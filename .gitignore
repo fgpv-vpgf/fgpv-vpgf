@@ -4,6 +4,8 @@ node_modules/
 lib/
 bower_components/
 dist/
-tmp
+build/
+tmp/
+.tmp/
 .DS_Store
 .idea
