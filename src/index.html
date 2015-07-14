@@ -4,16 +4,40 @@
     <meta charset="utf-8">
     <title>title</title>
 
-    <link rel="stylesheet" type="text/css" href="./main.css">
+    <link rel="shortcut icon" href="content/images/favicon.ico" type="image/x-icon" /> 
 
+    <!-- inject-vendor:css -->
+    <!-- endinject -->
+
+    <!-- inject:css -->
+    <link rel="stylesheet" href="/.tmp/main.css">
+    <!-- endinject -->
   </head>
-  <body>
-    <!-- page content -->
-    <div>
-        test12
+<body>
+    <md-button class="md-raised">{{title}}</md-button>
+
+    <div class="fgpv">
+
     </div>
 
-    <script src="./fgpv.js"></script>
+    <div class="fgpv">
 
-  </body>
+    </div>
+
+    <!-- inject-vendor:js -->
+    <script src="/lib/angular/angular.js"></script>
+    <script src="/lib/angular-animate/angular-animate.js"></script>
+    <script src="/lib/angular-aria/angular-aria.js"></script>
+    <script src="/lib/angular-material/angular-material.js"></script>
+    <!-- endinject -->
+    <!-- inject:js -->
+    <script src="/src/app/app.module.js"></script>
+    <script src="/src/app/core/core.module.js"></script>
+    <script src="/src/app/layout/layout.module.js"></script>
+    <script src="/src/app/layout/shell.controller.js"></script>
+    <script src="/src/app/app-seed.js"></script>
+    <!-- endinject -->
+
+
+</body>
 </html>
