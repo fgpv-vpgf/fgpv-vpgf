@@ -1,4 +1,9 @@
 ﻿body {
-  font: 100% Helvetica, sans-serif;
-  color: #333;
+    font: 100% Helvetica, sans-serif;
+    color: #132;
+}
+
+.fgpv {
+    @import "../../../lib/angular-material/angular-material";
+    
 }
