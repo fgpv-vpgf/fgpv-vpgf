@@ -3,10 +3,14 @@
 
     angular
         .module('app.layout')
-        .controller('Shell', ['$scope', function ($scope) {
-            $scope.title = "Button title";
+        .controller('ShellController', ShellController);
 
-            console.log($scope);
-        }]);
+    ShellController.$inject = [];
+    
+    function ShellController() {
+        var vm = this;
+
+        vm.title = "Button title";
+    }
 
 })();
