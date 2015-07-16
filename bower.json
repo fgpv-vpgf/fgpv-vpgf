@@ -5,6 +5,11 @@
     "homepage": "https://github.com/angular/angular-seed",
     "license": "MIT",
     "private": true,
+    "devDependencies": {
+        "angular-mocks": "^1.4.3",
+        "sinon": "http://sinonjs.org/releases/sinon-1.15.4.js",
+        "bardjs": "^0.1.4"
+    },
     "dependencies": {
         "angular": "^1.4.1",
         "angular-animate": "^1.4.1",
