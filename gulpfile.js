@@ -4,8 +4,11 @@
 var gulp = require('gulp');
 var del = require('del');
 var pkg = require('./package.json');
-var plug = $ = require('gulp-load-plugins')();
-var rs = require('run-sequence');
+var $ = require('gulp-load-plugins')();
+var args = require('yargs').argv;
+
+
+//var rs = require('run-sequence');
 
 //var env = plug.util.env;
 
@@ -49,11 +52,36 @@ gulp.task('inject', ['sass'],
     }
 );
 
+/**
+ * Serves the app.
+ * -- test  : run Karma auto tests in parallel
+ */
 gulp.task('serve:dev', ['inject'],
     function () {
+        // run karma tests parallel with serve
+        if (args.test) {
+            startTests(false);
+        }
+
         serve(true);
     }
 );
+
+/**
+ * Run specs once and exit
+ * @return {Stream}
+ */
+gulp.task('test', [], function (done) {
+    startTests(true /*singleRun*/, done);
+});
+
+/**
+ * Run specs and wait.
+ * Watch for file changes and re-run tests on each change
+ */
+gulp.task('test:auto', function (done) {
+    startTests(false /*singleRun*/, done);
+});
 
 function serve(isDev) {
     $.connect.server({
@@ -79,6 +107,40 @@ function serve(isDev) {
             .watch(config.watchhtml)
             .on('change', reload)
         ;
+    }
+}
+
+/**
+ * Start the tests using karma.
+ * @param  {boolean} singleRun - True means run once and end (CI), or keep running (dev)
+ * @param  {Function} done - Callback to fire when karma is done
+ * @return {undefined}
+ */
+function startTests(singleRun, done) {
+    var child;
+    var excludeFiles = [];
+    var fork = require('child_process').fork;
+    var karma = require('karma').server;
+
+    karma.start({
+        configFile: __dirname + '/karma.conf.js',
+        exclude: excludeFiles,
+        singleRun: !!singleRun
+    }, karmaCompleted);
+
+    ////////////////
+
+    function karmaCompleted(karmaResult) {
+        log('Karma completed');
+        if (child) {
+            log('shutting down the child process');
+            child.kill();
+        }
+        if (karmaResult === 1) {
+            done('karma: tests failed with code ' + karmaResult);
+        } else {
+            done();
+        }
     }
 }
 
@@ -123,10 +185,10 @@ function inject(src, label, order) {
  */
 function orderSrc(src, order) {
     //order = order || ['**/*'];
-   
+
     return gulp
         .src(src)
-        .pipe($.if(order, $.order(order)))       
+        .pipe($.if(order, $.order(order)))
     ;
 }
 
