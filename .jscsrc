@@ -13,7 +13,7 @@
     "requireOperatorBeforeLineBreak": true,
     "requireCamelCaseOrUpperCaseIdentifiers": true,
     "maximumLineLength": {
-      "value": 120,
+      "value": 100,
       "allowComments": true,
       "allowRegex": true
     },
@@ -24,7 +24,7 @@
     "disallowMixedSpacesAndTabs": true,
     "disallowTrailingWhitespace": true,
     "disallowSpaceAfterPrefixUnaryOperators": true,
-    "disallowMultipleVarDecl": null,
+    "disallowMultipleVarDecl": true,
 
     "requireSpaceAfterKeywords": [
       "if",
