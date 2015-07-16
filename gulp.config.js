@@ -5,8 +5,8 @@
     //var specRunnerFile = 'specs.html';
     //var wiredep = require('wiredep');
 
-    var nodeModules = 'node_modules';
-
+    var nodeModules = './node_modules/';
+    var bowerModules = './lib/';
 
     var root = './';
     var src = './src/'
@@ -21,11 +21,12 @@
     var config = {
 
         index: src + 'index.html',
-        
+
         js: [
             app + '**/*module*.js',
             app + '**/*.js',
-            app + 'app-seed.js'
+            app + 'app-seed.js',
+            '!' + app + '**/*.spec.js'
         ],
         jsOrder: [
             '**/app.module.js',
@@ -47,10 +48,13 @@
 
         ],
 
+        specHelpers: [src + 'test/*.js'],
+        specs: [app + '**/*.spec.js'],
+
         watchsass: src + 'content/styles/**/*.scss',
         watchjs: src + '**/*.js',
         watchhtml: src + '**/*.html',
-        
+
         app: app,
         src: src,
         temp: temp,
@@ -72,7 +76,7 @@
         //root: root,
         //server: server,
         //source: 'src/',
-        
+
         //optimized: {
         //    app: 'app.js',
         //    lib: 'lib.js'
@@ -95,10 +99,32 @@
         //    './package.json',
         //    './bower.json'
         //],
-        
+
         defaultPort: '6001'
     };
 
+    config.karma = getKarmaOptions();
+
+
+    function getKarmaOptions() {
+        var options = {
+            files: [].concat(
+                config.jslib,
+                bowerModules + 'angular-mocks/angular-mocks.js',
+                bowerModules + 'sinon/index.js',
+                bowerModules + 'bardjs/dist/bard.js',
+
+                app + '**/*module*.js',
+                app + '**/*.js',
+                app + 'app-seed.js',
+
+                config.specs,
+                config.specHelpers
+            )
+        };
+
+        return options;
+    }
 
 
     return config;
