@@ -6,11 +6,11 @@
         .controller('ShellController', ShellController);
 
     ShellController.$inject = [];
-    
+
     function ShellController() {
         var vm = this;
 
-        vm.title = "Button title";
+        vm.title = 'Button title';
     }
 
 })();

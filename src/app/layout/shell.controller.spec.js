@@ -1,5 +1,7 @@
 ﻿/* jshint -W117, -W030 */
 describe('ShellController', function () {
+    'use strict';
+
     var controller;
 
     beforeEach(function () {
@@ -9,11 +11,11 @@ describe('ShellController', function () {
 
     beforeEach(function () {
         controller = $controller('ShellController');
-        $rootScope.$apply();        
+        $rootScope.$apply();
     });
 
     bard.verifyNoOutstandingHttpRequests();
-    
+
     describe('Shell controller', function () {
         it('should be created successfully', function () {
             expect(controller).toBeDefined();

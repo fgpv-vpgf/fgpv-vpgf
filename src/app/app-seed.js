@@ -1,7 +1,9 @@
 angular.element(document).ready(function () {
-    // convert html collection to array: http://blog.cluster-text.com/2013/04/29/a-trap-when-looping-on-getelementsbyclassname/
-    var nodes = [].slice.call(document.getElementsByClassName('fgpv')); 
-    var i;
+    'use strict';
+
+    // convert html collection to array:
+    // http://blog.cluster-text.com/2013/04/29/a-trap-when-looping-on-getelementsbyclassname/
+    var nodes = [].slice.call(document.getElementsByClassName('fgpv'));
 
     nodes.forEach(function (node) {
         // load shell template into the node
@@ -12,5 +14,4 @@ angular.element(document).ready(function () {
             strictDi: true,
         });
     });
-
 });
