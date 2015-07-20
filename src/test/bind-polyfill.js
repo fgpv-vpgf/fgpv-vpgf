@@ -1,3 +1,4 @@
+//jscs:disable
 /*
  *  Phantom.js does not support Function.prototype.bind (at least not before v.2.0
  *  That's just crazy. Everybody supports bind.
@@ -8,6 +9,7 @@
 if (!Function.prototype.bind) {
     /*jshint freeze: false */
     Function.prototype.bind = function (oThis) {
+        'use strict';
         if (typeof this !== 'function') {
             // closest thing possible to the ECMAScript 5
             // internal IsCallable function
