@@ -14,6 +14,24 @@ var args = require('yargs').argv;
 
 var config = require('./gulp.config')();
 
+
+/**
+ * vet the code and create coverage report
+ *  -- verbose: verbose
+ * @return {Stream}
+ */
+gulp.task('vet', function () {
+    log('Analyzing source with JSHint and JSCS');
+
+    return gulp
+        .src(config.vetjs)
+        .pipe($.if(args.verbose, $.print()))
+        .pipe($.jshint())
+        .pipe($.jshint.reporter('jshint-stylish', { verbose: true }))
+        .pipe($.jshint.reporter('fail'))
+        .pipe($.jscs());
+});
+
 gulp.task('clean-sass', function (done) {
     del(config.temp, done);
 });
@@ -56,7 +74,7 @@ gulp.task('inject', ['sass'],
  * Serves the app.
  * -- test  : run Karma auto tests in parallel
  */
-gulp.task('serve:dev', ['inject'],
+gulp.task('serve:dev', ['vet', 'inject'],
     function () {
         // run karma tests parallel with serve
         if (args.test) {
@@ -71,7 +89,7 @@ gulp.task('serve:dev', ['inject'],
  * Run specs once and exit
  * @return {Stream}
  */
-gulp.task('test', [], function (done) {
+gulp.task('test', ['vet'], function (done) {
     startTests(true /*singleRun*/, done);
 });
 

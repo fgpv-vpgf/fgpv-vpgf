@@ -48,8 +48,10 @@
 
         ],
 
-        specHelpers: [src + 'test/*.js'],
-        specs: [app + '**/*.spec.js'],
+        specHelpers: [ src + 'test/*.js' ], // bind-polyfill, 
+        specs: [ app + '**/*.spec.js' ],
+
+        vetjs: [ src + '**/*.js' ],
 
         watchsass: src + 'content/styles/**/*.scss',
         watchjs: src + '**/*.js',
