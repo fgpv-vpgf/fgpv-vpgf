@@ -37,7 +37,10 @@
         "protractor": "^2.1.0",
         "run-sequence": "^1.1.1",
         "shelljs": "^0.2.6",
-        "yargs": "^3.15.0"
+        "yargs": "^3.15.0",
+        "gulp-jshint": "^1.11.2",
+        "gulp-jscs": "^1.6.0",
+        "jshint-stylish": "^2.0.1"
     },
     "scripts": {
         "postinstall": "bower install",
