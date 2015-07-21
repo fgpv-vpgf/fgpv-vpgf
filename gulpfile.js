@@ -91,6 +91,7 @@ gulp.task('serve:dev', ['vet', 'inject'],
 
 /**
  * Run specs once and exit
+ * -- coverage  : generate test coverage info
  * @return {Stream}
  */
 gulp.task('test', ['vet'], function (done) {
@@ -99,6 +100,7 @@ gulp.task('test', ['vet'], function (done) {
 
 /**
  * Run specs and wait.
+ * -- coverage  : generate test coverage info
  * Watch for file changes and re-run tests on each change
  */
 gulp.task('test:auto', function (done) {
@@ -153,12 +155,19 @@ function startTests(singleRun, done) {
     var excludeFiles = [];
     var fork = require('child_process').fork;
     var karma = require('karma').server;
-
-    karma.start({
+    
+    var karmaConfig = {
         configFile: __dirname + '/karma.conf.js',
         exclude: excludeFiles,
         singleRun: !!singleRun
-    }, karmaCompleted);
+    };
+
+    // add coverage reporter
+    if (args.coverage) {
+        karmaConfig.reporters = ['progress', 'coverage'];
+    }
+
+    karma.start(karmaConfig, karmaCompleted);
 
     ////////////////
 
