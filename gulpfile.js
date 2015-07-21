@@ -36,6 +36,30 @@ gulp.task('vet', function () {
         .pipe($.jscs());
 });
 
+/**
+ * Create a visualizer report
+ */
+gulp.task('plato', function (done) {
+    log('Analyzing source with Plato');
+    log('Browse to /report/plato/index.html to see Plato results');
+
+    startPlatoVisualizer(done);
+});
+
+/**
+ * Remove all files from the build, temp, and reports folders
+ * @param  {Function} done - callback when complete
+ */
+gulp.task('clean', function (done) {
+    var delconfig = [].concat(config.build, config.temp, config.report);
+    log('Cleaning: ' + $.util.colors.blue(delconfig));
+    del(delconfig, done);
+});
+
+/**
+ * Remove all styles from the temp folders
+ * @param  {Function} done - callback when complete
+ */
 gulp.task('clean-sass', function (done) {
     del(config.temp, done);
 });
@@ -105,16 +129,6 @@ gulp.task('test', ['vet'], function (done) {
  */
 gulp.task('test:auto', function (done) {
     startTests(false /*singleRun*/, done);
-});
-
-/**
- * Create a visualizer report
- */
-gulp.task('plato', function (done) {
-    log('Analyzing source with Plato');
-    log('Browse to /report/plato/index.html to see Plato results');
-
-    startPlatoVisualizer(done);
 });
 
 function serve(isDev) {
