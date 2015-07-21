@@ -48,10 +48,10 @@
 
         ],
 
-        specHelpers: [ src + 'test/*.js' ], // bind-polyfill, 
-        specs: [ app + '**/*.spec.js' ],
+        specHelpers: [src + 'test/*.js'], // bind-polyfill, 
+        specs: [app + '**/*.spec.js'],
 
-        vetjs: [ src + '**/*.js' ],
+        vetjs: [src + '**/*.js'],
 
         watchsass: src + 'content/styles/**/*.scss',
         watchjs: src + '**/*.js',
@@ -79,16 +79,10 @@
         //images: client + 'images/**/*.*',
         //// app js, with no specs
 
-        //root: root,
-        //server: server,
-        //source: 'src/',
-
         //optimized: {
         //    app: 'app.js',
         //    lib: 'lib.js'
         //},
-
-        //plato: { js: clientApp + '**/*.js' },
 
         //browserReloadDelay: 1000,
 
@@ -111,7 +105,6 @@
 
     config.karma = getKarmaOptions();
 
-
     function getKarmaOptions() {
         var options = {
             files: [].concat(
@@ -126,12 +119,23 @@
 
                 config.specs,
                 config.specHelpers
-            )
+            ),
+            coverage: {
+                dir: report + 'coverage',
+                reporters: [
+                    // reporters not supporting the `file` property
+                    { type: 'html', subdir: 'report-html' },
+                    { type: 'lcov', subdir: 'report-lcov' },
+                    { type: 'text-summary' } //, subdir: '.', file: 'text-summary.txt'}
+                ]
+            },
+            preprocessors: {}
         };
+
+        options.preprocessors[app + '**/!(*.spec)+(.js)'] = ['coverage'];
 
         return options;
     }
-
 
     return config;
 };
