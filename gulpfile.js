@@ -1,19 +1,23 @@
 /* jshint camelcase:false */
-//var common = require('./gulp/common.js');
-//var merge = require('merge-stream');
 var gulp = require('gulp');
+var glob = require('glob');
 var del = require('del');
 var pkg = require('./package.json');
-var $ = require('gulp-load-plugins')();
+var $ = require('gulp-load-plugins')({ lazy: true });
 var args = require('yargs').argv;
-
-
-//var rs = require('run-sequence');
-
-//var env = plug.util.env;
 
 var config = require('./gulp.config')();
 
+/**
+ * yargs variables can be passed in to alter the behavior, when present.
+ * Example: gulp serve:dev
+ *
+ * --verbose  : Various tasks will produce more output to the console.
+ * --nosync   : Don't launch the browser with browser-sync when serving code.
+ * --debug    : Launch debugger with node-inspector.
+ * --debug-brk: Launch debugger and break on 1st line with node-inspector.
+ * --test     : run Karma auto tests in parallel
+ */
 
 /**
  * vet the code and create coverage report
@@ -101,6 +105,16 @@ gulp.task('test:auto', function (done) {
     startTests(false /*singleRun*/, done);
 });
 
+/**
+ * Create a visualizer report
+ */
+gulp.task('plato', function (done) {
+    log('Analyzing source with Plato');
+    log('Browse to /report/plato/index.html to see Plato results');
+
+    startPlatoVisualizer(done);
+});
+
 function serve(isDev) {
     $.connect.server({
         root: config.root,
@@ -159,6 +173,34 @@ function startTests(singleRun, done) {
         } else {
             done();
         }
+    }
+}
+
+/**
+ * Start Plato inspector and visualizer
+ */
+function startPlatoVisualizer(done) {
+    log('Running Plato');
+
+    var files = glob.sync(config.plato.js);
+    var plato = require('plato');
+    var excludeFiles = /.*\.spec\.js/;
+
+    var options = {
+        title: 'Plato Inspections Report',
+        exclude: excludeFiles
+    };
+    var outputDir = config.report + '/plato';
+
+    
+    plato.inspect(files, outputDir, options, platoCompleted);
+
+    function platoCompleted(report) {
+        var overview = plato.getOverviewReport(report);
+        if (args.verbose) {
+            log(overview.summary);
+        }
+        if (done) { done(); }
     }
 }
 

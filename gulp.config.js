@@ -57,11 +57,16 @@
         watchjs: src + '**/*.js',
         watchhtml: src + '**/*.html',
 
+        plato: {
+            js: app + '**/*.js'
+        },
+
         app: app,
         src: src,
         temp: temp,
         build: build,
         root: root,
+        report: report,
 
         //alljs: [
         //    './src/**/*.js',
@@ -74,7 +79,6 @@
         //images: client + 'images/**/*.*',
         //// app js, with no specs
 
-        //report: report,
         //root: root,
         //server: server,
         //source: 'src/',

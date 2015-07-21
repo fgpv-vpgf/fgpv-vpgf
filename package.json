@@ -35,12 +35,13 @@
         "karma-sinon": "^1.0.4",
         "phantomjs": "^1.9.17",
         "protractor": "^2.1.0",
-        "run-sequence": "^1.1.1",
         "shelljs": "^0.2.6",
         "yargs": "^3.15.0",
         "gulp-jshint": "^1.11.2",
         "gulp-jscs": "^1.6.0",
-        "jshint-stylish": "^2.0.1"
+        "jshint-stylish": "^2.0.1",
+        "plato": "^1.5.0",
+        "glob": "^5.0.14"
     },
     "scripts": {
         "postinstall": "bower install",
