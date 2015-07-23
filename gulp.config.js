@@ -48,7 +48,12 @@
 
         ],
 
-        specHelpers: [src + 'test/*.js'], // bind-polyfill, 
+        // all html template files
+        htmltemplates: app + '**/*.html',
+        // angular template cache file to be injected
+        templates: temp + 'templates.js',
+
+        specHelpers: [src + 'test/*.js'], // bind-polyfill,
         specs: [app + '**/*.spec.js'],
 
         vetjs: [src + '**/*.js'],
@@ -59,6 +64,18 @@
 
         plato: {
             js: app + '**/*.js'
+        },
+
+        /**
+         * Template cache settings.
+         */
+        templateCache: {
+            file: 'templates.js',
+            options: {
+                module: 'app.core',
+                root: 'app/',
+                standAlone: false
+            }
         },
 
         app: app,
@@ -75,7 +92,6 @@
         //build: './build/',
         //client: client,
         //fonts: bowerdir + 'font-awesome/fonts/**/*.*',
-        //htmltemplates: clientApp + '**/*.html',
         //images: client + 'images/**/*.*',
         //// app js, with no specs
 
@@ -85,15 +101,6 @@
         //},
 
         //browserReloadDelay: 1000,
-
-        //templateCache: {
-        //    file: 'templates.js',
-        //    options: {
-        //        module: 'app.core',
-        //        root: 'app/',
-        //        standAlone: false
-        //    }
-        //},
 
         //packages: [
         //    './package.json',
@@ -119,7 +126,7 @@
 
                 config.specs,
                 config.specHelpers
-            ),
+                ),
             coverage: {
                 dir: report + 'coverage',
                 reporters: [

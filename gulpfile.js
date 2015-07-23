@@ -47,6 +47,25 @@ gulp.task('plato', function (done) {
 });
 
 /**
+ * Create $templateCache from the html templates
+ * @return {Stream}
+ */
+gulp.task('templatecache', ['clean-templates'], function() {
+    log('Creating an AngularJS $templateCache');
+
+    return gulp
+        .src(config.htmltemplates)
+        .pipe($.if(args.verbose, $.bytediff.start()))
+        .pipe($.minifyHtml({empty: true}))
+        .pipe($.if(args.verbose, $.bytediff.stop(bytediffFormatter)))
+        .pipe($.angularTemplatecache(
+            config.templateCache.file,
+            config.templateCache.options
+        ))
+        .pipe(gulp.dest(config.temp));
+});
+
+/**
  * Remove all files from the build, temp, and reports folders
  * @param  {Function} done - callback when complete
  */
@@ -61,7 +80,15 @@ gulp.task('clean', function (done) {
  * @param  {Function} done - callback when complete
  */
 gulp.task('clean-sass', function (done) {
-    del(config.temp, done);
+    del(config.css, done);
+});
+
+/**
+ * Remove all templates from the temp folders
+ * @param  {Function} done - callback when complete
+ */
+gulp.task('clean-templates', function (done) {
+    del(config.templates, done);
 });
 
 gulp.task('sass', ['clean-sass'],
@@ -80,7 +107,7 @@ gulp.task('sass', ['clean-sass'],
     }
 );
 
-gulp.task('inject', ['sass'],
+gulp.task('inject', ['sass', 'templatecache'],
     function () {
         log('Injecting JS, CSS');
 
@@ -92,6 +119,8 @@ gulp.task('inject', ['sass'],
 
             .pipe(inject(config.csslib, 'inject-vendor'))
             .pipe(inject(config.css))
+
+            .pipe(inject(config.templates, 'templates'))
 
             .pipe(gulp.dest(config.src))
         ;
@@ -152,7 +181,7 @@ function serve(isDev) {
         ;
 
         gulp
-            .watch(config.watchhtml)
+            .watch(config.watchhtml, ['templatecache'])
             .on('change', reload)
         ;
     }
@@ -169,7 +198,7 @@ function startTests(singleRun, done) {
     var excludeFiles = [];
     var fork = require('child_process').fork;
     var karma = require('karma').server;
-    
+
     var karmaConfig = {
         configFile: __dirname + '/karma.conf.js',
         exclude: excludeFiles,
@@ -215,7 +244,7 @@ function startPlatoVisualizer(done) {
     };
     var outputDir = config.report + '/plato';
 
-    
+
     plato.inspect(files, outputDir, options, platoCompleted);
 
     function platoCompleted(report) {
@@ -229,7 +258,7 @@ function startPlatoVisualizer(done) {
 
 /**
  * Reloads gulp-connect with whatever file has changed.
- * 
+ *
  */
 function reload(event) {
     logWatch(event);
@@ -283,6 +312,29 @@ function orderSrc(src, order) {
 function clean(path, done) {
     log('Cleaning: ' + $.util.colors.blue(path));
     del(path, done);
+}
+
+/**
+ * Formatter for bytediff to display the size changes after processing
+ * @param  {Object} data - byte data
+ * @return {String}      Difference in bytes, formatted
+ */
+function bytediffFormatter(data) {
+    var difference = (data.savings > 0) ? ' smaller.' : ' larger.';
+    return data.fileName + ' went from ' +
+        (data.startSize / 1000).toFixed(2) + ' kB to ' +
+        (data.endSize / 1000).toFixed(2) + ' kB and is ' +
+        formatPercent(1 - data.percent, 2) + '%' + difference;
+}
+
+/**
+ * Format a number as a percentage
+ * @param  {Number} num       Number to format as a percent
+ * @param  {Number} precision Precision of the decimal
+ * @return {String}           Formatted perentage
+ */
+function formatPercent(num, precision) {
+    return (num * 100).toFixed(precision);
 }
 
 /**
