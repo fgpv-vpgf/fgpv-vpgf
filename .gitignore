@@ -10,3 +10,5 @@ tmp/
 report/
 .DS_Store
 .idea
+typings/
+tsd.json
