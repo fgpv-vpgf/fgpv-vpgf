@@ -160,6 +160,19 @@ gulp.task('test:auto', function (done) {
     startTests(false /*singleRun*/, done);
 });
 
+/**
+ * Generates the changelog from commit messages.
+ * releseCount 0 regenerates all releases.
+ */
+gulp.task('changelog', function () {
+    return gulp.src('CHANGELOG.md')
+        .pipe($.conventionalChangelog({
+            preset: 'angular',
+            releaseCount: 0
+        }))
+        .pipe(gulp.dest('./'));
+});
+
 function serve(isDev) {
     $.connect.server({
         root: config.root,
