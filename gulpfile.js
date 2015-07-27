@@ -114,10 +114,10 @@ gulp.task('inject', ['sass', 'templatecache'],
         return gulp
             .src(config.index)
 
-            .pipe(inject(config.jslib, 'inject-vendor'))
+            .pipe(inject(config.jslib, 'vendor'))
             .pipe(inject(config.js, '', config.jsOrder))
 
-            .pipe(inject(config.csslib, 'inject-vendor'))
+            .pipe(inject(config.csslib, 'vendor'))
             .pipe(inject(config.css))
 
             .pipe(inject(config.templates, 'templates'))
