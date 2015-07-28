@@ -14,15 +14,12 @@
     <!-- endinject -->
   </head>
 <body>
-    <md-button class="md-raised">{{title}}</md-button>
 
-    <div class="fgpv">
+    <div class="fgpv" th-config='{"layout": { "title": "Granpa"}}'></div>
 
-    </div>
+    <div class="fgpv" th-config="config.en.json"></div>
 
-    <div class="fgpv">
-
-    </div>
+    <div class="fgpv"></div>
 
     <!-- inject:vendor:js -->
     <script src="/lib/angular/angular.js"></script>
@@ -34,6 +31,11 @@
     <script src="/src/app/app.module.js"></script>
     <script src="/src/app/core/core.module.js"></script>
     <script src="/src/app/layout/layout.module.js"></script>
+    <script src="/src/app/core/common.service.js"></script>
+    <script src="/src/app/core/config.service.js"></script>
+    <script src="/src/app/core/constant.service.js"></script>
+    <script src="/src/app/core/core.run.js"></script>
+    <script src="/src/app/layout/layout.config.service.js"></script>
     <script src="/src/app/layout/shell.controller.js"></script>
     <script src="/src/app/app-seed.js"></script>
     <!-- endinject -->

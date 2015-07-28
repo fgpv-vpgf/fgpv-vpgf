@@ -1,0 +1,79 @@
+{
+    "layout": {
+        "title": "TOMAHAWK"
+    },
+    "_id": "55b7740c90652144e5b2184b",
+    "index": 0,
+    "guid": "6b1062e4-502d-4eac-992f-86055682a61c",
+    "isActive": true,
+    "balance": "$1,088.36",
+    "picture": "http://placehold.it/32x32",
+    "age": 23,
+    "eyeColor": "green",
+    "name": {
+        "first": "Thompson",
+        "last": "Marks"
+    },
+    "company": "ZIDOX",
+    "email": "thompson.marks@zidox.ca",
+    "phone": "+1 (915) 469-2354",
+    "address": "712 Allen Avenue, Cherokee, Guam, 7395",
+    "about": "Sit ut velit do do. Ex eu minim sint proident ea officia adipisicing dolor sint mollit duis aliquip ea voluptate. Magna eiusmod cupidatat fugiat qui deserunt qui. Nulla elit aliquip ullamco cupidatat esse amet. Velit Lorem qui sint esse et qui magna labore. Reprehenderit laboris elit irure et qui pariatur enim dolore ad aliquip cupidatat voluptate anim. In excepteur in esse ad magna do ipsum adipisicing.",
+    "registered": "Wednesday, December 31, 2014 8:35 AM",
+    "latitude": "-41.418846",
+    "longitude": "-130.996005",
+    "tags": [
+        "non",
+        "pariatur",
+        "do",
+        "consequat",
+        "fugiat",
+        "quis",
+        "et",
+        "custom_tag"
+    ],
+    "range": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+    ],
+    "layers": [
+        {
+            "id": 0,
+            "name": "Meredith Christensen"
+        },
+        {
+            "id": 1,
+            "name": "Jaclyn Skinner"
+        },
+        {
+            "id": 2,
+            "name": "Hyde Cortez"
+        },
+        {
+            "id": 3,
+            "name": "Blair Snyder"
+        },
+        {
+            "id": 4,
+            "name": "Kelley Grimes"
+        },
+        {
+            "id": 5,
+            "name": "Tanisha Mullen"
+        },
+        {
+            "id": 6,
+            "name": "Angeline Holder"
+        }
+    ],
+    "greeting": "Hello, Thompson! You have 7 unread messages.",
+    "favoriteFruit": "strawberry"
+}
