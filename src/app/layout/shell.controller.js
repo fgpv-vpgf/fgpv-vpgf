@@ -5,12 +5,26 @@
         .module('app.layout')
         .controller('ShellController', ShellController);
 
-    ShellController.$inject = [];
+    ShellController.$inject = ['layoutConfig'];
 
-    function ShellController() {
+    function ShellController(layoutConfig) {
         var vm = this;
 
-        vm.title = 'Button title';
+        vm.config = layoutConfig;
+        vm.isLoading = true;
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+            layoutConfig.ready()
+                .then(hideLoadingScreen);
+        }
+
+        function hideLoadingScreen() {
+            vm.isLoading = false;
+        }
     }
 
 })();

@@ -3,7 +3,26 @@
     color: #132;
 }
 
+@import "../../../lib/angular-material/angular-material";
+
 .fgpv {
-    @import "../../../lib/angular-material/angular-material";
-    
+    position: relative;
+
+    md-whiteframe {
+      background: #fff;
+      margin: 20px;
+      padding: 20px;
+    }
+
+    .loading-splash {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        color: white;
+        background-color: darkgrey;
+        text-align: center;
+        vertical-align: middle;
+    }
 }
