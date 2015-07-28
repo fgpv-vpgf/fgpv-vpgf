@@ -1,7 +1,6 @@
 ﻿<div data-ng-controller="ShellController as shell">
-    I'm a RA.. Geo.. something instance.
-
-    test2
-    <md-button class="md-raised">{{shell.title}}</md-button>
-
+    <div ng-hide="!shell.isLoading" class="loading-splash" layout layout-align="center center">
+        <span>Loading</span>
+    </div>
+    <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">I'm {{shell.config.title}}</md-whiteframe>
 </div>

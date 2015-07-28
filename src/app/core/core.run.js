@@ -7,13 +7,13 @@
 
     runBlock.$inject = ['config', 'layoutConfig'];
 
-    function runBlock(config/*, layoutConfig*/) {
+    function runBlock(config, layoutConfig) {
         // wait until config is retrieved
         config.initialize()
             .then(function() {
                 // initialize other services
-                //layoutConfig.initialize();
-                //console.log(layoutConfig);
+                layoutConfig.initialize();
+                console.log(layoutConfig);
             });
     }
 
