@@ -4,8 +4,22 @@ describe('ShellController', function () {
 
     var controller;
 
+    function customTranslateLoader($provide, $translateProvider) {
+
+        $provide.factory('customLoader', function ($q) {
+            return function () {
+                var deferred = $q.defer();
+                deferred.resolve({});
+                return deferred.promise;
+            };
+        });
+
+        $translateProvider.useLoader('customLoader');
+    }
+
     beforeEach(function () {
-        bard.appModule('app.layout');
+        bard.appModule('app.layout', customTranslateLoader);
+
         bard.inject('$controller', '$rootScope');
     });
 
