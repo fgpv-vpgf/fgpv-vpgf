@@ -39,7 +39,10 @@
             bowerdir + 'angular/angular.js',
             bowerdir + 'angular-animate/angular-animate.js',
             bowerdir + 'angular-aria/angular-aria.js',
-            bowerdir + 'angular-material/angular-material.js'
+            bowerdir + 'angular-material/angular-material.js',
+            bowerdir + 'angular-sanitize/angular-sanitize.js',
+            bowerdir + 'angular-translate/angular-translate.js',
+            bowerdir + 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
         ],
 
         scss: src + 'content/styles/main.scss',

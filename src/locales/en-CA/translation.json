@@ -1,0 +1,708 @@
+{
+    "_unused": {
+        "abstract": "Abstract",
+        "altMaptip_image": "Feature icon",
+        "expandAll": "Expand All",
+        "extent": "Extent",
+        "scope": "Scope",
+        "show": "Show",
+        "showHeaders": "Show Headers",
+        "supplementalData": "Supplemental Data",
+        "timePeriod": "Time Period"
+    },
+    "addDataset": {
+        "addDatasetButton": "Add Dataset",
+        "cancel": "Cancel",
+        "colour": "Colour",
+        "connect": "Connect",
+        "csv": "CSV",
+        "dataSource": "Data Source",
+        "dataSourceFile": "File",
+        "dataSourceService": "Service",
+        "datasetName": "Dataset Name",
+        "error": {
+            "headerCSV": "CSV error",
+            "headerFeature": "Feature layer error",
+            "headerFile": "File error",
+            "headerGeojson": "GeoJSON error",
+            "headerShapefile": "Shapefile error",
+            "headerWMS": "Web Map Service error",
+            "ie9FileAPI": "Your browser does not support local file access",
+            "messageCSVBroken": "Unable to create layer from provided CSV.",
+            "messageCSVInvalid": "Malformed CSV; field names cannot be retrieved.",
+            "messageCSVShort": "Data source requires at least 2 rows for display.",
+            "messageCSVThin": "Data source requires at least latitude and longitude columns to display.",
+            "messageFeatureConnect": "Cannot retrieve service.",
+            "messageFeatureInvalid": "Service is misconfigured or does not exist.",
+            "messageFeatureLegend": "Unable to retrieve legend information.",
+            "messageFeatureOutsideZoomRange": "Layer is outside of available zoom range. Features will not be visible.",
+            "messageFileConnect": "Cannot retrieve file.",
+            "messageGeojsonBroken": "Unable to create layer from provided GeoJSON.",
+            "messageGeojsonInvalid": "Malformed JSON object; field names cannot be retrieved.",
+            "messageShapefileBroken": "Unable to create layer from provided Shapefile.",
+            "messageShapefileInvalid": "Malformed Shapefile; field names cannot be retrieved.",
+            "messageWMSConnect": "Cannot retrieve service.",
+            "messageWMSInvalid": "Service is misconfigured or does not exist."
+        },
+        "fileOrURL": "File or URL",
+        "fileOrURLPlaceholder": "Local file or URL",
+        "fileType": "File Type",
+        "geojson": "GeoJSON",
+        "help": {
+            "csvColour": "Enter hex HTML colour code or use a colour picker to select the layer features' colour",
+            "csvDatasetName": "Dataset name that will appear in the layer selector",
+            "csvLatitude": "Select a latitude column (in decimal degrees)",
+            "csvLongitude": "Select a longitude column (in decimal degrees)",
+            "csvPrimaryAttribute": "Select a primary identifier for map features (i.e. Name, ID, etc)",
+            "dataSource": "Select the type of data source you would like to add: 'Service' to add a web service; 'File' to upload a GeoJSON, CSV, or Shapefile.",
+            "featurePrimaryAttribute": "Select a primary identifier for map features (i.e. Name, ID, etc)",
+            "fileOrURL": "Select a file on your computer, or specify a URL to a network file",
+            "fileOrURLType": "Select the correct File Type (if we didn't guessed correctly)",
+            "geojsonColour": "Enter hex HTML colour code or use a colour picker to select the layer features' colour",
+            "geojsonDatasetName": "Dataset name that will appear in the layer selector",
+            "geojsonPrimaryAttribute": "Select a primary identifier for map features (i.e. Name, ID, etc)",
+            "serviceType": "Select the correct Map Service Type (if we didn't guess correctly)",
+            "serviceURL": "Enter the Map Service endpoint URL for an ESRI Feature Layer or OGC Web Map Service.",
+            "shapefileColour": "Enter hex HTML colour code or use a colour picker to select the layer features' colour",
+            "shapefileDatasetName": "Dataset name that will appear in the layer selector",
+            "shapefilePrimaryAttribute": "Select a primary identifier for map features (i.e. Name, ID, etc)",
+            "wmsLayerName": "Select a WMS layer to add."
+        },
+        "latitude": "Latitude",
+        "layerName": "Layer Name",
+        "load": "Load",
+        "longitude": "Longitude",
+        "primaryAttribute": "Primary Attribute",
+        "requestParser": "Request Parser",
+        "serviceLayerURL": "Service Layer URL",
+        "serviceLayerURLPlaceholder": "ESRI MapServer or Feature layer or WMS layer",
+        "serviceType": "Service Type",
+        "serviceTypeFeature": "Feature",
+        "serviceTypeWMS": "OGC WMS",
+        "shapefile": "Shapefile",
+        "style": "Style",
+        "symbology": "Symbology",
+        "title": "Add Dataset"
+    },
+    "addLayer": {
+        "addLayer-Opacity-label": "Opacity:",
+        "addLayer-URL-label": "URL:",
+        "addLayer-opacity-alt": "Range: 0 to 10 in steps of 1",
+        "addLayer-opacity-display-end": "%)",
+        "addLayer-opacity-display-start": "(Current Value:",
+        "addLayerAddButton": "Add Layer",
+        "addLayerPlaceholder": "http://<MyServerName>/ArcGIS/rest/services/<MyServiceName>",
+        "addLayerSelectTypeText": "What type of data are you referencing?",
+        "addLayerTitle": "Add Layer from Web",
+        "addLayerType1": "An ArcGIS Server Web Service",
+        "addLayerType2": "A WMS OGC Web Service",
+        "addLayerType3": "A WMTS OGC Web Service",
+        "addLayerType4": "A Tile Layer",
+        "addLayerType5": "A KML File",
+        "addLayerType6": "A GeoRSS File",
+        "addLayerType7": "A CSV File"
+    },
+    "advancedToolbar": {
+        "advancedTitle": "Advanced",
+        "title": "Tools"
+    },
+    "basemapSelector": {
+        "refreshRequired": "Page refresh required"
+    },
+    "bookmarkLink": {
+        "description": "Link to Map Viewer",
+        "email": "Email",
+        "emailUrlSubject": "RAMP GIS Viewer",
+        "longLink": "Long link",
+        "shortLink": "Short link",
+        "title": "Get Link"
+    },
+    "config": {
+        "basemaps": {
+            "baseCBME_CBCE_HS_RO_3978": {
+                "altText": "Topographic Map",
+                "description": "NrCan CBMT_CBCT_HS",
+                "name": "Shaded Relief"
+            },
+            "baseCBMT_CBCT_GEOM_3978": {
+                "altText": "Topographic Map",
+                "description": "NrCan CBMT_CBCT_GEOM",
+                "name": "Road Networks"
+            },
+            "baseE2M": {
+                "altText": "Topographic Map",
+                "description": "Earth 2 Map",
+                "name": "Canada Topographic"
+            },
+            "baseEsriPhysical": {
+                "altText": "Satellite Map",
+                "description": "ESRI World_Physical_Map",
+                "name": "Physical Earth"
+            },
+            "baseEsriRelief": {
+                "altText": "Satellite Map",
+                "description": "ESRI World_Shaded_Relief",
+                "name": "Shaded Relief"
+            },
+            "baseEsriStreet": {
+                "altText": "Topographic Map",
+                "description": "ESRI World_Street_Map",
+                "name": "Streets"
+            },
+            "baseEsriTerrain": {
+                "altText": "Topographic Map",
+                "description": "ESRI World_Terrain_Base",
+                "name": "Terrain"
+            },
+            "baseEsriTopo": {
+                "altText": "Topographic Map",
+                "description": "ESRI World_Topo_Map",
+                "name": "Topographic"
+            },
+            "baseEsriWorld": {
+                "altText": "Satellite Map",
+                "description": "ESRI World_Imagery",
+                "name": "Satellite Imagery"
+            },
+            "baseNrCan": {
+                "altText": "Topographic Map",
+                "description": "NrCan CBCT3978",
+                "name": "Canada Atlas"
+            },
+            "baseSimple": {
+                "altText": "Topographic Map",
+                "description": "NrCan Simple",
+                "name": "Water Bodies"
+            }
+        },
+        "layers": {
+            "feature": {
+                "MW_E": {
+                    "displayName": "Smelters and refineries"
+                },
+                "_17e537a6": {
+                    "displayName": "BBS Routes"
+                },
+                "_708985e5": {
+                    "displayName": "Water Regions"
+                },
+                "_b6b6d5a6": {
+                    "displayName": "CESI Water Quality Indicators"
+                },
+                "cesi_ozone": {
+                    "displayName": "CESI Air Ozone"
+                },
+                "dog_guts": {
+                    "displayName": "Bird Habitats"
+                },
+                "layer_dd1m3": {
+                    "displayName": "Monitoring Sites"
+                },
+                "layer_g5h6i": {
+                    "displayName": "EC Projects"
+                },
+                "layer_sea_parks": {
+                    "displayName": "Sea Parks"
+                },
+                "oilAreaOverlay": {
+                    "displayName": "CESI Oil Area Overlay"
+                },
+                "oilSandsRegions": {
+                    "displayName": "Oil Sands Regions"
+                }
+            },
+            "wms": {
+                "aglands": {
+                    "displayName": "Pastures - 2000"
+                },
+                "dog_guts": {
+                    "displayName": "Bird Habitats"
+                },
+                "geomet_rain": {
+                    "displayName": "Rain"
+                },
+                "geomet_temp": {
+                    "displayName": "Air temperature"
+                },
+                "geomet_wind": {
+                    "displayName": "Wind speed"
+                },
+                "limits": {
+                    "displayName": "Limits"
+                },
+                "wms6": {
+                    "displayName": "Railway Network"
+                }
+            }
+        },
+        "tileSchema": {
+            "ESRI_World_AuxMerc_3857": "Auxiliary Mercator",
+            "NRCAN_Lambert_3978": "Canada Atlas Lambert",
+            "NRCAN_Lambert_3979": "Lambert 79"
+        }
+    },
+    "datagrid": {
+        "dataTabTitle": "Data",
+        "details": "Details",
+        "ex": {
+            "dataSummary": "Data Summary",
+            "dataset": "Dataset",
+            "datasetSelectorButtonLoad": "Load",
+            "datasetSelectorButtonLoaded": "Loaded",
+            "datasetSelectorButtonLoading": "Loading ..."
+        },
+        "fullData": "Full Data",
+        "gridstrings": {
+            "oAria": {
+                "sSortAscending": ": activate to sort column ascending",
+                "sSortDescending": ": activate to sort column descending"
+            },
+            "oPaginate": {
+                "sFirst": "First",
+                "sLast": "Last",
+                "sNext": "Next",
+                "sPage": "Page",
+                "sPrevious": "Previous",
+                "sRecords": "Records"
+            },
+            "sEmptyTable": "No data available in table",
+            "sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
+            "sInfoEmpty": "Showing 0 to 0 of 0 entries",
+            "sInfoFiltered": "(filtered from _MAX_ total entries)",
+            "sInfoPostFix": "",
+            "sInfoThousands": ",",
+            "sLengthMenu": "Show _MENU_ entries",
+            "sLoadingRecords": "Loading ...",
+            "sProcessing": "Processing ...",
+            "sSearch": "Search:",
+            "sZeroRecords": "No matching records found"
+        },
+        "notices": {
+            "offScaleFullData": "Data is not visible at this zoom level.",
+            "offScaleSummary": "Some data is not visible at this zoom level.",
+            "update": "Updating"
+        },
+        "sort": "Sort",
+        "zoomBack": "Zoom Back",
+        "zoomTo": "Zoom To"
+    },
+    "filterManager": {
+        "WMSAllQueryDisable": "Disable queries on all WMS layers",
+        "WMSAllQueryEnable": "Enable queries on all WMS layers",
+        "WMSQueryDisable": "Disable query on {0}",
+        "WMSQueryEnable": "Enable query on {0}",
+        "allData": "All Data",
+        "boundingBox": "Bounding Box",
+        "controlsMatrix": {
+            "error": "Error",
+            "metadata": "Metadata",
+            "reload": "Reload",
+            "remove": "Remove",
+            "settings": "Settings"
+        },
+        "datasetsTabTitle": "Datasets",
+        "hideAllBounds": "Hide All Bounds",
+        "hideAllFeatures": "Hide All",
+        "hideBounds": "Hide Bounds of {0}",
+        "hideFeatures": "Hide {0}",
+        "hideLegend": "Hide Legend",
+        "layerData": "Layer data",
+        "layerDataPrefetch": "Load all features",
+        "layerHandle": "Layer Handle",
+        "layerHandleLabel": "Layer handle for __layerName__",
+        "layerListLabel": "Sortable layer list",
+        "legend": "Legend",
+        "linkToCap": "Link To Capabilities",
+        "metadata": "Metadata",
+        "metadataNotFound": "No metadata was found for this layer.",
+        "metadataNotPublished": "No metadata was published for this layer.",
+        "notices": {
+            "error": {
+                "connect": "Cannot retrieve service.",
+                "draw": "Cannot display service data.",
+                "load": "Cannot load service data."
+            },
+            "offScale": "No data visible at this zoom level",
+            "update": "Updating",
+            "user": "User-added Dataset"
+        },
+        "serviceEndPointLabel": "Service End Point",
+        "settings": "Settings",
+        "settingsLayerSettings": "Layer Settings",
+        "settingsOpacity": "Opacity",
+        "showAllBounds": "Show All Bounds",
+        "showAllFeatures": "Show All",
+        "showBounds": "Show Bounds of {0}",
+        "showFeatures": "Show {0}",
+        "showLegend": "Show Legend",
+        "zoomToData": "Zoom to data"
+    },
+	"geolocate": {
+		"noSupport": "Your browser does not support geolocation"
+	},
+    "geosearch": {
+        "filters": {
+            "clear": "Clear",
+            "distance": {
+                "100km": "100km",
+                "10km": "10km",
+                "15km": "15km",
+                "30km": "30km",
+                "50km": "50km",
+                "5km": "5km",
+                "75km": "75km",
+                "default": "Distance"
+            },
+            "extent": {
+                "canada": "Canada",
+                "default": "Extent",
+                "visible": "Visible"
+            },
+            "province": {
+                "default": "Province"
+            },
+            "type": {
+                "default": "Type"
+            }
+        }
+    },
+    "gui": {
+        "actions": {
+            "close": "Close",
+            "expand": "Expand",
+            "fullScreen": "Full Screen",
+            "mapExport": "Map Export",
+            "open": "Open"
+        }
+    },
+    "help": {
+        "s1": {
+            "h1": "Usage",
+            "header": "Navigation Controls",
+            "img1": "Map navigation controls",
+            "p1": "Navigation controls is used for changing the viewing extent of the map; the datagrid updates accordingly to what's viewable in the current extent.",
+            "p2": "Click Pan North/South/East/West to move the map in that particular direction.",
+            "p3": "Click Canada View to view map at its full extent.",
+            "p4": "Click Zoom In/Out to change the map extent.",
+            "p5": "Click and drag the Zoom Slider to zoom in/out."
+        },
+        "s10": {
+            "h2": "Keyboard Accessibility",
+            "h3": "Navigation Controls",
+            "h4": "Datasets/Data Tabs",
+            "h5": "Datasets Tab",
+            "header": "Accessibility",
+            "p1": "This page is WCAG 2.0 AA compliant.",
+            "p2": "Keyboard functionality is provided as an alternative for users who are unable to use a mouse. Use the Tab key to navigate forward to links and controls on the page. Press Shift+Tab to go back one step. Use the Enter or Spacebar keys to activate links and controls.",
+            "p3": "Zoom Slider: With the Zoom Slider highlighted, use the Up arrow key to zoom in and the Down arrow key to zoom out.",
+            "p4": "With either the Datasets or Data tab highlighted, use the Left and Right arrow keys to switch between them.",
+            "p5": "Within the Datasets tab, use the Up and Down arrow keys to navigate to different layers. With the layer handle (6 dots icon) highlighted, use Enter or Spacebar to grab the layer. Grabbed layers are indicated with a dark blue background. With the layer grabbed, use the Up or Down arrow keys to re-order the layers on the map interface. Press Enter or Spacebar again to release the layer."
+        },
+        "s11": {
+            "h1": "Usage",
+            "h2": "Opening the Toolbar",
+            "h3": "Tool Activation",
+            "h4": "Population Tool",
+            "h5": "Buffer Tool",
+            "h6": "Area Tool",
+            "h7": "Distance Tool",
+            "header": "Advanced Toolbar",
+            "img2": "The Toolbar Button",
+            "img3": "The Advanced Toolbar",
+            "img4": "Population Polygon and Result",
+            "img5": "Buffer Input and Result",
+            "img6": "Area Polygon and Result",
+            "img7": "Distance Line and Result",
+            "p1": "The advanced toolbar provides utilities that can break accessibility, usually due to their dependence on a mouse-driven input.",
+            "p2": "Select the Tools button on the main toolbar to open the advanced toolbar. Selecting the button a second time will close the advanced toolbar and de-activate any active tools.",
+            "p3": "Any tool can be activated by clicking the appropriate button on the advanced toolbar. Clicking a second time will de-activate the tool, as will closing the advanced toolbar, or selecting a new tool.",
+            "p31": "While active, you may use a tool as many times as you like.",
+            "p4": "Select the Population button to activate the population tool. Draw a polygon on the map and release the mouse.  The population of people inside the polygon will be displayed in the results window.  The Clear button will erase an existing result from the map.",
+            "p5": "Select the Buffer button to activate the buffer tool. Enter a desired buffer size in kilometers in the tool input. Draw a polygon on the map and release the mouse.  A buffer of the desired size will be applied to the polygon and displayed.",
+            "p6": "Select the Area button to activate the tool. Draw a polygon on the map and release the mouse.  The area and the circumference of the polygon will be displayed in the results window.",
+            "p7": "Select the Distance button to activate the tool. Draw a line on the map and release the mouse.  The distance of the line will be displayed in the results window."
+        },
+        "s12": {
+            "h2": "Note",
+            "header": "Load Times / Unanticipated Behaviour",
+            "p1": "Load times may vary based on network location and bandwidth availability, and unanticipated behaviour may occur if any map interactions occur before data is fully loaded. Please allow the webpage to load completely before triggering any map functions.",
+            "p2": "If the \"Loading...\" text appears in the lower right corner of map or the data grid displays a loading message, please allow the loading indicator to disappear before triggering any function on the map."
+        },
+        "s13": {
+            "h1": "Usage",
+            "h2": "Limitations",       
+            "header": "Map Export",
+            "img1": "The Toolbar Button",
+            "img2": "Download Image Button",
+            "p1": "Map Export is used to convert the contents of the map into an image that can be downloaded by the user.",
+            "p2": "Click the Map Export button in the toolbar to initiate the image generation.  The Map Export window will open. A \"Loading\" message will display, and the image preview will appear once it is generated.  Click the Download Image button to save the image.  Click the X to close the Map Export window.",
+            "p3": "Currently Map Export will only capture layers that are hosted on a public internet service. Layers hosted privately (e.g. on an intranet) or added from file-based sources will not appear in the resultant image file. Images are currently only available in PNG format."
+        },
+        "s14": {
+            "h1": "Usage",
+            "h2": "Basic Search",
+            "h3": "Filters",    
+            "header": "Geo Search",
+            "img1": "--",
+            "img2": "--",
+            "p1": "Geo Search allows known locations and places of interest to be discovered and zoomed to by the user.",
+            "p2": "Typing in the geo search text box will cause up to ten potential matches to appear in a dropdown list.  Clicking an item in the list will cause the map to zoom to that item.  Clicking the search button will pick the first item in the list.  Valid searches include place names, forward sorting area codes, and latitude longitude in decimal degrees separated by a comma.",
+            "p3": "Search results can be filtered in the following ways.",
+            "ul1": {
+                "li1": "The Province dropdown list will filter results to a specific province.  Province can also be filtered by ending the search string with a comma, followed by the province name or abbreviation.",
+                "li2": "The Type dropdown list will filter results to a type of item.  Some examples are Road, Lake, or Town.",
+                "li3": "The Extent dropdown list will filter results to a specific area.  The Visible option will only select results that are on current map view.  The Canada option will restrict results within the Canada view (press the Canada icon in the navigation widget to see the Canada view).",
+                "li4": "When entering a forward sorting area code or a latitude longitude pair, the Province filter will change to a Distance filter.  This will filter items to be within a certain radius of the center of the FSA or the lat long point."
+            }           
+        },
+        "s2": {
+            "h1": "Usage",
+            "header": "Basemaps",
+            "img1": "Basemap selector widget",
+            "p1": "The Basemap selector is used to modify the underlying basemap to provide a variety of geographical contexts.",
+            "p2": "From the dropdown, select the basemap of your choice and the map display will update."
+        },
+        "s3": {
+            "h1": "Usage",
+            "h2": "Specifying the Dataset Type",
+            "h3": "Specifying the Dataset Location",
+            "h4": "Specifying the Specifics of the Dataset",
+            "header": "User Added Datasets",
+            "p1": "Additional datasets can be added to the map viewer.  Supported formats are: ESRI Feature Layer, WMS, GeoJSON, Shapefile, and CSV File.  The '+' button at the top-left of the Layer Selector will launch the Add Dataset wizard.",
+            "p10": "File based datasets allow the choice of the following: a Dataset Name, which will be displayed in the Layer Selector; a Primary Attribute, which acts the same as in the Feature Service; a Symbol Colour, which determines the colour of the points / lines / polygons on the map.  CSV files also allow the specification of the columns that contain the Latitude and Longitude values, used to derive the point location on the map.",
+            "p11": "Clicking the 'Add Dataset' button will insert the layer into the map.",
+            "p2": "Select the type of data source you would like to add: 'Service' to add a web-based map service; 'File' to upload a GeoJSON, CSV, or Shapefile.",
+            "p3": "Enter the location of the service URL or dataset file in the location box.  If the dataset is a file on your file system, you must click the 'File' button and browse to the location.",
+            "p4": "A web based URL can be typed or pasted into the box.",
+            "p5": "RAMP will predict the dataset type, if it is incorrect, click the button that specifies the correct type.",
+            "p6": "Click the 'Connect' or 'Load' button to initiate the loading of the dataset.",
+            "p7": "Depending on the type of dataset being loaded, various parameters can be set in this phase.",
+            "p8": "A Feature Service allows the choice of a Primary Attribute, which determines the attribute used to identify a feature in the data grid and map tips.  All other information is derived from the service's metadata.",
+            "p9": "A WMS Service allows the choice of the Layer Name, which determines the layer in the WMS to be used as the source for the dataset.  All other information is derived from the service's metadata."
+        },
+        "s4": {
+            "h1": "Usage",
+            "h2": "Short link",
+            "h3": "Email",
+            "header": "Get Link",
+            "img1": "Get Link widget",
+            "p1": "Get Link is used to generate a shareable URL of the current map state with selected datasets.",
+            "p2": "Select this link to use Google's URL shortening service to generate a concise and easily shareable link to the current state of the RAMP map viewer.",
+            "p3": "Select this link to open a new email in your default mail client, with the URL contained in the body for convenient sharing."
+        },
+        "s5": {
+            "h1": "Usage",
+            "header": "Full Screen",
+            "p1": "Full Screen is used to collapse the departmental headers and footers to provide larger screen space for mapping.",
+            "p2": "Click the Full Screen button in the toolbar to hide departmental header and footer information. Select the Full Screen button again to restore to default view."
+        },
+        "s6": {
+            "h1": "Usage",
+            "h10": "Zoom Scale Dependent Layers",
+            "h2": "Layer Types",
+            "h3": "Layer Visibility",
+            "h4": "WMS Queries Toggle",
+            "h5": "Layer Legends",
+            "h6": "Handling Layer Errors",
+            "h7": "Layer Reordering",
+            "h8": "Layer Metadata",
+            "h9": "Layer Settings",
+            "header": "Datasets",
+            "img10": "Zoom Scale Dependent Layers",
+            "img2": "Datasets",
+            "img4": "WMS Queries Toggle",
+            "img5": "Legends",
+            "img6": "Layer Errors",
+            "img7": "Layer Reordering",
+            "img7a": "Layer Group Boundaries",
+            "img9": "Layer Settings",
+            "p1": "The Datasets tab lists the layers available to display in the map.  Feature layers also display in the data grid. The Datasets tab also serves as a map legend.",
+            "p10": "Some layers may only be visible at certain zoom levels.  If a layer is not visible at a given zoom level the layer selector will display a notice and have an action available to zoom to the closest zoom level at which the layer will be visible (this may involve either zooming in or zooming out).",
+            "p2": "There are three types of layers that can reside in the Dataset tab.",
+            "p3": "Select the \"eye\" icon next to a dataset name to toggle the layer on or off.",
+            "p4": "When a user clicks on the map (and not on a feature), the results for any queryable WMS layer will be displayed for the location clicked. This behaviour may not be desired for certain layers. Clicking the WMS Query Enable/Disable icons on the right side of the layer selector will toggle this functionality for an individual layer. The global toggle at the top of the layer selector will enable or disable the function for all WMS layers.  WMS layers that are not queryable will not have a toggle icon.",
+            "p5": "Each layer has some symbology associated with it.  For simple feature layers a single icon will be present next to the layer name.  For complex feature layers (i.e. those with multiple symbols used per layer) the icon will show as a stack and maybe toggled on and off.  When toggled on a section will expand beneath the layer name and show the full symbology for the layer.  WMS layers may optionally have a graphical legend defined, if one is present it will be displayed in the same drop down manner.",
+            "p6": "If a layer fails to load correctly it will be identified by an error notice.  Instead of the standard layer actions you can select to either reload the layer (this is particularly helpful if there is a temporary network connectivity issue) or remove the layer.  If a layer is removed it will be taken out of the layer selector completely and if it is added back via \"Add Dataset\" it will lose any previous customizations.",
+            "p7": "Click and drag the 6 dots to the left of the dataset up or down to re-order the layers on the map interface.",
+            "p7a": "While all layers can be re-ordered, WMS layers and Feature / Static layers may not be mixed together.  When reordering layers, layers which cannot be mixed will be greyed out.  Although layers can be reordered within their groups the grouping is static with feature and static layers always displaying over the WMS layer group.",
+            "p8": "Select the \"Metadata\" link to display relevant metadata for that source in a collapsible Info Panel.",
+            "p9": "Select the \"Settings\" link to access additional options for the layer.",
+            "ul2": {
+                "li1": "Feature layers represent data that can be interacted with on the map, and viewed in the data grid.",
+                "li2": "Static layers provide additional geographical context against the basemap.  They are not interactive and do not show in the data grid.",
+                "li3": "WMS layers provide an overlay of data from a Web Map Service.  They can support a click interaction on the map, and do not show in the data grid."
+            },
+            "ul9": {
+                "li1": "The layer's opacity can be adjusted using the slider control.",
+                "li2": "If the layer has a bounding box, its visibility can be toggled using the checkbox.",
+                "li3": "If the layer is a feature layer, and is in on-demand mode, the option to Load All Features is available. On-demand mode means the layer will be downloaded in parts as needed. Clicking Load All Features will cause all layer data to be loaded in the browser at once, providing snappier response times once the download completes.  This is called snapshot mode.  Attempting this with very large datasets may cause the site to stall or the layer to crash.  A layer in snapshot mode will have the Load All Features link disabled and a checkmark beside the link."
+            }
+        },
+        "s7": {
+            "h1": "Usage",
+            "h2": "Sorting",
+            "h3": "Details",
+            "h4": "Zoom To",
+            "h5": "Zoom Back",
+            "h6": "Pagination",
+            "header": "Summary Grid",
+            "img1": "The Summary Grid",
+            "img2": "The Sort Button",
+            "img3": "The Details Button",
+            "img4": "The Zoom To Button",
+            "img5": "The Zoom Back Button",
+            "img6": "The Pagination Control",
+            "p1": "The Summary Grid lists basic information for all the features that is visible in the current map extent.",
+            "p2": "Select the Sort link at the top of the data grid to sort by field name, descending. Select the Sort link again to switch the sort to ascending mode.",
+            "p3": "Select the Details link next to each data row to display its information in an Info Panel. This function replicates clicking directly on a map feature.",
+            "p4": "Every row on the data grid has an option to quickly zoom the map view to that data point. If the \"Zoom To\" link is clicked, the map and the data grid will dynamically zoom to that specific point.",
+            "p5": "After the \"Zoom To\" link is clicked, the link will be replaced by a \"Zoom Back\" link. Clicking on the \"Zoom Back\" link will bring the user back to the extent of the map before the \"Zoom To\" link was clicked.",
+            "p6": "Use the far left and right arrows to jump to the first or last page, respectively, of the information in the data grid. Use the inner left and right buttons to move back or forward one page at a time. Selecting the Page link will permit you to quickly jump to any page in the data grid listing.",
+            "p61": "There is also a record count next to the pagination buttons, which indicates the number of features currently in the map extent versus the total number of features in the map."
+        },
+        "s8": {
+            "h1": "Usage",
+            "h2": "Full Data Button",
+            "h3": "Data Summary Button",
+            "h4": "Sorting",
+            "h5": "Details",
+            "h6": "Pagination",
+            "header": "Extended Grid",
+            "img1": "The Extended Grid",
+            "img2": "The Extended Grid Button",
+            "img3": "The Data Summary Button",
+            "img4": "The Sorting Button",
+            "img5": "The Details Button",
+            "img6": "The Pagination Controls",
+            "p1": "The Extended Grid lists detailed information about all the features that in the current map extent.",
+            "p2": "Select the \"Full Data\" button at the top right corner of the Summary Grid to show the Extended Grid.",
+            "p3": "Select the \"Data Summary\" button at the top right corner of the Extended Grid to go back to the Summary Grid view.",
+            "p4": "For any column, selecting the upward arrow will sort the extended grid in ascending order by that column, selecting the downward arrow will sort the grid in descending order by that column.",
+            "p5": "Select the Details link next to each data row to display its information in an Info Panel.",
+            "p6": "Use the far left and right arrows to jump to the first or last page, respectively, of the information in the data grid. Use the inner left and right buttons to move back or forward one page at a time. Selecting the Page link will permit you to quickly jump to any page in the data grid listing.",
+            "p61": "There is also a record count next to the pagination buttons, which indicates the number of features currently in the map extent versus the total number of features in the map."
+        },
+        "s9": {
+            "h1": "Usage",
+            "header": "Info Panel",
+            "img1": "The Info Panel",
+            "p1": "The Info Panel displays data associated with a selected feature.",
+            "p2": "Select a feature on the map interface, or select the Details link in the Data Grid. The Info Panel will display information related to the selected feature. Clicking away from the feature or clicking the arrow in the top left corner of the panel will hide the display."
+        },
+        "sectionsTitle": "Help Sections",
+        "title": "Help"
+    },
+    "map": {
+        "generatingTitle": "Generating",
+        "loadingTitle": "Loading",
+        "scale": "Scale"
+    },
+    "mapClickHandler": {
+        "getFiFailed": "GetFeatureInfo request failed on one or more WMS layers",
+        "getFiPanelName": "WMS GetFeatureInfo",
+        "getFiPanelTitle": "Query Results"
+    },
+    "mapExport": {
+        "downloadImage": "Download Image",
+        "downloadJPG": "JPG",
+        "downloadJPGdesc": "Download as JPG",
+        "downloadPNG": "PNG",
+        "downloadPNGdesc": "Download as PNG",
+        "error": {
+            "generalMessage": "Image cannot be generated. Please try again later.",
+            "generalTitle": "Error",
+            "timeoutMessage": "The print service did not respond in a timely fashion. Please try again later."
+        },
+        "ie": {
+            "generalMessage": "Exporting file-based user-added layers is unsupported in versions of Internet Explorer 10 or lower. Please upgrade your browser, or use an alternative.",
+            "generalTitle": "Warning"
+        },
+        "includeLegend": "Include Legend",
+        "loading": "Generating image. Please wait.",
+        "title": "Map Export"
+    },
+    "maptips": {
+        "attribsDownloading": "Attribute data is still downloading"
+    },
+    "page": {
+        "footer": {
+            "dateModifiedTitle": "Date Modified",
+            "footer": "Footer",
+            "siteFooter": "Site footer",
+            "termsConditions": "Terms and conditions",
+            "termsConditionsLink": "http://www.ec.gc.ca/default.asp?lang=En&amp;xml=5830C36B-1773-4E3E-AF8C-B21F54633E0A",
+            "transparency": "Transparency",
+            "transparencyLink": "http://www.ec.gc.ca/default.asp?lang=En&amp;n=390AF41B-1"
+        },
+        "header": {
+            "departmentsTitle": "Departments",
+            "goc": "Government of Canada",
+            "navigationBar": "Navigation Bar",
+            "rampAltLangLink": "carte.html",
+            "servicesTitle": "Services",
+            "sgoc": "Symbol of the Government of Canada",
+            "skipToFooter": "Skip to footer",
+            "skipToMain": "Skip to main content",
+            "titleLink": "Reusable Accessible Mapping Platform (RAMP)",
+            "titleSubLink": "EC's Enterprise Geospatial Viewer"
+        },
+        "lang": {
+            "alt": "fr",
+            "altFull": "Français",
+            "altLong": "fra",
+            "main": "en",
+            "mainFull": "English",
+            "mainLong": "eng"
+        },
+        "menu": {
+            "link1Title": "RAMP Project",
+            "link1Url": "http://ramp-racp.github.io/index-en.html",
+            "link1sub1Title": "About RAMP",
+            "link1sub2Title": "Benefits",
+            "link1sub3Title": "Source Code",
+            "link1sub4Title": "Terms and Conditions",
+            "link2Title": "Using RAMP",
+            "link2Url": "http://ramp-racp.github.io/docs/started-en.html",
+            "link2sub1Title": "Getting Started",
+            "link2sub2Title": "Download RAMP",
+            "link2sub3Title": "Working Examples",
+            "link3Title": "RAMP Documentation",
+            "link3Url": "http://ramp-racp.github.io/docs/index-en.html",
+            "link3sub1Title": "Table of Contents",
+            "link3sub2Title": "API Reference",
+            "link3sub3Title": "Roadmap",
+            "link3sub4Title": "About the Web Standards",
+            "siteMenu": "Site menu"
+        },
+        "meta": {
+            "creator": "Environment Canada, CSB BASD BeSD",
+            "description": "Sample of an implementation of RAMP",
+            "issued": "Date Published (2014-07-01)",
+            "languge": "eng",
+            "modified": "Date Published (2014-07-01)",
+            "subject": "Environment",
+            "title": "Reusable Accessible Mapping Platform"
+        },
+        "siteTitle": "Reusable Accessible Mapping Platform",
+        "title": "Reusable Accessible Mapping Platform (RAMP)"
+    },
+    "presets": {
+        "defaultRenderers": {
+            "circlePoint": "Circle Point",
+            "outlinedPoly": "Outlined Polygon",
+            "solidLine": "Solid Line"
+        }
+    },
+    "serverError": {
+        "basemapNotAvailable": {
+            "detail": "Basemap service not available; map failed to initialize properly.",
+            "title": "Error: Basemap service not available"
+        }
+    },
+    "tools": {
+        "basetool": {
+            "clearmap": "Clear",
+            "working": "Working..."
+        }
+    }
+}
