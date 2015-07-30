@@ -17,6 +17,8 @@
         "angular-material": "^0.10.0",
         "angular-route": "~1.4.1",
         "angular-ui-router": "^0.2.15",
+        "angular-translate": "^2.7.2",
+        "angular-translate-loader-static-files": "^2.7.2",
 
         "html5-boilerplate": "~5.2.0"
     }
