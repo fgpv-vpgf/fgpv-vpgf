@@ -50,13 +50,13 @@ gulp.task('plato', function (done) {
  * Create $templateCache from the html templates
  * @return {Stream}
  */
-gulp.task('templatecache', ['clean-templates'], function() {
+gulp.task('templatecache', ['clean-templates'], function () {
     log('Creating an AngularJS $templateCache');
 
     return gulp
         .src(config.htmltemplates)
         .pipe($.if(args.verbose, $.bytediff.start()))
-        .pipe($.minifyHtml({empty: true}))
+        .pipe($.minifyHtml({ empty: true }))
         .pipe($.if(args.verbose, $.bytediff.stop(bytediffFormatter)))
         .pipe($.angularTemplatecache(
             config.templateCache.file,
@@ -102,8 +102,7 @@ gulp.task('sass', ['clean-sass'],
 
             .pipe(gulp.dest(config.temp))
 
-            .pipe($.connect.reload())
-        ;
+            .pipe($.connect.reload());
     }
 );
 
@@ -111,25 +110,34 @@ gulp.task('inject', ['sass', 'templatecache'],
     function () {
         log('Injecting JS, CSS');
 
+        var index = config.index;
+        var js = config.js;
+
+        if (args.protractor) {
+            index = config.indexProtractor;
+            // remove app-seed from injectables
+            js.push('!' + config.app + 'app-seed.js');
+        }
+
         return gulp
-            .src(config.index)
+            .src(index)
 
             .pipe(inject(config.jslib, 'vendor'))
-            .pipe(inject(config.js, '', config.jsOrder))
+            .pipe(inject(js, '', config.jsOrder))
 
             .pipe(inject(config.csslib, 'vendor'))
             .pipe(inject(config.css))
 
             .pipe(inject(config.templates, 'templates'))
 
-            .pipe(gulp.dest(config.src))
-        ;
+            .pipe(gulp.dest(config.src));
     }
 );
 
 /**
  * Serves the app.
  * -- test  : run Karma auto tests in parallel
+ * -- protractor: prepare index-protractor page and do not inject app-seed
  */
 gulp.task('serve:dev', ['vet', 'inject'],
     function () {
@@ -313,8 +321,18 @@ function orderSrc(src, order) {
 
     return gulp
         .src(src)
-        .pipe($.if(order, $.order(order)))
-    ;
+        .pipe($.if(order, $.order(order)));
+}
+
+function removeMatch(originalArray, regex) {
+    var j = 0;
+    while (j < originalArray.length) {
+        if (regex.test(originalArray[j]))
+            originalArray.splice(j, 1);
+        else
+            j++;
+    }
+    return originalArray;
 }
 
 /**

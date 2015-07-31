@@ -21,6 +21,7 @@
     var config = {
 
         index: src + 'index.html',
+        indexProtractor: src + 'index-protractor.html',
 
         js: [
             app + '**/*module*.js',
