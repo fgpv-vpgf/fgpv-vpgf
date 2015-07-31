@@ -49,11 +49,11 @@
     },
     "scripts": {
         "postinstall": "bower install",
-        "prestart": "npm install",
-        "start": "http-server -a localhost -p 8000 -c-1",
-        "pretest": "npm install",
+
+        "start": "http-server -a localhost -p 6001 -c-1",
+
         "test": "gulp test",
-        "test-single-run": "karma start karma.conf.js  --single-run",
+        "test-single-run": "karma start karma.conf.js --single-run",
 
         "update-webdriver": "webdriver-manager update",
         "preprotractor": "npm run update-webdriver",
