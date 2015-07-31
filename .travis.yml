@@ -13,8 +13,19 @@ before_install:
   - npm install -g gulp-cli
   - npm install -g bower
 
+before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - npm start > /dev/null &
+  - npm run update-webdriver
+  - sleep 1 # give server time to start
+  - webdriver-manager start > /dev/null &
+  - sleep 1 # give webdriver time to start
+
 script:
   - gulp test
+  - gulp inject --protractor
+  - node_modules/.bin/protractor src/e2e-test/protractor.conf.js --browser=firefox
 
 notifications:
   webhooks:
