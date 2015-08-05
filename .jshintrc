@@ -23,7 +23,6 @@
     "maxdepth": 5,
     "maxstatements": 40,
     "maxcomplexity": 8,
-    //"maxlen": 100, deprecated: http://jshint.com/docs/options/#maxlen
 
     "asi": false,
     "boss": false,
