@@ -40,6 +40,7 @@
             bowerdir + 'angular/angular.js',
             bowerdir + 'angular-animate/angular-animate.js',
             bowerdir + 'angular-aria/angular-aria.js',
+            bowerdir + 'angular-ui-router/release/angular-ui-router.js',
             bowerdir + 'angular-material/angular-material.js',
             bowerdir + 'angular-sanitize/angular-sanitize.js',
             bowerdir + 'angular-translate/angular-translate.js',
