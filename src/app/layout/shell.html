@@ -3,4 +3,12 @@
         <span>Loading</span>
     </div>
     <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">I'm {{shell.config.title}} and {{ 'page.title' | translate }}</md-whiteframe>
+
+    <div ui-view='toolbarPlug'></div>
+
+    <div ui-view='panelPlug'></div>
+
+    <div ui-view='detailsPlug'></div>
+
+    <div ui-view='geoSearchPlug'></div>
 </div>
