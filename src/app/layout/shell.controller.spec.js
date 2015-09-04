@@ -18,7 +18,12 @@ describe('ShellController', function () {
     }
 
     beforeEach(function () {
-        bard.appModule('app.layout', customTranslateLoader);
+        // cannot use bard.appModule with routes: https://github.com/wardbell/bardjs#dont-use-appmodule-when-testing-routes
+        //bard.appModule('app.layout', customTranslateLoader);
+        beforeEach(angular.mock.module(
+            'app.layout',
+            customTranslateLoader)
+        );
 
         bard.inject('$controller', '$rootScope');
     });
