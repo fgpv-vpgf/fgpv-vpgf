@@ -5,11 +5,15 @@
         .module('app.core')
         .config(configBlock);
 
-    configBlock.$inject = ['$translateProvider', '$stateProvider', 'statehelperConfigProvider'];
+    configBlock.$inject = ['$translateProvider', '$stateProvider',
+        '$mdThemingProvider', 'statehelperConfigProvider'];
 
-    function configBlock($translateProvider, $stateProvider, statehelperConfigProvider) {
+    function configBlock($translateProvider, $stateProvider,
+        $mdThemingProvider, statehelperConfigProvider) {
+
         configureStateRouting();
         configureTranslations();
+        configureTheme();
 
         function configureStateRouting() {
             var stateCfg = statehelperConfigProvider;
@@ -23,6 +27,12 @@
                 suffix: '/translation.json'
             });
             //$translateProvider.preferredLanguage('en-CA');
+        }
+
+        function configureTheme() {
+            $mdThemingProvider.theme('default')
+                .primaryPalette('blue-grey')
+                .accentPalette('cyan');
         }
     }
 })();
