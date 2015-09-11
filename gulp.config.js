@@ -20,7 +20,10 @@
 
     var config = {
 
-        index: src + 'index.html',
+        index: [
+            src + 'index-many.html',
+            src + 'index-one.html'
+        ],
         indexProtractor: src + 'index-protractor.html',
 
         js: [
