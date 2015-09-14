@@ -11,11 +11,11 @@
         "bardjs": "^0.1.4"
     },
     "dependencies": {
-        "angular": "^1.4.1",
-        "angular-animate": "^1.4.1",
-        "angular-sanitize": "^1.4.1",
-        "angular-aria": "^1.4.1",
-        "angular-material": "^0.10.0",
+        "angular": "^1.4.5",
+        "angular-animate": "^1.4.5",
+        "angular-sanitize": "^1.4.5",
+        "angular-aria": "^1.4.5",
+        "angular-material": "#master",
         "angular-route": "~1.4.1",
         "angular-ui-router": "^0.2.15",
         "angular-translate": "^2.7.2",
