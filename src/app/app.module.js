@@ -15,6 +15,7 @@
          * but this is easier to maintain.
          */
         'app.core',
+        'app.ui',
         //'app.widgets',
 
         /*

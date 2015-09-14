@@ -1,14 +1,21 @@
-﻿<div data-ng-controller="ShellController as shell">
-    <div ng-hide="!shell.isLoading" class="loading-splash" layout layout-align="center center">
-        <span>Loading</span>
+<div ng-controller="ShellController as vm" class="layout layout-fill">
+    <ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
+
+    <div layout="column">
+        <div ng-hide="!vm.isLoading" class="loading-splash" layout layout-align="center center">
+            <span>Loading</span>
+        </div>
+        <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">I'm {{vm.config.title}} and {{ 'page.title' | translate }}</md-whiteframe>
+
+        <div ui-view='toolbarPlug'></div>
+
+        <div ui-view='panelPlug'></div>
+
+        <div ui-view='detailsPlug'></div>
+
+        <div ui-view='geoSearchPlug'></div>
+
+        <md-button ng-click="vm.rvSideNavigationService.open()">Toggle</md-button>
     </div>
-    <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">I'm {{shell.config.title}} and {{ 'page.title' | translate }}</md-whiteframe>
 
-    <div ui-view='toolbarPlug'></div>
-
-    <div ui-view='panelPlug'></div>
-
-    <div ui-view='detailsPlug'></div>
-
-    <div ui-view='geoSearchPlug'></div>
 </div>

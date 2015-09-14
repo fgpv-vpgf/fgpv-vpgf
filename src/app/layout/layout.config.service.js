@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -47,11 +47,11 @@
             var readyPromise = initDeferred.promise;
 
             return readyPromise
-                .then(function() {
+                .then(function () {
                     console.log('Ready promise resolved.');
                     return $q.all(nextPromises);
                 })
-                .catch(function() {
+                .catch(function () {
                     console.log('"ready" function failed');
                 });
         }
