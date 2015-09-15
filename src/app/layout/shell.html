@@ -1,11 +1,14 @@
-<div ng-controller="ShellController as vm" class="layout layout-fill">
+<div class="layout layout-fill" ng-controller="ShellController as vm">
     <ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
 
     <div layout="column">
-        <div ng-hide="!vm.isLoading" class="loading-splash" layout layout-align="center center">
+        <div class="loading-splash" layout layout-align="center center" ng-hide="!vm.isLoading">
             <span>Loading</span>
         </div>
-        <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">I'm {{vm.config.title}} and {{ 'page.title' | translate }}</md-whiteframe>
+        <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">I'm
+            {{vm.config.title}}
+            and
+            {{ 'page.title' | translate }}</md-whiteframe>
 
         <div ui-view='toolbarPlug'></div>
 

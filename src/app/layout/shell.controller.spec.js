@@ -1,4 +1,4 @@
-/* global bard, $controller, $rootScope */
+﻿/* global bard, $controller, $rootScope */
 
 describe('ShellController', function () {
     'use strict';
@@ -24,8 +24,7 @@ describe('ShellController', function () {
         beforeEach(angular.mock.module(
             'app.layout',
             'app.ui',
-            customTranslateLoader)
-        );
+            customTranslateLoader));
 
         bard.inject('$controller', '$rootScope');
     });
@@ -39,7 +38,8 @@ describe('ShellController', function () {
 
     describe('Shell controller', function () {
         it('should be created successfully', function () {
-            expect(controller).toBeDefined();
+            expect(controller)
+                .toBeDefined();
         });
     });
 });

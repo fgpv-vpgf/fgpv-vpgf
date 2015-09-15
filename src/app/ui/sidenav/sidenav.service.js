@@ -5,8 +5,7 @@
         .module('app.ui')
         .factory('rvSideNavigationService', rvSideNavigationService);
 
-    rvSideNavigationService.$inject = ['$mdSidenav'];
-
+    /* @ngInject */
     function rvSideNavigationService($mdSidenav) {
         /* jshint shadow:true */
         /* jshint unused:false */

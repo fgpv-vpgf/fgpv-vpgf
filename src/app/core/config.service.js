@@ -1,11 +1,9 @@
-(function() {
+(function () {
     'use strict';
 
     angular
         .module('app.core')
         .factory('config', config);
-
-    config.$inject = ['$q', '$rootElement', '$timeout', '$http'];
 
     /* @ngInject */
     function config($q, $rootElement, $timeout, $http) {
@@ -38,7 +36,7 @@
                 if (!configJson) {
                     $http
                         .get(configAttr)
-                        .then(function(data) {
+                        .then(function (data) {
                             if (data.data) {
                                 configJson = data.data;
                             }

@@ -1,4 +1,3 @@
-﻿
 (function () {
     'use strict';
 
@@ -6,8 +5,7 @@
         .module('app.layout')
         .controller('ShellController', ShellController);
 
-    ShellController.$inject = ['layoutConfig', 'rvSideNavigationService'];
-
+    /* @ngInject */
     function ShellController(layoutConfig, rvSideNavigationService) {
         var vm = this;
 
