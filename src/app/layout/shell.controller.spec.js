@@ -1,4 +1,5 @@
-﻿/* jshint -W117, -W030 */
+/* global bard, $controller, $rootScope */
+
 describe('ShellController', function () {
     'use strict';
 
@@ -22,6 +23,7 @@ describe('ShellController', function () {
         //bard.appModule('app.layout', customTranslateLoader);
         beforeEach(angular.mock.module(
             'app.layout',
+            'app.ui',
             customTranslateLoader)
         );
 
