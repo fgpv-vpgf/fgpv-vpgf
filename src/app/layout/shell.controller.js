@@ -6,13 +6,14 @@
         .controller('ShellController', ShellController);
 
     /* @ngInject */
-    function ShellController(layoutConfig, rvSideNavigationService) {
+    function ShellController(configService, layoutService) {
         var vm = this;
 
-        vm.config = layoutConfig;
+        vm.config = configService.data;
         vm.isLoading = true;
-        vm.rvSideNavigationService = rvSideNavigationService;
+        vm.layoutService = layoutService;
 
+        // TODO: mock settings; replace by config
         vm.menu = [
             {
                 name: 'Options',
@@ -47,7 +48,7 @@
         ////////////////
 
         function activate() {
-            layoutConfig.ready()
+            configService.ready()
                 .then(hideLoadingScreen);
         }
 

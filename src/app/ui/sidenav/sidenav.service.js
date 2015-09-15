@@ -2,11 +2,11 @@
     'use strict';
 
     angular
-        .module('app.ui')
-        .factory('rvSideNavigationService', rvSideNavigationService);
+        .module('app.ui.sidenav')
+        .factory('sideNavigationService', sideNavigationService);
 
     /* @ngInject */
-    function rvSideNavigationService($mdSidenav) {
+    function sideNavigationService($mdSidenav) {
         /* jshint shadow:true */
         /* jshint unused:false */
         var service = {
