@@ -22,6 +22,7 @@ describe('ShellController', function () {
         //bard.appModule('app.layout', customTranslateLoader);
         beforeEach(angular.mock.module(
             'app.layout',
+            'app.ui',
             customTranslateLoader)
         );
 
