@@ -134,6 +134,19 @@ gulp.task('inject', ['sass', 'templatecache'],
     }
 );
 
+gulp.task('annotate',
+    function () {
+        return gulp
+            .src(config.js)
+            .pipe($.ngAnnotate({
+                remove: true,
+                add: true,
+                single_quotes: true
+            }))
+            .pipe(gulp.dest('dist-test'));
+    }
+);
+
 /**
  * Serves the app.
  * -- test  : run Karma auto tests in parallel
