@@ -5,8 +5,6 @@
         .module('app.layout')
         .run(layoutConfig);
 
-    layoutConfig.$inject = ['statehelper', '$state'];
-
     /* @ngInject */
     function layoutConfig(statehelper, $state) {
         statehelper.configureStates(getStates());

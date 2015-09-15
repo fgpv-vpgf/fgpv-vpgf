@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -15,14 +15,12 @@
             // resolveAlways: {ready: function(){ } }
         };
 
-        this.$get = function() {
+        this.$get = function () {
             return {
                 config: this.config
             };
         };
     }
-
-    statehelper.$inject = ['statehelperConfig'];
 
     /* @ngInject */
     function statehelper(statehelperConfig) {
@@ -39,7 +37,7 @@
         ////////////////
 
         function configureStates(states) {
-            states.forEach(function(state) {
+            states.forEach(function (state) {
                 //state.config.resolve =
                 //    angular.extend(state.config.resolve || {}, statehelperConfig.config.resolveAlways);
                 $stateProvider.state(state.name, state.config);
