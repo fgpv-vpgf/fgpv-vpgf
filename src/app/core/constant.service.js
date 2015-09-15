@@ -3,7 +3,7 @@
 
     angular
         .module('app.core')
-        .constant('layoutConfigDefaults', {
+        .constant('configDefaults', {
             title: 'Dawn RAM'
         });
 })();
