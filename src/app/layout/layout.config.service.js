@@ -5,8 +5,6 @@
         .module('app.layout')
         .factory('layoutConfig', layoutConfig);
 
-    layoutConfig.$inject = ['$q', 'config', 'layoutConfigDefaults'];
-
     /* @ngInject */
     function layoutConfig($q, config, layoutConfigDefaults) {
         var initDeferred = $q.defer();

@@ -25,8 +25,7 @@
         }
     }
 
-    Controller.$inject = [];
-
+    /* @ngInject */
     function Controller() {
         var vm = this;
         console.log('--', vm.section);

@@ -1,26 +1,26 @@
 <md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2" md-component-id="left">
 
     <header class="nav-header">
-        <a href="" class="app-logo">
+        <a class="app-logo" href="#">
             <h1 class="app-logotype md-heading">R2-V2</h1>
         </a>
     </header>
 
     <ul class="skip-links">
         <li class="md-whiteframe-z2">
-            <md-button ng-click="focusMainContent($event)" href="#">Skip to content</md-button>
+            <md-button href="#" ng-click="focusMainContent($event)">Skip to content</md-button>
         </li>
     </ul>
 
     <md-content flex role="navigation">
         <ul class="app-menu">
-            <li ng-repeat="section in vm.menu" class="app-menu-item">
+            <li class="app-menu-item" ng-repeat="section in vm.menu">
                 <h2 class="menu-heading md-subhead" ng-if="section.type === 'heading'">
                     {{section.name}}
                 </h2>
-                <rv-menu-link section="section" ng-if="section.type === 'link'"></rv-menu-link>
+                <rv-menu-link ng-if="section.type === 'link'" section="section"></rv-menu-link>
 
-                <ul ng-if="section.children" class="app-menu app-menu-sublist">
+                <ul class="app-menu app-menu-sublist" ng-if="section.children">
                     <li ng-repeat="child in section.children">
                         <rv-menu-link section="child"></rv-menu-link>
                     </li>
