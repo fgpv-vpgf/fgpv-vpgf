@@ -6,13 +6,12 @@
         .run(runBlock);
 
     /* @ngInject */
-    function runBlock(config, layoutConfig, $rootScope, $translate) {
+    function runBlock(configService, $rootScope, $translate) {
         // wait until config is retrieved
-        config.initialize()
+        configService.initialize()
             .then(function () {
-                // initialize other services
-                layoutConfig.initialize();
-                console.log(layoutConfig);
+                // initialize other services, if any
+                console.log('Config initialized');
             });
 
         // to prevent FOUC need to load translation files with config initialization if we know the language

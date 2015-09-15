@@ -3,13 +3,17 @@
 
     angular
         .module('app.core')
-        .factory('config', config);
+        .factory('configService', configService);
 
     /* @ngInject */
-    function config($q, $rootElement, $timeout, $http) {
+    function configService($q, $rootElement, $timeout, $http, configDefaults) {
+        var initDeferred = $q.defer();
+        var isInitialized = false;
+
         var service = {
             data: {},
-            initialize: initialize
+            initialize: initialize,
+            ready: ready
         };
 
         return service;
@@ -17,10 +21,13 @@
         ////////////////
 
         function initialize() {
-            var deferred = $q.defer();
             var configAttr = $rootElement.attr('th-config');
-
             var configJson;
+
+            // This function can only be called once.
+            if (isInitialized) {
+                return initDeferred.promise;
+            }
 
             // check if config attribute exist
             if (configAttr) {
@@ -53,12 +60,30 @@
                 configInitialized({});
             }
 
-            return deferred.promise;
+            return initDeferred.promise;
 
             function configInitialized(config) {
-                service.data = config;
-                deferred.resolve();
+                // apply any defaults from layoutConfigDefaults, then merge config on top
+                // TODO: this is an exampe; actual merging of the defaults is more complicated
+                angular.merge(service.data, configDefaults, config);
+
+                isInitialized = true;
+
+                initDeferred.resolve();
             }
+        }
+
+        function ready(nextPromises) {
+            var readyPromise = initDeferred.promise;
+
+            return readyPromise
+                .then(function () {
+                    console.log('Ready promise resolved.');
+                    return $q.all(nextPromises);
+                })
+                .catch(function () {
+                    console.log('"ready" function failed');
+                });
         }
     }
 })();
