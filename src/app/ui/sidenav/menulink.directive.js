@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('app.ui')
+        .module('app.ui.sidenav')
         .directive('rvMenuLink', rvMenuLink);
 
     function rvMenuLink() {
