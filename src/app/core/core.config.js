@@ -5,9 +5,7 @@
         .module('app.core')
         .config(configBlock);
 
-    configBlock.$inject = ['$translateProvider', '$stateProvider',
-        '$mdThemingProvider', 'statehelperConfigProvider'];
-
+    /* @ngInject */
     function configBlock($translateProvider, $stateProvider,
         $mdThemingProvider, statehelperConfigProvider) {
 

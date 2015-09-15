@@ -1,11 +1,9 @@
-(function() {
+(function () {
     'use strict';
 
     angular
         .module('app.core')
         .factory('common', common);
-
-    common.$inject = ['$timeout'];
 
     /* @ngInject */
     function common($timeout) {
@@ -26,7 +24,8 @@
 
         function isNumber(val) {
             // negative or positive
-            return (/^[-]?\d+$/).test(val);
+            return (/^[-]?\d+$/)
+                .test(val);
         }
     }
 })();
