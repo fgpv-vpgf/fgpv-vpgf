@@ -1,0 +1,18 @@
+<md-toolbar class='main-toolbar md-whiteframe-z2' ng-controller="ToolbarController as self">
+    <div class="md-toolbar-tools">
+        <md-button aria-label="Open Sidenav" class="md-icon-button"
+            ng-click="self.layoutService.sidenav.open()">
+            <md-tooltip>Menu</md-tooltip>
+            <md-icon>menu</md-icon>
+        </md-button>
+        <span flex></span>
+        <md-button aria-label="Favorite" class="md-icon-button" ng-click="">
+            <md-tooltip>Layers</md-tooltip>
+            <md-icon>layers</md-icon>
+        </md-button>
+        <md-button aria-label="Favorite" class="md-icon-button" ng-click="">
+            <md-tooltip>Tools</md-tooltip>
+            <md-icon>create</md-icon>
+        </md-button>
+    </div>
+</md-toolbar>

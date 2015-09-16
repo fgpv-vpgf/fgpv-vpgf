@@ -1,19 +1,18 @@
-﻿/* Want to try using OOCSS, SMACSS, and BEM according to this article: https://mattstauffer.co/blog/organizing-css-oocss-smacss-and-bem */
-
-body {
-    color: #132;
-}
+﻿/* Want to try using OOCSS and SMACSS according to this article: https://mattstauffer.co/blog/organizing-css-oocss-smacss-and-bem */
 
 @import "../../../lib/angular-material/angular-material";
 
 .fgpv {
-    @import "base/_all.scss";
     @import "common/_all.scss";
+    @import "base/_all.scss";
     @import "layout/_all.scss";
     @import "modules/_all.scss";
     @import "other/_all.scss";
     @import "vendor/_all.scss";
     @import "_shame.scss";
+
+    @include sidenav;
+    @include toolbar;
 
     // temporary stuff below; need to remove
     position: relative;
