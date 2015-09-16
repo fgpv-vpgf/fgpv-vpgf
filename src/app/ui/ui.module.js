@@ -3,6 +3,7 @@
 
     angular
         .module('app.ui', [
-            'app.ui.sidenav'
+            'app.ui.sidenav',
+            'app.ui.toolbar'
         ]);
 })();
