@@ -131,6 +131,7 @@
                 app + '**/*module*.js',
                 app + '**/*.js',
                 app + 'app-seed.js',
+                config.templates,
 
                 config.specs,
                 config.specHelpers
