@@ -168,7 +168,7 @@ gulp.task('serve:dev', ['vet', 'inject'],
  * -- coverage  : generate test coverage info
  * @return {Stream}
  */
-gulp.task('test', ['vet'], function (done) {
+gulp.task('test', ['vet', 'templatecache'], function (done) {
     startTests(true /*singleRun*/, done);
 });
 
