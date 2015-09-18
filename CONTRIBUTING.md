@@ -1,14 +1,30 @@
-# Contributing to [project name]
+# Contributing
 
-These guidelines are derived from [Angular Contribution Guidelines](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#-git-commit-guidelines).
+ - [Workflow](#workflow)
+ - [Testing](#testing)
+ - [Commit Guidelines](#commit)
+ - [Commit Scopes](#commit-scopes)
 
- - [Git Commit Guidelines](#commit)
+## <a name="workflow"></a> Workflow
+
+We use a fork and pull model for development using GitHub pull requests.  To add a new feature please fork the respository and open a pull request to the `#develop` branch.  All pull requests will be reviewed on [reviewable.io](https://reviewable.io/).
+
+## <a name="testing"></a> Testing
+
+We are using Karma for unit testing and protractor for integration tests.  Code accompanied by unit tests is far more likely to be merged.  We do not have any firm coverage goals at the moment but we should be trying to write unit tests wherever possible.
+
+Unit tests should not be hard to run, please run them locally before pushing to GitHub.  Although we do have travis integration it should be used primarily for integration tests and as a double check for unit tests.
+
+## <a name="docs"></a> Documentation
+
+We are using dgeni for all project documentation.  All code should be kept up to date with appropriate *jsdoc* markup for automatic API doc generation.  Any complex code changes or user facing changes should also be accompanied by supplemental documentation and diagrams where possible.
 
 ## <a name="commit"></a> Git Commit Guidelines
 
+> These guidelines are derived from [Angular Contribution Guidelines](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#-git-commit-guidelines).
+
 We have very precise rules over how our git commit messages can be formatted.  This leads to **more
-readable messages** that are easy to follow when looking through the **project history**.  But also,
-we use the git commit messages to **generate the AngularJS change log**.
+readable messages** that are easy to follow when looking through the **project history**.  But also, we use the git commit messages to **generate the changelog**.
 
 ### Commit Message Format
 Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
@@ -64,11 +80,11 @@ All breaking changes have to be mentioned in footer with the description of the 
 ```
 	BREAKING CHANGE: isolate scope bindings definition has changed and
 	    the inject option for the directive controller injection was removed.
-	    
+
 	    To migrate the code follow the example below:
-	    
+
 	    Before:
-	    
+
 	    scope: {
 	      myAttr: 'attribute',
 	      myBind: 'bind',
@@ -76,9 +92,9 @@ All breaking changes have to be mentioned in footer with the description of the 
 	      myEval: 'evaluate',
 	      myAccessor: 'accessor'
 	    }
-	    
+
 	    After:
-	    
+
 	    scope: {
 	      myAttr: '@',
 	      myBind: '@',
@@ -86,7 +102,7 @@ All breaking changes have to be mentioned in footer with the description of the 
 	      // myEval - usually not useful, but in cases where the expression is assignable, you can use '='
 	      myAccessor: '=' // in directive's template change myAccessor() to myAccessor
 	    }
-	    
+
 	    The removed `inject` wasn't generaly useful for directives so there should be no code using it.
 ```
 
@@ -140,3 +156,21 @@ docs(help): update dataset section
 
 Closes #8223
 ```
+
+## <a name="commit-scopes"></a> Commit Scopes
+
+With respect to the git commit guidelines above, the following scopes should be used for `feat` and `fix` types:
+
+- ui
+- data-services
+- layout
+- data
+- common
+- geoApi
+- core
+
+For the remaining types the above list should be used wherever possible, but we include some additions:
+
+- build
+- release
+- libs
