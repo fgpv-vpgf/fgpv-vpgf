@@ -5,18 +5,26 @@
         <div class="loading-splash" layout layout-align="center center" ng-hide="!vm.isLoading">
             <span>Loading</span>
         </div>
+
+        <div ng-class="{ active: active() }" ui-view='toolbarPlug'></div>
+
+        <div ng-class="{ active: active() }" ui-view='panelPlug'></div>
+
+        <div ng-class="{ active: active() }" ui-view='detailsPlug'></div>
+
+        <div ng-class="{ active: active() }" ui-view='geoSearchPlug'></div>
+
         <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">I'm
             {{vm.config.title}}
             and
             {{ 'page.title' | translate }}</md-whiteframe>
 
-        <div ui-view='toolbarPlug'></div>
-
-        <div ui-view='panelPlug'></div>
-
-        <div ui-view='detailsPlug'></div>
-
-        <div ui-view='geoSearchPlug'></div>
+        <md-button ng-click="vm.$state.go('app.main.sets', {}, { location: false })">
+            one
+        </md-button>
+        <md-button ng-click="vm.$state.go('app', {}, { location: false })">
+            two
+        </md-button>
     </div>
 
 </div>

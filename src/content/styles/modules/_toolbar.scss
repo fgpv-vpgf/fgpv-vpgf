@@ -1,15 +1,20 @@
 // Primary mixin
+
 @mixin toolbar {
     md-toolbar {
+
+        min-height: $toolbar-height;
+
+        > .md-toolbar-tools {
+            height: $toolbar-height;
+            max-height: $toolbar-height;
+        }
+
         &.main-toolbar {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 450px;
+            width: $toolbar-width;
         }
     }
 }
-
 
 /*
 @mixin buttons {a.button,

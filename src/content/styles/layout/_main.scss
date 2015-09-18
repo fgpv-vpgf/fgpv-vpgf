@@ -1,0 +1,53 @@
+[ui-view='toolbarPlug'] > md-toolbar {
+    left: $viewport-gutter;
+    top: $viewport-gutter;
+    position: absolute;
+}
+
+[ui-view='panelPlug'].active {
+    position: absolute;
+    left: $viewport-gutter;
+    top: $viewport-gutter + $toolbar-height;
+    bottom: $viewport-gutter;
+    width: $toolbar-width;
+    z-index: $toolbar-z-index;
+
+    &.ng-enter,
+    &.ng-leave {
+        overflow: hidden;
+        //transition: none $time ease-in-out;
+        transition: none $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+        ///top: 58px;
+        width: $toolbar-width + $viewport-gutter * 2;
+        left: 0;
+        bottom: 0;
+        //z-index: 20;
+
+        .panel {
+
+            top: 0;
+            right: $viewport-gutter;
+            left: $viewport-gutter;
+            bottom: $viewport-gutter;
+            //transition: transform $time ease-in-out;
+            transition: transform $swift-ease-in-duration $swift-ease-in-out-timing-function;
+        }
+    }
+
+    &.ng-enter .panel {
+        transform: translate3d(0, -100%, 0);
+    }
+
+    &.ng-enter-active .panel {
+        transform: translate3d(0, 0, 0);
+    }
+
+    &.ng-leave .panel {
+        transform: translate3d(0, 0, 0);
+    }
+
+    &.ng-leave-active .panel {
+        transform: translate3d(0, -100%, 0);
+    }
+}

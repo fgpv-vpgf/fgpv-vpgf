@@ -4,3 +4,13 @@ Things like mixin declarations, functions, and variables. */
 // import all common files
 
 @import "_palette.scss";
+
+$font-family: Roboto, 'Helvetica Neue', sans-serif !default;
+$font-size:   10px;
+
+$viewport-gutter: 10px;
+
+$toolbar-height: 48px;
+$toolbar-width: 400px;
+
+$toolbar-z-index: 10;

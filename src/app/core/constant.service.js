@@ -7,6 +7,7 @@
             title: 'Dawn RAM'
         })
         .constant('templateRegistry', {
-            toolbar: 'app/ui/toolbar/toolbar.html'
+            toolbar: 'app/ui/toolbar/toolbar.html',
+            mainPanel: 'app/ui/panels/mainpanel.html'
         });
 })();

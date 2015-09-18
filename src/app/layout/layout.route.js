@@ -11,7 +11,8 @@
 
         // when layout is ready, go to the default state
         $state.go('app');
-        //$state.go('app', {location: true}); // will change the url;
+        //$state.go('app', {}, {location: true}); // will change the url;
+        // http://angular-ui.github.io/ui-router/site/#/api/ui.router.state.$state#methods_go
         // need to detect if it's a single-page app or multiple apps
 
         ////////////////
@@ -26,10 +27,10 @@
                             toolbarPlug: {
                                 templateUrl: templateRegistry.toolbar
                             },
-                            panelPlug: {
+                            /*panelPlug: {
                                 template: '<div>panel placeholder' +
                                     '<a href="">example of a link</a></div>'
-                            },
+                            },*/
                             detailsPlug: {
                                 template: '<div>details panel placeholder</div>'
                             },
@@ -40,12 +41,42 @@
                     }
                 },
                 {
-                    name: 'app.details',
+                    name: 'app.main',
                     config: {
-                        url: 'details',
+                        /*resolve: {
+
+                        }*/
+                        abstract: true,
                         views: {
-                            'detailsPlug@': {
-                                template: '<div>details panel with content</div>'
+                            'panelPlug@': {
+                                templateUrl: templateRegistry.mainPanel,
+                                controller: function ($scope) {
+                                    $scope.active = function () {
+                                        return true;
+                                    };
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    name: 'app.main.sets',
+                    config: {
+                        url: 'sets',
+                        views: {
+                            contentPlug: {
+                                template: '<div>This is sets panel content</div>'
+                            }
+                        }
+                    }
+                },
+                {
+                    name: 'app.main.tools',
+                    config: {
+                        url: 'tools',
+                        views: {
+                            contentPlug: {
+                                template: '<div>This is tools panel content. I said TOO00Ls!</div>'
                             }
                         }
                     }
