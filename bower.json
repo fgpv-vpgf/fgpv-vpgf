@@ -1,0 +1,25 @@
+{
+    "name": "r2v2",
+    "description": "A starter project for AngularJS",
+    "version": "0.0.0",
+    "homepage": "https://github.com/angular/angular-seed",
+    "license": "MIT",
+    "private": true,
+    "devDependencies": {
+        "angular-mocks": "^1.4.3",
+        "sinon": "http://sinonjs.org/releases/sinon-1.15.4.js",
+        "bardjs": "^0.1.4"
+    },
+    "dependencies": {
+        "angular": "^1.4.5",
+        "angular-animate": "^1.4.5",
+        "angular-sanitize": "^1.4.5",
+        "angular-aria": "^1.4.5",
+        "angular-material": "#master",
+        "angular-ui-router": "^0.2.15",
+        "angular-translate": "^2.7.2",
+        "angular-translate-loader-static-files": "^2.7.2",
+
+        "html5-boilerplate": "~5.2.0"
+    }
+}

@@ -1,0 +1,14 @@
+logs/*
+!.gitkeep
+node_modules/
+lib/
+bower_components/
+dist/
+build/
+tmp/
+.tmp/
+report/
+.DS_Store
+.idea
+typings/
+tsd.json

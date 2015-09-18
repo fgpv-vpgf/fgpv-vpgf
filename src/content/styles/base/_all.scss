@@ -1,0 +1,18 @@
+/* Sets styles on base elements: html, body, a, ul, li, etc. */
+// include all base files
+
+body & {
+    color: $primary-text-color;
+}
+
+a {
+    color: $primary-color-dark; //or just $primary-color if it passess contrast check
+    text-decoration: none;
+    font-weight: 400;
+    border-bottom: 1px solid $primary-color-light;
+    transition: border-bottom 0.35s;
+
+    &:hover {
+        border-bottom-color: $primary-color-dark;
+    }
+}

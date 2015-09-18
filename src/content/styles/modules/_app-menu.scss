@@ -1,0 +1,60 @@
+// Primary mixin
+@mixin sidenav {
+    md-sidenav {
+        &.site-sidenav {
+            .app-logotype {
+                color: black;
+                text-align: center;
+                font-weight: 400;
+                font-size: 26px;
+            }
+
+            .app-menu {
+                padding: 0;
+                margin: 0;
+                list-style: none;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            .menu-heading {
+                display: block;
+                line-height: 32px;
+                margin: 0;
+                padding: 8px 16px 0;
+                text-align: left;
+                width: 100%;
+                color: black;
+            }
+
+            @include menu-link;
+        }
+    }
+}
+
+@mixin menu-link {
+    rv-menu-link {
+        padding: 0;
+        margin: 0;
+        @include menu-button;
+    }
+}
+
+@mixin menu-button {
+    .md-button {
+        border-radius: 0;
+        color: black;
+        cursor: pointer;
+        display: block;
+        align-items: inherit;
+        line-height: 40px;
+        margin: 0;
+        max-height: 40px;
+        overflow: hidden;
+        padding: 0 16px;
+        text-align: left;
+        text-decoration: none;
+        white-space: normal;
+        width: 100%;
+    }
+}
