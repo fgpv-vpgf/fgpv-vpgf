@@ -1,5 +1,6 @@
 /* jshint camelcase:false */
 var gulp = require('gulp');
+var terribleHelp = require('gulp-help')(gulp);
 var glob = require('glob');
 var del = require('del');
 var pkg = require('./package.json');
@@ -24,7 +25,7 @@ var config = require('./gulp.config')();
  *  -- verbose: verbose
  * @return {Stream}
  */
-gulp.task('vet', function () {
+gulp.task('vet', 'Checks code against style guidelines', function () {
     log('Analyzing source with JSHint and JSCS');
 
     return gulp
@@ -39,7 +40,7 @@ gulp.task('vet', function () {
 /**
  * Create a visualizer report
  */
-gulp.task('plato', function (done) {
+gulp.task('plato', 'Generate visualizer report', function (done) {
     log('Analyzing source with Plato');
     log('Browse to /report/plato/index.html to see Plato results');
 
@@ -50,7 +51,7 @@ gulp.task('plato', function (done) {
  * Create $templateCache from the html templates
  * @return {Stream}
  */
-gulp.task('templatecache', ['clean-templates'], function () {
+gulp.task('templatecache', 'Create a cache of HTML templates', ['clean-templates'], function () {
     log('Creating an AngularJS $templateCache');
 
     return gulp
@@ -69,7 +70,7 @@ gulp.task('templatecache', ['clean-templates'], function () {
  * Remove all files from the build, temp, and reports folders
  * @param  {Function} done - callback when complete
  */
-gulp.task('clean', function (done) {
+gulp.task('clean', 'Delete all build and report files', ['clean-sass', 'clean-templates'], function (done) {
     var delconfig = [].concat(config.build, config.temp, config.report);
     log('Cleaning: ' + $.util.colors.blue(delconfig));
     del(delconfig, done);
@@ -79,7 +80,7 @@ gulp.task('clean', function (done) {
  * Remove all styles from the temp folders
  * @param  {Function} done - callback when complete
  */
-gulp.task('clean-sass', function (done) {
+gulp.task('clean-sass', false, function (done) {
     del(config.css, done);
 });
 
@@ -87,11 +88,11 @@ gulp.task('clean-sass', function (done) {
  * Remove all templates from the temp folders
  * @param  {Function} done - callback when complete
  */
-gulp.task('clean-templates', function (done) {
+gulp.task('clean-templates', false, function (done) {
     del(config.templates, done);
 });
 
-gulp.task('sass', ['clean-sass'],
+gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
     function () {
         log('Compiling SASS --> CSS');
 
@@ -106,7 +107,7 @@ gulp.task('sass', ['clean-sass'],
     }
 );
 
-gulp.task('inject', ['sass', 'templatecache'],
+gulp.task('inject', 'Adds configured dependencies to the HTML page', ['sass', 'templatecache'],
     function () {
         log('Injecting JS, CSS');
 
@@ -134,7 +135,7 @@ gulp.task('inject', ['sass', 'templatecache'],
     }
 );
 
-gulp.task('annotate',
+gulp.task('annotate', 'Adds guards against minification for Angular depnendency injection',
     function () {
         return gulp
             .src(config.js)
@@ -152,7 +153,7 @@ gulp.task('annotate',
  * -- test  : run Karma auto tests in parallel
  * -- protractor: prepare index-protractor page and do not inject app-seed
  */
-gulp.task('serve:dev', ['vet', 'inject'],
+gulp.task('serve:dev', 'Build the application and start a local development server', ['vet', 'inject'],
     function () {
         // run karma tests parallel with serve
         if (args.test) {
@@ -160,6 +161,8 @@ gulp.task('serve:dev', ['vet', 'inject'],
         }
 
         serve(true);
+    }, {
+        aliases: ['serve']
     }
 );
 
@@ -168,7 +171,7 @@ gulp.task('serve:dev', ['vet', 'inject'],
  * -- coverage  : generate test coverage info
  * @return {Stream}
  */
-gulp.task('test', ['vet', 'templatecache'], function (done) {
+gulp.task('test', 'Run style checks and unit tests', ['vet', 'templatecache'], function (done) {
     startTests(true /*singleRun*/, done);
 });
 
@@ -177,7 +180,7 @@ gulp.task('test', ['vet', 'templatecache'], function (done) {
  * -- coverage  : generate test coverage info
  * Watch for file changes and re-run tests on each change
  */
-gulp.task('test:auto', function (done) {
+gulp.task('test:auto', 'Run unit tests and keep watching for changes', function (done) {
     startTests(false /*singleRun*/, done);
 });
 
@@ -185,7 +188,7 @@ gulp.task('test:auto', function (done) {
  * Generates the changelog from commit messages.
  * releseCount 0 regenerates all releases.
  */
-gulp.task('changelog', function () {
+gulp.task('changelog', 'Generate a changelog based on commit history', function () {
     return gulp.src('CHANGELOG.md')
         .pipe($.conventionalChangelog({
             preset: 'angular',
