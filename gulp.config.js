@@ -1,4 +1,6 @@
-﻿module.exports = function () {
+var path = require('path');
+
+module.exports = function () {
     var client = './src/client/';
     var server = './src/server/';
     var clientApp = client + 'app/';
@@ -8,7 +10,7 @@
     var nodeModules = './node_modules/';
     var bowerModules = './lib/';
 
-    var root = './';
+    var root = path.resolve('./');
     var src = './src/'
     var build = './dist/';
     var app = src + 'app/';
