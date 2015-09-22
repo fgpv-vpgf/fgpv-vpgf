@@ -64,7 +64,7 @@
     "disallowSpaceBeforeBinaryOperators": [
         ","
     ],
-    "disallowKeywords": [ "with" ],
+    "disallowKeywords": ["with"],
     "disallowKeywordsOnNewLine": ["else"],
 
     "disallowQuotedKeysInObjects": true,
@@ -95,11 +95,18 @@
     },
 
     "jsDoc": {
-        "checkAnnotations": true,
+        "checkAnnotations": {
+            "preset": "jsdoc3",
+            "extra": {
+                "ngdoc": true,
+                "usage": true
+            }
+        },
         "checkParamNames": true,
         "requireParamTypes": true,
         "checkReturnTypes": true,
         "checkTypes": true
+
     }
 
 }
