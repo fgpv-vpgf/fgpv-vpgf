@@ -1,8 +1,7 @@
 // Primary mixin
 
-@mixin toolbar {
+@mixin appbar {
     md-toolbar {
-
         min-height: $toolbar-height;
 
         > .md-toolbar-tools {
@@ -10,7 +9,7 @@
             max-height: $toolbar-height;
         }
 
-        &.main-toolbar {
+        &.main-appbar {
             width: $toolbar-width;
         }
     }

@@ -6,7 +6,7 @@
             <span>Loading</span>
         </div>
 
-        <div ng-class="{ active: active() }" ui-view='toolbarPlug'></div>
+        <div ng-class="{ active: active() }" ui-view='appbarPlug'></div>
 
         <div ng-class="{ active: active() }" ui-view='panelPlug'></div>
 
@@ -19,12 +19,7 @@
             and
             {{ 'page.title' | translate }}</md-whiteframe>
 
-        <md-button ng-click="self.$state.go('app.main.sets', {}, { location: false })">
-            one
-        </md-button>
-        <md-button ng-click="self.$state.go('app', {}, { location: false })">
-            two
-        </md-button>
+
     </div>
 
 </div>

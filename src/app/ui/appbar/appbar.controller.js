@@ -2,10 +2,10 @@
     'use strict';
 
     angular
-        .module('app.ui.toolbar')
-        .controller('ToolbarController', ToolbarController);
+        .module('app.ui.appbar')
+        .controller('AppbarController', AppbarController);
 
-    function ToolbarController(layoutService, $state) {
+    function AppbarController(layoutService, $state) {
         var self = this;
 
         self.layoutService = layoutService;
@@ -18,9 +18,11 @@
 
         }
 
+        // hacky way to toggle panels;
+        // TODO: replace with a sane method
         function toggleSets() {
-            if ($state.current.name.indexOf('sets') === -1) {
-                $state.go('app.main.sets', {}, {
+            if ($state.current.name.indexOf('toc') === -1) {
+                $state.go('app.main.toc', {}, {
                     location: false
                 });
             } else {
@@ -31,8 +33,8 @@
         }
 
         function toggleTools() {
-            if ($state.current.name.indexOf('tools') === -1) {
-                $state.go('app.main.tools', {}, {
+            if ($state.current.name.indexOf('toolbox') === -1) {
+                $state.go('app.main.toolbox', {}, {
                     location: false
                 });
             } else {

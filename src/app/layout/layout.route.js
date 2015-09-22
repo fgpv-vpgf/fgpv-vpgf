@@ -25,8 +25,8 @@
                     config: {
                         url: '/',
                         views: {
-                            toolbarPlug: {
-                                templateUrl: templateRegistry.toolbar
+                            appbarPlug: {
+                                templateUrl: templateRegistry.appbar
                             },
 
                             /*panelPlug: {
@@ -45,10 +45,6 @@
                 {
                     name: 'app.main',
                     config: {
-
-                        /*resolve: {
-
-                        }*/
                         abstract: true,
                         views: {
                             'panelPlug@': {
@@ -63,23 +59,27 @@
                     }
                 },
                 {
-                    name: 'app.main.sets',
+                    name: 'app.main.toc',
                     config: {
-                        url: 'sets',
+                        url: 'toc',
                         views: {
                             contentPlug: {
-                                template: '<div>This is sets panel content</div>'
+                                templateUrl: templateRegistry.toc
+
+                                //template: '<div>This is sets panel content</div>'
                             }
                         }
                     }
                 },
                 {
-                    name: 'app.main.tools',
+                    name: 'app.main.toolbox',
                     config: {
-                        url: 'tools',
+                        url: 'toolbox',
                         views: {
                             contentPlug: {
-                                template: '<div>This is tools panel content. I said TOO00Ls!</div>'
+                                templateUrl: templateRegistry.toolbox
+
+                                //template: '<div>This is tools panel content. I said TOO00Ls!</div>'
                             }
                         }
                     }

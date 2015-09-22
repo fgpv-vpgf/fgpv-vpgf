@@ -1,6 +1,6 @@
 /* Includes definitions for our modules, or objects. The goal is for as much code to exist in here as possible, making it flexible and reusable. This file will just be a list of modules defined (and documented) one after another.*/
 // import all module files here
 @import "_app-menu.scss";
-@import "_toolbar.scss";
+@import "_appbar.scss";
 @import "_main-panel.scss";
 @import "_content-pane.scss";
