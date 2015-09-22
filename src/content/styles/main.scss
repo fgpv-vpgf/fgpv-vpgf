@@ -13,6 +13,7 @@
 
     @include sidenav;
     @include toolbar;
+    @include content-pane;
 
     // temporary stuff below; need to remove
     position: relative;

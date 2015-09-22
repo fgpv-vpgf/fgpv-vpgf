@@ -106,7 +106,5 @@
         "requireParamTypes": true,
         "checkReturnTypes": true,
         "checkTypes": true
-
     }
-
 }
