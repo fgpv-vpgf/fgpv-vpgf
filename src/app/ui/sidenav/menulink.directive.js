@@ -14,7 +14,7 @@
             },
             link: linkFunc,
             controller: Controller,
-            controllerAs: 'vm',
+            controllerAs: 'self',
             bindToController: true
         };
 
@@ -27,8 +27,8 @@
 
     /* @ngInject */
     function Controller() {
-        var vm = this;
-        console.log('--', vm.section);
+        var self = this;
+        console.log('--', self.section);
 
         activate();
 

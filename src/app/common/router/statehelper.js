@@ -42,6 +42,7 @@
                 //    angular.extend(state.config.resolve || {}, statehelperConfig.config.resolveAlways);
                 $stateProvider.state(state.name, state.config);
             });
+
             //$stateProvider.otherwise({redirectTo: '/'});
         }
 

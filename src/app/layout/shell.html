@@ -1,8 +1,8 @@
-<div class="layout layout-fill" ng-controller="ShellController as vm">
+<div class="layout layout-fill" ng-controller="ShellController as self">
     <ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
 
     <div layout="column">
-        <div class="loading-splash" layout layout-align="center center" ng-hide="!vm.isLoading">
+        <div class="loading-splash" layout layout-align="center center" ng-hide="!self.isLoading">
             <span>Loading</span>
         </div>
 
@@ -15,14 +15,14 @@
         <div ng-class="{ active: active() }" ui-view='geoSearchPlug'></div>
 
         <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">I'm
-            {{vm.config.title}}
+            {{self.config.title}}
             and
             {{ 'page.title' | translate }}</md-whiteframe>
 
-        <md-button ng-click="vm.$state.go('app.main.sets', {}, { location: false })">
+        <md-button ng-click="self.$state.go('app.main.sets', {}, { location: false })">
             one
         </md-button>
-        <md-button ng-click="vm.$state.go('app', {}, { location: false })">
+        <md-button ng-click="self.$state.go('app', {}, { location: false })">
             two
         </md-button>
     </div>

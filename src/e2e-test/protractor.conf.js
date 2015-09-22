@@ -13,7 +13,7 @@ exports.config = {
     ],
 
     capabilities: {
-        'browserName': 'chrome'
+        browserName: 'chrome'
     },
 
     baseUrl: 'http://localhost:6001/src/',

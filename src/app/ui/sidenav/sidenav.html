@@ -9,7 +9,7 @@
 
     <md-content flex role="navigation">
         <ul class="app-menu">
-            <li class="app-menu-item" ng-repeat="section in vm.menu">
+            <li class="app-menu-item" ng-repeat="section in self.menu">
                 <h2 class="menu-heading md-subhead" ng-if="section.type === 'heading'">
                     {{section.name}}
                 </h2>

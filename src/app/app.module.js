@@ -16,6 +16,7 @@
          */
         'app.core',
         'app.ui',
+
         //'app.widgets',
 
         /*

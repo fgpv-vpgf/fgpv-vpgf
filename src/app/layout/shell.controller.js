@@ -7,15 +7,15 @@
 
     /* @ngInject */
     function ShellController(configService, layoutService, $state) {
-        var vm = this;
+        var self = this;
 
-        vm.config = configService.data;
-        vm.isLoading = true;
-        vm.layoutService = layoutService;
-        vm.$state = $state;
+        self.config = configService.data;
+        self.isLoading = true;
+        self.layoutService = layoutService;
+        self.$state = $state;
 
         // TODO: mock settings; replace by config
-        vm.menu = [
+        self.menu = [
             {
                 name: 'Options',
                 type: 'heading',
@@ -54,7 +54,7 @@
         }
 
         function hideLoadingScreen() {
-            vm.isLoading = false;
+            self.isLoading = false;
         }
     }
 
