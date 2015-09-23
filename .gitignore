@@ -12,3 +12,8 @@ report/
 .idea
 typings/
 tsd.json
+
+# VIM files
+*~
+*.swp
+*.swo
