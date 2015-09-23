@@ -7,6 +7,7 @@
             'app.ui.appbar',
             'app.ui.panels',
             'app.ui.toc',
-            'app.ui.toolbox'
+            'app.ui.toolbox',
+            'app.ui.metadata'
         ]);
 })();

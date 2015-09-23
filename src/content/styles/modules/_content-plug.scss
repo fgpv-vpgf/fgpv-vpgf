@@ -1,0 +1,50 @@
+@mixin ContentPlug {
+    $yFrom: -30px;
+    $yTo: 0;
+    $xFrom: 0;
+    $xTo: 0;
+    //$swift-ease-in-duration: 50s;
+
+    //position: absolute;
+    &.ng-enter,
+    &.ng-leave {
+
+        //position: absolute;
+        transition: none $swift-ease-in-duration * 1.5 $swift-ease-in-out-timing-function;
+
+        .content-pane {
+            transition: all $swift-ease-in-duration * 1.5 $swift-ease-in-out-timing-function;
+        }
+    }
+
+    &.ng-enter .content-pane {
+        transform: translate3d($xFrom, $yFrom, 0);
+        opacity: 0;
+    }
+
+    &.ng-enter-active .content-pane {
+        transform: translate3d($xTo, $yTo, 0);
+        opacity: 1;
+    }
+
+    &.ng-leave .content-pane {
+        transform: translate3d($xTo, $yTo, 0);
+        opacity: 1;
+    }
+
+    &.ng-leave-active .content-pane {
+        transform: translate3d($xFrom, -$yFrom, 0);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        transform: translate3d(0, 100%, 0);
+    }
+}

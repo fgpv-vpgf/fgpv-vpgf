@@ -72,6 +72,48 @@
                     }
                 },
                 {
+                    name: 'app.main.toc.side',
+                    config: {
+                        abstract: true,
+                        views: {
+                            'sidePanelPlug@': {
+                                templateUrl: templateRegistry.sidePanel,
+                                controller: function ($scope) {
+                                    $scope.active = function () {
+                                        return true;
+                                    };
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    name: 'app.main.toc.side.metadata',
+                    config: {
+                        url: 'metadata',
+                        views: {
+                            contentPlug: {
+                                templateUrl: templateRegistry.metadata
+
+                                //template: '<div>This is sets panel content</div>'
+                            }
+                        }
+                    }
+                },
+                {
+                    name: 'app.main.toc.side.settings',
+                    config: {
+                        url: 'settings',
+                        views: {
+                            contentPlug: {
+                                templateUrl: templateRegistry.settings
+
+                                //template: '<div>This is sets panel content</div>'
+                            }
+                        }
+                    }
+                },
+                {
                     name: 'app.main.toolbox',
                     config: {
                         url: 'toolbox',

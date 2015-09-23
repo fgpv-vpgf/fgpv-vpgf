@@ -1,0 +1,142 @@
+@mixin ActivePanelPlug($left: auto, $right: auto, $bottom: auto, $top: auto, $width: auto, $height: auto, $from: top, $z-index: auto) {
+    &.active {
+        position: absolute;
+        left: $left;
+        top: $top;
+        bottom: $bottom;
+        right: $right;
+        width: $width;
+        height: $height;
+        z-index: $z-index;
+
+        .panel {
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            position: absolute;
+            background-color: white;
+            overflow: hidden;
+        }
+        @include PlugAnimation($from, $left, $right, $bottom, $top, $width, $height);
+    }
+
+    @include PlugTransition;
+}
+
+@mixin PlugAnimation($from, $left: auto, $right: auto, $bottom: auto, $top: auto, $width: auto, $height: auto) {
+    $yFrom: 0;
+    $yTo: 0;
+    $xFrom: 0;
+    $xTo: 0;
+    $buffer: 10px;
+    $topBuffer: $buffer;
+    $bottomBuffer: $buffer;
+    $leftBuffer: $buffer;
+    $rightBuffer: $buffer;
+
+    @if $from == top {
+        $yFrom: -100%;
+        $topBuffer: 0;
+    }
+
+    @if $from == bottom {
+        $yFrom: 100%;
+        $bottomBuffer: 0;
+    }
+
+    @if $from == left {
+        $xFrom: -100%;
+        $leftBuffer: 0;
+    }
+
+    @if $from == right {
+        $xFrom: 100%;
+        $rightBuffer: 0;
+    }
+
+    &.ng-enter,
+    &.ng-leave {
+        overflow: hidden;
+        $left: if($left != auto, $left - $leftBuffer, $left);
+        $right: if($right != auto, $right - $rightBuffer, $right);
+        $top: if($top != auto, $top - $topBuffer, $top);
+        $bottom: if($bottom != auto, $bottom - $bottomBuffer, $bottom);
+
+        @if $width != auto {
+            $width: $width + $leftBuffer + $rightBuffer;
+        }
+
+        @if $height != auto {
+            $height: $height + $leftBuffer + $rightBuffer;
+        }
+        height: $height;
+        width: $width;
+        left: $left;
+        right: $right;
+        top: $top;
+        bottom: $bottom;
+
+        .panel {
+            left: $leftBuffer;
+            right: $rightBuffer;
+            top: $topBuffer;
+            bottom: $bottomBuffer;
+        }
+    }
+
+    &.ng-enter .panel {
+        transform: translate3d($xFrom, $yFrom, 0);
+    }
+
+    &.ng-enter-active .panel {
+        transform: translate3d($xTo, $yTo, 0);
+    }
+
+    &.ng-leave .panel {
+        transform: translate3d($xTo, $yTo, 0);
+    }
+
+    &.ng-leave-active .panel {
+        transform: translate3d($xFrom, $yFrom, 0);
+    }
+}
+
+@mixin PlugTransition($duration: $swift-ease-in-duration, $easing: $swift-ease-in-out-timing-function, $delay: 0s) {
+    &.active {
+        &.ng-enter,
+        &.ng-leave {
+            transition: none $duration $easing $delay;
+
+            .panel {
+                transition: transform $duration $easing $delay;
+            }
+        }
+    }
+}
+
+@mixin PlugTransitionDelay($delay: $swift-ease-in-duration / 2) {
+    &.active {
+        &.ng-enter,
+        &.ng-leave {
+            transition-delay: $delay;
+
+            .panel {
+                transition-delay: $delay;
+            }
+        }
+    }
+}
+
+@mixin PlugTransitionDuration($duration: $swift-ease-in-duration) {
+    &.active {
+        &.ng-enter,
+        &.ng-leave {
+            transition-duration: $duration;
+
+            .panel {
+                transition-duration: $duration;
+            }
+        }
+    }
+}

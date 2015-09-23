@@ -1,4 +1,4 @@
-<div class="layout layout-fill" ng-controller="ShellController as self">
+<div class="layout layout-fill" ng-controller="ShellController as self" state="{{self.$state.current.name}}">
     <ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
 
     <div layout="column">
@@ -9,6 +9,7 @@
         <div ng-class="{ active: active() }" ui-view='appbarPlug'></div>
 
         <div ng-class="{ active: active() }" ui-view='panelPlug'></div>
+        <div ng-class="{ active: active() }" ui-view='sidePanelPlug'></div>
 
         <div ng-class="{ active: active() }" ui-view='detailsPlug'></div>
 

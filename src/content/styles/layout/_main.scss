@@ -1,53 +1,34 @@
-[ui-view='appbarPlug'] > md-toolbar {
+[ui-view='appbarPlug'] {
     left: $viewport-gutter;
     top: $viewport-gutter;
     position: absolute;
+    z-index: $toolbar-z-index;
 }
 
-[ui-view='panelPlug'].active {
-    position: absolute;
-    left: $viewport-gutter;
-    top: $viewport-gutter + $toolbar-height;
-    bottom: $viewport-gutter;
-    width: $toolbar-width;
-    z-index: $toolbar-z-index;
+[ui-view='panelPlug'] {
+    @include ActivePanelPlug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height, $bottom: $viewport-gutter, $width: $toolbar-width, $z-index: $toolbar-z-index);
+    //@include PlugTransition;
 
-    &.ng-enter,
-    &.ng-leave {
-        overflow: hidden;
-        //transition: none $time ease-in-out;
-        transition: none $swift-ease-in-duration $swift-ease-in-out-timing-function;
+    [ui-view='contentPlug'] {
+        @include ContentPlug;
+    }
+}
 
-        ///top: 58px;
-        width: $toolbar-width + $viewport-gutter * 2;
-        left: 0;
-        bottom: 0;
-        //z-index: 20;
+[ui-view='sidePanelPlug'] {
+    @include ActivePanelPlug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: 350px, $z-index: $toolbar-z-index - 1, $from: left);
+    //@include PlugTransition;
 
-        .panel {
+    [ui-view='contentPlug'] {
+        @include ContentPlug;
+    }
+}
 
-            top: 0;
-            right: $viewport-gutter;
-            left: $viewport-gutter;
-            bottom: $viewport-gutter;
-            //transition: transform $time ease-in-out;
-            transition: transform $swift-ease-in-duration $swift-ease-in-out-timing-function;
-        }
+[state$='metadata'] {
+    [ui-view='panelPlug'] {
+        @include PlugTransitionDelay;
     }
 
-    &.ng-enter .panel {
-        transform: translate3d(0, -100%, 0);
-    }
-
-    &.ng-enter-active .panel {
-        transform: translate3d(0, 0, 0);
-    }
-
-    &.ng-leave .panel {
-        transform: translate3d(0, 0, 0);
-    }
-
-    &.ng-leave-active .panel {
-        transform: translate3d(0, -100%, 0);
+    [ui-view='sidePanelPlug'] {
+        @include PlugTransitionDuration;
     }
 }
