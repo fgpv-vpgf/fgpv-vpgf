@@ -3,10 +3,10 @@
 
     angular
         .module('app.ui.toc')
-        .controller('TOCController', TOCController);
+        .controller('TocController', TocController);
 
     /* @ngInject */
-    function TOCController() {
+    function TocController() {
         //var self = this;
 
         activate();
