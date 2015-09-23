@@ -3,6 +3,21 @@
 [![Join the chat at https://gitter.im/fgpv-vpgf/fgpv-vpgf](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fgpv-vpgf/fgpv-vpgf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Federal Geospatial Platform Visualiser / Visualisateur pour la Plateforme géospatiale fédérale
 
+## Getting Started
+
+Requirements:
+- [NodeJS](https://nodejs.org/)
+- Bower `npm install -g bower`
+- Gulp `npm install -g gulp`
+
+Running a local build:
+0. Checkout the repo
+0. Switch to the develop branch (master is for stable, released code)
+0. Run `npm install` to install dependencies
+0. Run `gulp serve` to build and launch a dev server
+
+We use a fork and pull model for contributions, see our [contributing guidelines](https://github.com/fgpv-vpgf/fgpv-vpgf/blob/develop/CONTRIBUTING.md) for more details.
+
 ## Gulp Tasks
 
 ### Code Analysis
