@@ -3,7 +3,8 @@
 @mixin appbar {
     md-toolbar {
         min-height: $toolbar-height;
-
+        z-index: auto;
+        
         > .md-toolbar-tools {
             height: $toolbar-height;
             max-height: $toolbar-height;

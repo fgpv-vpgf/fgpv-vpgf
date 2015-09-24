@@ -315,7 +315,7 @@ function logWatch(event) {
  * @returns {Stream}   The stream
  */
 function inject(src, label, order) {
-    var options = { read: false };
+    var options = { read: false, relative: true };
     if (label) {
         options.name = 'inject:' + label;
     }

@@ -3,10 +3,10 @@
 
     angular
         .module('app.ui.toc')
-        .controller('TOCController', TOCController);
+        .controller('TocController', TocController);
 
     /* @ngInject */
-    function TOCController($state) {
+    function TocController($state) {
         var self = this;
 
         self.toggleMetadata = toggleMetadata;

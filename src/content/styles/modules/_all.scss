@@ -6,3 +6,10 @@
 @import "_app-menu.scss";
 @import "_appbar.scss";
 @import "_content-pane.scss";
+@import "_rv-whiteframe.scss";
+
+@include sidenav;
+@include appbar;
+@include content-pane;
+
+@include rv-whiteframe-set;

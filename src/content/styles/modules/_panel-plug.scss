@@ -1,4 +1,4 @@
-@mixin ActivePanelPlug($left: auto, $right: auto, $bottom: auto, $top: auto, $width: auto, $height: auto, $from: top, $z-index: auto) {
+@mixin active-panel-plug($left: auto, $right: auto, $bottom: auto, $top: auto, $width: auto, $height: auto, $from: top) {
     &.active {
         position: absolute;
         left: $left;
@@ -7,7 +7,6 @@
         right: $right;
         width: $width;
         height: $height;
-        z-index: $z-index;
 
         .panel {
             top: 0;
@@ -16,15 +15,14 @@
             bottom: 0;
             position: absolute;
             background-color: white;
-            overflow: hidden;
         }
-        @include PlugAnimation($from, $left, $right, $bottom, $top, $width, $height);
+        @include plug-animation($from, $left, $right, $bottom, $top, $width, $height);
     }
 
-    @include PlugTransition;
+    @include plug-transition;
 }
 
-@mixin PlugAnimation($from, $left: auto, $right: auto, $bottom: auto, $top: auto, $width: auto, $height: auto) {
+@mixin plug-animation($from, $left: auto, $right: auto, $bottom: auto, $top: auto, $width: auto, $height: auto) {
     $yFrom: 0;
     $yTo: 0;
     $xFrom: 0;
@@ -102,7 +100,7 @@
     }
 }
 
-@mixin PlugTransition($duration: $swift-ease-in-duration, $easing: $swift-ease-in-out-timing-function, $delay: 0s) {
+@mixin plug-transition($duration: $swift-ease-in-duration, $easing: $swift-ease-in-out-timing-function, $delay: 0s) {
     &.active {
         &.ng-enter,
         &.ng-leave {
@@ -115,7 +113,7 @@
     }
 }
 
-@mixin PlugTransitionDelay($delay: $swift-ease-in-duration / 2) {
+@mixin plug-transition-delay($delay: $swift-ease-in-duration / 2) {
     &.active {
         &.ng-enter,
         &.ng-leave {
@@ -128,7 +126,7 @@
     }
 }
 
-@mixin PlugTransitionDuration($duration: $swift-ease-in-duration) {
+@mixin plug-transition-duration($duration: $swift-ease-in-duration) {
     &.active {
         &.ng-enter,
         &.ng-leave {

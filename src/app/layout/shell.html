@@ -1,7 +1,7 @@
-<div class="layout layout-fill" ng-controller="ShellController as self" state="{{self.$state.current.name}}">
+<div class="shell layout layout-fill" ng-controller="ShellController as self" state="{{self.$state.current.name}}">
     <ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
 
-    <div layout="column">
+    <div class="inner-shell" layout="column">
         <div class="loading-splash" layout layout-align="center center" ng-hide="!self.isLoading">
             <span>Loading</span>
         </div>
@@ -15,11 +15,10 @@
 
         <div ng-class="{ active: active() }" ui-view='geoSearchPlug'></div>
 
-        <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center">I'm
+        <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center" style="display: none;">I'm
             {{self.config.title}}
             and
             {{ 'page.title' | translate }}</md-whiteframe>
-
 
     </div>
 

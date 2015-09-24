@@ -1,28 +1,30 @@
+.inner-shell {
+    z-index: 0;
+}
+
 [ui-view='appbarPlug'] {
     left: $viewport-gutter;
     top: $viewport-gutter;
     position: absolute;
-    z-index: $toolbar-z-index;
 }
 
 [ui-view='panelPlug'] {
-    @include ActivePanelPlug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height, $bottom: $viewport-gutter, $width: $toolbar-width, $z-index: $toolbar-z-index);
-    //@include PlugTransition;
+    @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height, $bottom: $viewport-gutter, $width: $toolbar-width);
 
     [ui-view='contentPlug'] {
-        @include ContentPlug;
+        @include content-plug;
     }
 }
 
 [ui-view='sidePanelPlug'] {
-    @include ActivePanelPlug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: 350px, $z-index: $toolbar-z-index - 1, $from: left);
-    //@include PlugTransition;
+    @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: 350px, $from: left);
 
     [ui-view='contentPlug'] {
-        @include ContentPlug;
+        @include content-plug;
     }
 }
 
+/*
 [state$='metadata'] {
     [ui-view='panelPlug'] {
         @include PlugTransitionDelay;
@@ -32,3 +34,4 @@
         @include PlugTransitionDuration;
     }
 }
+*/
