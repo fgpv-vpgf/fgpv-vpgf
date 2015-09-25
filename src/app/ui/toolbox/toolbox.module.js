@@ -2,5 +2,5 @@
     'use strict';
 
     angular
-        .module('app.ui.toolbar', []);
+        .module('app.ui.toolbox', []);
 })();

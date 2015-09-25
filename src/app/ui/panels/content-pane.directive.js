@@ -2,16 +2,18 @@
     'use strict';
 
     angular
-        .module('app.ui.sidenav')
-        .directive('rvMenuLink', rvMenuLink);
+        .module('app.ui.panels')
+        .directive('rvContentPane', rvContentPane);
 
-    function rvMenuLink() {
+    /* @ngInject */
+    function rvContentPane() {
         var directive = {
             restrict: 'E',
-            templateUrl: 'app/ui/sidenav/menulink.html',
+            templateUrl: 'app/ui/panels/content-pane.html',
             scope: {
-                section: '='
+                title: '@'
             },
+            transclude: true,
             link: linkFunc,
             controller: Controller,
             controllerAs: 'self',
@@ -20,19 +22,17 @@
 
         return directive;
 
-        function linkFunc(scope, el, attr, ctrl) {
-            console.log(scope, el, attr, ctrl);
+        function linkFunc(/*scope, el, attr, ctrl*/) {
+
         }
     }
 
     /* @ngInject */
     function Controller() {
-        var self = this;
-        console.log('--', self.section);
+
+        //var self = this;
 
         activate();
-
-        ////////////////
 
         function activate() {
 

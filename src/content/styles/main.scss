@@ -12,10 +12,12 @@
     @import "_shame.scss";
 
     @include sidenav;
-    @include toolbar;
+    @include appbar;
+    @include content-pane;
 
     // temporary stuff below; need to remove
     position: relative;
+    overflow: hidden;
 
     md-whiteframe {
       background: #fff;

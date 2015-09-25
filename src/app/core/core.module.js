@@ -11,6 +11,7 @@
          * Our reusable cross app code modules
          */
         'common.router',
+
         //'blocks.exception', 'blocks.logger', 'blocks.router',
 
         /*
@@ -18,6 +19,7 @@
          */
         'pascalprecht.translate',
         'ui.router'
+
         //'ui.bootstrap',     // ui-bootstrap (ex: carousel, pagination, dialog)
         //'breeze.angular',   // tells breeze to use $q instead of Q.js
         //'breeze.directives',// breeze validation directive (zValidate)

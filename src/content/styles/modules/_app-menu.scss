@@ -2,6 +2,30 @@
 @mixin sidenav {
     md-sidenav {
         &.site-sidenav {
+            max-width: 256px;
+            min-width: 256px;
+
+
+            .app-logo {
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 0 0 16px;
+                margin: 0 auto;
+                border-bottom-color: $primary-color-light;
+                background: linear-gradient(#CFD8DC, #FFFFFF);
+
+                > img {
+                    height: 150px;
+                    width: auto;
+                    display: block;
+                    transform-origin: 50% 0;
+                    transform: scale(1);
+                }
+
+            }
+
             .app-logotype {
                 color: black;
                 text-align: center;
@@ -26,7 +50,6 @@
                 width: 100%;
                 color: black;
             }
-
             @include menu-link;
         }
     }

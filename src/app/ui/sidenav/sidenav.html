@@ -2,13 +2,14 @@
 
     <header class="nav-header">
         <a class="app-logo" href="#">
-            <h1 class="app-logotype md-heading">R2-V2</h1>
+            <img src="content/images/Map-icon.png" alt="">
+            <h1 class="app-logotype md-heading">FGP R2 Viewer</h1>
         </a>
     </header>
 
     <md-content flex role="navigation">
         <ul class="app-menu">
-            <li class="app-menu-item" ng-repeat="section in vm.menu">
+            <li class="app-menu-item" ng-repeat="section in self.menu">
                 <h2 class="menu-heading md-subhead" ng-if="section.type === 'heading'">
                     {{section.name}}
                 </h2>

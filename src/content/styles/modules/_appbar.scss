@@ -1,15 +1,19 @@
 // Primary mixin
-@mixin toolbar {
+
+@mixin appbar {
     md-toolbar {
-        &.main-toolbar {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 450px;
+        min-height: $toolbar-height;
+
+        > .md-toolbar-tools {
+            height: $toolbar-height;
+            max-height: $toolbar-height;
+        }
+
+        &.main-appbar {
+            width: $toolbar-width;
         }
     }
 }
-
 
 /*
 @mixin buttons {a.button,

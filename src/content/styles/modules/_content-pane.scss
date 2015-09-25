@@ -1,0 +1,14 @@
+// Primary mixin
+@mixin content-pane {
+    .content-pane {
+        top: 0;
+        left: 0;
+        bottom: 8px;
+        right: 0;
+        position: absolute;
+
+        h2 {
+            margin-top: 5px;
+        }
+    }
+}

@@ -24,6 +24,7 @@
                 prefix: './locales/',
                 suffix: '/translation.json'
             });
+
             //$translateProvider.preferredLanguage('en-CA');
         }
 
