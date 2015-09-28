@@ -11,6 +11,10 @@
 [ui-view='panelPlug'] {
     @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height, $bottom: $viewport-gutter, $width: $toolbar-width);
 
+    &.stagger {
+        @include plug-transition-delay;
+    }
+
     [ui-view='contentPlug'] {
         @include content-plug;
     }

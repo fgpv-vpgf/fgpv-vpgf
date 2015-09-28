@@ -6,9 +6,9 @@
             <span>Loading</span>
         </div>
 
-        <div ng-class="{ active: self.active() }" ui-view='appbarPlug'></div>
+        <div ng-class="{ active: self.active() }"  ui-view='appbarPlug'></div>
 
-        <div ng-class="{ active: self.active() }" ui-view='panelPlug'></div>
+        <div ng-class="{ active: self.active(), stagger: self.isStaggering }" ui-view='panelPlug'></div>
         <div ng-class="{ active: self.active() }" ui-view='sidePanelPlug'></div>
 
         <div ng-class="{ active: self.active() }" ui-view='detailsPlug'></div>
