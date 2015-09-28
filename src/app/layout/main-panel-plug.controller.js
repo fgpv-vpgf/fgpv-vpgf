@@ -8,14 +8,10 @@
     /* @ngInject */
     function MainPanelPlugController($rootScope) {
         var self = this;
-        self.active = active;
+        self.active = true;
         self.isStaggering = false;
 
         //////////////
-
-        function active() {
-            return true;
-        }
 
         // staggers the main panel's transition if the side panel is open
         $rootScope.$on('$stateChangeStart',

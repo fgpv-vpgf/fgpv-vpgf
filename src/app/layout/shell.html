@@ -6,14 +6,14 @@
             <span>Loading</span>
         </div>
 
-        <div ng-class="{ active: self.active() }"  ui-view='appbarPlug'></div>
+        <div ng-class="{ active: self.active }"  ui-view='appbarPlug'></div>
 
-        <div ng-class="{ active: self.active(), stagger: self.isStaggering }" ui-view='panelPlug'></div>
-        <div ng-class="{ active: self.active() }" ui-view='sidePanelPlug'></div>
+        <div ng-class="{ active: self.active, stagger: self.isStaggering }" ui-view='panelPlug'></div>
+        <div ng-class="{ active: self.active }" ui-view='sidePanelPlug'></div>
 
-        <div ng-class="{ active: self.active() }" ui-view='detailsPlug'></div>
+        <div ng-class="{ active: self.active }" ui-view='detailsPlug'></div>
 
-        <div ng-class="{ active: self.active() }" ui-view='geoSearchPlug'></div>
+        <div ng-class="{ active: self.active }" ui-view='geoSearchPlug'></div>
 
         <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center" style="display: none;">I'm
             {{self.config.title}}

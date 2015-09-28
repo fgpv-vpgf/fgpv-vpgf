@@ -8,10 +8,6 @@
     /* @ngInject */
     function SidePanelPlugController() {
         var self = this;
-        self.active = active;
-
-        function active() {
-            return true;
-        }
+        self.active = true;
     }
 })();
