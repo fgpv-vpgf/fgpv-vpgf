@@ -1,10 +1,8 @@
-@mixin content-plug {
-    $yFrom: -30px;
+@mixin content-plug($from: top, $by: 30px) {
+    $yFrom: 0;
     $yTo: 0;
     $xFrom: 0;
     $xTo: 0;
-    //$swift-ease-in-duration: 50s;
-
     top: 0;
     left: 0;
     right: 0;
@@ -12,10 +10,24 @@
     position: absolute;
     overflow: hidden;
 
+    @if $from == top {
+        $yFrom: -$by;
+    }
+
+    @if $from == bottom {
+        $yFrom: $by;
+    }
+
+    @if $from == left {
+        $xFrom: -$by;
+    }
+
+    @if $from == right {
+        $xFrom: $by;
+    }
+
     &.ng-enter,
     &.ng-leave {
-
-        //position: absolute;
         transition: none $swift-ease-in-duration * 1.5 $swift-ease-in-out-timing-function;
 
         .content-pane {
