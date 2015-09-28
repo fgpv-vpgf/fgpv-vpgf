@@ -6,9 +6,21 @@
         .constant('configDefaults', {
             title: 'Dawn RAM'
         })
+        .constant('viewRegistry', {
+            panelPlug: {
+                'panelPlug@': {
+                    template: '<rv-main-panel></rv-main-panel>',
+                    controller: 'MainPanelPlugController as self'
+                }
+            },
+            sidePanelPlug: {
+                'sidePanelPlug@': {
+                    template: '<rv-side-panel></rv-side-panel>',
+                    controller: 'SidePanelPlugController as self'
+                }
+            }
+        })
         .constant('templateRegistry', {
-            mainPanel: 'app/ui/panels/main-panel.html',
-            sidePanel: 'app/ui/panels/side-panel.html',
             appbar: 'app/ui/appbar/appbar.html',
             toc: 'app/ui/toc/toc.html',
             toolbox: 'app/ui/toolbox/toolbox.html',

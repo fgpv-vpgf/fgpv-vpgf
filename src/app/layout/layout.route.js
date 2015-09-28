@@ -6,7 +6,7 @@
         .run(layoutConfig);
 
     /* @ngInject */
-    function layoutConfig(statehelper, templateRegistry, $state) {
+    function layoutConfig(statehelper, templateRegistry, viewRegistry, $state) {
         statehelper.configureStates(getStates());
 
         // when layout is ready, go to the default state
@@ -46,16 +46,7 @@
                     name: 'app.main',
                     config: {
                         abstract: true,
-                        views: {
-                            'panelPlug@': {
-                                templateUrl: templateRegistry.mainPanel,
-                                controller: function ($scope) {
-                                    $scope.active = function () {
-                                        return true;
-                                    };
-                                }
-                            }
-                        }
+                        views: viewRegistry.panelPlug
                     }
                 },
                 {
@@ -75,16 +66,7 @@
                     name: 'app.main.toc.side',
                     config: {
                         abstract: true,
-                        views: {
-                            'sidePanelPlug@': {
-                                templateUrl: templateRegistry.sidePanel,
-                                controller: function ($scope) {
-                                    $scope.active = function () {
-                                        return true;
-                                    };
-                                }
-                            }
-                        }
+                        views: viewRegistry.sidePanelPlug
                     }
                 },
                 {
