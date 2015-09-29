@@ -1,6 +1,14 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc directive
+     * @name rvSidePanel
+     * @module app.ui.panels
+     * @description
+     *
+     * The `rvSidePanel` directive is an side panel outter container with a content plug view to allow for different content to be displayed.
+     */
     angular
         .module('app.ui.panels')
         .directive('rvSidePanel', rvSidePanel);

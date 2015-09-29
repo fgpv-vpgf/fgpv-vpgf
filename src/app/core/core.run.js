@@ -1,6 +1,14 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc function
+     * @name app.core#runBlock
+     * @module app.core
+     * @description
+     *
+     * The `runBlock` triggers config and locale file loading.
+     */
     angular
         .module('app.core')
         .run(runBlock);

@@ -1,6 +1,15 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc function
+     * @name TocController
+     * @module app.ui.toc
+     * @description
+     *
+     * The `TocController` controller handles the layer selector (or toc) main panel.
+     * Right now it's hacked together for demo purposes.
+     */
     angular
         .module('app.ui.toc')
         .controller('TocController', TocController);

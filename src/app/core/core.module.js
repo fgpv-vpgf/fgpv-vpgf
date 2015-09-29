@@ -1,29 +1,28 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc module
+     * @name app.core
+     * @description
+     *
+     * The `app.core` module pull in all the commonly used dependencies.
+     */
     angular.module('app.core', [
         /*
          * Angular modules
          */
-        'ngAnimate', 'ngMaterial', 'ngSanitize', //, 'ngRoute',
+        'ngAnimate', 'ngMaterial', 'ngSanitize',
 
         /*
-         * Our reusable cross app code modules
+         * Reusable cross app code modules
          */
         'common.router',
-
-        //'blocks.exception', 'blocks.logger', 'blocks.router',
 
         /*
          * 3rd Party modules
          */
         'pascalprecht.translate',
         'ui.router'
-
-        //'ui.bootstrap',     // ui-bootstrap (ex: carousel, pagination, dialog)
-        //'breeze.angular',   // tells breeze to use $q instead of Q.js
-        //'breeze.directives',// breeze validation directive (zValidate)
-        //'ngplus',           // ngplus utilities
-        //'ngzWip'            // zStorage and zStorageWip
     ]);
 })();

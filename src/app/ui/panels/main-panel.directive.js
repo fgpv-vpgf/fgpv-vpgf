@@ -1,6 +1,14 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc directive
+     * @name rvMainPanel
+     * @module app.ui.panels
+     * @description
+     *
+     * The `rvMainPanel` directive is a outter panel container with a content plug view to allow for different content to be displayed.
+     */
     angular
         .module('app.ui.panels')
         .directive('rvMainPanel', rvMainPanel);

@@ -1,6 +1,28 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc service
+     * @name configService
+     * @module app.core
+     * @description
+     *
+     * The `configService' is responsible for loading and parsing the supplied configuration.
+     *
+     * Config file is either specified inline, by a url or is referencing a global variable:
+     * ```html
+     * <div rv-map rv-cfg='{"layout": { "title": "Granpa"}}'></div>
+     * ```
+     * ```html
+     * <div rv-map rv-cfg="config.en.json"></div>
+     * ```
+     * ```html
+     * <div rv-map rv-cfg="configOpts"></div>
+     * <script>configOpts = {}</script>
+     * ```
+     * The main core run block (core.run.js) kicks in the initialization process by calling initialize on the `configService`. `configService` is responsible for parsing (inline) or loading (url) of the config. This service preserves the configuration in its pristine state (after applying all the defaults) - it will not be modified.
+     * After the main config service retrieved the configuration, all other services are initialized. Until then, the application is covered by a loading overlay to hide unstyled content.
+     */
     angular
         .module('app.core')
         .factory('configService', configService);

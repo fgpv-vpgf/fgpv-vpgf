@@ -1,6 +1,13 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc module
+     * @name app
+     * @description
+     * The root module ties other modules together providing a very straightforward way to add or remove modules from the application.
+     *
+     */
     angular.module('app', [
         /*
          * Order is not important. Angular makes a
@@ -16,8 +23,6 @@
          */
         'app.core',
         'app.ui',
-
-        //'app.widgets',
 
         /*
          * Feature areas

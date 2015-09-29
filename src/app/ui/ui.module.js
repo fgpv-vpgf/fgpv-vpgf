@@ -1,6 +1,13 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc module
+     * @name app.ui
+     * @description
+     *
+     * The `app.ui` module pull in all the inidividual ui modules.
+     */
     angular
         .module('app.ui', [
             'app.ui.sidenav',

@@ -1,12 +1,30 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc serviceProvider
+     * @name statehelperConfig
+     * @module app.router
+     * @description
+     *
+     * The `statehelperConfig` provider is used to configure `statehelper` before it's initialized.
+     *
+     * Must configure via the statehelperConfigProvider in core.config.js
+     */
+    /**
+     * @ngdoc service
+     * @name statehelper
+     * @module app.router
+     * @description
+     *
+     * The `statehelper` services supports adding additional states to the global state tree from other modules.
+     * It is also responsible for handling routing errors (coming soon).
+     */
     angular
         .module('common.router')
         .provider('statehelperConfig', statehelperConfig)
         .factory('statehelper', statehelper);
 
-    // Must configure via the statehelperConfigProvider in core.config.js
     function statehelperConfig() {
         /* jshint validthis:true */
         this.config = {
@@ -22,6 +40,7 @@
         };
     }
 
+    // TODO: add routing error handling
     /* @ngInject */
     function statehelper(statehelperConfig) {
         var $stateProvider = statehelperConfig.config.$stateProvider;

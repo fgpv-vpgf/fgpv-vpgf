@@ -1,6 +1,14 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc directive
+     * @name rvContentPane
+     * @module app.ui.panels
+     * @description
+     *
+     * The `rvContentPane` directive is a panel inner container holding the panel's content.
+     */
     angular
         .module('app.ui.panels')
         .directive('rvContentPane', rvContentPane);

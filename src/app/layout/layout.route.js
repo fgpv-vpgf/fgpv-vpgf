@@ -1,6 +1,14 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc function
+     * @name app.layout#layoutConfig
+     * @module app.layout
+     * @description
+     *
+     * The `layoutConfig` run block sets the layout states and triggers the `app` state which is the default state upon app loading.
+     */
     angular
         .module('app.layout')
         .run(layoutConfig);
@@ -18,7 +26,12 @@
 
         ////////////////
 
+        /**
+         * Returns collection of state objects for layout module.
+         * @return {array} A collection of state objects for UI-router
+         */
         function getStates() {
+            // TODO: move toc and toolbox parts to the corresponding modules
             return [
                 {
                     name: 'app',
@@ -56,8 +69,6 @@
                         views: {
                             contentPlug: {
                                 templateUrl: templateRegistry.toc
-
-                                //template: '<div>This is sets panel content</div>'
                             }
                         }
                     }
@@ -76,8 +87,6 @@
                         views: {
                             contentPlug: {
                                 templateUrl: templateRegistry.metadata
-
-                                //template: '<div>This is sets panel content</div>'
                             }
                         }
                     }
@@ -89,8 +98,6 @@
                         views: {
                             contentPlug: {
                                 templateUrl: templateRegistry.settings
-
-                                //template: '<div>This is sets panel content</div>'
                             }
                         }
                     }
@@ -102,8 +109,6 @@
                         views: {
                             contentPlug: {
                                 templateUrl: templateRegistry.toolbox
-
-                                //template: '<div>This is tools panel content. I said TOO00Ls!</div>'
                             }
                         }
                     }
