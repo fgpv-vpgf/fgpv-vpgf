@@ -3,25 +3,21 @@
 
     /**
      * @ngdoc directive
-     * @name rvContentPane
+     * @name rvSidePanel
      * @module app.ui.panels
      * @description
      *
-     * The `rvContentPane` directive is a panel inner container holding the panel's content.
+     * The `rvSidePanel` directive is an side panel outter container with a content plug view to allow for different content to be displayed.
      */
     angular
         .module('app.ui.panels')
-        .directive('rvContentPane', rvContentPane);
+        .directive('rvSidePanel', rvSidePanel);
 
-    /* @ngInject */
-    function rvContentPane() {
+    function rvSidePanel() {
         var directive = {
             restrict: 'E',
-            templateUrl: 'app/ui/panels/content-pane.html',
-            scope: {
-                title: '@'
-            },
-            transclude: true,
+            templateUrl: 'app/ui/panels/side-panel.html',
+            scope: {},
             link: linkFunc,
             controller: Controller,
             controllerAs: 'self',
@@ -30,15 +26,14 @@
 
         return directive;
 
-        function linkFunc(/*scope, el, attr, ctrl*/) {
+        function linkFunc() { //scope, el, attr, ctrl) {
 
         }
     }
 
     /* @ngInject */
     function Controller() {
-
-        //var self = this;
+        //var vm = this;
 
         activate();
 

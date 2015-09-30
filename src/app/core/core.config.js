@@ -1,6 +1,17 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc function
+     * @name app.core#configBlock
+     * @module app.core
+     * @description
+     *
+     * The `configBlock` does three things right now:
+     * - configure our custom stateHelper to work with $stateProvider from ui-router,
+     * - configure translation provider by prepping static loader (and optionally setting preferred language if we know what it is),
+     * - configure theme colours for angular material
+     */
     angular
         .module('app.core')
         .config(configBlock);

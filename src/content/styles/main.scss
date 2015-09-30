@@ -5,15 +5,14 @@
 .fgpv {
     @import "common/_all.scss";
     @import "base/_all.scss";
-    @import "layout/_all.scss";
     @import "modules/_all.scss";
     @import "other/_all.scss";
     @import "vendor/_all.scss";
+    @import "layout/_all.scss";
     @import "_shame.scss";
 
-    @include sidenav;
-    @include appbar;
-    @include content-pane;
+    //TODO: remove fake map image
+    background-image: url('http://i.imgur.com/CWVBK6E.png');
 
     // temporary stuff below; need to remove
     position: relative;
@@ -35,5 +34,7 @@
         background-color: darkgrey;
         text-align: center;
         vertical-align: middle;
+        z-index: 10000;
     }
+
 }

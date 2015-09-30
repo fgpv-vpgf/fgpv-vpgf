@@ -1,6 +1,14 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc directive
+     * @name rvMenuLink
+     * @module app.ui.sidenav
+     * @description
+     *
+     * The `rvMenuLink` directive is a wrapper around a button to provide some extra functionality (highlight currently selected item for example).
+     */
     angular
         .module('app.ui.sidenav')
         .directive('rvMenuLink', rvMenuLink);

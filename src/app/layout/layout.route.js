@@ -1,12 +1,20 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc function
+     * @name app.layout#layoutConfig
+     * @module app.layout
+     * @description
+     *
+     * The `layoutConfig` run block sets the layout states and triggers the `app` state which is the default state upon app loading.
+     */
     angular
         .module('app.layout')
         .run(layoutConfig);
 
     /* @ngInject */
-    function layoutConfig(statehelper, templateRegistry, $state) {
+    function layoutConfig(statehelper, templateRegistry, viewRegistry, $state) {
         statehelper.configureStates(getStates());
 
         // when layout is ready, go to the default state
@@ -18,7 +26,12 @@
 
         ////////////////
 
+        /**
+         * Returns collection of state objects for layout module.
+         * @return {array} A collection of state objects for UI-router
+         */
         function getStates() {
+            // TODO: move toc and toolbox parts to the corresponding modules
             return [
                 {
                     name: 'app',
@@ -46,16 +59,7 @@
                     name: 'app.main',
                     config: {
                         abstract: true,
-                        views: {
-                            'panelPlug@': {
-                                templateUrl: templateRegistry.mainPanel,
-                                controller: function ($scope) {
-                                    $scope.active = function () {
-                                        return true;
-                                    };
-                                }
-                            }
-                        }
+                        views: viewRegistry.panelPlug
                     }
                 },
                 {
@@ -65,8 +69,35 @@
                         views: {
                             contentPlug: {
                                 templateUrl: templateRegistry.toc
-
-                                //template: '<div>This is sets panel content</div>'
+                            }
+                        }
+                    }
+                },
+                {
+                    name: 'app.main.toc.side',
+                    config: {
+                        abstract: true,
+                        views: viewRegistry.sidePanelPlug
+                    }
+                },
+                {
+                    name: 'app.main.toc.side.metadata',
+                    config: {
+                        url: 'metadata',
+                        views: {
+                            contentPlug: {
+                                templateUrl: templateRegistry.metadata
+                            }
+                        }
+                    }
+                },
+                {
+                    name: 'app.main.toc.side.settings',
+                    config: {
+                        url: 'settings',
+                        views: {
+                            contentPlug: {
+                                templateUrl: templateRegistry.settings
                             }
                         }
                     }
@@ -78,8 +109,6 @@
                         views: {
                             contentPlug: {
                                 templateUrl: templateRegistry.toolbox
-
-                                //template: '<div>This is tools panel content. I said TOO00Ls!</div>'
                             }
                         }
                     }

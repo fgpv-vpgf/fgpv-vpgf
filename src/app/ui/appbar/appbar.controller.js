@@ -1,10 +1,20 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc function
+     * @name AppbarController
+     * @module app.ui.appbar
+     * @description
+     *
+     * The `AppbarController` controller handles the main application bar.
+     * Right now it's hacked together for demo purposes.
+     */
     angular
         .module('app.ui.appbar')
         .controller('AppbarController', AppbarController);
 
+    /* @ngInject */
     function AppbarController(layoutService, $state) {
         var self = this;
 
