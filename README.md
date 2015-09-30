@@ -6,11 +6,13 @@ Federal Geospatial Platform Visualiser / Visualisateur pour la Plateforme géosp
 ## Getting Started
 
 Requirements:
+
 - [NodeJS](https://nodejs.org/)
 - Bower `npm install -g bower`
 - Gulp `npm install -g gulp`
 
 Running a local build:
+
 0. Checkout the repo
 0. Switch to the develop branch (master is for stable, released code)
 0. Run `npm install` to install dependencies
