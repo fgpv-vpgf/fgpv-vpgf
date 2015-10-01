@@ -29,8 +29,8 @@ module.exports = function () {
         indexProtractor: src + 'index-protractor.html',
 
         js: [
-            app + '**/*module*.js',
-            app + '**/*.js',
+            app + '*/**/*.js',
+            app + 'app.module.js',
             app + 'app-seed.js',
             '!' + app + '**/*.spec.js'
         ],
