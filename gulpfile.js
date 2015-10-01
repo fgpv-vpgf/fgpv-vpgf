@@ -118,6 +118,7 @@ gulp.task('jsbuild', 'Annotate, transpile and concat JS development files',
                 single_quotes: true
             }))
             .pipe($.babel())
+            .pipe($.angularFilesort())
             .pipe($.concat(config.jsSingleFile))
             .pipe($.sourcemaps.write('.'))
             .pipe(gulp.dest(config.build));
