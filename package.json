@@ -36,6 +36,7 @@
     "jasmine-core": "^2.3.4",
     "jshint-stylish": "^2.0.1",
     "karma": "~0.12",
+    "karma-babel-preprocessor": "^5.2.2",
     "karma-chrome-launcher": "^0.1.12",
     "karma-coverage": "^0.4.2",
     "karma-firefox-launcher": "^0.1.6",
