@@ -11,11 +11,11 @@ module.exports = function () {
     var bowerModules = './lib/';
 
     var root = path.resolve('./');
-    var src = './src/'
-    var build = './dist/';
+    var src = './src/'; // source files
+    var build = './build/'; // build target, suitable for usage as a dev server
+    var dist = './dist/'; // contains packaged builds (ex: tgz and zip)
     var app = src + 'app/';
 
-    var temp = './.tmp/';
     var report = './report/';
 
     var bowerdir = './lib/';
@@ -52,19 +52,26 @@ module.exports = function () {
             bowerdir + 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
         ],
 
-        scss: src + 'content/styles/main.scss',
-        css: temp + 'main.css',
-        csslib: [
+        // please rename if there are better shorter names
+        jsSingleFile: 'app.js',
+        jsSingleFilePath: build + 'app.js', // too annoying to hoist jsSingleFile
 
-        ],
+        scss: src + 'content/styles/main.scss',
+        css: build + 'main.css',
+        csslib: [ ],
 
         // all html template files
         htmltemplates: app + '**/*.html',
         // angular template cache file to be injected
-        templates: temp + 'templates.js',
+        templates: build + 'templates.js',
 
         specHelpers: [src + 'test/*.js'], // bind-polyfill,
         specs: [app + '**/*.spec.js'],
+
+        staticAssets: [
+            src + 'content/images/**',
+            src + 'locales/**'
+        ],
 
         vetjs: [src + '**/*.js'],
 
@@ -90,8 +97,8 @@ module.exports = function () {
 
         app: app,
         src: src,
-        temp: temp,
         build: build,
+        dist: dist,
         root: root,
         report: report,
 
@@ -150,7 +157,7 @@ module.exports = function () {
             preprocessors: {}
         };
 
-        options.preprocessors[app + '**/!(*.spec)+(.js)'] = ['coverage'];
+        options.preprocessors[app + '**/!(*.spec)+(.js)'] = ['coverage', 'babel'];
 
         return options;
     }

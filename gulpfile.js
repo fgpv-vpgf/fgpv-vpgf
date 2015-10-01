@@ -63,7 +63,7 @@ gulp.task('templatecache', 'Create a cache of HTML templates', ['clean-templates
             config.templateCache.file,
             config.templateCache.options
         ))
-        .pipe(gulp.dest(config.temp));
+        .pipe(gulp.dest(config.build));
 });
 
 /**
@@ -71,7 +71,7 @@ gulp.task('templatecache', 'Create a cache of HTML templates', ['clean-templates
  * @param  {Function} done - callback when complete
  */
 gulp.task('clean', 'Delete all build and report files', ['clean-sass', 'clean-templates'], function (done) {
-    var delconfig = [].concat(config.build, config.temp, config.report);
+    var delconfig = [].concat(config.build, config.report);
     log('Cleaning: ' + $.util.colors.blue(delconfig));
     del(delconfig, done);
 });
@@ -101,13 +101,36 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
             .pipe($.sass().on('error', $.sass.logError))
             .pipe($.autoprefixer('last 2 version', '> 5%'))
 
-            .pipe(gulp.dest(config.temp))
+            .pipe(gulp.dest(config.build))
 
             .pipe($.connect.reload());
     }
 );
 
-gulp.task('inject', 'Adds configured dependencies to the HTML page', ['sass', 'templatecache'],
+gulp.task('jsbuild', 'Annotate, transpile and concat JS development files',
+    function () {
+        return gulp
+            .src(config.js)
+            .pipe($.sourcemaps.init())
+            .pipe($.ngAnnotate({
+                remove: true,
+                add: true,
+                single_quotes: true
+            }))
+            .pipe($.babel())
+            .pipe($.concat(config.jsSingleFile))
+            .pipe($.sourcemaps.write('.'))
+            .pipe(gulp.dest(config.build));
+    }
+);
+
+gulp.task('assetcopy','Copy fixed assets to the build directory',
+    function () {
+        return gulp.src(config.staticAssets, {base:config.src})
+            .pipe(gulp.dest(config.build));
+    });
+
+gulp.task('inject', 'Adds configured dependencies to the HTML page', ['sass', 'templatecache', 'jsbuild'],
     function () {
         log('Injecting JS, CSS');
 
@@ -124,27 +147,14 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page', ['sass', 't
             .src(index)
 
             .pipe(inject(config.jslib, 'vendor'))
-            .pipe(inject(js, '', config.jsOrder))
+            .pipe(inject(config.jsSingleFilePath, ''))
 
             .pipe(inject(config.csslib, 'vendor'))
             .pipe(inject(config.css))
 
             .pipe(inject(config.templates, 'templates'))
 
-            .pipe(gulp.dest(config.src));
-    }
-);
-
-gulp.task('annotate', 'Adds guards against minification for Angular depnendency injection',
-    function () {
-        return gulp
-            .src(config.js)
-            .pipe($.ngAnnotate({
-                remove: true,
-                add: true,
-                single_quotes: true
-            }))
-            .pipe(gulp.dest('dist-test'));
+            .pipe(gulp.dest(config.build));
     }
 );
 
@@ -159,12 +169,10 @@ gulp.task('serve:dev', 'Build the application and start a local development serv
         if (args.test) {
             startTests(false);
         }
-
         serve(true);
-    }, {
+    },{
         aliases: ['serve']
-    }
-);
+    });
 
 /**
  * Run specs once and exit
