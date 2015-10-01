@@ -6,6 +6,7 @@ var del = require('del');
 var pkg = require('./package.json');
 var $ = require('gulp-load-plugins')({ lazy: true });
 var args = require('yargs').argv;
+var bowerFiles = require('main-bower-files');
 
 var config = require('./gulp.config')();
 
@@ -122,8 +123,14 @@ gulp.task('jsbuild', 'Annotate, transpile and concat JS development files',
             .pipe($.concat(config.jsSingleFile))
             .pipe($.sourcemaps.write('.'))
             .pipe(gulp.dest(config.build));
-    }
-);
+    });
+
+gulp.task('libbuild', 'Concat bower dependencies',
+    function () {
+        return gulp.src(bowerFiles())
+            .pipe($.concat(config.jsLibFile))
+            .pipe(gulp.dest(config.build));
+    });
 
 gulp.task('assetcopy','Copy fixed assets to the build directory',
     function () {
@@ -131,7 +138,7 @@ gulp.task('assetcopy','Copy fixed assets to the build directory',
             .pipe(gulp.dest(config.build));
     });
 
-gulp.task('inject', 'Adds configured dependencies to the HTML page', ['sass', 'templatecache', 'jsbuild'],
+gulp.task('inject', 'Adds configured dependencies to the HTML page', ['sass', 'templatecache', 'jsbuild', 'libbuild', 'assetcopy'],
     function () {
         log('Injecting JS, CSS');
 
@@ -147,7 +154,7 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page', ['sass', 't
         return gulp
             .src(index)
 
-            .pipe(inject(config.jslib, 'vendor'))
+            .pipe(inject(config.jsLibFilePath, 'vendor'))
             .pipe(inject(config.jsSingleFilePath, ''))
 
             .pipe(inject(config.csslib, 'vendor'))

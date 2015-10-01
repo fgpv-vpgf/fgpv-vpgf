@@ -21,5 +21,8 @@
         "angular-translate-loader-static-files": "^2.7.2",
 
         "html5-boilerplate": "~5.2.0"
+    },
+    "overrides": {
+        "angular-material": { "main": "angular-material.js" }
     }
 }

@@ -1,4 +1,5 @@
 var path = require('path');
+var bowerFiles = require('main-bower-files');
 
 module.exports = function () {
     var client = './src/client/';
@@ -41,20 +42,12 @@ module.exports = function () {
             '**/*.js',
             '**/app-seed.js'
         ],
-        jslib: [
-            bowerdir + 'angular/angular.js',
-            bowerdir + 'angular-animate/angular-animate.js',
-            bowerdir + 'angular-aria/angular-aria.js',
-            bowerdir + 'angular-ui-router/release/angular-ui-router.js',
-            bowerdir + 'angular-material/angular-material.js',
-            bowerdir + 'angular-sanitize/angular-sanitize.js',
-            bowerdir + 'angular-translate/angular-translate.js',
-            bowerdir + 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
-        ],
 
         // please rename if there are better shorter names
         jsSingleFile: 'app.js',
         jsSingleFilePath: build + 'app.js', // too annoying to hoist jsSingleFile
+        jsLibFile: 'lib.js',
+        jsLibFilePath: build + 'lib.js',
 
         scss: src + 'content/styles/main.scss',
         css: build + 'main.css',
@@ -101,6 +94,7 @@ module.exports = function () {
         dist: dist,
         root: root,
         report: report,
+        libdir: bowerdir,
 
         //alljs: [
         //    './src/**/*.js',
@@ -132,7 +126,7 @@ module.exports = function () {
     function getKarmaOptions() {
         var options = {
             files: [].concat(
-                config.jslib,
+                bowerFiles(),
                 bowerModules + 'angular-mocks/angular-mocks.js',
                 bowerModules + 'sinon/index.js',
                 bowerModules + 'bardjs/dist/bard.js',
