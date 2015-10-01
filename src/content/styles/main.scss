@@ -1,5 +1,4 @@
-﻿/* Want to try using OOCSS and SMACSS according to this article: https://mattstauffer.co/blog/organizing-css-oocss-smacss-and-bem */
-
+/* Want to try using OOCSS and SMACSS according to this article: https://mattstauffer.co/blog/organizing-css-oocss-smacss-and-bem */
 @import "../../../lib/angular-material/angular-material";
 
 .fgpv {
@@ -11,18 +10,20 @@
     @import "layout/_all.scss";
     @import "_shame.scss";
 
+    *,
+    *:before,
+    *:after {
+        box-sizing: border-box;
+    }
+
+    box-sizing: border-box;
+
     //TODO: remove fake map image
-    background-image: url('http://i.imgur.com/CWVBK6E.png');
+    background-image: url("http://i.imgur.com/CWVBK6E.png");
 
     // temporary stuff below; need to remove
     position: relative;
     overflow: hidden;
-
-    md-whiteframe {
-      background: #fff;
-      margin: 20px;
-      padding: 20px;
-    }
 
     .loading-splash {
         position: absolute;
@@ -36,5 +37,4 @@
         vertical-align: middle;
         z-index: 10000;
     }
-
 }

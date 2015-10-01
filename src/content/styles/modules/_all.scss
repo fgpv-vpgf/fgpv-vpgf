@@ -1,6 +1,7 @@
 /* Includes definitions for our modules, or objects. The goal is for as much code to exist in here as possible, making it flexible and reusable. This file will just be a list of modules defined (and documented) one after another.*/
 // import all module files here
 
+@import "_buttons.scss";
 @import "_panel-plug.scss";
 @import "_content-plug.scss";
 @import "_app-menu.scss";
@@ -8,6 +9,7 @@
 @import "_content-pane.scss";
 @import "_rv-whiteframe.scss";
 
+@include buttons;
 @include sidenav;
 @include appbar;
 @include content-pane;

@@ -26,12 +26,14 @@
         $xFrom: $by;
     }
 
+    $duration: $swift-ease-in-duration * 1.5;
+
     &.ng-enter,
     &.ng-leave {
-        transition: none $swift-ease-in-duration * 1.5 $swift-ease-in-out-timing-function;
+        transition: none $duration $swift-ease-in-out-timing-function;
 
         .content-pane {
-            transition: all $swift-ease-in-duration * 1.5 $swift-ease-in-out-timing-function;
+            transition: all $duration $swift-ease-in-out-timing-function;
         }
     }
 
@@ -51,7 +53,7 @@
     }
 
     &.ng-leave-active .content-pane {
-        transform: translate3d($xFrom, -$yFrom, 0);
+        transform: translate3d(-$xFrom, -$yFrom, 0);
         opacity: 0;
     }
 }
