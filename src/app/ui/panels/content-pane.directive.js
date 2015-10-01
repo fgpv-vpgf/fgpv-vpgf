@@ -8,6 +8,7 @@
      * @description
      *
      * The `rvContentPane` directive is a panel inner container holding the panel's content.
+     *
      */
     angular
         .module('app.ui.panels')
@@ -19,7 +20,8 @@
             restrict: 'E',
             templateUrl: 'app/ui/panels/content-pane.html',
             scope: {
-                title: '@'
+                title: '@',
+                titleStyle: '@'
             },
             transclude: true,
             link: linkFunc,
@@ -30,7 +32,7 @@
 
         return directive;
 
-        function linkFunc(/*scope, el, attr, ctrl*/) {
+        function linkFunc() { // scope, el, attr, ctrl ) {
 
         }
     }

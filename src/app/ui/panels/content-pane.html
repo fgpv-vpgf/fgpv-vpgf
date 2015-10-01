@@ -1,5 +1,7 @@
-<md-content class="content-pane layout-padding">
-    <h2 class="md-title">{{self.title}}</h2>
+<md-content class="content-pane layout-padding" ng-switch on="self.titleStyle">
+    <h2 class="md-headline" ng-switch-when="headline">{{self.title}}</h2>
+    <h3 class="md-title" ng-switch-when="title">{{self.title}}</h3>
+    <h4 class="md-subhead" ng-switch-when="subhead">{{self.title}}</h4>
     <md-divider></md-divider>
     <ng-transclude></ng-transclude>
 </md-content>

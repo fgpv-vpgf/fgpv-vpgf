@@ -11,6 +11,27 @@
 [ui-view='panelPlug'] {
     @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height, $bottom: $viewport-gutter, $width: $toolbar-width);
 
+    &.active {
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            border-top: 1px solid $divider-color;
+            z-index: 1;
+        }
+
+        &.ng-enter,
+        &.ng-leave {
+            &:before {
+                left: 10px;
+                right: 10px;
+            }
+        }
+    }
+
     &.stagger {
         @include plug-transition-delay;
     }
@@ -21,7 +42,27 @@
 }
 
 [ui-view='sidePanelPlug'] {
-    @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: 350px, $from: left);
+    @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
+
+    &.active {
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 1px;
+            border-left: 1px solid $divider-color;
+            z-index: 1;
+        }
+
+        &.ng-enter,
+        &.ng-leave {
+            &:before {
+                bottom: 10px;
+            }
+        }
+    }
 
     [ui-view='contentPlug'] {
         @include content-plug;

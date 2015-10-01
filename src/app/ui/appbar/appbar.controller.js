@@ -22,6 +22,10 @@
         self.toggleSets = toggleSets;
         self.toggleTools = toggleTools;
 
+        // TODO: hacky method of highlighting currently selected button; needs replacement
+        self.setsSelected = false;
+        self.toolsSelected = false;
+
         activate();
 
         function activate() {
@@ -35,10 +39,13 @@
                 $state.go('app.main.toc', {}, {
                     location: false
                 });
+                self.setsSelected = true;
+                self.toolsSelected = false;
             } else {
                 $state.go('app', {}, {
                     location: false
                 });
+                self.setsSelected = false;
             }
         }
 
@@ -47,10 +54,13 @@
                 $state.go('app.main.toolbox', {}, {
                     location: false
                 });
+                self.setsSelected = false;
+                self.toolsSelected = true;
             } else {
                 $state.go('app', {}, {
                     location: false
                 });
+                self.toolsSelected = false;
             }
         }
     }
