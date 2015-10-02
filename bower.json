@@ -1,8 +1,8 @@
 {
     "name": "r2v2",
     "description": "A starter project for AngularJS",
-    "version": "0.0.0",
-    "homepage": "https://github.com/angular/angular-seed",
+    "version": "0.1.0",
+    "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf",
     "license": "MIT",
     "private": true,
     "devDependencies": {
@@ -18,8 +18,9 @@
         "angular-material": "#master",
         "angular-ui-router": "^0.2.15",
         "angular-translate": "^2.7.2",
-        "angular-translate-loader-static-files": "^2.7.2",
-
-        "html5-boilerplate": "~5.2.0"
+        "angular-translate-loader-static-files": "^2.7.2"
+    },
+    "overrides": {
+        "angular-material": { "main": "angular-material.js" }
     }
 }
