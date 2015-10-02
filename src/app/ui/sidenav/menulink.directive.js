@@ -28,8 +28,8 @@
 
         return directive;
 
-        function linkFunc(scope, el, attr, ctrl) {
-            console.log(scope, el, attr, ctrl);
+        function linkFunc() { //scope, el, attr, ctrl) {
+            //console.log(scope, el, attr, ctrl);
         }
     }
 
