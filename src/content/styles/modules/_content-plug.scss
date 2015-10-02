@@ -1,4 +1,4 @@
-@mixin content-plug($from: top, $by: 30px) {
+@mixin content-plug($from: top, $by: 20px) {
     $yFrom: 0;
     $yTo: 0;
     $xFrom: 0;
@@ -26,17 +26,20 @@
         $xFrom: $by;
     }
 
+    $duration: 280ms;
+
     &.ng-enter,
     &.ng-leave {
-        transition: none $swift-ease-in-duration * 1.5 $swift-ease-in-out-timing-function;
+        transition: none $duration $swift-ease-in-out-timing-function;
 
         .content-pane {
-            transition: all $swift-ease-in-duration * 1.5 $swift-ease-in-out-timing-function;
+            transition: all $duration $swift-ease-in-out-timing-function;
         }
     }
 
     &.ng-enter .content-pane {
         transform: translate3d($xFrom, $yFrom, 0);
+        transition-delay: $duration / 2; // enter delay lets leave pane disappear preventing overlap
         opacity: 0;
     }
 
@@ -51,7 +54,7 @@
     }
 
     &.ng-leave-active .content-pane {
-        transform: translate3d($xFrom, -$yFrom, 0);
+        transform: translate3d(-$xFrom, -$yFrom, 0);
         opacity: 0;
     }
 }

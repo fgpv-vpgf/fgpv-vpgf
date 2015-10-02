@@ -1,18 +1,22 @@
 // Primary mixin
-
 @mixin appbar {
-    md-toolbar {
+    .main-appbar {
+        box-sizing: border-box;
+        height: $toolbar-height;
         min-height: $toolbar-height;
         z-index: auto;
-        
-        > .md-toolbar-tools {
-            height: $toolbar-height;
-            max-height: $toolbar-height;
+        background: white;
+        width: $toolbar-width;
+
+        /*border: 1px solid rgba(0, 0, 0, 0);
+
+        &.bottom {
+            border-bottom-color: $divider-color;
         }
 
-        &.main-appbar {
-            width: $toolbar-width;
-        }
+        &.right {
+            border-right-color: $divider-color;
+        }*/
     }
 }
 
