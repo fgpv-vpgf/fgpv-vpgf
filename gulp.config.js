@@ -63,7 +63,8 @@ module.exports = function () {
 
         staticAssets: [
             src + 'content/images/**',
-            src + 'locales/**'
+            src + 'locales/**',
+            src + 'config*.json'
         ],
 
         vetjs: [src + '**/*.js'],
