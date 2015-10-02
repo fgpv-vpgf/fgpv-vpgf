@@ -22,7 +22,7 @@
          * Open and close are native browser functions for opening and closing windows.
          * To prevent JShint's "already defined" error, we use shadow and unused switches.
          */
-        var service = {
+        const service = {
             open: open,
             close: close,
             toggle: toggle

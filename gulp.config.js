@@ -1,4 +1,5 @@
 var path = require('path');
+var bowerFiles = require('main-bower-files');
 
 module.exports = function () {
     var client = './src/client/';
@@ -11,11 +12,11 @@ module.exports = function () {
     var bowerModules = './lib/';
 
     var root = path.resolve('./');
-    var src = './src/'
-    var build = './dist/';
+    var src = './src/'; // source files
+    var build = './build/'; // build target, suitable for usage as a dev server
+    var dist = './dist/'; // contains packaged builds (ex: tgz and zip)
     var app = src + 'app/';
 
-    var temp = './.tmp/';
     var report = './report/';
 
     var bowerdir = './lib/';
@@ -29,8 +30,8 @@ module.exports = function () {
         indexProtractor: src + 'index-protractor.html',
 
         js: [
-            app + '**/*module*.js',
-            app + '**/*.js',
+            app + '*/**/*.js',
+            app + 'app.module.js',
             app + 'app-seed.js',
             '!' + app + '**/*.spec.js'
         ],
@@ -41,30 +42,30 @@ module.exports = function () {
             '**/*.js',
             '**/app-seed.js'
         ],
-        jslib: [
-            bowerdir + 'angular/angular.js',
-            bowerdir + 'angular-animate/angular-animate.js',
-            bowerdir + 'angular-aria/angular-aria.js',
-            bowerdir + 'angular-ui-router/release/angular-ui-router.js',
-            bowerdir + 'angular-material/angular-material.js',
-            bowerdir + 'angular-sanitize/angular-sanitize.js',
-            bowerdir + 'angular-translate/angular-translate.js',
-            bowerdir + 'angular-translate-loader-static-files/angular-translate-loader-static-files.js'
-        ],
+
+        // please rename if there are better shorter names
+        jsSingleFile: 'app.js',
+        jsSingleFilePath: build + 'app.js', // too annoying to hoist jsSingleFile
+        jsLibFile: 'lib.js',
+        jsLibFilePath: build + 'lib.js',
 
         scss: src + 'content/styles/main.scss',
-        css: temp + 'main.css',
-        csslib: [
-
-        ],
+        css: build + 'main.css',
+        csslib: [ ],
 
         // all html template files
         htmltemplates: app + '**/*.html',
         // angular template cache file to be injected
-        templates: temp + 'templates.js',
+        templates: build + 'templates.js',
 
         specHelpers: [src + 'test/*.js'], // bind-polyfill,
         specs: [app + '**/*.spec.js'],
+
+        staticAssets: [
+            src + 'content/images/**',
+            src + 'locales/**',
+            src + 'config*.json'
+        ],
 
         vetjs: [src + '**/*.js'],
 
@@ -90,10 +91,11 @@ module.exports = function () {
 
         app: app,
         src: src,
-        temp: temp,
         build: build,
+        dist: dist,
         root: root,
         report: report,
+        libdir: bowerdir,
 
         //alljs: [
         //    './src/**/*.js',
@@ -125,7 +127,7 @@ module.exports = function () {
     function getKarmaOptions() {
         var options = {
             files: [].concat(
-                config.jslib,
+                bowerFiles(),
                 bowerModules + 'angular-mocks/angular-mocks.js',
                 bowerModules + 'sinon/index.js',
                 bowerModules + 'bardjs/dist/bard.js',
@@ -150,7 +152,7 @@ module.exports = function () {
             preprocessors: {}
         };
 
-        options.preprocessors[app + '**/!(*.spec)+(.js)'] = ['coverage'];
+        options.preprocessors[app + '**/!(*.spec)+(.js)'] = ['coverage', 'babel'];
 
         return options;
     }

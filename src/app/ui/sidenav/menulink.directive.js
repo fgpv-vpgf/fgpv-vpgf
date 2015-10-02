@@ -14,7 +14,7 @@
         .directive('rvMenuLink', rvMenuLink);
 
     function rvMenuLink() {
-        var directive = {
+        let directive = {
             restrict: 'E',
             templateUrl: 'app/ui/sidenav/menulink.html',
             scope: {
@@ -35,7 +35,7 @@
 
     /* @ngInject */
     function Controller() {
-        var self = this;
+        let self = this;
         console.log('--', self.section);
 
         activate();
