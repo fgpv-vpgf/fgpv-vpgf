@@ -1,4 +1,5 @@
-<div class="shell layout layout-fill" ng-controller="ShellController as self" state="{{self.$state.current.name}}">
+<div class="shell layout layout-fill md-body-1" ng-controller="ShellController as self"
+    state="{{self.$state.current.name}}">
     <ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
 
     <div class="inner-shell" layout="column">
@@ -6,7 +7,7 @@
             <span>Loading</span>
         </div>
 
-        <div ng-class="{ active: self.active }"  ui-view='appbarPlug'></div>
+        <div ng-class="{ active: self.active }" ui-view='appbarPlug'></div>
 
         <div ng-class="{ active: self.active, stagger: self.isStaggering }" ui-view='panelPlug'></div>
         <div ng-class="{ active: self.active }" ui-view='sidePanelPlug'></div>

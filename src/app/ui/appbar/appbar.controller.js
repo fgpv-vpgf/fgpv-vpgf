@@ -19,8 +19,12 @@
         var self = this;
 
         self.layoutService = layoutService;
-        self.toggleSets = toggleSets;
-        self.toggleTools = toggleTools;
+        self.toggleToc = toggleToc;
+        self.toggleToolbox = toggleToolbox;
+
+        // FIXME: hacky method of highlighting currently selected button; needs replacement
+        self.tocSelected = false;
+        self.toolboxSelected = false;
 
         activate();
 
@@ -29,28 +33,34 @@
         }
 
         // hacky way to toggle panels;
-        // TODO: replace with a sane method
-        function toggleSets() {
+        // FIXME: replace with a sane method
+        function toggleToc() {
             if ($state.current.name.indexOf('toc') === -1) {
                 $state.go('app.main.toc', {}, {
                     location: false
                 });
+                self.tocSelected = true;
+                self.toolboxSelected = false;
             } else {
                 $state.go('app', {}, {
                     location: false
                 });
+                self.tocSelected = false;
             }
         }
 
-        function toggleTools() {
+        function toggleToolbox() {
             if ($state.current.name.indexOf('toolbox') === -1) {
                 $state.go('app.main.toolbox', {}, {
                     location: false
                 });
+                self.tocSelected = false;
+                self.toolboxSelected = true;
             } else {
                 $state.go('app', {}, {
                     location: false
                 });
+                self.toolboxSelected = false;
             }
         }
     }

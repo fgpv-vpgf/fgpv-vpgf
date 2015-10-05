@@ -1,0 +1,42 @@
+@mixin buttons {
+    @include icon-button;
+}
+
+@mixin icon-button {
+    .md-icon-button {
+        md-icon {
+            opacity: 0.62;
+        }
+
+        &:hover,
+        &:focus {
+            md-icon {
+                opacity: 0.8;
+            }
+        }
+
+        &.selected {
+            md-icon {
+                opacity: 1;
+            }
+        }
+
+        &.black {
+            @include icon;
+        }
+
+        &.accent {
+            @include icon($accent-color);
+        }
+
+        &.primary {
+            @include icon($primary-color);
+        }
+    }
+}
+
+@mixin icon($color: black) {
+    md-icon {
+        color: $color;
+    }
+}
