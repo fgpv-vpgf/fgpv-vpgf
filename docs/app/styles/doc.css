@@ -1,0 +1,86 @@
+
+.site-sidenav {
+    background: #106CC8;
+}
+
+.site-content-toolbar {
+    background: #f6f6f6 !important;
+    color: #202020 !important;
+    z-index: 3;
+}
+
+.nav-header {
+    background-color: #106CC8;
+    background: linear-gradient(#185694, #106cc8);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #185694), color-stop(1, #106cc8));
+    background: -webkit-linear-gradient(top, #185694 0%, #106cc8 100%);
+    background: -moz-linear-gradient(top, #185694 0%, #106cc8 100%);
+    background: linear-gradient(top, #185694 0%, #106cc8 100%);
+    border-bottom: 1px solid #267ED5;
+    flex-shrink: 0;
+    z-index: 2;
+    height:218px;// added by jkw
+}
+
+.md-whiteframe-glow-z1 {
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.14), 0px 0px 2px 2px rgba(0, 0, 0, 0.098), 0px 0px 5px 1px rgba(0, 0, 0, 0.084);
+}
+
+.site-sidenav > * {
+    min-width: 218px;
+}
+
+
+.site-sidenav md-content {
+  background: transparent;
+}
+
+.docs-menu .md-button {
+    border-radius: 0;
+    color: white;
+    cursor: pointer;
+    display: block;
+    align-items: inherit;
+    line-height: 40px;
+    margin: 0;
+    max-height: 40px;
+    overflow: hidden;
+    padding: 0px 16px;
+    text-align: left;
+    text-decoration: none;
+    white-space: normal;
+    width: 100%;
+}
+
+
+.docs-logotype {
+    color: white;
+    text-align: center;
+    font-weight: 400;
+    font-size: 26px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+ul.gc_menu li{
+    color: white;
+    display: block;
+    line-height: 40px;
+    margin: 0;
+    padding: 0px 16px;
+    text-align: left;
+    text-decoration: none;
+    width: 100%;
+}
+ul.gc_menu {
+    margin:0;
+    padding:0;
+}
+
+.gc_menu a{
+    text-decoration: none;
+    color: white;
+}
