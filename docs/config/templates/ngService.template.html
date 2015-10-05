@@ -1,0 +1,12 @@
+
+<md-toolbar layout="row" class="site-content-toolbar md-whiteframe-glow-z1"><h2 layout-padding  >{$ doc.name $}</h2></md-toolbar>
+<md-content flex layout-padding >
+	<h3>service in {$ doc.module | relativeLink(doc) $}</h3>
+
+	<div>
+	  {$ doc.description | marked $}
+	</div>
+
+	{% include "partials/dependencies.template.html" %}
+	{% include "partials/methods.template.html" %}
+</md-content>
