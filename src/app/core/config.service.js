@@ -29,7 +29,7 @@
 
     /* @ngInject */
     function configService($q, $rootElement, $timeout, $http, configDefaults) {
-        var initDeferred = $q.defer();
+        var initializePromise;
         var isInitialized = false;
 
         var service = {
@@ -43,62 +43,70 @@
         ////////////////
 
         function initialize() {
-            var configAttr = $rootElement.attr('th-config');
-            var configJson;
-
-            // This function can only be called once.
-            if (isInitialized) {
-                return initDeferred.promise;
+            if (initializePromise) {
+                return initializePromise;
             }
 
-            // check if config attribute exist
-            if (configAttr) {
-                // check if it's a valid JSON
-                try {
-                    configJson = angular.fromJson(configAttr);
-                    configInitialized(configJson);
-                } catch (e) {
-                    console.log('Not valid JSON');
+            // store the promise and return it on all future calls; this way initialize can be called one time only
+            initializePromise = $q(function (fulfill, reject) {
+                var configAttr = $rootElement.attr('th-config');
+                var configJson;
+
+                // This function can only be called once.
+                if (isInitialized) {
+                    return fulfill();
                 }
 
-                // try to load config file
-                if (!configJson) {
-                    $http
-                        .get(configAttr)
-                        .then(function (data) {
-                            if (data.data) {
-                                configJson = data.data;
-                            }
+                // check if config attribute exist
+                if (configAttr) {
+                    // check if it's a valid JSON
+                    try {
+                        configJson = angular.fromJson(configAttr);
+                        configInitialized(configJson);
+                    } catch (e) {
+                        console.log('Not valid JSON');
+                    }
 
-                            // simulate delay to show loading splash
-                            $timeout(function () {
-                                configInitialized(configJson);
-                            }, 2000);
+                    // try to load config file
+                    if (!configJson) {
+                        $http
+                            .get(configAttr)
+                            .then(function (data) {
+                                if (data.data) {
+                                    configJson = data.data;
+                                }
 
-                            //configInitialized(configJson);
-                        });
+                                // simulate delay to show loading splash
+                                return $timeout(function () {
+                                    configInitialized(configJson);
+                                }, 2000);
+                            })
+                            .catch(function (error) {
+                                console.log('Config initialization failed:',
+                                    error);
+                                reject();
+                            });
+                    }
+                } else {
+                    configInitialized({});
                 }
-            } else {
-                configInitialized({});
-            }
 
-            return initDeferred.promise;
+                function configInitialized(config) {
+                    // apply any defaults from layoutConfigDefaults, then merge config on top
+                    // TODO: this is an exampe; actual merging of the defaults is more complicated
+                    angular.merge(service.data, configDefaults, config);
 
-            function configInitialized(config) {
-                // apply any defaults from layoutConfigDefaults, then merge config on top
-                // TODO: this is an exampe; actual merging of the defaults is more complicated
-                angular.merge(service.data, configDefaults, config);
+                    isInitialized = true;
 
-                isInitialized = true;
+                    return fulfill();
+                }
+            });
 
-                initDeferred.resolve();
-            }
+            return initializePromise;
         }
 
         function ready(nextPromises) {
-            var readyPromise = initDeferred.promise;
-
-            return readyPromise
+            return initializePromise
                 .then(function () {
                     console.log('Ready promise resolved.');
                     return $q.all(nextPromises);
