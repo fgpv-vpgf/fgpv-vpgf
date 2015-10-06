@@ -229,16 +229,38 @@ function serve(isDev) {
         ;
 
         gulp
-            .watch(config.watchjs)
-            .on('change', reload)
+            .watch(config.watchjs, ['reloadapp'])
+            .on('change', logWatch)
         ;
 
         gulp
-            .watch(config.watchhtml, ['templatecache'])
-            .on('change', reload)
+            .watch(config.watchhtml, ['reloadcache'])
+            .on('change', logWatch)
         ;
     }
 }
+
+/**
+ * Reloads app.js file on source files changes. Do not call directly.
+ * @return {Stream}
+ */
+gulp.task('reloadapp', 'Repackaging app...', ['jsbuild'], function () {
+    return gulp
+        .src(config.jsSingleFilePath)
+        .pipe($.connect.reload())
+    ;
+});
+
+/**
+ * Reloads template cache on template files changes. Do not call directly.
+ * @return {Stream}
+ */
+gulp.task('reloadcache', 'Repackaging templates...', ['templatecache'], function () {
+    return gulp
+        .src(config.jsSingleFilePath)
+        .pipe($.connect.reload())
+    ;
+});
 
 /**
  * Start the tests using karma.
@@ -310,18 +332,9 @@ function startPlatoVisualizer(done) {
 }
 
 /**
- * Reloads gulp-connect with whatever file has changed.
- *
+ * Log an event to the console.
+ * @param  {Object} event
  */
-function reload(event) {
-    logWatch(event);
-
-    gulp
-        .src(event.path)
-        .pipe($.connect.reload())
-    ;
-}
-
 function logWatch(event) {
     log('*** File ' + event.path + ' was ' + event.type + ', running tasks...');
 }
