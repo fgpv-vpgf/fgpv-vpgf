@@ -12,7 +12,7 @@ module.exports = new Package('dgeni-fgpv', [
 ])
 
 // add myRelativeLink to the package
-.factory(require('./processor/myRelativeLink'))
+.factory(require('./processor/myInternalRouteUrl'))
 .factory(require('./processor/myLinkModifier'))
 .factory(require('./processor/myApp'))
 // mddoc file reader
@@ -81,8 +81,8 @@ module.exports = new Package('dgeni-fgpv', [
 })
 
 // add filter to template engine
-.config(function(templateEngine, myRelativeLinkInlineTag, myLinkModifierFilter) {
-  templateEngine.filters.push(myRelativeLinkInlineTag);
+.config(function(templateEngine, myInternalRouteUrl, myLinkModifierFilter) {
+  templateEngine.filters.push(myInternalRouteUrl);
   templateEngine.filters.push(myLinkModifierFilter);
 })
 
