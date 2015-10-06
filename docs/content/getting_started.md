@@ -4,10 +4,6 @@
 
 <a name="top" />
 
-# Getting Started {#wb-cont}
-
-<div class="toc"></div>
-
 ## I want to download source code and build the RAMP viewer
 1. [Setup Build Tool](build-tool-en.html) for your platform.
 2. [Create a GitHub account](https://help.github.com/articles/signing-up-for-a-new-github-account).
