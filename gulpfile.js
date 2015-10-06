@@ -449,7 +449,7 @@ gulp.task('docs-clean', function() {
 /**
  * Build docs
  */
-gulp.task('docs-build',['docs-clean'], function() {
+gulp.task('docs-build', ['docs-clean'], function() {
   try {
     var dgeni = new Dgeni([require('./docs/config/dgeni-conf')]);
     return dgeni.generate();
@@ -461,7 +461,7 @@ gulp.task('docs-build',['docs-clean'], function() {
 
 // important task: copy site resources to the app folder; images, styles, app.js
 // !myDgeni/docs/app/js/**/*.txt is for exclusion.
-gulp.task('doc-resources', ['docs-build'], function() {
+gulp.task('docs-resources', ['docs-build'] ,function() {
   return gulp.src(['docs/app/**/*', '!docs/app/js/**/*.txt'])
   .pipe(gulp.dest('dist/docs/app'));
 });
@@ -483,4 +483,4 @@ gulp.task('serve:docs', 'Build the docs and start a local development server', [
     });
 
 // run doc generation
-gulp.task('dgeni', ['docs-clean', 'docs-build', 'doc-resources']);
+gulp.task('dgeni', ['docs-build','docs-resources']);

@@ -28,7 +28,7 @@ module.exports = new Package('dgeni-fgpv', [
   // 'mddocFileReader' in readFilesProcessor.sourceFiles
   readFilesProcessor.fileReaders.push(mddocFileReader);
 
-  log.level = 'debug'; // info, debug, silly
+  log.level = 'info'; // info, debug, silly
 
   readFilesProcessor.basePath = path.resolve(__dirname, '..');
   readFilesProcessor.sourceFiles = [
