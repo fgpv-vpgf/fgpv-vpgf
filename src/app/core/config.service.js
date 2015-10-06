@@ -43,8 +43,12 @@
         ////////////////
 
         function initialize() {
+            if (initializePromise) {
+                return initializePromise;
+            }
+
             // store the promise and return it on all future calls; this way initialize can be called one time only
-            return initializePromise || (initializePromise = $q(function (fulfill, reject) {
+            initializePromise = $q(function (fulfill, reject) {
                 var configAttr = $rootElement.attr('th-config');
                 var configJson;
 
@@ -96,7 +100,9 @@
 
                     return fulfill();
                 }
-            }));
+            });
+
+            return initializePromise;
         }
 
         function ready(nextPromises) {
