@@ -6,5 +6,5 @@
 
 	<p>{$ doc.description $}</p>
 
-	{$ doc.parent | relativeLink(doc, 'Go Up') $}
+	{$ doc.parent | myInternalRouteUrl(doc, 'Go Up') $}
 </md-content>

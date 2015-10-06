@@ -4,7 +4,7 @@
 <md-content layout-padding flex>
 <ul>
 {% for component in doc.children %}
-<li>{$ component | relativeLink(doc) $}
+<li>{$ component | myInternalRouteUrl(doc) $}
     {%- if component.description %} - {$ component.description $}{% endif -%}
 </li>
 {%- endfor %}
