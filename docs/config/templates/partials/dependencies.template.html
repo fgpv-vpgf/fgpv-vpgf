@@ -4,7 +4,7 @@
 <ul>
 {%- for dependency in doc.dependencies %}
   <li>
-  {$ dependency | relativeLink(doc) $}
+  {$ dependency | myInternalRouteUrl(doc) $}
   </li>
 {%- endfor %}
 </ul>
