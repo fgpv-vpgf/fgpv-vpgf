@@ -1,0 +1,23 @@
+{
+  "name": "geoApi",
+  "version": "0.0.0",
+  "homepage": "https://github.com/cynngah/geoApi",
+  "authors": [
+    "Cynthia (Qingwei) Li <Qingwei.Li@ec.gc.ca>"
+  ],
+  "main": "dist/geoApi.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "geoApi"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
