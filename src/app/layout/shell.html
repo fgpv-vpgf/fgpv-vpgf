@@ -7,6 +7,8 @@
             <span>Loading</span>
         </div>
 
+        <ng-include src="'app/ui/mapnav/mapnav.html'"></ng-include>
+
         <div ng-class="{ active: self.active }" ui-view='appbarPlug'></div>
 
         <div ng-class="{ active: self.active, stagger: self.isStaggering }" ui-view='panelPlug'></div>
@@ -20,6 +22,7 @@
             {{self.config.title}}
             and
             {{ 'page.title' | translate }}</md-whiteframe>
+
 
     </div>
 

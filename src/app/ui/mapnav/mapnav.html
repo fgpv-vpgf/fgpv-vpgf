@@ -1,0 +1,16 @@
+<div class='mapnav' ng-controller='MapNavigationController as self'>
+    <div class='rv-button-group hover rv-whiteframe-z2'>
+        <rv-mapnav-button control="self.service.controls.zoomIn" class="bold"></rv-mapnav-button>
+        <md-divider class="md-default-theme"></md-divider>
+        <rv-mapnav-button control="self.service.controls.zoomOut" class="bold"></rv-mapnav-button>
+    </div>
+    <div class='rv-button-group hover rv-whiteframe-z2'>
+        <rv-mapnav-button control="self.service.controls.geoLocation"></rv-mapnav-button>
+        <md-divider class="md-default-theme"></md-divider>
+        <rv-mapnav-button control="self.service.controls.marquee"></rv-mapnav-button>
+        <md-divider class="md-default-theme"></md-divider>
+        <rv-mapnav-button control="self.service.controls.home"></rv-mapnav-button>
+        <md-divider class="md-default-theme"></md-divider>
+        <rv-mapnav-button control="self.service.controls.history"></rv-mapnav-button>
+    </div>
+</div>

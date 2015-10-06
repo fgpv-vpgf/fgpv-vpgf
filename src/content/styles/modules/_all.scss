@@ -8,10 +8,12 @@
 @import "_appbar.scss";
 @import "_content-pane.scss";
 @import "_rv-whiteframe.scss";
+@import "_mapnav.scss";
 
 @include buttons;
 @include sidenav;
 @include appbar;
 @include content-pane;
+@include mapnav;
 
 @include rv-whiteframe-set;
