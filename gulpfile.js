@@ -113,7 +113,9 @@ gulp.task('jsbuild', 'Annotate, transpile and concat JS development files',
         return gulp
             .src(config.js)
             .pipe($.sourcemaps.init())
+            .pipe($.plumber())
             .pipe($.babel())
+            .pipe($.plumber.stop())
             .pipe($.ngAnnotate({
                 remove: true,
                 add: true,
