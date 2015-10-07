@@ -35,8 +35,8 @@
 
     /* @ngInject */
     function Controller() {
-        let self = this;
-        console.log('--', self.section);
+        //let self = this;
+        //console.log('--', self.section);
 
         activate();
 

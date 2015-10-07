@@ -1,6 +1,15 @@
 (function () {
     'use strict';
 
+    /**
+     * @ngdoc directive
+     * @name rvMapnavButton
+     * @module app.ui.mapnav
+     * @description
+     *
+     * The `rvMapnavButton` directive is a map navigation compoenent button.
+     *
+     */
     angular
         .module('app.ui.mapnav')
         .directive('rvMapnavButton', rvMapnavButton);

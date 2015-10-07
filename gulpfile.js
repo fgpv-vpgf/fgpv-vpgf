@@ -7,7 +7,6 @@ var pkg = require('./package.json');
 var $ = require('gulp-load-plugins')({ lazy: true });
 var args = require('yargs').argv;
 var bowerFiles = require('main-bower-files');
-var fs = require('fs');
 
 var config = require('./gulp.config')();
 

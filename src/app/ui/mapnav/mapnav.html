@@ -1,16 +1,36 @@
 <div class='mapnav' ng-controller='MapNavigationController as self'>
-    <div class='rv-button-group hover rv-whiteframe-z2'>
-        <rv-mapnav-button control="self.service.controls.zoomIn" class="bold"></rv-mapnav-button>
+    <ul class='rv-button-group hover rv-whiteframe-z2' ng-switch on="self.service.config.zoom">
+
+        <li ng-switch-when="buttons">
+            <rv-mapnav-button class="bold" control="self.service.controls.zoom.inButton"></rv-mapnav-button>
+        </li>
+        <li ng-switch-when="all">
+            <rv-mapnav-button class="bold" control="self.service.controls.zoom.inButton"></rv-mapnav-button>
+        </li>
+
+        <li ng-switch-when="slider">
+            <div>zoom slider only</div>
+        </li>
+        <li ng-switch-when="all">
+            <div>zoom slider</div>
+        </li>
+
+        <li ng-switch-when="buttons"></li>
         <md-divider class="md-default-theme"></md-divider>
-        <rv-mapnav-button control="self.service.controls.zoomOut" class="bold"></rv-mapnav-button>
-    </div>
-    <div class='rv-button-group hover rv-whiteframe-z2'>
-        <rv-mapnav-button control="self.service.controls.geoLocation"></rv-mapnav-button>
-        <md-divider class="md-default-theme"></md-divider>
-        <rv-mapnav-button control="self.service.controls.marquee"></rv-mapnav-button>
-        <md-divider class="md-default-theme"></md-divider>
-        <rv-mapnav-button control="self.service.controls.home"></rv-mapnav-button>
-        <md-divider class="md-default-theme"></md-divider>
-        <rv-mapnav-button control="self.service.controls.history"></rv-mapnav-button>
-    </div>
+
+        <li ng-switch-when="buttons">
+            <rv-mapnav-button class="bold" control="self.service.controls.zoom.outButton"></rv-mapnav-button>
+        </li>
+        <li ng-switch-when="all">
+            <rv-mapnav-button class="bold" control="self.service.controls.zoom.outButton"></rv-mapnav-button>
+        </li>
+    </ul>
+
+    <ul class='rv-button-group hover rv-whiteframe-z2'>
+        <li ng-repeat="extraControl in self.service.config.extra">
+            <rv-mapnav-button control="self.service.controls.extra[extraControl]"></rv-mapnav-button>
+            <!-- this will insert divider after every element except the last one -->
+            <md-divider ng-if="!$last"></md-divider>
+        </li>
+    </ul>
 </div>
