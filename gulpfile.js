@@ -12,9 +12,10 @@ gulp.task('check', 'Checks code against style guidelines', function () {
     return gulp
         .src('src/**/*.js')
         .pipe($.jshint())
-        .pipe($.jshint.reporter('jshint-stylish', {verbose:true}))
-        .pipe($.jshint.reporter('fail'))
-        .pipe($.jscs());
+        .pipe($.jscs())
+        .pipe($.jscsStylish.combineWithHintResults())   // combine with jshint results
+        .pipe($.jshint.reporter('jshint-stylish', { verbose:true }))
+        .pipe($.jshint.reporter('fail'));
 });
 
 gulp.task('build', 'Transpile and concatenate the code', function () {
@@ -33,5 +34,4 @@ gulp.task('test', 'Run unit tests in jasmine', ['build'], function () {
         .pipe($.jasmine());
 });
 
-
-gulp.task('default', 'Check style and unit tests', ['check','test']);
+gulp.task('default', 'Check style and unit tests', ['check', 'test']);
