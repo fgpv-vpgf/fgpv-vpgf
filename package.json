@@ -1,0 +1,33 @@
+{
+  "name": "geoApi",
+  "version": "0.0.0",
+  "description": "",
+  "main": "dist/geoApi.js",
+  "dependencies": {},
+  "devDependencies": {
+    "del": "^2.0.2",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-help": "^1.6.1",
+    "gulp-jasmine": "^2.1.0",
+    "gulp-jscs": "^3.0.1",
+    "gulp-jshint": "^1.11.2",
+    "gulp-load-plugins": "^1.0.0-rc.1",
+    "gulp-sourcemaps": "^1.6.0",
+    "jshint-stylish": "^2.0.1"
+  },
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fgpv-vpgf/geoApi.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fgpv-vpgf/geoApi/issues"
+  },
+  "homepage": "https://github.com/fgpv-vpgf/geoApi"
+}
