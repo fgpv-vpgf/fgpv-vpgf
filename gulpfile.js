@@ -7,6 +7,7 @@ var pkg = require('./package.json');
 var $ = require('gulp-load-plugins')({ lazy: true });
 var args = require('yargs').argv;
 var bowerFiles = require('main-bower-files');
+var fs = require('fs');
 
 var config = require('./gulp.config')();
 
@@ -110,10 +111,12 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
 
 gulp.task('jsbuild', 'Annotate, transpile and concat JS development files',
     function () {
+        injectError(false);
+
         return gulp
             .src(config.js)
             .pipe($.sourcemaps.init())
-            .pipe($.plumber())
+            .pipe($.plumber({ errorHandler: injectError}))
             .pipe($.babel())
             .pipe($.plumber.stop())
             .pipe($.ngAnnotate({
@@ -126,6 +129,20 @@ gulp.task('jsbuild', 'Annotate, transpile and concat JS development files',
             .pipe($.sourcemaps.write('.'))
             .pipe(gulp.dest(config.build));
     });
+
+// inject error css file into the index page if babel parser errors
+function injectError (error) {
+    var injector = '';
+    if (error) {
+        injector = '<link rel="stylesheet" href=".' + config.csserror + '">';
+        $.util.log(error);
+    }
+
+    return gulp
+        .src(config.build + '/index*.html')
+        .pipe($.replace(/<!-- inject:error -->([\s\S]*?)<!-- endinject -->/gi, '<!-- inject:error -->' + injector + '<!-- endinject -->' ))
+        .pipe(gulp.dest(config.build));
+}
 
 gulp.task('libbuild', 'Concat bower dependencies',
     function () {
@@ -346,10 +363,15 @@ function logWatch(event) {
  * @param   {Array} path   glob pattern for source files
  * @param   {String} label   The label name
  * @param   {Array} order   glob pattern for sort order of the files
+ * @param   {Boolean} relative   default is true
  * @returns {Stream}   The stream
  */
-function inject(src, label, order) {
-    var options = { read: false, relative: true };
+function inject(src, label, order, relative) {
+    if (typeof relative === 'undefined') {
+        relative = true;
+    }
+
+    var options = { read: false, relative: relative };
     if (label) {
         options.name = 'inject:' + label;
     }
