@@ -1,17 +1,17 @@
 /* globals define, exports */
 ;(function (root, factory) {
-  'use strict';
+    'use strict';
 
-  if (typeof define === 'function' && define.amd) {
-    define(['esri/tasks/PrintParameters', 'esri/tasks/PrintTemplate',
-     'esri/tasks/PrintTask'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('esri/tasks/PrintParameters'),
-     require('esri/tasks/PrintTemplate'),
-     require('esri/tasks/PrintTask'));
-  } else {
-    root.printService = factory(root.PrintParameters);
-  }
+    if (typeof define === 'function' && define.amd) {
+        define(['esri/tasks/PrintParameters', 'esri/tasks/PrintTemplate',
+            'esri/tasks/PrintTask'], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory(require('esri/tasks/PrintParameters'),
+            require('esri/tasks/PrintTemplate'),
+            require('esri/tasks/PrintTask'));
+    } else {
+        root.printService = factory(root.PrintParameters);
+    }
 
 }(this, function (PrintParameters, PrintTemplate, PrintTask) {
     'use strict';
@@ -34,7 +34,6 @@
         def.reject(event);
     });
 
-
     template.exportOptions = {
         width: mapDom.clientWidth,
         height: mapDom.clientHeight,
@@ -49,5 +48,5 @@
     console.log('submitting print job.  please wait');
     printTask.execute(params);
 
-  return {};
+    return {};
 }));
