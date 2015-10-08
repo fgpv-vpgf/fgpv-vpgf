@@ -440,10 +440,10 @@ function log(msg) {
 /**
  * Remove dgeni generated docs
  */
-gulp.task('docs-clean', function() {
+gulp.task('docs-clean', function(done) {
     return del([
         'dist/docs/**'
-        ]);
+        ], done);
 });
 
 /**
