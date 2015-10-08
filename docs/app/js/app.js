@@ -44,21 +44,31 @@
 
         .factory('menu', ['PAGES','API', '$location', '$rootScope', '$http', '$window', function(pages, api, $location, $rootScope, $http, $window) {
             
-            // can be add in manually
-            var sections = [{
+            
+            var sections= [];
+
+            // static content route can be add in manually
+            var contentDocs = [{
+                name: 'HOME',
+                url: '/',
+                type: 'link'
+            }];
+
+            // pages is split up by area, 0 for undefined
+            // currently only 1 area.
+            pages['undefined'].forEach(function(item) {
+                contentDocs.push({
+                    name: item.name,
+                    url: item.url,
+                    type: 'link'
+                });
+            });
+
+            sections.push({
                 name: 'Project Docs',
                 type: 'heading',
-                children: [{
-                    name: 'Home',
-                    url: '/',
-                    type: 'link'
-                },
-                {
-                    name: 'Getting Started',
-                    url: '/getting_started',
-                    type: 'link'
-                }]
-            }];
+                children: contentDocs
+            });
 
             // generated from *-data.js
             var apiDocs = [];
