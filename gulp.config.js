@@ -52,6 +52,7 @@ module.exports = function () {
         scss: src + 'content/styles/main.scss',
         css: build + 'main.css',
         csslib: [ ],
+        csserror: src + 'content/styles/_error.css',
 
         // all html template files
         htmltemplates: app + '**/*.html',
