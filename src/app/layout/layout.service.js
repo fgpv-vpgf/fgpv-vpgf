@@ -14,9 +14,10 @@
         .factory('layoutService', layoutService);
 
     /* @ngInject */
-    function layoutService(sideNavigationService) {
+    function layoutService(sideNavigationService, mapNavigationService) {
         var service = {
-            sidenav: sideNavigationService
+            sidenav: sideNavigationService,
+            mapnav: mapNavigationService
         };
 
         return service;

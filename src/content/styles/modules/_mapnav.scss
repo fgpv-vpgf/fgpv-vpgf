@@ -1,0 +1,7 @@
+@mixin mapnav {
+    .mapnav {
+        position: absolute;
+        bottom: 100px;
+        right: $viewport-gutter;
+    }
+}

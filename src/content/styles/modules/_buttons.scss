@@ -1,26 +1,11 @@
 @mixin buttons {
     @include icon-button;
+    @include mapnav-button;
+    @include button-group;
 }
 
 @mixin icon-button {
     .md-icon-button {
-        md-icon {
-            opacity: 0.62;
-        }
-
-        &:hover,
-        &:focus {
-            md-icon {
-                opacity: 0.8;
-            }
-        }
-
-        &.selected {
-            md-icon {
-                opacity: 1;
-            }
-        }
-
         &.black {
             @include icon;
         }
@@ -35,8 +20,108 @@
     }
 }
 
-@mixin icon($color: black) {
+@mixin mapnav-button {
+    rv-mapnav-button {
+        display: block;
+
+        //$default-bg-color: $primary-color;
+        //$default-icon-color: white;
+        $default-bg-color: white;
+        $default-icon-color: black;
+
+        .md-button {
+            margin: 0;
+            border-radius: 0;
+            background-color: $default-bg-color;
+            height: $map-nav-button-height;
+            line-height: $map-nav-button-height;
+            min-height: $map-nav-button-height;
+            width: $map-nav-button-width;
+            min-width: $map-nav-button-width;
+            @include icon($color: $default-icon-color, $opacity-to: 0.9);
+
+            md-icon {
+                font-size: $map-nav-button-font-size;
+                height: auto;
+                width: auto;
+            }
+
+            &:not([disabled]):hover,
+            &:not([disabled]).md-focused {
+                background-color: $default-bg-color;
+            }
+
+            .md-ripple-container {
+                border-radius: 0;
+            }
+        }
+
+        &.bold {
+            md-icon {
+                font-weight: bold;
+            }
+        }
+    }
+}
+
+@mixin icon($color: black, $opacity-from: 0.62, $opacity-to: 0.8, $opacity-full: 1) {
     md-icon {
         color: $color;
+        opacity: $opacity-from;
+    }
+
+    &:not([disabled]):hover,
+    &:not([disabled]):focus,
+    &:not([disabled]).md-focused {
+        md-icon {
+            opacity: $opacity-to;
+        }
+    }
+
+    &:not([disabled]).selected {
+        md-icon {
+            opacity: $opacity-full;
+        }
+    }
+}
+
+@mixin button-group {
+    $border-radius: 2px;
+    $opacity-from: 0.62;
+    $opacity-to: 1;
+
+    .rv-button-group {
+        margin: 2px 0;
+        position: relative;
+        border-radius: $border-radius;
+        background-color: white;
+        list-style: none;
+        padding: 0;
+
+        // round corners on the first and last elements
+        > *:first-child {
+            border-radius: $border-radius $border-radius 0 0;
+            overflow: hidden;
+        }
+
+        > *:last-child {
+            border-radius: 0 0 $border-radius $border-radius;
+            overflow: hidden;
+        }
+
+        &.hover {
+            opacity: 0.62;
+            transition: opacity $fade-in-out-duration ease-in;
+
+            &:not([disabled]):hover,
+            &:not([disabled]):focus,
+            &:not([disabled]).md-focused {
+                opacity: 1;
+            }
+        }
+
+        md-divider {
+            margin: 0 6px;
+        }
     }
 }
