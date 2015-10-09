@@ -18,9 +18,16 @@
         "angular-material": "#master",
         "angular-ui-router": "^0.2.15",
         "angular-translate": "^2.7.2",
-        "angular-translate-loader-static-files": "^2.7.2"
+        "angular-translate-loader-static-files": "^2.7.2",
+        "gsap": "^1.18.0"
     },
     "overrides": {
-        "angular-material": { "main": "angular-material.js" }
+        "angular-material": { "main": "angular-material.js" },
+        "gsap": {
+            "main": [
+                "src/uncompressed/TweenLite.js",
+                "src/uncompressed/plugins/CSSPlugin.js"
+            ]
+        }
     }
 }
