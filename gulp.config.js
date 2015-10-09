@@ -2,13 +2,14 @@ var path = require('path');
 var bowerFiles = require('main-bower-files');
 
 module.exports = function () {
-    var client = './src/client/';
+    'use strict';
+
+    /* var client = './src/client/';
     var server = './src/server/';
     var clientApp = client + 'app/';
-    //var specRunnerFile = 'specs.html';
-    //var wiredep = require('wiredep');
+    var specRunnerFile = 'specs.html';
+    var wiredep = require('wiredep'); */
 
-    var nodeModules = './node_modules/';
     var bowerModules = './lib/';
 
     var root = path.resolve('./');
@@ -56,6 +57,7 @@ module.exports = function () {
 
         // all html template files
         htmltemplates: app + '**/*.html',
+
         // angular template cache file to be injected
         templates: build + 'templates.js',
 
@@ -68,7 +70,7 @@ module.exports = function () {
             src + 'config*.json'
         ],
 
-        vetjs: [src + '**/*.js'],
+        vetjs: [src + '**/*.js', '*.js', 'e2e-test/**/*.js', 'test/**/*.js'],
 
         watchsass: src + 'content/styles/**/*.scss',
         watchjs: src + '**/*.js',
@@ -144,6 +146,7 @@ module.exports = function () {
             coverage: {
                 dir: report + 'coverage',
                 reporters: [
+
                     // reporters not supporting the `file` property
                     { type: 'html', subdir: 'report-html' },
                     { type: 'lcov', subdir: 'report-lcov' },

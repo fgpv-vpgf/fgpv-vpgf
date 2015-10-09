@@ -1,14 +1,18 @@
+/* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
 /* jshint camelcase:false */
+/* global -$ */
+'use strict';
+
 var gulp = require('gulp');
-var terribleHelp = require('gulp-help')(gulp);
 var glob = require('glob');
 var del = require('del');
-var pkg = require('./package.json');
+/* var pkg = require('./package.json'); */
 var $ = require('gulp-load-plugins')({ lazy: true });
 var args = require('yargs').argv;
 var bowerFiles = require('main-bower-files');
-
 var config = require('./gulp.config')();
+
+require('gulp-help')(gulp);
 
 /**
  * yargs variables can be passed in to alter the behavior, when present.
@@ -72,11 +76,12 @@ gulp.task('templatecache', 'Create a cache of HTML templates', ['clean-templates
  * Remove all files from the build, temp, and reports folders
  * @param  {Function} done - callback when complete
  */
-gulp.task('clean', 'Delete all build and report files', ['clean-sass', 'clean-templates'], function (done) {
-    var delconfig = [].concat(config.build, config.report);
-    log('Cleaning: ' + $.util.colors.blue(delconfig));
-    del(delconfig, done);
-});
+gulp.task('clean', 'Delete all build and report files', ['clean-sass', 'clean-templates'],
+    function (done) {
+        var delconfig = [].concat(config.build, config.report);
+        log('Cleaning: ' + $.util.colors.blue(delconfig));
+        del(delconfig, done);
+    });
 
 /**
  * Remove all styles from the temp folders
@@ -131,7 +136,7 @@ gulp.task('jsbuild', 'Annotate, transpile and concat JS development files',
     });
 
 // inject error css file into the index page if babel parser errors
-function injectError (error) {
+function injectError(error) {
     var injector = '';
     if (error) {
         injector = '<link rel="stylesheet" href=".' + config.csserror + '">';
@@ -140,7 +145,7 @@ function injectError (error) {
 
     return gulp
         .src(config.build + '/index*.html')
-        .pipe($.replace(/<!-- inject:error -->([\s\S]*?)<!-- endinject -->/gi, '<!-- inject:error -->' + injector + '<!-- endinject -->' ))
+        .pipe($.replace(/<!-- inject:error -->([\s\S]*?)<!-- endinject -->/gi, '<!-- inject:error -->' + injector + '<!-- endinject -->'))
         .pipe(gulp.dest(config.build));
 }
 
@@ -151,23 +156,23 @@ gulp.task('libbuild', 'Concat bower dependencies',
             .pipe(gulp.dest(config.build));
     });
 
-gulp.task('assetcopy','Copy fixed assets to the build directory',
+gulp.task('assetcopy', 'Copy fixed assets to the build directory',
     function () {
         return gulp.src(config.staticAssets, {base:config.src})
             .pipe(gulp.dest(config.build));
     });
 
-gulp.task('inject', 'Adds configured dependencies to the HTML page', ['sass', 'templatecache', 'jsbuild', 'libbuild', 'assetcopy'],
+gulp.task('inject', 'Adds configured dependencies to the HTML page',
+    ['sass', 'templatecache', 'jsbuild', 'libbuild', 'assetcopy'],
     function () {
-        log('Injecting JS, CSS');
-
         var index = config.index;
         var js = config.js;
 
+        log('Injecting JS, CSS');
+
         if (args.protractor) {
             index = config.indexProtractor;
-            // remove app-seed from injectables
-            js.push('!' + config.app + 'app-seed.js');
+            js.push('!' + config.app + 'app-seed.js'); // remove app-seed from injectables
         }
 
         return gulp
@@ -190,14 +195,15 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page', ['sass', 't
  * -- test  : run Karma auto tests in parallel
  * -- protractor: prepare index-protractor page and do not inject app-seed
  */
-gulp.task('serve:dev', 'Build the application and start a local development server', ['vet', 'inject'],
+gulp.task('serve:dev', 'Build the application and start a local development server',
+    ['vet', 'inject'],
     function () {
         // run karma tests parallel with serve
         if (args.test) {
             startTests(false);
         }
         serve(true);
-    },{
+    }, {
         aliases: ['serve']
     });
 
@@ -207,7 +213,7 @@ gulp.task('serve:dev', 'Build the application and start a local development serv
  * @return {Stream}
  */
 gulp.task('test', 'Run style checks and unit tests', ['vet', 'templatecache'], function (done) {
-    startTests(true /*singleRun*/, done);
+    startTests(true, done);
 });
 
 /**
@@ -216,7 +222,7 @@ gulp.task('test', 'Run style checks and unit tests', ['vet', 'templatecache'], f
  * Watch for file changes and re-run tests on each change
  */
 gulp.task('test:auto', 'Run unit tests and keep watching for changes', function (done) {
-    startTests(false /*singleRun*/, done);
+    startTests(false, done);
 });
 
 /**
@@ -237,6 +243,7 @@ function serve(isDev) {
         root: config.root,
         livereload: true,
         port: config.defaultPort,
+
         // fallback option doesn't seem to work well with index page reload
         //fallback: isDev ? config.src + 'index.html' : config.build + 'index.html'
     });
@@ -290,8 +297,8 @@ gulp.task('reloadcache', 'Repackaging templates...', ['templatecache'], function
 function startTests(singleRun, done) {
     var child;
     var excludeFiles = [];
-    var fork = require('child_process').fork;
     var karma = require('karma').server;
+    /* var fork = require('child_process').fork; */
 
     var karmaConfig = {
         configFile: __dirname + '/karma.conf.js',
@@ -326,8 +333,6 @@ function startTests(singleRun, done) {
  * Start Plato inspector and visualizer
  */
 function startPlatoVisualizer(done) {
-    log('Running Plato');
-
     var files = glob.sync(config.plato.js);
     var plato = require('plato');
     var excludeFiles = /.*\.spec\.js/;
@@ -338,6 +343,7 @@ function startPlatoVisualizer(done) {
     };
     var outputDir = config.report + '/plato';
 
+    log('Running Plato');
 
     plato.inspect(files, outputDir, options, platoCompleted);
 
@@ -360,18 +366,19 @@ function logWatch(event) {
 
 /**
  * Inject files in a sorted sequence at a specified inject label
- * @param   {Array} path   glob pattern for source files
+ * @param   {Array} src   glob pattern for source files
  * @param   {String} label   The label name
  * @param   {Array} order   glob pattern for sort order of the files
  * @param   {Boolean} relative   default is true
  * @returns {Stream}   The stream
  */
 function inject(src, label, order, relative) {
+    var options = { read: false, relative: relative };
+
     if (typeof relative === 'undefined') {
         relative = true;
     }
 
-    var options = { read: false, relative: relative };
     if (label) {
         options.name = 'inject:' + label;
     }
@@ -393,26 +400,27 @@ function orderSrc(src, order) {
         .pipe($.if(order, $.order(order)));
 }
 
-function removeMatch(originalArray, regex) {
+/* function removeMatch(originalArray, regex) {
     var j = 0;
     while (j < originalArray.length) {
-        if (regex.test(originalArray[j]))
+        if (regex.test(originalArray[j])) {
             originalArray.splice(j, 1);
-        else
+        } else {
             j++;
+        }
     }
     return originalArray;
-}
+} */
 
 /**
  * Delete all files in a given path
  * @param  {Array}   path - array of paths to delete
  * @param  {Function} done - callback when complete
  */
-function clean(path, done) {
+/* function clean(path, done) {
     log('Cleaning: ' + $.util.colors.blue(path));
     del(path, done);
-}
+} */
 
 /**
  * Formatter for bytediff to display the size changes after processing
@@ -442,8 +450,10 @@ function formatPercent(num, precision) {
  * Can pass in a string, object or array.
  */
 function log(msg) {
+    var item;
+
     if (typeof (msg) === 'object') {
-        for (var item in msg) {
+        for (item in msg) {
             if (msg.hasOwnProperty(item)) {
                 $.util.log($.util.colors.blue(msg[item]));
             }
