@@ -375,8 +375,8 @@ function logWatch(event) {
 function inject(src, label, order, relative) {
     var options = { read: false, relative: relative };
 
-    if (typeof relative === 'undefined') {
-        relative = true;
+    if (typeof options.relative === 'undefined') {
+        options.relative = true;
     }
 
     if (label) {
