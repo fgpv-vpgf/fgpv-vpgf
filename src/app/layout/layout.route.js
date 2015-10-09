@@ -2,7 +2,7 @@
     'use strict';
 
     /**
-     * @ngdoc function
+     * 
      * @name app.layout#layoutConfig
      * @module app.layout
      * @description
@@ -23,6 +23,7 @@
      * @param  {object} viewRegistry
      * @param  {object} $state
      */
+
     function layoutConfig(statehelper, templateRegistry, viewRegistry, $state) {
         statehelper.configureStates(getStates());
 

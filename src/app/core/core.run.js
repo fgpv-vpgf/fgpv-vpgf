@@ -4,7 +4,7 @@
 
     /**
      * @ngdoc function
-     * @name app.core#runBlock
+     * @name runBlock
      * @module app.core
      * @description
      *
