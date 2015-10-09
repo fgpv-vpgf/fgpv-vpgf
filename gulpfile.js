@@ -33,9 +33,10 @@ gulp.task('vet', 'Checks code against style guidelines', function () {
         .src(config.vetjs)
         .pipe($.if(args.verbose, $.print()))
         .pipe($.jshint())
+        .pipe($.jscs())
+        .pipe($.jscsStylish.combineWithHintResults())
         .pipe($.jshint.reporter('jshint-stylish', { verbose: true }))
-        .pipe($.jshint.reporter('fail'))
-        .pipe($.jscs());
+        .pipe($.jshint.reporter('fail'));
 });
 
 /**
