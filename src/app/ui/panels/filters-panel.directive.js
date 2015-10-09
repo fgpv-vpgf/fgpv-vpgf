@@ -3,25 +3,21 @@
 
     /**
      * @ngdoc directive
-     * @name rvMapnavButton
-     * @module app.ui.mapnav
+     * @name rvFiltersPanel
+     * @module app.ui.panels
      * @description
      *
-     * The `rvMapnavButton` directive is a map navigation component button.
-     *
+     * The `rvFiltersPanel` directive is a outter panel container with a content plug view to allow for different content to be displayed.
      */
     angular
-        .module('app.ui.mapnav')
-        .directive('rvMapnavButton', rvMapnavButton);
+        .module('app.ui.panels')
+        .directive('rvFiltersPanel', rvFiltersPanel);
 
-    /* @ngInject */
-    function rvMapnavButton() {
+    function rvFiltersPanel() {
         var directive = {
             restrict: 'E',
-            templateUrl: 'app/ui/mapnav/mapnav-button.html',
-            scope: {
-                control: '='
-            },
+            templateUrl: 'app/ui/panels/filters-panel.html',
+            scope: {},
             link: linkFunc,
             controller: Controller,
             controllerAs: 'self',
@@ -30,7 +26,7 @@
 
         return directive;
 
-        function linkFunc() { //scope, el, attr, ctrl) {
+        function linkFunc() { //(scope, el, attr, ctrl) {
 
         }
     }
@@ -38,8 +34,6 @@
     /* @ngInject */
     function Controller() {
         //var self = this;
-
-        ///////////
 
         activate();
 

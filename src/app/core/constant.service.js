@@ -31,6 +31,12 @@
             title: 'Dawn RAM'
         })
         .constant('viewRegistry', {
+            filtersPlug: {
+                'filtersPlug@': {
+                    template: '<rv-filters-panel></rv-filters-panel>',
+                    controller: 'FiltersPanelPlugController as self'
+                }
+            },
             panelPlug: {
                 'panelPlug@': {
                     template: '<rv-main-panel></rv-main-panel>',
