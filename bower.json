@@ -20,15 +20,20 @@
         "angular-ui-router": "^0.2.15",
         "angular-translate": "^2.7.2",
         "angular-translate-loader-static-files": "^2.7.2",
-        "gsap": "^1.18.0"
+        "gsap": "^1.18.0",
+        "bezier-easing": "^1.0.0"
     },
     "overrides": {
         "angular-material": { "main": "angular-material.js" },
         "gsap": {
             "main": [
                 "src/uncompressed/TweenLite.js",
-                "src/uncompressed/plugins/CSSPlugin.js"
+                "src/uncompressed/plugins/CSSPlugin.js",
+                "src/uncompressed/plugins/EaselPlugin.js"
             ]
+        },
+        "bezier-easing":{
+            "main": "bezier-easing.js"
         }
     }
 }

@@ -9,7 +9,7 @@
     "immed": true,
     "indent": 4,
     "latedef": "nofunc",
-    "newcap": true,
+    "newcap": false,
     "noarg": true,
     "noempty": true,
     "nonbsp": true,
