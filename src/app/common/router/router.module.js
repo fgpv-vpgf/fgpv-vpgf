@@ -3,14 +3,14 @@
 
     /**
      * @ngdoc module
-     * @name common.router
+     * @name app.common.router
      * @description
      *
      * The `common.router` provides support to handling `ui.router` states and transitions.
      *
      */
     angular
-        .module('common.router', [
+        .module('app.common.router', [
             'ui.router'
         ]);
 })();

@@ -14,7 +14,13 @@
         .module('app.ui.toc')
         .controller('TocController', TocController);
 
-    /* @ngInject */
+    /**
+     * @name TocController
+     * @module api.ui.toc
+     * @description
+     * The `TocController` controller handles the layer selector (or toc) main panel.
+     * Right now it's hacked together for demo purposes.
+     */
     function TocController($state) {
         var self = this;
 

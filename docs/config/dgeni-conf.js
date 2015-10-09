@@ -5,9 +5,9 @@ var Package = require('dgeni').Package;
 
 
 module.exports = new Package('dgeni-fgpv', [
-  require('dgeni-packages/angularjs'),
-  require('dgeni-packages/jsdoc'),
-  // require('dgeni-packages/ngdoc'),
+  // require('dgeni-packages/angularjs'),
+  // require('dgeni-packages/jsdoc'),
+  require('dgeni-packages/ngdoc'),
   require('dgeni-packages/nunjucks')
 ])
 
@@ -28,12 +28,12 @@ module.exports = new Package('dgeni-fgpv', [
   // 'mddocFileReader' in readFilesProcessor.sourceFiles
   readFilesProcessor.fileReaders.push(mddocFileReader);
 
-  log.level = 'info'; // info, debug, silly
+  log.level = 'debug'; // info, debug, silly
 
   readFilesProcessor.basePath = path.resolve(__dirname, '..');
   readFilesProcessor.sourceFiles = [
     { include: '../src/app/**/*.module.js', basePath: '../src'},
-    { include: '../src/app/**/*.js', basePath: '../src' },
+    { include: '../src/app/**/*.js', exclude: '../src/app/**/*.module.js', basePath: '../src' },
     { include: '../docs/content/**/*.md', basePath: '../docs/content', fileReader: 'mddocFileReader' }
   ];
 
@@ -79,6 +79,22 @@ module.exports = new Package('dgeni-fgpv', [
     'common.template.html'
   ];
 })
+
+.config(function(computeIdsProcessor, getAliases) {
+  computeIdsProcessor.idTemplates.push({
+    docTypes: ['mddoc'],
+    idTemplate: 'content:${docType}:${name}',
+    getAliases: getAliases
+  });
+})
+
+// .config(function(computeIdsProcessor, getAliases) {
+//   computeIdsProcessor.idTemplates.push({
+//     docTypes: ['js'],
+//     idTemplate: 'module:${module}.${docType}:${name}',
+//     getAliases: getAliases
+//   });
+// })
 
 // add filter to template engine
 .config(function(templateEngine, myInternalRouteUrl, myLinkModifierFilter) {

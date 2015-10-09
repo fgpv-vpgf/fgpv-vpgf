@@ -16,7 +16,7 @@ module.exports = function myJSMergeProcessor(log) {
 										.filter(function(doc) {
 											var tags = doc.tags.tags;
 											return _.find(tags, function(tag) {
-												if(tag.tagName === 'memberof') {
+												if(tag.tagName === 'module') {
 													return true;
 												}
 												return false;
@@ -27,7 +27,7 @@ module.exports = function myJSMergeProcessor(log) {
 			jsDocsWithMemberOf.forEach( function(doc, idx) {
 				var tags = doc.tags.tags;
 				var memberofTag = _.find(tags, function(tag) {
-					if(tag.tagName === 'memberof'){
+					if(tag.tagName === 'module'){
 						return true;
 					}
 				});
@@ -35,13 +35,13 @@ module.exports = function myJSMergeProcessor(log) {
 				if (typeof memberofTag !== 'undefined'){
 					var parentName = memberofTag.description;
 
-					log.debug("memberof: " + parentName);
+					log.debug("module: " + parentName);
 					// find the associated doc e.g. service or directive
 					var parentIdx = _.findIndex(ngDocs, function(a) {
 						return a.name === parentName;
 					});
 
-					log.debug("doc id:"+ doc.id + ", parentIdx:" + parentIdx + ", memberof:" + parentName);
+					log.debug("doc id:"+ doc.id + ", parentIdx:" + parentIdx + ", module:" + parentName);
 
 					
 

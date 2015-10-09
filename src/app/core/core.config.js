@@ -3,7 +3,7 @@
 
     /**
      * @ngdoc function
-     * @name app.core#configBlock
+     * @name configBlock
      * @module app.core
      * @description
      *

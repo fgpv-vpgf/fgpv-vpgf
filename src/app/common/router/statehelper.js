@@ -2,9 +2,9 @@
     'use strict';
 
     /**
-     * @ngdoc serviceProvider
+     * @ngdoc service
      * @name statehelperConfig
-     * @module app.router
+     * @module app.common.router
      * @description
      *
      * The `statehelperConfig` provider is used to configure `statehelper` before it's initialized.
@@ -14,14 +14,14 @@
     /**
      * @ngdoc service
      * @name statehelper
-     * @module app.router
+     * @module app.common.router
      * @description
      *
      * The `statehelper` services supports adding additional states to the global state tree from other modules.
      * It is also responsible for handling routing errors (coming soon).
      */
     angular
-        .module('common.router')
+        .module('app.common.router')
         .provider('statehelperConfig', statehelperConfig)
         .factory('statehelper', statehelper);
 
