@@ -56,6 +56,25 @@
                     }
                 },
                 {
+                    name: 'app.filters',
+                    config: {
+                        abstract: true,
+                        views: viewRegistry.filtersPlug
+                    }
+                },
+                {
+                    name: 'app.filters.default',
+                    config: {
+                        url: 'default',
+                        views: {
+                            contentPlug: {
+                                //templateUrl: templateRegistry.filtersDefault
+                                template: '<rv-filters-default></rv-filters-default>'
+                            }
+                        }
+                    }
+                },
+                {
                     name: 'app.main',
                     config: {
                         abstract: true,

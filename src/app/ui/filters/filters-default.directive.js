@@ -3,25 +3,22 @@
 
     /**
      * @ngdoc directive
-     * @name rvMapnavButton
-     * @module app.ui.mapnav
+     * @name rvFiltersDefault
+     * @module app.ui.filters
      * @description
      *
-     * The `rvMapnavButton` directive is a map navigation component button.
+     * The `rvFiltersDefault` directive is a filters and datatable panel component.
      *
      */
     angular
-        .module('app.ui.mapnav')
-        .directive('rvMapnavButton', rvMapnavButton);
+        .module('app.ui.filters')
+        .directive('rvFiltersDefault', rvFiltersDefault);
 
-    /* @ngInject */
-    function rvMapnavButton() {
+    function rvFiltersDefault() {
         var directive = {
-            restrict: 'E',
-            templateUrl: 'app/ui/mapnav/mapnav-button.html',
-            scope: {
-                control: '='
-            },
+            restrict: 'EA',
+            templateUrl: 'app/ui/filters/filters-default.html',
+            scope: {},
             link: linkFunc,
             controller: Controller,
             controllerAs: 'self',
@@ -35,11 +32,9 @@
         }
     }
 
-    /* @ngInject */
     function Controller() {
-        //var self = this;
-
-        ///////////
+        var self = this;
+        self.message = 'Can you see me?';
 
         activate();
 
