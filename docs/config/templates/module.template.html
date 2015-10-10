@@ -10,10 +10,10 @@
 	{% for groupName, group in doc.groups %}
 		{% if group.children.length %}
 		<material-divider></material-divider>
-		<h3>{$ group | myInternalRouteUrl(doc, group.title) $}</h3>
+		<h3>{$ group | toInternalRoute(doc, group.title) $}</h3>
 		<ul>
 			{% for component in group.children %}
-			<li>{$ component | myInternalRouteUrl(doc) $}
+			<li>{$ component | toInternalRoute(doc) $}
 			    {%- if component.description %} - {$ component.description $}{% endif -%}
 			</li>
 			{%- endfor %}
