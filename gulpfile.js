@@ -38,7 +38,8 @@ gulp.task('build', 'Transpile and concatenate the code', function () {
         .pipe($.rename('geoapi.min.js'))
         .pipe($.uglify())
         .pipe($.sourcemaps.write('.'))
-        .pipe(gulp.dest('dist/v'+pkg.version));
+        .pipe(gulp.dest('dist/v'+pkg.version))
+        .pipe(gulp.dest('dist'));
 });
 
 gulp.task('test', 'Run unit tests in jasmine', ['build'], function () {
@@ -50,5 +51,5 @@ gulp.task('test', 'Run unit tests in jasmine', ['build'], function () {
 gulp.task('default', 'Check style and unit tests', ['check', 'test']);
 
 gulp.task('serve', ['check', 'build'], function () {
-    $.connect.server();
+    $.connect.server({root:'.', port:6002});
 });
