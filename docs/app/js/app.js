@@ -21,16 +21,16 @@
             });
 
 
-            angular.forEach(PAGES, function(pages, area) {
-                angular.forEach(pages, function(page) {
-                    $routeProvider
-                        .when(page.url, {
-                            templateUrl: page.outputPath
-                            // uncomment to add controller for the page
-                            // , controller: 'SomeController'
-                        });
-                });
-            });
+            // angular.forEach(PAGES, function(pages, area) {
+            //     angular.forEach(pages, function(page) {
+            //         $routeProvider
+            //             .when(page.url, {
+            //                 templateUrl: page.outputPath
+            //                 // uncomment to add controller for the page
+            //                 // , controller: 'SomeController'
+            //             });
+            //     });
+            // });
 
             angular.forEach(API, function(api) {
                 $routeProvider
@@ -48,27 +48,27 @@
             var sections= [];
 
             // static content route can be add in manually
-            var contentDocs = [{
-                name: 'HOME',
-                url: '/',
-                type: 'link'
-            }];
+            // var contentDocs = [{
+            //     name: 'HOME',
+            //     url: '/',
+            //     type: 'link'
+            // }];
 
-            // pages is split up by area, 0 for undefined
-            // currently only 1 area.
-            pages['undefined'].forEach(function(item) {
-                contentDocs.push({
-                    name: item.name,
-                    url: item.url,
-                    type: 'link'
-                });
-            });
+            // // pages is split up by area, 0 for undefined
+            // // currently only 1 area.
+            // pages['undefined'].forEach(function(item) {
+            //     contentDocs.push({
+            //         name: item.name,
+            //         url: item.url,
+            //         type: 'link'
+            //     });
+            // });
 
-            sections.push({
-                name: 'Project Docs',
-                type: 'heading',
-                children: contentDocs
-            });
+            // sections.push({
+            //     name: 'Project Docs',
+            //     type: 'heading',
+            //     children: contentDocs
+            // });
 
             // generated from *-data.js
             var apiDocs = [];
