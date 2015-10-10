@@ -1,9 +1,9 @@
 var _ = require('lodash');
 var path = require('canonical-path');
 
-module.exports = function myInternalRouteUrl(myApp, log) {
+module.exports = function internalRouteUrlFilter(myApp, log) {
   return {
-    name: 'myInternalRouteUrl',
+    name: 'toInternalRoute',
     process: function(doc, originatingDoc, title) {
         // dependency inline tag filter will generate URL tags for the doc app router
         var url;

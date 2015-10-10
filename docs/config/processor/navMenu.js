@@ -1,52 +1,18 @@
 var _ = require('lodash');
 
-module.exports = function myNavProcessor(log) {
+module.exports = function navMenuProcessor(log) {
 	return {
 		$runAfter: ['myJSMergeProcessor'],
 		$runBefore: ['renderDocsProcessor'],
 		$process: function (docs) {
-
-			// generate route data
-			var apiRoutes = _(docs).filter(function(doc) {
-				return !_.contains(['index', 'content'], doc['docType']);
-			})
-			.value();
-
-			var tmpR = _.map(apiRoutes, function(route){
-
-				if (route.docType === 'gcMethod') {
-					return {
-						name: route.name,
-						outputPath: './partials/' + route.outputPath,
-						url: '/' + route.path + route.name 
-					};
-				} else {
-					return {
-						name: route.name,
-						outputPath: './partials/' + route.outputPath,
-						url: '/' + _.trimRight(route.path, '/')
-					};
-				}
-
-			});
-
-			// generate constant-data for pages
-		      docs.push({
-		      	name: 'API',
-		      	docType: 'constant',
-		      	template: 'constant-data.template.js',
-		      	outputPath: '../js/api-data.js',
-		      	items: tmpR
-		      });
-
 		      // generate navMenu for index.html
-			var navMenu = [];
+		      var navMenu = [];
 
-			var moduleDocs = _.filter(docs, {docType: 'ngModule'});
+		      var moduleDocs = _.filter(docs, {docType: 'module'});
 
 
-			_.forEach(moduleDocs, function(moduleDoc, idx) {
-				var subMenu=[];
+		      _.forEach(moduleDocs, function(moduleDoc, idx) {
+		      	var subMenu=[];
 
 				// groups is not array
 				// convert to array
@@ -59,7 +25,7 @@ module.exports = function myNavProcessor(log) {
 						subMenu.push({
 							title: group[1].title,
 							children: group[1].children
-					    });
+						});
 
 					    // TODO: each group has children in array format
 					    // children has name, outputPath as value
