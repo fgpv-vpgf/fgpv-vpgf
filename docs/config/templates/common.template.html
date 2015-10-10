@@ -6,5 +6,5 @@
 
 	<p>{$ doc.description $}</p>
 
-	{$ doc.parent | myInternalRouteUrl(doc, 'Go Up') $}
+	{$ doc.parent | toInternalRoute(doc, 'Go Up') $}
 </md-content>
