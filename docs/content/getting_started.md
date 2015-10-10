@@ -1,4 +1,4 @@
-@mddoc content
+@ngdoc content
 @name Getting Started
 @description
 

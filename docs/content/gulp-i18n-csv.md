@@ -1,4 +1,4 @@
-@mddoc content
+@ngdoc content
 @name i18n csv File
 @description
 
