@@ -11,16 +11,17 @@ module.exports = new Package('dgeni-fgpv', [
   require('dgeni-packages/nunjucks')
 ])
 
-// add myRelativeLink to the package
-.factory(require('./processor/myInternalRouteUrl'))
+// add internal route url filter to convert url to routing url
+.factory(require('./processor/internalRouteUrlFilter'))
 .factory(require('./processor/myLinkModifier'))
 .factory(require('./processor/myApp'))
 // mddoc file reader
 .factory(require('./file-readers/mddoc'))
 
 .processor(require('./processor/myJSMergeProcessor'))
-.processor(require('./processor/myNavProcessor'))
-.processor(require('./processor/myContent'))
+.processor(require('./processor/navMenu'))
+.processor(require('./processor/contentRoute'))
+.processor(require('./processor/apiRoute'))
 
 .config(function(log, readFilesProcessor, writeFilesProcessor, mddocFileReader) {
 
@@ -34,7 +35,7 @@ module.exports = new Package('dgeni-fgpv', [
   readFilesProcessor.sourceFiles = [
     { include: '../src/app/**/*.module.js', basePath: '../src'},
     { include: '../src/app/**/*.js', exclude: '../src/app/**/*.module.js', basePath: '../src' },
-    { include: '../docs/content/**/*.md', basePath: '../docs/content', fileReader: 'mddocFileReader' }
+    { include: '../docs/content/**/*.md', basePath: '../docs/content'}
   ];
 
   writeFilesProcessor.outputFolder  = '../dist/docs/app/partials';
@@ -82,7 +83,7 @@ module.exports = new Package('dgeni-fgpv', [
 
 .config(function(computeIdsProcessor, getAliases) {
   computeIdsProcessor.idTemplates.push({
-    docTypes: ['mddoc'],
+    docTypes: ['content'],
     idTemplate: 'content:${docType}:${name}',
     getAliases: getAliases
   });
@@ -97,8 +98,8 @@ module.exports = new Package('dgeni-fgpv', [
 // })
 
 // add filter to template engine
-.config(function(templateEngine, myInternalRouteUrl, myLinkModifierFilter) {
-  templateEngine.filters.push(myInternalRouteUrl);
+.config(function(templateEngine, internalRouteUrlFilter, myLinkModifierFilter) {
+  templateEngine.filters.push(internalRouteUrlFilter);
   templateEngine.filters.push(myLinkModifierFilter);
 })
 
