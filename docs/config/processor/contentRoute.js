@@ -1,8 +1,8 @@
 var _ = require('lodash');
 
-module.exports = function myContentProcessor(templateFinder, log) {
+module.exports = function contentRouteProcessor(templateFinder, log) {
 	return {
-		$runAfter: ['myNavProcessor'],
+		$runAfter: ['navMenuProcessor'],
 		$runBefore: ['rendering-docs'],
 		$process: function(docs) {
 			log.info('in myContentProcessor');
