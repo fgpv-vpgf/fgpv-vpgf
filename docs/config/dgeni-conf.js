@@ -18,7 +18,8 @@ module.exports = new Package('dgeni-fgpv', [
 // mddoc file reader
 .factory(require('./file-readers/mddoc'))
 
-.processor(require('./processor/myJSMergeProcessor'))
+// .processor(require('./processor/myJSMergeProcessor'))
+.processor(require('./processor/docMergeProcessor'))
 .processor(require('./processor/navMenu'))
 .processor(require('./processor/contentRoute'))
 .processor(require('./processor/apiRoute'))
