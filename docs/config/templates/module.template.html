@@ -7,10 +7,10 @@
 
   {% include "partials/dependencies.template.html" %}
 
-	{% for groupName, group in doc.groups %}
+	{% for group in doc.groups %}
 		{% if group.children.length %}
 		<material-divider></material-divider>
-		<h3>{$ group | toInternalRoute(doc, group.title) $}</h3>
+		<h3>{$ group.title | toInternalRoute(doc, group.title) $}</h3>
 		<ul>
 			{% for component in group.children %}
 			<li>{$ component | toInternalRoute(doc) $}
