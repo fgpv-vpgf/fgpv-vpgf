@@ -35,7 +35,10 @@ module.exports = new Package('dgeni-fgpv', [
   readFilesProcessor.sourceFiles = [
     { include: '../src/app/**/*.module.js', basePath: '../src'},
     { include: '../src/app/**/*.js', exclude: '../src/app/**/*.module.js', basePath: '../src' },
-    { include: '../docs/content/**/*.md', basePath: '../docs/content'}
+    // important! basepath has important effect on the grouping of documents
+    // here with ../docs will give a relative path of content/getting_started.md
+    // which in turn determine the doc.area = content for getting_started, gulp-i18n-csv 
+    { include: '../docs/content/**/*.md', basePath: '../docs'}
   ];
 
   writeFilesProcessor.outputFolder  = '../dist/docs/app/partials';
