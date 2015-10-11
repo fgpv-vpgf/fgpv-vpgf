@@ -2,7 +2,7 @@ var _ = require('lodash');
 
 module.exports = function apiRouteProcessor(log) {
 	return {
-		$runAfter: ['myJSMergeProcessor'],
+		$runAfter: ['docMergeProcessor'],
 		$runBefore: ['renderDocsProcessor'],
 		$process: function (docs) {
 
