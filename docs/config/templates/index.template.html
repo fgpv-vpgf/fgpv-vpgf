@@ -26,7 +26,7 @@ class="material-whiteframe-z1">
   <md-content layout-padding flex role="navigation"  class="site-sidenav">
   <ul class="docs-menu">
     <ul class="docs-menu">
-      <li ng-repeat="section in menu.sections" class="parent-list-item {{section.className || ''}}" ng-class="{'parentActive' : isSectionSelected(section)}">
+      <li ng-repeat="section in menu.sections" class="parent-list-item {{section.className || ''}}" ng-class="{'parentActive' : true}">
         <h2 class="menu-heading md-subhead">
           {{section.name}}
         </h2>
@@ -36,9 +36,20 @@ class="material-whiteframe-z1">
 
         <ul ng-if="section.children" class="menu-nested-list">
           <li ng-repeat="child in section.children" ng-class="{'childActive' : isSectionSelected(child)}">
-            <menu-link section="child" ng-if="child.type === 'link'"></menu-link>
+            <menu-link section="child" ng-if="child.type === 'link'" md-inset></menu-link>
 
-            <menu-toggle section="child" ng-if="child.type === 'toggle'"></menu-toggle>
+            <menu-toggle section="child" ng-if="child.type === 'toggle'" md-inset></menu-toggle>
+            <ul ng-if="child.children">
+              <!-- services, function -->
+              <li ng-repeat="cat in child.children"> 
+                <span class="menu-category">{{ cat.name }}</span>
+                <ul ng-if="cat.pages">
+                  <li ng-repeat="page in cat.pages" class="menu-page">
+                    <menu-link section="page" ng-if="page.type === 'link'"></menu-link>
+                  </li>
+                </ul>
+              </li>
+            </ul>
           </li>
         </ul>
       </li>

@@ -70,21 +70,52 @@
                 children: contentDocs
             });
 
+            
             // generated from *-data.js
             var apiDocs = [];
-            nav.forEach(function(item) {
+            nav.forEach(function(module) {
+
+                // // build up children docs
+                // // sub category 'service', 'function', 'directive'
+                var subcategory = [];
+                module.submenus.forEach(function(subcat) {
+
+                    // pages
+                    var cpages = [];
+                    subcat.children.forEach(function(page) {
+                        cpages.push({
+                            name: page.name,
+                            url: page.url,
+                            type: 'link'
+                        });
+                    });
+
+                    subcategory.push({
+                        name: subcat.title,
+                        type: 'toggle',
+                        pages: cpages
+                    });
+
+                });
+
+
+                // module
                 apiDocs.push({
-                    name: item.name,
-                    url: item.url,
+                    name: module.name,
+                    url: module.url,
+                    children: subcategory,
                     type: 'link'
                 });
             });
+
 
             sections.push({
                 name: 'API Reference',
                 type: 'heading',
                 children: apiDocs
             });
+
+            
 
 
             return self = {
