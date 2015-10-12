@@ -42,7 +42,7 @@
             });
         })
 
-        .factory('menu', ['PAGES','API', '$location', '$rootScope', '$http', '$window', function(pages, api, $location, $rootScope, $http, $window) {
+        .factory('menu', ['PAGES','NAV', '$location', '$rootScope', '$http', '$window', function(pages, nav, $location, $rootScope, $http, $window) {
             
             
             var sections= [];
@@ -72,7 +72,7 @@
 
             // generated from *-data.js
             var apiDocs = [];
-            api.forEach(function(item) {
+            nav.forEach(function(item) {
                 apiDocs.push({
                     name: item.name,
                     url: item.url,
