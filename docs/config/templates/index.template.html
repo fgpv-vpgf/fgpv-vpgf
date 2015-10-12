@@ -54,7 +54,7 @@ class="material-whiteframe-z1">
                 {% if item.children.length %}
                 <ul class='menu-nested-list'>
                   {% for child in item.children %}
-                  <li> {$ child.name $}</li>
+                  <li> <a href="{$ child.url $}">{$ child.name $}</a></li>
                   {% endfor %}
                 </ul>
                 {% endif %}
