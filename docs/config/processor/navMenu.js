@@ -44,7 +44,7 @@ module.exports = function navMenuProcessor(log) {
 					// build each menu item for module
 					navMenu.push({
 						name: moduleDoc.name,
-						url: moduleDoc.outputPath,
+						url: '/' + moduleDoc.path,
 						submenus: subMenu
 					});
 				}
