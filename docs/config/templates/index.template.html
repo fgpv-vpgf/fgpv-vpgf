@@ -42,6 +42,29 @@ class="material-whiteframe-z1">
           </li>
         </ul>
       </li>
+      {% for menu in doc.gcMenu %}
+        
+        <li class="parent-list-item">
+          <h2 class="menu-heading md-subhead"> {$ menu.name $}</h2>
+          {% if menu.submenus.length %}
+          <ul class="menu-nested-list">
+            {% for item in menu.submenus %}
+            <li> 
+              <h3>{$ item.title $}</h3>
+                {% if item.children.length %}
+                <ul class='menu-nested-list'>
+                  {% for child in item.children %}
+                  <li> {$ child.name $}</li>
+                  {% endfor %}
+                </ul>
+                {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+        
+      {% endfor %}
     </ul>
   </ul>
 </md-content>
