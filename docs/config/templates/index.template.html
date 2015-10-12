@@ -42,29 +42,6 @@ class="material-whiteframe-z1">
           </li>
         </ul>
       </li>
-      {% for menu in doc.gcMenu %}
-        
-        <li class="parent-list-item">
-          <h2 class="menu-heading md-subhead"> {$ menu.name $}</h2>
-          {% if menu.submenus.length %}
-          <ul class="menu-nested-list">
-            {% for item in menu.submenus %}
-            <li> 
-              <h3>{$ item.title $}</h3>
-                {% if item.children.length %}
-                <ul class='menu-nested-list'>
-                  {% for child in item.children %}
-                  <li> <a href="{$ child.url $}">{$ child.name $}</a></li>
-                  {% endfor %}
-                </ul>
-                {% endif %}
-            </li>
-            {% endfor %}
-          </ul>
-          {% endif %}
-        </li>
-        
-      {% endfor %}
     </ul>
   </ul>
 </md-content>
@@ -84,6 +61,7 @@ class="material-whiteframe-z1">
 <script type="text/javascript" src="js/app.js"></script>
 <script src="js/content-data.js"></script>
 <script src="js/api-data.js"></script>
+<script src="js/nav-data.js"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.js"></script>
 </body>
