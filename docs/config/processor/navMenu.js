@@ -2,7 +2,7 @@ var _ = require('lodash');
 
 module.exports = function navMenuProcessor(log) {
 	return {
-		$runAfter: ['docMergeProcessor'],
+		$runAfter: ['apiRouteProcessor'],
 		$runBefore: ['renderDocsProcessor'],
 		$process: function (docs) {
 		      // generate navMenu for index.html
@@ -22,9 +22,19 @@ module.exports = function navMenuProcessor(log) {
 				if(groups.length) {
 					groups.forEach(function(group) {
 						// directives, services, filters ???
+
+						var childmenu = [];
+						group[1].children.forEach(function(child) {
+							childmenu.push({
+								name: child.name,
+								url: '#/' + _.trimRight(child.path, '/')
+							});
+						});
+
+
 						subMenu.push({
 							title: group[1].title,
-							children: group[1].children
+							children: childmenu
 						});
 
 					    // TODO: each group has children in array format
@@ -50,6 +60,14 @@ module.exports = function navMenuProcessor(log) {
 				'title': 'This is a title field',
 				// 'path': '../../',
 				'outputPath': '../index.html'
+			});
+
+			docs.push({
+				name: 'NAV',
+				docType: 'constant',
+				template: 'constant-data.template.js',
+				outputPath: '../js/nav-data.js',
+				items: navMenu
 			});
 
 			// var apiDocs = _(moduleDocs)
