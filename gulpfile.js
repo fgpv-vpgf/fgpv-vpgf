@@ -12,7 +12,7 @@ var $ = require('gulp-load-plugins')({ lazy: true });
 require('gulp-help')(gulp);
 
 gulp.task('clean', 'Remove dist folder', function (done) {
-    del('dist',done);
+    del('dist', done);
 });
 
 gulp.task('check', 'Checks code against style guidelines', function () {
@@ -34,11 +34,11 @@ gulp.task('build', 'Transpile and concatenate the code', function () {
         .pipe($.sourcemaps.init())
         .pipe($.babel())
         .pipe($.concat('geoapi.js'))
-        .pipe(gulp.dest('dist/v'+pkg.version))
+        .pipe(gulp.dest('dist/v' + pkg.version))
         .pipe($.rename('geoapi.min.js'))
         .pipe($.uglify())
         .pipe($.sourcemaps.write('.'))
-        .pipe(gulp.dest('dist/v'+pkg.version))
+        .pipe(gulp.dest('dist/v' + pkg.version))
         .pipe(gulp.dest('dist'));
 });
 
