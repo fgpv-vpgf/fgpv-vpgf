@@ -27,7 +27,7 @@ module.exports = function navMenuProcessor(log) {
 						group[1].children.forEach(function(child) {
 							childmenu.push({
 								name: child.name,
-								url: '#/' + _.trimRight(child.path, '/')
+								url: '/' + _.trimRight(child.path, '/')
 							});
 						});
 
