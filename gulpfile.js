@@ -26,7 +26,7 @@ gulp.task('check', 'Checks code against style guidelines', function () {
 });
 
 gulp.task('build', 'Transpile and concatenate the code', function () {
-    var b = browserify({entries: 'src/index.js', standalone: 'geoapi'}).transform(babelify);
+    var b = browserify({ entries: 'src/index.js', standalone: 'geoapi' }).transform(babelify);
     return b.bundle()
         .pipe(source('gapi.js'))
         .pipe(buffer())
@@ -51,5 +51,5 @@ gulp.task('test', 'Run unit tests in jasmine', ['build'], function () {
 gulp.task('default', 'Check style and unit tests', ['check', 'test']);
 
 gulp.task('serve', ['check', 'build'], function () {
-    $.connect.server({root:'.', port:6002});
+    $.connect.server({ root:'.', port:6002 });
 });
