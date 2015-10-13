@@ -11,7 +11,7 @@
     "canonical-path": "0.0.2",
     "del": "^1.2.0",
     "dgeni": "^0.4.1",
-    "dgeni-packages": "git://github.com/angular/dgeni-packages.git#angular-docs",
+    "dgeni-packages": "https://github.com/ec-dev/dgeni-packages#develop",
     "glob": "^5.0.14",
     "gulp": "^3.9.0",
     "gulp-add-src": "^0.2.0",
