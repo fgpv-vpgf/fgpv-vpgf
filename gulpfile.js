@@ -17,7 +17,7 @@ gulp.task('clean', 'Remove dist folder', function (done) {
 
 gulp.task('check', 'Checks code against style guidelines', function () {
     return gulp
-        .src(['src/**/*.js','*.js'])
+        .src(['src/**/*.js', '*.js'])
         .pipe($.jshint())
         .pipe($.jscs())
         .pipe($.jscsStylish.combineWithHintResults())   // combine with jshint results
@@ -26,7 +26,7 @@ gulp.task('check', 'Checks code against style guidelines', function () {
 });
 
 gulp.task('build', 'Transpile and concatenate the code', function () {
-    var b = browserify({entries: 'src/index.js',standalone: 'geoapi'}).transform(babelify);
+    var b = browserify({entries: 'src/index.js', standalone: 'geoapi'}).transform(babelify);
     return b.bundle()
         .pipe(source('gapi.js'))
         .pipe(buffer())

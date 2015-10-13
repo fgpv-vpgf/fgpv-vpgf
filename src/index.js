@@ -24,7 +24,7 @@ module.exports = function (esriLoaderUrl, window) {
         });
     }
 
-    return new Promise(function (resolve,reject) {
+    return new Promise(function (resolve, reject) {
         const oScript = window.document.createElement('script');
         const oHead = window.document.head || window.document.getElementsByTagName('head')[0];
 
