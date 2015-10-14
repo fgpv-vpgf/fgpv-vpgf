@@ -99,7 +99,8 @@
             "preset": "jsdoc3",
             "extra": {
                 "ngdoc": true,
-                "usage": true
+                "usage": true,
+                "multiElement": true
             }
         },
         "checkParamNames": true,
