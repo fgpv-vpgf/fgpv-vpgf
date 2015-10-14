@@ -6,17 +6,16 @@
         .module('app.layout')
         .run(layoutConfig);
 
-    /* @ngInject */
-
-
     /**
-     * 
+     * @ngdoc function
      * @name app.layout#layoutConfig
      * @module app.layout
      * @description
      *
      * The `layoutConfig` run block sets the layout states and triggers the `app` state which is the default state upon app loading.
      */
+    
+    /* @ngInject */
     function layoutConfig(statehelper, templateRegistry, viewRegistry, $state) {
         statehelper.configureStates(getStates());
 
