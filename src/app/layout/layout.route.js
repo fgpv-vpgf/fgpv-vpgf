@@ -2,7 +2,7 @@
     'use strict';
 
     /**
-     * 
+     * @ngdoc function
      * @name app.layout#layoutConfig
      * @module app.layout
      * @description
