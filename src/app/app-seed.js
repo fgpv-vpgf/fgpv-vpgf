@@ -3,8 +3,8 @@ angular.element(document)
         'use strict';
 
         // convert html collection to array:
-        // http://blog.cluster-text.com/2013/04/29/a-trap-when-looping-on-getelementsbyclassname/
-        var nodes = [].slice.call(document.getElementsByClassName('fgpv'));
+        // https://babeljs.io/docs/learn-es2015/#math-number-string-object-apis
+        var nodes = Array.from(document.getElementsByClassName('fgpv'));
         var child;
 
         nodes.forEach(function (node) {
