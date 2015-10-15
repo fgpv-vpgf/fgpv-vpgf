@@ -16,6 +16,13 @@
         .controller('MainPanelPlugController', MainPanelPlugController);
 
     /* @ngInject */
+    /**
+     * Main Panel plug controller.
+     * `self.active` is bound to a CSS class that prevents the plug view from occupying space when its content is not visible.
+     * [deprecated] `self.isStaggering` is bound to CSS class to delay closing of the main panel when a side panel is open
+     *
+     * @param {object} $rootScope
+     */
     function MainPanelPlugController($rootScope) {
         var self = this;
         self.active = true;
@@ -24,6 +31,7 @@
         //////////////
 
         // staggers the main panel's transition if the side panel is open
+        // FIXME: move to mainpanel service?
         $rootScope.$on('$stateChangeStart',
             function (event, toState) {
                 var sideReg = /(app)\.(main)\.(.*)\.(side)/;

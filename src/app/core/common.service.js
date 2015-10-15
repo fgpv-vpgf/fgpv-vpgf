@@ -5,12 +5,11 @@
      * @ngdoc service
      * @name common
      * @module app.core
+     * @requires $timeout
      * @description
      *
      * The `common` service provides access to commonly used services and functions like $timeout, $broadcast, $q, logger, etc.
      *
-     * @requires $timeout
-     * @return {service}    `common` service
      */
     angular
         .module('app.core')

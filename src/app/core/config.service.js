@@ -5,6 +5,11 @@
      * @ngdoc service
      * @name configService
      * @module app.core
+     * @requires $q
+     * @requires $rootElement
+     * @requires $timeout
+     * @requires $http
+     * @requires configDefaults
      * @description
      *
      * The `configService' is responsible for loading and parsing the supplied configuration.
@@ -22,6 +27,12 @@
      * ```
      * The main core run block (core.run.js) kicks in the initialization process by calling initialize on the `configService`. `configService` is responsible for parsing (inline) or loading (url) of the config. This service preserves the configuration in its pristine state (after applying all the defaults) - it will not be modified.
      * After the main config service retrieved the configuration, all other services are initialized. Until then, the application is covered by a loading overlay to hide unstyled content.
+     *
+     * Config service body returns the service object with the following:
+     * - data: config data
+     * - initialize: initialize function; call from core.run
+     * - ready: checks if the service is ready to use
+     *
      */
     angular
         .module('app.core')
@@ -42,6 +53,9 @@
 
         ////////////////
 
+        /**
+         * Initializes `configService` by fetching and partins `config` object.
+         */
         function initialize() {
             if (initializePromise) {
                 return initializePromise;
@@ -91,6 +105,10 @@
                     configInitialized({});
                 }
 
+                /**
+                 * Initialization complete handler
+                 * @param  {object} config config object
+                 */
                 function configInitialized(config) {
                     // apply any defaults from layoutConfigDefaults, then merge config on top
                     // TODO: this is an exampe; actual merging of the defaults is more complicated
@@ -105,6 +123,11 @@
             return initializePromise;
         }
 
+        /**
+         * [ready description]
+         * @param  {object} nextPromises optional promises to be resolved before returning
+         * @return {object}              promise to be resolved on config service initialization
+         */
         function ready(nextPromises) {
             return initializePromise
                 .then(function () {

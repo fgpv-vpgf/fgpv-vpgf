@@ -14,6 +14,9 @@
         .controller('SettingsController', SettingsController);
 
     /* @ngInject */
+    /**
+     * `SettingsController` skeleton controller.
+     */
     function SettingsController() {
         //var self = this;
 

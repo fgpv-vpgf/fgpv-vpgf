@@ -15,12 +15,17 @@
         .directive('rvMapnavButton', rvMapnavButton);
 
     /* @ngInject */
+    /**
+     * `rvMapnavButton` directive body.
+     *
+     * @return {object} directive body
+     */
     function rvMapnavButton() {
         var directive = {
             restrict: 'E',
             templateUrl: 'app/ui/mapnav/mapnav-button.html',
             scope: {
-                control: '='
+                control: '=' // binds `control` attribute to the scope;
             },
             link: linkFunc,
             controller: Controller,
@@ -30,12 +35,18 @@
 
         return directive;
 
+        /**
+         * Sceleton link function.
+         */
         function linkFunc() { //scope, el, attr, ctrl) {
 
         }
     }
 
     /* @ngInject */
+    /**
+     * Sceleton controller function.
+     */
     function Controller() {
         //var self = this;
 

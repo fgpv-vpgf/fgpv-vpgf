@@ -7,7 +7,7 @@
      * @module app.core
      * @description
      *
-     * The `runBlock` triggers config and locale file loading.
+     * The `runBlock` triggers config and locale file loading, sets language of the app.
      */
     angular
         .module('app.core')
@@ -27,6 +27,7 @@
             console.log(data);
         });
 
+        // TODO: write language detection routine
         $translate.use('fr-CA');
     }
 

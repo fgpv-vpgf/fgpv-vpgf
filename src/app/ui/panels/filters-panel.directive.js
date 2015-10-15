@@ -13,6 +13,12 @@
         .module('app.ui.panels')
         .directive('rvFiltersPanel', rvFiltersPanel);
 
+    /* @ngInject */
+    /**
+     * `rvFiltersPanel` directive body.
+     *
+     * @return {object} directive body
+     */
     function rvFiltersPanel() {
         var directive = {
             restrict: 'E',
@@ -26,12 +32,18 @@
 
         return directive;
 
+        /**
+         * Sceleton link function.
+         */
         function linkFunc() { //(scope, el, attr, ctrl) {
 
         }
     }
 
     /* @ngInject */
+    /**
+     * Sceleton controller function.
+     */
     function Controller() {
         //var self = this;
 

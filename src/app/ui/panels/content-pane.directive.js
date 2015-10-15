@@ -15,12 +15,17 @@
         .directive('rvContentPane', rvContentPane);
 
     /* @ngInject */
+    /**
+     * `rvContentPane` directive body.
+     *
+     * @return {object} directive body
+     */
     function rvContentPane() {
         var directive = {
             restrict: 'E',
             templateUrl: 'app/ui/panels/content-pane.html',
             scope: {
-                title: '@',
+                title: '@', // binds to the evaluated dom property
                 titleStyle: '@'
             },
             transclude: true,
@@ -32,12 +37,18 @@
 
         return directive;
 
+        /**
+         * Sceleton link function.
+         */
         function linkFunc() { // scope, el, attr, ctrl ) {
 
         }
     }
 
     /* @ngInject */
+    /**
+     * Sceleton controller function.
+     */
     function Controller() {
 
         //var self = this;

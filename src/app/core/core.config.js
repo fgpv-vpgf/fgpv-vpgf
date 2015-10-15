@@ -24,11 +24,17 @@
         configureTranslations();
         configureTheme();
 
+        /**
+         * Set state provider for `configHelper`.
+         */
         function configureStateRouting() {
             var stateCfg = statehelperConfigProvider;
             stateCfg.config.$stateProvider = $stateProvider;
         }
 
+        /**
+         * Configure angular translation provider. Set locale files location and file name pattern.
+         */
         function configureTranslations() {
             $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
             $translateProvider.useStaticFilesLoader({
@@ -39,6 +45,9 @@
             //$translateProvider.preferredLanguage('en-CA');
         }
 
+        /**
+         * Set theme colours from material desing colour palette.
+         */
         function configureTheme() {
             $mdThemingProvider.theme('default')
                 .primaryPalette('blue-grey')
