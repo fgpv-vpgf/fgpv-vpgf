@@ -7,7 +7,7 @@ if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" -a "$TRAVIS_PULL_REQUEST" == "
     eval `ssh-agent -s`
     ssh-add ~/.ssh/id_rsa
 
-    if [ -n $TRAVIS_TAG ]; then
+    if [ -n "$TRAVIS_TAG" ]; then
         DEST="$DEST/$TRAVIS_TAG/"
     else
         DEST="$DEST/$TRAVIS_BRANCH/"
