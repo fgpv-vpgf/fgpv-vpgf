@@ -14,6 +14,13 @@
         .factory('layoutService', layoutService);
 
     /* @ngInject */
+    /**
+     * `layoutService` exposes component ui services.
+     *
+     * @param  {object} sideNavigationService
+     * @param  {object} mapNavigationService
+     * @return {object}
+     */
     function layoutService(sideNavigationService, mapNavigationService) {
         var service = {
             sidenav: sideNavigationService,

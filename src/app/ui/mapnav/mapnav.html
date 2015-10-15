@@ -27,6 +27,7 @@
     </ul>
 
     <ul class='rv-button-group hover rv-whiteframe-z2'>
+        <!-- loop through extra controls specified by the nav service and create them -->
         <li ng-repeat="extraControl in self.service.config.extra">
             <rv-mapnav-button control="self.service.controls.extra[extraControl]"></rv-mapnav-button>
             <!-- this will insert divider after every element except the last one -->

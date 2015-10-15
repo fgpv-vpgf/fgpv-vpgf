@@ -15,6 +15,9 @@
         .controller('TocController', TocController);
 
     /* @ngInject */
+    /**
+     * `TocController` has lots of ugly code to handle state switching. Should be rewritten.
+     */
     function TocController($state) {
         var self = this;
 
@@ -41,6 +44,8 @@
             }
         }
 
+        // hacky way to toggle panels;
+        // TODO: replace with a sane methods
         function toggleSettings() {
             if ($state.current.name.indexOf('settings') === -1) {
                 $state.go('app.main.toc.side.settings', {}, {
@@ -53,6 +58,8 @@
             }
         }
 
+        // hacky way to toggle panels;
+        // TODO: replace with a sane methods
         function toggleFilters() {
             if ($state.current.name.indexOf('filters') === -1) {
                 $state.go('app.main.toc.filters.default', {}, {

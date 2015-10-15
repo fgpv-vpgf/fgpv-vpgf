@@ -15,6 +15,7 @@
      * @ngdoc service
      * @name statehelper
      * @module app.router
+     * @requires statehelperConfig
      * @description
      *
      * The `statehelper` services supports adding additional states to the global state tree from other modules.

@@ -14,6 +14,9 @@
         .controller('ToolboxController', ToolboxController);
 
     /* @ngInject */
+    /**
+     * `ToolboxController` skeleton controller.
+     */
     function ToolboxController() {
         //var self = this;
 

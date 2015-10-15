@@ -13,6 +13,11 @@
         .module('app.ui.panels')
         .directive('rvSidePanel', rvSidePanel);
 
+    /* @ngInject */
+    /**
+     * `rvSidePanel` directive body.
+     * @return {object} directive body
+     */
     function rvSidePanel() {
         var directive = {
             restrict: 'E',
@@ -26,12 +31,18 @@
 
         return directive;
 
+        /**
+         * Sceleton link function.
+         */
         function linkFunc() { //scope, el, attr, ctrl) {
 
         }
     }
 
     /* @ngInject */
+    /**
+     * Sceleton controller function.
+     */
     function Controller() {
         //var vm = this;
 
