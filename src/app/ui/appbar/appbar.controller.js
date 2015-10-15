@@ -15,6 +15,12 @@
         .controller('AppbarController', AppbarController);
 
     /* @ngInject */
+    /**
+     * `AppbarController` has lots of garbage code so far, needed to show how the panels are toggled. It should be moved to service.
+     *
+     * @param {object} layoutService
+     * @param {object} $state
+     */
     function AppbarController(layoutService, $state) {
         var self = this;
 

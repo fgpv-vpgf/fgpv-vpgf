@@ -14,6 +14,13 @@
         .run(runBlock);
 
     /* @ngInject */
+    /**
+     * The `runBlock` initializes the `configService` and sets language of the app.
+     *
+     * @param  {object} configService
+     * @param  {object} $rootScope
+     * @param  {object} $translate
+     */
     function runBlock(configService, $rootScope, $translate) {
         // wait until config is retrieved
         configService.initialize()
@@ -27,6 +34,7 @@
             console.log(data);
         });
 
+        // TODO: write language detection routine
         $translate.use('fr-CA');
     }
 
