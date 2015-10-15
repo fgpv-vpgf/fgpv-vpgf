@@ -45,6 +45,9 @@
                             /*panelPlug: {
                                 template: '<div>panel placeholder' +
                                     '<a href="">example of a link</a></div>'
+                            },
+                            filtersPlug: {
+                                template: '<div>panel placeholder</div>'
                             },*/
                             detailsPlug: {
                                 template: '<div>details panel placeholder</div>'
@@ -56,14 +59,14 @@
                     }
                 },
                 {
-                    name: 'app.filters',
+                    name: 'app.main.toc.filters',
                     config: {
                         abstract: true,
                         views: viewRegistry.filtersPlug
                     }
                 },
                 {
-                    name: 'app.filters.default',
+                    name: 'app.main.toc.filters.default',
                     config: {
                         url: 'default',
                         views: {
@@ -72,6 +75,24 @@
                                 template: '<rv-filters-default></rv-filters-default>'
                             }
                         }
+                    }
+                },
+                {
+                    name: 'app.main.toc.filters.default.minimized',
+                    config: {
+                        url: 'full'
+                    }
+                },
+                {
+                    name: 'app.main.toc.filters.default.full',
+                    config: {
+                        url: 'full'
+                    }
+                },
+                {
+                    name: 'app.main.toc.filters.default.attached',
+                    config: {
+                        url: 'full'
                     }
                 },
                 {

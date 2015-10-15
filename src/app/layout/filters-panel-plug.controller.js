@@ -14,53 +14,20 @@
         .module('app.layout')
         .controller('FiltersPanelPlugController', FiltersPanelPlugController);
 
-    /* ignore this for now
-    angular.module('app.layout')
-        .animation('.slide', [function () {
-            var duration = 1;
-            return {
-                // make note that other events (like addClass/removeClass)
-                // have different function input parameters
-                enter: function (element, doneFn) {
-                    console.log('start enter', jQuery(element), element.attr('class'));
-
-                    TweenLite.fromTo(element, duration,
-                        { opacity: 0 },
-                        {  opacity: 1, onComplete: function () {
-
-                            console.log('done enter!!', element.attr('class'));
-                            doneFn();
-                        } });
-
-                    // remember to call doneFn so that angular
-                    // knows that the animation has concluded
-                },
-
-                move: function (element, doneFn) {
-                    jQuery(element)
-                        .fadeIn(duration, doneFn);
-                },
-
-                leave: function (element, doneFn) {
-                    console.log('start leave', jQuery(element), element.attr('class'));
-
-                    TweenLite.fromTo(element, duration,
-                        { opacity: 1 },
-                        {  opacity: 0, onComplete: function () {
-
-                            console.log('done enter!!', element.attr('class'));
-                            doneFn();
-                        }});
-
-
-                }
-            };
-        }]);
-    /*
-
     /* @ngInject */
-    function FiltersPanelPlugController() {
+    function FiltersPanelPlugController($rootScope) {
         var self = this;
         self.active = true;
+        self.mode = 'default';
+
+        // staggers the main panel's transition if the side panel is open
+        $rootScope.$on('$stateChangeStart',
+            function (event, toState) {
+                var filtersReg = /filters/;
+
+                if (filtersReg.test(toState.name)) {
+                    self.mode = toState.name.split('.').pop();
+                }
+            });
     }
 })();
