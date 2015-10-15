@@ -100,7 +100,8 @@
             "extra": {
                 "ngdoc": true,
                 "usage": true,
-                "multiElement": true
+                "multiElement": true,
+                "restrict": true
             }
         },
         "checkParamNames": true,

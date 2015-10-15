@@ -7,6 +7,7 @@
      * @name rvMorph
      * @multiElement
      * @module app.ui.common
+     * @restrict A
      * @description
      *
      * The `rvMorph` directive animates the given HTML element from one CSS class to another provided to the `rvMorph` attribute. The element is morphed by using GSAP animation library. Only class changes are animated - the first class is applied immediatelly; when removed, applied immediatelly as well.
