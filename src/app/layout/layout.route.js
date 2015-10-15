@@ -1,7 +1,6 @@
 (function () {
     'use strict';
 
-    
     angular
         .module('app.layout')
         .run(layoutConfig);
@@ -14,7 +13,7 @@
      *
      * The `layoutConfig` run block sets the layout states and triggers the `app` state which is the default state upon app loading.
      */
-    
+
     /* @ngInject */
     function layoutConfig(statehelper, templateRegistry, viewRegistry, $state) {
         statehelper.configureStates(getStates());
