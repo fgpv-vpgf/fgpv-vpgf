@@ -1,4 +1,87 @@
-@mixin active-panel-plug($left: auto, $right: auto, $bottom: auto, $top: auto, $width: auto, $height: auto, $from: top) {
+@mixin active-panel-plug($left: auto, $right: auto, $bottom: auto, $top: auto, $width: auto, $height: auto, $from: null) {
+    &.active {
+        position: absolute;
+        left: $left;
+        top: $top;
+        bottom: $bottom;
+        right: $right;
+        width: $width;
+        height: $height;
+
+        .panel {
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            position: absolute;
+            background-color: white;
+        }
+
+        @if $from != null {
+            @include active-panel-plug-transition($left: $left, $right: $right, $bottom: $bottom, $top: $top, $width: $width, $height: $height, $from: $from);
+        }
+    }
+}
+
+@mixin active-panel-plug-transition($left: auto, $right: auto, $bottom: auto, $top: auto, $width: auto, $height: auto, $from: top) {
+    $buffer: 10px;
+    $topBuffer: $buffer;
+    $bottomBuffer: $buffer;
+    $leftBuffer: $buffer;
+    $rightBuffer: $buffer;
+
+    @if $from == top {
+        $topBuffer: 0;
+    }
+
+    @if $from == bottom {
+        $bottomBuffer: 0;
+    }
+
+    @if $from == left {
+        $leftBuffer: 0;
+    }
+
+    @if $from == right {
+        $rightBuffer: 0;
+    }
+
+    &.ng-animate {
+        overflow: hidden;
+        $left: if($left != auto, $left - $leftBuffer, $left);
+        $right: if($right != auto, $right - $rightBuffer, $right);
+        $top: if($top != auto, $top - $topBuffer, $top);
+        $bottom: if($bottom != auto, $bottom - $bottomBuffer, $bottom);
+
+        @if $width != auto {
+            $width: $width + $leftBuffer + $rightBuffer;
+        }
+
+        @if $height != auto {
+            $height: $height + $leftBuffer + $rightBuffer;
+        }
+
+        height: $height;
+        width: $width;
+        left: $left;
+        right: $right;
+        top: $top;
+        bottom: $bottom;
+
+        .panel {
+            margin: {
+                left: $leftBuffer;
+                right: $rightBuffer;
+                top: $topBuffer;
+                bottom: $bottomBuffer;
+            }
+        }
+    }
+}
+
+// TODO: clean up
+/*
+@mixin active-panel-plug_($left: auto, $right: auto, $bottom: auto, $top: auto, $width: auto, $height: auto, $from: top) {
     &.active {
         position: absolute;
         left: $left;
@@ -18,7 +101,6 @@
         }
         @include plug-animation($from, $left, $right, $bottom, $top, $width, $height);
     }
-
     @include plug-transition;
 }
 
@@ -101,13 +183,16 @@
 }
 
 @mixin plug-transition($duration: $swift-ease-in-duration, $easing: $swift-ease-in-out-timing-function, $delay: 0s) {
+    $duration: 10s;
+
     &.active {
         &.ng-enter,
         &.ng-leave {
-            transition: none $duration $easing $delay;
 
+            //transition: none $duration $easing $delay;
             .panel {
-                transition: transform $duration $easing $delay;
+
+                //transition: transform $duration $easing $delay;
             }
         }
     }
@@ -137,4 +222,4 @@
             }
         }
     }
-}
+}*/

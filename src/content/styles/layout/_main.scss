@@ -1,4 +1,7 @@
 .inner-shell {
+
+    // z-index on inner-shell is needed to prevent elements' shadows from overlapping
+    // http://blog.dudak.me/2014/css-shadows-under-adjacent-elements/
     z-index: 0;
 }
 
@@ -8,8 +11,26 @@
     position: absolute;
 }
 
+[ui-view='filtersPlug'] {
+    &.default {
+        @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: 50%);
+    }
+
+    &.full {
+        @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: $viewport-gutter);
+    }
+
+    &.attached {
+        @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height, $width: 300px, $bottom: $viewport-gutter);
+    }
+
+    &.minimized {
+        @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $height: 100px);
+    }
+}
+
 [ui-view='panelPlug'] {
-    @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height, $bottom: $viewport-gutter, $width: $toolbar-width);
+    @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height, $bottom: $viewport-gutter, $width: $toolbar-width, $from: top);
 
     &.active {
         &:before {
@@ -23,8 +44,7 @@
             z-index: 1;
         }
 
-        &.ng-enter,
-        &.ng-leave {
+        &.ng-animate {
             &:before {
                 left: 10px;
                 right: 10px;
@@ -32,16 +52,20 @@
         }
     }
 
+    /*
     &.stagger {
         @include plug-transition-delay;
     }
 
+    */
     [ui-view='contentPlug'] {
         @include content-plug;
     }
 }
 
 [ui-view='sidePanelPlug'] {
+
+    //@include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
     @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
 
     &.active {
@@ -56,8 +80,7 @@
             z-index: 1;
         }
 
-        &.ng-enter,
-        &.ng-leave {
+        &.ng-animate {
             &:before {
                 bottom: 10px;
             }
