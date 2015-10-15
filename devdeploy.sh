@@ -13,5 +13,6 @@ if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" -a "$TRAVIS_PULL_REQUEST" == "
         DEST="$DEST/$TRAVIS_BRANCH/"
     fi
 
+    echo "Destintation: $DEST"
     rsync -av --delete "build/" "$DEST"
 fi
