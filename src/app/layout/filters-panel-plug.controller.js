@@ -15,12 +15,20 @@
         .controller('FiltersPanelPlugController', FiltersPanelPlugController);
 
     /* @ngInject */
+    /**
+     * Filter plug controller.
+     * `self.active` is bound to a CSS class that prevents the plug view from occupying space when its content is not visible.
+     * `self.mode` is bound to a CSS class indicating current mode of the filters panel (default, attached, minimized, or full). `rvMorph` is used to animate between modes.
+     *
+     * @param {object} $rootScope
+     */
     function FiltersPanelPlugController($rootScope) {
         var self = this;
         self.active = true;
         self.mode = 'default';
 
         // staggers the main panel's transition if the side panel is open
+        // FIXME: should be moved to a filter service and made sane
         $rootScope.$on('$stateChangeStart',
             function (event, toState) {
                 var filtersReg = /filters/;

@@ -14,6 +14,12 @@
         .module('app.ui.mapnav')
         .factory('mapNavigationService', mapNavigationService);
 
+    /* @ngInject */
+    /**
+     * `mapNavigationService` exposes zoom and pan methods as well as controls available in the map navigation component.
+     *
+     * @return {object} service object
+     */
     function mapNavigationService() {
         const service = {
             // FIXME: this config snippet should obvisouly come from config service
@@ -32,6 +38,7 @@
             zoomTo: zoomTo
         };
 
+        // navigation controls presets
         service.controls = {
             zoom: {
                 inButton: {

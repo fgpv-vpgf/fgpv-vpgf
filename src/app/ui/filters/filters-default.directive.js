@@ -14,9 +14,15 @@
         .module('app.ui.filters')
         .directive('rvFiltersDefault', rvFiltersDefault);
 
+    /* @ngInject */
+    /**
+     * `rvFiltersDefault` directive body.
+     *
+     * @return {object} directive body
+     */
     function rvFiltersDefault() {
         var directive = {
-            restrict: 'EA',
+            restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default.html',
             scope: {},
             link: linkFunc,
@@ -27,11 +33,18 @@
 
         return directive;
 
+        /**
+         * Skeleton link function.
+         */
         function linkFunc() { //scope, el, attr, ctrl) {
 
         }
     }
 
+    /* @ngInject */
+    /**
+     * Sceleton controller function with test message.
+     */
     function Controller() {
         var self = this;
         self.message = 'Can you see me?';

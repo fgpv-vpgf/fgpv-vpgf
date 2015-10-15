@@ -28,6 +28,27 @@
         .factory('configService', configService);
 
     /* @ngInject */
+    /**
+     * Config service body. Returns the service object with the following:
+     * - data: config data
+     * - initialize: initialize function; call from core.run
+     * - ready: checks if the service is ready to use
+     *
+     * @return {object}                service object
+     */
+    /**
+     * Config service body. Returns the service object with the following:
+     * - data: config data
+     * - initialize: initialize function; call from core.run
+     * - ready: checks if the service is ready to use
+     *
+     * @param  {object} $q
+     * @param  {object} $rootElement
+     * @param  {object} $timeout
+     * @param  {object} $http
+     * @param  {object} configDefaults
+     * @return {object}                service object
+     */
     function configService($q, $rootElement, $timeout, $http, configDefaults) {
         var initializePromise;
         var isInitialized = false;
@@ -42,6 +63,9 @@
 
         ////////////////
 
+        /**
+         * Initializes `configService` by fetching and partins `config` object.
+         */
         function initialize() {
             if (initializePromise) {
                 return initializePromise;
@@ -91,6 +115,10 @@
                     configInitialized({});
                 }
 
+                /**
+                 * Initialization complete handler
+                 * @param  {object} config config object
+                 */
                 function configInitialized(config) {
                     // apply any defaults from layoutConfigDefaults, then merge config on top
                     // TODO: this is an exampe; actual merging of the defaults is more complicated
@@ -105,6 +133,11 @@
             return initializePromise;
         }
 
+        /**
+         * [ready description]
+         * @param  {object} nextPromises optional promises to be resolved before returning
+         * @return {object}              promise to be resolved on config service initialization
+         */
         function ready(nextPromises) {
             return initializePromise
                 .then(function () {

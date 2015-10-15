@@ -31,6 +31,12 @@
         .module('app.ui.common')
         .directive('rvMorph', rvMorph);
 
+    /* @ngInject */
+    /**
+     * `rvMorph` directive body.
+     *
+     * @return {object} directive body
+     */
     function rvMorph() {
         const directive = {
             restrict: 'A',

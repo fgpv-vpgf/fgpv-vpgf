@@ -14,6 +14,14 @@
         .run(layoutConfig);
 
     /* @ngInject */
+    /**
+     * Sets initial application routes.
+     *
+     * @param  {object} statehelper
+     * @param  {object} templateRegistry
+     * @param  {object} viewRegistry
+     * @param  {object} $state
+     */
     function layoutConfig(statehelper, templateRegistry, viewRegistry, $state) {
         statehelper.configureStates(getStates());
 
