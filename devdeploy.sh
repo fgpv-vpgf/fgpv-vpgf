@@ -1,5 +1,10 @@
 DEST="travis@fgpv.cloudapp.net:/home/travis/www"
 
+echo $TRAVIS_REPO_SLUG
+echo $TRAVIS_PULL_REQUEST
+echo $TRAVIS_TAG
+echo $TRAVIS_BRANCH
+
 if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" -a "$TRAVIS_PULL_REQUEST" != "false" ]; then
     openssl aes-256-cbc -k "$PW" -out ~/.ssh/id_rsa -in devkey.enc -d
     echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
