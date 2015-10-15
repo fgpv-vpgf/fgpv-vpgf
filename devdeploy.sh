@@ -1,6 +1,6 @@
 DEST="travis@fgpv.cloudapp.net:/home/travis/www"
 
-if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" ]; then
+if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" -a "$TRAVIS_PULL_REQUEST" != "false" ]; then
     openssl aes-256-cbc -k "$PW" -out ~/.ssh/id_rsa -in devkey.enc -d
     echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
     chmod 600 ~/.ssh/id_rsa
@@ -15,4 +15,3 @@ if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" ]; then
 
     rsync -a --delete "build/" "$DEST"
 fi
-
