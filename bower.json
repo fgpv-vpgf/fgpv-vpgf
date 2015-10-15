@@ -27,6 +27,7 @@
         "angular-material": { "main": "angular-material.js" },
         "gsap": {
             "main": [
+                "src/uncompressed/TimelineLite.js",
                 "src/uncompressed/TweenLite.js",
                 "src/uncompressed/plugins/CSSPlugin.js",
                 "src/uncompressed/plugins/EaselPlugin.js"
