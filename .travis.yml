@@ -32,3 +32,6 @@ notifications:
 env:
   global:
     - secure: "i6434wZBSlUMqCFyVu7ytbJa3IjmfwB5h3FrqejzL/nnUEYOw7KMPy8ZqV3mWhQ2PTWVA7rmKP/SZ4wKSeNWEAuSgVRNik3dX/nCVBX8Dn7HiKn9G9BjQUHbUEcDMKE5cWz86/IVcK2OMKHFBb2GOArqN0NrPFf2Pv+TyorAtkoamXyIo57nBB31Cqok9sl0pz1a4Ft1X6fxRKh8Rr5zU4++Nh4+Ur0awvsecHSb7O9vNpk23DXaiBzwZUhxKIL3aFgVMFCt9f/ComTtB9ZhnZTxMj7epgu4StYa4uOqdwWo9nCKg1egz9SJNmVelkUgmSinC4jM3NiOEOVpWJRuZynESWlgBndZb5z782o/XSWacJjRZVDlc9m8EaowaC+gezl67dhGPP5hv6zXzQTtL3zpj4p1VTJqpps+k003PB76ASkfJQKOVS5nqgshy2RXDlpbp/l9S9Q5LFvltVZjvYfmeMqBlkzgYeKtzGLm/RM89UYOzgU2qzFSu1Ku1y41d/y0HPCHf4iOPxfJt0MwAa/KEEwZF1cKMXeIPvFmRt3TT2cQLzg2DNmneph3Iv0nUxSBvmLmj6BYGby9xnOkMUrlPkx/Ui0heQBReRjy447eAHO4qLsQn0LVhy3AMskgv+uxYhIdVGW36QbIf8HBlM9kkY30lAVizoufphwwAoA="
+before_install:
+  - openssl aes-256-cbc -k "$PW" -out test.dec -in test.enc -d
+  - cat test.dec
