@@ -19,7 +19,7 @@
      * @return {object} directive body
      */
     function rvMenuLink() {
-        let directive = {
+        const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/sidenav/menulink.html',
             scope: {

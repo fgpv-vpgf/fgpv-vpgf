@@ -20,7 +20,7 @@
      * `self.active` is bound to a CSS class that prevents the plug view from occupying space when its content is not visible.
      */
     function SidePanelPlugController() {
-        var self = this;
+        const self = this;
         self.active = true;
     }
 })();

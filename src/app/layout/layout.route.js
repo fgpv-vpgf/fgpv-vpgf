@@ -16,6 +16,7 @@
     /* @ngInject */
     /**
      * Sets initial application routes.
+     * some info: https://github.com/angular-ui/ui-router/wiki/Nested-States-and-Nested-Views
      *
      * @param  {object} statehelper
      * @param  {object} templateRegistry

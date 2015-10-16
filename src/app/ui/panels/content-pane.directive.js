@@ -21,7 +21,7 @@
      * @return {object} directive body
      */
     function rvContentPane() {
-        var directive = {
+        const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/panels/content-pane.html',
             scope: {

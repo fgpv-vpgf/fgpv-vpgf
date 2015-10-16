@@ -54,7 +54,7 @@
         ////////////////
 
         /**
-         * Initializes `configService` by fetching and partins `config` object.
+         * Initializes `configService` by fetching and parsing `config` object.
          */
         function initialize() {
             if (initializePromise) {
@@ -124,7 +124,7 @@
         }
 
         /**
-         * [ready description]
+         * Checks if the service is ready to use.
          * @param  {object} nextPromises optional promises to be resolved before returning
          * @return {object}              promise to be resolved on config service initialization
          */

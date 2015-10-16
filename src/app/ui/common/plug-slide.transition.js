@@ -1,6 +1,6 @@
 /* global Ease, BezierEasing, TweenLite, TimelineLite  */
 
-(function () {
+(() => {
     'use strict';
 
     const RV_PANEL_CLASS = '.panel';
@@ -19,7 +19,7 @@
      * @module app.ui.common
      * @description
      *
-     * The `rvPlugSLide` is an animation. It animates enter and leave events on view plugs by applying transitions to plugs' panels. It will not work with just any node.
+     * The `rvPlugSlide` is an animation. It animates enter and leave events on view plugs by applying transitions to plugs' panels. It will not work with just any node.
      *
      * ```html
      * <!-- plug's panel will be animated by sliding it down from -100% of its height relative to itself -->
@@ -31,11 +31,14 @@
      */
     angular
         .module('app.ui.common')
-        .animation('.rv-plug-slide-down', plugSlide.bind())
-        .animation('.rv-plug-slide-right', plugSlide.bind(null, 1))
-        .animation('.rv-plug-slide-up', plugSlide.bind(null, 2))
-        .animation('.rv-plug-slide-left', plugSlide.bind(null, 3))
-        .animation('.rv-plug-slide-down-grand', plugSlideGrand.bind());
+        .animation('.rv-plug-slide-down', plugSlideBuilder(0))
+        .animation('.rv-plug-slide-right', plugSlideBuilder(1))
+        .animation('.rv-plug-slide-up', plugSlideBuilder(2))
+        .animation('.rv-plug-slide-left', plugSlideBuilder(3))
+        .animation('.rv-plug-slide-down-grand', plugSlideGrandBuilder(0))
+        .animation('.rv-plug-slide-right-grand', plugSlideGrandBuilder(1))
+        .animation('.rv-plug-slide-up-grand', plugSlideGrandBuilder(2))
+        .animation('.rv-plug-slide-left-grand', plugSlideGrandBuilder(3));
 
     // TODO: add option to change duration through an attribute
     // TODO: add option to add delay before animation starts through an attribute
@@ -43,25 +46,31 @@
     /**
      * Animates plug's panel.
      *
-     * @param  {Number} direction = 0 direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+     * @param  {Number} direction direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
      * @return {Object} service object with `enter` and `leave` functions
      */
-    function plugSlide(direction = 0) {
+    function plugSlideBuilder(direction) {
         const service = {
-            enter: slideEnter.bind(null, direction),
-            leave: slideLeave.bind(null, direction)
+            enter: slideEnterBuilder(direction),
+            leave: slideLeaveBuilder(direction)
         };
 
-        return service;
+        return () => service;
     }
 
-    function plugSlideGrand(direction = 0) {
+    /**
+     * Animates plug's panel.
+     *
+     * @param  {Number} direction direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+     * @return {Object} service object with `enter` and `leave` functions
+     */
+    function plugSlideGrandBuilder(direction) {
         const service = {
             enter: enter,
-            leave: slideLeave.bind(null, direction)
+            leave: slideLeaveBuilder(direction)
         };
 
-        return service;
+        return () => service;
 
         ///////////////
 
@@ -69,6 +78,7 @@
          * Animates grand `enter` event.
          * @param  {Object}   element  plug node
          * @param  {Function} callback
+         * @param  {Object} service looks like service object; not used
          */
         function enter(element, callback, service) {
             // FIXME: find a better way to calculate position relateive to the rootElement
@@ -77,38 +87,40 @@
                 element.find(RV_PANEL_CLASS)
                 .outerHeight(true) + 10;
 
-            slideEnter(direction, element, callback, service, delta);
+            slideEnterBuilder(direction)(element, callback, service, delta);
         }
     }
 
     /**
      * Animates `enter` event.
-     * @param  {Number} direction = 0 direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+     * @param  {Number} direction direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
      * @param  {Object}   element  plug node
      * @param  {Function} callback
      * @param  {Object} service looks like service object; not used
      * @param  {Number} delta travel distance (defaults to '100%')
      */
-    function slideEnter(direction, element, callback, service, delta = '100%') {
-        // create new paused sequence
-        let sequence = new TimelineLite({
-            paused: true
-        });
+    function slideEnterBuilder(direction) {
+        return (element, callback, service, delta = '100%') => {
+            // create new paused sequence
+            let sequence = new TimelineLite({
+                paused: true
+            });
 
-        let panel = element.find(RV_PANEL_CLASS); // get panel node
-        let duration = RV_PLUG_SLIDE_DURATION; // figure out duration
-        element.data(RV_PLUG_SLIDE_ID_DATA, ++counter); // store sequence id on the node
-        sequences[counter] = sequence; // store sequence for reference
+            let panel = element.find(RV_PANEL_CLASS); // get panel node
+            let duration = RV_PLUG_SLIDE_DURATION; // figure out duration
+            element.data(RV_PLUG_SLIDE_ID_DATA, ++counter); // store sequence id on the node
+            sequences[counter] = sequence; // store sequence for reference
 
-        if (panel) {
-            sequence
-                .add(makeSlideTween(direction, panel, duration, delta))
-                .eventCallback('onComplete', () => {
-                    console.log('Plug Slide', direction, 'is complete.');
-                    callback();
-                })
-                .play();
-        }
+            if (panel) {
+                sequence
+                    .add(makeSlideTween(direction, panel, duration, delta))
+                    .eventCallback('onComplete', () => {
+                        console.log('Plug Slide', direction, 'is complete.');
+                        callback();
+                    })
+                    .play();
+            }
+        };
     }
 
     /**
@@ -117,24 +129,26 @@
      * @param  {Object}   element  plug node
      * @param  {Function} callback
      */
-    function slideLeave(direction, element, callback) {
-        let sequenceId = element.data(RV_PLUG_SLIDE_ID_DATA);
-        let sequence = sequences[sequenceId];
+    function slideLeaveBuilder(direction) {
+        return (element, callback) => {
+            let sequenceId = element.data(RV_PLUG_SLIDE_ID_DATA);
+            let sequence = sequences[sequenceId];
 
-        if (sequence) {
-            sequence
-                .pause()
-                .eventCallback('onReverseComplete', () => {
-                    console.log('Plug Slide [reversed]', direction, 'is complete.');
+            if (sequence) {
+                sequence
+                    .pause()
+                    .eventCallback('onReverseComplete', () => {
+                        console.log('Plug Slide [reversed]', direction, 'is complete.');
 
-                    // more on delete: http://perfectionkills.com/understanding-delete/
-                    delete sequences[sequenceId]; // release for garbage
-                    element.data(RV_PLUG_SLIDE_ID_DATA, null); // remove data attribute
+                        // more on delete: http://perfectionkills.com/understanding-delete/
+                        delete sequences[sequenceId]; // release for garbage
+                        element.data(RV_PLUG_SLIDE_ID_DATA, null); // remove data attribute
 
-                    callback();
-                })
-                .reverse();
-        }
+                        callback();
+                    })
+                    .reverse();
+            }
+        };
     }
 
     /**
