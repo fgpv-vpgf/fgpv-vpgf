@@ -81,7 +81,7 @@
     "requireSpacesInForStatement": true,
     "requireSpaceBetweenArguments": true,
     "requireSemicolons": true,
-    "requireVarDeclFirst": true,
+    "requireVarDeclFirst": false,
 
     "requirePaddingNewLinesBeforeLineComments": {
         "allExcept": "firstAfterCurly"
