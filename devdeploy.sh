@@ -1,4 +1,5 @@
-DEST="travis@fgpv.cloudapp.net:/home/travis/www"
+SSHSRV="travis@fgpv.cloudapp.net"
+DESTDIR="/home/travis/www"
 
 if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" -a "$TRAVIS_PULL_REQUEST" == "false" ]; then
     openssl aes-256-cbc -k "$PW" -out ~/.ssh/id_rsa -in devkey.enc -d
@@ -8,11 +9,12 @@ if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" -a "$TRAVIS_PULL_REQUEST" == "
     ssh-add ~/.ssh/id_rsa
 
     if [ -n "$TRAVIS_TAG" ]; then
-        DEST="$DEST/$TRAVIS_TAG/"
+        DESTDIR="$DESTDIR/$TRAVIS_TAG/"
     else
-        DEST="$DEST/$TRAVIS_BRANCH/"
+        DESTDIR="$DESTDIR/$TRAVIS_BRANCH/"
     fi
 
-    echo "Destintation: $DEST"
-    rsync -av --delete "build/" "$DEST"
+    echo "Destintation: $DESTDIR"
+    ssh "$SSHSRV" mkdir -p "$DESTDIR"
+    rsync -av --delete "build/" "$SSHSRV:$DESTDIR"
 fi
