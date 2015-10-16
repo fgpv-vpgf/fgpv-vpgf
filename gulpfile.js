@@ -178,13 +178,13 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
         return gulp
             .src(index)
 
-            .pipe(inject(config.jsLibFilePath, 'vendor'))
-            .pipe(inject(config.jsSingleFilePath, ''))
+            .pipe($.inject(gulp.src(config.jsLibFilePath), { name: 'inject:vendor', ignorePath: '../build/', relative: true }))
+            .pipe($.inject(gulp.src(config.jsSingleFilePath), { ignorePath: '../build/', relative: true }))
 
-            .pipe(inject(config.csslib, 'vendor'))
-            .pipe(inject(config.css))
+            .pipe($.inject(gulp.src(config.csslib), { name: 'inject:vendor', ignorePath: '../build/', relative: true }))
+            .pipe($.inject(gulp.src(config.css), { ignorePath: '../build/', relative: true }))
 
-            .pipe(inject(config.templates, 'templates'))
+            .pipe($.inject(gulp.src(config.templates), { name: 'inject:templates', ignorePath: '../build/', relative: true }))
 
             .pipe(gulp.dest(config.build));
     }
@@ -368,7 +368,7 @@ function logWatch(event) {
  * Inject files in a sorted sequence at a specified inject label
  * @param   {Array} src   glob pattern for source files
  * @param   {String} label   The label name
- * @param   {Array} order   glob pattern for sort order of the files
+ * @param   {Array} order   glob pattern for sort order of the files, undefined for unordered
  * @param   {Boolean} relative   default is true
  * @returns {Stream}   The stream
  */
