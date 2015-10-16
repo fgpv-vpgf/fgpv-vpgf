@@ -175,16 +175,24 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
             js.push('!' + config.app + 'app-seed.js'); // remove app-seed from injectables
         }
 
+        function injectOpts(name) {
+            var res = { ignorePath: '../build/', relative: true };
+            if (name) {
+                res.name = 'inject:' + name;
+            }
+            return res;
+        }
+
         return gulp
             .src(index)
 
-            .pipe(inject(config.jsLibFilePath, 'vendor'))
-            .pipe(inject(config.jsSingleFilePath, ''))
+            .pipe($.inject(gulp.src(config.jsLibFilePath), injectOpts('vendor')))
+            .pipe($.inject(gulp.src(config.jsSingleFilePath), injectOpts()))
 
-            .pipe(inject(config.csslib, 'vendor'))
-            .pipe(inject(config.css))
+            .pipe($.inject(gulp.src(config.csslib), injectOpts('vendor')))
+            .pipe($.inject(gulp.src(config.css), injectOpts()))
 
-            .pipe(inject(config.templates, 'templates'))
+            .pipe($.inject(gulp.src(config.templates), injectOpts('templates')))
 
             .pipe(gulp.dest(config.build));
     }
@@ -362,42 +370,6 @@ function startPlatoVisualizer(done) {
  */
 function logWatch(event) {
     log('*** File ' + event.path + ' was ' + event.type + ', running tasks...');
-}
-
-/**
- * Inject files in a sorted sequence at a specified inject label
- * @param   {Array} src   glob pattern for source files
- * @param   {String} label   The label name
- * @param   {Array} order   glob pattern for sort order of the files
- * @param   {Boolean} relative   default is true
- * @returns {Stream}   The stream
- */
-function inject(src, label, order, relative) {
-    var options = { read: false, relative: relative };
-
-    if (typeof options.relative === 'undefined') {
-        options.relative = true;
-    }
-
-    if (label) {
-        options.name = 'inject:' + label;
-    }
-
-    return $.inject(orderSrc(src, order), options);
-}
-
-/**
- * Order a stream
- * @param   {Stream} src   The gulp.src stream
- * @param   {Array} order Glob array pattern
- * @returns {Stream} The ordered stream
- */
-function orderSrc(src, order) {
-    //order = order || ['**/*'];
-
-    return gulp
-        .src(src)
-        .pipe($.if(order, $.order(order)));
 }
 
 /* function removeMatch(originalArray, regex) {
