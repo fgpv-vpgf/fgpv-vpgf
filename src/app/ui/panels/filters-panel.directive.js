@@ -7,7 +7,7 @@
      * @module app.ui.panels
      * @description
      *
-     * The `rvFiltersPanel` directive is a outter panel container with a content plug view to allow for different content to be displayed.
+     * The `rvFiltersPanel` directive is a outer panel container with a content plug view to allow for different content to be displayed.
      */
     angular
         .module('app.ui.panels')
@@ -20,7 +20,7 @@
      * @return {object} directive body
      */
     function rvFiltersPanel() {
-        var directive = {
+        const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/panels/filters-panel.html',
             scope: {},

@@ -10,7 +10,7 @@
      * @restrict A
      * @description
      *
-     * The `rvMorph` directive animates the given HTML element from one CSS class to another provided to the `rvMorph` attribute. The element is morphed by using GSAP animation library. Only class changes are animated - the first class is applied immediatelly; when removed, applied immediatelly as well.
+     * The `rvMorph` directive animates the given HTML element from one CSS class to another provided to the `rvMorph` attribute. The element is morphed by using GSAP animation library. Only class changes are animated - the first class is applied immediately; when removed, applied immediately as well.
      *
      * ```html
      * <!-- when $scope.myValue changes from `value1` to `value2`, the transition is animated -->

@@ -20,7 +20,7 @@
      * @param {object} mapNavigationService
      */
     function MapNavigationController(mapNavigationService) {
-        var self = this;
+        const self = this;
 
         // expose navigation service to the template
         self.service = mapNavigationService;

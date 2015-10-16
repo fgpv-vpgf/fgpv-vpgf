@@ -19,7 +19,7 @@
      * @return {object} directive body
      */
     function rvSidePanel() {
-        var directive = {
+        const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/panels/side-panel.html',
             scope: {},

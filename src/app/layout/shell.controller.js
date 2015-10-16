@@ -26,7 +26,7 @@
      * @param {object} $state
      */
     function ShellController(configService, $state) {
-        var self = this;
+        const self = this;
 
         self.config = configService.data;
         self.isLoading = true;

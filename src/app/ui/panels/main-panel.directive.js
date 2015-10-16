@@ -19,7 +19,7 @@
      * @return {object} directive body
      */
     function rvMainPanel() {
-        var directive = {
+        const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/panels/main-panel.html',
             scope: {},

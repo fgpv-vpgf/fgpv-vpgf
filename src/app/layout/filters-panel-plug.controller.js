@@ -10,7 +10,7 @@
      *
      * The `FiltersPanelPlugController` controller handles the filters panel plug view.
      * `self.active` is triggering an `active` CSS class to be added to the side panel plug when it's active.
-     * `self.mode` is bound to a CSS class indicating current mode of the filters panel (default, attached, minimized, or full). `rvMorph` is used to animate between modes.
+     * `self.mode` is bound to a CSS class indicating current mode of the filters panel (default, attached, minimized, or full). `rvMorph` directive is used to animate between modes (when `rv-morph` attribute is applied to a HTML node).
      */
     angular
         .module('app.layout')
@@ -18,7 +18,7 @@
 
     /* @ngInject */
     function FiltersPanelPlugController($rootScope) {
-        var self = this;
+        const self = this;
         self.active = true;
         self.mode = 'default';
 
@@ -26,7 +26,7 @@
         // FIXME: should be moved to a filter service and made sane
         $rootScope.$on('$stateChangeStart',
             function (event, toState) {
-                var filtersReg = /filters/;
+                const filtersReg = /filters/;
 
                 if (filtersReg.test(toState.name)) {
                     self.mode = toState.name.split('.').pop();

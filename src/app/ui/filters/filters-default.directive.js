@@ -21,7 +21,7 @@
      * @return {object} directive body
      */
     function rvFiltersDefault() {
-        var directive = {
+        const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default.html',
             scope: {},

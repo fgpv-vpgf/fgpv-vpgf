@@ -25,7 +25,7 @@
         configureTheme();
 
         /**
-         * Set state provider for `configHelper`.
+         * Sets state provider for `configHelper`.
          */
         function configureStateRouting() {
             var stateCfg = statehelperConfigProvider;
