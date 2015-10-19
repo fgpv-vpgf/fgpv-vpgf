@@ -16,6 +16,8 @@
             'app.ui.toc',
             'app.ui.toolbox',
             'app.ui.metadata',
-            'app.ui.mapnav'
+            'app.ui.mapnav',
+            'app.ui.filters',
+            'app.ui.common'
         ]);
 })();

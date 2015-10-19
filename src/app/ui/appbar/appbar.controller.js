@@ -15,6 +15,12 @@
         .controller('AppbarController', AppbarController);
 
     /* @ngInject */
+    /**
+     * `AppbarController` has lots of garbage code so far, needed to show how the panels are toggled. It should be moved to service.
+     *
+     * @param {object} layoutService
+     * @param {object} $state
+     */
     function AppbarController(layoutService, $state) {
         var self = this;
 
@@ -35,8 +41,11 @@
         // hacky way to toggle panels;
         // FIXME: replace with a sane method
         function toggleToc() {
-            if ($state.current.name.indexOf('toc') === -1) {
-                $state.go('app.main.toc', {}, {
+            //var stateName = 'app.filters.default';
+            var stateName = 'app.main.toc';
+
+            if ($state.current.name.indexOf(stateName) === -1) {
+                $state.go(stateName, {}, {
                     location: false
                 });
                 self.tocSelected = true;
@@ -50,8 +59,12 @@
         }
 
         function toggleToolbox() {
-            if ($state.current.name.indexOf('toolbox') === -1) {
-                $state.go('app.main.toolbox', {}, {
+            var stateName = 'app.main.toolbox';
+
+            //var stateName = 'app.filters.default';
+
+            if ($state.current.name.indexOf(stateName) === -1) {
+                $state.go(stateName, {}, {
                     location: false
                 });
                 self.tocSelected = false;

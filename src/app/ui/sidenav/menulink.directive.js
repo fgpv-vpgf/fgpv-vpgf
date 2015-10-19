@@ -13,8 +13,13 @@
         .module('app.ui.sidenav')
         .directive('rvMenuLink', rvMenuLink);
 
+    /* @ngInject */
+    /**
+     * `rvMenuLink` directive body.
+     * @return {object} directive body
+     */
     function rvMenuLink() {
-        let directive = {
+        const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/sidenav/menulink.html',
             scope: {
@@ -28,12 +33,18 @@
 
         return directive;
 
+        /**
+         * Sceleton link function.
+         */
         function linkFunc() { //scope, el, attr, ctrl) {
             //console.log(scope, el, attr, ctrl);
         }
     }
 
     /* @ngInject */
+    /**
+         * Sceleton controller function.
+         */
     function Controller() {
         //let self = this;
         //console.log('--', self.section);

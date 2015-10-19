@@ -15,12 +15,21 @@
         .controller('ShellController', ShellController);
 
     /* @ngInject */
-    function ShellController(configService, layoutService, $state) {
-        var self = this;
+    /**
+     * `ShellController`.
+     *
+     * `self.config`
+     * `self.isLoading` is bouding to a loading overlay
+     * `self.$state` binds state name to the attribute on the shell's root node; can be used in CSS selectors/
+     *
+     * @param {object} configService
+     * @param {object} $state
+     */
+    function ShellController(configService, $state) {
+        const self = this;
 
         self.config = configService.data;
         self.isLoading = true;
-        self.layoutService = layoutService;
         self.$state = $state;
 
         // TODO: mock settings; replace by config

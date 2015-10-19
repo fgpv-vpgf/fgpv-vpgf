@@ -81,7 +81,7 @@
     "requireSpacesInForStatement": true,
     "requireSpaceBetweenArguments": true,
     "requireSemicolons": true,
-    "requireVarDeclFirst": true,
+    "requireVarDeclFirst": false,
 
     "requirePaddingNewLinesBeforeLineComments": {
         "allExcept": "firstAfterCurly"
@@ -99,7 +99,9 @@
             "preset": "jsdoc3",
             "extra": {
                 "ngdoc": true,
-                "usage": true
+                "usage": true,
+                "multiElement": true,
+                "restrict": true
             }
         },
         "checkParamNames": true,

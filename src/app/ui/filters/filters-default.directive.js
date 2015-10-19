@@ -3,30 +3,28 @@
 
     /**
      * @ngdoc directive
-     * @name rvMapnavButton
-     * @module app.ui.mapnav
+     * @name rvFiltersDefault
+     * @module app.ui.filters
      * @description
      *
-     * The `rvMapnavButton` directive is a map navigation component button.
+     * The `rvFiltersDefault` directive is a filters and datatable panel component.
      *
      */
     angular
-        .module('app.ui.mapnav')
-        .directive('rvMapnavButton', rvMapnavButton);
+        .module('app.ui.filters')
+        .directive('rvFiltersDefault', rvFiltersDefault);
 
     /* @ngInject */
     /**
-     * `rvMapnavButton` directive body.
+     * `rvFiltersDefault` directive body.
      *
      * @return {object} directive body
      */
-    function rvMapnavButton() {
-        var directive = {
+    function rvFiltersDefault() {
+        const directive = {
             restrict: 'E',
-            templateUrl: 'app/ui/mapnav/mapnav-button.html',
-            scope: {
-                control: '=' // binds `control` attribute to the scope;
-            },
+            templateUrl: 'app/ui/filters/filters-default.html',
+            scope: {},
             link: linkFunc,
             controller: Controller,
             controllerAs: 'self',
@@ -36,7 +34,7 @@
         return directive;
 
         /**
-         * Sceleton link function.
+         * Skeleton link function.
          */
         function linkFunc() { //scope, el, attr, ctrl) {
 
@@ -45,12 +43,11 @@
 
     /* @ngInject */
     /**
-     * Sceleton controller function.
+     * Sceleton controller function with test message.
      */
     function Controller() {
-        //var self = this;
-
-        ///////////
+        var self = this;
+        self.message = 'Can you see me?';
 
         activate();
 

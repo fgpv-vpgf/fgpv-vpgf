@@ -15,6 +15,11 @@
         .factory('sideNavigationService', sideNavigationService);
 
     /* @ngInject */
+    /**
+     * `sideNavigationService` exposes methods to close/open the side navigation panel.
+     * @param  {object} $mdSidenav
+     * @return {object} service object
+     */
     function sideNavigationService($mdSidenav) {
         /* jshint shadow:true */
         /* jshint unused:false */
@@ -32,6 +37,9 @@
 
         ////////////////
 
+        /**
+         * Opens side navigation panel.
+         */
         function open() {
             $mdSidenav('left')
                 .open()
@@ -40,6 +48,9 @@
                 });
         }
 
+        /**
+         * Closes side navigation panel.
+         */
         function close() {
             $mdSidenav('left')
                 .close()
@@ -48,6 +59,12 @@
                 });
         }
 
+        // FIXME: write a proper toggle function
+        /**
+         * Toggles side navigation panel.
+         *
+         * @param  {object} argument [description]
+         */
         function toggle(argument) {
             console.log(argument);
         }

@@ -14,6 +14,9 @@
         .controller('MetadataController', MetadataController);
 
     /* @ngInject */
+    /**
+     * `MetadataController` skeleton controller.
+     */
     function MetadataController() {
         //var self = this;
 

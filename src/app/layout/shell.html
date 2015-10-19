@@ -3,25 +3,41 @@
     <ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
 
     <div class="inner-shell" layout="column">
+        <!-- TODO: add proper loading message or animation to the loading splash -->
         <div class="loading-splash" layout layout-align="center center" ng-hide="!self.isLoading">
             <span>Loading</span>
         </div>
 
-        <div ng-class="{ active: self.active }" ui-view='appbarPlug'></div>
+        <ng-include src="'app/ui/mapnav/mapnav.html'"></ng-include>
 
-        <div ng-class="{ active: self.active, stagger: self.isStaggering }" ui-view='panelPlug'></div>
-        <div ng-class="{ active: self.active }" ui-view='sidePanelPlug'></div>
+        <!--
+            Plugs are ui-router views to contain ui components, mostly panels. Each plug corresponds to the main part of the ui: panelPlug - main panel, etc.
 
-        <div ng-class="{ active: self.active }" ui-view='detailsPlug'></div>
+            Each plug has a permanent position on the page defined through CSS; plugs themselves don't move or change size (with a small exception when the plug needs to change size to accomodate content's shadow). Plug's child is a panel (panelPlug - mainPanel), which does animate on enter and leave events. Panels take all availables space in their plug.
 
-        <div ng-class="{ active: self.active }" ui-view='geoSearchPlug'></div>
+            A panel can display a content pane - mainPanel can display either toc or toolbox content panes. When switching between toc and tollbox, the panel doesn't not animate (fade in/out animations), but the content pane does on etner and leave events.
+
+            Plug - Panel - Content Pane - Content
+        -->
+        <div ng-class="{ active: self.active }" ui-view="appbarPlug"></div>
+
+        <!-- rv-plug-slide-down class specifies the type of animation applied to the plug's panel on enter/leave  -->
+        <div ng-class="{ active: self.active, stagger: self.isStaggering }" ui-view="panelPlug" class="rv-plug-slide-down"></div>
+
+        <div ng-class="{ active: self.active }" ui-view="sidePanelPlug" class="rv-plug-slide-right"></div>
+
+        <!-- rv-morph="self.mode" animates transitions between values bound to self.mode -->
+        <div ng-class="{ active: self.active }" rv-morph="self.mode" ui-view='filtersPlug' class="rv-plug-slide-down-grand"></div>
+
+        <div ng-class="{ active: self.active }" ui-view="detailsPlug"></div>
+
+        <div ng-class="{ active: self.active }" ui-view="geoSearchPlug"></div>
 
         <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center" style="display: none;">I'm
             {{self.config.title}}
             and
             {{ 'page.title' | translate }}</md-whiteframe>
 
-        <ng-include src="'app/ui/mapnav/mapnav.html'"></ng-include>
 
     </div>
 

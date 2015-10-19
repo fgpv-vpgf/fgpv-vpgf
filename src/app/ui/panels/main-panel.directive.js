@@ -13,8 +13,13 @@
         .module('app.ui.panels')
         .directive('rvMainPanel', rvMainPanel);
 
+    /* @ngInject */
+    /**
+     * `rvMainPanel` directive body.
+     * @return {object} directive body
+     */
     function rvMainPanel() {
-        var directive = {
+        const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/panels/main-panel.html',
             scope: {},
@@ -26,12 +31,18 @@
 
         return directive;
 
+        /**
+         * Sceleton link function.
+         */
         function linkFunc() { //(scope, el, attr, ctrl) {
 
         }
     }
 
     /* @ngInject */
+    /**
+     * Sceleton controller function.
+     */
     function Controller() {
         //var self = this;
 

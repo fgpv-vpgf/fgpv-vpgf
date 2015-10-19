@@ -14,6 +14,15 @@
         .run(layoutConfig);
 
     /* @ngInject */
+    /**
+     * Sets initial application routes.
+     * some info: https://github.com/angular-ui/ui-router/wiki/Nested-States-and-Nested-Views
+     *
+     * @param  {object} statehelper
+     * @param  {object} templateRegistry
+     * @param  {object} viewRegistry
+     * @param  {object} $state
+     */
     function layoutConfig(statehelper, templateRegistry, viewRegistry, $state) {
         statehelper.configureStates(getStates());
 
@@ -45,6 +54,9 @@
                             /*panelPlug: {
                                 template: '<div>panel placeholder' +
                                     '<a href="">example of a link</a></div>'
+                            },
+                            filtersPlug: {
+                                template: '<div>panel placeholder</div>'
                             },*/
                             detailsPlug: {
                                 template: '<div>details panel placeholder</div>'
@@ -53,6 +65,43 @@
                                 template: '<div>geosearch placeholder</div>'
                             }
                         }
+                    }
+                },
+                {
+                    name: 'app.main.toc.filters',
+                    config: {
+                        abstract: true,
+                        views: viewRegistry.filtersPlug
+                    }
+                },
+                {
+                    name: 'app.main.toc.filters.default',
+                    config: {
+                        url: 'default',
+                        views: {
+                            contentPlug: {
+                                //templateUrl: templateRegistry.filtersDefault
+                                template: '<rv-filters-default></rv-filters-default>'
+                            }
+                        }
+                    }
+                },
+                {
+                    name: 'app.main.toc.filters.default.minimized',
+                    config: {
+                        url: 'full'
+                    }
+                },
+                {
+                    name: 'app.main.toc.filters.default.full',
+                    config: {
+                        url: 'full'
+                    }
+                },
+                {
+                    name: 'app.main.toc.filters.default.attached',
+                    config: {
+                        url: 'full'
                     }
                 },
                 {

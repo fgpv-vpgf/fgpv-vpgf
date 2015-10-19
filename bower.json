@@ -11,6 +11,7 @@
         "bardjs": "^0.1.4"
     },
     "dependencies": {
+        "jquery": "^2.1.4",
         "angular": "^1.4.5",
         "angular-animate": "^1.4.5",
         "angular-sanitize": "^1.4.5",
@@ -18,9 +19,22 @@
         "angular-material": "#master",
         "angular-ui-router": "^0.2.15",
         "angular-translate": "^2.7.2",
-        "angular-translate-loader-static-files": "^2.7.2"
+        "angular-translate-loader-static-files": "^2.7.2",
+        "gsap": "^1.18.0",
+        "bezier-easing": "^1.0.0"
     },
     "overrides": {
-        "angular-material": { "main": "angular-material.js" }
+        "angular-material": { "main": "angular-material.js" },
+        "gsap": {
+            "main": [
+                "src/uncompressed/TimelineLite.js",
+                "src/uncompressed/TweenLite.js",
+                "src/uncompressed/plugins/CSSPlugin.js",
+                "src/uncompressed/plugins/EaselPlugin.js"
+            ]
+        },
+        "bezier-easing":{
+            "main": "bezier-easing.js"
+        }
     }
 }
