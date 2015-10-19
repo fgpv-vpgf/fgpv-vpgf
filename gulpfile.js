@@ -35,6 +35,7 @@ gulp.task('build', 'Transpile and concatenate the code', function () {
         .pipe($.babel())
         .pipe($.concat('geoapi.js'))
         .pipe(gulp.dest('dist/v' + pkg.version))
+        .pipe(gulp.dest('dist'))
         .pipe($.rename('geoapi.min.js'))
         .pipe($.uglify())
         .pipe($.sourcemaps.write('.'))

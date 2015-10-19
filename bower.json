@@ -5,7 +5,7 @@
   "authors": [
     "Cynthia (Qingwei) Li <Qingwei.Li@ec.gc.ca>"
   ],
-  "main": "dist/geoApi.js",
+  "main": "dist/geoapi.js",
   "moduleType": [
     "globals"
   ],

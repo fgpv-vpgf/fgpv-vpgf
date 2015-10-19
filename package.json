@@ -2,7 +2,7 @@
   "name": "geoApi",
   "version": "0.0.0",
   "description": "",
-  "main": "dist/geoApi.js",
+  "main": "dist/geoapi.js",
   "dependencies": {},
   "devDependencies": {
     "del": "^2.0.2",
