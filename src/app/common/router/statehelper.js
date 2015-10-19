@@ -2,7 +2,7 @@
     'use strict';
 
     /**
-     * @ngdoc service
+     * @ngdoc provider
      * @name statehelperConfig
      * @module app.common.router
      * @description
