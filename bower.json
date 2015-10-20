@@ -25,7 +25,9 @@
         "geoapi": "https://github.com/fgpv-vpgf/geoApi/releases/download/v0.0.0-1/geoapi-0.0.0.tgz"
     },
     "overrides": {
-        "angular-material": { "main": "angular-material.js" },
+        "angular-material": {
+            "main": "angular-material.js"
+        },
         "geoapi": { "main": "geoapi.js" },
         "gsap": {
             "main": [
@@ -37,6 +39,9 @@
         },
         "bezier-easing":{
             "main": "bezier-easing.js"
+        },
+        "dotjem-angular-tree": {
+            "main": "dotjem-angular-tree.js"
         }
     }
 }
