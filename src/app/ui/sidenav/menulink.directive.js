@@ -43,8 +43,8 @@
 
     /* @ngInject */
     /**
-         * Sceleton controller function.
-         */
+     * Sceleton controller function.
+     */
     function Controller() {
         //let self = this;
         //console.log('--', self.section);
