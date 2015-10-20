@@ -52,6 +52,7 @@ module.exports = function (config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         //browsers: ['Chrome', 'Firefox', 'PhantomJS', 'IE'],
+        // TODO: switch to PhantomJS2 as soon as Travis supports it
         browsers: ['PhantomJS'],
 
         // Continuous Integration mode

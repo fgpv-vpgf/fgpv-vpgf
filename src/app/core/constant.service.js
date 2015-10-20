@@ -30,6 +30,9 @@
         .constant('configDefaults', {
             title: 'Dawn RAM'
         })
+        .constant('events', {
+            rvReady: 'rvReady'
+        })
         .constant('viewRegistry', {
             filtersPlug: {
                 'filtersPlug@': {

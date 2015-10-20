@@ -14,18 +14,7 @@
         .module('app.layout')
         .controller('ShellController', ShellController);
 
-    /* @ngInject */
-    /**
-     * `ShellController`.
-     *
-     * `self.config`
-     * `self.isLoading` is bouding to a loading overlay
-     * `self.$state` binds state name to the attribute on the shell's root node; can be used in CSS selectors/
-     *
-     * @param {object} configService
-     * @param {object} $state
-     */
-    function ShellController(configService, $state) {
+    function ShellController(configService, layoutService, $state, $rootScope, events) {
         const self = this;
 
         self.config = configService.data;
@@ -70,8 +59,7 @@
          * Controller's activate function.
          */
         function activate() {
-            configService.ready()
-                .then(hideLoadingScreen);
+            $rootScope.$on(events.rvReady, hideLoadingScreen);
         }
 
         /**
