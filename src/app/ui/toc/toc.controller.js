@@ -1,4 +1,4 @@
-(function () {
+(() => {
     'use strict';
 
     /**
@@ -18,13 +18,21 @@
     /**
      * `TocController` has lots of ugly code to handle state switching. Should be rewritten.
      */
-    function TocController($state) {
+    function TocController($state, tocService) {
         var self = this;
 
         self.toggleMetadata = toggleMetadata;
         self.toggleSettings = toggleSettings;
         self.toggleFilters = toggleFilters;
         self.toggleFiltersFull = toggleFiltersFull;
+
+        self.config = tocService.data;
+        self.presets = tocService.presets;
+
+        // temp function to open layer groups
+        self.toggleGroup = (group) => {
+            group.expanded = !group.expanded;
+        };
 
         activate();
 

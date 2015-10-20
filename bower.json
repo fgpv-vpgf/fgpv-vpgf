@@ -22,6 +22,7 @@
         "angular-translate-loader-static-files": "^2.7.2",
         "gsap": "^1.18.0",
         "bezier-easing": "^1.0.0",
+        "dotjem-angular-tree": "^0.2.1",
         "geoapi": "https://github.com/fgpv-vpgf/geoApi/releases/download/v0.0.0-1/geoapi-0.0.0.tgz"
     },
     "overrides": {
