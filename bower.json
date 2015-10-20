@@ -21,10 +21,13 @@
         "angular-translate": "^2.7.2",
         "angular-translate-loader-static-files": "^2.7.2",
         "gsap": "^1.18.0",
-        "bezier-easing": "^1.0.0"
+        "bezier-easing": "^1.0.0",
+        "dotjem-angular-tree": "^0.2.1"
     },
     "overrides": {
-        "angular-material": { "main": "angular-material.js" },
+        "angular-material": {
+            "main": "angular-material.js"
+        },
         "gsap": {
             "main": [
                 "src/uncompressed/TimelineLite.js",
@@ -33,8 +36,11 @@
                 "src/uncompressed/plugins/EaselPlugin.js"
             ]
         },
-        "bezier-easing":{
+        "bezier-easing": {
             "main": "bezier-easing.js"
+        },
+        "dotjem-angular-tree": {
+            "main": "dotjem-angular-tree.js"
         }
     }
 }
