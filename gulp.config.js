@@ -21,6 +21,7 @@ module.exports = function () {
     var report = './report/';
 
     var bowerdir = './lib/';
+    var nodedir = './node_modules/';
 
     var config = {
 
@@ -131,6 +132,7 @@ module.exports = function () {
         var options = {
             files: [].concat(
                 bowerFiles(),
+                nodedir + 'babel-core/browser-polyfill.js',
                 bowerModules + 'angular-mocks/angular-mocks.js',
                 bowerModules + 'sinon/index.js',
                 bowerModules + 'bardjs/dist/bard.js',
