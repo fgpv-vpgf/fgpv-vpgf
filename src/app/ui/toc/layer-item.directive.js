@@ -29,7 +29,7 @@
         return directive;
 
         /**
-         * Sceleton link function.
+         * Skeleton link function.
          */
         function linkFunc() { //scope, el, attr, ctrl) {
 
@@ -37,7 +37,7 @@
     }
 
     /**
-     * Sceleton controller function.
+     * Skeleton controller function.
      */
     function Controller() {
         //const self = this;
