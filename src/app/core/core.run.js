@@ -37,5 +37,4 @@
         // TODO: write language detection routine
         $translate.use('fr-CA');
     }
-
 })();
