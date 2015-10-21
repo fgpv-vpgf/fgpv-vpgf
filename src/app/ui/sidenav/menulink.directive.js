@@ -34,7 +34,7 @@
         return directive;
 
         /**
-         * Sceleton link function.
+         * Skeleton link function.
          */
         function linkFunc() { //scope, el, attr, ctrl) {
             //console.log(scope, el, attr, ctrl);
@@ -43,8 +43,8 @@
 
     /* @ngInject */
     /**
-         * Sceleton controller function.
-         */
+     * Skeleton controller function.
+     */
     function Controller() {
         //let self = this;
         //console.log('--', self.section);

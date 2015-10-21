@@ -1,31 +1,24 @@
-(function () {
+(() => {
     'use strict';
 
     /**
      * @ngdoc directive
-     * @name rvMapnavButton
-     * @module app.ui.mapnav
+     * @name rvLayerItem
+     * @module app.ui.toc
      * @description
      *
-     * The `rvMapnavButton` directive is a map navigation component button.
-     *
+     * The `rvLayerItem` directive is a UI compoenent for a layer in the layer selector (toc).
      */
     angular
-        .module('app.ui.mapnav')
-        .directive('rvMapnavButton', rvMapnavButton);
+        .module('app.ui.toc')
+        .directive('rvLayerItem', rvLayerItem);
 
-    /* @ngInject */
-    /**
-     * `rvMapnavButton` directive body.
-     *
-     * @return {object} directive body
-     */
-    function rvMapnavButton() {
-        var directive = {
+    function rvLayerItem() {
+        const directive = {
             restrict: 'E',
-            templateUrl: 'app/ui/mapnav/mapnav-button.html',
+            templateUrl: 'app/ui/toc/layer-item.html',
             scope: {
-                control: '=' // binds `control` attribute to the scope;
+                layer: '='
             },
             link: linkFunc,
             controller: Controller,
@@ -43,14 +36,11 @@
         }
     }
 
-    /* @ngInject */
     /**
      * Skeleton controller function.
      */
     function Controller() {
-        //var self = this;
-
-        ///////////
+        //const self = this;
 
         activate();
 

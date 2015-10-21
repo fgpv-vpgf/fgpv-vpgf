@@ -33,7 +33,7 @@
         return directive;
 
         /**
-         * Sceleton link function.
+         * Skeleton link function.
          */
         function linkFunc() { //(scope, el, attr, ctrl) {
 
@@ -42,7 +42,7 @@
 
     /* @ngInject */
     /**
-     * Sceleton controller function.
+     * Skeleton controller function.
      */
     function Controller() {
         //var self = this;
