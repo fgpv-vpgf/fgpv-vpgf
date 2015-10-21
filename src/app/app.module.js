@@ -22,6 +22,7 @@
          * but this is easier to maintain.
          */
         'app.core',
+        'app.geo',
         'app.ui',
 
         /*
