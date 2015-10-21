@@ -1,0 +1,12 @@
+{% if doc.methods.length -%}
+
+<h3>Methods</h3>
+<ul>
+{%- for method in doc.methods %}
+  <li>
+  {$ method.name $} - {$ method.description $}
+  </li>
+{%- endfor %}
+</ul>
+
+{%- endif %}

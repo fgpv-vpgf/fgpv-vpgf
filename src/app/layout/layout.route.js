@@ -23,6 +23,7 @@
      * @param  {object} viewRegistry
      * @param  {object} $state
      */
+
     function layoutConfig(statehelper, templateRegistry, viewRegistry, $state) {
         statehelper.configureStates(getStates());
 

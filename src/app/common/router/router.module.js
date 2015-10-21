@@ -3,7 +3,7 @@
 
     /**
      * @ngdoc module
-     * @name common.router
+     * @name app.common.router
      * @requires ui.router
      * @description
      *
@@ -11,7 +11,7 @@
      *
      */
     angular
-        .module('common.router', [
+        .module('app.common.router', [
             'ui.router'
         ]);
 })();

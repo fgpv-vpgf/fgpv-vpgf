@@ -8,7 +8,10 @@
   "devDependencies": {
     "babel-core": "^5.8.25",
     "bower": "^1.4.1",
+    "canonical-path": "0.0.2",
     "del": "^1.2.0",
+    "dgeni": "^0.4.1",
+    "dgeni-packages": "https://github.com/ec-dev/dgeni-packages#develop",
     "glob": "^5.0.14",
     "gulp": "^3.9.0",
     "gulp-add-src": "^0.2.0",
@@ -52,6 +55,7 @@
     "karma-phantomjs-launcher": "^0.2.0",
     "karma-phantomjs2-launcher": "^0.3.2",
     "karma-sinon": "^1.0.4",
+    "lodash": "^3.10.1",
     "main-bower-files": "^2.9.0",
     "phantomjs": "^1.9.17",
     "plato": "^1.5.0",

@@ -10,6 +10,7 @@ var del = require('del');
 var $ = require('gulp-load-plugins')({ lazy: true });
 var args = require('yargs').argv;
 var bowerFiles = require('main-bower-files');
+var Dgeni = require('dgeni');
 var config = require('./gulp.config')();
 
 require('gulp-help')(gulp);
@@ -434,3 +435,44 @@ function log(msg) {
         $.util.log($.util.colors.blue(msg));
     }
 }
+
+/**
+ * Remove dgeni generated docs
+ */
+gulp.task('docs-clean', function (done) {
+    return del([
+        'dist/docs/**'
+        ], done);
+});
+
+/**
+ * Build docs
+ */
+gulp.task('docs-build', ['docs-clean'], function () {
+    var dgeni = new Dgeni([require('./docs/config/dgeni-conf')]);
+    return dgeni.generate();
+});
+
+// important task: copy site resources to the app folder; images, styles, app.js
+// !myDgeni/docs/app/js/**/*.txt is for exclusion.
+gulp.task('docs-resources', ['docs-build'], function () {
+    return gulp.src(['docs/app/**/*', '!docs/app/js/**/*.txt'])
+    .pipe(gulp.dest('dist/docs/app'));
+});
+
+/**
+ * Serves the app.
+ * -- test  : run Karma auto tests in parallel
+ * -- protractor: prepare index-protractor page and do not inject app-seed
+ */
+gulp.task('serve:docs', 'Build the docs and start a local development server', ['dgeni'],
+    function () {
+        $.connect.server({
+            root: './dist/docs/app/',
+            livereload: true,
+            port: config.defaultPort
+        });
+    });
+
+// run doc generation
+gulp.task('dgeni', ['docs-build','docs-resources']);

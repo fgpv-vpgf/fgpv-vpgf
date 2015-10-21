@@ -17,7 +17,7 @@
         /*
          * Reusable cross app code modules
          */
-        'common.router',
+        'app.common.router',
 
         /*
          * 3rd Party modules

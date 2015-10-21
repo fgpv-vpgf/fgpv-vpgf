@@ -1,0 +1,25 @@
+<!-- gcMethod.template.html -->
+	<md-toolbar layout="row"  class="site-content-toolbar md-whiteframe-glow-z1" layout-padding>
+		<h1>{$ doc.codeName $}</h1>
+	</md-toolbar>
+	<div layout-padding layout-margin>
+		<p>{$ doc.description $}</p>
+
+		{%- if doc.params %}
+		<h2>Params</h2>
+		<ul>
+		{%- for param in doc.params %}
+		  <li>
+		    <strong>{$ param.tagName $}</strong> { {$ param.typeList $} } - {$ param.description $}
+		  </li>
+		{%- endfor %}
+		</ul>
+		{%- endif %}
+
+		{%- if doc.returns %}
+		<h2>Returns</h2>
+		<p>
+		  { {$ doc.returns.typeList $} } - {$ doc.returns.description $}
+		</p>
+		{%- endif %}
+	</div>
