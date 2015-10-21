@@ -1,5 +1,5 @@
 /* global geoapi */
-(function () {
+(() => {
     'use strict';
 
     /**
@@ -26,7 +26,7 @@
                 console.log('Config initialized');
                 $rootScope.$broadcast(events.rvReady);
             })
-            .catch((reason) => {
+            .catch(reason => {
                 console.error('Everything broke');
                 console.error(reason);
             });
@@ -37,5 +37,4 @@
         // TODO: write language detection routine
         $translate.use('fr-CA');
     }
-
 })();
