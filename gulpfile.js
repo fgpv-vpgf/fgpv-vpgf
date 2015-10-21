@@ -475,4 +475,4 @@ gulp.task('serve:docs', 'Build the docs and start a local development server', [
     });
 
 // run doc generation
-gulp.task('dgeni', ['docs-build','docs-resources']);
+gulp.task('dgeni', ['docs-resources']);
