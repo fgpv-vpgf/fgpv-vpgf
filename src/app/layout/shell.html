@@ -1,14 +1,13 @@
 <div class="shell layout layout-fill md-body-1" ng-controller="ShellController as self"
     state="{{self.$state.current.name}}">
     <ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
+    <div class="esri-map" rv-init-map="!self.isLoading"></div>
 
     <div class="inner-shell" layout="column">
         <!-- TODO: add proper loading message or animation to the loading splash -->
         <div class="loading-splash" layout layout-align="center center" ng-hide="!self.isLoading">
             <span>Loading</span>
         </div>
-
-        <div class="esri-map" rv-init-map="!self.isLoading"></div>
 
         <ng-include src="'app/ui/mapnav/mapnav.html'"></ng-include>
 
