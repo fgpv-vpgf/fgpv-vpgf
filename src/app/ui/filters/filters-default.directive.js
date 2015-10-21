@@ -43,7 +43,7 @@
 
     /* @ngInject */
     /**
-     * Sceleton controller function with test message.
+     * Skeleton controller function with test message.
      */
     function Controller() {
         var self = this;
