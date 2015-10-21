@@ -19,7 +19,7 @@
      * `TocController` has lots of ugly code to handle state switching. Should be rewritten.
      */
     function TocController($state, tocService) {
-        var self = this;
+        const self = this;
 
         self.toggleMetadata = toggleMetadata;
         self.toggleSettings = toggleSettings;
@@ -30,9 +30,7 @@
         self.presets = tocService.presets;
 
         // temp function to open layer groups
-        self.toggleGroup = (group) => {
-            group.expanded = !group.expanded;
-        };
+        self.toggleGroup = group => group.expanded = !group.expanded;
 
         activate();
 

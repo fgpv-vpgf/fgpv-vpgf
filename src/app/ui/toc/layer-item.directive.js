@@ -7,7 +7,7 @@
      * @module app.ui.toc
      * @description
      *
-     * The `rvLayerItem` directive is a represents a layer in the layer selector (toc).
+     * The `rvLayerItem` directive is a UI compoenent for a layer in the layer selector (toc).
      */
     angular
         .module('app.ui.toc')
