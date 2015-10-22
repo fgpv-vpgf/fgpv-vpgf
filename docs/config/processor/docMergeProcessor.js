@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-module.exports = function docMergeProcessor () {
+module.exports = function docMergeProcessor() {
     'use strict';
     return {
         $runAfter: ['computePathsProcessor'],

@@ -12,7 +12,7 @@
  * ```
  */
 
-module.exports = function mddocFileReader () {
+module.exports = function mddocFileReader() {
     'use strict';
     return {
         name: 'mddocFileReader',
