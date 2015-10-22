@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-module.exports = function contentRouteProcessor (templateFinder, log) {
+module.exports = function contentRouteProcessor(templateFinder, log) {
     'use strict';
     return {
         $runAfter: ['apiRouteProcessor'],

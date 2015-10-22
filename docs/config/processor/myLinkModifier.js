@@ -1,7 +1,7 @@
 var path = require('canonical-path');
 
 // link modifier filter
-module.exports = function myLinkModifierFilter (myApp) {
+module.exports = function myLinkModifierFilter(myApp) {
     'use strict';
     return {
         name: 'myLinkModifier',
