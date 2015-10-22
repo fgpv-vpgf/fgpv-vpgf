@@ -8,7 +8,7 @@ module.exports = function apiRouteProcessor() {
         $process: function (docs) {
             // generate route data
             var apiRoutes = _(docs).filter(function (doc) {
-                return !_.contains(['index', 'content'], doc['docType']);
+                return !_.contains(['index', 'content'], doc.docType);
             })
             .value();
 

@@ -41,6 +41,7 @@
 
         .factory('menu', ['PAGES','NAV', function (pages, nav) {
             var sections = [];
+            var self = this;
 
             // static content route can be add in manually
             var contentDocs = [{
@@ -51,7 +52,7 @@
 
             // pages is split up by area, 0 for undefined
             // currently only 1 area.
-            pages['content'].forEach(function (item) {
+            pages.content.forEach(function (item) {
                 contentDocs.push({
                     name: item.name,
                     url: item.url,
@@ -107,12 +108,14 @@
                 children: apiDocs
             });
 
-            return self = {
+            self = {
                 sections: sections
             };
+
+            return self;
         }])
         .controller('ctrlMain', ['$scope', 'menu', function ($scope, menu) {
-            var self = this;
+
             $scope.menu = menu;
 
         }])
