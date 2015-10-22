@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-module.exports = function navMenuProcessor () {
+module.exports = function navMenuProcessor() {
     'use strict';
     return {
         $runAfter: ['apiRouteProcessor'],

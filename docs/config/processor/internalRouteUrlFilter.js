@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-module.exports = function internalRouteUrlFilter () {
+module.exports = function internalRouteUrlFilter() {
     'use strict';
     return {
         name: 'toInternalRoute',
