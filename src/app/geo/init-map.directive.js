@@ -25,7 +25,7 @@
 
         function linkFunc(scope, el, attr) {
 
-            scope.$watch(attr.rvInitMap, (val) => {
+            scope.$watch(attr.rvInitMap, val => {
                 if (val === true) {
                     console.log('Switched to true');
                     console.log(el);
