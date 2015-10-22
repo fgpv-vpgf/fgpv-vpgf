@@ -1,4 +1,3 @@
-/* global geoapi */
 (() => {
     'use strict';
 
