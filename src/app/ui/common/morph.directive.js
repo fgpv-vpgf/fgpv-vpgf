@@ -1,5 +1,5 @@
 /* global TweenLite */
-(function () {
+(() => {
     'use strict';
 
     /**
