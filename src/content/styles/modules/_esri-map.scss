@@ -1,0 +1,15 @@
+@mixin esri-map {
+    .rv-esri-map {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        top: 0;
+        z-index: -1;
+
+        // override clip on esri container; it appears only on mercator maps; lambert is fine
+        div[id$="_container"].container {
+            clip: auto !important;
+        }
+    }
+}
