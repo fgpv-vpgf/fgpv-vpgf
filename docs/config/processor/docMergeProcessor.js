@@ -7,10 +7,10 @@ module.exports = function docMergeProcessor() {
         $runBefore: ['renderDocsProcessor'],
         $process: function (docs) {
 
-            var modules = _(docs).filter({docType: 'module'}).value();
+            var modules = _(docs).filter({ docType: 'module' }).value();
 
             // servie docs
-            var componentGroups = _(docs).filter({docType: 'componentGroup'}).value();
+            var componentGroups = _(docs).filter({ docType: 'componentGroup' }).value();
 
             componentGroups.forEach(function (doc) {
                     // determine parent docs
@@ -45,7 +45,7 @@ module.exports = function docMergeProcessor() {
                     // }
                 });
 
-            return _(docs).reject({docType: 'componentGroup'}).value();
+            return _(docs).reject({ docType: 'componentGroup' }).value();
         }
     };
 };
