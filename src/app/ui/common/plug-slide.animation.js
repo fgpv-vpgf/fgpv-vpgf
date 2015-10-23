@@ -15,7 +15,6 @@
     /**
      * @ngdoc service
      * @name rvPlugSlide
-     * @multiElement
      * @module app.ui.common
      * @description
      *
