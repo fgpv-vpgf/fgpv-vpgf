@@ -9,11 +9,13 @@
 @import "_content-pane.scss";
 @import "_rv-whiteframe.scss";
 @import "_mapnav.scss";
+@import "_esri-map.scss";
 
 @include buttons;
 @include sidenav;
 @include appbar;
 @include content-pane;
 @include mapnav;
+@include esri-map;
 
 @include rv-whiteframe-set;
