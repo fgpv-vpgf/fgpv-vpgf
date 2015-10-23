@@ -1,4 +1,3 @@
-/* global geoapi */
 (() => {
     'use strict';
 
@@ -14,9 +13,9 @@
         .module('app.core')
         .run(runBlock);
 
-    function runBlock(configService, $rootScope, $translate, $q, events) {
+    function runBlock(configService, $rootScope, $translate, $q, events, geoService) {
         const promises = [];
-        promises.push(geoapi('//ec.cloudapp.net/~aly/esri/dojo/dojo.js', window));
+        promises.push(geoService.promise);
         promises.push(configService.initialize());
 
         // wait on the config and geoapi
