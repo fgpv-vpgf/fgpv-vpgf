@@ -9,22 +9,25 @@
         list-style: none;
         padding: 0 0 0 10px;
         max-width: 100%;
-        overflow-x: hidden;
-        transition: 0.75s cubic-bezier(0.35, 0, 0.25, 1);
-        transition-property: all;
+        overflow: hidden;
 
         &.rv-root {
             padding-left: 0;
         }
-        @include layer-group-toggle;
-    }
-}
 
-@mixin menu-link {
-    rv-menu-link {
-        padding: 0;
-        margin: 0;
-        @include menu-button;
+        // rotate the icon on the toggle button on open
+        .md-toggle-icon {
+            transition: transform $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+            &.rv-toggled {
+                transform: rotate(180deg);
+            }
+        }
+
+        &.ng-animate .md-toggle-icon {
+            transition: none;
+        }
+        @include layer-group-toggle;
     }
 }
 
@@ -41,6 +44,13 @@
 
         .md-ripple-container {
             border-radius: 0;
+        }
+
+        .md-toggle-icon {
+            display: block;
+            margin-left: auto;
+            speak: none;
+            vertical-align: middle;
         }
     }
 }

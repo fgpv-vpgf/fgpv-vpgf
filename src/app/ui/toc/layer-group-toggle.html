@@ -1,9 +1,9 @@
 <md-button ng-click="self.toggleGroup()">
     <div flex layout="row">
-        <span class="md-toggle-icon" ng-class="{ 'toggled' : isOpen() }">
+        <span class="md-toggle-icon" ng-class="{ 'rv-toggled' : self.group.expanded }">
             <md-icon md-svg-src="hardware:keyboard_arrow_up"></md-icon>
         </span>
         {{ self.group.name }}
         <span flex></span>
-    </div>
+    </div>    
 </md-button>

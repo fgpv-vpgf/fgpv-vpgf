@@ -11,9 +11,11 @@
                 <rv-layer-item layer="item" ng-if="item.type === 'layer'"></rv-layer-item>
                 <div ng-if="item.type == 'group'" class="level {{ $dxLevel }}">
 
-                    <rv-layer-group-toggle group="item" toggle-group="self.toggleGroup(item)"></rv-layer-group-toggle>
+                    <md-divider ng-if="!$first"></md-divider>
+                    <rv-layer-group-toggle group="item" ></rv-layer-group-toggle>
 
-                    <ul class="rv-layer-list" dx-connect="item" ng-if="item.expanded"></ul>
+                    <ul class="rv-layer-list rv-toggle-slide" dx-connect="item" ng-if="item.expanded"></ul>
+                    <md-divider ng-if="$last && $dxLevel === 0"></md-divider>
                 </div>
             </li>
         </ul>

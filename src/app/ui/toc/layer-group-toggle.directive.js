@@ -21,8 +21,7 @@
             require: '^ngController',
             templateUrl: 'app/ui/toc/layer-group-toggle.html',
             scope: {
-                group: '=',
-                toggleGroup: '&'
+                group: '='
             },
             link: link,
             controller: Controller,
@@ -34,13 +33,23 @@
 
         ///////////
 
-        function link() { //scope, el, attr, ctrl) {
-
+        /**
+         * Link function binds `toggleGroup` function from the `TocController` to directive's self.
+         * @param  {object} scope directive's scope
+         * @param  {object} el    element's node
+         * @param  {object} attr  element's attributes
+         * @param  {object} ctrl  reference to the `TocController`
+         */
+        function link(scope, el, attr, ctrl) {
+            const self = scope.self;
+            self.toggleGroup = () => ctrl.toggleGroup(self.group);
         }
     }
 
+    /**
+     * Skeleton controller function.
+     */
     function Controller() {
-        'ngInject';
 
         //const self = this;
 
