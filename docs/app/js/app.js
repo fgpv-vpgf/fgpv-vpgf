@@ -1,5 +1,5 @@
 
-(function (angular) {
+((angular) => {
     'use strict';
 
     // NOTE: ngSelect and hljs are only included to support
