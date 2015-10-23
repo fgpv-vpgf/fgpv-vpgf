@@ -1,5 +1,5 @@
 <div class="shell layout layout-fill md-body-1" ng-controller="ShellController as self"
-    state="{{self.$state.current.name}}">
+    state="{{ self.$state.current.name }}">
     <ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
 
     <div class="inner-shell" layout="column">
@@ -36,7 +36,7 @@
         <div ng-class="{ active: self.active }" ui-view="geoSearchPlug"></div>
 
         <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center" style="display: none;">I'm
-            {{self.config.title}}
+            {{ self.config.title }}
             and
             {{ 'page.title' | translate }}</md-whiteframe>
 
