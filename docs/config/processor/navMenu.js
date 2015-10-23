@@ -10,7 +10,7 @@ module.exports = function navMenuProcessor() {
             // generate navMenu for index.html
             var navMenu = [];
 
-            var moduleDocs = _.filter(docs, {docType: 'module'});
+            var moduleDocs = _.filter(docs, { docType: 'module' });
 
             _.forEach(moduleDocs, function (moduleDoc) {
                 var subMenu = [];
