@@ -1,27 +1,19 @@
 <rv-content-pane title-style="title" title="Layer Selector">
-    <div ng-controller="TocController as self">
+    <div class="rv-toc" ng-controller="TocController as self">
         <md-button ng-click="self.toggleMetadata()">Metadata</md-button>
         <md-button ng-click="self.toggleSettings()">Settings</md-button>
         <md-button ng-click="self.toggleFilters()">Filters</md-button>
         <md-button ng-click="self.toggleFiltersFull()">Toggle Filters mode</md-button>
 
         <!-- Do not ask me what `dx-start-with` and `dx-connect` are and how this whole thing works as I'm not completely understan it myself. I'll update this comment when I get it. Read this is you are curious: https://github.com/dotJEM/angular-tree -->
-        <ul class="" dx-start-with="self.config">
+        <ul class="rv-layer-list rv-root" dx-start-with="self.config">
             <li ng-repeat="item in $dxPrior.items">
                 <rv-layer-item layer="item" ng-if="item.type === 'layer'"></rv-layer-item>
-                <div ng-if="item.type == 'group'">
+                <div ng-if="item.type == 'group'" class="level {{ $dxLevel }}">
 
-                    <md-button class="md-button-toggle" ng-click="self.toggleGroup(item)">
-                        <div flex layout="row">
-                            <span class="md-toggle-icon" ng-class="{'toggled' : isOpen()}">
-                                <md-icon md-svg-src="md-toggle-arrow"></md-icon>
-                            </span>
-                            {{item.name}}
-                            <span flex></span>
-                        </div>
-                    </md-button>
+                    <rv-layer-group-toggle group="item" toggle-group="self.toggleGroup(item)"></rv-layer-group-toggle>
 
-                    <ul dx-connect="item" ng-if="item.expanded"></ul>
+                    <ul class="rv-layer-list" dx-connect="item" ng-if="item.expanded"></ul>
                 </div>
             </li>
         </ul>

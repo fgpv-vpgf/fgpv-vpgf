@@ -1,0 +1,46 @@
+@mixin toc {
+    .rv-toc {
+        @include layer-list;
+    }
+}
+
+@mixin layer-list {
+    .rv-layer-list {
+        list-style: none;
+        padding: 0 0 0 10px;
+        max-width: 100%;
+        overflow-x: hidden;
+        transition: 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+        transition-property: all;
+
+        &.rv-root {
+            padding-left: 0;
+        }
+        @include layer-group-toggle;
+    }
+}
+
+@mixin menu-link {
+    rv-menu-link {
+        padding: 0;
+        margin: 0;
+        @include menu-button;
+    }
+}
+
+@mixin layer-group-toggle {
+    rv-layer-group-toggle > .md-button {
+        border-radius: 0;
+        align-items: inherit;
+        margin: 0;
+        overflow: hidden;
+        text-align: left;
+        text-decoration: none;
+        white-space: normal;
+        width: 100%;
+
+        .md-ripple-container {
+            border-radius: 0;
+        }
+    }
+}
