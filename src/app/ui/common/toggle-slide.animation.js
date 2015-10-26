@@ -3,8 +3,7 @@
     'use strict';
 
     const RV_TOGGLE_SLIDE_DURATION = 0.3;
-    const RV_SWIFT_IN_OUT_EASE = (new Ease(BezierEasing(0.35, 0, 0.25, 1)))
-        .get;
+    const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
     /**
      * @ngdoc service

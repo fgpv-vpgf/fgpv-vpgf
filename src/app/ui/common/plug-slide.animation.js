@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TweenLite, TimelineLite  */
+/* global Ease, BezierEasing, TweenLite, TimelineLite */
 
 (() => {
     'use strict';
@@ -6,8 +6,7 @@
     const RV_PANEL_CLASS = '.panel';
     const RV_PLUG_SLIDE_DURATION = 0.3;
     const RV_PLUG_SLIDE_ID_DATA = 'rv-plug-slide-id';
-    const RV_SWIFT_IN_OUT_EASE = (new Ease(BezierEasing(0.35, 0, 0.25, 1)))
-        .get;
+    const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
     let sequences = {}; // store animation sequences
     let counter = 1; // simple id for animation sequences
