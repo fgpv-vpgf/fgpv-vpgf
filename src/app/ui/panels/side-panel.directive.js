@@ -41,7 +41,7 @@
      * Skeleton controller function.
      */
     function Controller() {
-        const self = this;
+        //const self = this;
 
         activate();
 
