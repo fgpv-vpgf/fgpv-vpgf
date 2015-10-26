@@ -17,6 +17,24 @@
         &.primary {
             @include icon($primary-color);
         }
+
+        // adjust size of the button container to the its parent while keeping the normal-sized ripple
+        &.rv-auto {
+            height: auto;
+            line-height: normal;
+            min-height: auto;
+            width: auto;
+            min-width: auto;
+            overflow: visible;
+
+            > .md-ripple-container {
+                width: 48px;
+                height: 48px;
+                left: -12px;
+                top: -12px;
+                overflow: visible;
+            }
+        }
     }
 }
 

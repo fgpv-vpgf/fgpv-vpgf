@@ -32,28 +32,28 @@
     &.ng-leave {
         transition: none $duration $swift-ease-in-out-timing-function;
 
-        .content-pane {
+        .rv-content-pane {
             transition: all $duration $swift-ease-in-out-timing-function;
         }
     }
 
-    &.ng-enter .content-pane {
+    &.ng-enter .rv-content-pane {
         transform: translate3d($xFrom, $yFrom, 0);
         transition-delay: $duration / 2; // enter delay lets leave pane disappear preventing overlap
         opacity: 0;
     }
 
-    &.ng-enter-active .content-pane {
+    &.ng-enter-active .rv-content-pane {
         transform: translate3d($xTo, $yTo, 0);
         opacity: 1;
     }
 
-    &.ng-leave .content-pane {
+    &.ng-leave .rv-content-pane {
         transform: translate3d($xTo, $yTo, 0);
         opacity: 1;
     }
 
-    &.ng-leave-active .content-pane {
+    &.ng-leave-active .rv-content-pane {
         transform: translate3d(-$xFrom, -$yFrom, 0);
         opacity: 0;
     }
