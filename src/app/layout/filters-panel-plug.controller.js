@@ -15,8 +15,8 @@
         .module('app.layout')
         .controller('FiltersPanelPlugController', FiltersPanelPlugController);
 
-    /* @ngInject */
-    function FiltersPanelPlugController($rootScope) {
+    function FiltersPanelPlugController($rootScope, $state) {
+        'ngInject';
         const self = this;
         self.active = true;
         self.mode = 'default';
@@ -37,8 +37,16 @@
                 }
             });
 
+        /**
+         * Temporary function to close the filters panel.
+         * FIXME: this should be handled in the shatehelper
+         */
         function closePanel() {
-            console.log('Closing panel');
+            let toState = $state.current.name.replace(/.filters.*/, '');
+            console.log('Closing filters panel; going to', toState);
+            $state.go(toState, {}, {
+                location: false
+            });
         }
     }
 })();
