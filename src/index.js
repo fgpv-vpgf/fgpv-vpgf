@@ -7,8 +7,20 @@ function grayMapFactory(esriBundle) {
 }
 
 function initAll(esriBundle) {
+    let debug = false;
     return {
-        grayMap: grayMapFactory(esriBundle)
+        grayMap: grayMapFactory(esriBundle),
+        debug: function () {
+            if (arguments.length === 1) {
+                debug = arguments[0] === true;
+            }
+        },
+        esriBundle: function () {
+            if (debug) {
+                return esriBundle;
+            }
+            throw new Error('Must set debug to directly access the bundle');
+        }
     };
 }
 
