@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc directive
@@ -14,7 +13,6 @@
         .module('app.ui.filters')
         .directive('rvFiltersDefault', rvFiltersDefault);
 
-    /* @ngInject */
     /**
      * `rvFiltersDefault` directive body.
      *
@@ -37,11 +35,9 @@
          * Skeleton link function.
          */
         function linkFunc() { //scope, el, attr, ctrl) {
-
         }
     }
 
-    /* @ngInject */
     /**
      * Skeleton controller function with test message.
      */

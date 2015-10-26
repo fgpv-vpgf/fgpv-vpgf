@@ -7,8 +7,10 @@
         <h4 class="md-subhead" ng-switch-when="subhead">{{ self.title }}</h4>
 
         <span flex></span>
-        <md-button aria-label="Sets" class="md-icon-button black rv-auto"
-            ng-class="{ selected: self.tocSelected }" ng-click="self.toggleToc()">
+
+        <!-- show close button if there is a closePanel function -->
+        <md-button aria-label="Close" class="md-icon-button black rv-auto" ng-click="self.closePanel()"
+            ng-if="self.closePanel">
             <md-tooltip>Close</md-tooltip>
             <md-icon md-svg-src="navigation:close"></md-icon>
         </md-button>
