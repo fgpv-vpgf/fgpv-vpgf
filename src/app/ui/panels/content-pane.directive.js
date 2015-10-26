@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc directive
@@ -14,7 +13,6 @@
         .module('app.ui.panels')
         .directive('rvContentPane', rvContentPane);
 
-    /* @ngInject */
     /**
      * `rvContentPane` directive body.
      *
@@ -23,13 +21,14 @@
     function rvContentPane() {
         const directive = {
             restrict: 'E',
+            require: '^ngController', // require plug controller
             templateUrl: 'app/ui/panels/content-pane.html',
             scope: {
                 title: '@', // binds to the evaluated dom property
                 titleStyle: '@'
             },
             transclude: true,
-            link: linkFunc,
+            link: link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
@@ -38,20 +37,20 @@
         return directive;
 
         /**
-         * Skeleton link function.
+         * Binds the `closePanel` method from the panel plug controller.
          */
-        function linkFunc() { // scope, el, attr, ctrl ) {
-
+        function link(scope, el, attr, ctrl) {
+            const self = scope.self;
+            self.closePanel = ctrl.closePanel;
         }
     }
 
-    /* @ngInject */
     /**
      * Skeleton controller function.
      */
     function Controller() {
 
-        //var self = this;
+        //const self = this;
 
         activate();
 

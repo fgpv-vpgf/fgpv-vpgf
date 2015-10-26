@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc function
@@ -14,13 +13,20 @@
         .module('app.layout')
         .controller('SidePanelPlugController', SidePanelPlugController);
 
-    /* @ngInject */
     /**
      * SidePanel plug controller
      * `self.active` is bound to a CSS class that prevents the plug view from occupying space when its content is not visible.
      */
     function SidePanelPlugController() {
         const self = this;
+
         self.active = true;
+        self.closePanel = closePanel;
+
+        ////////
+
+        function closePanel() {
+            console.log('Closing panel');
+        }
     }
 })();

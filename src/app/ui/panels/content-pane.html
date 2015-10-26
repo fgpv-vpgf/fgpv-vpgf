@@ -3,12 +3,14 @@
     <div class="rv-header" ng-switch on="self.titleStyle">
         <!-- display an appropriate header based on `headline` value -->
         <h2 class="md-headline" ng-switch-when="headline">{{ self.title }}</h2>
-        <h3 class="md-title" ng-switch-when="title">{{ self.title}}</h3>
+        <h3 class="md-title" ng-switch-when="title">{{ self.title }}</h3>
         <h4 class="md-subhead" ng-switch-when="subhead">{{ self.title }}</h4>
 
         <span flex></span>
-        <md-button aria-label="Sets" class="md-icon-button black rv-auto"
-            ng-class="{ selected: self.tocSelected }" ng-click="self.toggleToc()">
+
+        <!-- show close button if there is a closePanel function -->
+        <md-button aria-label="Close" class="md-icon-button black rv-auto" ng-click="self.closePanel()"
+            ng-if="self.closePanel">
             <md-tooltip>Close</md-tooltip>
             <md-icon md-svg-src="navigation:close"></md-icon>
         </md-button>

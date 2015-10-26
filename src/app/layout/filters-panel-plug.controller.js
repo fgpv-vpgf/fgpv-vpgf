@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc function
@@ -22,6 +21,10 @@
         self.active = true;
         self.mode = 'default';
 
+        self.closePanel = closePanel;
+
+        ////////
+
         // staggers the main panel's transition if the side panel is open
         // FIXME: should be moved to a filter service and made sane
         $rootScope.$on('$stateChangeStart',
@@ -29,8 +32,13 @@
                 const filtersReg = /filters/;
 
                 if (filtersReg.test(toState.name)) {
-                    self.mode = toState.name.split('.').pop();
+                    self.mode = toState.name.split('.')
+                        .pop();
                 }
             });
+
+        function closePanel() {
+            console.log('Closing panel');
+        }
     }
 })();
