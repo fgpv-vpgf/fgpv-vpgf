@@ -71,6 +71,8 @@
          * @param  {object} element node
          */
         function getTargetHeight(element) {
+            // reset height to default if animating from hidden element as it's initial height can be 0 set by preceding hide animation
+
             return element
                 .css('height', 'auto')
                 .prop('clientHeight');

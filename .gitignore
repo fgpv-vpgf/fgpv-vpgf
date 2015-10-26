@@ -12,7 +12,6 @@ report/
 .idea
 typings/
 tsd.json
-src/jspm_packages
 
 # VIM files
 *~
