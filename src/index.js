@@ -2,7 +2,7 @@
 function grayMapFactory(esriBundle) {
     return function (element) {
         console.info('made a map');
-        return esriBundle.map(element, { basemap: 'gray', zoom: 6, center: [-100, 50] });
+        return esriBundle.Map(element, { basemap: 'gray', zoom: 6, center: [-100, 50] });
     };
 }
 
@@ -14,10 +14,25 @@ function initAll(esriBundle) {
 
 module.exports = function (esriLoaderUrl, window) {
 
+    // esriDeps is an array pairing ESRI JSAPI dependencies with their imported names
+    // in esriBundle
+    const esriDeps = [
+        ['esri/map', 'Map'],
+        ['esri/layers/FeatureLayer', 'FeatureLayer'],
+        ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
+        ['esri/layers/WMSLayer', 'WmsLayer'],
+    ];
+
     function makeDojoRequests() {
         return new Promise(function (resolve, reject) {
-            window.require(['esri/map'], function (map) {
-                let esriBundle = { map };
+            window.require(esriDeps.map(deps => deps[0]), function () {
+                const esriBundle = {};
+
+                // iterate over arguments to avoid creating an ugly giant function call
+                // arguments is not an array so we do this the hard way
+                for (let i = 0; i < arguments.length; ++i) {
+                    esriBundle[esriDeps[i][1]] = arguments[i];
+                }
                 resolve(esriBundle);
             });
             window.require.on('error', reject);
