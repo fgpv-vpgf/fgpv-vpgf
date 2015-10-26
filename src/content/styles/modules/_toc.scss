@@ -1,0 +1,56 @@
+@mixin toc {
+    .rv-toc {
+        @include layer-list;
+    }
+}
+
+@mixin layer-list {
+    .rv-layer-list {
+        list-style: none;
+        padding: 0 0 0 10px;
+        max-width: 100%;
+        overflow: hidden;
+
+        &.rv-root {
+            padding-left: 0;
+        }
+
+        // rotate the icon on the toggle button on open
+        .md-toggle-icon {
+            transition: transform $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+            &.rv-toggled {
+                transform: rotate(180deg);
+            }
+        }
+
+        &.ng-animate .md-toggle-icon {
+            transition: none;
+        }
+        @include layer-group-toggle;
+    }
+}
+
+@mixin layer-group-toggle {
+    rv-layer-group-toggle > .md-button {
+        border-radius: 0;
+        align-items: inherit;
+        margin: 0;
+        overflow: hidden;
+        text-align: left;
+        text-decoration: none;
+        white-space: normal;
+        width: 100%;
+
+        .md-ripple-container {
+            border-radius: 0;
+        }
+
+        .md-toggle-icon {
+            display: block;
+            margin-left: auto;
+            speak: none;
+            vertical-align: middle;
+        }
+    }
+}

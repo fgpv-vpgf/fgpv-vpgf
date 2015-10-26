@@ -1,4 +1,4 @@
-(function () {
+(() => {
     'use strict';
 
     /**
@@ -43,7 +43,7 @@
             zoom: {
                 inButton: {
                     label: 'Zoom in',
-                    icon: 'add',
+                    icon: 'content:add',
                     tooltip: 'Zoom in',
                     call: zoomIn
                 },
@@ -53,7 +53,7 @@
                 },
                 outButton: {
                     label: 'Zoom out',
-                    icon: 'remove',
+                    icon: 'content:remove',
                     tooltip: 'Zoom out',
                     call: zoomOut
                 }
@@ -61,25 +61,25 @@
             extra: {
                 geoLocation: {
                     label: 'Your Location',
-                    icon: 'my_location',
+                    icon: 'maps:my_location',
                     tooltip: 'Your Location',
                     call: function () {} // FIXME: user proper call
                 },
                 marquee: {
                     label: '???',
-                    icon: 'search',
+                    icon: 'action:search',
                     tooltip: '???',
                     call: function () {} // FIXME: user proper call
                 },
                 home: {
                     label: 'Canada',
-                    icon: 'home',
+                    icon: 'action:home',
                     tooltip: 'Canada',
                     call: function () {} // FIXME: user proper call
                 },
                 history: {
                     label: 'History',
-                    icon: 'history',
+                    icon: 'action:history',
                     tooltip: 'History',
                     call: function () {} // FIXME: user proper call
                 }

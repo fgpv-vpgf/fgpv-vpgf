@@ -28,6 +28,8 @@
         //$default-icon-color: white;
         $default-bg-color: white;
         $default-icon-color: black;
+        $default-size: 80%;
+        $large-size: 100%;
 
         .md-button {
             margin: 0;
@@ -41,9 +43,8 @@
             @include icon($color: $default-icon-color, $opacity-to: 0.9);
 
             md-icon {
-                font-size: $map-nav-button-font-size;
-                height: auto;
-                width: auto;
+                height: $default-size;
+                width: $default-size;
             }
 
             &:not([disabled]):hover,
@@ -58,7 +59,8 @@
 
         &.bold {
             md-icon {
-                font-weight: bold;
+                height: $large-size;
+                width: $large-size;
             }
         }
     }

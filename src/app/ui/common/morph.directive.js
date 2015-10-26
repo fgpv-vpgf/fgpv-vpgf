@@ -1,11 +1,10 @@
 /* global TweenLite */
-(function () {
+(() => {
     'use strict';
 
     /**
      * @ngdoc directive
      * @name rvMorph
-     * @multiElement
      * @module app.ui.common
      * @restrict A
      * @description
@@ -40,7 +39,6 @@
     function rvMorph() {
         const directive = {
             restrict: 'A',
-            multiElement: true,
             link: linkFunc
         };
         const morphSpeed = 0.3;

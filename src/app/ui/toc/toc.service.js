@@ -75,7 +75,7 @@
                                 type: 'group',
                                 name: 'Sample Subgroup',
                                 id: 1,
-                                expanded: true,
+                                expanded: false,
                                 items: [
                                     {
                                         type: 'layer',
@@ -98,9 +98,75 @@
                                             'type',
                                             'table'
                                         ]
+                                    },
+                                    {
+                                        type: 'layer',
+                                        name: 'Subgroup Layer Name 2',
+                                        layerType: 'feature',
+                                        id: 4,
+                                        legend: [
+                                            {
+                                                icon: 'url',
+                                                name: 'something'
+                                            }
+                                        ],
+                                        toggles: [
+                                            'extra',
+                                            'settings',
+                                            'visibility',
+                                        ],
+                                        state: 'default',
+                                        flags: [
+                                            'type',
+                                            'table'
+                                        ]
+                                    },
+                                    {
+                                        type: 'layer',
+                                        name: 'Subgroup Layer Name 3',
+                                        layerType: 'feature',
+                                        id: 5,
+                                        legend: [
+                                            {
+                                                icon: 'url',
+                                                name: 'something'
+                                            }
+                                        ],
+                                        toggles: [
+                                            'extra',
+                                            'settings',
+                                            'visibility',
+                                        ],
+                                        state: 'default',
+                                        flags: [
+                                            'type',
+                                            'table'
+                                        ]
                                     }
                                 ],
                                 toggles: []
+                            },
+                            {
+                                type: 'layer',
+                                name: 'Layer Name 3',
+                                layerType: 'feature',
+                                id: 6,
+                                legend: [
+                                    {
+                                        icon: 'url',
+                                        name: 'something'
+                                    }
+                                ],
+                                toggles: [
+                                    'extra',
+                                    'settings',
+                                    'visibility',
+                                ],
+                                state: 'default',
+                                flags: [
+                                    'type',
+                                    'table'
+                                ]
                             }
                         ],
                         toggles: [
@@ -111,7 +177,7 @@
                         type: 'group',
                         name: 'Image Layers',
                         id: 1,
-                        expanded: true,
+                        expanded: false,
                         items: [
                             {
                                 type: 'layer',

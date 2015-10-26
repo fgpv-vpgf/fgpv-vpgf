@@ -10,10 +10,14 @@
 @import "_rv-whiteframe.scss";
 @import "_mapnav.scss";
 
+@import "_toc.scss";
+
 @include buttons;
 @include sidenav;
 @include appbar;
 @include content-pane;
 @include mapnav;
+
+@include toc;
 
 @include rv-whiteframe-set;
