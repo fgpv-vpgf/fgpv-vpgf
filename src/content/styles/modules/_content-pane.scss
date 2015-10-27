@@ -1,16 +1,42 @@
 // Primary mixin
 @mixin content-pane {
-    .content-pane {
+    .rv-content-pane {
         top: 0;
         left: 0;
         bottom: 8px;
         right: 0;
         position: absolute;
 
-        .md-headline, .md-title, .md-subhead {
-            line-height: 24px;
-            margin-top: 5px;
-            margin-bottom: 11px;
+        .rv-header {
+            display: flex;
+            white-space: nowrap;
+            margin: {
+                top: 5px;
+                bottom: 11px;
+            }
+
+            > .md-headline,
+            > .md-title,
+            > .md-subhead {
+                line-height: 24px;
+                margin-top: 0;
+                margin-bottom: 0;
+                display: inline-block;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+        }
+
+        .rv-content {
+            top: 49px;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            position: absolute;
+            padding: {
+                left: 8px;
+                right: 8px;
+            }
         }
     }
 }

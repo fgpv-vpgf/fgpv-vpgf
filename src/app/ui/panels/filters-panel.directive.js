@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc directive
@@ -13,7 +12,6 @@
         .module('app.ui.panels')
         .directive('rvFiltersPanel', rvFiltersPanel);
 
-    /* @ngInject */
     /**
      * `rvFiltersPanel` directive body.
      *
@@ -40,14 +38,15 @@
         }
     }
 
-    /* @ngInject */
     /**
      * Skeleton controller function.
      */
     function Controller() {
-        //var self = this;
+        //const self = this;
 
         activate();
+
+        //////////
 
         function activate() {
 

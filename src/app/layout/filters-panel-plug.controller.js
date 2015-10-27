@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc function
@@ -16,11 +15,15 @@
         .module('app.layout')
         .controller('FiltersPanelPlugController', FiltersPanelPlugController);
 
-    /* @ngInject */
-    function FiltersPanelPlugController($rootScope) {
+    function FiltersPanelPlugController($rootScope, $state) {
+        'ngInject';
         const self = this;
         self.active = true;
         self.mode = 'default';
+
+        self.closePanel = closePanel;
+
+        ////////
 
         // staggers the main panel's transition if the side panel is open
         // FIXME: should be moved to a filter service and made sane
@@ -29,8 +32,21 @@
                 const filtersReg = /filters/;
 
                 if (filtersReg.test(toState.name)) {
-                    self.mode = toState.name.split('.').pop();
+                    self.mode = toState.name.split('.')
+                        .pop();
                 }
             });
+
+        /**
+         * Temporary function to close the filters panel.
+         * FIXME: this should be handled in the shatehelper
+         */
+        function closePanel() {
+            let toState = $state.current.name.replace(/.filters.*/, '');
+            console.log('Closing filters panel; going to', toState);
+            $state.go(toState, {}, {
+                location: false
+            });
+        }
     }
 })();
