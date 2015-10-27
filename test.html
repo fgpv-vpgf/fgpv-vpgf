@@ -12,7 +12,8 @@
     <script src="dist/geoapi.min.js"></script>
     <script>
         geoapi('//ec.cloudapp.net/~aly/esri/dojo/dojo.js', window).then(function (api) {
-            api.grayMap(document.getElementById('map'));
+            var map = api.grayMap(document.getElementById('map'));
+            map.addLayer(new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0'));
         });
     </script>
 </body>
