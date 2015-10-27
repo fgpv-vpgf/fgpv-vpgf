@@ -1,5 +1,5 @@
 /**
- * @dgService mddocFileReader
+ * @name  mddocFileReader
  * @description
  * This file reader will pull the contents from a text file (by default .ngdoc)
  *
@@ -11,16 +11,18 @@
  * }
  * ```
  */
+
 module.exports = function mddocFileReader() {
-  return {
-    name: 'mddocFileReader',
-    defaultPattern: /\.md$/,
-    getDocs: function(fileInfo) {
-      // We return a single element array because mddoc files only contain one document
-      return [{
-        content: fileInfo.content,
-        startingLine: 1
-      }];
-    }
-  };
+    'use strict';
+    return {
+        name: 'mddocFileReader',
+        defaultPattern: /\.md$/,
+        getDocs: function (fileInfo) {
+            // We return a single element array because mddoc files only contain one document
+            return [{
+                content: fileInfo.content,
+                startingLine: 1
+            }];
+        }
+    };
 };
