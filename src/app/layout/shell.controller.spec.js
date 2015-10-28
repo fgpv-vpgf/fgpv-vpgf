@@ -12,8 +12,13 @@ describe('ShellController', () => {
     }
 
     beforeEach(() => {
-        // cannot use bard.appModule with routes: https://github.com/wardbell/bardjs#dont-use-appmodule-when-testing-routes
-        //bard.appModule('app.layout', customTranslateLoader);
+        /*
+            cannot use bard.appModule with routes: https://github.com/wardbell/bardjs#dont-use-appmodule-when-testing-routes
+            so instead of using `bard.appModule('app.layout', customTranslateLoader);` we have to use regular mock functions
+
+            Here we also define a customTranslateLoader module initialization function which creates a fake customloader for translation service.
+         */
+
         angular.mock.module(
             'app.layout',
             'app.ui',
