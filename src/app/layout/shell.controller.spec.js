@@ -1,43 +1,37 @@
-﻿/* global bard, $controller, $rootScope */
+﻿ /* global bard, $controller, $rootScope */
 
-describe('ShellController', function () {
-    'use strict';
+describe('ShellController', () => {
+    let controller;
 
-    var controller;
-
+    // mock custom loader module
     function customTranslateLoader($provide, $translateProvider) {
-
-        $provide.factory('customLoader', function ($q) {
-            return function () {
-                var deferred = $q.defer();
-                deferred.resolve({});
-                return deferred.promise;
-            };
-        });
+        // for customLoader use a function returning a self-fulfilling promise to mock the service
+        $provide.factory('customLoader', $q => () => $q(fulfill => fulfill()));
 
         $translateProvider.useLoader('customLoader');
     }
 
-    beforeEach(function () {
+    beforeEach(() => {
         // cannot use bard.appModule with routes: https://github.com/wardbell/bardjs#dont-use-appmodule-when-testing-routes
         //bard.appModule('app.layout', customTranslateLoader);
-        beforeEach(angular.mock.module(
+        angular.mock.module(
             'app.layout',
             'app.ui',
-            customTranslateLoader));
+            customTranslateLoader);
 
+        // inject angular services
         bard.inject('$controller', '$rootScope');
-    });
 
-    beforeEach(function () {
+        // create controler and store it
         controller = $controller('ShellController');
         $rootScope.$apply();
     });
 
     bard.verifyNoOutstandingHttpRequests();
 
-    describe('Shell controller', function () {
-        it('should be created successfully', function () {
+    describe('Shell controller', () => {
+        // check that controller is created
+        it('should be created successfully', () => {
             expect(controller)
                 .toBeDefined();
         });
