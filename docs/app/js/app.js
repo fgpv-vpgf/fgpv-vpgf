@@ -39,8 +39,9 @@
             });
         })
 
-        .factory('menu', ['PAGES','NAV', function (pages, nav) {
+        .factory('menu', ['PAGES', 'NAV', function (pages, nav) {
             var sections = [];
+            var apiDocs = [];
             var self = this;
 
             // static content route can be add in manually
@@ -67,7 +68,6 @@
             });
 
             // generated from *-data.js
-            var apiDocs = [];
             nav.forEach(function (module) {
 
                 // // build up children docs

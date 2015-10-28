@@ -58,6 +58,7 @@
     "requireSpacesInAnonymousFunctionExpression": {
         "beforeOpeningRoundBrace": true
     },
+    "requireSpacesInsideObjectBrackets": "all",
     "disallowSpaceBeforeBinaryOperators": [
         ","
     ],
@@ -74,7 +75,9 @@
 
     "requireBlocksOnNewline": 1,
     "requireSpaceBeforeBinaryOperators": true,
+
     "requireCapitalizedConstructors": true,
+    "requireSpaceAfterComma": true,
     "requireSpacesInForStatement": true,
     "requireSpaceBetweenArguments": true,
     "requireSemicolons": true,
@@ -96,9 +99,9 @@
             "preset": "jsdoc3",
             "extra": {
                 "ngdoc": true,
-                "usage": true,
                 "multiElement": true,
-                "restrict": true
+                "restrict": true,
+                "usage": true
             }
         },
         "checkParamNames": true,
