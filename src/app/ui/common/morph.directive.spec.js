@@ -5,7 +5,7 @@ describe('rvMorph', function () {
     var directiveElement;
 
     beforeEach(function () {
-        // cannot use bard.appModule with routes: https://github.com/wardbell/bardjs#dont-use-appmodule-when-testing-routes
+        // mock the module with bardjs
         bard.appModule('app.ui.common');
 
         // inject angular services
