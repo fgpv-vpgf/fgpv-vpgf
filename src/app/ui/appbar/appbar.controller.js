@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc function
@@ -14,7 +13,6 @@
         .module('app.ui.appbar')
         .controller('AppbarController', AppbarController);
 
-    /* @ngInject */
     /**
      * `AppbarController` has lots of garbage code so far, needed to show how the panels are toggled. It should be moved to service.
      *
@@ -22,7 +20,7 @@
      * @param {object} $state
      */
     function AppbarController(layoutService, $state) {
-        var self = this;
+        const self = this;
 
         self.layoutService = layoutService;
         self.toggleToc = toggleToc;

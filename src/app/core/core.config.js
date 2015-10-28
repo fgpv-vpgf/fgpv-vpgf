@@ -1,5 +1,4 @@
 (() => {
-    'use strict';
 
     /**
      * @ngdoc function
@@ -18,7 +17,6 @@
 
     function configBlock($translateProvider, $stateProvider,
         $mdThemingProvider, $mdIconProvider, statehelperConfigProvider) {
-        'ngInject';
 
         configureStateRouting();
         configureTranslations();

@@ -42,7 +42,6 @@
     }
 
     // TODO: add routing error handling
-    /* @ngInject */
     function statehelper(statehelperConfig) {
         var $stateProvider = statehelperConfig.config.$stateProvider;
 

@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc directive
@@ -14,14 +13,13 @@
         .module('app.ui.mapnav')
         .directive('rvMapnavButton', rvMapnavButton);
 
-    /* @ngInject */
     /**
      * `rvMapnavButton` directive body.
      *
      * @return {object} directive body
      */
     function rvMapnavButton() {
-        var directive = {
+        const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/mapnav/mapnav-button.html',
             scope: {
@@ -43,7 +41,6 @@
         }
     }
 
-    /* @ngInject */
     /**
      * Skeleton controller function.
      */

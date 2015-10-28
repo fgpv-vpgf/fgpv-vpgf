@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc function
@@ -8,15 +7,12 @@
      * @description
      *
      * The `SettingsController` controller handles the settings side panel.
+     * `SettingsController` skeleton controller.
      */
     angular
         .module('app.ui.settings')
         .controller('SettingsController', SettingsController);
 
-    /* @ngInject */
-    /**
-     * `SettingsController` skeleton controller.
-     */
     function SettingsController() {
         //var self = this;
 

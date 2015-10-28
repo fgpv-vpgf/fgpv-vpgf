@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc service
@@ -13,9 +12,8 @@
         .module('app.layout')
         .factory('layoutService', layoutService);
 
-    /* @ngInject */
     function layoutService(sideNavigationService, mapNavigationService) {
-        var service = {
+        const service = {
             sidenav: sideNavigationService,
             mapnav: mapNavigationService
         };

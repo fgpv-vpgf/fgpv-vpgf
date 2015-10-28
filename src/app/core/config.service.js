@@ -38,12 +38,11 @@
         .module('app.core')
         .factory('configService', configService);
 
-    /* @ngInject */
     function configService($q, $rootElement, $timeout, $http, configDefaults) {
-        var initializePromise;
-        var isInitialized = false;
+        let initializePromise;
+        let isInitialized = false;
 
-        var service = {
+        const service = {
             data: {},
             initialize: initialize,
             ready: ready
@@ -63,8 +62,8 @@
 
             // store the promise and return it on all future calls; this way initialize can be called one time only
             initializePromise = $q(function (fulfill, reject) {
-                var configAttr = $rootElement.attr('th-config');
-                var configJson;
+                const configAttr = $rootElement.attr('th-config');
+                let configJson;
 
                 // This function can only be called once.
                 if (isInitialized) {

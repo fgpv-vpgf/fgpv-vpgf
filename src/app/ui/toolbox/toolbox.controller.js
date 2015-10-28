@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc function
@@ -13,7 +12,6 @@
         .module('app.ui.toolbox')
         .controller('ToolboxController', ToolboxController);
 
-    /* @ngInject */
     /**
      * `ToolboxController` skeleton controller.
      */
