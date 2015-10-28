@@ -14,9 +14,6 @@ module.exports = function contentRouteProcessor(templateFinder, log) {
                 doc.outputPath = 'content/' + doc.fileInfo.baseName + '.html';
                 doc.url = doc.fileInfo.baseName;
             })
-
-            log.info('in myContentProcessor');
-
             // need groupby to generate another collection
             .groupBy('area')
             .mapValues(function (filteredDocs) {
@@ -30,6 +27,8 @@ module.exports = function contentRouteProcessor(templateFinder, log) {
                 });
             })
             .value();
+
+            log.info('in myContentProcessor');
 
             // generate constant-data for pages
             docs.push({
