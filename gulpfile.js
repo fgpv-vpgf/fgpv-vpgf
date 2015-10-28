@@ -12,6 +12,7 @@ var args = require('yargs').argv;
 var bowerFiles = require('main-bower-files');
 var Dgeni = require('dgeni');
 var config = require('./gulp.config')();
+var Server = require('karma').Server;
 
 require('gulp-help')(gulp);
 
@@ -321,7 +322,8 @@ function startTests(singleRun, done) {
         karmaConfig.reporters = ['progress', 'coverage'];
     }
 
-    karma.start(karmaConfig, karmaCompleted);
+    karma = new Server(karmaConfig, karmaCompleted);
+    karma.start();
 
     ////////////////
 
