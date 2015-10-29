@@ -159,7 +159,7 @@ module.exports = function () {
             preprocessors: {}
         };
 
-        options.preprocessors[app + '**/!(*.spec)+(.js)'] = ['coverage', 'babel'];
+        options.preprocessors[app + '**/*.js'] = ['coverage', 'babel'];
 
         return options;
     }
