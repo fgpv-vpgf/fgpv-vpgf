@@ -11,10 +11,13 @@
      * @module app.ui.common
      * @description
      *
-     * The `rvToggleSlide` is an animation. It animates enter and leave events on any node by `sliding` it up or down, animating its height, when its added or removed from the dom.
+     * The `rvToggleSlide` is an animation. It animates `enter` and `leave` events for `ng-if`; `addClass` and `removeClass`, for `ng-if` and `ng-show` directives on any node by `sliding` it up or down, animating its height, when its added or removed from the dom.
      *
      * ```html
-     * <div class="rv-toggle-slide"></div>
+     * <div class="rv-toggle-slide" ng-show="value"></div>
+     * <div class="rv-toggle-slide" ng-hide="value"></div>
+     *
+     * <div class="rv-toggle-slide" ng-if="value"></div>
      * ```
      */
     angular
@@ -26,7 +29,9 @@
     function toggleOpenBuilder() {
         const service = {
             enter: toggleOpen,
-            leave: toggleClose
+            leave: toggleClose,
+            addClass: ngShowHideBootstrap(1),
+            removeClass: ngShowHideBootstrap(0)
         };
 
         return () => service;
@@ -64,6 +69,32 @@
                 ease: RV_SWIFT_IN_OUT_EASE,
                 onComplete: () => callback()
             });
+        }
+
+        /**
+         * When using `ng-show` or `ng-hide`, animation is triggered on `addClass`, `removeClass`, and `setClass`. See more here: https://docs.angularjs.org/api/ng/service/$animate#addClass
+         *
+         * @param  {number} addClass a flag indicating whether the class was added or removed
+         * @return {function}        bootstrapped open or close function
+         */
+        function ngShowHideBootstrap(addClass) {
+            return (element, cssClass, callback) => {
+                // either `ng-hide` or `ng-show` class is toggled, depending on the directive
+                const directive = {
+                    'ng-hide': 0,
+                    'ng-show': 1
+                };
+
+                const action = {
+                    0: toggleOpen,
+                    1: toggleClose
+                };
+
+                // pick the action to perform;
+                // `1 - directive[cssClass]` chooses between opening and closing action based on the directive
+                // `addClass * ...` flips the action depending on whether the class is added or removed
+                action[addClass * (1 - directive[cssClass])](element, callback);
+            };
         }
 
         /**
