@@ -20,7 +20,7 @@
             transition: transform $swift-ease-in-duration $swift-ease-in-out-timing-function;
 
             &.rv-toggled {
-                transform: rotate(180deg);
+                transform: rotate(90deg);
             }
         }
 
