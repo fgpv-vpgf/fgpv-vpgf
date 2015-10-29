@@ -14,7 +14,7 @@
                     <md-divider ng-if="!$first"></md-divider>
                     <rv-layer-group-toggle group="item" ></rv-layer-group-toggle>
 
-                    <ul class="rv-layer-list rv-toggle-slide" dx-connect="item" ng-if="item.expanded"></ul>
+                    <ul class="rv-layer-list rv-toggle-slide" dx-connect="item" ng-show="item.expanded"></ul>
                     <md-divider ng-if="$last && $dxLevel === 0"></md-divider>
                 </div>
             </li>
