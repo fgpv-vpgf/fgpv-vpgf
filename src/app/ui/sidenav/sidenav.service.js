@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc service
@@ -14,7 +13,6 @@
         .module('app.ui.sidenav')
         .factory('sideNavigationService', sideNavigationService);
 
-    /* @ngInject */
     /**
      * `sideNavigationService` exposes methods to close/open the side navigation panel.
      * @param  {object} $mdSidenav

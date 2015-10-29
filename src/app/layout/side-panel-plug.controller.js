@@ -14,7 +14,6 @@
         .controller('SidePanelPlugController', SidePanelPlugController);
 
     function SidePanelPlugController($state) {
-        'ngInject';
         const self = this;
 
         self.active = true;

@@ -16,9 +16,8 @@ angular.element(document)
             node.appendChild(child);
 
             // bootstrap each node as an Angular app
-            angular.bootstrap(node, ['app'], {
-                // TODO: set strictDi to true in production
-                //strictDi: true,
-            });
+            // strictDi enforces explicit dependency names on each component: ngAnnotate should find most automatically
+            // this checks for any failures; to fix a problem add 'ngInject'; to the function preamble
+            angular.bootstrap(node, ['app'], { strictDi: true });
         });
     });

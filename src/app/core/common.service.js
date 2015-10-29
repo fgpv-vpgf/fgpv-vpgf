@@ -16,7 +16,6 @@
         .factory('common', common);
 
     // TODO: add helper function to common
-    /* @ngInject */
     function common($timeout) {
         var service = {
             $timeout: $timeout

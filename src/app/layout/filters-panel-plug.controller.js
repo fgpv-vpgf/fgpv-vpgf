@@ -16,7 +16,6 @@
         .controller('FiltersPanelPlugController', FiltersPanelPlugController);
 
     function FiltersPanelPlugController($rootScope, $state) {
-        'ngInject';
         const self = this;
         self.active = true;
         self.mode = 'default';

@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc function
@@ -13,7 +12,6 @@
         .module('app.layout')
         .run(layoutConfig);
 
-    /* @ngInject */
     /**
      * Sets initial application routes.
      * some info: https://github.com/angular-ui/ui-router/wiki/Nested-States-and-Nested-Views

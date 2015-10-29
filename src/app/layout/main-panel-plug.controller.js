@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc function
@@ -14,7 +13,6 @@
         .module('app.layout')
         .controller('MainPanelPlugController', MainPanelPlugController);
 
-    /* @ngInject */
     function MainPanelPlugController($rootScope) {
         const self = this;
         self.active = true;

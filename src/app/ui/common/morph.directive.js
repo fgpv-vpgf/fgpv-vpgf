@@ -1,6 +1,5 @@
 /* global TweenLite */
 (() => {
-    'use strict';
 
     /**
      * @ngdoc directive
@@ -30,7 +29,6 @@
         .module('app.ui.common')
         .directive('rvMorph', rvMorph);
 
-    /* @ngInject */
     /**
      * `rvMorph` directive body.
      *

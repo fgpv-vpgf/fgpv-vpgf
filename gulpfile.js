@@ -122,7 +122,7 @@ gulp.task('jsbuild', 'Annotate, transpile and concat JS development files',
         return gulp
             .src(config.js)
             .pipe($.sourcemaps.init())
-            .pipe($.plumber({ errorHandler: injectError}))
+            .pipe($.plumber({ errorHandler: injectError }))
             .pipe($.babel())
             .pipe($.plumber.stop())
             .pipe($.ngAnnotate({
@@ -132,6 +132,7 @@ gulp.task('jsbuild', 'Annotate, transpile and concat JS development files',
             }))
             .pipe($.angularFilesort())
             .pipe($.concat(config.jsSingleFile))
+            .pipe($.uglify())
             .pipe($.sourcemaps.write('.'))
             .pipe(gulp.dest(config.build));
     });
@@ -159,7 +160,7 @@ gulp.task('libbuild', 'Concat bower dependencies',
 
 gulp.task('assetcopy', 'Copy fixed assets to the build directory',
     function () {
-        return gulp.src(config.staticAssets, {base:config.src})
+        return gulp.src(config.staticAssets, { base: config.src })
             .pipe(gulp.dest(config.build));
     });
 

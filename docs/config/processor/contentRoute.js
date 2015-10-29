@@ -6,8 +6,6 @@ module.exports = function contentRouteProcessor(templateFinder, log) {
         $runAfter: ['apiRouteProcessor'],
         $runBefore: ['renderDocsProcessor'],
         $process: function (docs) {
-            log.info('in myContentProcessor');
-
             // TODO: need to figureout where material setup area information
             var contentDocs = _(docs).filter(function (doc) {
                 return doc.docType === 'content';
@@ -30,6 +28,8 @@ module.exports = function contentRouteProcessor(templateFinder, log) {
                 });
             })
             .value();
+
+            log.info('in myContentProcessor');
 
             // generate constant-data for pages
             docs.push({

@@ -9,15 +9,12 @@
      *
      * The `TocController` controller handles the layer selector (or toc) main panel.
      * Right now it's hacked together for demo purposes.
+     * `TocController` has lots of ugly code to handle state switching. Should be rewritten.
      */
     angular
         .module('app.ui.toc')
         .controller('TocController', TocController);
 
-    /* @ngInject */
-    /**
-     * `TocController` has lots of ugly code to handle state switching. Should be rewritten.
-     */
     function TocController($state, tocService) {
         const self = this;
 

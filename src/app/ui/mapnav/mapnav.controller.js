@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+(() => {
 
     /**
      * @ngdoc function
@@ -13,7 +12,6 @@
         .module('app.ui.mapnav')
         .controller('MapNavigationController', MapNavigationController);
 
-    /* @ngInject */
     /**
      * `MapNavigationController` directive body.
      *
