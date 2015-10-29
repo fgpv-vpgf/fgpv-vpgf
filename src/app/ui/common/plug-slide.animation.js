@@ -7,6 +7,7 @@
     const RV_PLUG_SLIDE_DURATION = 0.3;
     const RV_PLUG_SLIDE_ID_DATA = 'rv-plug-slide-id';
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
+    const RV_PLUG_PANEL_SIZE_DATA = 'rv-plug-panel-size';
 
     let sequences = {}; // store animation sequences
     let counter = 1; // simple id for animation sequences
@@ -48,12 +49,14 @@
      * @return {Object} service object with `enter` and `leave` functions
      */
     function plugSlideBuilder(direction) {
-        const service = {
-            enter: slideEnterBuilder(direction),
-            leave: slideLeaveBuilder(direction)
-        };
+        return $rootElement => {
+            const service = {
+                enter: slideEnterBuilder($rootElement, direction),
+                leave: slideLeaveBuilder($rootElement, direction)
+            };
 
-        return () => service;
+            return service;
+        };
     }
 
     /**
@@ -63,41 +66,54 @@
      * @return {Object} service object with `enter` and `leave` functions
      */
     function plugSlideGrandBuilder(direction) {
-        const service = {
-            enter: enter,
-            leave: slideLeaveBuilder(direction)
-        };
+        return $rootElement => {
+            const service = {
+                enter: enter($rootElement),
+                leave: leave($rootElement)
+            };
 
-        return () => service;
+            return service;
+        };
 
         ///////////////
 
         /**
          * Animates grand `enter` event.
+         * @param  {Object}   $rootElement
          * @param  {Object}   element  plug node
          * @param  {Function} callback
          * @param  {Object} service looks like service object; not used
          */
-        function enter(element, callback, service) {
-            // FIXME: find a better way to calculate position relateive to the rootElement
-            let delta = element.position()
-                .top +
-                element.find(RV_PANEL_CLASS)
-                .outerHeight(true) + 10;
+        function enter($rootElement) {
+            return (element, callback, service) => {
+                slideEnterBuilder($rootElement, direction)(element, callback, service, null);
+            };
+        }
 
-            slideEnterBuilder(direction)(element, callback, service, delta);
+        /**
+         * Animates grand `leave` event.
+         * @param  {Object}   $rootElement
+         * @param  {Object}   element  plug node
+         * @param  {Function} callback
+         * @param  {Object} service looks like service object; not used
+         */
+        function leave($rootElement) {
+            return (element, callback, service) => {
+                slideLeaveBuilder($rootElement, direction)(element, callback, service, null);
+            };
         }
     }
 
     /**
      * Animates `enter` event.
+     * @param  {Object} $rootElement
      * @param  {Number} direction direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
      * @param  {Object}   element  plug node
      * @param  {Function} callback
      * @param  {Object} service looks like service object; not used
      * @param  {Number} delta travel distance (defaults to '100%')
      */
-    function slideEnterBuilder(direction) {
+    function slideEnterBuilder($rootElement, direction) {
         return (element, callback, service, delta = '100%') => {
             // create new paused sequence
             let sequence = new TimelineLite({
@@ -107,7 +123,20 @@
             let panel = element.find(RV_PANEL_CLASS); // get panel node
             let duration = RV_PLUG_SLIDE_DURATION; // figure out duration
             element.data(RV_PLUG_SLIDE_ID_DATA, ++counter); // store sequence id on the node
+
+            // store current panel size on element, used to see if panel is morphed before leaving
+            if (direction % 2 === 0) {
+                //Down, Up
+                element.data(RV_PLUG_PANEL_SIZE_DATA,
+                    element.find(RV_PANEL_CLASS).outerHeight(true));
+            } else {
+                //Left, Right
+                element.data(RV_PLUG_PANEL_SIZE_DATA,
+                    element.find(RV_PANEL_CLASS).outerWidth(true));
+            }
             sequences[counter] = sequence; // store sequence for reference
+
+            delta = delta || deltaHelper($rootElement, element, direction);
 
             if (panel) {
                 sequence
@@ -123,23 +152,47 @@
 
     /**
      * Animates `leave` event.
+     * @param  {Object}   $rootElement
      * @param  {Number} direction = 0 direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
      * @param  {Object}   element  plug node
      * @param  {Function} callback
      */
-    function slideLeaveBuilder(direction) {
-        return (element, callback) => {
+    function slideLeaveBuilder($rootElement, direction) {
+        return (element, callback, service, delta = '100%') => {
+            let thisSequence;
             let sequenceId = element.data(RV_PLUG_SLIDE_ID_DATA);
             let sequence = sequences[sequenceId];
+            let elementSize;
+
+            if (direction === 0 || direction === 2) {
+                elementSize = element.find(RV_PANEL_CLASS).outerHeight(true);
+            } else {
+                elementSize = element.find(RV_PANEL_CLASS).outerWidth(true);
+            }
 
             if (sequence) {
-                sequence
+                if (elementSize !== element.data(RV_PLUG_PANEL_SIZE_DATA)) {
+                    //redo sequence
+                    slideEnterBuilder($rootElement, direction)(element, callback, service, delta);
+                    thisSequence = sequences[element.data(RV_PLUG_SLIDE_ID_DATA)];
+
+                    thisSequence
+                        .totalProgress(sequence.totalProgress(), true)
+                        .pause();
+                } else {
+                    thisSequence = sequence;
+                }
+            }
+
+            if (thisSequence) {
+                thisSequence
                     .pause()
                     .eventCallback('onReverseComplete', () => {
                         console.log('Plug Slide [reversed]', direction, 'is complete.');
 
                         // more on delete: http://perfectionkills.com/understanding-delete/
                         delete sequences[sequenceId]; // release for garbage
+                        delete sequences[element.data(RV_PLUG_SLIDE_ID_DATA)];
                         element.data(RV_PLUG_SLIDE_ID_DATA, null); // remove data attribute
 
                         callback();
@@ -147,6 +200,26 @@
                     .reverse();
             }
         };
+    }
+
+    function deltaHelper($rootElement, element, direction) {
+        let delta = 10;
+
+        if (direction === 0) {
+            //DOWN
+            delta += element.position().top + element.find(RV_PANEL_CLASS).outerHeight(true);
+        } else if (direction === 1) {
+            //RIGHT
+            delta += element.position().left + element.find(RV_PANEL_CLASS).outerWidth(true);
+        } else if (direction === 2) {
+            //UP
+            delta = $rootElement.outerHeight(true) - element.position().top;
+        } else {
+            //LEFT
+            delta = $rootElement.outerWidth(true) - element.position().left;
+        }
+
+        return delta;
     }
 
     /**
