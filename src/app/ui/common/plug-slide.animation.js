@@ -158,6 +158,11 @@
         };
     }
 
+    /**
+    * Retrieves the panel size of an element, based on animation direction
+    * @param  {Object}   element  plug node
+    * @param  {Number} direction = 0 direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+    */
     function getPanelSize(element, direction) {
         if (direction % 2 === 0) { //Down, Up
             return element.data(RV_PLUG_PANEL_SIZE_DATA,
@@ -168,6 +173,14 @@
         }
     }
 
+    /**
+    * Creates animation sequence
+    * @param  {Object} $rootElement
+    * @param  {Object}   element  plug node
+    * @param  {Function} callback
+    * @param  {Number} direction direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+    * @param  {Number} delta travel distance (defaults to '100%')
+    */
     function sequenceBuilder($rootElement, element, callback, direction, delta) {
         // create new paused sequence
         const sequence = new TimelineLite({
@@ -196,6 +209,12 @@
         return sequence;
     }
 
+    /**
+    * Calculates the delta needed for a grand animation
+    * @param  {Object} $rootElement
+    * @param  {Object}   element  plug node
+    * @param  {Number} direction direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+    */
     function deltaHelper($rootElement, element, direction) {
         let delta = 10;
 
