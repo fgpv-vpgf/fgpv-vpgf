@@ -50,6 +50,7 @@
      */
     function plugSlideBuilder(direction) {
         return $rootElement => {
+            'ngInject';
             const service = {
                 enter: slideEnterBuilder($rootElement, direction),
                 leave: slideLeaveBuilder($rootElement, direction)
@@ -67,41 +68,37 @@
      */
     function plugSlideGrandBuilder(direction) {
         return $rootElement => {
+            'ngInject';
             const service = {
-                enter: enter($rootElement),
-                leave: leave($rootElement)
+                enter: enter,
+                leave: leave
             };
 
             return service;
+
+            ///////////////
+
+            /**
+             * Animates grand `enter` event.
+             * @param  {Object}   element  plug node
+             * @param  {Function} callback
+             * @param  {Object} service looks like service object; not used
+             */
+            function enter(...args) {
+                slideEnterBuilder($rootElement, direction)(...args, null);
+            }
+
+            /**
+             * Animates grand `leave` event.
+             * @param  {Object}   element  plug node
+             * @param  {Function} callback
+             * @param  {Object} service looks like service object; not used
+             */
+            function leave(...args) {
+                slideLeaveBuilder($rootElement, direction)(...args, null);
+            }
         };
 
-        ///////////////
-
-        /**
-         * Animates grand `enter` event.
-         * @param  {Object}   $rootElement
-         * @param  {Object}   element  plug node
-         * @param  {Function} callback
-         * @param  {Object} service looks like service object; not used
-         */
-        function enter($rootElement) {
-            return (element, callback, service) => {
-                slideEnterBuilder($rootElement, direction)(element, callback, service, null);
-            };
-        }
-
-        /**
-         * Animates grand `leave` event.
-         * @param  {Object}   $rootElement
-         * @param  {Object}   element  plug node
-         * @param  {Function} callback
-         * @param  {Object} service looks like service object; not used
-         */
-        function leave($rootElement) {
-            return (element, callback, service) => {
-                slideLeaveBuilder($rootElement, direction)(element, callback, service, null);
-            };
-        }
     }
 
     /**
@@ -132,17 +129,9 @@
         return (element, callback, service, delta = '100%') => {
             let sequenceId = element.data(RV_PLUG_SLIDE_ID_DATA);
             let sequence = sequences[sequenceId];
-            let elementSize;
 
             if (sequence) {
-                // Find which dimension to compare
-                if (direction === 0 || direction === 2) {
-                    elementSize = element.find(RV_PANEL_CLASS).outerHeight(true);
-                } else {
-                    elementSize = element.find(RV_PANEL_CLASS).outerWidth(true);
-                }
-
-                if (elementSize !== element.data(RV_PLUG_PANEL_SIZE_DATA)) {
+                if (getPanelSize(element, direction) !== element.data(RV_PLUG_PANEL_SIZE_DATA)) {
                     //redo sequence
                     sequence = sequenceBuilder($rootElement, element,
                                                     callback, direction, delta);
@@ -169,9 +158,19 @@
         };
     }
 
+    function getPanelSize(element, direction) {
+        if (direction % 2 === 0) { //Down, Up
+            return element.data(RV_PLUG_PANEL_SIZE_DATA,
+                element.find(RV_PANEL_CLASS).outerHeight(true));
+        } else { //Left, Right
+            return element.data(RV_PLUG_PANEL_SIZE_DATA,
+                element.find(RV_PANEL_CLASS).outerWidth(true));
+        }
+    }
+
     function sequenceBuilder($rootElement, element, callback, direction, delta) {
         // create new paused sequence
-        let sequence = new TimelineLite({
+        const sequence = new TimelineLite({
             paused: true
         });
 
@@ -180,15 +179,7 @@
         element.data(RV_PLUG_SLIDE_ID_DATA, ++counter); // store sequence id on the node
 
         // store current panel size on element, used to see if panel is morphed before leaving
-        if (direction % 2 === 0) {
-            //Down, Up
-            element.data(RV_PLUG_PANEL_SIZE_DATA,
-                element.find(RV_PANEL_CLASS).outerHeight(true));
-        } else {
-            //Left, Right
-            element.data(RV_PLUG_PANEL_SIZE_DATA,
-                element.find(RV_PANEL_CLASS).outerWidth(true));
-        }
+        element.data(RV_PLUG_PANEL_SIZE_DATA, getPanelSize(element, direction));
 
         delta = delta || deltaHelper($rootElement, element, direction);
 
@@ -208,18 +199,15 @@
     function deltaHelper($rootElement, element, direction) {
         let delta = 10;
 
-        if (direction === 0) {
-            //DOWN
-            delta += element.position().top + element.find(RV_PANEL_CLASS).outerHeight(true);
-        } else if (direction === 1) {
-            //RIGHT
-            delta += element.position().left + element.find(RV_PANEL_CLASS).outerWidth(true);
-        } else if (direction === 2) {
-            //UP
+        if (direction === 0) { //DOWN
+            delta += element.position().top + getPanelSize(element, direction);
+        } else if (direction === 1) { //RIGHT
+            delta += element.position().left + getPanelSize(element, direction);
+        } else if (direction === 2) { //UP
+            // not adding on to 10 because there is no drop shadow above the panel
             delta = $rootElement.outerHeight(true) - element.position().top;
-        } else {
-            //LEFT
-            delta = $rootElement.outerWidth(true) - element.position().left;
+        } else { //LEFT
+            delta += $rootElement.outerWidth(true) - element.position().left;
         }
 
         return delta;
