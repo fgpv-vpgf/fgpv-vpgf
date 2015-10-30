@@ -116,37 +116,8 @@
     function slideEnterBuilder($rootElement, direction) {
         return (element, callback, service, delta = '100%') => {
             // create new paused sequence
-            let sequence = new TimelineLite({
-                paused: true
-            });
-
-            let panel = element.find(RV_PANEL_CLASS); // get panel node
-            let duration = RV_PLUG_SLIDE_DURATION; // figure out duration
-            element.data(RV_PLUG_SLIDE_ID_DATA, ++counter); // store sequence id on the node
-
-            // store current panel size on element, used to see if panel is morphed before leaving
-            if (direction % 2 === 0) {
-                //Down, Up
-                element.data(RV_PLUG_PANEL_SIZE_DATA,
-                    element.find(RV_PANEL_CLASS).outerHeight(true));
-            } else {
-                //Left, Right
-                element.data(RV_PLUG_PANEL_SIZE_DATA,
-                    element.find(RV_PANEL_CLASS).outerWidth(true));
-            }
+            let sequence = sequenceBuilder($rootElement, element, callback, direction, delta);
             sequences[counter] = sequence; // store sequence for reference
-
-            delta = delta || deltaHelper($rootElement, element, direction);
-
-            if (panel) {
-                sequence
-                    .add(makeSlideTween(direction, panel, duration, delta))
-                    .eventCallback('onComplete', () => {
-                        console.log('Plug Slide', direction, 'is complete.');
-                        callback();
-                    })
-                    .play();
-            }
         };
     }
 
@@ -159,33 +130,29 @@
      */
     function slideLeaveBuilder($rootElement, direction) {
         return (element, callback, service, delta = '100%') => {
-            let thisSequence;
             let sequenceId = element.data(RV_PLUG_SLIDE_ID_DATA);
             let sequence = sequences[sequenceId];
             let elementSize;
 
-            if (direction === 0 || direction === 2) {
-                elementSize = element.find(RV_PANEL_CLASS).outerHeight(true);
-            } else {
-                elementSize = element.find(RV_PANEL_CLASS).outerWidth(true);
-            }
-
             if (sequence) {
+                // Find which dimension to compare
+                if (direction === 0 || direction === 2) {
+                    elementSize = element.find(RV_PANEL_CLASS).outerHeight(true);
+                } else {
+                    elementSize = element.find(RV_PANEL_CLASS).outerWidth(true);
+                }
+
                 if (elementSize !== element.data(RV_PLUG_PANEL_SIZE_DATA)) {
                     //redo sequence
-                    slideEnterBuilder($rootElement, direction)(element, callback, service, delta);
-                    thisSequence = sequences[element.data(RV_PLUG_SLIDE_ID_DATA)];
+                    sequence = sequenceBuilder($rootElement, element,
+                                                    callback, direction, delta);
 
-                    thisSequence
-                        .totalProgress(sequence.totalProgress(), true)
+                    sequence
+                        .totalProgress(sequences[sequenceId].totalProgress(), true)
                         .pause();
-                } else {
-                    thisSequence = sequence;
                 }
-            }
 
-            if (thisSequence) {
-                thisSequence
+                sequence
                     .pause()
                     .eventCallback('onReverseComplete', () => {
                         console.log('Plug Slide [reversed]', direction, 'is complete.');
@@ -200,6 +167,42 @@
                     .reverse();
             }
         };
+    }
+
+    function sequenceBuilder($rootElement, element, callback, direction, delta) {
+        // create new paused sequence
+        let sequence = new TimelineLite({
+            paused: true
+        });
+
+        let panel = element.find(RV_PANEL_CLASS); // get panel node
+        let duration = RV_PLUG_SLIDE_DURATION; // figure out duration
+        element.data(RV_PLUG_SLIDE_ID_DATA, ++counter); // store sequence id on the node
+
+        // store current panel size on element, used to see if panel is morphed before leaving
+        if (direction % 2 === 0) {
+            //Down, Up
+            element.data(RV_PLUG_PANEL_SIZE_DATA,
+                element.find(RV_PANEL_CLASS).outerHeight(true));
+        } else {
+            //Left, Right
+            element.data(RV_PLUG_PANEL_SIZE_DATA,
+                element.find(RV_PANEL_CLASS).outerWidth(true));
+        }
+
+        delta = delta || deltaHelper($rootElement, element, direction);
+
+        if (panel) {
+            sequence
+                .add(makeSlideTween(direction, panel, duration, delta))
+                .eventCallback('onComplete', () => {
+                    console.log('Plug Slide', direction, 'is complete.');
+                    callback();
+                })
+                .play();
+        }
+
+        return sequence;
     }
 
     function deltaHelper($rootElement, element, direction) {
