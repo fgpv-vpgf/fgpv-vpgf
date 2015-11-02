@@ -85,6 +85,8 @@
              * @param  {Object} service looks like service object; not used
              */
             function enter(...args) {
+                // ...args is spread from ES6: https://babeljs.io/docs/learn-es2015/#default-rest-spread
+                // we use it to hide parameters we don't control. Angular passes in 3; element, callback, service
                 slideEnterBuilder($rootElement, direction)(...args, null);
             }
 
@@ -95,6 +97,7 @@
              * @param  {Object} service looks like service object; not used
              */
             function leave(...args) {
+                // ...args is ES6 spread: see above 'enter' function
                 slideLeaveBuilder($rootElement, direction)(...args, null);
             }
         };
