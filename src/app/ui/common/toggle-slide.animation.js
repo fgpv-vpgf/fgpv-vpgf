@@ -30,8 +30,8 @@
         const service = {
             enter: toggleOpen,
             leave: toggleClose,
-            addClass: ngShowHideBootstrap(1),
-            removeClass: ngShowHideBootstrap(0)
+            addClass: ngShowHideBootstrap(true),
+            removeClass: ngShowHideBootstrap(false)
         };
 
         return () => service;
@@ -74,26 +74,20 @@
         /**
          * When using `ng-show` or `ng-hide`, animation is triggered on `addClass`, `removeClass`, and `setClass`. See more here: https://docs.angularjs.org/api/ng/service/$animate#addClass
          *
-         * @param  {number} addClass a flag indicating whether the class was added or removed
+         * @param  {boolean} addClass a flag indicating whether the `ng-hide` class was added or removed
          * @return {function}        bootstrapped open or close function
          */
         function ngShowHideBootstrap(addClass) {
             return (element, cssClass, callback) => {
-                // either `ng-hide` or `ng-show` class is toggled, depending on the directive
-                const directive = {
-                    'ng-hide': 0,
-                    'ng-show': 1
-                };
-
+                // both `ng-hide` and `ng-show` use `ng-hide` css class
                 const action = {
-                    0: toggleOpen,
-                    1: toggleClose
+                    false: toggleOpen,
+                    true: toggleClose
                 };
 
                 // pick the action to perform;
-                // `1 - directive[cssClass]` chooses between opening and closing action based on the directive
-                // `addClass * ...` flips the action depending on whether the class is added or removed
-                action[addClass * (1 - directive[cssClass])](element, callback);
+                // `addClass` flips the action depending on whether the class is added or removed
+                action[addClass](element, callback);
             };
         }
 
