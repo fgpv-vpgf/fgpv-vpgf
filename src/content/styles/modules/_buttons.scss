@@ -1,5 +1,6 @@
 @mixin buttons {
     @include icon-button;
+    @include icon-sizes;
     @include mapnav-button;
     @include button-group;
 }
@@ -17,24 +18,49 @@
         &.primary {
             @include icon($primary-color);
         }
+    }
+}
 
-        // adjust size of the button container to the its parent while keeping the normal-sized ripple
-        &.rv-auto {
-            height: auto;
-            line-height: normal;
-            min-height: auto;
-            width: auto;
-            min-width: auto;
-            overflow: visible;
+@mixin icon-sizes {
+    .rv-icon-auto {
+        @include icon-size;
+    }
 
-            > .md-ripple-container {
-                width: 48px;
-                height: 48px;
-                left: -12px;
-                top: -12px;
-                overflow: visible;
-            }
-        }
+    .rv-icon-20 {
+        @include icon-size(rem(2));
+    }
+
+    .rv-icon-16 {
+        @include icon-size(rem(1.6));
+    }
+
+    .rv-icon-14 {
+        @include icon-size(rem(1.4));
+    }
+}
+
+@mixin icon-size($size: rem(2.4)) {
+
+    // adjust size of the button container to fit around the icon
+    height: auto;
+    line-height: normal;
+    min-height: auto;
+    width: auto;
+    min-width: auto;
+    overflow: visible;
+
+    md-icon {
+        height: $size;
+        width: $size;
+    }
+
+    // keep a normal size ripple
+    > .md-ripple-container {
+        width: rem(4.8);
+        height: rem(4.8);
+        overflow: visible;
+        left: - (rem(4.8) - $size) / 2; // shift ripple so it's still centered over the icon
+        top: - (rem(4.8) - $size) / 2;
     }
 }
 
