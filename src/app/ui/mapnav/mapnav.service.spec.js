@@ -15,7 +15,7 @@ describe('mapNavigationService', () => {
         bard.appModule('app.ui.mapnav');
 
         /*
-            injects angular components needed for testing and stores them on the global window oject: https://github.com/wardbell/bardjs#inject
+            injects angular components needed for testing and stores them on the global window object: https://github.com/wardbell/bardjs#inject
 
             Using vanilla inject function requires you to store references to injected components turning `bard.inject('mapNavigationService')` into this:
 
