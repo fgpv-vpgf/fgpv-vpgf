@@ -1,10 +1,10 @@
 /* global bard, $compile, $rootScope */
 
-describe('rvMorph', function () {
+describe('rvMorph', () => {
     let scope;
     let directiveElement;
 
-    beforeEach(function () {
+    beforeEach(() => {
         // mock the module with bardjs
         bard.appModule('app.ui.common');
 
