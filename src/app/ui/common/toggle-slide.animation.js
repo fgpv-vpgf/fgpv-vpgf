@@ -11,10 +11,13 @@
      * @module app.ui.common
      * @description
      *
-     * The `rvToggleSlide` is an animation. It animates enter and leave events on any node by `sliding` it up or down, animating its height, when its added or removed from the dom.
+     * The `rvToggleSlide` is an animation. It animates `enter` and `leave` events for `ng-if`; `addClass` and `removeClass`, for `ng-if` and `ng-show` directives on any node by `sliding` it up or down, animating its height, when its added or removed from the dom.
      *
      * ```html
-     * <div class="rv-toggle-slide"></div>
+     * <div class="rv-toggle-slide" ng-show="value"></div>
+     * <div class="rv-toggle-slide" ng-hide="value"></div>
+     *
+     * <div class="rv-toggle-slide" ng-if="value"></div>
      * ```
      */
     angular
@@ -26,7 +29,9 @@
     function toggleOpenBuilder() {
         const service = {
             enter: toggleOpen,
-            leave: toggleClose
+            leave: toggleClose,
+            addClass: ngShowHideBootstrap(true),
+            removeClass: ngShowHideBootstrap(false)
         };
 
         return () => service;
@@ -64,6 +69,26 @@
                 ease: RV_SWIFT_IN_OUT_EASE,
                 onComplete: () => callback()
             });
+        }
+
+        /**
+         * When using `ng-show` or `ng-hide`, animation is triggered on `addClass`, `removeClass`, and `setClass`. See more here: https://docs.angularjs.org/api/ng/service/$animate#addClass
+         *
+         * @param  {boolean} addClass a flag indicating whether the `ng-hide` class was added or removed
+         * @return {function}        bootstrapped open or close function
+         */
+        function ngShowHideBootstrap(addClass) {
+            return (element, cssClass, callback) => {
+                // both `ng-hide` and `ng-show` use `ng-hide` css class
+                const action = {
+                    false: toggleOpen,
+                    true: toggleClose
+                };
+
+                // pick the action to perform;
+                // `addClass` flips the action depending on whether the class is added or removed
+                action[addClass](element, callback);
+            };
         }
 
         /**
