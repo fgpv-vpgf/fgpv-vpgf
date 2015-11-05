@@ -28,6 +28,7 @@
             transition: none;
         }
         @include layer-group-toggle;
+        @include layer-item;
     }
 }
 
@@ -51,6 +52,45 @@
             margin-left: auto;
             speak: none;
             vertical-align: middle;
+        }
+    }
+}
+
+@mixin layer-item {
+    rv-layer-item {
+        display: flex;
+        align-items: center;
+        height: 48px;
+
+        .rv-layer-item-icon {
+            margin: 0 5px 0 0 ;
+            height: rem(3.2);
+            width: rem(3.2);
+        }
+
+        .rv-layer-item-name {
+            font-size: rem(1.6);
+        }
+
+        .rv-layer-item-toggles {
+            display: none;
+        }
+
+        .rv-layer-item-flag {
+            display: inline-block;
+            margin: 1px 2px;
+        }
+
+        &.error {
+            .rv-layer-item-toggles {
+                display: block;
+            }
+        }
+
+        &:hover {
+            .rv-layer-item-toggles {
+                display: block;
+            }
         }
     }
 }
