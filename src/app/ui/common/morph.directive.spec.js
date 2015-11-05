@@ -9,7 +9,7 @@ describe('rvMorph', function () {
         bard.appModule('app.ui.common');
 
         // inject angular services
-        bard.inject('$compile', '$rootScope', '$timeout');
+        bard.inject('$compile', '$rootScope');
 
         // crete new scope
         scope = $rootScope.$new();
