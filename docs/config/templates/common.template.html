@@ -4,7 +4,7 @@
 <md-content layout-padding flex>
 	<strong>({$ doc.docType $})</strong>
 
-	<p>{$ doc.description $}</p>
+	<p>{$ doc.description | marked $}</p>
 
 	{$ doc.parent | toInternalRoute(doc, 'Go Up') $}
 </md-content>

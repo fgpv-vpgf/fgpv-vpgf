@@ -12,7 +12,7 @@
      * @requires configDefaults
      * @description
      *
-     * The `configService' is responsible for loading and parsing the supplied configuration.
+     * The `configService` is responsible for loading and parsing the supplied configuration.
      *
      * Config file is either specified inline, by a url or is referencing a global variable:
      * ```html
