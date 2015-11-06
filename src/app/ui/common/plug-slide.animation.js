@@ -33,10 +33,10 @@
 
     directions.forEach((element, index) => {
         module
-            .animation('.rv-plug-slide-' + element, plugSlideBuilder(index))
-            .animation('.rv-plug-fade-' + element, plugFadeBuilder(index))
-            .animation('.rv-plug-slide-' + element + '-grand', plugSlideGrandBuilder(index))
-            .animation('.rv-plug-fade-' + element + '-grand', plugFadeGrandBuilder(index));
+            .animation(`.rv-plug-slide-${element}`, plugSlideBuilder(index))
+            .animation(`.rv-plug-fade-${element}`, plugFadeBuilder(index))
+            .animation(`.rv-plug-slide-${element}-grand`, plugSlideGrandBuilder(index))
+            .animation(`.rv-plug-fade-${element}-grand`, plugFadeGrandBuilder(index));
     });
 
     // TODO: add option to change duration through an attribute
