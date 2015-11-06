@@ -83,8 +83,8 @@
     *
     * @param  {Object}   $rootElement
     * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
-    * @param  {Bool}     grand       type of shift
     * @param  {Bool}     reverse     whether to reverse the animation direction
+    * @param  {Bool}     grand       type of shift
     * @param  {Object}   element     plug node
     * @param  {Function} callback    callback from angular
     */
@@ -109,7 +109,7 @@
 
             let config = {
                 ease: RV_SWIFT_IN_OUT_EASE,
-                onComplete: cb(element, callback),
+                onComplete: cleanup(element, callback),
                 clearProps: 'transform' // http://tiny.cc/dbuh4x; http://tiny.cc/wbuh4x
             };
 
@@ -158,8 +158,8 @@
     *
     * @param  {Object}   $rootElement
     * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
-    * @param  {Bool}     grand       type of shift
     * @param  {Bool}     reverse     whether to reverse the animation direction
+    * @param  {Bool}     grand       type of shift
     * @param  {Object}   element     plug node
     * @param  {Function} callback    callback from angular
     */
@@ -182,7 +182,7 @@
 
             let config = {
                 ease: RV_SWIFT_IN_OUT_EASE,
-                onComplete: cb(element, callback),
+                onComplete: cleanup(element, callback),
                 clearProps: 'transform' // http://tiny.cc/dbuh4x; http://tiny.cc/wbuh4x
             };
 
@@ -273,7 +273,7 @@
     * @param  {Object}   element    plug node
     * @param  {Function} callback   callback from angular
     */
-    function cb(element, callback) {
+    function cleanup(element, callback) {
         return () => {
             delete sequences[element.data(RV_PLUG_SLIDE_ID_DATA)];
             callback();
@@ -296,7 +296,7 @@
         // (if the animation still exists it must be ongoing)
         let sequence = sequences[element.data(RV_PLUG_SLIDE_ID_DATA)];
         if (sequence) {
-            sequence.reverse().eventCallback('onReverseComplete', cb(element, callback));
+            sequence.reverse().eventCallback('onReverseComplete', cleanup(element, callback));
             return;
         }
 
