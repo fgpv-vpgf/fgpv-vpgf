@@ -34,11 +34,88 @@
     directions.forEach((element, index) => {
         module
             .animation('.rv-plug-slide-' + element, plugSlideBuilder(index))
-            .animation('.rv-plug-slide-' + element + '-grand', plugSlideGrandBuilder(index));
+            .animation('.rv-plug-fade-' + element, plugFadeBuilder(index))
+            .animation('.rv-plug-slide-' + element + '-grand', plugSlideGrandBuilder(index))
+            .animation('.rv-plug-fade-' + element + '-grand', plugFadeGrandBuilder(index));
     });
 
     // TODO: add option to change duration through an attribute
     // TODO: add option to add delay before animation starts through an attribute
+
+    /**
+     * Animates plug's panel.
+     *
+     * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+     * @return {Object}  service     object with `enter` and `leave` functions
+     */
+    function plugFadeBuilder(direction) {
+        return $rootElement => {
+            'ngInject';
+            const service = {
+                enter: makeFadeAnim($rootElement, direction, false, false),
+                leave: makeFadeAnim($rootElement, direction, true, false)
+            };
+
+            return service;
+        };
+    }
+
+    /**
+     * Animates plug's panel.
+     *
+     * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+     * @return {Object}  service     object with `enter` and `leave` functions
+     */
+    function plugFadeGrandBuilder(direction) {
+        return $rootElement => {
+            'ngInject';
+            const service = {
+                enter: makeFadeAnim($rootElement, direction, false, true),
+                leave: makeFadeAnim($rootElement, direction, true, true)
+            };
+
+            return service;
+        };
+    }
+
+    /**
+    * Creates Fade animations
+    *
+    * @param  {Object}   $rootElement
+    * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+    * @param  {Bool}     reverse     whether to reverse the animation direction
+    * @param  {Bool}     grand       type of shift
+    * @param  {Object}   element     plug node
+    * @param  {Function} callback    callback from angular
+    */
+    function makeFadeAnim($rootElement, direction, reverse, grand) {
+        return (element, callback) => {
+            let duration = RV_PLUG_SLIDE_DURATION;
+            let shift = calculateShift($rootElement, element, direction, grand);
+
+            let start = {
+                x: shift.x,
+                y: shift.y,
+                z: 0,
+                opacity: 0
+            };
+
+            let end = {
+                x: '0%',
+                y: '0%',
+                z: 0,
+                opacity: 1
+            };
+
+            let config = {
+                ease: RV_SWIFT_IN_OUT_EASE,
+                onComplete: cleanup(element, callback),
+                clearProps: 'transform' // http://tiny.cc/dbuh4x; http://tiny.cc/wbuh4x
+            };
+
+            buildTween(element, callback, duration, reverse, start, end, config);
+        };
+    }
 
     /**
      * Animates plug's panel.
@@ -81,8 +158,8 @@
     *
     * @param  {Object}   $rootElement
     * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
-    * @param  {Bool}     grand       type of shift
     * @param  {Bool}     reverse     whether to reverse the animation direction
+    * @param  {Bool}     grand       type of shift
     * @param  {Object}   element     plug node
     * @param  {Function} callback    callback from angular
     */
@@ -105,7 +182,7 @@
 
             let config = {
                 ease: RV_SWIFT_IN_OUT_EASE,
-                onComplete: cb(element, callback),
+                onComplete: cleanup(element, callback),
                 clearProps: 'transform' // http://tiny.cc/dbuh4x; http://tiny.cc/wbuh4x
             };
 
@@ -196,7 +273,7 @@
     * @param  {Object}   element    plug node
     * @param  {Function} callback   callback from angular
     */
-    function cb(element, callback) {
+    function cleanup(element, callback) {
         return () => {
             delete sequences[element.data(RV_PLUG_SLIDE_ID_DATA)];
             callback();
@@ -219,7 +296,7 @@
         // (if the animation still exists it must be ongoing)
         let sequence = sequences[element.data(RV_PLUG_SLIDE_ID_DATA)];
         if (sequence) {
-            sequence.reverse().eventCallback('onReverseComplete', cb(element, callback));
+            sequence.reverse().eventCallback('onReverseComplete', cleanup(element, callback));
             return;
         }
 
