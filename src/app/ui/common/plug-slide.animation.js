@@ -28,8 +28,8 @@
      *
      */
 
-    let module = angular.module('app.ui.common');
-    let directions = ['down', 'right', 'up', 'left'];
+    const module = angular.module('app.ui.common');
+    const directions = ['down', 'right', 'up', 'left'];
 
     directions.forEach((element, index) => {
         module
