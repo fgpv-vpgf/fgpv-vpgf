@@ -8,6 +8,11 @@
      * @description
      *
      * The `rvLayerItem` directive is a UI compoenent for a layer in the layer selector (toc).
+     *
+     * ```html
+     * <!-- `layer` attribute binds to the layer item in toc -->
+     * <rv-layer-item layer="item"></rv-layer-item>
+     * ```
      */
     angular
         .module('app.ui.toc')
@@ -20,32 +25,11 @@
             scope: {
                 layer: '='
             },
-            link: linkFunc,
-            controller: Controller,
+            controller: () => {},
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
-
-        /**
-         * Skeleton link function.
-         */
-        function linkFunc() { //scope, el, attr, ctrl) {
-
-        }
-    }
-
-    /**
-     * Skeleton controller function.
-     */
-    function Controller() {
-        //const self = this;
-
-        activate();
-
-        function activate() {
-
-        }
     }
 })();

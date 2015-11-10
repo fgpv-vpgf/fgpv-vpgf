@@ -18,8 +18,6 @@
     function TocController($state, tocService) {
         const self = this;
 
-        self.toggleMetadata = toggleMetadata;
-        self.toggleSettings = toggleSettings;
         self.toggleFilters = toggleFilters;
         self.toggleFiltersFull = toggleFiltersFull;
 
@@ -35,34 +33,6 @@
         activate();
 
         ///////////////
-
-        // hacky way to toggle panels;
-        // TODO: replace with a sane methods
-        function toggleMetadata() {
-            if ($state.current.name.indexOf('metadata') === -1) {
-                $state.go('app.main.toc.side.metadata', {}, {
-                    location: false
-                });
-            } else {
-                $state.go('app.main.toc', {}, {
-                    location: false
-                });
-            }
-        }
-
-        // hacky way to toggle panels;
-        // TODO: replace with a sane methods
-        function toggleSettings() {
-            if ($state.current.name.indexOf('settings') === -1) {
-                $state.go('app.main.toc.side.settings', {}, {
-                    location: false
-                });
-            } else {
-                $state.go('app.main.toc', {}, {
-                    location: false
-                });
-            }
-        }
 
         // hacky way to toggle panels;
         // TODO: replace with a sane methods
