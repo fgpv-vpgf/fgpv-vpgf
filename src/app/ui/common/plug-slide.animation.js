@@ -32,15 +32,14 @@
     const animationTypes = { slide: makeSlideAnim, fade: makeFadeAnim };
 
     // register animations, loops through directions and types
-    directions.forEach((direction, index) => {
+    directions.forEach((direction, index) =>
         Object.keys(animationTypes).forEach(type => {
             module
                 .animation(`.rv-plug-${type}-${direction}`,
                     animationBuilder(type, index, false))
                 .animation(`.rv-plug-${type}-${direction}-grand`,
                     animationBuilder(type, index, true));
-        });
-    });
+        }));
 
     // TODO: add option to change duration through an attribute
     // TODO: add option to add delay before animation starts through an attribute
