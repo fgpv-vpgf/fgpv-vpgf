@@ -29,11 +29,11 @@
      */
     const module = angular.module('app.ui.common');
     const directions = ['down', 'right', 'up', 'left'];
-    const types = ['slide', 'fade'];
+    const animationTypes = { slide: makeSlideAnim, fade: makeFadeAnim };
 
     // register animations, loops through directions and types
     directions.forEach((direction, index) => {
-        types.forEach((type) => {
+        Object.keys(animationTypes).forEach((type) => {
             module
                 .animation(`.rv-plug-${type}-${direction}`,
                     animationBuilder(type, index, false))
@@ -48,15 +48,15 @@
     /**
      * Animates plug's panel.
      *
-     * @param  {String}  mode        type of animation (fade, slide, etc.)
+     * @param  {String}  type        type of animation (fade, slide, etc.)
      * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
      * @param  {Bool}    grand       type of shift (see top comment)
      * @return {Object}  service     object with `enter` and `leave` functions
      */
-    function animationBuilder(mode, direction, grand) {
+    function animationBuilder(type, direction, grand) {
         return $rootElement => {
             'ngInject';
-            const func = mode === 'fade' ? makeFadeAnim : makeSlideAnim;
+            const func = animationTypes[type];
             return {
                 enter: func($rootElement, direction, false, grand),
                 leave: func($rootElement, direction, true, grand)
@@ -177,7 +177,7 @@
             delta += $rootElement.outerWidth(true) - element.position().left;
         }
 
-        return delta.toString();
+        return delta;
     }
 
     /**
@@ -209,7 +209,7 @@
             3: ''
         };
 
-        let delta = grand ? deltaHelper($rootElement, element, direction) : '100%';
+        let delta = grand ? deltaHelper($rootElement, element, direction).toString() : '100%';
 
         // based on direction, set starting `x` or `y` attributes of the node
         shift[travel[direction]] = modifier[direction] + delta;
