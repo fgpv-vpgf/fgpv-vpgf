@@ -27,16 +27,19 @@
      * <div class="rv-plug-slide-down-grand"></div>
      *
      */
-
     const module = angular.module('app.ui.common');
     const directions = ['down', 'right', 'up', 'left'];
+    const types = ['slide', 'fade'];
 
-    directions.forEach((element, index) => {
-        module
-            .animation(`.rv-plug-slide-${element}`, plugSlideBuilder(index))
-            .animation(`.rv-plug-fade-${element}`, plugFadeBuilder(index))
-            .animation(`.rv-plug-slide-${element}-grand`, plugSlideGrandBuilder(index))
-            .animation(`.rv-plug-fade-${element}-grand`, plugFadeGrandBuilder(index));
+    // register animations, loops through directions and types
+    directions.forEach((direction, index) => {
+        types.forEach((type) => {
+            module
+                .animation(`.rv-plug-${type}-${direction}`,
+                    animationBuilder(type, index, false))
+                .animation(`.rv-plug-${type}-${direction}-grand`,
+                    animationBuilder(type, index, true));
+        });
     });
 
     // TODO: add option to change duration through an attribute
@@ -45,36 +48,19 @@
     /**
      * Animates plug's panel.
      *
+     * @param  {String}  mode        type of animation (fade, slide, etc.)
      * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+     * @param  {Bool}    grand       type of shift (see top comment)
      * @return {Object}  service     object with `enter` and `leave` functions
      */
-    function plugFadeBuilder(direction) {
+    function animationBuilder(mode, direction, grand) {
         return $rootElement => {
             'ngInject';
-            const service = {
-                enter: makeFadeAnim($rootElement, direction, false, false),
-                leave: makeFadeAnim($rootElement, direction, true, false)
+            const func = mode === 'fade' ? makeFadeAnim : makeSlideAnim;
+            return {
+                enter: func($rootElement, direction, false, grand),
+                leave: func($rootElement, direction, true, grand)
             };
-
-            return service;
-        };
-    }
-
-    /**
-     * Animates plug's panel.
-     *
-     * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
-     * @return {Object}  service     object with `enter` and `leave` functions
-     */
-    function plugFadeGrandBuilder(direction) {
-        return $rootElement => {
-            'ngInject';
-            const service = {
-                enter: makeFadeAnim($rootElement, direction, false, true),
-                leave: makeFadeAnim($rootElement, direction, true, true)
-            };
-
-            return service;
         };
     }
 
@@ -84,7 +70,7 @@
     * @param  {Object}   $rootElement
     * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
     * @param  {Bool}     reverse     whether to reverse the animation direction
-    * @param  {Bool}     grand       type of shift
+    * @param  {Bool}     grand       type of shift (see top comment)
     * @param  {Object}   element     plug node
     * @param  {Function} callback    callback from angular
     */
@@ -118,48 +104,12 @@
     }
 
     /**
-     * Animates plug's panel.
-     *
-     * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
-     * @return {Object}  service     object with `enter` and `leave` functions
-     */
-    function plugSlideBuilder(direction) {
-        return $rootElement => {
-            'ngInject';
-            const service = {
-                enter: makeSlideAnim($rootElement, direction, false, false),
-                leave: makeSlideAnim($rootElement, direction, true, false)
-            };
-
-            return service;
-        };
-    }
-
-    /**
-     * Animates plug's panel.
-     *
-     * @param  {Number}  direction  direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
-     * @return {Object}  service    object with `enter` and `leave` functions
-     */
-    function plugSlideGrandBuilder(direction) {
-        return $rootElement => {
-            'ngInject';
-            const service = {
-                enter: makeSlideAnim($rootElement, direction, false, true),
-                leave: makeSlideAnim($rootElement, direction, true, true)
-            };
-
-            return service;
-        };
-    }
-
-    /**
     * Creates Slide animations
     *
     * @param  {Object}   $rootElement
     * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
     * @param  {Bool}     reverse     whether to reverse the animation direction
-    * @param  {Bool}     grand       type of shift
+    * @param  {Bool}     grand       type of shift (see top comment)
     * @param  {Object}   element     plug node
     * @param  {Function} callback    callback from angular
     */
@@ -227,7 +177,7 @@
             delta += $rootElement.outerWidth(true) - element.position().left;
         }
 
-        return delta;
+        return delta.toString();
     }
 
     /**
@@ -236,7 +186,7 @@
     * @param  {Object}  $rootElement
     * @param  {Object}  element     plug node
     * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
-    * @param  {Bool}    grand       type of shift
+    * @param  {Bool}    grand       type of shift (see top comment)
     * @return {Object}  shift       amount to move the panel
     */
     function calculateShift($rootElement, element, direction, grand) {
@@ -285,7 +235,7 @@
     *
     * @param  {Object}   element    plug node
     * @param  {Function} callback   callback from angular
-    * @param  {Number}   duration   length of animation
+    * @param  {Number}   duration   length of animation in seconds
     * @param  {Bool}     reverse    whether to reverse the animation direction
     * @param  {Object}   start      beginning state for the animation
     * @param  {Object}   end        end state for the animation
@@ -303,7 +253,7 @@
         // Build and store the tween
         let id = counter++;
         sequences[id] = TweenLite.fromTo(element.find(RV_PANEL_CLASS), duration,
-            !reverse ? start : end,
+            reverse ? end : start,
             angular.extend({}, reverse ? start : end, config));
 
         element.data(RV_PLUG_SLIDE_ID_DATA, id);
