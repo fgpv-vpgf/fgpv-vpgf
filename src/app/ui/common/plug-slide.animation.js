@@ -33,7 +33,7 @@
 
     // register animations, loops through directions and types
     directions.forEach((direction, index) => {
-        Object.keys(animationTypes).forEach((type) => {
+        Object.keys(animationTypes).forEach(type => {
             module
                 .animation(`.rv-plug-${type}-${direction}`,
                     animationBuilder(type, index, false))
