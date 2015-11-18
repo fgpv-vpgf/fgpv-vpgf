@@ -8,8 +8,8 @@ Federal Geospatial Platform Visualiser / Visualisateur pour la Plateforme géosp
 Requirements:
 
 - [NodeJS](https://nodejs.org/)
-- Bower `npm install -g bower`
-- Gulp `npm install -g gulp`
+- [Bower](http://bower.io/) `npm install -g bower`
+- [Gulp](http://gulpjs.com/) `npm install -g gulp`
 
 Running a local build:
 
