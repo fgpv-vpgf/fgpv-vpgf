@@ -1,7 +1,19 @@
 'use strict';
 const proj4 = require('proj4');
 
+/**
+ * Reproject an EsriExtent object on the client.  Does not require network
+ * traffic, but may not handle conversion between projection types as well.
+ * Internally it tests 8 points along each edge and takes the max extent
+ * of the result.
+ *
+ * @param {EsriExtent} extent to reproject
+ * @param {Object} sr is the target spatial reference (if a number it
+ *                 will be treated as a WKID)
+ * @returns {Object} an extent as an unstructured object
+ */
 function localProjectExtent(extent, sr) {
+
     // interpolates two points by splitting the line in half recursively
     function interpolate(p0, p1, steps) {
         if (steps === 0) { return [p0, p1]; }
@@ -47,7 +59,7 @@ function localProjectExtent(extent, sr) {
     }
 
     if (!proj4.defs(srcProj)) {
-        return null;
+        throw new Error('Source projection not recognized by proj4 library');
     }
     const projConvert = proj4(srcProj, destProj);
     const transformed = interpolatedPoly.map(x => projConvert.forward(x));
