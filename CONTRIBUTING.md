@@ -11,7 +11,7 @@ We use a fork and pull model for development using GitHub pull requests.  To add
 
 ## <a name="testing"></a> Testing
 
-We are using Karma for unit testing and protractor for integration tests.  Code accompanied by unit tests is far more likely to be merged.  We do not have any firm coverage goals at the moment but we should be trying to write unit tests wherever possible.
+We are using Karma for unit testing and protractor for integration tests.  Code accompanied by unit tests is far more likely to be merged.  We do not have any firm coverage goals at the moment but we should be trying to write unit tests wherever possible.  Any PRs which affect code but do not include unit tests should address why no unit tests were added in the PR comments or gitter before initiating the PR.
 
 Unit tests should not be hard to run, please run them locally before pushing to GitHub.  Although we do have travis integration it should be used primarily for integration tests and as a double check for unit tests.
 
