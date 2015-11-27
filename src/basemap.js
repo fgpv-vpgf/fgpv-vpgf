@@ -43,7 +43,7 @@ module.exports = function (esriBundle) {
         // Set basemap by id
         function setBasemap(id) {
             // set the basemap based on the id provided
-            this.basemapGallery.select(id);
+            basemapGallery.select(id);
         }
 
         return {

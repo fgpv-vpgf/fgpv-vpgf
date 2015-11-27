@@ -43,7 +43,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/dijit/Basemap', 'Basemap'],
         ['esri/dijit/BasemapGallery', 'BasemapGallery'],
         ['esri/dijit/BasemapLayer', 'BasemapLayer'],
-        ['esri/dijit/BasemapLayerToggle', 'BasemapLayerToggle'],
+        ['esri/dijit/BasemapToggle', 'BasemapToggle'],
     ];
 
     function makeDojoRequests() {
