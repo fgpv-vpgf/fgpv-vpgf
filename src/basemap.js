@@ -13,6 +13,7 @@ module.exports = function (esriBundle) {
     function makeBasemaps(settings, map, anchorId) {
 
         var layer;
+        var layers = [];
         var basemap;
 
         let basemapGallery = new esriBundle.BasemapGallery({
@@ -21,15 +22,20 @@ module.exports = function (esriBundle) {
         }, anchorId);
 
         // iterate throuh basemap configs
-        settings.forEach((basemapSetting)=> {
-            // create basemap, add to basemap gallery
-            layer = new esriBundle.BasemapLayer({
-                url: basemapSetting.url
+        settings.forEach((basemapSetting) => {
+
+            basemapSetting.layers.forEach((layerSetting) => {
+                // create basemap, add to basemap gallery
+                layer = new esriBundle.BasemapLayer({
+                    url: layerSetting.url
+                });
+
+                layers.push(layer);
             });
 
             basemap = new esriBundle.Basemap({
                 id: basemapSetting.id,
-                layers:[layer],
+                layers: layers,
                 title: basemapSetting.title,
                 thumbnailUrl: basemapSetting.thumbnailUrl
             });
