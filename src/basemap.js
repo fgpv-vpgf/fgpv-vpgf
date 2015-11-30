@@ -5,12 +5,12 @@ module.exports = function (esriBundle) {
 
     /**
     * make basemap gallery based on the settings of basemap metadata
-    * @param {Ojbect} settings json config object contains collection/array of basemap settings
+    * @param {Ojbect} basemapsConfig json config object contains collection/array of basemap settings
     * @param {esriMap} map ESRI map object
     * @param {String} anchorId DOM element where the dijit will be placed
     * @return {Object} wrapper object for basemapGallery dijit
     */
-    function makeBasemaps(settings, map, anchorId) {
+    function makeBasemaps(basemapsConfig, map, anchorId) {
 
         var layer;
         var layers = [];
@@ -22,22 +22,22 @@ module.exports = function (esriBundle) {
         }, anchorId);
 
         // iterate throuh basemap configs
-        settings.forEach((basemapSetting) => {
+        basemapsConfig.forEach((basemapConfig) => {
 
-            basemapSetting.layers.forEach((layerSetting) => {
+            basemapConfig.layers.forEach((layerConfig) => {
                 // create basemap, add to basemap gallery
                 layer = new esriBundle.BasemapLayer({
-                    url: layerSetting.url
+                    url: layerConfig.url
                 });
 
                 layers.push(layer);
             });
 
             basemap = new esriBundle.Basemap({
-                id: basemapSetting.id,
+                id: basemapConfig.uid,
                 layers: layers,
-                title: basemapSetting.title,
-                thumbnailUrl: basemapSetting.thumbnailUrl
+                title: basemapConfig.name,
+                thumbnailUrl: basemapConfig.thumbnail
             });
 
             basemapGallery.add(basemap);
@@ -46,10 +46,10 @@ module.exports = function (esriBundle) {
         // finalize basmap gallery
         basemapGallery.startup();
 
-        // Set basemap by id
-        function setBasemap(id) {
+        // Set basemap by uid
+        function setBasemap(uid) {
             // set the basemap based on the id provided
-            basemapGallery.select(id);
+            basemapGallery.select(uid);
         }
 
         return {
