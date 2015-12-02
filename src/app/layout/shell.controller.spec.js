@@ -22,6 +22,7 @@ describe('ShellController', () => {
         angular.mock.module(
             'app.layout',
             'app.ui',
+            'app.templates',
             customTranslateLoader);
 
         // inject angular services;
