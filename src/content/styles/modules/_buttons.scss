@@ -7,8 +7,10 @@
 
 @mixin icon-button {
     .md-icon-button {
+        @include icon;
+
         &.black {
-            @include icon;
+            @include icon(black);
         }
 
         &.accent {
@@ -21,6 +23,7 @@
     }
 }
 
+/* default icons are 48x48 container and 24x24 actual icon; rv-icon-auto keeps the size of the actual icon but changes the size of the container to fit; other rules change the size of the actual icon and keeps its click ripple at 48x48 */
 @mixin icon-sizes {
     .rv-icon-auto {
         @include icon-size;
@@ -54,14 +57,32 @@
         width: $size;
     }
 
+    // when the button-icon is focused, it shows a shaded background; if the icon is resized, the background is also resized and might not be well visible; we would the shaded background to match button's ripple shape
+    &.md-focused {
+        background: none;
+
+        &:before {
+            content: "";
+            position: absolute;
+            background: rgba(158,158,158,0.2);
+            border-radius: 50%;
+            @include icon-ripple-shape($size);
+        }
+    }
+
     // keep a normal size ripple
     > .md-ripple-container {
-        width: rem(4.8);
-        height: rem(4.8);
-        overflow: visible;
-        left: - (rem(4.8) - $size) / 2; // shift ripple so it's still centered over the icon
-        top: - (rem(4.8) - $size) / 2;
+        @include icon-ripple-shape($size);
     }
+}
+
+// keeps button-icon ripple default size (48px) when the icon itself is resized; also used to resize on-focus effect
+@mixin icon-ripple-shape($size) {
+    width: rem(4.8);
+    height: rem(4.8);
+    overflow: visible;
+    left: - (rem(4.8) - $size) / 2; // shift ripple so it's still centered over the icon
+    top: - (rem(4.8) - $size) / 2;
 }
 
 @mixin mapnav-button {
@@ -110,9 +131,11 @@
     }
 }
 
-@mixin icon($color: black, $opacity-from: 0.62, $opacity-to: 0.8, $opacity-full: 1) {
+@mixin icon($color: auto, $opacity-from: 0.62, $opacity-to: 0.9, $opacity-full: 1) {
     md-icon {
-        color: $color;
+        @if $color != auto {
+            color: $color;
+        }
         opacity: $opacity-from;
     }
 
