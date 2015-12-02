@@ -540,7 +540,7 @@
                 } else if (item.type === 'group') {
                     // loop through layer toggles
                     for (let name in item.toggles) {
-                        console.log(item);
+
                         let template = service.presets.groupToggles[name];
                         let control = item.toggles[name];
 
