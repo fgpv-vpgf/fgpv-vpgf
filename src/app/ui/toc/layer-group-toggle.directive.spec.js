@@ -1,4 +1,4 @@
-/* global bard, $compile, $rootScope, tocService */
+/* global bard, $compile, $rootScope */
 
 describe('rvLayerGroupToggle', () => {
     let scope;
@@ -30,13 +30,14 @@ describe('rvLayerGroupToggle', () => {
         bard.appModule('app.ui.toc', 'app.templates');
 
         // inject angular services
-        bard.inject('$compile', '$rootScope', 'tocService');
+        bard.inject('$compile', '$rootScope');
 
         // spy on group visibility toggle method
         spyOn(ngController, 'toggleGroup');
 
         // crete new scope
         scope = $rootScope.$new();
+
         // add mockGroup object to the scope, so directive has access to it
         scope.item = mockGroup;
 
@@ -62,16 +63,16 @@ describe('rvLayerGroupToggle', () => {
             expect(directiveElement)
                 .toBeDefined();
 
-                // check that directive pulled the toggleGroup function from mocked tocController
-                expect(directiveScope.self.toggleGroup)
-                    .toBeDefined();
+            // check that directive pulled the toggleGroup function from mocked tocController
+            expect(directiveScope.self.toggleGroup)
+                .toBeDefined();
 
-                // call toggleGroup method on the directive
-                directiveScope.self.toggleGroup();
+            // call toggleGroup method on the directive
+            directiveScope.self.toggleGroup();
 
-                // check if the corresponding method on tocService has been called
-                expect(ngController.toggleGroup)
-                    .toHaveBeenCalled();
+            // check if the corresponding method has been called
+            expect(ngController.toggleGroup)
+                .toHaveBeenCalled();
         });
     });
 });
