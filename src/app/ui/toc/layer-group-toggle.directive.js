@@ -42,7 +42,9 @@
          */
         function link(scope, el, attr, ctrl) {
             const self = scope.self;
-            self.toggleGroup = () => ctrl.toggleGroup(self.group);
+
+            // call toggleGroup function on the tocController with the group object (see template)
+            self.toggleGroup = ctrl.toggleGroup;
         }
     }
 
