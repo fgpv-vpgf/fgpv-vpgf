@@ -1,9 +1,20 @@
-<md-button ng-click="self.toggleGroup()">
-    <div flex layout="row">
+<md-button class="rv-layer-group-button" ng-click="self.toggleGroup(self.group)">
+
+    <div class="rv-primary">
         <span class="md-toggle-icon" ng-class="{ 'rv-toggled' : self.group.expanded }">
             <md-icon md-svg-src="hardware:keyboard_arrow_right"></md-icon>
         </span>
+
         {{ self.group.name }}
-        <span flex></span>
+
     </div>
+
 </md-button>
+
+<span flex></span>
+
+<div class="rv-layer-group-controls">
+
+    <rv-layer-group-toggle-button name="visibility"></rv-layer-group-toggle-button>
+
+</div>
