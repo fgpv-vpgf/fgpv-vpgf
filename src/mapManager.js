@@ -4,9 +4,10 @@ var basemap = require('./basemap.js');
 module.exports = function (esriBundle) {
     var mapManager = {};
 
-    mapManager.setupMap = function () {
-        var map = arguments[0];
-        var settings = arguments[1];
+    mapManager.setupMap = function (map, settings) {
+
+        // var map = arguments[0];
+        // var settings = arguments[1];
 
         var lbasemap = basemap(esriBundle);
 
