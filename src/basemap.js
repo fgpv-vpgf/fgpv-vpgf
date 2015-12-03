@@ -12,8 +12,6 @@ module.exports = function (esriBundle) {
     */
     function makeBasemaps(basemapsConfig, map, anchorId) {
 
-        var layer;
-        var layers = [];
         var basemap;
 
         let basemapGallery = new esriBundle.BasemapGallery({
@@ -24,9 +22,11 @@ module.exports = function (esriBundle) {
         // iterate throuh basemap configs
         basemapsConfig.forEach((basemapConfig) => {
 
+            let layers = [];
+
             basemapConfig.layers.forEach((layerConfig) => {
                 // create basemap, add to basemap gallery
-                layer = new esriBundle.BasemapLayer({
+                let layer = new esriBundle.BasemapLayer({
                     url: layerConfig.url
                 });
 
