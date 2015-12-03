@@ -2,6 +2,7 @@
 const layer = require('./layer.js');
 const proj = require('./proj.js');
 const basemap = require('./basemap.js');
+const mapManager = require('./mapManager.js');
 
 function grayMapFactory(esriBundle) {
     return function (element) {
@@ -17,6 +18,7 @@ function initAll(esriBundle) {
         layer: layer(esriBundle),
         proj: proj(esriBundle),
         basemap: basemap(esriBundle),
+        mapManager: mapManager(),
         debug: function () {
             if (arguments.length === 1) {
                 debug = arguments[0] === true;
