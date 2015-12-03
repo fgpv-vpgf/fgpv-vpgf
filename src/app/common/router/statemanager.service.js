@@ -18,8 +18,8 @@
     // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
     function stateManager($q) {
-
         const service = {
+            addState: addState,
             set: set,
             get: get,
             resolve: resolve
@@ -68,8 +68,20 @@
         ///////////
 
         /**
-         * Sets items states.
-         * @param {Array} items [description]
+         * Adds new items to the state collection with overrride;
+         * @param {Array} items an array of state items
+         */
+        function addState(items) {
+            state = angular.merge(state, items);
+        }
+
+        /**
+         * Sets items states. Items may be supplied as an array of strings or ojects of `{ [itemName]: [targetValue] }` where `itemName` is a String; `targetValue`, a boolean. If the targetValue is not supplied, a negation of the current state is used. After changing state of an item, stateManager waits for state directive to resolve items callback after its transition is completed. This can be used to open toc panel and then metadata panel in sequence.
+         * ```
+         * // sideMetadata panel will only be activated when state directive resolved mainToc callback after its transition is complete
+         * stateManager.set('mainToc', 'sideMetadata');
+         * ```
+         * @param {Array} items state items to toggle
          */
         function set(...items) {
             if (items.length > 0) {
