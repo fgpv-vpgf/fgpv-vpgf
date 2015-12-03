@@ -18,7 +18,7 @@ function initAll(esriBundle) {
         layer: layer(esriBundle),
         proj: proj(esriBundle),
         basemap: basemap(esriBundle),
-        mapManager: mapManager(),
+        mapManager: mapManager(esriBundle),
         debug: function () {
             if (arguments.length === 1) {
                 debug = arguments[0] === true;

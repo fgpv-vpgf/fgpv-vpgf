@@ -212,10 +212,16 @@
             }
             ]};
 
-            // test basemap gallery
-            var basemapGallery = api.basemap.makeBasemaps(settings.basemaps, map, 'basemapG');
-            // switch to different basemap by id
-            basemapGallery.setBasemap('baseEsriStreet');
+            // // test basemap gallery
+            // var basemapGallery = api.basemap.makeBasemaps(settings.basemaps, map, 'basemapG');
+            // // switch to different basemap by id
+            // basemapGallery.setBasemap('baseEsriStreet');
+
+            // // var setupMap = api.mapManager.setupMap(map, settings);
+
+            var basemapGallery = api.mapManager.setupMap(map, settings);
+
+            basemapGallery.setBasemap('baseEsriTopo');
 
         });
 </script>
