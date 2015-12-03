@@ -8,8 +8,16 @@
      * @requires
      * @description
      *
-     * The `stateManager` factory .
+     * The `stateManager` factory is a service controlling states (true/false) of panels and their content.
+     * State object corresponds to either a panel with mutually exclusive content panes, a content pane, or any other element with set content. For simplicity, a state object which is a parent, cannot be a child of another state object.
      *
+     * When a parent state object is:
+     * - activated: it activates a first (random) child as well; activating a parent state object should be avoided;
+     * - deactivated: it deactivates its active child as well;
+     *
+     * When a child state object is:
+     * - activated: it activates its parent and deactivates its active sibling if any;
+     * - deactivated: it deactivates its parent as well;
      */
     angular
         .module('app.common.router')
@@ -26,8 +34,9 @@
         };
 
         // state object
+        // sample state object
         let state = {
-            main: {
+            /*main: {
                 enabled: false
             },
             mainToc: {
@@ -60,7 +69,7 @@
             filtersNamedata: {
                 enabled: false,
                 parent: 'filters'
-            }
+            }*/
         };
 
         return service;
@@ -99,7 +108,7 @@
                     one = getItem(oneName);
                 }
 
-                //console.log('-->', one, 'to', oneTargetValue);
+                //console.log('Setting state item', one.name, 'to', oneTargetValue);
 
                 if (one.item.parent) {
                     // toggling child and it's parent
@@ -131,26 +140,53 @@
                 }
 
                 // return promise for easy promise chaining
-                return setItem(one.item, oneTargetValue, one.name)
+                return setItem(one.item, oneTargetValue)
                     .then(() => {
-                        //console.log('continue');
+                        //console.log('Continue with the rest of state items');
 
                         // process the rest of the items
-                        set(...items);
+                        return set(...items);
                     });
             }
         }
 
-        // private: sets specified item to the provided value; waits for transition to complete
-        function setItem(item, value, itemName) { // itemName is temporary TODO: remove itemName
+        /**
+         * Retuns item state.
+         * @param  {String|Object} item either state name or object `{ [itemName]: [targetValue] }`
+         * @return {Boolean}      value of the specified state
+         */
+        function get(item) {
+            let itemName = typeof item === 'string' ? item : item.name;
+            return state[itemName].enabled;
+        }
+
+        /**
+         * Resolves promise on the item waiting for its transition to complete.
+         * @param  {String} itemName name of the state to resolve
+         */
+        function resolve(itemName) {
+            let item = state[itemName];
+
+            //console.log('Resolving state item lock:', itemName);
+
+            if (item.fulfill) {
+                item.fulfill();
+                delete item.fulfill;
+            }
+        }
+
+        /**
+         * Sets specified item to the provided value; waits for transition to complete
+         * @param {Object} item  state object to modify
+         * @param {Boolean} value target state value
+         */
+        function setItem(item, value) {
             return $q(fulfill => { // reject is not used
                 if (item.enabled !== value) {
                     item.fulfill = fulfill;
                     item.enabled = value;
 
-                    // TODO: wait for items to animate
-                    // rv-test directive should call stateManager.resolve(...) with component name
-                    resolve(itemName);
+                    // waititing for items to animate and be resolved
                 } else {
                     // resolve immediately
                     fulfill();
@@ -158,7 +194,11 @@
             });
         }
 
-        // private: returns item object from itemName specified
+        /**
+         * Returns item object from itemName specified
+         * @param  {String} itemName name of the item
+         * @return {Object}          state object and its name
+         */
         function getItem(itemName) {
             return {
                 name: itemName,
@@ -166,7 +206,11 @@
             };
         }
 
-        // private: returns parent of the itemName specified
+        /**
+         * Returns a parent of the itemName specified
+         * @param  {String} itemName name of the state object whose parent will be returned
+         * @return {Object}          state object and its name
+         */
         function getParent(itemName) {
             let parentName = state[itemName].parent;
             let parent = state[parentName];
@@ -177,7 +221,11 @@
             };
         }
 
-        // private: returns array of children of the itemName specified
+        /**
+         * Returns array of children of the itemName specified
+         * @param  {String} parentName itemName whose children will be returned
+         * @return {Object}            an array of state objects and their names
+         */
         function getChildren(parentName) {
             return Object.keys(state)
                 .filter((key) => {
@@ -190,24 +238,5 @@
                     };
                 });
         }
-
-        // returns item state
-        function get(item) {
-            let itemName = typeof item === 'string' ? item : item.name;
-            return state[itemName].enabled;
-        }
-
-        // resolves promise on the item waiting for transition end
-        function resolve(itemName) {
-            let item = state[itemName];
-
-            //console.log('resolving', itemName, item);
-
-            if (item.fulfill) {
-                item.fulfill();
-                delete item.fulfill;
-            }
-        }
-
     }
 })();
