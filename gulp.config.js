@@ -88,7 +88,7 @@ module.exports = function () {
         templateCache: {
             file: 'templates.js',
             options: {
-                module: 'app.core',
+                module: 'app.templates',
                 root: 'app/',
                 standAlone: false
             }

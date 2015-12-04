@@ -22,6 +22,7 @@
          * but this is easier to maintain.
          */
         'app.core',
+        'app.templates',
         'app.geo',
         'app.ui',
 
@@ -30,4 +31,7 @@
          */
         'app.layout'
     ]);
+
+    // a separate templates module is needed to facilitate directive unit testing
+    angular.module('app.templates', []);
 })();

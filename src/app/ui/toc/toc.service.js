@@ -29,7 +29,7 @@
                         items: [
                             {
                                 type: 'layer',
-                                name: 'Layer Name 1',
+                                name: 'Layer Name 1 Layer Name 1 Layer Name 1 Layer Name 1',
                                 layerType: 'feature',
                                 id: 0,
                                 legend: [
@@ -119,7 +119,7 @@
                                 items: [
                                     {
                                         type: 'layer',
-                                        name: 'Layer Name 2',
+                                        name: 'Layer Name 2 Layer Name 2 Layer Name 2 Layer Name 2',
                                         layerType: 'feature',
                                         id: 3,
                                         legend: [
@@ -247,7 +247,12 @@
                                         }
                                     }
                                 ],
-                                toggles: []
+                                toggles: {
+                                    visibility: {
+                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                        enabled: true
+                                    }
+                                }
                             },
                             {
                                 type: 'layer',
@@ -291,9 +296,12 @@
                                 }
                             }
                         ],
-                        toggles: [
-                            'visibility'
-                        ]
+                        toggles: {
+                            visibility: {
+                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                enabled: true
+                            }
+                        }
                     },
                     {
                         type: 'group',
@@ -343,9 +351,12 @@
                                 }
                             }
                         ],
-                        toggles: [
-                            'visibility'
-                        ]
+                        toggles: {
+                            visibility: {
+                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                enabled: true
+                            }
+                        }
                     }
                 ]
             }, // config and bindable data
@@ -363,8 +374,13 @@
             groupToggles: {
                 visibility: {
                     action: service.actions.toggleGroupVisibility,
-                    icon: 'visibility',
-                    label: 'Toggle visibility',
+                    icon: {
+                        on: 'action:visibility',
+                        off: 'action:visibility_off',
+                        zoomIn: 'action:zoom_in',
+                        zoomOut: 'action:zoom_out'
+                    },
+                    label: 'Toggle group visibility',
                     tooltip: 'Group visibility tooltip'
                 }
             },
@@ -488,13 +504,6 @@
         return service;
 
         /**
-         * Toggles visibility of a group of layers.
-         */
-        function toggleGroupVisibility() {
-
-        }
-
-        /**
          * Temporary helper function to set values on layer toggle and flag objects.
          */
         function setLayerControlValues(control, template) {
@@ -529,13 +538,49 @@
                     }
 
                 } else if (item.type === 'group') {
+                    // loop through layer toggles
+                    for (let name in item.toggles) {
+
+                        let template = service.presets.groupToggles[name];
+                        let control = item.toggles[name];
+
+                        setLayerControlValues(control, template);
+                    }
+
                     initLayers(item.items);
                 }
             }
         }
 
-        // FIXME:
-        function toggleVisiblity(layer) {
+        // FIXME: placeholder method for toggling group visibility
+        function toggleGroupVisibility(group, value) {
+            console.log('I am error', group);
+            let template = service.presets.groupToggles.visibility;
+            let control = group.toggles.visibility;
+
+            // visibility toggle logic goes here
+            const toggle = {
+                off: 'on',
+                on: 'off'
+            };
+
+            control.value = value || toggle[control.value];
+            setLayerControlValues(control, template);
+
+            for (let item of group.items) {
+                console.log('item', item);
+
+                if (item.type === 'group') {
+                    toggleGroupVisibility(item, control.value);
+                } else if (item.type === 'layer') {
+                    toggleVisiblity(item, control.value);
+                }
+            }
+        }
+
+        // FIXME: placeholder method for toggling visibility
+        // if 'value' is not specified, toggle
+        function toggleVisiblity(layer, value) {
             let template = service.presets.toggles.visibility;
             let control = layer.toggles.visibility;
 
@@ -547,7 +592,7 @@
                 zoomOut: 'zoomIn'
             };
 
-            control.value = toggle[control.value];
+            control.value = value || toggle[control.value];
 
             // FIXME: this should be done when applying defaults to the config file
             setLayerControlValues(control, template);
