@@ -44,7 +44,7 @@
          * @param  {callback} callback
          */
         function toggleOpen(element, callback) {
-            let targetHeight = open ? getTargetHeight(element) : 0;
+            let targetHeight = getTargetHeight(element);
 
             TweenLite.fromTo(element, RV_TOGGLE_SLIDE_DURATION, {
                 height: 0
