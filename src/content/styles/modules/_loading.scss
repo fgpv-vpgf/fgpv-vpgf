@@ -1,0 +1,115 @@
+@mixin loading {
+    .rv-loading {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        //color: white;
+        //background-color: darkgrey;
+        //text-align: center;
+        //vertical-align: middle;
+        z-index: 10000;
+        $reveal-duration: 0.7s;
+
+        .rv-loading-section {
+            position: absolute;
+            top: 0;
+            width: 51%;
+            height: 100%;
+            background: #222222;
+
+            //z-index: 1000;
+            transition: transform $reveal-duration $swift-ease-in-out-timing-function;
+
+            &.rv-left {
+                left: 0;
+            }
+
+            &.rv-right {
+                right: 0;
+            }
+        }
+
+        &.rv-loaded {
+            transform: translate3d(0%, -100%, 0);
+            transition-delay: $reveal-duration + $swift-ease-in-duration;
+            transition-duration: 0.1s;
+
+            .rv-spinner {
+                opacity: 0;
+                transition: all $swift-ease-in-duration ease-out;
+            }
+
+            .rv-left {
+                transition-delay: $swift-ease-in-duration;
+                transform: translate3d(-100%, 0%, 0);
+            }
+
+            .rv-right {
+                transition-delay: $swift-ease-in-duration;
+                transform: translate3d(100%, 0%, 0);
+            }
+        }
+    }
+
+    /*
+    *
+    * By:       Aaron Lumsden
+    * Website:  Tuts+
+    * URL:      http://goo.gl/vdEJg5
+    *
+    */
+    .google-spin {
+        display: block;
+        position: relative;
+
+        //left: 50%;
+        //top: 50%;
+        width: 150px;
+        height: 150px;
+        margin: -50px 0 0 -50px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #3498db;
+        animation: xLoaderGoogleSpin 2s linear infinite;
+
+        &:before {
+            content: "";
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #e74c3c;
+            animation: xLoaderGoogleSpin 3s linear infinite;
+        }
+
+        &:after {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #f9c922;
+            animation: xLoaderGoogleSpin 1.7s linear infinite;
+        }
+    }
+
+    //xLoaderCrossingShapesBefore
+    @keyframes xLoaderGoogleSpin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}
