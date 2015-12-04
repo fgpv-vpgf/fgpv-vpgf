@@ -83,6 +83,8 @@ absolutely position a button underneath an item so it acts like a button body fo
             position: absolute;
             padding: 0;
             margin: 0;
+            top: 0; // anchor the button to its parent container
+            left: 0;
             width: 100%;
 
             .md-ripple-container {
@@ -114,6 +116,7 @@ absolutely position a button underneath an item so it acts like a button body fo
 
         .rv-layer-item-content {
             flex: 10; // content tries to take all available space
+            min-width: 0; // Firefox fix for flexbox not wanting to shrink: http://stackoverflow.com/a/31349707
 
             .rv-layer-item-name {
                 font-size: rem(1.6);
