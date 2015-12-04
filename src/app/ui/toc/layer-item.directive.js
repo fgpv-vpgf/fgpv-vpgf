@@ -18,18 +18,32 @@
         .module('app.ui.toc')
         .directive('rvLayerItem', rvLayerItem);
 
-    function rvLayerItem() {
+    function rvLayerItem(tocService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/toc/layer-item.html',
             scope: {
                 layer: '='
             },
+            link: link,
             controller: () => {},
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
+
+        ///////////
+
+        /**
+         * Link function binds `toggleGroup` function from the `TocController` to directive's self.
+         * @param  {object} scope directive's scope
+         */
+        function link(scope) {
+            const self = scope.self;
+
+            // call toggleGroup function on the tocController with the group object (see template)
+            self.toggleLayerFiltersPanel = tocService.actions.toggleLayerFiltersPanel;
+        }
     }
 })();

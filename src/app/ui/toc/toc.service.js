@@ -363,7 +363,8 @@
 
             // method called by the toggles and flags set on the layer item
             actions: {
-                toggleGroupVisibility
+                toggleLayerGroup,
+                toggleLayerFiltersPanel
             },
 
             presets: null
@@ -373,7 +374,7 @@
         service.presets = {
             groupToggles: {
                 visibility: {
-                    action: service.actions.toggleGroupVisibility,
+                    action: toggleGroupVisibility,
                     icon: {
                         on: 'action:visibility',
                         off: 'action:visibility_off',
@@ -499,6 +500,7 @@
         };
 
         // set layer control defaults
+        // TODO: should be done when parsing config file
         initLayers(service.data.items);
 
         return service;
@@ -623,6 +625,19 @@
                     location: false
                 });
             }
+        }
+
+        // temp function to open layer groups
+        function toggleLayerGroup(group) {
+            console.log('toggle layer group', group.name);
+            group.expanded = !group.expanded;
+        }
+
+        // temp function to "open" filters panel
+        function toggleLayerFiltersPanel(layer) {
+            console.log('toggle layer filter panel', layer.name);
+            
+            // TODO: open filters panel with this layer's data
         }
     }
 })();
