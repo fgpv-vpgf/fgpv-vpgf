@@ -636,7 +636,7 @@
         // temp function to "open" filters panel
         function toggleLayerFiltersPanel(layer) {
             console.log('toggle layer filter panel', layer.name);
-            
+
             // TODO: open filters panel with this layer's data
         }
     }

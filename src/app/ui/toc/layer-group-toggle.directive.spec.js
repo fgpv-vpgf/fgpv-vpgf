@@ -1,14 +1,9 @@
-/* global bard, $compile, $rootScope */
+/* global bard, $compile, $rootScope, tocService */
 
 describe('rvLayerGroupToggle', () => {
     let scope;
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;
-
-    // mock part of the controller required by rvLayerGroupToggle directive
-    const ngController = {
-        toggleGroup: () => {}
-    };
 
     // mock a group object
     const mockGroup = {
@@ -30,10 +25,10 @@ describe('rvLayerGroupToggle', () => {
         bard.appModule('app.ui.toc', 'app.templates');
 
         // inject angular services
-        bard.inject('$compile', '$rootScope');
+        bard.inject('$compile', '$rootScope', 'tocService');
 
         // spy on group visibility toggle method
-        spyOn(ngController, 'toggleGroup');
+        spyOn(tocService.actions, 'toggleLayerGroup');
 
         // crete new scope
         scope = $rootScope.$new();
@@ -45,10 +40,6 @@ describe('rvLayerGroupToggle', () => {
             '<rv-layer-group-toggle group="item"></rv-layer-group-toggle>'
         );
 
-        // need to mock the required controller inside the directive being tested;
-        // http://stackoverflow.com/a/19951141
-        directiveElement.data('$ngControllerController',
-            ngController);
         directiveElement = $compile(directiveElement)(scope);
         scope.$digest();
 
@@ -64,14 +55,14 @@ describe('rvLayerGroupToggle', () => {
                 .toBeDefined();
 
             // check that directive pulled the toggleGroup function from mocked tocController
-            expect(directiveScope.self.toggleGroup)
+            expect(directiveScope.self.toggleLayerGroup)
                 .toBeDefined();
 
             // call toggleGroup method on the directive
-            directiveScope.self.toggleGroup();
+            directiveScope.self.toggleLayerGroup();
 
             // check if the corresponding method has been called
-            expect(ngController.toggleGroup)
+            expect(tocService.actions.toggleLayerGroup)
                 .toHaveBeenCalled();
         });
     });
