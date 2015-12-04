@@ -642,6 +642,7 @@
             // fancy alert box for now
             $mdDialog.show(
                 $mdDialog.alert()
+
                 //.parent(angular.element(document.querySelector('#popupContainer')))
                 .clickOutsideToClose(true)
                 .title('Imagine it\'s a "Filters panel"')

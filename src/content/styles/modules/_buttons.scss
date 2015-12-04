@@ -79,11 +79,11 @@
 
 // keeps button-icon ripple default size (48px) when the icon itself is resized; also used to resize on-focus effect
 @mixin icon-ripple-shape($size) {
-    width: rem(4.8);
-    height: rem(4.8);
+    width: $icon-button-width; // it's rem(4.0) now
+    height: $icon-button-height; // it's rem(4.0) now
     overflow: visible;
-    left: - (rem(4.8) - $size) / 2; // shift ripple so it's still centered over the icon
-    top: - (rem(4.8) - $size) / 2;
+    left: - ($icon-button-width - $size) / 2; // shift ripple so it's still centered over the icon
+    top: - ($icon-button-height - $size) / 2;
 }
 
 @mixin mapnav-button {
@@ -107,6 +107,7 @@
             width: $map-nav-button-width;
             min-width: $map-nav-button-width;
             @include icon($color: $default-icon-color, $opacity-to: 0.9);
+            padding: 0 6px;
 
             md-icon {
                 height: $default-size;
@@ -133,6 +134,8 @@
 }
 
 @mixin icon($color: auto, $opacity-from: 0.62, $opacity-to: 0.9, $opacity-full: 1) {
+    padding: 0;
+
     md-icon {
         @if $color != auto {
             color: $color;
