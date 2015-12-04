@@ -16,7 +16,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService($state) {
+    function tocService($state, $mdDialog) {
         const service = {
             // a sample config bit describing layer selector structure; comes from the config file
             data: {
@@ -638,6 +638,17 @@
             console.log('toggle layer filter panel', layer.name);
 
             // TODO: open filters panel with this layer's data
+
+            // fancy alert box for now
+            $mdDialog.show(
+                $mdDialog.alert()
+                //.parent(angular.element(document.querySelector('#popupContainer')))
+                .clickOutsideToClose(true)
+                .title('Imagine it\'s a "Filters panel"')
+                .textContent('Here goes data from the ' + layer.name)
+                .ariaLabel('Alert Dialog Demo')
+                .ok('Got it!')
+            );
         }
     }
 })();
