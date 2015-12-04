@@ -3,6 +3,7 @@
     @include icon-sizes;
     @include mapnav-button;
     @include button-group;
+    @include button-effects;
 }
 
 @mixin icon-button {
@@ -191,6 +192,19 @@
 
         md-divider {
             margin: 0 6px;
+        }
+    }
+}
+
+@mixin button-effects {
+    .md-button {
+        // makes the button and its ripple square, no cheesy rounded corners
+        &.rv-button-square {
+            border-radius: 0;
+
+            .md-ripple-container {
+                border-radius: 0;
+            }
         }
     }
 }
