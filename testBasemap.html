@@ -219,9 +219,15 @@
 
             // // var setupMap = api.mapManager.setupMap(map, settings);
 
-            var basemapGallery = api.mapManager.setupMap(map, settings);
+            // var basemapGallery = api.mapManager.setupMap(map, settings);
 
-            basemapGallery.setBasemap('baseEsriStreet');
+            // basemapGallery.setBasemap('baseEsriStreet');
+            var mapControls = api.mapManager.setupMap(map, settings);
+
+            // make sure returned object works properly
+            setTimeout(() => {
+                mapControls.BasemapControl.setBasemap('baseEsriPhysical');
+            }, 3000);
 
         });
 </script>
