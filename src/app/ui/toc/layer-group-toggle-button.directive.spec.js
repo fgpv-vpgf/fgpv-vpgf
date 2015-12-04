@@ -24,7 +24,7 @@ describe('rvLayerGroupToggleButton', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.toc', 'app.templates');
+        bard.appModule('app.ui.toc', 'app.templates', 'ngMaterial');
 
         // inject angular services
         bard.inject('$compile', '$rootScope', 'tocService');
@@ -43,6 +43,7 @@ describe('rvLayerGroupToggleButton', () => {
         // http://stackoverflow.com/a/19951141
         directiveElement.data('$rvLayerGroupToggleController',
             layerGroupToggleController);
+        directiveElement.data('$mdDialogProvider', {});
         directiveElement = $compile(directiveElement)(scope);
         scope.$digest();
 
