@@ -1,6 +1,11 @@
+<md-button class="rv-layer-item-button rv-button-square" ng-click="self.toggleLayerFiltersPanel(self.layer)">
+<!-- TODO: add aria attribues on the button to provide context on what it does; also mute the actual layer name below, so a screen reader wouldn't pronounce it twice-->
+</md-button>
+
 <div class="rv-layer-item-icon">
     <img alt="" ng-src="http://lorempixel.com/32/32/?{{ self.layer.id }}"/>
 </div>
+
 <div class="rv-layer-item-content">
     <div class="rv-layer-item-name">
         {{ self.layer.name }}

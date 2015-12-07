@@ -16,7 +16,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService($state) {
+    function tocService($state, $mdDialog) {
         const service = {
             // a sample config bit describing layer selector structure; comes from the config file
             data: {
@@ -363,7 +363,8 @@
 
             // method called by the toggles and flags set on the layer item
             actions: {
-                toggleGroupVisibility
+                toggleLayerGroup,
+                toggleLayerFiltersPanel
             },
 
             presets: null
@@ -373,7 +374,7 @@
         service.presets = {
             groupToggles: {
                 visibility: {
-                    action: service.actions.toggleGroupVisibility,
+                    action: toggleGroupVisibility,
                     icon: {
                         on: 'action:visibility',
                         off: 'action:visibility_off',
@@ -499,6 +500,7 @@
         };
 
         // set layer control defaults
+        // TODO: should be done when parsing config file
         initLayers(service.data.items);
 
         return service;
@@ -623,6 +625,31 @@
                     location: false
                 });
             }
+        }
+
+        // temp function to open layer groups
+        function toggleLayerGroup(group) {
+            console.log('toggle layer group', group.name);
+            group.expanded = !group.expanded;
+        }
+
+        // temp function to "open" filters panel
+        function toggleLayerFiltersPanel(layer) {
+            console.log('toggle layer filter panel', layer.name);
+
+            // TODO: open filters panel with this layer's data
+
+            // fancy alert box for now
+            $mdDialog.show(
+                $mdDialog.alert()
+
+                //.parent(angular.element(document.querySelector('#popupContainer')))
+                .clickOutsideToClose(true)
+                .title('Imagine it\'s a "Filters panel"')
+                .textContent('Here goes data from the ' + layer.name)
+                .ariaLabel('Alert Dialog Demo')
+                .ok('Got it!')
+            );
         }
     }
 })();
