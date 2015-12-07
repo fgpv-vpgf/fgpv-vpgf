@@ -1,8 +1,6 @@
 /* Want to try using OOCSS and SMACSS according to this article: https://mattstauffer.co/blog/organizing-css-oocss-smacss-and-bem */
 @import "../../../lib/angular-material/angular-material";
 
-// I'll add coments to SASS next time...
-
 .fgpv {
     @import "common/_all.scss";
     @import "base/_all.scss";
@@ -11,38 +9,4 @@
     @import "vendor/_all.scss";
     @import "layout/_all.scss";
     @import "_shame.scss";
-
-    *,
-    *:before,
-    *:after {
-        box-sizing: border-box;
-    }
-
-    box-sizing: border-box;
-
-    // temporary stuff below; need to remove
-    position: relative;
-    overflow: hidden;
-
-    .loading-splash {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        color: white;
-        background-color: darkgrey;
-        text-align: center;
-        vertical-align: middle;
-        z-index: 10000;
-    }
-}
-
-.layerTile {
-    position: absolute;
-}
-
-.esri-map {
-    height: 100%;
-    width: 100%;
 }

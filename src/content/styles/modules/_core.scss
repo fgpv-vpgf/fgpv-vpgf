@@ -1,0 +1,12 @@
+@mixin core {
+    box-sizing: border-box;
+
+    *,
+    *:before,
+    *:after {
+        box-sizing: border-box;
+    }
+
+    position: relative;
+    overflow: hidden;
+}
