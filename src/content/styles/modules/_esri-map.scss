@@ -14,5 +14,10 @@
         div[id$="_container"].container {
             clip: auto !important;
         }
+
+        .layerTile {
+            // tiles don't line up properly otherwise
+            position: absolute;
+        }
     }
 }
