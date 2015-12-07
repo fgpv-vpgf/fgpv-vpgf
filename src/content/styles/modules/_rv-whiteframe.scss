@@ -1,3 +1,4 @@
+// whiteframe provides a shadow around panels; 1 - tiny shadow; 5 - large shadow;
 @mixin rv-whiteframe-set {
     .rv-whiteframe-z1 {
         @include rv-whiteframe-base {

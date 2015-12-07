@@ -1,4 +1,6 @@
+// loading spals
 @mixin loading {
+    // takes the entire viewer viewport
     .rv-loading {
         position: absolute;
         top: 0;
@@ -32,11 +34,18 @@
             }
         }
 
+        // set the size of the spinner
+        .rv-spinner {
+            width: rem(15);
+            height: rem(15);
+        }
+
         &.rv-loaded {
             transform: translate3d(0%, -100%, 0);
             transition-delay: $reveal-duration + $swift-ease-in-duration;
             transition-duration: 0.1s;
 
+            // fade out the spinner just before removing the splash
             .rv-spinner {
                 opacity: 0;
                 transition: all $swift-ease-in-duration ease-out;
@@ -65,11 +74,9 @@
         display: block;
         position: relative;
 
-        //left: 50%;
-        //top: 50%;
-        width: 150px;
-        height: 150px;
-        margin: -50px 0 0 -50px;
+        width: 100%;
+        height: 100%;
+
         border-radius: 50%;
         border: 3px solid transparent;
         border-top-color: #3498db;
