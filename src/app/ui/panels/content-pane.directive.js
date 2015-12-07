@@ -24,7 +24,7 @@
             require: '^ngController', // require plug controller
             templateUrl: 'app/ui/panels/content-pane.html',
             scope: {
-                title: '@', // binds to the evaluated dom property
+                titleValue: '@', // binds to the evaluated dom property
                 titleStyle: '@'
             },
             transclude: true,
