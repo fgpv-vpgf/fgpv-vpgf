@@ -4,6 +4,19 @@
     @include mapnav-button;
     @include button-group;
     @include button-effects;
+
+    .rv-checkbox {
+        width: 100%;
+
+        > .md-ink-ripple {
+            right: 0;
+            left: auto;
+        }
+
+        > .md-label {
+            margin-left: 0;
+        }
+    }
 }
 
 @mixin icon-button {
