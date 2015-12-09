@@ -16,20 +16,11 @@
         .config(configBlock);
 
     function configBlock($translateProvider, $stateProvider,
-        $mdThemingProvider, $mdIconProvider, statehelperConfigProvider) {
+        $mdThemingProvider, $mdIconProvider) {
 
-        configureStateRouting();
         configureTranslations();
         configureTheme();
         configureIconsets();
-
-        /**
-         * Sets state provider for `configHelper`.
-         */
-        function configureStateRouting() {
-            const stateCfg = statehelperConfigProvider;
-            stateCfg.config.$stateProvider = $stateProvider;
-        }
 
         /**
          * Configure angular translation provider. Set locale files location and file name pattern.
