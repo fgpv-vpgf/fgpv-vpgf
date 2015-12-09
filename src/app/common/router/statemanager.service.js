@@ -30,13 +30,15 @@
             addState: addState,
             set: set,
             get: get,
+            getMode: getMode,
+            setMode: setMode,
             resolve: resolve
         };
 
         // state object
         // sample state object
         let state = {
-            /*main: {
+            main: {
                 enabled: false
             },
             mainToc: {
@@ -59,17 +61,17 @@
                 parent: 'side'
             },
             filters: {
-                enabled: false
+                enabled: false,
+                mode: 'default' // half, tenth
             },
             filtersFulldata: {
                 enabled: false,
-                parent: 'filters',
-                mode: 'full' // half, tenth
+                parent: 'filters'
             },
             filtersNamedata: {
                 enabled: false,
                 parent: 'filters'
-            }*/
+            }
         };
 
         return service;
@@ -237,6 +239,18 @@
                         item: state[key]
                     };
                 });
+        }
+
+        function getMode(item) {
+            return state[item].mode || null;
+        }
+
+        function setMode(item, value) {
+            /* jshint validthis: true */
+            const self = this;
+            state[item].mode = value;
+
+            return self;
         }
     }
 })();
