@@ -12,6 +12,7 @@
 @import "_rv-whiteframe.scss";
 @import "_mapnav.scss";
 @import "_esri-map.scss";
+@import "_setting-controls.scss";
 
 @import "_toc.scss";
 
@@ -23,6 +24,7 @@
 @include content-pane;
 @include mapnav;
 @include esri-map;
+@include setting-controls;
 
 @include toc;
 
