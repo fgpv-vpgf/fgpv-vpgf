@@ -5,6 +5,8 @@ describe('rvLayerGroupToggle', () => {
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;
 
+    const rvToc = {};
+
     // mock a group object
     const mockGroup = {
         type: 'group',
@@ -28,7 +30,7 @@ describe('rvLayerGroupToggle', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.toc', 'app.templates', mockMdDialog);
+        bard.appModule('app.ui.toc', 'app.templates', mockMdDialog, 'app.common.router');
 
         // inject angular services
         bard.inject('$compile', '$rootScope', 'tocService');
@@ -46,6 +48,10 @@ describe('rvLayerGroupToggle', () => {
             '<rv-layer-group-toggle group="item"></rv-layer-group-toggle>'
         );
 
+        // need to mock the required controller inside the directive being tested;
+        // http://stackoverflow.com/a/19951141
+        directiveElement.data('$rvTocController',
+            rvToc);
         directiveElement = $compile(directiveElement)(scope);
         scope.$digest();
 
