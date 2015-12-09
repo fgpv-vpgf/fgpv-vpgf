@@ -11,7 +11,5 @@
      *
      */
     angular
-        .module('app.common.router', [
-            'ui.router'
-        ]);
+        .module('app.common.router', []);
 })();
