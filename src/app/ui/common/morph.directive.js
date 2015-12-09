@@ -34,8 +34,9 @@
      *
      * @return {object} directive body
      */
-    function rvMorph() {
+    function rvMorph(stateManager) {
         const directive = {
+            multiElement: true,
             restrict: 'A',
             link: linkFunc
         };
@@ -54,8 +55,10 @@
         function linkFunc(scope, el, attr) {
             let classReg;
             let toClass;
+            scope.stateManager = stateManager;
 
-            scope.$watch(attr.rvMorph, (newClass, oldClass) => {
+            scope.$watch('stateManager.getMode("' + [attr.rvMorph] + '")', (newClass, oldClass) => {
+
                 // replace old class name with new on the element to get a morph target
                 classReg = new RegExp('(^| )' + oldClass + '($| )', 'i');
                 toClass = el.attr('class')

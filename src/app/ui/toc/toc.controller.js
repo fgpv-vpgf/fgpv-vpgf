@@ -15,7 +15,7 @@
         .module('app.ui.toc')
         .controller('TocController', TocController);
 
-    function TocController($state, tocService) {
+    function TocController($state, tocService, stateManager) {
         const self = this;
 
         self.toggleFilters = toggleFilters;
@@ -45,18 +45,22 @@
         // hacky way to toggle filters panel modes;
         // TODO: replace with a sane methods
         function toggleFiltersFull() {
+            //Temporary change, will soon be replaced with new directive
             const views = [
-                'app.main.toc.filters.default',
-                'app.main.toc.filters.default.minimized',
-                'app.main.toc.filters.default.full',
-                'app.main.toc.filters.default.attached'
+                'default',
+                'minimized',
+                'full',
+                'attached'
             ];
 
-            let index = (views.indexOf($state.current.name) + 1) % 4;
+            let currentMode = stateManager.getMode('filters');
+            let index = (views.indexOf(currentMode) + 1) % 4;
 
-            $state.go(views[index], {}, {
+            stateManager.setMode('filters', views[index]);
+
+            /*$state.go(views[index], {}, {
                 location: false
-            });
+            });*/
         }
 
         function activate() {
