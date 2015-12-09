@@ -21,7 +21,7 @@
     function rvContentPane() {
         const directive = {
             restrict: 'E',
-            require: '^ngController', // require plug controller
+            require: '^rvPanel', // require plug controller
             templateUrl: 'app/ui/panels/content-pane.html',
             scope: {
                 titleValue: '@', // binds to the evaluated dom property

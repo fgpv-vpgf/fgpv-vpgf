@@ -18,6 +18,7 @@
     function rvLayerGroupToggle(tocService) {
         const directive = {
             restrict: 'E',
+            require: '^rvToc',
             templateUrl: 'app/ui/toc/layer-group-toggle.html',
             scope: {
                 group: '='
