@@ -1,7 +1,7 @@
 // panel plugs are containers for panels; they are mostly used for positioning and cropping of during animations if the panel spawns not from the edge of the viewer container
 // $from indicates direction from which the panel starts moving during activaation animation
 @mixin active-panel-plug($left: auto, $right: auto, $bottom: auto, $top: auto, $width: auto, $height: auto, $from: null) {
-    &.active {
+
         position: absolute;
         left: $left;
         top: $top;
@@ -23,7 +23,7 @@
         @if $from != null {
             @include active-panel-plug-transition($left: $left, $right: $right, $bottom: $bottom, $top: $top, $width: $width, $height: $height, $from: $from);
         }
-    }
+    
 }
 
 // during transtion, container plug expands to accomodate panel's shadow; otherwise, it will be cropped
