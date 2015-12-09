@@ -41,7 +41,7 @@ describe('rvState', () => {
                 .toEqual('filters');
         });
 
-        it('should change class name', done => {
+        it('should remove the element from the dom', done => {
             // check if the element tied to rv-state is in the dom
             expect(directiveElement.children().length)
                 .toBe(1);
@@ -54,6 +54,29 @@ describe('rvState', () => {
 
                 expect(directiveElement.children().length)
                     .toBe(0);
+                done();
+            }, 50);
+        });
+
+        it('should add the element to the dom', done => {
+            stateManager.set({ filters: false });
+            scope.$digest();
+
+            // use small timeout since even zero-length animation is async
+            setTimeout(() => {
+
+                expect(directiveElement.children().length)
+                    .toBe(0);
+
+                stateManager.set({ filters: true });
+                scope.$digest();
+
+                setTimeout(() => {
+                    expect(directiveElement.children().length)
+                        .toBe(1);
+                    done();
+                }, 50);
+
                 done();
             }, 50);
         });
