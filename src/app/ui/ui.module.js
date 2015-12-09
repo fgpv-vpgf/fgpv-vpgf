@@ -18,6 +18,7 @@
             'app.ui.metadata',
             'app.ui.mapnav',
             'app.ui.filters',
-            'app.ui.common'
+            'app.ui.common',
+            'app.ui.settings'
         ]);
 })();
