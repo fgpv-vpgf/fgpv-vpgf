@@ -36,7 +36,6 @@
      */
     function rvMorph(stateManager) {
         const directive = {
-            multiElement: true,
             restrict: 'A',
             link: linkFunc
         };
