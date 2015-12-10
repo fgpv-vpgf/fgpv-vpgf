@@ -25,12 +25,12 @@ describe('stateManager', () => {
             parent: 'side'
         },
         filters: {
-            enabled: false
+            enabled: false,
+            mode: 'default'
         },
         filtersFulldata: {
             enabled: false,
             parent: 'filters',
-            mode: 'full' // half, tenth
         },
         filtersNamedata: {
             enabled: false,
@@ -157,6 +157,16 @@ describe('stateManager', () => {
                 });
 
             $rootScope.$digest();
+        });
+
+        it('should change modes correctly', () => {
+            expect(stateManager.getMode('filters'))
+                .toBe('default');
+
+            stateManager.setMode('filters', 'half');
+
+            expect(stateManager.getMode('filters'))
+                .toBe('half');
         });
 
         it('should chain state changes correctly', done => {
