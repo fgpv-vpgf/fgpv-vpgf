@@ -5,14 +5,14 @@ module.exports = function (esriBundle) {
 
     /**
     * make basemap gallery based on the settings of basemap metadata
-    * @param {Ojbect} basemapsConfig json config object contains collection/array of basemap settings
+    * @param {Object} basemapsConfig json config object contains collection/array of basemap settings
     * @param {esriMap} map ESRI map object
     * @param {String} anchorId DOM element where the dijit will be placed
     * @return {Object} wrapper object for basemapGallery dijit
     */
     function makeBasemaps(basemapsConfig, map, anchorId) {
 
-        var basemap;
+        let basemap;
 
         let basemapGallery = new esriBundle.BasemapGallery({
             showArcGISBasemaps: false,
