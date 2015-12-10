@@ -241,16 +241,25 @@
                 });
         }
 
+        /**
+         * Returns the mode of the item specified
+         * @param  {String} item       itemName whose mode will be returned
+         * @return {String}            the item's mode or null if the item has no mode stored
+         */
         function getMode(item) {
             return state[item].mode || null;
         }
 
+        /**
+         * Changes the mode of the item to the value specified
+         * @param  {String} item       name of the item to change
+         * @param  {String} value      value to change the mode to
+         * @return {Object}            the stateManager service to use for chaining
+         */
         function setMode(item, value) {
-            /* jshint validthis: true */
-            const self = this;
             state[item].mode = value;
 
-            return self;
+            return service;
         }
     }
 })();
