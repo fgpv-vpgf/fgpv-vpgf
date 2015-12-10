@@ -1,25 +1,31 @@
-/* global bard, $compile, $rootScope */
+/* global bard, $compile, $rootScope, stateManager */
 
 describe('rvMorph', () => {
     let scope;
     let directiveElement;
 
+    const mockState = {
+        filters: {
+            enabled: false,
+            mode: 'full'
+        }
+    };
+
     beforeEach(() => {
         // mock the module with bardjs
-        bard.appModule('app.ui.common');
+        bard.appModule('app.ui.common', 'app.common.router');
 
         // inject angular services
-        bard.inject('$compile', '$rootScope');
+        bard.inject('$compile', '$rootScope', 'stateManager');
+
+        stateManager.addState(mockState);
 
         // crete new scope
         scope = $rootScope.$new();
-        scope.self = {
-            mode: 'classZero'
-        };
 
         // create new element; set morph speed to 0 to speed up tests
         directiveElement = $compile(angular.element(
-                '<div rv-morph="self.mode" rv-morph-speed="0"></div>'))
+                '<div rv-morph="filters" rv-morph-speed="0"></div>'))
             (scope);
         scope.$digest();
     });
@@ -32,21 +38,21 @@ describe('rvMorph', () => {
 
             // check that directive attribute value is set correctly
             expect(directiveElement.attr('rv-morph'))
-                .toEqual('self.mode');
+                .toEqual('filters');
         });
 
         it('should change class name', done => {
             // check if the initial class is set correctly with no delay
-            expect(directiveElement.hasClass('classZero'))
+            expect(directiveElement.hasClass(mockState.filters.mode))
                 .toBe(true);
 
-            // change morph value
-            scope.self.mode = 'classOne';
+            stateManager.setMode('filters', 'half');
             scope.$digest();
 
             // use small timeout since even zero-length animation is async
             setTimeout(() => {
-                expect(directiveElement.hasClass('classOne'))
+
+                expect(directiveElement.hasClass('half'))
                     .toBe(true);
                 done();
             }, 50);
