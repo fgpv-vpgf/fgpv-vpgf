@@ -1,3 +1,5 @@
+/* global HolderIpsum */
+
 (() => {
     'use strict';
 
@@ -29,13 +31,17 @@
                         items: [
                             {
                                 type: 'layer',
-                                name: 'Layer Name 1 Layer Name 1 Layer Name 1 Layer Name 1',
+                                name:  HolderIpsum.words(3, true),
                                 layerType: 'feature',
                                 id: 0,
-                                legend: [
+                                symbology: [
                                     {
                                         icon: 'url',
-                                        name: 'something'
+                                        name: HolderIpsum.words(3, true)
+                                    },
+                                    {
+                                        icon: 'url',
+                                        name: HolderIpsum.words(3, true)
                                     }
                                 ],
 
@@ -75,10 +81,18 @@
                                 name: 'Layer Name 2',
                                 layerType: 'feature',
                                 id: 1,
-                                legend: [
+                                symbology: [
                                     {
                                         icon: 'url',
                                         name: 'something'
+                                    },
+                                    {
+                                        icon: 'url',
+                                        name: HolderIpsum.words(3, true)
+                                    },
+                                    {
+                                        icon: 'url',
+                                        name: HolderIpsum.words(3, true)
                                     }
                                 ],
                                 toggles: {
@@ -122,7 +136,7 @@
                                         name: 'Layer Name 2 Layer Name 2 Layer Name 2 Layer Name 2',
                                         layerType: 'feature',
                                         id: 3,
-                                        legend: [
+                                        symbology: [
                                             {
                                                 icon: 'url',
                                                 name: 'something'
@@ -163,7 +177,7 @@
                                         name: 'Subgroup Layer Name 2',
                                         layerType: 'feature',
                                         id: 4,
-                                        legend: [
+                                        symbology: [
                                             {
                                                 icon: 'url',
                                                 name: 'something'
@@ -210,7 +224,7 @@
                                         name: 'Subgroup Layer 3',
                                         layerType: 'image',
                                         id: 5,
-                                        legend: [
+                                        symbology: [
                                             {
                                                 icon: 'url',
                                                 name: 'something'
@@ -256,13 +270,41 @@
                             },
                             {
                                 type: 'layer',
-                                name: 'Layer Name 3',
+                                name: HolderIpsum.words(3, true),
                                 layerType: 'feature',
                                 id: 7,
-                                legend: [
+                                symbology: [
                                     {
                                         icon: 'url',
-                                        name: 'something'
+                                        name: HolderIpsum.words(3, true)
+                                    },
+                                    {
+                                        icon: 'url',
+                                        name: HolderIpsum.words(3, true)
+                                    },
+                                    {
+                                        icon: 'url',
+                                        name: HolderIpsum.words(3, true)
+                                    },
+                                    {
+                                        icon: 'url',
+                                        name: HolderIpsum.words(3, true)
+                                    },
+                                    {
+                                        icon: 'url',
+                                        name: HolderIpsum.words(3, true)
+                                    },
+                                    {
+                                        icon: 'url',
+                                        name: HolderIpsum.words(3, true)
+                                    },
+                                    {
+                                        icon: 'url',
+                                        name: HolderIpsum.words(3, true)
+                                    },
+                                    {
+                                        icon: 'url',
+                                        name: HolderIpsum.words(3, true)
                                     }
                                 ],
                                 toggles: {
@@ -314,7 +356,7 @@
                                 name: 'Group 2 Layer Name 1',
                                 layerType: 'image',
                                 id: 8,
-                                legend: [
+                                symbology: [
                                     {
                                         icon: 'url',
                                         name: 'something'
