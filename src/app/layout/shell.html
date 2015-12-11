@@ -24,17 +24,15 @@
 
             Plug - Panel - Content Pane - Content
         -->
-        <div ng-class="{ active: self.active }" ui-view="appbarPlug"></div>
+        <rv-appbar></rv-appbar>
 
         <!-- rv-plug-slide-down class specifies the type of animation applied to the plug's panel on enter/leave  -->
-        <div class="rv-plug-slide-down" ng-class="{ active: self.active, stagger: self.isStaggering }"
-            ui-view="panelPlug"></div>
+        <rv-panel type="main" close-button="false"  rv-state="main" class="rv-plug-slide-down"></rv-panel>
 
-        <div class="rv-plug-slide-right" ng-class="{ active: self.active }" ui-view="sidePanelPlug"></div>
+        <rv-panel type="side" rv-state="side" class="rv-plug-slide-right"></rv-panel>
 
-        <!-- rv-morph="self.mode" animates transitions between values bound to self.mode -->
-        <div class="rv-plug-slide-down-grand" ng-class="{ active: self.active }" rv-morph="filters"
-            ui-view='filtersPlug'></div>
+        <!-- rv-morph animates transitions between values stored in state -->
+        <rv-panel type="filters" rv-state="filters" rv-morph="filters" class="rv-plug-slide-down-grand"></rv-panel>
 
         <div ng-class="{ active: self.active }" ui-view="detailsPlug"></div>
 

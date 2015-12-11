@@ -28,7 +28,7 @@ describe('rvLayerGroupToggle', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.toc', 'app.templates', mockMdDialog);
+        bard.appModule('app.ui.toc', 'app.templates', mockMdDialog, 'app.common.router');
 
         // inject angular services
         bard.inject('$compile', '$rootScope', 'tocService');

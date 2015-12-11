@@ -16,7 +16,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService($state, $mdDialog) {
+    function tocService(stateManager, $mdDialog) {
         const service = {
             // a sample config bit describing layer selector structure; comes from the config file
             data: {
@@ -602,29 +602,12 @@
 
         // FIXME: placeholder method for toggling settings panel
         function toggleSettings() {
-            // hacky way to toggle panels; replace with a sane methods
-            if ($state.current.name.indexOf('settings') === -1) {
-                $state.go('app.main.toc.side.settings', {}, {
-                    location: false
-                });
-            } else {
-                $state.go('app.main.toc', {}, {
-                    location: false
-                });
-            }
+            stateManager.set({ filters: false }, 'sideSettings');
         }
 
         // FIXME: placeholder method for toggling metadata panel
         function toggleMetadata() {
-            if ($state.current.name.indexOf('metadata') === -1) {
-                $state.go('app.main.toc.side.metadata', {}, {
-                    location: false
-                });
-            } else {
-                $state.go('app.main.toc', {}, {
-                    location: false
-                });
-            }
+            stateManager.set({ filters: false }, 'sideMetadata');
         }
 
         // temp function to open layer groups
