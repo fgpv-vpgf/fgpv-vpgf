@@ -45,7 +45,9 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
         ['esri/layers/WMSLayer', 'WmsLayer'],
         ['esri/map', 'Map'],
-        ['esri/request', 'esriRequest']
+        ['esri/request', 'esriRequest'],
+        ['esri/tasks/GeometryService', 'GeometryService'],
+        ['esri/tasks/GeometryService', 'ProjectParameters']
     ];
 
     function makeDojoRequests() {
