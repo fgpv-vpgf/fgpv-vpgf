@@ -4,10 +4,9 @@
     /**
      * @ngdoc module
      * @name app.common.router
-     * @requires ui.router
      * @description
      *
-     * The `common.router` provides support to handling `ui.router` states and transitions.
+     * The `common.router` provides the applications stateManager.
      *
      */
     angular
