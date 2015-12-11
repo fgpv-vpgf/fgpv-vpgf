@@ -27,13 +27,7 @@ module.exports = function (esriBundle) {
             let lbasemap = basemap(esriBundle);
 
             // basemapCtrl is a basemap gallery object, should store this value for application use
-            // TODO: return as an part of JSON object?
-            basemapCtrl = lbasemap.makeBasemaps(settings.basemaps, map, 'anchorId');
-
-            // test the basemap by setting to map uid of 'baseEsriStreet', should remove after
-            // the obj is stored or returned as object
-            // TODO: remove the hard coded setting, demo purpose only
-            basemapCtrl.setBasemap('baseEsriStreet');
+            basemapCtrl = lbasemap.makeBasemaps(settings.basemaps, map);
         }
 
         // TODO: add code to setup scalebar
