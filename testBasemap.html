@@ -224,6 +224,9 @@
             // basemapGallery.setBasemap('baseEsriStreet');
             var mapControls = api.mapManager.setupMap(map, settings);
 
+            // set default then switch after 3 sec.
+            mapControls.BasemapControl.setBasemap('baseEsriStreet');
+
             // make sure returned object works properly
             setTimeout(() => {
                 mapControls.BasemapControl.setBasemap('baseEsriPhysical');
