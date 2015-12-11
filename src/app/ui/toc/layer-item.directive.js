@@ -39,8 +39,11 @@
          * Link function binds `toggleGroup` function from the `TocController` to directive's self.
          * @param  {object} scope directive's scope
          */
-        function link(scope) {
+        function link(scope, element) {
             const self = scope.self;
+
+            // store reference to element on the scope for legend directive to access
+            self.element = element;
 
             // call toggleGroup function on the tocController with the group object (see template)
             self.toggleLayerFiltersPanel = tocService.actions.toggleLayerFiltersPanel;
