@@ -1,6 +1,7 @@
 'use strict';
 const layer = require('./layer.js');
 const proj = require('./proj.js');
+const basemap = require('./basemap.js');
 
 function grayMapFactory(esriBundle) {
     return function (element) {
@@ -15,6 +16,7 @@ function initAll(esriBundle) {
         grayMap: grayMapFactory(esriBundle),
         layer: layer(esriBundle),
         proj: proj(esriBundle),
+        basemap: basemap(esriBundle),
         debug: function () {
             if (arguments.length === 1) {
                 debug = arguments[0] === true;
@@ -38,6 +40,9 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/layers/FeatureLayer', 'FeatureLayer'],
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
         ['esri/layers/WMSLayer', 'WmsLayer'],
+        ['esri/dijit/Basemap', 'Basemap'],
+        ['esri/dijit/BasemapGallery', 'BasemapGallery'],
+        ['esri/dijit/BasemapLayer', 'BasemapLayer'],
     ];
 
     function makeDojoRequests() {
