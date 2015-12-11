@@ -53,7 +53,7 @@ describe('rvLayerItemSymbology', () => {
                 .toBeDefined();
 
             // check that directive correctly pulled bound symbology object from the markup
-            expect(directiveScope.self.symbology.lenth)
+            expect(directiveScope.self.symbology.length)
                 .toBe(2);
         });
     });
