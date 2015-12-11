@@ -33,7 +33,7 @@
         return directive;
     }
 
-    function Controller($state, tocService, stateManager) {
+    function Controller(tocService, stateManager) {
         'ngInject';
         const self = this;
 
@@ -42,12 +42,6 @@
 
         self.config = tocService.data;
         self.presets = tocService.presets;
-
-        // temp function to open layer groups
-        self.toggleGroup = group => {
-            console.log('toggle group', group.name);
-            group.expanded = !group.expanded;
-        };
 
         activate();
 

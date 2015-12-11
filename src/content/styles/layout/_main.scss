@@ -88,15 +88,3 @@ rv-panel[type='side'] {
         @include content-plug;
     }
 }
-
-/*
-[state$='metadata'] {
-    [ui-view='panelPlug'] {
-        @include PlugTransitionDelay;
-    }
-
-    [ui-view='sidePanelPlug'] {
-        @include PlugTransitionDuration;
-    }
-}
-*/
