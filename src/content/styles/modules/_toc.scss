@@ -38,6 +38,7 @@
         // do not add padding to the root level layer list
         &.rv-root {
             padding-left: 0;
+            margin: 0;
         }
 
         &.ng-hide + .rv-shadow {
