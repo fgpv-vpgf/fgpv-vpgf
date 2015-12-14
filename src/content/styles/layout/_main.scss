@@ -21,7 +21,24 @@ rv-panel[type='filters'] {
     }
 
     &.attached {
-        @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height, $width: 300px, $bottom: $viewport-gutter);
+        @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $width: 300px, $bottom: $viewport-gutter);
+
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 1px;
+            border-left: 1px solid $divider-color;
+            z-index: 1;
+        }
+
+        &.ng-animate {
+            &:before {
+                bottom: 10px;
+            }
+        }
     }
 
     &.minimized {
@@ -35,7 +52,7 @@ rv-panel[type='main'] {
     &:before {
         content: "";
         position: absolute;
-            top: -1px;
+        top: -1px;
         left: 0;
         right: 0;
         height: 1px;
@@ -50,13 +67,8 @@ rv-panel[type='main'] {
         }
     }
 
-    /*
-    &.stagger {
-        @include plug-transition-delay;
-    }
-
-    */
-    rv-toc, rv-toolbox {
+    rv-toc,
+    rv-toolbox {
         @include content-plug;
     }
 }
@@ -83,8 +95,8 @@ rv-panel[type='side'] {
         }
     }
 
-
-    rv-settings, rv-metadata {
+    rv-settings,
+    rv-metadata {
         @include content-plug;
     }
 }
