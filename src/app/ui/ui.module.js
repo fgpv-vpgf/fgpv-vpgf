@@ -10,6 +10,7 @@
      */
     angular
         .module('app.ui', [
+            'app.ui.basemap',
             'app.ui.sidenav',
             'app.ui.appbar',
             'app.ui.panels',
