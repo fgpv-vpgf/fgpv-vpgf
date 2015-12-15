@@ -13,29 +13,14 @@
         .rv-header {
             display: flex;
             white-space: nowrap;
-            background-color: white;
+            border-bottom: 1px solid $divider-color-light;
             padding: {
                 top: 10px;
-                bottom: 6px;
-                right: 16px;
+                bottom: 7px;
+                right: 6px;
                 left: 16px;
-                right: 0;
             }
-
-            > .md-headline,
-            > .md-title,
-            > .md-subhead {
-                line-height: 24px;
-                margin-top: 0;
-                margin-bottom: 0;
-                display: inline-block;
-                text-overflow: ellipsis;
-                overflow: hidden;
-            }
-        }
-
-        > md-divider {
-            padding: 0;
+            @include rv-pane-title;
         }
 
         .rv-content {
@@ -45,7 +30,7 @@
         }
 
         .rv-footer {
-
+            border-top: 1px solid $divider-color-light;
         }
     }
 
@@ -54,6 +39,7 @@
         padding: 8px;
 
         .rv-subheader {
+            border-bottom: 1px solid $divider-color-light;
             margin: {
                 top: 5px;
                 bottom: 11px;
@@ -62,17 +48,7 @@
                 top: 0;
                 bottom: 0;
             }
-
-            > .md-headline,
-            > .md-title,
-            > .md-subhead {
-                line-height: 24px;
-                margin-top: 0;
-                margin-bottom: 0;
-                display: inline-block;
-                text-overflow: ellipsis;
-                overflow: hidden;
-            }
+            @include rv-pane-title;
         }
 
         .rv-subcontent {
@@ -81,5 +57,18 @@
                 right: 8px;
             }
         }
+    }
+}
+
+@mixin rv-pane-title {
+    > .md-headline,
+    > .md-title,
+    > .md-subhead {
+        line-height: 24px;
+        margin-top: 0;
+        margin-bottom: 0;
+        display: inline-block;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 }
