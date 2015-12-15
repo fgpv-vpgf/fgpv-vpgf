@@ -20,7 +20,7 @@
      *
      * @return {object} service object
      */
-    function mapNavigationService() {
+    function mapNavigationService(stateManager) {
         const service = {
             // FIXME: this config snippet should obvisouly come from config service
             config: {
@@ -29,7 +29,8 @@
                     'geoLocation',
                     'marquee',
                     'home',
-                    'history'
+                    'history',
+                    'basemap'
                 ]
             },
             controls: {},
@@ -82,6 +83,17 @@
                     icon: 'action:history',
                     tooltip: 'History',
                     call: function () {} // FIXME: user proper call
+                },
+                basemap: {
+                    label: 'Basemap',
+                    icon: 'maps:map',
+                    tooltip: 'Basemap',
+                    call: () => {
+                        stateManager.set('otherBasemap');
+                        let newMode = stateManager.getMode('mapnav') === 'default' ?
+                            'basemap' : 'default';
+                        stateManager.setMode('mapnav', newMode);
+                    }
                 }
             }
         };
