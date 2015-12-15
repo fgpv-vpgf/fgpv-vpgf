@@ -1,0 +1,25 @@
+<div class="rv-basemap-item">
+    <md-button class="rv-button-square rv-basemap-button md-raised)" ng-switch="self.basemap.wkid">
+        <!--img alt="" ng-src="http://lorempixel.com/400/200/nature/?{{self.basemap.id}}"/-->
+
+
+        <div class="rv-wkid rv-3978" ng-switch-when="3978">
+            <img ng-src="{{self.basemap.url}}/tile/8/285/268" alt="" />
+            <img ng-src="{{self.basemap.url}}/tile/8/285/269" alt="" />
+        </div>
+
+        <div class="rv-wkid rv-102100" ng-switch-when="102100">
+            <img ng-src="{{self.basemap.url}}/tile/8/91/74" alt="" />
+            <img ng-src="{{self.basemap.url}}/tile/8/91/75" alt="" />
+        </div>
+
+
+        <div class="rv-basemap-footer">
+            <span>
+                <span class="rv-basemap-name md-body-2">{{self.basemap.name}}</span>,
+                <span class="rv-basemap-type md-caption">{{self.basemap.type}}</span>
+            </span>
+
+        </div>
+    </md-button>
+</div>

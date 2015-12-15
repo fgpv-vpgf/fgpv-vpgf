@@ -1,0 +1,60 @@
+@mixin basemap {
+    ul.rv-basemap-list {
+        position: relative;
+
+        > li {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+    }
+
+    .rv-basemap-item {
+        .rv-basemap-button {
+            padding: 0;
+            margin: 0;
+            display: block;
+            height: 64px;
+            width: 100%;
+
+            .rv-wkid {
+                display: flex;
+                position: absolute;
+
+                &.rv-102100 {
+                    top: -110px;
+                    left: -40px;
+                }
+
+                &.rv-3978 {
+                    top: -60px;
+                    left: -60px;
+                }
+            }
+        }
+
+        .rv-basemap-footer {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 24px;
+            color: #fff;
+            overflow: hidden;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding-left: 10px;
+            background-color: rgba(0, 0, 0, 0.68);
+            text-transform: none;
+            font-weight: normal;
+
+            .rv-basemap-name {
+                text-transform: capitalize;
+            }
+
+            .rv-basemap-type {
+                text-transform: capitalize;
+            }
+        }
+    }
+}
