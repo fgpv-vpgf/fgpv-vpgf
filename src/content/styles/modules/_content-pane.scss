@@ -3,7 +3,7 @@
     .rv-content-pane {
         top: 0;
         left: 0;
-        bottom: 8px;
+        bottom: 0;
         right: 0;
         position: absolute;
         display: flex;
@@ -13,6 +13,7 @@
         .rv-header {
             display: flex;
             white-space: nowrap;
+            background-color: white;
             padding: {
                 top: 10px;
                 bottom: 6px;
@@ -40,6 +41,11 @@
         .rv-content {
             flex: 1;
             padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .rv-footer {
+
         }
     }
 
