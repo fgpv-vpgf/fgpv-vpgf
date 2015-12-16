@@ -33,7 +33,6 @@
 
             &:hover,
             &:focus {
-
                 // expand basemap preview button on hover
                 top: -$list-item-gap;
                 bottom: -$list-item-gap;
@@ -67,6 +66,10 @@
 
             .rv-basemap-type {
                 text-transform: capitalize;
+            }
+
+            .rv-basemap-check {
+                color: white;
             }
         }
     }

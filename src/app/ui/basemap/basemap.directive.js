@@ -74,10 +74,14 @@
                     type: HolderIpsum.words(1, true),
                     id: index,
                     url: basemap,
-                    wkid: projection.wkid
+                    wkid: projection.wkid,
+                    selected: false
                 };
             });
         });
+
+        // TODO: remove
+        self.projections[1].items[0].selected = true;
 
         activate();
 

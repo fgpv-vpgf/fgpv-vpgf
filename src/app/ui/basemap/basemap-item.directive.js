@@ -43,7 +43,8 @@
     }
 
     function Controller() {
-        //const self = this;
+        const self = this;
+        self.select = select;
 
         activate();
 
@@ -51,6 +52,15 @@
 
         function activate() {
 
+        }
+
+        /**
+         * Selects a basemap as the active basemap
+         */
+        function select() {
+            // TODO: move this function to basemap service or config;
+            // need to deselect currently selected basemap
+            self.basemap.selected = !self.basemap.selected;
         }
     }
 })();
