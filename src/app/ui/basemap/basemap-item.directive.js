@@ -8,7 +8,12 @@
      * @restrict E
      * @description
      *
-     * The `rvBasemapItem` directive description.
+     * The `rvBasemapItem` directive displays a single basemap option in the basemap selector.
+     *
+     * ```html
+     * <!-- `basemap` is an object containing basemap properties; see config schema -->
+     * <rv-basemap-item basemap='basemap'></rv-basemap-item>
+     * ```
      *
      */
     angular

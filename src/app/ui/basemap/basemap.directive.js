@@ -10,7 +10,7 @@
      * @restrict E
      * @description
      *
-     * The `rvBasemap` directive description.
+     * The `rvBasemap` directive displays a basemap selector. Its template uses a content pane which is loaded into the `other` panel opening on the right side of the screen. Selector groups basemaps by projection.
      *
      */
     angular
@@ -39,7 +39,7 @@
     function Controller() {
         const self = this;
 
-        // TODO: remove this;
+        // TODO: remove this; revise when config schema is finalized
         // mocking basemap part of the config
         self.projections = [
             {
@@ -65,6 +65,8 @@
             }
         ];
 
+        // TODO: remove this; revise when config schema is finalized
+        // mocking basemap part of the config
         self.projections.forEach(projection => {
             projection.items.forEach((basemap, index) => {
                 projection.items[index] = {
@@ -76,8 +78,6 @@
                 };
             });
         });
-
-        console.log(self.projections);
 
         activate();
 
