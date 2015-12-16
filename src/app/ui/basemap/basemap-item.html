@@ -4,19 +4,19 @@
         <!--img alt="" ng-src="http://lorempixel.com/400/200/nature/?{{self.basemap.id}}"/-->
 
         <div class="rv-wkid rv-3978" ng-switch-when="3978">
-            <img alt="" ng-src="{{self.basemap.url}}/tile/8/285/268"/>
-            <img alt="" ng-src="{{self.basemap.url}}/tile/8/285/269"/>
+            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/268"/>
+            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/269"/>
         </div>
 
         <div class="rv-wkid rv-102100" ng-switch-when="102100">
-            <img alt="" ng-src="{{self.basemap.url}}/tile/8/91/74"/>
-            <img alt="" ng-src="{{self.basemap.url}}/tile/8/91/75"/>
+            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/74"/>
+            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/75"/>
         </div>
 
         <div class="rv-basemap-footer">
             <span>
-                <span class="rv-basemap-name md-body-2">{{self.basemap.name}}</span>,
-                <span class="rv-basemap-type md-caption">{{self.basemap.type}}</span>
+                <span class="rv-basemap-name md-body-2">{{ self.basemap.name }}</span>,
+                <span class="rv-basemap-type md-caption">{{ self.basemap.type }}</span>
             </span>
             <span flex></span>
             <md-icon class="rv-basemap-check" md-svg-src="navigation:check" ng-if="self.basemap.selected"></md-icon>

@@ -87,6 +87,7 @@
                     label: 'Basemap',
                     icon: 'maps:map',
                     tooltip: 'Basemap',
+
                     // TODO: revise how mode is detected
                     selected: () => stateManager.getMode('mapnav') !== 'default',
                     call: () => {
