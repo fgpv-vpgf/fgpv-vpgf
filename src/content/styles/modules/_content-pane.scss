@@ -20,7 +20,7 @@
                 right: 6px;
                 left: 16px;
             }
-            @include rv-pane-title;
+            @include pane-title;
         }
 
         .rv-content {
@@ -48,19 +48,19 @@
                 top: 0;
                 bottom: 0;
             }
-            @include rv-pane-title;
+            @include pane-title;
         }
 
         .rv-subcontent {
-            padding: {
+            /*padding: {
                 left: 8px;
                 right: 8px;
-            }
+            }*/
         }
     }
 }
 
-@mixin rv-pane-title {
+@mixin pane-title {
     > .md-headline,
     > .md-title,
     > .md-subhead {

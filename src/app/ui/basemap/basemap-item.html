@@ -1,18 +1,16 @@
 <div class="rv-basemap-item">
-    <md-button class="rv-button-square rv-basemap-button md-raised)" ng-switch="self.basemap.wkid">
+    <md-button class="rv-button-square rv-basemap-button" ng-switch="self.basemap.wkid">
         <!--img alt="" ng-src="http://lorempixel.com/400/200/nature/?{{self.basemap.id}}"/-->
 
-
         <div class="rv-wkid rv-3978" ng-switch-when="3978">
-            <img ng-src="{{self.basemap.url}}/tile/8/285/268" alt="" />
-            <img ng-src="{{self.basemap.url}}/tile/8/285/269" alt="" />
+            <img alt="" ng-src="{{self.basemap.url}}/tile/8/285/268"/>
+            <img alt="" ng-src="{{self.basemap.url}}/tile/8/285/269"/>
         </div>
 
         <div class="rv-wkid rv-102100" ng-switch-when="102100">
-            <img ng-src="{{self.basemap.url}}/tile/8/91/74" alt="" />
-            <img ng-src="{{self.basemap.url}}/tile/8/91/75" alt="" />
+            <img alt="" ng-src="{{self.basemap.url}}/tile/8/91/74"/>
+            <img alt="" ng-src="{{self.basemap.url}}/tile/8/91/75"/>
         </div>
-
 
         <div class="rv-basemap-footer">
             <span>
