@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <p id="mess" />
+    <script src="dist/geoapi.min.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+               
+            var mahLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0/');
+            
+            mahLayer.on('load', function(evt) {  //update-end
+				
+				console.log('feature layer load');
+				
+                //test standard attribute loading of a feature layer
+                var nuggetPromise1 = api.attribs.loadLayerAttribs(mahLayer);
+                
+                nuggetPromise1.then(
+                    function (nugget) { 
+                        console.log('feature layer result - normal case');
+                        console.log(nugget);
+                        document.getElementById('mess').innerHTML = 'DONE';
+                    },
+                    function (iAmError) {
+                        console.log(iAmError);
+                        document.getElementById('mess').innerHTML = 'I AM ERROR';
+                    }
+                );
+                
+                //test filtered attribute loading of a feature layer 
+                var nuggetPromise2 = api.attribs.loadLayerAttribs(mahLayer, {"0": {"attribs":"latitude,siteEventType_en,siteID"}}); //,OBJECTID
+                
+                nuggetPromise2.then(
+                    function (nugget) { 
+                        console.log('feature layer result - filtered case');
+                        console.log(nugget);
+                        document.getElementById('mess').innerHTML = 'DONE';
+                    },
+                    function (iAmError) {
+                        console.log(iAmError);
+                        document.getElementById('mess').innerHTML = 'I AM ERROR';
+                    }
+                );
+                
+                //test skip attribute loading of a feature layer 
+                var nuggetPromise3 = api.attribs.loadLayerAttribs(mahLayer, {"0": {"skip":true}}); //,OBJECTID
+                
+                nuggetPromise3.then(
+                    function (nugget) { 
+                        console.log('feature layer result - skip case');
+                        console.log(nugget);
+                        document.getElementById('mess').innerHTML = 'DONE';
+                    },
+                    function (iAmError) {
+                        console.log(iAmError);
+                        document.getElementById('mess').innerHTML = 'I AM ERROR';
+                    }
+                );
+                
+
+                
+			});
+                        
+            var mahBigLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_AirEmissions_NOx/MapServer/0');
+            
+            mahBigLayer.on('load', function(evt) {  
+            
+                //test large attribute loading of a feature layer 
+                var nuggetPromise4 = api.attribs.loadLayerAttribs(mahBigLayer); 
+                
+                nuggetPromise4.then(
+                    function (nugget) { 
+                        console.log('feature layer result - big case');
+                        console.log(nugget);
+                        document.getElementById('mess').innerHTML = 'DONE';
+                    },
+                    function (iAmError) {
+                        console.log(iAmError);
+                        document.getElementById('mess').innerHTML = 'I AM ERROR';
+                    }
+                );
+            });
+
+            var mahNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_OzonePeak/MapServer', {id:'mapjection'});
+
+            mahNestedLayer.on('load', function(evt) {  
+
+                //test full loading of a dynamic layer 
+                var nuggetPromise5 = api.attribs.loadLayerAttribs(mahNestedLayer); 
+
+                nuggetPromise5.then(
+                    function (nugget) { 
+                        console.log('dynamic layer result - full with groups');
+                        console.log(nugget);
+                        document.getElementById('mess').innerHTML = 'DONE';
+                    },
+                    function (iAmError) {
+                        console.log(iAmError);
+                        document.getElementById('mess').innerHTML = 'I AM ERROR';
+                    }
+                );
+                
+                //test skip leaf loading of a dynamic layer 
+                var nuggetPromise6 = api.attribs.loadLayerAttribs(mahNestedLayer, {"3": {"skip":true}}); 
+
+                nuggetPromise6.then(
+                    function (nugget) { 
+                        console.log('dynamic layer result - skip leaf');
+                        console.log(nugget);
+                        document.getElementById('mess').innerHTML = 'DONE';
+                    },
+                    function (iAmError) {
+                        console.log(iAmError);
+                        document.getElementById('mess').innerHTML = 'I AM ERROR';
+                    }
+                );
+                
+                //test skip group loading of a dynamic layer 
+                var nuggetPromise7 = api.attribs.loadLayerAttribs(mahNestedLayer, {"0": {"skip":true}}); 
+
+                nuggetPromise7.then(
+                    function (nugget) { 
+                        console.log('dynamic layer result - skip group');
+                        console.log(nugget);
+                        document.getElementById('mess').innerHTML = 'DONE';
+                    },
+                    function (iAmError) {
+                        console.log(iAmError);
+                        document.getElementById('mess').innerHTML = 'I AM ERROR';
+                    }
+                );
+                
+            });
+            
+           var mahFancyNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/E2MS_Atlantic_region_data/MapServer/', {id:'pants'});
+            
+            mahFancyNestedLayer.on('load', function(evt) {  
+            
+                var skipper = {
+                    "1": {"skip":true},
+                    "8": {"skip":true}, 
+                    "11": {"skip":true}, 
+                    "16": {"skip":true}, 
+                    "22": {"skip":true}, 
+                    "23": {"skip":true}, 
+                    "29": {"skip":true}  
+                };
+            
+                //test large attribute loading of a feature layer 
+                var nuggetPromise8= api.attribs.loadLayerAttribs(mahFancyNestedLayer, skipper); 
+                
+                nuggetPromise8.then(
+                    function (nugget) { 
+                        console.log('dynamic layer result - complex nesting with skips');
+                        console.log(nugget);
+                        document.getElementById('mess').innerHTML = 'DONE';
+                    },
+                    function (iAmError) {
+                        console.log(iAmError);
+                        document.getElementById('mess').innerHTML = 'I AM ERROR';
+                    }
+                );
+            });
+            
+            
+        });
+</script>
+</body>
+</html>

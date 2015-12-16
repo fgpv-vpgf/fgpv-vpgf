@@ -3,11 +3,12 @@ const layer = require('./layer.js');
 const proj = require('./proj.js');
 const basemap = require('./basemap.js');
 const mapManager = require('./mapManager.js');
+const attribute = require('./attribute.js');
 
 function grayMapFactory(esriBundle) {
     return function (element) {
         console.info('made a map');
-        return esriBundle.Map(element, { basemap: 'gray', zoom: 6, center: [-100, 50] });
+        return esriBundle.Map(element, { basemap: 'topo', zoom: 6, center: [-100, 50] });
     };
 }
 
@@ -19,6 +20,7 @@ function initAll(esriBundle) {
         proj: proj(esriBundle),
         basemap: basemap(esriBundle),
         mapManager: mapManager(esriBundle),
+        attribs: attribute(esriBundle),
         debug: function () {
             if (arguments.length === 1) {
                 debug = arguments[0] === true;
@@ -38,13 +40,17 @@ module.exports = function (esriLoaderUrl, window) {
     // esriDeps is an array pairing ESRI JSAPI dependencies with their imported names
     // in esriBundle
     const esriDeps = [
-        ['esri/map', 'Map'],
-        ['esri/layers/FeatureLayer', 'FeatureLayer'],
-        ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
-        ['esri/layers/WMSLayer', 'WmsLayer'],
+        ['dojo/Deferred', 'Deferred'],
         ['esri/dijit/Basemap', 'Basemap'],
         ['esri/dijit/BasemapGallery', 'BasemapGallery'],
         ['esri/dijit/BasemapLayer', 'BasemapLayer'],
+        ['esri/layers/ArcGISDynamicMapServiceLayer', 'ArcGISDynamicMapServiceLayer'],
+        ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],
+        ['esri/layers/FeatureLayer', 'FeatureLayer'],
+        ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
+        ['esri/layers/WMSLayer', 'WmsLayer'],
+        ['esri/map', 'Map'],
+        ['esri/request', 'esriRequest']
     ];
 
     function makeDojoRequests() {
