@@ -211,10 +211,27 @@
                 }
             }
             ]};
-            // test basemap gallery
-            var basemapGallery = api.basemap.makeBasemaps(settings.basemaps, map, 'basemapG');
-            // switch to different basemap by id
-            basemapGallery.setBasemap('baseEsriStreet');
+
+            // // test basemap gallery
+            // var basemapGallery = api.basemap.makeBasemaps(settings.basemaps, map, 'basemapG');
+            // // switch to different basemap by id
+            // basemapGallery.setBasemap('baseEsriStreet');
+
+            // // var setupMap = api.mapManager.setupMap(map, settings);
+
+            // var basemapGallery = api.mapManager.setupMap(map, settings);
+
+            // basemapGallery.setBasemap('baseEsriStreet');
+            var mapControls = api.mapManager.setupMap(map, settings);
+
+            // set default then switch after 3 sec.
+            mapControls.BasemapControl.setBasemap('baseEsriStreet');
+
+            // make sure returned object works properly
+            setTimeout(() => {
+                mapControls.BasemapControl.setBasemap('baseEsriPhysical');
+            }, 3000);
+
         });
 </script>
 </body>
