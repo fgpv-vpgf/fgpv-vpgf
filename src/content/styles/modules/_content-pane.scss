@@ -6,17 +6,19 @@
         bottom: 8px;
         right: 0;
         position: absolute;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
 
         .rv-header {
             display: flex;
             white-space: nowrap;
-            margin: {
-                top: 5px;
-                bottom: 11px;
-            }
             padding: {
-                top: 0;
-                bottom: 0;
+                top: 10px;
+                bottom: 6px;
+                right: 16px;
+                left: 16px;
+                right: 0;
             }
 
             > .md-headline,
@@ -31,16 +33,13 @@
             }
         }
 
+        > md-divider {
+            padding: 0;
+        }
+
         .rv-content {
-            top: 49px;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            position: absolute;
-            padding: {
-                left: 8px;
-                right: 8px;
-            }
+            flex: 1;
+            padding: 8px;
         }
     }
 
