@@ -79,7 +79,7 @@ module.exports = function (esriBundle) {
 
         idx = layerUrl.lastIndexOf('/', endIdx - 1);
 
-        return parseInt(layerUrl.substring(idx + 1, endIdx));
+        return parseInt(layerUrl.substring(idx + 1, endIdx), 10);
 
     }
 
@@ -160,7 +160,7 @@ module.exports = function (esriBundle) {
     */
     function loadFeatureAttribs(layerUrl, attribs) {
 
-        let resultProm = new Promise(
+        return new Promise(
 
             function (resolve, reject) {
 
@@ -240,8 +240,6 @@ module.exports = function (esriBundle) {
                 });
             }
         );
-
-        return resultProm;
     }
 
     //extract the options (including defaults) for a layer index
