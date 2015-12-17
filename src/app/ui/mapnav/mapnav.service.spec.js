@@ -10,12 +10,12 @@ describe('mapNavigationService', () => {
             mock the module with bardjs: https://github.com/wardbell/bardjs#appmodule
             this identifies the module to test and disables routine services, similar to the vanilla function `angular.mock.module('app.ui.mapnav')`
 
-            Here 'app.ui.mapnav' module is identified as we are testing `mapNavigationService` service.
+            Here 'app.ui.mapnav' module is identified as we are testing `mapNavigationService` service. We also need 'app.common.router' module since mapNavigationService uses StateManager.
         */
-        bard.appModule('app.ui.mapnav');
+        bard.appModule('app.ui.mapnav', 'app.common.router');
 
         /*
-            injects angular components needed for testing and stores them on the global window oject: https://github.com/wardbell/bardjs#inject
+            injects angular components needed for testing and stores them on the global window object: https://github.com/wardbell/bardjs#inject
 
             Using vanilla inject function requires you to store references to injected components turning `bard.inject('mapNavigationService')` into this:
 

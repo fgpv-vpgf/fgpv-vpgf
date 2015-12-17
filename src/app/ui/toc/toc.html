@@ -1,40 +1,26 @@
-<rv-content-pane title-style="title" title="Layer Selector">
-    <div class="rv-toc" ng-controller="TocController as self">
-        <md-button ng-click="self.toggleMetadata()">Metadata</md-button>
-        <md-button ng-click="self.toggleSettings()">Settings</md-button>
-        <md-button ng-click="self.toggleFilters()">Filters</md-button>
-        <md-button ng-click="self.toggleFiltersFull()">Toggle Filters mode</md-button>
-
+<rv-content-pane title-style="title" title-value="Layer Selector">
+    <div class="rv-toc">
         <!-- Do not ask me what `dx-start-with` and `dx-connect` are and how this whole thing works as I'm not completely understan it myself. I'll update this comment when I get it. Read this is you are curious: https://github.com/dotJEM/angular-tree -->
         <ul class="rv-layer-list rv-root" dx-start-with="self.config">
             <li ng-repeat="item in $dxPrior.items">
-                <rv-layer-item layer="item" ng-if="item.type === 'layer'"></rv-layer-item>
-                <div ng-if="item.type == 'group'" class="level {{ $dxLevel }}">
+                <rv-layer-item layer="item" ng-class="item.state" ng-if="item.type === 'layer'"></rv-layer-item>
+                <div class="rv-layer-level {{ $dxLevel }}" ng-if="item.type == 'group'">
 
                     <md-divider ng-if="!$first"></md-divider>
-                    <rv-layer-group-toggle group="item" ></rv-layer-group-toggle>
+
+                    <rv-layer-group-toggle group="item"></rv-layer-group-toggle>
 
                     <ul class="rv-layer-list rv-toggle-slide" dx-connect="item" ng-show="item.expanded"></ul>
+
+                    <div class="rv-shadow"></div>
+
                     <md-divider ng-if="$last && $dxLevel === 0"></md-divider>
                 </div>
             </li>
         </ul>
 
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
-        <p>[ place holder content ]</p>
+        <md-button ng-click="self.toggleFilters()">Filters</md-button>
+        <md-button ng-click="self.toggleFiltersFull()">Filters mode</md-button>
 
     </div>
-
-</rv-main-panel-content>
+</rv-content-pane>

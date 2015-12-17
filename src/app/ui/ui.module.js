@@ -10,6 +10,7 @@
      */
     angular
         .module('app.ui', [
+            'app.ui.basemap',
             'app.ui.sidenav',
             'app.ui.appbar',
             'app.ui.panels',
@@ -18,6 +19,7 @@
             'app.ui.metadata',
             'app.ui.mapnav',
             'app.ui.filters',
-            'app.ui.common'
+            'app.ui.common',
+            'app.ui.settings'
         ]);
 })();

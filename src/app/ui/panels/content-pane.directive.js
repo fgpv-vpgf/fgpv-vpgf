@@ -18,14 +18,16 @@
      *
      * @return {object} directive body
      */
-    function rvContentPane() {
+    function rvContentPane($compile) {
         const directive = {
             restrict: 'E',
-            require: '^ngController', // require plug controller
+            require: '?^rvPanel', // require plug controller
             templateUrl: 'app/ui/panels/content-pane.html',
             scope: {
-                title: '@', // binds to the evaluated dom property
-                titleStyle: '@'
+                titleValue: '@', // binds to the evaluated dom property
+                titleStyle: '@',
+                footer: '@', // directive name to insert into the footer
+                closePanel: '&?' // https://docs.angularjs.org/api/ng/service/$compile
             },
             transclude: true,
             link: link,
@@ -39,9 +41,21 @@
         /**
          * Binds the `closePanel` method from the panel plug controller.
          */
-        function link(scope, el, attr, ctrl) {
+        function link(scope, element, attr, ctrl) {
             const self = scope.self;
-            self.closePanel = ctrl.closePanel;
+
+            // first, try to used passed closePanel function; if not, use one on the parent panel controller, or nothing
+            if (!self.closePanel && ctrl) {
+                self.closePanel = ctrl.closePanel || undefined;
+            }
+
+            // `self.footer` is a name string of a directive; if specified, directive is compiled and inserted into the pane template
+            if (self.footer) {
+                var rvBasemap = $compile(`<${self.footer}></${self.footer}>`)(scope);
+
+                element.find('.rv-footer')
+                    .append(rvBasemap);
+            }
         }
     }
 

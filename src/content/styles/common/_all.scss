@@ -6,11 +6,11 @@ Things like mixin declarations, functions, and variables. */
 @import "_palette.scss";
 
 $font-family: Roboto, 'Helvetica Neue', sans-serif !default;
-$font-size:   10px;
+$font-size:   rem(1.0);
 
-$viewport-gutter: 10px;
+$viewport-gutter: rem(1.0);
 
-$toolbar-height: 48px;
+$toolbar-height: $icon-button-height;
 $toolbar-width: 350px;
 
 $side-panel-width: 300px;
@@ -20,6 +20,5 @@ $side-panel-width: 300px;
 // Map navigation
 $map-nav-button-width: 32px;
 $map-nav-button-height: 32px;
-$map-nav-button-font-size: 16px;
 
 $fade-in-out-duration: 130ms;

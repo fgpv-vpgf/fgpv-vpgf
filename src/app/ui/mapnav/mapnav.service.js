@@ -14,13 +14,12 @@
         .module('app.ui.mapnav')
         .factory('mapNavigationService', mapNavigationService);
 
-    /* @ngInject */
     /**
      * `mapNavigationService` exposes zoom and pan methods as well as controls available in the map navigation component.
      *
      * @return {object} service object
      */
-    function mapNavigationService() {
+    function mapNavigationService(stateManager) {
         const service = {
             // FIXME: this config snippet should obvisouly come from config service
             config: {
@@ -29,7 +28,8 @@
                     'geoLocation',
                     'marquee',
                     'home',
-                    'history'
+                    'history',
+                    'basemap'
                 ]
             },
             controls: {},
@@ -82,6 +82,21 @@
                     icon: 'action:history',
                     tooltip: 'History',
                     call: function () {} // FIXME: user proper call
+                },
+                basemap: {
+                    label: 'Basemap',
+                    icon: 'maps:map',
+                    tooltip: 'Basemap',
+
+                    // TODO: revise how mode is detected
+                    selected: () => stateManager.getMode('mapnav') !== 'default',
+                    call: () => {
+                        // TODO: revise
+                        stateManager.set('otherBasemap');
+                        let newMode = stateManager.getMode('mapnav') === 'default' ?
+                            'basemap' : 'default';
+                        stateManager.setMode('mapnav', newMode);
+                    }
                 }
             }
         };

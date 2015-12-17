@@ -165,6 +165,13 @@ gulp.task('assetcopy', 'Copy fixed assets to the build directory',
             .pipe(gulp.dest(config.build));
     });
 
+gulp.task('translate', 'Split translation csv into internationalized files',
+    function () {
+        return gulp.src(config.src + 'locales/translations.csv')
+            .pipe($.i18nCsv())
+            .pipe(gulp.dest(config.build));
+    });
+
 gulp.task('inject', 'Adds configured dependencies to the HTML page',
     ['sass', 'templatecache', 'jsbuild', 'libbuild', 'assetcopy'],
     function () {
@@ -207,7 +214,7 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
  * -- protractor: prepare index-protractor page and do not inject app-seed
  */
 gulp.task('serve:dev', 'Build the application and start a local development server',
-    ['vet', 'inject'],
+    ['vet', 'inject', 'translate'],
     function () {
         // run karma tests parallel with serve
         if (args.test) {
@@ -223,18 +230,22 @@ gulp.task('serve:dev', 'Build the application and start a local development serv
  * -- coverage  : generate test coverage info
  * @return {Stream}
  */
-gulp.task('test', 'Run style checks and unit tests', ['vet', 'templatecache'], function (done) {
-    startTests(true, done);
-});
+gulp.task('test', 'Run style checks and unit tests',
+    ['vet', 'templatecache', 'translate'],
+    function (done) {
+        startTests(true, done);
+    });
 
 /**
  * Run specs and wait.
  * -- coverage  : generate test coverage info
  * Watch for file changes and re-run tests on each change
  */
-gulp.task('test:auto', 'Run unit tests and keep watching for changes', function (done) {
-    startTests(false, done);
-});
+gulp.task('test:auto', 'Run unit tests and keep watching for changes',
+    ['vet', 'templatecache', 'translate'],
+    function (done) {
+        startTests(false, done);
+    });
 
 /**
  * Generates the changelog from commit messages.

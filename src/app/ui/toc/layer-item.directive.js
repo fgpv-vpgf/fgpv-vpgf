@@ -8,44 +8,45 @@
      * @description
      *
      * The `rvLayerItem` directive is a UI compoenent for a layer in the layer selector (toc).
+     *
+     * ```html
+     * <!-- `layer` attribute binds to the layer item in toc -->
+     * <rv-layer-item layer="item"></rv-layer-item>
+     * ```
      */
     angular
         .module('app.ui.toc')
         .directive('rvLayerItem', rvLayerItem);
 
-    function rvLayerItem() {
+    function rvLayerItem(tocService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/toc/layer-item.html',
             scope: {
                 layer: '='
             },
-            link: linkFunc,
-            controller: Controller,
+            link: link,
+            controller: () => {},
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
 
+        ///////////
+
         /**
-         * Skeleton link function.
+         * Link function binds `toggleGroup` function from the `TocController` to directive's self.
+         * @param  {object} scope directive's scope
          */
-        function linkFunc() { //scope, el, attr, ctrl) {
+        function link(scope, element) {
+            const self = scope.self;
 
-        }
-    }
+            // store reference to element on the scope for legend directive to access
+            self.element = element;
 
-    /**
-     * Skeleton controller function.
-     */
-    function Controller() {
-        //const self = this;
-
-        activate();
-
-        function activate() {
-
+            // call toggleGroup function on the tocController with the group object (see template)
+            self.toggleLayerFiltersPanel = tocService.actions.toggleLayerFiltersPanel;
         }
     }
 })();

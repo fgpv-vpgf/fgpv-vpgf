@@ -15,10 +15,9 @@
         .module('app.ui.toc')
         .directive('rvLayerGroupToggle', rvLayerGroupToggle);
 
-    function rvLayerGroupToggle() {
+    function rvLayerGroupToggle(tocService) {
         const directive = {
             restrict: 'E',
-            require: '^ngController',
             templateUrl: 'app/ui/toc/layer-group-toggle.html',
             scope: {
                 group: '='
@@ -36,13 +35,12 @@
         /**
          * Link function binds `toggleGroup` function from the `TocController` to directive's self.
          * @param  {object} scope directive's scope
-         * @param  {object} el    element's node
-         * @param  {object} attr  element's attributes
-         * @param  {object} ctrl  reference to the `TocController`
          */
-        function link(scope, el, attr, ctrl) {
+        function link(scope) {
             const self = scope.self;
-            self.toggleGroup = () => ctrl.toggleGroup(self.group);
+
+            // call toggleGroup function on the tocController with the group object (see template)
+            self.toggleLayerGroup = tocService.actions.toggleLayerGroup;
         }
     }
 

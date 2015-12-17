@@ -1,30 +1,44 @@
-<rv-content-pane title-style="subhead" title="Settings">
+<rv-content-pane title-style="title" title-value="Settings">
     <div>
-        <p>[ settings content ]</p>
 
-        <p>[ settings content ]</p>
+        <div class="rv-subsection">
+            <div class="rv-subheader">
+                <h5 class="md-subhead">Display</h5>
+            </div>
 
-        <p>[ settings content ]</p>
+            <div class="rv-subcontent">
 
-        <p>[ settings content ]</p>
+                <md-checkbox aria-label="Bounding Box" class="md-primary rv-checkbox" ng-model="isChecked">
+                    Bounding Box
+                </md-checkbox>
 
-        <p>[ settings content ]</p>
+                <div class="rv-slider-setting">
+                    <span class="rv-slider-setting-label">Opacity</span>
+                    <div class="rv-slider-setting-body">
+                        <md-slider class="md-primary" max="100" min="0" ng-model="opacityValue"></md-slider>
+                        <span class="rv-slider-setting-indicator">{{opacityValue}}%</span>
+                    </div>
+                </div>
+            </div>
 
-        <p>[ settings content ]</p>
+        </div>
 
-        <p>[ settings content ]</p>
+        <div class="rv-subsection">
 
-        <p>[ settings content ]</p>
+            <div class="rv-subheader">
+                <h5 class="md-subhead">Data</h5>
+            </div>
+            <div class="rv-subcontent">
 
-        <p>[ settings content ]</p>
+                <div class="rv-toggle-setting">
+                    <span>Snapshot mode</span>
+                    <span flex></span>
+                    <md-button class="rv-button-square">Enable</md-button>
+                </div>
+            </div>
 
-        <p>[ settings content ]</p>
+        </div>
 
-        <p>[ settings content ]</p>
-
-        <p>[ settings content ]</p>
-
-        <p>[ settings content ]</p>
     </div>
 
-</rv-main-panel-content>
+</rv-content-pane>

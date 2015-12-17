@@ -5,13 +5,13 @@
     z-index: 0;
 }
 
-[ui-view='appbarPlug'] {
+rv-appbar {
     left: $viewport-gutter;
     top: $viewport-gutter;
     position: absolute;
 }
 
-[ui-view='filtersPlug'] {
+rv-panel[type='filters'] {
     &.default {
         @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: 50%);
     }
@@ -21,54 +21,8 @@
     }
 
     &.attached {
-        @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height, $width: 300px, $bottom: $viewport-gutter);
-    }
+        @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $width: 300px, $bottom: $viewport-gutter);
 
-    &.minimized {
-        @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $height: 100px);
-    }
-}
-
-[ui-view='panelPlug'] {
-    @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height, $bottom: $viewport-gutter, $width: $toolbar-width, $from: top);
-
-    &.active {
-        &:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            border-top: 1px solid $divider-color;
-            z-index: 1;
-        }
-
-        &.ng-animate {
-            &:before {
-                left: 10px;
-                right: 10px;
-            }
-        }
-    }
-
-    /*
-    &.stagger {
-        @include plug-transition-delay;
-    }
-
-    */
-    [ui-view='contentPlug'] {
-        @include content-plug;
-    }
-}
-
-[ui-view='sidePanelPlug'] {
-
-    //@include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
-    @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
-
-    &.active {
         &:before {
             content: "";
             position: absolute;
@@ -87,19 +41,77 @@
         }
     }
 
-    [ui-view='contentPlug'] {
+    &.minimized {
+        @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $height: 100px);
+    }
+}
+
+rv-panel[type='main'] {
+    @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $toolbar-width, $from: top);
+
+    &:before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: 0;
+        right: 0;
+        height: 1px;
+        border-top: 1px solid $divider-color;
+        z-index: 1;
+    }
+
+    &.ng-animate {
+        &:before {
+            left: 10px;
+            right: 10px;
+        }
+    }
+
+    rv-toc,
+    rv-toolbox {
         @include content-plug;
     }
 }
 
-/*
-[state$='metadata'] {
-    [ui-view='panelPlug'] {
-        @include PlugTransitionDelay;
+rv-panel[type='side'] {
+
+    //@include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
+    @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
+
+    &:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 1px;
+        border-left: 1px solid $divider-color;
+        z-index: 1;
     }
 
-    [ui-view='sidePanelPlug'] {
-        @include PlugTransitionDuration;
+    &.ng-animate {
+        &:before {
+            bottom: 10px;
+        }
+    }
+
+    rv-settings,
+    rv-metadata {
+        @include content-plug;
     }
 }
-*/
+
+rv-panel[type='other'] {
+    @include active-panel-plug($right: 0, $top: 0, $bottom: 0, $width: 300px, $from: right);
+
+    .panel {
+        //background-color: rgba(0,0,0,0.68);
+        background-color: rgba(255,255,255,.68);
+        //color: white;
+
+        md-content {
+            background-color: transparent;
+            //color: white;
+        }
+    }
+}

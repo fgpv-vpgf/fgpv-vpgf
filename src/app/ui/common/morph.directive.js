@@ -1,5 +1,8 @@
-/* global TweenLite */
+/* global Ease, BezierEasing, TweenLite */
 (() => {
+
+    const RV_MORPH_DURATION = 0.3;
+    const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
     /**
      * @ngdoc directive
@@ -34,12 +37,11 @@
      *
      * @return {object} directive body
      */
-    function rvMorph() {
+    function rvMorph(stateManager) {
         const directive = {
             restrict: 'A',
             link: linkFunc
         };
-        const morphSpeed = 0.3;
 
         return directive;
 
@@ -54,8 +56,10 @@
         function linkFunc(scope, el, attr) {
             let classReg;
             let toClass;
+            scope.stateManager = stateManager;
 
-            scope.$watch(attr.rvMorph, (newClass, oldClass) => {
+            scope.$watch('stateManager.getMode("' + [attr.rvMorph] + '")', (newClass, oldClass) => {
+
                 // replace old class name with new on the element to get a morph target
                 classReg = new RegExp('(^| )' + oldClass + '($| )', 'i');
                 toClass = el.attr('class')
@@ -63,8 +67,9 @@
 
                 // animate only on class change
                 if (newClass !== oldClass) {
-                    TweenLite.to(el, attr.rvMorphSpeed || morphSpeed, {
+                    TweenLite.to(el, attr.rvMorphSpeed || RV_MORPH_DURATION, {
                         className: toClass,
+                        ease: RV_SWIFT_IN_OUT_EASE,
                         onComplete: () => {
                             // Remove old class from the element after morph is completed.
                             el.removeClass(oldClass);

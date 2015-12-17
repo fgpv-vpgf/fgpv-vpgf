@@ -17,15 +17,18 @@
         "angular-sanitize": "^1.4.5",
         "angular-aria": "^1.4.5",
         "angular-material": "#master",
-        "angular-ui-router": "^0.2.15",
         "angular-translate": "^2.7.2",
         "angular-translate-loader-static-files": "^2.7.2",
         "gsap": "^1.18.0",
         "bezier-easing": "^1.0.0",
         "dotjem-angular-tree": "^0.2.1",
-        "geoapi": "https://github.com/fgpv-vpgf/geoApi/releases/download/v0.0.0-1/geoapi-0.0.0.tgz"
+        "geoapi": "https://github.com/fgpv-vpgf/geoApi/releases/download/v0.0.0-1/geoapi-0.0.0.tgz",
+        "holder-ipsum": "https://github.com/euangoddard/holder-ipsum.git"
     },
     "overrides": {
+        "holder-ipsum": {
+            "main": "holder-ipsum.js"
+        },
         "angular-material": {
             "main": "angular-material.js"
         },

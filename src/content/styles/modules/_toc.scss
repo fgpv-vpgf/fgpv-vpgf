@@ -5,15 +5,16 @@
 }
 
 @mixin layer-list {
+    .rv-layer-level {
+
+        // relative boxes list shadow to the current list
+        position: relative;
+    }
+
     .rv-layer-list {
         list-style: none;
-        padding: 0 0 0 10px;
+        padding: 0 0 0 rem(1);
         max-width: 100%;
-        overflow: hidden;
-
-        &.rv-root {
-            padding-left: 0;
-        }
 
         // rotate the icon on the toggle button on open
         .md-toggle-icon {
@@ -24,33 +25,240 @@
             }
         }
 
-        &.ng-animate .md-toggle-icon {
-            transition: none;
+        // need to hide overflow during open/close animations so the layer list content displays properly
+        &.ng-animate {
+            overflow: hidden;
+
+            // prevent toggle icon from animationg during list animation
+            .md-toggle-icon {
+                transition: none;
+            }
+        }
+
+        // do not add padding to the root level layer list
+        &.rv-root {
+            padding-left: 0;
+            margin: 0;
+        }
+
+        &.ng-hide + .rv-shadow {
+
+            // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
+            background-color: transparent !important;
         }
         @include layer-group-toggle;
+        @include layer-item;
+    }
+
+    // rv-shadow is a thin guideline drawn on the right side of the list when group toggle is hovered over;
+    // it helps to visualize which layers will be affected by the group toggle
+    .rv-shadow {
+        position: absolute;
+        right: rem(-0.8);
+        top: 0;
+        bottom: 0;
+        width: rem(0.3);
+        opacity: 0.45;
+        background-color: transparent;
+        transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
     }
 }
 
+/*
+absolutely position a button underneath an item so it acts like a button body for the item; add content to it using aria labels; make the actual text not pronounceable by aria as well or something like that. this should work for both layer items and layer group toggles;
+*/
 @mixin layer-group-toggle {
-    rv-layer-group-toggle > .md-button {
-        border-radius: 0;
-        align-items: inherit;
-        margin: 0;
-        overflow: hidden;
-        text-align: left;
-        text-decoration: none;
-        white-space: normal;
-        width: 100%;
+    rv-layer-group-toggle {
+        min-height: rem(3.6);
+        position: relative;
+        display: flex;
+        align-items: center;
 
-        .md-ripple-container {
-            border-radius: 0;
+        // setting layer list shadow color on hover
+        &:hover ~ .rv-shadow {
+            background-color: $primary-color;
         }
 
-        .md-toggle-icon {
-            display: block;
-            margin-left: auto;
-            speak: none;
-            vertical-align: middle;
+        .rv-layer-group-button {
+            text-align: left;
+            position: absolute;
+            padding: 0;
+            margin: 0;
+            top: 0; // anchor the button to its parent container
+            left: 0;
+            width: 100%;
+
+            .md-toggle-icon {
+                display: inline-block; // why? http://stackoverflow.com/a/25667784
+            }
+        }
+
+        .rv-layer-group-controls {
+
+        }
+    }
+}
+
+@mixin layer-item {
+    rv-layer-item {
+        @include layer-item-symbology;
+        display: block;
+
+        .rv-layer-item-inner-container {
+            display: flex;
+            align-items: center;
+            height: rem(4.8);
+            position: relative;
+        }
+
+        .rv-layer-item-button {
+            text-align: left;
+            position: absolute;
+            padding: 0;
+            margin: 0;
+
+            // makes the button appear to be a bit larger on the left size
+            // #{...} is a way to include variables and functions in `calc`: http://stackoverflow.com/a/20236515
+            width: calc(100% + #{rem(0.8)});
+            left: - rem(0.8);
+            top: 0;
+            bottom: 0;
+        }
+
+        .rv-layer-item-content {
+            flex: 10; // content tries to take all available space
+            min-width: 0; // Firefox fix for flexbox not wanting to shrink: http://stackoverflow.com/a/31349707
+
+            .rv-layer-item-name {
+                font-size: rem(1.6);
+
+                // truncate layer name if it's too long
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .rv-layer-item-flag {
+                display: inline-block;
+                margin: rem(0.1) rem(0.2);
+
+                // main layer item button was overlapting the flag
+                position: relative; // why? http://philipwalton.com/articles/what-no-one-told-you-about-z-index/
+            }
+        }
+
+        // hide layer toggles except the visibility toggle
+        .rv-layer-item-toggles rv-layer-item-button {
+            &:not([name='visibility']) {
+                display: none;
+            }
+        }
+
+        &.error {
+            .rv-layer-item-toggles rv-layer-item-button {
+                display: inline-block;
+            }
+        }
+
+        &:hover {
+            .rv-layer-item-toggles rv-layer-item-button {
+                display: inline-block;
+            }
+        }
+    }
+}
+
+@mixin layer-item-symbology {
+    .rv-layer-item-icon {
+        margin: 0 rem(0.5) 0 0;
+        height: rem(3.2);
+        width: rem(3.2);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 0; // set up new stacking context
+
+        // button which opens symbology section
+        .rv-symbology-trigger {
+            transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            opacity: 0;
+            z-index: 4;
+            margin: 0;
+        }
+
+        // item in the symbology list
+        .rv-symbology-item {
+            position: absolute;
+            width: rem(3.2); // need to specify width, otherwise it's squashed
+            height: 100%;
+            display: flex;
+            align-items: center;
+
+            .rv-symbology-item-name {
+                margin-left: 8px;
+                opacity: 0;
+                display: none;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            img {
+                //border: 1px solid black;
+                padding: 1px;
+                background-color: white;
+                width: rem(3.2);
+                height: rem(3.2);
+            }
+        }
+
+        &.rv-expanded {
+
+            // show the trigger (close) button when the symbology section is open
+            .rv-symbology-trigger {
+                opacity: 1;
+            }
+        }
+
+        &.rv-single {
+            .rv-symbology-item {
+                position: relative;
+            }
+        }
+
+        &.rv-compound .rv-symbology-container {
+            img {
+                width: rem(3.2) - 2px;
+                height: rem(3.2) - 2px;
+            }
+
+            .rv-symbology-item {
+
+                // this block will move items 4 and up underneath the stack
+                top: 1px;
+                left: 1px;
+                z-index: 0;
+
+                // the following arranges the first three items in a visible stack
+                &:first-child {
+                    z-index: 3;
+                    top: -1px;
+                    left: -1px;
+                }
+
+                &:nth-child(2) {
+                    z-index: 2;
+                    top: 1px;
+                    left: 1px;
+                }
+
+                &:last-child {
+                    z-index: 1;
+                    top: 3px;
+                    left: 3px;
+                }
+            }
         }
     }
 }

@@ -1,0 +1,40 @@
+@mixin setting-controls {
+    @include slider-setting;
+    @include toggle-setting;
+}
+
+// more styling on top of the default material slider control
+@mixin slider-setting {
+    .rv-slider-setting {
+        .rv-slider-setting-label {
+            margin-bottom: - rem(1.4);
+            display: block;
+        }
+
+        .rv-slider-setting-body {
+            display: flex;
+            align-items: center;
+
+            md-slider {
+                flex: 1;
+            }
+
+            .rv-slider-setting-indicator {
+                padding-left: 10px;
+                min-width: 45px;
+                text-align: right;
+            }
+        }
+    }
+}
+
+@mixin toggle-setting {
+    .rv-toggle-setting {
+        display: flex;
+        align-items: center;
+
+        .md-button {
+            margin: 0;
+        }
+    }
+}

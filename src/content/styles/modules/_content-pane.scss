@@ -3,40 +3,72 @@
     .rv-content-pane {
         top: 0;
         left: 0;
-        bottom: 8px;
+        bottom: 0;
         right: 0;
         position: absolute;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
 
         .rv-header {
             display: flex;
             white-space: nowrap;
+            border-bottom: 1px solid $divider-color-light;
+            padding: {
+                top: 10px;
+                bottom: 7px;
+                right: 6px;
+                left: 16px;
+            }
+            @include pane-title;
+        }
+
+        .rv-content {
+            flex: 1;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .rv-footer {
+            border-top: 1px solid $divider-color-light;
+        }
+    }
+
+    // use subsections to separate content into chunks
+    .rv-subsection {
+        padding: 8px;
+
+        .rv-subheader {
+            border-bottom: 1px solid $divider-color-light;
             margin: {
                 top: 5px;
                 bottom: 11px;
             }
-
-            > .md-headline,
-            > .md-title,
-            > .md-subhead {
-                line-height: 24px;
-                margin-top: 0;
-                margin-bottom: 0;
-                display: inline-block;
-                text-overflow: ellipsis;
-                overflow: hidden;
+            padding: {
+                top: 0;
+                bottom: 0;
             }
+            @include pane-title;
         }
 
-        .rv-content {
-            top: 49px;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            position: absolute;
-            padding: {
+        .rv-subcontent {
+            /*padding: {
                 left: 8px;
                 right: 8px;
-            }
+            }*/
         }
+    }
+}
+
+@mixin pane-title {
+    > .md-headline,
+    > .md-title,
+    > .md-subhead {
+        line-height: 24px;
+        margin-top: 0;
+        margin-bottom: 0;
+        display: inline-block;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 }

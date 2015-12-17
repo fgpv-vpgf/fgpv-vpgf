@@ -1,13 +1,30 @@
 @mixin buttons {
     @include icon-button;
+    @include icon-sizes;
     @include mapnav-button;
     @include button-group;
+    @include button-effects;
+
+    .rv-checkbox {
+        width: 100%;
+
+        > .md-ink-ripple {
+            right: 0;
+            left: auto;
+        }
+
+        > .md-label {
+            margin-left: 0;
+        }
+    }
 }
 
 @mixin icon-button {
     .md-icon-button {
+        @include icon;
+
         &.black {
-            @include icon;
+            @include icon(black);
         }
 
         &.accent {
@@ -17,25 +34,69 @@
         &.primary {
             @include icon($primary-color);
         }
+    }
+}
 
-        // adjust size of the button container to the its parent while keeping the normal-sized ripple
-        &.rv-auto {
-            height: auto;
-            line-height: normal;
-            min-height: auto;
-            width: auto;
-            min-width: auto;
-            overflow: visible;
+/* default icons are 48x48 container and 24x24 actual icon; rv-icon-auto keeps the size of the actual icon but changes the size of the container to fit; other rules change the size of the actual icon and keeps its click ripple at 48x48 */
+@mixin icon-sizes {
+    .rv-icon-auto {
+        @include icon-size;
+    }
 
-            > .md-ripple-container {
-                width: 48px;
-                height: 48px;
-                left: -12px;
-                top: -12px;
-                overflow: visible;
-            }
+    .rv-icon-20 {
+        @include icon-size(rem(2));
+    }
+
+    .rv-icon-16 {
+        @include icon-size(rem(1.6));
+    }
+
+    .rv-icon-14 {
+        @include icon-size(rem(1.4));
+    }
+}
+
+@mixin icon-size($size: rem(2.4)) {
+
+    // adjust size of the button container to fit around the icon
+    height: auto;
+    line-height: normal;
+    min-height: auto;
+    width: auto;
+    min-width: auto;
+    overflow: visible;
+
+    md-icon {
+        height: $size;
+        width: $size;
+    }
+
+    // when the button-icon is focused, it shows a shaded background; if the icon is resized, the background is also resized and might not be well visible; we would the shaded background to match button's ripple shape
+    &.md-focused {
+        background: none;
+
+        &:before {
+            content: "";
+            position: absolute;
+            background: rgba(158,158,158,0.2);
+            border-radius: 50%;
+            @include icon-ripple-shape($size);
         }
     }
+
+    // keep a normal size ripple
+    > .md-ripple-container {
+        @include icon-ripple-shape($size);
+    }
+}
+
+// keeps button-icon ripple default size (48px) when the icon itself is resized; also used to resize on-focus effect
+@mixin icon-ripple-shape($size) {
+    width: $icon-button-width; // it's rem(4.0) now
+    height: $icon-button-height; // it's rem(4.0) now
+    overflow: visible;
+    left: - ($icon-button-width - $size) / 2; // shift ripple so it's still centered over the icon
+    top: - ($icon-button-height - $size) / 2;
 }
 
 @mixin mapnav-button {
@@ -59,6 +120,7 @@
             width: $map-nav-button-width;
             min-width: $map-nav-button-width;
             @include icon($color: $default-icon-color, $opacity-to: 0.9);
+            padding: 0 6px;
 
             md-icon {
                 height: $default-size;
@@ -84,9 +146,13 @@
     }
 }
 
-@mixin icon($color: black, $opacity-from: 0.62, $opacity-to: 0.8, $opacity-full: 1) {
+@mixin icon($color: auto, $opacity-from: 0.62, $opacity-to: 0.9, $opacity-full: 1) {
+    padding: 0;
+
     md-icon {
-        color: $color;
+        @if $color != auto {
+            color: $color;
+        }
         opacity: $opacity-from;
     }
 
@@ -142,6 +208,19 @@
 
         md-divider {
             margin: 0 6px;
+        }
+    }
+}
+
+@mixin button-effects {
+    .md-button {
+        // makes the button and its ripple square, no cheesy rounded corners
+        &.rv-button-square {
+            border-radius: 0;
+
+            .md-ripple-container {
+                border-radius: 0;
+            }
         }
     }
 }
