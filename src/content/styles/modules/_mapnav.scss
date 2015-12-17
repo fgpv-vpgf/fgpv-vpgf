@@ -4,5 +4,9 @@
         position: absolute;
         bottom: 100px;
         right: $viewport-gutter;
+
+        &.basemap {
+            right: 300px + $viewport-gutter;
+        }
     }
 }

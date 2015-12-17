@@ -71,6 +71,16 @@
             filtersNamedata: {
                 enabled: false,
                 parent: 'filters'
+            },
+            other: {
+                enabled: false
+            },
+            otherBasemap: {
+                enabled: false,
+                parent: 'other'
+            },
+            mapnav: {
+                mode: 'default'
             }
         };
 

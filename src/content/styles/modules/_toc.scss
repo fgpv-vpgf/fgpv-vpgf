@@ -177,12 +177,13 @@ absolutely position a button underneath an item so it acts like a button body fo
         display: flex;
         align-items: center;
         justify-content: center;
+        z-index: 0; // set up new stacking context
 
         // button which opens symbology section
         .rv-symbology-trigger {
             transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
             opacity: 0;
-            z-index: 999;
+            z-index: 4;
             margin: 0;
         }
 

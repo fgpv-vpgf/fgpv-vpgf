@@ -1,0 +1,84 @@
+@mixin basemap {
+    $list-item-gap: rem(1.6);
+
+    ul.rv-basemap-list {
+        > li {
+            margin-bottom: $list-item-gap;
+        }
+    }
+
+    .rv-basemap-item {
+        height: rem(6.4);
+        width: 100%;
+        position: relative;
+
+        .rv-basemap-button {
+            padding: 0;
+            margin: 0;
+            display: block;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            transition: top $swift-ease-in-duration $swift-ease-in-out-timing-function, bottom $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+            .rv-wkid {
+                display: flex;
+                position: absolute;
+                transition: margin-top $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+                @include wkid(102100, -110px, -40px);
+                @include wkid(3978, -60px, -60px);
+            }
+
+            &:hover,
+            &:focus {
+                // expand basemap preview button on hover
+                top: -$list-item-gap;
+                bottom: -$list-item-gap;
+
+                .rv-wkid {
+                    // shift image up to keep it fixed relative to the screen
+                    margin-top: $list-item-gap;
+                }
+            }
+        }
+
+        .rv-basemap-footer {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: rem(2.4);
+            color: #fff;
+            overflow: hidden;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding-left: rem(1.0);
+            background-color: rgba(0, 0, 0, 0.68);
+            text-transform: none;
+            font-weight: normal;
+
+            .rv-basemap-name {
+                text-transform: capitalize;
+            }
+
+            .rv-basemap-type {
+                text-transform: capitalize;
+            }
+
+            .rv-basemap-check {
+                color: white;
+            }
+        }
+    }
+}
+
+// position basemap sample image for a specific wkid
+@mixin wkid($wkid, $top, $left) {
+    &.rv-#{$wkid} {
+        top: $top;
+        left: $left;
+    }
+}

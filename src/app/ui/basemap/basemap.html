@@ -1,0 +1,21 @@
+<rv-content-pane>
+
+    <div class="rv-subsection" ng-repeat="projection in self.projections">
+
+        <div class="rv-subheader">
+            <h3 class="md-title">{{projection.name}} Maps</h3>
+        </div>
+
+        <div class="rv-subcontent">
+
+            <ul class='rv-list rv-basemap-list'>
+                <li class="rv-basemap-list-item" ng-repeat="basemap in projection.items">
+                    <rv-basemap-item basemap='basemap'></rv-basemap-item>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+
+</rv-content-pane>

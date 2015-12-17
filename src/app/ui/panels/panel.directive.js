@@ -24,8 +24,8 @@
         const directive = {
             restrict: 'E',
             templateUrl: function (element, attr) {
-                            return 'app/ui/panels/' + attr.type + '-panel.html';
-                        },
+                return 'app/ui/panels/' + attr.type + '-panel.html';
+            },
             scope: {
                 closeButton: '@closeButton'
             },

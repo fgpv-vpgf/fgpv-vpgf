@@ -3,7 +3,7 @@
     .rv-content-pane {
         top: 0;
         left: 0;
-        bottom: 8px;
+        bottom: 0;
         right: 0;
         position: absolute;
         display: flex;
@@ -13,33 +13,24 @@
         .rv-header {
             display: flex;
             white-space: nowrap;
+            border-bottom: 1px solid $divider-color-light;
             padding: {
                 top: 10px;
-                bottom: 6px;
-                right: 16px;
+                bottom: 7px;
+                right: 6px;
                 left: 16px;
-                right: 0;
             }
-
-            > .md-headline,
-            > .md-title,
-            > .md-subhead {
-                line-height: 24px;
-                margin-top: 0;
-                margin-bottom: 0;
-                display: inline-block;
-                text-overflow: ellipsis;
-                overflow: hidden;
-            }
-        }
-
-        > md-divider {
-            padding: 0;
+            @include pane-title;
         }
 
         .rv-content {
             flex: 1;
             padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .rv-footer {
+            border-top: 1px solid $divider-color-light;
         }
     }
 
@@ -48,6 +39,7 @@
         padding: 8px;
 
         .rv-subheader {
+            border-bottom: 1px solid $divider-color-light;
             margin: {
                 top: 5px;
                 bottom: 11px;
@@ -56,24 +48,27 @@
                 top: 0;
                 bottom: 0;
             }
-
-            > .md-headline,
-            > .md-title,
-            > .md-subhead {
-                line-height: 24px;
-                margin-top: 0;
-                margin-bottom: 0;
-                display: inline-block;
-                text-overflow: ellipsis;
-                overflow: hidden;
-            }
+            @include pane-title;
         }
 
         .rv-subcontent {
-            padding: {
+            /*padding: {
                 left: 8px;
                 right: 8px;
-            }
+            }*/
         }
+    }
+}
+
+@mixin pane-title {
+    > .md-headline,
+    > .md-title,
+    > .md-subhead {
+        line-height: 24px;
+        margin-top: 0;
+        margin-bottom: 0;
+        display: inline-block;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 }
