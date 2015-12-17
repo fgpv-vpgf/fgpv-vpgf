@@ -4,6 +4,7 @@ const proj = require('./proj.js');
 const basemap = require('./basemap.js');
 const mapManager = require('./mapManager.js');
 const attribute = require('./attribute.js');
+const scalebar = require('./scalebar.js');
 
 function grayMapFactory(esriBundle) {
     return function (element) {
@@ -21,6 +22,7 @@ function initAll(esriBundle) {
         basemap: basemap(esriBundle),
         mapManager: mapManager(esriBundle),
         attribs: attribute(esriBundle),
+        scalebar: scalebar(esriBundle),
         debug: function () {
             if (arguments.length === 1) {
                 debug = arguments[0] === true;
@@ -50,7 +52,8 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
         ['esri/layers/WMSLayer', 'WmsLayer'],
         ['esri/map', 'Map'],
-        ['esri/request', 'esriRequest']
+        ['esri/request', 'esriRequest'],
+        ['esri/dijit/Scalebar', 'Scalebar'],
     ];
 
     function makeDojoRequests() {
