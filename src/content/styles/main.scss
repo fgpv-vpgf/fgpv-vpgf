@@ -1,5 +1,5 @@
 /* Want to try using OOCSS and SMACSS according to this article: https://mattstauffer.co/blog/organizing-css-oocss-smacss-and-bem */
-@import "../../../lib/angular-material/angular-material";
+@import "../../../lib/angular-material/angular-material.scss";
 
 .fgpv {
     @import "common/_all.scss";
