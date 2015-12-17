@@ -4,7 +4,6 @@ const proj = require('./proj.js');
 const basemap = require('./basemap.js');
 const mapManager = require('./mapManager.js');
 const attribute = require('./attribute.js');
-const scalebar = require('./scalebar.js');
 
 function grayMapFactory(esriBundle) {
     return function (element) {
@@ -22,7 +21,6 @@ function initAll(esriBundle) {
         basemap: basemap(esriBundle),
         mapManager: mapManager(esriBundle),
         attribs: attribute(esriBundle),
-        scalebar: scalebar(esriBundle),
         debug: function () {
             if (arguments.length === 1) {
                 debug = arguments[0] === true;
@@ -46,14 +44,14 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/dijit/Basemap', 'Basemap'],
         ['esri/dijit/BasemapGallery', 'BasemapGallery'],
         ['esri/dijit/BasemapLayer', 'BasemapLayer'],
+        ['esri/dijit/Scalebar', 'Scalebar'],
         ['esri/layers/ArcGISDynamicMapServiceLayer', 'ArcGISDynamicMapServiceLayer'],
         ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],
         ['esri/layers/FeatureLayer', 'FeatureLayer'],
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
         ['esri/layers/WMSLayer', 'WmsLayer'],
         ['esri/map', 'Map'],
-        ['esri/request', 'esriRequest'],
-        ['esri/dijit/Scalebar', 'Scalebar'],
+        ['esri/request', 'esriRequest']
     ];
 
     function makeDojoRequests() {

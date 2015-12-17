@@ -1,10 +1,11 @@
 'use strict';
 var basemap = require('./basemap.js');
-var scalebar = require('./scalebar.js');
 
 // mapManager module, provides function to setup a map
 module.exports = function (esriBundle) {
-    var mapManager = {};
+    var mapManager = {
+        Scalebar: esriBundle.Scalebar
+    };
 
     /**
     * setup map features with info provided by configuration
@@ -34,9 +35,8 @@ module.exports = function (esriBundle) {
 
         // TODO: add code to setup scalebar
         if ('scalebar' in settings) {
-            let scalebarMod = scalebar(esriBundle);
 
-            scalebarCtrl = new scalebarMod.Scalebar({
+            scalebarCtrl = new mapManager.Scalebar({
                 map: map,
                 attachTo: settings.scalebar.attachTo,
                 scalebarUnit: settings.scalebar.scalebarUnit
