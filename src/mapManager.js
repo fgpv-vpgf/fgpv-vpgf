@@ -1,5 +1,6 @@
 'use strict';
 var basemap = require('./basemap.js');
+var scalebar = require('./scalebar.js');
 
 // mapManager module, provides function to setup a map
 module.exports = function (esriBundle) {
@@ -15,7 +16,8 @@ module.exports = function (esriBundle) {
 
         // var map = arguments[0];
         // var settings = arguments[1];
-        var basemapCtrl;
+        let basemapCtrl;
+        let scalebarCtrl;
 
         // check to see if property exists in settings
         if ('basemaps' in settings) {
@@ -32,7 +34,16 @@ module.exports = function (esriBundle) {
 
         // TODO: add code to setup scalebar
         if ('scalebar' in settings) {
-            console.log('scalebar setting exists');
+            let scalebarMod = scalebar(esriBundle);
+
+            scalebarCtrl = new scalebarMod.Scalebar({
+                map: map,
+                attachTo: settings.scalebar.attachTo,
+                scalebarUnit: settings.scalebar.scalebarUnit
+            });
+
+            scalebarCtrl.show();
+
         } else {
             console.log('scalebar setting does not exists');
         }
@@ -45,7 +56,8 @@ module.exports = function (esriBundle) {
 
         // return as object so we can use this in our geo section of fgpv
         return {
-            BasemapControl: basemapCtrl
+            BasemapControl: basemapCtrl,
+            ScalebarControl: scalebarCtrl
         };
     };
 
