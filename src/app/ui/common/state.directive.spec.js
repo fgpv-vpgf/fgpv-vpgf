@@ -25,7 +25,7 @@ describe('rvState', () => {
 
         // create new element; set morph speed to 0 to speed up tests
         directiveElement = $compile(angular.element(
-                '<div><div rv-state="filters"></div></div>'))
+                '<div rv-state="filters"></div>'))
             (scope);
         scope.$digest();
     });
@@ -37,14 +37,14 @@ describe('rvState', () => {
                 .toBeDefined();
 
             // check that directive attribute value is set correctly
-            expect(directiveElement.children().attr('rv-state'))
+            expect(directiveElement.attr('rv-state'))
                 .toEqual('filters');
         });
 
-        it('should remove the element from the dom', done => {
+        it('should hide the element in the dom', done => {
             // check if the element tied to rv-state is in the dom
-            expect(directiveElement.children().length)
-                .toBe(1);
+            expect(directiveElement.hasClass('ng-hide'))
+                .toBe(false);
 
             stateManager.set({ filters: false });
             scope.$digest();
@@ -52,8 +52,8 @@ describe('rvState', () => {
             // use small timeout since even zero-length animation is async
             setTimeout(() => {
 
-                expect(directiveElement.children().length)
-                    .toBe(0);
+                expect(directiveElement.hasClass('ng-hide'))
+                    .toBe(true);
                 done();
             }, 50);
         });
@@ -65,15 +65,15 @@ describe('rvState', () => {
             // use small timeout since even zero-length animation is async
             setTimeout(() => {
 
-                expect(directiveElement.children().length)
-                    .toBe(0);
+                expect(directiveElement.hasClass('ng-hide'))
+                    .toBe(true);
 
                 stateManager.set({ filters: true });
                 scope.$digest();
 
                 setTimeout(() => {
-                    expect(directiveElement.children().length)
-                        .toBe(1);
+                    expect(directiveElement.hasClass('ng-hide'))
+                        .toBe(false);
                     done();
                 }, 50);
 

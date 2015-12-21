@@ -68,7 +68,7 @@
             let index = (views.indexOf(currentMode) + 1) % 4;
 
             //Make sure the filters panel is open
-            stateManager.set({ side: false }, { filters: true });
+            stateManager.set({ side: false }, { filtersFulldata: true });
             stateManager.setMode('filters', views[index]);
         }
 

@@ -58,7 +58,9 @@
             const func = animationTypes[type];
             return {
                 enter: func($rootElement, direction, false, grand),
-                leave: func($rootElement, direction, true, grand)
+                leave: func($rootElement, direction, true, grand),
+                addClass: ngShowHideWrapper(true, func, $rootElement, direction, grand),
+                removeClass: ngShowHideWrapper(false, func, $rootElement, direction, grand)
             };
         };
     }
@@ -226,6 +228,26 @@
         return () => {
             delete sequences[element.data(RV_PLUG_SLIDE_ID_DATA)];
             callback();
+        };
+    }
+
+    /**
+     * Makes call to animation from 'ng-show' and 'ng-hide' work the same as enter/leave
+     *
+     * @param  {boolean}    addClass    a flag indicating whether the `ng-hide` class was added or removed
+     * @return {function}               bootstrapped open or close function
+     */
+    function ngShowHideWrapper(addClass, func, $rootElement, direction, grand) {
+        return (element, cssClass, callback) => {
+            // both `ng-hide` and `ng-show` use `ng-hide` css class
+            const action = {
+                true: func($rootElement, direction, true, grand),
+                false: func($rootElement, direction, false, grand)
+            };
+
+            // pick the action to perform;
+            // `addClass` flips the action depending on whether the class is added or removed
+            action[addClass](element, callback);
         };
     }
 
