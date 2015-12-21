@@ -110,7 +110,7 @@ module.exports = function (esriBundle) {
             handleAs: 'json'
         });
 
-        defData.then((dataResult) => {
+        defData.then(dataResult => {
             if (dataResult.features) {
                 const len = dataResult.features.length;
                 if (len > 0) {
@@ -129,11 +129,11 @@ module.exports = function (esriBundle) {
                         loadDataBatch(dataResult.features[len - 1].attributes[idField], maxBatch,
                             layerUrl, idField, attribs, thisDef);
 
-                        thisDef.then((dataArray) => {
+                        thisDef.then(dataArray => {
                             callerDef.resolve(dataResult.features.concat(dataArray));
                         },
 
-                        (error) => {
+                        error => {
                             callerDef.reject(error);
                         });
                     }
@@ -147,7 +147,7 @@ module.exports = function (esriBundle) {
             }
         },
 
-        (error) => {
+        error => {
             callerDef.reject(error);
         });
     }
@@ -172,7 +172,7 @@ module.exports = function (esriBundle) {
                     handleAs: 'json',
                 });
 
-                defService.then((serviceResult) => {
+                defService.then(serviceResult => {
                     if (serviceResult && (typeof serviceResult.error === 'undefined')) {
 
                         //set up layer data object based on layer data
@@ -216,7 +216,7 @@ module.exports = function (esriBundle) {
                             resolve(layerData);
                         },
 
-                        (error) => {
+                        error => {
                             console.log('error getting attribute data for ' + layerUrl);
 
                             //return the error as part of the promise
@@ -231,7 +231,7 @@ module.exports = function (esriBundle) {
                             reject(serviceResult.error);
                         }
                     }
-                }, (error) => {
+                }, error => {
                     //TODO will we have a logging service?
                     console.log('Service metadata load error : ' + error);
 
@@ -285,14 +285,14 @@ module.exports = function (esriBundle) {
         } else {
             //call loadFeatureAttribs with options if present
             loadFeatureAttribs(layer.url, opts.attribs).then(
-                (layerData) => {
+                layerData => {
                     //attribs are loaded
                     //package into final object structure (one instance) and return
                     layerData.layerId = layer.id;
                     result[idx.toString()] = layerData;
                     resolve(result);
                 },
-                (error) => {
+                error => {
                     //issue loading attribs
                     reject(error);
                 }
@@ -349,17 +349,17 @@ module.exports = function (esriBundle) {
 
         //wait for promises.  add results to result
         Promise.all(featurePromises).then(
-            (layerDataArray) => {
+            layerDataArray => {
                 //attribs are loaded
                 //package into final object structure (one instance) and return
                 let result = {};
-                layerDataArray.forEach((layerData) => {
+                layerDataArray.forEach(layerData => {
                     layerData.layerId = layer.id;
                     result[layerData.layerIdx.toString()] = layerData;
                 });
                 resolve(result);
             },
-            (error) => {
+            error => {
                 //issue loading attribs
                 reject(error);
             }
