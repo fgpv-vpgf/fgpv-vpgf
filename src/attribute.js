@@ -33,7 +33,7 @@ module.exports = function (esriBundle) {
         layerData.features = layerData.features.concat(featureData);
 
         //make parent pointers and a fun index on object id
-        featureData.forEach(function (elem, idx) {
+        featureData.forEach((elem, idx) => {
             //map object id to index of object in feature array
             //use toString, as objectid is integer and will act funny using array notation.
             layerData.oidIndex[elem.attributes[layerData.oidField].toString()] = idx + offset;
@@ -110,7 +110,7 @@ module.exports = function (esriBundle) {
             handleAs: 'json'
         });
 
-        defData.then(function (dataResult) {
+        defData.then((dataResult) => {
             if (dataResult.features) {
                 const len = dataResult.features.length;
                 if (len > 0) {
@@ -129,11 +129,11 @@ module.exports = function (esriBundle) {
                         loadDataBatch(dataResult.features[len - 1].attributes[idField], maxBatch,
                             layerUrl, idField, attribs, thisDef);
 
-                        thisDef.then(function (dataArray) {
+                        thisDef.then((dataArray) => {
                             callerDef.resolve(dataResult.features.concat(dataArray));
                         },
 
-                        function (error) {
+                        (error) => {
                             callerDef.reject(error);
                         });
                     }
@@ -147,7 +147,7 @@ module.exports = function (esriBundle) {
             }
         },
 
-        function (error) {
+        (error) => {
             callerDef.reject(error);
         });
     }
@@ -162,7 +162,7 @@ module.exports = function (esriBundle) {
 
         return new Promise(
 
-            function (resolve, reject) {
+            (resolve, reject) => {
 
                 //extract info for this service
                 let defService = esriBundle.esriRequest({
@@ -172,7 +172,7 @@ module.exports = function (esriBundle) {
                     handleAs: 'json',
                 });
 
-                defService.then(function (serviceResult) {
+                defService.then((serviceResult) => {
                     if (serviceResult && (typeof serviceResult.error === 'undefined')) {
 
                         //set up layer data object based on layer data
@@ -187,7 +187,7 @@ module.exports = function (esriBundle) {
                         layerData.layerIdx = getLayerIndex(layerUrl);
 
                         //find object id field
-                        //TODO change to fancy new format
+                        //NOTE cannot use arrow functions here due to bug
                         serviceResult.fields.every(function (elem) {
                             if (elem.type === 'esriFieldTypeOID') {
                                 layerData.oidField = elem.name;
@@ -216,7 +216,7 @@ module.exports = function (esriBundle) {
                             resolve(layerData);
                         },
 
-                        function (error) {
+                        (error) => {
                             console.log('error getting attribute data for ' + layerUrl);
 
                             //return the error as part of the promise
@@ -231,7 +231,7 @@ module.exports = function (esriBundle) {
                             reject(serviceResult.error);
                         }
                     }
-                }, function (error) {
+                }, (error) => {
                     //TODO will we have a logging service?
                     console.log('Service metadata load error : ' + error);
 
@@ -285,14 +285,14 @@ module.exports = function (esriBundle) {
         } else {
             //call loadFeatureAttribs with options if present
             loadFeatureAttribs(layer.url, opts.attribs).then(
-                function (layerData) {
+                (layerData) => {
                     //attribs are loaded
                     //package into final object structure (one instance) and return
                     layerData.layerId = layer.id;
                     result[idx.toString()] = layerData;
                     resolve(result);
                 },
-                function (error) {
+                (error) => {
                     //issue loading attribs
                     reject(error);
                 }
@@ -349,17 +349,17 @@ module.exports = function (esriBundle) {
 
         //wait for promises.  add results to result
         Promise.all(featurePromises).then(
-            function (layerDataArray) {
+            (layerDataArray) => {
                 //attribs are loaded
                 //package into final object structure (one instance) and return
                 let result = {};
-                layerDataArray.forEach(function (layerData) {
+                layerDataArray.forEach((layerData) => {
                     layerData.layerId = layer.id;
                     result[layerData.layerIdx.toString()] = layerData;
                 });
                 resolve(result);
             },
-            function (error) {
+            (error) => {
                 //issue loading attribs
                 reject(error);
             }
