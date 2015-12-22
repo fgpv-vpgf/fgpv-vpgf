@@ -3,6 +3,8 @@
 (() => {
     'use strict';
 
+    // Using the first inner div to make sure we select something that renders
+    const RV_PANEL_SELECTOR = 'div:first';
     const RV_PLUG_SLIDE_DURATION = 0.3;
     const RV_PLUG_SLIDE_ID_DATA = 'rv-plug-slide-id';
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
@@ -153,9 +155,9 @@
     */
     function getPanelSize(element, direction) {
         if (direction % 2 === 0) { //Down, Up
-            return element.find('div:first').outerHeight(true);
+            return element.find(RV_PANEL_SELECTOR).outerHeight(true);
         } else { //Left, Right
-            return element.find('div:first').outerWidth(true);
+            return element.find(RV_PANEL_SELECTOR).outerWidth(true);
         }
     }
 
@@ -278,7 +280,7 @@
 
         // Build and store the tween
         let id = counter++;
-        sequences[id] = TweenLite.fromTo(element.find('div:first'), duration,
+        sequences[id] = TweenLite.fromTo(element.find(RV_PANEL_SELECTOR), duration,
             reverse ? end : start,
             angular.extend({}, reverse ? start : end, config));
 
