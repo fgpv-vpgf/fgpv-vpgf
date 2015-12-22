@@ -1,60 +1,8 @@
-@mixin content-plug($from: top, $by: 20px) {
-    $yFrom: 0;
-    $yTo: 0;
-    $xFrom: 0;
-    $xTo: 0;
+@mixin content-plug {
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     position: absolute;
     overflow: hidden;
-
-    @if $from == top {
-        $yFrom: -$by;
-    }
-
-    @if $from == bottom {
-        $yFrom: $by;
-    }
-
-    @if $from == left {
-        $xFrom: -$by;
-    }
-
-    @if $from == right {
-        $xFrom: $by;
-    }
-
-    $duration: 280ms;
-
-    &.ng-enter,
-    &.ng-leave {
-        transition: none $duration $swift-ease-in-out-timing-function;
-
-        .rv-content-pane {
-            transition: all $duration $swift-ease-in-out-timing-function;
-        }
-    }
-
-    &.ng-enter .rv-content-pane {
-        transform: translate3d($xFrom, $yFrom, 0);
-        transition-delay: $duration / 2; // enter delay lets leave pane disappear preventing overlap
-        opacity: 0;
-    }
-
-    &.ng-enter-active .rv-content-pane {
-        transform: translate3d($xTo, $yTo, 0);
-        opacity: 1;
-    }
-
-    &.ng-leave .rv-content-pane {
-        transform: translate3d($xTo, $yTo, 0);
-        opacity: 1;
-    }
-
-    &.ng-leave-active .rv-content-pane {
-        transform: translate3d(-$xFrom, -$yFrom, 0);
-        opacity: 0;
-    }
 }
