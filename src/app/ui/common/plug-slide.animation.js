@@ -3,7 +3,7 @@
 (() => {
     'use strict';
 
-    const RV_PANEL_CLASS = '.panel';
+    //const RV_PANEL_CLASS = '.panel';
     const RV_PLUG_SLIDE_DURATION = 0.3;
     const RV_PLUG_SLIDE_ID_DATA = 'rv-plug-slide-id';
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
@@ -41,6 +41,9 @@
                     animationBuilder(type, index, true));
         }));
 
+    module
+        .animation('.rv-plug-fade', animationBuilder('fade', 4, false));
+
     // TODO: add option to change duration through an attribute
     // TODO: add option to add delay before animation starts through an attribute
 
@@ -48,7 +51,7 @@
      * Animates plug's panel.
      *
      * @param  {String}  type        type of animation (fade, slide, etc.)
-     * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+     * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
      * @param  {Bool}    grand       type of shift (see top comment)
      * @return {Object}  service     object with `enter` and `leave` functions
      */
@@ -69,7 +72,7 @@
     * Creates Fade animations
     *
     * @param  {Object}   $rootElement
-    * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+    * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
     * @param  {Bool}     reverse     whether to reverse the animation direction
     * @param  {Bool}     grand       type of shift (see top comment)
     * @param  {Object}   element     plug node
@@ -97,7 +100,7 @@
             let config = {
                 ease: RV_SWIFT_IN_OUT_EASE,
                 onComplete: cleanup(element, callback),
-                clearProps: 'transform' // http://tiny.cc/dbuh4x; http://tiny.cc/wbuh4x
+                clearProps: 'transform,opacity' // http://tiny.cc/dbuh4x; http://tiny.cc/wbuh4x
             };
 
             buildTween(element, callback, duration, reverse, start, end, config);
@@ -108,7 +111,7 @@
     * Creates Slide animations
     *
     * @param  {Object}   $rootElement
-    * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+    * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
     * @param  {Bool}     reverse     whether to reverse the animation direction
     * @param  {Bool}     grand       type of shift (see top comment)
     * @param  {Object}   element     plug node
@@ -145,14 +148,14 @@
     * Retrieves the panel size of an element, based on animation direction
     *
     * @param  {Object}  element     plug node
-    * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+    * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
     * @return {Number}  size        size of relevant dimension
     */
     function getPanelSize(element, direction) {
         if (direction % 2 === 0) { //Down, Up
-            return element.find(RV_PANEL_CLASS).outerHeight(true);
+            return element.find('div:first').outerHeight(true);
         } else { //Left, Right
-            return element.find(RV_PANEL_CLASS).outerWidth(true);
+            return element.find('div:first').outerWidth(true);
         }
     }
 
@@ -161,7 +164,7 @@
     *
     * @param  {Object}  $rootElement
     * @param  {Object}  element      plug node
-    * @param  {Number}  direction    direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+    * @param  {Number}  direction    direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
     * @return {Number}  delta        amount the panel should move
     */
     function deltaHelper($rootElement, element, direction) {
@@ -186,7 +189,7 @@
     *
     * @param  {Object}  $rootElement
     * @param  {Object}  element     plug node
-    * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left)
+    * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
     * @param  {Bool}    grand       type of shift (see top comment)
     * @return {Object}  shift       amount to move the panel
     */
@@ -210,10 +213,12 @@
             3: ''
         };
 
-        let delta = grand ? deltaHelper($rootElement, element, direction).toString() : '100%';
+        if (direction !== 4) {
+            let delta = grand ? deltaHelper($rootElement, element, direction).toString() : '100%';
 
-        // based on direction, set starting `x` or `y` attributes of the node
-        shift[travel[direction]] = modifier[direction] + delta;
+            // based on direction, set starting `x` or `y` attributes of the node
+            shift[travel[direction]] = modifier[direction] + delta;
+        }
 
         return shift;
     }
@@ -273,7 +278,7 @@
 
         // Build and store the tween
         let id = counter++;
-        sequences[id] = TweenLite.fromTo(element.find(RV_PANEL_CLASS), duration,
+        sequences[id] = TweenLite.fromTo(element.find('div:first'), duration,
             reverse ? end : start,
             angular.extend({}, reverse ? start : end, config));
 
