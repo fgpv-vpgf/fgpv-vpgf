@@ -3,7 +3,6 @@
 (() => {
     'use strict';
 
-    //const RV_PANEL_CLASS = '.panel';
     const RV_PLUG_SLIDE_DURATION = 0.3;
     const RV_PLUG_SLIDE_ID_DATA = 'rv-plug-slide-id';
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
@@ -41,6 +40,7 @@
                     animationBuilder(type, index, true));
         }));
 
+    // stationary fade animation
     module
         .animation('.rv-plug-fade', animationBuilder('fade', 4, false));
 
