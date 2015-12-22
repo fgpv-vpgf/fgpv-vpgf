@@ -143,7 +143,7 @@
                                 .forEach(child => {
                                     //console.log('child - ', child);
                                     if (child.name !== one.name) {
-                                        setItem(child.item, false, true); // immediately turn off all children except one provided
+                                        setItem(child.item, false); // animate siblings off
                                     }
                                 });
                         }
@@ -226,11 +226,12 @@
         function setItem(item, value, skip = false) {
             return $q(fulfill => { // reject is not used
 
+                item.skip = skip; // even if the item has proper state, set its skip value for sanity
+
                 //console.log('settingItem', item, item.enabled, value);
                 if (item.enabled !== value) {
                     item.fulfill = fulfill;
                     item.enabled = value;
-                    item.skip = skip;
 
                     // waititing for items to animate and be resolved
                 } else {

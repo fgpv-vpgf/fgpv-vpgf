@@ -86,10 +86,18 @@ describe('stateManager', () => {
                 .then(() => {
                     expect(stateManager.get('main'))
                         .toBe(true);
+                    expect(stateManager.isAnimated('main'))
+                        .toBe(true); // panel should animate
+
                     expect(stateManager.get('mainToc'))
                         .toBe(true);
+                    expect(stateManager.isAnimated('mainToc'))
+                        .toBe(false); // mainToc should animate
+
                     expect(stateManager.get('mainToolbox'))
                         .toBe(false);
+                    expect(stateManager.isAnimated('mainToolbox'))
+                        .toBe(true); // mainToolbox should not do anything, so it defaults to animate
 
                     // open toolbox; toc should close
                     return stateManager.set('mainToolbox');
@@ -97,10 +105,18 @@ describe('stateManager', () => {
                 .then(() => {
                     expect(stateManager.get('main'))
                         .toBe(true);
+                    expect(stateManager.isAnimated('main'))
+                        .toBe(true); // main should not do anything, still says animate from before
+
                     expect(stateManager.get('mainToc'))
                         .toBe(false);
+                    expect(stateManager.isAnimated('mainToc'))
+                        .toBe(true); // mainToc is closing, should animate
+
                     expect(stateManager.get('mainToolbox'))
                         .toBe(true);
+                    expect(stateManager.isAnimated('mainToolbox'))
+                        .toBe(true); // mainToolbox is openeing, should animate
 
                     // close toolbox; main should also close
                     return stateManager.set('mainToolbox');
@@ -108,10 +124,18 @@ describe('stateManager', () => {
                 .then(() => {
                     expect(stateManager.get('main'))
                         .toBe(false);
+                    expect(stateManager.isAnimated('main'))
+                        .toBe(true); // main is closing, should animate
+
                     expect(stateManager.get('mainToc'))
                         .toBe(false);
+                    expect(stateManager.isAnimated('mainToc'))
+                        .toBe(false); // mainToc is closed immediately after its parent, no animation
+
                     expect(stateManager.get('mainToolbox'))
                         .toBe(false);
+                    expect(stateManager.isAnimated('mainToolbox'))
+                        .toBe(false); // mainToolbox is closed immediately after its parent, no animation
 
                     done();
                 });
@@ -148,10 +172,18 @@ describe('stateManager', () => {
                 .then(() => {
                     expect(stateManager.get('main'))
                         .toBe(false);
+                    expect(stateManager.isAnimated('main'))
+                        .toBe(true); // main is closing, should animate
+
                     expect(stateManager.get('mainToc'))
                         .toBe(false);
+                    expect(stateManager.isAnimated('mainToc'))
+                        .toBe(false); // mainToc is closed immediately after its parent, no animation
+
                     expect(stateManager.get('mainToolbox'))
                         .toBe(false);
+                    expect(stateManager.isAnimated('mainToolbox'))
+                        .toBe(false); // mainToolbox is closed immediately after its parent, no animation
 
                     done();
                 });
@@ -172,12 +204,23 @@ describe('stateManager', () => {
         it('should chain state changes correctly', done => {
             expect(stateManager.get('main'))
                 .toBe(false);
+            expect(stateManager.isAnimated('main'))
+                .toBe(true); // defaults to true
+
             expect(stateManager.get('mainToc'))
                 .toBe(false);
+            expect(stateManager.isAnimated('mainToc'))
+                .toBe(true); // defaults to true
+
             expect(stateManager.get('side'))
                 .toBe(false);
+            expect(stateManager.isAnimated('side'))
+                .toBe(true); // defaults to true
+
             expect(stateManager.get('sideMetadata'))
                 .toBe(false);
+            expect(stateManager.isAnimated('sideMetadata'))
+                .toBe(true); // defaults to true
 
             // need to listen on item state changes and resolve locks on the stateManager
             $rootScope.$watch(() => stateManager.get('main'), () =>
@@ -187,12 +230,23 @@ describe('stateManager', () => {
                 if (newValue) {
                     expect(stateManager.get('main'))
                         .toBe(true);
+                    expect(stateManager.isAnimated('main'))
+                        .toBe(true); // main is opening, should animate
+
                     expect(stateManager.get('mainToc'))
                         .toBe(true);
+                    expect(stateManager.isAnimated('mainToc'))
+                        .toBe(false); // mainToc is opened immediately, no animation
+
                     expect(stateManager.get('side'))
                         .toBe(false);
+                    expect(stateManager.isAnimated('side'))
+                        .toBe(true); // defaults to true
+
                     expect(stateManager.get('sideMetadata'))
                         .toBe(false);
+                    expect(stateManager.isAnimated('sideMetadata'))
+                        .toBe(true); // defaults to true
                 }
                 stateManager.resolve('mainToc');
             });
@@ -209,12 +263,23 @@ describe('stateManager', () => {
                     // both mainToc and sideMetadata should be open
                     expect(stateManager.get('main'))
                         .toBe(true);
+                    expect(stateManager.isAnimated('main'))
+                        .toBe(true); // main hasn't change its state since last transition
+
                     expect(stateManager.get('mainToc'))
                         .toBe(true);
+                    expect(stateManager.isAnimated('mainToc'))
+                        .toBe(false); // mainToc hasn't change its state since last transition
+
                     expect(stateManager.get('side'))
                         .toBe(true);
+                    expect(stateManager.isAnimated('side'))
+                        .toBe(true); // side is opening, should animate
+
                     expect(stateManager.get('sideMetadata'))
                         .toBe(true);
+                    expect(stateManager.isAnimated('sideMetadata'))
+                        .toBe(false); // sideMetadata is opened immediately, no animation
 
                     done();
                 });
