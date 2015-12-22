@@ -5,7 +5,7 @@
         .directive('rvState', rvState);
 
     /**
-     * `rvState` directive body. Essentially a modified ngShow directive.
+     * `rvState` directive body. Essentially a modified ngShow directive. If the state change is animated, the directive notifies `StateManger` upon its completion.
      *
      * @return {object} directive body
      */
@@ -24,12 +24,18 @@
 
             scope.$watch('stateManager.get("' + [attr.rvState] + '")',
                 value => {
-                    $animate[value ? 'removeClass' : 'addClass'](element, 'ng-hide', {
-                        tempClasses: 'ng-hide-animate'
-                    })
-                    .then(() => { //resolve state change after animation ends
+                    // check if the transition should be animated
+                    if (stateManager.isAnimated(attr.rvState)) { // animate hide/show
+                        $animate[value ? 'removeClass' : 'addClass'](element, 'ng-hide', {
+                            tempClasses: 'ng-hide-animate'
+                        })
+                        .then(() => { // resolve state change after animation ends
+                            stateManager.resolve(attr.rvState);
+                        });
+                    } else { // hide/show element without animating it
+                        element[value ? 'removeClass' : 'addClass']('ng-hide');
                         stateManager.resolve(attr.rvState);
-                    });
+                    }
                 }
             );
         }
