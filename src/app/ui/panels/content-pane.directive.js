@@ -26,6 +26,7 @@
             scope: {
                 titleValue: '@', // binds to the evaluated dom property
                 titleStyle: '@',
+                isLoading: '=', // bind to a property
                 footer: '@', // directive name to insert into the footer
                 closePanel: '&?' // https://docs.angularjs.org/api/ng/service/$compile
             },
@@ -51,10 +52,10 @@
 
             // `self.footer` is a name string of a directive; if specified, directive is compiled and inserted into the pane template
             if (self.footer) {
-                var rvBasemap = $compile(`<${self.footer}></${self.footer}>`)(scope);
+                var footerElement = $compile(`<${self.footer}></${self.footer}>`)(scope);
 
                 element.find('.rv-footer')
-                    .append(rvBasemap);
+                    .append(footerElement);
             }
         }
     }
@@ -63,7 +64,6 @@
      * Skeleton controller function.
      */
     function Controller() {
-
         //const self = this;
 
         activate();
