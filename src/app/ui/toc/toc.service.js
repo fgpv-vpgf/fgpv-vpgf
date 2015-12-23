@@ -31,7 +31,7 @@
                         items: [
                             {
                                 type: 'layer',
-                                name:  HolderIpsum.words(3, true),
+                                name: HolderIpsum.words(3, true),
                                 layerType: 'feature',
                                 id: 0,
                                 symbology: [
@@ -56,6 +56,9 @@
                                     visibility: {
                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                         enabled: true
+                                    },
+                                    filters: {
+                                        selected: false
                                     }
                                 },
                                 state: 'default', // error, loading,
@@ -105,6 +108,9 @@
                                     visibility: {
                                         value: 'zoomIn', //'off', 'zoomIn', 'zoomOut'
                                         enabled: true
+                                    },
+                                    filters: {
+                                        selected: false
                                     }
                                 },
                                 state: 'default', // error, loading,
@@ -152,6 +158,9 @@
                                             visibility: {
                                                 value: 'zoomIn', //'off', 'zoomIn', 'zoomOut'
                                                 enabled: true
+                                            },
+                                            filters: {
+                                                selected: false
                                             }
                                         },
                                         state: 'default', // error, loading,
@@ -199,6 +208,9 @@
                                             },
                                             reload: {
                                                 enabled: true
+                                            },
+                                            filters: {
+                                                selected: false
                                             }
                                         },
                                         state: 'error', // error, loading,
@@ -240,6 +252,9 @@
                                             visibility: {
                                                 value: 'off', //'off', 'zoomIn', 'zoomOut'
                                                 enabled: true
+                                            },
+                                            filters: {
+                                                selected: false
                                             }
                                         },
                                         state: 'default', // error, loading,
@@ -317,6 +332,9 @@
                                     visibility: {
                                         value: 'off', //'off', 'zoomIn', 'zoomOut'
                                         enabled: true
+                                    },
+                                    filters: {
+                                        selected: false
                                     }
                                 },
                                 state: 'default', // error, loading,
@@ -372,6 +390,9 @@
                                     visibility: {
                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                         enabled: true
+                                    },
+                                    filters: {
+                                        selected: false
                                     }
                                 },
                                 state: 'default', // error, loading,
