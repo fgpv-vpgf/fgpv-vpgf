@@ -58,6 +58,14 @@
             }*/
         }
     }
+
+    md-progress-linear {
+        position: absolute;
+        top: 0;
+        height: 3px;
+        overflow: hidden;
+        padding: 0;
+    }
 }
 
 @mixin pane-title {

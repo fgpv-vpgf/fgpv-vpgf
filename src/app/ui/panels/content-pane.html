@@ -1,6 +1,6 @@
 <div class="rv-content-pane layout-padding">
 
-    <div class="rv-header" ng-switch on="self.titleStyle" ng-show="self.titleValue">
+    <div class="rv-header" ng-show="self.titleValue" ng-switch on="self.titleStyle">
         <!-- display an appropriate header based on `headline` value -->
         <!-- hide header if no title text provided -->
         <h2 class="md-headline" ng-switch-when="headline">{{ self.titleValue }}</h2>
@@ -18,8 +18,12 @@
     </div>
 
     <md-content class="rv-content">
-        <ng-transclude></ng-transclude>
+
+        <ng-transclude ng-show="!self.isLoading"></ng-transclude>
+
     </md-content>
 
     <div class="rv-footer" ng-show="self.footer"></div>
+
+    <md-progress-linear md-mode="indeterminate" ng-show="self.isLoading"></md-progress-linear>
 </div>
