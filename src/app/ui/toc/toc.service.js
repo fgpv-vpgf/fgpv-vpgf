@@ -805,6 +805,7 @@
             } else if (service.display[contentName].layerId === layerId) { // metadata panel is open and if this layer's metadata is already selected
                 stateManager.set(panelName); // just close it
             } else { // panel is open and its content is from a different layer; deselect that layer and select the new one
+                // TODO: delay clearing old content to after the transtion ends - prevents a brief flash of null content in the pane
                 changeSelectedState(service.display[contentName].layerId, contentName, false); // old layer
                 changeSelectedState(layerId, contentName); // new layer
             }
