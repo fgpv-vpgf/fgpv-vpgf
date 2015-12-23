@@ -9,6 +9,10 @@
 
         // relative boxes list shadow to the current list
         position: relative;
+
+        > md-divider {
+            width: calc(100% + #{rem(0.8)});
+        }
     }
 
     .rv-layer-list {
@@ -86,7 +90,7 @@ absolutely position a button underneath an item so it acts like a button body fo
             margin: 0;
             top: 0; // anchor the button to its parent container
             left: 0;
-            width: 100%;
+            width: calc(100% + #{rem(0.8)});
 
             .md-toggle-icon {
                 display: inline-block; // why? http://stackoverflow.com/a/25667784
@@ -142,7 +146,7 @@ absolutely position a button underneath an item so it acts like a button body fo
 
             // makes the button appear to be a bit larger on the left size
             // #{...} is a way to include variables and functions in `calc`: http://stackoverflow.com/a/20236515
-            width: calc(100% + #{rem(0.8)});
+            width: calc(100% + #{rem(1.6)});
             left: - rem(0.8);
             top: 0;
             bottom: 0;
