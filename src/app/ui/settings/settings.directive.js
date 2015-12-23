@@ -33,7 +33,11 @@
         return directive;
     }
 
-    function Controller() {
+    function Controller(tocService) {
+        'ngInject';
+        const self = this;
+        self.display = tocService.display.settings;
+
         activate();
 
         ///////////
