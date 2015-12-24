@@ -6,13 +6,14 @@
 var gulp = require('gulp');
 var glob = require('glob');
 var del = require('del');
-/* var pkg = require('./package.json'); */
+var pkg = require('./package.json');
 var $ = require('gulp-load-plugins')({ lazy: true });
 var args = require('yargs').argv;
 var bowerFiles = require('main-bower-files');
 var Dgeni = require('dgeni');
 var config = require('./gulp.config')();
 var Server = require('karma').Server;
+var dateFormat = require('dateformat');
 
 require('gulp-help')(gulp);
 
@@ -116,12 +117,17 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
     }
 );
 
-gulp.task('jsbuild', 'Annotate, transpile and concat JS development files',
+gulp.task('jsbuild', 'Annotate, transpile and concat JS development files', ['version'],
     function () {
         injectError(false);
 
+        let versionFilter = $.filter('**/version.*.js', { restore: true });
+
         return gulp
             .src(config.js)
+            .pipe(versionFilter)
+            .pipe($.insert.transform(injectVersion))
+            .pipe(versionFilter.restore)
             .pipe($.sourcemaps.init())
             .pipe($.plumber({ errorHandler: injectError }))
             .pipe($.babel())
@@ -133,10 +139,20 @@ gulp.task('jsbuild', 'Annotate, transpile and concat JS development files',
             }))
             .pipe($.angularFilesort())
             .pipe($.concat(config.jsSingleFile))
-            .pipe($.uglify())
+
+            //.pipe($.uglify())
             .pipe($.sourcemaps.write('.'))
             .pipe(gulp.dest(config.build));
     });
+
+function injectVersion(contents) {
+    // inject version into the version constant service
+    Object.keys(pkg._v).forEach(key => {
+        contents = contents.replace('_' + key.toUpperCase() + '_', pkg._v[key]);
+    });
+
+    return contents;
+}
 
 // inject error css file into the index page if babel parser errors
 function injectError(error) {
@@ -448,6 +464,40 @@ function log(msg) {
     } else {
         $.util.log($.util.colors.blue(msg));
     }
+}
+
+/**
+ * Stores version info on the pkg object.
+ */
+gulp.task('version', function (done) {
+    let version = getVersion();
+
+    $.git.revParse({ args:'--short HEAD' }, function (err, hash) {
+        if (err) {
+            console.error('Cannot get current git hash');
+        }
+
+        version.hash = hash;
+        pkg._v = version;
+
+        done();
+    });
+});
+
+/**
+ * Generates current version number object and returns it as an Object.
+ * @return {Object} version info
+ */
+function getVersion() {
+    let now =  new Date();
+    let version = pkg.version.split('.');
+
+    return {
+        major: version[0],
+        minor: version[1],
+        patch: version[2],
+        timestamp: dateFormat(now, 'dd-mm-yyyy HH:MM:ss')
+    };
 }
 
 /**
