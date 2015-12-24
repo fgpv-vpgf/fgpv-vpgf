@@ -7,7 +7,7 @@
         </a>
     </header>
 
-    <md-content flex role="navigation">
+    <md-content role="navigation">
         <ul class="app-menu">
             <li class="app-menu-item" ng-repeat="section in self.menu">
                 <h2 class="menu-heading md-subhead" ng-if="section.type === 'heading'">
@@ -22,5 +22,13 @@
                 </ul>
             </li>
         </ul>
+
+        <span flex></span>
+        <p class='md-caption rv-version'>
+            <span class='rv-version-number'>{{ self.version.major }}.{{ self.version.minor }}.{{ self.version.patch }}
+                <span class='rv-version-hash'>[{{ self.version.hash }}]</span></span>
+            <span class='rv-version-timestamp'>{{ self.version.timestamp }}</span>
+        </p>
+
     </md-content>
 </md-sidenav>

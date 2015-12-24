@@ -14,11 +14,12 @@
         .module('app.layout')
         .controller('ShellController', ShellController);
 
-    function ShellController(configService, $rootScope, events) {
+    function ShellController(configService, $rootScope, events, version) {
         const self = this;
 
         self.config = configService.data;
         self.isLoading = true;
+        self.version = version;
 
         // TODO: mock settings; replace by config
         self.menu = [

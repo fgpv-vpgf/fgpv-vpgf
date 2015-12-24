@@ -4,6 +4,33 @@
         &.site-sidenav {
             max-width: 256px;
             min-width: 256px;
+            display: flex;
+            flex-direction: column;
+
+            > md-content {
+                flex-direction: column;
+                display: flex;
+                flex: 1;
+            }
+
+            .rv-version {
+                text-align: center;
+
+                &-number {
+                    font-weight: bold;
+                    display: block;
+                }
+
+                &-hash {
+                    margin-left: rem(0.3);
+                    font-weight: normal;
+                    font-size: smaller;
+                }
+
+                &-timestamp {
+                    font-size: smaller;
+                }
+            }
 
             .app-logo {
                 text-align: center;

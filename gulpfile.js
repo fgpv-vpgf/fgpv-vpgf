@@ -139,8 +139,7 @@ gulp.task('jsbuild', 'Annotate, transpile and concat JS development files', ['ve
             }))
             .pipe($.angularFilesort())
             .pipe($.concat(config.jsSingleFile))
-
-            //.pipe($.uglify())
+            .pipe($.uglify())
             .pipe($.sourcemaps.write('.'))
             .pipe(gulp.dest(config.build));
     });
