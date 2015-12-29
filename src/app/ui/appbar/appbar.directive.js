@@ -38,6 +38,8 @@
         const self = this;
 
         self.layoutService = layoutService;
+
+        self.toggleDetails = toggleDetails;
         self.toggleToc = toggleToc;
         self.toggleToolbox = toggleToolbox;
 
@@ -49,6 +51,10 @@
 
         function activate() {
 
+        }
+
+        function toggleDetails() {
+            stateManager.set({ side: false }, 'mainDetails');
         }
 
         function toggleToc() {

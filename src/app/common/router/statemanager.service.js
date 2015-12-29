@@ -50,6 +50,10 @@
                 enabled: false,
                 parent: 'main'
             },
+            mainDetails: {
+                enabled: false,
+                parent: 'main'
+            },
             side: {
                 enabled: false
             },
