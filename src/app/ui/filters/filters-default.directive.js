@@ -41,9 +41,10 @@
     /**
      * Skeleton controller function with test message.
      */
-    function Controller() {
-        var self = this;
-        self.message = 'Can you see me?';
+    function Controller(tocService) {
+        'ngInject';
+        const self = this;
+        self.display = tocService.display.filters;
 
         activate();
 

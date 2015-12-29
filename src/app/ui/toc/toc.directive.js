@@ -37,7 +37,6 @@
         'ngInject';
         const self = this;
 
-        self.toggleFilters = toggleFilters;
         self.toggleFiltersFull = toggleFiltersFull;
 
         self.config = tocService.data;
@@ -46,13 +45,6 @@
         activate();
 
         ///////////////
-
-        // hacky way to toggle panels;
-        // TODO: replace with a sane methods
-        function toggleFilters() {
-            //make sure side-panel is closed, then open filters
-            stateManager.set({ side: false }, 'filtersFulldata');
-        }
 
         // hacky way to toggle filters panel modes;
         // TODO: replace with a sane methods
