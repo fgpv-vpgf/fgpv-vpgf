@@ -14,6 +14,7 @@
             'app.ui.sidenav',
             'app.ui.appbar',
             'app.ui.panels',
+            'app.ui.details',
             'app.ui.toc',
             'app.ui.toolbox',
             'app.ui.metadata',
