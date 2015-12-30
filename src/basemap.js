@@ -1,15 +1,32 @@
 'use strict';
 
+/**
+  * @ngdoc module
+  * @name basemap
+  * @module geoAPI
+  * @description
+  *
+  * The `Basemap` module provides basemap related functions.
+  *
+  * This module returns a basemap object with the following:
+  * - Basemap: esri/dijit/Basemap class
+  * - BasemapGallery: esri/dijit/BasemapGallery class
+  * - BasemapLayer: esri/dijit/BasemapLayer class
+  * - makeBasemaps: make basemap gallery based on the settings of basemap metadata.
+  */
+
 // Basemap related modules
 module.exports = function (esriBundle) {
-
     /**
-    * make basemap gallery based on the settings of basemap metadata
-    * @param {Object} basemapsConfig json config object contains collection/array of basemap settings
-    * @param {esriMap} map ESRI map object
-    * @param {String} anchorId DOM element where the dijit will be placed
-    * @return {Object} wrapper object for basemapGallery dijit
-    */
+     * @ngdoc method
+     * @name makeBasemaps
+     * @memberof basemap
+     * @description make basemap gallery based on the settings of basemap metadata
+     * @param {Object} basemapsConfig json config object contains collection/array of basemap settings
+     * @param {esriMap} map ESRI map object
+     * @param {String} anchorId DOM element where the dijit will be placed
+     * @return {Object} wrapper object for basemapGallery dijit
+     */
     function makeBasemaps(basemapsConfig, map, anchorId) {
 
         let basemap;
