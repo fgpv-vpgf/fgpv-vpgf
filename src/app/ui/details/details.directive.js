@@ -1,9 +1,11 @@
-/* global Ease, BezierEasing, TweenLite, HolderIpsum */
+/* global Ease, BezierEasing, TimelineLite */
 (() => {
     'use strict';
 
     const RV_SLIDE_DURATION = 0.3;
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
+    const RV_DETAILS_LIST = '.rv-details-layer-list';
+    const RV_DETAILS_SECTION = '.rv-details';
 
     /**
      * @ngdoc directive
@@ -43,17 +45,14 @@
                 paused: true
             });
 
-            //element.on('.rv-details-layer-list', 'click', onEnter);
-            //element.on('.rv-details-layer-list', 'onmouseleave', onLeave);
-
             self.onEnter = onEnter;
             self.onLeave = onLeave;
 
             function onEnter() {
                 if (!layerList) {
                     // find layer node and construct timeline
-                    layerList = element.find('.rv-details-layer-list');
-                    section = element.find('.rv-details');
+                    layerList = element.find(RV_DETAILS_LIST);
+                    section = element.find(RV_DETAILS_SECTION);
 
                     tl.to(layerList, RV_SLIDE_DURATION, {
                             width: 280,
@@ -64,18 +63,17 @@
                         }, 0);
                 }
 
-                console.log('hover');
                 tl.play();
             }
 
             function onLeave() {
-                tl.reverse()
+                tl.reverse();
             }
 
         }
     }
 
-    function Controller(stateManager) {
+    function Controller(stateManager, $scope) {
         'ngInject';
         const self = this;
 
@@ -83,60 +81,43 @@
 
         self.selectLayer = selectLayer;
 
-        self.data = {
-            layers: [
-                {
-                    name: HolderIpsum.words(3, true),
-                    type: 'something',
-                    items: [
-                        {
-                            name: HolderIpsum.words(3, true),
-                            data: [HolderIpsum.sentence(), HolderIpsum.sentence(), HolderIpsum.sentence(),
-                                HolderIpsum.sentence()]
-                        },
-                        {
-                            name: HolderIpsum.words(3, true),
-                            data: [HolderIpsum.sentence(), HolderIpsum.sentence()]
-                        }
-                    ]
-                },
-                {
-                    name: HolderIpsum.words(3, true),
-                    type: 'something',
-                    items: [
-                        {
-                            name: HolderIpsum.words(3, true),
-                            data: [HolderIpsum.sentence(), HolderIpsum.sentence()]
-                        }
-                    ]
-                },
-                {
-                    name: HolderIpsum.words(3, true),
-                    type: 'something',
-                    items: [
-                        {
-                            name: HolderIpsum.words(3, true),
-                            data: [HolderIpsum.sentence(), HolderIpsum.sentence()]
-                        }
-                    ]
-                }
-            ]
-        };
+        self.data = stateManager._detailsData; // garbage data
+
+        // TODO: adding stateManger to scope to set up watch
+        // TODO: remove;
+        $scope.stateManager = stateManager;
+        $scope.$watch('stateManager._detailsData.layers', newValue => {
+            console.log(newValue);
+            if (newValue.length > 0) {
+                // pick random point to be selected initially
+                self.selected = newValue[Math.floor(Math.random() * newValue.length)];
+            }
+        });
 
         activate();
 
         ///////////
 
         function activate() {
-            self.selected = self.data.layers[0];
+
         }
 
+        /**
+         * Closes details pane and switches to toc.
+         */
         function closeDetails() {
             stateManager.set({
                 side: false
-            }, 'mainToc');
+            }, 'mainDetails');
+
+            // TODO: remove; temporary;
+            stateManager._detailsData.layers = [];
         }
 
+        /**
+         * Changes the layer whose data is displayed.
+         * @param  {Object} layer data object
+         */
         function selectLayer(layer) {
             self.selected = layer;
 

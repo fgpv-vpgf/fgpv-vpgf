@@ -26,7 +26,7 @@
                 <li ng-repeat="layer in self.data.layers">
                     <md-button class="rv-button-square rv-details-layer-item" ng-class="{'rv-selected': layer === self.selected }" ng-click="self.selectLayer(layer)">
                         <div class="rv-symbology-item">
-                            <img alt="" class="md-whiteframe-z1" ng-src="http://lorempixel.com/32/32/?{{ layer.name }}"/>
+                            <img alt="" class="md-whiteframe-z1" ng-src="http://lorempixel.com/32/32/technics/?{{ $index }}"/>
                             <span class="rv-symbology-item-name">{{ layer.name }}</span>
                         </div>
                     </md-button>

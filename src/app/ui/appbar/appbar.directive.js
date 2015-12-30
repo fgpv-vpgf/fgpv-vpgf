@@ -38,14 +38,11 @@
         const self = this;
 
         self.layoutService = layoutService;
+        self.stateManager = stateManager;
 
         self.toggleDetails = toggleDetails;
         self.toggleToc = toggleToc;
         self.toggleToolbox = toggleToolbox;
-
-        // FIXME: hacky method of highlighting currently selected button; needs replacement
-        self.tocSelected = false;
-        self.toolboxSelected = false;
 
         activate();
 
