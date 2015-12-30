@@ -1,0 +1,20 @@
+@mixin details {
+    .rv-details {
+        .rv-details-layer-list {
+            width: 48px;
+            position: absolute;
+            background: white;
+            left: 0;
+            top: 0;
+            //padding: 8px;
+            border-right: solid 1px black;
+            overflow: hidden;
+
+            .rv-details-layer-item {
+                //display: block;
+                padding: rem(0.8);
+                margin: 0;
+            }
+        }
+    }
+}

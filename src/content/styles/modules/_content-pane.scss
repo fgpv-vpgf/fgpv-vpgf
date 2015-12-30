@@ -78,7 +78,11 @@
         }
 
         .rv-subcontent {
-            // remove margin from the first and last child
+            .rv-sub-subhead {
+                margin: 0;
+            }
+
+            // remove margin from the first and last child paragraph
             p:first-child {
                 margin-top: 0;
             }
