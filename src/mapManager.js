@@ -1,6 +1,16 @@
 'use strict';
 var basemap = require('./basemap.js');
 
+/**
+  * @ngdoc module
+  * @name mapManager
+  * @area geoAPI
+  * @description
+  *
+  * The `MapManager` module provides function to setup a map as well as provide 
+  *
+  */
+
 // mapManager module, provides function to setup a map
 module.exports = function (esriBundle) {
     var mapManager = {
