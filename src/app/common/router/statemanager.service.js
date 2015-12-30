@@ -27,13 +27,13 @@
 
     function stateManager($q) {
         const service = {
-            addState: addState,
-            set: set,
-            get: get,
-            getMode: getMode,
-            setMode: setMode,
-            isAnimated: isAnimated,
-            resolve: resolve,
+            addState,
+            set,
+            get,
+            getMode,
+            setMode,
+            isAnimated,
+            resolve,
 
             // TODO: revise; temporary place to store details data
             _detailsData: {
