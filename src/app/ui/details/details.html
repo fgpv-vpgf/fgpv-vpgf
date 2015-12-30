@@ -1,54 +1,39 @@
-<rv-content-pane title-style="title" title-value="Point Information" close-panel="self.closeDetails()">
-    <div>
-        <p>[ metadata content ]</p>
+<rv-content-pane close-panel="self.closeDetails()" static-content="true" title-style="title"
+    title-value="Point Information">
+    <div class="rv-details" ng-class="{ 'rv-multiple': self.data.layers.length > 1 }">
+        <md-content class="rv-details-data rv-content">
+            <div class="rv-subsection">
+                <div class="rv-subheader">
+                    <h4 class="md-subhead">{{ self.selected.name }}</h4>
+                </div>
 
-        <p>[ metadata content ]</p>
+                <div class="rv-subcontent">
+                    <h5 class="rv-sub-subhead" ng-repeat-start="item in self.selected.items">{{ item.name }}</h5>
 
-        <p>[ metadata content ]</p>
+                    <p ng-repeat-end ng-repeat="paragraph in item.data">
+                        {{ paragraph }}
+                    </p>
 
-        <p>[ metadata content ]</p>
+                </div>
 
-        <p>[ metadata content ]</p>
+            </div>
+        </md-content>
 
-        <p>[ metadata content ]</p>
+        <div class="rv-details-layer-list" ng-mouseenter="self.onEnter()" ng-mouseleave="self.onLeave()"
+            ng-show="self.data.layers.length > 1">
 
-        <p>[ metadata content ]</p>
+            <ul class="rv-list">
+                <li ng-repeat="layer in self.data.layers">
+                    <md-button class="rv-button-square rv-details-layer-item" ng-class="{'rv-selected': layer === self.selected }" ng-click="self.selectLayer(layer)">
+                        <div class="rv-symbology-item">
+                            <img alt="" class="md-whiteframe-z1" ng-src="http://lorempixel.com/32/32/?{{ layer.name }}"/>
+                            <span class="rv-symbology-item-name">{{ layer.name }}</span>
+                        </div>
+                    </md-button>
+                </li>
+            </ul>
 
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
-
-        <p>[ metadata content ]</p>
+        </div>
     </div>
 
 </rv-main-panel-content>
