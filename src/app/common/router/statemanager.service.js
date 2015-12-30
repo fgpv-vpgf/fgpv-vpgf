@@ -33,7 +33,12 @@
             getMode: getMode,
             setMode: setMode,
             isAnimated: isAnimated,
-            resolve: resolve
+            resolve: resolve,
+
+            // TODO: revise; temporary place to store details data
+            _detailsData: {
+                layers: []
+            }
         };
 
         // state object
