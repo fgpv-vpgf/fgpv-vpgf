@@ -17,11 +17,13 @@
         </md-button>
     </div>
 
-    <md-content class="rv-content">
-
+    <md-content class="rv-content" ng-if="!self.staticContent">
         <ng-transclude ng-show="!self.isLoading"></ng-transclude>
-
     </md-content>
+
+    <div class="rv-content" ng-if="self.staticContent">
+        <ng-transclude ng-show="!self.isLoading"></ng-transclude>
+    </div>
 
     <div class="rv-footer" ng-show="self.footer"></div>
 
