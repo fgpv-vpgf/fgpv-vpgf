@@ -1,0 +1,10 @@
+<!-- common.template.html -->
+<md-toolbar layout="row" class="site-content-toolbar md-whiteframe-glow-z1"><h2 layout-padding>{$ doc.name $}</h2></md-toolbar>
+
+<md-content layout-padding flex>
+    <strong>({$ doc.docType $})</strong>
+
+    <p>{$ doc.description | marked $}</p>
+
+    {$ doc.parent | toInternalRoute(doc, 'Go Up') $}
+</md-content>
