@@ -28,7 +28,8 @@
                 titleStyle: '@',
                 isLoading: '=', // bind to a property
                 footer: '@', // directive name to insert into the footer
-                closePanel: '&?' // https://docs.angularjs.org/api/ng/service/$compile
+                closePanel: '&?', // https://docs.angularjs.org/api/ng/service/$compile
+                staticContent: '=' // makes main content section non-scrollable
             },
             transclude: true,
             link: link,

@@ -1,0 +1,29 @@
+@mixin symbology {
+    // item in the symbology list
+    .rv-symbology-item {
+        //position: absolute;
+
+        //width: rem(3.2); // need to specify width, otherwise it's squashed
+        //height: 100%;
+        display: flex;
+        align-items: center;
+
+        .rv-symbology-item-name {
+            margin-left: 8px;
+            //opacity: 0;
+            //display: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        img {
+
+            //border: 1px solid black;
+            padding: 1px;
+            background-color: white;
+            width: rem(3.2);
+            height: rem(3.2);
+        }
+    }
+}

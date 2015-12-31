@@ -232,39 +232,21 @@ absolutely position a button underneath an item so it acts like a button body fo
         justify-content: center;
         z-index: 0; // set up new stacking context
 
-// button which opens symbology section
         .rv-symbology-trigger {
+
+            // button which opens symbology section
             transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
             opacity: 0;
             z-index: 4;
             margin: 0;
         }
 
-        // item in the symbology list
         .rv-symbology-item {
             position: absolute;
 
-            //width: rem(3.2); // need to specify width, otherwise it's squashed
-            //height: 100%;
-            display: flex;
-            align-items: center;
-
             .rv-symbology-item-name {
-                margin-left: 8px;
                 opacity: 0;
                 display: none;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            img {
-
-                //border: 1px solid black;
-                padding: 1px;
-                background-color: white;
-                width: rem(3.2);
-                height: rem(3.2);
             }
         }
 
