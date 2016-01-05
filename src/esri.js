@@ -9,8 +9,6 @@ function esriService(esriBundle, extent, sr) {
     params.outSR = sr;
 
     gsvc.project(params, function (projectedExtents) {
-        console.log(projectedExtents);
-
         // return array returned from esriService
         return new esriBundle.EsriExtent(projectedExtents);
     });
