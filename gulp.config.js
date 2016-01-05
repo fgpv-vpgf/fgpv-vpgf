@@ -67,6 +67,7 @@ module.exports = function () {
 
         staticAssets: [
             src + 'content/images/**',
+            src + 'content/fake_data.json',
             src + 'config*.json'
         ],
 
