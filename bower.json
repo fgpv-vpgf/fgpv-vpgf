@@ -25,9 +25,14 @@
         "geoapi": "https://github.com/fgpv-vpgf/geoApi/releases/download/v0.0.0-1/geoapi-0.0.0.tgz",
         "holder-ipsum": "https://github.com/euangoddard/holder-ipsum.git",
         "datatables.net": "~1.10.10",
-        "datatables.net-dt": "~1.10.10"
+        "datatables.net-dt": "~1.10.10",
+        "datatables-scroller": "~1.4.0"
     },
     "overrides": {
+        "datatables-scroller": {
+            "main": "js/dataTables.scroller.js",
+            "dependencies": null
+        },
         "datatables.net-dt": {
             "ignore": true
         },
@@ -42,11 +47,11 @@
         },
         "gsap": {
             "main": [
-        "src/uncompressed/TimelineLite.js",
-        "src/uncompressed/TweenLite.js",
-        "src/uncompressed/plugins/CSSPlugin.js",
-        "src/uncompressed/plugins/EaselPlugin.js"
-      ]
+                "src/uncompressed/TimelineLite.js",
+                "src/uncompressed/TweenLite.js",
+                "src/uncompressed/plugins/CSSPlugin.js",
+                "src/uncompressed/plugins/EaselPlugin.js"
+              ]
         },
         "bezier-easing": {
             "main": "bezier-easing.js"
