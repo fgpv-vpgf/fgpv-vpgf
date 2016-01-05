@@ -1,5 +1,6 @@
 /* Want to try using OOCSS and SMACSS according to this article: https://mattstauffer.co/blog/organizing-css-oocss-smacss-and-bem */
 @import "../../../lib/angular-material/angular-material.scss";
+@import "../../../lib/datatables.net-dt/css/jquery.dataTables.css";
 
 .fgpv {
     @import "common/_all.scss";

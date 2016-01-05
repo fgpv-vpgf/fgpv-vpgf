@@ -23,25 +23,32 @@
         "bezier-easing": "^1.0.0",
         "dotjem-angular-tree": "^0.2.1",
         "geoapi": "https://github.com/fgpv-vpgf/geoApi/releases/download/v0.0.0-1/geoapi-0.0.0.tgz",
-        "holder-ipsum": "https://github.com/euangoddard/holder-ipsum.git"
+        "holder-ipsum": "https://github.com/euangoddard/holder-ipsum.git",
+        "datatables.net": "~1.10.10",
+        "datatables.net-dt": "~1.10.10"
     },
     "overrides": {
+        "datatables.net-dt": {
+            "ignore": true
+        },
         "holder-ipsum": {
             "main": "holder-ipsum.js"
         },
         "angular-material": {
             "main": "angular-material.js"
         },
-        "geoapi": { "main": "geoapi.js" },
+        "geoapi": {
+            "main": "geoapi.js"
+        },
         "gsap": {
             "main": [
-                "src/uncompressed/TimelineLite.js",
-                "src/uncompressed/TweenLite.js",
-                "src/uncompressed/plugins/CSSPlugin.js",
-                "src/uncompressed/plugins/EaselPlugin.js"
-            ]
+        "src/uncompressed/TimelineLite.js",
+        "src/uncompressed/TweenLite.js",
+        "src/uncompressed/plugins/CSSPlugin.js",
+        "src/uncompressed/plugins/EaselPlugin.js"
+      ]
         },
-        "bezier-easing":{
+        "bezier-easing": {
             "main": "bezier-easing.js"
         },
         "dotjem-angular-tree": {
