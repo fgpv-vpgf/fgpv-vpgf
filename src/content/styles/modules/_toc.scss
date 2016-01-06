@@ -9,11 +9,22 @@
 
         // relative boxes list shadow to the current list
         position: relative;
+
+        .rv-layer-list-divider {
+            position: absolute;
+            right: -8px;
+        }
+
+        @for $i from 0 to 6 {
+            @include layer-level-step($i);
+        }
     }
 
     .rv-layer-list {
         list-style: none;
-        padding: 0 0 0 rem(1);
+
+        //padding: 0 0 0 rem(1);
+        padding: 0;
         max-width: 100%;
 
         // rotate the icon on the toggle button on open
@@ -64,6 +75,24 @@
     }
 }
 
+// http://krasimirtsonev.com/blog/article/Two-handy-and-advanced-SASS-features-and-their-limitations
+// adjust layer item, layer group toggle, and layer list divider indent
+@mixin layer-level-step($index) {
+    &.rv-#{$index} {
+        rv-layer-item .rv-layer-item-inner-container {
+            padding-left: rem(0.8) * ($index + 1);
+        }
+
+        rv-layer-group-toggle .rv-layer-group-button {
+            padding-left: rem(0.8) * ($index + 1);
+        }
+
+        .rv-layer-list-divider {
+            left: rem(0.8) * ($index - 1);
+        }
+    }
+}
+
 /*
 absolutely position a button underneath an item so it acts like a button body for the item; add content to it using aria labels; make the actual text not pronounceable by aria as well or something like that. this should work for both layer items and layer group toggles;
 */
@@ -74,7 +103,7 @@ absolutely position a button underneath an item so it acts like a button body fo
         display: flex;
         align-items: center;
 
-        // setting layer list shadow color on hover
+        // setting layer list shadow color when hover over layer group toggle
         &:hover ~ .rv-shadow {
             background-color: $primary-color;
         }
@@ -85,8 +114,8 @@ absolutely position a button underneath an item so it acts like a button body fo
             padding: 0;
             margin: 0;
             top: 0; // anchor the button to its parent container
-            left: 0;
-            width: 100%;
+            left: - rem(0.8);
+            width: calc(100% + #{rem(1.6)});
 
             .md-toggle-icon {
                 display: inline-block; // why? http://stackoverflow.com/a/25667784
@@ -109,6 +138,30 @@ absolutely position a button underneath an item so it acts like a button body fo
             align-items: center;
             height: rem(4.8);
             position: relative;
+
+            // visually highlights selected layer item in the list
+            &.rv-selected {
+
+                // don't hide toggles on a selected layer
+                .rv-layer-item-toggles rv-layer-item-button {
+                    display: inline; // IE doesn't support `initial`
+                }
+
+                &:before {
+                    background-color: $accent-color;
+                }
+            }
+
+            // selection indicator
+            &:before {
+                position: absolute;
+                content: "";
+                background-color: transparent;
+                width: rem(0.3);
+                right: - rem(0.8);
+                height: 100%;
+                transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            }
         }
 
         .rv-layer-item-button {
@@ -119,7 +172,7 @@ absolutely position a button underneath an item so it acts like a button body fo
 
             // makes the button appear to be a bit larger on the left size
             // #{...} is a way to include variables and functions in `calc`: http://stackoverflow.com/a/20236515
-            width: calc(100% + #{rem(0.8)});
+            width: calc(100% + #{rem(1.6)});
             left: - rem(0.8);
             top: 0;
             bottom: 0;
@@ -179,37 +232,21 @@ absolutely position a button underneath an item so it acts like a button body fo
         justify-content: center;
         z-index: 0; // set up new stacking context
 
-        // button which opens symbology section
         .rv-symbology-trigger {
+
+            // button which opens symbology section
             transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
             opacity: 0;
             z-index: 4;
             margin: 0;
         }
 
-        // item in the symbology list
         .rv-symbology-item {
             position: absolute;
-            width: rem(3.2); // need to specify width, otherwise it's squashed
-            height: 100%;
-            display: flex;
-            align-items: center;
 
             .rv-symbology-item-name {
-                margin-left: 8px;
                 opacity: 0;
                 display: none;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            img {
-                //border: 1px solid black;
-                padding: 1px;
-                background-color: white;
-                width: rem(3.2);
-                height: rem(3.2);
             }
         }
 

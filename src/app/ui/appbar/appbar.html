@@ -8,13 +8,19 @@
         </md-button>
 
         <span flex></span>
+        <md-button aria-label="Point Information" class="md-icon-button primary"
+            ng-class="{ selected: self.stateManager.get('mainDetails') }" ng-click="self.toggleDetails()"
+            ng-show="self.stateManager._detailsData.layers.length > 0">
+            <md-tooltip>Point Information</md-tooltip>
+            <md-icon md-svg-src="maps:place"></md-icon>
+        </md-button>
         <md-button aria-label="Sets" class="md-icon-button primary"
-            ng-class="{ selected: self.tocSelected }" ng-click="self.toggleToc()">
+            ng-class="{ selected: self.stateManager.get('mainToc') }" ng-click="self.toggleToc()">
             <md-tooltip>Layers</md-tooltip>
             <md-icon md-svg-src="maps:layers"></md-icon>
         </md-button>
         <md-button aria-label="Tools" class="md-icon-button primary"
-            ng-class="{ selected: self.toolboxSelected }" ng-click="self.toggleToolbox()">
+            ng-class="{ selected: self.stateManager.get('mainToolbox') }" ng-click="self.toggleToolbox()">
             <md-tooltip>Tools</md-tooltip>
             <md-icon md-svg-src="content:create"></md-icon>
         </md-button>

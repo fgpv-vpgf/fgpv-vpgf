@@ -27,12 +27,38 @@
             flex: 1;
             padding: 8px;
             margin-bottom: 8px;
+            position: relative;
         }
 
         .rv-footer {
             border-top: 1px solid $divider-color-light;
         }
     }
+
+    md-progress-linear {
+        position: absolute;
+        top: 0;
+        height: 3px;
+        overflow: hidden;
+        padding: 0;
+    }
+    @include subsection;
+}
+
+@mixin pane-title {
+    > .md-headline,
+    > .md-title,
+    > .md-subhead {
+        line-height: 24px;
+        margin-top: 0;
+        margin-bottom: 0;
+        display: inline-block;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
+
+@mixin subsection {
 
     // use subsections to separate content into chunks
     .rv-subsection {
@@ -52,23 +78,18 @@
         }
 
         .rv-subcontent {
-            /*padding: {
-                left: 8px;
-                right: 8px;
-            }*/
-        }
-    }
-}
+            .rv-sub-subhead {
+                margin: 0;
+            }
 
-@mixin pane-title {
-    > .md-headline,
-    > .md-title,
-    > .md-subhead {
-        line-height: 24px;
-        margin-top: 0;
-        margin-bottom: 0;
-        display: inline-block;
-        text-overflow: ellipsis;
-        overflow: hidden;
+            // remove margin from the first and last child paragraph
+            p:first-child {
+                margin-top: 0;
+            }
+
+            p:last-child {
+                margin-bottom: 0;
+            }
+        }
     }
 }

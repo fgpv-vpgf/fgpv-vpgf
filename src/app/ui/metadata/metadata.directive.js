@@ -34,8 +34,10 @@
         return directive;
     }
 
-    function Controller() {
-        //const self = this;
+    function Controller(tocService) {
+        'ngInject';
+        const self = this;
+        self.display = tocService.display.metadata;
 
         activate();
 

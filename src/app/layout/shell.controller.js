@@ -1,3 +1,4 @@
+/* global HolderIpsum */
 (function () {
     'use strict';
 
@@ -14,11 +15,15 @@
         .module('app.layout')
         .controller('ShellController', ShellController);
 
-    function ShellController(configService, $rootScope, events) {
+    function ShellController(configService, $rootScope, events, version, stateManager) {
         const self = this;
 
         self.config = configService.data;
         self.isLoading = true;
+        self.version = version;
+
+        self.singlePoint = singlePoint;
+        self.multiplePoints = multiplePoints;
 
         // TODO: mock settings; replace by config
         self.menu = [
@@ -66,6 +71,52 @@
          */
         function hideLoadingScreen() {
             self.isLoading = false;
+        }
+
+        // TODO: remove; hacky functions to display some details data
+        function singlePoint() {
+            stateManager._detailsData.layers = generateDetailsData(1);
+
+            stateManager.set({
+                side: false
+            }, 'mainDetails');
+        }
+
+        // TODO: remove; hacky functions to display some details data
+        function multiplePoints() {
+            stateManager._detailsData.layers = generateDetailsData(6);
+
+            stateManager.set({
+                side: false
+            }, 'mainDetails');
+        }
+
+        // TODO: remove; hacky functions to display some details data
+        function generateDetailsData(n) {
+            let layers = [];
+
+            // generate garbage details
+            for (let i = 0; i < n; i++) {
+                let layer = {
+                    name: HolderIpsum.words(3, true),
+                    type: 'something',
+                    items: [
+                        {
+                            name: HolderIpsum.words(3, true),
+                            data: [HolderIpsum.sentence(), HolderIpsum.sentence(), HolderIpsum.sentence(),
+                                HolderIpsum.sentence()]
+                        },
+                        {
+                            name: HolderIpsum.words(3, true),
+                            data: [HolderIpsum.sentence(), HolderIpsum.sentence()]
+                        }
+                    ]
+                };
+
+                layers.push(layer);
+            }
+
+            return layers;
         }
     }
 
