@@ -1,5 +1,8 @@
 (() => {
 
+    const HEADER_CLASS = '.rv-header';
+    const FOOTER_CLASS = '.rv-footer';
+    const SPACER_CLASS = '.rv-spacer';
     /**
      * @ngdoc directive
      * @name rvContentPane
@@ -27,6 +30,7 @@
                 titleValue: '@', // binds to the evaluated dom property
                 titleStyle: '@',
                 isLoading: '=', // bind to a property
+                headerControls: '@', // a list of directive names separated by ';' to be inserted into the header (extra controls for example)
                 footer: '@', // directive name to insert into the footer
                 closePanel: '&?', // https://docs.angularjs.org/api/ng/service/$compile
                 staticContent: '=' // makes main content section non-scrollable
@@ -46,17 +50,27 @@
         function link(scope, element, attr, ctrl) {
             const self = scope.self;
 
+            const headerSpacer = element.find(`${HEADER_CLASS} ${SPACER_CLASS}`);
+            const footer = element.find(FOOTER_CLASS);
+
             // first, try to used passed closePanel function; if not, use one on the parent panel controller, or nothing
             if (!self.closePanel && ctrl) {
                 self.closePanel = ctrl.closePanel || undefined;
             }
 
+            // `self.headerControls` is a string of directive names separated by ';' to be inserted in the content pane's header
+            if (self.headerControls) {
+                self.headerControls.split(';')
+                    .forEach(controlName => {
+                        let controlElement = $compile(`<${controlName}></${controlName}>`)(scope);
+                        headerSpacer.after(controlElement);
+                    });
+            }
+
             // `self.footer` is a name string of a directive; if specified, directive is compiled and inserted into the pane template
             if (self.footer) {
-                var footerElement = $compile(`<${self.footer}></${self.footer}>`)(scope);
-
-                element.find('.rv-footer')
-                    .append(footerElement);
+                let footerElement = $compile(`<${self.footer}></${self.footer}>`)(scope);
+                footer.append(footerElement);
             }
         }
     }
