@@ -1,7 +1,7 @@
 'use strict';
 
 // Common functions for use across other geoApi modules
-module.exports = function (esriBundle) {
+module.exports = esriBundle => {
 
     /**
     * Will return a string indicating the type of layer a layer object is.
@@ -25,6 +25,6 @@ module.exports = function (esriBundle) {
     }
 
     return {
-        getLayerType: getLayerType
+        getLayerType
     };
 };

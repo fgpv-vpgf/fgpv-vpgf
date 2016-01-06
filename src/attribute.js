@@ -4,7 +4,7 @@ const shared = require('./shared.js');
 
 // Attribute Loader related functions
 //TODO consider re-writing all the asynch stuff with the ECMA-7 style of asynch keywords
-module.exports = function (esriBundle) {
+module.exports = esriBundle => {
 
     /**
     * Will generate an empty object structure to store attributes for a single layer of features
@@ -401,6 +401,6 @@ module.exports = function (esriBundle) {
     }
 
     return {
-        loadLayerAttribs: loadLayerAttribs
+        loadLayerAttribs
     };
 };
