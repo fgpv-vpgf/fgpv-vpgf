@@ -12,9 +12,12 @@ describe('tocService', () => {
 
     // resolve stateManager locks and executes an option function; this is needed to avoid waiting for state animation  to complete
     function spyWatch(name, func) {
-        $rootScope.$watch(() => stateManager.get(name), (newValue, oldValue) => {
+        const sm = stateManager; // global stateManager variable was disappearing for some reason
+
+        $rootScope.$watch(() => sm.get(name), (newValue, oldValue) => {
             //console.log(name, newValue, oldValue);
-            stateManager.resolve(name);
+
+            sm.resolve(name);
             if (func) {
                 func(newValue, oldValue);
             }
@@ -37,6 +40,8 @@ describe('tocService', () => {
             let layer = tocService.data.items[0].items[0]; // first layer from the first group
             let layerToggle = layer.toggles.metadata;
 
+            const to = $timeout; // global $timeout variable was disappearing for some reason, I think because of the async nature of these tests
+
             spyWatch('sideMetadata');
             spyWatch('side');
 
@@ -52,7 +57,7 @@ describe('tocService', () => {
             toggle.action(layer); // open metadata panel; it will generate some fake metadata right now
             $rootScope.$digest();
 
-            $timeout.flush(150); // flush timer past loading timeout
+            to.flush(150); // flush timer past loading timeout
 
             expect(display.isLoading)
                 .toBe(true);
@@ -62,7 +67,7 @@ describe('tocService', () => {
             expect(display.layerId)
                 .toBe(0);
 
-            $timeout.flush(5000); // flush metadata generation timer
+            to.flush(5000); // flush metadata generation timer
 
             expect(display.isLoading)
                 .toBe(false);
@@ -89,7 +94,7 @@ describe('tocService', () => {
             toggle.action(layer); // close metadata panel;
             $rootScope.$digest();
 
-            $timeout.verifyNoPendingTasks();
+            to.verifyNoPendingTasks();
         });
     });
 });
