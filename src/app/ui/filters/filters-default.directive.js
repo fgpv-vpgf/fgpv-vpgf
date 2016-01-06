@@ -18,7 +18,7 @@
      *
      * @return {object} directive body
      */
-    function rvFiltersDefault() {
+    function rvFiltersDefault($timeout) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default.html',
@@ -34,7 +34,40 @@
         /**
          * Skeleton link function.
          */
-        function linkFunc() { //scope, el, attr, ctrl) {
+        function linkFunc(scope, el) { //scope, el, attr, ctrl) {
+            const self = scope.self;
+
+            $timeout(() => {
+
+                let table = el.find('.rv-data-table')
+                    .first()
+                    .DataTable({
+                        dom: 'rti',
+                        ajax: 'content/fake_data.json',
+                        deferRender: true,
+                        scrollY: true,
+                        scroller: true,
+                        columns: [
+                            {
+                                title: 'ID'
+                            },
+                            {
+                                title: 'First Name'
+                            },
+                            {
+                                title: 'Last Name'
+                            },
+                            {
+                                title: 'ZIP'
+                            },
+                            {
+                                title: 'Country'
+                            }
+                        ]
+                    });
+
+                self.table = table;
+            }, 10000);
         }
     }
 
@@ -44,7 +77,12 @@
     function Controller(tocService) {
         'ngInject';
         const self = this;
+
         self.display = tocService.display.filters;
+
+        self.draw = () => {
+            self.table.scroller.measure();
+        };
 
         activate();
 
