@@ -1,8 +1,10 @@
 'use strict';
 
+const shared = require('./shared.js');
+
 // Attribute Loader related functions
 //TODO consider re-writing all the asynch stuff with the ECMA-7 style of asynch keywords
-module.exports = function (esriBundle) {
+module.exports = esriBundle => {
 
     /**
     * Will generate an empty object structure to store attributes for a single layer of features
@@ -42,28 +44,6 @@ module.exports = function (esriBundle) {
             //TODO verify we still have use for the parent pointer
             elem.parent = layerData;
         });
-    }
-
-    /**
-    * Will return a string indicating the type of layer a layer object is.
-    * @private
-    * @param  {Object} layer an ESRI API layer object
-    * @return {String} layer type
-    */
-    function getLayerType(layer) {
-        //TODO should this function be part of the layer bundle instead?  what is best way to have shared functions in geoApi
-        if (layer instanceof esriBundle.FeatureLayer) {
-            return 'FeatureLayer';
-        } else if (layer instanceof esriBundle.WmsLayer) {
-            return 'WmsLayer';
-        } else if (layer instanceof esriBundle.ArcGISDynamicMapServiceLayer) {
-            return 'ArcGISDynamicMapServiceLayer';
-        } else if (layer instanceof esriBundle.ArcGISTiledMapServiceLayer) {
-            return 'ArcGISTiledMapServiceLayer';
-        } else {
-            //Can add more types above as we support them
-            return 'UNKNOWN';
-        }
     }
 
     //skim the last number off the Url
@@ -393,8 +373,8 @@ module.exports = function (esriBundle) {
         let resultProm = new Promise(
 
             function (resolve, reject) {
-
-                switch (getLayerType(layer)) {
+                let shr = shared(esriBundle);
+                switch (shr.getLayerType(layer)) {
                     case 'FeatureLayer':
 
                         processFeatureLayer(layer, options, resolve, reject);
@@ -421,6 +401,6 @@ module.exports = function (esriBundle) {
     }
 
     return {
-        loadLayerAttribs: loadLayerAttribs
+        loadLayerAttribs
     };
 };
