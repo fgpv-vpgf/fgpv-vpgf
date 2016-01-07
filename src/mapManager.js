@@ -7,9 +7,9 @@ var basemap = require('./basemap.js');
   * @area geoAPI
   * @description
   *
-  * The `MapManager` module provides object with the following
-  * - `Scalebar` {class} of esri/dijit/Scalebar
-  * - setupMap {function} interates over the settings and apply logic for any items present
+  * The `MapManager` module exports an object with the following properties:
+  * - `Scalebar` {type} of esri/dijit/Scalebar
+  * - `setupMap` {function} interates over config settings and apply logic for any items present.
   */
 
 // mapManager module, provides function to setup a map
@@ -27,21 +27,21 @@ module.exports = function (esriBundle) {
      * @memberof mapManager
      * @description
      * Setup map features with info provided by configuration
+     * <div>
+     * -- Demo: The follwoing is from description section of ngDoc --
      *
+     * <h4>TODO</h4>
+     * <p>Rename BasemapControl and ScalebarControl</p>
+     * -- End of description section --
+     * </div>
      *
-     * <h3>Return Object</h3>
+     * @param {esriMap} map ESRI map object
+     * @param {Object} settings JSON object of map configurations
+     * @return {Object} with following properties:
      * <ul>
      *    <li>BasemapControl - an object with setBasemap function and a BasemapGallery object</li>
      *    <li>ScalebarControl - a reference to the scalebar control on the map</li>
      * </ul>
-     *
-     * <h3>TODO</h3>
-     * <p>Rename BasemapControl and ScalebarControl</p>
-     *
-     *
-     * @param {esriMap} map ESRI map object
-     * @param {Object} settings JSON object of map configurations
-     * @return {Object} object with reference to widgets/controls created following configuration
      */
      mapManager.setupMap = function (map, settings) {
 
