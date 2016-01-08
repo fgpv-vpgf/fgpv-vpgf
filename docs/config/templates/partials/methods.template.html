@@ -1,0 +1,33 @@
+{# method template #}
+{% if group.children.length %}
+    <material-divider></material-divider>
+    <h3>Function</h3>
+    <ul>
+        {% for component in group.children %}
+        <li>
+            <div>
+            <h4>{$ component.name $}</h4>
+            {%- if component.description %}
+                <p>{$ component.description $}</p>
+            {% endif -%}
+
+            {% if component.params.length %}
+                <h5>Params</h5>
+                <ul>
+                {# display param #}
+                {% for param in component.params %}
+                    <li>{$ param.name $} - &#123; {$ param.typeExpression $} &#125; - {$ param.description $}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if component.returns %}
+                <h5>Return</h5>
+                {# disply return type if exists #}
+                <p> &#123; {$ component.returns.typeExpression $} &#125; - {$ component.returns.description $}</p>
+            {% endif %}
+            </div>
+        </li>
+        {%- endfor %}
+    </ul>
+{% endif %}

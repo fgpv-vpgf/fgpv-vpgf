@@ -1,0 +1,12 @@
+<!-- componentGroup.template.html -->
+<!-- <md-toolbar layout="row" class="site-content-toolbar md-whiteframe-glow-z1"><h2 layout-padding  >{$ doc.title $} in {$ doc.module.name $}</h2></md-toolbar> -->
+<md-toolbar layout="row" class="site-content-toolbar md-whiteframe-glow-z1"><h2 layout-padding  >{$ groupType $} : {$ doc.name $} </h2></md-toolbar>
+<md-content layout-padding flex>
+<ul>
+{% for component in doc.components %}
+<li>{$ component | toInternalRoute(doc) $}
+    {%- if component.description %} - {$ component.description $}{% endif -%}
+</li>
+{%- endfor %}
+</ul>
+</md-content>
