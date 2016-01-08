@@ -4,7 +4,6 @@ var basemap = require('./basemap.js');
 /**
   * @ngdoc module
   * @name mapManager
-  * @area geoAPI
   * @description
   *
   * The `MapManager` module exports an object with the following properties:
@@ -43,7 +42,7 @@ module.exports = function (esriBundle) {
      *    <li>ScalebarControl - a reference to the scalebar control on the map</li>
      * </ul>
      */
-     mapManager.setupMap = function (map, settings) {
+    mapManager.setupMap = function (map, settings) {
 
         // var map = arguments[0];
         // var settings = arguments[1];
