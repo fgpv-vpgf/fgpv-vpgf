@@ -1,0 +1,31 @@
+@mixin filters {
+    .rv-filters {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        padding: 8px;
+
+        // all this does is fits the table vertically in the available space
+        .dataTables_wrapper {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+
+            .dataTables_scroll {
+                flex: 1;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+
+                .dataTables_scrollHead {
+                    overflow: inherit !important;
+                }
+            }
+        }
+    }
+}

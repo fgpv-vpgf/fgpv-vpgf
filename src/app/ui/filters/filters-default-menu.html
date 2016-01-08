@@ -1,0 +1,107 @@
+<md-menu>
+    <md-button aria-label="Open data panel menu" class="md-icon-button black rv-icon-auto"
+        ng-click="$mdOpenMenu($event)">
+        <md-icon md-svg-src="navigation:more_vert"></md-icon>
+    </md-button>
+    <md-menu-content class="rv-menu rv-dense" width="5">
+        <md-menu-item>
+            <md-button ng-click="self.setMode('minimized')">
+                <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hidden' : self.filtersMode() != 'minimized' }"></md-icon>
+                Map and Filters
+            </md-button>
+        </md-menu-item>
+        <md-menu-item>
+            <md-button ng-click="self.setMode('default')">
+                <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hidden' : self.filtersMode() != 'default' }"></md-icon>
+                Data and Map
+                <!--md-icon class="rv-alt-icon" md-svg-icon="action:view_agenda"></md-icon-->
+            </md-button>
+        </md-menu-item>
+        <md-menu-item>
+            <md-button ng-click="self.setMode('full')">
+                <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hidden' : self.filtersMode() != 'full' }"></md-icon>
+                Data
+            </md-button>
+        </md-menu-item>
+        <md-menu-divider></md-menu-divider>
+        <md-menu-item>
+            <md-button ng-click="self.toggleNotifications()">
+                <md-icon md-svg-icon="action:search"></md-icon>
+                Enable Search
+            </md-button>
+        </md-menu-item>
+        <md-menu-item>
+            <md-button ng-click="self.toggleNotifications()">
+                <md-icon md-svg-icon="community:filter"></md-icon>
+                Enable Filters
+            </md-button>
+        </md-menu-item>
+        <md-menu-divider></md-menu-divider>
+        <md-menu-item>
+            <md-button ng-click="self.toggleNotifications()">
+                <md-icon md-svg-icon="action:print"></md-icon>
+                Print
+            </md-button>
+        </md-menu-item>
+        <md-menu-item>
+            <md-button ng-click="self.toggleNotifications()">
+                <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
+                Export
+            </md-button>
+        </md-menu-item>
+    </md-menu-content>
+</md-menu>
+
+<!--md-menu-bar>
+    <md-menu>
+        <button ng-click="$mdOpenMenu()">
+            File
+        </button>
+
+        <md-menu-content>
+            <md-menu-item>
+                <md-button ng-click="ctrl.sampleAction('share', $event)">
+                    Share...
+                </md-button>
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>
+            <md-menu-item>
+                <md-menu>
+                    <md-button ng-click="$mdOpenMenu()">New</md-button>
+                    <md-menu-content>
+                        <md-menu-item>
+                            <md-button ng-click="ctrl.sampleAction('New Document', $event)">Document</md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="ctrl.sampleAction('New Spreadsheet', $event)">Spreadsheet</md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="ctrl.sampleAction('New Presentation', $event)">Presentation</md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="ctrl.sampleAction('New Form', $event)">Form</md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="ctrl.sampleAction('New Drawing', $event)">Drawing</md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+            </md-menu-item>
+            <md-menu-item>
+                <md-button ng-click="ctrl.sampleAction('Open', $event)">
+                    Open...
+                </md-button>
+            </md-menu-item>
+            <md-menu-item>
+                <md-button disabled="disabled" ng-click="ctrl.sampleAction('Rename', $event)">
+                    Rename
+                </md-button>
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>
+            <md-menu-item>
+                <md-button ng-click="ctrl.sampleAction('Print', $event)">
+                    Print
+                </md-button>
+            </md-menu-item>
+        </md-menu-content>
+    </md-menu-->
