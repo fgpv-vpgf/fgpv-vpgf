@@ -1,0 +1,25 @@
+@mixin datatable {
+    $pathPrefix: "content/images/datatables/";
+
+    table.dataTable thead {
+        .sorting {
+            background-image: url($pathPrefix + "sort_both.png");
+        }
+
+        .sorting_asc {
+            background-image: url($pathPrefix + "sort_asc.png");
+        }
+
+        .sorting_desc {
+            background-image: url($pathPrefix + "sort_desc.png");
+        }
+
+        .sorting_asc_disabled {
+            background-image: url($pathPrefix + "sort_asc_disabled.png");
+        }
+
+        .sorting_desc_disabled {
+            background-image: url($pathPrefix + "sort_desc_disabled.png");
+        }
+    }
+}
