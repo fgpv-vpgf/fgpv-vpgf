@@ -52,11 +52,11 @@
         }
 
         function setMode(mode) {
-            stateManager.setMode('filters', mode);
+            stateManager.setMorph('filters', mode);
         }
 
         function filtersMode() {
-            return stateManager.getMode('filters');
+            return stateManager.state.filters.morph;
         }
     }
 })();

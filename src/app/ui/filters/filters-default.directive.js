@@ -91,12 +91,11 @@
         activate();
 
         function activate() {
-            // TODO: watching mode change on stateManager is triggered when variable changes, no callback upon
-            // completing the transtion, that's why we need a delay here; update this after stateManager refactor
-            $scope.$watch('stateManager.getMode("filters")', newValue => {
-                if (newValue) {
-                    console.log(newValue, 'reDRAW!');
-                    $timeout(self.draw, 1000);
+            // wait for morph on filters panel to complete and redraw the datatable
+            $scope.$on('stateChangeComplete', (event, name, property, value, skip) => {
+                console.log(event, name, property, value, skip);
+                if (name === 'filters') {
+                    self.draw();
                 }
             });
         }

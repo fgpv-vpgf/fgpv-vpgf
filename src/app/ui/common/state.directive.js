@@ -22,22 +22,27 @@
         function linkFunc(scope, element, attr) {
             scope.stateManager = stateManager;
 
-            scope.$watch('stateManager.get("' + [attr.rvState] + '")',
+            scope.$watch(`stateManager.state.${attr.rvState}.active`,
                 value => {
+                    let skip = `stateManager.state.${attr.rvState}.activeSkip`;
+
                     // check if the transition should be animated
-                    if (stateManager.isAnimated(attr.rvState)) { // animate hide/show
-                        $animate[value ? 'removeClass' : 'addClass'](element, 'ng-hide', {
-                            tempClasses: 'ng-hide-animate'
-                        })
-                        .then(() => { // resolve state change after animation ends
-                            stateManager.resolve(attr.rvState);
-                        });
+                    if (skip) { // animate hide/show
+                        $animate[value ? 'removeClass' : 'addClass']
+                            (element, 'ng-hide', {
+                                tempClasses: 'ng-hide-animate'
+                            })
+                            .then(() => resolve()); // resolve state change after animation ends
                     } else { // hide/show element without animating it
                         element[value ? 'removeClass' : 'addClass']('ng-hide');
-                        stateManager.resolve(attr.rvState);
+                        resolve();
                     }
                 }
             );
+
+            function resolve() {
+                stateManager.resolve(attr.rvState, 'active');
+            }
         }
     }
 })();
