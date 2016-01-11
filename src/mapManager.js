@@ -1,5 +1,5 @@
 'use strict';
-var basemap = require('./basemap.js');
+const basemap = require('./basemap.js');
 
 /**
   * @ngdoc module
@@ -16,8 +16,9 @@ module.exports = function (esriBundle) {
     // note: a decision was made to include esri/dijit/Scalebar here because
     // it has minimum interaction after creation, no need for the additional
     // scalebar.js
-    var mapManager = {
-        Scalebar: esriBundle.Scalebar
+    const mapManager = {
+        Scalebar: esriBundle.Scalebar,
+        Map: esriBundle.Map
     };
 
     /**
@@ -44,8 +45,6 @@ module.exports = function (esriBundle) {
      */
     mapManager.setupMap = function (map, settings) {
 
-        // var map = arguments[0];
-        // var settings = arguments[1];
         let basemapCtrl;
         let scalebarCtrl;
 
@@ -56,7 +55,7 @@ module.exports = function (esriBundle) {
             // the alternative is to pass geoApi reference after creation, and then use the geoApi to
             // access the properly initialized modules.
             // or Is there an other way to do it?
-            let lbasemap = basemap(esriBundle);
+            const lbasemap = basemap(esriBundle);
 
             // basemapCtrl is a basemap gallery object, should store this value for application use
             basemapCtrl = lbasemap.makeBasemaps(settings.basemaps, map);
