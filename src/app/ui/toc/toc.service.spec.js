@@ -3,27 +3,33 @@
 // lots of info about $timeout here: http://www.bradoncode.com/blog/2015/06/11/unit-testing-code-that-uses-timeout-angularjs/
 
 describe('tocService', () => {
+    // global stateManager variable was disappearing for some reason
+    let rs;
+    let sm;
+
     beforeEach(() => {
         bard.appModule('app.ui.toc', 'app.common.router');
 
         // inject services
         bard.inject('tocService', 'stateManager', '$rootScope', '$timeout');
+        rs = $rootScope;
+        sm = stateManager;
     });
 
     // resolve stateManager locks and executes an option function; this is needed to avoid waiting for state animation  to complete
     function spyWatch(name, func) {
-        const sm = stateManager; // global stateManager variable was disappearing for some reason
+        //const sm = stateManager; // global stateManager variable was disappearing for some reason
 
-        $rootScope.$watch(() => sm.get(name), (newValue, oldValue) => {
-            //console.log(name, newValue, oldValue);
+        rs.$watch(() => sm.state[name].active, (newValue, oldValue) => {
+            //console.log('resolving', name, newValue, oldValue);
 
-            sm.resolve(name);
+            sm.resolve(name, 'active');
             if (func) {
                 func(newValue, oldValue);
             }
         });
 
-        $rootScope.$digest();
+        rs.$digest();
     }
 
     describe('tocService', () => {
@@ -55,9 +61,9 @@ describe('tocService', () => {
                 .toEqual({}); // no metadata
 
             toggle.action(layer); // open metadata panel; it will generate some fake metadata right now
-            $rootScope.$digest();
+            rs.$digest();
 
-            to.flush(150); // flush timer past loading timeout
+            to.flush(200); // flush timer past loading timeout
 
             expect(display.isLoading)
                 .toBe(true);
@@ -80,8 +86,10 @@ describe('tocService', () => {
                 .toBeGreaterThan(0); // some metadata was generated
 
             spyWatch('sideMetadata', newValue => {
+
                 // waiting for sideMetadata to close, it should clear metadata display object
                 if (!newValue) {
+
                     expect(display.layerId)
                         .toBe(-1); // layer id is reset
                     expect(layerToggle.selected)
@@ -90,9 +98,8 @@ describe('tocService', () => {
                     done();
                 }
             });
-
             toggle.action(layer); // close metadata panel;
-            $rootScope.$digest();
+            rs.$digest();
 
             to.verifyNoPendingTasks();
         });

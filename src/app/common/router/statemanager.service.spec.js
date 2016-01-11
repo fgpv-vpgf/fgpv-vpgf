@@ -3,37 +3,37 @@
 describe('stateManager', () => {
     const mockState = {
         main: {
-            enabled: false
+            active: false
         },
         mainToc: {
-            enabled: false,
+            active: false,
             parent: 'main'
         },
         mainToolbox: {
-            enabled: false,
+            active: false,
             parent: 'main'
         },
         side: {
-            enabled: false
+            active: false
         },
         sideMetadata: {
-            enabled: false,
+            active: false,
             parent: 'side'
         },
         sideSettings: {
-            enabled: false,
+            active: false,
             parent: 'side'
         },
         filters: {
-            enabled: false,
-            mode: 'default'
+            active: false,
+            morph: 'default'
         },
         filtersFulldata: {
-            enabled: false,
+            active: false,
             parent: 'filters',
         },
         filtersNamedata: {
-            enabled: false,
+            active: false,
             parent: 'filters'
         }
     };
@@ -55,87 +55,91 @@ describe('stateManager', () => {
 
     describe('stateManager', () => {
         // check that controller is created
+
         it('should be created successfully', () => {
+            let state = stateManager.state;
+
             // check if service is defined
             expect(stateManager)
                 .toBeDefined();
 
             // check initial states
-            expect(stateManager.get('main'))
+            expect(state.main.active)
                 .toBe(false);
-            expect(stateManager.get('mainToc'))
+            expect(state.mainToc.active)
                 .toBe(false);
-            expect(stateManager.get('mainToolbox'))
+            expect(state.mainToolbox.active)
                 .toBe(false);
         });
 
         it('should change child state correctly', done => {
-            // open mainToc; main should open as parent
+            let state = stateManager.state;
 
+            // open mainToc; main should open as parent
             // need to listen on item state changes and resolve locks on the stateManager
-            $rootScope.$watch(() => stateManager.get('mainToc'), () =>
-                stateManager.resolve('mainToc'));
-            $rootScope.$watch(() => stateManager.get('mainToolbox'), () =>
-                stateManager.resolve('mainToolbox'));
-            $rootScope.$watch(() => stateManager.get('main'), () =>
-                stateManager.resolve('main'));
+            $rootScope.$watch(() => state.mainToc.active, () =>
+                stateManager.resolve('mainToc', 'active'));
+            $rootScope.$watch(() => state.mainToolbox.active, () =>
+                stateManager.resolve('mainToolbox', 'active'));
+            $rootScope.$watch(() => state.main.active, () =>
+                stateManager.resolve('main', 'active'));
 
             $rootScope.$digest(); // need to kickstart digest cycle to init watches
 
-            stateManager.set('mainToc')
+            stateManager.setActive('mainToc')
                 .then(() => {
-                    expect(stateManager.get('main'))
+                    expect(state.main.active)
                         .toBe(true);
-                    expect(stateManager.isAnimated('main'))
-                        .toBe(true); // panel should animate
+                    expect(state.main.activeSkip)
+                        .toBe(false); // panel should animate
 
-                    expect(stateManager.get('mainToc'))
+                    expect(state.mainToc.active)
                         .toBe(true);
-                    expect(stateManager.isAnimated('mainToc'))
-                        .toBe(false); // mainToc should animate
+                    expect(state.mainToc.activeSkip)
+                        .toBe(true); // mainToc should not animate
 
-                    expect(stateManager.get('mainToolbox'))
+                    expect(state.mainToolbox.active)
                         .toBe(false);
-                    expect(stateManager.isAnimated('mainToolbox'))
-                        .toBe(true); // mainToolbox should not do anything, so it defaults to animate
+                    expect(state.mainToolbox.activeSkip)
+                        .toBe(false); // mainToolbox should not do anything, so it defaults to animate
 
                     // open toolbox; toc should close
-                    return stateManager.set('mainToolbox');
+                    return stateManager.setActive('mainToolbox');
                 })
                 .then(() => {
-                    expect(stateManager.get('main'))
+                    expect(state.main.active)
                         .toBe(true);
-                    expect(stateManager.isAnimated('main'))
-                        .toBe(true); // main should not do anything, still says animate from before
+                    expect(state.main.activeSkip)
+                        .toBe(false); // main should not do anything, still says animate from before
 
-                    expect(stateManager.get('mainToc'))
+                    expect(state.mainToc.active)
                         .toBe(false);
-                    expect(stateManager.isAnimated('mainToc'))
-                        .toBe(true); // mainToc is closing, should animate
+                    expect(state.mainToc.activeSkip)
+                        .toBe(false); // mainToc is closing, should animate
 
-                    expect(stateManager.get('mainToolbox'))
+                    expect(state.mainToolbox.active)
                         .toBe(true);
-                    expect(stateManager.isAnimated('mainToolbox'))
-                        .toBe(true); // mainToolbox is openeing, should animate
+                    expect(state.mainToolbox.activeSkip)
+                        .toBe(false); // mainToolbox is openeing, should animate
 
                     // close toolbox; main should also close
-                    return stateManager.set('mainToolbox');
+                    return stateManager.setActive('mainToolbox');
                 })
                 .then(() => {
-                    expect(stateManager.get('main'))
+                    expect(state.main.active)
                         .toBe(false);
-                    expect(stateManager.isAnimated('main'))
-                        .toBe(true); // main is closing, should animate
+                    expect(state.main.activeSkip)
+                        .toBe(false); // main is closing, should animate
 
-                    expect(stateManager.get('mainToc'))
+                    expect(state.mainToc.active)
                         .toBe(false);
-                    expect(stateManager.isAnimated('mainToc'))
-                        .toBe(false); // mainToc is closed immediately after its parent, no animation
+                    expect(state.mainToc.activeSkip)
+                        .toBe(true); // mainToc is closed immediately after its parent, no animation
 
-                    expect(stateManager.get('mainToolbox'))
+                    expect(state.mainToolbox.active)
                         .toBe(false);
-                    expect(stateManager.isAnimated('mainToolbox'))
-                        .toBe(false); // mainToolbox is closed immediately after its parent, no animation
+                    expect(state.mainToolbox.activeSkip)
+                        .toBe(true); // mainToolbox is closed immediately after its parent, no animation
 
                     done();
                 });
@@ -144,21 +148,22 @@ describe('stateManager', () => {
         });
 
         it('should change parent state correctly', done => {
-            // open main; should auto-open one of the children
+            let state = stateManager.state;
 
+            // open main; should auto-open one of the children
             // need to listen on item state changes and resolve locks on the stateManager
-            $rootScope.$watch(() => stateManager.get('main'), () =>
-                stateManager.resolve('main'));
+            $rootScope.$watch(() => state.main.active, () =>
+                stateManager.resolve('main', 'active'));
 
             $rootScope.$digest();
 
-            stateManager.set('main')
+            stateManager.setActive('main')
                 .then(() => {
-                    expect(stateManager.get('main'))
+                    expect(state.main.active)
                         .toBe(true);
 
-                    let mainToc = stateManager.get('mainToc');
-                    let mainToolbox = stateManager.get('mainToolbox');
+                    let mainToc = state.mainToc.active;
+                    let mainToolbox = state.mainToolbox.active;
 
                     // only one child should be open
                     expect(mainToc || mainToolbox)
@@ -167,23 +172,23 @@ describe('stateManager', () => {
                         .toBe(false);
 
                     // close parent item: everything should close
-                    return stateManager.set('main');
+                    return stateManager.setActive('main');
                 })
                 .then(() => {
-                    expect(stateManager.get('main'))
+                    expect(state.main.active)
                         .toBe(false);
-                    expect(stateManager.isAnimated('main'))
-                        .toBe(true); // main is closing, should animate
+                    expect(state.main.activeSkip)
+                        .toBe(false); // main is closing, should animate
 
-                    expect(stateManager.get('mainToc'))
+                    expect(state.mainToc.active)
                         .toBe(false);
-                    expect(stateManager.isAnimated('mainToc'))
-                        .toBe(false); // mainToc is closed immediately after its parent, no animation
+                    expect(state.mainToc.activeSkip)
+                        .toBe(true); // mainToc is closed immediately after its parent, no animation
 
-                    expect(stateManager.get('mainToolbox'))
+                    expect(state.mainToolbox.active)
                         .toBe(false);
-                    expect(stateManager.isAnimated('mainToolbox'))
-                        .toBe(false); // mainToolbox is closed immediately after its parent, no animation
+                    expect(state.mainToolbox.activeSkip)
+                        .toBe(true); // mainToolbox is closed immediately after its parent, no animation
 
                     done();
                 });
@@ -192,94 +197,98 @@ describe('stateManager', () => {
         });
 
         it('should change modes correctly', () => {
-            expect(stateManager.getMode('filters'))
+            let state = stateManager.state;
+
+            expect(state.filters.morph)
                 .toBe('default');
 
-            stateManager.setMode('filters', 'half');
+            stateManager.setMorph('filters', 'half');
 
-            expect(stateManager.getMode('filters'))
+            expect(state.filters.morph)
                 .toBe('half');
         });
 
         it('should chain state changes correctly', done => {
-            expect(stateManager.get('main'))
-                .toBe(false);
-            expect(stateManager.isAnimated('main'))
-                .toBe(true); // defaults to true
+            let state = stateManager.state;
 
-            expect(stateManager.get('mainToc'))
+            expect(state.main.active)
                 .toBe(false);
-            expect(stateManager.isAnimated('mainToc'))
-                .toBe(true); // defaults to true
+            expect(state.main.activeSkip)
+                .toBe(false); // defaults to true
 
-            expect(stateManager.get('side'))
+            expect(state.mainToc.active)
                 .toBe(false);
-            expect(stateManager.isAnimated('side'))
-                .toBe(true); // defaults to true
+            expect(state.mainToc.activeSkip)
+                .toBe(false); // defaults to true
 
-            expect(stateManager.get('sideMetadata'))
+            expect(state.side.active)
                 .toBe(false);
-            expect(stateManager.isAnimated('sideMetadata'))
-                .toBe(true); // defaults to true
+            expect(state.side.activeSkip)
+                .toBe(false); // defaults to true
+
+            expect(state.sideMetadata.active)
+                .toBe(false);
+            expect(state.sideMetadata.activeSkip)
+                .toBe(false); // defaults to true
 
             // need to listen on item state changes and resolve locks on the stateManager
-            $rootScope.$watch(() => stateManager.get('main'), () =>
-                stateManager.resolve('main'));
-            $rootScope.$watch(() => stateManager.get('mainToc'), (newValue) => {
+            $rootScope.$watch(() => state.main.active, () =>
+                stateManager.resolve('main', 'active'));
+            $rootScope.$watch(() => state.mainToc.active, newValue => {
                 // toc should be open already but not metadata
                 if (newValue) {
-                    expect(stateManager.get('main'))
+                    expect(state.main.active)
                         .toBe(true);
-                    expect(stateManager.isAnimated('main'))
-                        .toBe(true); // main is opening, should animate
+                    expect(state.main.activeSkip)
+                        .toBe(false); // main is opening, should animate
 
-                    expect(stateManager.get('mainToc'))
+                    expect(state.mainToc.active)
                         .toBe(true);
-                    expect(stateManager.isAnimated('mainToc'))
-                        .toBe(false); // mainToc is opened immediately, no animation
+                    expect(state.mainToc.activeSkip)
+                        .toBe(true); // mainToc is opened immediately, no animation
 
-                    expect(stateManager.get('side'))
+                    expect(state.side.active)
                         .toBe(false);
-                    expect(stateManager.isAnimated('side'))
-                        .toBe(true); // defaults to true
+                    expect(state.side.activeSkip)
+                        .toBe(false); // defaults to animation
 
-                    expect(stateManager.get('sideMetadata'))
+                    expect(state.sideMetadata.active)
                         .toBe(false);
-                    expect(stateManager.isAnimated('sideMetadata'))
-                        .toBe(true); // defaults to true
+                    expect(state.sideMetadata.activeSkip)
+                        .toBe(false); // defaults to animation
                 }
-                stateManager.resolve('mainToc');
+                stateManager.resolve('mainToc', 'active');
             });
-            $rootScope.$watch(() => stateManager.get('side'), () =>
-                stateManager.resolve('side'));
-            $rootScope.$watch(() => stateManager.get('sideMetadata'), () =>
-                stateManager.resolve('sideMetadata'));
+            $rootScope.$watch(() => state.side.active, () =>
+                stateManager.resolve('side', 'active'));
+            $rootScope.$watch(() => state.sideMetadata.active, () =>
+                stateManager.resolve('sideMetadata', 'active'));
 
             $rootScope.$digest();
 
             // open mainToc; stateManager should wait for mainToc to resolve and then open sideMetadata
-            stateManager.set('mainToc', 'sideMetadata')
+            stateManager.setActive('mainToc', 'sideMetadata')
                 .then(() => {
                     // both mainToc and sideMetadata should be open
-                    expect(stateManager.get('main'))
+                    expect(state.main.active)
                         .toBe(true);
-                    expect(stateManager.isAnimated('main'))
-                        .toBe(true); // main hasn't change its state since last transition
+                    expect(state.main.activeSkip)
+                        .toBe(false); // main hasn't change its state since last transition
 
-                    expect(stateManager.get('mainToc'))
+                    expect(state.mainToc.active)
                         .toBe(true);
-                    expect(stateManager.isAnimated('mainToc'))
-                        .toBe(false); // mainToc hasn't change its state since last transition
+                    expect(state.mainToc.activeSkip)
+                        .toBe(true); // mainToc hasn't change its state since last transition
 
-                    expect(stateManager.get('side'))
+                    expect(state.side.active)
                         .toBe(true);
-                    expect(stateManager.isAnimated('side'))
-                        .toBe(true); // side is opening, should animate
+                    expect(state.side.activeSkip)
+                        .toBe(false); // side is opening, should animate
 
-                    expect(stateManager.get('sideMetadata'))
+                    expect(state.sideMetadata.active)
                         .toBe(true);
-                    expect(stateManager.isAnimated('sideMetadata'))
-                        .toBe(false); // sideMetadata is opened immediately, no animation
+                    expect(state.sideMetadata.activeSkip)
+                        .toBe(true); // sideMetadata is opened immediately, no animation
 
                     done();
                 });
