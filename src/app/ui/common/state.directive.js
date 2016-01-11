@@ -32,16 +32,16 @@
                             (element, 'ng-hide', {
                                 tempClasses: 'ng-hide-animate'
                             })
-                            .then(() => resolve()); // resolve state change after animation ends
+                            .then(() => callback()); // resolve state change after animation ends
                     } else { // hide/show element without animating it
                         element[value ? 'removeClass' : 'addClass']('ng-hide');
-                        resolve();
+                        callback();
                     }
                 }
             );
 
-            function resolve() {
-                stateManager.resolve(attr.rvState, 'active');
+            function callback() {
+                stateManager.callback(attr.rvState, 'active');
             }
         }
     }

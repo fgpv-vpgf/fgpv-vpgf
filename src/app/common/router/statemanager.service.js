@@ -34,7 +34,7 @@
             setActive,
             setMorph,
 
-            resolve,
+            callback,
 
             state: {},
 
@@ -112,7 +112,7 @@
             }
         };
 
-        let fulfillStore = {}; // keeping references to promise fulfill functions
+        const fulfillStore = {}; // keeping references to promise fulfill functions
 
         return service;
 
@@ -237,10 +237,11 @@
          * Resolves promise on the item waiting for its transition to complete.
          * @param  {String} itemName name of the state to resolve
          */
-        function resolve(itemName, property) {
+        function callback(itemName, property) {
             const fulfillKey = `${property}${itemName}`;
 
             //console.log('Resolving state item lock:', itemName, property, fulfillStore[fulfillKey]); //, item.fulfill);
+            // there is no memory leak since there is a finite (and small) number of fulfill keys
             if (fulfillStore[fulfillKey]) {
                 fulfillStore[fulfillKey]();
             }

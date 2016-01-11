@@ -72,7 +72,7 @@
                         onComplete: () => {
                             // Remove old class from the element after morph is completed.
                             el.removeClass(oldClass);
-                            resolve();
+                            callback();
                             console.log('morph completed');
                         }
                     });
@@ -81,8 +81,8 @@
                 }
             });
 
-            function resolve() {
-                stateManager.resolve(attr.rvMorph, 'morph');
+            function callback() {
+                stateManager.callback(attr.rvMorph, 'morph');
             }
         }
     }

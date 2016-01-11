@@ -78,11 +78,11 @@ describe('stateManager', () => {
             // open mainToc; main should open as parent
             // need to listen on item state changes and resolve locks on the stateManager
             $rootScope.$watch(() => state.mainToc.active, () =>
-                stateManager.resolve('mainToc', 'active'));
+                stateManager.callback('mainToc', 'active'));
             $rootScope.$watch(() => state.mainToolbox.active, () =>
-                stateManager.resolve('mainToolbox', 'active'));
+                stateManager.callback('mainToolbox', 'active'));
             $rootScope.$watch(() => state.main.active, () =>
-                stateManager.resolve('main', 'active'));
+                stateManager.callback('main', 'active'));
 
             $rootScope.$digest(); // need to kickstart digest cycle to init watches
 
@@ -153,7 +153,7 @@ describe('stateManager', () => {
             // open main; should auto-open one of the children
             // need to listen on item state changes and resolve locks on the stateManager
             $rootScope.$watch(() => state.main.active, () =>
-                stateManager.resolve('main', 'active'));
+                stateManager.callback('main', 'active'));
 
             $rootScope.$digest();
 
@@ -233,7 +233,7 @@ describe('stateManager', () => {
 
             // need to listen on item state changes and resolve locks on the stateManager
             $rootScope.$watch(() => state.main.active, () =>
-                stateManager.resolve('main', 'active'));
+                stateManager.callback('main', 'active'));
             $rootScope.$watch(() => state.mainToc.active, newValue => {
                 // toc should be open already but not metadata
                 if (newValue) {
@@ -257,12 +257,12 @@ describe('stateManager', () => {
                     expect(state.sideMetadata.activeSkip)
                         .toBe(false); // defaults to animation
                 }
-                stateManager.resolve('mainToc', 'active');
+                stateManager.callback('mainToc', 'active');
             });
             $rootScope.$watch(() => state.side.active, () =>
-                stateManager.resolve('side', 'active'));
+                stateManager.callback('side', 'active'));
             $rootScope.$watch(() => state.sideMetadata.active, () =>
-                stateManager.resolve('sideMetadata', 'active'));
+                stateManager.callback('sideMetadata', 'active'));
 
             $rootScope.$digest();
 

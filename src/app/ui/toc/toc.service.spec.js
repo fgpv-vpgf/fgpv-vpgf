@@ -23,7 +23,7 @@ describe('tocService', () => {
         rs.$watch(() => sm.state[name].active, (newValue, oldValue) => {
             //console.log('resolving', name, newValue, oldValue);
 
-            sm.resolve(name, 'active');
+            sm.callback(name, 'active');
             if (func) {
                 func(newValue, oldValue);
             }
