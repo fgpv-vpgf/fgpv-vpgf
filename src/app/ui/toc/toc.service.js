@@ -721,7 +721,7 @@
          */
         function toggleLayerFiltersPanel(layer) {
             // close basemap selector if open
-            stateManager.set({
+            stateManager.setActive({
                 other: false
             });
 
@@ -738,7 +738,7 @@
             // cancel previous data retrieval timeout so we don't display old data
             $timeout.cancel(service.display.metadata.handle);
 
-            // if it takes longer than 200 mil to get metadata, kick in the loading screen
+            // if it takes longer than 100 mil to get metadata, kick in the loading screen
             service.display.metadata.handle = $timeout(() => {
                 service.display.metadata.isLoading = true;
             }, 100);
@@ -791,19 +791,19 @@
          * @param  {String} panelNameToClose name of the panel to close before opening the main one if needed
          */
         function togglePanelContent(panelName, contentName, layerId, panelNameToClose) {
-            if (!stateManager.get(panelName)) { // panel is not open; open it; close other panels is specified
+            if (!stateManager.state[panelName].active) { // panel is not open; open it; close other panels is specified
 
                 // open panel closing anything else specified
                 if (panelNameToClose) {
                     let closePanel = {};
                     closePanel[panelNameToClose] = false;
-                    stateManager.set(closePanel, panelName);
+                    stateManager.setActive(closePanel, panelName);
                 } else {
-                    stateManager.set(panelName);
+                    stateManager.setActive(panelName);
                 }
 
             } else if (service.display[contentName].layerId === layerId) { // metadata panel is open and if this layer's metadata is already selected
-                stateManager.set(panelName); // just close it
+                stateManager.setActive(panelName); // just close it
             } else { // panel is open and its content is from a different layer; deselect that layer and select the new one
                 // TODO: delay clearing old content to after the transtion ends - prevents a brief flash of null content in the pane
                 changeSelectedState(service.display[contentName].layerId, contentName, false); // old layer
@@ -840,7 +840,7 @@
          * @param  {String} contentName type of the display data
          */
         function watchPanelState(itemName, contentName) {
-            $rootScope.$watch(() => stateManager.get(itemName), newValue => {
+            $rootScope.$watch(() => stateManager.state[itemName].active, newValue => {
                 let layerId = service.display[contentName].layerId;
                 changeSelectedState(layerId, contentName, newValue);
             });

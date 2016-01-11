@@ -6,8 +6,8 @@ describe('rvMorph', () => {
 
     const mockState = {
         filters: {
-            enabled: false,
-            mode: 'full'
+            active: false,
+            morph: 'full'
         }
     };
 
@@ -43,10 +43,10 @@ describe('rvMorph', () => {
 
         it('should change class name', done => {
             // check if the initial class is set correctly with no delay
-            expect(directiveElement.hasClass(mockState.filters.mode))
+            expect(directiveElement.hasClass(mockState.filters.morph))
                 .toBe(true);
 
-            stateManager.setMode('filters', 'half');
+            stateManager.setMorph('filters', 'half');
             scope.$digest();
 
             // use small timeout since even zero-length animation is async

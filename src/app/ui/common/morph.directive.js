@@ -58,8 +58,7 @@
             let toClass;
             scope.stateManager = stateManager;
 
-            scope.$watch('stateManager.getMode("' + [attr.rvMorph] + '")', (newClass, oldClass) => {
-
+            scope.$watch(`stateManager.state.${attr.rvMorph}.morph`, (newClass, oldClass) => {
                 // replace old class name with new on the element to get a morph target
                 classReg = new RegExp('(^| )' + oldClass + '($| )', 'i');
                 toClass = el.attr('class')
@@ -73,6 +72,7 @@
                         onComplete: () => {
                             // Remove old class from the element after morph is completed.
                             el.removeClass(oldClass);
+                            callback();
                             console.log('morph completed');
                         }
                     });
@@ -80,6 +80,10 @@
                     el.addClass(newClass);
                 }
             });
+
+            function callback() {
+                stateManager.callback(attr.rvMorph, 'morph');
+            }
         }
     }
 })();
