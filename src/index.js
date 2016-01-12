@@ -5,17 +5,9 @@ const basemap = require('./basemap.js');
 const mapManager = require('./mapManager.js');
 const attribute = require('./attribute.js');
 
-function grayMapFactory(esriBundle) {
-    return function (element) {
-        console.info('made a map');
-        return esriBundle.Map(element, { basemap: 'topo', zoom: 6, center: [-100, 50] });
-    };
-}
-
 function initAll(esriBundle) {
     let debug = false;
     return {
-        grayMap: grayMapFactory(esriBundle),
         layer: layer(esriBundle),
         proj: proj(esriBundle),
         basemap: basemap(esriBundle),
