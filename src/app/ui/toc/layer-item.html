@@ -1,6 +1,6 @@
 <div class="rv-layer-item-inner-container" ng-class="{ 'rv-selected': self.layer.selected }">
 
-    <md-button class="rv-layer-item-button rv-button-square"
+    <md-button class="rv-layer-item-button rv-button-square" rv-help="layer-item"
         ng-click="self.toggleLayerFiltersPanel(self.layer)">
         <!-- TODO: add aria attribues on the button to provide context on what it does; also mute the actual layer name below, so a screen reader wouldn't pronounce it twice-->
     </md-button>
