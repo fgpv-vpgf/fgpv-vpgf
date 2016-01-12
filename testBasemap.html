@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <div id="basemapG" style="height:100px; width:100px;" ></div>
+    <div id="map" style="height:90%; width: 100%;"></div>
+    <script src="dist/geoapi.min.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            var map = api.grayMap(document.getElementById('map'));
+            map.addLayer(new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0'));
+
+            var settings = {"basemaps": [
+            {
+                "uid": "baseNrCan",
+                "layers": [
+                {
+                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+                }
+                ],
+                "thumbnail": "assets/images/basemap/baseToponrcan.jpg",
+                "scaleCssClass": "map-scale-dark",
+                "type": "Topographic",
+                "title": "@@config.basemaps.baseNrCan.name",
+                "altText": "@@config.basemaps.baseNrCan.altText",
+                "tileSchema": "NRCAN_Lambert_3978",
+                "description": "@@config.basemaps.baseNrCan.description",
+                "spatialReference": {
+                    "wkid": 3978
+                }
+            },
+            {
+                "uid": "baseSimple",
+                "layers": [
+                {
+                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+                },
+                {
+                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_TXT_3978/MapServer"
+                },
+                {
+                    "url": "http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/RAMP_NRSTC/MapServer",
+                    "visibleLayers": [ 0 ]
+                }
+                ],
+                "thumbnail": "assets/images/basemap/baseSimple.jpg",
+                "scaleCssClass": "map-scale-dark",
+                "type": "Topographic",
+                "title": "@@config.basemaps.baseSimple.name",
+                "altText": "@@config.basemaps.baseSimple.altText",
+                "tileSchema": "NRCAN_Lambert_3978",
+                "description": "@@config.basemaps.baseSimple.description",
+                "spatialReference": {
+                    "wkid": 3978
+                }
+            },
+            {
+                "uid": "baseCBME_CBCE_HS_RO_3978",
+                "layers": [
+                {
+                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
+                }
+                ],
+                "thumbnail": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
+                "scaleCssClass": "map-scale-dark",
+                "type": "Topographic",
+                "title": "@@config.basemaps.baseCBME_CBCE_HS_RO_3978.name",
+                "altText": "@@config.basemaps.baseCBME_CBCE_HS_RO_3978.altText",
+                "tileSchema": "NRCAN_Lambert_3978",
+                "description": "@@config.basemaps.baseCBME_CBCE_HS_RO_3978.description",
+                "spatialReference": {
+                    "wkid": 3978
+                }
+            },
+            {
+                "uid": "baseCBMT_CBCT_GEOM_3978",
+                "layers": [
+                {
+                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
+                }
+                ],
+                "thumbnail": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
+                "scaleCssClass": "map-scale-dark",
+                "type": "Topographic",
+                "title": "@@config.basemaps.baseCBMT_CBCT_GEOM_3978.name",
+                "altText": "@@config.basemaps.baseCBMT_CBCT_GEOM_3978.altText",
+                "tileSchema": "NRCAN_Lambert_3978",
+                "description": "@@config.basemaps.baseCBMT_CBCT_GEOM_3978.description",
+                "spatialReference": {
+                    "wkid": 3978
+                }
+            },
+            {
+                "uid": "baseEsriWorld",
+                "layers": [
+                {
+                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
+                }
+                ],
+                "thumbnail": "assets/images/basemap/imagery.jpg",
+                "scaleCssClass": "map-scale-light",
+                "type": "Imagery",
+                "title": "@@config.basemaps.baseEsriWorld.name",
+                "altText": "@@config.basemaps.baseEsriWorld.altText",
+                "tileSchema": "ESRI_World_AuxMerc_3857",
+                "description": "@@config.basemaps.baseEsriWorld.description",
+                "spatialReference": {
+                    "wkid": 102100,
+                    "latestWkid":  3857
+                }
+            },
+            {
+                "uid": "baseEsriPhysical",
+                "layers": [
+                {
+                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
+                }
+                ],
+                "thumbnail": "assets/images/basemap/imagery.jpg",
+                "scaleCssClass": "map-scale-dark",
+                "type": "Imagery",
+                "title": "@@config.basemaps.baseEsriPhysical.name",
+                "altText": "@@config.basemaps.baseEsriPhysical.altText",
+                "tileSchema": "ESRI_World_AuxMerc_3857",
+                "description": "@@config.basemaps.baseEsriPhysical.description",
+                "spatialReference": {
+                    "wkid": 102100,
+                    "latestWkid":  3857
+                }
+            },
+            {
+                "uid": "baseEsriRelief",
+                "layers": [
+                {
+                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
+                }
+                ],
+                "thumbnail": "assets/images/basemap/imagery.jpg",
+                "scaleCssClass": "map-scale-dark",
+                "type": "Imagery",
+                "title": "@@config.basemaps.baseEsriRelief.name",
+                "altText": "@@config.basemaps.baseEsriRelief.altText",
+                "tileSchema": "ESRI_World_AuxMerc_3857",
+                "description": "@@config.basemaps.baseEsriRelief.description",
+                "spatialReference": {
+                    "wkid": 102100,
+                    "latestWkid":  3857
+                }
+            },
+            {
+                "uid": "baseEsriStreet",
+                "layers": [
+                {
+                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
+                }
+                ],
+                "thumbnail": "assets/images/basemap/imagery.jpg",
+                "scaleCssClass": "map-scale-dark",
+                "type": "Topographic",
+                "title": "@@config.basemaps.baseEsriStreet.name",
+                "altText": "@@config.basemaps.baseEsriStreet.altText",
+                "tileSchema": "ESRI_World_AuxMerc_3857",
+                "description": "@@config.basemaps.baseEsriStreet.description",
+                "spatialReference": {
+                    "wkid": 102100,
+                    "latestWkid":  3857
+                }
+            },
+            {
+                "uid": "baseEsriTerrain",
+                "layers": [
+                {
+                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
+                }
+                ],
+                "thumbnail": "assets/images/basemap/imagery.jpg",
+                "scaleCssClass": "map-scale-dark",
+                "type": "Topographic",
+                "title": "@@config.basemaps.baseEsriTerrain.name",
+                "altText": "@@config.basemaps.baseEsriTerrain.altText",
+                "tileSchema": "ESRI_World_AuxMerc_3857",
+                "description": "@@config.basemaps.baseEsriTerrain.description",
+                "spatialReference": {
+                    "wkid": 102100,
+                    "latestWkid":  3857
+                }
+            },
+            {
+                "uid": "baseEsriTopo",
+                "layers": [
+                {
+                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
+                }
+                ],
+                "thumbnail": "assets/images/basemap/imagery.jpg",
+                "scaleCssClass": "map-scale-dark",
+                "type": "Topographic",
+                "title": "@@config.basemaps.baseEsriTopo.name",
+                "altText": "@@config.basemaps.baseEsriTopo.altText",
+                "tileSchema": "ESRI_World_AuxMerc_3857",
+                "description": "@@config.basemaps.baseEsriTopo.description",
+                "spatialReference": {
+                    "wkid": 102100,
+                    "latestWkid":  3857
+                }
+            }
+            ]};
+
+            // // test basemap gallery
+            // var basemapGallery = api.basemap.makeBasemaps(settings.basemaps, map, 'basemapG');
+            // // switch to different basemap by id
+            // basemapGallery.setBasemap('baseEsriStreet');
+
+            // // var setupMap = api.mapManager.setupMap(map, settings);
+
+            // var basemapGallery = api.mapManager.setupMap(map, settings);
+
+            // basemapGallery.setBasemap('baseEsriStreet');
+            var mapControls = api.mapManager.setupMap(map, settings);
+
+            // set default then switch after 3 sec.
+            mapControls.BasemapControl.setBasemap('baseEsriStreet');
+
+            // make sure returned object works properly
+            setTimeout(() => {
+                mapControls.BasemapControl.setBasemap('baseEsriPhysical');
+            }, 3000);
+
+        });
+</script>
+</body>
+</html>

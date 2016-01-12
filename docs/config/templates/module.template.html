@@ -1,0 +1,36 @@
+<!-- ngModule.template.html -->
+<md-toolbar layout="row" class="site-content-toolbar md-whiteframe-glow-z1"><h2 layout-padding  >{$ doc.name $} Module</h2></md-toolbar>
+
+<md-content layout-padding flex>
+
+  {$ doc.description | marked $}
+
+  {% include "partials/dependencies.template.html" %}
+
+    {% for group in doc.groups %}
+        {% if group.children.length %}
+            {% if group.title == 'method' %}
+                {# default component handler #}
+                {% include "partials/methods.template.html" %}
+            {% elif group.title == 'type' %}
+                {# default component handler #}
+                {% include "partials/methods.template.html" %}
+            {% elif group.title == 'object' %}
+                {# default component handler #}
+                {% include "partials/methods.template.html" %}
+            {% else %}
+                {# default component handler #}
+                <material-divider></material-divider>
+                <h3>{$ group.title | toInternalRoute(doc, group.title) $}</h3>
+                <ul>
+                    {% for component in group.children %}
+                    <li>{$ component | toInternalRoute(doc) $}
+                        {%- if component.description %} - {$ component.description $}{% endif -%}
+                    </li>
+                    {%- endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+</md-content>
