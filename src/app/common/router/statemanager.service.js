@@ -109,6 +109,9 @@
             mapnav: {
                 morph: 'default',
                 morphSkip: false
+            },
+            help: {
+                active: false
             }
         };
 
