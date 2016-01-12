@@ -15,7 +15,7 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
-    function rvInitMap(geoService) {
+    function rvInitMap(geoService, configService) {
 
         const directive = {
             restrict: 'A',
@@ -31,7 +31,8 @@
                     console.log(el);
 
                     //geoapi.grayMap(el[0]); // there should only be one instance of the directive
-                    geoService.gapi.grayMap(el[0]);
+                    //geoService.gapi.grayMap(el[0]);
+                    geoService.buildMap(el[0], configService.data);
                 }
             });
         }

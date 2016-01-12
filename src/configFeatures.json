@@ -1,0 +1,20 @@
+{
+  "version": -1,
+  "layers": [
+    {
+      "id":"ecogeo",
+      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer/0",
+      "layerType":"esriFeature"
+    },
+    {
+      "id":"josm",
+      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0",
+      "layerType":"esriFeature"
+    },
+    {
+      "id":"cesi_ozone",
+      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_Ozone/MapServer/3",
+      "layerType":"esriFeature"
+    }
+  ]
+}
