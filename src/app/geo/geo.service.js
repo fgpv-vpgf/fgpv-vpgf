@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService() {
+    function geoService(layerTypes) {
 
         //TODO update how the layerOrder works with the UI
         //Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -25,9 +25,12 @@
         const service = {
             layers: {},
             layerOrder: [],
+            buildMap,
             registerLayer,
             registerAttributes
         };
+
+        let map = null; // keep map reference local to geoService
 
         // FIXME: need to find a way to have the dojo URL set by the config
         service.promise = geoapi('http://js.arcgis.com/3.14/', window)
@@ -37,9 +40,13 @@
 
         /**
          * Adds a layer object to the layers registry
-         * @param  {object} layer the API layer object
+         * @param {object} layer the API layer object
+         * @param {object} config a configuration fragment used to generate the layer
+         * @param {object} attribs an optional object containing the attributes associated with the layer
+         * @param {number} position an optional index indicating at which position the layer was added to the map
+         * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
          */
-        function registerLayer(layer) {
+        function registerLayer(layer, config, attribs, position) {
             //TODO determine the proper docstrings for a non-service function that lives in a service
 
             if (!layer.id) {
@@ -53,14 +60,19 @@
             }
 
             //TODO should attribs be defined and set to null, or simply omitted from the object?  some layers will not have attributes. others will be added after they load
-            //TODO add the config snippet for the layer as a third property for quick access?
-            service.layers[layer.id] = {
-                layer: layer,
-                attribs: null
-            };
+            let l = { layer };
+            if (config) {
+                l.state = config;
+            }
+            if (attribs) {
+                l.attribs = attribs;
+            }
+            service.layers[layer.id] = l;
 
-            //TODO update the layerOrder here as well? or do that at same time we call map.addLayer
-
+            if (position === undefined) {
+                position = service.layerOrder.length;
+            }
+            service.layerOrder.splice(position, 0, layer.id);
         }
 
         /**
@@ -82,6 +94,38 @@
             }
 
             service.layers[attribData.layerId].attribs = attribData;
+        }
+
+        /**
+        * Takes a layer in the config format and generates an appropriate layer object.
+        * @param {object} layerConfig a configuration fragment for a single layer
+        * @return {object} a layer object matching one of the esri/layers objects based on the layer type
+        */
+        function generateLayer(layerConfig) {
+            const handlers = {};
+
+            handlers[layerTypes.esriFeature] = config => new service.gapi.layer.FeatureLayer(config.url);
+
+            if (handlers.hasOwnProperty(layerConfig.layerType)) {
+                return handlers[layerConfig.layerType](layerConfig);
+            } else {
+                throw new Error('Your layer type is unacceptable');
+            }
+        }
+
+        /**
+        * Constructs a map on the given DOM node.
+        * @param {object} domNode the DOM node on which the map should be initialized
+        * @param {object} config the map configuration based on the configuration schema
+        */
+        function buildMap(domNode, config) {
+            map = service.gapi.mapManager.Map(domNode, { basemap: 'terrain', zoom: 6, center: [-100, 50] });
+            config.layers.forEach(layerConfig => {
+                const l = generateLayer(layerConfig);
+                registerLayer(l, layerConfig);
+                map.addLayer(l);
+            });
+
         }
     }
 })();
