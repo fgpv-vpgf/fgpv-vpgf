@@ -53,6 +53,11 @@
                 }
             }
         })
+        .constant('layerTypes', {
+            esriFeature: 'esriFeature',
+            esriDynamic: 'esriDynamic',
+            ogcWms: 'ogcWms'
+        })
         .constant('templateRegistry', {
             appbar: 'app/ui/appbar/appbar.html',
             toc: 'app/ui/toc/toc.html',
