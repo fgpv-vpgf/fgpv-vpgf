@@ -1,6 +1,6 @@
 // positions map navigation component
 @mixin mapnav {
-    .mapnav {
+    rv-mapnav {
         position: absolute;
         bottom: 100px;
         right: $viewport-gutter;
