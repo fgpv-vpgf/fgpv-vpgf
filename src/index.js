@@ -38,6 +38,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/dijit/BasemapLayer', 'BasemapLayer'],
         ['esri/dijit/Scalebar', 'Scalebar'],
         ['esri/layers/ArcGISDynamicMapServiceLayer', 'ArcGISDynamicMapServiceLayer'],
+        ['esri/layers/ArcGISImageServiceLayer', 'ArcGISImageServiceLayer'],
         ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],
         ['esri/layers/FeatureLayer', 'FeatureLayer'],
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
