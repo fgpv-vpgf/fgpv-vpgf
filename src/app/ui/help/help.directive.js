@@ -27,7 +27,7 @@
         ///////////
 
         function link(scope, element, attr) { //, ctrl) {
-            let obj = { getCoords: getCoords, key: attr.rvHelp.toString() };
+            const obj = { getCoords: getCoords, key: attr.rvHelp.toString() };
             helpService.register(obj);
 
             function getCoords() {

@@ -15,8 +15,6 @@
         .service('helpService', helpService);
 
     function helpService() {
-        'ngInject';
-
         // all help sections (populated when elements tagged with rv-help are created)
         const registry = [];
 
@@ -49,7 +47,10 @@
         * @param {Object} object    the object to be removed
         */
         function unregister(object) {
-            registry.splice(registry.indexOf(object), 1);
+            const index = registry.indexOf(object);
+            if (index !== -1) {
+                registry.splice(index, 1);
+            }
         }
 
         /**
