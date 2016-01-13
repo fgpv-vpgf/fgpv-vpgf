@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <p id="mess" />
+    <script src="dist/geoapi.min.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            var map = api.grayMap(document.getElementById('mess'));
+            map.addLayer(new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0'));
+            // new Point
+            // transform point with esri.js
+            // output then see code actually works l0l
+            var sr = new api.proj.SpatialReference({ wkid: 102100 });
+            var sr1 = new api.proj.SpatialReference({ wkid: 4326 });
+            //convert into an array
+            console.log(sr);
+            var pt1 = new api.proj.esriBundle.Point(-94.5, 49.5, sr1);
+            var pt2 = new api.proj.esriBundle.Point(-94, 49.2, sr1);
+            console.log(pt1);
+            var newPt = api.proj.esriService(api.proj.esriBundle, [pt1], sr);
+            console.log(newPt);
+            // lat/long time, then convert into a SR put into google earth then see if it's right
+            // newPt.then (console.log stuff)
+        });
+    </script>
+</body>
+</html>
