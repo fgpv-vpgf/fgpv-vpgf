@@ -19,7 +19,7 @@
      *
      * @return {object} service object
      */
-    function mapNavigationService(stateManager) {
+    function mapNavigationService(stateManager, geoService) {
         const service = {
             // FIXME: this config snippet should obvisouly come from config service
             config: {
@@ -32,10 +32,7 @@
                     'basemap'
                 ]
             },
-            controls: {},
-            zoomIn: zoomIn,
-            zoomOut: zoomOut,
-            zoomTo: zoomTo
+            controls: {}
         };
 
         // navigation controls presets
@@ -44,7 +41,7 @@
                 label: 'Zoom in',
                 icon: 'content:add',
                 tooltip: 'Zoom in',
-                action: zoomIn
+                action: () => geoService.setZoom('1')
             },
             slider: {
                 // TODO: add slider properties when we find a suitable slider lib
@@ -53,7 +50,7 @@
                 label: 'Zoom out',
                 icon: 'content:remove',
                 tooltip: 'Zoom out',
-                action: zoomOut
+                action: () => geoService.setZoom('-1')
             },
             geoLocation: {
                 label: 'Your Location',
@@ -100,23 +97,5 @@
         return service;
 
         ///////////////
-
-        function zoomIn(by = 1) {
-            console.log('Zoom in by', by);
-
-            // FIXME: user proper call
-        }
-
-        function zoomOut(by = 1) {
-            console.log('Zoom out by', by);
-
-            // FIXME: user proper call
-        }
-
-        function zoomTo(level) {
-            console.log('Zoom to the level:', level);
-
-            // FIXME: user proper call
-        }
     }
 })();
