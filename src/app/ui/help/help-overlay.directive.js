@@ -35,8 +35,8 @@
             const self = scope.self;
             self.draw = draw;
 
-            let canvas = el.find('canvas')[0];
-            let context = canvas.getContext('2d');
+            const canvas = el.find('canvas')[0];
+            const context = canvas.getContext('2d');
 
             // make the canvas take up the whole view
             context.canvas.width  = window.innerWidth;
@@ -60,9 +60,9 @@
 
                 // restore saved context settings
                 context.restore();
-                let items = helpService.registry;
+                const items = helpService.registry;
                 items.forEach(item => {
-                    let coords = item.getCoords();
+                    const coords = item.getCoords();
                     if (shouldBeDrawn(item.key, coords)) {
                         // draw a rect with a border
                         context.fillRect(coords.x, coords.y, coords.width, coords.height);
@@ -77,6 +77,11 @@
 
             /**
             * Performs checks to see whether the object described with (key, coords) is valid to draw.
+            * An object is valid to draw iff - it doesn't share a key with an already drawn object
+            *                                   (we only want one of each help section)
+            *                                - it doesn't overlap with an already drawn object
+            *                                   (we don't want overlapping help sections)
+            *                                - it's width and height are non-zero
             *
             * @param {String} key       the attribute key for the object being checked
             * @param {Object} coords    the coordinates for the object being checked
@@ -109,11 +114,8 @@
             * @return {Boolean}         returns true iff the two rectangles overlap
             */
             function overlap(first, second) {
-                if ((first.y + first.height) <= second.y || first.y >= (second.y + second.height) ||
-                     (first.x + first.width) <= second.x || first.x >= (second.x + second.width)) {
-                    return false;
-                }
-                return true;
+                return !((first.y + first.height) <= second.y || first.y >= (second.y + second.height) ||
+                     (first.x + first.width) <= second.x || first.x >= (second.x + second.width));
             }
         }
     }
