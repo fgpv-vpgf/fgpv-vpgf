@@ -1,0 +1,10 @@
+@mixin help {
+    rv-help-overlay {
+        position: absolute;
+        z-index: 999;
+
+        div[rv-name] {
+            position: absolute;
+        }
+    }
+}
