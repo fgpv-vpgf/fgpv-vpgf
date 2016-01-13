@@ -39,8 +39,7 @@
          */
         function linkFunc(scope) { // el, attr, ctrl) {
             const self = scope.self;
-            console.log(mapNavigationService.controls);
-
+            
             // getting toggle object from the navigation servcie directly using toggle's name
             self.control = mapNavigationService.controls[self.name];
         }
