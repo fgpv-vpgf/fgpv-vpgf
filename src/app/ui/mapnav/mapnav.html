@@ -1,37 +1,25 @@
 <div class='rv-mapnav-content'>
-    <ul class='rv-button-group hover rv-whiteframe-z2' ng-switch on="self.config.zoom">
+    <div class="rv-button-group hover rv-whiteframe-z2" ng-switch on="self.config.zoom">
+        <rv-mapnav-button name="zoomIn" ng-switch-when="buttons" class="rv-icon-20"></rv-mapnav-button>
+        <rv-mapnav-button name="zoomIn" ng-switch-when="all" class="rv-icon-20"></rv-mapnav-button>
 
-        <li ng-switch-when="buttons">
-            <rv-mapnav-button class="bold" name="zoomIn"></rv-mapnav-button>
-        </li>
-        <li ng-switch-when="all">
-            <rv-mapnav-button class="bold" name="zoomIn"></rv-mapnav-button>
-        </li>
+        <div ng-switch-when="slider">
+            slider only
+        </div>
 
-        <li ng-switch-when="slider">
-            <div>zoom slider only</div>
-        </li>
-        <li ng-switch-when="all">
-            <div>zoom slider</div>
-        </li>
+        <div ng-switch-when="all">
+            slider
+        </div>
 
-        <li ng-switch-when="buttons"></li>
         <md-divider class="md-default-theme"></md-divider>
 
-        <li ng-switch-when="buttons">
-            <rv-mapnav-button class="bold" name="zoomOut"></rv-mapnav-button>
-        </li>
-        <li ng-switch-when="all">
-            <rv-mapnav-button class="bold" name="zoomOut"></rv-mapnav-button>
-        </li>
-    </ul>
+        <rv-mapnav-button name="zoomOut" ng-switch-when="buttons" class="rv-icon-20"></rv-mapnav-button>
+        <rv-mapnav-button name="zoomOut" ng-switch-when="all" class="rv-icon-20"></rv-mapnav-button>
+    </div>
 
-    <ul class='rv-button-group hover rv-whiteframe-z2'>
-        <!-- loop through extra controls specified by the nav service and create them -->
-        <li ng-repeat="extra in self.config.extra">
-            <rv-mapnav-button name="{{ extra }}"></rv-mapnav-button>
-            <!-- this will insert divider after every element except the last one -->
-            <md-divider ng-if="!$last"></md-divider>
-        </li>
-    </ul>
+    <div class="rv-button-group hover rv-whiteframe-z2">
+        <rv-mapnav-button ng-repeat-start="extra in self.config.extra" name="{{ extra }}" class="rv-icon-16"></rv-mapnav-button>
+        <!-- this will insert divider after every element except the last one -->
+        <md-divider ng-if="!$last" ng-repeat-end></md-divider>
+    </div>
 </div>
