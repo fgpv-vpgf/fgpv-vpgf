@@ -50,3 +50,43 @@ describe('Local projection', () => {
     });
 
 });
+
+describe("test for esri projection conversion function", () => {
+    const sampleData = {x0:-95,y0:49,x1:-94.5,y1:49.5,sr:4326};
+    const sampleExtent = makeFakeEsriExtent(sampleData);
+    let esri;
+    let x;
+
+    // make fake esri extent as input
+    function makeFakeEsriExtent(o) {
+        return {
+            "xmin":o.x0,"ymin":o.y0,"xmax":o.x1,"ymax":o.y1,
+            "spatialReference":{"wkid":o.sr}
+        };
+    }
+
+    beforeEach(function() {
+    //reset esri
+        esri = null;
+    });
+
+    it("should export functions", () => {
+        // make sure functions are exported properly
+        esri = projBuilder(sampleData);
+        expect(esri).not.toBe(null);
+    });
+
+    // calls fake geosvc and makes sure the parameters are correct
+    it('should call esriService function from exported modules', () => {
+        // make mock body for esriService instead of using spy
+        let spy = jasmine.createSpy("fake esri method").and.callFake(
+            function() {
+                console.log("OK");
+            }
+        );
+        let esri = projBuilder(sampleData);
+        esri.esriService = spy;
+        esri.esriService();
+        expect(spy).toHaveBeenCalled();
+    });
+});
