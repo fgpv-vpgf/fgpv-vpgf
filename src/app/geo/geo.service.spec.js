@@ -7,15 +7,7 @@ describe('geo', () => {
         bard.appModule('app.geo');
 
         // inject services
-        //whut does this do?  do i needs it?
-        bard.inject('geoService', '$rootScope');
-
-        //stateManager.addState(mockState);
-
-        // a spy can stub any function and tracks calls to it and all arguments. We spy on the service functions to check if they are being called properly. http://jasmine.github.io/2.0/introduction.html#section-Spies
-        //spyOn(mapNavigationService, 'zoomIn');
-        //spyOn(mapNavigationService, 'zoomOut');
-        //spyOn(mapNavigationService, 'zoomTo');
+        bard.inject('geoService');
     });
 
     describe('geoService', () => {
