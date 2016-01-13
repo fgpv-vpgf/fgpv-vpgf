@@ -28,12 +28,15 @@
             buildMap,
             registerLayer,
             registerAttributes,
-
             setZoom,
             shiftZoom
+            setupMap,
+            setBasemap
         };
 
         let map = null; // keep map reference local to geoService
+
+        let mapManager = null;
 
         // FIXME: need to find a way to have the dojo URL set by the config
         service.promise = geoapi('http://js.arcgis.com/3.14/', window)
@@ -134,6 +137,28 @@
                 registerLayer(l, layerConfig);
                 map.addLayer(l);
             });
+        }
+
+        /**
+         * Construct mapManagerControl
+         * TODO: should we move the setupMap in buildMap
+         * @param  {object} config the config object that has settings to initialize map; basemaps, scalebar, ..., etc.
+         * @return {object} configured mapManager object contains the controls {BasemapControl, Scalbar Control}
+         */
+        function setupMap(config) {
+            mapManager = service.gapi.mapManager.setupMap(map, config);
+        }
+
+        /**
+         * Switch basemap based on the uid provided.
+         * @param {string} uid identifier for a specific basemap layerbower
+         */
+        function setBasemap(uid) {
+            if (typeof (mapManager) === 'undefined') {
+                console.log('Map manager is not setup, please setup map manager by calling setupMap().');
+            } else {
+                mapManager.BasemapControl.setBasemap(uid);
+            }
         }
 
         /**
