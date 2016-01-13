@@ -19,6 +19,7 @@
 @import "_symbology.scss";
 @import "_details.scss";
 @import "_filters.scss";
+@import "_help.scss";
 
 @include core;
 @include loading;
@@ -37,3 +38,4 @@
 @include symbology;
 @include details;
 @include filters;
+@include help;
