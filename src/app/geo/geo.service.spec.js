@@ -59,6 +59,46 @@ describe('geo', () => {
                 .toBe('sausages');
         });
 
+        it('should set zoom correctly', () => {
+            // make a fake map object
+            let map = {
+                setZoom: () => {},
+                getZoom: () => 5
+            };
+
+            // set a spy on it
+            spyOn(map, 'setZoom');
+
+            // fake a map creating function
+            geoService.gapi = {
+                mapManager: {
+                    Map: () => map
+                }
+            };
+
+            // create a fake map
+            geoService.buildMap({}, {
+                layers: []
+            });
+
+            // call setZoom with different arguments
+            geoService.setZoom('-a2');
+            expect(map.setZoom)
+                .not.toHaveBeenCalled();
+
+            geoService.setZoom(2);
+            expect(map.setZoom)
+                .toHaveBeenCalledWith(2);
+
+            geoService.setZoom('+2');
+            expect(map.setZoom)
+                .toHaveBeenCalledWith(7);
+
+            geoService.setZoom('-2');
+            expect(map.setZoom)
+                .toHaveBeenCalledWith(3);
+        });
+
         //TODO add test: register layer with no id
         //TODO add test: register attributes with no layerId
         //TODO add test: register layer with id that is already registered

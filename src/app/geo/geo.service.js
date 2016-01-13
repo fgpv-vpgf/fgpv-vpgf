@@ -141,11 +141,11 @@
          */
         function setZoom(value) {
             value = angular.isString(value) ? map.getZoom() + parseInt(value, 10) : value;
-            if (!Number.isNaN(value)) {
+            if (!Number.isNaN(value) && map) {
                 map.setZoom(value);
                 console.log('GeoService: Zooming to', value, 'from', map.getZoom());
             } else {
-                console.warn('GeoService: Supplied zoom value is incorrect.');
+                console.warn('GeoService: Supplied zoom value is incorrect or map is not defined.');
             }
         }
     }
