@@ -60,7 +60,7 @@ gulp.task('build', 'Transpile and concatenate the code', function () {
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('test', 'Run unit tests in jasmine', ['build'], function () {
+gulp.task('test', 'Run unit tests in jasmine', ['check', 'build'], function () {
     return gulp
         .src('spec/*Spec.js')
         .pipe($.jasmine());
