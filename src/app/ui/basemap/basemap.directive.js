@@ -158,7 +158,7 @@
 
             // set the current basemap as selected.
             basemap.selected = true;
-            geoService.setBasemap(basemap.id);
+            geoService.selectBasemap(basemap.id);
         }
     }
 })();

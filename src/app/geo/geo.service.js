@@ -28,7 +28,7 @@
             buildMap,
             registerLayer,
             registerAttributes,
-            setBasemap
+            selectBasemap
         };
 
         let map = null; // keep map reference local to geoService
@@ -137,7 +137,7 @@
          * Switch basemap based on the uid provided.
          * @param {string} uid identifier for a specific basemap layerbower
          */
-        function setBasemap(uid) {
+        function selectBasemap(uid) {
             if (typeof (mapManager) === 'undefined') {
                 console.log('Error: Map manager is not setup, please setup map manager by calling setupMap().');
             } else {

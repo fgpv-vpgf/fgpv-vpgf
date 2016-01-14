@@ -34,7 +34,7 @@
                     //geoService.gapi.grayMap(el[0]);
                     geoService.buildMap(el[0], configService.data);
 
-                    geoService.setBasemap('baseEsriStreet');
+                    geoService.selectBasemap('baseEsriStreet');
                 }
             });
         }
