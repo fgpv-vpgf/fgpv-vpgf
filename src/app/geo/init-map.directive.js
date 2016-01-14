@@ -34,6 +34,7 @@
                     //geoService.gapi.grayMap(el[0]);
                     geoService.buildMap(el[0], configService.data);
 
+                    // setup map using configs
                     geoService.setupMap(configService.data);
 
                     geoService.setBasemap('baseEsriStreet');
