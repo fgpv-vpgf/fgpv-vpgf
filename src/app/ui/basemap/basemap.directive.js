@@ -35,9 +35,10 @@
         }
     }
 
-    function Controller(configService) {
+    function Controller(configService, geoService) {
         'ngInject';
         const self = this;
+        self.select = select;
 
         // TODO: remove this; revise when config schema is finalized
         // mocking basemap part of the config
@@ -129,6 +130,9 @@
                 });
 
             });
+
+            console.log(basemaps);
+
         });
 
         activate();
@@ -137,6 +141,24 @@
 
         function activate() {
 
+        }
+
+        /**
+         * Set the basemap as selected
+         * @param  {object} basemap basemap object
+         */
+        function select(basemap) {
+
+            // un-select the previous basemap
+            self.projections.forEach(projection => {
+                projection.items.forEach(item => {
+                    item.selected = false;
+                });
+            });
+
+            // set the current basemap as selected.
+            basemap.selected = true;
+            geoService.setBasemap(basemap.id);
         }
     }
 })();

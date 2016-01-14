@@ -25,7 +25,8 @@
             restrict: 'E',
             templateUrl: 'app/ui/basemap/basemap-item.html',
             scope: {
-                basemap: '='
+                basemap: '=',
+                select: '&'
             },
             link: link,
             controller: Controller,
@@ -42,10 +43,7 @@
         }
     }
 
-    function Controller(geoService) {
-        'ngInject';
-        const self = this;
-        self.select = select;
+    function Controller() {
 
         activate();
 
@@ -55,16 +53,5 @@
 
         }
 
-        /**
-         * Selects a basemap as the active basemap
-         */
-        function select() {
-            // TODO: move this function to basemap service or config;
-            // need to deselect currently selected basemap
-            self.basemap.selected = !self.basemap.selected;
-
-            geoService.setBasemap(self.basemap.id);
-
-        }
     }
 })();

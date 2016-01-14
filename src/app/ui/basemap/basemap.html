@@ -10,7 +10,7 @@
 
             <ul class='rv-list rv-basemap-list'>
                 <li class="rv-basemap-list-item" ng-repeat="basemap in projection.items">
-                    <rv-basemap-item basemap='basemap'></rv-basemap-item>
+                    <rv-basemap-item basemap='basemap' select='self.select(basemap)'></rv-basemap-item>
                 </li>
             </ul>
 
