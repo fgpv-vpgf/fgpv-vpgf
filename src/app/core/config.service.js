@@ -77,7 +77,7 @@
                         configJson = angular.fromJson(configAttr);
                         configInitialized(configJson);
                     } catch (e) {
-                        console.log('Not valid JSON');
+                        console.log('Not valid JSON, attempting to load a file with this name');
                     }
 
                     // try to load config file
@@ -95,8 +95,8 @@
                                 }, 2000);
                             })
                             .catch(function (error) {
-                                console.log('Config initialization failed:',
-                                    error);
+                                console.error('Config initialization failed');
+                                console.log(error);
                                 reject();
                             });
                     }
