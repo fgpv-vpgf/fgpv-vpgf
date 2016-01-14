@@ -41,7 +41,7 @@
                 label: 'Zoom in',
                 icon: 'content:add',
                 tooltip: 'Zoom in',
-                action: () => geoService.setZoom('1')
+                action: () => geoService.shiftZoom(1)
             },
             slider: {
                 // TODO: add slider properties when we find a suitable slider lib
@@ -50,7 +50,7 @@
                 label: 'Zoom out',
                 icon: 'content:remove',
                 tooltip: 'Zoom out',
-                action: () => geoService.setZoom('-1')
+                action: () => geoService.shiftZoom(-1)
             },
             geoLocation: {
                 label: 'Your Location',
