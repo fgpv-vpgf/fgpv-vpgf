@@ -90,7 +90,12 @@
             filtersFulldata: {
                 active: false,
                 activeSkip: false,
-                parent: 'filters'
+                parent: 'filters',
+                display: {
+                    isLoading: false, // showing loading indicator in the content pane
+                    layerId: -1, // id of the layer which data is being display
+                    data: {} // data to display
+                }
             },
             filtersNamedata: {
                 active: false,
@@ -262,7 +267,7 @@
         function setItemProperty(itemName, property, value, skip = false) {
             const item = service.state[itemName];
 
-            return $q(fulfill => { // reject is not used
+            return $q(fulfill => {
                 const fulfillKey = `${property}${itemName}`; // key to store `fulfill` function
                 const skipKey = `${property}Skip`; // key to store `skip` animation flag
 

@@ -24,8 +24,7 @@
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/metadata/metadata.html',
-            scope: {
-            },
+            scope: {},
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
@@ -37,6 +36,7 @@
     function Controller(tocService) {
         'ngInject';
         const self = this;
+
         self.display = tocService.display.metadata;
 
         activate();

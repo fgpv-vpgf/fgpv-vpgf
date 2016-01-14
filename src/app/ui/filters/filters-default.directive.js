@@ -18,7 +18,7 @@
      *
      * @return {object} directive body
      */
-    function rvFiltersDefault($timeout) {
+    function rvFiltersDefault($timeout, stateManager) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default.html',
@@ -41,10 +41,19 @@
             // to see the table;
             // obviously it shouldn't be happening in production.
             // TODO: write proper logic to generate the table while hidden and then redraw it on show
-            $timeout(() => {
+            stateManager.state.filtersFulldata.display.isLoading = true;
 
+            $timeout(() => {
                 let table = el.find('.rv-data-table')
                     .first()
+                    .on('init.dt', function () {
+                        // wait for table to initialize fully: https://datatables.net/reference/event/init
+                        stateManager.state.filtersFulldata.display.isLoading = false;
+                        scope.$digest(); // need to kick in the digest cycle since we are using non-Angular even here.
+                        self.draw();
+
+                        //console.log('Table initialisation complete: ' + new Date().getTime());
+                    })
                     .DataTable({
                         dom: 'rti',
                         ajax: 'content/fake_data.json',
@@ -82,9 +91,7 @@
         'ngInject';
         const self = this;
 
-        $scope.stateManager = stateManager;
-
-        self.display = tocService.display.filters;
+        self.display = stateManager.state.filtersFulldata.display;
 
         self.draw = draw;
 
