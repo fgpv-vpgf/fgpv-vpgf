@@ -28,12 +28,14 @@
             buildMap,
             registerLayer,
             registerAttributes,
-
             setZoom,
-            shiftZoom
+            shiftZoom,
+            selectBasemap
         };
 
         let map = null; // keep map reference local to geoService
+
+        let mapManager = null;
 
         // FIXME: need to find a way to have the dojo URL set by the config
         service.promise = geoapi('http://js.arcgis.com/3.14/', window)
@@ -134,6 +136,21 @@
                 registerLayer(l, layerConfig);
                 map.addLayer(l);
             });
+
+            // setup map using configs
+            mapManager = service.gapi.mapManager.setupMap(map, config);
+        }
+
+        /**
+         * Switch basemap based on the uid provided.
+         * @param {string} uid identifier for a specific basemap layerbower
+         */
+        function selectBasemap(uid) {
+            if (typeof (mapManager) === 'undefined') {
+                console.log('Error: Map manager is not setup, please setup map manager by calling setupMap().');
+            } else {
+                mapManager.BasemapControl.setBasemap(uid);
+            }
         }
 
         /**

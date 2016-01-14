@@ -1,13 +1,13 @@
 /* global bard, $compile, $rootScope */
 
-describe('rvBasemap', () => {
+xdescribe('rvBasemap', () => {
     let scope;
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.basemap', 'app.templates');
+        bard.appModule('app.ui.basemap', 'app.templates', 'app.geo');
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
