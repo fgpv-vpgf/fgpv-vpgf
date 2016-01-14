@@ -82,19 +82,16 @@ describe('geo', () => {
             });
 
             // call setZoom with different arguments
-            geoService.setZoom('-a2');
-            expect(map.setZoom)
-                .not.toHaveBeenCalled();
 
             geoService.setZoom(2);
             expect(map.setZoom)
                 .toHaveBeenCalledWith(2);
 
-            geoService.setZoom('+2');
+            geoService.shiftZoom(2);
             expect(map.setZoom)
                 .toHaveBeenCalledWith(7);
 
-            geoService.setZoom('-2');
+            geoService.shiftZoom(-2);
             expect(map.setZoom)
                 .toHaveBeenCalledWith(3);
         });

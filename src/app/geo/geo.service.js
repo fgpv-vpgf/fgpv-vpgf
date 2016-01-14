@@ -29,7 +29,8 @@
             registerLayer,
             registerAttributes,
 
-            setZoom
+            setZoom,
+            shiftZoom
         };
 
         let map = null; // keep map reference local to geoService
@@ -136,16 +137,27 @@
         }
 
         /**
-         * Sets zoom level of the map
-         * @param {number|string} value can be a level number or a string with a relative shift
+         * Sets zoom level of the map to the specified level
+         * @param {number} value a zoom level number
          */
         function setZoom(value) {
-            value = angular.isString(value) ? map.getZoom() + parseInt(value, 10) : value;
-            if (!Number.isNaN(value) && map) {
+            if (map) {
                 map.setZoom(value);
-                console.log('GeoService: Zooming to', value, 'from', map.getZoom());
             } else {
-                console.warn('GeoService: Supplied zoom value is incorrect or map is not defined.');
+                console.warn('GeoService: map is not yet created.');
+            }
+        }
+
+        /**
+         * Changes the zoom level by the specified value relative to the current level; can be negative
+         * @param  {number} byValue a number of zoom levels to shift by
+         */
+        function shiftZoom(byValue) {
+            if (map) {
+                let newValue = map.getZoom() + byValue;
+                map.setZoom(newValue);
+            } else {
+                console.warn('GeoService: map is not yet created.');
             }
         }
     }
