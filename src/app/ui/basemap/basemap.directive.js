@@ -27,9 +27,6 @@
             bindToController: true
         };
 
-        // inject configService to controller
-        Controller.$inject = ['configService'];
-
         return directive;
 
         ///////////
@@ -39,6 +36,7 @@
     }
 
     function Controller(configService) {
+        'ngInject';
         const self = this;
 
         // TODO: remove this; revise when config schema is finalized
