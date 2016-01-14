@@ -89,7 +89,7 @@ module.exports = function (esriBundle) {
             BasemapControl: basemapCtrl,
             ScalebarControl: scalebarCtrl
         };
-    };
+    }
 
     /**
      * @ngdoc method
