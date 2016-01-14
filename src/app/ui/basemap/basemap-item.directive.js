@@ -33,9 +33,6 @@
             bindToController: true
         };
 
-        // $inject geoService, assume it's setup.
-        Controller.$inject = ['geoService'];
-
         return directive;
 
         ///////////
@@ -46,6 +43,7 @@
     }
 
     function Controller(geoService) {
+        'ngInject';
         const self = this;
         self.select = select;
 
