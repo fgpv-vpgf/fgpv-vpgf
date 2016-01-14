@@ -155,7 +155,7 @@
          */
         function setBasemap(uid) {
             if (typeof (mapManager) === 'undefined') {
-                console.log('Map manager is not setup, please setup map manager by calling setupMap().');
+                console.log('Error: Map manager is not setup, please setup map manager by calling setupMap().');
             } else {
                 mapManager.BasemapControl.setBasemap(uid);
             }
