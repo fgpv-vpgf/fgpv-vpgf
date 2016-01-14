@@ -72,7 +72,8 @@ describe('geo', () => {
             // fake a map creating function
             geoService.gapi = {
                 mapManager: {
-                    Map: () => map
+                    Map: () => map,
+                    setupMap: () => {}
                 }
             };
 
