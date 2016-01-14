@@ -33,6 +33,9 @@
             bindToController: true
         };
 
+        // $inject geoService, assume it's setup.
+        Controller.$inject = ['geoService'];
+
         return directive;
 
         ///////////
@@ -42,7 +45,7 @@
         }
     }
 
-    function Controller() {
+    function Controller(geoService) {
         const self = this;
         self.select = select;
 
@@ -61,6 +64,9 @@
             // TODO: move this function to basemap service or config;
             // need to deselect currently selected basemap
             self.basemap.selected = !self.basemap.selected;
+
+            geoService.setBasemap(self.basemap.id);
+
         }
     }
 })();
