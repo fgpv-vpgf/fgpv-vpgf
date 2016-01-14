@@ -18,7 +18,9 @@ module.exports = function (esriBundle) {
     // scalebar.js
     const mapManager = {
         Scalebar: esriBundle.Scalebar,
-        Map: esriBundle.Map
+        Map: esriBundle.Map,
+        setupMap,
+        setProxy
     };
 
     /**
@@ -43,7 +45,7 @@ module.exports = function (esriBundle) {
      *    <li>ScalebarControl - a reference to the scalebar control on the map</li>
      * </ul>
      */
-    mapManager.setupMap = function (map, settings) {
+    function setupMap(map, settings) {
 
         let basemapCtrl;
         let scalebarCtrl;
@@ -88,6 +90,19 @@ module.exports = function (esriBundle) {
             ScalebarControl: scalebarCtrl
         };
     };
+
+    /**
+     * @ngdoc method
+     * @name setProxy
+     * @memberof mapManager
+     * @description
+     * Set proxy service URL to avoid same origin issues
+     *
+     * @param {string} proxyUrl should point to a proxy with an interface compatible with ESRI's resource proxy
+     */
+    function setProxy(proxyUrl) {
+        esriBundle.esriConfig.defaults.io.proxyUrl = proxyUrl;
+    }
 
     return mapManager;
 };
