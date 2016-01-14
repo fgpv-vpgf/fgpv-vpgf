@@ -1,6 +1,10 @@
-<md-button aria-label="{{ self.control.label }}" class="md-icon-button rv-icon-20" rv-help="{{ self.name }}"
-    ng-class="{ selected: self.control.selected }" ng-click="self.action(self.layer)"
-    ng-disabled="!self.control.enabled">
+<md-button
+    aria-label="{{ self.control.label }}"
+    class="md-icon-button rv-button-32 rv-icon-20"
+    ng-class="{ selected: self.control.selected }"
+    ng-click="self.action(self.layer)"
+    ng-disabled="!self.control.enabled"
+    rv-help="{{ self.name }}">
 
     <md-tooltip md-direction="top">{{ self.control.tooltip }}</md-tooltip>
     <md-icon md-svg-src="{{ self.control.icon }}"></md-icon>

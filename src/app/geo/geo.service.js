@@ -27,7 +27,10 @@
             layerOrder: [],
             buildMap,
             registerLayer,
-            registerAttributes
+            registerAttributes,
+
+            setZoom,
+            shiftZoom
         };
 
         let map = null; // keep map reference local to geoService
@@ -60,7 +63,9 @@
             }
 
             //TODO should attribs be defined and set to null, or simply omitted from the object?  some layers will not have attributes. others will be added after they load
-            let l = { layer };
+            let l = {
+                layer
+            };
             if (config) {
                 l.state = config;
             }
@@ -97,10 +102,10 @@
         }
 
         /**
-        * Takes a layer in the config format and generates an appropriate layer object.
-        * @param {object} layerConfig a configuration fragment for a single layer
-        * @return {object} a layer object matching one of the esri/layers objects based on the layer type
-        */
+         * Takes a layer in the config format and generates an appropriate layer object.
+         * @param {object} layerConfig a configuration fragment for a single layer
+         * @return {object} a layer object matching one of the esri/layers objects based on the layer type
+         */
         function generateLayer(layerConfig) {
             const handlers = {};
 
@@ -114,18 +119,46 @@
         }
 
         /**
-        * Constructs a map on the given DOM node.
-        * @param {object} domNode the DOM node on which the map should be initialized
-        * @param {object} config the map configuration based on the configuration schema
-        */
+         * Constructs a map on the given DOM node.
+         * @param {object} domNode the DOM node on which the map should be initialized
+         * @param {object} config the map configuration based on the configuration schema
+         */
         function buildMap(domNode, config) {
-            map = service.gapi.mapManager.Map(domNode, { basemap: 'terrain', zoom: 6, center: [-100, 50] });
+            map = service.gapi.mapManager.Map(domNode, {
+                basemap: 'terrain',
+                zoom: 6,
+                center: [-100, 50]
+            });
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
                 registerLayer(l, layerConfig);
                 map.addLayer(l);
             });
+        }
 
+        /**
+         * Sets zoom level of the map to the specified level
+         * @param {number} value a zoom level number
+         */
+        function setZoom(value) {
+            if (map) {
+                map.setZoom(value);
+            } else {
+                console.warn('GeoService: map is not yet created.');
+            }
+        }
+
+        /**
+         * Changes the zoom level by the specified value relative to the current level; can be negative
+         * @param  {number} byValue a number of zoom levels to shift by
+         */
+        function shiftZoom(byValue) {
+            if (map) {
+                let newValue = map.getZoom() + byValue;
+                map.setZoom(newValue);
+            } else {
+                console.warn('GeoService: map is not yet created.');
+            }
         }
     }
 })();

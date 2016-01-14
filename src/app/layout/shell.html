@@ -12,7 +12,7 @@
 
         <div class="rv-esri-map" rv-init-map="!self.isLoading"></div>
 
-        <ng-include src="'app/ui/mapnav/mapnav.html'"></ng-include>
+        <rv-mapnav rv-morph="mapnav"></rv-mapnav>
 
         <!--
             Plugs are ui-router views to contain ui components, mostly panels. Each plug corresponds to the main part of the ui: panelPlug - main panel, etc.

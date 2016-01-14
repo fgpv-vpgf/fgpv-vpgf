@@ -83,7 +83,7 @@
             padding-left: rem(0.8) * ($index + 1);
         }
 
-        rv-layer-group-toggle .rv-layer-group-button {
+        rv-layer-group-toggle .rv-layer-group-body-button {
             padding-left: rem(0.8) * ($index + 1);
         }
 
@@ -97,18 +97,24 @@
 absolutely position a button underneath an item so it acts like a button body for the item; add content to it using aria labels; make the actual text not pronounceable by aria as well or something like that. this should work for both layer items and layer group toggles;
 */
 @mixin layer-group-toggle {
+    $toggleHeight: rem(4.0);
+
     rv-layer-group-toggle {
-        min-height: rem(3.6);
+        height: $toggleHeight;
         position: relative;
         display: flex;
         align-items: center;
+
+        .md-button {
+            margin: 0;
+        }
 
         // setting layer list shadow color when hover over layer group toggle
         &:hover ~ .rv-shadow {
             background-color: $primary-color;
         }
 
-        .rv-layer-group-button {
+        .rv-layer-group-body-button {
             text-align: left;
             position: absolute;
             padding: 0;
@@ -116,6 +122,10 @@ absolutely position a button underneath an item so it acts like a button body fo
             top: 0; // anchor the button to its parent container
             left: - rem(0.8);
             width: calc(100% + #{rem(1.6)});
+
+            .rv-primary {
+                line-height: $toggleHeight;
+            }
 
             .md-toggle-icon {
                 display: inline-block; // why? http://stackoverflow.com/a/25667784
@@ -138,6 +148,10 @@ absolutely position a button underneath an item so it acts like a button body fo
             align-items: center;
             height: rem(4.8);
             position: relative;
+
+            rv-layer-item-button .md-button {
+                margin: 0;
+            }
 
             // visually highlights selected layer item in the list
             &.rv-selected {
@@ -164,7 +178,7 @@ absolutely position a button underneath an item so it acts like a button body fo
             }
         }
 
-        .rv-layer-item-button {
+        .rv-layer-body-button {
             text-align: left;
             position: absolute;
             padding: 0;

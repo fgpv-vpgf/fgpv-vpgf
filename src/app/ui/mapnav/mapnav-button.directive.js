@@ -18,12 +18,12 @@
      *
      * @return {object} directive body
      */
-    function rvMapnavButton() {
+    function rvMapnavButton(mapNavigationService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/mapnav/mapnav-button.html',
             scope: {
-                control: '=' // binds `control` attribute to the scope;
+                name: '@' // get the name of the control object to fetch
             },
             link: linkFunc,
             controller: Controller,
@@ -36,8 +36,11 @@
         /**
          * Skeleton link function.
          */
-        function linkFunc() { //scope, el, attr, ctrl) {
+        function linkFunc(scope) { // el, attr, ctrl) {
+            const self = scope.self;
 
+            // getting toggle object from the navigation servcie directly using toggle's name
+            self.control = mapNavigationService.controls[self.name];
         }
     }
 
