@@ -56,7 +56,9 @@
 
             if (!layer.id) {
                 //TODO replace with proper error handling mechanism
-                console.log('Error: attempt to register layer without id property');
+                console.err('Attempt to register layer without id property');
+                console.log(layer);
+                console.log(config);
             }
 
             if (service.layers[layer.id]) {
@@ -110,8 +112,20 @@
          */
         function generateLayer(layerConfig) {
             const handlers = {};
+            const commonConfig = {
+                id: layerConfig.id
+            };
 
-            handlers[layerTypes.esriFeature] = config => new service.gapi.layer.FeatureLayer(config.url);
+            handlers[layerTypes.esriFeature] = config => {
+                return new service.gapi.layer.FeatureLayer(config.url, commonConfig);
+            };
+            handlers[layerTypes.esriDynamic] = config => {
+                return new service.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
+            };
+            handlers[layerTypes.ogcWms] = config => {
+                commonConfig.visibleLayers = [config.layerName];
+                return new service.gapi.layer.WmsLayer(config.url, commonConfig);
+            };
 
             if (handlers.hasOwnProperty(layerConfig.layerType)) {
                 return handlers[layerConfig.layerType](layerConfig);
@@ -126,11 +140,10 @@
          * @param {object} config the map configuration based on the configuration schema
          */
         function buildMap(domNode, config) {
-            map = service.gapi.mapManager.Map(domNode, {
-                basemap: 'terrain',
-                zoom: 6,
-                center: [-100, 50]
-            });
+
+            // FIXME remove the hardcoded settings when we have code which does this properly
+            map = service.gapi.mapManager.Map(domNode, { basemap: 'gray', zoom: 6, center: [-100, 50] });
+            service.gapi.mapManager.setProxy(config.services.proxyUrl);
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
                 registerLayer(l, layerConfig);
@@ -139,6 +152,9 @@
 
             // setup map using configs
             mapManager = service.gapi.mapManager.setupMap(map, config);
+
+            // FIXME temp link for debugging
+            window.FGPV = service.layers;
         }
 
         /**
@@ -176,6 +192,7 @@
             } else {
                 console.warn('GeoService: map is not yet created.');
             }
+
         }
     }
 })();
