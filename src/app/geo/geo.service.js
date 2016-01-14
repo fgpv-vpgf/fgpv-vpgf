@@ -29,8 +29,7 @@
             registerLayer,
             registerAttributes,
             setZoom,
-            shiftZoom
-            setupMap,
+            shiftZoom,
             setBasemap
         };
 
@@ -137,15 +136,8 @@
                 registerLayer(l, layerConfig);
                 map.addLayer(l);
             });
-        }
 
-        /**
-         * Construct mapManagerControl
-         * TODO: should we move the setupMap in buildMap
-         * @param  {object} config the config object that has settings to initialize map; basemaps, scalebar, ..., etc.
-         * @return {object} configured mapManager object contains the controls {BasemapControl, Scalbar Control}
-         */
-        function setupMap(config) {
+            // setup map using configs
             mapManager = service.gapi.mapManager.setupMap(map, config);
         }
 
