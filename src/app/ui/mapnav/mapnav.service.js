@@ -89,13 +89,16 @@
                     tooltip: 'Basemap',
 
                     // TODO: revise how mode is detected
-                    selected: () => stateManager.getMode('mapnav') !== 'default',
+                    //selected: () => stateManager.getMode('mapnav') !== 'default',
+                    selected: () => stateManager.state.mapnav.morph !== 'default',
                     call: () => {
                         // TODO: revise
-                        stateManager.set('otherBasemap');
-                        let newMode = stateManager.getMode('mapnav') === 'default' ?
+                        stateManager.setActive('otherBasemap');
+
+                        //let newMode = stateManager.getMode('mapnav') === 'default' ?
+                        let newMode = stateManager.state.mapnav.morph === 'default' ?
                             'basemap' : 'default';
-                        stateManager.setMode('mapnav', newMode);
+                        stateManager.setMorph('mapnav', newMode);
                     }
                 }
             }

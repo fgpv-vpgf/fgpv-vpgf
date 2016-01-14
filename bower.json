@@ -1,7 +1,7 @@
 {
     "name": "r2v2",
     "description": "A starter project for AngularJS",
-    "version": "0.1.0",
+    "version": "0.1.3",
     "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf",
     "license": "MIT",
     "private": true,
@@ -22,26 +22,38 @@
         "gsap": "^1.18.0",
         "bezier-easing": "^1.0.0",
         "dotjem-angular-tree": "^0.2.1",
-        "geoapi": "https://github.com/fgpv-vpgf/geoApi/releases/download/v0.0.0-1/geoapi-0.0.0.tgz",
-        "holder-ipsum": "https://github.com/euangoddard/holder-ipsum.git"
+        "geoapi": "https://github.com/fgpv-vpgf/geoApi/releases/download/v0.1.0/geoapi-0.1.0.tgz",
+        "holder-ipsum": "https://github.com/euangoddard/holder-ipsum.git",
+        "datatables.net": "~1.10.10",
+        "datatables.net-dt": "~1.10.10",
+        "datatables-scroller": "~1.4.0"
     },
     "overrides": {
+        "datatables-scroller": {
+            "main": "js/dataTables.scroller.js",
+            "dependencies": null
+        },
+        "datatables.net-dt": {
+            "ignore": true
+        },
         "holder-ipsum": {
             "main": "holder-ipsum.js"
         },
         "angular-material": {
             "main": "angular-material.js"
         },
-        "geoapi": { "main": "geoapi.js" },
+        "geoapi": {
+            "main": "geoapi.js"
+        },
         "gsap": {
             "main": [
                 "src/uncompressed/TimelineLite.js",
                 "src/uncompressed/TweenLite.js",
                 "src/uncompressed/plugins/CSSPlugin.js",
                 "src/uncompressed/plugins/EaselPlugin.js"
-            ]
+              ]
         },
-        "bezier-easing":{
+        "bezier-easing": {
             "main": "bezier-easing.js"
         },
         "dotjem-angular-tree": {

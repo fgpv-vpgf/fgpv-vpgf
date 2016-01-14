@@ -77,7 +77,7 @@
         function singlePoint() {
             stateManager._detailsData.layers = generateDetailsData(1);
 
-            stateManager.set({
+            stateManager.setActive({
                 side: false
             }, 'mainDetails');
         }
@@ -86,7 +86,7 @@
         function multiplePoints() {
             stateManager._detailsData.layers = generateDetailsData(6);
 
-            stateManager.set({
+            stateManager.setActive({
                 side: false
             }, 'mainDetails');
         }

@@ -18,6 +18,8 @@
      * When a child state object is:
      * - activated: it activates its parent and deactivates its active sibling if any;
      * - deactivated: it deactivates its parent as well;
+     *
+     * Only `active` and `morph` state properties are animated (animation can be skip which is indicated by the `activeSkip` and `morphSkip` flags) and need to be set through `setActive` and `setMorph` functions accordingly; these properties can be bound and watched directly though. Everything else on the `state` object can be set, bound, and watched directly.
      */
     angular
         .module('app.common.router')
@@ -25,17 +27,19 @@
 
     // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
-    function stateManager($q) {
+    function stateManager($q, $rootScope) {
         const service = {
             addState,
-            set,
-            get,
-            getMode,
-            setMode,
-            isAnimated,
-            resolve,
 
-            // TODO: revise; temporary place to store details data
+            setActive,
+            setMorph,
+
+            callback,
+
+            state: {},
+
+            // temporary place to store layer data;
+            // TODO: move to the state object
             _detailsData: {
                 layers: []
             }
@@ -43,56 +47,72 @@
 
         // state object
         // sample state object
-        let state = {
+        service.state = {
             main: {
-                enabled: false
+                active: false,
+                activeSkip: false, // flag for skipping animation
             },
             mainToc: {
-                enabled: false,
+                active: false,
+                activeSkip: false,
                 parent: 'main'
             },
             mainToolbox: {
-                enabled: false,
+                active: false,
+                activeSkip: false,
                 parent: 'main'
             },
             mainDetails: {
-                enabled: false,
+                active: false,
+                activeSkip: false,
                 parent: 'main'
             },
             side: {
-                enabled: false
+                active: false,
+                activeSkip: false
             },
             sideMetadata: {
-                enabled: false,
+                active: false,
+                activeSkip: false,
                 parent: 'side'
             },
             sideSettings: {
-                enabled: false,
+                active: false,
+                activeSkip: false,
                 parent: 'side'
             },
             filters: {
-                enabled: false,
-                mode: 'default' // half, tenth
+                active: false,
+                activeSkip: false,
+                morph: 'default', // minimized, full,
+                morphSkip: false,
             },
             filtersFulldata: {
-                enabled: false,
+                active: false,
+                activeSkip: false,
                 parent: 'filters'
             },
             filtersNamedata: {
-                enabled: false,
+                active: false,
+                activeSkip: false,
                 parent: 'filters'
             },
             other: {
-                enabled: false
+                active: false,
+                activeSkip: false
             },
             otherBasemap: {
-                enabled: false,
+                active: false,
+                activeSkip: false,
                 parent: 'other'
             },
             mapnav: {
-                mode: 'default'
+                morph: 'default',
+                morphSkip: false
             }
         };
+
+        const fulfillStore = {}; // keeping references to promise fulfill functions
 
         return service;
 
@@ -103,27 +123,26 @@
          * @param {Array} items an array of state items
          */
         function addState(items) {
-            state = angular.merge(state, items);
+            service.state = angular.merge(service.state, items);
         }
 
         /**
-         * Sets items states. Items may be supplied as an array of strings or ojects of `{ [itemName]: [targetValue] }` where `itemName` is a String; `targetValue`, a boolean. If the targetValue is not supplied, a negation of the current state is used. After changing state of an item, stateManager waits for state directive to resolve items callback after its transition is completed. This can be used to open toc panel and then metadata panel in sequence.
+         * Sets items states. Items may be supplied as an array of strings or ojects of `{ [itemName]: [targetValue] }` where `itemName` is a String; `targetValue`, a boolean. If the targetValue is not supplied, a negation of the current state is used. runAfter changing state of an item, stateManager waits for state directive to resolve items callback runAfter its transition is completed. This can be used to open toc panel and then metadata panel in sequence.
          *
          * ```js
-         * // sideMetadata panel will only be activated when state directive resolved mainToc callback after its transition is complete
-         * stateManager.set('mainToc', 'sideMetadata');
+         * // sideMetadata panel will only be activated when state directive resolved mainToc callback runAfter its transition is complete
+         * stateManager.setActive('mainToc', 'sideMetadata');
          *
          * // same effect as above but using object notation with explicit target values
-         * stateManager.set({ mainToc: true }, { sideMetadata: true });
+         * stateManager.setActive({ mainToc: true }, { sideMetadata: true });
          * ```
          *
          * @param {Array} items state items to toggle
          * @return {Promise} returns a promise which is resolved when animation completes; if the child is supplies as the element to be manipulated and its transition is immediate, the return promise is resovled when its parent animation is complete;
          */
-        function set(...items) {
+        function setActive(...items) {
             if (items.length > 0) {
-
-                let after;
+                let runAfter;
 
                 let one = items.shift(); // get first item
                 let oneTargetValue;
@@ -131,7 +150,7 @@
                 // infer name, target state and parent
                 if (typeof one === 'string') {
                     one = getItem(one);
-                    oneTargetValue = !one.item.enabled; // using negated current state as the target
+                    oneTargetValue = !one.item.active; // using negated current state as the target
                 } else {
                     let oneName = Object.keys(one)[0];
                     oneTargetValue = one[oneName];
@@ -144,26 +163,26 @@
                     let oneParent = getParent(one.name); // get parent
                     if (oneTargetValue) { // item turning on
 
-                        if (!oneParent.item.enabled) { // if parent is off,
-                            setItem(one.item, true, true); // turn item on without animation
+                        if (!oneParent.item.active) { // if parent is off,
+                            setItemProperty(one.name, 'active', true, true); // turn item on without animation
                             one = oneParent; // and animate parent's opening transition
-                        } else { // if parent if on,
+                        } else { // if parent is on,
                             getChildren(oneParent.name)
                                 .forEach(child => {
                                     //console.log('child - ', child);
                                     if (child.name !== one.name) {
-                                        setItem(child.item, false); // animate siblings off
+                                        setItemProperty(child.name, 'active', false); // animate siblings off
                                     }
                                 });
                         }
 
                     } else { // item turning off
                         one = oneParent; // animate parent's closing transition
-                        after = () => { // after parent finished its transition
+                        runAfter = () => { // runAfter parent finished its transition
                             getChildren(oneParent.name)
                                 .forEach(child => {
-                                    //console.log('child - ', child);
-                                    setItem(child.item, false, true); // immediately turn off all children
+                                    //console.log('child 1- ', child);
+                                    setItemProperty(child.name, 'active', false, true); // immediately turn off all children
                                 });
                         };
                     }
@@ -173,29 +192,29 @@
 
                     // when turning a parent item on, turn on first (random) child
                     if (oneTargetValue && oneChildren.length > 0) { // turning on and with children
-                        setItem(oneChildren[0].item, true, true); // immediately turn the first (random) child on without transition
+                        setItemProperty(oneChildren[0].name, 'active', true, true); // immediately turn the first (random) child on without transition
                     } else if (!oneTargetValue) { // turning off
-                        after = () => { // after parent finished its transition
+                        runAfter = () => { // runAfter parent finished its transition
                             oneChildren.forEach(child => {
-                                //console.log('child - ', child);
-                                setItem(child.item, false, true); // immediately turn off all children
+                                //console.log('child 2- ', child);
+                                setItemProperty(child.name, 'active', false, true); // immediately turn off all children
                             });
                         };
                     }
                 }
 
                 // return promise for easy promise chaining
-                return setItem(one.item, oneTargetValue)
+                return setItemProperty(one.name, 'active', oneTargetValue)
                     .then(() => {
 
                         //console.log('Continue with the rest of state items');
-                        // run any `after` function if exists
-                        if (after) {
-                            after();
+                        // run any `runAfter` function if exists
+                        if (runAfter) {
+                            runAfter();
                         }
 
                         // process the rest of the items
-                        return set(...items);
+                        return setActive(...items);
                     });
             } else {
                 return $q.resolve(true); // return a resolved promise for thenability
@@ -203,50 +222,73 @@
         }
 
         /**
-         * Retuns item state.
-         * @param  {String|Object} item either state name or object `{ [itemName]: [targetValue] }`
-         * @return {Boolean}      value of the specified state
+         * Changes the morph value of the item to the value specified
+         * @param  {String} itemName       name of the item to change
+         * @param  {String} value      value to change the morph to
+         * @return {Object}            the stateManager service to use for chaining
          */
-        function get(item) {
-            let itemName = typeof item === 'string' ? item : item.name;
-            return state[itemName].enabled;
+        function setMorph(itemName, value) {
+            setItemProperty(itemName, 'morph', value);
+
+            return service;
         }
 
         /**
          * Resolves promise on the item waiting for its transition to complete.
          * @param  {String} itemName name of the state to resolve
          */
-        function resolve(itemName) {
-            let item = state[itemName];
+        function callback(itemName, property) {
+            const fulfillKey = `${property}${itemName}`;
 
-            //console.log('Resolving state item lock:', itemName); //, item.fulfill);
-            if (item.fulfill) {
-                item.fulfill();
-                delete item.fulfill;
+            //console.log('Resolving state item lock:', itemName, property, fulfillStore[fulfillKey]); //, item.fulfill);
+            // there is no memory leak since there is a finite (and small) number of fulfill keys
+            if (fulfillStore[fulfillKey]) {
+                fulfillStore[fulfillKey]();
             }
         }
 
+        /* PRIVATE HELPERS */
+
         /**
          * Sets specified item to the provided value; waits for transition to complete
-         * @param {Object} item  state object to modify
+         * @param {String} itemName  object name to modify
+         * @param {String} property  property name to modify
          * @param {Boolean} value  target state value
          * @param {Boolean} skip skips animation, defaults to false
          */
-        function setItem(item, value, skip = false) {
+        function setItemProperty(itemName, property, value, skip = false) {
+            const item = service.state[itemName];
+
             return $q(fulfill => { // reject is not used
+                const fulfillKey = `${property}${itemName}`; // key to store `fulfill` function
+                const skipKey = `${property}Skip`; // key to store `skip` animation flag
 
-                item.skip = skip; // even if the item has proper state, set its skip value for sanity
+                item[skipKey] = skip; // even if the item has proper state, set its skip value for sanity
 
-                //console.log('settingItem', item, item.enabled, value);
-                if (item.enabled !== value) {
-                    item.fulfill = fulfill;
-                    item.enabled = value;
+                //console.log('settingItem', item, item.active, value);
+                if (item[property] !== value) {
+
+                    // check if fulfill function exists from before exist and resolve it
+                    if (fulfillStore[fulfillKey]) {
+                        fulfillStore[fulfillKey]();
+                    }
+                    fulfillStore[fulfillKey] = fulfill; // store fulfill function to resolve on callback
+
+                    item[property] = value;
+
+                    // emit event on the rootscope when change started
+                    $rootScope.$broadcast('stateChangeStart', itemName, property, value, skip);
 
                     // waititing for items to animate and be resolved
                 } else {
                     // resolve immediately
                     fulfill();
                 }
+            })
+            .then(() => {
+                //console.log('EMIT EVENT for', itemName, property, value, skip);
+                // emit event on the rootscope when change is complete
+                $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
             });
         }
 
@@ -258,7 +300,7 @@
         function getItem(itemName) {
             return {
                 name: itemName,
-                item: state[itemName]
+                item: service.state[itemName]
             };
         }
 
@@ -268,8 +310,8 @@
          * @return {Object}          state object and its name
          */
         function getParent(itemName) {
-            let parentName = state[itemName].parent;
-            let parent = state[parentName];
+            let parentName = service.state[itemName].parent;
+            let parent = service.state[parentName];
 
             return {
                 name: parentName,
@@ -283,50 +325,16 @@
          * @return {Object}            an array of state objects and their names
          */
         function getChildren(parentName) {
-            return Object.keys(state)
+            return Object.keys(service.state)
                 .filter((key) => {
-                    return state[key].parent === parentName;
+                    return service.state[key].parent === parentName;
                 })
                 .map((key) => {
                     return {
                         name: key,
-                        item: state[key]
+                        item: service.state[key]
                     };
                 });
-        }
-
-        /**
-         * Returns the mode of the item specified
-         * @param  {String} item       itemName whose mode will be returned
-         * @return {String}            the item's mode or null if the item has no mode stored
-         */
-        function getMode(item) {
-            return state[item].mode || null;
-        }
-
-        /**
-         * Changes the mode of the item to the value specified
-         * @param  {String} item       name of the item to change
-         * @param  {String} value      value to change the mode to
-         * @return {Object}            the stateManager service to use for chaining
-         */
-        function setMode(item, value) {
-            state[item].mode = value;
-
-            return service;
-        }
-
-        /**
-         * Returns whether transition should be animated or not.
-         * @param  {String} item       itemName whose isAnimated value will be returned
-         * @return {String}            the item's isAnimated value; defaults to true if skip value is not stored
-         */
-        function isAnimated(item) {
-            // true !== true => false
-            // false !== true => true
-            // undefined !== true => true
-            // null !== true => true
-            return state[item].skip !== true;
         }
     }
 })();

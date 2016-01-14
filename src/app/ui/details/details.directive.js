@@ -87,7 +87,7 @@
         // TODO: remove;
         $scope.stateManager = stateManager;
         $scope.$watch('stateManager._detailsData.layers', newValue => {
-            console.log(newValue);
+            console.log('stateManager._detailsData.layers', newValue);
             if (newValue.length > 0) {
                 // pick random point to be selected initially
                 self.selected = newValue[Math.floor(Math.random() * newValue.length)];
@@ -106,7 +106,7 @@
          * Closes details pane and switches to toc.
          */
         function closeDetails() {
-            stateManager.set({
+            stateManager.setActive({
                 side: false
             }, 'mainDetails');
 

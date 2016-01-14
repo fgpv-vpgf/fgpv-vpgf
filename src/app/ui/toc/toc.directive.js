@@ -56,11 +56,11 @@
                 'attached'
             ];
 
-            let currentMode = stateManager.getMode('filters');
+            let currentMode = stateManager.state.filters.morph; //stateManager.getMode('filters');
             let index = (views.indexOf(currentMode) + 1) % 4;
 
             //Make sure the filters panel is open
-            stateManager.set({ side: false }, { filtersFulldata: true });
+            stateManager.setActive({ side: false }, { filtersFulldata: true });
             stateManager.setMode('filters', views[index]);
         }
 
