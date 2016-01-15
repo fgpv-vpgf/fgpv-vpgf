@@ -38,6 +38,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/dijit/BasemapGallery', 'BasemapGallery'],
         ['esri/dijit/BasemapLayer', 'BasemapLayer'],
         ['esri/dijit/Scalebar', 'Scalebar'],
+        ['esri/geometry/Point', 'Point'],
         ['esri/layers/ArcGISDynamicMapServiceLayer', 'ArcGISDynamicMapServiceLayer'],
         ['esri/layers/ArcGISImageServiceLayer', 'ArcGISImageServiceLayer'],
         ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],
@@ -46,8 +47,9 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/layers/WMSLayer', 'WmsLayer'],
         ['esri/map', 'Map'],
         ['esri/request', 'esriRequest'],
+        ['esri/SpatialReference', 'SpatialReference'],
         ['esri/tasks/GeometryService', 'GeometryService'],
-        ['esri/tasks/GeometryService', 'ProjectParameters']
+        ['esri/tasks/ProjectParameters', 'ProjectParameters']
     ];
 
     function makeDojoRequests() {
