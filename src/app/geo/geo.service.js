@@ -143,7 +143,9 @@
 
             // FIXME remove the hardcoded settings when we have code which does this properly
             map = service.gapi.mapManager.Map(domNode, { basemap: 'gray', zoom: 6, center: [-100, 50] });
-            service.gapi.mapManager.setProxy(config.services.proxyUrl);
+            if (config.services && config.services.proxyUrl) {
+                service.gapi.mapManager.setProxy(config.services.proxyUrl);
+            }
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
                 registerLayer(l, layerConfig);
