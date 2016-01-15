@@ -6,20 +6,20 @@
     <md-menu-content class="rv-menu rv-dense" width="5">
         <md-menu-item>
             <md-button ng-click="self.setMode('minimized')">
-                <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hidden' : self.filtersMode() != 'minimized' }"></md-icon>
+                <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hide' : self.filtersMode() != 'minimized' }"></md-icon>
                 Map and Filters
             </md-button>
         </md-menu-item>
         <md-menu-item>
             <md-button ng-click="self.setMode('default')">
-                <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hidden' : self.filtersMode() != 'default' }"></md-icon>
+                <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hide' : self.filtersMode() != 'default' }"></md-icon>
                 Data and Map
                 <!--md-icon class="rv-alt-icon" md-svg-icon="action:view_agenda"></md-icon-->
             </md-button>
         </md-menu-item>
         <md-menu-item>
             <md-button ng-click="self.setMode('full')">
-                <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hidden' : self.filtersMode() != 'full' }"></md-icon>
+                <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hide' : self.filtersMode() != 'full' }"></md-icon>
                 Data
             </md-button>
         </md-menu-item>

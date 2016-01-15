@@ -90,12 +90,7 @@
             filtersFulldata: {
                 active: false,
                 activeSkip: false,
-                parent: 'filters',
-                display: {
-                    isLoading: false, // showing loading indicator in the content pane
-                    layerId: -1, // id of the layer which data is being display
-                    data: {} // data to display
-                }
+                parent: 'filters'
             },
             filtersNamedata: {
                 active: false,
@@ -117,6 +112,27 @@
             },
             help: {
                 active: false
+            }
+        };
+
+        service.display = {
+            filters: {
+                isLoading: false, // showing loading indicator in the content pane
+                layerId: -1, // id of the layer which data is being display
+                data: {  // layer data to display
+                    columns: null,
+                    data: null
+                }
+            },
+            metadata: {
+                isLoading: false,
+                layerId: -1,
+                data: null
+            },
+            settings: {
+                isLoading: false,
+                layerId: -1,
+                data: null
             }
         };
 
