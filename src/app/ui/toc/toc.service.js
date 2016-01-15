@@ -18,7 +18,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService(stateManager, $timeout, $rootScope) {
+    function tocService(stateManager, $timeout, $rootScope, $http) {
         const service = {
             // a sample config bit describing layer selector structure; comes from the config file
             data: {
@@ -428,28 +428,6 @@
             actions: {
                 toggleLayerGroup,
                 toggleLayerFiltersPanel
-            },
-
-            presets: null,
-
-            selectedLayer: {},
-            layerMetadata: null,
-            display: {
-                metadata: {
-                    isLoading: false, // showing loading indicator in the content pane
-                    layerId: -1, // id of the layer which data is being display
-                    data: {} // data to display
-                },
-                settings: {
-                    isLoading: false,
-                    layerId: -1,
-                    data: {}
-                },
-                filters: {
-                    isLoading: false,
-                    layerId: -1,
-                    data: {}
-                }
             }
         };
 
@@ -711,7 +689,7 @@
          */
         function toggleSettings(layer) {
             togglePanelContent('sideSettings', 'settings', layer.id, 'filters');
-            setDisplay('settings', layer.id);
+            updateDisplay('settings', {}, layer.id);
         }
 
         /**
@@ -720,13 +698,80 @@
          * @param  {Object} layer layer object whose data should be displayed.
          */
         function toggleLayerFiltersPanel(layer) {
+            stateManager.display.filters.isLoading = true;
+
             // close basemap selector if open
             stateManager.setActive({
                 other: false
             });
 
             togglePanelContent('filtersFulldata', 'filters', layer.id, 'side');
-            setDisplay('filters', layer.id);
+
+            stateManager.display.filters.layerId = layer.id;
+
+            // TODO: remove
+            // get fake data
+            $http
+                .get('content/fake_data.json')
+                .then(function (data) {
+                    // shuffle fake data
+                    let newData = shuffle(data.data.aaData);
+                    newData.splice(Math.floor(Math.random() * (newData.length - 20) + 20))
+                    newData.forEach((row, index) => row[0] = index + 1);
+
+                    // simulate delay to show loading splash
+                    return $timeout(function () {
+                        updateDisplay('filters', {
+                            columns: [
+                                {
+                                    title: 'ID'
+                                },
+                                {
+                                    title: 'First Name'
+                                },
+                                {
+                                    title: 'Last Name'
+                                },
+                                {
+                                    title: 'ZIP'
+                                },
+                                {
+                                    title: 'Country'
+                                }
+                            ],
+                            data: newData
+                        }, layer.id);
+
+                        console.log(stateManager.display.filters.data);
+                    }, 2000);
+                })
+                .catch(function (error) {
+                    console.log('failed to load fake data:',
+                        error);
+                });
+
+            // helper to shuffle array
+            function shuffle(array) {
+                let counter = array.length;
+                let temp;
+                let index;
+
+                // While there are elements in the array
+                while (counter > 0) {
+                    // Pick a random index
+                    index = Math.floor(Math.random() * counter);
+
+                    // Decrease counter by 1
+                    counter--;
+
+                    // And swap the last element with it
+                    temp = array[counter];
+                    array[counter] = array[index];
+                    array[index] = temp;
+                }
+
+                return array;
+            }
         }
 
         /**
@@ -736,11 +781,11 @@
          */
         function toggleMetadata(layer) {
             // cancel previous data retrieval timeout so we don't display old data
-            $timeout.cancel(service.display.metadata.handle);
+            $timeout.cancel(stateManager.display.metadata.handle);
 
             // if it takes longer than 100 mil to get metadata, kick in the loading screen
-            service.display.metadata.handle = $timeout(() => {
-                service.display.metadata.isLoading = true;
+            stateManager.display.metadata.handle = $timeout(() => {
+                stateManager.display.metadata.isLoading = true;
             }, 100);
 
             // toggle panels as needed
@@ -748,12 +793,13 @@
 
             // check if metadata is cached
             if (layer.cache.metadata) {
-                setDisplay('metadata', layer.id); // display from cache
+                updateDisplay('metadata', layer.cache.metadata, layer.id); // display from cache
+                stateManager.display.metadata.isLoading = false;
 
-                $timeout.cancel(service.display.metadata.handle);
+                $timeout.cancel(stateManager.display.metadata.handle);
             } else { // else, retrieve it;
                 // set layerId to check agains when data is retrieved
-                service.display.metadata.layerId = layer.id;
+                stateManager.display.metadata.layerId = layer.id;
 
                 // TODO: generate some metadata to display functionality
                 let mdata = HolderIpsum.paragraphs(2, true);
@@ -763,11 +809,12 @@
                     layer.cache.metadata = layer.cache.metadata || mdata;
 
                     // check if the layerId for displayed metadata still matches metadata being retrieved
-                    if (service.display.metadata.layerId === layer.id) {
-                        setDisplay('metadata', layer.id);
+                    if (stateManager.display.metadata.layerId === layer.id) {
+                        updateDisplay('metadata', layer.cache.metadata, layer.id);
+                        stateManager.display.metadata.isLoading = false;
 
                         // cancel loading indicator timeout
-                        $timeout.cancel(service.display.metadata.handle);
+                        $timeout.cancel(stateManager.display.metadata.handle);
                     }
                 }, Math.random() * 3000); // random delay
             }
@@ -802,72 +849,84 @@
                     stateManager.setActive(panelName);
                 }
 
-            } else if (service.display[contentName].layerId === layerId) { // metadata panel is open and if this layer's metadata is already selected
+            } else if (stateManager.display[contentName].layerId === layerId) { // metadata panel is open and if this layer's metadata is already selected
                 stateManager.setActive(panelName); // just close it
             } else { // panel is open and its content is from a different layer; deselect that layer and select the new one
                 // TODO: delay clearing old content to after the transtion ends - prevents a brief flash of null content in the pane
-                changeSelectedState(service.display[contentName].layerId, contentName, false); // old layer
-                changeSelectedState(layerId, contentName); // new layer
+                changeContentState(stateManager.display[contentName].layerId, contentName, false); // old layer
+                changeContentState(layerId, contentName); // new layer
             }
         }
 
         /**
-         * Changes the state of the displayed layer data.
+         * Updates displayed data for a specific layer content.
          * If the layerId is provided, then data type is considered to be visible in a panel.
          *
-         * @param {String} type    name of the displayed content
+         * @param {String} contentName    name of the displayed content
+         * @param {Object} data     data to be displayed, defaults to {}
          * @param {id} layerId     layer id, defaults to -1
          */
-        function setDisplay(type, layerId = -1) {
-            if (layerId !== -1) {
+        function updateDisplay(contentName, data = {}, layerId = -1) {
+            stateManager.display[contentName].layerId = layerId;
+            stateManager.display[contentName].data = data;
+
+            /*if (data) {
                 let layer = findLayer(layerId);
 
                 // TODO: decide where to store cached layer data
-                service.display[type].data = layer.cache[type];
-                service.display[type].layerId = layerId;
-            } else {
-                service.display[type].layerId = -1;
-                service.display[type].data = {};
-            }
+                //service.display[contentName].layerId = layerId;
+                //service.display[contentName].data = layer.cache[contentName];
 
-            service.display[type].isLoading = false;
+                stateManager.display[contentName].layerId = layerId;
+                stateManager.display[contentName].data = data;
+
+            } else {
+                //service.display[contentName].layerId = -1;
+                //service.display[contentName].data = {};
+            }*/
+
+            // TODO: not always !
+            //service.display[type].isLoading = false;
         }
 
         /**
-         * Sets a watch on StateManager for layer data panels. When the panel is opened/closed, calls changeSelectedState to dehighlight layer toggles and checks the state of the layer item itself (selected / not selected).
+         * Sets a watch on StateManager for layer data panels. When the panel is opened/closed, calls changeContentState to dehighlight layer toggles and checks the state of the layer item itself (selected / not selected).
          *
-         * @param  {String} itemName    name of the panel to watch
-         * @param  {String} contentName type of the display data
+         * @param  {String} panelName    name of the panel to watch as specified in the stateManager
+         * @param  {String} contentName type of the display data (layer toggle name: 'settings', 'metadata', 'filters')
          */
-        function watchPanelState(itemName, contentName) {
-            $rootScope.$watch(() => stateManager.state[itemName].active, newValue => {
-                let layerId = service.display[contentName].layerId;
-                changeSelectedState(layerId, contentName, newValue);
+        function watchPanelState(panelName, contentName) {
+            $rootScope.$watch(() => stateManager.state[panelName].active, newValue => {
+                let layerId = stateManager.display[contentName].layerId;
+                console.log('watch!', panelName, contentName, newValue, layerId);
+                changeContentState(layerId, contentName, newValue);
             });
         }
 
         /**
-         * Sets the selected state of `contentName` layer data type. There options are possible right now: metadata, settings, and filters. If any one of them is selected, the layer is considered selected as well and has a visual indicator of that.
+         * Changes the state of the specified layer content (metadata, settings, and filters) to the value provided. If any one of them is selected, the layer is considered selected as well and has a visual indicator of that.
          *
          * @param  {Integer} layerId     id of the layer whose data is displayed
          * @param  {String} contentName type of the data displayed
          * @param  {Boolean} newValue    indicates whether the `contentName` display data is visible or not
          */
-        function changeSelectedState(layerId, contentName, newValue = true) {
+        function changeContentState(layerId, contentName, newValue = true) {
             let layer = findLayer(layerId);
 
             if (layer) {
                 // TODO: revise; maybe also store filters values here or something
                 layer.toggles[contentName].selected = newValue; // select the toggle to stay visible
 
+                console.log('layer.toggles', layer.toggles);
+
                 // check if any toggle is selected; if so, select the layer
                 let layerSelectedValue = Object.keys(layer.toggles)
                     .some(toggleName => layer.toggles[toggleName].selected);
                 layer.selected = layerSelectedValue; // newValue; // change layer's selected state
 
-                // if panel closed, set current display to null to prevent previous display from showing up during loading
+                // if panel is closed, set current display to null to prevent previous display from showing up during loading
                 if (!newValue) {
-                    setDisplay(contentName);
+                    updateDisplay(contentName);
                 }
             }
         }
