@@ -10,7 +10,7 @@ describe('geo', () => {
         bard.inject('geoService');
     });
 
-    describe('geoService', () => {
+    xdescribe('geoService', () => {
 
         //check registering a layer
         it('should register a layer', () => {

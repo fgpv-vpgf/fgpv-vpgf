@@ -56,7 +56,7 @@
 
             if (!layer.id) {
                 //TODO replace with proper error handling mechanism
-                console.err('Attempt to register layer without id property');
+                console.error('Attempt to register layer without id property');
                 console.log(layer);
                 console.log(config);
             }
