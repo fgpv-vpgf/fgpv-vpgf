@@ -1,20 +1,34 @@
 {
   "version": -1,
+  "services": {
+    "proxyUrl":"http://cp.zz9.ca/index"
+  },
   "layers": [
     {
       "id":"ecogeo",
-      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer/0",
-      "layerType":"esriFeature"
+      "layerType":"esriDynamic",
+      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer"
     },
     {
       "id":"josm",
-      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0",
-      "layerType":"esriFeature"
+      "layerType":"esriFeature",
+      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0"
     },
     {
       "id":"cesi_ozone",
-      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_Ozone/MapServer/3",
-      "layerType":"esriFeature"
+      "layerType":"esriFeature",
+      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_Ozone/MapServer/3"
+    },
+    {
+      "id":"aafc_dynamic_layer",
+      "layerType":"esriDynamic",
+      "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_census_of_agriculture_2011_ccs/MapServer"
+    },
+    {
+      "id":"rail_wms",
+      "layerType":"ogcWms",
+      "url":"http://maps.geogratis.gc.ca/wms/railway_en",
+      "layerName":"railway.track"
     }
   ],
   "basemaps": [
