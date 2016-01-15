@@ -7,10 +7,10 @@
         <h3 class="md-title" ng-switch-when="title">{{ self.titleValue }}</h3>
         <h4 class="md-subhead" ng-switch-when="subhead">{{ self.titleValue }}</h4>
 
-        <span flex></span>
+        <span flex class="rv-spacer"></span>
 
         <!-- show close button if there is a closePanel function -->
-        <md-button aria-label="Close" class="md-icon-button black rv-icon-auto" ng-click="self.closePanel()"
+        <md-button aria-label="Close" class="md-icon-button black rv-button-24" ng-click="self.closePanel()"
             ng-if="self.closePanel">
             <md-tooltip>Close</md-tooltip>
             <md-icon md-svg-src="navigation:close"></md-icon>

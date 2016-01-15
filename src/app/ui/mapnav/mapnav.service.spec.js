@@ -12,7 +12,7 @@ describe('mapNavigationService', () => {
 
             Here 'app.ui.mapnav' module is identified as we are testing `mapNavigationService` service. We also need 'app.common.router' module since mapNavigationService uses StateManager.
         */
-        bard.appModule('app.ui.mapnav', 'app.common.router');
+        bard.appModule('app.ui.mapnav', 'app.common.router', 'app.geo');
 
         /*
             injects angular components needed for testing and stores them on the global window object: https://github.com/wardbell/bardjs#inject
@@ -32,11 +32,6 @@ describe('mapNavigationService', () => {
 
         // inject services
         bard.inject('mapNavigationService');
-
-        // a spy can stub any function and tracks calls to it and all arguments. We spy on the service functions to check if they are being called properly. http://jasmine.github.io/2.0/introduction.html#section-Spies
-        spyOn(mapNavigationService, 'zoomIn');
-        spyOn(mapNavigationService, 'zoomOut');
-        spyOn(mapNavigationService, 'zoomTo');
     });
 
     describe('mapNavigationService', () => {
@@ -45,20 +40,6 @@ describe('mapNavigationService', () => {
             // check if service is defined
             expect(mapNavigationService)
                 .toBeDefined();
-
-            // call service functions
-            mapNavigationService.zoomIn();
-            mapNavigationService.zoomOut();
-            mapNavigationService.zoomTo(5);
-
-            // using spies, check if they functions have been called correctly and with correct arguments
-            expect(mapNavigationService.zoomIn)
-                .toHaveBeenCalled();
-            expect(mapNavigationService.zoomOut)
-                .toHaveBeenCalled();
-            expect(mapNavigationService.zoomTo)
-                .toHaveBeenCalledWith(5);
-
         });
     });
 });

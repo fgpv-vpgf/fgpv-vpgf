@@ -15,7 +15,8 @@
         .module('app.layout')
         .controller('ShellController', ShellController);
 
-    function ShellController(configService, $rootScope, events, version, stateManager) {
+    function ShellController(configService, $rootScope, events, version, sideNavigationService,
+            stateManager) {
         const self = this;
 
         self.config = configService.data;
@@ -51,7 +52,12 @@
             },
             {
                 name: 'Help',
-                type: 'link'
+                type: 'link',
+                action: () => {
+                    sideNavigationService.close();
+                    stateManager.setActive('help');
+                    console.log('Halp!');
+                }
             }
         ];
 
@@ -77,7 +83,7 @@
         function singlePoint() {
             stateManager._detailsData.layers = generateDetailsData(1);
 
-            stateManager.set({
+            stateManager.setActive({
                 side: false
             }, 'mainDetails');
         }
@@ -86,7 +92,7 @@
         function multiplePoints() {
             stateManager._detailsData.layers = generateDetailsData(6);
 
-            stateManager.set({
+            stateManager.setActive({
                 side: false
             }, 'mainDetails');
         }

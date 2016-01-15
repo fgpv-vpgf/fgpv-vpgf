@@ -21,6 +21,7 @@
             'app.ui.mapnav',
             'app.ui.filters',
             'app.ui.common',
-            'app.ui.settings'
+            'app.ui.settings',
+            'app.ui.help'
         ]);
 })();

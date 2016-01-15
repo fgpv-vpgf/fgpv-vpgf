@@ -120,7 +120,7 @@
                     .toArray();
                 names = element.find(RV_SYMBOLOGY_ITEM_NAME_CLASS)
                     .toArray();
-                container = ctrl.element;
+                container = ctrl.element; // container is needed for animation
             }
         }
     }

@@ -51,7 +51,7 @@
          * FIXME: this should be handled in the shatehelper
          */
         function closePanel() {
-            stateManager.set($attrs.type);
+            stateManager.setActive($attrs.type);
         }
 
         activate();

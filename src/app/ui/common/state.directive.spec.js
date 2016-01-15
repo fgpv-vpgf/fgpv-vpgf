@@ -6,8 +6,8 @@ describe('rvState', () => {
 
     const mockState = {
         filters: {
-            enabled: true,
-            mode: 'full'
+            active: true,
+            morph: 'full'
         }
     };
 
@@ -46,7 +46,7 @@ describe('rvState', () => {
             expect(directiveElement.hasClass('ng-hide'))
                 .toBe(false);
 
-            stateManager.set({ filters: false });
+            stateManager.setActive({ filters: false });
             scope.$digest();
 
             // use small timeout since even zero-length animation is async
@@ -59,7 +59,7 @@ describe('rvState', () => {
         });
 
         it('should add the element to the dom', done => {
-            stateManager.set({ filters: false });
+            stateManager.setActive({ filters: false });
             scope.$digest();
 
             // use small timeout since even zero-length animation is async
@@ -68,7 +68,7 @@ describe('rvState', () => {
                 expect(directiveElement.hasClass('ng-hide'))
                     .toBe(true);
 
-                stateManager.set({ filters: true });
+                stateManager.setActive({ filters: true });
                 scope.$digest();
 
                 setTimeout(() => {

@@ -10,3 +10,7 @@ This should make it easy to update my third-party stylesheets to more current ve
 md-icon {
     color: #666666;
 }
+
+@import "_datatable.scss";
+
+@include datatable;

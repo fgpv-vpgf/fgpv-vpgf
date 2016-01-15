@@ -1,0 +1,33 @@
+// this overrides vendor classes of node created outside the main viewer container
+// this is why it's special :)
+md-menu-content {
+    &.rv-menu {
+        max-height: rem(40);
+    }
+
+    &.rv-dense {
+        md-menu-item {
+            min-height: rem(3.6);
+            height: rem(3.6);
+
+            > .md-button {
+                display: flex;
+
+                > span {
+                    flex: 1;
+                }
+
+                > .rv-alt-icon {
+                    margin: {
+                        right: rem(0.8);
+                        left: rem(0.8);
+                    }
+                }
+            }
+        }
+    }
+
+    .rv-hidden {
+        visibility: hidden;
+    }
+}
