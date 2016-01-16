@@ -2,15 +2,16 @@
 
 describe('geo', () => {
 
-    beforeEach(() => {
+    beforeEach((done) => {
 
         bard.appModule('app.geo');
 
         // inject services
         bard.inject('geoService');
+        geoService.promise.then(() => done());
     });
 
-    xdescribe('geoService', () => {
+    describe('geoService', () => {
 
         //check registering a layer
         it('should register a layer', () => {
@@ -61,7 +62,7 @@ describe('geo', () => {
 
         it('should set zoom correctly', () => {
             // make a fake map object
-            let map = {
+            const map = {
                 setZoom: () => {},
                 getZoom: () => 5
             };
@@ -95,6 +96,35 @@ describe('geo', () => {
             geoService.shiftZoom(-2);
             expect(map.setZoom)
                 .toHaveBeenCalledWith(3);
+        });
+
+        describe('map', () => {
+            const emptyConfig = { layers: [] };
+            const layerConfig = { layers: [
+                { layerType:'esriFeature' },
+                { layerType:'esriDynamic' },
+                { layerType:'ogcWms' }
+            ] };
+            const el = angular.element('<div id="randomMap" />');
+
+            it('should make a map', () => {
+                const m = geoService.gapi.mapManager;
+                spyOn(m, 'Map');
+                geoService.buildMap(el[0], emptyConfig);
+                expect(m.Map).toHaveBeenCalled();
+            });
+
+            it('should add all the configured layers', () => {
+                const l = geoService.gapi.layer;
+                spyOn(l, 'FeatureLayer');
+                spyOn(l, 'WmsLayer');
+                spyOn(l, 'ArcGISDynamicMapServiceLayer');
+                geoService.buildMap(el[0], layerConfig);
+                expect(l.FeatureLayer).toHaveBeenCalled();
+                expect(l.WmsLayer).toHaveBeenCalled();
+                expect(l.ArcGISDynamicMapServiceLayer).toHaveBeenCalled();
+            });
+
         });
 
         //TODO add test: register layer with no id
