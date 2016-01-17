@@ -54,8 +54,9 @@
             }
         })
         .constant('layerTypes', {
-            esriFeature: 'esriFeature',
             esriDynamic: 'esriDynamic',
+            esriFeature: 'esriFeature',
+            esriImage: 'esriImage',
             ogcWms: 'ogcWms'
         })
         .constant('templateRegistry', {

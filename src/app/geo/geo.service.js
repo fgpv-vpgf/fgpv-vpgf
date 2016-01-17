@@ -116,11 +116,17 @@
                 id: layerConfig.id
             };
 
+            handlers[layerTypes.esriDynamic] = config => {
+                return new service.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
+            };
             handlers[layerTypes.esriFeature] = config => {
                 return new service.gapi.layer.FeatureLayer(config.url, commonConfig);
             };
-            handlers[layerTypes.esriDynamic] = config => {
-                return new service.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
+            handlers[layerTypes.esriImage] = config => {
+
+                // FIXME don't hardcode opacity
+                commonConfig.opacity = 0.3;
+                return new service.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig);
             };
             handlers[layerTypes.ogcWms] = config => {
                 commonConfig.visibleLayers = [config.layerName];
