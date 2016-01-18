@@ -689,7 +689,11 @@
          */
         function toggleSettings(layer) {
             togglePanelContent('sideSettings', 'settings', layer.id, 'filters');
-            updateDisplay('settings', {}, layer.id);
+
+            updateDisplay('settings', layer.id, {}, true);
+
+            //updateDisplay('settings', {}, layer.id);
+            //stateManager.display.settings.data = {};
         }
 
         /**
@@ -707,7 +711,7 @@
 
             togglePanelContent('filtersFulldata', 'filters', layer.id, 'side');
 
-            stateManager.display.filters.layerId = layer.id;
+            //stateManager.display.filters.layerId = layer.id;
 
             // TODO: remove
             // get fake data
@@ -716,12 +720,33 @@
                 .then(function (data) {
                     // shuffle fake data
                     let newData = shuffle(data.data.aaData);
-                    newData.splice(Math.floor(Math.random() * (newData.length - 20) + 20))
+                    newData.splice(Math.floor(Math.random() * (newData.length - 20) + 20));
                     newData.forEach((row, index) => row[0] = index + 1);
+                    newData = {
+                        columns: [
+                            {
+                                title: 'ID'
+                            },
+                            {
+                                title: 'First Name'
+                            },
+                            {
+                                title: 'Last Name'
+                            },
+                            {
+                                title: 'ZIP'
+                            },
+                            {
+                                title: 'Country'
+                            }
+                        ],
+                        data: newData
+                    };
 
                     // simulate delay to show loading splash
                     return $timeout(function () {
-                        updateDisplay('filters', {
+                        //updateDisplay('filters', {
+                        /*stateManager.display.filters.data = {
                             columns: [
                                 {
                                     title: 'ID'
@@ -740,7 +765,9 @@
                                 }
                             ],
                             data: newData
-                        }, layer.id);
+                        }; //, layer.id);*/
+
+                        updateDisplay('filters', layer.id, newData, false);
 
                         console.log(stateManager.display.filters.data);
                     }, 2000);
@@ -780,42 +807,58 @@
          * @param  {Object} layer layer object whose data should be displayed.
          */
         function toggleMetadata(layer) {
+            /*
             // cancel previous data retrieval timeout so we don't display old data
             $timeout.cancel(stateManager.display.metadata.handle);
 
             // if it takes longer than 100 mil to get metadata, kick in the loading screen
             stateManager.display.metadata.handle = $timeout(() => {
                 stateManager.display.metadata.isLoading = true;
-            }, 100);
+            }, 100);*/
 
             // toggle panels as needed
             togglePanelContent('sideMetadata', 'metadata', layer.id, 'filters');
 
             // check if metadata is cached
             if (layer.cache.metadata) {
-                updateDisplay('metadata', layer.cache.metadata, layer.id); // display from cache
+                console.log('seting metadata');
+                updateDisplay('metadata', layer.id, layer.cache.metadata, true);
+
+                /*
+                //updateDisplay('metadata', layer.cache.metadata, layer.id); // display from cache
+                stateManager.display.metadata.data = layer.cache.metadata;
                 stateManager.display.metadata.isLoading = false;
 
                 $timeout.cancel(stateManager.display.metadata.handle);
+                */
             } else { // else, retrieve it;
                 // set layerId to check agains when data is retrieved
-                stateManager.display.metadata.layerId = layer.id;
+                //stateManager.display.metadata.layerId = layer.id;
 
                 // TODO: generate some metadata to display functionality
-                let mdata = HolderIpsum.paragraphs(2, true);
+                const mdata = HolderIpsum.paragraphs(2, true);
 
                 // TODO: remove; simulating delay on retrieving metadata
                 $timeout(() => {
-                    layer.cache.metadata = layer.cache.metadata || mdata;
+                    layer.cache.metadata = mdata;
 
+                    updateDisplay('metadata', layer.id, layer.cache.metadata, true);
+
+                    /*
                     // check if the layerId for displayed metadata still matches metadata being retrieved
                     if (stateManager.display.metadata.layerId === layer.id) {
-                        updateDisplay('metadata', layer.cache.metadata, layer.id);
+
+                        updateDisplay('metadata', layer.id, layer.cache.metadata, true);
+
+                        /*
+                        //updateDisplay('metadata', layer.cache.metadata, layer.id);
+                        stateManager.display.metadata.data = layer.cache.metadata;
                         stateManager.display.metadata.isLoading = false;
 
                         // cancel loading indicator timeout
                         $timeout.cancel(stateManager.display.metadata.handle);
-                    }
+
+                    }*/
                 }, Math.random() * 3000); // random delay
             }
         }
@@ -838,7 +881,44 @@
          * @param  {String} panelNameToClose name of the panel to close before opening the main one if needed
          */
         function togglePanelContent(panelName, contentName, layerId, panelNameToClose) {
-            if (!stateManager.state[panelName].active) { // panel is not open; open it; close other panels is specified
+
+            if (stateManager.state[panelName].active &&
+                stateManager.display[contentName].layerId === layerId) {
+                stateManager.setActive(panelName);
+
+                return false;
+            } else {
+                // cancel previous data retrieval timeout so we don't display old data
+                $timeout.cancel(stateManager.display[contentName].loadingTimeout);
+
+                // if it takes longer than 100 ms to get metadata, kick in the loading screen
+                // this is fast enough for people to perceive it as instantaneous
+                stateManager.display[contentName].loadingTimeout = $timeout(() => {
+                    stateManager.display[contentName].isLoading = true;
+                }, 100);
+
+                if (!stateManager.state[panelName].active) { // panel is not open; open it; close other panels is specified
+                    // open panel closing anything else specified
+                    if (panelNameToClose) {
+                        let closePanel = {};
+                        closePanel[panelNameToClose] = false;
+                        stateManager.setActive(closePanel, panelName);
+                    } else {
+                        stateManager.setActive(panelName);
+                    }
+                } else { // panel is open and its content is from a different layer; deselect that layer and select the new one
+                    // TODO: delay clearing old content to after the transtion ends - prevents a brief flash of null content in the pane
+                    changeContentState(stateManager.display[contentName].layerId, contentName, false); // old layer
+                    changeContentState(layerId, contentName); // new layer
+                }
+
+                // update id to the layer whose data is being displayed
+                stateManager.display[contentName].layerId = layerId;
+
+                return true;
+            }
+
+            /*if (!stateManager.state[panelName].active) { // panel is not open; open it; close other panels is specified
 
                 // open panel closing anything else specified
                 if (panelNameToClose) {
@@ -848,13 +928,34 @@
                 } else {
                     stateManager.setActive(panelName);
                 }
-
             } else if (stateManager.display[contentName].layerId === layerId) { // metadata panel is open and if this layer's metadata is already selected
                 stateManager.setActive(panelName); // just close it
             } else { // panel is open and its content is from a different layer; deselect that layer and select the new one
                 // TODO: delay clearing old content to after the transtion ends - prevents a brief flash of null content in the pane
                 changeContentState(stateManager.display[contentName].layerId, contentName, false); // old layer
                 changeContentState(layerId, contentName); // new layer
+            }
+
+            // update id to the layer whose data is being displayed
+            stateManager.display[contentName].layerId = layerId;
+            */
+        }
+
+        function updateDisplay(contentName, layerId, data, isLoaded) {
+            // check if the layerId for displayed data still matches data being retrieved
+            // this prevents old request which complete after the newer ones to update display with old data
+            if (stateManager.display[contentName].layerId === layerId) {
+                console.log('Setting data for ', layerId);
+                stateManager.display[contentName].data = data;
+
+                if (isLoaded === true) {
+                    stateManager.display[contentName].isLoading = false;
+
+                    // cancel loading indicator timeout if any
+                    $timeout.cancel(stateManager.display[contentName].loadingTimeout);
+                }
+            } else {
+                console.log('Data rejected for ', layerId, '; loading in progress');
             }
         }
 
@@ -866,28 +967,29 @@
          * @param {Object} data     data to be displayed, defaults to {}
          * @param {id} layerId     layer id, defaults to -1
          */
-        function updateDisplay(contentName, data = {}, layerId = -1) {
+
+        //function updateDisplay(contentName, data = {}, layerId = -1) {
+        //    stateManager.display[contentName].layerId = layerId;
+        //    stateManager.display[contentName].data = data;
+
+        /*if (data) {
+            let layer = findLayer(layerId);
+
+            // TODO: decide where to store cached layer data
+            //service.display[contentName].layerId = layerId;
+            //service.display[contentName].data = layer.cache[contentName];
+
             stateManager.display[contentName].layerId = layerId;
             stateManager.display[contentName].data = data;
 
-            /*if (data) {
-                let layer = findLayer(layerId);
+        } else {
+            //service.display[contentName].layerId = -1;
+            //service.display[contentName].data = {};
+        }*/
 
-                // TODO: decide where to store cached layer data
-                //service.display[contentName].layerId = layerId;
-                //service.display[contentName].data = layer.cache[contentName];
-
-                stateManager.display[contentName].layerId = layerId;
-                stateManager.display[contentName].data = data;
-
-            } else {
-                //service.display[contentName].layerId = -1;
-                //service.display[contentName].data = {};
-            }*/
-
-            // TODO: not always !
-            //service.display[type].isLoading = false;
-        }
+        // TODO: not always !
+        //service.display[type].isLoading = false;
+        //}
 
         /**
          * Sets a watch on StateManager for layer data panels. When the panel is opened/closed, calls changeContentState to dehighlight layer toggles and checks the state of the layer item itself (selected / not selected).
@@ -926,7 +1028,8 @@
 
                 // if panel is closed, set current display to null to prevent previous display from showing up during loading
                 if (!newValue) {
-                    updateDisplay(contentName);
+                    //updateDisplay(contentName);
+                    stateManager.display[contentName].data = {};
                 }
             }
         }
