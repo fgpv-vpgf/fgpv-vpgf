@@ -6,7 +6,7 @@
   "repository": "https://github.com/fgpv-vpgf/fgpv-vpgf",
   "license": "MIT",
   "devDependencies": {
-    "babel-core": "^5.8.25",
+    "babel-core": "5.8.25",
     "bower": "^1.4.1",
     "canonical-path": "0.0.2",
     "dateformat": "^1.0.12",
