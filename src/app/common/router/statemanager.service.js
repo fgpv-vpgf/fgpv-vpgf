@@ -45,8 +45,12 @@
             }
         };
 
-        // state object
-        // sample state object
+        // `service.state` holds the state of the panel and content panes;
+        // `active` indicates whether the panel/pane is open/visible or not;
+        // `activeSkip` is a boolean flag indicating whether the animation on changes to the `active` should be skipped
+        // `parent` links a pane to its parent panel; main panel can display three panes, for example, toc, toolbox, and details; only one pane can be active at a time;
+        // `morph` indicates the mode of the panel; filters panel has three different modes: 'full', 'default', and 'minimized'; filters panel's modes specify different height for the panel; its changes are also animated;
+        // `morphSkip` is a boolean flag indicating whether the animation on changes to the `morph` should be skipped
         service.state = {
             main: {
                 active: false,
@@ -115,11 +119,16 @@
             }
         };
 
+        // TODO: add a unit test to check mapping between display options and layer toggles
+        // `service.display` holds data to be displayed in metadata, details, filters, and settings panes;
+        // `isLoading` is a boolean flag to be bound to `isLoading` property on `contentPane` directive; setting it to 'true', will display a loading indicator and hide pane's content; `false` reverse that;
+        // `layerId` is the id of the layer which data is being displayed; used for check that the requested data is still required in case of async calls;
+        // `data` is a data object to be displayed in the content pane;
         service.display = {
             filters: {
-                isLoading: false, // showing loading indicator in the content pane
-                layerId: -1, // id of the layer which data is being display
-                data: {  // layer data to display
+                isLoading: false,
+                layerId: -1,
+                data: {
                     columns: null,
                     data: null
                 }
