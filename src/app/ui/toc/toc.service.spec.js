@@ -42,7 +42,7 @@ describe('tocService', () => {
 
         it('should open metadata panel with some data and close it', done => {
             let toggle = tocService.presets.toggles.metadata;
-            let display = tocService.display.metadata;
+            let display = sm.display.metadata;
             let layer = tocService.data.items[0].items[0]; // first layer from the first group
             let layerToggle = layer.toggles.metadata;
 
@@ -58,12 +58,14 @@ describe('tocService', () => {
             expect(display.layerId)
                 .toBe(-1);
             expect(display.data)
-                .toEqual({}); // no metadata
+                .toEqual(null); // no metadata
 
             toggle.action(layer); // open metadata panel; it will generate some fake metadata right now
             rs.$digest();
 
             to.flush(200); // flush timer past loading timeout
+
+            // TODO: when we have a real function to fetch metadata, need to mock it here and simulate the delay
 
             expect(display.isLoading)
                 .toBe(true);
