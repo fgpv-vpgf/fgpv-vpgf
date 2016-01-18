@@ -22,6 +22,9 @@
         .fgpv {
             height: 100%;
         }
+
+        /* Edge hack, seems like body is at z-index 0 and sits on top of the map which is at z-index: -1 */
+        body { background: transparent; }
     </style>
 </head>
 
