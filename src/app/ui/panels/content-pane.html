@@ -22,7 +22,7 @@
     </md-content>
 
     <div class="rv-content" ng-if="self.staticContent">
-        <ng-transclude ng-show="!self.isLoading"></ng-transclude>
+        <ng-transclude ng-class="{ 'rv-hide': self.isLoading }"></ng-transclude>
     </div>
 
     <div class="rv-footer" ng-show="self.footer"></div>

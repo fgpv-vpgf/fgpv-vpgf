@@ -1,5 +1,9 @@
 // this overrides vendor classes of node created outside the main viewer container
 // this is why it's special :)
+.rv-hide {
+    visibility: hidden;
+}
+
 md-menu-content {
     &.rv-menu {
         max-height: rem(40);
@@ -25,9 +29,5 @@ md-menu-content {
                 }
             }
         }
-    }
-
-    .rv-hidden {
-        visibility: hidden;
     }
 }

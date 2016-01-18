@@ -27,7 +27,7 @@
 
     // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
-    function stateManager($q, $rootScope) {
+    function stateManager($q, $rootScope, initialState, initialDisplay) {
         const service = {
             addState,
 
@@ -36,82 +36,13 @@
 
             callback,
 
-            state: {},
+            state: angular.copy(initialState),
+            display: angular.copy(initialDisplay),
 
             // temporary place to store layer data;
-            // TODO: move to the state object
+            // TODO: move to the initialDisplay constant service
             _detailsData: {
                 layers: []
-            }
-        };
-
-        // state object
-        // sample state object
-        service.state = {
-            main: {
-                active: false,
-                activeSkip: false, // flag for skipping animation
-            },
-            mainToc: {
-                active: false,
-                activeSkip: false,
-                parent: 'main'
-            },
-            mainToolbox: {
-                active: false,
-                activeSkip: false,
-                parent: 'main'
-            },
-            mainDetails: {
-                active: false,
-                activeSkip: false,
-                parent: 'main'
-            },
-            side: {
-                active: false,
-                activeSkip: false
-            },
-            sideMetadata: {
-                active: false,
-                activeSkip: false,
-                parent: 'side'
-            },
-            sideSettings: {
-                active: false,
-                activeSkip: false,
-                parent: 'side'
-            },
-            filters: {
-                active: false,
-                activeSkip: false,
-                morph: 'default', // minimized, full,
-                morphSkip: false,
-            },
-            filtersFulldata: {
-                active: false,
-                activeSkip: false,
-                parent: 'filters'
-            },
-            filtersNamedata: {
-                active: false,
-                activeSkip: false,
-                parent: 'filters'
-            },
-            other: {
-                active: false,
-                activeSkip: false
-            },
-            otherBasemap: {
-                active: false,
-                activeSkip: false,
-                parent: 'other'
-            },
-            mapnav: {
-                morph: 'default',
-                morphSkip: false
-            },
-            help: {
-                active: false
             }
         };
 
@@ -262,7 +193,7 @@
         function setItemProperty(itemName, property, value, skip = false) {
             const item = service.state[itemName];
 
-            return $q(fulfill => { // reject is not used
+            return $q(fulfill => {
                 const fulfillKey = `${property}${itemName}`; // key to store `fulfill` function
                 const skipKey = `${property}Skip`; // key to store `skip` animation flag
 
