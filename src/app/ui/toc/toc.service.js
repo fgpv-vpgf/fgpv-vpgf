@@ -808,7 +808,7 @@
                     layer.cache.metadata = mdata;
 
                     updateDisplay('metadata', layer.id, layer.cache.metadata, true);
-                }, Math.random() * 3000); // random delay
+                }, Math.random() * 3000 + 300); // random delay
             }
         }
 
