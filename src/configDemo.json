@@ -29,6 +29,11 @@
       "layerType":"ogcWms",
       "url":"http://maps.geogratis.gc.ca/wms/railway_en",
       "layerName":"railway.track"
+    },
+    {
+      "id":"sample_temp",
+      "layerType":"esriImage",
+      "url":"http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/World/Temperature/ImageServer"
     }
   ],
   "basemaps": [
