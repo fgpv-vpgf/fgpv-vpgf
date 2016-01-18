@@ -797,7 +797,6 @@
 
             // check if metadata is cached
             if (layer.cache.metadata) {
-                console.log('0----< setting data again!!!');
                 updateDisplay('metadata', layer.id, layer.cache.metadata, true);
             } else { // else, retrieve it;
                 // TODO: generate some metadata to display functionality

@@ -58,8 +58,9 @@
 
                 self.table = tableNode
                     .on('init.dt', () => {
-                        // turn off loading indicator after the table initialized
+                        // turn off loading indicator after the table initialized; cancel loading timeout as well
                         stateManager.display.filters.isLoading = false;
+                        $timeout.cancel(stateManager.display.filters.loadingTimeout);
 
                         console.log('Filters: Table initialisation complete: ' + new Date().getTime());
                     })
