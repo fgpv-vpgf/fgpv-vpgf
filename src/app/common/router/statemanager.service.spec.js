@@ -1,56 +1,12 @@
 /* global bard, stateManager, $rootScope */
 
 describe('stateManager', () => {
-    const mockState = {
-        main: {
-            active: false
-        },
-        mainToc: {
-            active: false,
-            parent: 'main'
-        },
-        mainToolbox: {
-            active: false,
-            parent: 'main'
-        },
-        side: {
-            active: false
-        },
-        sideMetadata: {
-            active: false,
-            parent: 'side'
-        },
-        sideSettings: {
-            active: false,
-            parent: 'side'
-        },
-        filters: {
-            active: false,
-            morph: 'default'
-        },
-        filtersFulldata: {
-            active: false,
-            parent: 'filters',
-        },
-        filtersNamedata: {
-            active: false,
-            parent: 'filters'
-        }
-    };
-
     beforeEach(() => {
 
         bard.appModule('app.common.router');
 
         // inject services
         bard.inject('stateManager', '$rootScope');
-
-        stateManager.addState(mockState);
-
-        // a spy can stub any function and tracks calls to it and all arguments. We spy on the service functions to check if they are being called properly. http://jasmine.github.io/2.0/introduction.html#section-Spies
-        //spyOn(mapNavigationService, 'zoomIn');
-        //spyOn(mapNavigationService, 'zoomOut');
-        //spyOn(mapNavigationService, 'zoomTo');
     });
 
     describe('stateManager', () => {
@@ -214,22 +170,22 @@ describe('stateManager', () => {
             expect(state.main.active)
                 .toBe(false);
             expect(state.main.activeSkip)
-                .toBe(false); // defaults to true
+                .toBe(false); // defaults to false
 
             expect(state.mainToc.active)
                 .toBe(false);
             expect(state.mainToc.activeSkip)
-                .toBe(false); // defaults to true
+                .toBe(false); // defaults to false
 
             expect(state.side.active)
                 .toBe(false);
             expect(state.side.activeSkip)
-                .toBe(false); // defaults to true
+                .toBe(false); // defaults to false
 
             expect(state.sideMetadata.active)
                 .toBe(false);
             expect(state.sideMetadata.activeSkip)
-                .toBe(false); // defaults to true
+                .toBe(false); // defaults to false
 
             // need to listen on item state changes and resolve locks on the stateManager
             $rootScope.$watch(() => state.main.active, () =>

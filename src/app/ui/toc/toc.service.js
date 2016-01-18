@@ -694,7 +694,7 @@
                 return;
             }
 
-            updateDisplay('settings', layer.id, {}, true);
+            updateDisplayedLayerData('settings', layer.id, {}, true);
         }
 
         /**
@@ -748,7 +748,7 @@
 
                     // simulate delay to show loading splash
                     return $timeout(function () {
-                        updateDisplay('filters', layer.id, newData, false);
+                        updateDisplayedLayerData('filters', layer.id, newData, false);
 
                         //console.log(stateManager.display.filters.data);
                     }, 2000);
@@ -797,7 +797,7 @@
 
             // check if metadata is cached
             if (layer.cache.metadata) {
-                updateDisplay('metadata', layer.id, layer.cache.metadata, true);
+                updateDisplayedLayerData('metadata', layer.id, layer.cache.metadata, true);
             } else { // else, retrieve it;
                 // TODO: generate some metadata to display functionality
                 const mdata = HolderIpsum.paragraphs(2, true);
@@ -806,7 +806,7 @@
                 $timeout(() => {
                     layer.cache.metadata = mdata;
 
-                    updateDisplay('metadata', layer.id, layer.cache.metadata, true);
+                    updateDisplayedLayerData('metadata', layer.id, layer.cache.metadata, true);
                 }, Math.random() * 3000 + 300); // random delay
             }
         }
@@ -869,14 +869,14 @@
         }
 
         /**
-         * Updates displayed data for a specific layer content.
+         * Updates displayed data for a specific layer content like layer metadata in the metadata panel.
          *
          * @param {String} contentName    name of the displayed content
          * @param {Number} layerId     layer id, defaults to -1
          * @param {Object} data     data to be displayed, defaults to {}
          * @param {Boolean} isLoaded     flag to remove loading indicator from the panel
          */
-        function updateDisplay(contentName, layerId, data, isLoaded) {
+        function updateDisplayedLayerData(contentName, layerId, data, isLoaded) {
             // check if the layerId for displayed data still matches data being retrieved
             // this prevents old request which complete after the newer ones to update display with old data
             if (stateManager.display[contentName].layerId === layerId) {
@@ -934,7 +934,7 @@
 
                 // if panel is closed, set current display to null to prevent previous display from showing up during loading
                 if (!newValue) {
-                    //updateDisplay(contentName);
+                    //updateDisplayedLayerData(contentName);
                     stateManager.display[contentName].data = {};
                     stateManager.display[contentName].layerId = -1;
                 }
