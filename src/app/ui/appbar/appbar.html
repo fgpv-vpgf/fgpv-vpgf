@@ -10,7 +10,7 @@
         <span flex></span>
         <md-button aria-label="Point Information" class="md-icon-button primary" rv-help="details-button"
             ng-class="{ selected: self.stateManager.state.mainDetails.active }" ng-click="self.toggleDetails()"
-            ng-show="self.stateManager._detailsData.layers.length > 0">
+            ng-show="self.stateManager.display.details.data">
             <md-tooltip>Point Information</md-tooltip>
             <md-icon md-svg-src="maps:place"></md-icon>
         </md-button>
