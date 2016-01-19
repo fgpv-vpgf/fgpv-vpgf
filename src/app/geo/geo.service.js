@@ -211,12 +211,11 @@
                             angular.forEach(data, value => {
                                 registerAttributes(value);
                             });
-                        },
-                        error =>
-                        {
-                            console.log('Error getting attributes for ' + l.name, error);
-                        }
-                    );
+                        })
+                        .error(
+                            exception => {
+                                console.log('Error getting attributes for ' + l.name + ': ' + exception);
+                            });
                 });
             });
 
