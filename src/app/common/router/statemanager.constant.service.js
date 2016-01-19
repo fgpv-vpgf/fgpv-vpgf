@@ -23,7 +23,7 @@
         return {
             isLoading: false,
             requester: null,
-            requestId: -1,
+            requestId: null,
             data: data || null
         };
     };
@@ -83,6 +83,7 @@
                 data: null
             }),
             metadata: DISPLAY_OBJECT_DEFAULTS(),
-            settings: DISPLAY_OBJECT_DEFAULTS()
-                    });
+            settings: DISPLAY_OBJECT_DEFAULTS(),
+            details: DISPLAY_OBJECT_DEFAULTS()
+        });
 })();

@@ -729,7 +729,7 @@
             // temporary data loading
             // TODO: replace ecogeo with layerid
             const newData = geoService.getFormattedAttributes('ecogeo', '0');
-                        updateDisplayedData('filters', requestId, newData, false);
+            updateDisplayedData('filters', requestId, newData, false);
         }
 
         /**
@@ -896,7 +896,7 @@
                     // TODO: some of this ought to be moved to stateManager
                     stateManager.display[contentName].data = null;
                     stateManager.display[contentName].requester = null;
-                    stateManager.display[contentName].requestId = -1;
+                    stateManager.display[contentName].requestId = null;
                 }
             }
         }
