@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <p id="mess" />
+    <script src="dist/geoapi.min.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            var sr = new api.proj.SpatialReference({ wkid: 102100 });
+            var sr1 = new api.proj.SpatialReference({ wkid: 4326 });
+            console.log(sr);
+            var pt1 = new api.proj.Point(-94.5, 49.5, sr1);
+            var pt2 = new api.proj.Point(-94, 49.2, sr1);
+            console.log(pt1);
+            var newPt = api.proj.esriServerProject('http://sncr01wbingsdv1.ncr.' +
+             'int.ec.gc.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer',
+             [pt1], sr);
+            console.log(newPt);
+        });
+    </script>
+</body>
+</html>

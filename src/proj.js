@@ -83,9 +83,46 @@ function projectEsriExtentBuilder(esriBundle) {
     };
 }
 
+function esriServiceBuilder(esriBundle) {
+    /**
+     * Reproject an esri geometry object on the server. Requires network traffic
+     * to esri's Geometry Service, but may be slower than proj4 conversion.
+     * Internally it tests 1 point and reprojects it to another spatial reference.
+     *
+     * @param {url} url for the ESRI Geometry Service
+     * @param {geometries} geometries to be projected
+     * @param {sr} sr is the target spatial reference
+     * @returns {Promise} promise to return reprojected geometries
+     */
+    return (url, geometries, sr) => {
+        return new Promise(
+            (resolve, reject) => {
+                const params = new esriBundle.ProjectParameters();
+
+                // connect to esri server
+                const gsvc = new esriBundle.GeometryService(url);
+
+                params.geometries = geometries;
+                params.outSR = sr;
+
+                // call project function from esri server to do conversion
+                gsvc.project(params,
+                    projectedExtents => {
+                        resolve(projectedExtents);
+                    }, error => {
+                        reject(error);
+                    });
+            });
+    };
+}
+
 module.exports = function (esriBundle) {
+    // TODO: Move Point and SpatialReference to its own (geometry) module
     return {
+        esriServerProject: esriServiceBuilder(esriBundle),
         localProjectExtent: localProjectExtent,
-        projectEsriExtent: projectEsriExtentBuilder(esriBundle)
+        Point: esriBundle.Point,
+        projectEsriExtent: projectEsriExtentBuilder(esriBundle),
+        SpatialReference: esriBundle.SpatialReference
     };
 };
