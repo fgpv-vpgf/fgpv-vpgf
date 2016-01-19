@@ -956,7 +956,7 @@
                     // TODO: some of this ought to be moved to stateManager
                     stateManager.display[contentName].data = null;
                     stateManager.display[contentName].requester = null;
-                    stateManager.display[contentName].requestId = -1;
+                    stateManager.display[contentName].requestId = null;
                 }
             }
         }
