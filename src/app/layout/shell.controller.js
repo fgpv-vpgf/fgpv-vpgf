@@ -15,8 +15,8 @@
         .module('app.layout')
         .controller('ShellController', ShellController);
 
-    function ShellController(configService, $rootScope, events, version, sideNavigationService,
-            stateManager) {
+    function ShellController($timeout, $interval, configService, $rootScope, events, version, sideNavigationService,
+        stateManager) {
         const self = this;
 
         self.config = configService.data;
@@ -81,7 +81,14 @@
 
         // TODO: remove; hacky functions to display some details data
         function singlePoint() {
-            stateManager._detailsData.layers = generateDetailsData(1);
+            let display = stateManager.display.details;
+            display.isLoading = true;
+            display.data = generateDetailsData(1);
+
+            // clears loading indicator
+            $timeout(() => display.isLoading = false, Math.random() * 3000 + 300);
+
+            console.log('single point', stateManager.display.details);
 
             stateManager.setActive({
                 side: false
@@ -90,7 +97,20 @@
 
         // TODO: remove; hacky functions to display some details data
         function multiplePoints() {
-            stateManager._detailsData.layers = generateDetailsData(6);
+            let display = stateManager.display.details;
+            display.isLoading = true;
+            display.data = generateDetailsData(6);
+
+            // stops loading indicator when all items are loaded
+            let stop = $interval(function () {
+                if (display.data.every(item => !item.isLoading)) {
+                    console.log('STOP!');
+                    display.isLoading = false;
+                    $interval.cancel(stop);
+                }
+            }, 100);
+
+            console.log('multiple point', stateManager.display.details);
 
             stateManager.setActive({
                 side: false
@@ -99,14 +119,15 @@
 
         // TODO: remove; hacky functions to display some details data
         function generateDetailsData(n) {
-            let layers = [];
+            let items = [];
 
             // generate garbage details
             for (let i = 0; i < n; i++) {
-                let layer = {
-                    name: HolderIpsum.words(3, true),
-                    type: 'something',
-                    items: [
+                let item = {
+                    isLoading: true,
+                    requestId: -1,
+                    requester: HolderIpsum.words(3, true),
+                    data: [
                         {
                             name: HolderIpsum.words(3, true),
                             data: [HolderIpsum.sentence(), HolderIpsum.sentence(), HolderIpsum.sentence(),
@@ -119,10 +140,13 @@
                     ]
                 };
 
-                layers.push(layer);
+                // clears loading indicator for individual items
+                $timeout(() => item.isLoading = false, Math.random() * 5000 + 200);
+
+                items.push(item);
             }
 
-            return layers;
+            return items;
         }
     }
 
