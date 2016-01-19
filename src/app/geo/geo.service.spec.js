@@ -140,6 +140,8 @@ describe('geo', () => {
                 expect(m.Map).toHaveBeenCalled();
             });
 
+            // disabled due to issue with esri layer.on
+            // re-enable once geoApi events are working
             xit('should add all the configured layers', () => {
                 const l = geoService.gapi.layer;
                 spyOn(l, 'FeatureLayer');
