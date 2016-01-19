@@ -104,7 +104,7 @@
             filters: {
                 isLoading: false,
                 requester: null,
-                requestId: -1,
+                requestId: null,
                 data: {
                     columns: null,
                     data: null
@@ -113,19 +113,19 @@
             metadata: {
                 isLoading: false,
                 requester: null,
-                requestId: -1,
+                requestId: null,
                 data: null
             },
             settings: {
                 isLoading: false,
                 requester: null,
-                requestId: -1,
+                requestId: null,
                 data: null
             },
             details: {
                 isLoading: false,
                 requester: null,
-                requestId: -1,
+                requestId: null,
                 data: null
             }
         });
