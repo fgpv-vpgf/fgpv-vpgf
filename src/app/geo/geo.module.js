@@ -16,6 +16,6 @@
      * And, as far as possible, it should minimize the amount of GIS specific functionality needs to be built
      * outside the module.
      */
-    angular.module('app.geo', ['app.core']);
+    angular.module('app.geo', []);
 
 })();
