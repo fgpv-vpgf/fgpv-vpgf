@@ -14,7 +14,7 @@
         .directive('rvFiltersDefault', rvFiltersDefault);
 
     /**
-     * `rvFiltersDefault` directive body.
+     * `rvFiltersDefault` directive displays the datatable with layer data.
      *
      * @return {object} directive body
      */
@@ -23,7 +23,7 @@
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default.html',
             scope: {},
-            link: linkFunc,
+            link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
@@ -32,9 +32,11 @@
         return directive;
 
         /**
-         * Skeleton link function.
+         * Add a `createTable` to self. The table, after creation, is assigned to `self.table`.
+         * @param  {Object} scope directive scope
+         * @param  {Object} el    node element
          */
-        function linkFunc(scope, el) { //scope, el, attr, ctrl) {
+        function link(scope, el) { //scope, el, attr, ctrl) {
             const self = scope.self;
             let containerNode;
 
@@ -62,7 +64,8 @@
                         stateManager.display.filters.isLoading = false;
                         $timeout.cancel(stateManager.display.filters.loadingTimeout);
 
-                        console.log('Filters: Table initialisation complete: ' + new Date().getTime());
+                        console.log('Filters: Table initialisation complete: ' + new Date()
+                            .getTime());
                     })
                     .DataTable({
                         dom: 'rti',
@@ -77,7 +80,8 @@
     }
 
     /**
-     * Skeleton controller function with test message.
+     * Controller watches for panel morph changes and redraws the table after the change is complete;
+     * it also watches for dispaly data changes and re-creates the table when it does change.
      */
     function Controller($scope, $timeout, tocService, stateManager) {
         'ngInject';
@@ -100,7 +104,7 @@
 
             // watch filters data for changes; recreate table when data changes
             $scope.$watch('self.display.data', newValue => {
-                if (newValue.data) {
+                if (newValue && newValue.data) {
                     //console.log('Filters: table data udpated', newValue);
                     self.createTable();
                 }
