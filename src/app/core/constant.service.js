@@ -25,12 +25,6 @@
         .constant('events', {
             rvReady: 'rvReady'
         })
-        .constant('layerTypes', {
-            esriDynamic: 'esriDynamic',
-            esriFeature: 'esriFeature',
-            esriImage: 'esriImage',
-            ogcWms: 'ogcWms'
-        })
         .constant('templateRegistry', {
             appbar: 'app/ui/appbar/appbar.html',
             toc: 'app/ui/toc/toc.html',
