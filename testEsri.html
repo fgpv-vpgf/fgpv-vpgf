@@ -18,9 +18,10 @@
             var pt1 = new api.proj.Point(-94.5, 49.5, sr1);
             var pt2 = new api.proj.Point(-94, 49.2, sr1);
             console.log(pt1);
-            var newPt = api.proj.esriService([pt1], sr);
+            var newPt = api.proj.esriServerProject('http://sncr01wbingsdv1.ncr.' +
+             'int.ec.gc.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer',
+             [pt1], sr);
             console.log(newPt);
-
         });
     </script>
 </body>
