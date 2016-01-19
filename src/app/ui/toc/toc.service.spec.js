@@ -8,7 +8,7 @@ describe('tocService', () => {
     let sm;
 
     beforeEach(() => {
-        bard.appModule('app.ui.toc', 'app.common.router');
+        bard.appModule('app.ui.toc', 'app.common.router', 'app.geo');
 
         // inject services
         bard.inject('tocService', 'stateManager', '$rootScope', '$timeout');
