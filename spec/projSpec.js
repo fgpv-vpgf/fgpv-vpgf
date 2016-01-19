@@ -3,6 +3,13 @@
 const projBuilder = require('../src/proj.js');
 const proj4 = require('proj4');
 
+function makeFakeEsriExtent(o) {
+    return {
+        "xmin":o.x0,"ymin":o.y0,"xmax":o.x1,"ymax":o.y1,
+        "spatialReference":{"wkid":o.sr}
+    };
+}
+
 // describe declares a test suite
 // takes a suite name and a function, all tests within the suite are declared within the function
 // besides grouping tests together suites can also do a setup / teardown for each test or for the whole suite
@@ -13,13 +20,6 @@ describe('Local projection', () => {
     const sampleData = {x0:-95,y0:49,x1:-94.5,y1:49.5,sr:4326};
     const sampleExtent = makeFakeEsriExtent(sampleData);
     let proj;
-
-    function makeFakeEsriExtent(o) {
-        return {
-            "xmin":o.x0,"ymin":o.y0,"xmax":o.x1,"ymax":o.y1,
-            "spatialReference":{"wkid":o.sr}
-        };
-    }
 
     proj4.defs("EPSG:3978", "+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
     proj4.defs("EPSG:3979", "+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
@@ -52,41 +52,36 @@ describe('Local projection', () => {
 });
 
 describe("test for esri projection conversion function", () => {
+    let fakeEsri = { EsriExtent: {},
+                    GeometryService: () => {},
+                    ProjectParameters: () => {} }
     const sampleData = {x0:-95,y0:49,x1:-94.5,y1:49.5,sr:4326};
     const sampleExtent = makeFakeEsriExtent(sampleData);
     let esri;
     let x;
-
-    // make fake esri extent as input
-    function makeFakeEsriExtent(o) {
-        return {
-            "xmin":o.x0,"ymin":o.y0,"xmax":o.x1,"ymax":o.y1,
-            "spatialReference":{"wkid":o.sr}
-        };
-    }
 
     beforeEach(function() {
     //reset esri
         esri = null;
     });
 
-    it("should export functions", () => {
+    it("should export esri server projection function", () => {
         // make sure functions are exported properly
-        esri = projBuilder(sampleData);
-        expect(esri).not.toBe(null);
+        esri = projBuilder(fakeEsri);
+        expect(esri.esriServerProject).not.toBe(null);
     });
 
     // calls fake geosvc and makes sure the parameters are correct
-    it('should call esriService function from exported modules', () => {
-        // make mock body for esriService instead of using spy
-        let spy = jasmine.createSpy("fake esri method").and.callFake(
-            function() {
-                console.log("OK");
-            }
-        );
-        let esri = projBuilder(sampleData);
-        esri.esriService = spy;
-        esri.esriService();
-        expect(spy).toHaveBeenCalled();
+    it('should call esri server from wrapper function', () => {
+        let esri = projBuilder(fakeEsri);
+        spyOn(fakeEsri, 'GeometryService');
+        spyOn(fakeEsri, 'ProjectParameters');
+
+        // fake call to esri server
+        let newPt = esri.esriServerProject('http://sncr01wbingsdv1.ncr.' +
+         'int.ec.gc.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer', [0], 12345);
+        expect(fakeEsri.GeometryService).toHaveBeenCalled();
+        expect(fakeEsri.ProjectParameters).toHaveBeenCalled();
+        expect(newPt).toEqual(jasmine.any(Promise));
     });
 });
