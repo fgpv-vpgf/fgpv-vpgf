@@ -1,5 +1,5 @@
 /* global HolderIpsum */
-(function () {
+(() => {
     'use strict';
 
     /**
