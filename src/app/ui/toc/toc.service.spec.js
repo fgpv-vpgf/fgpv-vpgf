@@ -56,7 +56,7 @@ describe('tocService', () => {
             expect(layerToggle.selected)
                 .toBeFalsy(); // layer toggle is not selected yet
             expect(display.requestId)
-                .toBe(-1); // request hasn't been made
+                .toEqual(null); // request hasn't been made
             expect(display.data)
                 .toEqual(null); // no metadata
 
@@ -93,7 +93,7 @@ describe('tocService', () => {
                 if (!newValue) {
 
                     expect(display.requestId)
-                        .toBe(-1); // request id is reset
+                        .toEqual(null); // request id is reset
                     expect(layerToggle.selected)
                         .toBe(false); // layer toggle no longer selected
 
