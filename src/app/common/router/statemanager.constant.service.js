@@ -22,7 +22,8 @@
     const DISPLAY_OBJECT_DEFAULTS = data => {
         return {
             isLoading: false,
-            layerId: -1,
+            requester: null,
+            requestId: -1,
             data: data || null
         };
     };
@@ -73,7 +74,8 @@
             // TODO: add a unit test to check mapping between display options and layer toggles
             // `service.display` holds data to be displayed in metadata, details, filters, and settings panes;
             // `isLoading` is a boolean flag to be bound to `isLoading` property on `contentPane` directive; setting it to 'true', will display a loading indicator and hide pane's content; `false` reverse that;
-            // `layerId` is the id of the layer which data is being displayed; used for check that the requested data is still required in case of async calls;
+            // `requester` an optional object used to pass display data; can be used to pass the layer name to the filters panel while the main data is still loading;
+            // `requestId` is the id of the data request; used for check that the requested data is still required in case of async calls;
             // `data` is a data object to be displayed in the content pane;
 
             filters: DISPLAY_OBJECT_DEFAULTS({
@@ -82,5 +84,5 @@
             }),
             metadata: DISPLAY_OBJECT_DEFAULTS(),
             settings: DISPLAY_OBJECT_DEFAULTS()
-        });
+                    });
 })();
