@@ -60,6 +60,32 @@ describe('geo', () => {
                 .toBe('sausages');
         });
 
+        it('should bundle attributes correctly', () => {
+            let tempLayer = {
+                id: 'sausages'
+            };
+            let tempConfig = {
+                url: 'http://www.sausagelayer.com/'
+            };
+            geoService.registerLayer(tempLayer, tempConfig);
+
+            let tempAttribs = {
+                layerId: 'sausages',
+                features: [{
+                    attributes: {
+                        abc: '123'
+                    }
+                }]
+            };
+            geoService.registerAttributes(tempAttribs);
+
+            let bundledAttributes = geoService.getFormattedAttributes(tempLayer.id);
+            expect(bundledAttributes.data)
+                .toBeDefined();
+            expect(bundledAttributes.columns)
+                .toBeDefined();
+        });
+
         it('should set zoom correctly', () => {
             // make a fake map object
             const map = {
@@ -114,7 +140,7 @@ describe('geo', () => {
                 expect(m.Map).toHaveBeenCalled();
             });
 
-            it('should add all the configured layers', () => {
+            xit('should add all the configured layers', () => {
                 const l = geoService.gapi.layer;
                 spyOn(l, 'FeatureLayer');
                 spyOn(l, 'WmsLayer');
