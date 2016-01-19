@@ -85,7 +85,7 @@ function projectEsriExtentBuilder(esriBundle) {
 
 function esriServiceBuilder(esriBundle) {
     /**
-     * Reproject an esri geometry object on the client. Requires network traffic
+     * Reproject an esri geometry object on the server. Requires network traffic
      * to esri's Geometry Service, but may be slower than proj4 conversion.
      * Internally it tests 1 point and reprojects it to another spatial reference.
      *
