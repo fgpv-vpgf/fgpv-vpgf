@@ -143,6 +143,7 @@
 
                         //console.log('Continue with the rest of state items');
                         // run any `runAfter` function if exists
+                        // TODO: runAfter should return a promise; return `setActive` when it resolves
                         if (runAfter) {
                             runAfter();
                         }
@@ -226,6 +227,21 @@
                     //console.log('EMIT EVENT for', itemName, property, value, skip);
                     // emit event on the rootscope when change is complete
                     $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
+
+                    let history;
+
+                    if (item.parent && value) { // add to history only when a child opens or ...
+                        history = getParent(itemName).item.history;
+                        history.push(itemName);
+                    } else if (!item.parent && !value) { // ... or the parent closes
+                        history = item.history;
+                        history.push(null); // `null` means no item was active in the panel;
+                    }
+
+                    // keep history at 10 items, I don't think we need any more
+                    if (history && history.length > 10) {
+                        history.shift();
+                    }
                 }
 
                 return;

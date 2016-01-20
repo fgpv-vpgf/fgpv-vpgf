@@ -26,10 +26,12 @@
             // `parent` links a pane to its parent panel; main panel can display three panes, for example, toc, toolbox, and details; only one pane can be active at a time;
             // `morph` indicates the mode of the panel; filters panel has three different modes: 'full', 'default', and 'minimized'; filters panel's modes specify different height for the panel; its changes are also animated;
             // `morphSkip` is a boolean flag indicating whether the animation on changes to the `morph` should be skipped
+            // `history` keeps track of pane names opened in a panel; limit of 10 items;
 
             main: {
                 active: false,
                 activeSkip: false, // flag for skipping animation
+                history: []
             },
             mainToc: {
                 active: false,
@@ -48,7 +50,8 @@
             },
             side: {
                 active: false,
-                activeSkip: false
+                activeSkip: false,
+                history: []
             },
             sideMetadata: {
                 active: false,
@@ -65,6 +68,7 @@
                 activeSkip: false,
                 morph: 'default', // minimized, full,
                 morphSkip: false,
+                history: []
             },
             filtersFulldata: {
                 active: false,
@@ -78,7 +82,8 @@
             },
             other: {
                 active: false,
-                activeSkip: false
+                activeSkip: false,
+                history: []
             },
             otherBasemap: {
                 active: false,
