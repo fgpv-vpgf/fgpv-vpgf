@@ -4,6 +4,7 @@ const shared = require('./shared.js');
 
 // Attribute Loader related functions
 //TODO consider re-writing all the asynch stuff with the ECMA-7 style of asynch keywords
+//FIXME hoist functions out of module.exports using fancy buildiers. change promise.then(,) to promise.then().error(), changes lets to consts where applicable.
 module.exports = esriBundle => {
 
     /**
