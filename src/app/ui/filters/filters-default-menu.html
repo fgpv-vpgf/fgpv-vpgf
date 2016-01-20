@@ -1,37 +1,37 @@
-<md-menu>
+<md-menu md-position-mode="target-right target">
     <md-button aria-label="Open data panel menu" class="md-icon-button black rv-button-24"
         ng-click="$mdOpenMenu($event)">
         <md-icon md-svg-src="navigation:more_vert"></md-icon>
     </md-button>
     <md-menu-content class="rv-menu rv-dense" width="5">
         <md-menu-item>
-            <md-button ng-click="self.setMode('minimized')">
+            <md-button ng-click="self.setMode('minimized')"  md-prevent-menu-close="md-prevent-menu-close">
                 <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hide' : self.filtersMode() != 'minimized' }"></md-icon>
-                Map and Filters
+                Minimize
             </md-button>
         </md-menu-item>
         <md-menu-item>
-            <md-button ng-click="self.setMode('default')">
+            <md-button ng-click="self.setMode('default')"  md-prevent-menu-close="md-prevent-menu-close">
                 <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hide' : self.filtersMode() != 'default' }"></md-icon>
-                Data and Map
+                Split View
                 <!--md-icon class="rv-alt-icon" md-svg-icon="action:view_agenda"></md-icon-->
             </md-button>
         </md-menu-item>
         <md-menu-item>
-            <md-button ng-click="self.setMode('full')">
+            <md-button ng-click="self.setMode('full')"  md-prevent-menu-close="md-prevent-menu-close">
                 <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hide' : self.filtersMode() != 'full' }"></md-icon>
-                Data
+                Maximize
             </md-button>
         </md-menu-item>
         <md-menu-divider></md-menu-divider>
         <md-menu-item>
-            <md-button ng-click="self.toggleNotifications()">
+            <md-button ng-click="self.toggleNotifications()" md-prevent-menu-close="md-prevent-menu-close">
                 <md-icon md-svg-icon="action:search"></md-icon>
                 Enable Search
             </md-button>
         </md-menu-item>
         <md-menu-item>
-            <md-button ng-click="self.toggleNotifications()">
+            <md-button ng-click="self.toggleNotifications()" md-prevent-menu-close="md-prevent-menu-close">
                 <md-icon md-svg-icon="community:filter"></md-icon>
                 Enable Filters
             </md-button>
