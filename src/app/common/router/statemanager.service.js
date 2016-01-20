@@ -206,7 +206,9 @@
                     if (fulfillStore[fulfillKey]) {
                         fulfillStore[fulfillKey]();
                     }
-                    fulfillStore[fulfillKey] = fulfill; // store fulfill function to resolve on callback
+
+                    // store a modified fulfill function which returns `false` to any following `then` to resolve on callback
+                    fulfillStore[fulfillKey] = () => fulfill(false);
 
                     item[property] = value;
 
@@ -215,14 +217,18 @@
 
                     // waititing for items to animate and be resolved
                 } else {
-                    // resolve immediately
-                    fulfill();
+                    // resolve immediately skipping event broadcasting since nothing really changed
+                    fulfill(true);
                 }
             })
-            .then(() => {
-                //console.log('EMIT EVENT for', itemName, property, value, skip);
-                // emit event on the rootscope when change is complete
-                $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
+            .then(skipEvent => {
+                if (!skipEvent) {
+                    //console.log('EMIT EVENT for', itemName, property, value, skip);
+                    // emit event on the rootscope when change is complete
+                    $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
+                }
+
+                return;
             });
         }
 
