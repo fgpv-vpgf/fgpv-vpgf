@@ -110,8 +110,9 @@
          * Returns nicely bundled attributes for the layer described by layerId.
          * The bundles are used in the datatable.
          *
-         * @param   {String} layerId    The id for the layer
-         * @return  {Object}            The column headers and data to show in the datatable
+         * @param   {String} layerId        The id for the layer
+         * @param   {String} featureIndex   The index for the feature set within the layer
+         * @return  {Object}                The column headers and data to show in the datatable
          */
         function getFormattedAttributes(layerId, featureIndex) {
             if (!service.layers[layerId]) {
