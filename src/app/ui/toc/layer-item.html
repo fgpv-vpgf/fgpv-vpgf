@@ -21,33 +21,31 @@
         </div>
     </div>
 
-    <span flex></span>
-
     <div class="rv-layer-item-toggles" ng-if="self.layer.state === 'error'">
-        <rv-layer-item-button name="reload"></rv-layer-item-button>
 
+        <rv-layer-item-button name="reload"></rv-layer-item-button>
         <rv-layer-item-button name="remove"></rv-layer-item-button>
+
     </div>
 
     <div class="rv-layer-item-toggles" ng-if="self.layer.state !== 'error'">
-        <rv-layer-item-button name="metadata"></rv-layer-item-button>
 
-        <rv-layer-item-button name="settings"></rv-layer-item-button>
+        <md-menu md-position-mode="target-right target">
+            <md-button aria-label="Open data panel menu" class="md-icon-button rv-button-24" ng-click="$mdOpenMenu($event)">
+                <md-icon md-svg-src="navigation:more_horiz"></md-icon>
+            </md-button>
+
+            <md-menu-content class="rv-menu rv-dense" width="4">
+                <rv-layer-item-button type="menu-item" name="metadata"></rv-layer-item-button>
+                <rv-layer-item-button type="menu-item" name="settings"></rv-layer-item-button>
+                <md-menu-divider></md-menu-divider>
+                <rv-layer-item-button type="menu-item" name="remove"></rv-layer-item-button>
+            </md-menu-content>
+        </md-menu>
+
+        <!--rv-layer-item-button name="metadata"></rv-layer-item-button>
+        <rv-layer-item-button name="settings"></rv-layer-item-button-->
 
         <rv-layer-item-button name="visibility"></rv-layer-item-button>
     </div>
-    <!--md-menu>
-
-    <rv-layer-item-button action="$mdOpenMenu($event)" name="extra"></rv-layer-item-button>
-
-    <md-menu-content width="3">
-        <md-menu-item>
-            <md-button aria-label="Metadata" ng-click="self.tocService.presets.toggles.metadata.action()">
-                <md-icon md-svg-src="action:description"></md-icon>
-                Metadata
-            </md-button>
-        </md-menu-item>
-    </md-menu-content>
-
-</md-menu-->
 </div>

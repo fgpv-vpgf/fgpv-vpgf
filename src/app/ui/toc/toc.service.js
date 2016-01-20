@@ -59,6 +59,9 @@
                                     },
                                     filters: { // an invisible toggle for filters panel; stores filters configuration
                                         selected: false
+                                    },
+                                    remove: {
+                                        enabled: true
                                     }
                                 },
                                 state: 'default', // error, loading,
@@ -111,6 +114,9 @@
                                     },
                                     filters: {
                                         selected: false
+                                    },
+                                    remove: {
+                                        enabled: true
                                     }
                                 },
                                 state: 'default', // error, loading,
@@ -161,6 +167,9 @@
                                             },
                                             filters: {
                                                 selected: false
+                                            },
+                                            remove: {
+                                                enabled: true
                                             }
                                         },
                                         state: 'default', // error, loading,
@@ -255,6 +264,9 @@
                                             },
                                             filters: {
                                                 selected: false
+                                            },
+                                            remove: {
+                                                enabled: true
                                             }
                                         },
                                         state: 'default', // error, loading,
@@ -327,7 +339,7 @@
                                         enabled: true
                                     },
                                     settings: {
-                                        enabled: true
+                                        enabled: false
                                     },
                                     visibility: {
                                         value: 'off', //'off', 'zoomIn', 'zoomOut'
@@ -335,6 +347,9 @@
                                     },
                                     filters: {
                                         selected: false
+                                    },
+                                    remove: {
+                                        enabled: true
                                     }
                                 },
                                 state: 'default', // error, loading,
@@ -393,6 +408,9 @@
                                     },
                                     filters: {
                                         selected: false
+                                    },
+                                    remove: {
+                                        enabled: true
                                     }
                                 },
                                 state: 'default', // error, loading,
