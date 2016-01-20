@@ -4,6 +4,7 @@ const proj = require('./proj.js');
 const basemap = require('./basemap.js');
 const mapManager = require('./mapManager.js');
 const attribute = require('./attribute.js');
+const events = require('./events.js');
 
 function initAll(esriBundle) {
     let debug = false;
@@ -13,6 +14,7 @@ function initAll(esriBundle) {
         basemap: basemap(esriBundle),
         mapManager: mapManager(esriBundle),
         attribs: attribute(esriBundle),
+        events: events(esriBundle),
         debug: function () {
             if (arguments.length === 1) {
                 debug = arguments[0] === true;
