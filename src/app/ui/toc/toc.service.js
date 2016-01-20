@@ -18,7 +18,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService(stateManager, $timeout, $rootScope, $http) {
+    function tocService(stateManager, $timeout, $rootScope, $http, geoService) {
         const service = {
             // a sample config bit describing layer selector structure; comes from the config file
             data: {
@@ -716,70 +716,10 @@
                 return;
             }
 
-            // TODO: remove
-            // get fake data
-            $http
-                .get('content/fake_data.json')
-                .then(function (data) {
-                    // shuffle fake data
-                    let newData = shuffle(data.data.aaData);
-                    newData.splice(Math.floor(Math.random() * (newData.length - 20) + 20));
-                    newData.forEach((row, index) => row[0] = index + 1);
-                    newData = {
-                        columns: [
-                            {
-                                title: 'ID'
-                            },
-                            {
-                                title: 'First Name'
-                            },
-                            {
-                                title: 'Last Name'
-                            },
-                            {
-                                title: 'ZIP'
-                            },
-                            {
-                                title: 'Country'
-                            }
-                        ],
-                        data: newData
-                    };
-
-                    // simulate delay to show loading splash
-                    return $timeout(function () {
-                        updateDisplayedLayerData('filters', layer.id, newData, false);
-
-                        //console.log(stateManager.display.filters.data);
-                    }, 2000);
-                })
-                .catch(function (error) {
-                    console.log('failed to load fake data:', error);
-                });
-
-            // helper to shuffle array
-            // TODO: remove
-            function shuffle(array) {
-                let counter = array.length;
-                let temp;
-                let index;
-
-                // While there are elements in the array
-                while (counter > 0) {
-                    // Pick a random index
-                    index = Math.floor(Math.random() * counter);
-
-                    // Decrease counter by 1
-                    counter--;
-
-                    // And swap the last element with it
-                    temp = array[counter];
-                    array[counter] = array[index];
-                    array[index] = temp;
-                }
-
-                return array;
-            }
+            // temporary data loading
+            // TODO: replace ecogeo with layerid
+            const newData = geoService.getFormattedAttributes('ecogeo', '0');
+            updateDisplayedLayerData('filters', layer.id, newData, false);
         }
 
         /**
