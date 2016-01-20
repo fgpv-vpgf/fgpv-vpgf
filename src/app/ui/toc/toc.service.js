@@ -718,7 +718,7 @@
 
             // temporary data loading
             // TODO: replace ecogeo with layerid
-            const newData = geoService.getFormattedAttributes('ecogeo');
+            const newData = geoService.getFormattedAttributes('ecogeo', '0');
             updateDisplayedLayerData('filters', layer.id, newData, false);
         }
 
