@@ -112,19 +112,18 @@
          *
          * @param   {String} layerId        The id for the layer
          * @param   {String} featureIndex   The index for the feature (attribute set) within the layer
-         * @return  {Object}                The column headers and data to show in the datatable
+         * @return  {?Object}               The column headers and data to show in the datatable
          */
         function getFormattedAttributes(layerId, featureIndex) {
             if (!service.layers[layerId]) {
-                console.log('Error: attempt to get attributes for unregistered layer. id: ' +
-                    layerId);
-                return;
+                throw new Error('Cannot get attributes for unregistered layer');
+            }
+            if (!service.layers[layerId].attribs) {
+                // return null as attributes are not loaded yet
+                return null;
             }
             if (!service.layers[layerId].attribs[featureIndex]) {
-                console.log(service.layers[layerId].attribs.indexes);
-                console.log('Error: attempt to get attributes for attribute set that doesnt exist. id: ' +
-                    layerId + ', attribute set index: ' + featureIndex);
-                return;
+                throw new Error('Cannot get attributes for feature that does not exist');
             }
 
             // get the attributes and single out the first one
@@ -219,11 +218,9 @@
                     // get the attributes for the layer
                     const a = service.gapi.attribs.loadLayerAttribs(l);
 
+                    // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
                     a.then(
                         data => {
-                            /*angular.forEach(data, value => {
-                                registerAttributes(value);
-                            });*/
                             registerAttributes(data);
                         })
                         .error(
