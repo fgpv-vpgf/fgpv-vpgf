@@ -3,6 +3,12 @@
 const projBuilder = require('../src/proj.js');
 const proj4 = require('proj4');
 
+let fakeEsri = {
+    EsriExtent: {},
+    GeometryService: () => {},
+    ProjectParameters: () => {}
+};
+
 function makeFakeEsriExtent(o) {
     return {
         "xmin":o.x0,"ymin":o.y0,"xmax":o.x1,"ymax":o.y1,
@@ -16,7 +22,6 @@ function makeFakeEsriExtent(o) {
 describe('Local projection', () => {
 
     // make up some data for testing
-    let fakeEsri = { EsriExtent: {} };
     const sampleData = {x0:-95,y0:49,x1:-94.5,y1:49.5,sr:4326};
     const sampleExtent = makeFakeEsriExtent(sampleData);
     let proj;
@@ -51,10 +56,19 @@ describe('Local projection', () => {
 
 });
 
+describe('geojson reprojection', () => {
+    it('should reproject a point', () => {
+        const geojsonTestPoint = require('./geojsonTestPoint.json');
+        const proj = projBuilder(fakeEsri);
+        proj.addProjection("EPSG:3978", "+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+        proj.projectGeojson(geojsonTestPoint, 'EPSG:3978');
+        const pt = geojsonTestPoint.features[0].geometry.coordinates;
+        expect(pt[0]).toBeCloseTo(-356765.042);
+        expect(pt[1]).toBeCloseTo(125038.026);
+    })
+})
+
 describe("test for esri projection conversion function", () => {
-    let fakeEsri = { EsriExtent: {},
-                    GeometryService: () => {},
-                    ProjectParameters: () => {} }
     const sampleData = {x0:-95,y0:49,x1:-94.5,y1:49.5,sr:4326};
     const sampleExtent = makeFakeEsriExtent(sampleData);
     let esri;
