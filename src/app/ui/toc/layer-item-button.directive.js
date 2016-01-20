@@ -13,6 +13,9 @@
      * ```html
      * <!-- `name` attribute specifies the name of the toggle; toggle's control object and its template are fetched from the layerItem directive -->
      * <rv-layer-item-button name="settings"></rv-layer-item-button>
+     *
+     * <!-- `type` attribute specifies the template to be used for the control; it defaults to `layer-item-button.html`; another option is `layer-item-menu-item.html` -->
+     * <rv-layer-item-button name="metadata" type="menu-item"></rv-layer-item-button>
      * ```
      */
     angular
@@ -23,7 +26,11 @@
         const directive = {
             require: '^rvLayerItem',
             restrict: 'E',
-            templateUrl: 'app/ui/toc/layer-item-button.html',
+            templateUrl: (elm, attr) => {
+                // returns a different template based on the value of the type attribute
+                const type = attr.type || 'button'; // `type` is a string, so no need to check if it's defined or not
+                return `app/ui/toc/layer-item-${type}.html`;
+            },
             scope: {
                 action: '&?',
                 name: '@'
