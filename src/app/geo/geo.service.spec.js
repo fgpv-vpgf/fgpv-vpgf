@@ -71,15 +71,17 @@ describe('geo', () => {
 
             let tempAttribs = {
                 layerId: 'sausages',
-                features: [{
-                    attributes: {
-                        abc: '123'
-                    }
-                }]
+                0: {
+                    features: [{
+                        attributes: {
+                            abc: '123'
+                        }
+                    }]
+                }
             };
             geoService.registerAttributes(tempAttribs);
 
-            let bundledAttributes = geoService.getFormattedAttributes(tempLayer.id);
+            let bundledAttributes = geoService.getFormattedAttributes(tempLayer.id, '0');
             expect(bundledAttributes.data)
                 .toBeDefined();
             expect(bundledAttributes.columns)
@@ -141,7 +143,7 @@ describe('geo', () => {
             });
 
             // disabled due to issue with esri layer.on
-            // re-enable once geoApi events are working
+            // TODO: re-enable once geoApi events are working
             xit('should add all the configured layers', () => {
                 const l = geoService.gapi.layer;
                 spyOn(l, 'FeatureLayer');

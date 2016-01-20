@@ -113,9 +113,21 @@
          * @param   {String} layerId    The id for the layer
          * @return  {Object}            The column headers and data to show in the datatable
          */
-        function getFormattedAttributes(layerId) {
+        function getFormattedAttributes(layerId, featureIndex) {
+            if (!service.layers[layerId]) {
+                console.log('Error: attempt to get attributes for unregistered layer. id: ' +
+                    layerId);
+                return;
+            }
+            if (!service.layers[layerId].attribs[featureIndex]) {
+                console.log(service.layers[layerId].attribs.indexes);
+                console.log('Error: attempt to get attributes for feature set that doesnt exist. id: ' +
+                    layerId + ', feature set index: ' + featureIndex);
+                return;
+            }
+
             // get the attributes and single out the first one
-            const attr = service.layers[layerId].attribs;
+            const attr = service.layers[layerId].attribs[featureIndex];
             const first = attr.features[0];
 
             // columns for the data table
@@ -208,9 +220,10 @@
 
                     a.then(
                         data => {
-                            angular.forEach(data, value => {
+                            /*angular.forEach(data, value => {
                                 registerAttributes(value);
-                            });
+                            });*/
+                            registerAttributes(data);
                         })
                         .error(
                             exception => {
