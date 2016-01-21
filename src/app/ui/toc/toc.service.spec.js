@@ -55,8 +55,8 @@ describe('tocService', () => {
                 .toBe(false);
             expect(layerToggle.selected)
                 .toBeFalsy(); // layer toggle is not selected yet
-            expect(display.layerId)
-                .toBe(-1);
+            expect(display.requestId)
+                .toEqual(null); // request hasn't been made
             expect(display.data)
                 .toEqual(null); // no metadata
 
@@ -72,7 +72,7 @@ describe('tocService', () => {
             expect(layerToggle.selected)
                 .toBe(true); // layer toggle is already selected
 
-            expect(display.layerId)
+            expect(display.requester.id)
                 .toBe(0);
 
             to.flush(5000); // flush metadata generation timer
@@ -82,7 +82,7 @@ describe('tocService', () => {
             expect(layerToggle.selected)
                 .toBe(true);
 
-            expect(display.layerId)
+            expect(display.requester.id)
                 .toBe(0);
             expect(display.data.length)
                 .toBeGreaterThan(0); // some metadata was generated
@@ -92,8 +92,8 @@ describe('tocService', () => {
                 // waiting for sideMetadata to close, it should clear metadata display object
                 if (!newValue) {
 
-                    expect(display.layerId)
-                        .toBe(-1); // layer id is reset
+                    expect(display.requestId)
+                        .toEqual(null); // request id is reset
                     expect(layerToggle.selected)
                         .toBe(false); // layer toggle no longer selected
 
