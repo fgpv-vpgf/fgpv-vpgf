@@ -1,4 +1,4 @@
-/* global bard, $compile, $rootScope, tocService */
+/* global bard, $compile, $rootScope, $httpBackend, tocService */
 
 describe('rvLayerItem', () => {
     let scope;
@@ -31,7 +31,7 @@ describe('rvLayerItem', () => {
         bard.appModule('app.ui.toc', 'app.templates', 'ngMaterial', 'app.common.router', 'app.geo');
 
         // inject angular services
-        bard.inject('$compile', '$rootScope', 'tocService');
+        bard.inject('$compile', '$rootScope', '$httpBackend', 'tocService');
 
         // spy on group visibility toggle method
         spyOn(tocService.actions, 'toggleLayerFiltersPanel');
@@ -45,6 +45,11 @@ describe('rvLayerItem', () => {
         directiveElement = angular.element(
             '<rv-layer-item layer="item"></rv-layer-item>'
         );
+
+        // layer-item directive tries to load icon resources on compile
+        // need to mock that
+        $httpBackend.expectGET('content/images/iconsets/navigation-icons.svg')
+            .respond({});
 
         directiveElement = $compile(directiveElement)(scope);
         scope.$digest();

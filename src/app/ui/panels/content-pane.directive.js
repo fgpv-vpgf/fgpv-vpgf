@@ -49,14 +49,14 @@
             require: '?^rvPanel', // require plug controller
             templateUrl: 'app/ui/panels/content-pane.html',
             scope: {
-                titleValue: '@', // binds to the evaluated dom property
-                titleStyle: '@',
-                isLoading: '=', // bind to a property
-                hideWhenLoading: '=',
-                headerControls: '@',
-                footer: '@',
+                titleValue: '@?', // binds to the evaluated dom property
+                titleStyle: '@?',
+                isLoading: '=?', // bind to a property
+                hideWhenLoading: '=?',
+                headerControls: '@?',
+                footer: '@?',
                 closePanel: '&?', // https://docs.angularjs.org/api/ng/service/$compile
-                staticContent: '='
+                staticContent: '=?'
             },
             transclude: true,
             link: link,
@@ -78,13 +78,13 @@
             self.hideWhenLoading = angular.isDefined(self.hideWhenLoading) ? self.hideWhenLoading : true;
             self.staticContent = angular.isDefined(self.staticContent) ? self.staticContent : false;
 
-            const headerSpacer = element.find(`${HEADER_CLASS} ${SPACER_CLASS}`);
-            const footer = element.find(FOOTER_CLASS);
-
             // first, try to used passed closePanel function; if not, use one on the parent panel controller, or nothing
             if (!self.closePanel && ctrl) {
                 self.closePanel = ctrl.closePanel || undefined;
             }
+
+            const headerSpacer = element.find(`${HEADER_CLASS} ${SPACER_CLASS}`);
+            const footer = element.find(FOOTER_CLASS);
 
             // `self.headerControls` is a string of directive names separated by ';' to be inserted in the content pane's header
             if (self.headerControls) {
