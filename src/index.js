@@ -14,7 +14,7 @@ function initAll(esriBundle) {
         basemap: basemap(esriBundle),
         mapManager: mapManager(esriBundle),
         attribs: attribute(esriBundle),
-        events: events(esriBundle),
+        events: events(),
         debug: function () {
             if (arguments.length === 1) {
                 debug = arguments[0] === true;
