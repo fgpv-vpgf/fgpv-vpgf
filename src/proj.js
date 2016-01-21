@@ -1,5 +1,20 @@
 'use strict';
 const proj4 = require('proj4');
+const terraformer = require('terraformer');
+const teraProj = require('terraformer-proj4js');
+
+/**
+ * Reproject a GeoJSON object in place.  This is a wrapper around terraformer-proj4js.
+ * @param {Object} geojson the GeoJSON to be reprojected, this will be modified in place
+ * @param {String|Number} outputSpatialReference the target spatial reference,
+ * 'EPSG:4326' is used by default; if a number is suppied it will be used as an EPSG code
+ * @param {String|Number} inputSpatialReference same rules as outputSpatialReference if suppied
+ * if missing it will attempt to find it encoded in the GeoJSON
+ */
+function projectGeojson(geojson, outputSpatialReference, inputSpatialReference) {
+    const converter = teraProj(terraformer, proj4);
+    converter(geojson, outputSpatialReference, inputSpatialReference);
+}
 
 /**
  * Reproject an EsriExtent object on the client.  Does not require network
@@ -119,8 +134,10 @@ function esriServiceBuilder(esriBundle) {
 module.exports = function (esriBundle) {
     // TODO: Move Point and SpatialReference to its own (geometry) module
     return {
+        addProjection: proj4.defs, // straight passthrough at the moment, maybe add arg checking?
         esriServerProject: esriServiceBuilder(esriBundle),
-        localProjectExtent: localProjectExtent,
+        localProjectExtent,
+        projectGeojson,
         Point: esriBundle.Point,
         projectEsriExtent: projectEsriExtentBuilder(esriBundle),
         SpatialReference: esriBundle.SpatialReference
