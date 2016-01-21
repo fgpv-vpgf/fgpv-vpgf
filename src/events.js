@@ -2,16 +2,23 @@
  * Wire up any supplied handlers to the corresponding dojo .on events on layer.
  * Purpose is to keep Dojo .on events contained in geoApi.
  *
- * @param {obj} obj from which the events pertain to
- * @param {layer} layer is an ESRI layer object
- * @param {handlers} handlers for an event handler definition object
+ * @param {esriObject} esriObject which contains the dojo events to be wrapped
+ * @param {handlers} handlers is an object which contains all handlers needed
  */
-function wrapEvents(obj, layer, handlers) {
-    // use function getLayerType to determine layer type. (in shared.js)
+function wrapEvents(esriObject, handlers) {
+    Object.keys(handlers).forEach(ourEventName => {
+        let ourNameString = ourEventName.toString();
+
+        // replace camelCase name to dojo event name format
+        let dojoName = ourNameString.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+
+        // make dojo call
+        esriObject.on(dojoName, handlers[ourEventName]);
+    });
 }
 
-module.exports = function (esriBundle) {
+module.exports = function () {
     return {
-
+        wrapEvents: wrapEvents
     };
 };
