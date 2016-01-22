@@ -51,8 +51,9 @@
                 self.destroyTable();
 
                 // forced delay of a 100 to prevent the loading indicator from flickering if the table is created too fast; it's annoying; it means that switching tables takes at least 100ms no matter how small the table is; in majority of cases it should take more than 100ms to get data and create a table anyway;
-                // double arrow function!
-                let forcedDelay = $q(fulfill => $timeout(() => fulfill(), 100));
+                const forcedDelay = $q(fulfill =>
+                    $timeout(() => fulfill(), 100)
+                );
 
                 // create a new table node
                 const tableNode = angular.element('<table class="display nowrap rv-data-table"></table>');
