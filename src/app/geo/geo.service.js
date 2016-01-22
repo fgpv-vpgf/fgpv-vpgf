@@ -26,7 +26,7 @@
             layers: {},
             layerOrder: [],
             buildMap,
-            espgLookup,
+            epsgLookup,
             getFormattedAttributes,
             registerLayer,
             registerAttributes,
@@ -201,7 +201,7 @@
          * @return {Promise} a Promise resolving to proj4 style definition or null
          * if the definition could not be found
          */
-        function espgLookup(code) {
+        function epsgLookup(code) {
             // FIXME this should be moved to a plugin; it is hardcoded to use epsg.io
 
             const urnRegex = /urn:ogc:def:crs:EPSG::(\d+)/;
@@ -219,11 +219,14 @@
                 lookup = epsgMatches[1];
             }
 
-            return $http.get('http://epsg.io/' + lookup + '.proj4')
+            return $http.get(`http://epsg.io/${lookup}.proj4`)
+                    .then(response => {
+                        return response.data;
+                    })
                     .catch(err => {
                         console.warn(err);
                         return null;
-                    })
+                    });
         }
 
         /**
@@ -266,7 +269,7 @@
             mapManager = service.gapi.mapManager.setupMap(map, config);
 
             // FIXME temp link for debugging
-            window.FGPV = service.layers;
+            window.FGPV = { layers: service.layers };
         }
 
         /**
