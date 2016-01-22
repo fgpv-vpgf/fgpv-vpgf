@@ -727,7 +727,7 @@
          * @param  {Object} layer layer object whose data should be displayed.
          */
         function toggleLayerFiltersPanel(layer) {
-            stateManager.display.filters.isLoading = true;
+            //stateManager.display.filters.isLoading = true;
 
             // close basemap selector if open
             stateManager.setActive({
@@ -738,7 +738,9 @@
                 id: layer.id,
                 name: layer.name
             };
-            const requestId = togglePanelContent('filtersFulldata', 'filters', requester, 'side');
+
+            // we have to set the loading indicator immediatelly because the creating of the datatable block ui from updating and uless the indicator is already set, it will be visible until after the table is created
+            const requestId = togglePanelContent('filtersFulldata', 'filters', requester, 'side', 0);
 
             if (requestId === -1) {
                 return;
@@ -747,7 +749,13 @@
             // temporary data loading
             // TODO: replace ecogeo with layerid
             const newData = geoService.getFormattedAttributes('ecogeo', '0');
-            updateDisplayedData('filters', requestId, newData, false);
+            newData.columns = newData.columns.slice(0, (layer.id + 1) * 5);
+            newData.data = newData.data.slice(0, (layer.id + 1) * 50);
+
+            console.log('TOC, is loading', stateManager.display.filters.isLoading);
+
+            // need to use 0 timeout; otherwise the loading indicator will never be shown as ui gets blocked by datatable construction
+            $timeout(() => updateDisplayedData('filters', requestId, newData, false), 0);
         }
 
         /**
@@ -799,9 +807,10 @@
          * @param  {String} contentName      name of the content
          * @param  {Object} requester        object requesting display change; must have `id` attribute
          * @param  {String} panelNameToClose name of the panel to close before opening the main one if needed
+         * @param  {Number} delay            time to wait before setting loading indicator
          * @return {Number} return a data requestId; if equals -1, the panel will be closed, no further actions needed; otherwise, the panel will be opened
          */
-        function togglePanelContent(panelName, contentName, requester, panelNameToClose) {
+        function togglePanelContent(panelName, contentName, requester, panelNameToClose, delay = 100) {
             // if specified panel is open and the requester matches
             if (stateManager.state[panelName].active &&
                 stateManager.display[contentName].requester.id === requester.id) {
@@ -813,11 +822,15 @@
                 // cancel previous data retrieval timeout so we don't display old data
                 $timeout.cancel(stateManager.display[contentName].loadingTimeout);
 
-                // if it takes longer than 100 ms to get metadata, kick in the loading screen
-                // this is fast enough for people to perceive it as instantaneous
-                stateManager.display[contentName].loadingTimeout = $timeout(() => {
+                if (delay === 0) {
                     stateManager.display[contentName].isLoading = true;
-                }, 100);
+                } else {
+                    // if it takes longer than 100 ms to get metadata, kick in the loading screen
+                    // this is fast enough for people to perceive it as instantaneous
+                    stateManager.display[contentName].loadingTimeout = $timeout(() => {
+                        stateManager.display[contentName].isLoading = true;
+                    }, delay);
+                }
 
                 if (!stateManager.state[panelName].active) { // panel is not open; open it; close other panels is specified
                     // open panel closing anything else specified
