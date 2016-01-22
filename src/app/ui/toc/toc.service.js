@@ -18,7 +18,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService(stateManager, $timeout, $rootScope) {
+    function tocService(stateManager, $timeout, $rootScope, $http, geoService) {
         const service = {
             // a sample config bit describing layer selector structure; comes from the config file
             data: {
@@ -59,6 +59,9 @@
                                     },
                                     filters: { // an invisible toggle for filters panel; stores filters configuration
                                         selected: false
+                                    },
+                                    remove: {
+                                        enabled: true
                                     }
                                 },
                                 state: 'default', // error, loading,
@@ -111,6 +114,9 @@
                                     },
                                     filters: {
                                         selected: false
+                                    },
+                                    remove: {
+                                        enabled: true
                                     }
                                 },
                                 state: 'default', // error, loading,
@@ -161,6 +167,9 @@
                                             },
                                             filters: {
                                                 selected: false
+                                            },
+                                            remove: {
+                                                enabled: true
                                             }
                                         },
                                         state: 'default', // error, loading,
@@ -255,6 +264,9 @@
                                             },
                                             filters: {
                                                 selected: false
+                                            },
+                                            remove: {
+                                                enabled: true
                                             }
                                         },
                                         state: 'default', // error, loading,
@@ -327,7 +339,7 @@
                                         enabled: true
                                     },
                                     settings: {
-                                        enabled: true
+                                        enabled: false
                                     },
                                     visibility: {
                                         value: 'off', //'off', 'zoomIn', 'zoomOut'
@@ -335,6 +347,9 @@
                                     },
                                     filters: {
                                         selected: false
+                                    },
+                                    remove: {
+                                        enabled: true
                                     }
                                 },
                                 state: 'default', // error, loading,
@@ -393,6 +408,9 @@
                                     },
                                     filters: {
                                         selected: false
+                                    },
+                                    remove: {
+                                        enabled: true
                                     }
                                 },
                                 state: 'default', // error, loading,
@@ -428,28 +446,6 @@
             actions: {
                 toggleLayerGroup,
                 toggleLayerFiltersPanel
-            },
-
-            presets: null,
-
-            selectedLayer: {},
-            layerMetadata: null,
-            display: {
-                metadata: {
-                    isLoading: false, // showing loading indicator in the content pane
-                    layerId: -1, // id of the layer which data is being display
-                    data: {} // data to display
-                },
-                settings: {
-                    isLoading: false,
-                    layerId: -1,
-                    data: {}
-                },
-                filters: {
-                    isLoading: false,
-                    layerId: -1,
-                    data: {}
-                }
             }
         };
 
@@ -587,6 +583,9 @@
             }
         };
 
+        // TODO: move requestId counter to stateManager
+        let requestIdCounter = 1;
+
         // set layer control defaults
         // TODO: should be done when parsing config file
         initLayers(service.data.items);
@@ -710,8 +709,16 @@
          * @param  {Object} layer layer object whose settings should be opened.
          */
         function toggleSettings(layer) {
-            togglePanelContent('sideSettings', 'settings', layer.id, 'filters');
-            setDisplay('settings', layer.id);
+            const requester = {
+                id: layer.id
+            };
+            const requestId = togglePanelContent('sideSettings', 'settings', requester, 'filters');
+
+            if (requestId === -1) {
+                return;
+            }
+
+            updateDisplayedData('settings', requestId, {}, true);
         }
 
         /**
@@ -720,13 +727,35 @@
          * @param  {Object} layer layer object whose data should be displayed.
          */
         function toggleLayerFiltersPanel(layer) {
+            //stateManager.display.filters.isLoading = true;
+
             // close basemap selector if open
             stateManager.setActive({
                 other: false
             });
 
-            togglePanelContent('filtersFulldata', 'filters', layer.id, 'side');
-            setDisplay('filters', layer.id);
+            const requester = {
+                id: layer.id,
+                name: layer.name
+            };
+
+            // we have to set the loading indicator immediatelly because the creating of the datatable block ui from updating and uless the indicator is already set, it will be visible until after the table is created
+            const requestId = togglePanelContent('filtersFulldata', 'filters', requester, 'side', 0);
+
+            if (requestId === -1) {
+                return;
+            }
+
+            // temporary data loading
+            // TODO: replace ecogeo with layerid
+            const newData = geoService.getFormattedAttributes('ecogeo', '0');
+            newData.columns = newData.columns.slice(0, (layer.id + 1) * 5);
+            newData.data = newData.data.slice(0, (layer.id + 1) * 50);
+
+            console.log('TOC, is loading', stateManager.display.filters.isLoading);
+
+            // need to use 0 timeout; otherwise the loading indicator will never be shown as ui gets blocked by datatable construction
+            $timeout(() => updateDisplayedData('filters', requestId, newData, false), 0);
         }
 
         /**
@@ -735,41 +764,29 @@
          * @param  {Object} layer layer object whose data should be displayed.
          */
         function toggleMetadata(layer) {
-            // cancel previous data retrieval timeout so we don't display old data
-            $timeout.cancel(service.display.metadata.handle);
-
-            // if it takes longer than 100 mil to get metadata, kick in the loading screen
-            service.display.metadata.handle = $timeout(() => {
-                service.display.metadata.isLoading = true;
-            }, 100);
-
             // toggle panels as needed
-            togglePanelContent('sideMetadata', 'metadata', layer.id, 'filters');
+            const requester = {
+                id: layer.id
+            };
+            const requestId = togglePanelContent('sideMetadata', 'metadata', requester, 'filters');
+
+            if (requestId === -1) {
+                return;
+            }
 
             // check if metadata is cached
             if (layer.cache.metadata) {
-                setDisplay('metadata', layer.id); // display from cache
-
-                $timeout.cancel(service.display.metadata.handle);
+                updateDisplayedData('metadata', requestId, layer.cache.metadata, true);
             } else { // else, retrieve it;
-                // set layerId to check agains when data is retrieved
-                service.display.metadata.layerId = layer.id;
-
                 // TODO: generate some metadata to display functionality
-                let mdata = HolderIpsum.paragraphs(2, true);
+                const mdata = HolderIpsum.paragraphs(2, true);
 
                 // TODO: remove; simulating delay on retrieving metadata
                 $timeout(() => {
-                    layer.cache.metadata = layer.cache.metadata || mdata;
+                    layer.cache.metadata = mdata;
 
-                    // check if the layerId for displayed metadata still matches metadata being retrieved
-                    if (service.display.metadata.layerId === layer.id) {
-                        setDisplay('metadata', layer.id);
-
-                        // cancel loading indicator timeout
-                        $timeout.cancel(service.display.metadata.handle);
-                    }
-                }, Math.random() * 3000); // random delay
+                    updateDisplayedData('metadata', requestId, layer.cache.metadata, true);
+                }, Math.random() * 3000 + 300); // random delay
             }
         }
 
@@ -785,75 +802,114 @@
          *     closed:
          *         -> open panel
          *
+         * TODO: this ought to be moved to stateManager
          * @param  {String} panelName        panel to open
          * @param  {String} contentName      name of the content
-         * @param  {Integer} layerId          id of the layer whose data will be displayed in the opened panel
+         * @param  {Object} requester        object requesting display change; must have `id` attribute
          * @param  {String} panelNameToClose name of the panel to close before opening the main one if needed
+         * @param  {Number} delay            time to wait before setting loading indicator
+         * @return {Number} return a data requestId; if equals -1, the panel will be closed, no further actions needed; otherwise, the panel will be opened
          */
-        function togglePanelContent(panelName, contentName, layerId, panelNameToClose) {
-            if (!stateManager.state[panelName].active) { // panel is not open; open it; close other panels is specified
+        function togglePanelContent(panelName, contentName, requester, panelNameToClose, delay = 100) {
+            // if specified panel is open and the requester matches
+            if (stateManager.state[panelName].active &&
+                stateManager.display[contentName].requester.id === requester.id) {
+                //stateManager.display[contentName].layerId === layerId) {
+                stateManager.setActive(panelName); // just close the panel
 
-                // open panel closing anything else specified
-                if (panelNameToClose) {
-                    let closePanel = {};
-                    closePanel[panelNameToClose] = false;
-                    stateManager.setActive(closePanel, panelName);
+                return -1;
+            } else {
+                // cancel previous data retrieval timeout so we don't display old data
+                $timeout.cancel(stateManager.display[contentName].loadingTimeout);
+
+                if (delay === 0) {
+                    stateManager.display[contentName].isLoading = true;
                 } else {
-                    stateManager.setActive(panelName);
+                    // if it takes longer than 100 ms to get metadata, kick in the loading screen
+                    // this is fast enough for people to perceive it as instantaneous
+                    stateManager.display[contentName].loadingTimeout = $timeout(() => {
+                        stateManager.display[contentName].isLoading = true;
+                    }, delay);
                 }
 
-            } else if (service.display[contentName].layerId === layerId) { // metadata panel is open and if this layer's metadata is already selected
-                stateManager.setActive(panelName); // just close it
-            } else { // panel is open and its content is from a different layer; deselect that layer and select the new one
-                // TODO: delay clearing old content to after the transtion ends - prevents a brief flash of null content in the pane
-                changeSelectedState(service.display[contentName].layerId, contentName, false); // old layer
-                changeSelectedState(layerId, contentName); // new layer
+                if (!stateManager.state[panelName].active) { // panel is not open; open it; close other panels is specified
+                    // open panel closing anything else specified
+                    if (panelNameToClose) {
+                        let closePanel = {};
+                        closePanel[panelNameToClose] = false;
+                        stateManager.setActive(closePanel, panelName);
+                    } else {
+                        stateManager.setActive(panelName);
+                    }
+                } else { // panel is open and its content is from a different layer; deselect that layer and select the new one
+                    // TODO: delay clearing old content to after the transtion ends - prevents a brief flash of null content in the pane
+                    changeContentState(stateManager.display[contentName].requester.id, contentName, false); // old layer
+                    changeContentState(requester.id, contentName); // new layer
+                }
+
+                // update requestId and the requester object
+                stateManager.display[contentName].requester = requester;
+                stateManager.display[contentName].requestId = ++requestIdCounter;
+
+                return requestIdCounter;
             }
         }
 
         /**
-         * Changes the state of the displayed layer data.
-         * If the layerId is provided, then data type is considered to be visible in a panel.
+         * Updates displayed data for a specific content like layer metadata in the metadata panel.
+         * TODO: ought to be moved to stateManager
          *
-         * @param {String} type    name of the displayed content
-         * @param {id} layerId     layer id, defaults to -1
+         * @param {String} contentName    name of the displayed content
+         * @param {Number} requestId     request id
+         * @param {Object} data          data to be displayed
+         * @param {Boolean} isLoaded     flag to remove loading indicator from the panel
          */
-        function setDisplay(type, layerId = -1) {
-            if (layerId !== -1) {
-                let layer = findLayer(layerId);
+        function updateDisplayedData(contentName, requestId, data, isLoaded) {
+            // check if the layerId for displayed data still matches data being retrieved
+            // this prevents old request which complete after the newer ones to update display with old data
+            if (stateManager.display[contentName].requestId === requestId) {
+                console.log('Displaying', contentName, 'data for request id', requestId);
+                stateManager.display[contentName].data = data;
 
-                // TODO: decide where to store cached layer data
-                service.display[type].data = layer.cache[type];
-                service.display[type].layerId = layerId;
+                // in some cases you might not want to turn off the loading indicator from tocService toggle function
+                // with the filters panel for example: fetching data for the table takes time, but generating the actual table also takes time; so you want to turn off the loading indicator from filters panel
+                if (isLoaded === true) {
+                    stateManager.display[contentName].isLoading = false;
+
+                    // cancel loading indicator timeout if any
+                    $timeout.cancel(stateManager.display[contentName].loadingTimeout);
+                }
             } else {
-                service.display[type].layerId = -1;
-                service.display[type].data = {};
+                console.log(contentName, 'Data rejected for request id ', requestId, '; loading in progress');
             }
-
-            service.display[type].isLoading = false;
         }
 
         /**
-         * Sets a watch on StateManager for layer data panels. When the panel is opened/closed, calls changeSelectedState to dehighlight layer toggles and checks the state of the layer item itself (selected / not selected).
+         * Sets a watch on StateManager for layer data panels. When the panel is opened/closed, calls changeContentState to dehighlight layer toggles and checks the state of the layer item itself (selected / not selected).
          *
-         * @param  {String} itemName    name of the panel to watch
-         * @param  {String} contentName type of the display data
+         * @param  {String} panelName    name of the panel to watch as specified in the stateManager
+         * @param  {String} contentName type of the display data (layer toggle name: 'settings', 'metadata', 'filters')
          */
-        function watchPanelState(itemName, contentName) {
-            $rootScope.$watch(() => stateManager.state[itemName].active, newValue => {
-                let layerId = service.display[contentName].layerId;
-                changeSelectedState(layerId, contentName, newValue);
+        function watchPanelState(panelName, contentName) {
+            $rootScope.$watch(() => stateManager.state[panelName].active, newValue => {
+                if (!stateManager.display[contentName].requester) {
+                    return;
+                }
+                let layerId = stateManager.display[contentName].requester.id;
+
+                //console.log('TocService:', 'panel state change', panelName, contentName, newValue, layerId);
+                changeContentState(layerId, contentName, newValue);
             });
         }
 
         /**
-         * Sets the selected state of `contentName` layer data type. There options are possible right now: metadata, settings, and filters. If any one of them is selected, the layer is considered selected as well and has a visual indicator of that.
+         * Changes the state of the specified layer content (metadata, settings, and filters) to the value provided. If any one of them is selected, the layer is considered selected as well and has a visual indicator of that.
          *
          * @param  {Integer} layerId     id of the layer whose data is displayed
          * @param  {String} contentName type of the data displayed
          * @param  {Boolean} newValue    indicates whether the `contentName` display data is visible or not
          */
-        function changeSelectedState(layerId, contentName, newValue = true) {
+        function changeContentState(layerId, contentName, newValue = true) {
             let layer = findLayer(layerId);
 
             if (layer) {
@@ -865,9 +921,13 @@
                     .some(toggleName => layer.toggles[toggleName].selected);
                 layer.selected = layerSelectedValue; // newValue; // change layer's selected state
 
-                // if panel closed, set current display to null to prevent previous display from showing up during loading
+                // if panel is closed, set current display to null to prevent previous display from showing up during loading
                 if (!newValue) {
-                    setDisplay(contentName);
+                    //updateDisplayedData(contentName);
+                    // TODO: some of this ought to be moved to stateManager
+                    stateManager.display[contentName].data = null;
+                    stateManager.display[contentName].requester = null;
+                    stateManager.display[contentName].requestId = null;
                 }
             }
         }

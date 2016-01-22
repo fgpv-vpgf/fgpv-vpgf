@@ -11,6 +11,28 @@
      *
      * The `rvContentPane` directive is a panel inner container holding the panel's content.
      *
+     * `title-value` a string to be displayed in the pane's header; if ommited, the header is not shown
+     * `title-style` sets the style of the pane's title; options: "headline", "title", "subhead"
+     * `is-loading` a flag to show/hide the loading indicator
+     * `hide-when-loading` if true, hides the content of the pane when the loading indicator is active
+     * `header-controls` a list of directive names separated by ';' to be inserted into the header (extra controls like a menu for example)
+     * `footer` directive name to insert into the footer
+     * `close-panel` a custom "close" function to call when the pane is closed
+     * `static-content` makes main content section non-scrollable
+     *
+     * Usage example:
+     * ```html
+     * <rv-content-pane
+     *         title-value="Panel"
+     *         title-style="title"
+     *         is-loading="true"
+     *         hide-when-loading="true"
+     *         header-controls="filters-default-menu"
+     *         footer=""
+     *         close-panel=""
+     *         static-content="false"
+     *         ></rv-content-pane>
+     * ```
      */
     angular
         .module('app.ui.panels')
@@ -27,13 +49,14 @@
             require: '?^rvPanel', // require plug controller
             templateUrl: 'app/ui/panels/content-pane.html',
             scope: {
-                titleValue: '@', // binds to the evaluated dom property
-                titleStyle: '@',
-                isLoading: '=', // bind to a property
-                headerControls: '@', // a list of directive names separated by ';' to be inserted into the header (extra controls for example)
-                footer: '@', // directive name to insert into the footer
+                titleValue: '@?', // binds to the evaluated dom property
+                titleStyle: '@?',
+                isLoading: '=?', // bind to a property
+                hideWhenLoading: '=?',
+                headerControls: '@?',
+                footer: '@?',
                 closePanel: '&?', // https://docs.angularjs.org/api/ng/service/$compile
-                staticContent: '=' // makes main content section non-scrollable
+                staticContent: '=?'
             },
             transclude: true,
             link: link,
@@ -45,18 +68,23 @@
         return directive;
 
         /**
-         * Binds the `closePanel` method from the panel plug controller.
+         * Sets defaults; binds the `closePanel` method from the panel plug controller; compiles footer and extra header controls.
          */
         function link(scope, element, attr, ctrl) {
             const self = scope.self;
 
-            const headerSpacer = element.find(`${HEADER_CLASS} ${SPACER_CLASS}`);
-            const footer = element.find(FOOTER_CLASS);
+            // apply defaults
+            self.isLoading = angular.isDefined(self.isLoading) ? self.isLoading : false;
+            self.hideWhenLoading = angular.isDefined(self.hideWhenLoading) ? self.hideWhenLoading : true;
+            self.staticContent = angular.isDefined(self.staticContent) ? self.staticContent : false;
 
             // first, try to used passed closePanel function; if not, use one on the parent panel controller, or nothing
             if (!self.closePanel && ctrl) {
                 self.closePanel = ctrl.closePanel || undefined;
             }
+
+            const headerSpacer = element.find(`${HEADER_CLASS} ${SPACER_CLASS}`);
+            const footer = element.find(FOOTER_CLASS);
 
             // `self.headerControls` is a string of directive names separated by ';' to be inserted in the content pane's header
             if (self.headerControls) {

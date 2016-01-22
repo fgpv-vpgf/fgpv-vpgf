@@ -1,0 +1,9 @@
+<md-menu-item>
+    <md-button
+        ng-click="self.action(self.layer)"
+        ng-class="{ selected: self.control.selected }"
+        ng-disabled="!self.control.enabled">
+        <md-icon md-svg-icon="{{ self.control.icon }}"></md-icon>
+        {{ self.control.label }}
+    </md-button>
+</md-menu-item>

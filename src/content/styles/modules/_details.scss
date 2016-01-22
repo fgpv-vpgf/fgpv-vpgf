@@ -16,23 +16,45 @@
             left: 0;
             top: 0;
             bottom: - rem(0.8);
-
             //padding: 8px;
             border-right: solid 1px $divider-color-light;
             overflow: hidden;
 
             .rv-details-layer-item {
-
                 //display: block;
                 padding: rem(0.8);
                 margin: 0;
                 width: $slide-out-width;
 
-                .rv-symbology-item-name {
-                    text-transform: none;
-                    font-size: rem(1.6);
-                    line-height: rem(2.0);
-                    font-weight: normal;
+                .rv-symbology-item {
+                    &-name {
+                        text-transform: none;
+                        font-size: rem(1.6);
+                        line-height: rem(2.0);
+                        font-weight: normal;
+                    }
+
+                    md-progress-circular {
+                        position: absolute;
+                        left: - rem(0.8);
+                        top: - rem(0.8);
+                    }
+
+                    // this makes the symbology image more opaque when the loading indicator is visible
+                    &:after {
+                        content: "";
+                        position: absolute;
+                        height: 32px;
+                        width: 32px;
+                        left: 0;
+                        top: 0;
+                        background-color: rgba(255, 255,255,0);
+                        transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+                    }
+
+                    &.rv-progress:after {
+                        background-color: rgba(255, 255,255,0.8);
+                    }
                 }
 
                 &.rv-selected {

@@ -26,6 +26,7 @@
             layers: {},
             layerOrder: [],
             buildMap,
+            getFormattedAttributes,
             registerLayer,
             registerAttributes,
             setZoom,
@@ -106,6 +107,59 @@
         }
 
         /**
+         * Returns nicely bundled attributes for the layer described by layerId.
+         * The bundles are used in the datatable.
+         *
+         * @param   {String} layerId        The id for the layer
+         * @param   {String} featureIndex   The index for the feature (attribute set) within the layer
+         * @return  {?Object}               The column headers and data to show in the datatable
+         */
+        function getFormattedAttributes(layerId, featureIndex) {
+            if (!service.layers[layerId]) {
+                throw new Error('Cannot get attributes for unregistered layer');
+            }
+            if (!service.layers[layerId].attribs) {
+                // return null as attributes are not loaded yet
+                return null;
+            }
+            if (!service.layers[layerId].attribs[featureIndex]) {
+                throw new Error('Cannot get attributes for feature that does not exist');
+            }
+
+            // get the attributes and single out the first one
+            const attr = service.layers[layerId].attribs[featureIndex];
+            const first = attr.features[0];
+
+            // columns for the data table
+            const columns = [];
+
+            // data for the data table
+            const data = [];
+
+            // used to track order of columns
+            const columnOrder = [];
+
+            // get the attribute keys to use as column headers
+            Object.keys(first.attributes).forEach((key, index) => {
+                columns[index] = { title: key };
+                columnOrder[index] = key;
+            });
+
+            // get the attribute data from every feature
+            attr.features.forEach((element, index) => {
+                data[index] = [];
+                angular.forEach(element.attributes, (value, key) => {
+                    data[index][columnOrder.indexOf(key)] = value;
+                });
+            });
+
+            return {
+                columns,
+                data
+            };
+        }
+
+        /**
          * Takes a layer in the config format and generates an appropriate layer object.
          * @param {object} layerConfig a configuration fragment for a single layer
          * @return {object} a layer object matching one of the esri/layers objects based on the layer type
@@ -116,11 +170,17 @@
                 id: layerConfig.id
             };
 
+            handlers[layerTypes.esriDynamic] = config => {
+                return new service.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
+            };
             handlers[layerTypes.esriFeature] = config => {
                 return new service.gapi.layer.FeatureLayer(config.url, commonConfig);
             };
-            handlers[layerTypes.esriDynamic] = config => {
-                return new service.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
+            handlers[layerTypes.esriImage] = config => {
+
+                // FIXME don't hardcode opacity
+                commonConfig.opacity = 0.3;
+                return new service.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig);
             };
             handlers[layerTypes.ogcWms] = config => {
                 commonConfig.visibleLayers = [config.layerName];
@@ -148,8 +208,26 @@
             }
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
-                registerLayer(l, layerConfig);
                 map.addLayer(l);
+
+                // wait for layer to load before registering
+                // TODO: replace with geoApi event once support is there (and re-enable test)
+                l.on('load', () => {
+                    registerLayer(l, layerConfig);
+
+                    // get the attributes for the layer
+                    const a = service.gapi.attribs.loadLayerAttribs(l);
+
+                    // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
+                    a.then(
+                        data => {
+                            registerAttributes(data);
+                        })
+                        .error(
+                            exception => {
+                                console.log('Error getting attributes for ' + l.name + ': ' + exception);
+                            });
+                });
             });
 
             // setup map using configs

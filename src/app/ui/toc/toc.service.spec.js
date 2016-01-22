@@ -8,7 +8,7 @@ describe('tocService', () => {
     let sm;
 
     beforeEach(() => {
-        bard.appModule('app.ui.toc', 'app.common.router');
+        bard.appModule('app.ui.toc', 'app.common.router', 'app.geo');
 
         // inject services
         bard.inject('tocService', 'stateManager', '$rootScope', '$timeout');
@@ -42,7 +42,7 @@ describe('tocService', () => {
 
         it('should open metadata panel with some data and close it', done => {
             let toggle = tocService.presets.toggles.metadata;
-            let display = tocService.display.metadata;
+            let display = sm.display.metadata;
             let layer = tocService.data.items[0].items[0]; // first layer from the first group
             let layerToggle = layer.toggles.metadata;
 
@@ -55,22 +55,24 @@ describe('tocService', () => {
                 .toBe(false);
             expect(layerToggle.selected)
                 .toBeFalsy(); // layer toggle is not selected yet
-            expect(display.layerId)
-                .toBe(-1);
+            expect(display.requestId)
+                .toEqual(null); // request hasn't been made
             expect(display.data)
-                .toEqual({}); // no metadata
+                .toEqual(null); // no metadata
 
             toggle.action(layer); // open metadata panel; it will generate some fake metadata right now
             rs.$digest();
 
             to.flush(200); // flush timer past loading timeout
 
+            // TODO: when we have a real function to fetch metadata, need to mock it here and simulate the delay
+
             expect(display.isLoading)
                 .toBe(true);
             expect(layerToggle.selected)
                 .toBe(true); // layer toggle is already selected
 
-            expect(display.layerId)
+            expect(display.requester.id)
                 .toBe(0);
 
             to.flush(5000); // flush metadata generation timer
@@ -80,7 +82,7 @@ describe('tocService', () => {
             expect(layerToggle.selected)
                 .toBe(true);
 
-            expect(display.layerId)
+            expect(display.requester.id)
                 .toBe(0);
             expect(display.data.length)
                 .toBeGreaterThan(0); // some metadata was generated
@@ -90,8 +92,8 @@ describe('tocService', () => {
                 // waiting for sideMetadata to close, it should clear metadata display object
                 if (!newValue) {
 
-                    expect(display.layerId)
-                        .toBe(-1); // layer id is reset
+                    expect(display.requestId)
+                        .toEqual(null); // request id is reset
                     expect(layerToggle.selected)
                         .toBe(false); // layer toggle no longer selected
 

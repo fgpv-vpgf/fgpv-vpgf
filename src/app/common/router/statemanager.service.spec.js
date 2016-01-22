@@ -1,56 +1,12 @@
 /* global bard, stateManager, $rootScope */
 
 describe('stateManager', () => {
-    const mockState = {
-        main: {
-            active: false
-        },
-        mainToc: {
-            active: false,
-            parent: 'main'
-        },
-        mainToolbox: {
-            active: false,
-            parent: 'main'
-        },
-        side: {
-            active: false
-        },
-        sideMetadata: {
-            active: false,
-            parent: 'side'
-        },
-        sideSettings: {
-            active: false,
-            parent: 'side'
-        },
-        filters: {
-            active: false,
-            morph: 'default'
-        },
-        filtersFulldata: {
-            active: false,
-            parent: 'filters',
-        },
-        filtersNamedata: {
-            active: false,
-            parent: 'filters'
-        }
-    };
-
     beforeEach(() => {
 
         bard.appModule('app.common.router');
 
         // inject services
         bard.inject('stateManager', '$rootScope');
-
-        stateManager.addState(mockState);
-
-        // a spy can stub any function and tracks calls to it and all arguments. We spy on the service functions to check if they are being called properly. http://jasmine.github.io/2.0/introduction.html#section-Spies
-        //spyOn(mapNavigationService, 'zoomIn');
-        //spyOn(mapNavigationService, 'zoomOut');
-        //spyOn(mapNavigationService, 'zoomTo');
     });
 
     describe('stateManager', () => {
@@ -214,22 +170,22 @@ describe('stateManager', () => {
             expect(state.main.active)
                 .toBe(false);
             expect(state.main.activeSkip)
-                .toBe(false); // defaults to true
+                .toBe(false); // defaults to false
 
             expect(state.mainToc.active)
                 .toBe(false);
             expect(state.mainToc.activeSkip)
-                .toBe(false); // defaults to true
+                .toBe(false); // defaults to false
 
             expect(state.side.active)
                 .toBe(false);
             expect(state.side.activeSkip)
-                .toBe(false); // defaults to true
+                .toBe(false); // defaults to false
 
             expect(state.sideMetadata.active)
                 .toBe(false);
             expect(state.sideMetadata.activeSkip)
-                .toBe(false); // defaults to true
+                .toBe(false); // defaults to false
 
             // need to listen on item state changes and resolve locks on the stateManager
             $rootScope.$watch(() => state.main.active, () =>
@@ -290,6 +246,88 @@ describe('stateManager', () => {
                     expect(state.sideMetadata.activeSkip)
                         .toBe(true); // sideMetadata is opened immediately, no animation
 
+                    done();
+                });
+
+            $rootScope.$digest();
+        });
+
+        it('should keep panel change history', done => {
+            let state = stateManager.state;
+
+            expect(state.main.history.length)
+                .toBe(0);
+
+            // open mainToc; main should open as parent
+            // need to listen on item state changes and resolve locks on the stateManager
+            $rootScope.$watch(() => state.mainToc.active, () =>
+                stateManager.callback('mainToc', 'active'));
+            $rootScope.$watch(() => state.mainToolbox.active, () =>
+                stateManager.callback('mainToolbox', 'active'));
+            $rootScope.$watch(() => state.main.active, () =>
+                stateManager.callback('main', 'active'));
+
+            $rootScope.$digest(); // need to kickstart digest cycle to init watches
+
+            stateManager.setActive('mainToc')
+                .then(() => {
+                    expect(state.main.history.length)
+                        .toBe(1);
+                    expect(state.main.history[0])
+                        .toBe('mainToc');
+
+                    // open toolbox; toc should close
+                    return stateManager.setActive('mainToolbox');
+                })
+                .then(() => {
+                    expect(state.main.history.length)
+                        .toBe(2);
+
+                    // close toolbox
+                    return stateManager.setActive('mainToolbox');
+                })
+                .then(() => {
+                    expect(state.main.history.length)
+                        .toBe(3);
+                    expect(state.main.history[2])
+                        .toEqual(null);
+
+                    done();
+                });
+
+            $rootScope.$digest();
+        });
+
+        // FIXME: test is broken; it should pass after the TODO on line 146 in stateManager.js is done
+        xit('should track change history properly', done => {
+            let state = stateManager.state;
+
+            console.log(state.main);
+
+            expect(state.main.history.length)
+                .toBe(0);
+
+            // open mainToc; main should open as parent
+            // need to listen on item state changes and resolve locks on the stateManager
+            $rootScope.$watch(() => state.mainToc.active, () =>
+                stateManager.callback('mainToc', 'active'));
+            $rootScope.$watch(() => state.mainToolbox.active, () =>
+                stateManager.callback('mainToolbox', 'active'));
+            $rootScope.$watch(() => state.main.active, () =>
+                stateManager.callback('main', 'active'));
+
+            $rootScope.$digest(); // need to kickstart digest cycle to init watches
+
+            stateManager.setActive('mainToc')
+                .then(() => stateManager.setActive('mainToc'))
+                .then(() => stateManager.setActive('mainToc'))
+                .then(() => stateManager.setActive('mainToc'))
+                .then(() => stateManager.setActive('mainToc'))
+                .then(() => {
+                    expect(state.main.history)
+                        .toEqual(['mainToc', null, 'mainToc', null, 'mainToc']);
+
+                    console.log('----', state.main);
                     done();
                 });
 

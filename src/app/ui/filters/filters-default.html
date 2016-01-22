@@ -1,14 +1,14 @@
-<rv-content-pane header-controls="rv-filters-default-menu" static-content="true" title-style="title"
-    title-value="Data Points">
-    <div class='rv-filters'>
-        <p>
-            // TODO: removeparagraph to show that panel content is actually changing layer display data:
-            <b>{{ self.display }}</b>
-        </p>
+<rv-content-pane
+    header-controls="rv-filters-default-menu"
+    static-content="true"
+    title-style="title"
+    title-value="Data Points: {{ self.display.requester.name }}"
+    is-loading="self.display.isLoading">
+    <div class="rv-filters">
 
-        <md-button ng-click="self.draw()">click this button if you don't see the table below</md-button>
+        <!--md-button ng-click="self.draw()">click this button if you don't see the table below</md-button-->
 
-        <table class="display nowrap rv-data-table" width="100%"></table>
+        <div class="rv-filters-data-container"></div>
 
     </div>
 

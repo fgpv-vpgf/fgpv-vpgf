@@ -15,6 +15,7 @@
      * @description
      *
      * The `rvDetails` directive to display point data and wms query results.
+     * Where are multiple data items, displays a selector list on the left side, letting the user to select the item.
      *
      */
     angular
@@ -41,10 +42,12 @@
             let section;
             let layerList;
 
+            // create animation timeline
             const tl = new TimelineLite({
                 paused: true
             });
 
+            // expand and collapse item selector list when multiple items are displayed
             self.onEnter = onEnter;
             self.onLeave = onLeave;
 
@@ -73,24 +76,24 @@
         }
     }
 
-    function Controller(stateManager, $scope) {
+    // COMMENT to self: brief flickering of fake content is caused by immediately setting data and isLoading flag;
+    // in a real case, we wait for 100ms to get data, and then set isLoading which;
+
+    function Controller(stateManager, $scope, $timeout) {
         'ngInject';
         const self = this;
 
         self.closeDetails = closeDetails;
+        self.selectItem = selectItem;
 
-        self.selectLayer = selectLayer;
-
-        self.data = stateManager._detailsData; // garbage data
+        self.display = stateManager.display.details; // garbage data
 
         // TODO: adding stateManger to scope to set up watch
-        // TODO: remove;
-        $scope.stateManager = stateManager;
-        $scope.$watch('stateManager._detailsData.layers', newValue => {
-            console.log('stateManager._detailsData.layers', newValue);
-            if (newValue.length > 0) {
+        $scope.$watch('self.display.data', newValue => {
+            console.log('self.display.data', newValue);
+            if (newValue && newValue.length > 0) {
                 // pick random point to be selected initially
-                self.selected = newValue[Math.floor(Math.random() * newValue.length)];
+                self.selectedItem = newValue[Math.floor(Math.random() * newValue.length)];
             }
         });
 
@@ -110,16 +113,20 @@
                 side: false
             }, 'mainDetails');
 
-            // TODO: remove; temporary;
-            stateManager._detailsData.layers = [];
+            // TODO: remove;
+            // null the data on panel close
+            $timeout(() => {
+                self.display.data = null;
+                self.selectedItem = null;
+            }, 400);
         }
 
         /**
          * Changes the layer whose data is displayed.
-         * @param  {Object} layer data object
+         * @param  {Object} item data object
          */
-        function selectLayer(layer) {
-            self.selected = layer;
+        function selectItem(item) {
+            self.selectedItem = item;
 
             self.onLeave();
         }

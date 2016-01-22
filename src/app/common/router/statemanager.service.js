@@ -27,7 +27,7 @@
 
     // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
-    function stateManager($q, $rootScope) {
+    function stateManager($q, $rootScope, initialState, initialDisplay) {
         const service = {
             addState,
 
@@ -36,82 +36,13 @@
 
             callback,
 
-            state: {},
+            state: angular.copy(initialState),
+            display: angular.copy(initialDisplay),
 
             // temporary place to store layer data;
-            // TODO: move to the state object
+            // TODO: move to the initialDisplay constant service
             _detailsData: {
                 layers: []
-            }
-        };
-
-        // state object
-        // sample state object
-        service.state = {
-            main: {
-                active: false,
-                activeSkip: false, // flag for skipping animation
-            },
-            mainToc: {
-                active: false,
-                activeSkip: false,
-                parent: 'main'
-            },
-            mainToolbox: {
-                active: false,
-                activeSkip: false,
-                parent: 'main'
-            },
-            mainDetails: {
-                active: false,
-                activeSkip: false,
-                parent: 'main'
-            },
-            side: {
-                active: false,
-                activeSkip: false
-            },
-            sideMetadata: {
-                active: false,
-                activeSkip: false,
-                parent: 'side'
-            },
-            sideSettings: {
-                active: false,
-                activeSkip: false,
-                parent: 'side'
-            },
-            filters: {
-                active: false,
-                activeSkip: false,
-                morph: 'default', // minimized, full,
-                morphSkip: false,
-            },
-            filtersFulldata: {
-                active: false,
-                activeSkip: false,
-                parent: 'filters'
-            },
-            filtersNamedata: {
-                active: false,
-                activeSkip: false,
-                parent: 'filters'
-            },
-            other: {
-                active: false,
-                activeSkip: false
-            },
-            otherBasemap: {
-                active: false,
-                activeSkip: false,
-                parent: 'other'
-            },
-            mapnav: {
-                morph: 'default',
-                morphSkip: false
-            },
-            help: {
-                active: false
             }
         };
 
@@ -212,6 +143,7 @@
 
                         //console.log('Continue with the rest of state items');
                         // run any `runAfter` function if exists
+                        // TODO: runAfter should return a promise; return `setActive` when it resolves
                         if (runAfter) {
                             runAfter();
                         }
@@ -262,7 +194,7 @@
         function setItemProperty(itemName, property, value, skip = false) {
             const item = service.state[itemName];
 
-            return $q(fulfill => { // reject is not used
+            return $q(fulfill => {
                 const fulfillKey = `${property}${itemName}`; // key to store `fulfill` function
                 const skipKey = `${property}Skip`; // key to store `skip` animation flag
 
@@ -275,7 +207,9 @@
                     if (fulfillStore[fulfillKey]) {
                         fulfillStore[fulfillKey]();
                     }
-                    fulfillStore[fulfillKey] = fulfill; // store fulfill function to resolve on callback
+
+                    // store a modified fulfill function which returns `false` to any following `then` to resolve on callback
+                    fulfillStore[fulfillKey] = () => fulfill(false);
 
                     item[property] = value;
 
@@ -284,14 +218,33 @@
 
                     // waititing for items to animate and be resolved
                 } else {
-                    // resolve immediately
-                    fulfill();
+                    // resolve immediately skipping event broadcasting since nothing really changed
+                    fulfill(true);
                 }
             })
-            .then(() => {
-                //console.log('EMIT EVENT for', itemName, property, value, skip);
-                // emit event on the rootscope when change is complete
-                $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
+            .then(skipEvent => {
+                if (!skipEvent) {
+                    //console.log('EMIT EVENT for', itemName, property, value, skip);
+                    // emit event on the rootscope when change is complete
+                    $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
+
+                    let history;
+
+                    if (item.parent && value) { // add to history only when a child opens or ...
+                        history = getParent(itemName).item.history;
+                        history.push(itemName);
+                    } else if (!item.parent && !value) { // ... or the parent closes
+                        history = item.history;
+                        history.push(null); // `null` means no item was active in the panel;
+                    }
+
+                    // keep history at 10 items, I don't think we need any more
+                    if (history && history.length > 10) {
+                        history.shift();
+                    }
+                }
+
+                return;
             });
         }
 

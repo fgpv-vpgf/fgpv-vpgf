@@ -1,12 +1,12 @@
 {
   "name": "r2v2",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A starter project for AngularJS",
   "repository": "https://github.com/fgpv-vpgf/fgpv-vpgf",
   "license": "MIT",
   "devDependencies": {
-    "babel-core": "^5.8.25",
+    "babel-core": "5.8.25",
     "bower": "^1.4.1",
     "canonical-path": "0.0.2",
     "dateformat": "^1.0.12",
