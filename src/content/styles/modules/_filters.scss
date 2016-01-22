@@ -29,7 +29,11 @@
                     flex-direction: column;
 
                     .dataTables_scrollHead {
-                        overflow: inherit !important;
+                    }
+
+                    .dataTables_scrollBody {
+                        flex: 1; // this needed for the body to fill available space
+                        background: lighten($divider-color, 20%);
                     }
                 }
             }
