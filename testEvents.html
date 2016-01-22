@@ -16,9 +16,11 @@
             var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
             var layer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0');
             map.addLayer(layer);
-            var events = api.events.wrapEvents(layer, {mouseOver: (x) => {
+            var events = api.events.wrapEvents(layer, {updateEnd: (x) => {
                 console.log('Happy Cat ! :)');
                 console.log(x);
+                console.log(x.layer);
+                console.log(x.target);
                 }
             });
         });
