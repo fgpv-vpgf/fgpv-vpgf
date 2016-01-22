@@ -1,5 +1,20 @@
 'use strict';
 const proj4 = require('proj4');
+const terraformer = require('terraformer');
+const teraProj = require('terraformer-proj4js');
+
+/**
+ * Reproject a GeoJSON object in place.  This is a wrapper around terraformer-proj4js.
+ * @param {Object} geojson the GeoJSON to be reprojected, this will be modified in place
+ * @param {String|Number} outputSpatialReference the target spatial reference,
+ * 'EPSG:4326' is used by default; if a number is suppied it will be used as an EPSG code
+ * @param {String|Number} inputSpatialReference same rules as outputSpatialReference if suppied
+ * if missing it will attempt to find it encoded in the GeoJSON
+ */
+function projectGeojson(geojson, outputSpatialReference, inputSpatialReference) {
+    const converter = teraProj(terraformer, proj4);
+    converter(geojson, outputSpatialReference, inputSpatialReference);
+}
 
 /**
  * Reproject an EsriExtent object on the client.  Does not require network
@@ -83,9 +98,48 @@ function projectEsriExtentBuilder(esriBundle) {
     };
 }
 
+function esriServiceBuilder(esriBundle) {
+    /**
+     * Reproject an esri geometry object on the server. Requires network traffic
+     * to esri's Geometry Service, but may be slower than proj4 conversion.
+     * Internally it tests 1 point and reprojects it to another spatial reference.
+     *
+     * @param {url} url for the ESRI Geometry Service
+     * @param {geometries} geometries to be projected
+     * @param {sr} sr is the target spatial reference
+     * @returns {Promise} promise to return reprojected geometries
+     */
+    return (url, geometries, sr) => {
+        return new Promise(
+            (resolve, reject) => {
+                const params = new esriBundle.ProjectParameters();
+
+                // connect to esri server
+                const gsvc = new esriBundle.GeometryService(url);
+
+                params.geometries = geometries;
+                params.outSR = sr;
+
+                // call project function from esri server to do conversion
+                gsvc.project(params,
+                    projectedExtents => {
+                        resolve(projectedExtents);
+                    }, error => {
+                        reject(error);
+                    });
+            });
+    };
+}
+
 module.exports = function (esriBundle) {
+    // TODO: Move Point and SpatialReference to its own (geometry) module
     return {
-        localProjectExtent: localProjectExtent,
-        projectEsriExtent: projectEsriExtentBuilder(esriBundle)
+        addProjection: proj4.defs, // straight passthrough at the moment, maybe add arg checking?
+        esriServerProject: esriServiceBuilder(esriBundle),
+        localProjectExtent,
+        projectGeojson,
+        Point: esriBundle.Point,
+        projectEsriExtent: projectEsriExtentBuilder(esriBundle),
+        SpatialReference: esriBundle.SpatialReference
     };
 };

@@ -4,6 +4,7 @@ const shared = require('./shared.js');
 
 // Attribute Loader related functions
 //TODO consider re-writing all the asynch stuff with the ECMA-7 style of asynch keywords
+//FIXME hoist functions out of module.exports using fancy buildiers. change promise.then(,) to promise.then().error(), changes lets to consts where applicable.
 module.exports = esriBundle => {
 
     /**
@@ -257,7 +258,10 @@ module.exports = esriBundle => {
         //TODO we may want to support the option of a layer that points to a server based JSON file containing attributes
         let idx = getLayerIndex(layer.url);
         let opts = pluckOptions(idx, options);
-        let result = {};
+        let result = {
+            layerId: layer.id,
+            indexes: []
+        };
 
         //check for skip flag
         if (opts.skip) {
@@ -270,6 +274,7 @@ module.exports = esriBundle => {
                     //package into final object structure (one instance) and return
                     layerData.layerId = layer.id;
                     result[idx.toString()] = layerData;
+                    result.indexes.push(idx.toString());
                     resolve(result);
                 },
                 error => {
@@ -332,10 +337,14 @@ module.exports = esriBundle => {
             layerDataArray => {
                 //attribs are loaded
                 //package into final object structure (one instance) and return
-                let result = {};
+                let result = {
+                    layerId: layer.id,
+                    indexes: []
+                };
                 layerDataArray.forEach(layerData => {
                     layerData.layerId = layer.id;
                     result[layerData.layerIdx.toString()] = layerData;
+                    result.indexes.push(layerData.layerIdx.toString());
                 });
                 resolve(result);
             },

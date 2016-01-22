@@ -33,17 +33,23 @@ module.exports = function (esriLoaderUrl, window) {
     // in esriBundle
     const esriDeps = [
         ['dojo/Deferred', 'Deferred'],
+        ['esri/config', 'esriConfig'],
         ['esri/dijit/Basemap', 'Basemap'],
         ['esri/dijit/BasemapGallery', 'BasemapGallery'],
         ['esri/dijit/BasemapLayer', 'BasemapLayer'],
         ['esri/dijit/Scalebar', 'Scalebar'],
+        ['esri/geometry/Point', 'Point'],
         ['esri/layers/ArcGISDynamicMapServiceLayer', 'ArcGISDynamicMapServiceLayer'],
+        ['esri/layers/ArcGISImageServiceLayer', 'ArcGISImageServiceLayer'],
         ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],
         ['esri/layers/FeatureLayer', 'FeatureLayer'],
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
         ['esri/layers/WMSLayer', 'WmsLayer'],
         ['esri/map', 'Map'],
-        ['esri/request', 'esriRequest']
+        ['esri/request', 'esriRequest'],
+        ['esri/SpatialReference', 'SpatialReference'],
+        ['esri/tasks/GeometryService', 'GeometryService'],
+        ['esri/tasks/ProjectParameters', 'ProjectParameters']
     ];
 
     function makeDojoRequests() {
