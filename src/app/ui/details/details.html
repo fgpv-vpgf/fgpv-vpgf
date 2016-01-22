@@ -7,7 +7,9 @@
     hide-when-loading="self.display.data.length === 1">
     <div class="rv-details" ng-class="{ 'rv-multiple': self.display.data.length > 1 }">
         <md-content class="rv-details-data rv-content">
-            <div class="rv-subsection" ng-hide="self.display.data.length > 1 && self.selectedItem.isLoading">
+            <div
+                class="rv-subsection rv-hide-animate"
+                ng-class="{ 'rv-hide': self.display.data.length > 1 && self.selectedItem.isLoading }">
                 <div class="rv-subheader">
                     <h4 class="md-subhead">{{ self.selectedItem.requester }}</h4>
                 </div>
