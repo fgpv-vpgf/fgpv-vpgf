@@ -1,7 +1,14 @@
 // this overrides vendor classes of node created outside the main viewer container
 // this is why it's special :)
 .rv-hide {
-    visibility: hidden;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+.rv-hide-animate {
+    display: inherit;
+    opacity: 1;
+    transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
 }
 
 md-menu-content {

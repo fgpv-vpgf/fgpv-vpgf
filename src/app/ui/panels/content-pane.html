@@ -19,11 +19,11 @@
 
     <md-content class="rv-content" ng-if="!self.staticContent">
         <!-- hide content when it's loading and hideWhenLoading is "true" -->
-        <ng-transclude ng-class="{ 'rv-hide': self.isLoading && self.hideWhenLoading }"></ng-transclude>
+        <ng-transclude class="rv-hide-animate" ng-class="{ 'rv-hide': self.isLoading && self.hideWhenLoading }"></ng-transclude>
     </md-content>
 
     <div class="rv-content" ng-if="self.staticContent">
-        <ng-transclude ng-class="{ 'rv-hide': self.isLoading && self.hideWhenLoading }"></ng-transclude>
+        <ng-transclude class="rv-hide-animate" ng-class="{ 'rv-hide': self.isLoading && self.hideWhenLoading }"></ng-transclude>
     </div>
 
     <div class="rv-footer" ng-show="self.footer"></div>
