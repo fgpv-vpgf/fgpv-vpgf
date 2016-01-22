@@ -7,18 +7,25 @@
  */
 function wrapEvents(esriObject, handlers) {
     Object.keys(handlers).forEach(ourEventName => {
-        let ourNameString = ourEventName.toString();
-
         // replace camelCase name to dojo event name format
-        let dojoName = ourNameString.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+        const dojoName = ourEventName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
+        //TODO: Validity checking on inputs for dojoName
         // make dojo call
-        esriObject.on(dojoName, handlers[ourEventName]);
+        esriObject.on(dojoName, (e) => {
+
+            // check if needs special handling to point at layer calling event
+            const layerEvents = ['update-start', 'update-end', 'error'];
+            if (layerEvents.indexOf(dojoName) >= 0) {
+                e.layer = e.target;
+            }
+            handlers[ourEventName](e);
+        });
     });
 }
 
-module.exports = function () {
+module.exports = () => {
     return {
-        wrapEvents: wrapEvents
+        wrapEvents
     };
 };
