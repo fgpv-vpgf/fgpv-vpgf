@@ -223,7 +223,7 @@
                         data => {
                             registerAttributes(data);
                         })
-                        .error(
+                        .catch(
                             exception => {
                                 console.log('Error getting attributes for ' + l.name + ': ' + exception);
                             });
