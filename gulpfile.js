@@ -332,10 +332,8 @@ gulp.task('reloadcache', 'Repackaging templates...', ['templatecache'], function
  * @return {undefined}
  */
 function startTests(singleRun, done) {
-    var child;
     var excludeFiles = [];
     var karma = require('karma').server;
-    /* var fork = require('child_process').fork; */
 
     var karmaConfig = {
         configFile: __dirname + '/karma.conf.js',
@@ -355,10 +353,6 @@ function startTests(singleRun, done) {
 
     function karmaCompleted(karmaResult) {
         log('Karma completed');
-        if (child) {
-            log('shutting down the child process');
-            child.kill();
-        }
         if (karmaResult === 1) {
             done('karma: tests failed with code ' + karmaResult);
         } else {
