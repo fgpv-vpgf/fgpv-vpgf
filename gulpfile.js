@@ -14,6 +14,7 @@ var Dgeni = require('dgeni');
 var config = require('./gulp.config')();
 var Server = require('karma').Server;
 var dateFormat = require('dateformat');
+var through = require('through2');
 
 require('gulp-help')(gulp);
 
@@ -44,6 +45,20 @@ gulp.task('vet', 'Checks code against style guidelines', function () {
         .pipe($.jscsStylish.combineWithHintResults())
         .pipe($.jshint.reporter('jshint-stylish', { verbose: true }))
         .pipe($.jshint.reporter('fail'));
+});
+
+gulp.task('validate', 'Validate all config files against the config schema', function () {
+    return gulp.src(config.src + 'config*.json')
+            .pipe($.tv4(config.src + 'schema.json'))
+            .pipe(through.obj(function (file, enc, callback) {
+                callback(null, file);
+                if (!file.tv4.valid) {
+                    $.util.log($.util.colors.red(file.tv4.error.message));
+                    $.util.log($.util.colors.red('JSON validation error(s) found in ' + file.path));
+                    process.exit(1);
+                }
+            }))
+            .pipe($.if(args.verbose, $.print()));
 });
 
 /**
@@ -117,7 +132,7 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
     }
 );
 
-gulp.task('jsbuild', 'Annotate, transpile and concat JS development files', ['version'],
+gulp.task('jsbuild', 'Annotate, transpile and concat JS development files', ['validate', 'version'],
     function () {
         injectError(false);
 
