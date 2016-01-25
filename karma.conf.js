@@ -29,12 +29,22 @@ module.exports = function (config) {
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
         //reporters: ['progress', 'coverage'],
-        reporters: ['progress'],
+        reporters: ['spec'],
 
         coverageReporter: {
             dir: gulpConfig.karma.coverage.dir,
             reporters: gulpConfig.karma.coverage.reporters
         },
+
+        /*
+        specReporter: {
+            maxLogLines: 5,         // limit number of lines logged per test
+            suppressErrorSummary: false,  // do not print error summary
+            suppressFailed: false,  // do not print information about failed tests
+            suppressPassed: true,  // do not print information about passed tests
+            suppressSkipped: true  // do not print information about skipped tests
+        },
+        */
 
         // web server port
         port: 9876,
