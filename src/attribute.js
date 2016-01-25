@@ -13,7 +13,7 @@ function newLayerData() {
         oidField: '',
         oidIndex: {},
         layerId: '',
-        layerIdx: -1 //default value to indicate uninitialized
+        layerIdx: null //default value to indicate uninitialized
     };
 }
 
@@ -46,7 +46,7 @@ function newLayerBundle(layerId) {
 * @param  {Array} featureData feature objects to enhance and add to layer data
 */
 function addLayerData(layerData, featureData) {
-    let offset = layerData.features.length;
+    const offset = layerData.features.length;
 
     //add new data to layer data's array
     layerData.features = layerData.features.concat(featureData);
@@ -66,18 +66,12 @@ function addLayerData(layerData, featureData) {
 //skim the last number off the Url
 //TODO apply more edge case tests to this function
 function getLayerIndex(layerUrl) {
-    let endIdx = layerUrl.length;
-    let idx;
-
-    //handle case if a trailing slash
-    if (layerUrl.substr(endIdx - 1) === '/') {
-        endIdx -= 1;
+    const re = /\/(\d+)\/?$/;
+    const matches = layerUrl.match(re);
+    if (matches) {
+        return parseInt(matches[1]);
     }
-
-    idx = layerUrl.lastIndexOf('/', endIdx - 1);
-
-    return parseInt(layerUrl.substring(idx + 1, endIdx), 10);
-
+    throw new Error('Cannot extract layer index from url ' + layerUrl);
 }
 
 /**
@@ -96,6 +90,7 @@ function getLayerIndex(layerUrl) {
 function loadDataBatch(maxId, maxBatch, layerUrl, idField, attribs, callerDef, esriBundle) {
     // fetch attributes from feature layer. where specifies records with id's higher than stuff already
     // downloaded. no geometry.
+    //FIXME replace esriRequest with a library that handles proxies better
     const defData = esriBundle.esriRequest({
         url: layerUrl + '/query',
         content: {
@@ -176,7 +171,7 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
                 //10.0 server will not supply a max record value
                 let maxBatchSize = serviceResult.maxRecordCount || -1;
 
-                //TODO should we stick with dojo deferred inside here, or switch to native Promise?
+                //FIXME switch to native Promise
                 const defFinished = new esriBundle.Deferred();
                 const layerData = newLayerData();
 
@@ -195,7 +190,7 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
 
                 //ensure our attribute list contains the object id
                 if (attribs !== '*') {
-                    if (attribs.indexOf(layerData.oidField) === -1) {
+                    if (attribs.split(',').indexOf(layerData.oidField) === -1) {
                         attribs += (',' + layerData.oidField);
                     }
                 }
@@ -270,7 +265,7 @@ function processFeatureLayer(layer, options, esriBundle) {
     //TODO file based layers will not have URL.  will need additional logic to extract attributes from layer feature collection
     //TODO we may want to support the option of a layer that points to a server based JSON file containing attributes
 
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
         const idx = getLayerIndex(layer.url);
         const opts = pluckOptions(idx, options);
         const result = newLayerBundle(layer.id);
@@ -286,13 +281,6 @@ function processFeatureLayer(layer, options, esriBundle) {
                     //package into final object structure (one instance) and return
                     result.registerData(layerData);
                     resolve(result);
-                }
-            ).catch(
-
-                //TODO is this redundant? if we don't add the catch will the rejection bubble on its own?
-                error => {
-                    //issue loading attribs
-                    reject(error);
                 }
             );
         }
@@ -311,7 +299,7 @@ function processDynamicLayer(layer, options, esriBundle) {
 
     //logic is in separate function to passify the cyclomatic complexity check.
     //TODO we may want to support the option of a layer that points to a server based JSON file containing attributes
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
         let idx = 0;
         let opts;
         const featurePromises = [];
@@ -326,7 +314,9 @@ function processDynamicLayer(layer, options, esriBundle) {
                 //group node
 
                 if (opts.skip) {
-                    //skip to 1 past last child layer (thus avoiding processing all children)
+                    //skip to 1 past last child layer (thus avoiding processing all children).
+                    //find the layer index of the last child of this group node, then add one
+                    //to get the next layer index that comes after this group node.
                     idx = layer.layerInfos[idx].subLayerIds[
                         layer.layerInfos[idx].subLayerIds.length - 1] + 1;
                 } else {
@@ -358,12 +348,6 @@ function processDynamicLayer(layer, options, esriBundle) {
                 });
                 resolve(result);
             }
-        ).catch(
-            error => {
-                //TODO is this redundant? if we don't add the catch will the rejection bubble on its own?
-                //issue loading attribs
-                reject(error);
-            }
         );
     });
 }
@@ -371,7 +355,7 @@ function processDynamicLayer(layer, options, esriBundle) {
 function loadLayerAttribsBuilder(esriBundle) {
 
     /**
-    * fetch attributes from a server-based Layer
+    * Fetch attributes from a server-based Layer
     * @param {Object} layer an ESRI API layer object
     * @param {Object} options settings to determine if sub layers or certain attributes should be skipped.
     * @return {Promise} promise of attributes in proper format
