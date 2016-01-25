@@ -72,21 +72,51 @@
             "required": [ "xmin", "ymin", "xmax", "ymax" ],
             "additionalProperties": false
         },
+        "extentSetNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "number" },
+                "default": { "$ref": "#/defs/extentWithReferenceNode", "description": "The default (starting) extent." },
+                "full": { "$ref": "#/defs/extentWithReferenceNode", "description": "The full extent (should give good view of the whole map, not necessarily the maximum extent); default will be used if not supplied." },
+                "maximum": { "$ref": "#/defs/extentWithReferenceNode", "description": "The maximum extent; full or default extents will be used if not supplied." }
+            },
+            "required": [ "id", "default" ],
+            "additionalProperties": false
+        },
+
+        "lodNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "number" },
+                "lod": {
+                    "type": "object",
+                    "properties": {
+                        "level": { "type": "number" },
+                        "resolution": { "type": "number" },
+                        "scale": { "type": "number" }
+                    },
+                    "required": [ "level", "resolution", "scale" ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [ "id", "lod" ],
+            "additionalProperties": false
+        },
 
         "basicLayer": {
             "type": "object",
             "properties": {
                 "id": { "type": "string" },
-                "layerType": { "type": "string", "enum": ["esriDynamic", "esriFeature", "esriImage", "ogcWms"] },
+                "layerType": { "type": "string", "enum": [ "esriDynamic", "esriFeature", "esriImage", "ogcWms" ] },
                 "url": { "type": "string" },
                 "extent": { "$ref": "#/defs/extentWithReferenceNode" }
             },
-            "required": ["id", "layerType", "url"]
+            "required": [ "id", "layerType", "url" ]
         },
 
         "layerList": {
             "type": "array",
-            "items": { "oneOf": [{"$ref":"#/defs/basicLayer"}] }
+            "items": { "oneOf": [ { "$ref": "#/defs/basicLayer" } ] }
         },
 
         "baseMapNode": {
@@ -108,11 +138,11 @@
                         "min": { "type": "number" },
                         "max": { "type": "number" }
                     },
-                    "default": {},
+                    "default": { },
                     "additionalProperties": false
                 }
             },
-            "required": [ "id", "name", "description", "altText", "thumbnailUrl", "wkid", "extentId"],
+            "required": [ "id", "name", "description", "altText", "thumbnailUrl", "wkid", "extentId" ],
             "additionalProperties": false
         }
 
@@ -121,36 +151,51 @@
     "properties": {
         "version": { "type": "string", "enum": [ "-1" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
         "language": { "type": "string", "enum": [ "en", "fr", "es" ], "description": "ISO 639-1 code indicating the language of strings in the schema file" },
-        "theme": { "type": "string", "enum": [ "default" ], "default":"default", "description": "UI theme of the viewer" },
+        "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
         "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
 
         "services": {
             "description": "A set of service endpoints used by the viewer",
             "type": "object",
             "properties": {
-                "proxyUrl": { "type": "string", "description": "An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers."},
-                "exportMapUrl": { "type": "string", "description": "An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask."},
-                "geometryUrl": { "type": "string", "description": "A URL to an ESRI ArcGIS geometry service REST endpoint."},
-                "geolocation": { "type": "object", "additionalProperties": true, "description": "FIXME"},
-                "coordInfo": { "type": "object", "additionalProperties": true, "description": "FIXME"},
-                "print": { "type": "object", "additionalProperties": true, "description": "FIXME"}
+                "proxyUrl": { "type": "string", "description": "An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers." },
+                "exportMapUrl": { "type": "string", "description": "An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask." },
+                "geometryUrl": { "type": "string", "description": "A URL to an ESRI ArcGIS geometry service REST endpoint." },
+                "geolocation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+                "coordInfo": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+                "print": { "type": "object", "additionalProperties": true, "description": "FIXME" }
             }
         },
 
-        "map": { "type": "object", "additionalProperties": true, "description": "FIXME"},
+        "map": {
+            "type": "object",
+            "description": "Core map properties (extent sets, levels of detail)",
+            "properties": {
+                "extentSets": {
+                    "type": "array",
+                    "items": { "$ref": "#/defs/extentSetNode" },
+                    "description": "The default, full and maximum extents of the map"
+                },
+                "lods": {
+                    "type": "array",
+                    "items": { "$ref": "#/defs/lodNode" },
+                    "description": "The levels of detail available for the map"
+                }
+            }
+        },
         "baseMaps": {
             "type": "array",
-            "items": { "oneOf": [{"$ref":"#/defs/baseMap"}] },
+            "items": { "oneOf": [ { "$ref": "#/defs/baseMap" } ] },
             "description": "A list of basemaps to be made available via the basemap selector."
         },
         "layers": {
             "$ref": "#/defs/layerList",
             "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
         },
-        "legend": { "type": "object", "additionalProperties": true, "description": "FIXME"},
-        "navigation": { "type": "object", "additionalProperties": true, "description": "FIXME"},
-        "tools": { "type": "object", "additionalProperties": true, "description": "FIXME"},
-        "widgets": { "type": "object", "additionalProperties": true, "description": "FIXME"}
+        "legend": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+        "navigation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+        "tools": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+        "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
     },
 
     "required": [ "version" ]
