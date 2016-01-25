@@ -125,7 +125,7 @@ function loadDataBatch(maxId, maxBatch, layerUrl, idField, attribs, callerDef, e
                     //max id becomes last object id in the current batch
                     const thisDef = new esriBundle.Deferred();
                     loadDataBatch(dataResult.features[len - 1].attributes[idField], maxBatch,
-                        layerUrl, idField, attribs, thisDef);
+                        layerUrl, idField, attribs, thisDef, esriBundle);
 
                     thisDef.then(dataArray => {
                         callerDef.resolve(dataResult.features.concat(dataArray));
@@ -202,7 +202,7 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
 
                 //begin the loading process
                 loadDataBatch(-1, maxBatchSize, layerUrl, layerData.oidField,
-                    attribs, defFinished);
+                    attribs, defFinished, esriBundle);
 
                 //after all data has been loaded
                 defFinished.promise.then(features => {
