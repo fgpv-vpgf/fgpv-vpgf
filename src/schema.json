@@ -82,6 +82,38 @@
                 "extent": { "$ref": "#/defs/extentWithReferenceNode" }
             },
             "required": ["id", "layerType", "url"]
+        },
+
+        "layerList": {
+            "type": "array",
+            "items": { "oneOf": [{"$ref":"#/defs/basicLayer"}] }
+        },
+
+        "baseMapNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "A unique identifier for the basemap" },
+                "name": { "type": "string", "description": "Name of the basemap used for labeling" },
+                "description": { "type": "string", "description": "Description of the basemap. Will be visible when basemap selector is expanded.Description of the basemap. Will be visible when basemap selector is expanded." },
+                "typeSummary": { "type": "string", "description": "Optional base map type. This is descriptive only, and will be shown in the basemap selector." },
+                "altText": { "type": "string", "description": "Alt text for the basemap thumbnail image.Alt text for the basemap thumbnail image." },
+                "thumbnailUrl": { "type": "string", "description": "Path to image file to display in the basemap selector." },
+                "wkid": { "type": "number", "description": "The WKID of spatial reference" },
+                "extentId": { "type": "string", "description": "The extent set to be used for this basemap (should reference map.extentSets.id)" },
+                "lodId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" },
+                "layers": { "$ref": "#/defs/layerList" },
+                "zoomLevels": {
+                    "type": "object",
+                    "properties": {
+                        "min": { "type": "number" },
+                        "max": { "type": "number" }
+                    },
+                    "default": {},
+                    "additionalProperties": false
+                }
+            },
+            "required": [ "id", "name", "description", "altText", "thumbnailUrl", "wkid", "extentId"],
+            "additionalProperties": false
         }
 
     },
@@ -106,10 +138,13 @@
         },
 
         "map": { "type": "object", "additionalProperties": true, "description": "FIXME"},
-        "baseMaps": { "type": "array", "additionalProperties": true, "description": "FIXME"},
-        "layers": {
+        "baseMaps": {
             "type": "array",
-            "items": { "oneOf": [{"$ref":"#/defs/basicLayer"}] },
+            "items": { "oneOf": [{"$ref":"#/defs/baseMap"}] },
+            "description": "A list of basemaps to be made available via the basemap selector."
+        },
+        "layers": {
+            "$ref": "#/defs/layerList",
             "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
         },
         "legend": { "type": "object", "additionalProperties": true, "description": "FIXME"},
