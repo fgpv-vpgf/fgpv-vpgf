@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <div id="map" style="height:90%; width: 100%;"></div>
+    <p id="mess" />
+    <script src="dist/geoapi.min.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
+            var layer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0');
+            map.addLayer(layer);
+            var events = api.events.wrapEvents(layer, {updateEnd: (x) => {
+                console.log('Happy Cat ! :)');
+                console.log(x);
+                console.log(x.layer);
+                console.log(x.target);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
