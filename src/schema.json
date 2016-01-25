@@ -71,12 +71,51 @@
             },
             "required": [ "xmin", "ymin", "xmax", "ymax" ],
             "additionalProperties": false
+        },
+
+        "basicLayer": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "layerType": { "type": "string", "enum": ["esriDynamic", "esriFeature", "esriImage", "ogcWms"] },
+                "url": { "type": "string" },
+                "extent": { "$ref": "#/defs/extentWithReferenceNode" }
+            },
+            "required": ["id", "layerType", "url"]
         }
 
     },
 
     "properties": {
-        "version": { "type": "string", "enum": [ "-1" ], "description": "List of schema versions accepted by this version of the viewer." }
+        "version": { "type": "string", "enum": [ "-1" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
+        "language": { "type": "string", "enum": [ "en", "fr", "es" ], "description": "ISO 639-1 code indicating the language of strings in the schema file" },
+        "theme": { "type": "string", "enum": [ "default" ], "default":"default", "description": "UI theme of the viewer" },
+        "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
+
+        "services": {
+            "description": "A set of service endpoints used by the viewer",
+            "type": "object",
+            "properties": {
+                "proxyUrl": { "type": "string", "description": "An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers."},
+                "exportMapUrl": { "type": "string", "description": "An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask."},
+                "geometryUrl": { "type": "string", "description": "A URL to an ESRI ArcGIS geometry service REST endpoint."},
+                "geolocation": { "type": "object", "additionalProperties": true, "description": "FIXME"},
+                "coordInfo": { "type": "object", "additionalProperties": true, "description": "FIXME"},
+                "print": { "type": "object", "additionalProperties": true, "description": "FIXME"}
+            }
+        },
+
+        "map": { "type": "object", "additionalProperties": true, "description": "FIXME"},
+        "baseMaps": { "type": "array", "additionalProperties": true, "description": "FIXME"},
+        "layers": {
+            "type": "array",
+            "items": { "oneOf": [{"$ref":"#/defs/basicLayer"}] },
+            "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
+        },
+        "legend": { "type": "object", "additionalProperties": true, "description": "FIXME"},
+        "navigation": { "type": "object", "additionalProperties": true, "description": "FIXME"},
+        "tools": { "type": "object", "additionalProperties": true, "description": "FIXME"},
+        "widgets": { "type": "object", "additionalProperties": true, "description": "FIXME"}
     },
 
     "required": [ "version" ]
