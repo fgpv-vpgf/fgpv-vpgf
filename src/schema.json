@@ -1,5 +1,83 @@
 {
+    "$schema": "http://json-schema.org/draft-04/schema#",
     "title": "FGPV Config Schema",
     "type": "object",
-    "additionalProperties": true
+    "comments": "FIXME: when draft 05 is release redo schema inheritance with patching / merging if they are accepted",
+    "additionalProperties": true,
+
+    "defs": {
+        "spatialReference": {
+            "type": "object",
+            "properties": {
+                "wkid": { "type": "number" },
+                "vcsWkid": { "type": "number" },
+                "latestWkid": { "type": "number" },
+                "latestVcsWkid": { "type": "number" },
+                "wkt": { "type": "string" }
+            },
+            "anyOf": [
+                { "required": [ "wkid" ] },
+                { "required": [ "vcsWkid" ] },
+                { "required": [ "latestWkid" ] },
+                { "required": [ "latestVcsWkid" ] },
+                { "required": [ "wkt" ] }
+            ]
+        },
+        "spatialReferenceNode": {
+            "type": "object",
+            "properties": {
+                "wkid": { "type": "number" },
+                "vcsWkid": { "type": "number" },
+                "latestWkid": { "type": "number" },
+                "latestVcsWkid": { "type": "number" },
+                "wkt": { "type": "string" }
+            },
+            "anyOf": [
+                { "required": [ "wkid" ] },
+                { "required": [ "vcsWkid" ] },
+                { "required": [ "latestWkid" ] },
+                { "required": [ "latestVcsWkid" ] },
+                { "required": [ "wkt" ] }
+            ],
+            "additionalProperties": false
+        },
+        "extent": {
+            "properties": {
+                "xmin": { "type": "number" },
+                "ymin": { "type": "number" },
+                "xmax": { "type": "number" },
+                "ymax": { "type": "number" }
+            },
+            "required": [ "xmin", "ymin", "xmax", "ymax" ]
+        },
+        "extentNode": {
+            "properties": {
+                "xmin": { "type": "number" },
+                "ymin": { "type": "number" },
+                "xmax": { "type": "number" },
+                "ymax": { "type": "number" }
+            },
+            "required": [ "xmin", "ymin", "xmax", "ymax" ],
+            "additionalProperties": false
+        },
+        "extentWithReferenceNode": {
+            "type": "object",
+            "properties": {
+                "xmin": { "type": "number" },
+                "ymin": { "type": "number" },
+                "xmax": { "type": "number" },
+                "ymax": { "type": "number" },
+                "spatialReference": { "$ref": "#/defs/spatialReferenceNode" }
+            },
+            "required": [ "xmin", "ymin", "xmax", "ymax" ],
+            "additionalProperties": false
+        }
+
+    },
+
+    "properties": {
+        "version": { "type": "string", "enum": [ "-1" ], "description": "List of schema versions accepted by this version of the viewer." }
+    },
+
+    "required": [ "version" ]
 }
