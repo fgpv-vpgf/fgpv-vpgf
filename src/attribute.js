@@ -177,42 +177,51 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
 
                 layerData.layerIdx = getLayerIndex(layerUrl);
 
-                //find object id field
-                //NOTE cannot use arrow functions here due to bug
-                serviceResult.fields.every(function (elem) {
-                    if (elem.type === 'esriFieldTypeOID') {
-                        layerData.oidField = elem.name;
-                        return false; //break the loop
+                if (layerData.type === 'Feature Layer') {
+
+                    //find object id field
+                    //NOTE cannot use arrow functions here due to bug
+                    serviceResult.fields.every(function (elem) {
+                        if (elem.type === 'esriFieldTypeOID') {
+                            layerData.oidField = elem.name;
+                            return false; //break the loop
+                        }
+
+                        return true; //keep looping
+                    });
+
+                    //ensure our attribute list contains the object id
+                    if (attribs !== '*') {
+                        if (attribs.split(',').indexOf(layerData.oidField) === -1) {
+                            attribs += (',' + layerData.oidField);
+                        }
                     }
 
-                    return true; //keep looping
-                });
+                    //begin the loading process
+                    loadDataBatch(-1, maxBatchSize, layerUrl, layerData.oidField,
+                        attribs, defFinished, esriBundle);
 
-                //ensure our attribute list contains the object id
-                if (attribs !== '*') {
-                    if (attribs.split(',').indexOf(layerData.oidField) === -1) {
-                        attribs += (',' + layerData.oidField);
-                    }
-                }
+                    //after all data has been loaded
+                    defFinished.promise.then(features => {
+                        addLayerData(layerData, features);
 
-                //begin the loading process
-                loadDataBatch(-1, maxBatchSize, layerUrl, layerData.oidField,
-                    attribs, defFinished, esriBundle);
+                        //return the data as part of the promise
+                        resolve(layerData);
+                    },
 
-                //after all data has been loaded
-                defFinished.promise.then(features => {
-                    addLayerData(layerData, features);
+                    error => {
+                        console.warn('error getting attribute data for ' + layerUrl);
 
-                    //return the data as part of the promise
+                        //return the error as part of the promise
+                        reject(error);
+                    });
+                } else {
+                    //we are interrogating a non-feature layer (such as a Raster Layer)
+                    //return the empty attribute set
+                    //(should not be error, as dynamic crawler can come across non feature layers)
+                    //TODO revist incase we want a differnt return value in this case.
                     resolve(layerData);
-                },
-
-                error => {
-                    console.warn('error getting attribute data for ' + layerUrl);
-
-                    //return the error as part of the promise
-                    reject(error);
-                });
+                }
             } else {
                 //case where error happened but service request was successful
                 console.warn('Service metadata load error');

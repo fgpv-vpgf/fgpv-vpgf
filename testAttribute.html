@@ -176,8 +176,7 @@
                 var skipper = {
                     "2": {"skip":true},
                     "29": {"skip":true}, 
-                    "31": {"skip":true}, 
-                    "32": {"skip":true}                       
+                    "31": {"skip":true}                     
                 };
             
                 //test large attribute loading of a feature layer 
@@ -185,7 +184,7 @@
                 
                 nuggetPromise9.then(
                     function (nugget) { 
-                        console.log('dynamic layer result - deep nesting with skips - 1, 28, 30');
+                        console.log('dynamic layer result - deep nesting with skips - 1, 28, 30, 32');
                         console.log(nugget);
                         document.getElementById('mess').innerHTML = 'DONE';
                     },
