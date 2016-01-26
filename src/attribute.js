@@ -30,7 +30,7 @@ function newLayerBundle(layerId) {
     };
 
     function registerData(layerData) {
-        layerData.layerId = bundle.layerId;
+        layerData.layerId = bundle.layerId; //layerData is unaware of layerId. assign it during registration
         bundle[layerData.layerIdx.toString()] = layerData;
         bundle.indexes.push(layerData.layerIdx.toString());
     }
@@ -150,7 +150,7 @@ function loadDataBatch(maxId, maxBatch, layerUrl, idField, attribs, callerDef, e
 * @param {String} layerUrl an arcgis feature layer service endpoint
 * @param {String} attribs a comma separated list of attributes to download. '*' will download all
 * @param  {Object} esriBundle bundle of API classes
-* @return {Promise} promise of attributes in proper format
+* @return {Promise} promise of attributes in layer bundle format (see newLayerBundle)
 */
 function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
 
@@ -257,7 +257,7 @@ function pluckOptions(layerIdx, options) {
 * @param  {Object} layer an ESRI API Feature layer object
 * @param  {Object} options information on layer and attribute skipping
 * @param  {Object} esriBundle bundle of API classes
-* @return {Promise} promise of attributes in proper format
+* @return {Promise} promise of attributes in layer bundle format (see newLayerBundle)
 */
 function processFeatureLayer(layer, options, esriBundle) {
 
@@ -303,22 +303,39 @@ function processDynamicLayer(layer, options, esriBundle) {
         let idx = 0;
         let opts;
         const featurePromises = [];
+        const lInfo = layer.layerInfos;
 
         //for each layer leaf.  we use a custom loop as we need to skip sections
-        while (idx < layer.layerInfos.length) {
+        while (idx < lInfo.length) {
 
             opts = pluckOptions(idx, options);
 
             // check if leaf node or group node
-            if (layer.layerInfos[idx].subLayerIds) {
+            if (lInfo[idx].subLayerIds) {
                 //group node
 
                 if (opts.skip) {
-                    //skip to 1 past last child layer (thus avoiding processing all children).
-                    //find the layer index of the last child of this group node, then add one
-                    //to get the next layer index that comes after this group node.
-                    idx = layer.layerInfos[idx].subLayerIds[
-                        layer.layerInfos[idx].subLayerIds.length - 1] + 1;
+                    //skip past all child indexes (thus avoiding processing all children).
+                    //group indexes have property .subLayerIds that lists indexes of all immediate child layers
+                    //child layers can be group layers as well.
+                    //example: to skip Group A (index 0), we crawl to Leaf X (index 4), then add 1 to get to sibling layer Leaf W (index 5)
+                    // [0] Group A
+                    //     [1] Leaf Z
+                    //     [2] Group B
+                    //         [3] Leaf Y
+                    //         [4] Leaf X
+                    // [5] Leaf W
+
+                    let lastIdx = idx;
+                    while (lInfo[lastIdx].subLayerIds) {
+                        //find last child index of this group. the last child may be a group itself so we keep processing the while loop
+                        lastIdx = lInfo[lastIdx].subLayerIds[
+                            lInfo[lastIdx].subLayerIds.length - 1];
+                    }
+
+                    //lastIdx has made it to the very last child in the original group node.
+                    //advance by 1 to get the next sibling index to the group
+                    idx = lastIdx + 1;
                 } else {
                     //advance to the first child layer
                     idx += 1;

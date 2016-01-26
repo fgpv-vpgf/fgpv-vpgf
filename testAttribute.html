@@ -168,7 +168,33 @@
                     }
                 );
             });
+          
+           var mahDeepNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/TaxParcel/AssessorsBasemap/MapServer', {id:'horseface'});
             
+            mahDeepNestedLayer.on('load', function(evt) {  
+            
+                var skipper = {
+                    "2": {"skip":true},
+                    "29": {"skip":true}, 
+                    "31": {"skip":true}, 
+                    "32": {"skip":true}                       
+                };
+            
+                //test large attribute loading of a feature layer 
+                var nuggetPromise9= api.attribs.loadLayerAttribs(mahDeepNestedLayer, skipper); 
+                
+                nuggetPromise9.then(
+                    function (nugget) { 
+                        console.log('dynamic layer result - deep nesting with skips - 1, 28, 30');
+                        console.log(nugget);
+                        document.getElementById('mess').innerHTML = 'DONE';
+                    },
+                    function (iAmError) {
+                        console.log(iAmError);
+                        document.getElementById('mess').innerHTML = 'I AM ERROR';
+                    }
+                );
+            });  
             
         });
 </script>
