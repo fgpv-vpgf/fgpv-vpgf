@@ -96,7 +96,7 @@
             self.projections = [];
 
             var wkidArray = [];
-            var basemaps = configService.data.basemaps;
+            var basemaps = configService.data.rampStyleBasemaps;
 
             basemaps.forEach(basemap => {
 
