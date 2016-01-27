@@ -13,6 +13,21 @@
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             
+            function epsgLookup(code) {     
+                console.log('imma searchin for ' + code);           
+                return new Promise(resolve => {
+                    //bring for the funtime lol switch
+                    var defst = null;
+                    switch (code) {
+                        case 'EPSG:102100':
+                            console.log('I FOUND A MAPJECTION');
+                            defst = '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs';
+                            break;
+                    }
+                    resolve(defst);
+                });
+            }
+            
             // TEST GEOJSON LAYER   
             var happyData = {
                 "type": "FeatureCollection",
@@ -46,7 +61,8 @@
             
             var opts = {
                 targetWkid: 102100,
-                sourceProjection: 'EPSG:4326' //'+proj=longlat +datum=WGS84 +no_defs'
+                sourceProjection: 'EPSG:4326', //'+proj=longlat +datum=WGS84 +no_defs',
+                epsgLookup: epsgLookup
             };
             var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'terrain', zoom: 6, center: [-100, 50] });
             
@@ -62,7 +78,8 @@
             var csvData = "Long,Lat,Prop\n0,0,One\n-100,50,Two\n-50,50,Three\n-75,50,Four\n";
             
             opts = {            
-               targetWkid: 102100
+               targetWkid: 102100,
+               epsgLookup: epsgLookup
             };
             
             var csvPromise = api.layer.makeCsvLayer(csvData, opts);

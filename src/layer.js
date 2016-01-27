@@ -1,10 +1,9 @@
 'use strict';
 const csv2geojson = require('csv2geojson');
 const Terraformer = require('terraformer');
-const proj4 = require('proj4');
+const proj = require('./proj.js');
 const shp = require('shpjs');
 Terraformer.ArcGIS = require('terraformer-arcgis-parser');
-Terraformer.projectGeoJson = require('terraformer-proj4js')(Terraformer, proj4);
 
 /**
 * Default renderers for generated layers
@@ -128,6 +127,8 @@ function makeGeoJsonLayerBuilder(esriBundle) {
     *   - sourceProjection: a string matching a proj4.defs projection to be used for the source data (overrides
     *     geoJson.crs)
     *   - fields: an array of fields to be appended to the FeatureLayer layerDefinition (OBJECTID is set by default)
+    *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
+    *     definition or null if not found
     *
     * @method makeGeoJsonLayer
     * @param {Object} geoJson An object following the GeoJSON specification, should be a FeatureCollection with
@@ -144,6 +145,9 @@ function makeGeoJsonLayerBuilder(esriBundle) {
         let fs;
         let targetWkid;
         let srcProj;
+        let projSrcProm;
+        let projDestProm;
+        const projLib = proj(esriBundle);
         const layerID = nextId();
         const layerDefinition = {
             objectIdField: 'OBJECTID',
@@ -160,10 +164,10 @@ function makeGeoJsonLayerBuilder(esriBundle) {
         layerDefinition.drawingInfo =
             defaultRenderers[featureTypeToRenderer[geoJson.features[0].geometry.type]];
 
-        //TODO decide how we are handling the proj4 projection lookup plugins.  see ramp js/plugins/epsgio.js
-        //     drop plugin and make part of proj.js module?
-        //     other choices?
-        //scanCrs(geoJson);
+        //attempt to get spatial reference from geoJson
+        if (geoJson.crs && geoJson.crs.type === 'name') {
+            srcProj = geoJson.crs.properties.name;
+        }
 
         //pluck treats from options parameter
         if (opts) {
@@ -194,42 +198,78 @@ function makeGeoJsonLayerBuilder(esriBundle) {
             layerDefinition.fields = layerDefinition.fields.concat(extractFields(geoJson));
         }
 
-        //HACK do this properly -- using a projection lookup service/plugin.
-        //     ree RAMP file dataLoader.js function scanCrs
-        //NOTE: we access proj4 via exposed properties in Terraformer.  We cannot simply require
-        //      the proj4 library, as changes to the object returned by the require will not be
-        //      visible to the library instance inside Terraformer.
-        //Terraformer.Proj.proj4.defs('EPSG:102100', Terraformer.Proj.proj4.defs('EPSG:3857'));
-        proj4.defs('EPSG:102100', proj4.defs('EPSG:3857'));
-
-        //project data and convert to esri json format
-        console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
-        Terraformer.projectGeoJson(geoJson, 'EPSG:' + targetWkid, srcProj);
-        esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
-        console.log('geojson -> esrijson converted');
-
-        fs = {
-            features: esriJson,
-            geometryType: layerDefinition.drawingInfo.geometryType
-        };
-
-        layer = new esriBundle.FeatureLayer(
-            {
-                layerDefinition: layerDefinition,
-                featureSet: fs
-            }, {
-                mode: esriBundle.FeatureLayer.MODE_SNAPSHOT,
-                id: layerID,
-            });
-
-        // ＼(｀O´)／ manually setting SR because it will come out as 4326
-        layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
-
-        //TODO : revisit if we actually need this anymore
-        //layer.renderer._RampRendererType = featureTypeToRenderer[geoJson.features[0].geometry.type];
+        //FIXME fix this horrid mess.
+        // a) addProjection is misleading when using it to access a definition.
+        // b) we need a better spot to load in the pre-cooked ones, especially the esri ones that epsg.io does not supply.
+        //    - in proj module constructor, tho this would be adding state to the library
+        //    - baked into epsgLookup() in angular, tho this could be confusing for anyone wanting to change to a different function
+        projLib.addProjection('EPSG:3978', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 ' +
+            '+lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+        projLib.addProjection('EPSG:3979', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 ' +
+            '+x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+        projLib.addProjection('EPSG:102100', projLib.addProjection('EPSG:3857'));
+        projLib.addProjection('EPSG:54004', '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 ' +
+            '+datum=WGS84 +units=m +no_defs');
 
         return new Promise(resolve => {
-            resolve(layer);
+            const destProj = 'EPSG:' + targetWkid;
+
+            //TODO if we end up adopting this approach, turn the following twin 'if' blocks into a function call
+
+            //look up projection definitions if they don't already exist and we have enough info
+            if (!projLib.addProjection(srcProj) && opts.epsgLookup && srcProj) {
+                projSrcProm = opts.epsgLookup(srcProj);
+            } else {
+                //no lookup function provided. return code that cannot find projection string
+                projSrcProm = new Promise(resolve => {resolve(null);});
+            }
+
+            if (!projLib.addProjection(destProj) && opts.epsgLookup) {
+                projDestProm = opts.epsgLookup(destProj);
+            } else {
+                //no lookup function provided. return code that cannot find projection string
+                projDestProm = new Promise(resolve => {resolve(null);});
+            }
+
+            //wait for both projection lookups to resolve; if results, add them to proj library definitions.
+            //NOTE: not using Promise.all() as there is no way to map the proj definition to the proj code
+            projSrcProm.then(projSrcDef => {
+                if (srcProj && projSrcDef) {
+                    projLib.addProjection(srcProj, projSrcDef);
+                }
+                projDestProm.then(projDestDef => {
+                    if (destProj && projDestDef) {
+                        projLib.addProjection(destProj, projDestDef);
+                    }
+
+                    //project data and convert to esri json format
+                    //console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
+                    projLib.projectGeojson(geoJson, destProj, srcProj);
+                    esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
+
+                    fs = {
+                        features: esriJson,
+                        geometryType: layerDefinition.drawingInfo.geometryType
+                    };
+
+                    layer = new esriBundle.FeatureLayer(
+                        {
+                            layerDefinition: layerDefinition,
+                            featureSet: fs
+                        }, {
+                            mode: esriBundle.FeatureLayer.MODE_SNAPSHOT,
+                            id: layerID,
+                        });
+
+                    // ＼(｀O´)／ manually setting SR because it will come out as 4326
+                    layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
+
+                    //TODO : revisit if we actually need this anymore
+                    //layer.renderer._RampRendererType = featureTypeToRenderer[geoJson.features[0].geometry.type];
+
+                    resolve(layer);
+                });
+            });
         });
     };
 }
@@ -244,6 +284,8 @@ function makeCsvLayerBuilder(esriBundle) {
     *   - latfield: a string identifying the field containing latitude values ('Lat' by default)
     *   - lonfield: a string identifying the field containing longitude values ('Long' by default)
     *   - delimiter: a string defining the delimiter character of the file (',' by default)
+    *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
+    *     definition or null if not found
     * @param {string} csvData the CSV data to be processed
     * @param {object} opts options to be set for the parser
     * @returns {Promise} a promise resolving with a {FeatureLayer}
@@ -313,13 +355,13 @@ function makeShapeLayerBuilder(esriBundle) {
     *   - sourceProjection: a string matching a proj4.defs projection to be used for the source data (overrides
     *     geoJson.crs)
     *   - fields: an array of fields to be appended to the FeatureLayer layerDefinition (OBJECTID is set by default)
+    *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
+    *     definition or null if not found
     * @param {ArrayBuffer} shapeData an ArrayBuffer of the Shapefile in zip format
     * @param {object} opts options to be set for the parser
     * @returns {Promise} a promise resolving with a {FeatureLayer}
     */
-    console.log('im in the makeShapeLayerBuilder');
     return (shapeData, opts) => {
-        console.log('im in the makeShapeLayer');
         return new Promise((resolve, reject) => {
             //TODO is this try redundant since we're using a .catch after the getShapefile promise?
             try {
