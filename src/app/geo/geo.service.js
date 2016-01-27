@@ -198,8 +198,7 @@
         /**
          * Lookup a proj4 style projection definition for a given ESPG code.
          * @param {string|number} code the EPSG code as a string or number
-         * @return {Promise|null} a Promise resolving to proj4 style definition or null
-         * if the definition could not be found
+         * @return {Promise} a Promise resolving to proj4 style definition or null if the definition could not be found
          */
         function epsgLookup(code) {
             // FIXME this should be moved to a plugin; it is hardcoded to use epsg.io
@@ -225,7 +224,9 @@
                     })
                     .catch(err => {
                         console.warn(err);
-                        return null;
+
+                        // jscs check doesn't realize return null; returns a promise
+                        return null; // jscs:ignore jsDoc
                     });
         }
 
