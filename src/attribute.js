@@ -263,27 +263,46 @@ function pluckOptions(layerIdx, options = {}) {
 function processFeatureLayer(layer, options, esriBundle) {
 
     //logic is in separate function to passify the cyclomatic complexity check.
-    //TODO file based layers will not have URL.  will need additional logic to extract attributes from layer feature collection
     //TODO we may want to support the option of a layer that points to a server based JSON file containing attributes
 
     return new Promise(resolve => {
-        const idx = getLayerIndex(layer.url);
-        const opts = pluckOptions(idx, options);
         const result = newLayerBundle(layer.id);
 
-        //check for skip flag
-        if (opts.skip) {
-            resolve(result);
+        if (layer.url) {
+            const idx = getLayerIndex(layer.url);
+            const opts = pluckOptions(idx, options);
+
+            //check for skip flag
+            if (opts.skip) {
+                resolve(result);
+            } else {
+                //call loadFeatureAttribs with options if present
+                loadFeatureAttribs(layer.url, opts.attribs, esriBundle).then(
+                    layerData => {
+                        //attribs are loaded
+                        //package into final object structure (one instance) and return
+                        result.registerData(layerData);
+                        resolve(result);
+                    }
+                );
+            }
         } else {
-            //call loadFeatureAttribs with options if present
-            loadFeatureAttribs(layer.url, opts.attribs, esriBundle).then(
-                layerData => {
-                    //attribs are loaded
-                    //package into final object structure (one instance) and return
-                    result.registerData(layerData);
-                    resolve(result);
-                }
-            );
+            //feature layer was loaded from a file.
+            //this approach is inefficient (duplicates attributes in layer and in attribute store),
+            //but provides a consistent approach to attributes regardless of where the layer came from
+
+            const layerData = newLayerData();
+
+            layerData.oidField = layer.objectIdField;
+            layerData.layerId = layer.id;
+            layerData.layerIdx = 0; //files have no index (no server), so we use value 0
+
+            addLayerData(layerData, layer.graphics.map(elem => {
+                return { attributes: elem.attributes };
+            }));
+
+            result.registerData(layerData);
+            resolve(result);
         }
     });
 }
