@@ -81,6 +81,13 @@ module.exports = function (esriLoaderUrl, window) {
     // everything is done in an async model and the result is a promise which resolves to
     // a reference to our API
     return new Promise(function (resolve, reject) {
+        if (window.require) {
+            console.warn('window.require has been set, ' +
+                         'attempting to reuse existing loader with no new script tag created');
+            resolve();
+            return;
+        }
+
         const oScript = window.document.createElement('script');
         const oHead = window.document.head || window.document.getElementsByTagName('head')[0];
 
