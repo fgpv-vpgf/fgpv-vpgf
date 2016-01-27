@@ -177,7 +177,8 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
 
                 layerData.layerIdx = getLayerIndex(layerUrl);
 
-                if (layerData.type === 'Feature Layer') {
+                console.log('mah layer type for url ' + layerUrl + ' is ' + serviceResult.type);
+                if (serviceResult.type === 'Feature Layer') {
 
                     //find object id field
                     //NOTE cannot use arrow functions here due to bug
@@ -241,23 +242,14 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
 }
 
 //extract the options (including defaults) for a layer index
-function pluckOptions(layerIdx, options) {
-    //default values
-    const opts = {
-        skip: false,
-        attribs: '*'
-    };
+function pluckOptions(layerIdx, options = {}) {
+    //handle missing layer
+    const opt = options[layerIdx] || {};
 
-    //check if real options exist.  if so, replace defaults with real values
-    if (options && options[layerIdx]) {
-        if (options[layerIdx].skip) {
-            opts.skip = true;
-        }
-        if (options[layerIdx].attribs) {
-            opts.attribs = options[layerIdx].attribs;
-        }
-    }
-    return opts;
+    return {
+        skip: opt.skip || false,
+        attribs: opt.attribs || '*'
+    };
 }
 
 /**
