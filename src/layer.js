@@ -3,56 +3,8 @@ const csv2geojson = require('csv2geojson');
 const Terraformer = require('terraformer');
 const proj = require('./proj.js');
 const shp = require('shpjs');
+const defaultRenderers = require('./defaultRenderers.json');
 Terraformer.ArcGIS = require('terraformer-arcgis-parser');
-
-/**
-* Default renderers for generated layers
-* @property defaultRenderers {Object}
-* @private
-*/
-const defaultRenderers = {
-    circlePoint: {
-        geometryType: 'esriGeometryPoint',
-        renderer: {
-            type: 'simple',
-            symbol: {
-                type: 'esriSMS',
-                style: 'esriSMSCircle',
-                color: [67, 100, 255, 200],
-                size: 7,
-            },
-        },
-    },
-    solidLine: {
-        geometryType: 'esriGeometryPolyline',
-        renderer: {
-            type: 'simple',
-            symbol: {
-                type: 'esriSLS',
-                style: 'esriSLSSolid',
-                color: [90, 90, 90, 200],
-                width: 2,
-            },
-        },
-    },
-    outlinedPoly: {
-        geometryType: 'esriGeometryPolygon',
-        renderer: {
-            type: 'simple',
-            symbol: {
-                type: 'esriSFS',
-                style: 'esriSFSSolid',
-                color: [76, 76, 125, 200],
-                outline: {
-                    type: 'esriSLS',
-                    style: 'esriSLSSolid',
-                    color: [110, 110, 110, 255],
-                    width: 1,
-                },
-            },
-        },
-    },
-};
 
 /**
 * Maps GeoJSON geometry types to a set of default renders defined in GlobalStorage.DefaultRenders
@@ -81,9 +33,6 @@ function nextId() {
     idCounter += 1;
     return 'geoApiAutoId_' + idCounter;
 }
-
-//TODO pull these functions out of the exports. use the "build" style functions that return another function
-//------------ CREATE FILE BASED LAYER FUNCTIONS ------------
 
 /**
 * Performs in place assignment of integer ids for a GeoJSON FeatureCollection.
@@ -139,16 +88,9 @@ function makeGeoJsonLayerBuilder(esriBundle) {
     return (geoJson, opts) => {
 
         //TODO add documentation on why we only support layers with WKID (and not WKT).
-
-        let esriJson;
-        let layer;
-        let fs;
         let targetWkid;
         let srcProj;
-        let projSrcProm;
-        let projDestProm;
         const projLib = proj(esriBundle);
-        const layerID = nextId();
         const layerDefinition = {
             objectIdField: 'OBJECTID',
             fields: [
@@ -213,8 +155,8 @@ function makeGeoJsonLayerBuilder(esriBundle) {
 
         return new Promise(resolve => {
             const destProj = 'EPSG:' + targetWkid;
-
-            //TODO if we end up adopting this approach, turn the following twin 'if' blocks into a function call
+            let projSrcProm;
+            let projDestProm;
 
             //look up projection definitions if they don't already exist and we have enough info
             if (!projLib.addProjection(srcProj) && opts.epsgLookup && srcProj) {
@@ -237,38 +179,39 @@ function makeGeoJsonLayerBuilder(esriBundle) {
                 if (srcProj && projSrcDef) {
                     projLib.addProjection(srcProj, projSrcDef);
                 }
-                projDestProm.then(projDestDef => {
-                    if (destProj && projDestDef) {
-                        projLib.addProjection(destProj, projDestDef);
-                    }
+                return projDestProm; //chain next promise
+            }).then(projDestDef => {
 
-                    //project data and convert to esri json format
-                    //console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
-                    projLib.projectGeojson(geoJson, destProj, srcProj);
-                    esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
+                if (destProj && projDestDef) {
+                    projLib.addProjection(destProj, projDestDef);
+                }
 
-                    fs = {
-                        features: esriJson,
-                        geometryType: layerDefinition.drawingInfo.geometryType
-                    };
+                //project data and convert to esri json format
+                //console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
+                projLib.projectGeojson(geoJson, destProj, srcProj);
+                const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
 
-                    layer = new esriBundle.FeatureLayer(
-                        {
-                            layerDefinition: layerDefinition,
-                            featureSet: fs
-                        }, {
-                            mode: esriBundle.FeatureLayer.MODE_SNAPSHOT,
-                            id: layerID,
-                        });
+                const fs = {
+                    features: esriJson,
+                    geometryType: layerDefinition.drawingInfo.geometryType
+                };
 
-                    // ＼(｀O´)／ manually setting SR because it will come out as 4326
-                    layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
+                const layer = new esriBundle.FeatureLayer(
+                    {
+                        layerDefinition: layerDefinition,
+                        featureSet: fs
+                    }, {
+                        mode: esriBundle.FeatureLayer.MODE_SNAPSHOT,
+                        id: nextId()
+                    });
 
-                    //TODO : revisit if we actually need this anymore
-                    //layer.renderer._RampRendererType = featureTypeToRenderer[geoJson.features[0].geometry.type];
+                // ＼(｀O´)／ manually setting SR because it will come out as 4326
+                layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
 
-                    resolve(layer);
-                });
+                //TODO : revisit if we actually need this anymore
+                //layer.renderer._RampRendererType = featureTypeToRenderer[geoJson.features[0].geometry.type];
+
+                resolve(layer);
             });
         });
     };
@@ -313,34 +256,30 @@ function makeCsvLayerBuilder(esriBundle) {
         }
 
         return new Promise((resolve, reject) => {
-            try {
-                csv2geojson.csv2geojson(csvData, csvOpts, (err, data) => {
-                    if (err) {
-                        console.warn('csv conversion error');
-                        console.log(err);
-                        reject(err);
-                    } else {
-                        // csv2geojson will not include the lat and long in the feature
-                        data.features.map(feature => {
-                            // add new property Long and Lat before layer is generated
-                            feature.properties[csvOpts.lonfield] = feature.geometry.coordinates[0];
-                            feature.properties[csvOpts.latfield] = feature.geometry.coordinates[1];
-                        });
+            csv2geojson.csv2geojson(csvData, csvOpts, (err, data) => {
+                if (err) {
+                    console.warn('csv conversion error');
+                    console.log(err);
+                    reject(err);
+                } else {
+                    // csv2geojson will not include the lat and long in the feature
+                    data.features.map(feature => {
+                        // add new property Long and Lat before layer is generated
+                        feature.properties[csvOpts.lonfield] = feature.geometry.coordinates[0];
+                        feature.properties[csvOpts.latfield] = feature.geometry.coordinates[1];
+                    });
 
-                        //TODO are we at risk adding params to the var that was passed in? should we make a copy and modify the copy?
-                        opts.sourceProjection = 'EPSG:4326'; //csv is always latlong
-                        opts.renderer = 'circlePoint'; //csv is always latlong
+                    //TODO are we at risk adding params to the var that was passed in? should we make a copy and modify the copy?
+                    opts.sourceProjection = 'EPSG:4326'; //csv is always latlong
+                    opts.renderer = 'circlePoint'; //csv is always latlong
 
-                        //TODO is there a better way to call the makeGeoJsonLayer instead of having to run the builder function?
-                        makeGeoJsonLayerBuilder(esriBundle)(data, opts).then(jsonLayer => {
-                            resolve(jsonLayer);
-                        });
-                    }
+                    //TODO is there a better way to call the makeGeoJsonLayer instead of having to run the builder function?
+                    makeGeoJsonLayerBuilder(esriBundle)(data, opts).then(jsonLayer => {
+                        resolve(jsonLayer);
+                    });
+                }
 
-                });
-            } catch (e) {
-                reject(e);
-            }
+            });
         });
 
     };
@@ -363,25 +302,20 @@ function makeShapeLayerBuilder(esriBundle) {
     */
     return (shapeData, opts) => {
         return new Promise((resolve, reject) => {
-            //TODO is this try redundant since we're using a .catch after the getShapefile promise?
-            try {
-                //turn shape into geojson
-                shp(shapeData).then(geoJson => {
-                    try {
-                        //turn geojson into feature layer
-                        //TODO is there a better way to call the makeGeoJsonLayer instead of having to run the builder function?
-                        makeGeoJsonLayerBuilder(esriBundle)(geoJson, opts).then(jsonLayer => {
-                            resolve(jsonLayer);
-                        });
-                    } catch (e) {
-                        reject(e);
-                    }
-                }).catch(err => {
-                    reject(err);
-                });
-            } catch (e) {
-                reject(e);
-            }
+            //turn shape into geojson
+            shp(shapeData).then(geoJson => {
+                try {
+                    //turn geojson into feature layer
+                    //TODO is there a better way to call the makeGeoJsonLayer instead of having to run the builder function?
+                    makeGeoJsonLayerBuilder(esriBundle)(geoJson, opts).then(jsonLayer => {
+                        resolve(jsonLayer);
+                    });
+                } catch (e) {
+                    reject(e);
+                }
+            }).catch(err => {
+                reject(err);
+            });
         });
     };
 }
