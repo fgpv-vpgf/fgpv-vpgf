@@ -87,6 +87,7 @@ gulp.task('templatecache', 'Create a cache of HTML templates', ['clean-templates
             config.templateCache.file,
             config.templateCache.options
         ))
+        .pipe($.if(args.prod, $.uglify()))
         .pipe(gulp.dest(config.build));
 });
 
@@ -156,7 +157,7 @@ gulp.task('jsbuild', 'Annotate, transpile and concat JS development files', ['va
             }))
             .pipe($.angularFilesort())
             .pipe($.concat(config.jsSingleFile))
-            .pipe($.uglify())
+            .pipe($.if(args.prod, $.uglify()))
             .pipe($.sourcemaps.write('.'))
             .pipe(gulp.dest(config.build));
     });
@@ -188,6 +189,7 @@ gulp.task('libbuild', 'Concat bower dependencies',
     function () {
         return gulp.src(bowerFiles())
             .pipe($.concat(config.jsLibFile))
+            .pipe($.if(args.prod, $.uglify()))
             .pipe(gulp.dest(config.build));
     });
 
