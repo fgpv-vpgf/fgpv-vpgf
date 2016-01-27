@@ -126,6 +126,8 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
             .pipe($.sass().on('error', $.sass.logError))
             .pipe($.autoprefixer('last 2 version', '> 5%'))
 
+            .pipe($.if(args.prod, $.cssnano()))
+
             .pipe(gulp.dest(config.build))
 
             .pipe($.connect.reload());
@@ -241,7 +243,8 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
 /**
  * Serves the app.
  * -- test  : run Karma auto tests in parallel
- * -- protractor: prepare index-protractor page and do not inject app-seed
+ * -- protractor  : prepare index-protractor page and do not inject app-seed
+ * -- prod  : minify everything
  */
 gulp.task('serve:dev', 'Build the application and start a local development server',
     ['vet', 'inject', 'translate'],
