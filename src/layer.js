@@ -1,7 +1,6 @@
 'use strict';
 const csv2geojson = require('csv2geojson');
 const Terraformer = require('terraformer');
-const proj = require('./proj.js');
 const shp = require('shpjs');
 const defaultRenderers = require('./defaultRenderers.json');
 Terraformer.ArcGIS = require('terraformer-arcgis-parser');
@@ -65,7 +64,23 @@ function extractFields(geoJson) {
     });
 }
 
-function makeGeoJsonLayerBuilder(esriBundle) {
+/**
+ * Makes an attempt to load a projection definition.
+ * Returns promise resolving in definition, or null if not found, already registered, or missing parameters
+ * projModule - proj module from geoApi
+ * projCode - the string or int epsg code we want to lookup
+ * epsgLookup - function that will do the epsg lookup, taking code and returning promise of result or null
+ */
+function projectionLookup(projModule, projCode, epsgLookup) {
+    //look up projection definitions if it's not already loaded and we have enough info
+    if (!projModule.getProjection(projCode) && epsgLookup && projCode) {
+        return epsgLookup(projCode);
+    } else {
+        return new Promise(resolve => {resolve(null);});
+    }
+}
+
+function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
 
     /**
     * Converts a GeoJSON object into a FeatureLayer.  Expects GeoJSON to be formed as a FeatureCollection
@@ -90,7 +105,6 @@ function makeGeoJsonLayerBuilder(esriBundle) {
         //TODO add documentation on why we only support layers with WKID (and not WKT).
         let targetWkid;
         let srcProj;
-        const projLib = proj(esriBundle);
         const layerDefinition = {
             objectIdField: 'OBJECTID',
             fields: [
@@ -140,55 +154,31 @@ function makeGeoJsonLayerBuilder(esriBundle) {
             layerDefinition.fields = layerDefinition.fields.concat(extractFields(geoJson));
         }
 
-        //FIXME fix this horrid mess.
-        // a) addProjection is misleading when using it to access a definition.
-        // b) we need a better spot to load in the pre-cooked ones, especially the esri ones that epsg.io does not supply.
-        //    - in proj module constructor, tho this would be adding state to the library
-        //    - baked into epsgLookup() in angular, tho this could be confusing for anyone wanting to change to a different function
-        projLib.addProjection('EPSG:3978', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 ' +
-            '+lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
-        projLib.addProjection('EPSG:3979', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 ' +
-            '+x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
-        projLib.addProjection('EPSG:102100', projLib.addProjection('EPSG:3857'));
-        projLib.addProjection('EPSG:54004', '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 ' +
-            '+datum=WGS84 +units=m +no_defs');
-
         return new Promise(resolve => {
             const destProj = 'EPSG:' + targetWkid;
             let projSrcProm;
             let projDestProm;
 
             //look up projection definitions if they don't already exist and we have enough info
-            if (!projLib.addProjection(srcProj) && opts.epsgLookup && srcProj) {
-                projSrcProm = opts.epsgLookup(srcProj);
-            } else {
-                //no lookup function provided. return code that cannot find projection string
-                projSrcProm = new Promise(resolve => {resolve(null);});
-            }
-
-            if (!projLib.addProjection(destProj) && opts.epsgLookup) {
-                projDestProm = opts.epsgLookup(destProj);
-            } else {
-                //no lookup function provided. return code that cannot find projection string
-                projDestProm = new Promise(resolve => {resolve(null);});
-            }
+            projSrcProm = projectionLookup(geoApi.proj, srcProj, opts.epsgLookup);
+            projDestProm = projectionLookup(geoApi.proj, destProj, opts.epsgLookup);
 
             //wait for both projection lookups to resolve; if results, add them to proj library definitions.
             //NOTE: not using Promise.all() as there is no way to map the proj definition to the proj code
             projSrcProm.then(projSrcDef => {
                 if (srcProj && projSrcDef) {
-                    projLib.addProjection(srcProj, projSrcDef);
+                    geoApi.proj.addProjection(srcProj, projSrcDef);
                 }
                 return projDestProm; //chain next promise
             }).then(projDestDef => {
 
                 if (destProj && projDestDef) {
-                    projLib.addProjection(destProj, projDestDef);
+                    geoApi.proj.addProjection(destProj, projDestDef);
                 }
 
                 //project data and convert to esri json format
                 //console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
-                projLib.projectGeojson(geoJson, destProj, srcProj);
+                geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
                 const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
 
                 const fs = {
@@ -217,7 +207,7 @@ function makeGeoJsonLayerBuilder(esriBundle) {
     };
 }
 
-function makeCsvLayerBuilder(esriBundle) {
+function makeCsvLayerBuilder(esriBundle, geoApi) {
 
     /**
     * Constructs a FeatureLayer from CSV data. Accepts the following options:
@@ -274,7 +264,7 @@ function makeCsvLayerBuilder(esriBundle) {
                     opts.renderer = 'circlePoint'; //csv is always latlong
 
                     //TODO is there a better way to call the makeGeoJsonLayer instead of having to run the builder function?
-                    makeGeoJsonLayerBuilder(esriBundle)(data, opts).then(jsonLayer => {
+                    makeGeoJsonLayerBuilder(esriBundle, geoApi)(data, opts).then(jsonLayer => {
                         resolve(jsonLayer);
                     });
                 }
@@ -285,7 +275,7 @@ function makeCsvLayerBuilder(esriBundle) {
     };
 }
 
-function makeShapeLayerBuilder(esriBundle) {
+function makeShapeLayerBuilder(esriBundle, geoApi) {
 
     /**
     * Constructs a FeatureLayer from Shapefile data. Accepts the following options:
@@ -307,7 +297,7 @@ function makeShapeLayerBuilder(esriBundle) {
                 try {
                     //turn geojson into feature layer
                     //TODO is there a better way to call the makeGeoJsonLayer instead of having to run the builder function?
-                    makeGeoJsonLayerBuilder(esriBundle)(geoJson, opts).then(jsonLayer => {
+                    makeGeoJsonLayerBuilder(esriBundle, geoApi)(geoJson, opts).then(jsonLayer => {
                         resolve(jsonLayer);
                     });
                 } catch (e) {
@@ -320,8 +310,10 @@ function makeShapeLayerBuilder(esriBundle) {
     };
 }
 
-// NOTE: we should split this out if this module becomes too big
-module.exports = function (esriBundle) {
+//CAREFUL NOW!
+//we are passing in a reference to geoApi.  it is a pointer to the object that contains this module,
+//along with other modules. it lets us access other modules without re-instantiating them in here.
+module.exports = function (esriBundle, geoApi) {
 
     return {
         ArcGISDynamicMapServiceLayer: esriBundle.ArcGISDynamicMapServiceLayer,
@@ -329,8 +321,8 @@ module.exports = function (esriBundle) {
         GraphicsLayer: esriBundle.GraphicsLayer,
         FeatureLayer: esriBundle.FeatureLayer,
         WmsLayer: esriBundle.WmsLayer,
-        makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle),
-        makeCsvLayer: makeCsvLayerBuilder(esriBundle),
-        makeShapeLayer: makeShapeLayerBuilder(esriBundle)
+        makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
+        makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
+        makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi)
     };
 };

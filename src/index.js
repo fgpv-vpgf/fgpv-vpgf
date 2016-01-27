@@ -8,25 +8,27 @@ const events = require('./events.js');
 
 function initAll(esriBundle) {
     let debug = false;
-    return {
-        layer: layer(esriBundle),
-        proj: proj(esriBundle),
-        basemap: basemap(esriBundle),
-        mapManager: mapManager(esriBundle),
-        attribs: attribute(esriBundle),
-        events: events(),
-        debug: function () {
-            if (arguments.length === 1) {
-                debug = arguments[0] === true;
-            }
-        },
-        esriBundle: function () {
-            if (debug) {
-                return esriBundle;
-            }
-            throw new Error('Must set debug to directly access the bundle');
+    const api = {};
+
+    api.layer = layer(esriBundle, api);
+    api.proj = proj(esriBundle);
+    api.basemap = basemap(esriBundle);
+    api.mapManager = mapManager(esriBundle);
+    api.attribs = attribute(esriBundle);
+    api.events = events();
+    api.debug = function () {
+        if (arguments.length === 1) {
+            debug = arguments[0] === true;
         }
     };
+    api.esriBundle = function () {
+        if (debug) {
+            return esriBundle;
+        }
+        throw new Error('Must set debug to directly access the bundle');
+    };
+
+    return api;
 }
 
 module.exports = function (esriLoaderUrl, window) {
