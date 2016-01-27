@@ -519,7 +519,7 @@ function getVersion() {
         major: version[0],
         minor: version[1],
         patch: version[2],
-        timestamp: dateFormat(now, 'dd-mm-yyyy HH:MM:ss')
+        timestamp: dateFormat(now, 'yyyy-mm-dd HH:MM:ss')
     };
 }
 
