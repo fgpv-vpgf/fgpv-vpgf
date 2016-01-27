@@ -19,6 +19,8 @@
         .factory('tocService', tocService);
 
     function tocService(stateManager, $timeout, $rootScope, $http, geoService) {
+        // TODO: remove after switching to the real config
+        // jscs:disable maximumLineLength
         const service = {
             // a sample config bit describing layer selector structure; comes from the config file
             data: {
@@ -438,6 +440,193 @@
                                 enabled: true
                             }
                         }
+                    },
+                    {
+                        type: 'group',
+                        name: 'Crazy Nested Group',
+                        id: 1,
+                        expanded: false,
+                        items: [
+                            {
+                                type: 'group',
+                                name: 'Nested Level 2',
+                                id: 1,
+                                expanded: false,
+                                items: [
+                                    {
+                                        type: 'group',
+                                        name: 'Nested Level 3',
+                                        id: 1,
+                                        expanded: false,
+                                        items: [
+                                            {
+                                                type: 'group',
+                                                name: 'Nested Level 4',
+                                                id: 1,
+                                                expanded: false,
+                                                items: [
+                                                    {
+                                                        type: 'group',
+                                                        name: 'Nested Level 5',
+                                                        id: 1,
+                                                        expanded: false,
+                                                        items: [
+                                                            {
+                                                                type: 'group',
+                                                                name: 'Nested Level 6',
+                                                                id: 1,
+                                                                expanded: false,
+                                                                items: [
+                                                                    {
+                                                                        type: 'group',
+                                                                        name: 'Nested Level 7',
+                                                                        id: 1,
+                                                                        expanded: false,
+                                                                        items: [
+                                                                            {
+                                                                                type: 'group',
+                                                                                name: 'Nested Level 8',
+                                                                                id: 1,
+                                                                                expanded: false,
+                                                                                items: [
+                                                                                    {
+                                                                                        type: 'group',
+                                                                                        name: 'Nested Level 9',
+                                                                                        id: 1,
+                                                                                        expanded: false,
+                                                                                        items: [
+                                                                                            {
+                                                                                                type: 'group',
+                                                                                                name: 'Nested Level 10',
+                                                                                                id: 1,
+                                                                                                expanded: false,
+                                                                                                items: [
+                                                                                                    {
+                                                                                                        type: 'layer',
+                                                                                                        name: 'Lonely Layer',
+                                                                                                        layerType: 'image',
+                                                                                                        id: 8,
+                                                                                                        symbology: [
+                                                                                                            {
+                                                                                                                icon: 'url',
+                                                                                                                name: 'something'
+                                                                                                            }
+                                                                                                        ],
+                                                                                                        toggles: {
+                                                                                                            metadata: {
+                                                                                                                enabled: true
+                                                                                                            },
+                                                                                                            settings: {
+                                                                                                                enabled: true
+                                                                                                            },
+                                                                                                            visibility: {
+                                                                                                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                                                                enabled: true
+                                                                                                            },
+                                                                                                            filters: {
+                                                                                                                selected: false
+                                                                                                            },
+                                                                                                            remove: {
+                                                                                                                enabled: true
+                                                                                                            }
+                                                                                                        },
+                                                                                                        state: 'default', // error, loading,
+                                                                                                        flags: {
+                                                                                                            type: {
+                                                                                                                visible: true,
+                                                                                                                value: 'feature'
+                                                                                                            },
+                                                                                                            data: {
+                                                                                                                visible: true,
+                                                                                                                value: 'filter'
+                                                                                                            },
+                                                                                                            user: {
+                                                                                                                visible: false
+                                                                                                            },
+                                                                                                            scale: {
+                                                                                                                visible: false
+                                                                                                            }
+                                                                                                        }
+                                                                                                    },
+                                                                                                ],
+                                                                                                toggles: {
+                                                                                                    visibility: {
+                                                                                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                                                        enabled: true
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        ],
+                                                                                        toggles: {
+                                                                                            visibility: {
+                                                                                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                                                enabled: true
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                ],
+                                                                                toggles: {
+                                                                                    visibility: {
+                                                                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                                        enabled: true
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        ],
+                                                                        toggles: {
+                                                                            visibility: {
+                                                                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                                enabled: true
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ],
+                                                                toggles: {
+                                                                    visibility: {
+                                                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                        enabled: true
+                                                                    }
+                                                                }
+                                                            }
+                                                        ],
+                                                        toggles: {
+                                                            visibility: {
+                                                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                enabled: true
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                toggles: {
+                                                    visibility: {
+                                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                        enabled: true
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        toggles: {
+                                            visibility: {
+                                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                enabled: true
+                                            }
+                                        }
+                                    }
+                                ],
+                                toggles: {
+                                    visibility: {
+                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                        enabled: true
+                                    }
+                                }
+                            }
+                        ],
+                        toggles: {
+                            visibility: {
+                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                enabled: true
+                            }
+                        }
                     }
                 ]
             }, // config and bindable data
@@ -582,6 +771,8 @@
                 }
             }
         };
+
+        // jscs:enable maximumLineLength
 
         // TODO: move requestId counter to stateManager
         let requestIdCounter = 1;

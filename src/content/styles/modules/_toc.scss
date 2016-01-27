@@ -15,7 +15,7 @@
             right: -8px;
         }
 
-        @for $i from 0 to 6 {
+        @for $i from 0 to 10 {
             @include layer-level-step($i);
         }
     }
