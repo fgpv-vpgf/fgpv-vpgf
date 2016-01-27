@@ -65,6 +65,7 @@
     "karma-spec-reporter": "0.0.23",
     "lodash": "^3.10.1",
     "main-bower-files": "^2.9.0",
+    "merge-stream": "^1.0.0",
     "phantomjs": "^1.9.17",
     "plato": "^1.5.0",
     "protractor": "^2.2.0",
