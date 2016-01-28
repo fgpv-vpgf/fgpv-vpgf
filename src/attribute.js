@@ -177,7 +177,6 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
 
                 layerData.layerIdx = getLayerIndex(layerUrl);
 
-                console.log('mah layer type for url ' + layerUrl + ' is ' + serviceResult.type);
                 if (serviceResult.type === 'Feature Layer') {
 
                     //find object id field
