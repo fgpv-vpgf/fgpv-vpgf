@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.15/esri/css/esri.css">
+        <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <script src="dist/geoapi.min.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            
+            function epsgLookup(code) {     
+                console.log('imma searchin for ' + code);           
+                return new Promise(resolve => {
+                    //bring for the funtime lol switch
+                    var defst = null;
+                    switch (code) {
+                        case 'EPSG:102100':
+                            console.log('I FOUND A MAPJECTION');
+                            defst = '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs';
+                            break;
+                    }
+                    resolve(defst);
+                });
+            }
+            
+            // TEST GEOJSON LAYER   
+            var happyData = {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {"name": "Right Eye"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [[[-90.3515625,53.73571574532637],[-92.13134765625,53.199451902831555],[-91.29638671875,51.93071827931289],[-88.9453125,51.83577752045248],[-87.71484375,52.96187505907603],[-88.59374999999999,53.68369534495075],[-90.3515625,53.73571574532637]]]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {"name": "Left Eye"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [[[-84.57275390625,53.44880683542759],[-86.0009765625,53.04121304075649],[-85.4296875,51.80861475198521],[-83.408203125,51.41291212935532],[-82.15576171875,52.308478623663355],[-82.90283203125,53.409531853086435],[-84.57275390625,53.44880683542759]]]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {"name": "Happy Mouth"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates":[[[-92.8125,51.67255514839676],[-91.82373046875,50.499452103967734],[-88.9892578125,50.317408112618686],[-84.44091796875,50.190967765585604],[-82.33154296875,51.04139389812637],[-82.02392578125,49.96535590991311],[-83.60595703125,48.748945343432936],[-85.869140625,48.3416461723746],[-89.296875,48.66194284607008],[-92.021484375,49.05227025601607],[-93.2080078125,49.76707407366792],[-92.8125,51.67255514839676]]]
+                        }
+                    }
+                ]
+            }
+            
+            var opts = {
+                targetWkid: 102100,
+                sourceProjection: 'EPSG:4326', //'+proj=longlat +datum=WGS84 +no_defs',
+                epsgLookup: epsgLookup
+            };
+            var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'terrain', zoom: 6, center: [-100, 50] });
+            
+            api.layer.makeGeoJsonLayer(happyData, opts).then(function (happyLayer) {               
+                map.addLayer(happyLayer);
+                
+                console.log(happyLayer);
+            });
+            
+
+            
+            // TEST CSV LAYER   
+            var csvData = "Long,Lat,Prop\n0,0,One\n-100,50,Two\n-50,50,Three\n-75,50,Four\n";
+            
+            opts = {            
+               targetWkid: 102100,
+               epsgLookup: epsgLookup
+            };
+            
+            var csvPromise = api.layer.makeCsvLayer(csvData, opts);
+            
+            csvPromise.then(function(csvLayer){
+                map.addLayer(csvLayer);
+                console.log(csvLayer);
+            });         
+            
+            // TEST SHAPEFILE LAYER   
+            //http://www.html5rocks.com/en/tutorials/file/dndfiles/
+            function handleShapeFileSelect(fileEvt) {
+                var shapeFile = fileEvt.target.files[0];
+                var reader = new FileReader();
+                    
+
+                reader.onloadend = function (e) { 
+                    var shapePromise = api.layer.makeShapeLayer(e.target.result, opts);
+                    shapePromise.then(function(shapeLayer){
+                        map.addLayer(shapeLayer);
+                        console.log('chapelayer');
+                        console.log(shapeLayer);
+                    });
+                };
+                reader.onerror = function (e) {
+                    console.log('file reader error');
+                    console.log(e.target.error);
+                };
+                    
+                reader.readAsArrayBuffer(shapeFile);
+            }
+            
+            document.getElementById('shapeFile').addEventListener('change', handleShapeFileSelect, false);
+            
+        });
+</script>
+<div style="height:100%; width: 100%;">
+    <div id="map" style="height:auto; width: auto; padding-bottom: 70px; display:block;"></div>
+    <div style="height:70px; width: 100%; display:block;">
+        <input type="file" id="shapeFile" name="files[]" />
+    </div>
+    </div>
+</body>
+</html>
