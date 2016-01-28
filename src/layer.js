@@ -19,18 +19,23 @@ const featureTypeToRenderer = {
     MultiPolygon: 'outlinedPoly'
 };
 
-let idCounter = 0;
-
 /**
-* Get an auto-generated layer id.  This works because javascript is single threaded: if this gets called
-* from a web-worker at some point it will need to be synchronized.
+* Get a 'good enough' uuid. For backup purposes if client does not supply its own
+* unique layer id
 *
-* @method  nextId
-* @returns {String} an auto-generated layer id
+* @method  generateUUID
+* @returns {String} a uuid
 */
-function nextId() {
-    idCounter += 1;
-    return 'geoApiAutoId_' + idCounter;
+function generateUUID() {
+    let d = Date.now();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        //do math!
+        /*jslint bitwise: true */
+        const r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        /*jslint bitwise: false */
+    });
 }
 
 /**
@@ -65,8 +70,8 @@ function extractFields(geoJson) {
 }
 
 /**
- * Makes an attempt to load a projection definition.
- * Returns promise resolving in definition, or null if not found, already registered, or missing parameters
+ * Makes an attempt to load and register a projection definition.
+ * Returns promise resolving when process is complete
  * projModule - proj module from geoApi
  * projCode - the string or int epsg code we want to lookup
  * epsgLookup - function that will do the epsg lookup, taking code and returning promise of result or null
@@ -74,7 +79,12 @@ function extractFields(geoJson) {
 function projectionLookup(projModule, projCode, epsgLookup) {
     //look up projection definitions if it's not already loaded and we have enough info
     if (!projModule.getProjection(projCode) && epsgLookup && projCode) {
-        return epsgLookup(projCode);
+        return epsgLookup(projCode).then(projDef => {
+            if (projDef) {
+                //register projection
+                projModule.addProjection(projCode, projDef);
+            }
+        });
     } else {
         return new Promise(resolve => {resolve(null);});
     }
@@ -93,6 +103,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
     *   - fields: an array of fields to be appended to the FeatureLayer layerDefinition (OBJECTID is set by default)
     *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
     *     definition or null if not found
+    *   - layerId: a string to use as the layerId
     *
     * @method makeGeoJsonLayer
     * @param {Object} geoJson An object following the GeoJSON specification, should be a FeatureCollection with
@@ -105,6 +116,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         //TODO add documentation on why we only support layers with WKID (and not WKT).
         let targetWkid;
         let srcProj;
+        let layerId;
         const layerDefinition = {
             objectIdField: 'OBJECTID',
             fields: [
@@ -134,19 +146,23 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
             if (opts.targetWkid) {
                 targetWkid = opts.targetWkid;
             } else {
-                //TODO enhance to standard error handling once decided
-                console.warn('makeGeoJsonLayer - missing opts.targetWkid arguement');
+                throw new Error('makeGeoJsonLayer - missing opts.targetWkid arguement');
             }
 
             if (opts.fields) {
                 layerDefinition.fields = layerDefinition.fields.concat(opts.fields);
             }
 
+            if (opts.layerId) {
+                layerId = opts.layerId;
+            } else {
+                layerId = generateUUID();
+            }
+
             //TODO add support for renderer option, or drop the option
 
         } else {
-            //TODO enhance to standard error handling once decided
-            console.warn('makeGeoJsonLayer - missing opts arguement');
+            throw new Error('makeGeoJsonLayer - missing opts arguement');
         }
 
         if (layerDefinition.fields.length === 1) {
@@ -154,56 +170,47 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
             layerDefinition.fields = layerDefinition.fields.concat(extractFields(geoJson));
         }
 
-        return new Promise(resolve => {
-            const destProj = 'EPSG:' + targetWkid;
-            let projSrcProm;
-            let projDestProm;
+        const destProj = 'EPSG:' + targetWkid;
 
-            //look up projection definitions if they don't already exist and we have enough info
-            projSrcProm = projectionLookup(geoApi.proj, srcProj, opts.epsgLookup);
-            projDestProm = projectionLookup(geoApi.proj, destProj, opts.epsgLookup);
+        //look up projection definitions if they don't already exist and we have enough info
+        const srcLookup = projectionLookup(geoApi.proj, srcProj, opts.epsgLookup);
+        const destLookup = projectionLookup(geoApi.proj, destProj, opts.epsgLookup);
 
-            //wait for both projection lookups to resolve; if results, add them to proj library definitions.
-            //NOTE: not using Promise.all() as there is no way to map the proj definition to the proj code
-            projSrcProm.then(projSrcDef => {
-                if (srcProj && projSrcDef) {
-                    geoApi.proj.addProjection(srcProj, projSrcDef);
-                }
-                return projDestProm; //chain next promise
-            }).then(projDestDef => {
+        //make the layer
+        const buildLayer = new Promise(resolve => {
+            //project data and convert to esri json format
+            //console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
+            geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
+            const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
 
-                if (destProj && projDestDef) {
-                    geoApi.proj.addProjection(destProj, projDestDef);
-                }
+            const fs = {
+                features: esriJson,
+                geometryType: layerDefinition.drawingInfo.geometryType
+            };
 
-                //project data and convert to esri json format
-                //console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
-                geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
-                const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
+            const layer = new esriBundle.FeatureLayer(
+                {
+                    layerDefinition: layerDefinition,
+                    featureSet: fs
+                }, {
+                    mode: esriBundle.FeatureLayer.MODE_SNAPSHOT,
+                    id: layerId
+                });
 
-                const fs = {
-                    features: esriJson,
-                    geometryType: layerDefinition.drawingInfo.geometryType
-                };
+            // ＼(｀O´)／ manually setting SR because it will come out as 4326
+            layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
 
-                const layer = new esriBundle.FeatureLayer(
-                    {
-                        layerDefinition: layerDefinition,
-                        featureSet: fs
-                    }, {
-                        mode: esriBundle.FeatureLayer.MODE_SNAPSHOT,
-                        id: nextId()
-                    });
+            //TODO : revisit if we actually need this anymore
+            //layer.renderer._RampRendererType = featureTypeToRenderer[geoJson.features[0].geometry.type];
 
-                // ＼(｀O´)／ manually setting SR because it will come out as 4326
-                layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
-
-                //TODO : revisit if we actually need this anymore
-                //layer.renderer._RampRendererType = featureTypeToRenderer[geoJson.features[0].geometry.type];
-
-                resolve(layer);
-            });
+            resolve(layer);
         });
+
+        //call promises in order
+        return srcLookup
+            .then(() => destLookup)
+            .then(() => buildLayer);
+
     };
 }
 
@@ -219,6 +226,7 @@ function makeCsvLayerBuilder(esriBundle, geoApi) {
     *   - delimiter: a string defining the delimiter character of the file (',' by default)
     *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
     *     definition or null if not found
+    *   - layerId: a string to use as the layerId
     * @param {string} csvData the CSV data to be processed
     * @param {object} opts options to be set for the parser
     * @returns {Promise} a promise resolving with a {FeatureLayer}
@@ -263,8 +271,7 @@ function makeCsvLayerBuilder(esriBundle, geoApi) {
                     opts.sourceProjection = 'EPSG:4326'; //csv is always latlong
                     opts.renderer = 'circlePoint'; //csv is always latlong
 
-                    //TODO is there a better way to call the makeGeoJsonLayer instead of having to run the builder function?
-                    makeGeoJsonLayerBuilder(esriBundle, geoApi)(data, opts).then(jsonLayer => {
+                    geoApi.layer.makeGeoJsonLayer(data, opts).then(jsonLayer => {
                         resolve(jsonLayer);
                     });
                 }
@@ -286,6 +293,7 @@ function makeShapeLayerBuilder(esriBundle, geoApi) {
     *   - fields: an array of fields to be appended to the FeatureLayer layerDefinition (OBJECTID is set by default)
     *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
     *     definition or null if not found
+    *   - layerId: a string to use as the layerId
     * @param {ArrayBuffer} shapeData an ArrayBuffer of the Shapefile in zip format
     * @param {object} opts options to be set for the parser
     * @returns {Promise} a promise resolving with a {FeatureLayer}
@@ -294,15 +302,10 @@ function makeShapeLayerBuilder(esriBundle, geoApi) {
         return new Promise((resolve, reject) => {
             //turn shape into geojson
             shp(shapeData).then(geoJson => {
-                try {
-                    //turn geojson into feature layer
-                    //TODO is there a better way to call the makeGeoJsonLayer instead of having to run the builder function?
-                    makeGeoJsonLayerBuilder(esriBundle, geoApi)(geoJson, opts).then(jsonLayer => {
-                        resolve(jsonLayer);
-                    });
-                } catch (e) {
-                    reject(e);
-                }
+                //turn geojson into feature layer
+                geoApi.layer.makeGeoJsonLayer(geoJson, opts).then(jsonLayer => {
+                    resolve(jsonLayer);
+                });
             }).catch(err => {
                 reject(err);
             });
