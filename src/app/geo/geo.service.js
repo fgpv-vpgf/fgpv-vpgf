@@ -247,7 +247,6 @@
                 map.addLayer(l);
 
                 // wait for layer to load before registering
-                // TODO: replace with geoApi event once support is there (and re-enable test)
                 service.gapi.events.wrapEvents(l, {
                     load: () => {
                         registerLayer(l, layerConfig);
