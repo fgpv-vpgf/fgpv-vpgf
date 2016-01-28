@@ -3,6 +3,7 @@ logs
 
 node_modules/
 dist/
+.vscode/
 
 *~
 *.swp
