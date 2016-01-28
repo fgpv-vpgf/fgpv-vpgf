@@ -84,9 +84,10 @@ function projectionLookup(projModule, projCode, epsgLookup) {
                 //register projection
                 projModule.addProjection(projCode, projDef);
             }
+            return projDef;
         });
     } else {
-        return new Promise(resolve => {resolve(null);});
+        return Promise.resolve(null);
     }
 }
 
@@ -271,6 +272,7 @@ function makeCsvLayerBuilder(esriBundle, geoApi) {
                     opts.sourceProjection = 'EPSG:4326'; //csv is always latlong
                     opts.renderer = 'circlePoint'; //csv is always latlong
 
+                    //NOTE: since makeGeoJsonLayer is a "built" function, grab the built version from our link to api object
                     geoApi.layer.makeGeoJsonLayer(data, opts).then(jsonLayer => {
                         resolve(jsonLayer);
                     });
@@ -303,6 +305,7 @@ function makeShapeLayerBuilder(esriBundle, geoApi) {
             //turn shape into geojson
             shp(shapeData).then(geoJson => {
                 //turn geojson into feature layer
+                //NOTE: since makeGeoJsonLayer is a "built" function, grab the built version from our link to api object
                 geoApi.layer.makeGeoJsonLayer(geoJson, opts).then(jsonLayer => {
                     resolve(jsonLayer);
                 });
