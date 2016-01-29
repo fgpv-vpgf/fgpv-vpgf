@@ -6,6 +6,8 @@
      */
     const d = document;
     const scripts = d.getElementsByTagName('script'); // get scripts
+
+    // TODO: make more robust; this way of getting script's url might break if the `asyn` attribute is added on the script tag
     const seedUrl = scripts[scripts.length - 1].src; // get the last loaded script, which is this
     const repo = seedUrl.substring(0, seedUrl.lastIndexOf('/'));
 
