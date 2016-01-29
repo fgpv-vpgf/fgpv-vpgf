@@ -341,17 +341,6 @@ gulp.task('reloadapp', 'Repackaging app...', ['jsrollup'], function () {
 });
 
 /**
- * Reloads template cache on template files changes. Do not call directly.
- * @return {Stream}
- */
-/*gulp.task('reloadcache', 'Repackaging templates...', ['jsrollup'], function () {
-    return gulp
-        .src(config.jsSingleFilePath)
-        .pipe($.connect.reload())
-        ;
-});*/
-
-/**
  * Start the tests using karma.
  * @param  {boolean} singleRun - True means run once and end (CI), or keep running (dev)
  * @param  {Function} done - Callback to fire when karma is done
@@ -374,10 +363,12 @@ function startTests(singleRun, done) {
 
     // generate template module for tests
     templatecache()
-        .pipe(gulp.dest(config.tmp));
-
-    karma = new Server(karmaConfig, karmaCompleted);
-    karma.start();
+        .pipe(gulp.dest(config.tmp))
+        .on('end', () => {
+            // wait for templates before starting tests
+            karma = new Server(karmaConfig, karmaCompleted);
+            karma.start();
+        });
 
     ////////////////
 
