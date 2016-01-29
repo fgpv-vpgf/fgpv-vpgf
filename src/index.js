@@ -4,27 +4,31 @@ const proj = require('./proj.js');
 const basemap = require('./basemap.js');
 const mapManager = require('./mapManager.js');
 const attribute = require('./attribute.js');
+const events = require('./events.js');
 
 function initAll(esriBundle) {
     let debug = false;
-    return {
-        layer: layer(esriBundle),
-        proj: proj(esriBundle),
-        basemap: basemap(esriBundle),
-        mapManager: mapManager(esriBundle),
-        attribs: attribute(esriBundle),
-        debug: function () {
-            if (arguments.length === 1) {
-                debug = arguments[0] === true;
-            }
-        },
-        esriBundle: function () {
-            if (debug) {
-                return esriBundle;
-            }
-            throw new Error('Must set debug to directly access the bundle');
+    const api = {};
+
+    api.layer = layer(esriBundle, api);
+    api.proj = proj(esriBundle);
+    api.basemap = basemap(esriBundle);
+    api.mapManager = mapManager(esriBundle);
+    api.attribs = attribute(esriBundle);
+    api.events = events();
+    api.debug = function () {
+        if (arguments.length === 1) {
+            debug = arguments[0] === true;
         }
     };
+    api.esriBundle = function () {
+        if (debug) {
+            return esriBundle;
+        }
+        throw new Error('Must set debug to directly access the bundle');
+    };
+
+    return api;
 }
 
 module.exports = function (esriLoaderUrl, window) {
@@ -79,6 +83,13 @@ module.exports = function (esriLoaderUrl, window) {
     // everything is done in an async model and the result is a promise which resolves to
     // a reference to our API
     return new Promise(function (resolve, reject) {
+        if (window.require) {
+            console.warn('window.require has been set, ' +
+                         'attempting to reuse existing loader with no new script tag created');
+            resolve();
+            return;
+        }
+
         const oScript = window.document.createElement('script');
         const oHead = window.document.head || window.document.getElementsByTagName('head')[0];
 

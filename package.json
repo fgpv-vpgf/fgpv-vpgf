@@ -1,13 +1,15 @@
 {
   "name": "geoApi",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "",
   "main": "dist/geoapi.js",
   "dependencies": {},
   "devDependencies": {
     "babelify": "~6.3.0",
+    "brfs": "~1.4.3",
     "browserify": "~11.2.0",
     "canonical-path": "0.0.2",
+    "csv2geojson": "https://github.com/mapbox/csv2geojson.git#v4.0.0",
     "del": "^2.0.2",
     "dgeni": "^0.4.1",
     "dgeni-packages": "^0.11.1",
@@ -31,7 +33,10 @@
     "jshint-stylish": "^2.0.1",
     "lodash": "^3.10.1",
     "proj4": "^2.3.12",
-    "terraformer-proj4js": "https://github.com/RAMP-PCAR/terraformer-proj4js#develop",
+    "shpjs": "https://github.com/calvinmetcalf/shapefile-js.git#v3.3.1",
+    "terraformer": "~1.0.4",
+    "terraformer-arcgis-parser": "~1.0.4",
+    "terraformer-proj4js": "https://github.com/RAMP-PCAR/terraformer-proj4js.git#develop",
     "vinyl-buffer": "~1.0.0",
     "vinyl-source-stream": "~1.1.0"
   },
