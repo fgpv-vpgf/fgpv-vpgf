@@ -28,7 +28,8 @@ module.exports = function () {
 
         index: [
             src + 'index-many.html',
-            src + 'index-one.html'
+            src + 'index-one.html',
+            src + 'index-wet.html'
         ],
         indexProtractor: src + 'index-protractor.html',
 
