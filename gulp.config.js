@@ -17,6 +17,7 @@ module.exports = function () {
     var build = './build/'; // build target, suitable for usage as a dev server
     var dist = './dist/'; // contains packaged builds (ex: tgz and zip)
     var app = src + 'app/';
+    var tmp = '.tmp/';
 
     var report = './report/';
 
@@ -27,14 +28,14 @@ module.exports = function () {
 
         index: [
             src + 'index-many.html',
-            src + 'index-one.html'
+            src + 'index-one.html',
+            src + 'index-wet.html'
         ],
         indexProtractor: src + 'index-protractor.html',
 
         js: [
             app + '*/**/*.js',
             app + 'app.module.js',
-            app + 'app-seed.js',
             '!' + app + '**/*.spec.js'
         ],
         jsOrder: [
@@ -60,7 +61,12 @@ module.exports = function () {
         htmltemplates: app + '**/*.html',
 
         // angular template cache file to be injected
-        templates: build + 'templates.js',
+        templates: tmp + 'templates.js',
+
+        jsInjectorFile: app + 'injector.js',
+        jsInjectorFilePath: build + 'injector.js',
+
+        jsCoreFile: 'core.js',
 
         specHelpers: [src + 'test/*.js'], // bind-polyfill,
         specs: [app + '**/*.spec.js'],
@@ -99,6 +105,7 @@ module.exports = function () {
         build: build,
         dist: dist,
         root: root,
+        tmp: tmp,
         report: report,
         libdir: bowerdir,
 
@@ -139,7 +146,7 @@ module.exports = function () {
                 bowerModules + 'bardjs/dist/bard.js',
 
                 app + '**/*module*.js',
-                app + '**/*.js',
+                app + '**/!(injector).js', // excluding injector
                 app + 'app-seed.js',
                 config.templates,
 
