@@ -35,7 +35,6 @@ module.exports = function () {
         js: [
             app + '*/**/*.js',
             app + 'app.module.js',
-            app + 'app-seed.js',
             '!' + app + '**/*.spec.js'
         ],
         jsOrder: [
