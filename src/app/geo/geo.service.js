@@ -247,22 +247,23 @@
                 map.addLayer(l);
 
                 // wait for layer to load before registering
-                // TODO: replace with geoApi event once support is there (and re-enable test)
-                l.on('load', () => {
-                    registerLayer(l, layerConfig);
+                service.gapi.events.wrapEvents(l, {
+                    load: () => {
+                        registerLayer(l, layerConfig);
 
-                    // get the attributes for the layer
-                    const a = service.gapi.attribs.loadLayerAttribs(l);
+                        // get the attributes for the layer
+                        const a = service.gapi.attribs.loadLayerAttribs(l);
 
-                    // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
-                    a.then(
-                        data => {
-                            registerAttributes(data);
-                        })
-                        .catch(
-                            exception => {
+                        // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
+                        a.then(
+                            data => {
+                                registerAttributes(data);
+                            })
+                            .catch(exception => {
                                 console.log('Error getting attributes for ' + l.name + ': ' + exception);
+                                console.log(l);
                             });
+                    }
                 });
             });
 
