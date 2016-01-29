@@ -1,4 +1,4 @@
-/* global bard, geoService */
+/* global bard, geoService, $httpBackend */
 
 describe('geo', () => {
 
@@ -7,7 +7,7 @@ describe('geo', () => {
         bard.appModule('app.geo');
 
         // inject services
-        bard.inject('geoService');
+        bard.inject('geoService', '$httpBackend');
         geoService.promise.then(() => done());
     });
 
@@ -142,8 +142,7 @@ describe('geo', () => {
                 expect(m.Map).toHaveBeenCalled();
             });
 
-            // disabled due to issue with esri layer.on
-            // TODO: re-enable once geoApi events are working
+            // TODO: mock responses to layer endpoint calls before re-enabling
             xit('should add all the configured layers', () => {
                 const l = geoService.gapi.layer;
                 spyOn(l, 'FeatureLayer');
@@ -155,6 +154,33 @@ describe('geo', () => {
                 expect(l.ArcGISDynamicMapServiceLayer).toHaveBeenCalled();
             });
 
+        });
+
+        describe('epsg lookup', () => {
+            it('should fetch an integer code', (done) => {
+                $httpBackend.expectGET('http://epsg.io/4326.proj4').respond('+proj=longlat +datum=WGS84 +no_defs');
+                geoService.epsgLookup(4326).then(projText => {
+                    expect(projText).toBe('+proj=longlat +datum=WGS84 +no_defs');
+                    done();
+                }).catch(err => {
+                    fail(err);
+                    done();
+                });
+                $httpBackend.flush();
+            });
+            it('should fetch an EPSG string code', (done) => {
+                /* jscs:disable maximumLineLength */
+                $httpBackend.expectGET('http://epsg.io/3979.proj4').respond('+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+                /* jscs:enable maximumLineLength */
+                geoService.epsgLookup('EPSG:3979').then(projText => {
+                    console.log(projText);
+                    done();
+                }).catch(err => {
+                    console.log(err);
+                    fail();
+                });
+                $httpBackend.flush();
+            });
         });
 
         //TODO add test: register layer with no id

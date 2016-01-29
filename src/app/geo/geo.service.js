@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService(layerTypes) {
+    function geoService(layerTypes, $http) {
 
         //TODO update how the layerOrder works with the UI
         //Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -26,6 +26,7 @@
             layers: {},
             layerOrder: [],
             buildMap,
+            epsgLookup,
             getFormattedAttributes,
             registerLayer,
             registerAttributes,
@@ -195,6 +196,41 @@
         }
 
         /**
+         * Lookup a proj4 style projection definition for a given ESPG code.
+         * @param {string|number} code the EPSG code as a string or number
+         * @return {Promise} a Promise resolving to proj4 style definition or null if the definition could not be found
+         */
+        function epsgLookup(code) {
+            // FIXME this should be moved to a plugin; it is hardcoded to use epsg.io
+
+            const urnRegex = /urn:ogc:def:crs:EPSG::(\d+)/;
+            const epsgRegex = /EPSG:(\d+)/;
+            let lookup = code;
+            if (typeof lookup === 'number') {
+                lookup = String(lookup);
+            }
+            const urnMatches = lookup.match(urnRegex);
+            if (urnMatches) {
+                lookup = urnMatches[1];
+            }
+            const epsgMatches = lookup.match(epsgRegex);
+            if (epsgMatches) {
+                lookup = epsgMatches[1];
+            }
+
+            return $http.get(`http://epsg.io/${lookup}.proj4`)
+                    .then(response => {
+                        return response.data;
+                    })
+                    .catch(err => {
+                        console.warn(err);
+
+                        // jscs check doesn't realize return null; returns a promise
+                        return null; // jscs:ignore jsDoc
+                    });
+        }
+
+        /**
          * Constructs a map on the given DOM node.
          * @param {object} domNode the DOM node on which the map should be initialized
          * @param {object} config the map configuration based on the configuration schema
@@ -211,22 +247,23 @@
                 map.addLayer(l);
 
                 // wait for layer to load before registering
-                // TODO: replace with geoApi event once support is there (and re-enable test)
-                l.on('load', () => {
-                    registerLayer(l, layerConfig);
+                service.gapi.events.wrapEvents(l, {
+                    load: () => {
+                        registerLayer(l, layerConfig);
 
-                    // get the attributes for the layer
-                    const a = service.gapi.attribs.loadLayerAttribs(l);
+                        // get the attributes for the layer
+                        const a = service.gapi.attribs.loadLayerAttribs(l);
 
-                    // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
-                    a.then(
-                        data => {
-                            registerAttributes(data);
-                        })
-                        .error(
-                            exception => {
+                        // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
+                        a.then(
+                            data => {
+                                registerAttributes(data);
+                            })
+                            .catch(exception => {
                                 console.log('Error getting attributes for ' + l.name + ': ' + exception);
+                                console.log(l);
                             });
+                    }
                 });
             });
 
@@ -234,7 +271,7 @@
             mapManager = service.gapi.mapManager.setupMap(map, config);
 
             // FIXME temp link for debugging
-            window.FGPV = service.layers;
+            window.FGPV = { layers: service.layers };
         }
 
         /**

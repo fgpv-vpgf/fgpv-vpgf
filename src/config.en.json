@@ -1,4 +1,5 @@
 {
+    "version": "-1",
     "layout": {
         "title": "TOMAHAWK"
     },
@@ -46,31 +47,45 @@
     ],
     "layers": [
         {
-            "id": 0,
+            "id": "0",
+            "url": "http://localhost/",
+            "layerType": "esriFeature",
             "name": "Meredith Christensen"
         },
         {
-            "id": 1,
+            "id": "1",
+            "url": "http://localhost/",
+            "layerType": "esriFeature",
             "name": "Jaclyn Skinner"
         },
         {
-            "id": 2,
+            "id": "2",
+            "url": "http://localhost/",
+            "layerType": "esriFeature",
             "name": "Hyde Cortez"
         },
         {
-            "id": 3,
+            "id": "3",
+            "url": "http://localhost/",
+            "layerType": "esriFeature",
             "name": "Blair Snyder"
         },
         {
-            "id": 4,
+            "id": "4",
+            "url": "http://localhost/",
+            "layerType": "esriFeature",
             "name": "Kelley Grimes"
         },
         {
-            "id": 5,
+            "id": "5",
+            "url": "http://localhost/",
+            "layerType": "esriFeature",
             "name": "Tanisha Mullen"
         },
         {
-            "id": 6,
+            "id": "6",
+            "url": "http://localhost/",
+            "layerType": "esriFeature",
             "name": "Angeline Holder"
         }
     ],
