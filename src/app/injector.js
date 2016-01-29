@@ -1,4 +1,9 @@
 (() => {
+    /**
+     * Dynamically injects the main viewer script and styles references.
+     * TODO: need to check how viewer works if there is already a version of jQuery on the page; maybe load a jQuery-less version of the viewer then.
+     * Reference on script loading: http://www.html5rocks.com/en/tutorials/speed/script-loading/
+     */
     const d = document;
     const scripts = d.getElementsByTagName('script'); // get scripts
     const seedUrl = scripts[scripts.length - 1].src; // get the last loaded script, which is this
@@ -19,11 +24,7 @@
     // inject fonts
     const fontsLink = d.createElement('link');
     fontsLink.href = 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic';
-
-    //fontsLink.type = 'text/css';
     fontsLink.rel = 'stylesheet';
-
-    //fontsLink.media = 'screen,print';
 
     headNode.appendChild(fontsLink);
 
