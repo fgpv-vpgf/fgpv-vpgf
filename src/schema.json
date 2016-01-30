@@ -200,6 +200,18 @@
                 }
             }
         },
+        "legendAuto": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "autopopulate" ] }
+            }
+        },
+        "legendStructured": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "structured" ] }
+            }
+        },
 
         "basicLayer": {
             "type": "object",
@@ -232,7 +244,7 @@
                 },
                 "options": {
                     "type": "object",
-                    "properties": { 
+                    "properties": {
                         "visibility": {
                             "allOf": [
                                 { "$ref": "#/definitions/option" },
@@ -332,7 +344,15 @@
             "$ref": "#/definitions/layerList",
             "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
         },
-        "legend": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+        "legend": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "autopopulate", "structured" ] }
+            },
+            "oneOf": [ { "$ref": "#/defs/legendAuto" }, { "$ref": "#/defs/legendStructured" } ],
+            "required": [ "type" ],
+            "description": "FIXME"
+        },
         "navigation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
         "tools": { "type": "object", "additionalProperties": true, "description": "FIXME" },
         "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }

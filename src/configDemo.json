@@ -3,6 +3,9 @@
   "services": {
     "proxyUrl":"http://cp.zz9.ca/index"
   },
+  "legend": {
+      "type": "autopopulate"
+  },
   "layers": [
     {
       "id":"ecogeo",
