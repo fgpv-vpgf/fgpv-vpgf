@@ -8,8 +8,7 @@
     "devDependencies": {
         "angular-mocks": "^1.4.3",
         "sinon": "http://sinonjs.org/releases/sinon-1.15.4.js",
-        "bardjs": "^0.1.4",
-        "wet-boew-dist-4.0.20": "https://github.com/wet-boew/wet-boew/releases/download/v4.0.20/wet-boew-dist-4.0.20.zip"
+        "bardjs": "^0.1.4"
     },
     "dependencies": {
         "jquery": "^2.1.4",
