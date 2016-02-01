@@ -268,7 +268,12 @@
             });
 
             // setup map using configs
-            mapManager = service.gapi.mapManager.setupMap(map, config);
+            // FIXME: I should be migrated to the new config schema when geoApi is updated
+            const mapSettings = { basemaps: [] };
+            if (config.rampStyleBasemaps) {
+                mapSettings.basemaps = config.rampStyleBasemaps;
+            }
+            mapManager = service.gapi.mapManager.setupMap(map, mapSettings);
 
             // FIXME temp link for debugging
             window.FGPV = { layers: service.layers };
@@ -279,8 +284,9 @@
          * @param {string} uid identifier for a specific basemap layerbower
          */
         function selectBasemap(uid) {
-            if (typeof (mapManager) === 'undefined') {
-                console.log('Error: Map manager is not setup, please setup map manager by calling setupMap().');
+            if (typeof (mapManager) === 'undefined' || !mapManager.BasemapControl) {
+                console.error('Error: Map manager or basemap control is not setup,' +
+                              ' please setup map manager by calling setupMap().');
             } else {
                 mapManager.BasemapControl.setBasemap(uid);
             }

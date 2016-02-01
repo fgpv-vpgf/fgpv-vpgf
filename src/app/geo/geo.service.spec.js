@@ -137,7 +137,7 @@ describe('geo', () => {
 
             it('should make a map', () => {
                 const m = geoService.gapi.mapManager;
-                spyOn(m, 'Map');
+                spyOn(m, 'Map').and.callThrough();
                 geoService.buildMap(el[0], emptyConfig);
                 expect(m.Map).toHaveBeenCalled();
             });
