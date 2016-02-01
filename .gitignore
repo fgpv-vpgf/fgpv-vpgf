@@ -12,6 +12,7 @@ report/
 .idea
 typings/
 tsd.json
+.vagrant/
 
 # VIM files
 *~
