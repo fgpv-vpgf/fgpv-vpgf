@@ -334,14 +334,29 @@ function serve(isDev) {
             .watch(config.watchhtml, ['reloadapp'])
             .on('change', logWatch)
         ;
+
+        gulp
+            .watch(config.watchconfig, ['reloadconfig'])
+            .on('change', logWatch)
+        ;
     }
 }
 
 /**
- * Reloads app.js file on source files changes. Do not call directly.
+ * Reloads core.js file on source files changes. Do not call directly.
  * @return {Stream}
  */
 gulp.task('reloadapp', 'Repackaging app...', ['jsrollup'], function () {
+    return gulp
+        .src(config.jsInjectorFilePath)
+        .pipe($.connect.reload());
+});
+
+/**
+ * Copy changed config and validate against schema on config files changes. Reload core.js. Do not call directly.
+ * @return {Stream}
+ */
+gulp.task('reloadconfig', 'Repackaging app...', ['validate', 'assetcopy'], function () {
     return gulp
         .src(config.jsInjectorFilePath)
         .pipe($.connect.reload());
