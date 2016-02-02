@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService(layerTypes, $http) {
+    function geoService($http, layerTypes, configDefaults) {
 
         //TODO update how the layerOrder works with the UI
         //Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -48,19 +48,19 @@
         /**
          * Adds a layer object to the layers registry
          * @param {object} layer the API layer object
-         * @param {object} config a configuration fragment used to generate the layer
+         * @param {object} initialState a configuration fragment used to generate the layer
          * @param {object} attribs an optional object containing the attributes associated with the layer
          * @param {number} position an optional index indicating at which position the layer was added to the map
          * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
          */
-        function registerLayer(layer, config, attribs, position) {
+        function registerLayer(layer, initialState, attribs, position) {
             //TODO determine the proper docstrings for a non-service function that lives in a service
 
             if (!layer.id) {
                 //TODO replace with proper error handling mechanism
                 console.error('Attempt to register layer without id property');
                 console.log(layer);
-                console.log(config);
+                console.log(initialState);
             }
 
             if (service.layers[layer.id]) {
@@ -70,11 +70,12 @@
 
             //TODO should attribs be defined and set to null, or simply omitted from the object?  some layers will not have attributes. others will be added after they load
             let l = {
-                layer
+                layer,
+
+                // apply layer option defaults
+                state: angular.merge({}, initialState, configDefaults.layerOptions)
             };
-            if (config) {
-                l.state = config;
-            }
+
             if (attribs) {
                 l.attribs = attribs;
             }

@@ -83,6 +83,7 @@ module.exports = function () {
         watchsass: src + 'content/styles/**/*.scss',
         watchjs: src + '**/*.js',
         watchhtml: src + '**/*.html',
+        watchconfig: src + '*.json',
 
         plato: {
             js: app + '**/*.js'

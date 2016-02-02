@@ -33,7 +33,12 @@
     {
       "id":"sample_temp",
       "layerType":"esriImage",
-      "url":"http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/World/Temperature/ImageServer"
+      "url":"http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/World/Temperature/ImageServer",
+      "options": {
+          "visibility": {
+              "value": "off"
+          }
+      }
     }
   ],
   "rampStyleBasemaps": [
