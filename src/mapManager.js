@@ -17,8 +17,9 @@ module.exports = function (esriBundle) {
     // it has minimum interaction after creation, no need for the additional
     // scalebar.js
     const mapManager = {
-        Scalebar: esriBundle.Scalebar,
         Map: esriBundle.Map,
+        OverviewMap: esriBundle.OverviewMap,
+        Scalebar: esriBundle.Scalebar,
         setupMap,
         setProxy
     };
@@ -49,6 +50,7 @@ module.exports = function (esriBundle) {
 
         let basemapCtrl;
         let scalebarCtrl;
+        let overviewMapCtrl;
 
         // check to see if property exists in settings
         if ('basemaps' in settings) {
@@ -61,6 +63,8 @@ module.exports = function (esriBundle) {
 
             // basemapCtrl is a basemap gallery object, should store this value for application use
             basemapCtrl = lbasemap.makeBasemaps(settings.basemaps, map);
+        } else {
+            console.log('warning: basemaps setting does not exist');
         }
 
         // TODO: add code to setup scalebar
@@ -80,13 +84,27 @@ module.exports = function (esriBundle) {
 
         // TODO: add code to setup north arrow
 
-        // TODO: add code to setup overview map
+        // Setup overview map
+        // todo: add visible to setting
+        if ('overviewMap' in settings && 'visible' in settings.overviewMap &&
+            settings.overviewMap.visible === true) {
+            overviewMapCtrl = mapManager.OverviewMap({
+                map: map,
+                visible: settings.overviewMap.visible
+            });
+
+            overviewMapCtrl.startup();
+        } else {
+            console.log('info: overviewMap setting does not exist, or it\'s visible' +
+                ' setting is set to false.');
+        }
 
         // TODO: add code to setup mouse co-ordinates
 
         // return as object so we can use this in our geo section of fgpv
         return {
             BasemapControl: basemapCtrl,
+            OverviewMapControl: overviewMapCtrl,
             ScalebarControl: scalebarCtrl
         };
     }
