@@ -326,6 +326,7 @@ module.exports = function (esriBundle, geoApi) {
         ArcGISImageServiceLayer: esriBundle.ArcGISImageServiceLayer,
         GraphicsLayer: esriBundle.GraphicsLayer,
         FeatureLayer: esriBundle.FeatureLayer,
+        TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
         WmsLayer: esriBundle.WmsLayer,
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
