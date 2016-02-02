@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService(layerTypes, $http) {
+    function geoService($http, layerTypes, configDefaults) {
 
         //TODO update how the layerOrder works with the UI
         //Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -72,7 +72,9 @@
             let l = {
                 layer
             };
-            if (config) {
+            if (config) { // FIXME: I don't think `config` parameter should be optional;
+                // apply layer option defaults
+                angular.merge(config, configDefaults.layerOptions);
                 l.state = config;
             }
             if (attribs) {
