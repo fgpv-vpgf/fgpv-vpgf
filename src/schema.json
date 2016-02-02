@@ -5,7 +5,7 @@
     "comments": "FIXME: when draft 05 is release redo schema inheritance with patching / merging if they are accepted",
     "additionalProperties": true,
 
-    "defs": {
+    "definitions": {
         "spatialReference": {
             "type": "object",
             "properties": {
@@ -67,7 +67,7 @@
                 "ymin": { "type": "number" },
                 "xmax": { "type": "number" },
                 "ymax": { "type": "number" },
-                "spatialReference": { "$ref": "#/defs/spatialReferenceNode" }
+                "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" }
             },
             "required": [ "xmin", "ymin", "xmax", "ymax" ],
             "additionalProperties": false
@@ -76,9 +76,9 @@
             "type": "object",
             "properties": {
                 "id": { "type": "number" },
-                "default": { "$ref": "#/defs/extentWithReferenceNode", "description": "The default (starting) extent." },
-                "full": { "$ref": "#/defs/extentWithReferenceNode", "description": "The full extent (should give good view of the whole map, not necessarily the maximum extent); default will be used if not supplied." },
-                "maximum": { "$ref": "#/defs/extentWithReferenceNode", "description": "The maximum extent; full or default extents will be used if not supplied." }
+                "default": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The default (starting) extent." },
+                "full": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The full extent (should give good view of the whole map, not necessarily the maximum extent); default will be used if not supplied." },
+                "maximum": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The maximum extent; full or default extents will be used if not supplied." }
             },
             "required": [ "id", "default" ],
             "additionalProperties": false
@@ -103,20 +103,120 @@
             "additionalProperties": false
         },
 
+        "option": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                }
+            },
+            "description": "Specifies if the corresponding control, option or function is interactive. Doesn't not have any effect on actual state, if any, of the corresponding option"
+        },
+
+        "layerOptions": {
+            "type": "object",
+            "properties": {
+                "visibility": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "string",
+                                    "enum": [ "on", "off" ],
+                                    "description": "Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only."
+                                }
+                            }
+                        }
+                    ],
+                    "description": "Visibility toggle in the layer selector and its current state."
+                },
+                "query": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "boolean",
+                                    "default": true,
+                                    "description": "Specifies the initial state of the layer visibility. True: layer attribute data (or wms results, etc.) can be accessed by clicking on layer features; False: layer attribute data (not wms results), if any, can only be accessed through the data panel"
+                                }
+                            }
+                        }
+                    ],
+                    "description": "FIXME: available only in layer with attributes; Specifies if the layer can be queried by clicking on the map"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "refresh": {
+                    "$ref": "#/definitions/option",
+                    "description": "Refresh control in the layer selector"
+                },
+                "remove": {
+                    "$ref": "#/definitions/option",
+                    "description": "Remove control in the layer selector"
+                },
+                "boundingBox": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "boolean",
+                                    "default": true,
+                                    "description": "Specifies the initial state of the bounding box option. True: the layer bounding box is visible; False: the bounding box is hidden."
+                                }
+                            }
+                        }
+                    ],
+                    "description": "FIXME: does not apply to all layer types; Displays layers bounding box"
+                },
+                "snapshot": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "boolean",
+                                    "default": false,
+                                    "description": "Specifies the layer data will be initially retrieved. True: everything is fetched upfront; False: fetched based on map extent."
+                                }
+                            }
+                        }
+                    ],
+                    "description": "FIXME: available only in esri feature layers; Specifies how layer attributes are loaded"
+                },
+                "data": {
+                    "$ref": "#/definitions/option",
+                    "description": "FIXME: available only in layers with attributes; Enables data panel"
+                }
+            }
+        },
+
         "basicLayer": {
             "type": "object",
             "properties": {
                 "id": { "type": "string" },
                 "layerType": { "type": "string", "enum": [ "esriDynamic", "esriFeature", "esriImage", "ogcWms" ] },
                 "url": { "type": "string" },
-                "extent": { "$ref": "#/defs/extentWithReferenceNode" }
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "options": {
+                    "$ref": "#/definitions/layerOptions"
+                }
             },
             "required": [ "id", "layerType", "url" ]
         },
 
         "layerList": {
             "type": "array",
-            "items": { "oneOf": [ { "$ref": "#/defs/basicLayer" } ] }
+            "items": { "oneOf": [ { "$ref": "#/definitions/basicLayer" } ] }
         },
 
         "baseMapNode": {
@@ -131,7 +231,7 @@
                 "wkid": { "type": "number", "description": "The WKID of spatial reference" },
                 "extentId": { "type": "string", "description": "The extent set to be used for this basemap (should reference map.extentSets.id)" },
                 "lodId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" },
-                "layers": { "$ref": "#/defs/layerList" },
+                "layers": { "$ref": "#/definitions/layerList" },
                 "zoomLevels": {
                     "type": "object",
                     "properties": {
@@ -173,23 +273,23 @@
             "properties": {
                 "extentSets": {
                     "type": "array",
-                    "items": { "$ref": "#/defs/extentSetNode" },
+                    "items": { "$ref": "#/definitions/extentSetNode" },
                     "description": "The default, full and maximum extents of the map"
                 },
                 "lods": {
                     "type": "array",
-                    "items": { "$ref": "#/defs/lodNode" },
+                    "items": { "$ref": "#/definitions/lodNode" },
                     "description": "The levels of detail available for the map"
                 }
             }
         },
         "baseMaps": {
             "type": "array",
-            "items": { "oneOf": [ { "$ref": "#/defs/baseMap" } ] },
+            "items": { "oneOf": [ { "$ref": "#/definitions/baseMap" } ] },
             "description": "A list of basemaps to be made available via the basemap selector."
         },
         "layers": {
-            "$ref": "#/defs/layerList",
+            "$ref": "#/definitions/layerList",
             "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
         },
         "legend": { "type": "object", "additionalProperties": true, "description": "FIXME" },
