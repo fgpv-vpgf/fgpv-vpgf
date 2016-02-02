@@ -125,6 +125,7 @@
                                 "value": {
                                     "type": "string",
                                     "enum": [ "on", "off" ],
+                                    "default": "on",
                                     "description": "Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only."
                                 }
                             }
@@ -212,6 +213,45 @@
                 }
             },
             "required": [ "id", "layerType", "url" ]
+        },
+
+        "layerGroup": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": { "oneOf": [ { "$ref": "#/definitions/basicLayer" }, { "$ref": "#/definitions/layerGroup" } ] }
+                },
+                "expanded": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "True: the layer group is expanded on load; False: the layer group is collapsed"
+                },
+                "options": {
+                    "type": "object",
+                    "properties": { 
+                        "visibility": {
+                            "allOf": [
+                                { "$ref": "#/definitions/option" },
+                                {
+                                    "properties": {
+                                        "value": {
+                                            "type": "boolean",
+                                            "default": true,
+                                            "description": "True: the layer group and all its children are visible unless children have overrides; False: the layer group and all its children are hidden unless the overrides are specified."
+                                        }
+                                    }
+                                }
+                            ],
+                            "description": "Visibility toggle of the layer group and its current state."
+                        }
+                    }
+                }
+            },
+            "required": [ "items", "name" ]
         },
 
         "layerList": {
