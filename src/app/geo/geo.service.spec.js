@@ -36,6 +36,11 @@ describe('geo', () => {
                 .toBe('http://www.sausagelayer.com/');
             expect(geoService.layerOrder)
                 .toContain('sausages');
+
+            expect(geoService.layers.sausages.state.options)
+                .toBeDefined();
+            expect(geoService.layers.sausages.state.options.visibility.value)
+                .toBe('on');
         });
 
         //check registering a attribute object
@@ -127,19 +132,31 @@ describe('geo', () => {
         });
 
         describe('map', () => {
-            const emptyConfig = { layers: [] };
-            const layerConfig = { layers: [
-                { layerType:'esriFeature' },
-                { layerType:'esriDynamic' },
-                { layerType:'ogcWms' }
-            ] };
+            const emptyConfig = {
+                layers: []
+            };
+            const layerConfig = {
+                layers: [
+                    {
+                        layerType: 'esriFeature'
+                    },
+                    {
+                        layerType: 'esriDynamic'
+                    },
+                    {
+                        layerType: 'ogcWms'
+                    }
+            ]
+            };
             const el = angular.element('<div id="randomMap" />');
 
             it('should make a map', () => {
                 const m = geoService.gapi.mapManager;
-                spyOn(m, 'Map').and.callThrough();
+                spyOn(m, 'Map')
+                    .and.callThrough();
                 geoService.buildMap(el[0], emptyConfig);
-                expect(m.Map).toHaveBeenCalled();
+                expect(m.Map)
+                    .toHaveBeenCalled();
             });
 
             // TODO: mock responses to layer endpoint calls before re-enabling
@@ -149,36 +166,48 @@ describe('geo', () => {
                 spyOn(l, 'WmsLayer');
                 spyOn(l, 'ArcGISDynamicMapServiceLayer');
                 geoService.buildMap(el[0], layerConfig);
-                expect(l.FeatureLayer).toHaveBeenCalled();
-                expect(l.WmsLayer).toHaveBeenCalled();
-                expect(l.ArcGISDynamicMapServiceLayer).toHaveBeenCalled();
+                expect(l.FeatureLayer)
+                    .toHaveBeenCalled();
+                expect(l.WmsLayer)
+                    .toHaveBeenCalled();
+                expect(l.ArcGISDynamicMapServiceLayer)
+                    .toHaveBeenCalled();
             });
 
         });
 
         describe('epsg lookup', () => {
             it('should fetch an integer code', (done) => {
-                $httpBackend.expectGET('http://epsg.io/4326.proj4').respond('+proj=longlat +datum=WGS84 +no_defs');
-                geoService.epsgLookup(4326).then(projText => {
-                    expect(projText).toBe('+proj=longlat +datum=WGS84 +no_defs');
-                    done();
-                }).catch(err => {
-                    fail(err);
-                    done();
-                });
+                $httpBackend.expectGET('http://epsg.io/4326.proj4')
+                    .respond('+proj=longlat +datum=WGS84 +no_defs');
+                geoService.epsgLookup(4326)
+                    .then(projText => {
+                        expect(projText)
+                            .toBe('+proj=longlat +datum=WGS84 +no_defs');
+                        done();
+                    })
+                    .catch(err => {
+                        fail(err);
+                        done();
+                    });
                 $httpBackend.flush();
             });
             it('should fetch an EPSG string code', (done) => {
                 /* jscs:disable maximumLineLength */
-                $httpBackend.expectGET('http://epsg.io/3979.proj4').respond('+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+                $httpBackend.expectGET('http://epsg.io/3979.proj4')
+                    .respond(
+                        '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+                    );
                 /* jscs:enable maximumLineLength */
-                geoService.epsgLookup('EPSG:3979').then(projText => {
-                    console.log(projText);
-                    done();
-                }).catch(err => {
-                    console.log(err);
-                    fail();
-                });
+                geoService.epsgLookup('EPSG:3979')
+                    .then(projText => {
+                        console.log(projText);
+                        done();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        fail();
+                    });
                 $httpBackend.flush();
             });
         });
