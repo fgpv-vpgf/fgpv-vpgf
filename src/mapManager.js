@@ -7,6 +7,8 @@ const basemap = require('./basemap.js');
   * @description
   *
   * The `MapManager` module exports an object with the following properties:
+  * - `Map` {type} of esri/map
+  * - `OverviewMap` {type} of esri/dijit/OverviewMap
   * - `Scalebar` {type} of esri/dijit/Scalebar
   * - `setupMap` {function} interates over config settings and apply logic for any items present.
   */
@@ -43,6 +45,7 @@ module.exports = function (esriBundle) {
      * @return {Object} with following properties:
      * <ul>
      *    <li>BasemapControl - an object with setBasemap function and a BasemapGallery object</li>
+     *    <li>OverviewMapControl - a reference to the overviewMap control on the map</li>
      *    <li>ScalebarControl - a reference to the scalebar control on the map</li>
      * </ul>
      */
