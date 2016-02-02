@@ -184,6 +184,9 @@
                 commonConfig.opacity = 0.3;
                 return new service.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig);
             };
+            handlers[layerTypes.esriTile] = config => {
+                return new service.gapi.layer.TileLayer(config.url, commonConfig);
+            };
             handlers[layerTypes.ogcWms] = config => {
                 commonConfig.visibleLayers = [config.layerName];
                 return new service.gapi.layer.WmsLayer(config.url, commonConfig);

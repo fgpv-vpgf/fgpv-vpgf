@@ -15,6 +15,7 @@
             esriDynamic: 'esriDynamic',
             esriFeature: 'esriFeature',
             esriImage: 'esriImage',
+            esriTile: 'esriTile',
             ogcWms: 'ogcWms'
         })
         .constant('configDefaults', { // FIXME: these defaults should be generated using `json-schema-defaults` module at build time
