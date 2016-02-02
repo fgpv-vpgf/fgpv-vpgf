@@ -51,6 +51,7 @@
     "http-server": "^0.6.1",
     "jasmine-core": "^2.3.4",
     "jshint-stylish": "^2.0.1",
+    "json-schema-defaults": "^0.1.1",
     "karma": "=0.13.18",
     "karma-babel-preprocessor": "^5.2.2",
     "karma-chrome-launcher": "^0.1.12",
