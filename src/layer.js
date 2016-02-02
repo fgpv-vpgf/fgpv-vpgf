@@ -19,6 +19,77 @@ const featureTypeToRenderer = {
     MultiPolygon: 'outlinedPoly'
 };
 
+function serverLayerIdentifyBuilder(esriBundle) {
+    //TODO we are using layerIds option property as it aligns with what the ESRI identify parameter
+    //     object uses.  However, in r2 terminology, a layerId is specific to a full map layer, not
+    //     indexes of a single dynamic layer.  for clarity, could consider renaming to .visibleLayers
+    //     and then map the value to the .layerIds property inside this function.
+
+    /**
+    * Perform a server-side identify on a layer (usually an ESRI dynamic layer)
+    * Accepts the following options:
+    *   - geometry: Required. geometry in map co-ordinates for the area to identify.
+    *     will usually be an ESRI Point, though a polygon would work.
+    *   - mapExtent: Required. ESRI Extent of the current map view
+    *   - width: Required. Width of the map in pixels
+    *   - height: Required. Height of the map in pixels
+    *   - layerIds: an array of integers specifying the layer indexes to be examined. Will override the current
+    *     visible indexes in the layer parameter
+    *   - returnGeometry: a boolean indicating if result geometery should be returned with results.  Defaults to false
+    *   - tolerance: an integer indicating how many screen pixels away from the mouse is valid for a hit.  Defaults to 2
+    *
+    * @method serverLayerIdentify
+    * @param {Object} layer an ESRI dynamic layer object
+    * @param {Object} opts An object for supplying additional parameters
+    * @returns {Promise} a promise resolving with an array of identify results
+    */
+    return (layer, opts) => {
+
+        const identParams = new esriBundle.IdentifyParameters();
+
+        //pluck treats from options parameter
+        if (opts) {
+
+            const reqOpts = ['geometry', 'mapExtent', 'height', 'width'];
+            reqOpts.forEach(optProp => {
+                if (opts[optProp]) {
+                    identParams[optProp] = opts[optProp];
+                } else {
+                    throw new Error(`serverLayerIdentify - missing opts.${ optProp } arguement`);
+                }
+            });
+
+            identParams.layerIds = opts.layerIds || layer.visibleLayers;
+            identParams.returnGeometry = opts.returnGeometry || false;
+            identParams.layerOption = esriBundle.IdentifyParameters.LAYER_OPTION_ALL;
+            identParams.spatialReference = opts.geometry.spatialReference;
+            identParams.tolerance = opts.tolerance || 2;
+
+            //TODO add support for identParams.layerDefinitions once attribute filtering is implemented
+
+        } else {
+            throw new Error('serverLayerIdentify - missing opts arguement');
+        }
+
+        //asynch an identify task
+        return new Promise((resolve, reject) => {
+            const identify = new esriBundle.IdentifyTask(layer.url);
+
+            //TODO possibly tack on the layer.id to the resolved thing so we know which parent layer returned?
+            //     would only be required if the caller is mashing promises together and using Promise.all()
+
+            identify.on('complete', result => {
+                resolve(result.results);
+            });
+            identify.on('error', err => {
+                reject(err.error);
+            });
+
+            identify.execute(identParams);
+        });
+    };
+}
+
 /**
 * Get a 'good enough' uuid. For backup purposes if client does not supply its own
 * unique layer id
@@ -330,6 +401,7 @@ module.exports = function (esriBundle, geoApi) {
         WmsLayer: esriBundle.WmsLayer,
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
-        makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi)
+        makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi),
+        serverLayerIdentify: serverLayerIdentifyBuilder(esriBundle)
     };
 };
