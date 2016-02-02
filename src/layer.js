@@ -41,7 +41,7 @@ function serverLayerIdentifyBuilder(esriBundle) {
     * @method serverLayerIdentify
     * @param {Object} layer an ESRI dynamic layer object
     * @param {Object} opts An object for supplying additional parameters
-    * @returns {Promise} a promise resolving with an array of identify results
+    * @returns {Promise} a promise resolving with an array of identify results (empty array if no hits)
     */
     return (layer, opts) => {
 
