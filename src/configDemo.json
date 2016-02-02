@@ -230,5 +230,9 @@
             "latestWkid":  3857
         }
     }
-  ]
+  ],
+  "scalebar": {
+        "attachTo": "bottom-left",
+        "scalebarUnit": "metric"
+    }
 }
