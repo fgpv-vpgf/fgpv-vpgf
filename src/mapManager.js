@@ -67,7 +67,7 @@ module.exports = function (esriBundle) {
             // basemapCtrl is a basemap gallery object, should store this value for application use
             basemapCtrl = lbasemap.makeBasemaps(settings.basemaps, map);
         } else {
-            console.log('warning: basemaps setting does not exist');
+            console.warn('warning: basemaps setting does not exist');
         }
 
         // TODO: add code to setup scalebar
@@ -82,7 +82,7 @@ module.exports = function (esriBundle) {
             scalebarCtrl.show();
 
         } else {
-            console.log('scalebar setting does not exists');
+            console.warn('scalebar setting does not exists');
         }
 
         // TODO: add code to setup north arrow
@@ -98,7 +98,7 @@ module.exports = function (esriBundle) {
 
             overviewMapCtrl.startup();
         } else {
-            console.log('info: overviewMap setting does not exist, or it\'s visible' +
+            console.warn('info: overviewMap setting does not exist, or it\'s visible' +
                 ' setting is set to false.');
         }
 
