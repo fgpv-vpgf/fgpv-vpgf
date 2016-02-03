@@ -20,7 +20,7 @@
         .module('app.ui.toc')
         .directive('rvLayerItemFlag', rvLayerItemFlag);
 
-    function rvLayerItemFlag() {
+    function rvLayerItemFlag(tocService) {
         const directive = {
             require: '^rvLayerItem',
             restrict: 'E',
@@ -43,6 +43,7 @@
 
             // getting toggle object from the layer item controller directly using toggle's name
             self.control = ctrl.layer.flags[self.name];
+            self.template = tocService.presets.flags[self.name];
         }
     }
 })();
