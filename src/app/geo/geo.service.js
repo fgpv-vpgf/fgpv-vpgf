@@ -248,13 +248,12 @@
             }
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
+                registerLayer(l, layerConfig);
                 map.addLayer(l);
 
                 // wait for layer to load before registering
                 service.gapi.events.wrapEvents(l, {
                     load: () => {
-                        registerLayer(l, layerConfig);
-
                         // get the attributes for the layer
                         const a = service.gapi.attribs.loadLayerAttribs(l);
 
