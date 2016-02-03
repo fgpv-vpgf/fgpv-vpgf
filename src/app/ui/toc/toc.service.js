@@ -788,15 +788,6 @@
 
         return service;
 
-        /**
-         * Temporary helper function to set values on layer toggle and flag objects.
-         */
-        function setLayerControlValues(control, template) {
-            control.icon = template.icon[control.value] || template.icon;
-            control.tooltip = template.tooltip[control.value] || template.tooltip;
-            control.label = template.label[control.value] || template.label;
-        }
-
         // FIXME: updating config layer objects with default values for toggles and flags
         // this should be done when applying defaults to the config file
         // items is an array
@@ -806,37 +797,11 @@
             // ^ kills jshint error abour for .. in loop
             for (let item of items) {
                 if (item.type === 'layer') {
-
-                    // loop through layer toggles
-                    for (let name in item.toggles) {
-                        let template = service.presets.toggles[name];
-                        let control = item.toggles[name];
-
-                        setLayerControlValues(control, template);
-                    }
-
-                    // loop through layer flags
-                    for (let name in item.flags) {
-                        let template = service.presets.flags[name];
-                        let control = item.flags[name];
-
-                        setLayerControlValues(control, template);
-                    }
-
                     // TODO: remove/revise; layer object should have cache created before; or outsource cache to something else
                     // should store cache in layer registry
                     item.cache = item.cache || {};
 
                 } else if (item.type === 'group') {
-                    // loop through layer toggles
-                    for (let name in item.toggles) {
-
-                        let template = service.presets.groupToggles[name];
-                        let control = item.toggles[name];
-
-                        setLayerControlValues(control, template);
-                    }
-
                     initLayers(item.items);
                 }
             }
@@ -845,7 +810,8 @@
         // FIXME: placeholder method for toggling group visibility
         function toggleGroupVisibility(group, value) {
             console.log('I am error', group);
-            let template = service.presets.groupToggles.visibility;
+
+            //let template = service.presets.groupToggles.visibility;
             let control = group.toggles.visibility;
 
             // visibility toggle logic goes here
@@ -855,7 +821,6 @@
             };
 
             control.value = value || toggle[control.value];
-            setLayerControlValues(control, template);
 
             for (let item of group.items) {
                 console.log('item', item);
@@ -871,7 +836,7 @@
         // FIXME: placeholder method for toggling visibility
         // if 'value' is not specified, toggle
         function toggleVisiblity(layer, value) {
-            let template = service.presets.toggles.visibility;
+            //let template = service.presets.toggles.visibility;
             let control = layer.toggles.visibility;
 
             // visibility toggle logic goes here
@@ -883,9 +848,6 @@
             };
 
             control.value = value || toggle[control.value];
-
-            // FIXME: this should be done when applying defaults to the config file
-            setLayerControlValues(control, template);
         }
 
         // temp function to open layer groups
@@ -1071,7 +1033,8 @@
                     $timeout.cancel(stateManager.display[contentName].loadingTimeout);
                 }
             } else {
-                console.log(contentName, 'Data rejected for request id ', requestId, '; loading in progress');
+                console.log(contentName, 'Data rejected for request id ', requestId,
+                    '; loading in progress');
             }
         }
 
