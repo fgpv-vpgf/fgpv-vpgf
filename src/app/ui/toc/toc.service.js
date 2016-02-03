@@ -27,6 +27,21 @@
                 items: [
                     {
                         type: 'group',
+                        name: 'Real Layers',
+                        id: 1,
+                        expanded: false,
+                        items: [
+
+                        ],
+                        toggles: {
+                            visibility: {
+                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                enabled: true
+                            }
+                        }
+                    },
+                    {
+                        type: 'group',
                         name: 'Feature Layers',
                         id: 1,
                         expanded: true,
@@ -780,6 +795,22 @@
         // set layer control defaults
         // TODO: should be done when parsing config file
         initLayers(service.data.items);
+
+        // remove
+        $timeout(() => {
+            service.data.items[0].items = geoService.layerOrder.map(id => {
+                // add some fake symbology for now
+                geoService.layers[id].state.symbology = [
+                    {
+                        icon: 'url',
+                        name: HolderIpsum.words(3, true)
+                    }
+                ];
+                return geoService.layers[id].state;
+            });
+
+            //console.log(service.data.items);
+        }, 5000);
 
         // set state change watches on metadata, settings and filters panel
         watchPanelState('sideMetadata', 'metadata');
