@@ -41,10 +41,10 @@ describe('tocService', () => {
         });
 
         it('should open metadata panel with some data and close it', done => {
-            let toggle = tocService.presets.toggles.metadata;
+            let toggle = tocService.presets.options.metadata;
             let display = sm.display.metadata;
-            let layer = tocService.data.items[0].items[0]; // first layer from the first group
-            let layerToggle = layer.toggles.metadata;
+            let layer = tocService.data.items[1].items[0]; // first layer from the first group
+            let layerOption = layer.options.metadata;
 
             const to = $timeout; // global $timeout variable was disappearing for some reason, I think because of the async nature of these tests
 
@@ -53,7 +53,7 @@ describe('tocService', () => {
 
             expect(display.isLoading)
                 .toBe(false);
-            expect(layerToggle.selected)
+            expect(layerOption.selected)
                 .toBeFalsy(); // layer toggle is not selected yet
             expect(display.requestId)
                 .toEqual(null); // request hasn't been made
@@ -66,10 +66,9 @@ describe('tocService', () => {
             to.flush(200); // flush timer past loading timeout
 
             // TODO: when we have a real function to fetch metadata, need to mock it here and simulate the delay
-
             expect(display.isLoading)
                 .toBe(true);
-            expect(layerToggle.selected)
+            expect(layerOption.selected)
                 .toBe(true); // layer toggle is already selected
 
             expect(display.requester.id)
@@ -79,7 +78,7 @@ describe('tocService', () => {
 
             expect(display.isLoading)
                 .toBe(false);
-            expect(layerToggle.selected)
+            expect(layerOption.selected)
                 .toBe(true);
 
             expect(display.requester.id)
@@ -94,7 +93,7 @@ describe('tocService', () => {
 
                     expect(display.requestId)
                         .toEqual(null); // request id is reset
-                    expect(layerToggle.selected)
+                    expect(layerOption.selected)
                         .toBe(false); // layer toggle no longer selected
 
                     done();

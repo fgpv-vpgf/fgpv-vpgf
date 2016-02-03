@@ -57,8 +57,7 @@
             layerFlags: {
                 flags: {
                     type: {
-                        visible: true,
-                        value: 'image'
+                        visible: true
                     },
                     data: {
                         visible: false
