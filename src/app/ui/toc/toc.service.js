@@ -33,7 +33,7 @@
                         items: [
 
                         ],
-                        toggles: {
+                        options: {
                             visibility: {
                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                 enabled: true
@@ -63,7 +63,7 @@
                                 ],
 
                                 // FIXME: these should be mostly filled by config default values
-                                toggles: {
+                                options: {
                                     metadata: {
                                         enabled: true
                                     },
@@ -118,7 +118,7 @@
                                         name: HolderIpsum.words(3, true)
                                     }
                                 ],
-                                toggles: {
+                                options: {
                                     metadata: {
                                         enabled: false
                                     },
@@ -171,7 +171,7 @@
                                                 name: 'something'
                                             }
                                         ],
-                                        toggles: {
+                                        options: {
                                             metadata: {
                                                 enabled: true
                                             },
@@ -218,7 +218,7 @@
                                                 name: 'something'
                                             }
                                         ],
-                                        toggles: {
+                                        options: {
                                             metadata: {
                                                 enabled: true
                                             },
@@ -268,7 +268,7 @@
                                                 name: 'something'
                                             }
                                         ],
-                                        toggles: {
+                                        options: {
                                             metadata: {
                                                 enabled: true
                                             },
@@ -305,7 +305,7 @@
                                         }
                                     }
                                 ],
-                                toggles: {
+                                options: {
                                     visibility: {
                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                         enabled: true
@@ -351,7 +351,7 @@
                                         name: HolderIpsum.words(3, true)
                                     }
                                 ],
-                                toggles: {
+                                options: {
                                     metadata: {
                                         enabled: true
                                     },
@@ -388,7 +388,7 @@
                                 }
                             }
                         ],
-                        toggles: {
+                        options: {
                             visibility: {
                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                 enabled: true
@@ -412,7 +412,7 @@
                                         name: 'something'
                                     }
                                 ],
-                                toggles: {
+                                options: {
                                     metadata: {
                                         enabled: true
                                     },
@@ -449,7 +449,7 @@
                                 }
                             }
                         ],
-                        toggles: {
+                        options: {
                             visibility: {
                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                 enabled: true
@@ -527,7 +527,7 @@
                                                                                                                 name: 'something'
                                                                                                             }
                                                                                                         ],
-                                                                                                        toggles: {
+                                                                                                        options: {
                                                                                                             metadata: {
                                                                                                                 enabled: true
                                                                                                             },
@@ -564,7 +564,7 @@
                                                                                                         }
                                                                                                     },
                                                                                                 ],
-                                                                                                toggles: {
+                                                                                                options: {
                                                                                                     visibility: {
                                                                                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                                                         enabled: true
@@ -572,7 +572,7 @@
                                                                                                 }
                                                                                             }
                                                                                         ],
-                                                                                        toggles: {
+                                                                                        options: {
                                                                                             visibility: {
                                                                                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                                                 enabled: true
@@ -580,7 +580,7 @@
                                                                                         }
                                                                                     }
                                                                                 ],
-                                                                                toggles: {
+                                                                                options: {
                                                                                     visibility: {
                                                                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                                         enabled: true
@@ -588,7 +588,7 @@
                                                                                 }
                                                                             }
                                                                         ],
-                                                                        toggles: {
+                                                                        options: {
                                                                             visibility: {
                                                                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                                 enabled: true
@@ -596,7 +596,7 @@
                                                                         }
                                                                     }
                                                                 ],
-                                                                toggles: {
+                                                                options: {
                                                                     visibility: {
                                                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                         enabled: true
@@ -604,7 +604,7 @@
                                                                 }
                                                             }
                                                         ],
-                                                        toggles: {
+                                                        options: {
                                                             visibility: {
                                                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                 enabled: true
@@ -612,7 +612,7 @@
                                                         }
                                                     }
                                                 ],
-                                                toggles: {
+                                                options: {
                                                     visibility: {
                                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                         enabled: true
@@ -620,7 +620,7 @@
                                                 }
                                             }
                                         ],
-                                        toggles: {
+                                        options: {
                                             visibility: {
                                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                 enabled: true
@@ -628,7 +628,7 @@
                                         }
                                     }
                                 ],
-                                toggles: {
+                                options: {
                                     visibility: {
                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                         enabled: true
@@ -636,7 +636,7 @@
                                 }
                             }
                         ],
-                        toggles: {
+                        options: {
                             visibility: {
                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                 enabled: true
@@ -646,16 +646,16 @@
                 ]
             }, // config and bindable data
 
-            // method called by the toggles and flags set on the layer item
+            // method called by the options and flags set on the layer item
             actions: {
                 toggleLayerGroup,
                 toggleLayerFiltersPanel
             }
         };
 
-        // toc preset controls (toggles and flags displayed on the layer item)
+        // toc preset controls (options and flags displayed on the layer item)
         service.presets = {
-            groupToggles: {
+            groupOptions: {
                 visibility: {
                     action: toggleGroupVisibility,
                     icon: {
@@ -668,7 +668,7 @@
                     tooltip: 'Group visibility tooltip'
                 }
             },
-            toggles: {
+            options: {
                 extra: {
                     icon: 'navigation:more_horiz',
                     label: 'Extra',
@@ -819,7 +819,7 @@
 
         return service;
 
-        // FIXME: updating config layer objects with default values for toggles and flags
+        // FIXME: updating config layer objects with default values for options and flags
         // this should be done when applying defaults to the config file
         // items is an array
         function initLayers(items) {
@@ -842,8 +842,7 @@
         function toggleGroupVisibility(group, value) {
             console.log('I am error', group);
 
-            //let template = service.presets.groupToggles.visibility;
-            let control = group.toggles.visibility;
+            let control = group.options.visibility;
 
             // visibility toggle logic goes here
             const toggle = {
@@ -856,9 +855,9 @@
             for (let item of group.items) {
                 console.log('item', item);
 
-                if (item.type === 'group') {
+                if (item.items !== undefined) {
                     toggleGroupVisibility(item, control.value);
-                } else if (item.type === 'layer') {
+                } else {
                     toggleVisiblity(item, control.value);
                 }
             }
@@ -867,8 +866,8 @@
         // FIXME: placeholder method for toggling visibility
         // if 'value' is not specified, toggle
         function toggleVisiblity(layer, value) {
-            //let template = service.presets.toggles.visibility;
-            let control = layer.toggles.visibility;
+            //let template = service.presets.options.visibility;
+            let control = layer.options.visibility;
 
             // visibility toggle logic goes here
             const toggle = {
@@ -1070,7 +1069,7 @@
         }
 
         /**
-         * Sets a watch on StateManager for layer data panels. When the panel is opened/closed, calls changeContentState to dehighlight layer toggles and checks the state of the layer item itself (selected / not selected).
+         * Sets a watch on StateManager for layer data panels. When the panel is opened/closed, calls changeContentState to dehighlight layer options and checks the state of the layer item itself (selected / not selected).
          *
          * @param  {String} panelName    name of the panel to watch as specified in the stateManager
          * @param  {String} contentName type of the display data (layer toggle name: 'settings', 'metadata', 'filters')
@@ -1099,11 +1098,11 @@
 
             if (layer) {
                 // TODO: revise; maybe also store filters values here or something
-                layer.toggles[contentName].selected = newValue; // select the toggle to stay visible
+                layer.options[contentName].selected = newValue; // select the toggle to stay visible
 
                 // check if any toggle is selected; if so, select the layer
-                let layerSelectedValue = Object.keys(layer.toggles)
-                    .some(toggleName => layer.toggles[toggleName].selected);
+                let layerSelectedValue = Object.keys(layer.options)
+                    .some(optionName => layer.options[optionName].selected);
                 layer.selected = layerSelectedValue; // newValue; // change layer's selected state
 
                 // if panel is closed, set current display to null to prevent previous display from showing up during loading
