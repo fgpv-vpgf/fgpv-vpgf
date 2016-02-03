@@ -49,7 +49,7 @@
                             {
                                 type: 'layer',
                                 name: HolderIpsum.words(3, true),
-                                layerType: 'feature',
+                                layerType: 'esriFeature',
                                 id: 0,
                                 symbology: [
                                     {
@@ -85,7 +85,7 @@
                                 flags: {
                                     type: {
                                         visible: true,
-                                        value: 'feature'
+                                        value: 'esriFeature'
                                     },
                                     data: {
                                         visible: true,
@@ -102,7 +102,7 @@
                             {
                                 type: 'layer',
                                 name: 'Layer Name 2',
-                                layerType: 'feature',
+                                layerType: 'esriFeature',
                                 id: 1,
                                 symbology: [
                                     {
@@ -140,7 +140,7 @@
                                 flags: {
                                     type: {
                                         visible: true,
-                                        value: 'feature'
+                                        value: 'esriFeature'
                                     },
                                     data: {
                                         visible: false,
@@ -163,7 +163,7 @@
                                     {
                                         type: 'layer',
                                         name: 'Layer Name 2 Layer Name 2 Layer Name 2 Layer Name 2',
-                                        layerType: 'feature',
+                                        layerType: 'esriFeature',
                                         id: 3,
                                         symbology: [
                                             {
@@ -193,7 +193,7 @@
                                         flags: {
                                             type: {
                                                 visible: true,
-                                                value: 'dynamic'
+                                                value: 'esriDynamic'
                                             },
                                             data: {
                                                 visible: true,
@@ -210,7 +210,7 @@
                                     {
                                         type: 'layer',
                                         name: 'Subgroup Layer Name 2',
-                                        layerType: 'feature',
+                                        layerType: 'esriFeature',
                                         id: 4,
                                         symbology: [
                                             {
@@ -243,7 +243,7 @@
                                         flags: {
                                             type: {
                                                 visible: true,
-                                                value: 'feature'
+                                                value: 'esriFeature'
                                             },
                                             data: {
                                                 visible: true,
@@ -260,7 +260,7 @@
                                     {
                                         type: 'layer',
                                         name: 'Subgroup Layer 3',
-                                        layerType: 'image',
+                                        layerType: 'esriImage',
                                         id: 5,
                                         symbology: [
                                             {
@@ -290,7 +290,7 @@
                                         flags: {
                                             type: {
                                                 visible: true,
-                                                value: 'image'
+                                                value: 'esriImage'
                                             },
                                             data: {
                                                 visible: false,
@@ -315,7 +315,7 @@
                             {
                                 type: 'layer',
                                 name: HolderIpsum.words(3, true),
-                                layerType: 'feature',
+                                layerType: 'esriFeature',
                                 id: 7,
                                 symbology: [
                                     {
@@ -373,7 +373,7 @@
                                 flags: {
                                     type: {
                                         visible: true,
-                                        value: 'feature'
+                                        value: 'esriFeature'
                                     },
                                     data: {
                                         visible: false,
@@ -404,7 +404,7 @@
                             {
                                 type: 'layer',
                                 name: 'Group 2 Layer Name 1',
-                                layerType: 'image',
+                                layerType: 'esriImage',
                                 id: 8,
                                 symbology: [
                                     {
@@ -434,7 +434,7 @@
                                 flags: {
                                     type: {
                                         visible: true,
-                                        value: 'feature'
+                                        value: 'esriFeature'
                                     },
                                     data: {
                                         visible: true,
@@ -519,7 +519,7 @@
                                                                                                     {
                                                                                                         type: 'layer',
                                                                                                         name: 'Lonely Layer',
-                                                                                                        layerType: 'image',
+                                                                                                        layerType: 'esriImage',
                                                                                                         id: 8,
                                                                                                         symbology: [
                                                                                                             {
@@ -549,7 +549,7 @@
                                                                                                         flags: {
                                                                                                             type: {
                                                                                                                 visible: true,
-                                                                                                                value: 'feature'
+                                                                                                                value: 'esriFeature'
                                                                                                             },
                                                                                                             data: {
                                                                                                                 visible: true,
@@ -731,19 +731,22 @@
             flags: {
                 type: {
                     icon: {
-                        feature: 'community:vector-square',
-                        image: 'image:photo',
-                        dynamic: 'action:settings'
+                        esriFeature: 'community:vector-square',
+                        esriDynamic: 'action:settings',
+                        ogcWms: 'image:photo',
+                        esriImage: 'image:photo'
                     },
                     label: {
-                        feature: 'Feature layer with <x> <points|polygons|lines>',
-                        image: 'Image layer',
-                        dynamic: 'Dynamic layer with <x> <points|polygons|lines>'
+                        esriFeature: 'ESRI Feature Layer (<x> <points|polygons|lines>)',
+                        esriDynamic: 'ESRI Dynamic Layer (<x> <points|polygons|lines>)',
+                        ogcWms: 'OGC WMS Layer',
+                        esriImage: 'ESRI Image Layer'
                     },
                     tooltip: {
-                        feature: 'Feature layer with <x> <points|polygons|lines>',
-                        image: 'Image layer',
-                        dynamic: 'Dynamic layer with <x> <points|polygons|lines>'
+                        esriFeature: 'ESRI Feature Layer (<x> <points|polygons|lines>)',
+                        esriDynamic: 'ESRI Dynamic Layer (<x> <points|polygons|lines>)',
+                        ogcWms: 'OGC WMS Layer',
+                        esriImage: 'ESRI Image Layer'
                     }
                 },
                 scale: {
@@ -764,6 +767,11 @@
                         table: 'Layer has viewable data',
                         filter: 'Layer data is filtered'
                     }
+                },
+                query: {
+                    icon: 'community:map-marker-off',
+                    label: 'query is turned off',
+                    tooltip: 'query is turned off'
                 },
                 user: {
                     icon: 'social:person',
@@ -806,11 +814,14 @@
                         name: HolderIpsum.words(3, true)
                     }
                 ];
+                geoService.layers[id].state.cache = {};
+                geoService.layers[id].state.flags.type.value = geoService.layers[id].state.layerType;
+
                 return geoService.layers[id].state;
             });
 
-            //console.log(service.data.items);
-        }, 5000);
+            //console.log('--->', service.data.items[0]);
+        }, 7000); // FIXME: wait for layer to be added to the layer registry; this will not be needed as we are going to bind directly to layer/legend construction from geoservice; this is needed right now to keep the fake layers in the layer selector as well.
 
         // set state change watches on metadata, settings and filters panel
         watchPanelState('sideMetadata', 'metadata');
@@ -827,12 +838,12 @@
 
             // ^ kills jshint error abour for .. in loop
             for (let item of items) {
-                if (item.type === 'layer') {
+                if (item.items === undefined) {
                     // TODO: remove/revise; layer object should have cache created before; or outsource cache to something else
                     // should store cache in layer registry
                     item.cache = item.cache || {};
 
-                } else if (item.type === 'group') {
+                } else {
                     initLayers(item.items);
                 }
             }
@@ -1120,7 +1131,7 @@
         // TODO: replace
         function iterateLayers(group, func) {
             group.items.forEach(item => {
-                if (item.type === 'layer') {
+                if (item.items === undefined) {
                     func(item);
                 } else {
                     iterateLayers(item, func);
