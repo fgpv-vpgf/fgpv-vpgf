@@ -3,8 +3,8 @@
         <!-- Do not ask me what `dx-start-with` and `dx-connect` are and how this whole thing works as I'm not completely understan it myself. I'll update this comment when I get it. Read this is you are curious: https://github.com/dotJEM/angular-tree -->
         <ul class="rv-layer-list rv-root" dx-start-with="self.config">
             <li ng-repeat="item in $dxPrior.items">
-                <rv-layer-item layer="item" ng-class="item.state" ng-if="!item.items"></rv-layer-item>
-                <div class="rv-layer-level rv-{{ $dxLevel }}" ng-if="item.items">
+                <rv-layer-item layer="item" ng-class="item.state" ng-if="item.items === undefined"></rv-layer-item>
+                <div class="rv-layer-level rv-{{ $dxLevel }}" ng-if="item.items !== undefined">
 
                     <md-divider class="rv-layer-list-divider" ng-if="!$first || $dxLevel !== 0" ng-show="item.expanded"></md-divider>
 
