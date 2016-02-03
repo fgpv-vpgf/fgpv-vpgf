@@ -73,7 +73,7 @@
                 layer,
 
                 // apply layer option defaults
-                state: angular.merge({}, configDefaults.layerOptions, initialState)
+                state: angular.merge({}, configDefaults.layerOptions, configDefaults.layerFlags, initialState)
             };
 
             if (attribs) {
