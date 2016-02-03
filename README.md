@@ -1,6 +1,13 @@
 # fgpv-vpgf
 
-[![Join the chat at https://gitter.im/fgpv-vpgf/fgpv-vpgf](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fgpv-vpgf/fgpv-vpgf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/fgpv-vpgf/fgpv-vpgf](https://img.shields.io/badge/GITTER-join%20chat-green.svg?style=flat-square)](https://gitter.im/fgpv-vpgf/fgpv-vpgf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+[![Issue Stats](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf/badge/issue?style=flat-square)](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf)<br />
+[![PR Stats](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf/badge/pr?style=flat-square)](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf)
+
+[![Dependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf)<br />
+[![devDependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf/dev-status.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf#info=devDependencies)
+
 Federal Geospatial Platform Visualiser / Visualisateur pour la Plateforme géospatiale fédérale
 
 ## Getting Started
