@@ -1,4 +1,4 @@
-/* global bard, $compile, $rootScope, tocService */
+/* global bard, $compile, $rootScope, $httpBackend, tocService */
 
 describe('rvLayerItemButton', () => {
     let scope;
@@ -12,7 +12,7 @@ describe('rvLayerItemButton', () => {
             name: 'Image Layers 1',
             layerType: 'image',
             id: 1,
-            toggles: {
+            options: {
                 visibility: {
                     value: 'on', //'off', 'zoomIn', 'zoomOut'
                     enabled: true
@@ -26,10 +26,10 @@ describe('rvLayerItemButton', () => {
         bard.appModule('app.ui.toc', 'app.templates', 'ngMaterial', 'app.common.router', 'app.geo');
 
         // inject angular services
-        bard.inject('$compile', '$rootScope', 'tocService');
+        bard.inject('$compile', '$rootScope', '$httpBackend', 'tocService');
 
         // spy on visibility toggle method
-        spyOn(tocService.presets.toggles.visibility, 'action');
+        spyOn(tocService.presets.options.visibility, 'action');
 
         // crete new scope
         scope = $rootScope.$new();
@@ -42,6 +42,10 @@ describe('rvLayerItemButton', () => {
         // http://stackoverflow.com/a/19951141
         directiveElement.data('$rvLayerItemController',
             rvLayerItemController);
+
+        $httpBackend.expectGET('content/images/iconsets/action-icons.svg')
+            .respond({});
+
         directiveElement = $compile(directiveElement)(scope);
         scope.$digest();
 
@@ -68,7 +72,7 @@ describe('rvLayerItemButton', () => {
             directiveScope.self.action(directiveScope.self.layer);
 
             // check if the corresponding method on tocService has been called
-            expect(tocService.presets.toggles.visibility.action)
+            expect(tocService.presets.options.visibility.action)
                 .toHaveBeenCalled();
         });
     });
