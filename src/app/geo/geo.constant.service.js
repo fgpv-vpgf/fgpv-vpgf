@@ -53,6 +53,26 @@
                         enabled: true
                     }
                 }
+            },
+            layerFlags: {
+                flags: {
+                    type: {
+                        visible: true,
+                        value: 'image'
+                    },
+                    data: {
+                        visible: false
+                    },
+                    query: {
+                        visible: false
+                    },
+                    user: {
+                        visible: false
+                    },
+                    scale: {
+                        visible: false
+                    }
+                }
             }
         });
 })();
