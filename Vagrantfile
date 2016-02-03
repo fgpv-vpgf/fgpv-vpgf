@@ -7,6 +7,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "1024"
+    vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate//vagrant","1"]
   end
 
   config.vm.provision "shell", inline: <<-SHELL
@@ -15,8 +16,8 @@ Vagrant.configure(2) do |config|
     sudo apt-get install -y nodejs build-essential
     cd /vagrant
     sudo npm install -g bower gulp
-    sudo npm install --no-bin-links
-    sudo bower install
+    sudo npm install
+    bower install
 
     # sudo apt-get install -y apache2
   SHELL
