@@ -248,5 +248,8 @@
   "scalebar": {
         "attachTo": "bottom-left",
         "scalebarUnit": "metric"
+    },
+    "overviewMap": {
+        "visible": true
     }
 }

@@ -272,13 +272,17 @@
 
             // setup map using configs
             // FIXME: I should be migrated to the new config schema when geoApi is updated
-            const mapSettings = { basemaps: [], scalebar: {} };
+            const mapSettings = { basemaps: [], scalebar: {}, overviewMap: {} };
             if (config.rampStyleBasemaps) {
                 mapSettings.basemaps = config.rampStyleBasemaps;
             }
 
             if (config.scalebar) {
                 mapSettings.scalebar = config.scalebar;
+            }
+
+            if (config.overviewMap) {
+                mapSettings.overviewMap = config.overviewMap;
             }
 
             mapManager = service.gapi.mapManager.setupMap(map, mapSettings);
