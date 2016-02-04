@@ -113,7 +113,8 @@ describe('geo', () => {
 
             // create a fake map
             geoService.buildMap({}, {
-                layers: []
+                layers: [],
+                scalebar: {}
             });
 
             // call setZoom with different arguments
@@ -133,7 +134,8 @@ describe('geo', () => {
 
         describe('map', () => {
             const emptyConfig = {
-                layers: []
+                layers: [],
+                scalebar: {}
             };
             const layerConfig = {
                 layers: [
