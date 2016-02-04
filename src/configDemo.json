@@ -9,32 +9,38 @@
   "layers": [
     {
       "id":"ecogeo",
+      "name":"ecogeo",
       "layerType":"esriDynamic",
       "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer"
     },
     {
       "id":"josm",
+      "name":"josm",
       "layerType":"esriFeature",
       "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0"
     },
     {
       "id":"cesi_ozone",
+      "name":"cesi_ozone",
       "layerType":"esriFeature",
       "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_Ozone/MapServer/3"
     },
     {
       "id":"aafc_dynamic_layer",
+      "name":"aafc_dynamic_layer",
       "layerType":"esriDynamic",
       "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_census_of_agriculture_2011_ccs/MapServer"
     },
     {
       "id":"rail_wms",
+      "name":"rail_wms",
       "layerType":"ogcWms",
       "url":"http://maps.geogratis.gc.ca/wms/railway_en",
       "layerName":"railway.track"
     },
     {
       "id":"sample_temp",
+      "name":"sample_temp",
       "layerType":"esriImage",
       "url":"http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/World/Temperature/ImageServer",
       "options": {
