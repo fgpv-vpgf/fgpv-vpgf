@@ -84,6 +84,67 @@
             "additionalProperties": false
         },
 
+        "simpleRendererNode": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "simple" ] },
+                "label": { "type": "string" },
+                "imageUrl": { "type": "string" }
+            },
+            "required": [ "type", "imageUrl" ],
+            "additionalProperties": false
+        },
+        "uniqueValueRendererNode": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "uniqueValue" ] },
+                "defaultImageUrl": { "type": "string" },
+                "field1": { "type": "string" },
+                "field2": { "type": "string" },
+                "field3": { "type": "string" },
+                "valueMaps": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "label": { "type": "string" },
+                            "value": { "type": "string" },
+                            "imageUrl": { "type": "string" }
+                        },
+                        "required": [ "value", "imageUrl" ],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "required": [ "type", "field1", "valueMaps" ],
+            "additionalProperties": false
+        },
+        "classBreaksRendererNode": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "classBreaks" ] },
+                "defaultImageUrl": { "type": "string" },
+                "field": { "type": "string" },
+                "minValue": { "type": "number" },
+                "rangeMaps": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "label": { "type": "string" },
+                            "maxValue": { "type": "number" },
+                            "imageUrl": { "type": "string" }
+                        },
+                        "required": [ "maxValue", "imageUrl" ],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "required": [ "type", "field", "minValue", "rangeMaps" ],
+            "additionalProperties": false
+        },
+        "symbolNode": { "oneOf": [ { "$ref": "#/definitions/simpleRendererNode" }, { "$ref": "#/definitions/uniqueValueRendererNode" }, { "$ref": "#/definitions/classBreaksRendererNode" } ] },
+
         "lodNode": {
             "type": "object",
             "properties": {
@@ -102,6 +163,8 @@
             "required": [ "id", "lod" ],
             "additionalProperties": false
         },
+
+
 
         "option": {
             "type": "object",
@@ -200,11 +263,44 @@
                 }
             }
         },
+        "legendAuto": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "autopopulate" ] }
+            },
+            "required": ["type"],
+            "additionalProperties": false
+        },
+        "legendStructured": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "structured" ] },
+                "layers": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "layerId": { "type": "string", "description": "reference to an entry in the main layers section" },
+                            "symbology": { "$ref": "#/definitions/symbolNode" },
+                            "children": {
+                                "type": "array",
+                                "items": [ { "$ref": "#/definitions/legendStructured" } ]
+                            }
+                        },
+                        "required": ["layerId", "symbology"],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "required": ["type"],
+            "additionalProperties": false
+        },
 
         "basicLayer": {
             "type": "object",
             "properties": {
                 "id": { "type": "string" },
+                "name": { "type": "string" },
                 "layerType": { "type": "string", "enum": [ "esriDynamic", "esriFeature", "esriImage", "esriTile", "ogcWms" ] },
                 "url": { "type": "string" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
@@ -232,7 +328,7 @@
                 },
                 "options": {
                     "type": "object",
-                    "properties": { 
+                    "properties": {
                         "visibility": {
                             "allOf": [
                                 { "$ref": "#/definitions/option" },
@@ -332,7 +428,10 @@
             "$ref": "#/definitions/layerList",
             "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
         },
-        "legend": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+        "legend": {
+            "oneOf": [ { "$ref": "#/definitions/legendAuto" }, { "$ref": "#/definitions/legendStructured" } ],
+            "description": "FIXME"
+        },
         "navigation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
         "tools": { "type": "object", "additionalProperties": true, "description": "FIXME" },
         "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
