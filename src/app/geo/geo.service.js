@@ -73,7 +73,7 @@
                 layer,
 
                 // apply layer option defaults
-                state: angular.merge({}, initialState, configDefaults.layerOptions)
+                state: angular.merge({}, configDefaults.layerOptions, configDefaults.layerFlags, initialState)
             };
 
             if (attribs) {
@@ -248,13 +248,12 @@
             }
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
+                registerLayer(l, layerConfig); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                 map.addLayer(l);
 
                 // wait for layer to load before registering
                 service.gapi.events.wrapEvents(l, {
                     load: () => {
-                        registerLayer(l, layerConfig);
-
                         // get the attributes for the layer
                         const a = service.gapi.attribs.loadLayerAttribs(l);
 

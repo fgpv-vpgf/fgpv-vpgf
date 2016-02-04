@@ -17,7 +17,7 @@ describe('rvLayerItem', () => {
                 name: 'something'
             }
         ],
-        toggles: {
+        options: {
             // needed for layer-item-button directives
         },
         state: 'default', // error, loading,
@@ -48,6 +48,10 @@ describe('rvLayerItem', () => {
 
         // layer-item directive tries to load icon resources on compile
         // need to mock that
+        $httpBackend.expectGET('content/images/iconsets/action-icons.svg')
+            .respond({});
+        $httpBackend.expectGET('content/images/iconsets/image-icons.svg')
+            .respond({});
         $httpBackend.expectGET('content/images/iconsets/navigation-icons.svg')
             .respond({});
 

@@ -27,6 +27,21 @@
                 items: [
                     {
                         type: 'group',
+                        name: 'Real Layers',
+                        id: 1,
+                        expanded: false,
+                        items: [
+
+                        ],
+                        options: {
+                            visibility: {
+                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                enabled: true
+                            }
+                        }
+                    },
+                    {
+                        type: 'group',
                         name: 'Feature Layers',
                         id: 1,
                         expanded: true,
@@ -34,7 +49,7 @@
                             {
                                 type: 'layer',
                                 name: HolderIpsum.words(3, true),
-                                layerType: 'feature',
+                                layerType: 'esriFeature',
                                 id: 0,
                                 symbology: [
                                     {
@@ -48,7 +63,7 @@
                                 ],
 
                                 // FIXME: these should be mostly filled by config default values
-                                toggles: {
+                                options: {
                                     metadata: {
                                         enabled: true
                                     },
@@ -70,7 +85,7 @@
                                 flags: {
                                     type: {
                                         visible: true,
-                                        value: 'feature'
+                                        value: 'esriFeature'
                                     },
                                     data: {
                                         visible: true,
@@ -87,7 +102,7 @@
                             {
                                 type: 'layer',
                                 name: 'Layer Name 2',
-                                layerType: 'feature',
+                                layerType: 'esriFeature',
                                 id: 1,
                                 symbology: [
                                     {
@@ -103,7 +118,7 @@
                                         name: HolderIpsum.words(3, true)
                                     }
                                 ],
-                                toggles: {
+                                options: {
                                     metadata: {
                                         enabled: false
                                     },
@@ -125,7 +140,7 @@
                                 flags: {
                                     type: {
                                         visible: true,
-                                        value: 'feature'
+                                        value: 'esriFeature'
                                     },
                                     data: {
                                         visible: false,
@@ -148,7 +163,7 @@
                                     {
                                         type: 'layer',
                                         name: 'Layer Name 2 Layer Name 2 Layer Name 2 Layer Name 2',
-                                        layerType: 'feature',
+                                        layerType: 'esriFeature',
                                         id: 3,
                                         symbology: [
                                             {
@@ -156,7 +171,7 @@
                                                 name: 'something'
                                             }
                                         ],
-                                        toggles: {
+                                        options: {
                                             metadata: {
                                                 enabled: true
                                             },
@@ -178,7 +193,7 @@
                                         flags: {
                                             type: {
                                                 visible: true,
-                                                value: 'dynamic'
+                                                value: 'esriDynamic'
                                             },
                                             data: {
                                                 visible: true,
@@ -195,7 +210,7 @@
                                     {
                                         type: 'layer',
                                         name: 'Subgroup Layer Name 2',
-                                        layerType: 'feature',
+                                        layerType: 'esriFeature',
                                         id: 4,
                                         symbology: [
                                             {
@@ -203,7 +218,7 @@
                                                 name: 'something'
                                             }
                                         ],
-                                        toggles: {
+                                        options: {
                                             metadata: {
                                                 enabled: true
                                             },
@@ -228,7 +243,7 @@
                                         flags: {
                                             type: {
                                                 visible: true,
-                                                value: 'feature'
+                                                value: 'esriFeature'
                                             },
                                             data: {
                                                 visible: true,
@@ -245,7 +260,7 @@
                                     {
                                         type: 'layer',
                                         name: 'Subgroup Layer 3',
-                                        layerType: 'image',
+                                        layerType: 'esriImage',
                                         id: 5,
                                         symbology: [
                                             {
@@ -253,7 +268,7 @@
                                                 name: 'something'
                                             }
                                         ],
-                                        toggles: {
+                                        options: {
                                             metadata: {
                                                 enabled: true
                                             },
@@ -275,7 +290,7 @@
                                         flags: {
                                             type: {
                                                 visible: true,
-                                                value: 'image'
+                                                value: 'esriImage'
                                             },
                                             data: {
                                                 visible: false,
@@ -290,7 +305,7 @@
                                         }
                                     }
                                 ],
-                                toggles: {
+                                options: {
                                     visibility: {
                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                         enabled: true
@@ -300,7 +315,7 @@
                             {
                                 type: 'layer',
                                 name: HolderIpsum.words(3, true),
-                                layerType: 'feature',
+                                layerType: 'esriFeature',
                                 id: 7,
                                 symbology: [
                                     {
@@ -336,7 +351,7 @@
                                         name: HolderIpsum.words(3, true)
                                     }
                                 ],
-                                toggles: {
+                                options: {
                                     metadata: {
                                         enabled: true
                                     },
@@ -358,7 +373,7 @@
                                 flags: {
                                     type: {
                                         visible: true,
-                                        value: 'feature'
+                                        value: 'esriFeature'
                                     },
                                     data: {
                                         visible: false,
@@ -373,7 +388,7 @@
                                 }
                             }
                         ],
-                        toggles: {
+                        options: {
                             visibility: {
                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                 enabled: true
@@ -389,7 +404,7 @@
                             {
                                 type: 'layer',
                                 name: 'Group 2 Layer Name 1',
-                                layerType: 'image',
+                                layerType: 'esriImage',
                                 id: 8,
                                 symbology: [
                                     {
@@ -397,7 +412,7 @@
                                         name: 'something'
                                     }
                                 ],
-                                toggles: {
+                                options: {
                                     metadata: {
                                         enabled: true
                                     },
@@ -419,7 +434,7 @@
                                 flags: {
                                     type: {
                                         visible: true,
-                                        value: 'feature'
+                                        value: 'esriFeature'
                                     },
                                     data: {
                                         visible: true,
@@ -434,7 +449,7 @@
                                 }
                             }
                         ],
-                        toggles: {
+                        options: {
                             visibility: {
                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                 enabled: true
@@ -504,7 +519,7 @@
                                                                                                     {
                                                                                                         type: 'layer',
                                                                                                         name: 'Lonely Layer',
-                                                                                                        layerType: 'image',
+                                                                                                        layerType: 'esriImage',
                                                                                                         id: 8,
                                                                                                         symbology: [
                                                                                                             {
@@ -512,7 +527,7 @@
                                                                                                                 name: 'something'
                                                                                                             }
                                                                                                         ],
-                                                                                                        toggles: {
+                                                                                                        options: {
                                                                                                             metadata: {
                                                                                                                 enabled: true
                                                                                                             },
@@ -534,7 +549,7 @@
                                                                                                         flags: {
                                                                                                             type: {
                                                                                                                 visible: true,
-                                                                                                                value: 'feature'
+                                                                                                                value: 'esriFeature'
                                                                                                             },
                                                                                                             data: {
                                                                                                                 visible: true,
@@ -549,7 +564,7 @@
                                                                                                         }
                                                                                                     },
                                                                                                 ],
-                                                                                                toggles: {
+                                                                                                options: {
                                                                                                     visibility: {
                                                                                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                                                         enabled: true
@@ -557,7 +572,7 @@
                                                                                                 }
                                                                                             }
                                                                                         ],
-                                                                                        toggles: {
+                                                                                        options: {
                                                                                             visibility: {
                                                                                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                                                 enabled: true
@@ -565,7 +580,7 @@
                                                                                         }
                                                                                     }
                                                                                 ],
-                                                                                toggles: {
+                                                                                options: {
                                                                                     visibility: {
                                                                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                                         enabled: true
@@ -573,7 +588,7 @@
                                                                                 }
                                                                             }
                                                                         ],
-                                                                        toggles: {
+                                                                        options: {
                                                                             visibility: {
                                                                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                                 enabled: true
@@ -581,7 +596,7 @@
                                                                         }
                                                                     }
                                                                 ],
-                                                                toggles: {
+                                                                options: {
                                                                     visibility: {
                                                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                         enabled: true
@@ -589,7 +604,7 @@
                                                                 }
                                                             }
                                                         ],
-                                                        toggles: {
+                                                        options: {
                                                             visibility: {
                                                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                                 enabled: true
@@ -597,7 +612,7 @@
                                                         }
                                                     }
                                                 ],
-                                                toggles: {
+                                                options: {
                                                     visibility: {
                                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                         enabled: true
@@ -605,7 +620,7 @@
                                                 }
                                             }
                                         ],
-                                        toggles: {
+                                        options: {
                                             visibility: {
                                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                                 enabled: true
@@ -613,7 +628,7 @@
                                         }
                                     }
                                 ],
-                                toggles: {
+                                options: {
                                     visibility: {
                                         value: 'on', //'off', 'zoomIn', 'zoomOut'
                                         enabled: true
@@ -621,7 +636,7 @@
                                 }
                             }
                         ],
-                        toggles: {
+                        options: {
                             visibility: {
                                 value: 'on', //'off', 'zoomIn', 'zoomOut'
                                 enabled: true
@@ -631,16 +646,16 @@
                 ]
             }, // config and bindable data
 
-            // method called by the toggles and flags set on the layer item
+            // method called by the options and flags set on the layer item
             actions: {
                 toggleLayerGroup,
                 toggleLayerFiltersPanel
             }
         };
 
-        // toc preset controls (toggles and flags displayed on the layer item)
+        // toc preset controls (options and flags displayed on the layer item)
         service.presets = {
-            groupToggles: {
+            groupOptions: {
                 visibility: {
                     action: toggleGroupVisibility,
                     icon: {
@@ -653,7 +668,7 @@
                     tooltip: 'Group visibility tooltip'
                 }
             },
-            toggles: {
+            options: {
                 extra: {
                     icon: 'navigation:more_horiz',
                     label: 'Extra',
@@ -716,19 +731,22 @@
             flags: {
                 type: {
                     icon: {
-                        feature: 'community:vector-square',
-                        image: 'image:photo',
-                        dynamic: 'action:settings'
+                        esriFeature: 'community:vector-square',
+                        esriDynamic: 'action:settings',
+                        ogcWms: 'image:photo',
+                        esriImage: 'image:photo'
                     },
                     label: {
-                        feature: 'Feature layer with <x> <points|polygons|lines>',
-                        image: 'Image layer',
-                        dynamic: 'Dynamic layer with <x> <points|polygons|lines>'
+                        esriFeature: 'ESRI Feature Layer (<x> <points|polygons|lines>)',
+                        esriDynamic: 'ESRI Dynamic Layer (<x> <points|polygons|lines>)',
+                        ogcWms: 'OGC WMS Layer',
+                        esriImage: 'ESRI Image Layer'
                     },
                     tooltip: {
-                        feature: 'Feature layer with <x> <points|polygons|lines>',
-                        image: 'Image layer',
-                        dynamic: 'Dynamic layer with <x> <points|polygons|lines>'
+                        esriFeature: 'ESRI Feature Layer (<x> <points|polygons|lines>)',
+                        esriDynamic: 'ESRI Dynamic Layer (<x> <points|polygons|lines>)',
+                        ogcWms: 'OGC WMS Layer',
+                        esriImage: 'ESRI Image Layer'
                     }
                 },
                 scale: {
@@ -749,6 +767,11 @@
                         table: 'Layer has viewable data',
                         filter: 'Layer data is filtered'
                     }
+                },
+                query: {
+                    icon: 'community:map-marker-off',
+                    label: 'query is turned off',
+                    tooltip: 'query is turned off'
                 },
                 user: {
                     icon: 'social:person',
@@ -781,6 +804,25 @@
         // TODO: should be done when parsing config file
         initLayers(service.data.items);
 
+        // remove
+        $timeout(() => {
+            service.data.items[0].items = geoService.layerOrder.map(id => {
+                // add some fake symbology for now
+                geoService.layers[id].state.symbology = [
+                    {
+                        icon: 'url',
+                        name: HolderIpsum.words(3, true)
+                    }
+                ];
+                geoService.layers[id].state.cache = {};
+                geoService.layers[id].state.flags.type.value = geoService.layers[id].state.layerType;
+
+                return geoService.layers[id].state;
+            });
+
+            //console.log('--->', service.data.items[0]);
+        }, 7000); // FIXME: wait for layer to be added to the layer registry; this will not be needed as we are going to bind directly to layer/legend construction from geoservice; this is needed right now to keep the fake layers in the layer selector as well.
+
         // set state change watches on metadata, settings and filters panel
         watchPanelState('sideMetadata', 'metadata');
         watchPanelState('sideSettings', 'settings');
@@ -788,16 +830,7 @@
 
         return service;
 
-        /**
-         * Temporary helper function to set values on layer toggle and flag objects.
-         */
-        function setLayerControlValues(control, template) {
-            control.icon = template.icon[control.value] || template.icon;
-            control.tooltip = template.tooltip[control.value] || template.tooltip;
-            control.label = template.label[control.value] || template.label;
-        }
-
-        // FIXME: updating config layer objects with default values for toggles and flags
+        // FIXME: updating config layer objects with default values for options and flags
         // this should be done when applying defaults to the config file
         // items is an array
         function initLayers(items) {
@@ -805,38 +838,12 @@
 
             // ^ kills jshint error abour for .. in loop
             for (let item of items) {
-                if (item.type === 'layer') {
-
-                    // loop through layer toggles
-                    for (let name in item.toggles) {
-                        let template = service.presets.toggles[name];
-                        let control = item.toggles[name];
-
-                        setLayerControlValues(control, template);
-                    }
-
-                    // loop through layer flags
-                    for (let name in item.flags) {
-                        let template = service.presets.flags[name];
-                        let control = item.flags[name];
-
-                        setLayerControlValues(control, template);
-                    }
-
+                if (item.items === undefined) {
                     // TODO: remove/revise; layer object should have cache created before; or outsource cache to something else
                     // should store cache in layer registry
                     item.cache = item.cache || {};
 
-                } else if (item.type === 'group') {
-                    // loop through layer toggles
-                    for (let name in item.toggles) {
-
-                        let template = service.presets.groupToggles[name];
-                        let control = item.toggles[name];
-
-                        setLayerControlValues(control, template);
-                    }
-
+                } else {
                     initLayers(item.items);
                 }
             }
@@ -845,8 +852,8 @@
         // FIXME: placeholder method for toggling group visibility
         function toggleGroupVisibility(group, value) {
             console.log('I am error', group);
-            let template = service.presets.groupToggles.visibility;
-            let control = group.toggles.visibility;
+
+            let control = group.options.visibility;
 
             // visibility toggle logic goes here
             const toggle = {
@@ -855,14 +862,13 @@
             };
 
             control.value = value || toggle[control.value];
-            setLayerControlValues(control, template);
 
             for (let item of group.items) {
                 console.log('item', item);
 
-                if (item.type === 'group') {
+                if (item.items !== undefined) {
                     toggleGroupVisibility(item, control.value);
-                } else if (item.type === 'layer') {
+                } else {
                     toggleVisiblity(item, control.value);
                 }
             }
@@ -871,8 +877,8 @@
         // FIXME: placeholder method for toggling visibility
         // if 'value' is not specified, toggle
         function toggleVisiblity(layer, value) {
-            let template = service.presets.toggles.visibility;
-            let control = layer.toggles.visibility;
+            //let template = service.presets.options.visibility;
+            let control = layer.options.visibility;
 
             // visibility toggle logic goes here
             const toggle = {
@@ -883,9 +889,6 @@
             };
 
             control.value = value || toggle[control.value];
-
-            // FIXME: this should be done when applying defaults to the config file
-            setLayerControlValues(control, template);
         }
 
         // temp function to open layer groups
@@ -1071,12 +1074,13 @@
                     $timeout.cancel(stateManager.display[contentName].loadingTimeout);
                 }
             } else {
-                console.log(contentName, 'Data rejected for request id ', requestId, '; loading in progress');
+                console.log(contentName, 'Data rejected for request id ', requestId,
+                    '; loading in progress');
             }
         }
 
         /**
-         * Sets a watch on StateManager for layer data panels. When the panel is opened/closed, calls changeContentState to dehighlight layer toggles and checks the state of the layer item itself (selected / not selected).
+         * Sets a watch on StateManager for layer data panels. When the panel is opened/closed, calls changeContentState to dehighlight layer options and checks the state of the layer item itself (selected / not selected).
          *
          * @param  {String} panelName    name of the panel to watch as specified in the stateManager
          * @param  {String} contentName type of the display data (layer toggle name: 'settings', 'metadata', 'filters')
@@ -1105,11 +1109,11 @@
 
             if (layer) {
                 // TODO: revise; maybe also store filters values here or something
-                layer.toggles[contentName].selected = newValue; // select the toggle to stay visible
+                layer.options[contentName].selected = newValue; // select the toggle to stay visible
 
                 // check if any toggle is selected; if so, select the layer
-                let layerSelectedValue = Object.keys(layer.toggles)
-                    .some(toggleName => layer.toggles[toggleName].selected);
+                let layerSelectedValue = Object.keys(layer.options)
+                    .some(optionName => layer.options[optionName].selected);
                 layer.selected = layerSelectedValue; // newValue; // change layer's selected state
 
                 // if panel is closed, set current display to null to prevent previous display from showing up during loading
@@ -1127,7 +1131,7 @@
         // TODO: replace
         function iterateLayers(group, func) {
             group.items.forEach(item => {
-                if (item.type === 'layer') {
+                if (item.items === undefined) {
                     func(item);
                 } else {
                     iterateLayers(item, func);
