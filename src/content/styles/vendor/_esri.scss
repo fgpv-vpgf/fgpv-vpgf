@@ -86,7 +86,7 @@
     .esriScalebarLine {
         overflow: hidden;
         position: relative;
-        width: 150%;
+        width: 100%;
         height: 1px;
         border: 1px solid black;
     }
@@ -155,7 +155,6 @@
     .esriOverviewMap .ovwContainer {
         position: absolute;
         display: none;
-        background-color: #666;
     }
     /*
  * Have added "width 100% height 100%" to the map div in template
@@ -170,6 +169,7 @@
         width: 100%;
         height: 100%;
         background-color: #FFF;
+        overflow: hidden;
     }
 
     .esriOverviewMap .ovwHighlight {
@@ -177,6 +177,7 @@
         display: none;
         z-index: 99;
         cursor: move;
+        background-color: rgba(0, 0, 0, 0.1) !important;
     }
 
     .esriOverviewMap .ovwButton {
@@ -229,8 +230,6 @@
         left: 0;
         border-bottom: 1px solid #000;
         border-right: 1px solid #000;
-        padding-bottom: 2px;
-        padding-right: 2px;
     }
 
     .esriOverviewMap.ovwTR .ovwContainer {
@@ -238,8 +237,6 @@
         right: 0;
         border-bottom: 1px solid #000;
         border-left: 1px solid #000;
-        padding-bottom: 2px;
-        padding-left: 2px;
     }
 
     .esriOverviewMap.ovwBL .ovwContainer {
@@ -247,8 +244,6 @@
         left: 0;
         border-top: 1px solid #000;
         border-right: 1px solid #000;
-        padding-top: 2px;
-        padding-right: 2px;
     }
 
     .esriOverviewMap.ovwBR .ovwContainer {
@@ -256,8 +251,6 @@
         right: 0;
         border-top: 1px solid #000;
         border-left: 1px solid #000;
-        padding-top: 2px;
-        padding-left: 2px;
     }
 
     .esriOverviewMap.ovwTL .ovwShow,
