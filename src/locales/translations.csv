@@ -4,3 +4,11 @@ Language direction,lang.dir,ltr,ltr
 Language name (English),lang.en,English,French
 Language name (French),lang.fr,anglais,français
 Language name (native),lang.native,English,Français
+Appbar tooltip for layers icon,appbar.tooltip.layers,Layers,[fr] Layers
+Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Point Information,[fr] Point Information
+Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,[fr] Menu
+Appbar tooltip for tools icon,appbar.tooltip.tools,Tools,[fr] Tools
+Appbar aria label for layers icon,appbar.aria.layers,Sets,[fr] Sets
+Appbar aria label for point info icon,appbar.aria.pointInfo,Point Information,[fr] Point Information
+Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,[fr] Open Sidenav
+Appbar aria label for tools icon,appbar.aria.tools,Tools,[fr] Tools
