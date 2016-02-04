@@ -12,3 +12,15 @@ Appbar aria label for layers icon,appbar.aria.layers,Sets,[fr] Sets
 Appbar aria label for point info icon,appbar.aria.pointInfo,Point Information,[fr] Point Information
 Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,[fr] Open Sidenav
 Appbar aria label for tools icon,appbar.aria.tools,Tools,[fr] Tools
+Details pane title,details.title,Feature Information,[fr] Feature Information
+Content pane aria label for close button,contentPane.aria.close,Close,[fr] Close
+Content pane tooltip for close button,contentPane.tooltip.close,Close,[fr] Close
+Filter pane title prefix,filter.title,Features: ,[fr] Features: 
+Filter pane aria label for menu icon,filter.aria.menu,Open data panel menu,[fr] Open data panel menu
+Filter pane menu label for Minimize,filter.menu.minimize,Minimize,[fr] Minimize
+Filter pane menu label for Split View,filter.menu.splitView,Split View,[fr] Split View
+Filter pane menu label for Maximize,filter.menu.maximize,Maximize,[fr] Maximize
+Filter pane menu label for Enable Search,filter.menu.enableSearch,Enable Search,[fr] Enable Search
+Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable Filters,[fr] Enable Filters
+Filter pane menu label for Print,filter.menu.print,Print,[fr] Print
+Filter pane menu label for Export,filter.menu.export,Export,[fr] Export

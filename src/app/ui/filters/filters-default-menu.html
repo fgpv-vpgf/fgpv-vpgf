@@ -1,51 +1,51 @@
 <md-menu md-position-mode="target-right target">
-    <md-button aria-label="Open data panel menu" class="md-icon-button black rv-button-24" ng-click="$mdOpenMenu($event)">
+    <md-button translate translate-attr-aria-label="filter.aria.menu" class="md-icon-button black rv-button-24" ng-click="$mdOpenMenu($event)">
         <md-icon md-svg-src="navigation:more_vert"></md-icon>
     </md-button>
     <md-menu-content class="rv-menu rv-dense" width="5">
         <md-menu-item>
             <md-button ng-click="self.setMode('minimized')">
                 <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hide' : self.filtersMode() != 'minimized' }"></md-icon>
-                Minimize
+                {{'filter.menu.minimize' | translate}}
             </md-button>
         </md-menu-item>
         <md-menu-item>
             <md-button ng-click="self.setMode('default')">
                 <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hide' : self.filtersMode() != 'default' }"></md-icon>
-                Split View
+                {{'filter.menu.splitView' | translate}}
                 <!--md-icon class="rv-alt-icon" md-svg-icon="action:view_agenda"></md-icon-->
             </md-button>
         </md-menu-item>
         <md-menu-item>
             <md-button ng-click="self.setMode('full')">
                 <md-icon md-svg-icon="navigation:check" ng-class="{ 'rv-hide' : self.filtersMode() != 'full' }"></md-icon>
-                Maximize
+                {{'filter.menu.maximize' | translate}}
             </md-button>
         </md-menu-item>
         <md-menu-divider></md-menu-divider>
         <md-menu-item>
             <md-button ng-click="self.toggleNotifications()" md-prevent-menu-close="md-prevent-menu-close">
                 <md-icon md-svg-icon="action:search"></md-icon>
-                Enable Search
+                {{'filter.menu.enableSearch' | translate}}
             </md-button>
         </md-menu-item>
         <md-menu-item>
             <md-button ng-click="self.toggleNotifications()" md-prevent-menu-close="md-prevent-menu-close">
                 <md-icon md-svg-icon="community:filter"></md-icon>
-                Enable Filters
+                {{'filter.menu.enableFilters' | translate}}
             </md-button>
         </md-menu-item>
         <md-menu-divider></md-menu-divider>
         <md-menu-item>
             <md-button ng-click="self.toggleNotifications()">
                 <md-icon md-svg-icon="action:print"></md-icon>
-                Print
+                {{'filter.menu.print' | translate}}
             </md-button>
         </md-menu-item>
         <md-menu-item>
             <md-button ng-click="self.toggleNotifications()">
                 <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
-                Export
+                {{'filter.menu.export' | translate}}
             </md-button>
         </md-menu-item>
     </md-menu-content>
