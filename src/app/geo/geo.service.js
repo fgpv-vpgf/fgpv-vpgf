@@ -277,8 +277,11 @@
                 mapSettings.basemaps = config.rampStyleBasemaps;
             }
 
-            if (config.scalebar) {
-                mapSettings.scalebar = config.scalebar;
+            if (config.scalebar.visible) {
+                mapSettings.scalebar = {
+                    attachTo: 'bottom-left',
+                    scalebarUnit: 'dual'
+                };
             }
 
             if (config.overviewMap) {
