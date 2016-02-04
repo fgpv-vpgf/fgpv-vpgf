@@ -1,150 +1,163 @@
 // ESRI specific css
-
 // scalebar dijit styles
-.scalebar_top-left{
-    left: 10px;
-    top: 10px;
+@mixin esri {
+    @include scalebar;
+    @include overview;
 }
 
-.scalebar_top-center{
-    left: 50%;
-    top: 10px;
+@mixin scalebar {
+    .scalebar_top-left {
+        left: 10px;
+        top: 10px;
+    }
+
+    .scalebar_top-center {
+        left: 50%;
+        top: 10px;
+    }
+
+    .scalebar_top-right {
+        right: 150px;
+        top: 10px;
+    }
+
+    .scalebar_bottom-left {
+        left: 25px;
+        bottom: 25px;
+    }
+
+    .scalebar_bottom-center {
+        left: 50%;
+        bottom: 25px;
+    }
+
+    .scalebar_bottom-right {
+        right: 100px;
+        bottom: 25px;
+    }
+
+    .esriScalebar {
+        z-index: 30;
+        position: absolute;
+        width: 0;
+        height: 20px;
+    }
+
+    .esriScalebarRuler {
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        height: 6px;
+        background-color: White;
+        border: 1px solid #444444;
+    }
+
+    .esriScalebarRulerBlock {
+        overflow: hidden;
+        position: absolute;
+        height: 50%;
+        background-color: #444444;
+    }
+
+    .upper_firstpiece {
+        top: 0;
+        left: 0;
+        width: 25%;
+    }
+
+    .upper_secondpiece {
+        top: 0;
+        left: 50%;
+        width: 25%;
+    }
+
+    .lower_firstpiece {
+        top: 50%;
+        left: 25%;
+        width: 25%;
+    }
+
+    .lower_secondpiece {
+        top: 50%;
+        left: 75%;
+        width: 30%;
+    }
+
+    .esriScalebarLine {
+        overflow: hidden;
+        position: relative;
+        width: 150%;
+        height: 1px;
+        border: 1px solid black;
+    }
+
+    .esriScalebarMetricLineBackground {
+        border: 4px solid white;
+        position: absolute;
+        left: -1px;
+        bottom: 2px;
+    }
+
+    .esriScalebarMetricLine {
+        border-top-style: none;
+        top: -2px;
+    }
+
+    .esriScalebarEnglishLine {
+        border-bottom-style: none;
+        top: 2px;
+    }
+
+    .esriScaleLabelDiv {
+        position: relative;
+        //top: -5px;
+        width: 100%;
+        //padding: 2px;
+    }
+
+    .scaleLabelDiv {
+        position: relative;
+        //width: 100%;
+        //height: 5px;
+    }
+
+    .esriScalebarLabel {
+        font-size: rem(1.0);
+        //position: absolute;
+        //width: 10%;
+        //text-align: center;
+        color: black;
+        font-weight: bold;
+        //height: 5px;
+        //top: -1px;
+    }
+
+    .esriScalebarLineLabel {
+        //position: relative;
+    }
+
+    .esriScalebarFirstNumber {
+        //left: 45%;
+    }
+
+    .esriScalebarSecondNumber {
+        //left: 95%;
+        //white-space: nowrap;
+    }
 }
 
-.scalebar_top-right{
-    right: 150px;
-    top: 10px;
-}
+@mixin overview {
+    .esriOverviewMap {
+        position: absolute;
+        z-index: 99;
+    }
 
-.scalebar_bottom-left{
-    left: 25px;
-    bottom: 25px;
-}
-
-.scalebar_bottom-center{
-    left: 50%;
-    bottom: 25px;
-}
-
-.scalebar_bottom-right{
-    right: 100px;
-    bottom: 25px;
-}
-
-.esriScalebar{
-    z-index:30;
-    position: absolute;
-    width: 0px;
-    height:20px;
-}
-
-.esriScalebarRuler{
-    overflow:hidden;
-    position: relative;
-    width: 100%;
-    height:6px;
-    background-color: White;
-    border:1px solid #444444;
-}
-
-.esriScalebarRulerBlock{
-    overflow:hidden;
-    position: absolute;
-    height:50%;
-    background-color: #444444;
-}
-
-.upper_firstpiece{
-    top:0%;
-    left: 0%;
-    width: 25%;
-}
-
-.upper_secondpiece{
-    top:0%;
-    left: 50%;
-    width: 25%;
-}
-
-.lower_firstpiece{
-    top:50%;
-    left: 25%;
-    width: 25%;
-}
-
-.lower_secondpiece{
-    top:50%;
-    left: 75%;
-    width: 30%;
-}
-
-.esriScalebarLine{
-    overflow:hidden;
-    position: relative;
-    width: 100%;
-    height:6px;
-    border:2px solid #444444;
-}
-
-.esriScalebarMetricLineBackground{
-    border:4px solid white;
-    position: absolute;
-    left: -1px;
-    bottom: 2px;
-}
-
-.esriScalebarMetricLine{
-    border-top-style:none;
-}
-
-.esriScalebarEnglishLine{
-    border-bottom-style:none;
-    top: -2px;
-}
-
-.esriScaleLabelDiv{
-    position: relative;
-    top: -5px;
-    width: 100%;
-    padding: 2px;
-}
-
-.scaleLabelDiv{
-    position: relative;
-    width: 100%;
-    height:5px;
-}
-
-.esriScalebarLabel{
-    font-size:11px;
-    position: absolute;
-    width:10%;
-    text-align:center;
-    color:#666666;
-    font:Verdana;
-    font-weight:bolder;
-    height:5px;
-    top: -1px;
-}
-
-.esriScalebarLineLabel{
-    position: relative;
-}
-
-.esriScalebarFirstNumber{
-    left:45%;
-}
-
-.esriScalebarSecondNumber{
-    left:95%;
-    white-space:nowrap;
-}
-
-
-
-.esriOverviewMap  { position: absolute; z-index: 99; }
-.esriOverviewMap .ovwContainer       { position: absolute; display: none; background-color: #666; }
-/* 
+    .esriOverviewMap .ovwContainer {
+        position: absolute;
+        display: none;
+        background-color: #666;
+    }
+    /*
  * Have added "width 100% height 100%" to the map div in template
  * html to avoid timing problems in built code - where when overview map
  * is about to be created in _initialize method, OverviewMap.css may not
@@ -152,37 +165,129 @@
  * Note: this is reproducible either with built or unbuilt code depending
  * on the browser
  */
-.esriOverviewMap .map        { position: relative; width: 100%; height: 100%; background-color: #FFF; }
-.esriOverviewMap .ovwHighlight  { position: absolute; display: none; z-index: 99; cursor: move; }
-.esriOverviewMap .ovwButton { position: relative; width: 16px; height: 16px; cursor: pointer; z-index: 99; /*background-color: #666;*/ }
-.esriOverviewMap .ovwMaximizer  { display: none; }
-.esriOverviewMap .ovwDisabledButton  { display: none !important; }
-.esriOverviewMap .ovwMaximize  { background: url(../images/overview.png) 0px -130px; }
-.esriOverviewMap .ovwRestore  { background: url(../images/overview.png) 0px -104px; }
+    .esriOverviewMap .map {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: #FFF;
+    }
 
-.esriOverviewMap.ovwTL { top: 0px; left: 0px; }
-.esriOverviewMap.ovwTR { top: 0px; right: 0px; }
-.esriOverviewMap.ovwBL { bottom: 0px; left: 0px; }
-.esriOverviewMap.ovwBR { bottom: 0px; right: 0px; }
+    .esriOverviewMap .ovwHighlight {
+        position: absolute;
+        display: none;
+        z-index: 99;
+        cursor: move;
+    }
 
-.esriOverviewMap.ovwTL .ovwContainer { top: 0px; left: 0px; border-bottom: 1px solid #000; border-right: 1px solid #000; padding-bottom: 2px; padding-right: 2px; }
-.esriOverviewMap.ovwTR .ovwContainer { top: 0px; right: 0px; border-bottom: 1px solid #000; border-left: 1px solid #000; padding-bottom: 2px; padding-left: 2px; }
-.esriOverviewMap.ovwBL .ovwContainer { bottom: 0px; left: 0px; border-top: 1px solid #000; border-right: 1px solid #000; padding-top: 2px; padding-right: 2px; }
-.esriOverviewMap.ovwBR .ovwContainer { bottom: 0px; right: 0px; border-top: 1px solid #000; border-left: 1px solid #000; padding-top: 2px; padding-left: 2px; }
+    .esriOverviewMap .ovwButton {
+        position: relative;
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        z-index: 99;
+        /*background-color: #666;*/
+    }
 
-.esriOverviewMap.ovwTL .ovwShow, .esriOverviewMap.ovwBR .ovwHide { background: url(../images/overview.png) 0px -26px; }
-.esriOverviewMap.ovwTR .ovwShow, .esriOverviewMap.ovwBL .ovwHide { background: url(../images/overview.png) 0px 0px; }
-.esriOverviewMap.ovwBL .ovwShow, .esriOverviewMap.ovwTR .ovwHide { background: url(../images/overview.png) 0px -78px; }
-.esriOverviewMap.ovwBR .ovwShow, .esriOverviewMap.ovwTL .ovwHide { background: url(../images/overview.png) 0px -52px; }
+    .esriOverviewMap .ovwMaximizer {
+        display: none;
+    }
 
-/*.esriOverviewMap.ovwTL .ovwHide { background-image: url(../images/collapse-top-left.png); }
+    .esriOverviewMap .ovwDisabledButton {
+        display: none !important;
+    }
+
+    .esriOverviewMap .ovwMaximize {
+        background: url(../images/overview.png) 0 -130px;
+    }
+
+    .esriOverviewMap .ovwRestore {
+        background: url(../images/overview.png) 0 -104px;
+    }
+
+    .esriOverviewMap.ovwTL {
+        top: 0;
+        left: 0;
+    }
+
+    .esriOverviewMap.ovwTR {
+        top: 0;
+        right: 0;
+    }
+
+    .esriOverviewMap.ovwBL {
+        bottom: 0;
+        left: 0;
+    }
+
+    .esriOverviewMap.ovwBR {
+        bottom: 0;
+        right: 0;
+    }
+
+    .esriOverviewMap.ovwTL .ovwContainer {
+        top: 0;
+        left: 0;
+        border-bottom: 1px solid #000;
+        border-right: 1px solid #000;
+        padding-bottom: 2px;
+        padding-right: 2px;
+    }
+
+    .esriOverviewMap.ovwTR .ovwContainer {
+        top: 0;
+        right: 0;
+        border-bottom: 1px solid #000;
+        border-left: 1px solid #000;
+        padding-bottom: 2px;
+        padding-left: 2px;
+    }
+
+    .esriOverviewMap.ovwBL .ovwContainer {
+        bottom: 0;
+        left: 0;
+        border-top: 1px solid #000;
+        border-right: 1px solid #000;
+        padding-top: 2px;
+        padding-right: 2px;
+    }
+
+    .esriOverviewMap.ovwBR .ovwContainer {
+        bottom: 0;
+        right: 0;
+        border-top: 1px solid #000;
+        border-left: 1px solid #000;
+        padding-top: 2px;
+        padding-left: 2px;
+    }
+
+    .esriOverviewMap.ovwTL .ovwShow,
+    .esriOverviewMap.ovwBR .ovwHide {
+        background: url(../images/overview.png) 0 -26px;
+    }
+
+    .esriOverviewMap.ovwTR .ovwShow,
+    .esriOverviewMap.ovwBL .ovwHide {
+        background: url(../images/overview.png) 0 0;
+    }
+
+    .esriOverviewMap.ovwBL .ovwShow,
+    .esriOverviewMap.ovwTR .ovwHide {
+        background: url(../images/overview.png) 0 -78px;
+    }
+
+    .esriOverviewMap.ovwBR .ovwShow,
+    .esriOverviewMap.ovwTL .ovwHide {
+        background: url(../images/overview.png) 0 -52px;
+    }
+    /*.esriOverviewMap.ovwTL .ovwHide { background-image: url(../images/collapse-top-left.png); }
 .esriOverviewMap.ovwTR .ovwHide { background-image: url(../images/collapse-top-right.png); }
 .esriOverviewMap.ovwBL .ovwHide { background-image: url(../images/collapse-bottom-left.png); }
 .esriOverviewMap.ovwBR .ovwHide { background-image: url(../images/collapse-bottom-right.png); }
 
 .esriOverviewMap .logo-med,
 .esriOverviewMap .logo-sm,*/
-
-.esriOverviewMap .bingLogo-lg { display: none; }
-
-/* Sprites created using http://csssprites.com. Alternate choice: http://spritegen.website-performance.org/ */
+    .esriOverviewMap .bingLogo-lg {
+        display: none;
+    }
+    /* Sprites created using http://csssprites.com. Alternate choice: http://spritegen.website-performance.org/ */
+}
