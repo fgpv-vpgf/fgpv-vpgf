@@ -44,6 +44,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/dijit/OverviewMap', 'OverviewMap'],
         ['esri/dijit/Scalebar', 'Scalebar'],
         ['esri/geometry/Point', 'Point'],
+        ['esri/geometry/Extent', 'Extent'],
         ['esri/layers/ArcGISDynamicMapServiceLayer', 'ArcGISDynamicMapServiceLayer'],
         ['esri/layers/ArcGISImageServiceLayer', 'ArcGISImageServiceLayer'],
         ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],

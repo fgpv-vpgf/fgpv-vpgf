@@ -22,6 +22,7 @@ module.exports = function (esriBundle) {
         Map: esriBundle.Map,
         OverviewMap: esriBundle.OverviewMap,
         Scalebar: esriBundle.Scalebar,
+        Extent: esriBundle.Extent,
         setupMap,
         setProxy
     };
