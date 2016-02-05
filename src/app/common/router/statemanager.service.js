@@ -228,6 +228,11 @@
                     // emit event on the rootscope when change is complete
                     $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
 
+                    // record history of `active` changes only 
+                    if (property === 'morph') {
+                        return;
+                    }
+
                     let history;
 
                     if (item.parent && value) { // add to history only when a child opens or ...
