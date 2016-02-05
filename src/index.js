@@ -41,7 +41,9 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/dijit/Basemap', 'Basemap'],
         ['esri/dijit/BasemapGallery', 'BasemapGallery'],
         ['esri/dijit/BasemapLayer', 'BasemapLayer'],
+        ['esri/dijit/OverviewMap', 'OverviewMap'],
         ['esri/dijit/Scalebar', 'Scalebar'],
+        ['esri/geometry/Extent', 'Extent'],
         ['esri/geometry/Point', 'Point'],
         ['esri/layers/ArcGISDynamicMapServiceLayer', 'ArcGISDynamicMapServiceLayer'],
         ['esri/layers/ArcGISImageServiceLayer', 'ArcGISImageServiceLayer'],
@@ -53,6 +55,8 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/request', 'esriRequest'],
         ['esri/SpatialReference', 'SpatialReference'],
         ['esri/tasks/GeometryService', 'GeometryService'],
+        ['esri/tasks/IdentifyParameters', 'IdentifyParameters'],
+        ['esri/tasks/IdentifyTask', 'IdentifyTask'],
         ['esri/tasks/ProjectParameters', 'ProjectParameters']
     ];
 

@@ -7,6 +7,8 @@ const basemap = require('./basemap.js');
   * @description
   *
   * The `MapManager` module exports an object with the following properties:
+  * - `Map` {type} of esri/map
+  * - `OverviewMap` {type} of esri/dijit/OverviewMap
   * - `Scalebar` {type} of esri/dijit/Scalebar
   * - `setupMap` {function} interates over config settings and apply logic for any items present.
   */
@@ -17,8 +19,10 @@ module.exports = function (esriBundle) {
     // it has minimum interaction after creation, no need for the additional
     // scalebar.js
     const mapManager = {
-        Scalebar: esriBundle.Scalebar,
         Map: esriBundle.Map,
+        OverviewMap: esriBundle.OverviewMap,
+        Scalebar: esriBundle.Scalebar,
+        Extent: esriBundle.Extent,
         setupMap,
         setProxy
     };
@@ -42,6 +46,7 @@ module.exports = function (esriBundle) {
      * @return {Object} with following properties:
      * <ul>
      *    <li>BasemapControl - an object with setBasemap function and a BasemapGallery object</li>
+     *    <li>OverviewMapControl - a reference to the overviewMap control on the map</li>
      *    <li>ScalebarControl - a reference to the scalebar control on the map</li>
      * </ul>
      */
@@ -49,6 +54,7 @@ module.exports = function (esriBundle) {
 
         let basemapCtrl;
         let scalebarCtrl;
+        let overviewMapCtrl;
 
         // check to see if property exists in settings
         if ('basemaps' in settings) {
@@ -61,6 +67,8 @@ module.exports = function (esriBundle) {
 
             // basemapCtrl is a basemap gallery object, should store this value for application use
             basemapCtrl = lbasemap.makeBasemaps(settings.basemaps, map);
+        } else {
+            console.warn('warning: basemaps setting does not exist');
         }
 
         // TODO: add code to setup scalebar
@@ -75,18 +83,32 @@ module.exports = function (esriBundle) {
             scalebarCtrl.show();
 
         } else {
-            console.log('scalebar setting does not exists');
+            console.warn('scalebar setting does not exists');
         }
 
         // TODO: add code to setup north arrow
 
-        // TODO: add code to setup overview map
+        // Setup overview map
+        // todo: add visible to setting
+        if ('overviewMap' in settings && 'visible' in settings.overviewMap &&
+            settings.overviewMap.visible === true) {
+            overviewMapCtrl = mapManager.OverviewMap({
+                map: map,
+                visible: settings.overviewMap.visible
+            });
+
+            overviewMapCtrl.startup();
+        } else {
+            console.warn('info: overviewMap setting does not exist, or it\'s visible' +
+                ' setting is set to false.');
+        }
 
         // TODO: add code to setup mouse co-ordinates
 
         // return as object so we can use this in our geo section of fgpv
         return {
             BasemapControl: basemapCtrl,
+            OverviewMapControl: overviewMapCtrl,
             ScalebarControl: scalebarCtrl
         };
     }
