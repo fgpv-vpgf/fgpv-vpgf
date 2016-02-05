@@ -18,7 +18,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService(stateManager, $timeout, $rootScope, $http, geoService) {
+    function tocService(stateManager, displayManager, $timeout, $rootScope, $http, geoService) {
         // TODO: remove after switching to the real config
         // jscs:disable maximumLineLength
         const service = {
@@ -798,7 +798,7 @@
         // jscs:enable maximumLineLength
 
         // TODO: move requestId counter to stateManager
-        let requestIdCounter = 1;
+        //let requestIdCounter = 1;
 
         // set layer control defaults
         // TODO: should be done when parsing config file
@@ -907,13 +907,13 @@
             const requester = {
                 id: layer.id
             };
-            const requestId = togglePanelContent('sideSettings', 'settings', requester, 'filters');
+            const requestId = displayManager.toggleDisplayPanel('sideSettings', requester, 'filters');
 
             if (requestId === -1) {
                 return;
             }
 
-            updateDisplayedData('sideSettings', requestId, {}, true);
+            displayManager.setDisplayData('sideSettings', requestId, {}, true);
         }
 
         /**
@@ -935,7 +935,7 @@
             };
 
             // we have to set the loading indicator immediatelly because the creating of the datatable block ui from updating and uless the indicator is already set, it will be visible until after the table is created
-            const requestId = togglePanelContent('filtersFulldata', 'filters', requester, 'side', 0);
+            const requestId = displayManager.toggleDisplayPanel('filtersFulldata', requester, 'side', 0);
 
             if (requestId === -1) {
                 return;
@@ -950,7 +950,7 @@
             console.log('TOC, is loading', stateManager.display.filters.isLoading);
 
             // need to use 0 timeout; otherwise the loading indicator will never be shown as ui gets blocked by datatable construction
-            $timeout(() => updateDisplayedData('filtersFulldata', requestId, newData, false), 0);
+            $timeout(() => displayManager.setDisplayData('filtersFulldata', requestId, newData, false), 0);
         }
 
         /**
@@ -963,7 +963,7 @@
             const requester = {
                 id: layer.id
             };
-            const requestId = togglePanelContent('sideMetadata', 'metadata', requester, 'filters', 1000);
+            const requestId = displayManager.toggleDisplayPanel('sideMetadata', requester, 'filters');
 
             if (requestId === -1) {
                 return;
@@ -971,7 +971,7 @@
 
             // check if metadata is cached
             if (layer.cache.metadata) {
-                updateDisplayedData('sideMetadata', requestId, layer.cache.metadata, true);
+                displayManager.setDisplayData('sideMetadata', requestId, layer.cache.metadata, true);
             } else { // else, retrieve it;
                 // TODO: generate some metadata to display functionality
                 const mdata = HolderIpsum.paragraphs(2, true);
@@ -980,7 +980,7 @@
                 $timeout(() => {
                     layer.cache.metadata = mdata;
 
-                    updateDisplayedData('sideMetadata', requestId, layer.cache.metadata, true);
+                    displayManager.setDisplayData('sideMetadata', requestId, layer.cache.metadata, true);
                 }, Math.random() * 3000 + 300); // random delay
             }
         }
@@ -1005,7 +1005,7 @@
          * @param  {Number} delay            time to wait before setting loading indicator
          * @return {Number} return a data requestId; if equals -1, the panel will be closed, no further actions needed; otherwise, the panel will be opened
          */
-        function togglePanelContent(panelName, _contentName, requester, panelNameToClose, delay = 100) {
+        /*function toggleDisplayPanel(panelName, _contentName, requester, panelNameToClose, delay = 100) {
             const displayName = stateManager.state[panelName].display;
             if (typeof displayName === 'undefined') {
                 return -1; // display for this panel is not defined, exit
@@ -1055,7 +1055,7 @@
 
                 return requestIdCounter;
             }
-        }
+        }*/
 
         /**
          * Updates displayed data for a specific content like layer metadata in the metadata panel.
@@ -1066,7 +1066,7 @@
          * @param {Object} data          data to be displayed
          * @param {Boolean} isLoaded     flag to remove loading indicator from the panel
          */
-        function updateDisplayedData(panelName, requestId, data, isLoaded) {
+        /*function setDisplayData(panelName, requestId, data, isLoaded) {
             const displayName = stateManager.state[panelName].display;
             if (typeof displayName === 'undefined') {
                 return -1; // display for this panel is not defined, exit
@@ -1090,7 +1090,7 @@
                 console.log(displayName, 'Data rejected for request id ', requestId,
                     '; loading in progress');
             }
-        }
+        }*/
 
         /**
          * Sets a watch on StateManager for layer data panels. When the panel is opened/closed, calls changeContentState to dehighlight layer options and checks the state of the layer item itself (selected / not selected).
@@ -1112,23 +1112,17 @@
             });*/
 
             $rootScope.$watch(() => stateManager.display[contentName].requester, (newRequester, oldRequester) => {
-                // requester is set to null by `changeContentState` when panel closes; nothing to do here
-                /*if (requester === null) {
-                    return;
-                }*/
-
-                // requester changed; in cases when panel is already open, need to update the selected layer
-                //changeContentState(requester.id, contentName, requester !== null);
-
-                //console.log('---M requestor', contentName, requester);
-
                 if (newRequester !== null) {
                     // deselect layer from the old requester if layer ids don't match
                     if (oldRequester !== null && oldRequester.id !== newRequester.id) {
                         changeContentState(oldRequester.id, contentName, false);
                     }
 
+                    // select the new layer
                     changeContentState(newRequester.id, contentName);
+                } else if (oldRequester !== null) {
+                    // deselect the old layer since the panel is closed as the newRequester is null
+                    changeContentState(oldRequester.id, contentName, false);
                 }
             });
         }
@@ -1153,7 +1147,7 @@
                         layer.selected = false;
                         Object.keys(layer.options).forEach(optionName => {
                             layer.options[optionName].selected = false;
-                        })
+                        });
                     });
                 }
 
@@ -1167,7 +1161,7 @@
 
                 // if panel is closed, set current display to null to prevent previous display from showing up during loading
                 /*if (!newValue) {
-                    //updateDisplayedData(contentName);
+                    //displayManager.setDisplayData(contentName);
                     // TODO: some of this ought to be moved to stateManager
                     //stateManager.display[contentName].data = null;
 
