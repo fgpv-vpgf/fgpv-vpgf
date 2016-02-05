@@ -250,5 +250,14 @@
     },
     "overviewMap": {
         "visible": true
+    },
+    "fullExtent": {
+        "xmin": -20200000,
+        "ymin": 4829000,
+        "xmax": -1415000,
+        "ymax": 12940000,
+        "spatialReference": {
+            "wkid": 102100
+        }
     }
 }
