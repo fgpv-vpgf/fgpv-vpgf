@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService(layerTypes, $http) {
+    function geoService($http, layerTypes, configDefaults) {
 
         //TODO update how the layerOrder works with the UI
         //Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -48,19 +48,19 @@
         /**
          * Adds a layer object to the layers registry
          * @param {object} layer the API layer object
-         * @param {object} config a configuration fragment used to generate the layer
+         * @param {object} initialState a configuration fragment used to generate the layer
          * @param {object} attribs an optional object containing the attributes associated with the layer
          * @param {number} position an optional index indicating at which position the layer was added to the map
          * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
          */
-        function registerLayer(layer, config, attribs, position) {
+        function registerLayer(layer, initialState, attribs, position) {
             //TODO determine the proper docstrings for a non-service function that lives in a service
 
             if (!layer.id) {
                 //TODO replace with proper error handling mechanism
                 console.error('Attempt to register layer without id property');
                 console.log(layer);
-                console.log(config);
+                console.log(initialState);
             }
 
             if (service.layers[layer.id]) {
@@ -70,11 +70,12 @@
 
             //TODO should attribs be defined and set to null, or simply omitted from the object?  some layers will not have attributes. others will be added after they load
             let l = {
-                layer
+                layer,
+
+                // apply layer option defaults
+                state: angular.merge({}, configDefaults.layerOptions, configDefaults.layerFlags, initialState)
             };
-            if (config) {
-                l.state = config;
-            }
+
             if (attribs) {
                 l.attribs = attribs;
             }
@@ -183,6 +184,9 @@
                 commonConfig.opacity = 0.3;
                 return new service.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig);
             };
+            handlers[layerTypes.esriTile] = config => {
+                return new service.gapi.layer.TileLayer(config.url, commonConfig);
+            };
             handlers[layerTypes.ogcWms] = config => {
                 commonConfig.visibleLayers = [config.layerName];
                 return new service.gapi.layer.WmsLayer(config.url, commonConfig);
@@ -244,13 +248,12 @@
             }
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
+                registerLayer(l, layerConfig); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                 map.addLayer(l);
 
                 // wait for layer to load before registering
                 service.gapi.events.wrapEvents(l, {
                     load: () => {
-                        registerLayer(l, layerConfig);
-
                         // get the attributes for the layer
                         const a = service.gapi.attribs.loadLayerAttribs(l);
 
@@ -268,7 +271,24 @@
             });
 
             // setup map using configs
-            mapManager = service.gapi.mapManager.setupMap(map, config);
+            // FIXME: I should be migrated to the new config schema when geoApi is updated
+            const mapSettings = { basemaps: [], scalebar: {}, overviewMap: {} };
+            if (config.rampStyleBasemaps) {
+                mapSettings.basemaps = config.rampStyleBasemaps;
+            }
+
+            if (config.scalebar.visible) {
+                mapSettings.scalebar = {
+                    attachTo: 'bottom-left',
+                    scalebarUnit: 'dual'
+                };
+            }
+
+            if (config.overviewMap) {
+                mapSettings.overviewMap = config.overviewMap;
+            }
+
+            mapManager = service.gapi.mapManager.setupMap(map, mapSettings);
 
             // FIXME temp link for debugging
             window.FGPV = { layers: service.layers };
@@ -279,8 +299,9 @@
          * @param {string} uid identifier for a specific basemap layerbower
          */
         function selectBasemap(uid) {
-            if (typeof (mapManager) === 'undefined') {
-                console.log('Error: Map manager is not setup, please setup map manager by calling setupMap().');
+            if (typeof (mapManager) === 'undefined' || !mapManager.BasemapControl) {
+                console.error('Error: Map manager or basemap control is not setup,' +
+                              ' please setup map manager by calling setupMap().');
             } else {
                 mapManager.BasemapControl.setBasemap(uid);
             }

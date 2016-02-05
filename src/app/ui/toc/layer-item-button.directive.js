@@ -32,7 +32,7 @@
                 return `app/ui/toc/layer-item-${type}.html`;
             },
             scope: {
-                action: '&?',
+                action: '&?', // overloading default template action
                 name: '@'
             },
             link: link,
@@ -50,10 +50,9 @@
 
             // getting toggle object from the layer item controller directly using toggle's name
             self.layer = ctrl.layer;
-            self.control = ctrl.layer.toggles[self.name];
-
-            // getting toggle's default action from the tocService using it's name
-            self.action = self.action || tocService.presets.toggles[self.name].action;
+            self.control = ctrl.layer.options[self.name];
+            self.template = tocService.presets.options[self.name];
+            self.action = self.action || self.template.action;
         }
     }
 })();

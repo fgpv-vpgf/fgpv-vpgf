@@ -15,6 +15,7 @@ var config = require('./gulp.config')();
 var Server = require('karma').Server;
 var dateFormat = require('dateformat');
 var through = require('through2');
+var merge = require('merge-stream');
 
 require('gulp-help')(gulp);
 
@@ -49,16 +50,16 @@ gulp.task('vet', 'Checks code against style guidelines', function () {
 
 gulp.task('validate', 'Validate all config files against the config schema', function () {
     return gulp.src(config.src + 'config*.json')
-            .pipe($.tv4(config.src + 'schema.json'))
-            .pipe(through.obj(function (file, enc, callback) {
-                callback(null, file);
-                if (!file.tv4.valid) {
-                    $.util.log($.util.colors.red(file.tv4.error.message));
-                    $.util.log($.util.colors.red('JSON validation error(s) found in ' + file.path));
-                    process.exit(1);
-                }
-            }))
-            .pipe($.if(args.verbose, $.print()));
+        .pipe($.tv4(config.src + 'schema.json'))
+        .pipe(through.obj(function (file, enc, callback) {
+            callback(null, file);
+            if (!file.tv4.valid) {
+                $.util.log($.util.colors.red(file.tv4.error.message));
+                $.util.log($.util.colors.red('JSON validation error(s) found in ' + file.path));
+                process.exit(1);
+            }
+        }))
+        .pipe($.if(args.verbose, $.print()));
 });
 
 /**
@@ -72,29 +73,10 @@ gulp.task('plato', 'Generate visualizer report', function (done) {
 });
 
 /**
- * Create $templateCache from the html templates
- * @return {Stream}
- */
-gulp.task('templatecache', 'Create a cache of HTML templates', ['clean-templates'], function () {
-    log('Creating an AngularJS $templateCache');
-
-    return gulp
-        .src(config.htmltemplates)
-        .pipe($.if(args.verbose, $.bytediff.start()))
-        .pipe($.minifyHtml({ empty: true }))
-        .pipe($.if(args.verbose, $.bytediff.stop(bytediffFormatter)))
-        .pipe($.angularTemplatecache(
-            config.templateCache.file,
-            config.templateCache.options
-        ))
-        .pipe(gulp.dest(config.build));
-});
-
-/**
  * Remove all files from the build, temp, and reports folders
  * @param  {Function} done - callback when complete
  */
-gulp.task('clean', 'Delete all build and report files', ['clean-sass', 'clean-templates'],
+gulp.task('clean', 'Delete all build and report files', ['clean-sass'],
     function (done) {
         var delconfig = [].concat(config.build, config.report);
         log('Cleaning: ' + $.util.colors.blue(delconfig));
@@ -109,14 +91,6 @@ gulp.task('clean-sass', false, function (done) {
     del(config.css, done);
 });
 
-/**
- * Remove all templates from the temp folders
- * @param  {Function} done - callback when complete
- */
-gulp.task('clean-templates', false, function (done) {
-    del(config.templates, done);
-});
-
 gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
     function () {
         log('Compiling SASS --> CSS');
@@ -126,37 +100,11 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
             .pipe($.sass().on('error', $.sass.logError))
             .pipe($.autoprefixer('last 2 version', '> 5%'))
 
+            .pipe($.if(args.prod, $.cssnano()))
+
             .pipe(gulp.dest(config.build))
 
             .pipe($.connect.reload());
-    }
-);
-
-gulp.task('jsbuild', 'Annotate, transpile and concat JS development files', ['validate', 'version'],
-    function () {
-        injectError(false);
-
-        let versionFilter = $.filter('**/version.*.js', { restore: true });
-
-        return gulp
-            .src(config.js)
-            .pipe(versionFilter)
-            .pipe($.insert.transform(injectVersion))
-            .pipe(versionFilter.restore)
-            .pipe($.sourcemaps.init())
-            .pipe($.plumber({ errorHandler: injectError }))
-            .pipe($.babel())
-            .pipe($.plumber.stop())
-            .pipe($.ngAnnotate({
-                remove: true,
-                add: true,
-                single_quotes: true
-            }))
-            .pipe($.angularFilesort())
-            .pipe($.concat(config.jsSingleFile))
-            .pipe($.uglify())
-            .pipe($.sourcemaps.write('.'))
-            .pipe(gulp.dest(config.build));
     });
 
 function injectVersion(contents) {
@@ -182,12 +130,62 @@ function injectError(error) {
         .pipe(gulp.dest(config.build));
 }
 
-gulp.task('libbuild', 'Concat bower dependencies',
-    function () {
-        return gulp.src(bowerFiles())
-            .pipe($.concat(config.jsLibFile))
-            .pipe(gulp.dest(config.build));
-    });
+/**
+ * Concat and optionally uglify js libs.
+ * @return {Stream}
+ */
+function libbuild() {
+    return gulp.src(bowerFiles())
+        .pipe($.concat(config.jsLibFile))
+        .pipe($.if(args.prod, $.uglify()));
+}
+
+/**
+ * Create $templateCache from the html templates
+ * @return {Stream}
+ */
+function templatecache() {
+    return gulp
+        .src(config.htmltemplates)
+        .pipe($.if(args.verbose, $.bytediff.start()))
+        .pipe($.minifyHtml({ empty: true }))
+        .pipe($.if(args.verbose, $.bytediff.stop(bytediffFormatter)))
+        .pipe($.angularTemplatecache(
+            config.templateCache.file,
+            config.templateCache.options
+            ))
+        .pipe($.if(args.prod, $.uglify()));
+}
+
+/**
+ * Prepare main app js file.
+ * @return {Stream}
+ */
+function jsbuild() {
+    injectError(false);
+
+    let versionFilter = $.filter('**/version.*.js', { restore: true });
+
+    return gulp
+        .src(config.js)
+        .pipe(versionFilter)
+        .pipe($.insert.transform(injectVersion))
+        .pipe(versionFilter.restore)
+        .pipe($.sourcemaps.init())
+        .pipe($.plumber({ errorHandler: injectError }))
+        .pipe($.babel())
+        .pipe($.plumber.stop())
+        .pipe($.ngAnnotate({
+            remove: true,
+            add: true,
+            single_quotes: true
+        }))
+        .pipe($.angularFilesort())
+        .pipe($.concat(config.jsSingleFile))
+
+        // if prod, uglify; if not, write sourcemaps inline because it will be merged with other libraries and it's not possible to use external files in that case
+        .pipe($.if(args.prod, $.uglify(), $.sourcemaps.write()));
+}
 
 gulp.task('assetcopy', 'Copy fixed assets to the build directory',
     function () {
@@ -202,13 +200,42 @@ gulp.task('translate', 'Split translation csv into internationalized files',
             .pipe(gulp.dest(config.build));
     });
 
+gulp.task('jsrollup', 'Roll up all js into one file',
+    ['jsinjector', 'validate', 'version'],
+    function () {
+
+        const jslib = libbuild();
+        const jscache = templatecache();
+        const jsapp = jsbuild();
+        const seed = gulp.src(`${config.app}app-seed.js`); // app-seed `must` be the last item
+
+        // merge all js streams to avoid writing individual files to disk
+        return merge(jslib, jscache, jsapp, seed) // merge doesn't guarantee file order :(
+            .pipe($.order([
+                'lib.js',
+                'app.js',
+                'templates.js',
+                'app-seed.js'
+            ]))
+            .pipe($.concat(config.jsCoreFile))
+            .pipe(gulp.dest(config.build));
+    });
+
+gulp.task('jsinjector', 'Copy fixed assets to the build directory',
+    function () {
+        return gulp.src(config.jsInjectorFile)
+            .pipe($.babel())
+            .pipe($.if(args.prod, $.uglify()))
+            .pipe(gulp.dest(config.build));
+    });
+
 gulp.task('inject', 'Adds configured dependencies to the HTML page',
-    ['sass', 'templatecache', 'jsbuild', 'libbuild', 'assetcopy'],
+    ['sass', 'jsrollup', 'assetcopy'],
     function () {
         var index = config.index;
         var js = config.js;
 
-        log('Injecting JS, CSS');
+        log('Injecting JS');
 
         if (args.protractor) {
             index = config.indexProtractor;
@@ -225,23 +252,15 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
 
         return gulp
             .src(index)
-
-            .pipe($.inject(gulp.src(config.jsLibFilePath), injectOpts('vendor')))
-            .pipe($.inject(gulp.src(config.jsSingleFilePath), injectOpts()))
-
-            .pipe($.inject(gulp.src(config.csslib), injectOpts('vendor')))
-            .pipe($.inject(gulp.src(config.css), injectOpts()))
-
-            .pipe($.inject(gulp.src(config.templates), injectOpts('templates')))
-
+            .pipe($.inject(gulp.src(config.jsInjectorFilePath), injectOpts()))
             .pipe(gulp.dest(config.build));
-    }
-);
+    });
 
 /**
  * Serves the app.
  * -- test  : run Karma auto tests in parallel
- * -- protractor: prepare index-protractor page and do not inject app-seed
+ * -- protractor  : prepare index-protractor page and do not inject app-seed
+ * -- prod  : minify everything
  */
 gulp.task('serve:dev', 'Build the application and start a local development server',
     ['vet', 'inject', 'translate'],
@@ -261,7 +280,7 @@ gulp.task('serve:dev', 'Build the application and start a local development serv
  * @return {Stream}
  */
 gulp.task('test', 'Run style checks and unit tests',
-    ['vet', 'templatecache', 'translate'],
+    ['vet', 'translate'],
     function (done) {
         startTests(true, done);
     });
@@ -272,7 +291,7 @@ gulp.task('test', 'Run style checks and unit tests',
  * Watch for file changes and re-run tests on each change
  */
 gulp.task('test:auto', 'Run unit tests and keep watching for changes',
-    ['vet', 'templatecache', 'translate'],
+    ['vet', 'translate'],
     function (done) {
         startTests(false, done);
     });
@@ -312,32 +331,35 @@ function serve(isDev) {
         ;
 
         gulp
-            .watch(config.watchhtml, ['reloadcache'])
+            .watch(config.watchhtml, ['reloadapp'])
+            .on('change', logWatch)
+        ;
+
+        gulp
+            .watch(config.watchconfig, ['reloadconfig'])
             .on('change', logWatch)
         ;
     }
 }
 
 /**
- * Reloads app.js file on source files changes. Do not call directly.
+ * Reloads core.js file on source files changes. Do not call directly.
  * @return {Stream}
  */
-gulp.task('reloadapp', 'Repackaging app...', ['jsbuild'], function () {
+gulp.task('reloadapp', 'Repackaging app...', ['jsrollup'], function () {
     return gulp
-        .src(config.jsSingleFilePath)
-        .pipe($.connect.reload())
-    ;
+        .src(config.jsInjectorFilePath)
+        .pipe($.connect.reload());
 });
 
 /**
- * Reloads template cache on template files changes. Do not call directly.
+ * Copy changed config and validate against schema on config files changes. Reload core.js. Do not call directly.
  * @return {Stream}
  */
-gulp.task('reloadcache', 'Repackaging templates...', ['templatecache'], function () {
+gulp.task('reloadconfig', 'Repackaging app...', ['validate', 'assetcopy'], function () {
     return gulp
-        .src(config.jsSingleFilePath)
-        .pipe($.connect.reload())
-    ;
+        .src(config.jsInjectorFilePath)
+        .pipe($.connect.reload());
 });
 
 /**
@@ -361,8 +383,14 @@ function startTests(singleRun, done) {
         karmaConfig.reporters = ['progress', 'coverage'];
     }
 
-    karma = new Server(karmaConfig, karmaCompleted);
-    karma.start();
+    // generate template module for tests
+    templatecache()
+        .pipe(gulp.dest(config.tmp))
+        .on('end', () => {
+            // wait for templates before starting tests
+            karma = new Server(karmaConfig, karmaCompleted);
+            karma.start();
+        });
 
     ////////////////
 
@@ -480,7 +508,7 @@ function log(msg) {
 gulp.task('version', function (done) {
     let version = getVersion();
 
-    $.git.revParse({ args:'--short HEAD' }, function (err, hash) {
+    $.git.revParse({ args: '--short HEAD' }, function (err, hash) {
         if (err) {
             console.error('Cannot get current git hash');
         }
@@ -497,14 +525,14 @@ gulp.task('version', function (done) {
  * @return {Object} version info
  */
 function getVersion() {
-    let now =  new Date();
+    let now = new Date();
     let version = pkg.version.split('.');
 
     return {
         major: version[0],
         minor: version[1],
         patch: version[2],
-        timestamp: dateFormat(now, 'dd-mm-yyyy HH:MM:ss')
+        timestamp: dateFormat(now, 'yyyy-mm-dd HH:MM:ss')
     };
 }
 
@@ -514,7 +542,7 @@ function getVersion() {
 gulp.task('docs-clean', function (done) {
     return del([
         'dist/docs/**'
-        ], done);
+    ], done);
 });
 
 /**
@@ -529,7 +557,7 @@ gulp.task('docs-build', ['docs-clean'], function () {
 // !myDgeni/docs/app/js/**/*.txt is for exclusion.
 gulp.task('docs-resources', ['docs-build'], function () {
     return gulp.src(['docs/app/**/*', '!docs/app/js/**/*.txt'])
-    .pipe(gulp.dest('dist/docs/app'));
+        .pipe(gulp.dest('dist/docs/app'));
 });
 
 /**

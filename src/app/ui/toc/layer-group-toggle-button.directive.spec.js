@@ -1,4 +1,4 @@
-/* global bard, $compile, $rootScope, tocService */
+/* global bard, $compile, $rootScope, $httpBackend, tocService */
 
 describe('rvLayerGroupToggleButton', () => {
     let scope;
@@ -8,12 +8,11 @@ describe('rvLayerGroupToggleButton', () => {
     // mock part of the controller required by rvLayerGroupToggleButton directive
     const layerGroupToggleController = {
         group: {
-            type: 'group',
             name: 'Image Layers',
             id: 1,
             expanded: false,
             items: [],
-            toggles: {
+            options: {
                 visibility: {
                     value: 'on', //'off', 'zoomIn', 'zoomOut'
                     enabled: true
@@ -27,10 +26,10 @@ describe('rvLayerGroupToggleButton', () => {
         bard.appModule('app.ui.toc', 'app.templates', 'ngMaterial', 'app.common.router', 'app.geo');
 
         // inject angular services
-        bard.inject('$compile', '$rootScope', 'tocService');
+        bard.inject('$compile', '$rootScope', '$httpBackend', 'tocService');
 
         // spy on group visibility toggle method
-        spyOn(tocService.presets.groupToggles.visibility, 'action');
+        spyOn(tocService.presets.groupOptions.visibility, 'action');
 
         // crete new scope
         scope = $rootScope.$new();
@@ -44,6 +43,10 @@ describe('rvLayerGroupToggleButton', () => {
         directiveElement.data('$rvLayerGroupToggleController',
             layerGroupToggleController);
         directiveElement.data('$mdDialogProvider', {});
+
+        $httpBackend.expectGET('content/images/iconsets/action-icons.svg')
+            .respond({});
+
         directiveElement = $compile(directiveElement)(scope);
         scope.$digest();
 
@@ -71,7 +74,7 @@ describe('rvLayerGroupToggleButton', () => {
             directiveScope.self.action(directiveScope.self.group);
 
             // check if the corresponding method on tocService has been called
-            expect(tocService.presets.groupToggles.visibility.action)
+            expect(tocService.presets.groupOptions.visibility.action)
                 .toHaveBeenCalled();
         });
     });

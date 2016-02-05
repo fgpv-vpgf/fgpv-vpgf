@@ -1,27 +1,27 @@
 <div class="main-appbar rv-whiteframe-z2">
     <div class="tools layout">
 
-        <md-button aria-label="Open Sidenav" class="md-icon-button black" rv-help="sidenav-button"
+        <md-button translate translate-attr-aria-label="appbar.aria.menu" class="md-icon-button black" rv-help="sidenav-button"
             ng-click="self.layoutService.sidenav.open()">
-            <md-tooltip>Menu</md-tooltip>
+            <md-tooltip>{{'appbar.tooltip.menu' | translate}}</md-tooltip>
             <md-icon md-svg-src="navigation:menu"></md-icon>
         </md-button>
 
         <span flex></span>
-        <md-button aria-label="Point Information" class="md-icon-button primary" rv-help="details-button"
+        <md-button translate translate-attr-aria-label="appbar.aria.pointInfo" class="md-icon-button primary" rv-help="details-button"
             ng-class="{ selected: self.stateManager.state.mainDetails.active }" ng-click="self.toggleDetails()"
             ng-show="self.stateManager.display.details.data">
-            <md-tooltip>Point Information</md-tooltip>
+            <md-tooltip>{{'appbar.tooltip.pointInfo' | translate}}</md-tooltip>
             <md-icon md-svg-src="maps:place"></md-icon>
         </md-button>
-        <md-button aria-label="Sets" class="md-icon-button primary" rv-help="toc-button"
+        <md-button translate translate-attr-aria-label="appbar.aria.layers" class="md-icon-button primary" rv-help="toc-button"
             ng-class="{ selected: self.stateManager.state.mainToc.active }" ng-click="self.toggleToc()">
-            <md-tooltip>Layers</md-tooltip>
+            <md-tooltip>{{'appbar.tooltip.layers' | translate}}</md-tooltip>
             <md-icon md-svg-src="maps:layers"></md-icon>
         </md-button>
-        <md-button aria-label="Tools" class="md-icon-button primary" rv-help="tool-button"
+        <md-button translate translate-attr-aria-label="appbar.aria.tools" class="md-icon-button primary" rv-help="tool-button"
             ng-class="{ selected: self.stateManager.state.mainToolbox.active }" ng-click="self.toggleToolbox()">
-            <md-tooltip>Tools</md-tooltip>
+            <md-tooltip>{{'appbar.tooltip.tools' | translate}}</md-tooltip>
             <md-icon md-svg-src="content:create"></md-icon>
         </md-button>
     </div>
