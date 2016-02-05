@@ -10,9 +10,9 @@
         <span flex class="rv-spacer"></span>
 
         <!-- show close button if there is a closePanel function -->
-        <md-button aria-label="Close" class="md-icon-button black rv-button-24" ng-click="self.closePanel()"
+        <md-button translate translate-attr-aria-label="contentPane.aria.close" class="md-icon-button black rv-button-24" ng-click="self.closePanel()"
             ng-if="self.closePanel">
-            <md-tooltip>Close</md-tooltip>
+            <md-tooltip>{{'contentPane.tooltip.close' | translate}}</md-tooltip>
             <md-icon md-svg-src="navigation:close"></md-icon>
         </md-button>
     </div>

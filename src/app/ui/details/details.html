@@ -2,7 +2,7 @@
     close-panel="self.closeDetails()"
     static-content="true"
     title-style="title"
-    title-value="Point Information"
+    title-value="{{'details.title' | translate}}"
     is-loading="self.display.isLoading"
     hide-when-loading="self.display.data.length === 1">
     <div class="rv-details" ng-class="{ 'rv-multiple': self.display.data.length > 1 }">
