@@ -233,16 +233,6 @@
                         return;
                     }
 
-                    let displayName = item.display;
-                    if (typeof displayName !== 'undefined' && value === false) {
-                        console.log('displayName', displayName, service.display[displayName]);
-
-                        // null data, and requester info on child panel close
-                        service.display[displayName].data = null;
-                        service.display[displayName].requester = null;
-                        service.display[displayName].requestId = null;
-                    }
-
                     let history;
 
                     if (item.parent && value) { // add to history only when a child opens or ...
