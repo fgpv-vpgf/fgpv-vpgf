@@ -94,7 +94,7 @@ function localProjectExtent(extent, sr) {
 function projectEsriExtentBuilder(esriBundle) {
     return (extent, sr) => {
         const p = localProjectExtent(extent, sr);
-        return new esriBundle.EsriExtent(p.x0, p.y0, p.x1, p.y1, p.sr);
+        return new esriBundle.Extent(p.x0, p.y0, p.x1, p.y1, p.sr);
     };
 }
 
