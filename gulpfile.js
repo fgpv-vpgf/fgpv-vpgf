@@ -171,7 +171,8 @@ function jsbuild() {
         .pipe(versionFilter)
         .pipe($.insert.transform(injectVersion))
         .pipe(versionFilter.restore)
-        .pipe($.sourcemaps.init())
+
+        //.pipe($.sourcemaps.init())
         .pipe($.plumber({ errorHandler: injectError }))
         .pipe($.babel())
         .pipe($.plumber.stop())
@@ -184,7 +185,7 @@ function jsbuild() {
         .pipe($.concat(config.jsSingleFile))
 
         // if prod, uglify; if not, write sourcemaps inline because it will be merged with other libraries and it's not possible to use external files in that case
-        .pipe($.if(args.prod, $.uglify(), $.sourcemaps.write()));
+        .pipe($.if(args.prod, $.uglify())); //, $.sourcemaps.write()));
 }
 
 gulp.task('assetcopy', 'Copy fixed assets to the build directory',
