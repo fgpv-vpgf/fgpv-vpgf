@@ -33,7 +33,7 @@
          * Toggles the specified panel with following logic:
          * The requested panel can be open or closed;
          *     open:
-         *         the content alredy in the panel can belong to a differen layer
+         *         the content alredy in the panel can belong to a different layer
          *             same layer:
          *                 -> close panel
          *             different layer:
