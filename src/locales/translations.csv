@@ -24,3 +24,5 @@ Filter pane menu label for Enable Search,filter.menu.enableSearch,Enable Search,
 Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable Filters,[fr] Enable Filters
 Filter pane menu label for Print,filter.menu.print,Print,[fr] Print
 Filter pane menu label for Export,filter.menu.export,Export,[fr] Export
+Map Navigation slider only text,nav.sliderOnly,slider only,[fr] slider only
+Map Navigation slider text,nav.slider,slider,[fr] slider
