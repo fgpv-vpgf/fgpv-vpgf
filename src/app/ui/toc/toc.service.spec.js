@@ -86,19 +86,21 @@ describe('tocService', () => {
             expect(display.data.length)
                 .toBeGreaterThan(0); // some metadata was generated
 
-            spyWatch('sideMetadata', newValue => {
-
+            rs.$watch(() => stateManager.display.metadata.requester, newRequester => {
                 // waiting for sideMetadata to close, it should clear metadata display object
-                if (!newValue) {
-
+                if (newRequester === null) {
                     expect(display.requestId)
                         .toEqual(null); // request id is reset
                     expect(layerOption.selected)
                         .toBe(false); // layer toggle no longer selected
 
+                    expect(sm.state.sideMetadata.active)
+                        .toBe(false);
+
                     done();
                 }
             });
+
             toggle.action(layer); // close metadata panel;
             rs.$digest();
 
