@@ -172,6 +172,7 @@ function jsbuild() {
         .pipe($.insert.transform(injectVersion))
         .pipe(versionFilter.restore)
 
+        // TODO: fix this: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/293
         //.pipe($.sourcemaps.init())
         .pipe($.plumber({ errorHandler: injectError }))
         .pipe($.babel())
