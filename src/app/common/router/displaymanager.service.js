@@ -8,7 +8,7 @@
      * @requires dependencies
      * @description
      *
-     * The `displayManager` factory description.
+     * The `displayManager` factory handles the display of dynamically retrived or constructed data like layer metadata, attributes, details, or settings.
      *
      */
     angular
@@ -30,7 +30,7 @@
         ///////////
 
         /**
-         * Toggles panel specified with following logic:
+         * Toggles the specified panel with following logic:
          * The requested panel can be open or closed;
          *     open:
          *         the content alredy in the panel can belong to a differen layer
@@ -41,6 +41,8 @@
          *     closed:
          *         -> open panel
          *
+         * If the panel is not closing, a loading indicator will be triggered (immediately or after a delay).
+         *
          * @param  {String} panelName        panel to open
          * @param  {Object} requester        object requesting display change; must have `id` attribute
          * @param  {String} panelNameToClose name of the panel to close before opening the main one if needed
@@ -48,7 +50,6 @@
          * @return {Number} return a data requestId; if equals -1, the panel will be closed, no further actions needed; otherwise, the panel will be opened
          */
         function toggleDisplayPanel(panelName, requester, panelNameToClose, delay = 100) {
-            console.log(panelName, requester, panelNameToClose, delay);
             const displayName = stateManager.state[panelName].display;
             if (typeof displayName === 'undefined') {
                 return -1; // display for this panel is not defined, exit
@@ -94,7 +95,7 @@
         }
 
         /**
-         * Sets displayed data for a specific content like layer metadata in the metadata panel.
+         * Sets displayed data for a specific content like layer metadata in the metadata panel. It checks agains the provided requestId, if the id matches, the data is set and the loading indidcator is turned off.
          *
          * @param {String} panelName     name of the panel where to update displayed content
          * @param {Number} requestId     request id
