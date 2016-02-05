@@ -252,12 +252,12 @@
         "visible": true
     },
     "fullExtent": {
-        "xmin": -20200000,
-        "ymin": 4829000,
-        "xmax": -1415000,
-        "ymax": 12940000,
+        "xmin": -2681457,
+        "ymin": -883440,
+        "xmax": 3549492,
+        "ymax": 3482193,
         "spatialReference": {
-            "wkid": 102100
+            "wkid": 3978
         }
     }
 }
