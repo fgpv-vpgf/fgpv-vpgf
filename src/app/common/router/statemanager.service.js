@@ -228,9 +228,19 @@
                     // emit event on the rootscope when change is complete
                     $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
 
-                    // record history of `active` changes only 
+                    // record history of `active` changes only
                     if (property === 'morph') {
                         return;
+                    }
+
+                    let displayName = item.display;
+                    if (typeof displayName !== 'undefined' && value === false) {
+                        console.log('displayName', displayName, service.display[displayName]);
+
+                        // null data, and requester info on child panel close
+                        service.display[displayName].data = null;
+                        service.display[displayName].requester = null;
+                        service.display[displayName].requestId = null;
                     }
 
                     let history;
