@@ -12,7 +12,7 @@ md-icon {
 }
 
 @import "_datatable.scss";
-
 @import "_esri.scss";
 
 @include datatable;
+@include esri;
