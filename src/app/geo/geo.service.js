@@ -335,7 +335,7 @@
                         mapSettings.fullExtent = config.fullExtent;
 
                         // compare map extent and setting.extent spatial-references
-                        let mapExtent = map.extent;
+                        const mapExtent = map.extent;
 
                         if (service.gapi.proj.isSpatialRefEqual(mapExtent.spatialReference,
                             mapSettings.fullExtent.spatialReference)) {
