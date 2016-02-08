@@ -15,17 +15,22 @@
         .module('app.common.router')
         .factory('displayManager', displayManager);
 
-    function displayManager($timeout, $rootScope, stateManager) {
+    function displayManager($timeout, $rootScope) {
         const service = {
             toggleDisplayPanel,
             setDisplayData
         };
-
+        let stateManager;
         let requestIdCounter = 1;
 
-        activate();
+        // to avoid circular references, stateManger instantiates displayManager by passing its own service to the init function
+        return sm => {
+            stateManager = sm;
 
-        return service;
+            activate();
+
+            return service;
+        };
 
         ///////////
 
