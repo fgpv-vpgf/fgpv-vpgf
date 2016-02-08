@@ -18,7 +18,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService(stateManager, displayManager, $timeout, $rootScope, $http, geoService) {
+    function tocService(stateManager, $timeout, $rootScope, $http, geoService) {
         // TODO: remove after switching to the real config
         // jscs:disable maximumLineLength
         const service = {
@@ -904,13 +904,13 @@
             const requester = {
                 id: layer.id
             };
-            const requestId = displayManager.toggleDisplayPanel('sideSettings', requester, 'filters');
+            const requestId = stateManager.toggleDisplayPanel('sideSettings', requester, 'filters');
 
             if (requestId === -1) {
                 return;
             }
 
-            displayManager.setDisplayData('sideSettings', requestId, {}, true);
+            stateManager.setDisplayData('sideSettings', requestId, {}, true);
         }
 
         /**
@@ -929,7 +929,7 @@
             };
 
             // we have to set the loading indicator immediately because the creating of the datatable block ui from updating and uless the indicator is already set, it will be visible until after the table is created
-            const requestId = displayManager.toggleDisplayPanel('filtersFulldata', requester, 'side', 0);
+            const requestId = stateManager.toggleDisplayPanel('filtersFulldata', requester, 'side', 0);
 
             if (requestId === -1) {
                 return;
@@ -942,7 +942,7 @@
             newData.data = newData.data.slice(0, (layer.id + 1) * 50);
 
             // need to use 0 timeout; otherwise the loading indicator will never be shown as ui gets blocked by datatable construction
-            $timeout(() => displayManager.setDisplayData('filtersFulldata', requestId, newData, false), 0);
+            $timeout(() => stateManager.setDisplayData('filtersFulldata', requestId, newData, false), 0);
         }
 
         /**
@@ -955,7 +955,7 @@
             const requester = {
                 id: layer.id
             };
-            const requestId = displayManager.toggleDisplayPanel('sideMetadata', requester, 'filters');
+            const requestId = stateManager.toggleDisplayPanel('sideMetadata', requester, 'filters');
 
             if (requestId === -1) {
                 return;
@@ -963,7 +963,7 @@
 
             // check if metadata is cached
             if (layer.cache.metadata) {
-                displayManager.setDisplayData('sideMetadata', requestId, layer.cache.metadata, true);
+                stateManager.setDisplayData('sideMetadata', requestId, layer.cache.metadata, true);
             } else { // else, retrieve it;
                 // TODO: generate some metadata to display functionality
                 const mdata = HolderIpsum.paragraphs(2, true);
@@ -972,7 +972,7 @@
                 $timeout(() => {
                     layer.cache.metadata = mdata;
 
-                    displayManager.setDisplayData('sideMetadata', requestId, layer.cache.metadata, true);
+                    stateManager.setDisplayData('sideMetadata', requestId, layer.cache.metadata, true);
                 }, Math.random() * 3000 + 300); // random delay
             }
         }
