@@ -134,7 +134,7 @@
             const dataPromise = $timeout(() => {
                 return generateDetailsData(1)
                     .items;
-            }, Math.random() * 3000 + 300);
+            }, Math.random() * 9000 + 300);
 
             // open panel and prep;
             stateManager.toggleDisplayPanel('mainDetails', dataPromise);
