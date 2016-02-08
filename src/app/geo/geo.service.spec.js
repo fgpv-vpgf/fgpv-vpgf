@@ -16,7 +16,8 @@ describe('geo', () => {
         //check registering a layer
         it('should register a layer', () => {
             let tempLayer = {
-                id: 'sausages'
+                id: 'sausages',
+                setVisibility: () => {}
             };
             let tempConfig = {
                 url: 'http://www.sausagelayer.com/'
@@ -46,7 +47,8 @@ describe('geo', () => {
         //check registering a attribute object
         it('should register attributes', () => {
             let tempLayer = {
-                id: 'sausages'
+                id: 'sausages',
+                setVisibility: () => {}
             };
             let tempConfig = {
                 url: 'http://www.sausagelayer.com/'
@@ -67,7 +69,8 @@ describe('geo', () => {
 
         it('should bundle attributes correctly', () => {
             let tempLayer = {
-                id: 'sausages'
+                id: 'sausages',
+                setVisibility: () => {}
             };
             let tempConfig = {
                 url: 'http://www.sausagelayer.com/'
