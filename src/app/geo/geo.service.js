@@ -32,7 +32,9 @@
             registerAttributes,
             setZoom,
             shiftZoom,
-            selectBasemap
+            selectBasemap,
+
+            setLayerVisibility
         };
 
         let map = null; // keep map reference local to geoService
@@ -45,6 +47,21 @@
             .then(initializedGeoApi => service.gapi = initializedGeoApi);
 
         return service;
+
+        /**
+         * Sets layer visiblity value.
+         * @param {Number} layerId id of the layer in the layer registry
+         * @param {String} value   visibility state; Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only. Any value except for 'on' means the layer is hidden. 'off', 'zoomIn', and 'zoomOut' specify an icon and action for the layer toggle.
+         * TODO: needs more work for toggling on/off dynamic layers and its children;
+         */
+        function setLayerVisibility(layerId, value) {
+            const l = service.layers[layerId];
+
+            if (l) {
+                l.state.options.visibility.value = value; // update layer state value
+                l.layer.setVisibility(value === 'on' ? true : false);
+            }
+        }
 
         /**
          * Adds a layer object to the layers registry
@@ -86,6 +103,9 @@
                 position = service.layerOrder.length;
             }
             service.layerOrder.splice(position, 0, layer.id);
+
+            // TODO: apply config values
+            service.setLayerVisibility(l.layer.id, l.state.options.visibility.value);
         }
 
         /**

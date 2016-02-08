@@ -877,8 +877,7 @@
         // FIXME: placeholder method for toggling visibility
         // if 'value' is not specified, toggle
         function toggleVisiblity(layer, value) {
-            //let template = service.presets.options.visibility;
-            let control = layer.options.visibility;
+            const control = layer.options.visibility;
 
             // visibility toggle logic goes here
             const toggle = {
@@ -888,7 +887,9 @@
                 zoomOut: 'zoomIn'
             };
 
-            control.value = value || toggle[control.value];
+            value = value || toggle[control.value];
+
+            geoService.setLayerVisibility(layer.id, value);
         }
 
         // temp function to open layer groups
