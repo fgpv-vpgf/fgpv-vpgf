@@ -53,6 +53,8 @@
                     mapExtent: map.extent,
                 };
 
+                // run through all registered dynamic layers and trigger
+                // an identify task for each layer
                 const idPromises = dynamicLayers.map(({ layer, name }) => {
                     const result = {
                         isLoading: true,
@@ -65,6 +67,13 @@
                         .then(clickResults => {
                             console.log('got a click result');
                             console.log(clickResults);
+
+                            // transform attributes of click results into {name,data} objects
+                            // one object per identified feature
+                            //
+                            // each feature will have its attributes converted into a table
+                            // placeholder for now until we figure out how to signal the panel that
+                            // we want to make a nice table
                             result.data = clickResults.map(ele => {
                                 return {
                                     name: ele.value,
