@@ -19,6 +19,11 @@
             geoApi.events.wrapEvents(map, { click: clickHandlerBuilder(geoApi, map) });
 
             return {
+                /**
+                 * Add a dynamic layer to identify when map click events happen.
+                 * @param {Object} layer an ESRI DynamicLayer object
+                 * @param {String} name the display name of the layer
+                 */
                 addDynamicLayer: (layer, name) => { dynamicLayers.push({ layer, name }); }
             };
         };
@@ -26,6 +31,13 @@
         ////////
 
         function clickHandlerBuilder(geoApi, map) {
+
+            /**
+             * Handles global map clicks.  Currently configured to walk through all registered dynamic
+             * layers and trigger service side identify queries.  TODO: add WMS support
+             * @name clickHandler
+             * @param {Object} clickEvent an ESRI event object for map click events
+             */
             return clickEvent => {
                 if (dynamicLayers.length === 0) { return; }
 
