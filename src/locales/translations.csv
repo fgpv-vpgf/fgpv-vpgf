@@ -26,3 +26,17 @@ Filter pane menu label for Print,filter.menu.print,Print,[fr] Print
 Filter pane menu label for Export,filter.menu.export,Export,[fr] Export
 Map Navigation slider only text,nav.sliderOnly,slider only,[fr] slider only
 Map Navigation slider text,nav.slider,slider,[fr] slider
+Map Navigation zoom in label,nav.label.zoomIn,Zoom in,[fr] Zoom in
+Map Navigation zoom out label,nav.label.zoomOut,Zoom out,[fr] Zoom out
+Map Navigation geolocation label,nav.label.geoLocation,Your Location,[fr] Your Location
+Map Navigation search label,nav.label.search,Search,[fr] Search
+Map Navigation home label,nav.label.home,Canada,[fr] Canada
+Map Navigation history label,nav.label.history,History,[fr] History
+Map Navigation basemap label,nav.label.basemap,Basemap,[fr] Basemap
+Map Navigation zoom in tooltip,nav.tooltip.zoomIn,Zoom in,[fr] Zoom in
+Map Navigation zoom out tooltip,nav.tooltip.zoomOut,Zoom out,[fr] Zoom out
+Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your Location,[fr] Your Location
+Map Navigation search tooltip,nav.tooltip.search,Search,[fr] Search
+Map Navigation home tooltip,nav.tooltip.home,Canada,[fr] Canada
+Map Navigation history tooltip,nav.tooltip.history,History,[fr] History
+Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,[fr] Basemap
