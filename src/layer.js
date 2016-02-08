@@ -387,6 +387,40 @@ function makeShapeLayerBuilder(esriBundle, geoApi) {
     };
 }
 
+function getDynamicLayerBuilder(esriBundle) {
+    /**
+    *  Fetches layer information from esri servers for feature layer
+    * @param {layerUrl} layerUrl linking to layer where feature layer resides
+    * @param {objectId} objectId for feature layer to be retried from a dynamic service
+    * @returns {Promise} a promise resolving with a layerObj
+    */
+    return (layerUrl, objectId) => {
+        return new Promise(
+            (resolve, reject) => {
+                const defData = esriBundle.esriRequest({
+                    url: layerUrl + '/query',
+                    content: {
+                        objectIds: objectId,
+                        returnGeometry: 'true',
+                        f: 'json',
+                    },
+                    callbackParamName: 'callback',
+                    handleAs: 'json'
+                });
+
+                defData.then(
+                    layerObj => {
+                        console.log(layerObj);
+                        return resolve(layerObj);
+                    }, error => {
+                        console.warn(error.message);
+                        return reject(error.message);
+                    }
+                );
+            });
+    };
+}
+
 //CAREFUL NOW!
 //we are passing in a reference to geoApi.  it is a pointer to the object that contains this module,
 //along with other modules. it lets us access other modules without re-instantiating them in here.
@@ -399,6 +433,7 @@ module.exports = function (esriBundle, geoApi) {
         FeatureLayer: esriBundle.FeatureLayer,
         TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
         WmsLayer: esriBundle.WmsLayer,
+        getDynamicLayer: getDynamicLayerBuilder(esriBundle),
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
         makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi),
