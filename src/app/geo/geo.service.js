@@ -42,7 +42,7 @@
         let mapManager = null;
         let identify = null;
 
-        var fullExtent = null;
+        let fullExtent = null;
 
         // FIXME: need to find a way to have the dojo URL set by the config
         service.promise = geoapi('http://js.arcgis.com/3.14/', window)
