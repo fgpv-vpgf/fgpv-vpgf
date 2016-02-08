@@ -337,7 +337,8 @@
                         // compare map extent and setting.extent spatial-references
                         let mapExtent = map.extent;
 
-                        if (isSpatialRefEqual(mapExtent.spatialReference, mapSettings.fullExtent.spatialReference)) {
+                        if (service.gapi.proj.isSpatialRefEqual(mapExtent.spatialReference,
+                            mapSettings.fullExtent.spatialReference)) {
 
                             // same spatial reference, no reprojection required
                             fullExtent = service.gapi.mapManager.Extent(mapSettings.fullExtent);
@@ -357,28 +358,6 @@
 
             // FIXME temp link for debugging
             window.FGPV = { layers: service.layers };
-        }
-
-        /**
-        * Checks if two spatial reference objects are equivalent.  Handles both wkid and wkt definitions
-        *
-        * @method isSpatialRefEqual
-        * @static
-        * @param {type} sr1 Esri Spatial Reference First to compare
-        * @param {type} sr2 Esri Spatial Reference Second to compare
-        * @return {Boolean} true if the two spatial references are equivalent.  False otherwise.
-        */
-        function isSpatialRefEqual(sr1, sr2) {
-            if ((sr1.wkid) && (sr2.wkid)) {
-                //both SRs have wkids
-                return sr1.wkid === sr2.wkid;
-            } else if ((sr1.wkt) && (sr2.wkt)) {
-                //both SRs have wkt's
-                return sr1.wkt === sr2.wkt;
-            } else {
-                //not enough info provided or mismatch between wkid and wkt.
-                return false;
-            }
         }
 
         /**
