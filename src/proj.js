@@ -94,7 +94,7 @@ function localProjectExtent(extent, sr) {
 function projectEsriExtentBuilder(esriBundle) {
     return (extent, sr) => {
         const p = localProjectExtent(extent, sr);
-        return new esriBundle.EsriExtent(p.x0, p.y0, p.x1, p.y1, p.sr);
+        return new esriBundle.Extent(p.x0, p.y0, p.x1, p.y1, p.sr);
     };
 }
 
@@ -131,6 +131,28 @@ function esriServiceBuilder(esriBundle) {
     };
 }
 
+/**
+* Checks if two spatial reference objects are equivalent.  Handles both wkid and wkt definitions
+*
+* @method isSpatialRefEqual
+* @static
+* @param {type} sr1 Esri Spatial Reference First to compare
+* @param {type} sr2 Esri Spatial Reference Second to compare
+* @return {Boolean} true if the two spatial references are equivalent.  False otherwise.
+*/
+function isSpatialRefEqual(sr1, sr2) {
+    if ((sr1.wkid) && (sr2.wkid)) {
+        //both SRs have wkids
+        return sr1.wkid === sr2.wkid;
+    } else if ((sr1.wkt) && (sr2.wkt)) {
+        //both SRs have wkt's
+        return sr1.wkt === sr2.wkt;
+    } else {
+        //not enough info provided or mismatch between wkid and wkt.
+        return false;
+    }
+}
+
 module.exports = function (esriBundle) {
     // TODO: Move Point and SpatialReference to its own (geometry) module
 
@@ -147,6 +169,7 @@ module.exports = function (esriBundle) {
         addProjection: proj4.defs, // straight passthrough at the moment, maybe add arg checking (two args)?
         getProjection: proj4.defs, // straight passthrough at the moment, maybe add arg checking (one arg)?
         esriServerProject: esriServiceBuilder(esriBundle),
+        isSpatialRefEqual,
         localProjectExtent,
         projectGeojson,
         Point: esriBundle.Point,
