@@ -65,10 +65,10 @@
                         .then(clickResults => {
                             console.log('got a click result');
                             console.log(clickResults);
-                            result.data = clickResults.map((ele, idx) => {
+                            result.data = clickResults.map(ele => {
                                 return {
                                     name: ele.value,
-                                    data: Object.keys(ele.feature.attributes).map( key =>
+                                    data: Object.keys(ele.feature.attributes).map(key =>
                                         `make a table row from ${key} and ${ele.feature.attributes[key]}`
                                     )
                                 };
