@@ -387,12 +387,12 @@ function makeShapeLayerBuilder(esriBundle, geoApi) {
     };
 }
 
-function getDynamicLayerBuilder(esriBundle) {
+function getFeatureInfoBuilder(esriBundle) {
     /**
-    *  Fetches layer information from esri servers for feature layer
+    * Fetches feature information, including geometry, from esri servers for feature layer.
     * @param {layerUrl} layerUrl linking to layer where feature layer resides
-    * @param {objectId} objectId for feature layer to be retried from a dynamic service
-    * @returns {Promise} a promise resolving with a layerObj
+    * @param {objectId} objectId for feature to be retrived from a feature layer
+    * @returns {Promise} promise resolves with feature information
     */
     return (layerUrl, objectId) => {
         return new Promise(
@@ -433,7 +433,7 @@ module.exports = function (esriBundle, geoApi) {
         FeatureLayer: esriBundle.FeatureLayer,
         TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
         WmsLayer: esriBundle.WmsLayer,
-        getDynamicLayer: getDynamicLayerBuilder(esriBundle),
+        getFeatureInfo: getFeatureInfoBuilder(esriBundle),
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
         makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi),
