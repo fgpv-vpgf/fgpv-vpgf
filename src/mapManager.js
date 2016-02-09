@@ -90,11 +90,11 @@ module.exports = function (esriBundle) {
 
         // Setup overview map
         // todo: add visible to setting
-        if ('overviewMap' in settings && 'visible' in settings.overviewMap &&
-            settings.overviewMap.visible === true) {
+        if ('overviewMap' in settings && 'enabled' in settings.overviewMap &&
+            settings.overviewMap.enabled === true) {
             overviewMapCtrl = mapManager.OverviewMap({
                 map: map,
-                visible: settings.overviewMap.visible
+                visible: settings.overviewMap.enabled
             });
 
             overviewMapCtrl.startup();
