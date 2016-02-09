@@ -18,7 +18,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService(stateManager, $timeout, $rootScope, $http, geoService) {
+    function tocService($timeout, $q, $rootScope, $http, stateManager, geoService) {
         // TODO: remove after switching to the real config
         // jscs:disable maximumLineLength
         const service = {
@@ -905,13 +905,13 @@
             const requester = {
                 id: layer.id
             };
-            const requestId = stateManager.toggleDisplayPanel('sideSettings', requester, 'filters');
-
-            if (requestId === -1) {
-                return;
-            }
-
-            stateManager.setDisplayData('sideSettings', requestId, {}, true);
+            const panelToClose = {
+                filters: false
+            };
+            
+            stateManager
+                .setActive(panelToClose)
+                .then(() => stateManager.toggleDisplayPanel('sideSettings', {}, requester));
         }
 
         /**
