@@ -127,9 +127,7 @@
         }
 
         function reset(lang) {
-            if (initializePromise) {
-                initializePromise = undefined;
-            }
+            initializePromise = undefined;
             return initialize(lang);
         }
 
