@@ -15,9 +15,8 @@
         .module('app.layout')
         .controller('ShellController', ShellController);
 
-    function ShellController($timeout, $interval, $q, configService, $rootScope, events, version,
-        sideNavigationService,
-        stateManager) {
+    function ShellController($timeout, $q, configService, $rootScope, events, version,
+        sideNavigationService, stateManager, $translate, geoService) {
         const self = this;
 
         self.config = configService.data;
@@ -26,6 +25,8 @@
 
         self.singlePoint = singlePoint;
         self.multiplePoints = multiplePoints;
+
+        self.languageSwitch = languageSwitch;
 
         // TODO: mock settings; replace by config
         self.menu = [
@@ -78,6 +79,13 @@
          */
         function hideLoadingScreen() {
             self.isLoading = false;
+        }
+
+        // FIXME: move to a directive or sidenav
+        function languageSwitch(lang) {
+            $translate.use(lang);
+            configService.reset(lang).then(
+                () => geoService.buildMap($('div[rv-init-map]')[0], configService.data));
         }
 
         // TODO: remove; hacky functions to display some details data
