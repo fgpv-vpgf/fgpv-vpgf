@@ -18,7 +18,7 @@
     function displayManager($timeout, $q, $rootScope) {
         const service = {
             toggleDisplayPanel,
-            setDisplayData
+            clearDisplay
         };
         let stateManager;
         let requestIdCounter = 1;
@@ -119,9 +119,10 @@
                         const data = typeof value.data !== 'undefined' ? value.data : value;
                         const isLoaded = typeof value.isLoaded !== 'undefined' ? value.isLoaded : true;
 
-                        setDisplayData(panelName, requestId, data, isLoaded);
+                        setDisplay(panelName, requestId, data, isLoaded);
                     })
                     .catch(value => {
+                        // TODO: handle rejections properly
                         console.log('error retrieving data apparently', value);
                     });
             }
@@ -133,9 +134,9 @@
          * @param {String} panelName     name of the panel where to update displayed content
          * @param {Number} requestId     request id
          * @param {Object} data          data to be displayed
-         * @param {Boolean} isLoaded     flag to remove loading indicator from the panel
+         * @param {Boolean|Promise} isLoaded     flag to remove loading indicator from the panel; if `false`, don't remove the flag; if a promise, remove the flag upon its resolution
          */
-        function setDisplayData(panelName, requestId, data, isLoaded) {
+        function setDisplay(panelName, requestId, data, isLoaded) {
             const state = stateManager.state[panelName];
             const displayName = state.display;
 
@@ -153,11 +154,11 @@
 
                 // in some cases you might not want to turn off the loading indicator from tocService toggle function
                 // with the filters panel for example: fetching data for the table takes time, but generating the actual table also takes time; so you want to turn off the loading indicator from filters panel
-                // when `isLoaded` promise resolves, the loading indicator is removed no matter the resolve value
+                // when `isLoaded` promise resolves, the loading indicator is removed if the resolved value is not false
                 $q
                     .resolve(isLoaded)
                     .then(value => {
-                        if (display.requestId === requestId && state.active === true) {
+                        if (display.requestId === requestId && state.active === true && value === true) {
                             display.isLoading = false;
 
                             // cancel loading indicator timeout if any
