@@ -392,16 +392,14 @@ function getFeatureInfoBuilder(esriBundle) {
     * Fetches feature information, including geometry, from esri servers for feature layer.
     * @param {layerUrl} layerUrl linking to layer where feature layer resides
     * @param {objectId} objectId for feature to be retrived from a feature layer
-    * @returns {Promise} promise resolves with feature information
+    * @returns {Promise} promise resolves with an esri Graphic (http://resources.arcgis.com/en/help/arcgis-rest-api/#/Feature_Map_Service_Layer/02r3000000r9000000/)
     */
     return (layerUrl, objectId) => {
         return new Promise(
             (resolve, reject) => {
                 const defData = esriBundle.esriRequest({
-                    url: layerUrl + '/query',
+                    url: layerUrl + objectId,
                     content: {
-                        objectIds: objectId,
-                        returnGeometry: 'true',
                         f: 'json',
                     },
                     callbackParamName: 'callback',
@@ -411,10 +409,10 @@ function getFeatureInfoBuilder(esriBundle) {
                 defData.then(
                     layerObj => {
                         console.log(layerObj);
-                        return resolve(layerObj);
+                        resolve(layerObj);
                     }, error => {
-                        console.warn(error.message);
-                        return reject(error.message);
+                        console.warn(error);
+                        reject(error);
                     }
                 );
             });
