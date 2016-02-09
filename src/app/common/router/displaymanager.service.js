@@ -15,7 +15,7 @@
         .module('app.common.router')
         .factory('displayManager', displayManager);
 
-    function displayManager($timeout, $rootScope) {
+    function displayManager($timeout, $q, $rootScope) {
         const service = {
             toggleDisplayPanel,
             setDisplayData
@@ -49,53 +49,81 @@
          * If the panel is not closing, a loading indicator will be triggered (immediately or after a delay).
          *
          * @param  {String} panelName        panel to open
-         * @param  {Object} requester        object requesting display change; must have `id` attribute
-         * @param  {String} panelNameToClose name of the panel to close before opening the main one if needed
+         * @param  {Object} dataPromise        object requesting display change; must have `id` attribute
          * @param  {Number} delay            time to wait before setting loading indicator
          * @return {Number} return a data requestId; if equals -1, the panel will be closed, no further actions needed; otherwise, the panel will be opened
          */
-        function toggleDisplayPanel(panelName, requester, panelNameToClose, delay = 100) {
-            const displayName = stateManager.state[panelName].display;
+        function toggleDisplayPanel(panelName, dataPromise, requester = {}, delay = 100) {
+            //function toggleDisplayPanel(panelName, requester, panelNameToClose, delay = 100) {
+            const state = stateManager.state[panelName];
+            const displayName = state.display;
+
             if (typeof displayName === 'undefined') {
                 return -1; // display for this panel is not defined, exit
             }
 
-            // if specified panel is open and the requester matches
-            if (stateManager.state[panelName].active &&
-                stateManager.display[displayName].requester.id === requester.id) {
+            const display = stateManager.display[displayName];
+            const requestId = ++requestIdCounter;
+
+            console.log(requester, typeof requester.id !== 'undefined', delay);
+
+            // if specified panel is open ...
+            // and the requester id is not undefined or matches to the previous requester id ...
+            if (state.active &&
+                typeof requester.id !== 'undefined' &&
+                display.requester.id === requester.id) {
                 stateManager.setActive(panelName); // just close the panel
 
                 return -1;
             } else {
-                // cancel previous data retrieval timeout so we don't display old data
-                $timeout.cancel(stateManager.display[displayName].loadingTimeout);
+                // cancel previous data retrieval timeout
+                $timeout.cancel(display.loadingTimeout);
 
                 if (delay === 0) {
-                    stateManager.display[displayName].isLoading = true;
+                    display.data = null;
+                    display.isLoading = true;
                 } else {
                     // if it takes longer than 100 ms to get metadata, kick in the loading screen
-                    // this is fast enough for people to perceive it as instantaneous
-                    stateManager.display[displayName].loadingTimeout = $timeout(() => {
-                        stateManager.display[displayName].isLoading = true;
+                    // this is fast enough for people to still perceive it as instantaneous;
+                    // waiting 100ms before showing loading indicator prevents flickering if data is retrieved really fast
+                    display.loadingTimeout = $timeout(() => {
+                        display.data = null;
+                        display.isLoading = true;
                     }, delay);
                 }
 
-                if (!stateManager.state[panelName].active) { // panel is not open; open it; close other panels is specified
+                if (!state.active) { // panel is not open; open it; close other panels is specified
                     // open panel closing anything else specified
-                    if (panelNameToClose) {
+                    /*if (panelNameToClose) {
                         let closePanel = {};
                         closePanel[panelNameToClose] = false;
                         stateManager.setActive(closePanel, panelName);
-                    } else {
-                        stateManager.setActive(panelName);
-                    }
+                    } else {*/
+                    stateManager.setActive(panelName);
+
+                    //}
                 }
 
                 // update requestId and the requester object
-                stateManager.display[displayName].requester = requester;
-                stateManager.display[displayName].requestId = ++requestIdCounter;
+                display.requester = requester;
+                display.requestId = requestId;
 
-                return requestIdCounter;
+                //return requestIdCounter;
+                /*return $q((fulfill, reject) => {
+
+                });*/
+
+                return $q
+                    .resolve(dataPromise)
+                    .then(value => {
+                        const data = typeof value.data !== 'undefined' ? value.data : value;
+                        const isLoaded = typeof value.isLoaded !== 'undefined' ? value.isLoaded : true;
+
+                        setDisplayData(panelName, requestId, data, isLoaded);
+                    })
+                    .catch(value => {
+                        console.log('error retrieving data apparently', value);
+                    });
             }
         }
 
@@ -108,27 +136,40 @@
          * @param {Boolean} isLoaded     flag to remove loading indicator from the panel
          */
         function setDisplayData(panelName, requestId, data, isLoaded) {
-            const displayName = stateManager.state[panelName].display;
+            const state = stateManager.state[panelName];
+            const displayName = state.display;
+
             if (typeof displayName === 'undefined') {
                 return -1; // display for this panel is not defined, exit
             }
 
+            const display = stateManager.display[displayName];
+
             // check if the layerId for displayed data still matches data being retrieved
             // this prevents old request which complete after the newer ones to update display with old data
-            if (stateManager.display[displayName].requestId === requestId) {
-                stateManager.display[displayName].data = data;
+            // `state.active` check makes sure data is not set when the panel is closed
+            if (display.requestId === requestId && state.active === true) {
+                display.data = data;
 
                 // in some cases you might not want to turn off the loading indicator from tocService toggle function
                 // with the filters panel for example: fetching data for the table takes time, but generating the actual table also takes time; so you want to turn off the loading indicator from filters panel
-                if (isLoaded === true) {
-                    stateManager.display[displayName].isLoading = false;
+                // when `isLoaded` promise resolves, the loading indicator is removed no matter the resolve value
+                $q
+                    .resolve(isLoaded)
+                    .then(value => {
+                        if (display.requestId === requestId && state.active === true) {
+                            display.isLoading = false;
 
-                    // cancel loading indicator timeout if any
-                    $timeout.cancel(stateManager.display[displayName].loadingTimeout);
-                }
+                            // cancel loading indicator timeout if any
+                            $timeout.cancel(display.loadingTimeout);
+                        } else {
+                            console.log(displayName + ' Data rejected for request id ' + requestId +
+                                '; loading in progress or panel is closed');
+                        }
+                    });
             } else {
                 console.log(displayName + ' Data rejected for request id ' + requestId +
-                    '; loading in progress');
+                    '; loading in progress or panel is closed');
             }
         }
 
@@ -136,14 +177,15 @@
             // listen to panels closing; set their corresponding displays to null when they close
             $rootScope.$on('stateChangeComplete', (event, name, property, value) => {
                 const displayName = stateManager.state[name].display;
+                const display = stateManager.display[displayName];
 
                 if (typeof displayName !== 'undefined' && value === false) {
-                    //console.log('displayName', displayName, stateManager.display[displayName]);
+                    console.log('displayName', displayName, display);
 
                     // null data, and requester info on child panel close
-                    stateManager.display[displayName].data = null;
-                    stateManager.display[displayName].requester = null;
-                    stateManager.display[displayName].requestId = null;
+                    display.data = null;
+                    display.requester = null;
+                    display.requestId = null;
                 }
             });
         }
