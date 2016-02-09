@@ -908,7 +908,7 @@
             const panelToClose = {
                 filters: false
             };
-            
+
             stateManager
                 .setActive(panelToClose)
                 .then(() => stateManager.toggleDisplayPanel('sideSettings', {}, requester));
@@ -952,30 +952,34 @@
          * @param  {Object} layer layer object whose data should be displayed.
          */
         function toggleMetadata(layer) {
-            // toggle panels as needed
             const requester = {
                 id: layer.id
             };
-            const requestId = stateManager.toggleDisplayPanel('sideMetadata', requester, 'filters');
+            const panelToClose = {
+                filters: false
+            };
 
-            if (requestId === -1) {
-                return;
-            }
+            // construct a temp promise which resolves when data is generated or retrieved;
+            const dataPromise = $q(fulfill => {
+                // check if metadata is cached
+                if (layer.cache.metadata) {
+                    fulfill(layer.cache.metadata);
+                } else {
+                    // TODO: generate some metadata to display functionality
+                    const mdata = HolderIpsum.paragraphs(2, true);
 
-            // check if metadata is cached
-            if (layer.cache.metadata) {
-                stateManager.setDisplayData('sideMetadata', requestId, layer.cache.metadata, true);
-            } else { // else, retrieve it;
-                // TODO: generate some metadata to display functionality
-                const mdata = HolderIpsum.paragraphs(2, true);
+                    // TODO: remove; simulating delay on retrieving metadata
+                    $timeout(() => {
+                        layer.cache.metadata = mdata;
 
-                // TODO: remove; simulating delay on retrieving metadata
-                $timeout(() => {
-                    layer.cache.metadata = mdata;
+                        fulfill(layer.cache.metadata);
+                    }, Math.random() * 3000 + 300); // random delay
+                }
+            });
 
-                    stateManager.setDisplayData('sideMetadata', requestId, layer.cache.metadata, true);
-                }, Math.random() * 3000 + 300); // random delay
-            }
+            stateManager
+                .setActive(panelToClose)
+                .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester));
         }
 
         /**
