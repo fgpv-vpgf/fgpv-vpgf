@@ -112,16 +112,11 @@
          * Closes details pane and switches to toc.
          */
         function closeDetails() {
+            // close `mainDetails` panel
             stateManager.setActive({
                 side: false
-            }, 'mainDetails');
-
-            // TODO: remove;
-            // null the data on panel close
-            $timeout(() => {
-                self.display.data = null;
-                self.selectedItem = null;
-            }, 400);
+            }, 'mainDetails')
+            .then(() => stateManager.clearDisplay('mainDetails')); // clear `details` display
         }
 
         /**
