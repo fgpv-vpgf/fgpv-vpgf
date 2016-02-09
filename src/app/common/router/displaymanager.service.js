@@ -8,7 +8,7 @@
      * @requires dependencies
      * @description
      *
-     * The `displayManager` factory handles the display of dynamically retrived or constructed data like layer metadata, attributes, details, or settings.
+     * The `displayManager` factory handles the display of dynamically retrieved or constructed data like layer metadata, attributes, details, or settings.
      *
      */
     angular
@@ -27,8 +27,6 @@
         return sm => {
             stateManager = sm;
 
-            activate();
-
             return service;
         };
 
@@ -38,19 +36,19 @@
          * Toggles the specified panel with following logic:
          * The requested panel can be open or closed;
          *     open:
-         *         the content alredy in the panel can belong to a different layer
+         *         the content already in the panel can belong to a different layer
          *             same layer:
          *                 -> close panel
          *             different layer:
-         *                 -> dehighlight the the old layer; highlihgt the new one
+         *                 -> dehighlight the the old layer; highlight the new one
          *     closed:
          *         -> open panel
          *
          * If the panel is not closing, a loading indicator will be triggered (immediately or after a delay).
          *
-         * @param  {String} panelName        panel to open
+         * @param  {String} panelName        panel to open; `statemanager.constant.service` `initialState` for valid panel names; any panel with a `display` property is a valid target;
          * @param  {Object} dataPromise      data object or a promise returning a data object; both can be plain data object or containers `{data: data, isLoaded: <boolean|promise> }`, where isLoaded can be a promise;
-         * @param  {Object} requester        object requesting display change; must have `id` attribute if you want the panel to toggle off on the same requester
+         * @param  {Object} requester        object requesting display change; must have `id` attribute if you want the panel to toggle off on the same requester; requester object can be used to immediately pass content to the panel - for example passing layer name to the filters panel to be displayed in the panel header while the datatable is being constructed;
          * @param  {Number} delay            time to wait before setting loading indicator
          * @return {Number} return a data requestId; if equals -1, the panel will be closed, no further actions needed; otherwise, the panel will be opened
          */
@@ -115,7 +113,7 @@
         }
 
         /**
-         * Sets displayed data for a specific content like layer metadata in the metadata panel. It checks agains the provided requestId, if the id matches, the data is set and the loading indidcator is turned off.
+         * Sets displayed data for a specific content like layer metadata in the metadata panel. It checks against the provided requestId, if the id matches, the data is set and the loading indidcator is turned off.
          *
          * @param {String} panelName     name of the panel where to update displayed content
          * @param {Number} requestId     request id to check if it's the latest request
@@ -150,11 +148,13 @@
                             // cancel loading indicator timeout if any
                             $timeout.cancel(display.loadingTimeout);
                         } else {
+                            // TODO: add fancy es6 string substitution when adding a logger library
                             console.log(displayName + ' Data rejected for request id ' + requestId +
                                 '; loading in progress or panel is closed');
                         }
                     });
             } else {
+                // TODO: add fancy es6 string substitution when adding a logger library
                 console.log(displayName + ' Data rejected for request id ' + requestId +
                     '; loading in progress or panel is closed');
             }
@@ -169,6 +169,8 @@
             const state = stateManager.state[panelName];
             const displayName = state.display;
 
+            console.log('clear!!!', panelName);
+
             if (typeof displayName === 'undefined') {
                 return -1; // display for this panel is not defined, exit
             }
@@ -181,7 +183,5 @@
             display.isLoading = false;
             $timeout.cancel(display.loadingTimeout);
         }
-
-        function activate() {}
     }
 })();
