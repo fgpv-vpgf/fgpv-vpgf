@@ -100,7 +100,8 @@ describe('geo', () => {
             // make a fake map object
             const map = {
                 setZoom: () => {},
-                getZoom: () => 5
+                getZoom: () => 5,
+                extent: {}
             };
 
             // set a spy on it
@@ -118,7 +119,8 @@ describe('geo', () => {
             // create a fake map
             geoService.buildMap({}, {
                 layers: [],
-                scalebar: {}
+                navigation: { scalebar: {} },
+                map: { extents: [{ uid: '123', type: 'full', spatialReference: { wkid: 3978 } }] }
             });
 
             // call setZoom with different arguments
@@ -139,7 +141,8 @@ describe('geo', () => {
         describe('map', () => {
             const emptyConfig = {
                 layers: [],
-                scalebar: {}
+                navigation: { scalebar: {}, overviewMap: {} },
+                map: { extents: [] }
             };
             const layerConfig = {
                 layers: [
