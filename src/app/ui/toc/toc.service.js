@@ -919,31 +919,33 @@
          * @param  {Object} layer layer object whose data should be displayed.
          */
         function toggleLayerFiltersPanel(layer) {
-            // close basemap selector if open
-            stateManager.setActive({
-                other: false
-            });
-
             const requester = {
                 id: layer.id,
                 name: layer.name
             };
 
-            // we have to set the loading indicator immediately because the creating of the datatable block ui from updating and uless the indicator is already set, it will be visible until after the table is created
-            const requestId = stateManager.toggleDisplayPanel('filtersFulldata', requester, 'side', 0);
-
-            if (requestId === -1) {
-                return;
-            }
-
             // temporary data loading
-            // TODO: replace ecogeo with layerid
-            const newData = geoService.getFormattedAttributes('ecogeo', '0');
-            newData.columns = newData.columns.slice(0, (layer.id + 1) * 5);
-            newData.data = newData.data.slice(0, (layer.id + 1) * 50);
+            // TODO: replace ecogeo with layerid;
+            const newData = $timeout(() => {
+                const attrs = geoService.getFormattedAttributes('ecogeo', '0');
 
-            // need to use 0 timeout; otherwise the loading indicator will never be shown as ui gets blocked by datatable construction
-            $timeout(() => stateManager.setDisplayData('filtersFulldata', requestId, newData, false), 0);
+                return {
+                    data: {
+                        columns: attrs.columns.slice(0, (layer.id + 1) * 5),
+                        data: attrs.data.slice(0, (layer.id + 1) * 50)
+                    },
+                    isLoaded: false
+                };
+            }, 0);
+
+            stateManager.setActive({
+                other: false
+            });
+            stateManager
+                .setActive({
+                    side: false
+                })
+                .then(() => stateManager.toggleDisplayPanel('filtersFulldata', newData, requester, 0));
         }
 
         /**
