@@ -991,6 +991,14 @@
          * @param  {String} displayName type of the display data (layer toggle name: 'settings', 'metadata', 'filters')
          */
         function watchPanelState(panelName, displayName) {
+            // clear display on metadata, settings, and filters panels when closed
+            $rootScope.$on('stateChangeComplete', (event, name, property, value) => {
+                //console.log(name, property, value);
+                if (property === 'active' && name === panelName && value === false) {
+                    stateManager.clearDisplayPanel(panelName);
+                }
+            });
+
             $rootScope.$watch(() => stateManager.display[displayName].requester, (newRequester, oldRequester) => {
                 if (newRequester !== null) {
                     // deselect layer from the old requester if layer ids don't match

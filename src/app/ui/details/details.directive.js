@@ -113,10 +113,11 @@
          */
         function closeDetails() {
             // close `mainDetails` panel
-            stateManager.setActive({
-                side: false
-            }, 'mainDetails')
-            .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display
+            stateManager
+                .setActive({
+                    side: false
+                }, 'mainDetails')
+                .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display
         }
 
         /**
