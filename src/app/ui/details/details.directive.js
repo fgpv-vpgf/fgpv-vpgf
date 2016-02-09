@@ -90,10 +90,13 @@
 
         // TODO: adding stateManger to scope to set up watch
         $scope.$watch('self.display.data', newValue => {
-            console.log('self.display.data', newValue);
+            //console.log('self.display.data', newValue);
+            // if multiple points added to the details panel ...
             if (newValue && newValue.length > 0) {
                 // pick random point to be selected initially
                 self.selectedItem = newValue[Math.floor(Math.random() * newValue.length)];
+            } else {
+                self.selectedItem = null;
             }
         });
 
