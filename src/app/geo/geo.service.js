@@ -332,11 +332,6 @@
                         // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
                         a.then(data => {
                             registerAttributes(data);
-
-                            // use the fullExtent of a layer if one does not exists
-                            if (!fullExtent && l.fullExtent) {
-                                fullExtent = l.fullExtent;
-                            }
                         })
                         .catch(exception => {
                             console.log('Error getting attributes for ' + l.name + ': ' +
@@ -354,27 +349,29 @@
                 scalebar: {},
                 overviewMap: {}
             };
-            if (config.rampStyleBasemaps) {
-                mapSettings.basemaps = config.rampStyleBasemaps;
+            if (config.basemaps) {
+                mapSettings.basemaps = config.basemaps;
             }
 
-            if (config.scalebar.visible) {
+            if (config.navigation.scalebar) {
                 mapSettings.scalebar = {
                     attachTo: 'bottom-left',
                     scalebarUnit: 'dual'
                 };
             }
 
-            if (config.overviewMap) {
-                mapSettings.overviewMap = config.overviewMap;
+            if (config.navigation.overviewMap && config.navigation.overviewMap.enabled) {
+                mapSettings.overviewMap = config.navigation.overviewMap;
             }
 
-            if (config.fullExtent) {
+            if (config.map.extents) {
+
+                // TODO: find the extent with type of full
 
                 service.gapi.events.wrapEvents(map, {
                     load: () => {
                         // full extent available in config
-                        mapSettings.fullExtent = config.fullExtent;
+                        mapSettings.fullExtent = config.map.extents[0];
 
                         // compare map extent and setting.extent spatial-references
                         const mapExtent = map.extent;
