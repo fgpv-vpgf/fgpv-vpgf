@@ -265,6 +265,7 @@
         function buildMap(domNode, config) {
             // reset before rebuilding the map
             if (map !== null) {
+                // NOTE: Possible to have dom listeners stick around after the node is destroyed
                 map.destroy();
                 map = null;
                 service.layers = {};
