@@ -61,7 +61,7 @@
             }
 
             // store the promise and return it on all future calls; this way initialize can be called one time only
-            initializePromise = $q(function (fulfill, reject) {
+            initializePromise = $q((fulfill, reject) => {
                 const configAttr = $rootElement.attr('th-config');
                 let configJson;
 
@@ -129,11 +129,11 @@
          */
         function ready(nextPromises) {
             return initializePromise
-                .then(function () {
+                .then(() => {
                     console.log('Ready promise resolved.');
                     return $q.all(nextPromises);
                 })
-                .catch(function () {
+                .catch(() => {
                     console.log('"ready" function failed');
                 });
         }
