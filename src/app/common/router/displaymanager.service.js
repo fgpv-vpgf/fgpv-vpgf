@@ -173,21 +173,28 @@
             }
         }
 
-        function activate() {
-            // listen to panels closing; set their corresponding displays to null when they close
-            $rootScope.$on('stateChangeComplete', (event, name, property, value) => {
-                const displayName = stateManager.state[name].display;
-                const display = stateManager.display[displayName];
+        /**
+         * Clears data from the specified display.
+         * @param  {String} panelName the name of the panel whose display should be cleared
+         */
+        function clearDisplay(panelName) {
+            // TODO: the following 4 statements could be moved to a helper function
+            const state = stateManager.state[panelName];
+            const displayName = state.display;
 
-                if (typeof displayName !== 'undefined' && value === false) {
-                    console.log('displayName', displayName, display);
+            if (typeof displayName === 'undefined') {
+                return -1; // display for this panel is not defined, exit
+            }
 
-                    // null data, and requester info on child panel close
-                    display.data = null;
-                    display.requester = null;
-                    display.requestId = null;
-                }
-            });
+            const display = stateManager.display[displayName];
+
+            display.data = null;
+            display.requester = null;
+            display.requestId = null;
+            display.isLoading = false;
+            $timeout.cancel(display.loadingTimeout);
         }
+
+        function activate() {}
     }
 })();
