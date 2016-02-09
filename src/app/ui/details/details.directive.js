@@ -116,7 +116,7 @@
             stateManager.setActive({
                 side: false
             }, 'mainDetails')
-            .then(() => stateManager.clearDisplay('mainDetails')); // clear `details` display
+            .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display
         }
 
         /**
