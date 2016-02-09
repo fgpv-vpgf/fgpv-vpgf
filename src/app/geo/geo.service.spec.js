@@ -4,7 +4,7 @@ describe('geo', () => {
 
     beforeEach((done) => {
 
-        bard.appModule('app.geo');
+        bard.appModule('app.geo', 'app.common.router');
 
         // inject services
         bard.inject('geoService', '$httpBackend');
@@ -108,7 +108,8 @@ describe('geo', () => {
                 mapManager: {
                     Map: () => map,
                     setupMap: () => {}
-                }
+                },
+                events: { wrapEvents: () => {} }
             };
 
             // create a fake map

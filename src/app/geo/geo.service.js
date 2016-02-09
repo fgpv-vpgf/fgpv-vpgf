@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService($http, layerTypes, configDefaults) {
+    function geoService($http, identifyService, layerTypes, configDefaults) {
 
         //TODO update how the layerOrder works with the UI
         //Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -38,6 +38,7 @@
         let map = null; // keep map reference local to geoService
 
         let mapManager = null;
+        let identify = null;
 
         // FIXME: need to find a way to have the dojo URL set by the config
         service.promise = geoapi('http://js.arcgis.com/3.14/', window)
@@ -173,7 +174,9 @@
             };
 
             handlers[layerTypes.esriDynamic] = config => {
-                return new service.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
+                const l = service.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
+                identify.addDynamicLayer(l, config.name);
+                return l;
             };
             handlers[layerTypes.esriFeature] = config => {
                 return new service.gapi.layer.FeatureLayer(config.url, commonConfig);
@@ -246,6 +249,8 @@
             if (config.services && config.services.proxyUrl) {
                 service.gapi.mapManager.setProxy(config.services.proxyUrl);
             }
+            identify = identifyService(service.gapi, map);
+
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
                 registerLayer(l, layerConfig); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
