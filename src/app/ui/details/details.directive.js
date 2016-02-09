@@ -79,7 +79,7 @@
     // COMMENT to self: brief flickering of fake content is caused by immediately setting data and isLoading flag;
     // in a real case, we wait for 100ms to get data, and then set isLoading which;
 
-    function Controller(stateManager, $scope, $timeout) {
+    function Controller(stateManager, $scope) {
         'ngInject';
         const self = this;
 
@@ -116,7 +116,7 @@
             stateManager.setActive({
                 side: false
             }, 'mainDetails')
-            .then(() => stateManager.clearDisplay('mainDetails')); // clear `details` display
+            .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display
         }
 
         /**

@@ -15,10 +15,10 @@
         .module('app.common.router')
         .factory('displayManager', displayManager);
 
-    function displayManager($timeout, $q, $rootScope) {
+    function displayManager($timeout, $q) {
         const service = {
             toggleDisplayPanel,
-            clearDisplay
+            clearDisplayPanel
         };
         let stateManager;
         let requestIdCounter = 1;
@@ -49,32 +49,31 @@
          * If the panel is not closing, a loading indicator will be triggered (immediately or after a delay).
          *
          * @param  {String} panelName        panel to open
-         * @param  {Object} dataPromise        object requesting display change; must have `id` attribute
+         * @param  {Object} dataPromise      data object or a promise returning a data object; both can be plain data object or containers `{data: data, isLoaded: <boolean|promise> }`, where isLoaded can be a promise;
+         * @param  {Object} requester        object requesting display change; must have `id` attribute if you want the panel to toggle off on the same requester
          * @param  {Number} delay            time to wait before setting loading indicator
          * @return {Number} return a data requestId; if equals -1, the panel will be closed, no further actions needed; otherwise, the panel will be opened
          */
         function toggleDisplayPanel(panelName, dataPromise, requester = {}, delay = 100) {
-            //function toggleDisplayPanel(panelName, requester, panelNameToClose, delay = 100) {
             const state = stateManager.state[panelName];
             const displayName = state.display;
 
             if (typeof displayName === 'undefined') {
-                return -1; // display for this panel is not defined, exit
+                return $q.reject(); // display for this panel is not defined, exit
             }
 
             const display = stateManager.display[displayName];
             const requestId = ++requestIdCounter;
-
-            console.log(requester, typeof requester.id !== 'undefined', delay);
 
             // if specified panel is open ...
             // and the requester id is not undefined or matches to the previous requester id ...
             if (state.active &&
                 typeof requester.id !== 'undefined' &&
                 display.requester.id === requester.id) {
+
                 stateManager.setActive(panelName); // just close the panel
 
-                return -1;
+                return $q.reject(); // display for this panel is not defined, exit
             } else {
                 // cancel previous data retrieval timeout
                 $timeout.cancel(display.loadingTimeout);
@@ -92,26 +91,13 @@
                     }, delay);
                 }
 
-                if (!state.active) { // panel is not open; open it; close other panels is specified
-                    // open panel closing anything else specified
-                    /*if (panelNameToClose) {
-                        let closePanel = {};
-                        closePanel[panelNameToClose] = false;
-                        stateManager.setActive(closePanel, panelName);
-                    } else {*/
+                if (!state.active) { // panel is not open; open it
                     stateManager.setActive(panelName);
-
-                    //}
                 }
 
                 // update requestId and the requester object
                 display.requester = requester;
                 display.requestId = requestId;
-
-                //return requestIdCounter;
-                /*return $q((fulfill, reject) => {
-
-                });*/
 
                 return $q
                     .resolve(dataPromise)
@@ -132,9 +118,9 @@
          * Sets displayed data for a specific content like layer metadata in the metadata panel. It checks agains the provided requestId, if the id matches, the data is set and the loading indidcator is turned off.
          *
          * @param {String} panelName     name of the panel where to update displayed content
-         * @param {Number} requestId     request id
+         * @param {Number} requestId     request id to check if it's the latest request
          * @param {Object} data          data to be displayed
-         * @param {Boolean|Promise} isLoaded     flag to remove loading indicator from the panel; if `false`, don't remove the flag; if a promise, remove the flag upon its resolution
+         * @param {Boolean|Promise} isLoaded     flag to remove loading indicator from the panel; if `false` (or resolves to `false`), don't remove the flag;
          */
         function setDisplay(panelName, requestId, data, isLoaded) {
             const state = stateManager.state[panelName];
@@ -178,7 +164,7 @@
          * Clears data from the specified display.
          * @param  {String} panelName the name of the panel whose display should be cleared
          */
-        function clearDisplay(panelName) {
+        function clearDisplayPanel(panelName) {
             // TODO: the following 4 statements could be moved to a helper function
             const state = stateManager.state[panelName];
             const displayName = state.display;
