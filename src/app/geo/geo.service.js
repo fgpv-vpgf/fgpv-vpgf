@@ -273,7 +273,7 @@
 
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
-                registerLayer(l, layerConfig); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                registerLayer(l, layerConfig, service.layers); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                 map.addLayer(l);
 
                 // wait for layer to load before registering
@@ -291,7 +291,8 @@
                                 console.log('Error getting attributes for ' + l.name + ': ' + exception);
                                 console.log(l);
                             });
-                    }
+                    },
+                    click: identify.featureClickHandler
                 });
             });
 
