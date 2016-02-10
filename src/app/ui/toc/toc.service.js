@@ -720,7 +720,8 @@
                 remove: {
                     icon: 'action:delete',
                     label: 'Remove',
-                    tooltip: 'Remove'
+                    tooltip: 'Remove',
+                    action: removeLayer
                 },
                 filters: {
                     icon: '',
@@ -847,6 +848,25 @@
                     initLayers(item.items);
                 }
             }
+        }
+
+        /**
+         * Simple function to remove layers.
+         * TODO: needs more work to handle dynamic layer and other crazy stuff
+         * @param  {Object} layer layerItem object from the layer selector
+         */
+        function removeLayer(layer) {
+            geoService.removeLayer(layer.id);
+
+            iterateLayers(service.data, (item, index, group) => {
+                if (item.id === layer.id) {
+                    //console.log(item, index, group);
+
+                    if (index !== -1) {
+                        group.items.splice(index, 1);
+                    }
+                }
+            });
         }
 
         // FIXME: placeholder method for toggling group visibility
@@ -1131,9 +1151,9 @@
         // sergei helper functions; should be handled by layer registry or something
         // TODO: replace
         function iterateLayers(group, func) {
-            group.items.forEach(item => {
+            group.items.forEach((item, index) => {
                 if (item.items === undefined) {
-                    func(item);
+                    func(item, index, group);
                 } else {
                     iterateLayers(item, func);
                 }
