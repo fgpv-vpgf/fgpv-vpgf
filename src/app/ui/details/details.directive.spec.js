@@ -7,7 +7,7 @@ describe('rvDetails', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.details', 'app.templates', 'app.common.router');
+        bard.appModule('app.ui.details', 'app.templates', 'app.common.router', 'pascalprecht.translate');
 
         // inject angular services
         bard.inject('$compile', '$rootScope');

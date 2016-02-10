@@ -7,7 +7,7 @@ describe('rvContentPane0', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.panels', 'app.templates');
+        bard.appModule('app.ui.panels', 'app.templates', 'pascalprecht.translate');
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
@@ -63,7 +63,7 @@ describe('rvContentPane1', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.panels', 'app.templates');
+        bard.appModule('app.ui.panels', 'app.templates', 'pascalprecht.translate');
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
@@ -118,7 +118,7 @@ describe('rvContentPane2', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.panels', 'app.templates');
+        bard.appModule('app.ui.panels', 'app.templates', 'pascalprecht.translate');
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
