@@ -15,7 +15,8 @@
         .module('app.layout')
         .controller('ShellController', ShellController);
 
-    function ShellController($timeout, $interval, configService, $rootScope, events, version, sideNavigationService,
+    function ShellController($timeout, $interval, $q, configService, $rootScope, events, version,
+        sideNavigationService,
         stateManager) {
         const self = this;
 
@@ -81,45 +82,39 @@
 
         // TODO: remove; hacky functions to display some details data
         function singlePoint() {
-            let display = stateManager.display.details;
-            display.isLoading = true;
-            display.data = generateDetailsData(1);
+            // generate some data and pretend you are retrieving it
+            const dataPromise = $timeout(() => {
+                return generateDetailsData(1)
+                    .items;
+            }, Math.random() * 3000 + 300);
 
-            // clears loading indicator
-            $timeout(() => display.isLoading = false, Math.random() * 3000 + 300);
-
-            console.log('single point', stateManager.display.details);
-
-            stateManager.setActive({
-                side: false
-            }, 'mainDetails');
+            // open panel and prep;
+            stateManager.toggleDisplayPanel('mainDetails', dataPromise);
         }
 
         // TODO: remove; hacky functions to display some details data
         function multiplePoints() {
-            let display = stateManager.display.details;
-            display.isLoading = true;
-            display.data = generateDetailsData(6);
+            const requester = {
+                id: Date.now()
+            };
 
-            // stops loading indicator when all items are loaded
-            let stop = $interval(function () {
-                if (display.data.every(item => !item.isLoading)) {
-                    console.log('STOP!');
-                    display.isLoading = false;
-                    $interval.cancel(stop);
-                }
-            }, 100);
+            const {
+                items,
+                promises
+            } = generateDetailsData(6);
 
-            console.log('multiple point', stateManager.display.details);
-
-            stateManager.setActive({
-                side: false
-            }, 'mainDetails');
+            // open panel and prep;
+            stateManager
+                .toggleDisplayPanel('mainDetails', {
+                    data: items,
+                    isLoaded: $q.all(promises).then(() => true)
+                }, requester, 0);
         }
 
         // TODO: remove; hacky functions to display some details data
         function generateDetailsData(n) {
-            let items = [];
+            const items = [];
+            const promises = [];
 
             // generate garbage details
             for (let i = 0; i < n; i++) {
@@ -127,7 +122,12 @@
                     isLoading: true,
                     requestId: -1,
                     requester: HolderIpsum.words(3, true),
-                    data: [
+                    data: {}
+                };
+
+                // clears loading indicator for individual items
+                promises.push($timeout(() => {
+                    item.data = [
                         {
                             name: HolderIpsum.words(3, true),
                             data: [HolderIpsum.sentence(), HolderIpsum.sentence(), HolderIpsum.sentence(),
@@ -137,16 +137,17 @@
                             name: HolderIpsum.words(3, true),
                             data: [HolderIpsum.sentence(), HolderIpsum.sentence()]
                         }
-                    ]
-                };
-
-                // clears loading indicator for individual items
-                $timeout(() => item.isLoading = false, Math.random() * 5000 + 200);
+                    ];
+                    item.isLoading = false;
+                }, n === 1 ? 0 : Math.random() * 5000 + 200));
 
                 items.push(item);
             }
 
-            return items;
+            return {
+                items,
+                promises
+            };
         }
     }
 

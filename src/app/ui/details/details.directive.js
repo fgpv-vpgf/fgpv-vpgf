@@ -79,7 +79,7 @@
     // COMMENT to self: brief flickering of fake content is caused by immediately setting data and isLoading flag;
     // in a real case, we wait for 100ms to get data, and then set isLoading which;
 
-    function Controller(stateManager, $scope, $timeout) {
+    function Controller(stateManager, $scope) {
         'ngInject';
         const self = this;
 
@@ -90,10 +90,13 @@
 
         // TODO: adding stateManger to scope to set up watch
         $scope.$watch('self.display.data', newValue => {
-            console.log('self.display.data', newValue);
+            //console.log('self.display.data', newValue);
+            // if multiple points added to the details panel ...
             if (newValue && newValue.length > 0) {
                 // pick random point to be selected initially
                 self.selectedItem = newValue[Math.floor(Math.random() * newValue.length)];
+            } else {
+                self.selectedItem = null;
             }
         });
 
@@ -109,16 +112,20 @@
          * Closes details pane and switches to toc.
          */
         function closeDetails() {
-            stateManager.setActive({
-                side: false
-            }, 'mainDetails');
+            const item = stateManager.state.main.history.slice(-2).shift(); // get second to last history item
+            const options = {};
 
-            // TODO: remove;
-            // null the data on panel close
-            $timeout(() => {
-                self.display.data = null;
-                self.selectedItem = null;
-            }, 400);
+            // reopen previous selected pane if it's not null or 'mainDetails'
+            if (item !== null && item !== 'mainDetails') {
+                options[item] = true;
+            } else {
+                options.mainDetails = false;
+            }
+
+            // close `mainDetails` panel
+            stateManager
+                .setActive(options)
+                .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display
         }
 
         /**

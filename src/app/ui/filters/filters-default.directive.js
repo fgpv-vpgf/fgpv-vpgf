@@ -64,6 +64,7 @@
                     .on('init.dt', () => {
                         // turn off loading indicator after the table initialized or the forced delay whichever takes longer; cancel loading timeout as well
                         forcedDelay.then(() => {
+                            // TODO: these ought to be moved to a helper function in displayManager
                             stateManager.display.filters.isLoading = false;
                             $timeout.cancel(stateManager.display.filters.loadingTimeout);
                         });

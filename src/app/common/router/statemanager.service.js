@@ -19,7 +19,7 @@
      * - activated: it activates its parent and deactivates its active sibling if any;
      * - deactivated: it deactivates its parent as well;
      *
-     * Only `active` and `morph` state properties are animated (animation can be skip which is indicated by the `activeSkip` and `morphSkip` flags) and need to be set through `setActive` and `setMorph` functions accordingly; these properties can be bound and watched directly though. Everything else on the `state` object can be set, bound, and watched directly.
+     * Only `active` and `morph` state properties are animated (animation can be skipped which is indicated by the `activeSkip` and `morphSkip` flags) and need to be set through `setActive` and `setMorph` functions accordingly; these properties can be bound and watched directly though. Everything else on the `state` object can be set, bound, and watched directly.
      */
     angular
         .module('app.common.router')
@@ -27,7 +27,7 @@
 
     // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
-    function stateManager($q, $rootScope, initialState, initialDisplay) {
+    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay) {
         const service = {
             addState,
 
@@ -47,6 +47,9 @@
         };
 
         const fulfillStore = {}; // keeping references to promise fulfill functions
+
+        const displayService = displayManager(service); // init displayManager
+        angular.extend(service, displayService); // merge displayManager service function into stateManager
 
         return service;
 
@@ -227,6 +230,11 @@
                     //console.log('EMIT EVENT for', itemName, property, value, skip);
                     // emit event on the rootscope when change is complete
                     $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
+
+                    // record history of `active` changes only
+                    if (property === 'morph') {
+                        return;
+                    }
 
                     let history;
 
