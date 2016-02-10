@@ -925,14 +925,16 @@
             };
 
             // temporary data loading
-            // TODO: replace ecogeo with layerid;
+            // FIXME: remove default ecogeo data once filters is disabled for layers with no attribs
             const newData = $timeout(() => {
-                const attrs = geoService.getFormattedAttributes('ecogeo', '0');
+                const attrs = geoService.layers[layer.id] && geoService.layers[layer.id].attribs ?
+                    geoService.getFormattedAttributes(layer.id, geoService.layers[layer.id].attribs.indexes[0]) :
+                    geoService.getFormattedAttributes('ecogeo', '0');
 
                 return {
                     data: {
-                        columns: attrs.columns.slice(0, (layer.id + 1) * 5),
-                        data: attrs.data.slice(0, (layer.id + 1) * 50)
+                        columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 5),
+                        data: attrs.data.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 50)
                     },
                     isLoaded: false
                 };
