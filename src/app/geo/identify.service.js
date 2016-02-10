@@ -14,6 +14,7 @@
     function identifyService(stateManager) {
 
         const dynamicLayers = [];
+        let lastClick = Date.now(); //HACK time to deterimne when to clear content
 
         return (geoApi, map, layerRegistry) => {
             geoApi.events.wrapEvents(map, { click: clickHandlerBuilder(geoApi, map) });
@@ -30,6 +31,21 @@
         };
 
         ////////
+
+        //determines if it has been sufficiently long since the last user click happened.
+        //used by competing handlers to determine if they should clear the results pane
+        //or just append data to it
+        function newClickTest() {
+            const rightNow = Date.now();
+            if (rightNow - lastClick > 500) {
+                //has been half a second since last click.  treat as new click
+                lastClick = rightNow;
+                return true;
+            } else {
+                //less than half a second. was probably the same click
+                return false;
+            }
+        }
 
         //takes an attribute set (key-value mapping) and converts it to a format
         //suitable for the details pane.
@@ -70,7 +86,9 @@
                 console.info('Click start');
                 const detailsPanel = stateManager.display.details;
                 detailsPanel.isLoading = true;
-                detailsPanel.data = [];
+                if (newClickTest()) {
+                    detailsPanel.data = [];
+                }
 
                 const opts = {
                     geometry: clickEvent.mapPoint,
@@ -126,8 +144,7 @@
 
         function featureClickHandlerBuilder(layerRegistry) {
 
-            //TODO to have true "click through" on the map, we may need to mock other clicks
-            //     on the map at the same position (to get image layers lurking below the features)
+            //TODO the map click is also happening, which conflicts with this.
             //     as well as consider other actual feature-layer items that are underneath the top
             //     feature.  This can include file-based features, meaning we cannot default to
             //     just using server-side identify to solve the issue.  A true mess.
@@ -144,7 +161,9 @@
                 //TODO we have duplicated code in both click handlers to manage the details pane.  abstract if possible
                 const detailsPanel = stateManager.display.details;
                 detailsPanel.isLoading = true;
-                detailsPanel.data = [];
+                if (newClickTest()) {
+                    detailsPanel.data = [];
+                }
 
                 //get the id and attribute bundle of the layer belonging to the feature that was clicked
                 const layerId = clickEvent.graphic.getLayer().id;
@@ -186,7 +205,11 @@
                 };
                 detailsPanel.data.push(result);
                 detailsPanel.isLoading = false;
-                stateManager.setActive({ side: false }, 'mainDetails');
+
+                //FIXME this is not a perfect solution; it only works right now because we have non-feature layers always present.
+                //      need a good way to know when to show/hide the point window.  having this line in both handlers makes it open
+                //      then close.
+                //stateManager.setActive({ side: false }, 'mainDetails');
             };
         }
 
