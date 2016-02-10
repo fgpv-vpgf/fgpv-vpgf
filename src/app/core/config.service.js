@@ -45,6 +45,7 @@
         const service = {
             data: {},
             initialize: initialize,
+            reset,
             ready: ready
         };
 
@@ -55,7 +56,10 @@
         /**
          * Initializes `configService` by fetching and parsing `config` object.
          */
-        function initialize() {
+        function initialize(lang) {
+            if (lang !== undefined) {
+                console.log('got a language');
+            }
             if (initializePromise) {
                 return initializePromise;
             }
@@ -120,6 +124,11 @@
             });
 
             return initializePromise;
+        }
+
+        function reset(lang) {
+            initializePromise = undefined;
+            return initialize(lang);
         }
 
         /**

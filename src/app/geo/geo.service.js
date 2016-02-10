@@ -263,6 +263,13 @@
          * @param {object} config the map configuration based on the configuration schema
          */
         function buildMap(domNode, config) {
+            // reset before rebuilding the map
+            if (map !== null) {
+                // NOTE: Possible to have dom listeners stick around after the node is destroyed
+                map.destroy();
+                map = null;
+                service.layers = {};
+            }
 
             // FIXME remove the hardcoded settings when we have code which does this properly
             map = service.gapi.mapManager.Map(domNode, { basemap: 'gray', zoom: 6, center: [-100, 50] });
