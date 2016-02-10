@@ -38,6 +38,9 @@
                     refresh: {
                         enabled: true
                     },
+                    filters: {
+                        enabled: true
+                    },
                     remove: {
                         enabled: true
                     },
