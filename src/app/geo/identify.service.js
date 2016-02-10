@@ -147,24 +147,29 @@
                 detailsPanel.data = [];
 
                 //get the id and attribute bundle of the layer belonging to the feature that was clicked
-                const layerId = clickEvent.layer.id;
+                const layerId = clickEvent.graphic.getLayer().id;
                 if (!layerRegistry[layerId]) {
                     throw new Error('Click on unregistered layer ' + layerId);
                 }
+
                 const attribsBundle = layerRegistry[layerId].attribs;
                 if (!attribsBundle) {
                     //TODO a valid case is that attributes are still downloading. perhaps returning
-                    //     a "click back later when attribs have downloaded" message for display in
-                    //     details pane is more appropriate than an error.
+                    //     a "click back later when attribs have downloaded" detail result is ok?
+                    detailsPanel.isLoading = false;
+                    return;
+                } else if (attribsBundle === {}) {
+                    //TODO do we really want to error, or just do nothing (i.e. user clicks on no-data feature -- so what?)
                     throw new Error('Click on layer without downloaded attributes ' + layerId);
                 }
+
                 const layerState = layerRegistry[layerId].state;
 
                 //feature layers have only one index, so the first one is ours. grab the attribute set for that index.
                 const attribSet = attribsBundle[attribsBundle.indexes[0]];
 
                 //grab the object id of the feature we clicked on.
-                const objId = clickEvent.Graphic.attributes[attribSet.oidField].toString();
+                const objId = clickEvent.graphic.attributes[attribSet.oidField].toString();
 
                 //use object id find location of our feature in the feature array, and grab its attributes
                 const featAttribs = attribSet.features[attribSet.oidIndex[objId]].attributes;
