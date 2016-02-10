@@ -34,7 +34,8 @@
             shiftZoom,
             selectBasemap,
             setFullExtent,
-            setLayerVisibility
+            setLayerVisibility,
+            removeLayer
         };
 
         let map = null; // keep map reference local to geoService
@@ -62,6 +63,27 @@
             if (l) {
                 l.state.options.visibility.value = value; // update layer state value
                 l.layer.setVisibility(value === 'on' ? true : false);
+            }
+        }
+
+        /**
+         * Removes the layer from the map and from the layer registry
+         * @param {Number} layerId  the id of the layer to be removed
+         * TODO: needs more work for removing dynamic layers and its children;
+         */
+        function removeLayer(layerId) {
+            const l = service.layers[layerId];
+
+            if (!l) {
+                return;
+            }
+
+            map.removeLayer(l.layer);
+
+            // TODO: needs more work to manager layerOrder
+            const index = service.layerOrder.indexOf(layerId);
+            if (index !== -1) {
+                service.layerOrder.splice(index, 1);
             }
         }
 
@@ -165,8 +187,11 @@
             const columnOrder = [];
 
             // get the attribute keys to use as column headers
-            Object.keys(first.attributes).forEach((key, index) => {
-                columns[index] = { title: key };
+            Object.keys(first.attributes)
+                .forEach((key, index) => {
+                    columns[index] = {
+                        title: key
+                    };
                 columnOrder[index] = key;
             });
 
@@ -274,7 +299,11 @@
             }
 
             // FIXME remove the hardcoded settings when we have code which does this properly
-            map = service.gapi.mapManager.Map(domNode, { basemap: 'gray', zoom: 6, center: [-100, 50] });
+            map = service.gapi.mapManager.Map(domNode, {
+                basemap: 'gray',
+                zoom: 6,
+                center: [-100, 50]
+            });
             if (config.services && config.services.proxyUrl) {
                 service.gapi.mapManager.setProxy(config.services.proxyUrl);
             }
@@ -302,7 +331,8 @@
                                 }
                             })
                             .catch(exception => {
-                                console.log('Error getting attributes for ' + l.name + ': ' + exception);
+                                console.log('Error getting attributes for ' + l.name + ': ' +
+                                    exception);
                                 console.log(l);
                             });
                     }
@@ -311,7 +341,11 @@
 
             // setup map using configs
             // FIXME: I should be migrated to the new config schema when geoApi is updated
-            const mapSettings = { basemaps: [], scalebar: {}, overviewMap: {} };
+            const mapSettings = {
+                basemaps: [],
+                scalebar: {},
+                overviewMap: {}
+            };
             if (config.rampStyleBasemaps) {
                 mapSettings.basemaps = config.rampStyleBasemaps;
             }
@@ -357,7 +391,9 @@
             mapManager = service.gapi.mapManager.setupMap(map, mapSettings);
 
             // FIXME temp link for debugging
-            window.FGPV = { layers: service.layers };
+            window.FGPV = {
+                layers: service.layers
+            };
         }
 
         /**
