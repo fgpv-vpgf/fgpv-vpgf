@@ -68,7 +68,7 @@
                 label: 'Canada',
                 icon: 'action:home',
                 tooltip: 'Canada',
-                action: function () {} // FIXME: user proper call
+                action: () => geoService.setFullExtent()
             },
             history: {
                 label: 'History',

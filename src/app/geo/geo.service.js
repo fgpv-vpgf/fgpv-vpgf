@@ -33,7 +33,7 @@
             setZoom,
             shiftZoom,
             selectBasemap,
-
+            setFullExtent,
             setLayerVisibility
         };
 
@@ -41,6 +41,8 @@
 
         let mapManager = null;
         let identify = null;
+
+        let fullExtent = null;
 
         // FIXME: need to find a way to have the dojo URL set by the config
         service.promise = geoapi('http://js.arcgis.com/3.14/', window)
@@ -293,6 +295,11 @@
                         a.then(
                             data => {
                                 registerAttributes(data);
+
+                                // use the fullExtent of a layer if one does not exists
+                                if (!fullExtent && l.fullExtent) {
+                                    fullExtent = l.fullExtent;
+                                }
                             })
                             .catch(exception => {
                                 console.log('Error getting attributes for ' + l.name + ': ' + exception);
@@ -318,6 +325,33 @@
 
             if (config.overviewMap) {
                 mapSettings.overviewMap = config.overviewMap;
+            }
+
+            if (config.fullExtent) {
+
+                service.gapi.events.wrapEvents(map, {
+                    load: () => {
+                        // full extent available in config
+                        mapSettings.fullExtent = config.fullExtent;
+
+                        // compare map extent and setting.extent spatial-references
+                        const mapExtent = map.extent;
+
+                        if (service.gapi.proj.isSpatialRefEqual(mapExtent.spatialReference,
+                            mapSettings.fullExtent.spatialReference)) {
+
+                            // same spatial reference, no reprojection required
+                            fullExtent = service.gapi.mapManager.Extent(mapSettings.fullExtent);
+                        } else {
+
+                            // need to re-project
+                            fullExtent = service.gapi.proj.projectEsriExtent(
+                                service.gapi.mapManager.Extent(mapSettings.fullExtent),
+                                mapExtent.spatialReference);
+                        }
+                    }
+                });
+
             }
 
             mapManager = service.gapi.mapManager.setupMap(map, mapSettings);
@@ -363,6 +397,21 @@
                 console.warn('GeoService: map is not yet created.');
             }
 
+        }
+
+        /**
+         * Set the map to full extent
+         */
+        function setFullExtent() {
+            if (map) {
+                if (fullExtent) {
+                    map.setExtent(fullExtent);
+                } else {
+                    console.warn('GeoService: fullExtent value is not set.');
+                }
+            } else {
+                console.warn('GeoService: map is not yet created.');
+            }
         }
     }
 })();
