@@ -15,8 +15,12 @@
         .module('app.layout')
         .controller('ShellController', ShellController);
 
+    // disable jshint maxparam rule; this module will be trimmed down - there is a lot of garbage/demo code here
+    // TODO: re-enable maxparam rule
+    /* jshint maxparams: 999 */
     function ShellController($timeout, $q, configService, $rootScope, $mdDialog, events, version,
         sideNavigationService, stateManager, $translate, geoService) {
+        /* jshint maxparams: 10 */
         const self = this;
 
         self.config = configService.data;
