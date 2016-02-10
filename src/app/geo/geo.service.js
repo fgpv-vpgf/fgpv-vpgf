@@ -192,8 +192,8 @@
                     columns[index] = {
                         title: key
                     };
-                columnOrder[index] = key;
-            });
+                    columnOrder[index] = key;
+                });
 
             // get the attribute data from every feature
             attr.features.forEach((element, index) => {
@@ -273,15 +273,15 @@
             }
 
             return $http.get(`http://epsg.io/${lookup}.proj4`)
-                    .then(response => {
-                        return response.data;
-                    })
-                    .catch(err => {
-                        console.warn(err);
+                .then(response => {
+                    return response.data;
+                })
+                .catch(err => {
+                    console.warn(err);
 
-                        // jscs check doesn't realize return null; returns a promise
-                        return null; // jscs:ignore jsDoc
-                    });
+                    // jscs check doesn't realize return null; returns a promise
+                    return null; // jscs:ignore jsDoc
+                });
         }
 
         /**
@@ -321,20 +321,19 @@
                         const a = service.gapi.attribs.loadLayerAttribs(l);
 
                         // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
-                        a.then(
-                            data => {
-                                registerAttributes(data);
+                        a.then(data => {
+                            registerAttributes(data);
 
-                                // use the fullExtent of a layer if one does not exists
-                                if (!fullExtent && l.fullExtent) {
-                                    fullExtent = l.fullExtent;
-                                }
-                            })
-                            .catch(exception => {
-                                console.log('Error getting attributes for ' + l.name + ': ' +
-                                    exception);
-                                console.log(l);
-                            });
+                            // use the fullExtent of a layer if one does not exists
+                            if (!fullExtent && l.fullExtent) {
+                                fullExtent = l.fullExtent;
+                            }
+                        })
+                        .catch(exception => {
+                            console.log('Error getting attributes for ' + l.name + ': ' +
+                                exception);
+                            console.log(l);
+                        });
                     }
                 });
             });
@@ -372,7 +371,7 @@
                         const mapExtent = map.extent;
 
                         if (service.gapi.proj.isSpatialRefEqual(mapExtent.spatialReference,
-                            mapSettings.fullExtent.spatialReference)) {
+                                mapSettings.fullExtent.spatialReference)) {
 
                             // same spatial reference, no reprojection required
                             fullExtent = service.gapi.mapManager.Extent(mapSettings.fullExtent);
@@ -403,7 +402,7 @@
         function selectBasemap(uid) {
             if (typeof (mapManager) === 'undefined' || !mapManager.BasemapControl) {
                 console.error('Error: Map manager or basemap control is not setup,' +
-                              ' please setup map manager by calling setupMap().');
+                    ' please setup map manager by calling setupMap().');
             } else {
                 mapManager.BasemapControl.setBasemap(uid);
             }
