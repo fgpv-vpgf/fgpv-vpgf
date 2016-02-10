@@ -90,6 +90,7 @@
                 }
 
                 if (!state.active) { // panel is not open; open it
+                    display.data = null; // clear data so the newly opened panel doesn't have any content
                     stateManager.setActive(panelName);
                 }
 
@@ -132,8 +133,8 @@
 
             // check if the layerId for displayed data still matches data being retrieved
             // this prevents old request which complete after the newer ones to update display with old data
-            // `state.active` check makes sure data is not set when the panel is closed
-            if (display.requestId === requestId && state.active === true) {
+            // data can be set on the closed panel, see fgpv-vpgf/fgpv-vpgf#308
+            if (display.requestId === requestId) {
                 display.data = data;
 
                 // in some cases you might not want to turn off the loading indicator from tocService toggle function
@@ -142,7 +143,7 @@
                 $q
                     .resolve(isLoaded)
                     .then(value => {
-                        if (display.requestId === requestId && state.active === true && value === true) {
+                        if (display.requestId === requestId && value === true) {
                             display.isLoading = false;
 
                             // cancel loading indicator timeout if any
