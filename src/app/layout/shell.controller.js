@@ -15,7 +15,7 @@
         .module('app.layout')
         .controller('ShellController', ShellController);
 
-    function ShellController($timeout, $q, configService, $rootScope, events, version,
+    function ShellController($timeout, $q, configService, $rootScope, $mdDialog, events, version,
         sideNavigationService, stateManager, $translate, geoService) {
         const self = this;
 
@@ -55,10 +55,23 @@
             {
                 name: 'Help',
                 type: 'link',
-                action: () => {
+                action: event => {
                     sideNavigationService.close();
-                    stateManager.setActive('help');
-                    console.log('Halp!');
+
+                    // TODO: do something better
+                    // open dumb help
+                    $mdDialog.show({
+                        controller: HelpSummaryController,
+                        controllerAs: 'self',
+                        templateUrl: 'app/ui/help/help-summary.html',
+                        parent: angular.element('.fgpv'),
+                        targetEvent: event,
+                        clickOutsideToClose: true,
+                        fullscreen: false
+                    });
+
+                    //stateManager.setActive('help');
+                    //console.log('Halp!');
                 }
             }
         ];
@@ -66,6 +79,29 @@
         activate();
 
         ////////////////
+
+        function HelpSummaryController() {
+            const self = this;
+            self.closeHelpSummary = () => $mdDialog.hide();
+            self.helpSummary = [];
+
+            // generate garbage help text;
+            // should ideally supplied from the translation files
+            for (let i = 0; i < 12; i++) {
+                let section = {
+                    name: HolderIpsum.words(3, true),
+                    items: []
+                };
+
+                for (let j = 0; j < Math.ceil(Math.random() * 5); j++) {
+                    section.items.push(HolderIpsum.sentence());
+                    section.items.push(HolderIpsum.sentence());
+                }
+
+                self.helpSummary.push(section);
+            }
+            console.log(self);
+        }
 
         /**
          * Controller's activate function.
@@ -115,7 +151,8 @@
             stateManager
                 .toggleDisplayPanel('mainDetails', {
                     data: items,
-                    isLoaded: $q.all(promises).then(() => true)
+                    isLoaded: $q.all(promises)
+                        .then(() => true)
                 }, requester, 0);
         }
 
