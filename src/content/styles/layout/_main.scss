@@ -76,7 +76,7 @@ rv-panel[type='main'] {
 rv-panel[type='side'] {
 
     //@include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
-    @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
+    @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
 
     &:before {
         content: "";
@@ -91,7 +91,8 @@ rv-panel[type='side'] {
 
     &.ng-animate {
         &:before {
-            bottom: 10px;
+            top: $viewport-gutter;
+            bottom: $viewport-gutter;
         }
     }
 
