@@ -84,11 +84,7 @@
                 if (dynamicLayers.length === 0) { return; }
 
                 console.info('Click start');
-                const detailsPanel = stateManager.display.details;
-                detailsPanel.isLoading = true;
-                if (newClickTest()) {
-                    detailsPanel.data = [];
-                }
+                const details = { data: [] };
 
                 const opts = {
                     geometry: clickEvent.mapPoint,
@@ -106,7 +102,7 @@
                         requester: name,
                         data: []
                     };
-                    detailsPanel.data.push(result);
+                    details.data.push(result);
                     return geoApi.layer.serverLayerIdentify(layer, opts)
                         .then(clickResults => {
                             console.log('got a click result');
@@ -125,6 +121,7 @@
                                 };
                             });
                             result.isLoading = false;
+                            console.log(details);
                         })
                         .catch(err => {
                             console.warn('Identify failed');
@@ -134,11 +131,9 @@
                         });
                 });
 
-                Promise.all(idPromises)
-                    .then(() => { detailsPanel.isLoading = false; })
-                    .catch(() => { detailsPanel.isLoading = false; });
+                details.isLoaded = Promise.all(idPromises).then(() => true);
 
-                stateManager.setActive({ side: false }, 'mainDetails');
+                stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
             };
         }
 
