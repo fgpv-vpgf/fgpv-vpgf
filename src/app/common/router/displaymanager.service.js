@@ -46,10 +46,23 @@
          *
          * If the panel is not closing, a loading indicator will be triggered (immediately or after a delay).
          *
+         * There are three options for passing data into the panel:
+         * 1. Data is a plain (synchronous) object (use this if the data does not have to be fetched).
+         *    In this case the isLoaded property does not need to be supplied and the panel will not show any indicator.
+         * 2. Data is a Promise which resolves to a simple object in the form `{data: {}}`.
+         *    A loading indicator will be displayed when the Promise is resolved or rejected.
+         * 3. Data is a Promise which resolves to an object in the form `{ data: {}, isLoaded: <Promise> }`.
+         *    The loading indicator will be triggered by the resolution of isLoaded.  It is recommended to use this as
+         *    a signal when data will be an array of points (e.g. resolving clicks on multiple layers), or in other cases
+         *    where data may be updated in multiple steps.
+         * Avoid sending a synchronous value in the form `{ data, isLoaded: false }`.  Generally if you can set isLoaded
+         * to true this could be better represented as a Promise object (but we do have a few edge cases where this may
+         * not hold).
+         *
          * @param  {String} panelName        panel to open; `statemanager.constant.service` `initialState` for valid panel names; any panel with a `display` property is a valid target;
          * @param  {Object} dataPromise      data object or a promise returning a data object; both can be plain data object or containers `{data: data, isLoaded: <boolean|promise> }`, where isLoaded can be a promise;
-         * @param  {Object} requester        object requesting display change; must have `id` attribute if you want the panel to toggle off on the same requester; requester object can be used to immediately pass content to the panel - for example passing layer name to the filters panel to be displayed in the panel header while the datatable is being constructed;
-         * @param  {Number} delay            time to wait before setting loading indicator
+         * @param  {Object} requester        an optional object requesting display change; must have `id` attribute if you want the panel to toggle off on the same requester; requester object can be used to immediately pass content to the panel - for example passing layer name to the filters panel to be displayed in the panel header while the datatable is being constructed;
+         * @param  {Number} delay            an optional time to wait (in milliseconds) before setting loading indicator
          * @return {Number} return a data requestId; if equals -1, the panel will be closed, no further actions needed; otherwise, the panel will be opened
          */
         function toggleDisplayPanel(panelName, dataPromise, requester = {}, delay = 100) {
