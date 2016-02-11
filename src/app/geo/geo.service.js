@@ -307,7 +307,7 @@
             if (config.services && config.services.proxyUrl) {
                 service.gapi.mapManager.setProxy(config.services.proxyUrl);
             }
-            identify = identifyService(service.gapi, map);
+            identify = identifyService(service.gapi, map, service.layers);
 
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
@@ -334,7 +334,8 @@
                                 exception);
                             console.log(l);
                         });
-                    }
+                    },
+                    click: identify.featureClickHandler
                 });
             });
 
