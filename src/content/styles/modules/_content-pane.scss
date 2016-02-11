@@ -14,11 +14,11 @@
             display: flex;
             white-space: nowrap;
             border-bottom: 1px solid $divider-color-light;
+            height: $toolbar-height + 1px; // 1px needed for a border
+            align-items: center;
             padding: {
-                top: 10px;
-                bottom: 7px;
-                right: 6px;
-                left: 16px;
+                right: rem(0.6);
+                left: rem(1.6);
             }
             @include pane-title;
         }
