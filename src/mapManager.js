@@ -139,10 +139,10 @@ module.exports = function (esriBundle) {
      *
      * @param {object} extentSetting that follows config spec
      */
-    function getExtentFromSetting(settingExtent) {
+    function getExtentFromSetting(extentSetting) {
 
-        return esriBundle.Extent(settingExtent.xmin, settingExtent.ymin, settingExtent.xmax,
-            settingExtent.ymax, settingExtent.spatialReference);
+        return esriBundle.Extent(extentSetting.xmin, extentSetting.ymin, extentSetting.xmax,
+            extentSetting.ymax, extentSetting.spatialReference);
     }
 
     return mapManager;
