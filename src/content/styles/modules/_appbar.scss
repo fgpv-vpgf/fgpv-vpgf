@@ -3,9 +3,17 @@
     .main-appbar {
         box-sizing: border-box;
         height: $toolbar-height;
-        min-height: $toolbar-height;
         z-index: auto;
         background: white;
         width: $toolbar-width;
+
+        align-items: center;;
+        padding: rem(0.4);
+        display: flex;
+
+        .rv-spacer {
+            border-right: $divider-color 1px solid;
+            height: 65%;
+        }
     }
 }

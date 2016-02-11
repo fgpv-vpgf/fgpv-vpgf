@@ -10,10 +10,10 @@ $font-size:   rem(1.0);
 
 $viewport-gutter: rem(1.0);
 
-$toolbar-height: $icon-button-height;
-$toolbar-width: 350px;
+$toolbar-height: $icon-button-height + rem(0.8);
+$toolbar-width: rem(40);
 
-$side-panel-width: 300px;
+$side-panel-width: rem(35);
 
 //$toolbar-z-index: 10;
 
