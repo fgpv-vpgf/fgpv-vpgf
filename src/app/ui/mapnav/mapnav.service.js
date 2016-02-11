@@ -38,48 +38,48 @@
         // navigation controls presets
         service.controls = {
             zoomIn: {
-                label: 'Zoom in',
+                label: 'nav.label.zoomIn',
                 icon: 'content:add',
-                tooltip: 'Zoom in',
+                tooltip: 'nav.tooltip.zoomIn',
                 action: () => geoService.shiftZoom(1)
             },
             slider: {
                 // TODO: add slider properties when we find a suitable slider lib
             },
             zoomOut: {
-                label: 'Zoom out',
+                label: 'nav.label.zoomOut',
                 icon: 'content:remove',
-                tooltip: 'Zoom out',
+                tooltip: 'nav.tooltip.zoomOut',
                 action: () => geoService.shiftZoom(-1)
             },
             geoLocation: {
-                label: 'Your Location',
+                label: 'nav.label.geoLocation',
                 icon: 'maps:my_location',
-                tooltip: 'Your Location',
+                tooltip: 'nav.tooltip.geoLocation',
                 action: function () {} // FIXME: user proper call
             },
             marquee: {
-                label: '???',
+                label: 'nav.label.search',
                 icon: 'action:search',
-                tooltip: '???',
+                tooltip: 'nav.tooltip.search',
                 action: function () {} // FIXME: user proper call
             },
             home: {
-                label: 'Canada',
+                label: 'nav.label.home',
                 icon: 'action:home',
-                tooltip: 'Canada',
+                tooltip: 'nav.tooltip.home',
                 action: () => geoService.setFullExtent()
             },
             history: {
-                label: 'History',
+                label: 'nav.label.history',
                 icon: 'action:history',
-                tooltip: 'History',
+                tooltip: 'nav.tooltip.history',
                 action: function () {} // FIXME: user proper call
             },
             basemap: {
-                label: 'Basemap',
+                label: 'nav.label.basemap',
                 icon: 'maps:map',
-                tooltip: 'Basemap',
+                tooltip: 'nav.tooltip.basemap',
 
                 // TODO: revise how mode is detected
                 selected: () => stateManager.state.mapnav.morph !== 'default',
@@ -93,6 +93,18 @@
                 }
             }
         };
+
+        //TODO when time permits, investigate this alternate form of translation.
+        //     we are currently using filters; performance testing should be done
+        //     to see if they have a significant impact compared to this approach
+        //     see https://github.com/fgpv-vpgf/fgpv-vpgf/commit/ac798a8a9b6678a7d37d462fd776ae54139739a4
+        /*
+        $translate.onReady(() => {
+            service.controls.zoomIn.tooltip = $translate.instant('nav.tooltip.zoomIn');
+            service.controls.zoomIn.label = $translate.instant('nav.label.zoomIn');
+            ...
+        });
+        */
 
         return service;
 

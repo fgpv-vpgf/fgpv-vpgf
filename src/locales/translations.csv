@@ -12,3 +12,88 @@ Appbar aria label for layers icon,appbar.aria.layers,Sets,[fr] Sets
 Appbar aria label for point info icon,appbar.aria.pointInfo,Point Information,[fr] Point Information
 Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,[fr] Open Sidenav
 Appbar aria label for tools icon,appbar.aria.tools,Tools,[fr] Tools
+Details pane title,details.title,Feature Information,[fr] Feature Information
+Content pane aria label for close button,contentPane.aria.close,Close,[fr] Close
+Content pane tooltip for close button,contentPane.tooltip.close,Close,[fr] Close
+Filter pane title prefix,filter.title,Features: ,[fr] Features: 
+Filter pane aria label for menu icon,filter.aria.menu,Open data panel menu,[fr] Open data panel menu
+Filter pane menu label for Minimize,filter.menu.minimize,Minimize,[fr] Minimize
+Filter pane menu label for Split View,filter.menu.splitView,Split View,[fr] Split View
+Filter pane menu label for Maximize,filter.menu.maximize,Maximize,[fr] Maximize
+Filter pane menu label for Enable Search,filter.menu.enableSearch,Enable Search,[fr] Enable Search
+Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable Filters,[fr] Enable Filters
+Filter pane menu label for Print,filter.menu.print,Print,[fr] Print
+Filter pane menu label for Export,filter.menu.export,Export,[fr] Export
+Map Navigation slider only text,nav.sliderOnly,slider only,[fr] slider only
+Map Navigation slider text,nav.slider,slider,[fr] slider
+Map Navigation zoom in label,nav.label.zoomIn,Zoom in,[fr] Zoom in
+Map Navigation zoom out label,nav.label.zoomOut,Zoom out,[fr] Zoom out
+Map Navigation geolocation label,nav.label.geoLocation,Your Location,[fr] Your Location
+Map Navigation search label,nav.label.search,Search,[fr] Search
+Map Navigation home label,nav.label.home,Canada,[fr] Canada
+Map Navigation history label,nav.label.history,History,[fr] History
+Map Navigation basemap label,nav.label.basemap,Basemap,[fr] Basemap
+Map Navigation zoom in tooltip,nav.tooltip.zoomIn,Zoom in,[fr] Zoom in
+Map Navigation zoom out tooltip,nav.tooltip.zoomOut,Zoom out,[fr] Zoom out
+Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your Location,[fr] Your Location
+Map Navigation search tooltip,nav.tooltip.search,Search,[fr] Search
+Map Navigation home tooltip,nav.tooltip.home,Canada,[fr] Canada
+Map Navigation history tooltip,nav.tooltip.history,History,[fr] History
+Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,[fr] Basemap
+Metadata pane title,metadata.title,Metadata,[fr] Metadata
+Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,[fr] Bounding Box
+Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding Box,[fr] Bounding Box
+Settings opacity slider label,settings.label.opaciaty,Opacity,[fr] Opacity
+Settings data header label,settings.label.data,Data,[fr] Data
+Settings snapshot mode label,settings.label.snapshot,Snapshot mode,[fr] Snapshot mode
+Side Navigation main title,sidenav.title,FGP R2 Viewer,[fr] FGP R2 Viewer
+Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,[fr] Open data panel menu
+Table of Content show symbology label,toc.layer.label.symbologyShow,Show symbology,[fr] Show symbology
+Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide symbology,[fr] Hide symbology
+Table of Content main title,toc.title,Layer Selector,[fr] Layer Selector
+Table of Content toggle group visibility label,toc.label.toggleGroupViz,Toggle group visibility,[fr] Toggle group visibility
+Table of Content toggle group visibility tootlip,toc.tooltip.toggleGroupViz,Toggle group visibility,[fr] Toggle group visibility
+Table of Content extra menu items label,toc.label.extraMenu,Extra,[fr] Extra
+Table of Content extra menu items tootlip,toc.tooltip.extraMenu,Extra,[fr] Extra
+Table of Content metadata label,toc.label.metadata,Metadata,[fr] Metadata
+Table of Content metadata tootlip,toc.tooltip.metadata,Metadata,[fr] Metadata
+Table of Content query label,toc.label.query,Toggle query,[fr] Toggle query
+Table of Content query tootlip,toc.tooltip.query,Toggle query,[fr] Toggle query
+Table of Content settings label,toc.label.settings,Settings,[fr] Settings
+Table of Content settings tootlip,toc.tooltip.settings,Settings,[fr] Settings
+Table of Content visibilty off label,toc.label.visibility.off,Show layer,[fr] Show layer
+Table of Content visibilty off tootlip,toc.tooltip.visibility.off,Show layer,[fr] Show layer
+Table of Content visibilty on label,toc.label.visibility.on,Hide layer,[fr] Hide layer
+Table of Content visibilty on tootlip,toc.tooltip.visibility.on,Hide layer,[fr] Hide layer
+Table of Content visibilty zoom in label,toc.label.visibility.zoomIn,Zoom In to Details,[fr] Zoom In to Details
+Table of Content visibilty zoom in tootlip,toc.tooltip.visibility.zoomIn,Zoom In to Details,[fr] Zoom In to Details
+Table of Content visibilty zoom out label,toc.label.visibility.zoomOut,Zoom Out to Details,[fr] Zoom Out to Details
+Table of Content visibilty zoom out tootlip,toc.tooltip.visibility.zoomOut,Zoom Out to Details,[fr] Zoom Out to Details
+Table of Content reload label,toc.label.reload,Reload,[fr] Reload
+Table of Content reload tootlip,toc.tooltip.reload,Reload,[fr] Reload
+Table of Content remove label,toc.label.remove,Remove,[fr] Remove
+Table of Content remove tootlip,toc.tooltip.remove,Remove,[fr] Remove
+Table of Content filters label,toc.label.filters,,[fr] 
+Table of Content filters tootlip,toc.tooltip.filters,,[fr] 
+Table of Content feature layer flag label,toc.label.flag.feature,ESRI Feature Layer (<x> <points|polygons|lines>),[fr] ESRI Feature Layer (<x> <points|polygons|lines>)
+Table of Content feature layer flag tootlip,toc.tooltip.flag.feature,ESRI Feature Layer (<x> <points|polygons|lines>),[fr] ESRI Feature Layer (<x> <points|polygons|lines>)
+Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic Layer (<x> <points|polygons|lines>),[fr] ESRI Dynamic Layer (<x> <points|polygons|lines>)
+Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer (<x> <points|polygons|lines>),[fr] ESRI Dynamic Layer (<x> <points|polygons|lines>)
+Table of Content wms layer flag label,toc.label.flag.wms,OGC WMS Layer,[fr] OGC WMS Layer
+Table of Content wms layer flag tootlip,toc.tooltip.flag.wms,OGC WMS Layer,[fr] OGC WMS Layer
+Table of Content image layer flag label,toc.label.flag.image,ESRI Image Layer,[fr] ESRI Image Layer
+Table of Content image layer flag tootlip,toc.tooltip.flag.image,ESRI Image Layer,[fr] ESRI Image Layer
+Table of Content scale flag label,toc.label.flag.scale,Toggle scale,[fr] Toggle scale
+Table of Content scale flag tootlip,toc.tooltip.flag.scale,Toggle scale,[fr] Toggle scale
+Table of Content data table flag label,toc.label.flag.data.table,Layer has viewable data,[fr] Layer has viewable data
+Table of Content data table flag tootlip,toc.tooltip.flag.data.table,Layer has viewable data,[fr] Layer has viewable data
+Table of Content data filter flag label,toc.label.flag.data.filter,Layer data is filtered,[fr] Layer data is filtered
+Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer data is filtered,[fr] Layer data is filtered
+Table of Content query flag label,toc.label.flag.query,query is turned off,[fr] query is turned off
+Table of Content query flag tootlip,toc.tooltip.flag.query,query is turned off,[fr] query is turned off
+Table of Content user flag label,toc.label.flag.user,Toggle user,[fr] Toggle user
+Table of Content user flag tootlip,toc.tooltip.flag.user,Toggle user,[fr] Toggle user
+Table of Content error state label,toc.label.state.error,Error,[fr] Error
+Table of Content error state tootlip,toc.tooltip.state.error,Error,[fr] Error
+Table of Content loading state label,toc.label.state.loading,Updating,[fr] Updating
+Table of Content loading state tootlip,toc.tooltip.state.loading,Updating,[fr] Updating
