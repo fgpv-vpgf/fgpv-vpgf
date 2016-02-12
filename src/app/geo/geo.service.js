@@ -45,8 +45,6 @@
 
         let fullExtent = null;
 
-        let fullExtent = null;
-
         // FIXME: need to find a way to have the dojo URL set by the config
         service.promise = geoapi('http://js.arcgis.com/3.14/', window)
             .then(initializedGeoApi => service.gapi = initializedGeoApi);
@@ -361,31 +359,56 @@
             }
 
             if (config.navigation.overviewMap && config.navigation.overviewMap.enabled) {
+
+                // FIXME: overviewMap has more settings
                 mapSettings.overviewMap = config.navigation.overviewMap;
+                console.log(mapSettings.overviewMap);
             }
 
             if (config.map.extents) {
 
-                // TODO: find the extent with type of full
+                // FIXME: default basemap should be indicated in the config as well
+                let currentBasemapUID = 'gray';
 
+                // In configSchema, at least one extent for a basemap
+                let extentsForUID = config.map.extents.filter((extent) => {
+                    if (extent.uid === currentBasemapUID) {
+                        return true;
+                    }
+                });
+
+                // find the full extent type from extentsForUID
+                let lFullExtent = extentsForUID.find((extent) => {
+                    if (extent.type === 'full') {
+                        return true;
+                    }
+                });
+
+                // setup mapSettings fullExtent
+                if (!angular.isUndefined(lFullExtent)) {
+                    mapSettings.fullExtent = lFullExtent;
+                } else {
+
+                    // pick any from the rest
+                    mapSettings.fullExtent = extentsForUID[0];
+                }
+
+                // map extent is not available until map is loaded
                 service.gapi.events.wrapEvents(map, {
                     load: () => {
-                        // full extent available in config
-                        mapSettings.fullExtent = config.map.extents[0];
 
                         // compare map extent and setting.extent spatial-references
-                        const mapExtent = map.extent;
-
-                        if (service.gapi.proj.isSpatialRefEqual(mapExtent.spatialReference,
-                                mapSettings.fullExtent.spatialReference)) {
+                        // make sure the full extent has the same spatial reference as the map
+                        if (service.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
+                            mapSettings.fullExtent.spatialReference)) {
 
                             // same spatial reference, no reprojection required
-                            fullExtent = service.gapi.mapManager.Extent(mapSettings.fullExtent);
+                            fullExtent = service.gapi.mapManager.getExtentFromSetting(mapSettings.fullExtent);
                         } else {
 
                             // need to re-project
                             fullExtent = service.gapi.proj.projectEsriExtent(
-                                service.gapi.mapManager.Extent(mapSettings.fullExtent),
+                                service.gapi.mapManager.getExtentFromSetting(mapSettings.fullExtent),
                                 mapExtent.spatialReference);
                         }
                     }
