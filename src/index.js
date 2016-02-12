@@ -57,7 +57,8 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/tasks/GeometryService', 'GeometryService'],
         ['esri/tasks/IdentifyParameters', 'IdentifyParameters'],
         ['esri/tasks/IdentifyTask', 'IdentifyTask'],
-        ['esri/tasks/ProjectParameters', 'ProjectParameters']
+        ['esri/tasks/ProjectParameters', 'ProjectParameters'],
+        ['esri/tasks/query', 'Query']
     ];
 
     function makeDojoRequests() {

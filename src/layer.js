@@ -429,6 +429,7 @@ module.exports = function (esriBundle, geoApi) {
         ArcGISImageServiceLayer: esriBundle.ArcGISImageServiceLayer,
         GraphicsLayer: esriBundle.GraphicsLayer,
         FeatureLayer: esriBundle.FeatureLayer,
+        Query: esriBundle.Query,
         TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
         WmsLayer: esriBundle.WmsLayer,
         getFeatureInfo: getFeatureInfoBuilder(esriBundle),
