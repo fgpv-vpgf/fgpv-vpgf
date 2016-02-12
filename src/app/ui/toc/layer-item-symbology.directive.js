@@ -9,6 +9,8 @@
     const RV_DURATION = 0.3;
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
+    const RV_ROTATE_ANGLE = 8;
+
     /**
      * @ngdoc directive
      * @name rvLayerItemSymbology
@@ -16,7 +18,7 @@
      * @restrict E
      * @description
      *
-     * The `rvLayerItemSymbology` directive generates a symbology list and toggles its visibility.
+     * The `rvLayerItemSymbology` directive generates a symbology list and toggles its visibility. It also wiggles the stacked symbology icons on mouse over and focus.
      *
      * ```html
      * <rv-layer-item-symbology symbology="layer.symbology"></rv-layer-item-symbology>
@@ -27,7 +29,7 @@
         .module('app.ui.toc')
         .directive('rvLayerItemSymbology', rvLayerItemSymbology);
 
-    function rvLayerItemSymbology() {
+    function rvLayerItemSymbology($q) {
         const directive = {
             require: '^rvLayerItem', // need access to layerItem to get its element reference
             restrict: 'E',
@@ -50,36 +52,101 @@
 
             self.expanded = false; // holds the state of symbology section
             self.toggleSymbology = toggleSymbology;
+            self.wiggleSymbology = wiggleSymbology;
 
             // TODO: remove temp var to randomize images loaded
             self.random = Math.random();
 
-            // store reference to symbology nodes
-            let imgs = [];
-            let names = [];
-            let container = {};
+            let initializePromise;
 
-            // we only need one timeline since we can reuse it
-            let tl = new TimelineLite({
-                paused: true
-            });
+            let tlshift; // expand/collapse animation timeline
+            let tlwiggle; // wiggle animation timeline
+
+            // store reference to symbology nodes
+            // the following are normal arrays of jQuery items, NOT jQuery pseudo-arrays
+            let items; // symbology items (icon and name)
+            let icons; // just the icon from the item
+            let names; // just then name
 
             function toggleSymbology() {
                 // when invoked for the first time, find elements and construct a timeline
-                if (imgs.length === 0) {
-                    findItems();
+                initializeTimelines()
+                    .then(() => {
+                        // expand symbology items and reverse wiggle
+                        if (!self.expanded) {
+                            tlshift.play();
+                            tlwiggle.reverse();
+                        } else { // collapse symbology items and forward play wiggle
+                            tlshift.reverse();
+                            tlwiggle.play();
+                        }
+
+                        self.expanded = !self.expanded;
+                    });
+            }
+
+            function wiggleSymbology(isOver) {
+                // when invoked for the first time, find elements and construct a timeline
+                initializeTimelines()
+                    .then(() => {
+                        if (isOver) {
+                            // on mouse over, wiggle only if symbology is not expanded or animating
+                            if (!self.expanded && !tlshift.isActive()) {
+                                tlwiggle.play();
+                            }
+                        } else {
+                            // on mouse out, set wiggle timeline to 0 if symbology is expanded or animating
+                            if (tlshift.isActive() || self.expanded) {
+                                tlwiggle.pause(0);
+                            } else if (!self.expanded && !tlshift.isActive()) { // ... reverse wiggle, if symbology is collapsed and not animating
+                                tlwiggle.reverse();
+                            }
+                        }
+                    });
+            }
+
+            // find and store references to relevant nodes
+            function initializeTimelines() {
+
+                if (initializePromise) {
+                    return initializePromise;
+                }
+
+                initializePromise = $q(fulfill => {
+                    items = element.find(RV_SYMBOLOGY_ITEM_CLASS)
+                        .toArray()
+                        .map(item => $(item));
+                    icons = items.map(item => $(item)
+                        .find('> img'));
+                    names = element.find(RV_SYMBOLOGY_ITEM_NAME_CLASS)
+                        .toArray()
+                        .map(name => $(name));
+
+                    makeShiftTimeline();
+                    makeWiggleTimeline();
+
+                    fulfill();
+                });
+
+                return initializePromise;
+
+                function makeShiftTimeline() {
+                    tlshift = new TimelineLite({
+                        paused: true
+                    });
 
                     // in pixels
-                    let symbologyListTopOffset = 45;
-                    let symbologyListTopMargin = 8;
-                    let symbologyListBottomMargin = 15;
-                    let symbologyItemHeight = 36;
+                    const symbologyListTopOffset = 45;
+                    const symbologyListTopMargin = 8;
+                    const symbologyListBottomMargin = 15;
+                    const symbologyItemHeight = 36;
 
                     // move all the symbology items from stack into list
-                    imgs.forEach(img => tl.set(img, {
+                    // TODO: I think hardcoding '300px' has something to do with https://github.com/fgpv-vpgf/fgpv-vpgf/issues/262
+                    items.forEach(img => tlshift.set(img, {
                         width: '300px'
                     }, 0));
-                    imgs.forEach((img, index) => tl.to(img, RV_DURATION, {
+                    items.forEach((img, index) => tlshift.to(img, RV_DURATION, {
                         left: 0,
                         top: (symbologyListTopOffset + index * symbologyItemHeight) +
                             'px',
@@ -87,40 +154,41 @@
                     }, 0));
 
                     // make symbology names visible
-                    names.forEach(name => tl.to(name, RV_DURATION - 0.1, {
+                    names.forEach(name => tlshift.to(name, RV_DURATION - 0.1, {
                         autoAlpha: 1, // https://greensock.com/docs/#/HTML5/GSAP/Plugins/CSSPlugin/
-                        display:'block',
+                        display: 'block',
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, 0.1));
 
-                    // expand layer item container to accomodate symbology list
-                    tl.to(container, RV_DURATION, {
+                    // expand layer item container (ctrl.element) to accomodate symbology list
+                    tlshift.to(ctrl.element, RV_DURATION, {
                         height: symbologyListTopOffset +
                             symbologyListTopMargin +
-                            imgs.length *
+                            items.length *
                             symbologyItemHeight +
                             symbologyListBottomMargin,
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, 0);
                 }
 
-                // play timeline
-                if (!self.expanded) {
-                    tl.play();
-                } else {
-                    tl.reverse();
+                function makeWiggleTimeline() {
+                    // we only need one timeline since we can reuse it
+                    tlwiggle = new TimelineLite({
+                        paused: true
+                    });
+
+                    // wiggle the first icon in the stack
+                    tlwiggle.to(icons[0], RV_DURATION, {
+                        rotation: -RV_ROTATE_ANGLE,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, 0);
+
+                    // wiggle the last icon in the stack
+                    tlwiggle.to(icons.slice(-1).pop(), RV_DURATION, {
+                            rotation: RV_ROTATE_ANGLE,
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        }, 0);
                 }
-
-                self.expanded = !self.expanded;
-            }
-
-            // find and store references to relevant nodes
-            function findItems() {
-                imgs = element.find(RV_SYMBOLOGY_ITEM_CLASS)
-                    .toArray();
-                names = element.find(RV_SYMBOLOGY_ITEM_NAME_CLASS)
-                    .toArray();
-                container = ctrl.element; // container is needed for animation
             }
         }
     }
