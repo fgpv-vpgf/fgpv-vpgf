@@ -9,7 +9,11 @@
     ng-if="self.symbology.length > 1">
 
     <md-button class='rv-symbology-trigger rv-button-32 rv-icon-24 md-icon-button'
-        ng-click="self.toggleSymbology()">
+        ng-click="self.toggleSymbology()"
+        ng-focus="self.wiggleSymbology(true)"
+        ng-blur="self.wiggleSymbology(false)"
+        ng-mouseover="self.wiggleSymbology(true)"
+        ng-mouseout="self.wiggleSymbology(false)">
         <md-tooltip md-direction="top">{{ self.expanded ? 'Hide symbology' : 'Show symbology' }}</md-tooltip>
         <md-icon md-svg-src="navigation:close"></md-icon>
     </md-button>
