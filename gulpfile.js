@@ -232,7 +232,7 @@ gulp.task('jsinjector', 'Copy fixed assets to the build directory',
     });
 
 gulp.task('inject', 'Adds configured dependencies to the HTML page',
-    ['sass', 'jsrollup', 'assetcopy'],
+    ['sass', 'jsrollup', 'assetcopy', 'translate'],
     function () {
         var index = config.index;
         var js = config.js;
@@ -265,7 +265,7 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
  * -- prod  : minify everything
  */
 gulp.task('serve:dev', 'Build the application and start a local development server',
-    ['vet', 'inject', 'translate'],
+    ['vet', 'inject'],
     function () {
         // run karma tests parallel with serve
         if (args.test) {
@@ -282,7 +282,7 @@ gulp.task('serve:dev', 'Build the application and start a local development serv
  * @return {Stream}
  */
 gulp.task('test', 'Run style checks and unit tests',
-    ['vet', 'translate'],
+    ['vet'],
     function (done) {
         startTests(true, done);
     });
@@ -293,7 +293,7 @@ gulp.task('test', 'Run style checks and unit tests',
  * Watch for file changes and re-run tests on each change
  */
 gulp.task('test:auto', 'Run unit tests and keep watching for changes',
-    ['vet', 'translate'],
+    ['vet'],
     function (done) {
         startTests(false, done);
     });
