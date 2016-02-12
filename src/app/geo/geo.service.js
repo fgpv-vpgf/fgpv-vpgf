@@ -409,7 +409,7 @@
                             // need to re-project
                             fullExtent = service.gapi.proj.projectEsriExtent(
                                 service.gapi.mapManager.getExtentFromSetting(mapSettings.fullExtent),
-                                mapExtent.spatialReference);
+                                map.extent.spatialReference);
                         }
                     }
                 });
