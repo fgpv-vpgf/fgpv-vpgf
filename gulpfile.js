@@ -258,6 +258,23 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
             .pipe(gulp.dest(config.build));
     });
 
+gulp.task('tgz', 'Generate tarball for distribution', ['inject'], function () {
+    return gulp
+        .src(['build/*'])
+        .pipe($.tar('fgpv-' + pkg.version + '.tgz'))
+        .pipe($.gzip({ append: false }))
+        .pipe(gulp.dest('dist'));
+});
+
+gulp.task('zip', 'Generate zip for distribution', ['inject'], function () {
+    return gulp
+        .src(['build/*'])
+        .pipe($.zip('fgpv-' + pkg.version + '.zip'))
+        .pipe(gulp.dest('dist'));
+});
+
+gulp.task('dist', 'Generate tgz and zip files for distribution', ['zip', 'tgz']);
+
 /**
  * Serves the app.
  * -- test  : run Karma auto tests in parallel
