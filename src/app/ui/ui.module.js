@@ -16,7 +16,7 @@
             'app.ui.panels',
             'app.ui.details',
             'app.ui.toc',
-            'app.ui.toolbox',
+            'app.ui.widgets',
             'app.ui.metadata',
             'app.ui.mapnav',
             'app.ui.filters',

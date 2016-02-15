@@ -4,7 +4,7 @@
     /**
      * @ngdoc directive
      * @name rvToolbox
-     * @module app.ui.toolbox
+     * @module app.ui.widgets
      * @restrict E
      * @description
      *
@@ -12,7 +12,7 @@
      *
      */
     angular
-        .module('app.ui.toolbox')
+        .module('app.ui.widgets')
         .directive('rvToolbox', rvToolbox);
 
     function rvToolbox() {
