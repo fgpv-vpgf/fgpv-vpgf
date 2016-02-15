@@ -3,11 +3,11 @@
 
     /**
      * @ngdoc module
-     * @name app.ui.toolbox
+     * @name app.ui.widgets
      * @description
      *
-     * The `app.ui.toolbox` module contains toolbox panel.
+     * The `app.ui.widgets` module contains toolbox panel.
      */
     angular
-        .module('app.ui.toolbox', []);
+        .module('app.ui.widgets', []);
 })();
