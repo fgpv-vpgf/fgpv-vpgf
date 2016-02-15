@@ -161,16 +161,15 @@ Closes #8223
 
 With respect to the git commit guidelines above, the following scopes should be used for `feat` and `fix` types:
 
-- ui
-- data-services
-- layout
-- data
-- common
-- geoApi
-- core
+- 😾 or :pouting_cat: (formerly ui)
+- 🍱 or :bento: (formerly layout)
+- 💾 or :floppy_disk: (formerly data)
+- 💩 or :neckbeard: (formerly common)
+- 🔮 or :globe_with_meridians: (formerly geo)
+- 🍩 or :donut: (formerly core)
 
 For the remaining types the above list should be used wherever possible, but we include some additions:
 
-- build
-- release
-- libs
+- :tractor: (formerly build)
+- :shipit: (formerly release)
+- :toilet: (formerly libs)
