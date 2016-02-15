@@ -2,18 +2,22 @@
 
 set -e
 
-VER=$1
+if [ -z $UPSTREAM ]; then
+    UPSTREAM=fgp
+fi
+VER=`cat package.json | grep version | sed "s/\s*\"version\"\s*:\s*\"\(.*\)\"\s*,/\1/"`
 
-if [ -z $VER ]; then
-    echo 'Must supply a version number to use for tagging'
+read -p "Using v$VER to tag $UPSTREAM/master, continue? [y/N] " RESP
+
+if [[ $RESP != "y" && $RESP != "Y" ]]; then
+    echo Cancelled
     exit 1
 fi
 
-git fetch fgp
+git fetch $UPSTREAM
 git co master
-git reset --hard fgp/master
-git mff fgp/develop
-git push fgp
+git reset --hard $UPSTREAM/master
+git mff $UPSTREAM/develop
+git push $UPSTREAM
 git tag v$VER
-git push fgp v$VER
-
+git push $UPSTREAM v$VER
