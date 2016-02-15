@@ -289,6 +289,27 @@ gulp.task('serve:dev', 'Build the application and start a local development serv
             startTests(false);
         }
         serve(true);
+        $.util.log(`
+                 ._zzzd@@@@zzzL_
+              ._d@@~=~'._)-]~~~-@zz,
+       _zzr-zz~~)'   )L  _,   z _"~@z_
+     ]a@~._]P 6"             z     e'@bz_
+   _z@@Z, ][    -  )c )-  )-  ._ - .,'~r~b,
+  d@@t~= ~q@z")e  _        .    _,  .  '''@,
+ ]@@. ]r, .-aL_ _   )L '   "'], ._z_  ~   ][
+ q@@"d[ ._ -,'-UUzdL  -,'') _  ]%~~~~' _,za[
+ '@@@@L  "._   P   "L   '   "  "e '".j  )z@@
+  '-@@@bz___]L +',   )c   -_,'az__zz@'+)za@@
+     ~~@@@@@@@@zzaza_db_L  '' z=@@@@@@@@@@@~
+       ]@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@[~~"
+        ]@@@@@@@@@@@@@@@@@@]@@@@@@@@@@'
+        '@@@@@a@@a@@]M@@M@@]@@]OM@@@@[
+         q@@@@K@@U@@M@[@H[@]M@]@UM@@@'
+          @@U@@]][@qH[[]H[[]H[]]]]]@[
+          '@@aN,baq[[[2]][[q~[d|r(@@'
+           q@@)ql]'bq|]]][[]]'P||Q@[    jrd
+            ~@@bd_L11"'' '_____za@@'
+             '~~@@@@@@@@@@@@@@@~~`);
     }, {
         aliases: ['serve']
     });
