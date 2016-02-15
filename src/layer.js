@@ -355,6 +355,16 @@ function makeCsvLayerBuilder(esriBundle, geoApi) {
     };
 }
 
+/**
+* Peek at the CSV output (useful for checking headers)
+* @param {string} csvData the CSV data to be processed
+* @param {string} delimiter the delimiter used by the data
+* @returns {Array} an array of arrays containing the parsed CSV
+*/
+function csvPeek(csvData, delimiter) {
+    return csv2geojson.dsv(delimiter).parseRows(csvData);
+}
+
 function makeShapeLayerBuilder(esriBundle, geoApi) {
 
     /**
@@ -436,6 +446,7 @@ module.exports = function (esriBundle, geoApi) {
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
         makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi),
-        serverLayerIdentify: serverLayerIdentifyBuilder(esriBundle)
+        serverLayerIdentify: serverLayerIdentifyBuilder(esriBundle),
+        csvPeek
     };
 };
