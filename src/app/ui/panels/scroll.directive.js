@@ -26,10 +26,7 @@
          * @param  {Object} attr  element's attributes
          */
         function link(scope, element) {
-            var iframe = document.createElement('iframe');
-            iframe.id = 'sdfs';
-            iframe.style.cssText = `height: 0; background-color: transparent; margin: 0; padding: 0;
-            overflow: hidden; border-width: 0; position: absolute; width: 100%;`;
+            const iframe = angular.element(`<iframe class="rv-resize-h"></iframe>`)[0];
 
             // Register our event when the iframe loads
             iframe.onload = function () {
@@ -38,7 +35,7 @@
                 // resize (even scrollbars on the outer document)
                 iframe.contentWindow.addEventListener('resize', evt => {
                     console.log(evt, element.width(), $(iframe).width());
-                    scope.$emit('pane-resize', evt);
+                    scope.$emit('rv-resize', evt);
                     /*try {
                         var evt = document.createEvent('UIEvents');
                         evt.initUIEvent('resize', true, false, window, 0);
