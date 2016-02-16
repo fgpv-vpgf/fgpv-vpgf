@@ -180,12 +180,14 @@
                     // wiggle the first icon in the stack
                     tlwiggle.to(icons[0], RV_DURATION, {
                         rotation: -RV_ROTATE_ANGLE,
+                        transformOrigin: '0% 100%',
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, 0);
 
                     // wiggle the last icon in the stack
                     tlwiggle.to(icons.slice(-1).pop(), RV_DURATION, {
                             rotation: RV_ROTATE_ANGLE,
+                            transformOrigin: '0% 100%',
                             ease: RV_SWIFT_IN_OUT_EASE
                         }, 0);
                 }
