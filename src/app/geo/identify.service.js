@@ -25,14 +25,14 @@
                  * @param {Object} layer an ESRI ArcGISDynamicMapServiceLayer object
                  * @param {String} name the display name of the layer
                  */
-                addDynamicLayer: (layer, name) => { dynamicLayers.push({ layer, name }); },
+                addDynamicLayer: (layer, name) => dynamicLayers.push({ layer, name }),
 
                 /**
                  * Add a feature layer to identify when map click events happen.
                  * @param {Object} layer an ESRI FeatureLayer object
                  * @param {String} name the display name of the layer
                  */
-                addFeatureLayer: (layer, name) => { featureLayers.push({ layer, name }); }
+                addFeatureLayer: (layer, name) => featureLayers.push({ layer, name })
 
             };
         };
@@ -41,11 +41,8 @@
 
         //returns the number of visible layers that have been registered with the identify service
         function getVisibleLayers() {
-            let count = 0;
-            dynamicLayers.concat(featureLayers).forEach(layerReg => {
-                count += layerReg.layer.visibleAtMapScale ? 1 : 0;
-            });
-            return count;
+            //use .filter to count boolean true values
+            return dynamicLayers.concat(featureLayers).filter(l => l.layer.visibleAtMapScale).length;
         }
 
         //takes an attribute set (key-value mapping) and converts it to a format
@@ -192,9 +189,11 @@
 
                             const attribsBundle = layerRegistry[layer.id].attribs;
                             if (!attribsBundle) {
-                                //TODO a valid case is that attributes are still downloading. perhaps returning
-                                //     a "click back later when attribs have downloaded" detail result is ok?
-                                //     for now, just display the bare data that is in the graphic layer (probably object id)
+                                //a valid case is that attributes are still downloading. perhaps returning
+                                //a "click back later when attribs have downloaded" detail result is ok?
+                                //for now, just display the bare data that is in the graphic layer (probably object id)
+                                //FIXME once we have a promise that resolves after attributes are downloaded,
+                                //      use that to delay this entire attribute fetch process
                                 return {
                                     name: feat.getTitle(),
                                     data: attributesToDetails(feat.attributes)
