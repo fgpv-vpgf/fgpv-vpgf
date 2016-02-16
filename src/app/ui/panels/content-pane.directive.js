@@ -103,6 +103,10 @@
                 let footerElement = $compile(`<${self.footer}></${self.footer}>`)(scope);
                 footer.append(footerElement);
             }
+
+            scope.$on('pane-resize', (evt, args) => {
+                console.log('caughts ->', evt, args);
+            });
         }
     }
 
