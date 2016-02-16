@@ -74,7 +74,7 @@
         //makes it easier for point clicks to instersect
         //TODO may want to make the tolerance a parameter, as we may want different sizes per layer
         function makeClickBuffer(point, geoApi, map) {
-            const tolerance = 4; //number of pixels the extent will be.
+            const tolerance = 10; //number of pixels the extent will be.
 
             //take pixel tolerance, convert to map units at current scale
             const buffSize = tolerance * map.extent.getWidth() / map.width;
