@@ -30,8 +30,9 @@
      *         header-controls="filters-default-menu"
      *         footer=""
      *         close-panel=""
-     *         static-content="false"
-     *         ></rv-content-pane>
+     *         static-content="false">
+     *
+     * </rv-content-pane>
      * ```
      */
     angular
@@ -78,6 +79,8 @@
             self.hideWhenLoading = angular.isDefined(self.hideWhenLoading) ? self.hideWhenLoading : true;
             self.staticContent = angular.isDefined(self.staticContent) ? self.staticContent : false;
 
+            self.element = element;
+
             // first, try to used passed closePanel function; if not, use one on the parent panel controller, or nothing
             if (!self.closePanel && ctrl) {
                 self.closePanel = ctrl.closePanel || undefined;
@@ -106,8 +109,19 @@
     /**
      * Skeleton controller function.
      */
-    function Controller() {
-        //const self = this;
+    function Controller($scope) {
+        'ngInject';
+        const self = this;
+
+        self.rightOffset = 0;
+
+        $scope.$watch(() => {
+            return self.element.find('.rv-content > ng-transclude').width();
+        }, (newValue, oldValue) => {
+            self.rightOffset = 384 - newValue;
+            console.log(newValue, oldValue, self.rightOffset);
+
+        });
 
         activate();
 
