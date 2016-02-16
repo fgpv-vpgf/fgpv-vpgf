@@ -104,7 +104,7 @@
                 footer.append(footerElement);
             }
 
-            scope.$on('pane-resize', (evt, args) => {
+            scope.$on('rv-resize', (evt, args) => {
                 console.log('caughts ->', evt, args);
             });
         }

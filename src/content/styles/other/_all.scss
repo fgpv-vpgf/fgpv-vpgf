@@ -1,2 +1,24 @@
 /* The name for this partial varies, but essentially this is all the code that doesn't fit in _base, _layout, or _modules. Code we just couldn't make modular; glue between modules; top level layouts; etc. */
 // import all other files
+
+iframe{
+    &.rv-resize {
+        height: 0;
+        width: 0;
+        background-color: transparent;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        border-width: 0;
+        position: absolute;
+
+        &-h {
+            @extend .rv-resize;
+            width: 100%;
+        }
+        &-v {
+            @extend .rv-resize;
+            height: 100%;
+        }
+    }
+}
