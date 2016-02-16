@@ -112,7 +112,7 @@
                 // an identify task for each layer
                 const idPromises = dynamicLayers.map(({ layer, name }) => {
                     if (!layer.visibleAtMapScale) {
-                        return $q(resolve => resolve(null));
+                        return $q.resolve(null);
                     }
 
                     const result = {
@@ -155,7 +155,7 @@
                 Array.prototype.push.apply(idPromises, featureLayers.map(({ layer, name }) => {
 
                     if (!layer.visibleAtMapScale) {
-                        return $q(resolve => resolve(null));
+                        return $q.resolve(null);
                     }
 
                     const result = {
