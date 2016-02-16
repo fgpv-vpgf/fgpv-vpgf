@@ -7,7 +7,7 @@
 
     <div class="rv-details" ng-if="self.display.data.length === 1">
         <md-content class="rv-details-data rv-content">
-            <div
+            <div rv-resize
                 class="rv-subsection">
                 <div class="rv-subheader">
                     <h4 class="md-subhead">{{ self.display.data[0].requester }}</h4>
@@ -28,7 +28,7 @@
 
     <div class="rv-details rv-multiple" ng-if="self.display.data.length > 1">
         <md-content class="rv-details-data rv-content">
-            <div
+            <div rv-resize
                 class="rv-subsection rv-hide-animate"
                 ng-class="{ 'rv-hide': (self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data }">
                 <div class="rv-subheader">
