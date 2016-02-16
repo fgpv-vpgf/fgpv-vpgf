@@ -1,15 +1,15 @@
 (() => {
 
     angular
-        .module('app.ui.panels')
-        .directive('rvScroll', rvScroll);
+        .module('app.ui.common')
+        .directive('rvResize', rvResize);
 
     /**
-     * `rvMorph` directive body.
+     * `rvResize` directive body.
      *
      * @return {object} directive body
      */
-    function rvScroll() {
+    function rvResize() {
         const directive = {
             restrict: 'A',
             link: link
@@ -18,8 +18,7 @@
         return directive;
 
         /**
-         * Directive's link function. Sets up a watch on the `ng-morph` attribute and triggers the animation on attribute change.
-         * Initial setting and nulling of the attribute causes immediate change with no animation.
+         * Directive's link function.
          *
          * @param  {Object} scope directive's scope
          * @param  {Object} element    element reference; jquery wrapped
@@ -36,6 +35,7 @@
                 iframe.contentWindow.addEventListener('resize', evt => {
                     console.log(evt, element.width(), $(iframe).width());
                     scope.$emit('rv-resize', evt);
+
                     /*try {
                         var evt = document.createEvent('UIEvents');
                         evt.initUIEvent('resize', true, false, window, 0);
@@ -45,6 +45,7 @@
             };
 
             console.log(element, iframe);
+
             // Stick the iframe somewhere out of the way
             element.append(iframe);
         }
