@@ -410,6 +410,19 @@
             },
             "required": [ "id", "name", "description", "altText", "thumbnailUrl", "wkid", "extentId" ],
             "additionalProperties": false
+        },
+
+        "navBarNode": {
+            "type": "object",
+            "properties": {
+                "zoom": { "type": "string", "enum": ["all", "buttons", "slider"] },
+                "extra": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/navBarButtons" }  }
+            }
+        },
+
+        "navBarButtons": {
+            "type": "string",
+            "enum": ["geoLocator", "marquee", "home", "history", "basemap"]
         }
 
     },
@@ -463,6 +476,7 @@
             "description": "FIXME"
         },
         "navigation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+        "navBar": { "$ref": "#/definitions/navBarNode" },
         "tools": { "type": "object", "additionalProperties": true, "description": "FIXME" },
         "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
     },
