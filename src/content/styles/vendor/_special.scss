@@ -11,6 +11,14 @@
     transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
 }
 
+.rv-scrollbar-measure {
+    width: rem(10);
+    height: rem(10);
+    overflow: scroll;
+    position: absolute;
+    top: - rem(999);
+}
+
 md-menu-content {
     &.rv-menu {
         max-height: rem(40);
