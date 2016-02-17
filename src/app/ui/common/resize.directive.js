@@ -5,7 +5,9 @@
         .directive('rvResize', rvResize);
 
     /**
-     * `rvResize` directive body.
+     * `rvResize` directive body detects when the host element is resized and emits an event.
+     * Inspired by https://github.com/wnr/element-resize-detector/blob/master/src/detection-strategy/object.js
+     * and https://gist.github.com/OrganicPanda/8222636
      *
      * @return {object} directive body
      */
@@ -25,29 +27,52 @@
          * @param  {Object} attr  element's attributes
          */
         function link(scope, element) {
-            const iframe = angular.element(`<iframe class="rv-resize-h"></iframe>`)[0];
 
-            // Register our event when the iframe loads
-            iframe.onload = function () {
-                // The trick here is that because this iframe has 100% width
+            scope.$watch(() => element.width(), (oldValue, newValue) => {
+                console.log('wathc', oldValue, newValue);
+                scope.$emit('rv-resize', oldValue, newValue);
+            });
+
+            return;
+            const object = document.createElement("object");
+
+            object.className = 'rv-resize-h'
+            object.type = 'text/html';
+            object.data = 'about:blank';
+
+            let oldValue = {};
+            let newValue = {};
+
+            // Register our event when the object loads
+            object.onload = function () {
+                // The trick here is that because this object has 100% width
                 // it should fire a window resize event when anything causes it to
                 // resize (even scrollbars on the outer document)
-                iframe.contentWindow.addEventListener('resize', evt => {
-                    console.log(evt, element.width(), $(iframe).width());
-                    scope.$emit('rv-resize', evt);
 
-                    /*try {
-                        var evt = document.createEvent('UIEvents');
-                        evt.initUIEvent('resize', true, false, window, 0);
-                        window.dispatchEvent(evt);
-                    } catch (e) { }*/
+                oldValue = {
+                    width: element.width(),
+                    height: element.height()
+                };
+
+                //scope.$emit('rv-resize', oldValue, oldValue);
+                //console.log('init what?', oldValue);
+
+                object.contentDocument.defaultView.addEventListener('resize', evt => {
+                    newValue = {
+                        width: element.width(),
+                        height: element.height()
+                    };
+
+                    console.log('what?', evt, element.width(), $(object)
+                        .width());
+                    scope.$emit('rv-resize', oldValue, newValue, evt);
+
+                    oldValue = newValue;
                 });
             };
 
-            console.log(element, iframe);
-
-            // Stick the iframe somewhere out of the way
-            element.append(iframe);
+            // Stick the object somewhere out of the way
+            element.after(object);
         }
     }
 })();
