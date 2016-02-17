@@ -1,20 +1,20 @@
 {
   "version": "-1",
-  "language": "en",
   "services": {
     "proxyUrl": "http://cp.zz9.ca/index"
   },
   "map": {
-    "extents": [
+    "extentSets": [
       {
-        "uid": "gray",
-        "type": "full",
-        "xmin": -2681457,
-        "ymin": -883440,
-        "xmax": 3549492,
-        "ymax": 3482193,
-        "spatialReference": {
-          "wkid": 3978
+        "id": 123456789,
+        "default": {
+          "xmin": -2681457,
+          "ymin": -883440,
+          "xmax": 3549492,
+          "ymax": 3482193,
+          "spatialReference": {
+            "wkid": 3978
+          }
         }
       }
     ]
@@ -66,172 +66,173 @@
       }
     }
   ],
-  "basemaps": [
+  "baseMaps": [
     {
-      "uid": "baseNrCan",
-      "name": "@@config.basemaps.baseNrCan.name",
-      "type": "Topographic",
-      "description": "@@config.basemaps.baseNrCan.description",
-      "altText": "@@config.basemaps.baseNrCan.altText",
-      "thumbnail": "assets/images/basemap/baseToponrcan.jpg",
-      "spatialReference": {
-        "wkid": 3978
-      },
+      "id": "baseNrCan",
+      "name": "The Canada Base Map - Transportation (CBMT)",
+      "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+      "altText": "altText - The Canada Base Map - Transportation (CBMT)",
+      "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
+      "wkid": 3978,
+      "extendId": 123456789,
       "layers": [
         {
+          "id": "CBMT",
+          "layerType": "esriFeature",
           "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
         }
       ]
     },
     {
-      "uid": "baseSimple",
-      "name": "@@config.basemaps.baseSimple.name",
-      "type": "Topographic",
+      "id": "baseSimple",
+      "name": "Canada Base Map - Simple",
       "description": "@@config.basemaps.baseSimple.description",
-      "altText": "@@config.basemaps.baseSimple.altText",
-      "thumbnail": "assets/images/basemap/baseSimple.jpg",
-      "spatialReference": {
-        "wkid": 3978
-      },
+      "altText": "altText - Canada base map - Simple",
+      "thumbnailUrl": "assets/images/basemap/baseSimple.jpg",
+      "wkid": 3978,
+      "extendId": 123456789,
       "layers": [
         {
+          "id": "SMR",
+          "layerType": "esriFeature",
           "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
         },
         {
+          "id": "SMW",
+          "layerType": "esriFeature",
           "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_TXT_3978/MapServer"
         },
         {
-          "url": "http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/RAMP_NRSTC/MapServer",
-          "visibleLayers": [
-            0
-          ]
+          "id": "SMB",
+          "layerType": "esriFeature",
+          "url": "http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/RAMP_NRSTC/MapServer"
         }
       ]
     },
     {
-      "uid": "baseCBME_CBCE_HS_RO_3978",
-      "name": "@@config.basemaps.baseCBME_CBCE_HS_RO_3978.name",
-      "type": "Topographic",
-      "description": "@@config.basemaps.baseCBME_CBCE_HS_RO_3978.description",
-      "altText": "@@config.basemaps.baseNrCan.altText",
-      "thumbnail": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
-      "spatialReference": {
-        "wkid": 3978
-      },
+      "id": "baseCBME_CBCE_HS_RO_3978",
+      "name": "Canada Base Map&#92;Carte de Base du Canada - Elevation&#92;Élevation",
+      "description": " The Canada Base Map - Elevation(CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
+      "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Elevation&#92;Élevation",
+      "thumbnailUrl": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
+      "wkid": 3978,
+      "extendId": 123456789,
       "layers": [
         {
+          "id": "CBME_CBCE_HS_RO_3978",
+          "layerType": "esriFeature",
           "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
         }
       ]
     },
     {
-      "uid": "baseCBMT_CBCT_GEOM_3978",
-      "name": "@@config.basemaps.baseCBMT_CBCT_GEOM_3978.name",
-      "type": "Topographic",
-      "description": "@@config.basemaps.baseCBMT_CBCT_GEOM_3978.description",
-      "altText": "@@config.basemaps.baseCBMT_CBCT_GEOM_3978.altText",
-      "thumbnail": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
-      "spatialReference": {
-        "wkid": 3978
-      },
+      "id": "baseCBMT_CBCT_GEOM_3978",
+      "name": "Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
+      "description": " The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+      "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
+      "thumbnailUrl": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
+      "wkid": 3978,
+      "extendId": 123456789,
       "layers": [
         {
+          "id": "CBMT_CBCT_GEOM_3978",
+          "layerType": "esriFeature",
           "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
         }
       ]
     },
     {
-      "uid": "baseEsriWorld",
-      "name": "@@config.basemaps.baseEsriWorld.name",
-      "type": "Imagery",
-      "description": "@@config.basemaps.baseEsriWorld.description",
-      "altText": "@@config.basemaps.baseEsriWorld.altText",
-      "thumbnail": "assets/images/basemap/imagery.jpg",
-      "spatialReference": {
-        "wkid": 102100
-      },
+      "id": "baseEsriWorld",
+      "name": "World Imagery",
+      "description": "World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.",
+      "altText": "altText - World Imagery",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extendId": 123456789,
       "layers": [
         {
+          "id": "World_Imagery",
+          "layerType": "esriFeature",
           "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
         }
       ]
     },
     {
-      "uid": "baseEsriPhysical",
-      "name": "@@config.basemaps.baseEsriPhysical.name",
-      "type": "Imagery",
-      "description": "@@config.basemaps.baseEsriPhysical.description",
-      "altText": "@@config.basemaps.baseEsriPhysical.altText",
-      "thumbnail": "assets/images/basemap/imagery.jpg",
-      "spatialReference": {
-        "wkid": 102100
-      },
+      "id": "baseEsriPhysical",
+      "name": "World Physical Map",
+      "description": " This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States. ",
+      "altText": "altText - World Physical Map",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extendId": 123456789,
       "layers": [
         {
+          "id": "World_Physical_Map",
+          "layerType": "esriFeature",
           "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
         }
       ]
     },
     {
-      "uid": "baseEsriRelief",
-      "name": "@@config.basemaps.baseEsriRelief.name",
-      "type": "Imagery",
-      "description": "@@config.basemaps.baseEsriRelief.description",
-      "altText": "@@config.basemaps.baseEsriRelief.altText",
-      "thumbnail": "assets/images/basemap/imagery.jpg",
-      "spatialReference": {
-        "wkid": 102100
-      },
+      "id": "baseEsriRelief",
+      "name": "World Shaded Relief",
+      "description": "This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map. ",
+      "altText": "altText - World Shaded Relief",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extendId": 123456789,
       "layers": [
         {
+          "id": "World_Shaded_Relief",
+          "layerType": "esriFeature",
           "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
         }
       ]
     },
     {
-      "uid": "baseEsriStreet",
-      "name": "@@config.basemaps.baseEsriStreet.name",
-      "type": "Topographic",
-      "description": "@@config.basemaps.baseEsriStreet.description",
-      "altText": "@@config.basemaps.baseEsriStreet.altText",
-      "thumbnail": "assets/images/basemap/imagery.jpg",
-      "spatialReference": {
-        "wkid": 102100
-      },
+      "id": "baseEsriStreet",
+      "name": "World Street Map",
+      "description": "This worldwide street map presents highway-level data for the world.",
+      "altText": "altText - ESWorld Street Map",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extendId": 123456789,
       "layers": [
         {
+          "id": "World_Street_Map",
+          "layerType": "esriFeature",
           "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
         }
       ]
     },
     {
-      "uid": "baseEsriTerrain",
-      "name": "@@config.basemaps.baseEsriTerrain.name",
-      "type": "Topographic",
-      "description": "@@config.basemaps.baseEsriTerrain.description",
-      "altText": "@@config.basemaps.baseEsriTerrain.altText",
-      "thumbnail": "assets/images/basemap/imagery.jpg",
-      "spatialReference": {
-        "wkid": 102100
-      },
+      "id": "baseEsriTerrain",
+      "name": "World Terrain Base",
+      "description": "This map is designed to be used as a base map by GIS professionals to overlay other thematic layers such as demographics or land cover.",
+      "altText": "altText - World Terrain Base",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extendId": 123456789,
       "layers": [
         {
+          "id": "World_Terrain_Base",
+          "layerType": "esriFeature",
           "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
         }
       ]
     },
     {
-      "uid": "baseEsriTopo",
-      "name": "@@config.basemaps.baseEsriTopo.name",
-      "type": "Topographic",
-      "description": "@@config.basemaps.baseEsriTopo.description",
-      "altText": "@@config.basemaps.baseEsriTopo.altText",
-      "thumbnail": "assets/images/basemap/imagery.jpg",
-      "spatialReference": {
-        "wkid": 102100
-      },
+      "id": "baseEsriTopo",
+      "name": "World Topographic Map",
+      "description": "This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.",
+      "altText": "altText - World Topographic Map",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extendId": 123456789,
       "layers": [
         {
+          "id": "World_Topo_Map",
+          "layerType": "esriFeature",
           "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
         }
       ]
