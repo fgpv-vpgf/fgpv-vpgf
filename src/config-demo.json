@@ -4,6 +4,25 @@
     "proxyUrl": "http://cp.zz9.ca/index"
   },
   "map": {
+    "components": {
+      "geoSearch": {
+        "enabled": true,
+        "showGraphic": true,
+        "showInfo": true
+      },
+      "mouseInfo": {
+        "enabled": true,
+        "spatialReference": {
+          "wkid": 102100
+        }
+      },
+      "northArrow": true,
+      "overviewMap": {
+        "enabled": true,
+        "layerType": "imagery"
+      },
+      "scaleBar": true
+    },
     "extentSets": [
       {
         "id": 123456789,
@@ -238,29 +257,14 @@
       ]
     }
   ],
-  "navigation": {
-    "zoomBar": true,
-    "zoomDefault": true,
-    "zoomMarquee": true,
-    "zoomLocation": true,
-    "zoomPrevNext": true,
-    "northArrow": true,
-    "scalebar": true,
-    "scaleDisplay": true,
-    "overviewMap": {
-      "enabled": true,
-      "layerType": "imagery"
-    },
-    "geoLocator": {
-      "enabled": true,
-      "showGraphic": true,
-      "showInfo": true
-    },
-    "mouseInfo": {
-      "enabled": true,
-      "spatialReference": {
-        "wkid": 102100
-      }
-    }
+  "navBar": {
+    "zoom": "buttons",
+    "extra": [
+      "geoLocator",
+      "marquee",
+      "home",
+      "history",
+      "basemap"
+    ]
   }
 }
