@@ -417,12 +417,24 @@
             "properties": {
                 "zoom": { "type": "string", "enum": ["all", "buttons", "slider"] },
                 "extra": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/navBarButtons" }  }
-            }
+            },
+            "required": [ "zoom" ]
         },
 
         "navBarButtons": {
             "type": "string",
             "enum": ["geoLocator", "marquee", "home", "history", "basemap"]
+        },
+
+        "mapComponentsNode": {
+            "type": "object",
+            "properties": {
+                "geoSearch": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
+                "mouseInfo": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
+                "northArrow": { "type": "boolean" },
+                "overviewMap": { "type": "object", "properties": { "enabled": { "type": "boolean"}, "maximizeButton": { "type": "boolean"}, "layerType": { "type": "string"} } },
+                "scaleBar": { "type": "boolean" }
+            }
         }
 
     },
@@ -459,6 +471,10 @@
                     "type": "array",
                     "items": { "$ref": "#/definitions/lodNode" },
                     "description": "The levels of detail available for the map"
+                },
+                "components": {
+                    "type": "object",
+                    "$ref": "#/definitions/mapComponentsNode"
                 }
             }
         },
