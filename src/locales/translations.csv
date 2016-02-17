@@ -41,11 +41,14 @@ Map Navigation home tooltip,nav.tooltip.home,Canada,[fr] Canada
 Map Navigation history tooltip,nav.tooltip.history,History,[fr] History
 Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,[fr] Basemap
 Metadata pane title,metadata.title,Metadata,[fr] Metadata
+Settings main title,settings.title,Settings,[fr] Settings
+Settings visibility header label,settings.label.display,Display,[fr] Display
 Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,[fr] Bounding Box
 Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding Box,[fr] Bounding Box
-Settings opacity slider label,settings.label.opaciaty,Opacity,[fr] Opacity
+Settings opacity slider label,settings.label.opacity,Opacity,[fr] Opacity
 Settings data header label,settings.label.data,Data,[fr] Data
 Settings snapshot mode label,settings.label.snapshot,Snapshot mode,[fr] Snapshot mode
+Settings snapshot mode enable label,settings.label.snapshotEnable,Enable,[fr] Enable
 Side Navigation main title,sidenav.title,FGP R2 Viewer,[fr] FGP R2 Viewer
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,[fr] Open data panel menu
 Table of Content show symbology label,toc.layer.label.symbologyShow,Show symbology,[fr] Show symbology
