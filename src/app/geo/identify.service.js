@@ -110,7 +110,7 @@
 
                 // run through all registered dynamic layers and trigger
                 // an identify task for each layer
-                const idPromises = dynamicLayers.map(({ layer, name }) => {
+                let idPromises = dynamicLayers.map(({ layer, name }) => {
                     if (!layer.visibleAtMapScale) {
                         return $q.resolve(null);
                     }
@@ -152,7 +152,7 @@
 
                 // run through all registered feature layers and trigger
                 // an spatial query for each layer
-                Array.prototype.push.apply(idPromises, featureLayers.map(({ layer, name }) => {
+                idPromises = idPromises.concat(featureLayers.map(({ layer, name }) => {
 
                     if (!layer.visibleAtMapScale) {
                         return $q.resolve(null);
