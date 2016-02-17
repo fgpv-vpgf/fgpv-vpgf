@@ -1,0 +1,29 @@
+<rv-content-pane title-style="title" title-value="Layer Loader File">
+    <div>
+
+        <div class="rv-subsection">
+            <div class="rv-subcontent">
+
+                <div flow-init flow-files-submitted="$flow.upload()" flow-file-success="$file.msg = $message">
+
+                    <!--input type="file" flow-btn/>
+                    Input OR Other element as upload button-->
+                    <md-button class="btn" flow-btn flow-progress="console.log()">Upload File</md-button>
+                    <span class="label label-info">Total Size: {{$flow.getSize()}}bytes</span>
+
+                    <table>
+                        <tr ng-repeat="file in $flow.files">
+                            <td>{{$index+1}}</td>
+                            <td>{{file.name}}</td>
+                            <!--td>{{file.msg}}</td-->
+                            <td>{{ file.progress() * 100 }}% Complete</td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</rv-main-panel-content>
