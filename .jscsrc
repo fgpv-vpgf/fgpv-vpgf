@@ -65,6 +65,9 @@
     "disallowSpaceBeforeBinaryOperators": [
         ","
     ],
+    "requireSpaceAfterLineComment": {
+        "allExcept": ["/"]
+    },
     "disallowKeywords": ["with"],
     "disallowKeywordsOnNewLine": ["else"],
 

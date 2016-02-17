@@ -10,7 +10,7 @@ function wrapEvents(esriObject, handlers) {
         // replace camelCase name to dojo event name format
         const dojoName = ourEventName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
-        //TODO: Validity checking on inputs for dojoName
+        // TODO: Validity checking on inputs for dojoName
         // make dojo call
         esriObject.on(dojoName, (e) => {
 
