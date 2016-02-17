@@ -1,14 +1,13 @@
 <rv-content-pane
     close-panel="self.closeDetails()"
     static-content="true"
-    title-style="title"
+    floating-header="true"
     is-loading="self.display.isLoading"
     hide-when-loading="self.display.data.length === 1 || !self.display.data">
 
     <div class="rv-details" ng-if="self.display.data.length === 1">
-        <md-content class="rv-details-data rv-content">
-            <div rv-resize
-                class="rv-subsection">
+        <md-content class="rv-details-data rv-content" rv-detect-scrollbar>
+            <div class="rv-subsection">
                 <div class="rv-subheader">
                     <h4 class="md-subhead">{{ self.display.data[0].requester }}</h4>
                 </div>
@@ -27,8 +26,8 @@
     </div>
 
     <div class="rv-details rv-multiple" ng-if="self.display.data.length > 1">
-        <md-content class="rv-details-data rv-content">
-            <div rv-resize
+        <md-content class="rv-details-data rv-content" rv-detect-scrollbar>
+            <div
                 class="rv-subsection rv-hide-animate"
                 ng-class="{ 'rv-hide': (self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data }">
                 <div class="rv-subheader">
