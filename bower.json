@@ -26,9 +26,13 @@
     "holder-ipsum": "https://github.com/euangoddard/holder-ipsum.git",
     "datatables.net": "~1.10.10",
     "datatables.net-dt": "~1.10.10",
-    "datatables-scroller": "~1.4.0"
+        "datatables-scroller": "~1.4.0",
+        "ng-flow": "~2.7.1"
   },
   "overrides": {
+        "ng-flow": {
+            "main": "dist/ng-flow-standalone.js"
+        },
     "datatables-scroller": {
       "main": "js/dataTables.scroller.js",
       "dependencies": null
