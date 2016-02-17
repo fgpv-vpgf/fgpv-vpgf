@@ -72,18 +72,27 @@
 
         //will make an extent around a point, that is appropriate for the current map scale.
         //makes it easier for point clicks to instersect
-        //TODO may want to make the tolerance a parameter, as we may want different sizes per layer
-        function makeClickBuffer(point, geoApi, map) {
-            const tolerance = 10; //number of pixels the extent will be.
+        //the tolerance is distance in pixels from mouse point that qualifies as a hit
+        function makeClickBuffer(point, geoApi, map, tolerance) {
+            const tol = tolerance || 5;
 
-            //take pixel tolerance, convert to map units at current scale
-            const buffSize = tolerance * map.extent.getWidth() / map.width;
+            //take pixel tolerance, convert to map units at current scale. x2 to turn radius into diameter
+            const buffSize = 2 * tol * map.extent.getWidth() / map.width;
 
             //Build tolerance envelope of correct size
             const cBuff = new geoApi.mapManager.Extent(1, 1, buffSize, buffSize, point.spatialReference);
 
             //move the envelope so it is centered around the point
             return cBuff.centerAt(point);
+        }
+
+        //attempt to get a tolerance from the layer state, otherwise return a default
+        function getTolerance(layerRegistry, layer) {
+            if (layerRegistry[layer.id] && layerRegistry[layer.id].state && layerRegistry[layer.id].state.tolerance) {
+                return layerRegistry[layer.id].state.tolerance;
+            } else {
+                return 5;
+            }
         }
 
         function clickHandlerBuilder(geoApi, map, layerRegistry) {
@@ -121,6 +130,7 @@
                         requester: name,
                         data: []
                     };
+                    opts.tolerance = getTolerance(layerRegistry, layer);
                     details.data.push(result);
                     return geoApi.layer.serverLayerIdentify(layer, opts)
                         .then(clickResults => {
@@ -169,7 +179,8 @@
                     //run a spatial query
                     const qry = new geoApi.layer.Query();
                     qry.outFields = ['*']; //this will result in just objectid fields, as that is all we have in feature layers
-                    qry.geometry = makeClickBuffer(clickEvent.mapPoint, geoApi, map);
+                    qry.geometry = makeClickBuffer(clickEvent.mapPoint, geoApi, map,
+                        getTolerance(layerRegistry, layer));
 
                     return $q((resolve, reject) => {
                         //queryFeatures returns a dojo-style promise, so cannot use .catch
