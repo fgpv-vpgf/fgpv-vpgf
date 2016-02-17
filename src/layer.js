@@ -20,10 +20,10 @@ const featureTypeToRenderer = {
 };
 
 function serverLayerIdentifyBuilder(esriBundle) {
-    //TODO we are using layerIds option property as it aligns with what the ESRI identify parameter
-    //     object uses.  However, in r2 terminology, a layerId is specific to a full map layer, not
-    //     indexes of a single dynamic layer.  for clarity, could consider renaming to .visibleLayers
-    //     and then map the value to the .layerIds property inside this function.
+    // TODO we are using layerIds option property as it aligns with what the ESRI identify parameter
+    //      object uses.  However, in r2 terminology, a layerId is specific to a full map layer, not
+    //      indexes of a single dynamic layer.  for clarity, could consider renaming to .visibleLayers
+    //      and then map the value to the .layerIds property inside this function.
 
     /**
     * Perform a server-side identify on a layer (usually an ESRI dynamic layer)
@@ -47,7 +47,7 @@ function serverLayerIdentifyBuilder(esriBundle) {
 
         const identParams = new esriBundle.IdentifyParameters();
 
-        //pluck treats from options parameter
+        // pluck treats from options parameter
         if (opts) {
 
             const reqOpts = ['geometry', 'mapExtent', 'height', 'width'];
@@ -65,18 +65,18 @@ function serverLayerIdentifyBuilder(esriBundle) {
             identParams.spatialReference = opts.geometry.spatialReference;
             identParams.tolerance = opts.tolerance || 2;
 
-            //TODO add support for identParams.layerDefinitions once attribute filtering is implemented
+            // TODO add support for identParams.layerDefinitions once attribute filtering is implemented
 
         } else {
             throw new Error('serverLayerIdentify - missing opts arguement');
         }
 
-        //asynch an identify task
+        // asynch an identify task
         return new Promise((resolve, reject) => {
             const identify = new esriBundle.IdentifyTask(layer.url);
 
-            //TODO possibly tack on the layer.id to the resolved thing so we know which parent layer returned?
-            //     would only be required if the caller is mashing promises together and using Promise.all()
+            // TODO possibly tack on the layer.id to the resolved thing so we know which parent layer returned?
+            //      would only be required if the caller is mashing promises together and using Promise.all()
 
             identify.on('complete', result => {
                 resolve(result.results);
@@ -100,7 +100,7 @@ function serverLayerIdentifyBuilder(esriBundle) {
 function generateUUID() {
     let d = Date.now();
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-        //do math!
+        // do math!
         /*jslint bitwise: true */
         const r = (d + Math.random() * 16) % 16 | 0;
         d = Math.floor(d / 16);
@@ -118,7 +118,7 @@ function assignIds(geoJson) {
         throw new Error('Assignment can only be performed on FeatureCollections');
     }
 
-    //for every feature, if it does not have an id property, add it.
+    // for every feature, if it does not have an id property, add it.
     geoJson.features.forEach(function (val, idx) {
         if (typeof val.id === 'undefined') {
             val.id = idx;
@@ -148,11 +148,11 @@ function extractFields(geoJson) {
  * epsgLookup - function that will do the epsg lookup, taking code and returning promise of result or null
  */
 function projectionLookup(projModule, projCode, epsgLookup) {
-    //look up projection definitions if it's not already loaded and we have enough info
+    // look up projection definitions if it's not already loaded and we have enough info
     if (!projModule.getProjection(projCode) && epsgLookup && projCode) {
         return epsgLookup(projCode).then(projDef => {
             if (projDef) {
-                //register projection
+                // register projection
                 projModule.addProjection(projCode, projDef);
             }
             return projDef;
@@ -185,7 +185,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
     */
     return (geoJson, opts) => {
 
-        //TODO add documentation on why we only support layers with WKID (and not WKT).
+        // TODO add documentation on why we only support layers with WKID (and not WKT).
         let targetWkid;
         let srcProj;
         let layerId;
@@ -199,17 +199,17 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
             ],
         };
 
-        //ensure our features have ids
+        // ensure our features have ids
         assignIds(geoJson);
         layerDefinition.drawingInfo =
             defaultRenderers[featureTypeToRenderer[geoJson.features[0].geometry.type]];
 
-        //attempt to get spatial reference from geoJson
+        // attempt to get spatial reference from geoJson
         if (geoJson.crs && geoJson.crs.type === 'name') {
             srcProj = geoJson.crs.properties.name;
         }
 
-        //pluck treats from options parameter
+        // pluck treats from options parameter
         if (opts) {
             if (opts.sourceProjection) {
                 srcProj = opts.sourceProjection;
@@ -231,27 +231,27 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
                 layerId = generateUUID();
             }
 
-            //TODO add support for renderer option, or drop the option
+            // TODO add support for renderer option, or drop the option
 
         } else {
             throw new Error('makeGeoJsonLayer - missing opts arguement');
         }
 
         if (layerDefinition.fields.length === 1) {
-            //caller has not supplied custom field list. so take them all.
+            // caller has not supplied custom field list. so take them all.
             layerDefinition.fields = layerDefinition.fields.concat(extractFields(geoJson));
         }
 
         const destProj = 'EPSG:' + targetWkid;
 
-        //look up projection definitions if they don't already exist and we have enough info
+        // look up projection definitions if they don't already exist and we have enough info
         const srcLookup = projectionLookup(geoApi.proj, srcProj, opts.epsgLookup);
         const destLookup = projectionLookup(geoApi.proj, destProj, opts.epsgLookup);
 
-        //make the layer
+        // make the layer
         const buildLayer = new Promise(resolve => {
-            //project data and convert to esri json format
-            //console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
+            // project data and convert to esri json format
+            // console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
             geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
             const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
 
@@ -272,13 +272,13 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
             // ＼(｀O´)／ manually setting SR because it will come out as 4326
             layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
 
-            //TODO : revisit if we actually need this anymore
-            //layer.renderer._RampRendererType = featureTypeToRenderer[geoJson.features[0].geometry.type];
+            // TODO : revisit if we actually need this anymore
+            // layer.renderer._RampRendererType = featureTypeToRenderer[geoJson.features[0].geometry.type];
 
             resolve(layer);
         });
 
-        //call promises in order
+        // call promises in order
         return srcLookup
             .then(() => destLookup)
             .then(() => buildLayer);
@@ -304,13 +304,13 @@ function makeCsvLayerBuilder(esriBundle, geoApi) {
     * @returns {Promise} a promise resolving with a {FeatureLayer}
     */
     return (csvData, opts) => {
-        const csvOpts = { //default values
+        const csvOpts = { // default values
             latfield: 'Lat',
             lonfield: 'Long',
             delimiter: ','
         };
 
-        //user options if
+        // user options if
         if (opts) {
             if (opts.latfield) {
                 csvOpts.latfield = opts.latfield;
@@ -339,11 +339,11 @@ function makeCsvLayerBuilder(esriBundle, geoApi) {
                         feature.properties[csvOpts.latfield] = feature.geometry.coordinates[1];
                     });
 
-                    //TODO are we at risk adding params to the var that was passed in? should we make a copy and modify the copy?
-                    opts.sourceProjection = 'EPSG:4326'; //csv is always latlong
-                    opts.renderer = 'circlePoint'; //csv is always latlong
+                    // TODO are we at risk adding params to the var that was passed in? should we make a copy and modify the copy?
+                    opts.sourceProjection = 'EPSG:4326'; // csv is always latlong
+                    opts.renderer = 'circlePoint'; // csv is always latlong
 
-                    //NOTE: since makeGeoJsonLayer is a "built" function, grab the built version from our link to api object
+                    // NOTE: since makeGeoJsonLayer is a "built" function, grab the built version from our link to api object
                     geoApi.layer.makeGeoJsonLayer(data, opts).then(jsonLayer => {
                         resolve(jsonLayer);
                     });
@@ -383,10 +383,10 @@ function makeShapeLayerBuilder(esriBundle, geoApi) {
     */
     return (shapeData, opts) => {
         return new Promise((resolve, reject) => {
-            //turn shape into geojson
+            // turn shape into geojson
             shp(shapeData).then(geoJson => {
-                //turn geojson into feature layer
-                //NOTE: since makeGeoJsonLayer is a "built" function, grab the built version from our link to api object
+                // turn geojson into feature layer
+                // NOTE: since makeGeoJsonLayer is a "built" function, grab the built version from our link to api object
                 geoApi.layer.makeGeoJsonLayer(geoJson, opts).then(jsonLayer => {
                     resolve(jsonLayer);
                 });
@@ -429,9 +429,9 @@ function getFeatureInfoBuilder(esriBundle) {
     };
 }
 
-//CAREFUL NOW!
-//we are passing in a reference to geoApi.  it is a pointer to the object that contains this module,
-//along with other modules. it lets us access other modules without re-instantiating them in here.
+// CAREFUL NOW!
+// we are passing in a reference to geoApi.  it is a pointer to the object that contains this module,
+// along with other modules. it lets us access other modules without re-instantiating them in here.
 module.exports = function (esriBundle, geoApi) {
 
     return {

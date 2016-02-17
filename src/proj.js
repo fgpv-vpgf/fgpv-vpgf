@@ -142,13 +142,13 @@ function esriServiceBuilder(esriBundle) {
 */
 function isSpatialRefEqual(sr1, sr2) {
     if ((sr1.wkid) && (sr2.wkid)) {
-        //both SRs have wkids
+        // both SRs have wkids
         return sr1.wkid === sr2.wkid;
     } else if ((sr1.wkt) && (sr2.wkt)) {
-        //both SRs have wkt's
+        // both SRs have wkt's
         return sr1.wkt === sr2.wkt;
     } else {
-        //not enough info provided or mismatch between wkid and wkt.
+        // not enough info provided or mismatch between wkid and wkt.
         return false;
     }
 }
@@ -156,7 +156,7 @@ function isSpatialRefEqual(sr1, sr2) {
 module.exports = function (esriBundle) {
     // TODO: Move Point and SpatialReference to its own (geometry) module
 
-    //TODO consider moving this elsewhere.  state is bad, but these are common, and we have no service for esri defs
+    // TODO consider moving this elsewhere.  state is bad, but these are common, and we have no service for esri defs
     proj4.defs('EPSG:3978', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 ' +
         '+lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
     proj4.defs('EPSG:3979', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 ' +

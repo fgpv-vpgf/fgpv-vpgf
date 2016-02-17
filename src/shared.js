@@ -19,7 +19,7 @@ module.exports = esriBundle => {
         } else if (layer instanceof esriBundle.ArcGISTiledMapServiceLayer) {
             return 'ArcGISTiledMapServiceLayer';
         } else {
-            //Can add more types above as we support them
+            // Can add more types above as we support them
             return 'UNKNOWN';
         }
     }

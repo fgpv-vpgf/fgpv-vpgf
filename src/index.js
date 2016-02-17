@@ -102,7 +102,7 @@ module.exports = function (esriLoaderUrl, window) {
         oScript.onerror = err => reject(err);
         oScript.onload = () => resolve();
         oHead.appendChild(oScript);
-        oScript.src = esriLoaderUrl; //'//ec.cloudapp.net/~aly/esri/dojo/dojo.js';
+        oScript.src = esriLoaderUrl; // '//ec.cloudapp.net/~aly/esri/dojo/dojo.js';
         console.log('made a promise');
     }).then(makeDojoRequests).then(initAll);
 };
