@@ -90,33 +90,45 @@
                 self.closePanel = ctrl.closePanel || undefined;
             }
 
-            const headerSpacer = element.find(`${HEADER_CLASS} ${SPACER_CLASS}`);
-            const footer = element.find(FOOTER_CLASS);
+            initHeaderControls();
+            initFloatingHeader();
+            initFooter();
 
-            // `self.headerControls` is a string of directive names separated by ';' to be inserted in the content pane's header
-            if (self.headerControls) {
-                self.headerControls.split(';')
-                    .forEach(controlName => {
-                        let controlElement = $compile(`<${controlName}></${controlName}>`)(scope);
-                        headerSpacer.after(controlElement);
-                    });
+            function initHeaderControls() {
+                // `self.headerControls` is a string of directive names separated by ';' to be inserted in the content pane's header
+                // TODO: option to add controls to the floating header?
+                if (self.headerControls) {
+                    const headerSpacer = element.find(`${HEADER_CLASS} ${SPACER_CLASS}`);
+
+                    self.headerControls.split(';')
+                        .forEach(controlName => {
+                            let controlElement = $compile(`<${controlName}></${controlName}>`)(scope);
+                            headerSpacer.after(controlElement);
+                        });
+                }
             }
 
-            if (self.floatingHeader) {
-                const floatingHeader = element.find(FLOATING_HEADER_CLASS);
+            function initFloatingHeader() {
+                if (self.floatingHeader) {
+                    const floatingHeader = element.find(FLOATING_HEADER_CLASS);
 
-                scope.$on('rv-detect-scrollbar', (evt, newValue, oldValue, scrollbarWidth) => {
-                    //console.log(evt, oldValue, newValue, scrollbarWidth);
-                    TweenLite.set(floatingHeader, {
-                        x: newValue ? -scrollbarWidth : 0
+                    scope.$on('rv-detect-scrollbar', (evt, newValue, oldValue, scrollbarWidth) => {
+                        //console.log(evt, oldValue, newValue, scrollbarWidth);
+                        TweenLite.set(floatingHeader, {
+                            x: newValue ? -scrollbarWidth : 0
+                        });
                     });
-                });
+                }
             }
 
-            // `self.footer` is a name string of a directive; if specified, directive is compiled and inserted into the pane template
-            if (self.footer) {
-                let footerElement = $compile(`<${self.footer}></${self.footer}>`)(scope);
-                footer.append(footerElement);
+            function initFooter() {
+                // `self.footer` is a name string of a directive; if specified, directive is compiled and inserted into the pane template
+                if (self.footer) {
+                    const footer = element.find(FOOTER_CLASS);
+
+                    let footerElement = $compile(`<${self.footer}></${self.footer}>`)(scope);
+                    footer.append(footerElement);
+                }
             }
         }
     }
