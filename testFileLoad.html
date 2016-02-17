@@ -89,6 +89,10 @@
                 console.log(csvLayer);
             });         
             
+            var csvPeeker = api.layer.csvPeek(csvData, ',');
+            console.log("I like to peek at CSVs");
+            console.log(csvPeeker);
+            
             // TEST SHAPEFILE LAYER   
             //http://www.html5rocks.com/en/tutorials/file/dndfiles/
             function handleShapeFileSelect(fileEvt) {
