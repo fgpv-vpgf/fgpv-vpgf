@@ -1,6 +1,8 @@
+/* global TweenLite */
 (() => {
 
     const HEADER_CLASS = '.rv-header';
+    const FLOATING_HEADER_CLASS = '.rv-header-float';
     const FOOTER_CLASS = '.rv-footer';
     const SPACER_CLASS = '.rv-spacer';
     /**
@@ -16,6 +18,7 @@
      * `is-loading` a flag to show/hide the loading indicator
      * `hide-when-loading` if true, hides the content of the pane when the loading indicator is active
      * `header-controls` a list of directive names separated by ';' to be inserted into the header (extra controls like a menu for example)
+     * `floating-header` no explicit header is shown; close button sticks to the upper right corner of the scrollable content
      * `footer` directive name to insert into the footer
      * `close-panel` a custom "close" function to call when the pane is closed
      * `static-content` makes main content section non-scrollable
@@ -28,6 +31,7 @@
      *         is-loading="true"
      *         hide-when-loading="true"
      *         header-controls="filters-default-menu"
+     *         floating-header="true"
      *         footer=""
      *         close-panel=""
      *         static-content="false">
@@ -55,6 +59,7 @@
                 isLoading: '=?', // bind to a property
                 hideWhenLoading: '=?',
                 headerControls: '@?',
+                floatingHeader: '=?',
                 footer: '@?',
                 closePanel: '&?', // https://docs.angularjs.org/api/ng/service/$compile
                 staticContent: '=?'
@@ -78,8 +83,7 @@
             self.isLoading = angular.isDefined(self.isLoading) ? self.isLoading : false;
             self.hideWhenLoading = angular.isDefined(self.hideWhenLoading) ? self.hideWhenLoading : true;
             self.staticContent = angular.isDefined(self.staticContent) ? self.staticContent : false;
-
-            self.element = element;
+            self.floatingHeader = angular.isDefined(self.floatingHeader) ? self.floatingHeader : false;
 
             // first, try to used passed closePanel function; if not, use one on the parent panel controller, or nothing
             if (!self.closePanel && ctrl) {
@@ -98,34 +102,30 @@
                     });
             }
 
+            if (self.floatingHeader) {
+                const floatingHeader = element.find(FLOATING_HEADER_CLASS);
+
+                scope.$on('rv-detect-scrollbar', (evt, newValue, oldValue, scrollbarWidth) => {
+                    //console.log(evt, oldValue, newValue, scrollbarWidth);
+                    TweenLite.set(floatingHeader, {
+                        x: newValue ? -scrollbarWidth : 0
+                    });
+                });
+            }
+
             // `self.footer` is a name string of a directive; if specified, directive is compiled and inserted into the pane template
             if (self.footer) {
                 let footerElement = $compile(`<${self.footer}></${self.footer}>`)(scope);
                 footer.append(footerElement);
             }
-
-            scope.$on('rv-resize', (evt, args) => {
-                console.log('caughts ->', evt, args);
-            });
         }
     }
 
     /**
      * Skeleton controller function.
      */
-    function Controller($scope) {
-        'ngInject';
-        const self = this;
-
-        self.rightOffset = 0;
-
-        $scope.$watch(() => {
-            return self.element.find('.rv-content > ng-transclude').width();
-        }, (newValue, oldValue) => {
-            self.rightOffset = 384 - newValue;
-            console.log(newValue, oldValue, self.rightOffset);
-
-        });
+    function Controller() {
+        //const self = this;
 
         activate();
 
