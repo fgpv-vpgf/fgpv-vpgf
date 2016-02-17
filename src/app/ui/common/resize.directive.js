@@ -9,7 +9,7 @@
      *
      * @return {object} directive body
      */
-    function rvResize($timeout) {
+    function rvResize() {
         const directive = {
             restrict: 'A',
             link: link
