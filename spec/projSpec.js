@@ -99,3 +99,24 @@ describe("test for esri projection conversion function", () => {
         expect(newPt).toEqual(jasmine.any(Promise));
     });
 });
+
+describe('test for spatialReference comparison', () => {
+    const sr1_3978 = { wkid: 3978 };
+    const sr2_3978 = { wkid: 3978 };
+    const sr3_10200 = { wkid: 10200 };
+    let proj;
+
+    // setup function running before each test
+    beforeEach(() => {
+        proj = projBuilder(fakeEsri);
+    });
+
+    it("should detect same spatial reference", () => {
+        expect(proj.isSpatialRefEqual(sr1_3978, sr2_3978)).toBe(true);
+    });
+
+    it("should detect different spatial reference", () => {
+        expect(proj.isSpatialRefEqual(sr1_3978, sr3_10200)).toBe(false);
+    });
+
+});
