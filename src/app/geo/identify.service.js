@@ -11,40 +11,38 @@
         .module('app.geo')
         .factory('identifyService', identifyService);
 
-    function identifyService(stateManager) {
+    function identifyService(stateManager, $q) {
 
         const dynamicLayers = [];
-        let lastClick = Date.now(); //HACK time to deterimne when to clear content
+        const featureLayers = [];
 
         return (geoApi, map, layerRegistry) => {
-            geoApi.events.wrapEvents(map, { click: clickHandlerBuilder(geoApi, map) });
+            geoApi.events.wrapEvents(map, { click: clickHandlerBuilder(geoApi, map, layerRegistry) });
 
             return {
                 /**
                  * Add a dynamic layer to identify when map click events happen.
-                 * @param {Object} layer an ESRI DynamicLayer object
+                 * @param {Object} layer an ESRI ArcGISDynamicMapServiceLayer object
                  * @param {String} name the display name of the layer
                  */
-                addDynamicLayer: (layer, name) => { dynamicLayers.push({ layer, name }); },
-                featureClickHandler: featureClickHandlerBuilder(layerRegistry)
+                addDynamicLayer: (layer, name) => dynamicLayers.push({ layer, name }),
+
+                /**
+                 * Add a feature layer to identify when map click events happen.
+                 * @param {Object} layer an ESRI FeatureLayer object
+                 * @param {String} name the display name of the layer
+                 */
+                addFeatureLayer: (layer, name) => featureLayers.push({ layer, name })
+
             };
         };
 
         ////////
 
-        //determines if it has been sufficiently long since the last user click happened.
-        //used by competing handlers to determine if they should clear the results pane
-        //or just append data to it
-        function newClickTest() {
-            const rightNow = Date.now();
-            if (rightNow - lastClick > 500) {
-                //has been half a second since last click.  treat as new click
-                lastClick = rightNow;
-                return true;
-            } else {
-                //less than half a second. was probably the same click
-                return false;
-            }
+        //returns the number of visible layers that have been registered with the identify service
+        function getVisibleLayers() {
+            //use .filter to count boolean true values
+            return dynamicLayers.concat(featureLayers).filter(l => l.layer.visibleAtMapScale).length;
         }
 
         //takes an attribute set (key-value mapping) and converts it to a format
@@ -72,16 +70,33 @@
             }
         }
 
-        function clickHandlerBuilder(geoApi, map) {
+        //will make an extent around a point, that is appropriate for the current map scale.
+        //makes it easier for point clicks to instersect
+        //TODO may want to make the tolerance a parameter, as we may want different sizes per layer
+        function makeClickBuffer(point, geoApi, map) {
+            const tolerance = 10; //number of pixels the extent will be.
+
+            //take pixel tolerance, convert to map units at current scale
+            const buffSize = tolerance * map.extent.getWidth() / map.width;
+
+            //Build tolerance envelope of correct size
+            const cBuff = new geoApi.mapManager.Extent(1, 1, buffSize, buffSize, point.spatialReference);
+
+            //move the envelope so it is centered around the point
+            return cBuff.centerAt(point);
+        }
+
+        function clickHandlerBuilder(geoApi, map, layerRegistry) {
 
             /**
              * Handles global map clicks.  Currently configured to walk through all registered dynamic
-             * layers and trigger service side identify queries.  TODO: add WMS support
+             * layers and trigger service side identify queries, and perform client side spatial queries
+             * on registered feature layers.  TODO: add WMS support
              * @name clickHandler
              * @param {Object} clickEvent an ESRI event object for map click events
              */
             return clickEvent => {
-                if (dynamicLayers.length === 0) { return; }
+                if (getVisibleLayers() === 0) { return; }
 
                 console.info('Click start');
                 const details = { data: [] };
@@ -95,7 +110,11 @@
 
                 // run through all registered dynamic layers and trigger
                 // an identify task for each layer
-                const idPromises = dynamicLayers.map(({ layer, name }) => {
+                let idPromises = dynamicLayers.map(({ layer, name }) => {
+                    if (!layer.visibleAtMapScale) {
+                        return $q.resolve(null);
+                    }
+
                     const result = {
                         isLoading: true,
                         requestId: -1,
@@ -131,80 +150,93 @@
                         });
                 });
 
-                details.isLoaded = Promise.all(idPromises).then(() => true);
+                // run through all registered feature layers and trigger
+                // an spatial query for each layer
+                idPromises = idPromises.concat(featureLayers.map(({ layer, name }) => {
+
+                    if (!layer.visibleAtMapScale) {
+                        return $q.resolve(null);
+                    }
+
+                    const result = {
+                        isLoading: true,
+                        requestId: -1,
+                        requester: name,
+                        data: []
+                    };
+                    details.data.push(result);
+
+                    //run a spatial query
+                    const qry = new geoApi.layer.Query();
+                    qry.outFields = ['*']; //this will result in just objectid fields, as that is all we have in feature layers
+                    qry.geometry = makeClickBuffer(clickEvent.mapPoint, geoApi, map);
+
+                    return $q((resolve, reject) => {
+                        //queryFeatures returns a dojo-style promise, so cannot use .catch
+                        layer.queryFeatures(qry).then(queryResult => {
+
+                            // transform attributes of query results into {name,data} objects
+                            // one object per queried feature
+                            //
+                            // each feature will have its attributes converted into a table
+                            // placeholder for now until we figure out how to signal the panel that
+                            // we want to make a nice table
+                            result.data = queryResult.features.map(feat => {
+                                //TODO might want to abstract some of this out into a "get attibutes from feature" function
+                                //get the id and attribute bundle of the layer belonging to the feature that was clicked
+                                if (!layerRegistry[layer.id]) {
+                                    throw new Error('Click on unregistered layer ' + layer.id);
+                                }
+
+                                const attribsBundle = layerRegistry[layer.id].attribs;
+                                if (!attribsBundle) {
+                                    //a valid case is that attributes are still downloading. perhaps returning
+                                    //a "click back later when attribs have downloaded" detail result is ok?
+                                    //for now, just display the bare data that is in the graphic layer (probably object id)
+                                    //FIXME once we have a promise that resolves after attributes are downloaded,
+                                    //      use that to delay this entire attribute fetch process
+                                    return {
+                                        name: feat.getTitle(),
+                                        data: attributesToDetails(feat.attributes)
+                                    };
+                                } else if (Object.keys(attribsBundle).length === 0) {
+                                    //TODO do we really want to error, or just do nothing (i.e. user clicks on no-data feature -- so what?)
+                                    throw new Error('Click on layer without downloaded attributes ' + layer.id);
+                                }
+
+                                const layerState = layerRegistry[layer.id].state;
+
+                                //feature layers have only one index, so the first one is ours. grab the attribute set for that index.
+                                const attribSet = attribsBundle[attribsBundle.indexes[0]];
+
+                                //grab the object id of the feature we clicked on.
+                                const objId = feat.attributes[attribSet.oidField].toString();
+
+                                //use object id find location of our feature in the feature array, and grab its attributes
+                                const featAttribs = attribSet.features[attribSet.oidIndex[objId]].attributes;
+
+                                return {
+                                    name: getFeatureName(feat.attribs, layerState, objId),
+                                    data: attributesToDetails(featAttribs)
+                                };
+                            });
+                            result.isLoading = false;
+                            resolve(true);
+
+                        }, err => {
+                            console.warn('Layer query failed');
+                            console.warn(err);
+                            result.data = JSON.stringify(err);
+                            result.isLoading = false;
+                            reject(err);
+                        });
+                    });
+
+                }));
+
+                details.isLoaded = $q.all(idPromises).then(() => true);
 
                 stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
-            };
-        }
-
-        function featureClickHandlerBuilder(layerRegistry) {
-
-            //TODO the map click is also happening, which conflicts with this.
-            //     as well as consider other actual feature-layer items that are underneath the top
-            //     feature.  This can include file-based features, meaning we cannot default to
-            //     just using server-side identify to solve the issue.  A true mess.
-
-            /**
-             * Handles clicks on features (belonging to feature layers). Takes clicked
-             * item and fetches the attributes from attribute store (local operation).
-             * Formats the attribute data for details pane and loads the pane
-             * @name featureClickHandler
-             * @param {Object} clickEvent an ESRI event object for feature layer click events
-             */
-            return clickEvent => {
-
-                //TODO we have duplicated code in both click handlers to manage the details pane.  abstract if possible
-                const detailsPanel = stateManager.display.details;
-                detailsPanel.isLoading = true;
-                if (newClickTest()) {
-                    detailsPanel.data = [];
-                }
-
-                //get the id and attribute bundle of the layer belonging to the feature that was clicked
-                const layerId = clickEvent.graphic.getLayer().id;
-                if (!layerRegistry[layerId]) {
-                    throw new Error('Click on unregistered layer ' + layerId);
-                }
-
-                const attribsBundle = layerRegistry[layerId].attribs;
-                if (!attribsBundle) {
-                    //TODO a valid case is that attributes are still downloading. perhaps returning
-                    //     a "click back later when attribs have downloaded" detail result is ok?
-                    detailsPanel.isLoading = false;
-                    return;
-                } else if (attribsBundle === {}) {
-                    //TODO do we really want to error, or just do nothing (i.e. user clicks on no-data feature -- so what?)
-                    throw new Error('Click on layer without downloaded attributes ' + layerId);
-                }
-
-                const layerState = layerRegistry[layerId].state;
-
-                //feature layers have only one index, so the first one is ours. grab the attribute set for that index.
-                const attribSet = attribsBundle[attribsBundle.indexes[0]];
-
-                //grab the object id of the feature we clicked on.
-                const objId = clickEvent.graphic.attributes[attribSet.oidField].toString();
-
-                //use object id find location of our feature in the feature array, and grab its attributes
-                const featAttribs = attribSet.features[attribSet.oidIndex[objId]].attributes;
-
-                //construct a details result and plop it on the panel
-                const result = {
-                    isLoading: false, //synchronous load
-                    requestId: -1, //TODO verify what this is and if -1 is appropriate
-                    requester: layerState.name || '',
-                    data: [{
-                        name: getFeatureName(featAttribs, layerState, objId),
-                        data: attributesToDetails(featAttribs)
-                    }]
-                };
-                detailsPanel.data.push(result);
-                detailsPanel.isLoading = false;
-
-                //FIXME this is not a perfect solution; it only works right now because we have non-feature layers always present.
-                //      need a good way to know when to show/hide the point window.  having this line in both handlers makes it open
-                //      then close.
-                //stateManager.setActive({ side: false }, 'mainDetails');
             };
         }
 

@@ -221,12 +221,14 @@
             };
 
             handlers[layerTypes.esriDynamic] = config => {
-                const l = service.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
+                const l = new service.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
                 identify.addDynamicLayer(l, config.name);
                 return l;
             };
             handlers[layerTypes.esriFeature] = config => {
-                return new service.gapi.layer.FeatureLayer(config.url, commonConfig);
+                const l = new service.gapi.layer.FeatureLayer(config.url, commonConfig);
+                identify.addFeatureLayer(l, config.name);
+                return l;
             };
             handlers[layerTypes.esriImage] = config => {
 
@@ -334,8 +336,7 @@
                                 exception);
                             console.log(l);
                         });
-                    },
-                    click: identify.featureClickHandler
+                    }
                 });
             });
 
