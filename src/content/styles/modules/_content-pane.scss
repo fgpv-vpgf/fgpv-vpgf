@@ -28,9 +28,9 @@
                 justify-content: flex-end;
                 position: absolute;
                 z-index: 1;
-                right: 16px;
                 border: none;
-                padding: 4px 0;
+                padding: rem(0.4) 0;
+                right: 0;
                 //left: 1px;
                 /*background: linear-gradient(to bottom, rgba(255,255,255,1) 30%,rgba(255,255,255,0.62) 60%, rgba(255,255,255,0) 100%);*/
                 align-items: center;
