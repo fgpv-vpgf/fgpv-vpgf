@@ -26,7 +26,7 @@ module.exports = function (esriBundle) {
         Map: esriBundle.Map,
         OverviewMap: esriBundle.OverviewMap,
         Scalebar: esriBundle.Scalebar,
-        getExtentFromSetting,
+        getExtentFromJson,
         setupMap,
         setProxy
     };
@@ -132,17 +132,17 @@ module.exports = function (esriBundle) {
 
     /**
      * @ngdoc method
-     * @name getExtentFromSetting
+     * @name getExtentFromJson
      * @memberof mapManager
      * @description
      * create an ESRI Extent object from extent setting JSON object.
      *
-     * @param {object} extentSetting that follows config spec
+     * @param {object} extentJson that follows config spec
      */
-    function getExtentFromSetting(extentSetting) {
+    function getExtentFromJson(extentJson) {
 
-        return esriBundle.Extent(extentSetting.xmin, extentSetting.ymin, extentSetting.xmax,
-            extentSetting.ymax, extentSetting.spatialReference);
+        return esriBundle.Extent(extentJson.xmin, extentJson.ymin, extentJson.xmax,
+            extentJson.ymax, extentJson.spatialReference);
     }
 
     return mapManager;
