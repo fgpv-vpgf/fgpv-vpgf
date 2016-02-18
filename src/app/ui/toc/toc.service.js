@@ -665,31 +665,31 @@
                         zoomIn: 'action:zoom_in',
                         zoomOut: 'action:zoom_out'
                     },
-                    label: 'Toggle group visibility',
-                    tooltip: 'Group visibility tooltip'
+                    label: 'toc.label.toggleGroupViz',
+                    tooltip: 'toc.tooltip.toggleGroupViz'
                 }
             },
             options: {
                 extra: {
                     icon: 'navigation:more_horiz',
-                    label: 'Extra',
-                    tooltip: 'Extra'
+                    label: 'toc.label.extraMenu',
+                    tooltip: 'toc.tooltip.extraMenu'
                 },
                 metadata: {
                     icon: 'action:description',
-                    label: 'Metadata',
-                    tooltip: 'Metadata',
+                    label: 'toc.label.metadata',
+                    tooltip: 'toc.tooltip.metadata',
                     action: toggleMetadata
                 },
                 query: {
                     icon: 'communication:location_on',
-                    label: 'Toggle query',
-                    tooltip: 'query tooltip'
+                    label: 'toc.label.query',
+                    tooltip: 'toc.tooltip.query'
                 },
                 settings: {
                     icon: 'image:tune',
-                    label: 'Settings',
-                    tooltip: 'Settings',
+                    label: 'toc.label.settings',
+                    tooltip: 'toc.tooltip.settings',
                     action: toggleSettings
                 },
                 visibility: {
@@ -700,34 +700,34 @@
                         zoomOut: 'action:zoom_out'
                     },
                     label: {
-                        off: 'Show layer',
-                        on: 'Hide layer',
-                        zoomIn: 'Zoom In to details',
-                        zoomOut: 'Zoom out to details'
+                        off: 'toc.label.visibility.off',
+                        on: 'toc.label.visibility.on',
+                        zoomIn: 'toc.label.visibility.zoomIn',
+                        zoomOut: 'toc.label.visibility.zoomOut'
                     },
                     tooltip: {
-                        off: 'Show layer',
-                        on: 'Hide layer',
-                        zoomIn: 'Zoom In to details',
-                        zoomOut: 'Zoom out to details'
+                        off: 'toc.tooltip.visibility.off',
+                        on: 'toc.tooltip.visibility.on',
+                        zoomIn: 'toc.tooltip.visibility.zoomIn',
+                        zoomOut: 'toc.tooltip.visibility.zoomOut'
                     },
                     action: toggleVisiblity
                 },
                 reload: {
                     icon: 'navigation:refresh',
-                    label: 'Reload',
-                    tooltip: 'Reload'
+                    label: 'toc.label.reload',
+                    tooltip: 'toc.tooltip.reload'
                 },
                 remove: {
                     icon: 'action:delete',
-                    label: 'Remove',
-                    tooltip: 'Remove',
+                    label: 'toc.label.remove',
+                    tooltip: 'toc.tooltip.remove',
                     action: removeLayer
                 },
                 filters: {
                     icon: '',
-                    label: '',
-                    tooltip: ''
+                    label: 'toc.label.filters',
+                    tooltip: 'toc.tooltip.filters'
                 }
             },
             flags: {
@@ -739,22 +739,22 @@
                         esriImage: 'image:photo'
                     },
                     label: {
-                        esriFeature: 'ESRI Feature Layer (<x> <points|polygons|lines>)',
-                        esriDynamic: 'ESRI Dynamic Layer (<x> <points|polygons|lines>)',
-                        ogcWms: 'OGC WMS Layer',
-                        esriImage: 'ESRI Image Layer'
+                        esriFeature: 'toc.label.flag.feature',
+                        esriDynamic: 'toc.label.flag.dynamic',
+                        ogcWms: 'toc.label.flag.wms',
+                        esriImage: 'toc.label.flag.image'
                     },
                     tooltip: {
-                        esriFeature: 'ESRI Feature Layer (<x> <points|polygons|lines>)',
-                        esriDynamic: 'ESRI Dynamic Layer (<x> <points|polygons|lines>)',
-                        ogcWms: 'OGC WMS Layer',
-                        esriImage: 'ESRI Image Layer'
+                        esriFeature: 'toc.tooltip.flag.feature',
+                        esriDynamic: 'toc.tooltip.flag.dynamic',
+                        ogcWms: 'toc.tooltip.flag.wms',
+                        esriImage: 'toc.tooltip.flag.image'
                     }
                 },
                 scale: {
                     icon: 'action:info',
-                    label: 'Toggle scale',
-                    tooltip: 'scale tooltip'
+                    label: 'toc.label.flag.scale',
+                    tooltip: 'toc.tooltip.flag.scale'
                 },
                 data: {
                     icon: {
@@ -762,23 +762,23 @@
                         filter: 'community:filter'
                     },
                     label: {
-                        table: 'Layer has viewable data',
-                        filter: 'Layer data is filtered'
+                        table: 'toc.label.flag.data.table',
+                        filter: 'toc.label.flag.data.filter'
                     },
                     tooltip: {
-                        table: 'Layer has viewable data',
-                        filter: 'Layer data is filtered'
+                        table: 'toc.tooltip.flag.data.table',
+                        filter: 'toc.tooltip.flag.data.filter'
                     }
                 },
                 query: {
                     icon: 'community:map-marker-off',
-                    label: 'query is turned off',
-                    tooltip: 'query is turned off'
+                    label: 'toc.label.flag.query',
+                    tooltip: 'toc.tooltip.flag.query'
                 },
                 user: {
                     icon: 'social:person',
-                    label: 'Toggle user',
-                    tooltip: 'user tooltip'
+                    label: 'toc.label.flag.user',
+                    tooltip: 'toc.tooltip.flag.user'
                 }
             },
             state: {
@@ -787,12 +787,12 @@
                     reloading: 'navigation:refresh'
                 },
                 label: {
-                    error: 'I am Erorr',
-                    reloading: 'Updating'
+                    error: 'toc.label.state.error',
+                    reloading: 'toc.label.state.loading'
                 },
                 tooltip: {
-                    error: 'I am Erorr',
-                    reloading: 'Updating'
+                    error: 'toc.tooltip.state.error',
+                    reloading: 'toc.tooltip.state.loading'
                 }
             }
         };
