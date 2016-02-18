@@ -72,6 +72,15 @@
         text-align: center;
         padding-bottom: rem(0.1);
     }
+
+    &-check {
+        margin: 0;
+        color: $primary-color-dark;
+        > svg {
+            transform: scale(1.2); // 20 * 1.2 = 24
+            transform-origin: 50% 50%;
+        }
+    }
 }
 
 @mixin content {
