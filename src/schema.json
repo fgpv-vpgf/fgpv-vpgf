@@ -260,6 +260,21 @@
                 "data": {
                     "$ref": "#/definitions/option",
                     "description": "FIXME: available only in layers with attributes; Enables data panel"
+                },
+                "tolerance": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "number",
+                                    "default": 5,
+                                    "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
+                                }
+                            }
+                        }
+                    ],
+                    "description": "FIXME: does not apply to all layer types (ESRI feature, ESRI dynamic, maybe wms?); Specifies the tolerance in pixels when determining if a feature was clicked"
                 }
             }
         },
