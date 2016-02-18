@@ -20,6 +20,7 @@
 @import "_details.scss";
 @import "_filters.scss";
 @import "_help.scss";
+@import "_stepper.scss";
 
 @include core;
 @include loading;
@@ -39,3 +40,4 @@
 @include details;
 @include filters;
 @include help;
+@include stepper;
