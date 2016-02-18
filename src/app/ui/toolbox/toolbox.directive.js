@@ -29,7 +29,6 @@
     }
 
     function Controller() {
-        //var self = this;
 
         activate();
 

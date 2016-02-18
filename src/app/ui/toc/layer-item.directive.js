@@ -33,7 +33,7 @@
 
         return directive;
 
-        ///////////
+        /*********/
 
         /**
          * Link function binds `toggleGroup` function from the `TocController` to directive's self.

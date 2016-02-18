@@ -18,7 +18,8 @@
 
         return directive;
 
-        /////////////////
+        /***************/
+
         function linkFunc(scope, element, attr) {
             scope.stateManager = stateManager;
 

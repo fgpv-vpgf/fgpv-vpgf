@@ -29,9 +29,9 @@
 
         return directive;
 
-        ///////////
+        /*********/
 
-        function link(scope, el) { //, attr, ctrl) {
+        function link(scope, el) { // , attr, ctrl) {
             const self = scope.self;
             self.draw = draw;
 
@@ -147,7 +147,7 @@
 
         activate();
 
-        ///////////
+        /*********/
 
         function activate() {
 

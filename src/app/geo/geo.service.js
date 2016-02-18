@@ -17,10 +17,10 @@
 
     function geoService($http, identifyService, layerTypes, configDefaults) {
 
-        //TODO update how the layerOrder works with the UI
-        //Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
-        //Add a function to update the layer order. This function will raise a change event so other interested
-        //pieces of code can react to the change in the order
+        // TODO update how the layerOrder works with the UI
+        // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
+        // Add a function to update the layer order. This function will raise a change event so other interested
+        // pieces of code can react to the change in the order
 
         const service = {
             layers: {},
@@ -96,21 +96,21 @@
          * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
          */
         function registerLayer(layer, initialState, attribs, position) {
-            //TODO determine the proper docstrings for a non-service function that lives in a service
+            // TODO determine the proper docstrings for a non-service function that lives in a service
 
             if (!layer.id) {
-                //TODO replace with proper error handling mechanism
+                // TODO replace with proper error handling mechanism
                 console.error('Attempt to register layer without id property');
                 console.log(layer);
                 console.log(initialState);
             }
 
             if (service.layers[layer.id]) {
-                //TODO replace with proper error handling mechanism
+                // TODO replace with proper error handling mechanism
                 console.log('Error: attempt to register layer already registered.  id: ' + layer.id);
             }
 
-            //TODO should attribs be defined and set to null, or simply omitted from the object?  some layers will not have attributes. others will be added after they load
+            // TODO should attribs be defined and set to null, or simply omitted from the object?  some layers will not have attributes. others will be added after they load
             let l = {
                 layer,
 
@@ -137,15 +137,15 @@
          * @param  {object} attribData an attribute dataset
          */
         function registerAttributes(attribData) {
-            //TODO determine the proper docstrings for a non-service function that lives in a service
+            // TODO determine the proper docstrings for a non-service function that lives in a service
 
             if (!attribData.layerId) {
-                //TODO replace with proper error handling mechanism
+                // TODO replace with proper error handling mechanism
                 console.log('Error: attempt to register attribute dataset without layerId property');
             }
 
             if (!service.layers[attribData.layerId]) {
-                //TODO replace with proper error handling mechanism
+                // TODO replace with proper error handling mechanism
                 console.log('Error: attempt to register layer attributes against unregistered layer.  id: ' +
                     attribData.layerId);
             }

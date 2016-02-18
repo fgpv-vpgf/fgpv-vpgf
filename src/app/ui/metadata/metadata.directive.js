@@ -41,7 +41,7 @@
 
         activate();
 
-        ///////////
+        /*********/
 
         function activate() {
 

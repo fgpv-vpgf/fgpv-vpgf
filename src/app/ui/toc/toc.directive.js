@@ -44,7 +44,7 @@
 
         activate();
 
-        ///////////////
+        /*************/
 
         // hacky way to toggle filters panel modes;
         // TODO: replace with a sane methods
@@ -56,10 +56,10 @@
                 'attached'
             ];
 
-            let currentMode = stateManager.state.filters.morph; //stateManager.getMode('filters');
+            let currentMode = stateManager.state.filters.morph; // stateManager.getMode('filters');
             let index = (views.indexOf(currentMode) + 1) % 4;
 
-            //Make sure the filters panel is open
+            // Make sure the filters panel is open
             stateManager.setActive({ side: false }, { filtersFulldata: true });
             stateManager.setMode('filters', views[index]);
         }

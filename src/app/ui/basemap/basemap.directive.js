@@ -29,9 +29,9 @@
 
         return directive;
 
-        ///////////
+        /*********/
 
-        function link() { //scope, el, attr, ctrl) {
+        function link() { // scope, el, attr, ctrl) {
         }
     }
 
@@ -137,7 +137,7 @@
 
         activate();
 
-        ///////////
+        /*********/
 
         function activate() {
 

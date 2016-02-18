@@ -53,7 +53,7 @@
 
         return service;
 
-        ///////////
+        /*********/
 
         /**
          * Adds new items to the state collection with overrride;
@@ -94,7 +94,7 @@
                     one = getItem(oneName);
                 }
 
-                //console.log('Setting state item', one.name, 'to', oneTargetValue);
+                // console.log('Setting state item', one.name, 'to', oneTargetValue);
                 if (one.item.parent) { // item has a parent
 
                     let oneParent = getParent(one.name); // get parent
@@ -106,7 +106,7 @@
                         } else { // if parent is on,
                             getChildren(oneParent.name)
                                 .forEach(child => {
-                                    //console.log('child - ', child);
+                                    // console.log('child - ', child);
                                     if (child.name !== one.name) {
                                         setItemProperty(child.name, 'active', false); // animate siblings off
                                     }
@@ -118,7 +118,7 @@
                         runAfter = () => { // runAfter parent finished its transition
                             getChildren(oneParent.name)
                                 .forEach(child => {
-                                    //console.log('child 1- ', child);
+                                    // console.log('child 1- ', child);
                                     setItemProperty(child.name, 'active', false, true); // immediately turn off all children
                                 });
                         };
@@ -133,7 +133,7 @@
                     } else if (!oneTargetValue) { // turning off
                         runAfter = () => { // runAfter parent finished its transition
                             oneChildren.forEach(child => {
-                                //console.log('child 2- ', child);
+                                // console.log('child 2- ', child);
                                 setItemProperty(child.name, 'active', false, true); // immediately turn off all children
                             });
                         };
@@ -144,7 +144,7 @@
                 return setItemProperty(one.name, 'active', oneTargetValue)
                     .then(() => {
 
-                        //console.log('Continue with the rest of state items');
+                        // console.log('Continue with the rest of state items');
                         // run any `runAfter` function if exists
                         // TODO: runAfter should return a promise; return `setActive` when it resolves
                         if (runAfter) {
@@ -178,7 +178,7 @@
         function callback(itemName, property) {
             const fulfillKey = `${property}${itemName}`;
 
-            //console.log('Resolving state item lock:', itemName, property, fulfillStore[fulfillKey]); //, item.fulfill);
+            // console.log('Resolving state item lock:', itemName, property, fulfillStore[fulfillKey]); //, item.fulfill);
             // there is no memory leak since there is a finite (and small) number of fulfill keys
             if (fulfillStore[fulfillKey]) {
                 fulfillStore[fulfillKey]();
@@ -203,7 +203,7 @@
 
                 item[skipKey] = skip; // even if the item has proper state, set its skip value for sanity
 
-                //console.log('settingItem', item, item.active, value);
+                // console.log('settingItem', item, item.active, value);
                 if (item[property] !== value) {
 
                     // check if fulfill function exists from before exist and resolve it
@@ -227,7 +227,7 @@
             })
             .then(skipEvent => {
                 if (!skipEvent) {
-                    //console.log('EMIT EVENT for', itemName, property, value, skip);
+                    // console.log('EMIT EVENT for', itemName, property, value, skip);
                     // emit event on the rootscope when change is complete
                     $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
 

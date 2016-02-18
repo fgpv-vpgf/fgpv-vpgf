@@ -1,7 +1,7 @@
 exports.config = {
     // if you need this, make sure that your first ng-inlcude div is on the descendant of
     // the roomElement; it doesn't work otherwise for some reason
-    //rootElement: 'div#guts',
+    // rootElement: 'div#guts',
 
     allScriptsTimeout: 11000,
     getPageTimeout: 10000,

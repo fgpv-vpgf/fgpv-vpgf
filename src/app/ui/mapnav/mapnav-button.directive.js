@@ -48,9 +48,9 @@
      * Skeleton controller function.
      */
     function Controller() {
-        //var self = this;
+        // var self = this;
 
-        ///////////
+        /*********/
 
         activate();
 

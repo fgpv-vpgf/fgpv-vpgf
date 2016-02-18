@@ -40,7 +40,7 @@
 
         activate();
 
-        ///////////
+        /*********/
 
         function activate() {
 

@@ -18,10 +18,10 @@ describe('tocService', () => {
 
     // resolve stateManager locks and executes an option function; this is needed to avoid waiting for state animation  to complete
     function spyWatch(name, func) {
-        //const sm = stateManager; // global stateManager variable was disappearing for some reason
+        // const sm = stateManager; // global stateManager variable was disappearing for some reason
 
         rs.$watch(() => sm.state[name].active, (newValue, oldValue) => {
-            //console.log('resolving', name, newValue, oldValue);
+            // console.log('resolving', name, newValue, oldValue);
 
             sm.callback(name, 'active');
             if (func) {

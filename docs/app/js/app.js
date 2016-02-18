@@ -157,7 +157,7 @@
                 //   // $locationChangeSuccess calls openPage()
                 //   controller.autoFocusContent = true;
                 // };
-                //}
+                // }
             };
         });
 

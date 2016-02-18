@@ -30,7 +30,7 @@
 
         return directive;
 
-        ///////////
+        /*********/
 
         /**
          * Link function binds `toggleGroup` function from the `TocController` to directive's self.
@@ -49,11 +49,11 @@
      */
     function Controller() {
 
-        //const self = this;
+        // const self = this;
 
         activate();
 
-        ///////////
+        /*********/
 
         function activate() {
 

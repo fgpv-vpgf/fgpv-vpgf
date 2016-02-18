@@ -51,7 +51,7 @@
 
         return service;
 
-        ////////////////
+        /***************/
 
         /**
          * Initializes `configService` by fetching and parsing `config` object.

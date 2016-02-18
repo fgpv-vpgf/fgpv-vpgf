@@ -154,9 +154,9 @@
     * @return {Number}  size        size of relevant dimension
     */
     function getPanelSize(element, direction) {
-        if (direction % 2 === 0) { //Down, Up
+        if (direction % 2 === 0) { // Down, Up
             return element.find(RV_PANEL_SELECTOR).outerHeight(true);
-        } else { //Left, Right
+        } else { // Left, Right
             return element.find(RV_PANEL_SELECTOR).outerWidth(true);
         }
     }
@@ -172,14 +172,14 @@
     function deltaHelper($rootElement, element, direction) {
         let delta = 10;
 
-        if (direction === 0) { //DOWN
+        if (direction === 0) { // DOWN
             delta += element.position().top + getPanelSize(element, direction);
-        } else if (direction === 1) { //RIGHT
+        } else if (direction === 1) { // RIGHT
             delta += element.position().left + getPanelSize(element, direction);
-        } else if (direction === 2) { //UP
+        } else if (direction === 2) { // UP
             // not adding on to 10 because there is no drop shadow above the panel
             delta = $rootElement.outerHeight(true) - element.position().top;
-        } else { //LEFT
+        } else { // LEFT
             delta += $rootElement.outerWidth(true) - element.position().left;
         }
 

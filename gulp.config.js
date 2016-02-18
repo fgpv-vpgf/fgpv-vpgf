@@ -110,27 +110,27 @@ module.exports = function () {
         report: report,
         libdir: bowerdir,
 
-        //alljs: [
+        // alljs: [
         //    './src/**/*.js',
         //    './*.js'
-        //],
-        //build: './build/',
-        //client: client,
-        //fonts: bowerdir + 'font-awesome/fonts/**/*.*',
-        //images: client + 'images/**/*.*',
-        //// app js, with no specs
+        // ],
+        // build: './build/',
+        // client: client,
+        // fonts: bowerdir + 'font-awesome/fonts/**/*.*',
+        // images: client + 'images/**/*.*',
+        // // app js, with no specs
 
-        //optimized: {
+        // optimized: {
         //    app: 'app.js',
         //    lib: 'lib.js'
-        //},
+        // },
 
-        //browserReloadDelay: 1000,
+        // browserReloadDelay: 1000,
 
-        //packages: [
+        // packages: [
         //    './package.json',
         //    './bower.json'
-        //],
+        // ],
 
         defaultPort: '6001'
     };
@@ -161,7 +161,7 @@ module.exports = function () {
                     // reporters not supporting the `file` property
                     { type: 'html', subdir: 'report-html' },
                     { type: 'lcov', subdir: 'report-lcov' },
-                    { type: 'text-summary' } //, subdir: '.', file: 'text-summary.txt'}
+                    { type: 'text-summary' } // , subdir: '.', file: 'text-summary.txt'}
                 ]
             },
             preprocessors: {}
