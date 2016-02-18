@@ -96,12 +96,12 @@
             self.projections = [];
 
             var wkidArray = [];
-            var basemaps = configService.data.basemaps;
+            var basemaps = configService.data.baseMaps;
 
             basemaps.forEach(basemap => {
 
                 // make new projection if not exists
-                var wkid = basemap.spatialReference.wkid;
+                var wkid = basemap.wkid;
                 var idx;
 
                 if (wkidArray.indexOf(wkid) !== -1) {
@@ -121,11 +121,11 @@
                 }
 
                 self.projections[idx].items.push({
-                    name: basemap.title,
+                    name: basemap.name,
                     type: basemap.type,
-                    id: basemap.uid,
+                    id: basemap.id,
                     url: basemap.layers[0].url,
-                    wkid: basemap.spatialReference.wkid,
+                    wkid: basemap.wkid,
                     selected: false
                 });
 
