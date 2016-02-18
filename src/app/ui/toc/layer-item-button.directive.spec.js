@@ -14,7 +14,7 @@ describe('rvLayerItemButton', () => {
             id: 1,
             options: {
                 visibility: {
-                    value: 'on', //'off', 'zoomIn', 'zoomOut'
+                    value: 'on', // 'off', 'zoomIn', 'zoomOut'
                     enabled: true
                 }
             }

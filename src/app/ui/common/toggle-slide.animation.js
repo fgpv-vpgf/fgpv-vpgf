@@ -36,7 +36,7 @@
 
         return () => service;
 
-        ////////
+        /******/
 
         /**
          * Animates `leave` event by `sliding` the element down, animating its height from 0 to full.

@@ -36,7 +36,7 @@
          * @param  {Object} scope directive scope
          * @param  {Object} el    node element
          */
-        function link(scope, el) { //scope, el, attr, ctrl) {
+        function link(scope, el) { // scope, el, attr, ctrl) {
             const self = scope.self;
             let containerNode;
 
@@ -87,7 +87,7 @@
             function destroyTable() {
                 if (self.table) {
                     // destroy table with all events
-                    self.table.destroy(true); //https://datatables.net/reference/api/destroy()
+                    self.table.destroy(true); // https://datatables.net/reference/api/destroy()
                     delete self.table; // kill the reference
                 }
             }
@@ -113,9 +113,9 @@
 
         function activate() {
             // wait for morph on filters panel to complete and redraw the datatable
-            $scope.$on('stateChangeComplete', (event, name, property, value) => { //, skip) => {
+            $scope.$on('stateChangeComplete', (event, name, property, value) => { // , skip) => {
                 if (name === 'filters') {
-                    console.log('Filters: ', event, name, property, value); //, skip);
+                    console.log('Filters: ', event, name, property, value); // , skip);
                     self.draw();
 
                     if (property === 'active') {
@@ -132,8 +132,8 @@
             // watch filters data for changes; recreate table when data changes
             $scope.$watch('self.display.data', newValue => {
                 if (newValue && newValue.data) {
-                    //console.log('Filters fullyOpen', isFullyOpen, self.display.isLoading);
-                    //console.log('Filters: table data udpated', newValue);
+                    // console.log('Filters fullyOpen', isFullyOpen, self.display.isLoading);
+                    // console.log('Filters: table data udpated', newValue);
                     if (isFullyOpen) {
                         self.createTable();
                     } else {
@@ -154,7 +154,7 @@
                 console.log('Filters: drawing table');
                 self.table.scroller.measure();
 
-                //self.table.columns.adjust().draw();
+                // self.table.columns.adjust().draw();
             }
         }
     }

@@ -56,7 +56,7 @@
 
         activate();
 
-        //////////
+        /********/
 
         function activate() {
 

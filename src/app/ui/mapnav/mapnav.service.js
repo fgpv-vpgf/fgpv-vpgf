@@ -94,7 +94,7 @@
             }
         };
 
-        //TODO when time permits, investigate this alternate form of translation.
+        // TODO when time permits, investigate this alternate form of translation.
         //     we are currently using filters; performance testing should be done
         //     to see if they have a significant impact compared to this approach
         //     see https://github.com/fgpv-vpgf/fgpv-vpgf/commit/ac798a8a9b6678a7d37d462fd776ae54139739a4
@@ -108,6 +108,6 @@
 
         return service;
 
-        ///////////////
+        /*************/
     }
 })();

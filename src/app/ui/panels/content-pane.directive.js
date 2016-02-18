@@ -113,7 +113,7 @@
                     const floatingHeader = element.find(FLOATING_HEADER_CLASS);
 
                     scope.$on('rv-detect-scrollbar', (evt, newValue, oldValue, scrollbarWidth) => {
-                        //console.log(evt, oldValue, newValue, scrollbarWidth);
+                        // console.log(evt, oldValue, newValue, scrollbarWidth);
                         TweenLite.set(floatingHeader, {
                             x: newValue ? -scrollbarWidth : 0
                         });
@@ -137,7 +137,7 @@
      * Skeleton controller function.
      */
     function Controller() {
-        //const self = this;
+        // const self = this;
 
         activate();
 

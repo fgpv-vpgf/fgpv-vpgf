@@ -14,7 +14,7 @@ describe('rvLayerGroupToggle', () => {
         items: [],
         options: {
             visibility: {
-                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                value: 'on', // 'off', 'zoomIn', 'zoomOut'
                 enabled: true
             }
         }

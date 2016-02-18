@@ -36,7 +36,7 @@
 
         return directive;
 
-        ///////////
+        /*********/
 
         function link(scope, el, attr, ctrl) {
             const self = scope.self;

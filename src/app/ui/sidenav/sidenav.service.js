@@ -33,7 +33,7 @@
 
         return service;
 
-        ////////////////
+        /**************/
 
         /**
          * Opens side navigation panel.

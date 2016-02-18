@@ -35,9 +35,9 @@
 
         return directive;
 
-        ///////////
+        /*********/
 
-        function link(scope, element) { //scope, element, attr, ctrl) {
+        function link(scope, element) { // scope, element, attr, ctrl) {
             const self = scope.self;
             let section;
             let layerList;
@@ -90,7 +90,7 @@
 
         // TODO: adding stateManger to scope to set up watch
         $scope.$watch('self.display.data', newValue => {
-            //console.log('self.display.data', newValue);
+            // console.log('self.display.data', newValue);
             // if multiple points added to the details panel ...
             if (newValue && newValue.length > 0) {
                 // pick random point to be selected initially
@@ -102,7 +102,7 @@
 
         activate();
 
-        ///////////
+        /*********/
 
         function activate() {
 

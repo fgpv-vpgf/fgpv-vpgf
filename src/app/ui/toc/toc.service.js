@@ -35,7 +35,7 @@
                         ],
                         options: {
                             visibility: {
-                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                 enabled: true
                             }
                         }
@@ -71,7 +71,7 @@
                                         enabled: true
                                     },
                                     visibility: {
-                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                        value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                         enabled: true
                                     },
                                     filters: { // an invisible toggle for filters panel; stores filters configuration
@@ -126,7 +126,7 @@
                                         enabled: true
                                     },
                                     visibility: {
-                                        value: 'zoomIn', //'off', 'zoomIn', 'zoomOut'
+                                        value: 'zoomIn', // 'off', 'zoomIn', 'zoomOut'
                                         enabled: true
                                     },
                                     filters: {
@@ -179,7 +179,7 @@
                                                 enabled: true
                                             },
                                             visibility: {
-                                                value: 'zoomIn', //'off', 'zoomIn', 'zoomOut'
+                                                value: 'zoomIn', // 'off', 'zoomIn', 'zoomOut'
                                                 enabled: true
                                             },
                                             filters: {
@@ -226,7 +226,7 @@
                                                 enabled: true
                                             },
                                             visibility: {
-                                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                                 enabled: true
                                             },
                                             remove: {
@@ -276,7 +276,7 @@
                                                 enabled: true
                                             },
                                             visibility: {
-                                                value: 'off', //'off', 'zoomIn', 'zoomOut'
+                                                value: 'off', // 'off', 'zoomIn', 'zoomOut'
                                                 enabled: true
                                             },
                                             filters: {
@@ -307,7 +307,7 @@
                                 ],
                                 options: {
                                     visibility: {
-                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                        value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                         enabled: true
                                     }
                                 }
@@ -359,7 +359,7 @@
                                         enabled: false
                                     },
                                     visibility: {
-                                        value: 'off', //'off', 'zoomIn', 'zoomOut'
+                                        value: 'off', // 'off', 'zoomIn', 'zoomOut'
                                         enabled: true
                                     },
                                     filters: {
@@ -390,7 +390,7 @@
                         ],
                         options: {
                             visibility: {
-                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                 enabled: true
                             }
                         }
@@ -420,7 +420,7 @@
                                         enabled: true
                                     },
                                     visibility: {
-                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                        value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                         enabled: true
                                     },
                                     filters: {
@@ -451,7 +451,7 @@
                         ],
                         options: {
                             visibility: {
-                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                 enabled: true
                             }
                         }
@@ -535,7 +535,7 @@
                                                                                                                 enabled: true
                                                                                                             },
                                                                                                             visibility: {
-                                                                                                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                                                                value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                                                                                                 enabled: true
                                                                                                             },
                                                                                                             filters: {
@@ -566,7 +566,7 @@
                                                                                                 ],
                                                                                                 options: {
                                                                                                     visibility: {
-                                                                                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                                                        value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                                                                                         enabled: true
                                                                                                     }
                                                                                                 }
@@ -574,7 +574,7 @@
                                                                                         ],
                                                                                         options: {
                                                                                             visibility: {
-                                                                                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                                                value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                                                                                 enabled: true
                                                                                             }
                                                                                         }
@@ -582,7 +582,7 @@
                                                                                 ],
                                                                                 options: {
                                                                                     visibility: {
-                                                                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                                        value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                                                                         enabled: true
                                                                                     }
                                                                                 }
@@ -590,7 +590,7 @@
                                                                         ],
                                                                         options: {
                                                                             visibility: {
-                                                                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                                value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                                                                 enabled: true
                                                                             }
                                                                         }
@@ -598,7 +598,7 @@
                                                                 ],
                                                                 options: {
                                                                     visibility: {
-                                                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                        value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                                                         enabled: true
                                                                     }
                                                                 }
@@ -606,7 +606,7 @@
                                                         ],
                                                         options: {
                                                             visibility: {
-                                                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                                value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                                                 enabled: true
                                                             }
                                                         }
@@ -614,7 +614,7 @@
                                                 ],
                                                 options: {
                                                     visibility: {
-                                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                        value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                                         enabled: true
                                                     }
                                                 }
@@ -622,7 +622,7 @@
                                         ],
                                         options: {
                                             visibility: {
-                                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                                value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                                 enabled: true
                                             }
                                         }
@@ -630,7 +630,7 @@
                                 ],
                                 options: {
                                     visibility: {
-                                        value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                        value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                         enabled: true
                                     }
                                 }
@@ -638,7 +638,7 @@
                         ],
                         options: {
                             visibility: {
-                                value: 'on', //'off', 'zoomIn', 'zoomOut'
+                                value: 'on', // 'off', 'zoomIn', 'zoomOut'
                                 enabled: true
                             }
                         }
@@ -819,7 +819,7 @@
                 return geoService.layers[id].state;
             });
 
-            //console.log('--->', service.data.items[0]);
+            // console.log('--->', service.data.items[0]);
         }, 7000); // FIXME: wait for layer to be added to the layer registry; this will not be needed as we are going to bind directly to layer/legend construction from geoservice; this is needed right now to keep the fake layers in the layer selector as well.
 
         // set state change watches on metadata, settings and filters panel
@@ -858,7 +858,7 @@
 
             iterateLayers(service.data, (item, index, group) => {
                 if (item.id === layer.id) {
-                    //console.log(item, index, group);
+                    // console.log(item, index, group);
 
                     if (index !== -1) {
                         group.items.splice(index, 1);
@@ -1015,7 +1015,7 @@
         function watchPanelState(panelName, displayName) {
             // clear display on metadata, settings, and filters panels when closed
             $rootScope.$on('stateChangeComplete', (event, name, property, value) => {
-                //console.log(name, property, value);
+                // console.log(name, property, value);
                 if (property === 'active' && name === panelName && value === false) {
                     stateManager.clearDisplayPanel(panelName);
                 }

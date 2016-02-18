@@ -20,7 +20,7 @@ describe('my app', function () {
 
             // this test fails as md-whiteform element is hidden
             // it was a toy-test anyway, just wanted an example how tests work
-            //expect(
+            // expect(
             //        element.all(by.css('md-whiteframe'))
             //        .first()
             //       .getText()

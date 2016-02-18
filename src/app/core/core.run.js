@@ -31,7 +31,7 @@
             });
 
         // to prevent FOUC need to load translation files with config initialization if we know the language
-        //$rootScope.$on('$translateLoadingSuccess', data => console.log(data));
+        // $rootScope.$on('$translateLoadingSuccess', data => console.log(data));
         $rootScope.$on('$translateLoadingSuccess', () => console.log(
             '$translateLoadingSuccess ->'));
 

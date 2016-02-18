@@ -39,19 +39,19 @@
 
         return directive;
 
-        ///////////
+        /*********/
 
         function link(scope, element) {
             const domNode = element[0];
             let handle;
 
             // TODO: add check for overflow property and if it's auto, or scroll set the watch
-            //if (window.getComputedStyle(domNode).overflowY)
+            // if (window.getComputedStyle(domNode).overflowY)
 
             scope.$watch(() => domNode.scrollHeight > domNode.clientHeight, (newValue, oldValue) => {
                 $timeout.cancel(handle);
                 handle = $timeout(() => {
-                    //console.log('watch scrollbar', newValue, oldValue);
+                    // console.log('watch scrollbar', newValue, oldValue);
                     scope.$emit('rv-detect-scrollbar', newValue, oldValue, SCROLLBAR_WIDTH);
                 }, 20); // magic binding sometimes doubles the height of the node; add a small timeout to avoid false detections
             });

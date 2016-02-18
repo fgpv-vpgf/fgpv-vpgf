@@ -24,9 +24,9 @@
 
         return directive;
 
-        ///////////
+        /*********/
 
-        function link(scope, element, attr) { //, ctrl) {
+        function link(scope, element, attr) { // , ctrl) {
             const obj = { getCoords: getCoords, key: attr.rvHelp.toString() };
             helpService.register(obj);
 

@@ -30,7 +30,7 @@
                 suffix: '/translation.json'
             });
 
-            //$translateProvider.preferredLanguage('en-CA');
+            // $translateProvider.preferredLanguage('en-CA');
         }
 
         /**

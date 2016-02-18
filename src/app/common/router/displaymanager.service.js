@@ -30,7 +30,7 @@
             return service;
         };
 
-        ///////////
+        /*********/
 
         /**
          * Toggles the specified panel with following logic:
@@ -183,7 +183,7 @@
             const state = stateManager.state[panelName];
             const displayName = state.display;
 
-            //console.log('Clearing ' + panelName);
+            // console.log('Clearing ' + panelName);
 
             if (typeof displayName === 'undefined') {
                 return -1; // display for this panel is not defined, exit

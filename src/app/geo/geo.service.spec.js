@@ -13,7 +13,7 @@ describe('geo', () => {
 
     describe('geoService', () => {
 
-        //check registering a layer
+        // check registering a layer
         it('should register a layer', () => {
             let tempLayer = {
                 id: 'sausages',
@@ -24,7 +24,7 @@ describe('geo', () => {
             };
             geoService.registerLayer(tempLayer, tempConfig);
 
-            //layer is now in registry
+            // layer is now in registry
             expect(geoService.layers.sausages)
                 .toBeDefined();
             expect(geoService.layers.sausages.layer)
@@ -44,7 +44,7 @@ describe('geo', () => {
                 .toBe('on');
         });
 
-        //check registering a attribute object
+        // check registering a attribute object
         it('should register attributes', () => {
             let tempLayer = {
                 id: 'sausages',
@@ -60,7 +60,7 @@ describe('geo', () => {
             };
             geoService.registerAttributes(tempAttribs);
 
-            //attribute object is attached to correct layer
+            // attribute object is attached to correct layer
             expect(geoService.layers.sausages.attribs)
                 .toBeDefined();
             expect(geoService.layers.sausages.attribs.layerId)
@@ -218,12 +218,12 @@ describe('geo', () => {
             });
         });
 
-        //TODO add test: register layer with no id
-        //TODO add test: register attributes with no layerId
-        //TODO add test: register layer with id that is already registered
-        //TODO add test: register layer without a config param
-        //TODO add test: register attributes for a layer that has not been registered
-        //TODO add test: optional attribute registration during registerLayer call
-        //TODO add test: optional order parameter during registerLayer call
+        // TODO add test: register layer with no id
+        // TODO add test: register attributes with no layerId
+        // TODO add test: register layer with id that is already registered
+        // TODO add test: register layer without a config param
+        // TODO add test: register attributes for a layer that has not been registered
+        // TODO add test: optional attribute registration during registerLayer call
+        // TODO add test: optional order parameter during registerLayer call
     });
 });

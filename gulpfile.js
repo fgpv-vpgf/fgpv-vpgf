@@ -173,7 +173,7 @@ function jsbuild() {
         .pipe(versionFilter.restore)
 
         // TODO: fix this: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/293
-        //.pipe($.sourcemaps.init())
+        // .pipe($.sourcemaps.init())
         .pipe($.plumber({ errorHandler: injectError }))
         .pipe($.babel())
         .pipe($.plumber.stop())
@@ -186,7 +186,7 @@ function jsbuild() {
         .pipe($.concat(config.jsSingleFile))
 
         // if prod, uglify; if not, write sourcemaps inline because it will be merged with other libraries and it's not possible to use external files in that case
-        .pipe($.if(args.prod, $.uglify())); //, $.sourcemaps.write()));
+        .pipe($.if(args.prod, $.uglify())); // , $.sourcemaps.write()));
 }
 
 gulp.task('assetcopy', 'Copy fixed assets to the build directory',
@@ -366,7 +366,7 @@ function serve(isDev) {
         port: config.defaultPort,
 
         // fallback option doesn't seem to work well with index page reload
-        //fallback: isDev ? config.src + 'index.html' : config.build + 'index.html'
+        // fallback: isDev ? config.src + 'index.html' : config.build + 'index.html'
     });
 
     if (isDev) {
@@ -442,7 +442,7 @@ function startTests(singleRun, done) {
             karma.start();
         });
 
-    ////////////////
+    /**************/
 
     function karmaCompleted(karmaResult) {
         log('Karma completed');

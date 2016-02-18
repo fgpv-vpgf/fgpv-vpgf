@@ -13,7 +13,6 @@
         .module('app.ui.sidenav')
         .directive('rvMenuLink', rvMenuLink);
 
-    /* @ngInject */
     /**
      * `rvMenuLink` directive body.
      * @return {object} directive body
@@ -36,22 +35,21 @@
         /**
          * Skeleton link function.
          */
-        function linkFunc() { //scope, el, attr, ctrl) {
-            //console.log(scope, el, attr, ctrl);
+        function linkFunc() { // scope, el, attr, ctrl) {
+            // console.log(scope, el, attr, ctrl);
         }
     }
 
-    /* @ngInject */
     /**
      * Skeleton controller function.
      */
     function Controller() {
-        //let self = this;
-        //console.log('--', self.section);
+        // let self = this;
+        // console.log('--', self.section);
 
         activate();
 
-        ////////////////
+        /**************/
 
         function activate() {
 

@@ -74,15 +74,15 @@
                         fullscreen: false
                     });
 
-                    //stateManager.setActive('help');
-                    //console.log('Halp!');
+                    // stateManager.setActive('help');
+                    // console.log('Halp!');
                 }
             }
         ];
 
         activate();
 
-        ////////////////
+        /**************/
 
         function HelpSummaryController() {
             const self = this;
