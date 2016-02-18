@@ -73,11 +73,9 @@
         //will make an extent around a point, that is appropriate for the current map scale.
         //makes it easier for point clicks to instersect
         //the tolerance is distance in pixels from mouse point that qualifies as a hit
-        function makeClickBuffer(point, geoApi, map, tolerance) {
-            const tol = tolerance || 5;
-
+        function makeClickBuffer(point, geoApi, map, tolerance = 5) {
             //take pixel tolerance, convert to map units at current scale. x2 to turn radius into diameter
-            const buffSize = 2 * tol * map.extent.getWidth() / map.width;
+            const buffSize = 2 * tolerance * map.extent.getWidth() / map.width;
 
             //Build tolerance envelope of correct size
             const cBuff = new geoApi.mapManager.Extent(1, 1, buffSize, buffSize, point.spatialReference);
