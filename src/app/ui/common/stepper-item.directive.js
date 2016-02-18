@@ -22,7 +22,8 @@
             scope: {
                 titleValue: '@?',
                 summaryValue: '@?',
-                stepNumber: '@?'
+                stepNumber: '@?',
+                isActive: '=?'
             },
             transclude: true,
             link: link,
@@ -35,8 +36,11 @@
 
         ///////////
 
-        function link() { // scope, el, attr, ctrl) {
+        function link(scope) { // scope, el, attr, ctrl) {
+            const self = scope.self;
 
+            // apply defaults
+            self.isActive = angular.isDefined(self.isActive) ? self.isActive : false;
         }
     }
 

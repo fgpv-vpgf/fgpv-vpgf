@@ -1,7 +1,13 @@
 <rv-content-pane>
     <div class="rv-lloader-file">
 
-        <rv-stepper-item title-value="Pick a file" step-number="1">
+        <md-button ng-click="self.expanded = !self.expanded">
+            Expand first step</md-button>
+
+        <md-button ng-click="self.expanded2 = !self.expanded2">
+            Expand second step</md-button>
+
+        <rv-stepper-item title-value="Pick a file" step-number="1" is-active="self.expanded">
             <div flow-init="{singleFile: true}" flow-files-submitted="$flow.upload()" flow-file-success="$file.msg = $message">
 
                 <!--input type="file" flow-btn/>
@@ -21,7 +27,17 @@
             </div>
         </rv-stepper-item>
 
-        <rv-stepper-item title-value="Double vision" summary-value="reason not to work" step-number="2"></rv-stepper-item>
+        <rv-stepper-item
+            title-value="Double vision"
+            summary-value="reason not to work"
+            step-number="2"
+            is-active="self.expanded2">
+            Nothing to see here
+        </rv-stepper-item>
+
+        <rv-stepper-item title-value="Six months" summary-value="later" step-number="3" is-active="true">
+            It's in French!
+        </rv-stepper-item>
     </div>
 
 </rv-main-panel-content>

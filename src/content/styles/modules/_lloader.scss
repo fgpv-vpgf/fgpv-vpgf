@@ -1,16 +1,12 @@
 @mixin lloader {
     .rv-lloader-file {
         rv-stepper-item {
-            &:first-child {
-                .rv-stepper-item-container:before {
-                    display: none;
-                }
+            &:first-child .rv-stepper-item-container:before {
+                display: none;
             }
 
-            &:last-child {
-                .rv-stepper-item-container:after {
-                    display: none;
-                }
+            &:last-child .rv-stepper-item-container:after {
+                display: none;
             }
         }
     }
