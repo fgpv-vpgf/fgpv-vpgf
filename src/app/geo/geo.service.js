@@ -459,10 +459,10 @@
         function getFullExtFromExtentSets(extentSets) {
 
             // FIXME: default basemap should be indicated in the config as well
-            let currentBasemapExtentSetId = 123456789;
+            const currentBasemapExtentSetId = '123456789';
 
             // In configSchema, at least one extent for a basemap
-            let extentSetForId = extentSets.find((extentSet) => {
+            const extentSetForId = extentSets.find(extentSet => {
                 if (extentSet.id === currentBasemapExtentSetId) {
                     return true;
                 }
@@ -470,12 +470,11 @@
 
             // no matching id in the extentset
             if (angular.isUndefined(extentSetForId)) {
-                console.warn('Could not find an extent set with matching id');
-                return null;
+                throw new Error('could not find an extent set with matching id.');
             }
 
             // find the full extent type from extentSetForId
-            let lFullExtent = (extentSetForId.full) ? extentSetForId.full :
+            const lFullExtent = (extentSetForId.full) ? extentSetForId.full :
                 (extentSetForId.default) ? extentSetForId.default :
                 (extentSetForId.maximum) ? extentSetForId.maximum : null;
 
