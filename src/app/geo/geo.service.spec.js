@@ -119,8 +119,9 @@ describe('geo', () => {
             // create a fake map
             geoService.buildMap({}, {
                 layers: [],
-                navigation: { scalebar: {} },
-                map: { extents: [{ uid: '123', type: 'full', spatialReference: { wkid: 3978 } }] }
+                map: { extentSets: [{ id: 123456789, default: { spatialReference: { wkid: 3978 } } }],
+                    components: { scaleBar: {} }
+                }
             });
 
             // call setZoom with different arguments
@@ -141,8 +142,10 @@ describe('geo', () => {
         describe('map', () => {
             const emptyConfig = {
                 layers: [],
-                navigation: { scalebar: {}, overviewMap: {} },
-                map: { extents: [] }
+                map: {
+                    extentSets: [{ id: 123456789, full: {}, default: {} }],
+                    components: { scaleBar: {}, overviewMap: {} }
+                }
             };
             const layerConfig = {
                 layers: [
