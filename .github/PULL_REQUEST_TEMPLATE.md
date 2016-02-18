@@ -6,7 +6,7 @@
 ### Checklist
 
 - [ ] `gulp test` succeeds without warnings or errors
-- [ ] unit tests have been added
+- [ ] unit tests have been added (or their absense has been explained)
 - [ ] all commit messages are descriptive and follow guidelines
 - I will assign this PR to the primary reviewer
 
