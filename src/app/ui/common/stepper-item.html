@@ -1,0 +1,15 @@
+<div class="rv-stepper-item-container">
+    <div class="rv-stepper-item-header" ng-class="{'rv-summary': self.summaryValue }">
+        <span class="rv-stepper-item-number">{{ self.stepNumber }}</span>
+        <div class="rv-stepper-item-title">
+            <h5 class="md-body-2">{{ self.titleValue }}</h5>
+            <span class="md-caption">{{ self.summaryValue }}</span>
+        </div>
+
+    </div>
+
+
+    <ng-transclude>
+
+    </ng-transclude>
+</div>
