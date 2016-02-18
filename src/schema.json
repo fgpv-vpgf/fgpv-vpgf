@@ -196,6 +196,21 @@
                     ],
                     "description": "Visibility toggle in the layer selector and its current state."
                 },
+                "opacity": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "number",
+                                    "default": 1,
+                                    "description": "Specifies the opacity of the layer. Should be between 0 and 1 inclusively."
+                                }
+                            }
+                        }
+                    ],
+                    "description": "FIXME: Specifies the opacity of the layer."
+                },
                 "query": {
                     "allOf": [
                         { "$ref": "#/definitions/option" },
