@@ -8,22 +8,23 @@
 
     </div>
 
-    <div class="rv-stepper-item-body">
-        <ng-transclude>
+    <div class="rv-stepper-item-content rv-toggle-slide" ng-show="self.isActive">
 
-        </ng-transclude>
-    </div>
+        <div class="rv-stepper-item-body">
+            <ng-transclude></ng-transclude>
+        </div>
 
-    <div class="rv-stepper-item-footer">
+        <div class="rv-stepper-item-footer">
 
-        <md-button class="rv-button-square">
-            cancel
-        </md-button>
+            <md-button class="rv-button-square">
+                cancel
+            </md-button>
 
-        <md-button class="rv-button-square md-primary">
-            continue
-        </md-button>
+            <md-button class="rv-button-square md-primary">
+                continue
+            </md-button>
 
+        </div>
     </div>
 
 </div>
