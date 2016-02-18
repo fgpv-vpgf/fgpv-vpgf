@@ -16,16 +16,20 @@
           "wkid": 102100
         }
       },
-      "northArrow": true,
+      "northArrow": {
+        "enabled": true
+      },
       "overviewMap": {
         "enabled": true,
         "layerType": "imagery"
       },
-      "scaleBar": true
+      "scaleBar": {
+        "enabled": true
+      }
     },
     "extentSets": [
       {
-        "id": 123456789,
+        "id": "123456789",
         "default": {
           "xmin": -2681457,
           "ymin": -883440,
@@ -93,7 +97,7 @@
       "altText": "altText - The Canada Base Map - Transportation (CBMT)",
       "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
       "wkid": 3978,
-      "extendId": 123456789,
+      "extentId": "123456789",
       "layers": [
         {
           "id": "CBMT",
@@ -109,7 +113,7 @@
       "altText": "altText - Canada base map - Simple",
       "thumbnailUrl": "assets/images/basemap/baseSimple.jpg",
       "wkid": 3978,
-      "extendId": 123456789,
+      "extentId": "123456789",
       "layers": [
         {
           "id": "SMR",
@@ -135,7 +139,7 @@
       "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Elevation&#92;Élevation",
       "thumbnailUrl": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
       "wkid": 3978,
-      "extendId": 123456789,
+      "extentId": "123456789",
       "layers": [
         {
           "id": "CBME_CBCE_HS_RO_3978",
@@ -151,7 +155,7 @@
       "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
       "thumbnailUrl": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
       "wkid": 3978,
-      "extendId": 123456789,
+      "extentId": "123456789",
       "layers": [
         {
           "id": "CBMT_CBCT_GEOM_3978",
@@ -167,7 +171,7 @@
       "altText": "altText - World Imagery",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extendId": 123456789,
+      "extentId": "123456789",
       "layers": [
         {
           "id": "World_Imagery",
@@ -183,7 +187,7 @@
       "altText": "altText - World Physical Map",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extendId": 123456789,
+      "extentId": "123456789",
       "layers": [
         {
           "id": "World_Physical_Map",
@@ -199,7 +203,7 @@
       "altText": "altText - World Shaded Relief",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extendId": 123456789,
+      "extentId": "123456789",
       "layers": [
         {
           "id": "World_Shaded_Relief",
@@ -215,7 +219,7 @@
       "altText": "altText - ESWorld Street Map",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extendId": 123456789,
+      "extentId": "123456789",
       "layers": [
         {
           "id": "World_Street_Map",
@@ -231,7 +235,7 @@
       "altText": "altText - World Terrain Base",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extendId": 123456789,
+      "extentId": "123456789",
       "layers": [
         {
           "id": "World_Terrain_Base",
@@ -247,7 +251,7 @@
       "altText": "altText - World Topographic Map",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extendId": 123456789,
+      "extentId": "123456789",
       "layers": [
         {
           "id": "World_Topo_Map",
