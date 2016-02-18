@@ -14,7 +14,7 @@
         ng-blur="self.wiggleSymbology(false)"
         ng-mouseover="self.wiggleSymbology(true)"
         ng-mouseout="self.wiggleSymbology(false)">
-        <md-tooltip md-direction="top">{{ self.expanded ? 'Hide symbology' : 'Show symbology' }}</md-tooltip>
+        <md-tooltip md-direction="top">{{ self.expanded ? 'toc.layer.label.symbologyHide' : 'toc.layer.label.symbologyShow' | translate }}</md-tooltip>
         <md-icon md-svg-src="navigation:close"></md-icon>
     </md-button>
 

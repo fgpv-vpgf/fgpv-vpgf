@@ -22,7 +22,7 @@ describe('rvLayerItemFlag', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo');
+        bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo', 'pascalprecht.translate');
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
