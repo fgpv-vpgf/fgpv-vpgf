@@ -7,10 +7,13 @@ const basemap = require('./basemap.js');
   * @description
   *
   * The `MapManager` module exports an object with the following properties:
+  * - `Extent` {type} of esri/geometry
   * - `Map` {type} of esri/map
   * - `OverviewMap` {type} of esri/dijit/OverviewMap
   * - `Scalebar` {type} of esri/dijit/Scalebar
+  * - `getExtentFromSetting {function} create an ESRI Extent object from extent setting JSON object.
   * - `setupMap` {function} interates over config settings and apply logic for any items present.
+  * - `setProxy` {function} Set proxy service URL to avoid same origin issues
   */
 
 // mapManager module, provides function to setup a map
@@ -19,10 +22,11 @@ module.exports = function (esriBundle) {
     // it has minimum interaction after creation, no need for the additional
     // scalebar.js
     const mapManager = {
+        Extent: esriBundle.Extent,
         Map: esriBundle.Map,
         OverviewMap: esriBundle.OverviewMap,
         Scalebar: esriBundle.Scalebar,
-        Extent: esriBundle.Extent,
+        getExtentFromJson,
         setupMap,
         setProxy
     };
@@ -89,17 +93,17 @@ module.exports = function (esriBundle) {
         // TODO: add code to setup north arrow
 
         // Setup overview map
-        // todo: add visible to setting
-        if ('overviewMap' in settings && 'visible' in settings.overviewMap &&
-            settings.overviewMap.visible === true) {
+        if ('overviewMap' in settings && 'enabled' in settings.overviewMap &&
+            settings.overviewMap.enabled === true) {
+
             overviewMapCtrl = mapManager.OverviewMap({
                 map: map,
-                visible: settings.overviewMap.visible
+                visible: settings.overviewMap.enabled
             });
 
             overviewMapCtrl.startup();
         } else {
-            console.warn('info: overviewMap setting does not exist, or it\'s visible' +
+            console.warn('overviewMap setting does not exist, or it\'s visible' +
                 ' setting is set to false.');
         }
 
@@ -124,6 +128,21 @@ module.exports = function (esriBundle) {
      */
     function setProxy(proxyUrl) {
         esriBundle.esriConfig.defaults.io.proxyUrl = proxyUrl;
+    }
+
+    /**
+     * @ngdoc method
+     * @name getExtentFromJson
+     * @memberof mapManager
+     * @description
+     * create an ESRI Extent object from extent setting JSON object.
+     *
+     * @param {object} extentJson that follows config spec
+     */
+    function getExtentFromJson(extentJson) {
+
+        return esriBundle.Extent(extentJson.xmin, extentJson.ymin, extentJson.xmax,
+            extentJson.ymax, extentJson.spatialReference);
     }
 
     return mapManager;

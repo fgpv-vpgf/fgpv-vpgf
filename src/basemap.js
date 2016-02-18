@@ -55,10 +55,11 @@ module.exports = function (esriBundle) {
             });
 
             basemap = new esriBundle.Basemap({
-                id: basemapConfig.uid,
+                id: basemapConfig.id,
                 layers: layers,
                 title: basemapConfig.name,
-                thumbnailUrl: basemapConfig.thumbnail
+                thumbnailUrl: basemapConfig.thumbnailUrl,
+                wkid: basemapConfig.wkid
             });
 
             basemapGallery.add(basemap);
@@ -67,10 +68,10 @@ module.exports = function (esriBundle) {
         // finalize basmap gallery
         basemapGallery.startup();
 
-        // Set basemap by uid
-        function setBasemap(uid) {
+        // Set basemap by id
+        function setBasemap(id) {
             // set the basemap based on the id provided
-            basemapGallery.select(uid);
+            basemapGallery.select(id);
         }
 
         return {
