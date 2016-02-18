@@ -75,7 +75,7 @@
         "extentSetNode": {
             "type": "object",
             "properties": {
-                "id": { "type": "number" },
+                "id": { "type": "string" },
                 "default": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The default (starting) extent." },
                 "full": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The full extent (should give good view of the whole map, not necessarily the maximum extent); default will be used if not supplied." },
                 "maximum": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The maximum extent; full or default extents will be used if not supplied." }
@@ -415,10 +415,11 @@
         "navBarNode": {
             "type": "object",
             "properties": {
-                "zoom": { "type": "string", "enum": ["all", "buttons", "slider"] },
-                "extra": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/navBarButtons" }  }
+                "zoom": { "type": "string", "enum": ["all", "buttons", "slider"], "default": "buttons" },
+                "extra": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/navBarButtons" }, "default": [] }
             },
-            "required": [ "zoom" ]
+            "required": [ "zoom" ],
+            "additionalProperties": false
         },
 
         "navBarButtons": {
@@ -431,9 +432,9 @@
             "properties": {
                 "geoSearch": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
                 "mouseInfo": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
-                "northArrow": { "type": "boolean" },
+                "northArrow": { "type": "object", "properties": {"enabled": { "type": "boolean" } } },
                 "overviewMap": { "type": "object", "properties": { "enabled": { "type": "boolean"}, "maximizeButton": { "type": "boolean"}, "layerType": { "type": "string"} } },
-                "scaleBar": { "type": "boolean" }
+                "scaleBar": { "type": "object", "properties": {"enabled": { "type": "boolean" } } }
             }
         }
 
@@ -480,7 +481,7 @@
         },
         "baseMaps": {
             "type": "array",
-            "items": { "oneOf": [ { "$ref": "#/definitions/baseMap" } ] },
+            "items": { "oneOf": [ { "$ref": "#/definitions/baseMapNode" } ] },
             "description": "A list of basemaps to be made available via the basemap selector."
         },
         "layers": {
