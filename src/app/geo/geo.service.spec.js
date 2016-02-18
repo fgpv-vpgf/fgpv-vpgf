@@ -119,7 +119,7 @@ describe('geo', () => {
             // create a fake map
             geoService.buildMap({}, {
                 layers: [],
-                map: { extentSets: [{ id: 123456789, default: { spatialReference: { wkid: 3978 } } }],
+                map: { extentSets: [{ id: '123456789', default: { spatialReference: { wkid: 3978 } } }],
                     components: { scaleBar: {} }
                 }
             });
@@ -143,7 +143,7 @@ describe('geo', () => {
             const emptyConfig = {
                 layers: [],
                 map: {
-                    extentSets: [{ id: 123456789, full: {}, default: {} }],
+                    extentSets: [{ id: '123456789', full: {}, default: {} }],
                     components: { scaleBar: {}, overviewMap: {} }
                 }
             };
