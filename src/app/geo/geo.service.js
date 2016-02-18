@@ -347,72 +347,48 @@
                 scalebar: {},
                 overviewMap: {}
             };
-            if (config.basemaps) {
-                mapSettings.basemaps = config.basemaps;
+            if (config.baseMaps) {
+                mapSettings.basemaps = config.baseMaps;
             }
 
-            if (config.navigation.scalebar) {
+            if (config.map.components.scaleBar) {
                 mapSettings.scalebar = {
                     attachTo: 'bottom-left',
                     scalebarUnit: 'dual'
                 };
             }
 
-            if (config.navigation.overviewMap && config.navigation.overviewMap.enabled) {
+            if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
 
                 // FIXME: overviewMap has more settings
-                mapSettings.overviewMap = config.navigation.overviewMap;
-                console.log(mapSettings.overviewMap);
+                mapSettings.overviewMap = config.map.components.overviewMap;
             }
 
-            if (config.map.extents) {
-
-                // FIXME: default basemap should be indicated in the config as well
-                let currentBasemapUID = 'gray';
-
-                // In configSchema, at least one extent for a basemap
-                let extentsForUID = config.map.extents.filter((extent) => {
-                    if (extent.uid === currentBasemapUID) {
-                        return true;
-                    }
-                });
-
-                // find the full extent type from extentsForUID
-                let lFullExtent = extentsForUID.find((extent) => {
-                    if (extent.type === 'full') {
-                        return true;
-                    }
-                });
-
-                // setup mapSettings fullExtent
-                if (!angular.isUndefined(lFullExtent)) {
-                    mapSettings.fullExtent = lFullExtent;
-                } else {
-
-                    // pick any from the rest
-                    mapSettings.fullExtent = extentsForUID[0];
-                }
+            if (config.map.extentSets) {
+                let lFullExtent = getFullExtent(config.map.extentSets);
 
                 // map extent is not available until map is loaded
-                service.gapi.events.wrapEvents(map, {
-                    load: () => {
+                if (lFullExtent) {
+                    service.gapi.events.wrapEvents(map, {
+                        load: () => {
 
-                        // compare map extent and setting.extent spatial-references
-                        // make sure the full extent has the same spatial reference as the map
-                        if (service.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
-                            mapSettings.fullExtent.spatialReference)) {
+                            // compare map extent and setting.extent spatial-references
+                            // make sure the full extent has the same spatial reference as the map
+                            if (service.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
+                                lFullExtent.spatialReference)) {
 
-                            // same spatial reference, no reprojection required
-                            fullExtent = service.gapi.mapManager.getExtentFromSetting(mapSettings.fullExtent);
-                        } else {
+                                // same spatial reference, no reprojection required
+                                fullExtent = service.gapi.mapManager.getExtentFromJson(lFullExtent);
+                            } else {
 
-                            // need to re-project
-                            fullExtent = service.gapi.proj.projectEsriExtent(
-                                service.gapi.mapManager.getExtentFromSetting(mapSettings.fullExtent),
-                                map.extent.spatialReference);
+                                // need to re-project
+                                fullExtent = service.gapi.proj.projectEsriExtent(
+                                    service.gapi.mapManager.getExtentFromJson(lFullExtent),
+                                    map.extent.spatialReference);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
 
             mapManager = service.gapi.mapManager.setupMap(map, mapSettings);
@@ -425,14 +401,14 @@
 
         /**
          * Switch basemap based on the uid provided.
-         * @param {string} uid identifier for a specific basemap layerbower
+         * @param {string} id identifier for a specific basemap layerbower
          */
-        function selectBasemap(uid) {
+        function selectBasemap(id) {
             if (typeof (mapManager) === 'undefined' || !mapManager.BasemapControl) {
                 console.error('Error: Map manager or basemap control is not setup,' +
                     ' please setup map manager by calling setupMap().');
             } else {
-                mapManager.BasemapControl.setBasemap(uid);
+                mapManager.BasemapControl.setBasemap(id);
             }
         }
 
@@ -475,6 +451,33 @@
             } else {
                 console.warn('GeoService: map is not yet created.');
             }
+        }
+
+        function getFullExtent(extentSets) {
+
+            // FIXME: default basemap should be indicated in the config as well
+            let currentBasemapExtentSetId = 123456789;
+
+            // In configSchema, at least one extent for a basemap
+            let extentSetForId = extentSets.find((extentSet) => {
+                if (extentSet.id === currentBasemapExtentSetId) {
+                    return true;
+                }
+            });
+
+            // no matching id in the extentset
+            if (angular.isUndefined(extentSetForId)) {
+                console.warn('Could not find an extent set with matching id');
+                return null;
+            }
+
+            // find the full extent type from extentSetForId
+            let lFullExtent = (extentSetForId.full) ? extentSetForId.full :
+                (extentSetForId.default) ? extentSetForId.default :
+                (extentSetForId.maximum) ? extentSetForId.maximum : null;
+
+            return lFullExtent;
+
         }
     }
 })();
