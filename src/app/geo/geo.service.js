@@ -360,7 +360,7 @@
             }
 
             if (config.map.extentSets) {
-                let lFullExtent = getFullExtent(config.map.extentSets);
+                let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
 
                 // map extent is not available until map is loaded
                 if (lFullExtent) {
@@ -448,7 +448,10 @@
             }
         }
 
-        function getFullExtent(extentSets) {
+        /*
+        * Retrieve full extent from extentSets
+        */
+        function getFullExtFromExtentSets(extentSets) {
 
             // FIXME: default basemap should be indicated in the config as well
             let currentBasemapExtentSetId = 123456789;
