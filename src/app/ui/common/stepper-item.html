@@ -1,6 +1,8 @@
 <div class="rv-stepper-item-container">
     <div class="rv-stepper-item-header" ng-class="{'rv-summary': self.summaryValue }">
-        <span class="rv-stepper-item-number">{{ self.stepNumber }}</span>
+        <span class="rv-stepper-item-number" ng-if="!self.isCompleted">{{ self.stepNumber }}</span>
+        <md-icon class="rv-stepper-item-check" md-svg-src="action:check_circle" ng-if="self.isCompleted"></md-icon>
+
         <div class="rv-stepper-item-title">
             <h5 class="md-body-2">{{ self.titleValue }}</h5>
             <span class="md-caption">{{ self.summaryValue }}</span>

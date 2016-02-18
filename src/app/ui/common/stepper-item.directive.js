@@ -23,7 +23,8 @@
                 titleValue: '@?',
                 summaryValue: '@?',
                 stepNumber: '@?',
-                isActive: '=?'
+                isActive: '=?',
+                isCompleted: '=?'
             },
             transclude: true,
             link: link,
@@ -41,6 +42,7 @@
 
             // apply defaults
             self.isActive = angular.isDefined(self.isActive) ? self.isActive : false;
+            self.isCompleted = angular.isDefined(self.isCompleted) ? self.isActive : false;
         }
     }
 
