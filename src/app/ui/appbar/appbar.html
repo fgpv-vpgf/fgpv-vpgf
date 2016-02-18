@@ -1,28 +1,51 @@
 <div class="main-appbar rv-whiteframe-z2">
-    <div class="tools layout">
+    <md-button
+        translate
+        translate-attr-aria-label="appbar.aria.menu"
+        class="md-icon-button black"
+        rv-help="sidenav-button"
+        ng-click="self.layoutService.sidenav.open()">
+        <md-tooltip>{{'appbar.tooltip.menu' | translate}}</md-tooltip>
+        <md-icon md-svg-src="navigation:menu"></md-icon>
+    </md-button>
 
-        <md-button translate translate-attr-aria-label="appbar.aria.menu" class="md-icon-button black" rv-help="sidenav-button"
-            ng-click="self.layoutService.sidenav.open()">
-            <md-tooltip>{{'appbar.tooltip.menu' | translate}}</md-tooltip>
-            <md-icon md-svg-src="navigation:menu"></md-icon>
-        </md-button>
-
-        <span flex></span>
-        <md-button translate translate-attr-aria-label="appbar.aria.pointInfo" class="md-icon-button primary" rv-help="details-button"
-            ng-class="{ selected: self.stateManager.state.mainDetails.active }" ng-click="self.toggleDetails()"
-            ng-show="self.stateManager.display.details.requestId">
-            <md-tooltip>{{'appbar.tooltip.pointInfo' | translate}}</md-tooltip>
-            <md-icon md-svg-src="maps:place"></md-icon>
-        </md-button>
-        <md-button translate translate-attr-aria-label="appbar.aria.layers" class="md-icon-button primary" rv-help="toc-button"
-            ng-class="{ selected: self.stateManager.state.mainToc.active }" ng-click="self.toggleToc()">
-            <md-tooltip>{{'appbar.tooltip.layers' | translate}}</md-tooltip>
-            <md-icon md-svg-src="maps:layers"></md-icon>
-        </md-button>
-        <md-button translate translate-attr-aria-label="appbar.aria.tools" class="md-icon-button primary" rv-help="tool-button"
-            ng-class="{ selected: self.stateManager.state.mainToolbox.active }" ng-click="self.toggleToolbox()">
-            <md-tooltip>{{'appbar.tooltip.tools' | translate}}</md-tooltip>
-            <md-icon md-svg-src="content:create"></md-icon>
-        </md-button>
+    <div class="rv-appbar-title">
+        <h2 class="md-headline" translate ng-if="self.stateManager.state.mainToc.active">appbar.tooltip.layers</h2>
+        <h2 class="md-headline" translate ng-if="self.stateManager.state.mainDetails.active">appbar.tooltip.pointInfo</h2>
     </div>
+
+    <span class="rv-divider"></span>
+
+    <md-button
+        translate
+        translate-attr-aria-label="appbar.aria.pointInfo"
+        class="md-icon-button primary"
+        rv-help="details-button"
+        ng-class="{ selected: self.stateManager.state.mainDetails.active }"
+        ng-click="self.toggleDetails()"
+        ng-show="self.stateManager.display.details.requestId">
+        <md-tooltip>{{'appbar.tooltip.pointInfo' | translate}}</md-tooltip>
+        <md-icon md-svg-src="maps:place"></md-icon>
+    </md-button>
+    <md-button
+        translate
+        translate-attr-aria-label="appbar.aria.layers"
+        class="md-icon-button primary"
+        rv-help="toc-button"
+        ng-class="{ selected: self.stateManager.state.mainToc.active }"
+        ng-click="self.toggleToc()">
+        <md-tooltip>{{'appbar.tooltip.layers' | translate}}</md-tooltip>
+        <md-icon md-svg-src="maps:layers"></md-icon>
+    </md-button>
+    <!-- hiding tools section for now; TODO: re-enable when we have tools -->
+    <!--md-button
+        translate
+        translate-attr-aria-label="appbar.aria.tools"
+        class="md-icon-button primary"
+        rv-help="tool-button"
+        ng-class="{ selected: self.stateManager.state.mainToolbox.active }"
+        ng-click="self.toggleToolbox()">
+        <md-tooltip>{{'appbar.tooltip.tools' | translate}}</md-tooltip>
+        <md-icon md-svg-src="content:create"></md-icon>
+    </md-button-->
 </div>

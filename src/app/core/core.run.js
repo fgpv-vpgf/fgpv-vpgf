@@ -36,6 +36,6 @@
             '$translateLoadingSuccess ->'));
 
         // TODO: write language detection routine
-        $translate.use('fr-CA');
+        $translate.use('en-CA');
     }
 })();

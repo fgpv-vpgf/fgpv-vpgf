@@ -1,4 +1,5 @@
 // Primary mixin
+
 @mixin content-pane {
     .rv-content-pane {
         top: 0;
@@ -14,13 +15,30 @@
             display: flex;
             white-space: nowrap;
             border-bottom: 1px solid $divider-color-light;
+            height: $toolbar-height + 1px; // 1px needed for a border
+            align-items: center;
             padding: {
-                top: 10px;
-                bottom: 7px;
-                right: 6px;
-                left: 16px;
+                right: rem(0.6);
+                left: rem(1.6);
             }
             @include pane-title;
+
+            &-float {
+                display: flex;
+                justify-content: flex-end;
+                position: absolute;
+                z-index: 1;
+                border: none;
+                padding: rem(0.4) 0;
+                right: 0;
+                //left: 1px;
+                /*background: linear-gradient(to bottom, rgba(255,255,255,1) 30%,rgba(255,255,255,0.62) 60%, rgba(255,255,255,0) 100%);*/
+                align-items: center;
+
+                > .md-button {
+                    background: radial-gradient(ellipse at center, rgba(255,255,255,1) 30%,rgba(255,255,255,0.32) 100%)
+                }
+            }
         }
 
         .rv-content {
@@ -41,7 +59,9 @@
         height: 3px;
         overflow: hidden;
         padding: 0;
+        z-index: 10;
     }
+
     @include subsection;
 }
 
@@ -59,7 +79,6 @@
 }
 
 @mixin subsection {
-
     // use subsections to separate content into chunks
     .rv-subsection {
         padding: 8px;
@@ -81,7 +100,6 @@
             .rv-sub-subhead {
                 margin: 0;
             }
-
             // remove margin from the first and last child paragraph
             p:first-child {
                 margin-top: 0;

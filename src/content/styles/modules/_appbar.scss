@@ -1,11 +1,39 @@
 // Primary mixin
+
 @mixin appbar {
     .main-appbar {
         box-sizing: border-box;
         height: $toolbar-height;
-        min-height: $toolbar-height;
         z-index: auto;
         background: white;
         width: $toolbar-width;
+        align-items: center;
+        padding: rem(0.4);
+        display: flex;
+
+        .rv-appbar-title {
+            flex: 1;
+            overflow: hidden;
+
+            h2 {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+
+                margin: {
+                    top: auto;
+                    bottom: auto;
+                }
+            }
+        }
+
+        .rv-divider {
+            border-right: $divider-color 1px solid;
+            height: 65%;
+            margin: {
+                right: rem(0.4);
+                left: rem(1);
+            }
+        }
     }
 }
