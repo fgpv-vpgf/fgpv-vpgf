@@ -217,7 +217,9 @@
         function generateLayer(layerConfig) {
             const handlers = {};
             const commonConfig = {
-                id: layerConfig.id
+                id: layerConfig.id,
+                visible: layerConfig.visibility === 'on',
+                opacity: layerConfig.opacity || 1
             };
 
             handlers[layerTypes.esriDynamic] = config => {
@@ -226,6 +228,9 @@
                 return l;
             };
             handlers[layerTypes.esriFeature] = config => {
+                commonConfig.mode = config.snapshot ?
+                    service.gapi.layer.FeatureLayer.MODE_SNAPSHOT :
+                    service.gapi.layer.FeatureLayer.MODE_ONDEMAND;
                 const l = new service.gapi.layer.FeatureLayer(config.url, commonConfig);
                 identify.addFeatureLayer(l, config.name);
                 return l;
