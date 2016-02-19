@@ -1,5 +1,44 @@
 <rv-content-pane>
-    <div class="rv-loader-file">
+    <div class="rv-loader-file" flow-init="{ singleFile: true }">
+
+        <rv-stepper-item
+            title-value="Upload data"
+            summary-value="{{ $flow.files[0].name }}"
+            step-number="1"
+            is-active="!self.expanded"
+            is-completed="self.completed">
+
+            <md-button
+                class="rv-button-square rv-loader-file-select-button"
+                flow-btn
+                flow-files-submitted="self.filesSubmitted($flow)"
+                flow-file-success="self.log($file, $flow)"
+                flow-progress="console.log()">Select a file</md-button>
+
+            <span class="md-caption rv-loader-file-caption">GeoJSON, CSV, and Shapefile data types are supported</span>
+
+            <md-progress-linear md-mode="determinate" value="{{ $flow.files[0] ? $flow.files[0].progress() * 100 : 0 }}"></md-progress-linear>
+            <!--span class="label label-info">Total Size:
+                {{ $flow.getSize() }}bytes</span>
+
+            <table>
+                <tr ng-repeat="file in $flow.files">
+                    <td>{{$index+1}}</td>
+                    <td>{{file.name}}</td>
+                    <td>{{file.msg}}</td>
+                    <td>{{ file.progress() * 100 }}% Complete</td>
+                </tr>
+            </table-->
+
+        </rv-stepper-item>
+
+        <rv-stepper-item title-value="Double vision" step-number="2" is-active="self.expanded2" is-completed="!self.completed2">
+            Nothing to see here
+        </rv-stepper-item>
+
+        <rv-stepper-item title-value="Six months" step-number="3" is-active="true">
+            It's in French!
+        </rv-stepper-item>
 
         <md-button ng-click="self.expanded = !self.expanded">
             Expand first step</md-button>
@@ -12,39 +51,6 @@
 
         <md-button ng-click="self.completed2 = !self.completed2">
             Complete second step</md-button>
-
-        <rv-stepper-item title-value="Pick a file" step-number="1" is-active="self.expanded" is-completed="self.completed">
-            <div flow-init="{singleFile: true}" flow-files-submitted="$flow.upload()" flow-file-success="$file.msg = $message">
-
-                <!--input type="file" flow-btn/>
-            Input OR Other element as upload button-->
-                <md-button class="rv-button-square" flow-btn flow-progress="console.log()">Upload File</md-button>
-                <span class="label label-info">Total Size:
-                    {{$flow.getSize()}}bytes</span>
-
-                <table>
-                    <tr ng-repeat="file in $flow.files">
-                        <td>{{$index+1}}</td>
-                        <td>{{file.name}}</td>
-                        <!--td>{{file.msg}}</td-->
-                        <td>{{ file.progress() * 100 }}% Complete</td>
-                    </tr>
-                </table>
-            </div>
-        </rv-stepper-item>
-
-        <rv-stepper-item
-            title-value="Double vision"
-            summary-value="reason not to work"
-            step-number="2"
-            is-active="self.expanded2"
-            is-completed="!self.completed2">
-            Nothing to see here
-        </rv-stepper-item>
-
-        <rv-stepper-item title-value="Six months" summary-value="later" step-number="3" is-active="true">
-            It's in French!
-        </rv-stepper-item>
     </div>
 
 </rv-main-panel-content>

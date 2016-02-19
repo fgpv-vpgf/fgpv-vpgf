@@ -9,5 +9,19 @@
                 display: none;
             }
         }
+
+        &-select-button {
+            display: block;
+            width: 100%;
+            margin: {
+                left: 0;
+                right: 0;
+            }
+        }
+
+        &-caption {
+            display: block;
+            text-align: center;
+        }
     }
 }

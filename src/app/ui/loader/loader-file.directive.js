@@ -37,7 +37,17 @@
     }
 
     function Controller() {
-        // const self = this;
+        const self = this;
+
+        self.filesSubmitted = filesSubmitted;
+
+        function filesSubmitted(flow) {
+            flow.upload();
+        }
+
+        self.log = (file, flow) => {
+            console.log(file, flow);
+        };
 
         activate();
 

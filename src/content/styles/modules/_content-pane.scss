@@ -51,15 +51,15 @@
         .rv-footer {
             border-top: 1px solid $divider-color-light;
         }
-    }
 
-    md-progress-linear {
-        position: absolute;
-        top: 0;
-        height: 3px;
-        overflow: hidden;
-        padding: 0;
-        z-index: 10;
+        &-progress-indicator {
+            position: absolute;
+            top: 0;
+            height: 3px;
+            overflow: hidden;
+            padding: 0;
+            z-index: 10;
+        }
     }
 
     @include subsection;
