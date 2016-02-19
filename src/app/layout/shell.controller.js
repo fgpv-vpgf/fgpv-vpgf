@@ -30,6 +30,8 @@
         self.singlePoint = singlePoint;
         self.multiplePoints = multiplePoints;
 
+        self.loaderFile = loaderFile;
+
         self.languageSwitch = languageSwitch;
 
         // TODO: mock settings; replace by config
@@ -126,6 +128,11 @@
             $translate.use(lang);
             configService.reset(lang).then(
                 () => geoService.buildMap($('div[rv-init-map]')[0], configService.data));
+        }
+
+        // TODO: hack
+        function loaderFile() {
+            stateManager.setActive('mainLoaderFile');
         }
 
         // TODO: remove; hacky functions to display some details data

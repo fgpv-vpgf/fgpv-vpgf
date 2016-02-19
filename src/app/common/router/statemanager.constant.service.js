@@ -61,6 +61,7 @@
             mainToc: STATE_OBJECT_DEFAULTS('main'),
             mainToolbox: STATE_OBJECT_DEFAULTS('main'),
             mainDetails: STATE_OBJECT_DEFAULTS('main', 'details'),
+            mainLoaderFile: STATE_OBJECT_DEFAULTS('main'),
             side: STATE_OBJECT_DEFAULTS(),
             sideMetadata: STATE_OBJECT_DEFAULTS('side', 'metadata'),
             sideSettings: STATE_OBJECT_DEFAULTS('side', 'settings'),

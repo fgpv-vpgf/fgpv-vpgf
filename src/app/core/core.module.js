@@ -23,6 +23,7 @@
          * 3rd Party modules
          */
         'pascalprecht.translate',
-        'dotjem.angular.tree'
+        'dotjem.angular.tree',
+        'flow'
     ]);
 })();
