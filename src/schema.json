@@ -209,7 +209,7 @@
                             }
                         }
                     ],
-                    "description": "FIXME: Specifies the opacity of the layer."
+                    "description": "Specifies the opacity of the layer."
                 },
                 "query": {
                     "allOf": [
