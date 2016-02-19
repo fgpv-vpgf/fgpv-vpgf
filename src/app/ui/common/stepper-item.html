@@ -16,13 +16,13 @@
             <ng-transclude></ng-transclude>
         </div>
 
-        <div class="rv-stepper-item-footer">
+        <div class="rv-stepper-item-footer" ng-if="self.onCancel || self.onComplete">
 
-            <md-button class="rv-button-square">
+            <md-button class="rv-button-square" ng-if="self.onCancel" ng-click="self.onCancel()">
                 cancel
             </md-button>
 
-            <md-button class="rv-button-square md-primary">
+            <md-button class="rv-button-square md-primary" ng-if="self.onComplete" ng-click="self.onComplete()">
                 continue
             </md-button>
 

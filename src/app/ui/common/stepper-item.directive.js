@@ -24,7 +24,9 @@
                 summaryValue: '@?',
                 stepNumber: '@?',
                 isActive: '=?',
-                isCompleted: '=?'
+                isCompleted: '=?',
+                onComplete: '&?',
+                onCancel: '&?'
             },
             transclude: true,
             link: link,
@@ -43,6 +45,8 @@
             // apply defaults
             self.isActive = angular.isDefined(self.isActive) ? self.isActive : false;
             self.isCompleted = angular.isDefined(self.isCompleted) ? self.isCompleted : false;
+            self.onComplete = angular.isDefined(self.onComplete) ? self.onComplete : false;
+            self.onCancel = angular.isDefined(self.onCancel) ? self.onCancel : false;
         }
     }
 
