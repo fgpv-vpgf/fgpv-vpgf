@@ -3,22 +3,22 @@
 
     /**
      * @ngdoc directive
-     * @name rv-lloader-file
-     * @module app.ui.lloader
+     * @name rv-loader-file
+     * @module app.ui.loader
      * @restrict A
      * @description
      *
-     * The `rv-lloader-file` directive description.
+     * The `rv-loader-file` directive description.
      *
      */
     angular
-        .module('app.ui.lloader')
-        .directive('rvLloaderFile', rvLloaderFile);
+        .module('app.ui.loader')
+        .directive('rvLoaderFile', rvLoaderFile);
 
-    function rvLloaderFile() {
+    function rvLoaderFile() {
         const directive = {
             restrict: 'E',
-            templateUrl: 'app/ui/lloader/lloader-file.html',
+            templateUrl: 'app/ui/loader/loader-file.html',
             scope: {
             },
             link: link,
@@ -29,7 +29,7 @@
 
         return directive;
 
-        ///////////
+        /*********/
 
         function link() { // scope, el, attr, ctrl) {
 
@@ -37,11 +37,11 @@
     }
 
     function Controller() {
-        //const self = this;
+        // const self = this;
 
         activate();
 
-        ///////////
+        /*********/
 
         function activate() {
 

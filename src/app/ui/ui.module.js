@@ -23,6 +23,6 @@
             'app.ui.common',
             'app.ui.settings',
             'app.ui.help',
-            'app.ui.lloader'
+            'app.ui.loader'
         ]);
 })();

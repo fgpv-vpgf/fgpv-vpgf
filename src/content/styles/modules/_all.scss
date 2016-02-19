@@ -21,7 +21,7 @@
 @import "_filters.scss";
 @import "_help.scss";
 @import "_stepper.scss";
-@import "_lloader.scss";
+@import "_loader.scss";
 
 @include core;
 @include loading;
@@ -42,4 +42,4 @@
 @include filters;
 @include help;
 @include stepper;
-@include lloader;
+@include loader;

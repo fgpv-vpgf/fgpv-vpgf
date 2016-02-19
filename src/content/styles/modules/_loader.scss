@@ -1,5 +1,5 @@
-@mixin lloader {
-    .rv-lloader-file {
+@mixin loader {
+    .rv-loader-file {
         rv-stepper-item {
             &:first-of-type .rv-stepper-item-container:before {
                 display: none;

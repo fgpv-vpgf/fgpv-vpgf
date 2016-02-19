@@ -30,7 +30,7 @@
         self.singlePoint = singlePoint;
         self.multiplePoints = multiplePoints;
 
-        self.lloaderFile = lloaderFile;
+        self.loaderFile = loaderFile;
 
         self.languageSwitch = languageSwitch;
 
@@ -131,8 +131,8 @@
         }
 
         // TODO: hack
-        function lloaderFile() {
-            stateManager.setActive('mainLloaderFile');
+        function loaderFile() {
+            stateManager.setActive('mainLoaderFile');
         }
 
         // TODO: remove; hacky functions to display some details data

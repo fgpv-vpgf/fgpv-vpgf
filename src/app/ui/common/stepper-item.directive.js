@@ -35,23 +35,23 @@
 
         return directive;
 
-        ///////////
+        /*********/
 
         function link(scope) { // scope, el, attr, ctrl) {
             const self = scope.self;
 
             // apply defaults
             self.isActive = angular.isDefined(self.isActive) ? self.isActive : false;
-            self.isCompleted = angular.isDefined(self.isCompleted) ? self.isActive : false;
+            self.isCompleted = angular.isDefined(self.isCompleted) ? self.isCompleted : false;
         }
     }
 
     function Controller() {
-        //const self = this;
+        // const self = this;
 
         activate();
 
-        ///////////
+        /*********/
 
         function activate() {
 
