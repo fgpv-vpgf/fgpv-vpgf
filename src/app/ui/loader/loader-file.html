@@ -1,23 +1,34 @@
 <rv-content-pane>
-    <div class="rv-loader-file" flow-init="{ singleFile: true }">
+    <div class="rv-loader-file" flow-init="{ singleFile: true }" flow-prevent-drop>
 
         <rv-stepper-item
             title-value="Upload data"
             summary-value="{{ $flow.files[0].name }}"
             step-number="1"
-            is-active="!self.expanded"
-            is-completed="self.completed">
+            is-active="self.steps[0].active"
+            is-completed="self.steps[0].complete">
 
-            <md-button
-                class="rv-button-square rv-loader-file-select-button"
-                flow-btn
-                flow-files-submitted="self.filesSubmitted($flow)"
-                flow-file-success="self.log($file, $flow)"
-                flow-progress="console.log()">Select a file</md-button>
+            <div
+                flow-drop
+                flow-drag-enter="self.dropActive = true"
+                flow-drag-leave="self.dropActive = false"
+                flow-files-submitted="self.filesSubmitted($files, $event, $flow)"
+                flow-file-success="self.fileSuccess($file, $flow)"
+                ng-class="{'rv-loader-file-drop': self.dropActive}">
 
-            <span class="md-caption rv-loader-file-caption">GeoJSON, CSV, and Shapefile data types are supported</span>
+                <span class="md-title rv-loader-file-drop-title" ng-if="self.dropActive">Drop to upload your file</span>
 
-            <md-progress-linear md-mode="determinate" value="{{ $flow.files[0] ? $flow.files[0].progress() * 100 : 0 }}"></md-progress-linear>
+                <md-button
+                    ng-if="!self.dropActive"
+                    class="rv-button-square rv-loader-file-select-button"
+                    flow-btn
+                    flow-progress="console.log()">Select a file</md-button>
+
+                <span class="md-caption rv-loader-file-caption">GeoJSON, CSV, and Shapefile data types are supported</span>
+
+                <md-progress-linear md-mode="determinate" value="{{ $flow.files[0] ? $flow.files[0].progress() * 100 : 0 }}"></md-progress-linear>
+
+            </div>
             <!--span class="label label-info">Total Size:
                 {{ $flow.getSize() }}bytes</span>
 
@@ -32,15 +43,34 @@
 
         </rv-stepper-item>
 
-        <rv-stepper-item title-value="Double vision" step-number="2" is-active="self.expanded2" is-completed="!self.completed2">
-            Nothing to see here
+        <rv-stepper-item
+            title-value="Double vision"
+            step-number="2"
+            is-active="self.steps[1].active"
+            is-completed="self.steps[1].complete"
+            on-complete="self.forward(1)"
+            on-cancel="self.back(1)">
+            <md-input-container class="md-block">
+                <label>Data Type</label>
+                <md-select ng-model="self.dataType">
+                    <md-option ng-repeat="type in ['one', 'two']" value="{{ type }}">
+                        {{ type }}
+                    </md-option>
+                </md-select>
+            </md-input-container>
         </rv-stepper-item>
 
-        <rv-stepper-item title-value="Six months" step-number="3" is-active="true">
+        <rv-stepper-item
+            title-value="Six months"
+            step-number="3"
+            is-active="self.steps[2].active"
+            is-completed="self.steps[2].complete"
+            on-complete="self.forward(2)"
+            on-cancel="self.back(2)">
             It's in French!
         </rv-stepper-item>
 
-        <md-button ng-click="self.expanded = !self.expanded">
+        <!--md-button ng-click="self.expanded = !self.expanded">
             Expand first step</md-button>
 
         <md-button ng-click="self.expanded2 = !self.expanded2">
@@ -50,7 +80,7 @@
             Complete first step</md-button>
 
         <md-button ng-click="self.completed2 = !self.completed2">
-            Complete second step</md-button>
+            Complete second step</md-button-->
     </div>
 
 </rv-main-panel-content>

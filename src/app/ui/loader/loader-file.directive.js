@@ -19,8 +19,7 @@
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/loader/loader-file.html',
-            scope: {
-            },
+            scope: {},
             link: link,
             controller: Controller,
             controllerAs: 'self',
@@ -36,18 +35,70 @@
         }
     }
 
-    function Controller() {
+    function Controller($timeout) {
+        'ngInject';
         const self = this;
 
-        self.filesSubmitted = filesSubmitted;
+        self.steps = [
+            {
+                active: true,
+                complete: false
+            },
+            {
+                active: false,
+                complete: false
+            },
+            {
+                active: false,
+                complete: false
+            }
+        ];
 
-        function filesSubmitted(flow) {
+        self.dropActive = false;
+        self.file = null;
+
+        self.filesSubmitted = filesSubmitted;
+        self.fileSuccess = fileSuccess;
+
+        self.forward = forward;
+        self.back = back;
+
+        function filesSubmitted(files, event, flow) {
+            // console.log(files, event, flow);
+            self.file = files[0];
             flow.upload();
         }
 
-        self.log = (file, flow) => {
-            console.log(file, flow);
-        };
+        function fileSuccess(file, message, flow) {
+            self.forward(0);
+            $timeout(() => self.forward(0), 300);
+            
+            console.log(file, message, flow);
+        }
+
+        function forward(fromStepNumber) {
+            const fromStep = self.steps[fromStepNumber];
+            const toStep = self.steps[fromStepNumber + 1];
+
+            fromStep.complete = true;
+            if (toStep) {
+                fromStep.active = false;
+                toStep.active = true;
+            }
+
+
+        }
+
+        function back(fromStepNumber) {
+            const fromStep = self.steps[fromStepNumber];
+            const toStep = self.steps[fromStepNumber - 1];
+
+            fromStep.complete = false;
+            if (toStep) {
+                fromStep.active = false;
+                toStep.active = true;
+            }
+        }
 
         activate();
 
