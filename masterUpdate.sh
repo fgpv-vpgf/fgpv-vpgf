@@ -18,6 +18,6 @@ git fetch $UPSTREAM
 git co master
 git reset --hard $UPSTREAM/master
 git mff $UPSTREAM/develop
-git push $UPSTREAM
+git push $UPSTREAM master
 git tag v$VER
 git push $UPSTREAM v$VER
