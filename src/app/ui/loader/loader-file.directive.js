@@ -39,73 +39,96 @@
         'ngInject';
         const self = this;
 
-        self.steps = [
-            {
-                active: true,
-                complete: false
-            },
-            {
-                active: false,
-                complete: false
-            },
-            {
-                active: false,
-                complete: false
-            }
-        ];
+        // TODO: get datatypes from a loader service
+        self.steps = [];
+        self.dataTypes = {
+            geojson: 'GeoJSON',
+            csv: 'CSV',
+            shapefile: 'Shapefile'
+        };
 
         self.dropActive = false;
         self.file = null;
+        self.dataType = null;
 
         self.filesSubmitted = filesSubmitted;
         self.fileSuccess = fileSuccess;
-
-        self.forward = forward;
-        self.back = back;
-
-        function filesSubmitted(files, event, flow) {
-            // console.log(files, event, flow);
-            self.file = files[0];
-            flow.upload();
-        }
-
-        function fileSuccess(file, message, flow) {
-            self.forward(0);
-            $timeout(() => self.forward(0), 300);
-            
-            console.log(file, message, flow);
-        }
-
-        function forward(fromStepNumber) {
-            const fromStep = self.steps[fromStepNumber];
-            const toStep = self.steps[fromStepNumber + 1];
-
-            fromStep.complete = true;
-            if (toStep) {
-                fromStep.active = false;
-                toStep.active = true;
-            }
-
-
-        }
-
-        function back(fromStepNumber) {
-            const fromStep = self.steps[fromStepNumber];
-            const toStep = self.steps[fromStepNumber - 1];
-
-            fromStep.complete = false;
-            if (toStep) {
-                fromStep.active = false;
-                toStep.active = true;
-            }
-        }
 
         activate();
 
         /*********/
 
         function activate() {
+            self.steps.push({
+                titleValue: 'Upload data',
+                stepNumber: 1,
+                isActive: true,
+                isCompleted: false
+            }, {
+                titleValue: 'Confirm data type',
+                stepNumber: 2,
+                isActive: false,
+                isCompleted: false,
+                onComplete: () => {
+                    console.log(self.dataType);
+                    forward(1);
+                },
+                onCancel: () => {
+                    back(1);
+                    self.file.cancel();
+                    self.file = null;
 
+                    self.dataType = null;
+                }
+            }, {
+                titleValue: 'Configure layer',
+                stepNumber: 3,
+                isActive: false,
+                isCompleted: false,
+                onComplete: () => {
+                    forward(2);
+                },
+                onCancel: () => {
+                    back(2);
+
+                    // self.dataType = null;
+                }
+            });
+        }
+
+        function filesSubmitted(files, event, flow) {
+            console.log(files, event, flow);
+            self.file = files[0];
+            flow.upload();
+        }
+
+        function fileSuccess(file, message, flow) {
+            console.log(file, message, flow);
+            $timeout(() => forward(0), 300);
+        }
+
+        function forward(fromStepNumber) {
+            const fromStep = self.steps[fromStepNumber];
+            const toStep = self.steps[fromStepNumber + 1];
+
+            fromStep.isCompleted = true;
+            fromStep.isActive = false;
+            if (toStep) {
+                toStep.isActive = true;
+            }
+        }
+
+        function back(fromStepNumber) {
+            const fromStep = self.steps[fromStepNumber];
+            const toStep = self.steps[fromStepNumber - 1];
+
+            fromStep.isCompleted = false;
+            toStep.isCompleted = false;
+
+            if (toStep) {
+                fromStep.isActive = false;
+                toStep.isActive = true;
+            }
         }
     }
 })();

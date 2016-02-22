@@ -19,9 +19,16 @@
             }
         }
 
+        &-drop-title {
+            display: block;
+            line-height: rem(3.6);
+            text-align: center;
+            margin: rem(0.6) 0;
+        }
+
         &-drop {
             position: relative;
-            
+
             &:after {
                 position: absolute;
                 content: "";
@@ -31,13 +38,6 @@
                 right: 0;
                 left: 0;
             }
-        }
-
-        &-drop-title {
-            display: block;
-            line-height: rem(3.6);
-            text-align: center;
-            margin: rem(0.6) 0;
         }
 
         &-caption {

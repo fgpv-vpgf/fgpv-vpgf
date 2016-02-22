@@ -1,17 +1,14 @@
-<rv-content-pane>
+<rv-content-pane >
     <div class="rv-loader-file" flow-init="{ singleFile: true }" flow-prevent-drop>
 
         <rv-stepper-item
-            title-value="Upload data"
-            summary-value="{{ $flow.files[0].name }}"
-            step-number="1"
-            is-active="self.steps[0].active"
-            is-completed="self.steps[0].complete">
+            summary-value="{{ self.file && self.steps[0].isCompleted ? self.file.name : 'GeoJSON, CSV, or Shapefile' }}"
+            step="self.steps[0]">
 
             <div
-                flow-drop
                 flow-drag-enter="self.dropActive = true"
                 flow-drag-leave="self.dropActive = false"
+                flow-drop
                 flow-files-submitted="self.filesSubmitted($files, $event, $flow)"
                 flow-file-success="self.fileSuccess($file, $flow)"
                 ng-class="{'rv-loader-file-drop': self.dropActive}">
@@ -24,9 +21,9 @@
                     flow-btn
                     flow-progress="console.log()">Select a file</md-button>
 
-                <span class="md-caption rv-loader-file-caption">GeoJSON, CSV, and Shapefile data types are supported</span>
+                <!--span class="md-caption rv-loader-file-caption">GeoJSON, CSV, and Shapefile data types are supported</span-->
 
-                <md-progress-linear md-mode="determinate" value="{{ $flow.files[0] ? $flow.files[0].progress() * 100 : 0 }}"></md-progress-linear>
+                <md-progress-linear md-mode="determinate" value="{{ self.file ? self.file.progress() * 100 : 0 }}"></md-progress-linear>
 
             </div>
             <!--span class="label label-info">Total Size:
@@ -44,29 +41,21 @@
         </rv-stepper-item>
 
         <rv-stepper-item
-            title-value="Double vision"
-            step-number="2"
-            is-active="self.steps[1].active"
-            is-completed="self.steps[1].complete"
-            on-complete="self.forward(1)"
-            on-cancel="self.back(1)">
+            step="self.steps[1]"
+            summary-value="{{ self.dataType && self.steps[1].isCompleted ? self.dataTypes[self.dataType] : '' }}"
+            is-continue-enabled="self.dataType">
+
             <md-input-container class="md-block">
-                <label>Data Type</label>
+                <label>Select data type</label>
                 <md-select ng-model="self.dataType">
-                    <md-option ng-repeat="type in ['one', 'two']" value="{{ type }}">
-                        {{ type }}
+                    <md-option ng-repeat="(value, key) in self.dataTypes" value="{{ value }}">
+                        {{ key }}
                     </md-option>
                 </md-select>
             </md-input-container>
         </rv-stepper-item>
 
-        <rv-stepper-item
-            title-value="Six months"
-            step-number="3"
-            is-active="self.steps[2].active"
-            is-completed="self.steps[2].complete"
-            on-complete="self.forward(2)"
-            on-cancel="self.back(2)">
+        <rv-stepper-item step="self.steps[2]">
             It's in French!
         </rv-stepper-item>
 
