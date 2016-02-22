@@ -36,7 +36,7 @@ function serverLayerIdentifyBuilder(esriBundle) {
     *   - layerIds: an array of integers specifying the layer indexes to be examined. Will override the current
     *     visible indexes in the layer parameter
     *   - returnGeometry: a boolean indicating if result geometery should be returned with results.  Defaults to false
-    *   - tolerance: an integer indicating how many screen pixels away from the mouse is valid for a hit.  Defaults to 2
+    *   - tolerance: an integer indicating how many screen pixels away from the mouse is valid for a hit.  Defaults to 5
     *
     * @method serverLayerIdentify
     * @param {Object} layer an ESRI dynamic layer object
@@ -63,7 +63,7 @@ function serverLayerIdentifyBuilder(esriBundle) {
             identParams.returnGeometry = opts.returnGeometry || false;
             identParams.layerOption = esriBundle.IdentifyParameters.LAYER_OPTION_ALL;
             identParams.spatialReference = opts.geometry.spatialReference;
-            identParams.tolerance = opts.tolerance || 2;
+            identParams.tolerance = opts.tolerance || 5;
 
             // TODO add support for identParams.layerDefinitions once attribute filtering is implemented
 

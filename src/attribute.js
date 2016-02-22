@@ -10,6 +10,7 @@ const shared = require('./shared.js');
 function newLayerData() {
     return {
         features: [],
+        fields: [],
         oidField: '',
         oidIndex: {},
         layerId: '',
@@ -178,6 +179,7 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
                 layerData.layerIdx = getLayerIndex(layerUrl);
 
                 if (serviceResult.type === 'Feature Layer') {
+                    layerData.fields = serviceResult.fields;
 
                     // find object id field
                     // NOTE cannot use arrow functions here due to bug
@@ -295,6 +297,7 @@ function processFeatureLayer(layer, options, esriBundle) {
             layerData.oidField = layer.objectIdField;
             layerData.layerId = layer.id;
             layerData.layerIdx = 0; // files have no index (no server), so we use value 0
+            layerData.fields = layer.fields;
 
             addLayerData(layerData, layer.graphics.map(elem => {
                 return { attributes: elem.attributes };
