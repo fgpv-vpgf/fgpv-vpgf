@@ -26,7 +26,9 @@
                 isActive: '=?',
                 isCompleted: '=?',
                 onComplete: '&?',
-                onCancel: '&?'
+                onCancel: '&?',
+                isContinueEnabled: '=?',
+                isCancelEnabled: '=?'
             },
             transclude: true,
             link: link,
@@ -47,6 +49,8 @@
             self.isCompleted = angular.isDefined(self.isCompleted) ? self.isCompleted : false;
             self.onComplete = angular.isDefined(self.onComplete) ? self.onComplete : false;
             self.onCancel = angular.isDefined(self.onCancel) ? self.onCancel : false;
+            self.isContinueEnabled = angular.isDefined(self.isContinueEnabled) ? self.isContinueEnabled : true;
+            self.isCancelEnabled = angular.isDefined(self.isCancelEnabled) ? self.isCancelEnabled : true;
         }
     }
 
