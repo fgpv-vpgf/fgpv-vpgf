@@ -73,17 +73,25 @@
         display: block;
         width: rem(2.4);
         height: rem(2.4);
-        background: $primary-color-dark;
+        background: $secondary-text-color;
         border-radius: 50%;
         color: #FFF;
         line-height: rem(2.5);
         text-align: center;
         padding-bottom: rem(0.1);
+
+        &.rv-active {
+            background: $primary-color-dark;
+        }
     }
 
     &-check {
         margin: 0;
-        color: $primary-color-dark;
+        color: $secondary-text-color;
+
+        &.rv-active {
+            color: $primary-color-dark;
+        }
 
         > svg {
             transform: scale(1.2); // 20 * 1.2 = 24
