@@ -47,11 +47,30 @@
 
         // takes an attribute set (key-value mapping) and converts it to a format
         // suitable for the details pane.
+        // the fields param is optional field information containing alias data
         // TODO make this extensible / modifiable / configurable to allow different details looks for different data
-        function attributesToDetails(attribs) {
+        function attributesToDetails(attribs, fields) {
             // simple array of text mapping for demonstration purposes. fancy grid formatting later?
-            return Object.keys(attribs).map(key =>
-                `make a table row from ${key} and ${attribs[key]}`);
+
+            return Object.keys(attribs).map(key => {
+                let fieldName = key;
+
+                // search for aliases
+                if (fields) {
+                    fields.every(function (field) {
+                        if (field.name === key) {
+                            if (field.alias && field.alias.length > 0) {
+                                fieldName = field.alias;
+                            }
+                            return false; // break the loop
+                        }
+                        return true; // keep looping
+                    });
+                }
+
+                // FIXME how to get this to format in a table, and looking nice??? CSS trickery somewhere else?
+                return `${fieldName} - ${attribs[key]}`;
+            });
         }
 
         // extract the feature name from a feature as best we can.
@@ -142,6 +161,7 @@
                             // placeholder for now until we figure out how to signal the panel that
                             // we want to make a nice table
                             result.data = clickResults.map(ele => {
+                                // NOTE: the identify service returns aliased field names, so no need to look them up here
                                 return {
                                     name: ele.value,
                                     data: attributesToDetails(ele.feature.attributes)
@@ -226,7 +246,7 @@
 
                                 return {
                                     name: getFeatureName(feat.attribs, layerState, objId),
-                                    data: attributesToDetails(featAttribs)
+                                    data: attributesToDetails(featAttribs, attribSet.fields)
                                 };
                             });
                             result.isLoading = false;
