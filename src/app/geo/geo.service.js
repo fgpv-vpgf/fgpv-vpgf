@@ -330,11 +330,6 @@
                         // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
                         a.then(data => {
                             registerAttributes(data);
-
-                            // use the fullExtent of a layer if one does not exists
-                            if (!fullExtent && l.fullExtent) {
-                                fullExtent = l.fullExtent;
-                            }
                         })
                         .catch(exception => {
                             console.log('Error getting attributes for ' + l.name + ': ' +
@@ -352,46 +347,48 @@
                 scalebar: {},
                 overviewMap: {}
             };
-            if (config.rampStyleBasemaps) {
-                mapSettings.basemaps = config.rampStyleBasemaps;
+            if (config.baseMaps) {
+                mapSettings.basemaps = config.baseMaps;
             }
 
-            if (config.scalebar.visible) {
+            if (config.map.components.scaleBar) {
                 mapSettings.scalebar = {
                     attachTo: 'bottom-left',
                     scalebarUnit: 'dual'
                 };
             }
 
-            if (config.overviewMap) {
-                mapSettings.overviewMap = config.overviewMap;
+            if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
+
+                // FIXME: overviewMap has more settings
+                mapSettings.overviewMap = config.map.components.overviewMap;
             }
 
-            if (config.fullExtent) {
+            if (config.map.extentSets) {
+                let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
 
-                service.gapi.events.wrapEvents(map, {
-                    load: () => {
-                        // full extent available in config
-                        mapSettings.fullExtent = config.fullExtent;
+                // map extent is not available until map is loaded
+                if (lFullExtent) {
+                    service.gapi.events.wrapEvents(map, {
+                        load: () => {
 
-                        // compare map extent and setting.extent spatial-references
-                        const mapExtent = map.extent;
+                            // compare map extent and setting.extent spatial-references
+                            // make sure the full extent has the same spatial reference as the map
+                            if (service.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
+                                lFullExtent.spatialReference)) {
 
-                        if (service.gapi.proj.isSpatialRefEqual(mapExtent.spatialReference,
-                                mapSettings.fullExtent.spatialReference)) {
+                                // same spatial reference, no reprojection required
+                                fullExtent = service.gapi.mapManager.getExtentFromJson(lFullExtent);
+                            } else {
 
-                            // same spatial reference, no reprojection required
-                            fullExtent = service.gapi.mapManager.Extent(mapSettings.fullExtent);
-                        } else {
-
-                            // need to re-project
-                            fullExtent = service.gapi.proj.projectEsriExtent(
-                                service.gapi.mapManager.Extent(mapSettings.fullExtent),
-                                mapExtent.spatialReference);
+                                // need to re-project
+                                fullExtent = service.gapi.proj.projectEsriExtent(
+                                    service.gapi.mapManager.getExtentFromJson(lFullExtent),
+                                    map.extent.spatialReference);
+                            }
                         }
-                    }
-                });
-
+                    });
+                }
             }
 
             mapManager = service.gapi.mapManager.setupMap(map, mapSettings);
@@ -404,14 +401,14 @@
 
         /**
          * Switch basemap based on the uid provided.
-         * @param {string} uid identifier for a specific basemap layerbower
+         * @param {string} id identifier for a specific basemap layerbower
          */
-        function selectBasemap(uid) {
+        function selectBasemap(id) {
             if (typeof (mapManager) === 'undefined' || !mapManager.BasemapControl) {
                 console.error('Error: Map manager or basemap control is not setup,' +
                     ' please setup map manager by calling setupMap().');
             } else {
-                mapManager.BasemapControl.setBasemap(uid);
+                mapManager.BasemapControl.setBasemap(id);
             }
         }
 
@@ -454,6 +451,35 @@
             } else {
                 console.warn('GeoService: map is not yet created.');
             }
+        }
+
+        /*
+        * Retrieve full extent from extentSets
+        */
+        function getFullExtFromExtentSets(extentSets) {
+
+            // FIXME: default basemap should be indicated in the config as well
+            const currentBasemapExtentSetId = '123456789';
+
+            // In configSchema, at least one extent for a basemap
+            const extentSetForId = extentSets.find(extentSet => {
+                if (extentSet.id === currentBasemapExtentSetId) {
+                    return true;
+                }
+            });
+
+            // no matching id in the extentset
+            if (angular.isUndefined(extentSetForId)) {
+                throw new Error('could not find an extent set with matching id.');
+            }
+
+            // find the full extent type from extentSetForId
+            const lFullExtent = (extentSetForId.full) ? extentSetForId.full :
+                (extentSetForId.default) ? extentSetForId.default :
+                (extentSetForId.maximum) ? extentSetForId.maximum : null;
+
+            return lFullExtent;
+
         }
     }
 })();

@@ -75,7 +75,7 @@
         "extentSetNode": {
             "type": "object",
             "properties": {
-                "id": { "type": "number" },
+                "id": { "type": "string" },
                 "default": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The default (starting) extent." },
                 "full": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The full extent (should give good view of the whole map, not necessarily the maximum extent); default will be used if not supplied." },
                 "maximum": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The maximum extent; full or default extents will be used if not supplied." }
@@ -410,6 +410,32 @@
             },
             "required": [ "id", "name", "description", "altText", "thumbnailUrl", "wkid", "extentId" ],
             "additionalProperties": false
+        },
+
+        "navBarNode": {
+            "type": "object",
+            "properties": {
+                "zoom": { "type": "string", "enum": ["all", "buttons", "slider"], "default": "buttons" },
+                "extra": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/navBarButtons" }, "default": [] }
+            },
+            "required": [ "zoom" ],
+            "additionalProperties": false
+        },
+
+        "navBarButtons": {
+            "type": "string",
+            "enum": ["geoLocator", "marquee", "home", "history", "basemap"]
+        },
+
+        "mapComponentsNode": {
+            "type": "object",
+            "properties": {
+                "geoSearch": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": true }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
+                "mouseInfo": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": true }, "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
+                "northArrow": { "type": "object", "properties": {"enabled": { "type": "boolean", "default": true } } },
+                "overviewMap": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": true }, "maximizeButton": { "type": "boolean"}, "layerType": { "type": "string"} } },
+                "scaleBar": { "type": "object", "properties": {"enabled": { "type": "boolean", "default": true } } }
+            }
         }
 
     },
@@ -446,12 +472,16 @@
                     "type": "array",
                     "items": { "$ref": "#/definitions/lodNode" },
                     "description": "The levels of detail available for the map"
+                },
+                "components": {
+                    "type": "object",
+                    "$ref": "#/definitions/mapComponentsNode"
                 }
             }
         },
         "baseMaps": {
             "type": "array",
-            "items": { "oneOf": [ { "$ref": "#/definitions/baseMap" } ] },
+            "items": { "oneOf": [ { "$ref": "#/definitions/baseMapNode" } ] },
             "description": "A list of basemaps to be made available via the basemap selector."
         },
         "layers": {
@@ -463,6 +493,7 @@
             "description": "FIXME"
         },
         "navigation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+        "navBar": { "$ref": "#/definitions/navBarNode" },
         "tools": { "type": "object", "additionalProperties": true, "description": "FIXME" },
         "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
     },
