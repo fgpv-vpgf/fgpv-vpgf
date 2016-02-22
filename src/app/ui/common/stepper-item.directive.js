@@ -20,6 +20,7 @@
             restrict: 'E',
             templateUrl: 'app/ui/common/stepper-item.html',
             scope: {
+                step: '=?',
                 titleValue: '@?',
                 summaryValue: '@?',
                 stepNumber: '@?',
@@ -43,14 +44,26 @@
 
         function link(scope) { // scope, el, attr, ctrl) {
             const self = scope.self;
+            self.step = angular.isDefined(self.step) ? self.step : {};
 
             // apply defaults
-            self.isActive = angular.isDefined(self.isActive) ? self.isActive : false;
-            self.isCompleted = angular.isDefined(self.isCompleted) ? self.isCompleted : false;
-            self.onComplete = angular.isDefined(self.onComplete) ? self.onComplete : false;
-            self.onCancel = angular.isDefined(self.onCancel) ? self.onCancel : false;
-            self.isContinueEnabled = angular.isDefined(self.isContinueEnabled) ? self.isContinueEnabled : true;
-            self.isCancelEnabled = angular.isDefined(self.isCancelEnabled) ? self.isCancelEnabled : true;
+            applyDefaults('titleValue', '');
+            applyDefaults('summaryValue', '');
+            applyDefaults('stepNumber', '');
+
+            applyDefaults('isActive');
+            applyDefaults('isCompleted');
+            applyDefaults('onComplete');
+            applyDefaults('onCancel');
+
+            applyDefaults('isContinueEnabled', true);
+            applyDefaults('isCancelEnabled', true);
+
+            function applyDefaults(name, d = false) {
+                if (!angular.isDefined(self[name]) && !angular.isDefined(self.step[name])) {
+                    self.step[name] = d;
+                }
+            }
         }
     }
 
