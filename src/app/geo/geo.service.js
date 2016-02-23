@@ -35,7 +35,8 @@
             selectBasemap,
             setFullExtent,
             setLayerVisibility,
-            removeLayer
+            removeLayer,
+            zoomToGraphic
         };
 
         let map = null; // keep map reference local to geoService
@@ -480,6 +481,16 @@
 
             return lFullExtent;
 
+        }
+
+        // only handles feature layers right now. zoom to dynamic/wms layers obj won't work
+        function zoomToGraphic(layerUrl, objId) {
+            const geo = service.gapi.layer.getFeatureInfo(layerUrl, objId);
+            geo.then(geoInfo => {
+                if (geoInfo) {
+                    map.centerAndZoom(geoInfo.feature.geometry, 10);
+                }
+            });
         }
     }
 })();
