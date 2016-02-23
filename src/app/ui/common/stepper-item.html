@@ -25,7 +25,7 @@
 
         <div
             class="rv-stepper-item-footer"
-            ng-if="self.onCancel || self.step.onCancel || self.onComplete || self.step.onComplete">
+            ng-if="self.onCancel || self.step.onCancel || self.onContinue || self.step.onContinue">
 
             <md-button
                 class="rv-button-square"
@@ -38,8 +38,8 @@
             <md-button
                 class="rv-button-square md-primary"
                 ng-disabled="!self.isContinueEnabled && !self.step.isContinueEnabled"
-                ng-if="self.onComplete || self.step.onComplete"
-                ng-click="(self.onComplete || self.step.onComplete)()">
+                ng-if="self.onContinue || self.step.onContinue"
+                ng-click="(self.onContinue || self.step.onContinue)()">
                 continue
             </md-button>
 

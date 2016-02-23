@@ -26,7 +26,7 @@
                 stepNumber: '@?',
                 isActive: '=?',
                 isCompleted: '=?',
-                onComplete: '&?',
+                onContinue: '&?',
                 onCancel: '&?',
                 isContinueEnabled: '=?',
                 isCancelEnabled: '=?'
@@ -53,7 +53,7 @@
 
             applyDefaults('isActive');
             applyDefaults('isCompleted');
-            applyDefaults('onComplete');
+            applyDefaults('onContinue');
             applyDefaults('onCancel');
 
             applyDefaults('isContinueEnabled', true);

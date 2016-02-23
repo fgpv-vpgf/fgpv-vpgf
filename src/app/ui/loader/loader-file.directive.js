@@ -69,7 +69,7 @@
                 stepNumber: 2,
                 isActive: false,
                 isCompleted: false,
-                onComplete: () => {
+                onContinue: () => {
                     console.log(self.dataType);
                     forward(1);
                 },
@@ -85,7 +85,7 @@
                 stepNumber: 3,
                 isActive: false,
                 isCompleted: false,
-                onComplete: () => {
+                onContinue: () => {
                     forward(2);
                 },
                 onCancel: () => {
@@ -107,6 +107,8 @@
             $timeout(() => forward(0), 300);
         }
 
+        // TODO: this will be reused, so it needs to go into a service
+        // move the stepper forward to the next step (if any)
         function forward(fromStepNumber) {
             const fromStep = self.steps[fromStepNumber];
             const toStep = self.steps[fromStepNumber + 1];
@@ -118,6 +120,8 @@
             }
         }
 
+        // TODO: this will be reused, so it needs to go into a service
+        // move the stepper backward to the previous step (if any)
         function back(fromStepNumber) {
             const fromStep = self.steps[fromStepNumber];
             const toStep = self.steps[fromStepNumber - 1];
