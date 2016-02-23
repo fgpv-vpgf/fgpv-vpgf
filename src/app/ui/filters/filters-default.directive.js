@@ -86,12 +86,10 @@
                     const objId = dt.context[0].aoData[indexes[0]]._aData[0];
                     const layerId = self.display.requester.id;
                     const featureIndex = self.display.data.featureIndex;
-                    let layerUrl;
+                    let layerUrl = geoService.layers[layerId].layer.url + '/';
 
                     if (geoService.layers[layerId].layer.layerInfos) {
-                        layerUrl = geoService.layers[layerId].layer.url + '/' + featureIndex + '/';
-                    } else {
-                        layerUrl = geoService.layers[layerId].layer.url + '/';
+                        layerUrl += featureIndex + '/';
                     }
 
                     geoService.zoomToGraphic(layerUrl, objId);
