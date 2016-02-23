@@ -954,7 +954,10 @@
                 return {
                     data: {
                         columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 5),
-                        data: attrs.data.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 50)
+                        data: attrs.data.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 50),
+
+                        // FIXME: this after dynamic layer index gets refactored to proper separate layers
+                        featureIndex: '0'
                     },
                     isLoaded: false
                 };
