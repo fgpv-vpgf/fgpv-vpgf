@@ -1,22 +1,25 @@
-<rv-content-pane >
-    <div class="rv-loader-file" flow-init="{ singleFile: true }" flow-prevent-drop>
+<rv-content-pane
+    flow-drag-enter="self.dropActive = true"
+    flow-drag-leave="self.dropActive = false"
+    flow-prevent-drop
+    class="rv-file-drop"
+    ng-class="{'rv-file-drop-active': self.dropActive}">
+
+    <div class="rv-loader-file" flow-init="{ singleFile: true }">
+
+        <div class="rv-file-drop-blur">
 
         <rv-stepper-item
             summary-value="{{ self.file && self.steps[0].isCompleted ? self.file.name : 'GeoJSON, CSV, or Shapefile' }}"
             step="self.steps[0]">
 
             <div
-                flow-drag-enter="self.dropActive = true"
-                flow-drag-leave="self.dropActive = false"
-                flow-drop
                 flow-files-submitted="self.filesSubmitted($files, $event, $flow)"
-                flow-file-success="self.fileSuccess($file, $flow)"
-                ng-class="{'rv-loader-file-drop': self.dropActive}">
+                flow-file-success="self.fileSuccess($file, $flow)">
 
-                <span class="md-title rv-loader-file-drop-title" ng-if="self.dropActive">Drop to upload your file</span>
+                <!--span class="md-title rv-loader-file-drop-title" ng-if="self.dropActive">Drop to upload your file</span-->
 
                 <md-button
-                    ng-if="!self.dropActive"
                     class="rv-button-square rv-loader-file-select-button"
                     flow-btn
                     flow-progress="console.log()">Select a file</md-button>
@@ -70,6 +73,13 @@
 
         <md-button ng-click="self.completed2 = !self.completed2">
             Complete second step</md-button-->
+
+        </div>
+
+        <div class="rv-file-drop-container" flow-drop>
+            <span class="md-display-2 rv-file-drop-title">Drop to upload your file</span>
+        </div>
     </div>
 
-</rv-main-panel-content>
+
+</rv-content-pane>
