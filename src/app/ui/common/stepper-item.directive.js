@@ -8,8 +8,34 @@
      * @restrict E
      * @description
      *
-     * The `rvStepperItem` directive description.
+     * The `rvStepperItem` directive is a step.
      *
+     * `title-value` a string to be displayed in the step's header
+     * `summary-value` a string to be displayed under the step's header; now shown if omitted
+     * `step-number` the step number to be displayed
+     * `is-active` a boolean flag specifying if the step is active (open) at the moment
+     * `is-complete` a boolean flag specifying is the step has been completed (checkmark is shown instead of the step's number)
+     * `on-continue` a function to call when the user pressed the `continue` button; the `continue` button is not shown if the function is omitted
+     * `on-cancel` a function to call when the user pressed the `cancel` button; the `cancel` button is not shown if the function is omitted
+     * `is-continue-enabled` a boolean flag indicating if the `continue` button is enabled; doesn't make sense if `on-cancel` is omitted
+     * `is-cancel-enabled` a boolean flag indicating if the `cancel` button is enabled; doesn't make sense if `on-continue` is omitted
+     * `step` a shortcut for all other properties which can be supplied in an object; first, a explicit binding takes precedence over anything supplied in the `step` property
+     *
+     * Usage example:
+     * ```html
+     * <stepper-item
+     *         title-value="Pick a side"
+     *         summary-value="Empire or Rebels"
+     *         step-number="2"
+     *         is-active="true"
+     *         is-active="false"
+     *         on-continue="forward"
+     *         on-cancel="back"
+     *         is-continue-enabled="true"
+     *         is-cancel-enabled="false">
+     *
+     * </stepper-item>
+     * ```
      */
     angular
         .module('app.ui.common')
@@ -20,11 +46,16 @@
             restrict: 'E',
             templateUrl: 'app/ui/common/stepper-item.html',
             scope: {
+                step: '=?',
                 titleValue: '@?',
                 summaryValue: '@?',
                 stepNumber: '@?',
                 isActive: '=?',
-                isCompleted: '=?'
+                isCompleted: '=?',
+                onContinue: '&?',
+                onCancel: '&?',
+                isContinueEnabled: '=?',
+                isCancelEnabled: '=?'
             },
             transclude: true,
             link: link,
@@ -39,10 +70,26 @@
 
         function link(scope) { // scope, el, attr, ctrl) {
             const self = scope.self;
+            self.step = angular.isDefined(self.step) ? self.step : {};
 
             // apply defaults
-            self.isActive = angular.isDefined(self.isActive) ? self.isActive : false;
-            self.isCompleted = angular.isDefined(self.isCompleted) ? self.isCompleted : false;
+            applyDefaults('titleValue', '');
+            applyDefaults('summaryValue', '');
+            applyDefaults('stepNumber', '');
+
+            applyDefaults('isActive');
+            applyDefaults('isCompleted');
+            applyDefaults('onContinue');
+            applyDefaults('onCancel');
+
+            applyDefaults('isContinueEnabled', true);
+            applyDefaults('isCancelEnabled', true);
+
+            function applyDefaults(name, d = false) {
+                if (!angular.isDefined(self[name]) && !angular.isDefined(self.step[name])) {
+                    self.step[name] = d;
+                }
+            }
         }
     }
 

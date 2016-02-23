@@ -1,7 +1,65 @@
-<rv-content-pane>
-    <div class="rv-loader-file">
+<rv-content-pane >
+    <div class="rv-loader-file" flow-init="{ singleFile: true }" flow-prevent-drop>
 
-        <md-button ng-click="self.expanded = !self.expanded">
+        <rv-stepper-item
+            summary-value="{{ self.file && self.steps[0].isCompleted ? self.file.name : 'GeoJSON, CSV, or Shapefile' }}"
+            step="self.steps[0]">
+
+            <div
+                flow-drag-enter="self.dropActive = true"
+                flow-drag-leave="self.dropActive = false"
+                flow-drop
+                flow-files-submitted="self.filesSubmitted($files, $event, $flow)"
+                flow-file-success="self.fileSuccess($file, $flow)"
+                ng-class="{'rv-loader-file-drop': self.dropActive}">
+
+                <span class="md-title rv-loader-file-drop-title" ng-if="self.dropActive">Drop to upload your file</span>
+
+                <md-button
+                    ng-if="!self.dropActive"
+                    class="rv-button-square rv-loader-file-select-button"
+                    flow-btn
+                    flow-progress="console.log()">Select a file</md-button>
+
+                <!--span class="md-caption rv-loader-file-caption">GeoJSON, CSV, and Shapefile data types are supported</span-->
+
+                <md-progress-linear md-mode="determinate" value="{{ self.file ? self.file.progress() * 100 : 0 }}"></md-progress-linear>
+
+            </div>
+            <!--span class="label label-info">Total Size:
+                {{ $flow.getSize() }}bytes</span>
+
+            <table>
+                <tr ng-repeat="file in $flow.files">
+                    <td>{{$index+1}}</td>
+                    <td>{{file.name}}</td>
+                    <td>{{file.msg}}</td>
+                    <td>{{ file.progress() * 100 }}% Complete</td>
+                </tr>
+            </table-->
+
+        </rv-stepper-item>
+
+        <rv-stepper-item
+            step="self.steps[1]"
+            summary-value="{{ self.dataType && self.steps[1].isCompleted ? self.dataTypes[self.dataType] : '' }}"
+            is-continue-enabled="self.dataType">
+
+            <md-input-container class="md-block">
+                <label>Select data type</label>
+                <md-select ng-model="self.dataType">
+                    <md-option ng-repeat="(value, key) in self.dataTypes" value="{{ value }}">
+                        {{ key }}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+        </rv-stepper-item>
+
+        <rv-stepper-item step="self.steps[2]">
+            It's in French!
+        </rv-stepper-item>
+
+        <!--md-button ng-click="self.expanded = !self.expanded">
             Expand first step</md-button>
 
         <md-button ng-click="self.expanded2 = !self.expanded2">
@@ -11,40 +69,7 @@
             Complete first step</md-button>
 
         <md-button ng-click="self.completed2 = !self.completed2">
-            Complete second step</md-button>
-
-        <rv-stepper-item title-value="Pick a file" step-number="1" is-active="self.expanded" is-completed="self.completed">
-            <div flow-init="{singleFile: true}" flow-files-submitted="$flow.upload()" flow-file-success="$file.msg = $message">
-
-                <!--input type="file" flow-btn/>
-            Input OR Other element as upload button-->
-                <md-button class="rv-button-square" flow-btn flow-progress="console.log()">Upload File</md-button>
-                <span class="label label-info">Total Size:
-                    {{$flow.getSize()}}bytes</span>
-
-                <table>
-                    <tr ng-repeat="file in $flow.files">
-                        <td>{{$index+1}}</td>
-                        <td>{{file.name}}</td>
-                        <!--td>{{file.msg}}</td-->
-                        <td>{{ file.progress() * 100 }}% Complete</td>
-                    </tr>
-                </table>
-            </div>
-        </rv-stepper-item>
-
-        <rv-stepper-item
-            title-value="Double vision"
-            summary-value="reason not to work"
-            step-number="2"
-            is-active="self.expanded2"
-            is-completed="!self.completed2">
-            Nothing to see here
-        </rv-stepper-item>
-
-        <rv-stepper-item title-value="Six months" summary-value="later" step-number="3" is-active="true">
-            It's in French!
-        </rv-stepper-item>
+            Complete second step</md-button-->
     </div>
 
 </rv-main-panel-content>
