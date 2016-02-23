@@ -484,6 +484,11 @@
         }
 
         // only handles feature layers right now. zoom to dynamic/wms layers obj won't work
+        /**
+         * Fetches a point in a layer given the layerUrl and objId of the object and then zooms to it
+         * @param  {layerUrl} layerUrl is the URL that the point to be zoomed to belongs to
+         * @param  {objId} objId is ID of object that was clicked on datatable to be zoomed to
+         */
         function zoomToGraphic(layerUrl, objId) {
             const geo = service.gapi.layer.getFeatureInfo(layerUrl, objId);
             geo.then(geoInfo => {

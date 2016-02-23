@@ -81,8 +81,8 @@
                         select: true // allow row select
                     });
 
-                // TODO: change this from select to dblclick or another button
                 self.table.on('select', function (e, dt, type, indexes) {
+                    // FIXME: Assumes OBJECTID always first column; make it not so
                     const objId = dt.context[0].aoData[indexes[0]]._aData[0];
                     const layerId = self.display.requester.id;
                     const featureIndex = self.display.data.featureIndex;
