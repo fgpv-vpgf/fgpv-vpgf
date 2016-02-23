@@ -18,7 +18,7 @@
      *
      * @return {object} directive body
      */
-    function rvFiltersDefault($timeout, $q, stateManager) {
+    function rvFiltersDefault($timeout, $q, stateManager, geoService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default.html',
@@ -77,8 +77,25 @@
                         scrollY: true, // allow verstical scroller
                         scrollX: true, // allow horizontal scroller
                         autoWidth: false, // without autoWidth, few columns will be stretched to fill avaialbe width, and many columns will cause the table to scroll horizontally
-                        scroller: true // turn on virtual scroller extension
+                        scroller: true, // turn on virtual scroller extension
+                        select: true // allow row select
                     });
+
+                // TODO: change this from select to dblclick or another button
+                self.table.on('select', function (e, dt, type, indexes) {
+                    const objId = dt.context[0].aoData[indexes[0]]._aData[0];
+                    const layerId = self.display.requester.id;
+                    const featureIndex = self.display.data.featureIndex;
+                    let layerUrl;
+
+                    if (geoService.layers[layerId].layer.layerInfos) {
+                        layerUrl = geoService.layers[layerId].layer.url + '/' + featureIndex + '/';
+                    } else {
+                        layerUrl = geoService.layers[layerId].layer.url + '/';
+                    }
+
+                    geoService.zoomToGraphic(layerUrl, objId);
+                });
             }
 
             /**
