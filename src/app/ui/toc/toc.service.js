@@ -895,7 +895,7 @@
                         // remove layer for real now
                         geoService.removeLayer(layer.id);
                     }
-            });
+                });
         }
 
         // FIXME: placeholder method for toggling group visibility
