@@ -27,6 +27,7 @@
     "datatables.net": "~1.10.10",
     "datatables.net-dt": "~1.10.10",
         "datatables-scroller": "~1.4.0",
+        "datatables-select":"~1.1.2",
         "ng-flow": "~2.7.1"
   },
   "overrides": {
@@ -35,6 +36,10 @@
         },
     "datatables-scroller": {
       "main": "js/dataTables.scroller.js",
+      "dependencies": null
+    },
+    "datatables-select": {
+      "main": "js/dataTables.select.js",
       "dependencies": null
     },
     "datatables.net-dt": {
