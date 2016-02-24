@@ -851,11 +851,14 @@
         /**
          * Simple function to remove layers.
          * TODO: needs more work to handle dynamic layer and other crazy stuff
+         * TODO: need to consider what happens when removing the only layer in the group; remove the group as well? etc.
+         * Hides the layer data and removes the node from the layer selector; removes the layer from geoservice after toast delay has passed;adds the layer back to the layer selctor if user click `undo`.
          * @param  {Object} layer layerItem object from the layer selector
          */
         function removeLayer(layer) {
             let layerGroup;
             let layerIndex;
+            let layerOriginalVisibility = layer.options.visibility.value;
 
             // find where the layer is in layer selector
             iterateLayers(service.data, (item, index, group) => {
@@ -865,7 +868,7 @@
                 }
             });
 
-            console.log(layerGroup, layerIndex);
+            // console.log(layerGroup, layerIndex);
 
             // pretend we removed the layer by setting it's visibility to off and remove it from the layer selector
             layerGroup.items.splice(layerIndex, 1);
@@ -884,7 +887,10 @@
                     if (response === 'ok') { // promise resolves with 'ok' when user clicks 'undo'
                         // restore layer visibility on undo; and add it back to layer selector
                         layerGroup.items.splice(layerIndex, 0, layer);
-                        toggleVisiblity(layer, 'on');
+
+                        // restore original visibility, so if he removed and restored already invisible layer,
+                        // it is restored also invisible
+                        toggleVisiblity(layer, layerOriginalVisibility);
                     } else {
                         // remove layer for real now
                         geoService.removeLayer(layer.id);
