@@ -5,6 +5,7 @@ branches:
   only:
     - develop
     - master
+    - '/.+/'
     - '/^test/.*$/'
     - "/^v\\d+\\.\\d+\\.\\d+(-.+)?$/"
 before_install:
