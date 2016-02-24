@@ -1,4 +1,3 @@
-
 (() => {
     'use strict';
 
@@ -96,7 +95,9 @@
             self.projections = [];
 
             var wkidArray = [];
-            var basemaps = configService.data.baseMaps;
+
+            // FIXME: in case there is no basemaps; fall back to some default one or something
+            var basemaps = configService.data.baseMaps || [];
 
             basemaps.forEach(basemap => {
 
@@ -112,8 +113,12 @@
                     // TODO: decision needed on how we handle different type of projection,
                     // adding all of them here, or it won't be an issue if we predefine all
                     // in config.
-                    self.projections.push({ wkid: wkid, name: (wkid === 3978) ? 'Lambert' :
-                        (wkid === 102100) ? 'Mercator' : 'Other', items: [] });
+                    self.projections.push({
+                        wkid: wkid,
+                        name: (wkid === 3978) ? 'Lambert' :
+                            (wkid === 102100) ? 'Mercator' : 'Other',
+                        items: []
+                    });
 
                     wkidArray.push(wkid);
 
