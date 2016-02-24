@@ -20,7 +20,7 @@
      *
      * @return {object} directive body
      */
-    function rvPanel(layoutService) {
+    function rvPanel() {
         const directive = {
             restrict: 'E',
             templateUrl: function (element, attr) {
@@ -29,23 +29,12 @@
             scope: {
                 closeButton: '@closeButton'
             },
-            link: link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
-
-
-        /*********/
-
-        function link(scope, el, attr) { // , ctrl) {
-            // register panel with layoutService
-            layoutService.panels[attr.type] = {
-                node: el
-            };
-        }
     }
 
     /**
@@ -69,7 +58,6 @@
 
         /********/
 
-        function activate() {
-        }
+        function activate() {}
     }
 })();

@@ -865,20 +865,19 @@
                 }
             });
 
+            console.log(layerGroup, layerIndex);
+
             // pretend we removed the layer by setting it's visibility to off and remove it from the layer selector
             layerGroup.items.splice(layerIndex, 1);
             toggleVisiblity(layer, 'off');
 
+            // create notification toast
             const undoToast = $mdToast.simple()
                 .textContent('Layer removed') // TODO: translate
                 .action('undo') // TODO: translate
                 .highlightAction(true)
-
-                // .hideDelay(300)
-
-                // .parent(layoutService.panels.main.node)
-                .parent($('rv-toc'))
-                .position('bottom');
+                .parent(layoutService.panes.toc)
+                .position('bottom rv-flex');
 
             $mdToast.show(undoToast)
                 .then(response => {

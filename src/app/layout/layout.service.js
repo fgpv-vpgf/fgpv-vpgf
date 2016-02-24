@@ -16,7 +16,8 @@
         const service = {
             sidenav: sideNavigationService,
             mapnav: mapNavigationService,
-            panels: {}
+            panels: {},
+            panes: {} // registry for content pane nodes
         };
 
         return service;
