@@ -20,17 +20,23 @@
      *
      * @return {object} directive body
      */
-    function rvToc() {
+    function rvToc(layoutService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/toc/toc.html',
             scope: {},
+            link: link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
+
+        function link(scope, el) {
+            // register toc node with layoutService so it can be targeted
+            layoutService.panes.toc = el;
+        }
     }
 
     function Controller(tocService, stateManager) {
