@@ -924,6 +924,7 @@
         }
 
         // FIXME: placeholder method for toggling visibility
+        // TODO: rename to something like `setVisibility` to make it clearer what this does
         // if 'value' is not specified, toggle
         function toggleVisiblity(layer, value) {
             const control = layer.options.visibility;
