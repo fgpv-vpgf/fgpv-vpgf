@@ -48,7 +48,7 @@
         let fullExtent = null;
         let mapExtent = null;
         let selectedBasemapId = null;
-        let selectedBasemapExtentSetId = '123456789';
+        let selectedBasemapExtentSetId = null;
 
         // FIXME: need to find a way to have the dojo URL set by the config
         service.promise = geoapi('http://js.arcgis.com/3.14/', window)
@@ -318,7 +318,15 @@
                         mapManager.BasemapControl.basemapGallery.destroy();
                     }
                 }
+
                 // NOTE: Possible to have dom listeners stick around after the node is destroyed
+                console.log(service.layers);
+
+                for (let layer in service.layers) {
+                    console.log('remove layer.id:' + layer.id);
+                    removeLayer(layer.id);
+                }
+
                 map.destroy();
                 map = null;
                 service.layers = {};
@@ -349,8 +357,6 @@
             identify = identifyService(service.gapi, map, service.layers);
 
             // extract the logic to setupLayers
-            // commented out to test basemap switching. The setupLayers code is causing issues with basemap switch
-            // setupLayers(config);
 
             // setup map using configs
             // FIXME: I should be migrated to the new config schema when geoApi is updated
@@ -408,12 +414,12 @@
                 const oldBasemap = getBasemapConfig(selectedBasemapId, configService);
 
                 if (newBasemap.wkid === oldBasemap.wkid) {
-                    console.log("same wkid: " + newBasemap.wkid);
+                    console.log('same wkid: ' + newBasemap.wkid);
                     mapManager.BasemapControl.setBasemap(id);
                 } else {
 
                     // extent is different, build the map
-                    console.log("different wkid: " + newBasemap.wkid);
+                    console.log('different wkid: ' + newBasemap.wkid);
                     mapExtent = setSelectedBaseMap(id, configService);
                     buildMap(domNode, configService);
                 }
@@ -553,6 +559,9 @@
                                 service.gapi.mapManager.getExtentFromJson(lFullExtent),
                                 map.extent.spatialReference);
                         }
+
+                        // setup layers
+                        setupLayers(config);
                     }
                 });
             }
@@ -588,10 +597,10 @@
          * Get basemap config from basemap id
          * @param id base Map id
          * @param config config object
-         * @return {JSON} base map json object
+         * @return {object} base map json object
          */
-        function getBasemapConfig(id, config){
-            return config.baseMaps.find( basemapConfig => {
+        function getBasemapConfig(id, config) {
+            return config.baseMaps.find(basemapConfig => {
                 return (basemapConfig.id === id);
             });
         }
