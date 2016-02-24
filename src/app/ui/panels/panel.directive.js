@@ -20,7 +20,7 @@
      *
      * @return {object} directive body
      */
-    function rvPanel() {
+    function rvPanel(layoutService) {
         const directive = {
             restrict: 'E',
             templateUrl: function (element, attr) {
@@ -29,18 +29,29 @@
             scope: {
                 closeButton: '@closeButton'
             },
+            link: link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
+
+
+        /*********/
+
+        function link(scope, el, attr) { // , ctrl) {
+            // register panel with layoutService
+            layoutService.panels[attr.type] = {
+                node: el
+            };
+        }
     }
 
     /**
      * Skeleton controller function.
      */
-    function Controller($rootScope, $attrs, stateManager) {
+    function Controller($attrs, stateManager) {
         'ngInject';
         const self = this;
 
@@ -59,7 +70,6 @@
         /********/
 
         function activate() {
-
         }
     }
 })();
