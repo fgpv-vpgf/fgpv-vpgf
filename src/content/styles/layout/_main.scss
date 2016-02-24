@@ -1,10 +1,3 @@
-.inner-shell {
-
-    // z-index on inner-shell is needed to prevent elements' shadows from overlapping
-    // http://blog.dudak.me/2014/css-shadows-under-adjacent-elements/
-    z-index: 0;
-}
-
 rv-appbar {
     left: $viewport-gutter;
     top: $viewport-gutter;
