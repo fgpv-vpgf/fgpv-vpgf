@@ -7,7 +7,9 @@
 <body ng-app="app">
     <!-- Protractor doesn't work well with manually bootstrapped apps, so we have to use ng-app tag and we just use a single app on the page. -->
 
-    <div ng-include="'app/layout/shell.html'" class="fgpv" th-config="config.en.json" style="height: 100%;"></div>
+    <div class="fgpv" th-config="config.en.json" style="height: 100%;">
+        <rv-shell></rv-shell>
+    </div>
 
     <!-- inject:js -->
     <!-- endinject -->
