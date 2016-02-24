@@ -15,7 +15,8 @@
     function layoutService(sideNavigationService, mapNavigationService) {
         const service = {
             sidenav: sideNavigationService,
-            mapnav: mapNavigationService
+            mapnav: mapNavigationService,
+            panels: {}
         };
 
         return service;

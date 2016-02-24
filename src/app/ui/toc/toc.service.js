@@ -18,7 +18,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService($timeout, $q, $rootScope, $http, stateManager, geoService) {
+    function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager, geoService) {
         // TODO: remove after switching to the real config
         // jscs:disable maximumLineLength
         const service = {
@@ -854,16 +854,42 @@
          * @param  {Object} layer layerItem object from the layer selector
          */
         function removeLayer(layer) {
-            geoService.removeLayer(layer.id);
+            let layerGroup;
+            let layerIndex;
 
+            // find where the layer is in layer selector
             iterateLayers(service.data, (item, index, group) => {
-                if (item.id === layer.id) {
-                    // console.log(item, index, group);
-
-                    if (index !== -1) {
-                        group.items.splice(index, 1);
-                    }
+                if (item.id === layer.id && index !== -1) {
+                    layerGroup = group;
+                    layerIndex = index;
                 }
+            });
+
+            // pretend we removed the layer by setting it's visibility to off and remove it from the layer selector
+            layerGroup.items.splice(layerIndex, 1);
+            toggleVisiblity(layer, 'off');
+
+            const undoToast = $mdToast.simple()
+                .textContent('Layer removed') // TODO: translate
+                .action('undo') // TODO: translate
+                .highlightAction(true)
+
+                // .hideDelay(300)
+
+                // .parent(layoutService.panels.main.node)
+                .parent($('rv-toc'))
+                .position('bottom');
+
+            $mdToast.show(undoToast)
+                .then(response => {
+                    if (response === 'ok') { // promise resolves with 'ok' when user clicks 'undo'
+                        // restore layer visibility on undo; and add it back to layer selector
+                        layerGroup.items.splice(layerIndex, 0, layer);
+                        toggleVisiblity(layer, 'on');
+                    } else {
+                        // remove layer for real now
+                        geoService.removeLayer(layer.id);
+                    }
             });
         }
 
@@ -948,12 +974,14 @@
             // FIXME: remove default ecogeo data once filters is disabled for layers with no attribs
             const newData = $timeout(() => {
                 const attrs = geoService.layers[layer.id] && geoService.layers[layer.id].attribs ?
-                    geoService.getFormattedAttributes(layer.id, geoService.layers[layer.id].attribs.indexes[0]) :
+                    geoService.getFormattedAttributes(layer.id, geoService.layers[layer.id].attribs.indexes[
+                        0]) :
                     geoService.getFormattedAttributes('ecogeo', '0');
 
                 return {
                     data: {
-                        columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 5),
+                        columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) *
+                            5),
                         data: attrs.data.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 50),
 
                         // FIXME: this after dynamic layer index gets refactored to proper separate layers
