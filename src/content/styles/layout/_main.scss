@@ -4,6 +4,15 @@ rv-appbar {
     position: absolute;
 }
 
+rv-panel md-toast.md-rv-flex {
+    width: 100%;
+    padding: {
+        left: 0;
+        right: 0;
+        bottom: 0;
+    };
+}
+
 rv-panel[type='filters'] {
     &.default {
         @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: 50%);
