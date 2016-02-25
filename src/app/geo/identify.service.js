@@ -69,7 +69,7 @@
                     });
                 }
 
-                // FIXME how to get this to format in a table, and looking nice??? CSS trickery somewhere else?
+                // FIXME change this output into a tabular format that is compatible with the detail pane (format yet to be decided)
                 return `${fieldName} - ${attribs[key]}`;
             });
         }
