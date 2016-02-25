@@ -19,6 +19,297 @@ const featureTypeToRenderer = {
     MultiPolygon: 'outlinedPoly'
 };
 
+/**
+* Different types of services that a URL could point to
+* @property serviceType {Object}
+*/
+const serviceType = {
+    CSV: 'csv',
+    GeoJSON: 'geojson',
+    Shapefile: 'shapefile',
+    FeatureLayer: 'featurelayer',
+    RasterLayer: 'rasterlayer',
+    GroupLayer: 'grouplayer',
+    TileService: 'tileservice',
+    DynamicService: 'dynamicservice',
+    ImageService: 'imageservice',
+    WMS: 'wms',
+    Unknown: 'unknown',
+    Error: 'error'
+};
+
+// returns a standard information object with serviceType
+// supports predictLayerUrl
+// type is serviceType enum value
+function makeInfo(type) {
+    return {
+        serviceType: type
+    };
+}
+
+// returns a standard information object with serviceType and name
+// common for most ESRI endpoints
+// supports predictLayerUrl
+// type is serviceType enum value
+// name is property in json containing a service name
+// json is json result from service
+function makeLayerInfo(type, name, json) {
+    const info = makeInfo(type);
+    info.name = json[name] || '';
+    return info;
+}
+
+// inspects the JSON that was returned from a service.
+// if the JSON belongs to an ESRI endpoint, we do some terrible dog-logic to attempt
+// to derive what type of endpoint it is (mainly by looking for properties that are
+// unique to that type of service).
+// returns an enumeration value (string) from serviceType based on the match found.
+// non-esri services or unexpected esri services will return the .Unknown value
+function crawlEsriService(srvJson) {
+    if (srvJson.type) {
+        // a layer endpoint (i.e. url ends with integer index)
+        switch (srvJson.type) {
+            case 'Feature Layer':
+                return serviceType.FeatureLayer;
+
+            case 'Raster Layer':
+                return serviceType.RasterLayer;
+
+            case 'Group Layer':
+                return serviceType.GroupLayer;
+
+            default:
+                return serviceType.Unknown;
+        }
+
+    } else if (srvJson.hasOwnProperty('singleFusedMapCache')) {
+        if (srvJson.singleFusedMapCache) {
+            // a tile server
+            return serviceType.TileService;
+
+        } else {
+            // a map server
+            return serviceType.DynamicService;
+        }
+
+    } else if (srvJson.hasOwnProperty('allowGeometryUpdates')) {
+        // a feature server
+        return serviceType.DynamicService;
+
+    } else if (srvJson.hasOwnProperty('allowedMosaicMethods')) {
+        // an image server
+        return serviceType.ImageService;
+
+    } else {
+        return serviceType.Unknown;
+    }
+}
+
+// given a URL, attempt to read it as an ESRI rest endpoint.
+// returns a promise that resovles with an information object.
+// at minimum, the object will have a .serviceType property with a value from the above enumeration.
+// if the type is .Unknown, then we were unable to determine the url was an ESRI rest endpoint.
+// otherwise, we were successful, and the information object will have other properties depending on the service type
+// - .name : scraped from service, but may be rubbish (depends on service publisher). used as UI suggestion only
+// - .fields : for feature layer service only. list of fields to allow user to pick name field
+// - .geometryTpe : for feature layer service only.  for help in defining the renderer, if required.
+function pokeEsriService(url, esriBundle, hint) {
+
+    // reaction functions to different esri services
+    const srvHandler = {};
+
+    // feature layer gets some extra treats
+    srvHandler[serviceType.FeatureLayer] = srvJson => {
+        const info = makeLayerInfo(serviceType.FeatureLayer, 'name', srvJson);
+        info.fields = srvJson.fields;
+        info.geometryType = srvJson.geometryType;
+        return info;
+    };
+
+    // no treats for raster (for now)
+    srvHandler[serviceType.RasterLayer] = srvJson => {
+        makeLayerInfo(serviceType.RasterLayer, 'name', srvJson);
+    };
+
+    // no treats for group (for now)
+    srvHandler[serviceType.GroupLayer] = srvJson => {
+        makeLayerInfo(serviceType.GroupLayer, 'name', srvJson);
+    };
+
+    // no treats for tile (for now)
+    srvHandler[serviceType.TileService] = srvJson => {
+        makeLayerInfo(serviceType.TileService, 'mapName', srvJson);
+    };
+
+    // no treats for mapserver / dynamic (for now)
+    srvHandler[serviceType.DynamicService] = srvJson => {
+        makeLayerInfo(serviceType.DynamicService, 'mapName', srvJson);
+    };
+
+    // no treats for imageserver (for now)
+    srvHandler[serviceType.ImageService] = srvJson => {
+        makeLayerInfo(serviceType.ImageService, 'name', srvJson);
+    };
+
+    // couldnt figure it out
+    srvHandler[serviceType.Unknown] = () => {
+        makeInfo(serviceType.Unknown);
+    };
+
+    return new Promise(resolve => {
+        // extract info for this service
+        const defService = esriBundle.esriRequest({
+            url: url,
+            content: { f: 'json' },
+            callbackParamName: 'callback',
+            handleAs: 'json',
+        });
+
+        defService.then(srvResult => {
+            // request didnt fail, indicating it is likely an ArcGIS Server endpoint
+
+            if (hint) {
+                // force the data extraction of the hinted format
+                resolve(srvHandler[hint](srvResult));
+            } else {
+                // inspect the result, and do bad logic to try to determine the service type
+                resolve(srvHandler[crawlEsriService(srvResult)](srvResult));
+            }
+        }, () => {
+            // something went wrong, but that doesnt mean our service is invalid yet
+            // it's likely not ESRI.  return unknown and let main predictor keep investigating
+            resolve(makeInfo(serviceType.Unknown));
+        });
+    });
+}
+
+function pokeFile(url, hint) {
+
+    // reaction functions to different files
+    // overkill right now, as files just identify the type right now
+    // but structure will let us enhance to scrape field names for use in import wizard
+    const fileHandler = {};
+
+    // csv
+    fileHandler[serviceType.CSV] = () => {
+        makeInfo(serviceType.CSV);
+    };
+
+    // geojson
+    fileHandler[serviceType.GeoJSON] = () => {
+        makeInfo(serviceType.GeoJSON);
+    };
+
+    // csv
+    fileHandler[serviceType.Shapefile] = () => {
+        makeInfo(serviceType.Shapefile);
+    };
+
+    // couldnt figure it out
+    fileHandler[serviceType.Unknown] = () => {
+        makeInfo(serviceType.Unknown);
+    };
+
+    return new Promise(resolve => {
+        if (hint) {
+            // force the data extraction of the hinted format
+            resolve(fileHandler[hint]());
+        } else {
+            // inspect the url for file extensions
+            let guessType = serviceType.Unknown;
+            switch (url.substr(url.lastIndexOf('.') + 1).toLowerCase()) {
+
+                // check for file extensions
+                case 'csv':
+                    guessType = serviceType.CSV;
+                    break;
+                case 'zip':
+                    guessType = serviceType.Shapefile;
+                    break;
+
+                case 'json':
+                    guessType = serviceType.GeoJSON;
+                    break;
+            }
+            resolve(fileHandler[guessType]());
+        }
+    });
+}
+
+function predictLayerUrlBuilder(esriBundle) {
+    /**
+    * Attempts to determine what kind of layer the URL most likely is, and
+    * if possible, return back some useful information about the layer
+    *
+    * TODO add specs of return object
+    *
+    * @method predictLayerUrl
+    * @param {String} url a url to something that is hopefully a map service
+    * @param {String} hint optional. allows the caller to specify the url type, allowing the function to run the data logic for that type
+    * @returns {Promise} a promise resolving with an infomation object
+    */
+    return (url, hint) => {
+
+        // TODO this function has lots of room to improve.  there are many valid urls that it will
+        //      fail to identify correctly in it's current state
+
+        return new Promise(resolve => {
+            if (hint) {
+                // go directly to appropriate logic block
+                switch (hint) {
+                    // file based
+                    case serviceType.CSV:
+                    case serviceType.GeoJSON:
+                    case serviceType.Shapefile:
+                        pokeFile(url, hint).then(info => resolve(info));
+                        break;
+
+                    // esri based
+                    case serviceType.FeatureLayer:
+                    case serviceType.RasterLayer:
+                    case serviceType.GroupLayer:
+                    case serviceType.TileService:
+                    case serviceType.DynamicService:
+                    case serviceType.ImageService:
+                        pokeEsriService(url, esriBundle, hint).then(info => resolve(info));
+                        break;
+
+                    // ogc
+                    case serviceType.WMS:
+
+                        // FIXME REAL LOGIC COMING SOON
+                        resolve(null);
+                        break;
+
+                    default:
+
+                        // FIXME REAL LOGIC COMING SOON
+                        resolve(null);
+                }
+            } else {
+                // do multiple tests on url
+                pokeFile(url).then(infoFile => {
+                    if (infoFile.serviceType === serviceType.Unknown) {
+                        pokeEsriService(url, esriBundle).then(infoEsri => {
+                            if (infoEsri.serviceType === serviceType.Unknown) {
+                                // FIXME REAL LOGIC COMING SOON
+                                // pokeWMS
+                                resolve(null);
+                            } else {
+                                // it was a esri service. rejoice.
+                                resolve(infoEsri);
+                            }
+                        });
+                    } else {
+                        // it was a file. rejoice.
+                        resolve(infoFile);
+                    }
+                });
+            }
+        });
+    };
+}
+
 function serverLayerIdentifyBuilder(esriBundle) {
     // TODO we are using layerIds option property as it aligns with what the ESRI identify parameter
     //      object uses.  However, in r2 terminology, a layerId is specific to a full map layer, not
@@ -447,6 +738,8 @@ module.exports = function (esriBundle, geoApi) {
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
         makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi),
         serverLayerIdentify: serverLayerIdentifyBuilder(esriBundle),
-        csvPeek
+        predictLayerUrl: predictLayerUrlBuilder(esriBundle),
+        csvPeek,
+        serviceType
     };
 };
