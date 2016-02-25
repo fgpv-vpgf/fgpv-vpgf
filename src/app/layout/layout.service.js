@@ -15,7 +15,9 @@
     function layoutService(sideNavigationService, mapNavigationService) {
         const service = {
             sidenav: sideNavigationService,
-            mapnav: mapNavigationService
+            mapnav: mapNavigationService,
+            panels: {},
+            panes: {} // registry for content pane nodes
         };
 
         return service;

@@ -1,5 +1,6 @@
 <rv-content-pane close-panel="self.actions.toggleLayerGroup()">
     <div class="rv-toc">
+
         <!-- Do not ask me what `dx-start-with` and `dx-connect` are and how this whole thing works as I'm not completely understan it myself. I'll update this comment when I get it. Read this is you are curious: https://github.com/dotJEM/angular-tree -->
         <ul class="rv-layer-list rv-root" dx-start-with="self.config">
             <li ng-repeat="item in $dxPrior.items">
@@ -18,8 +19,6 @@
                 </div>
             </li>
         </ul>
-
-        <!--md-button ng-click="self.toggleFiltersFull()">Filters mode</md-button-->
 
     </div>
 </rv-content-pane>

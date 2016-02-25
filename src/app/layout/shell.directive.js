@@ -1,26 +1,50 @@
 /* global HolderIpsum */
+/* jshint maxparams: 999 */
+
+// TODO: re-enable maxparam rule
 (() => {
     'use strict';
 
     /**
-     * @ngdoc function
-     * @name ShellController
+     * @ngdoc directive
+     * @name rvShell
      * @module app.layout
+     * @restrict E
      * @description
      *
      * The `ShellController` controller handles the shell which is the visible part of the layout.
      * `self.isLoading` is initially `true` and causes the loading overlay to be displayed; when `configService` resolves, it's set to `false` and the loading overly is removed.
+     * // TODO: update comments since it's a directive now.
      */
     angular
         .module('app.layout')
-        .controller('ShellController', ShellController);
+        .directive('rvShell', rvShell);
+
+    function rvShell() {
+        const directive = {
+            restrict: 'E',
+            templateUrl: 'app/layout/shell.html',
+            scope: {},
+            link: link,
+            controller: Controller,
+            controllerAs: 'self',
+            bindToController: true
+        };
+
+        return directive;
+
+        /********/
+
+        function link() { // scope, el, attr, ctrl) {
+
+        }
+    }
 
     // disable jshint maxparam rule; this module will be trimmed down - there is a lot of garbage/demo code here
-    // TODO: re-enable maxparam rule
-    /* jshint maxparams: 999 */
-    function ShellController($timeout, $q, configService, $rootScope, $mdDialog, events, version,
-        sideNavigationService, stateManager, $translate, geoService) {
+    function Controller($timeout, $q, configService, $rootScope, $mdDialog, events, version, sideNavigationService,
+        stateManager, $translate, geoService) {
         /* jshint maxparams: 10 */
+        'ngInject';
         const self = this;
 
         self.config = configService.data;
@@ -126,8 +150,9 @@
         // FIXME: move to a directive or sidenav
         function languageSwitch(lang) {
             $translate.use(lang);
-            configService.reset(lang).then(
-                () => geoService.buildMap($('div[rv-init-map]')[0], configService.data));
+            configService.reset(lang)
+                .then(
+                    () => geoService.buildMap($('div[rv-init-map]')[0], configService.data));
         }
 
         // TODO: hack
@@ -206,5 +231,4 @@
             };
         }
     }
-
 })();

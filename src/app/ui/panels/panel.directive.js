@@ -40,7 +40,7 @@
     /**
      * Skeleton controller function.
      */
-    function Controller($rootScope, $attrs, stateManager) {
+    function Controller($attrs, stateManager) {
         'ngInject';
         const self = this;
 
@@ -58,8 +58,6 @@
 
         /********/
 
-        function activate() {
-
-        }
+        function activate() {}
     }
 })();

@@ -1,14 +1,22 @@
 /* global bard, tocService, stateManager, $rootScope, $timeout */
 
 // lots of info about $timeout here: http://www.bradoncode.com/blog/2015/06/11/unit-testing-code-that-uses-timeout-angularjs/
-
+// TODO: when testing visibility toggle, need to extend mdToast mock to include functions `simple` and `show`; `show` should return a resolved promise
 describe('tocService', () => {
     // global stateManager variable was disappearing for some reason
     let rs;
     let sm;
 
+    function mockLayoutService($provide) {
+        $provide.factory('layoutService', $q => () => $q(fulfill => fulfill()));
+    }
+
+    function mockToast($provide) {
+        $provide.service('$mdToast', () => {});
+    }
+
     beforeEach(() => {
-        bard.appModule('app.ui.toc', 'app.common.router', 'app.geo');
+        bard.appModule('app.ui.toc', 'app.common.router', 'app.geo', mockLayoutService, mockToast);
 
         // inject services
         bard.inject('tocService', 'stateManager', '$rootScope', '$timeout');
@@ -72,7 +80,7 @@ describe('tocService', () => {
                 .toBe(true); // layer toggle is already selected
 
             expect(display.requester.id)
-                .toBe(0);
+                .toBe(3);
 
             to.flush(5000); // flush metadata generation timer
 
@@ -82,7 +90,7 @@ describe('tocService', () => {
                 .toBe(true);
 
             expect(display.requester.id)
-                .toBe(0);
+                .toBe(3);
             expect(display.data.length)
                 .toBeGreaterThan(0); // some metadata was generated
 

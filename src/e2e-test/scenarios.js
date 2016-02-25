@@ -16,7 +16,7 @@ describe('my app', function () {
         });
 
         it('should render view1 when user navigates to /view1', function () {
-            browser.wait(protractor.ExpectedConditions.visibilityOf($('.inner-shell')), 5000);
+            browser.wait(protractor.ExpectedConditions.visibilityOf($('rv-shell')), 5000);
 
             // this test fails as md-whiteform element is hidden
             // it was a toy-test anyway, just wanted an example how tests work

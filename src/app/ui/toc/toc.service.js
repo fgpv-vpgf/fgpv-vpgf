@@ -18,7 +18,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService($timeout, $q, $rootScope, $http, stateManager, geoService) {
+    function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager, geoService) {
         // TODO: remove after switching to the real config
         // jscs:disable maximumLineLength
         const service = {
@@ -43,14 +43,14 @@
                     {
                         type: 'group',
                         name: 'Feature Layers',
-                        id: 1,
+                        id: 2,
                         expanded: true,
                         items: [
                             {
                                 type: 'layer',
                                 name: HolderIpsum.words(3, true),
                                 layerType: 'esriFeature',
-                                id: 0,
+                                id: 3,
                                 symbology: [
                                     {
                                         icon: 'url',
@@ -103,7 +103,7 @@
                                 type: 'layer',
                                 name: 'Layer Name 2',
                                 layerType: 'esriFeature',
-                                id: 1,
+                                id: 4,
                                 symbology: [
                                     {
                                         icon: 'url',
@@ -157,14 +157,14 @@
                             {
                                 type: 'group',
                                 name: 'Sample Subgroup',
-                                id: 1,
+                                id: 5,
                                 expanded: false,
                                 items: [
                                     {
                                         type: 'layer',
                                         name: 'Layer Name 2 Layer Name 2 Layer Name 2 Layer Name 2',
                                         layerType: 'esriFeature',
-                                        id: 3,
+                                        id: 6,
                                         symbology: [
                                             {
                                                 icon: 'url',
@@ -211,7 +211,7 @@
                                         type: 'layer',
                                         name: 'Subgroup Layer Name 2',
                                         layerType: 'esriFeature',
-                                        id: 4,
+                                        id: 7,
                                         symbology: [
                                             {
                                                 icon: 'url',
@@ -261,7 +261,7 @@
                                         type: 'layer',
                                         name: 'Subgroup Layer 3',
                                         layerType: 'esriImage',
-                                        id: 5,
+                                        id: 8,
                                         symbology: [
                                             {
                                                 icon: 'url',
@@ -316,7 +316,7 @@
                                 type: 'layer',
                                 name: HolderIpsum.words(3, true),
                                 layerType: 'esriFeature',
-                                id: 7,
+                                id: 9,
                                 symbology: [
                                     {
                                         icon: 'url',
@@ -398,14 +398,14 @@
                     {
                         type: 'group',
                         name: 'Image Layers',
-                        id: 1,
+                        id: 10,
                         expanded: false,
                         items: [
                             {
                                 type: 'layer',
                                 name: 'Group 2 Layer Name 1',
                                 layerType: 'esriImage',
-                                id: 8,
+                                id: 11,
                                 symbology: [
                                     {
                                         icon: 'url',
@@ -459,68 +459,68 @@
                     {
                         type: 'group',
                         name: 'Crazy Nested Group',
-                        id: 1,
+                        id: 12,
                         expanded: false,
                         items: [
                             {
                                 type: 'group',
                                 name: 'Nested Level 2',
-                                id: 1,
+                                id: 13,
                                 expanded: false,
                                 items: [
                                     {
                                         type: 'group',
                                         name: 'Nested Level 3',
-                                        id: 1,
+                                        id: 14,
                                         expanded: false,
                                         items: [
                                             {
                                                 type: 'group',
                                                 name: 'Nested Level 4',
-                                                id: 1,
+                                                id: 15,
                                                 expanded: false,
                                                 items: [
                                                     {
                                                         type: 'group',
                                                         name: 'Nested Level 5',
-                                                        id: 1,
+                                                        id: 16,
                                                         expanded: false,
                                                         items: [
                                                             {
                                                                 type: 'group',
                                                                 name: 'Nested Level 6',
-                                                                id: 1,
+                                                                id: 17,
                                                                 expanded: false,
                                                                 items: [
                                                                     {
                                                                         type: 'group',
                                                                         name: 'Nested Level 7',
-                                                                        id: 1,
+                                                                        id: 18,
                                                                         expanded: false,
                                                                         items: [
                                                                             {
                                                                                 type: 'group',
                                                                                 name: 'Nested Level 8',
-                                                                                id: 1,
+                                                                                id: 19,
                                                                                 expanded: false,
                                                                                 items: [
                                                                                     {
                                                                                         type: 'group',
                                                                                         name: 'Nested Level 9',
-                                                                                        id: 1,
+                                                                                        id: 20,
                                                                                         expanded: false,
                                                                                         items: [
                                                                                             {
                                                                                                 type: 'group',
                                                                                                 name: 'Nested Level 10',
-                                                                                                id: 1,
+                                                                                                id: 21,
                                                                                                 expanded: false,
                                                                                                 items: [
                                                                                                     {
                                                                                                         type: 'layer',
                                                                                                         name: 'Lonely Layer',
                                                                                                         layerType: 'esriImage',
-                                                                                                        id: 8,
+                                                                                                        id: 22,
                                                                                                         symbology: [
                                                                                                             {
                                                                                                                 icon: 'url',
@@ -851,20 +851,51 @@
         /**
          * Simple function to remove layers.
          * TODO: needs more work to handle dynamic layer and other crazy stuff
+         * TODO: need to consider what happens when removing the only layer in the group; remove the group as well? etc.
+         * Hides the layer data and removes the node from the layer selector; removes the layer from geoservice after toast delay has passed;adds the layer back to the layer selctor if user click `undo`.
          * @param  {Object} layer layerItem object from the layer selector
          */
         function removeLayer(layer) {
-            geoService.removeLayer(layer.id);
+            let layerGroup;
+            let layerIndex;
+            let layerOriginalVisibility = layer.options.visibility.value;
 
+            // find where the layer is in layer selector
             iterateLayers(service.data, (item, index, group) => {
-                if (item.id === layer.id) {
-                    // console.log(item, index, group);
-
-                    if (index !== -1) {
-                        group.items.splice(index, 1);
-                    }
+                if (item.id === layer.id && index !== -1) {
+                    layerGroup = group;
+                    layerIndex = index;
                 }
             });
+
+            // console.log(layerGroup, layerIndex);
+
+            // pretend we removed the layer by setting it's visibility to off and remove it from the layer selector
+            layerGroup.items.splice(layerIndex, 1);
+            toggleVisiblity(layer, 'off');
+
+            // create notification toast
+            const undoToast = $mdToast.simple()
+                .textContent('Layer removed') // TODO: translate
+                .action('undo') // TODO: translate
+                .highlightAction(true)
+                .parent(layoutService.panes.toc)
+                .position('bottom rv-flex');
+
+            $mdToast.show(undoToast)
+                .then(response => {
+                    if (response === 'ok') { // promise resolves with 'ok' when user clicks 'undo'
+                        // restore layer visibility on undo; and add it back to layer selector
+                        layerGroup.items.splice(layerIndex, 0, layer);
+
+                        // restore original visibility, so if he removed and restored already invisible layer,
+                        // it is restored also invisible
+                        toggleVisiblity(layer, layerOriginalVisibility);
+                    } else {
+                        // remove layer for real now
+                        geoService.removeLayer(layer.id);
+                    }
+                });
         }
 
         // FIXME: placeholder method for toggling group visibility
@@ -893,6 +924,7 @@
         }
 
         // FIXME: placeholder method for toggling visibility
+        // TODO: rename to something like `setVisibility` to make it clearer what this does
         // if 'value' is not specified, toggle
         function toggleVisiblity(layer, value) {
             const control = layer.options.visibility;
@@ -948,12 +980,14 @@
             // FIXME: remove default ecogeo data once filters is disabled for layers with no attribs
             const newData = $timeout(() => {
                 const attrs = geoService.layers[layer.id] && geoService.layers[layer.id].attribs ?
-                    geoService.getFormattedAttributes(layer.id, geoService.layers[layer.id].attribs.indexes[0]) :
+                    geoService.getFormattedAttributes(layer.id, geoService.layers[layer.id].attribs.indexes[
+                        0]) :
                     geoService.getFormattedAttributes('ecogeo', '0');
 
                 return {
                     data: {
-                        columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 5),
+                        columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) *
+                            5),
                         data: attrs.data.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 50),
 
                         // FIXME: this after dynamic layer index gets refactored to proper separate layers

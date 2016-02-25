@@ -20,6 +20,14 @@ describe('rvLayerGroupToggle', () => {
         }
     };
 
+    function mockLayoutService($provide) {
+        $provide.factory('layoutService', $q => () => $q(fulfill => fulfill()));
+    }
+
+    function mockToast($provide) {
+        $provide.service('$mdToast', () => {});
+    }
+
     // mock $mdDialog service because adding 'ngMaterial' module causes more problems;
     // it tries to actually load icons used in the rvlayerGroupToggle template and we would need to mock that out as well
     function mockMdDialog($provide) {
@@ -29,7 +37,7 @@ describe('rvLayerGroupToggle', () => {
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
         bard.appModule('app.ui.toc', 'app.templates', mockMdDialog, 'app.common.router', 'app.geo',
-            'pascalprecht.translate');
+            'pascalprecht.translate', mockLayoutService, mockToast);
 
         // inject angular services
         bard.inject('$compile', '$rootScope', 'tocService');
