@@ -1,5 +1,11 @@
 @mixin toc {
     .rv-toc {
+        // to hide scrollbars when animating layer items
+        // TODO: revisit; this is temporary; consider adding an option on the content pane to set custom css class to style it differently based on the content; to remove default padding from the pane or something like that; this way we can set the overflow directly on the list; if you do it now, part of the layre item on-hover highlight is cut off (8px on left and right);
+        margin: - rem(0.8);
+        overflow-x: hidden;
+        padding: rem(0.8);
+
         @include layer-list;
     }
 }
@@ -24,7 +30,6 @@
         //padding: 0 0 0 rem(1);
         padding: 0;
         max-width: 100%;
-        overflow: hidden; // to hide scrollbars when animating layer items
 
         > li {
             // TODO: move to a separate file maybe or a separate mixin
