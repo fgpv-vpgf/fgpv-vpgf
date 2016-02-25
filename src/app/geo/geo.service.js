@@ -16,7 +16,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService($http, identifyService, layerTypes, configDefaults) {
+    function geoService($http, $q, identifyService, layerTypes, configDefaults) {
 
         // TODO update how the layerOrder works with the UI
         // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -321,14 +321,14 @@
                 }
 
                 // NOTE: Possible to have dom listeners stick around after the node is destroyed
-                console.log(service.layers);
+                // console.log(service.layers);
 
-                for (let key in service.layers) {
-                    if (service.layers.hasOwnProperty(key)) {
-                        console.log('remove layer.id:' + key);
-                        removeLayer(key);
-                    }
-                }
+                // for (let key in service.layers) {
+                //     if (service.layers.hasOwnProperty(key)) {
+                //         console.log('remove layer.id:' + key);
+                //         removeLayer(key);
+                //     }
+                // }
 
                 map.destroy();
                 map = null;
@@ -347,51 +347,23 @@
             const basemapConfig = getBasemapConfig(selectedBasemapId, config);
             const basemap = getBasemapFromJson(basemapConfig);
 
-            map = new service.gapi.mapManager.Map(domNode, {
-                basemap: basemap,
-                zoom: 4,
-                center: [-100, 50]
-            });
+            const initMap = asyncMapInit(basemap, domNode);
 
             if (config.services && config.services.proxyUrl) {
                 service.gapi.mapManager.setProxy(config.services.proxyUrl);
             }
             identify = identifyService(service.gapi, map, service.layers);
 
-            // extract the logic to setupLayers
+            initMap.then(function (msg) {
 
-            // setup map using configs
-            // FIXME: I should be migrated to the new config schema when geoApi is updated
-            const mapSettings = {
-                basemaps: [],
-                scalebar: {},
-                overviewMap: {}
-            };
-            if (config.baseMaps) {
-                mapSettings.basemaps = config.baseMaps;
-            }
+                console.log('initMap: ' + msg);
+                mapManager = service.gapi.mapManager.setupMap(map, config);
 
-            if (config.map.components.scaleBar) {
-                mapSettings.scalebar = {
-                    attachTo: 'bottom-left',
-                    scalebarUnit: 'dual'
-                };
-            }
+                // setup layers
+                setupLayers(config);
+                initMapFullExtentValue(config);
 
-            if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
-
-                // FIXME: overviewMap has more settings
-                mapSettings.overviewMap = config.map.components.overviewMap;
-            }
-
-            if (config.map.extentSets) {
-
-                initMapFullExtent(config);
-            }
-
-            mapManager = service.gapi.mapManager.setupMap(map, mapSettings);
-
-            // mapManager.BasemapControl.setBasemap(selectedBasemapId);
+            });
 
             // FIXME temp link for debugging
             window.FGPV = {
@@ -418,6 +390,9 @@
                 if (newBasemap.wkid === oldBasemap.wkid) {
                     console.log('same wkid: ' + newBasemap.wkid);
                     mapManager.BasemapControl.setBasemap(id);
+                    mapManager.OverviewMapControl.destroy();
+                    mapManager.OverviewMapControl = service.gapi.mapManager.getOverviewMap(map, configService);
+                    mapManager.OverviewMapControl.startup();
                 } else {
 
                     // extent is different, build the map
@@ -460,6 +435,8 @@
         function setFullExtent() {
             if (map) {
                 if (fullExtent) {
+                    console.log('setFullExtent');
+                    console.log(fullExtent);
                     map.setExtent(fullExtent);
                 } else {
                     console.warn('GeoService: fullExtent value is not set.');
@@ -471,6 +448,8 @@
 
         /*
         * Retrieve full extent from extentSets
+        * @param {object} extentSets from config settings of map
+        * @return {object} fullExtent from map settings
         */
         function getFullExtFromExtentSets(extentSets) {
 
@@ -522,37 +501,40 @@
 
         }
 
-        function initMapFullExtent(config) {
-            // body...
+        /**
+        * set up map full extent value
+        * @param {object} config settings
+        */
+        function initMapFullExtentValue(config) {
+
             let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
 
             // map extent is not available until map is loaded
             if (lFullExtent) {
-                service.gapi.events.wrapEvents(map, {
-                    load: () => {
 
-                        // compare map extent and setting.extent spatial-references
-                        // make sure the full extent has the same spatial reference as the map
-                        if (service.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
-                            lFullExtent.spatialReference)) {
+                // compare map extent and setting.extent spatial-references
+                // make sure the full extent has the same spatial reference as the map
+                if (service.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
+                    lFullExtent.spatialReference)) {
 
-                            // same spatial reference, no reprojection required
-                            fullExtent = service.gapi.mapManager.getExtentFromJson(lFullExtent);
-                        } else {
+                    // same spatial reference, no reprojection required
+                    console.log('same spatial reference');
+                    fullExtent = service.gapi.mapManager.getExtentFromJson(lFullExtent);
+                } else {
 
-                            // need to re-project
-                            fullExtent = service.gapi.proj.projectEsriExtent(
-                                service.gapi.mapManager.getExtentFromJson(lFullExtent),
-                                map.extent.spatialReference);
-                        }
-
-                        // setup layers
-                        setupLayers(config);
-                    }
-                });
+                    // need to re-project
+                    console.log('different spatial reference, needs re-projection');
+                    fullExtent = service.gapi.proj.projectEsriExtent(
+                        service.gapi.mapManager.getExtentFromJson(lFullExtent),
+                        map.extent.spatialReference);
+                }
             }
         }
 
+        /**
+        * Setup map layers from config settings
+        * @param {object} config settings
+        */
         function setupLayers(config) {
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
@@ -593,6 +575,9 @@
 
         /*
         * FIXME: can be moved to geoApi
+        * create a basemap from a basemap config setting
+        * @param {object} basemapConfig in JSON format
+        * @return {object} esri basemap object
         */
         function getBasemapFromJson(basemapConfig) {
             const basemapLayers = [];
@@ -612,6 +597,31 @@
             });
 
             return basemap;
+        }
+
+        /**
+        * Return a promise wrapping map creation
+        * TODO: review this one please!
+        */
+        function asyncMapInit(initialBasemap, domNode) {
+            return $q((resolve, reject) => {
+
+                map = new service.gapi.mapManager.Map(domNode, {
+                    basemap: initialBasemap,
+                    zoom: 4,
+                    center: [-100, 50]
+                });
+
+                service.gapi.events.wrapEvents(map, {
+                    load: () => {
+                        // map loaded
+                        resolve('map loaded.');
+                    },
+                    error: () => {
+                        reject('map failed to load.');
+                    }
+                });
+            });
         }
 
     }
