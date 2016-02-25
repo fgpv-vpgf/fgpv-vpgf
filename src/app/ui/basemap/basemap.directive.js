@@ -85,6 +85,7 @@
 
         // TODO: code needs to be updated when config schema is stable
         // check to see if config service is ready
+        // FIXME: clean up vars
         var promise = configService.ready();
 
         // run after configService is ready

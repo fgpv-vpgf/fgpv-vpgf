@@ -14,7 +14,7 @@
      *
      * The `ShellController` controller handles the shell which is the visible part of the layout.
      * `self.isLoading` is initially `true` and causes the loading overlay to be displayed; when `configService` resolves, it's set to `false` and the loading overly is removed.
-     *
+     * // TODO: update comments since it's a directive now.
      */
     angular
         .module('app.layout')
