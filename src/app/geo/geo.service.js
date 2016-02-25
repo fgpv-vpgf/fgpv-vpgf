@@ -322,9 +322,11 @@
                 // NOTE: Possible to have dom listeners stick around after the node is destroyed
                 console.log(service.layers);
 
-                for (let layer in service.layers) {
-                    console.log('remove layer.id:' + layer.id);
-                    removeLayer(layer.id);
+                for (let key in service.layers) {
+                    if (service.layers.hasOwnProperty(key)) {
+                        console.log('remove layer.id:' + key);
+                        removeLayer(key);
+                    }
                 }
 
                 map.destroy();
@@ -389,7 +391,6 @@
 
             mapManager = service.gapi.mapManager.setupMap(map, mapSettings);
             mapManager.BasemapControl.setBasemap(selectedBasemapId);
-            mapManager.OverviewMapControl.startup();
 
             // FIXME temp link for debugging
             window.FGPV = {
