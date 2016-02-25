@@ -6,30 +6,38 @@
     ng-class="{'rv-file-drop-active': self.dropActive}">
 
     <div class="rv-loader-file" flow-init="{ singleFile: true }">
+        <!-- add `, permanentErrors: [200, 201, 202, 404, 415, 500, 501], successStatuses: []` to flow-init to simulate error during upload  -->
 
         <div class="rv-file-drop-blur">
 
-        <rv-stepper-item
-            summary-value="{{ self.file && self.steps[0].isCompleted ? self.file.name : 'GeoJSON, CSV, or Shapefile' }}"
-            step="self.steps[0]">
+            <rv-stepper-item
+                summary-value="{{ self.file && self.steps[0].isCompleted ? self.file.name : 'GeoJSON, CSV, or Shapefile' }}"
+                step="self.steps[0]">
 
-            <div
-                flow-files-submitted="self.filesSubmitted($files, $event, $flow)"
-                flow-file-success="self.fileSuccess($file, $flow)">
+                <div
+                    flow-files-submitted="self.filesSubmitted($files, $event, $flow)"
+                    flow-file-success="self.fileSuccess($file, $flow)"
+                    flow-error="self.fileError($file, $message, $flow)">
 
-                <!--span class="md-title rv-loader-file-drop-title" ng-if="self.dropActive">Drop to upload your file</span-->
+                    <md-button class="rv-button-square rv-loader-file-select-button" flow-btn flow-progress="console.log()">Select a file</md-button>
 
-                <md-button
-                    class="rv-button-square rv-loader-file-select-button"
-                    flow-btn
-                    flow-progress="console.log()">Select a file</md-button>
+                    <md-progress-linear md-mode="determinate" value="{{ self.file ? self.file.progress() * 100 : 0 }}"></md-progress-linear>
 
-                <!--span class="md-caption rv-loader-file-caption">GeoJSON, CSV, and Shapefile data types are supported</span-->
+                    <!--error {{ self.file.error }} TODO: need to somehow add custom error messages here in case file fails to upload -->
 
-                <md-progress-linear md-mode="determinate" value="{{ self.file ? self.file.progress() * 100 : 0 }}"></md-progress-linear>
+                    <!--form name="projectForm">
+                <md-input-container class="md-block rv-loader-file-error-block">
+                    <label>Fields separated by</label>
+                    <input ng-model="self.delimiter" name="description" type="text" md-maxlength="1">
 
-            </div>
-            <!--span class="label label-info">Total Size:
+                    <div ng-messages="projectForm.description.$error">
+                        <div ng-message="md-maxlength">File cannot be uploaded.</div>
+                    </div>
+                </md-input-container>
+            </form-->
+
+                </div>
+                <!--span class="label label-info">Total Size:
                 {{ $flow.getSize() }}bytes</span>
 
             <table>
@@ -41,28 +49,28 @@
                 </tr>
             </table-->
 
-        </rv-stepper-item>
+            </rv-stepper-item>
 
-        <rv-stepper-item
-            step="self.steps[1]"
-            summary-value="{{ self.dataType && self.steps[1].isCompleted ? self.dataTypes[self.dataType] : '' }}"
-            is-continue-enabled="self.dataType">
+            <rv-stepper-item
+                step="self.steps[1]"
+                summary-value="{{ self.dataType && self.steps[1].isCompleted ? self.dataTypes[self.dataType] : '' }}"
+                is-continue-enabled="self.dataType">
 
-            <md-input-container class="md-block">
-                <label>Select data type</label>
-                <md-select ng-model="self.dataType">
-                    <md-option ng-repeat="(value, key) in self.dataTypes" value="{{ value }}">
-                        {{ key }}
-                    </md-option>
-                </md-select>
-            </md-input-container>
-        </rv-stepper-item>
+                <md-input-container class="md-block">
+                    <label>Select data type</label>
+                    <md-select ng-model="self.dataType">
+                        <md-option ng-repeat="(value, key) in self.dataTypes" value="{{ value }}">
+                            {{ key }}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </rv-stepper-item>
 
-        <rv-stepper-item step="self.steps[2]">
-            It's in French!
-        </rv-stepper-item>
+            <rv-stepper-item step="self.steps[2]">
+                It's in French!
+            </rv-stepper-item>
 
-        <!--md-button ng-click="self.expanded = !self.expanded">
+            <!--md-button ng-click="self.expanded = !self.expanded">
             Expand first step</md-button>
 
         <md-button ng-click="self.expanded2 = !self.expanded2">
@@ -80,6 +88,5 @@
             <span class="md-display-2 rv-file-drop-title">Drop to upload your file</span>
         </div>
     </div>
-
 
 </rv-content-pane>

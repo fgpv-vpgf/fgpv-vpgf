@@ -35,9 +35,11 @@
         }
     }
 
-    function Controller($timeout) {
+    function Controller($timeout, stepper) {
         'ngInject';
         const self = this;
+
+        self.dropActive = false; // flag to indicate if file drop zone is active
 
         // TODO: get datatypes from a loader service
         self.steps = [];
@@ -47,12 +49,12 @@
             shapefile: 'Shapefile'
         };
 
-        self.dropActive = false;
-        self.file = null;
-        self.dataType = null;
+        self.file = null; // flow file object
+        self.dataType = null; // string
 
-        self.filesSubmitted = filesSubmitted;
+        self.filesSubmitted = filesSubmitted; // a file is selected or dropped
         self.fileSuccess = fileSuccess;
+        self.fileError = fileError;
 
         activate();
 
@@ -62,7 +64,7 @@
             self.steps.push({
                 titleValue: 'Upload data',
                 stepNumber: 1,
-                isActive: true,
+                isActive: false,
                 isCompleted: false
             }, {
                 titleValue: 'Confirm data type',
@@ -71,12 +73,12 @@
                 isCompleted: false,
                 onContinue: () => {
                     console.log(self.dataType);
-                    forward(1);
+                    stepper.nextStep();
                 },
                 onCancel: () => {
-                    back(1);
-                    self.file.cancel();
-                    self.file = null;
+                    stepper.previousStep();
+                    self.file.cancel(); // removes the file from the upload queue
+                    self.file = null; // kill reference as well
 
                     self.dataType = null;
                 }
@@ -86,53 +88,31 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: () => {
-                    forward(2);
+                    stepper.nextStep();
                 },
                 onCancel: () => {
-                    back(2);
-
-                    // self.dataType = null;
+                    stepper.previousStep();
                 }
             });
+
+            stepper
+                .addSteps(self.steps)
+                .start(); // activate stepper on the first step
         }
 
         function filesSubmitted(files, event, flow) {
-            console.log(files, event, flow);
+            console.log('submitted', files, event, flow);
             self.file = files[0];
             flow.upload();
         }
 
         function fileSuccess(file, message, flow) {
-            console.log(file, message, flow);
-            $timeout(() => forward(0), 300);
+            console.log('success', file, message, flow);
+            $timeout(() => stepper.nextStep(), 300);
         }
 
-        // TODO: this will be reused, so it needs to go into a service
-        // move the stepper forward to the next step (if any)
-        function forward(fromStepNumber) {
-            const fromStep = self.steps[fromStepNumber];
-            const toStep = self.steps[fromStepNumber + 1];
-
-            fromStep.isCompleted = true;
-            fromStep.isActive = false;
-            if (toStep) {
-                toStep.isActive = true;
-            }
-        }
-
-        // TODO: this will be reused, so it needs to go into a service
-        // move the stepper backward to the previous step (if any)
-        function back(fromStepNumber) {
-            const fromStep = self.steps[fromStepNumber];
-            const toStep = self.steps[fromStepNumber - 1];
-
-            fromStep.isCompleted = false;
-            toStep.isCompleted = false;
-
-            if (toStep) {
-                fromStep.isActive = false;
-                toStep.isActive = true;
-            }
+        function fileError(file, message, flow) {
+            console.log('error', file, message, flow);
         }
     }
 })();

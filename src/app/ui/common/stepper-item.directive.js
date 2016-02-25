@@ -8,10 +8,11 @@
      * @restrict E
      * @description
      *
-     * The `rvStepperItem` directive is a step.
+     * The `rvStepperItem` directive is a step implementation in Material Design stepper component.
+     * // TODO: Aly's comment Out of context is a step is a bit confusing. I'm assuming this is part of a workflow provided by that fancy angular library you found? Can you add a bit about where it should be used (i.e. does stepper-item need to be / recommended to be nested within any other directives), and its relation to the library? Feel free to mark a TODO and move on for now.
      *
      * `title-value` a string to be displayed in the step's header
-     * `summary-value` a string to be displayed under the step's header; now shown if omitted
+     * `summary-value` a string to be displayed under the step's header; not shown if omitted
      * `step-number` the step number to be displayed
      * `is-active` a boolean flag specifying if the step is active (open) at the moment
      * `is-complete` a boolean flag specifying is the step has been completed (checkmark is shown instead of the step's number)
