@@ -56,6 +56,7 @@
                 let fieldName = key;
 
                 // search for aliases
+                // TODO add IE polyfill for array.find and use it instead of array.every
                 if (fields) {
                     fields.every(function (field) {
                         if (field.name === key) {
