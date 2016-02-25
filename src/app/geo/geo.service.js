@@ -46,7 +46,8 @@
         let identify = null;
 
         let fullExtent = null;
-        let mapExtent = null;
+
+        // selected basemap id and extentSetId
         let selectedBasemapId = null;
         let selectedBasemapExtentSetId = null;
 
@@ -339,19 +340,18 @@
             // FIXME remove the hardcoded settings when we have code which does this properly
             // if no selected basemap, use the first item
             if (!selectedBasemapId) {
-                mapExtent = setSelectedBaseMap(config.baseMaps[0].id, config);
+                setSelectedBaseMap(config.baseMaps[0].id, config);
             }
 
-            map = new service.gapi.mapManager.Map(domNode, {
+            // create a basemap object
+            const basemapConfig = getBasemapConfig(selectedBasemapId, config);
+            const basemap = getBasemapFromJson(basemapConfig);
 
-                // basemap: 'gray',
-                extent: mapExtent,
-                zoom: 6,
+            map = new service.gapi.mapManager.Map(domNode, {
+                basemap: basemap,
+                zoom: 4,
                 center: [-100, 50]
             });
-
-            console.log('config');
-            console.log(config);
 
             if (config.services && config.services.proxyUrl) {
                 service.gapi.mapManager.setProxy(config.services.proxyUrl);
@@ -390,7 +390,8 @@
             }
 
             mapManager = service.gapi.mapManager.setupMap(map, mapSettings);
-            mapManager.BasemapControl.setBasemap(selectedBasemapId);
+
+            // mapManager.BasemapControl.setBasemap(selectedBasemapId);
 
             // FIXME temp link for debugging
             window.FGPV = {
@@ -421,7 +422,7 @@
 
                     // extent is different, build the map
                     console.log('different wkid: ' + newBasemap.wkid);
-                    mapExtent = setSelectedBaseMap(id, configService);
+                    setSelectedBaseMap(id, configService);
                     buildMap(domNode, configService);
                 }
             }
@@ -509,32 +510,16 @@
             });
         }
 
+        /**
+        * set selected basemap values
+        * internal use only
+        */
         function setSelectedBaseMap(id, config) {
 
-            // console.log('--- config.BaseMaps');
-            // console.log(config.baseMaps);
-            // console.log(config.baseMaps[0].id);
-
-            // selectedBasemapId = (selectedBasemapId) ? selectedBasemapId : config.baseMaps[0].id;
             selectedBasemapId = id;
+            const selectedBaseMapConfig = getBasemapConfig(selectedBasemapId, config);
+            selectedBasemapExtentSetId = selectedBaseMapConfig.extentId;
 
-            console.log('--- selectedBasemapId');
-            console.log(selectedBasemapId);
-            const selectedBaseMap = config.baseMaps.find(baseMap => {
-                return (baseMap.id === selectedBasemapId);
-            });
-
-            console.log('--- selectedBaseMap');
-            console.log(selectedBaseMap);
-            selectedBasemapExtentSetId = selectedBaseMap.extentId;
-
-            console.log('--- base map extentId:' + selectedBasemapExtentSetId);
-
-            const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
-
-            const extent = service.gapi.mapManager.Extent(fullExtentJson);
-
-            return extent;
         }
 
         function initMapFullExtent(config) {
@@ -604,6 +589,29 @@
             return config.baseMaps.find(basemapConfig => {
                 return (basemapConfig.id === id);
             });
+        }
+
+        /*
+        * FIXME: can be moved to geoApi
+        */
+        function getBasemapFromJson(basemapConfig) {
+            const basemapLayers = [];
+            if (basemapConfig.layers) {
+                basemapConfig.layers.forEach(layer => {
+                    let basemapLayer = service.gapi.basemap.BasemapLayer({ url: layer.url });
+                    basemapLayers.push(basemapLayer);
+                });
+            }
+
+            const basemap = new service.gapi.basemap.Basemap({
+                id: basemapConfig.id,
+                layers: basemapLayers,
+                title: basemapConfig.name,
+                thumbnailUrl: basemapConfig.thumbnailUrl,
+                wkid: basemapConfig.wkid
+            });
+
+            return basemap;
         }
 
     }
