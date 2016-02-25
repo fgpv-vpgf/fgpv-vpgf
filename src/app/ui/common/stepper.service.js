@@ -43,7 +43,7 @@
             self.steps.forEach(step => {
                 step.isActive = false;
                 step.isCompleted = false;
-            })
+            });
 
             self.currentStep = null;
 
