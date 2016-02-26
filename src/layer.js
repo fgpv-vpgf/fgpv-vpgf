@@ -68,19 +68,12 @@ function makeLayerInfo(type, name, json) {
 function crawlEsriService(srvJson) {
     if (srvJson.type) {
         // a layer endpoint (i.e. url ends with integer index)
-        switch (srvJson.type) {
-            case 'Feature Layer':
-                return serviceType.FeatureLayer;
-
-            case 'Raster Layer':
-                return serviceType.RasterLayer;
-
-            case 'Group Layer':
-                return serviceType.GroupLayer;
-
-            default:
-                return serviceType.Unknown;
-        }
+        const mapper = {
+            'Feature Layer': serviceType.FeatureLayer,
+            'Raster Layer': serviceType.RasterLayer,
+            'Group Layer': serviceType.GroupLayer
+        };
+        return mapper[srvJson.type] || serviceType.Unknown;
 
     } else if (srvJson.hasOwnProperty('singleFusedMapCache')) {
         if (srvJson.singleFusedMapCache) {
@@ -256,37 +249,40 @@ function predictLayerUrlBuilder(esriBundle) {
         return new Promise(resolve => {
             if (hint) {
                 // go directly to appropriate logic block
-                switch (hint) {
-                    // file based
-                    case serviceType.CSV:
-                    case serviceType.GeoJSON:
-                    case serviceType.Shapefile:
-                        pokeFile(url, hint).then(info => resolve(info));
-                        break;
+                const mapper = {}; // why? cuz cyclomatic complexity + OBEY RULES
 
-                    // esri based
-                    case serviceType.FeatureLayer:
-                    case serviceType.RasterLayer:
-                    case serviceType.GroupLayer:
-                    case serviceType.TileService:
-                    case serviceType.DynamicService:
-                    case serviceType.ImageService:
-                        pokeEsriService(url, esriBundle, hint).then(info => resolve(info));
-                        break;
+                // hint type to hint flavour
+                mapper[serviceType.CSV] = 'F_FILE';
+                mapper[serviceType.GeoJSON] = 'F_FILE';
+                mapper[serviceType.Shapefile] = 'F_FILE';
+                mapper[serviceType.FeatureLayer] = 'F_ESRI';
+                mapper[serviceType.RasterLayer] = 'F_ESRI';
+                mapper[serviceType.GroupLayer] = 'F_ESRI';
+                mapper[serviceType.TileService] = 'F_ESRI';
+                mapper[serviceType.DynamicService] = 'F_ESRI';
+                mapper[serviceType.ImageService] = 'F_ESRI';
+                mapper[serviceType.WMS] = 'F_WMS';
 
-                    // ogc
-                    case serviceType.WMS:
+                // flavour to flavour handler
+                mapper.F_FILE = () => {
+                    pokeFile(url, hint).then(info => resolve(info));
+                };
 
-                        // FIXME REAL LOGIC COMING SOON
-                        resolve(null);
-                        break;
+                mapper.F_ESRI = () => {
+                    pokeEsriService(url, esriBundle, hint).then(info => resolve(info));
+                };
 
-                    default:
+                mapper.F_WMS = () => {
+                    // FIXME REAL LOGIC COMING SOON
+                    resolve(makeInfo(serviceType.WMS));
+                };
 
-                        // FIXME REAL LOGIC COMING SOON
-                        resolve(null);
-                }
+                // execute handler.  hint -> handler -> run it!
+                mapper[mapper[hint]]();
+
             } else {
+                resolve(null);
+
                 // do multiple tests on url
                 pokeFile(url).then(infoFile => {
                     if (infoFile.serviceType === serviceType.Unknown) {
