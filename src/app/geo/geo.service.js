@@ -41,6 +41,8 @@
         };
 
         let map = null; // keep map reference local to geoService
+        let mapDomNode = null;
+        let mapPromise = null;
 
         let mapManager = null;
         let identify = null;
@@ -305,6 +307,10 @@
         function buildMap(domNode, config) {
             console.log('buildMap');
 
+            if (!mapDomNode) {
+                mapDomNode = domNode;
+            }
+
             // reset before rebuilding the map
             if (map !== null) {
 
@@ -321,15 +327,6 @@
                 }
 
                 // NOTE: Possible to have dom listeners stick around after the node is destroyed
-                // console.log(service.layers);
-
-                // for (let key in service.layers) {
-                //     if (service.layers.hasOwnProperty(key)) {
-                //         console.log('remove layer.id:' + key);
-                //         removeLayer(key);
-                //     }
-                // }
-
                 map.destroy();
                 map = null;
                 service.layers = {};
@@ -347,22 +344,21 @@
             const basemapConfig = getBasemapConfig(selectedBasemapId, config);
             const basemap = getBasemapFromJson(basemapConfig);
 
-            const initMap = asyncMapInit(basemap, domNode);
+            buildMapPromise(basemap, domNode);
 
-            if (config.services && config.services.proxyUrl) {
-                service.gapi.mapManager.setProxy(config.services.proxyUrl);
-            }
-            identify = identifyService(service.gapi, map, service.layers);
-
-            initMap.then(function (msg) {
-
-                console.log('initMap: ' + msg);
+            mapPromise.then(esriMapObject => {
+                map = esriMapObject;
                 mapManager = service.gapi.mapManager.setupMap(map, config);
+
+                if (config.services && config.services.proxyUrl) {
+                    service.gapi.mapManager.setProxy(config.services.proxyUrl);
+                }
+
+                identify = identifyService(service.gapi, map, service.layers);
 
                 // setup layers
                 setupLayers(config);
                 initMapFullExtentValue(config);
-
             });
 
             // FIXME temp link for debugging
@@ -375,7 +371,7 @@
          * Switch basemap based on the uid provided.
          * @param {string} id identifier for a specific basemap layerbower
          */
-        function selectBasemap(id, domNode, configService) {
+        function selectBasemap(id, configService) {
             if (typeof (mapManager) === 'undefined' || !mapManager.BasemapControl) {
                 console.error('Error: Map manager or basemap control is not setup,' +
                     ' please setup map manager by calling setupMap().');
@@ -398,7 +394,7 @@
                     // extent is different, build the map
                     console.log('different wkid: ' + newBasemap.wkid);
                     setSelectedBaseMap(id, configService);
-                    buildMap(domNode, configService);
+                    buildMap(mapDomNode, configService);
                 }
             }
         }
@@ -574,7 +570,6 @@
         }
 
         /*
-        * FIXME: can be moved to geoApi
         * create a basemap from a basemap config setting
         * @param {object} basemapConfig in JSON format
         * @return {object} esri basemap object
@@ -601,27 +596,28 @@
 
         /**
         * Return a promise wrapping map creation
-        * TODO: review this one please!
         */
-        function asyncMapInit(initialBasemap, domNode) {
-            return $q((resolve, reject) => {
+        function buildMapPromise(initialBasemap, domNode) {
 
-                map = new service.gapi.mapManager.Map(domNode, {
+            mapPromise = $q((resolve, reject) => {
+
+                const esriMapObject = new service.gapi.mapManager.Map(domNode, {
                     basemap: initialBasemap,
                     zoom: 4,
                     center: [-100, 50]
                 });
 
-                service.gapi.events.wrapEvents(map, {
+                service.gapi.events.wrapEvents(esriMapObject, {
                     load: () => {
                         // map loaded
-                        resolve('map loaded.');
+                        resolve(esriMapObject);
                     },
                     error: () => {
                         reject('map failed to load.');
                     }
                 });
             });
+
         }
 
     }
