@@ -32,7 +32,7 @@
 
                     // there should only be one instance of the directive as the application bootstrap takes care
                     // of handling multiple instances at that level
-                    geoService.buildMap(el[0], configService.data);
+                    geoService.buildMap(el[0], configService.getCurrent());
 
                 }
             });
