@@ -36,6 +36,7 @@ module.exports = function () {
         js: [
             app + '*/**/*.js',
             app + 'app.module.js',
+            src + 'polyfill/*.js',
             '!' + app + '**/*.spec.js'
         ],
         jsOrder: [
