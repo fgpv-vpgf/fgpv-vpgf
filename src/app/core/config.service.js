@@ -148,7 +148,7 @@
 
         /**
          * Returns the currently used config. Language is determined by asking $translate.
-         *
+         * @return {object}     The config object tied to the current language
          */
         function getCurrent() {
             const currentLang = ($translate.proposedLanguage() || $translate.use()).split('-')[0];

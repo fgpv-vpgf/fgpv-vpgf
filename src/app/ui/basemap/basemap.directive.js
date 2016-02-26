@@ -96,6 +96,8 @@
             self.projections = [];
 
             var wkidArray = [];
+
+            // FIXME: in case there is no basemaps; fall back to some default one or something
             var basemaps = configService.getCurrent().baseMaps || [];
 
             basemaps.forEach(basemap => {
