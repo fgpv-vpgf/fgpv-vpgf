@@ -1,4 +1,3 @@
-/*jshint maxcomplexity:15 */
 /* global geoapi */
 (() => {
     'use strict';
