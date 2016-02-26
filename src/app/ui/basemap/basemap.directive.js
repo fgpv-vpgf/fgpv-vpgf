@@ -166,7 +166,7 @@
             basemap.selected = true;
 
             // geoService.selectBasemap(basemap.id);
-            geoService.selectBasemap(basemap.id, $('div[rv-init-map]')[0], configService.data);
+            geoService.selectBasemap(basemap.id, configService.data);
         }
     }
 })();
