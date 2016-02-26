@@ -96,7 +96,7 @@ describe('geo', () => {
                 .toBeDefined();
         });
 
-        it('should set zoom correctly', () => {
+        it('should set zoom correctly', (done) => {
             // make a fake map object
             const map = {
                 setZoom: () => {},
@@ -130,7 +130,7 @@ describe('geo', () => {
             });
 
             // call setZoom with different arguments
-
+            done();
             geoService.setZoom(2);
             expect(map.setZoom)
                 .toHaveBeenCalledWith(2);
@@ -142,6 +142,7 @@ describe('geo', () => {
             geoService.shiftZoom(-2);
             expect(map.setZoom)
                 .toHaveBeenCalledWith(3);
+
         });
 
         describe('map', () => {
@@ -169,8 +170,9 @@ describe('geo', () => {
             const el = angular.element('<div id="randomMap" />');
 
             // TODO: don't know what this does. will bug Aly
-            xit('should make a map', () => {
+            it('should make a map', (done) => {
                 const m = geoService.gapi.mapManager;
+                done();
                 spyOn(m, 'Map')
                     .and.callThrough();
                 geoService.buildMap(el[0], emptyConfig);
