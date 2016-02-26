@@ -84,17 +84,16 @@
             "additionalProperties": false
         },
 
-        "simpleRendererNode": {
+        "symbolNode": {
             "type": "object",
             "properties": {
-                "type": { "type": "string", "enum": [ "simple" ] },
-                "label": { "type": "string" },
-                "imageUrl": { "type": "string" }
+                "label": { "type": "string", "description": "description" },
+                "icon": { "type": "string", "description": "Graphical symbol as a URL (data URLs are encouraged for smaller symbols)" }
             },
-            "required": [ "type", "imageUrl" ],
+            "required": [ "label", "icon" ],
             "additionalProperties": false
         },
-        "uniqueValueRendererNode": {
+        "UNUSEDuniqueValueRendererNode": {
             "type": "object",
             "properties": {
                 "type": { "type": "string", "enum": [ "uniqueValue" ] },
@@ -119,7 +118,7 @@
             "required": [ "type", "field1", "valueMaps" ],
             "additionalProperties": false
         },
-        "classBreaksRendererNode": {
+        "UNUSEDclassBreaksRendererNode": {
             "type": "object",
             "properties": {
                 "type": { "type": "string", "enum": [ "classBreaks" ] },
@@ -143,7 +142,6 @@
             "required": [ "type", "field", "minValue", "rangeMaps" ],
             "additionalProperties": false
         },
-        "symbolNode": { "oneOf": [ { "$ref": "#/definitions/simpleRendererNode" }, { "$ref": "#/definitions/uniqueValueRendererNode" }, { "$ref": "#/definitions/classBreaksRendererNode" } ] },
 
         "lodNode": {
             "type": "object",
@@ -301,28 +299,25 @@
             "required": ["type"],
             "additionalProperties": false
         },
+        "structuredNode": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string", "description": "Display name of the legend entry" },
+                "expanded": {  "type": "boolean", "default": true, "description": "If true the initial state of the group will be expanded"},
+                "children": { "type": "array", "items": { "oneOf": [ {"$ref": "#/definitions/structuredNode" }, {"$ref": "#/definitions/symbolNode"} ] }, "description": "Child elements of the legend node" },
+                "layerId": { "type": "string", "description": "A reference to an entry in the layers list, if set this node will have controls setup for that particular layer" },
+                "index": { "type": "string", "description": "If layerId is a compound layer this should reference the particular entry in that layer" }
+            },
+            "required": ["name"],
+            "additionalProperties": false
+        },
         "legendStructured": {
             "type": "object",
             "properties": {
                 "type": { "type": "string", "enum": [ "structured" ] },
-                "layers": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "layerId": { "type": "string", "description": "reference to an entry in the main layers section" },
-                            "symbology": { "$ref": "#/definitions/symbolNode" },
-                            "children": {
-                                "type": "array",
-                                "items": [ { "$ref": "#/definitions/legendStructured" } ]
-                            }
-                        },
-                        "required": ["layerId", "symbology"],
-                        "additionalProperties": false
-                    }
-                }
+                "root": { "$ref": "#/definitions/structuredNode" }
             },
-            "required": ["type"],
+            "required": ["type", "root"],
             "additionalProperties": false
         },
 
@@ -490,7 +485,7 @@
         },
         "legend": {
             "oneOf": [ { "$ref": "#/definitions/legendAuto" }, { "$ref": "#/definitions/legendStructured" } ],
-            "description": "FIXME"
+            "description": "A structured or automatically generated legend"
         },
         "navigation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
         "navBar": { "$ref": "#/definitions/navBarNode" },
