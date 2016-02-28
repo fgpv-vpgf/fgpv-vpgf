@@ -303,6 +303,7 @@
             "type": "object",
             "properties": {
                 "name": { "type": "string", "description": "Display name of the legend entry" },
+                "renderChildren": { "type": "string", "enum": ["tree", "inline"], "default": "tree", "description": "How to render the elements in the children array (inline only makes sense with symbolNode entries but this is not enforced by the schema)."},
                 "expanded": {  "type": "boolean", "default": true, "description": "If true the initial state of the group will be expanded"},
                 "children": { "type": "array", "items": { "oneOf": [ {"$ref": "#/definitions/structuredNode" }, {"$ref": "#/definitions/symbolNode"} ] }, "description": "Child elements of the legend node" },
                 "layerId": { "type": "string", "description": "A reference to an entry in the layers list, if set this node will have controls setup for that particular layer" },
