@@ -412,10 +412,10 @@
         "basicLayer": {
             "type": "object",
             "properties": {
-                "id": { "type": "string" },
-                "name": { "type": "string" },
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "layerType": { "type": "string", "enum": [ "esriDynamic", "esriFeature", "esriImage", "esriTile", "ogcWms" ] },
-                "url": { "type": "string" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" }
             },
             "required": [ "id", "layerType", "url" ]
@@ -423,10 +423,10 @@
         "basicLayerNode": {
             "type": "object",
             "properties": {
-                "id": { "type": "string" },
-                "name": { "type": "string" },
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "layerType": { "type": "string", "enum": [ "esriImage", "esriTile" ] },
-                "url": { "type": "string" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
                 "options": { "$ref": "#/definitions/basicLayerOptionsNode" }
             },
@@ -436,10 +436,10 @@
         "featureLayerNode": {
             "type": "object",
             "properties": {
-                "id": { "type": "string" },
-                "name": { "type": "string" },
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "layerType": { "type": "string", "enum": [ "esriFeature" ] },
-                "url": { "type": "string" },
                 "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
                 "options": { "$ref": "#/definitions/featureLayerOptionsNode" }
@@ -450,8 +450,9 @@
         "wmsLayerNode": {
             "type": "object",
             "properties": {
-                "id": { "type": "string" },
-                "name": { "type": "string" },
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "layerEntries": {
                     "type": "array",
                     "items": {
@@ -470,7 +471,6 @@
                 "layerType": { "type": "string", "enum": [ "ogcWms" ] },
                 "featureInfoMimeType": { "type": "string", "enum": [ "text/html;fgpv=summary", "text/html", "text/plain", "application/json" ], "description": "If specified indicates that GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested." },
                 "legendMimeType": { "type": "string", "enum": [ "image/png", "image/gif", "image/jpeg", "image/svg", "image/svg+xml" ], "description": "If specified indicates that GetLegendGraphic should be enabled for this WMS and indicates the format that should be requested.  FIXME check legendUrl for additional requirements" },
-                "url": { "type": "string" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
                 "options": { "$ref": "#/definitions/compoundLayerOptionsNode" }
             },
@@ -480,8 +480,9 @@
         "dynamicLayerNode": {
             "type": "object",
             "properties": {
-                "id": { "type": "string" },
-                "name": { "type": "string" },
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "layerType": { "type": "string", "enum": [ "esriDynamic" ] },
                 "layerEntries": {
                     "type": "array",
@@ -492,8 +493,8 @@
                             "enableVisibilityControl": { "type": "boolean", "default":false },
                             "visibleOnLoad": { "type": "boolean","default":true },
                             "queryable": { "type": "boolean", "default": true },
-                            "data": { "type": "boolean", "default": false },
-                            "outfields": { "type": "string", "default": "*" },
+                            "data": { "type": "boolean", "default": false, "description": "Indicates if this index has attribute data that should be requested by the viewer." },
+                            "outfields": { "type": "string", "default": "*", "description": "A comma separated list of attribute names that should be requested on query." },
                             "queryable": { "type": "boolean", "default": true }
                         },
                         "required": ["index"],
@@ -501,7 +502,6 @@
                     },
                     "minItems": 1
                 },
-                "url": { "type": "string" },
                 "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
                 "options": { "$ref": "#/definitions/compoundLayerOptionsNode" }
