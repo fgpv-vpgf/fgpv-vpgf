@@ -93,56 +93,6 @@
             "required": [ "label", "icon" ],
             "additionalProperties": false
         },
-        "UNUSEDuniqueValueRendererNode": {
-            "type": "object",
-            "properties": {
-                "type": { "type": "string", "enum": [ "uniqueValue" ] },
-                "defaultImageUrl": { "type": "string" },
-                "field1": { "type": "string" },
-                "field2": { "type": "string" },
-                "field3": { "type": "string" },
-                "valueMaps": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "label": { "type": "string" },
-                            "value": { "type": "string" },
-                            "imageUrl": { "type": "string" }
-                        },
-                        "required": [ "value", "imageUrl" ],
-                        "additionalProperties": false
-                    }
-                }
-            },
-            "required": [ "type", "field1", "valueMaps" ],
-            "additionalProperties": false
-        },
-        "UNUSEDclassBreaksRendererNode": {
-            "type": "object",
-            "properties": {
-                "type": { "type": "string", "enum": [ "classBreaks" ] },
-                "defaultImageUrl": { "type": "string" },
-                "field": { "type": "string" },
-                "minValue": { "type": "number" },
-                "rangeMaps": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "label": { "type": "string" },
-                            "maxValue": { "type": "number" },
-                            "imageUrl": { "type": "string" }
-                        },
-                        "required": [ "maxValue", "imageUrl" ],
-                        "additionalProperties": false
-                    }
-                }
-            },
-            "required": [ "type", "field", "minValue", "rangeMaps" ],
-            "additionalProperties": false
-        },
-
         "lodNode": {
             "type": "object",
             "properties": {
@@ -163,7 +113,6 @@
         },
 
 
-
         "option": {
             "type": "object",
             "properties": {
@@ -174,8 +123,7 @@
             },
             "description": "Specifies if the corresponding control, option or function is interactive. Doesn't not have any effect on actual state, if any, of the corresponding option"
         },
-
-        "layerOptions": {
+        "basicLayerOptionsNode": {
             "type": "object",
             "properties": {
                 "visibility": {
@@ -209,7 +157,23 @@
                     ],
                     "description": "Specifies the opacity of the layer."
                 },
-                "query": {
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "refresh": {
+                    "$ref": "#/definitions/option",
+                    "description": "Refresh control in the layer selector"
+                },
+                "remove": {
+                    "$ref": "#/definitions/option",
+                    "description": "Remove control in the layer selector"
+                },
+                "boundingBox": {
                     "allOf": [
                         { "$ref": "#/definitions/option" },
                         {
@@ -217,12 +181,49 @@
                                 "value": {
                                     "type": "boolean",
                                     "default": true,
-                                    "description": "Specifies the initial state of the layer visibility. True: layer attribute data (or wms results, etc.) can be accessed by clicking on layer features; False: layer attribute data (not wms results), if any, can only be accessed through the data panel"
+                                    "description": "Specifies the initial state of the bounding box option. True: the layer bounding box is visible; False: the bounding box is hidden."
                                 }
                             }
                         }
                     ],
-                    "description": "FIXME: available only in layer with attributes; Specifies if the layer can be queried by clicking on the map"
+                    "description": "Displays layers bounding box"
+                }
+            },
+            "additionalProperties": false
+        },
+        "featureLayerOptionsNode": {
+            "type": "object",
+            "properties": {
+                "visibility": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "string",
+                                    "enum": [ "on", "off" ],
+                                    "default": "on",
+                                    "description": "Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only."
+                                }
+                            }
+                        }
+                    ],
+                    "description": "Visibility toggle in the layer selector and its current state."
+                },
+                "opacity": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "number",
+                                    "default": 1,
+                                    "description": "Specifies the opacity of the layer. Should be between 0 and 1 inclusively."
+                                }
+                            }
+                        }
+                    ],
+                    "description": "Specifies the opacity of the layer."
                 },
                 "metadata": {
                     "$ref": "#/definitions/option",
@@ -253,7 +254,22 @@
                             }
                         }
                     ],
-                    "description": "FIXME: does not apply to all layer types; Displays layers bounding box"
+                    "description": "Displays layers bounding box"
+                },
+                "query": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "boolean",
+                                    "default": true,
+                                    "description": "Specifies the initial state of the layer visibility. True: layer attribute data (or wms results, etc.) can be accessed by clicking on layer features; False: layer attribute data (not wms results), if any, can only be accessed through the data panel"
+                                }
+                            }
+                        }
+                    ],
+                    "description": "Specifies if the layer can be queried by clicking on the map"
                 },
                 "snapshot": {
                     "allOf": [
@@ -268,29 +284,100 @@
                             }
                         }
                     ],
-                    "description": "FIXME: available only in esri feature layers; Specifies how layer attributes are loaded"
+                    "description": "Specifies how layer attributes are loaded"
                 },
                 "data": {
                     "$ref": "#/definitions/option",
-                    "description": "FIXME: available only in layers with attributes; Enables data panel"
+                    "description": "Enables data panel"
+                }
+            },
+            "additionalProperties": false
+        },
+        "compoundLayerOptionsNode": {
+            "type": "object",
+            "properties": {
+                "visibility": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "string",
+                                    "enum": [ "on", "off" ],
+                                    "default": "on",
+                                    "description": "Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only."
+                                }
+                            }
+                        }
+                    ],
+                    "description": "Visibility toggle in the layer selector and its current state."
                 },
-                "tolerance": {
+                "opacity": {
                     "allOf": [
                         { "$ref": "#/definitions/option" },
                         {
                             "properties": {
                                 "value": {
                                     "type": "number",
-                                    "default": 5,
-                                    "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer"
+                                    "default": 1,
+                                    "description": "Specifies the opacity of the layer. Should be between 0 and 1 inclusively."
                                 }
                             }
                         }
                     ],
-                    "description": "FIXME: does not apply to all layer types (ESRI feature, ESRI dynamic, maybe wms?); Specifies the tolerance in pixels when determining if a feature was clicked"
+                    "description": "Specifies the opacity of the layer."
+                },
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "refresh": {
+                    "$ref": "#/definitions/option",
+                    "description": "Refresh control in the layer selector"
+                },
+                "remove": {
+                    "$ref": "#/definitions/option",
+                    "description": "Remove control in the layer selector"
+                },
+                "boundingBox": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "boolean",
+                                    "default": true,
+                                    "description": "Specifies the initial state of the bounding box option. True: the layer bounding box is visible; False: the bounding box is hidden."
+                                }
+                            }
+                        }
+                    ],
+                    "description": "Displays layers bounding box"
+                },
+                "query": {
+                    "allOf": [
+                        { "$ref": "#/definitions/option" },
+                        {
+                            "properties": {
+                                "value": {
+                                    "type": "boolean",
+                                    "default": true,
+                                    "description": "Specifies the initial state of the layer visibility. True: layer attribute data (or wms results, etc.) can be accessed by clicking on layer features; False: layer attribute data (not wms results), if any, can only be accessed through the data panel"
+                                }
+                            }
+                        }
+                    ],
+                    "description": "Specifies if the layer can be queried by clicking on the map"
                 }
-            }
+            },
+            "additionalProperties": false
         },
+
+
         "legendAuto": {
             "type": "object",
             "properties": {
@@ -329,56 +416,106 @@
                 "name": { "type": "string" },
                 "layerType": { "type": "string", "enum": [ "esriDynamic", "esriFeature", "esriImage", "esriTile", "ogcWms" ] },
                 "url": { "type": "string" },
-                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
-                "options": {
-                    "$ref": "#/definitions/layerOptions"
-                }
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" }
             },
             "required": [ "id", "layerType", "url" ]
         },
-
-        "layerGroup": {
+        "basicLayerNode": {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "items": {
-                    "type": "array",
-                    "items": { "oneOf": [ { "$ref": "#/definitions/basicLayer" }, { "$ref": "#/definitions/layerGroup" } ] }
-                },
-                "expanded": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "True: the layer group is expanded on load; False: the layer group is collapsed"
-                },
-                "options": {
-                    "type": "object",
-                    "properties": {
-                        "visibility": {
-                            "allOf": [
-                                { "$ref": "#/definitions/option" },
-                                {
-                                    "properties": {
-                                        "value": {
-                                            "type": "boolean",
-                                            "default": true,
-                                            "description": "True: the layer group and all its children are visible unless children have overrides; False: the layer group and all its children are hidden unless the overrides are specified."
-                                        }
-                                    }
-                                }
-                            ],
-                            "description": "Visibility toggle of the layer group and its current state."
-                        }
-                    }
-                }
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "layerType": { "type": "string", "enum": [ "esriImage", "esriTile" ] },
+                "url": { "type": "string" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "options": { "$ref": "#/definitions/basicLayerOptionsNode" }
             },
-            "required": [ "items", "name" ]
+            "required": [ "id", "layerType", "url" ],
+            "additionalProperties": false
+        },
+        "featureLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "layerType": { "type": "string", "enum": [ "esriFeature" ] },
+                "url": { "type": "string" },
+                "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "options": { "$ref": "#/definitions/featureLayerOptionsNode" }
+            },
+            "required": [ "id", "layerType", "url" ],
+            "additionalProperties": false
+        },
+        "wmsLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "layerEntries": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {"type": "string", "description": "The id of the layer entry in the WMS"},
+                            "visible": {"type": "boolean"},
+                            "queryable": {"type": "boolean"}
+                        },
+                        "required": ["id"],
+                        "additionalProperties": false
+                    }
+                },
+                "layerType": { "type": "string", "enum": [ "ogcWms" ] },
+                "featureInfoMimeType": { "type": "string", "enum": [ "text/html;fgpv=summary", "text/html", "text/plain", "application/json" ], "description": "If specified indicates that GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested." },
+                "legendMimeType": { "type": "string", "enum": [ "image/png", "image/gif", "image/jpeg", "image/svg", "image/svg+xml" ], "description": "If specified indicates that GetLegendGraphic should be enabled for this WMS and indicates the format that should be requested.  FIXME check legendUrl for additional requirements" },
+                "url": { "type": "string" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "options": { "$ref": "#/definitions/compoundLayerOptionsNode" }
+            },
+            "required": [ "id", "layerType", "layerEntries", "url" ],
+            "additionalProperties": false
+        },
+        "dynamicLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "layerType": { "type": "string", "enum": [ "esriDynamic" ] },
+                "layerEntries": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "index": {"type": "number", "description": "The index of the layer in the map service."},
+                            "visible": {"type": "boolean"},
+                            "data": {"type": "boolean"},
+                            "outfields": {"type": "string"},
+                            "queryable": {"type": "boolean"}
+                        },
+                        "required": ["index"],
+                        "additionalProperties": false
+                    }
+                },
+                "url": { "type": "string" },
+                "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "options": { "$ref": "#/definitions/compoundLayerOptionsNode" }
+            },
+            "required": [ "id", "layerType", "layerEntries", "url" ],
+            "additionalProperties": false
+        },
+        "layerNode": {
+            "oneOf": [
+                { "$ref": "#/definitions/basicLayerNode" },
+                { "$ref": "#/definitions/featureLayerNode" },
+                { "$ref": "#/definitions/wmsLayerNode" },
+                { "$ref": "#/definitions/dynamicLayerNode" }
+            ]
         },
 
         "layerList": {
             "type": "array",
-            "items": { "oneOf": [ { "$ref": "#/definitions/basicLayer" } ] }
+            "items": { "oneOf": [ { "$ref": "#/definitions/layerNode" } ] }
         },
 
         "baseMapNode": {
