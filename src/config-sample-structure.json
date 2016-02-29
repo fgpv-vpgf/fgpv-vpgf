@@ -1,0 +1,63 @@
+{
+  "version": "-1",
+  "legend": {
+    "type": "structured",
+    "root": {
+      "name": "test",
+      "children": [
+        { "icon": "red data url", "label": "red part of the map" },
+        {
+          "name": "wms",
+          "children": [
+            { "icon": "something other than legend graphic for layer A", "label": "random text" },
+            { "icon": "something else which is still not legend graphic for layer A", "label": "holderIpsum.sentence()" }
+          ],
+          "layerId": "wms-042",
+          "index": "A"
+        },
+        {
+          "name": "some feature layer",
+          "children": [
+            { "icon": "starfield.gif", "label": "holderIspum.sentence(maxInt)" }
+          ],
+          "renderChildren": "inline",
+          "layerId": "layer9000"
+        },
+        { "icon": "green data url", "label": "green part of the map" }
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "layer9000",
+      "layerType": "esriFeature",
+      "url": "http://localhost/",
+      "tolerance": 2
+    },
+    {
+      "id": "wms-042",
+      "layerType": "ogcWms",
+      "url": "http://localhost/",
+      "layerEntries": [
+          {"id": "A", "visible": true},
+          {"id": "B"}
+      ],
+      "options": {
+        "query": { "enabled": true, "value": false }
+      }
+    },
+    {
+      "id": "dyn",
+      "layerType": "esriDynamic",
+      "url": "http://localhost/",
+      "layerEntries": [
+          {"index": 4, "visible": true},
+          {"index": 7, "outfields": "OBJFIELD33, OBJFIELD99"}
+      ],
+      "options": {
+        "refresh": { "enabled": false }
+      }
+    }
+  ]
+
+}

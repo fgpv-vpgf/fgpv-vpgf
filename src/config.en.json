@@ -1,7 +1,10 @@
 {
     "version": "-1",
     "legend": {
-        "type": "structured"
+        "type": "structured",
+        "root": {
+            "name": "I got nothin"
+        }
     },
     "layout": {
         "title": "TOMAHAWK"
