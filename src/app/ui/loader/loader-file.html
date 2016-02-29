@@ -38,28 +38,36 @@
             </rv-stepper-item>
 
             <rv-stepper-item
-                form="self.__form1"
-                step="self.steps[1]"
-                summary-value="{{ self.dataType && self.steps[1].isCompleted ? self.dataTypes[self.dataType] : '' }}"
-                is-continue-enabled="self.dataType">
+                form="self.select.form"
+                step="self.select.step"
+                summary-value="{{ self.select.dataType && self.select.step.isCompleted ? self.dataTypes[self.select.dataType] : '' }}"
+                is-continue-enabled="self.select.dataType">
 
-                {{ self.__form1.$valid }}
+                <!--{{ self.select.form.$valid }} {{ self.select.form.$error }}
+
+                {{ self.select.form.dataType.$valid }} {{ self.select.form.dataType.$error }}
+
+                {{ self.select.form.dataType }} -->
 
                 <md-input-container class="md-block">
                     <label>Select data type</label>
-                    <md-select name="dataType" ng-model="self.dataType" required>
+                    <md-select name="dataType" ng-model="self.select.dataType" required>
                         <md-option ng-repeat="(value, key) in self.dataTypes" value="{{ value }}">
                             {{ key }}
                         </md-option>
                     </md-select>
-                    <div class="errors" ng-messages="self.__form1.dataType.$error">
+                    <div class="errors" ng-messages="self.select.form.dataType.$error">
                         <div ng-message="required">Required</div>
                     </div>
                 </md-input-container>
             </rv-stepper-item>
 
             <form name="self.configureLayerForm">
-                <rv-stepper-item step="self.steps[2]" is-continue-enabled="self.configureLayerForm.$valid" ng-switch on="self.dataType">
+                <rv-stepper-item
+                    step="self.steps[2]"
+                    is-continue-enabled="self.configureLayerForm.$valid"
+                    ng-switch
+                    on="self.select.dataType">
 
                     {{ self.configureLayerForm.$valid }}
                     ---

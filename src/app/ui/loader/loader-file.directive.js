@@ -44,7 +44,6 @@
         self.dropActive = false; // flag to indicate if file drop zone is active
 
         // TODO: get datatypes from a loader service
-        self.steps = [];
         self.dataTypes = {
             geojson: 'GeoJSON',
             csv: 'CSV',
@@ -56,12 +55,7 @@
             three: 'three'
         };
 
-        self.file = null; // flow file object
         self.dataType = null; // string
-
-        /*self.filesSubmitted = filesSubmitted; // a file is selected or dropped
-        self.fileSuccess = fileSuccess;
-        self.fileError = fileError;*/
 
         activate();
 
@@ -84,52 +78,74 @@
                 fileError,
                 fileReset,
             };
-            stepper
-                .addSteps(self.upload.step);
 
-            self.steps.push({
-                titleValue: 'Confirm data type',
-                stepNumber: 2,
-                isActive: false,
-                isCompleted: false,
-                onContinue: () => {
-                    console.log(self.dataType);
-                    stepper.nextStep();
-
-                    console.log('=>', self.steps[1], this);
-
-                    console.log('__form1', self.__form1);
+            self.select = {
+                step: {
+                    titleValue: 'Confirm data type',
+                    stepNumber: 2,
+                    isActive: false,
+                    isCompleted: false,
+                    onContinue: selectOnContinue,
+                    onCancel: selectOnCancel
                 },
-                onCancel: () => {
-                    stepper.previousStep();
-                    self.file.cancel(); // removes the file from the upload queue
-                    self.file = null; // kill reference as well
+                form: null,
+                dataType: null,
+                selectReset: selectReset
+            };
 
-                    self.dataType = null;
-                }
-            }, {
-                titleValue: 'Configure layer',
-                stepNumber: 3,
-                isActive: false,
-                isCompleted: false,
-                onContinue: () => {
-                    self.configureLayerForm.$setValidity('required', true, {
-                        a: true
-                    });
-                    self.configureLayerForm.$setValidity('customKey', false, true);
-
-                    // stepper.nextStep();
+            self.configure = {
+                step: {
+                    titleValue: 'Configure layer',
+                    stepNumber: 3,
+                    isActive: false,
+                    isCompleted: false,
+                    onContinue: configureOnContinue,
+                    onCancel: configureOnCancel
                 },
-                onCancel: () => {
-                    self.configureLayerForm.$setPristine();
-                    self.configureLayerForm.$setUntouched();
-                    stepper.previousStep();
-                }
-            });
+                form: null,
+                config: {}
+            };
 
             stepper
-                .addSteps(self.steps)
+                .addSteps(self.upload.step)
+                .addSteps(self.select.step)
+                .addSteps(self.configure.step)
                 .start(); // activate stepper on the first step
+        }
+
+        function configureOnContinue() {
+            /* jshint validthis:true */
+            self.configureLayerForm.$setValidity('required', true, {
+                a: true
+            });
+            self.configureLayerForm.$setValidity('customKey', false, true);
+
+            // stepper.nextStep();
+        }
+
+        function configureOnCancel() {
+            /* jshint validthis:true */
+            self.configureLayerForm.$setPristine();
+            self.configureLayerForm.$setUntouched();
+            stepper.previousStep();
+        }
+
+        function selectOnContinue() {
+            console.log(self.select.dataType);
+            stepper.nextStep();
+        }
+
+        function selectOnCancel() {
+            console.log('selectOnCancel', this);
+            stepper.previousStep();
+            self.upload.fileReset();
+            self.select.selectReset();
+        }
+
+        function selectReset() {
+            self.select.dataType = null;
+            self.select.form.$setPristine();
+            self.select.form.$setUntouched();
         }
 
         function fileSelectorOpened() {
@@ -158,42 +174,11 @@
 
         function fileReset() {
             /* jshint validthis:true */
-            this.file = null;
-            this.form.$setValidity('upload-error', true, true);
-        }
-    }
-})();
-
-(() => {
-    'use strict';
-
-    /**
-     * @ngdoc directive
-     * @name rvFileValidation
-     * @module app.ui.loader
-     * @restrict A
-     * @description
-     *
-     * The `rvFileValidation` directive description.
-     *
-     */
-    angular
-        .module('app.ui.loader')
-        .directive('rvFileValidation', rvFileValidation);
-
-    function rvFileValidation() {
-        const directive = {
-            restrict: 'A',
-            require: 'ngModel',
-            link: link
-        };
-
-        return directive;
-
-        /**********/
-
-        function link(scope, el, attr, ctrl) {
-            console.log('rvFileValidation', scope, el, attr, ctrl);
+            if (this.file) {
+                this.file.cancel(); // removes the file from the upload queue
+            }
+            this.file = null; // kill reference as well
+            this.form.$setValidity('upload-error', true, true); // remove errors from the form
         }
     }
 })();
