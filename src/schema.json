@@ -394,7 +394,7 @@
                 "expanded": {  "type": "boolean", "default": true, "description": "If true the initial state of the group will be expanded"},
                 "children": { "type": "array", "items": { "oneOf": [ {"$ref": "#/definitions/structuredNode" }, {"$ref": "#/definitions/symbolNode"} ] }, "description": "Child elements of the legend node" },
                 "layerId": { "type": "string", "description": "A reference to an entry in the layers list, if set this node will have controls setup for that particular layer" },
-                "index": { "type": "string", "description": "If layerId is a compound layer this should reference the particular entry in that layer" }
+                "index": { "type": "string", "description": "If layerId is a compound layer this should reference the particular entry in that layer.  WMSes will have an id property in layerEntries and dynamic layers will have an index." }
             },
             "required": ["name"],
             "additionalProperties": false
@@ -458,12 +458,14 @@
                         "type": "object",
                         "properties": {
                             "id": {"type": "string", "description": "The id of the layer entry in the WMS"},
-                            "visible": {"type": "boolean"},
-                            "queryable": {"type": "boolean"}
+                            "enableVisibilityControl": { "type": "boolean", "default":false },
+                            "visibleOnLoad": { "type": "boolean","default":true },
+                            "queryable": { "type": "boolean", "default": true }
                         },
                         "required": ["id"],
                         "additionalProperties": false
-                    }
+                    },
+                    "minItems": 1
                 },
                 "layerType": { "type": "string", "enum": [ "ogcWms" ] },
                 "featureInfoMimeType": { "type": "string", "enum": [ "text/html;fgpv=summary", "text/html", "text/plain", "application/json" ], "description": "If specified indicates that GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested." },
@@ -487,14 +489,17 @@
                         "type": "object",
                         "properties": {
                             "index": {"type": "number", "description": "The index of the layer in the map service."},
-                            "visible": {"type": "boolean"},
-                            "data": {"type": "boolean"},
-                            "outfields": {"type": "string"},
-                            "queryable": {"type": "boolean"}
+                            "enableVisibilityControl": { "type": "boolean", "default":false },
+                            "visibleOnLoad": { "type": "boolean","default":true },
+                            "queryable": { "type": "boolean", "default": true },
+                            "data": { "type": "boolean", "default": false },
+                            "outfields": { "type": "string", "default": "*" },
+                            "queryable": { "type": "boolean", "default": true }
                         },
                         "required": ["index"],
                         "additionalProperties": false
-                    }
+                    },
+                    "minItems": 1
                 },
                 "url": { "type": "string" },
                 "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },

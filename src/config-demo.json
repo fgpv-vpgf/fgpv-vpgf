@@ -50,7 +50,7 @@
       "id":"ecogeo",
       "name": "Eco Geo",
       "layerType":"esriDynamic",
-      "layerEntries": [],
+      "layerEntries": [{"index": 0}],
       "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer"
     },
     {
@@ -69,7 +69,7 @@
       "id":"aafc_dynamic_layer",
       "name": "AAFC Census of Agriculture 2011",
       "layerType":"esriDynamic",
-      "layerEntries": [],
+      "layerEntries": [{"index": 0}],
       "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_census_of_agriculture_2011_ccs/MapServer"
     },
     {
