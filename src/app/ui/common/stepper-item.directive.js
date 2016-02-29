@@ -21,6 +21,7 @@
      * `is-continue-enabled` a boolean flag indicating if the `continue` button is enabled; doesn't make sense if `on-cancel` is omitted
      * `is-cancel-enabled` a boolean flag indicating if the `cancel` button is enabled; doesn't make sense if `on-continue` is omitted
      * `step` a shortcut for all other properties which can be supplied in an object; first, a explicit binding takes precedence over anything supplied in the `step` property
+     * `step-form` is an object reference to which stepper item's form will be bound, so it can be access from the parent directive
      *
      * Usage example:
      * ```html
@@ -56,7 +57,8 @@
                 onContinue: '&?',
                 onCancel: '&?',
                 isContinueEnabled: '=?',
-                isCancelEnabled: '=?'
+                isCancelEnabled: '=?',
+                stepForm: '=?form'
             },
             transclude: true,
             link: link,
@@ -101,8 +103,6 @@
 
         /*********/
 
-        function activate() {
-
-        }
+        function activate() {}
     }
 })();
