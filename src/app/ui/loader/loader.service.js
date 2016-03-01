@@ -31,16 +31,9 @@
          * @returns {Promise} resolving to a guessed data type or null if can't guess
          */
         function setSource(dataSource) {
-
-            if (dataSource.isFile) {
-
-            } else {
-
-            }
-
             // a call to geoApi to try and guess what this is
             // returns a promise resolbing to a string with a data type (user will need to confirm the guess); null if cannot determine (user will need to select manually)
-            return geoService.guessDataType(self.source)
+            return geoService.guessDataType(dataSource)
                 .then((data, guessedType) => {
                     self.data = data;
                     self.type = guessedType; // store guess on service so it can be bound to
@@ -59,10 +52,12 @@
                 return $q.reject('Data or its type is not specified');
             }
 
+            // based on datatype, call validateData for files; and interrogate services if type changed from before
+
             return geoService.validateData(self.data, self.type)
                 .then((isValid, otherStuff) => {
-                    return $q.resolve(isValid);
-                })
+                    return $q.resolve(isValid, otherStuff);
+                });
 
             /*
              cals geoapi to get stuff like row headers;

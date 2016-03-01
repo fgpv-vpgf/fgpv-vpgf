@@ -8,7 +8,7 @@
      * @restrict A
      * @description
      *
-     * The `rv-loader-file` directive description.
+     * The `rv-loader-file` directive creates a stepper interface for loading local files with geodata and turning them into layers.
      *
      */
     angular
@@ -35,11 +35,9 @@
         }
     }
 
-    function Controller($scope, $timeout, stepper) {
+    function Controller($timeout, stepper) {
         'ngInject';
         const self = this;
-
-        // self.__form1 = {a: 999};
 
         self.dropActive = false; // flag to indicate if file drop zone is active
 
@@ -54,8 +52,6 @@
             two: 'two',
             three: 'three'
         };
-
-        self.dataType = null; // string
 
         activate();
 
@@ -72,11 +68,10 @@
                 },
                 form: null,
                 file: null,
-                fileSelectorOpened, // wanted to use es6 lexical this, but jshint complains; need to update to the newer version of jshint
-                filesSubmitted,
-                fileSuccess,
-                fileError,
-                fileReset,
+                filesSubmitted: uploadFilesSubmitted,
+                fileSuccess: uploadFileSuccess,
+                fileError: uploadFileError,
+                fileReset: uploadFileReset,
             };
 
             self.select = {
@@ -89,8 +84,7 @@
                     onCancel: selectOnCancel
                 },
                 form: null,
-                dataType: null,
-                selectReset: selectReset
+                dataType: null
             };
 
             self.configure = {
@@ -113,83 +107,91 @@
                 .start(); // activate stepper on the first step
         }
 
+        /**
+         * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
+         */
         function configureOnContinue() {
-            /*self.configure.form.$setValidity('required', true, {
-                a: true
-            });
-            self.configure.form.$setValidity('customKey', false, true);*/
-
-            // stepper.nextStep();
+            // TODO: try to build layer and add it to the map
+            // TODO: display error message if something breaks
+            stepper.nextStep();
         }
 
+        /**
+         * Cancels the layer configuration step and rolls back to file type selection.
+         */
         function configureOnCancel() {
-            self.configure.options = {};
-
-            // self.configure.form.$setPristine();
-            // self.configure.form.$setValidity();
-            // self.configure.form.$setUntouched();
+            self.configure.options = {}; // reset layer options
 
             stepper.previousStep();
         }
 
         function selectOnContinue() {
-            console.log(self.select.dataType);
+            // console.log(self.select.dataType);
             stepper.nextStep();
         }
 
+        /**
+         * Cancels the file type selection and rolls back to file upload.
+         */
         function selectOnCancel() {
-            console.log('selectOnCancel');
+            // console.log('selectOnCancel');
             stepper.previousStep();
-            self.upload.fileReset();
-            self.select.selectReset();
-        }
-
-        function selectReset() {
+            self.upload.fileReset(); // reset the upload form
             self.select.dataType = null;
-
-            // self.select.form.$setPristine();
-            // self.select.form.$setValidity('required', true);
-            // self.select.form.$setUntouched();
-
-            // self.select.form.$setValidity('required', true, true);
         }
 
-        function fileSelectorOpened() {
-            /* jshint validthis:true */
-            this.fileReset();
-        }
-
-        function filesSubmitted(files, event, flow) {
-            /* jshint validthis:true */
-            console.log('submitted', files, event, flow, this);
-            this.file = files[0];
-            flow.upload();
-        }
-
-        function fileSuccess(file, message, flow) {
-            /* jshint validthis:true */
-            console.log('success', file, message, flow, this);
-            $timeout(() => stepper.nextStep(), 300);
-        }
-
-        function fileError(file, message, flow) {
-            /* jshint validthis:true */
-            console.log('error', file, flow, this.form);
-            this.form.$setValidity('upload-error', false, this.step);
-        }
-
-        function fileReset() {
-            /* jshint validthis:true */
-            if (this.file) {
-                this.file.cancel(); // removes the file from the upload queue
+        /**
+         * Starts file upload.
+         * @param  {Array} files uploaded array of files
+         * @param  {Object} event submitted event
+         * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
+         */
+        function uploadFilesSubmitted(files, event, flow) {
+            // TODO: if current step is not the first and user drag-drops file, go back to first step
+            // console.log('submitted', files, event, flow);
+            if (files.length > 0) {
+                self.upload.file = files[0]; // store the first file from the array;
+                flow.upload();
             }
-            this.file = null; // kill reference as well
+        }
 
-            this.form.$setPristine();
-            this.form.$setUntouched();
+        /**
+         * When a file is uploaded, calls gapi to get data type and field names if possible.
+         * @param  {Object} file    uploaded flow file object
+         * @param  {Object} message a success message
+         * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
+         */
+        function uploadFileSuccess() { // file, message, flow) {
+            // console.log('success', file, message, flow);
+            // TODO: call geoapi to guess filetype :_ ; throw erorr if unsupported format
+            $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
+        }
+
+        /**
+         * Displays an error message if a file fails to upload
+         * @param  {Object} file    flow file object
+         * @param  {String} message error message
+         * @param  {Object} flow    flow object https://github.com/flowjs/ng-flow
+         */
+        function uploadFileError() { // file, message, flow) {
+            // console.log('error', file, flow);
+            const upload = self.upload;
+            upload.form.$setValidity('upload-error', false, upload.step);
+        }
+
+        /**
+         * Reset the file upload form removing custom messages.
+         */
+        function uploadFileReset() {
+            const upload = self.upload;
+
+            if (upload.file) { // if there is a file in the queue
+                upload.file.cancel(); // removes the file from the upload queue
+            }
+            upload.file = null; // kill reference as well
 
             // arguments as follows: name of the error, state of the error, a controller object which will be stored against the error; when removing the same error, need to provide the same controller object
-            this.form.$setValidity('upload-error', true, this.step); // remove errors from the form
+            upload.form.$setValidity('upload-error', true, upload.step); // remove errors from the form
         }
     }
 })();

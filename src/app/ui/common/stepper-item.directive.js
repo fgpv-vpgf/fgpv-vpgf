@@ -9,8 +9,12 @@
      * @description
      *
      * The `rvStepperItem` directive is a step implementation in Material Design stepper component.
-     * // TODO: Aly's comment Out of context is a step is a bit confusing. I'm assuming this is part of a workflow provided by that fancy angular library you found? Can you add a bit about where it should be used (i.e. does stepper-item need to be / recommended to be nested within any other directives), and its relation to the library? Feel free to mark a TODO and move on for now.
+     * Material Design has specs for a Stepper component (https://www.google.com/design/spec/components/steppers.html#steppers-specs). Steppers display progress through a sequence by breaking it up into multiple logical and numbered steps. Unfortunatelly, Angular Material didn't implement it yet, so we have to build our own.
+     * This directive represents a single step (`Stepper` service provides navigation between linked steps) which wraps the specified content in a form to provide field validation. `Continue` and `Cancel` buttons can be display in each step. `Continue` button is disabled unless the form is valid. `Cancel` button clears the form and remove all the standard error messages.
      *
+     * `Stepper-items` should not be nested.
+     *
+     * // TODO: check if individual overrides even make sense and useful; removing them will siplify the template;
      * `title-value` a string to be displayed in the step's header
      * `summary-value` a string to be displayed under the step's header; not shown if omitted
      * `step-number` the step number to be displayed

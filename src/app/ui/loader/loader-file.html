@@ -6,7 +6,9 @@
     ng-class="{'rv-file-drop-active': self.dropActive}">
 
     <div class="rv-loader-file" flow-init="{ singleFile: true }">
-        <!-- add `, permanentErrors: [200, 201, 202, 404, 415, 500, 501], successStatuses: []` to flow-init to simulate error during upload  -->
+        <!-- add `
+            , permanentErrors: [200, 201, 202, 404, 415, 500, 501], successStatuses: []`
+         to flow-init to simulate error during upload  -->
 
         <div class="rv-file-drop-blur">
 
@@ -25,13 +27,13 @@
                             class="rv-button-square rv-loader-file-select-button"
                             flow-btn
                             flow-progress="console.log()"
-                            ng-click="self.upload.fileSelectorOpened()">Select a file</md-button>
+                            ng-click="self.upload.fileReset()">Select a file</md-button>
 
                         <md-progress-linear md-mode="determinate" value="{{ self.upload.file ? self.upload.file.progress() * 100 : 0 }}"></md-progress-linear>
 
                     </div>
                     <div class="errors" ng-messages="self.upload.form.$error" ng-if="self.upload.form.$invalid">
-                        <div ng-message="upload-error">File cannot be uploaded.</div>
+                        <div ng-message="upload-error">Can't access file.</div>
                     </div>
                 </md-input-container>
 
