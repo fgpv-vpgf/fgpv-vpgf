@@ -2,7 +2,11 @@
 
     <!-- TODO: add translate filters -->
 
-    <md-button aria-label="Import Layers" class="md-icon-button primary" ng-click="$mdOpenMenu($event)">
+    <md-button
+        aria-label="Import Layers"
+        class="md-icon-button primary"
+        ng-click="$mdOpenMenu($event)"
+        ng-class="{ selected: self.stateManager.state.mainLoaderFile.active }">
         <md-tooltip>Import Layers</md-tooltip>
         <md-icon md-svg-src="content:add"></md-icon>
     </md-button>

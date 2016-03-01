@@ -40,6 +40,8 @@
         'ngInject';
         const self = this;
 
+        self.stateManager = stateManager;
+
         self.openFileLoader = openFileLoader;
 
         activate();

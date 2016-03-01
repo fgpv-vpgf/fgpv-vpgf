@@ -8,6 +8,7 @@
      *
      * @description
      * The `Loader` service provides ....
+     * TODO: add description
      *
      */
     angular
@@ -24,6 +25,8 @@
         self.setSource = setSource;
         self.validateData = validateData;
         self.configurateLayer = configurateLayer;
+
+        // TODO: write proper code when gapi has necessary methods; the following functions are pseudo-code;
 
         /**
          * Stores data source from the layer import component and calls geoApi for details.

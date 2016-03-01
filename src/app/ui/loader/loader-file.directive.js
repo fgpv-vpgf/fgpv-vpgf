@@ -204,11 +204,11 @@
             const item = stateManager.state.main.history.slice(-2).shift(); // get second to last history item
             const options = {};
 
-            // reopen previous selected pane if it's not null or 'mainDetails'
+            // reopen previous selected pane if it's not null or 'mainLoaderFile'
             if (item !== null && item !== 'mainLoaderFile') {
                 options[item] = true;
             } else {
-                options.mainDetails = false;
+                options.mainLoaderFile = false;
             }
 
             // close `mainDetails` panel
