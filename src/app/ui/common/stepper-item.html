@@ -33,17 +33,19 @@
                     class="rv-button-square"
                     ng-disabled="!self.isCancelEnabled && !self.step.isCancelEnabled"
                     ng-if="self.onCancel || self.step.onCancel"
-                    ng-click="(self.onCancel || self.step.onCancel)()">
+                    ng-click="self.onCancelBefore()">
                     cancel
                 </md-button>
 
                 <md-button
                     class="rv-button-square md-primary"
-                    ng-disabled="!self.isContinueEnabled && !self.step.isContinueEnabled"
+                    ng-disabled="!(self.stepForm.$valid && (self.isContinueEnabled || self.step.isContinueEnabled))"
                     ng-if="self.onContinue || self.step.onContinue"
                     ng-click="(self.onContinue || self.step.onContinue)()">
                     continue
                 </md-button>
+
+                <!--{{ !(self.stepForm.$valid && (self.isContinueEnabled || self.step.isContinueEnabled)) }} -->
 
             </div>
 

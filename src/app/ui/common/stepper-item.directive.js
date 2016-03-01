@@ -97,12 +97,22 @@
     }
 
     function Controller() {
-        // const self = this;
+        const self = this;
 
-        activate();
+        self.onCancelBefore = onCancelBefore;
 
         /*********/
 
-        function activate() {}
+        /**
+         * Called when the `Cancel` button is clicked; this resets the inner form to its default state, hiding all the standard error messages, executes extrenal callback after.
+         */
+        function onCancelBefore() {
+            // reset the form on cancel
+            self.stepForm.$setPristine();
+            self.stepForm.$setUntouched();
+
+            // call cancel function
+            (self.onCancel || self.step.onCancel)();
+        }
     }
 })();
