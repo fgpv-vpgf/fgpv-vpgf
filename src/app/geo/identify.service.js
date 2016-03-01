@@ -224,7 +224,7 @@
                             const attribSet = attribsBundle[attribsBundle.indexes[0]];
 
                             // queryFeatures returns a dojo-style promise, so cannot use .catch
-                            layer.queryFeatures(qry).then(queryResult => {
+                            $q.resolve(layer.queryFeatures(qry)).then(queryResult => {
 
                                 // transform attributes of query results into {name,data} objects
                                 // one object per queried feature
@@ -248,7 +248,7 @@
                                 result.isLoading = false;
                                 resolve(true);
 
-                            }, err => {
+                            }).catch(err => {
                                 console.warn('Layer query failed');
                                 console.warn(err);
                                 result.data = JSON.stringify(err);

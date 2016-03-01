@@ -109,8 +109,7 @@
                 console.error('attempt to register layer already registered.  id: ' + layer.id);
             }
 
-            // TODO should attribs be defined and set to null, or simply omitted from the object?  some layers will not have attributes. others will be added after they load
-            let l = {
+            const l = {
                 layer,
                 attribs,
 
@@ -318,34 +317,34 @@
 
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
-                const defAttrib = $q.defer(); // handles the asynch loading of attributes
-                registerLayer(l, layerConfig, defAttrib.promise); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
-                map.addLayer(l);
+                const pAttrib = $q((resolve, reject) => { // handles the asynch loading of attributes
 
-                // wait for layer to load before registering
-                // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
-                service.gapi.events.wrapEvents(l, {
-                    load: () => {
-                        // FIXME look at layer config for flags indicating not to load attributes
-                        // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
+                    // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
+                    service.gapi.events.wrapEvents(l, {
+                        load: () => {
+                            // FIXME look at layer config for flags indicating not to load attributes
+                            // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
 
-                        // get the attributes for the layer
-                        const a = service.gapi.attribs.loadLayerAttribs(l);
+                            // get the attributes for the layer
+                            const a = service.gapi.attribs.loadLayerAttribs(l);
 
-                        a.then(data => {
-                            // registerAttributes(data);
-                            defAttrib.resolve(data);
-                        })
-                        .catch(exception => {
-                            console.error('Error getting attributes for ' + l.name + ': ' +
-                                exception);
-                            console.log(l);
+                            a.then(data => {
+                                // registerAttributes(data);
+                                resolve(data);
+                            })
+                            .catch(exception => {
+                                console.error('Error getting attributes for ' + l.name + ': ' +
+                                    exception);
+                                console.log(l);
 
-                            // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
-                            defAttrib.reject(exception);
-                        });
-                    }
+                                // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
+                                reject(exception);
+                            });
+                        }
+                    });
                 });
+                registerLayer(l, layerConfig, pAttrib); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                map.addLayer(l);
             });
 
             // setup map using configs

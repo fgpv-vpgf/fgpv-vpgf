@@ -72,9 +72,8 @@ describe('geo', () => {
         });
         */
 
-        /*
         // FIXME re-enable and correct this test once getFormattedAttributes is migrated
-        it('should bundle attributes correctly', () => {
+        xit('should bundle attributes correctly', () => {
             let tempLayer = {
                 id: 'sausages',
                 setVisibility: () => {}
@@ -102,7 +101,6 @@ describe('geo', () => {
             expect(bundledAttributes.columns)
                 .toBeDefined();
         });
-        */
 
         it('should set zoom correctly', () => {
             // make a fake map object
