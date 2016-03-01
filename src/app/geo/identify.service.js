@@ -187,6 +187,8 @@
                         return $q.resolve(null);
                     }
 
+                    // FIXME  add a check to see if layer has config setting for not supporting a click
+
                     const result = {
                         isLoading: true,
                         requestId: -1,
@@ -202,63 +204,57 @@
                         getTolerance(layerRegistry, layer));
 
                     return $q((resolve, reject) => {
-                        // queryFeatures returns a dojo-style promise, so cannot use .catch
-                        layer.queryFeatures(qry).then(queryResult => {
 
-                            // transform attributes of query results into {name,data} objects
-                            // one object per queried feature
-                            //
-                            // each feature will have its attributes converted into a table
-                            // placeholder for now until we figure out how to signal the panel that
-                            // we want to make a nice table
-                            result.data = queryResult.features.map(feat => {
-                                // TODO might want to abstract some of this out into a "get attibutes from feature" function
-                                // get the id and attribute bundle of the layer belonging to the feature that was clicked
-                                if (!layerRegistry[layer.id]) {
-                                    throw new Error('Click on unregistered layer ' + layer.id);
-                                }
+                        // TODO might want to abstract some of this out into a "get attibutes from feature" function
+                        // get the id and attribute bundle of the layer belonging to the feature that was clicked
+                        if (!layerRegistry[layer.id]) {
+                            throw new Error('Click on unregistered layer ' + layer.id);
+                        }
+                        const layerState = layerRegistry[layer.id].state;
 
-                                const attribsBundle = layerRegistry[layer.id].attribs;
-                                if (!attribsBundle) {
-                                    // a valid case is that attributes are still downloading. perhaps returning
-                                    // a "click back later when attribs have downloaded" detail result is ok?
-                                    // for now, just display the bare data that is in the graphic layer (probably object id)
-                                    // FIXME once we have a promise that resolves after attributes are downloaded,
-                                    //      use that to delay this entire attribute fetch process
+                        // ensure attributes are downloaded.  wait for them if not.
+                        layerRegistry[layer.id].attribs.then(attribsBundle => {
+
+                            if (attribsBundle.indexes.length === 0) {
+                                // TODO do we really want to error, or just do nothing (i.e. user clicks on no-data feature -- so what?)
+                                throw new Error('Click on layer without downloaded attributes ' + layer.id);
+                            }
+
+                            // feature layers have only one index, so the first one is ours. grab the attribute set for that index.
+                            const attribSet = attribsBundle[attribsBundle.indexes[0]];
+
+                            // queryFeatures returns a dojo-style promise, so cannot use .catch
+                            layer.queryFeatures(qry).then(queryResult => {
+
+                                // transform attributes of query results into {name,data} objects
+                                // one object per queried feature
+                                //
+                                // each feature will have its attributes converted into a table
+                                // placeholder for now until we figure out how to signal the panel that
+                                // we want to make a nice table
+                                result.data = queryResult.features.map(feat => {
+
+                                    // grab the object id of the feature we clicked on.
+                                    const objId = feat.attributes[attribSet.oidField].toString();
+
+                                    // use object id find location of our feature in the feature array, and grab its attributes
+                                    const featAttribs = attribSet.features[attribSet.oidIndex[objId]].attributes;
+
                                     return {
-                                        name: feat.getTitle(),
-                                        data: attributesToDetails(feat.attributes)
+                                        name: getFeatureName(feat.attribs, layerState, objId),
+                                        data: attributesToDetails(featAttribs, attribSet.fields)
                                     };
-                                } else if (Object.keys(attribsBundle).length === 0) {
-                                    // TODO do we really want to error, or just do nothing (i.e. user clicks on no-data feature -- so what?)
-                                    throw new Error('Click on layer without downloaded attributes ' + layer.id);
-                                }
+                                });
+                                result.isLoading = false;
+                                resolve(true);
 
-                                const layerState = layerRegistry[layer.id].state;
-
-                                // feature layers have only one index, so the first one is ours. grab the attribute set for that index.
-                                const attribSet = attribsBundle[attribsBundle.indexes[0]];
-
-                                // grab the object id of the feature we clicked on.
-                                const objId = feat.attributes[attribSet.oidField].toString();
-
-                                // use object id find location of our feature in the feature array, and grab its attributes
-                                const featAttribs = attribSet.features[attribSet.oidIndex[objId]].attributes;
-
-                                return {
-                                    name: getFeatureName(feat.attribs, layerState, objId),
-                                    data: attributesToDetails(featAttribs, attribSet.fields)
-                                };
+                            }, err => {
+                                console.warn('Layer query failed');
+                                console.warn(err);
+                                result.data = JSON.stringify(err);
+                                result.isLoading = false;
+                                reject(err);
                             });
-                            result.isLoading = false;
-                            resolve(true);
-
-                        }, err => {
-                            console.warn('Layer query failed');
-                            console.warn(err);
-                            result.data = JSON.stringify(err);
-                            result.isLoading = false;
-                            reject(err);
                         });
                     });
 
