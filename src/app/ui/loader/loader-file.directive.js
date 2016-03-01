@@ -35,9 +35,11 @@
         }
     }
 
-    function Controller($timeout, stepper) {
+    function Controller($timeout, stateManager, stepper) {
         'ngInject';
         const self = this;
+
+        self.closeLoaderFile = closeLoaderFile;
 
         self.dropActive = false; // flag to indicate if file drop zone is active
 
@@ -192,6 +194,25 @@
 
             // arguments as follows: name of the error, state of the error, a controller object which will be stored against the error; when removing the same error, need to provide the same controller object
             upload.form.$setValidity('upload-error', true, upload.step); // remove errors from the form
+        }
+
+        /**
+         * Closes loader pane and switches to toc.
+         */
+        function closeLoaderFile() {
+            // TODO: abstract; maybe move to stateManager itself
+            const item = stateManager.state.main.history.slice(-2).shift(); // get second to last history item
+            const options = {};
+
+            // reopen previous selected pane if it's not null or 'mainDetails'
+            if (item !== null && item !== 'mainLoaderFile') {
+                options[item] = true;
+            } else {
+                options.mainDetails = false;
+            }
+
+            // close `mainDetails` panel
+            stateManager.setActive(options);
         }
     }
 })();
