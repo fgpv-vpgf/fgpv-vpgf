@@ -9,13 +9,17 @@
         <md-icon md-svg-src="navigation:menu"></md-icon>
     </md-button>
 
+    <!-- TODO: find a better way to conditionally show all these icons and names -->
+
     <div class="rv-appbar-title">
         <h2 class="md-headline" translate ng-if="self.stateManager.state.mainToc.active">appbar.tooltip.layers</h2>
         <h2 class="md-headline" translate ng-if="self.stateManager.state.mainLoaderFile.active">Import layer</h2>
         <h2 class="md-headline" translate ng-if="self.stateManager.state.mainDetails.active">appbar.tooltip.pointInfo</h2>
     </div>
 
-    <span class="rv-divider"></span>
+    <rv-loader-menu ng-if="self.stateManager.state.mainToc.active || self.stateManager.state.mainLoaderFile.active"></rv-loader-menu>
+
+    <span class="rv-appbar-divider"></span>
 
     <md-button
         translate
@@ -28,6 +32,7 @@
         <md-tooltip>{{'appbar.tooltip.pointInfo' | translate}}</md-tooltip>
         <md-icon md-svg-src="maps:place"></md-icon>
     </md-button>
+
     <md-button
         translate
         translate-attr-aria-label="appbar.aria.layers"
