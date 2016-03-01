@@ -12,7 +12,7 @@
         /*
          * Angular modules
          */
-        'ngAnimate', 'ngMaterial', 'ngSanitize',
+        'ngAnimate', 'ngMaterial', 'ngSanitize', 'ngMessages',
 
         /*
          * Reusable cross app code modules
