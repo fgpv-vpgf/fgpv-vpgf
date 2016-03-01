@@ -81,7 +81,7 @@
 
             self.select = {
                 step: {
-                    titleValue: 'Confirm data type',
+                    titleValue: 'Select file format',
                     stepNumber: 2,
                     isActive: false,
                     isCompleted: false,
@@ -103,7 +103,7 @@
                     onCancel: configureOnCancel
                 },
                 form: null,
-                config: {}
+                options: {}
             };
 
             stepper
@@ -114,19 +114,21 @@
         }
 
         function configureOnContinue() {
-            /* jshint validthis:true */
-            self.configureLayerForm.$setValidity('required', true, {
+            /*self.configure.form.$setValidity('required', true, {
                 a: true
             });
-            self.configureLayerForm.$setValidity('customKey', false, true);
+            self.configure.form.$setValidity('customKey', false, true);*/
 
             // stepper.nextStep();
         }
 
         function configureOnCancel() {
-            /* jshint validthis:true */
-            self.configureLayerForm.$setPristine();
-            self.configureLayerForm.$setUntouched();
+            self.configure.options = {};
+
+            // self.configure.form.$setPristine();
+            // self.configure.form.$setValidity();
+            // self.configure.form.$setUntouched();
+
             stepper.previousStep();
         }
 
@@ -136,7 +138,7 @@
         }
 
         function selectOnCancel() {
-            console.log('selectOnCancel', this);
+            console.log('selectOnCancel');
             stepper.previousStep();
             self.upload.fileReset();
             self.select.selectReset();
@@ -144,8 +146,12 @@
 
         function selectReset() {
             self.select.dataType = null;
-            self.select.form.$setPristine();
-            self.select.form.$setUntouched();
+
+            // self.select.form.$setPristine();
+            // self.select.form.$setValidity('required', true);
+            // self.select.form.$setUntouched();
+
+            // self.select.form.$setValidity('required', true, true);
         }
 
         function fileSelectorOpened() {
@@ -169,7 +175,7 @@
         function fileError(file, message, flow) {
             /* jshint validthis:true */
             console.log('error', file, flow, this.form);
-            this.form.$setValidity('upload-error', false, true);
+            this.form.$setValidity('upload-error', false, this.step);
         }
 
         function fileReset() {
@@ -178,7 +184,12 @@
                 this.file.cancel(); // removes the file from the upload queue
             }
             this.file = null; // kill reference as well
-            this.form.$setValidity('upload-error', true, true); // remove errors from the form
+
+            this.form.$setPristine();
+            this.form.$setUntouched();
+
+            // arguments as follows: name of the error, state of the error, a controller object which will be stored against the error; when removing the same error, need to provide the same controller object
+            this.form.$setValidity('upload-error', true, this.step); // remove errors from the form
         }
     }
 })();
