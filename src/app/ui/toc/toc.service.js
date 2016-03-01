@@ -978,6 +978,7 @@
 
             // temporary data loading
             // FIXME: remove default ecogeo data once filters is disabled for layers with no attribs
+            // TODO have getFormattedAttributes return a promise, remove timeout
             const newData = $timeout(() => {
                 const attrs = geoService.layers[layer.id] && geoService.layers[layer.id].attribs ?
                     geoService.getFormattedAttributes(layer.id, geoService.layers[layer.id].attribs.indexes[

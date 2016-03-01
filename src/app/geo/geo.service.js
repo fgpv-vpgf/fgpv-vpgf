@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService($http, identifyService, layerTypes, configDefaults) {
+    function geoService($http, $q, identifyService, layerTypes, configDefaults) {
 
         // TODO update how the layerOrder works with the UI
         // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -92,7 +92,7 @@
          * Adds a layer object to the layers registry
          * @param {object} layer the API layer object
          * @param {object} initialState a configuration fragment used to generate the layer
-         * @param {object} attribs an optional object containing the attributes associated with the layer
+         * @param {promise} attribs a promise resolving with the attributes associated with the layer (empty set if no attributes)
          * @param {number} position an optional index indicating at which position the layer was added to the map
          * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
          */
@@ -100,28 +100,24 @@
             // TODO determine the proper docstrings for a non-service function that lives in a service
 
             if (!layer.id) {
-                // TODO replace with proper error handling mechanism
                 console.error('Attempt to register layer without id property');
                 console.log(layer);
                 console.log(initialState);
             }
 
             if (service.layers[layer.id]) {
-                // TODO replace with proper error handling mechanism
-                console.log('Error: attempt to register layer already registered.  id: ' + layer.id);
+                console.error('attempt to register layer already registered.  id: ' + layer.id);
             }
 
             // TODO should attribs be defined and set to null, or simply omitted from the object?  some layers will not have attributes. others will be added after they load
             let l = {
                 layer,
+                attribs,
 
                 // apply layer option defaults
                 state: angular.merge({}, configDefaults.layerOptions, configDefaults.layerFlags, initialState)
             };
 
-            if (attribs) {
-                l.attribs = attribs;
-            }
             service.layers[layer.id] = l;
 
             if (position === undefined) {
@@ -135,9 +131,10 @@
 
         /**
          * Adds an attribute dataset to the layers registry
-         * @param  {object} attribData an attribute dataset
+         * @param  {promise} attribData a promise resolving in an attribute dataset
          */
         function registerAttributes(attribData) {
+            // FIXME this function may be obsolete? if not, update doc and code to be $q compliant.
             // TODO determine the proper docstrings for a non-service function that lives in a service
 
             if (!attribData.layerId) {
@@ -163,6 +160,8 @@
          * @return  {?Object}               The column headers and data to show in the datatable
          */
         function getFormattedAttributes(layerId, featureIndex) {
+            // FIXME change to new promise format of attributes.  return a promise from this function.
+
             if (!service.layers[layerId]) {
                 throw new Error('Cannot get attributes for unregistered layer');
             }
@@ -319,23 +318,31 @@
 
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
-                registerLayer(l, layerConfig); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                const defAttrib = $q.defer(); // handles the asynch loading of attributes
+                registerLayer(l, layerConfig, defAttrib.promise); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                 map.addLayer(l);
 
                 // wait for layer to load before registering
+                // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
                 service.gapi.events.wrapEvents(l, {
                     load: () => {
+                        // FIXME look at layer config for flags indicating not to load attributes
+                        // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
+
                         // get the attributes for the layer
                         const a = service.gapi.attribs.loadLayerAttribs(l);
 
-                        // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
                         a.then(data => {
-                            registerAttributes(data);
+                            // registerAttributes(data);
+                            defAttrib.resolve(data);
                         })
                         .catch(exception => {
-                            console.log('Error getting attributes for ' + l.name + ': ' +
+                            console.error('Error getting attributes for ' + l.name + ': ' +
                                 exception);
                             console.log(l);
+
+                            // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
+                            defAttrib.reject(exception);
                         });
                     }
                 });
