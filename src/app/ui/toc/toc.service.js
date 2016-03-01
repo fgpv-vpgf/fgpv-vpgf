@@ -976,27 +976,38 @@
                 name: layer.name
             };
 
-            // temporary data loading
-            // FIXME: remove default ecogeo data once filters is disabled for layers with no attribs
-            // TODO have getFormattedAttributes return a promise, remove timeout
-            const newData = $timeout(() => {
-                const attrs = geoService.layers[layer.id] && geoService.layers[layer.id].attribs ?
-                    geoService.getFormattedAttributes(layer.id, geoService.layers[layer.id].attribs.indexes[
-                        0]) :
-                    geoService.getFormattedAttributes('ecogeo', '0');
+            // wait for attributes to be loaded, then process them into grid format
+            const newData = geoService.layers[layer.id].attribs.then(attribBundle => {
+                let layerId = layer.id;
+                let layerIdx;
 
-                return {
-                    data: {
-                        columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) *
-                            5),
-                        data: attrs.data.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 50),
+                // FIXME: remove default ecogeo data once filters is disabled for layers with no attribs.
+                //        can get rid of the layerId and layerIdx vars to (they are used to support the hack)
+                if (attribBundle.indexes.length === 0) {
+                    layerId = 'ecogeo';
+                    layerIdx = '0';
+                } else {
+                    // FIXME once the TOC has layer indexes assigned to its elements, and available to
+                    //       the button that triggers the grid view, we should be using that.  for now,
+                    //       hack by grabbing the first index available (.indexes[0])
+                    layerIdx = attribBundle.indexes[0];
+                }
 
-                        // FIXME: this after dynamic layer index gets refactored to proper separate layers
-                        featureIndex: '0'
-                    },
-                    isLoaded: false
-                };
-            }, 0);
+                return geoService.getFormattedAttributes(layerId, layerIdx).then(attrs => {
+                    return {
+                        data: {
+                            // TODO investigate .isNumber call.  layer.id is generally never a number
+                            columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) *
+                                5),
+                            data: attrs.data.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 50),
+
+                            // FIXME: this after dynamic layer index gets refactored to proper separate layers
+                            featureIndex: '0'
+                        },
+                        isLoaded: false
+                    };
+                });
+            });
 
             stateManager.setActive({
                 other: false

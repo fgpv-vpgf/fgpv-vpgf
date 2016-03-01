@@ -156,7 +156,7 @@
          *
          * @param   {String} layerId        The id for the layer
          * @param   {String} featureIndex   The index for the feature (attribute set) within the layer
-         * @return  {?Object}               The column headers and data to show in the datatable
+         * @return  {Promise}               Resolves with the column headers and data to show in the datatable
          */
         function getFormattedAttributes(layerId, featureIndex) {
             // FIXME change to new promise format of attributes.  return a promise from this function.
@@ -164,48 +164,65 @@
             if (!service.layers[layerId]) {
                 throw new Error('Cannot get attributes for unregistered layer');
             }
-            if (!service.layers[layerId].attribs) {
-                // return null as attributes are not loaded yet
-                return null;
-            }
-            if (!service.layers[layerId].attribs[featureIndex]) {
-                throw new Error('Cannot get attributes for feature that does not exist');
-            }
 
-            // get the attributes and single out the first one
-            const attr = service.layers[layerId].attribs[featureIndex];
-            const first = attr.features[0];
+            // waits for attributes to be loaded, then resolves with formatted data
+            return service.layers[layerId].attribs.then(attribBundle => {
+                if (!attribBundle[featureIndex] || attribBundle[featureIndex].features.length === 0) {
+                    throw new Error('Cannot get attributes for feature set that does not exist');
+                }
 
-            // columns for the data table
-            const columns = [];
+                // get the attributes and single out the first one
+                const attr = attribBundle[featureIndex];
+                const first = attr.features[0];
 
-            // data for the data table
-            const data = [];
+                // columns for the data table
+                const columns = [];
 
-            // used to track order of columns
-            const columnOrder = [];
+                // data for the data table
+                const data = [];
 
-            // get the attribute keys to use as column headers
-            Object.keys(first.attributes)
-                .forEach((key, index) => {
-                    columns[index] = {
-                        title: key
-                    };
-                    columnOrder[index] = key;
+                // used to track order of columns
+                const columnOrder = [];
+
+                // get the attribute keys to use as column headers
+                Object.keys(first.attributes)
+                    .forEach((key, index) => {
+                        let title = key;
+
+                        // search for aliases
+                        // TODO add IE polyfill for array.find and use it instead of array.every
+                        // TODO duplicate alias search code as found in indentify.service. refactor to be in magic angular shared location
+                        if (attr.fields) {
+                            attr.fields.every(function (field) {
+                                if (field.name === key) {
+                                    if (field.alias && field.alias.length > 0) {
+                                        title = field.alias;
+                                    }
+                                    return false; // break the loop
+                                }
+                                return true; // keep looping
+                            });
+                        }
+
+                        columns[index] = {
+                            title
+                        };
+                        columnOrder[index] = key;
+                    });
+
+                // get the attribute data from every feature
+                attr.features.forEach((feat, index) => {
+                    data[index] = [];
+                    angular.forEach(feat.attributes, (value, key) => {
+                        data[index][columnOrder.indexOf(key)] = value;
+                    });
                 });
 
-            // get the attribute data from every feature
-            attr.features.forEach((element, index) => {
-                data[index] = [];
-                angular.forEach(element.attributes, (value, key) => {
-                    data[index][columnOrder.indexOf(key)] = value;
-                });
+                return {
+                    columns,
+                    data
+                };
             });
-
-            return {
-                columns,
-                data
-            };
         }
 
         /**
