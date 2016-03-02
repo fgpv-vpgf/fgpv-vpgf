@@ -2,33 +2,34 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name stepperService
+     * @ngdoc factory
+     * @name stepperFactory
      * @module app.ui.common
      * @description
      *
-     * The `stepper` service provides a common interface to move between a number of steps forming a stepper [Material Design Stepper](https://www.google.com/design/spec/components/steppers.html#steppers-specs).
-     * Other components should import `Stepper` and add steps to it in the order they appear in the template.
-     * Only one step can be active at a time. `Stepper` can move forward and backwards, or jump to any step optionally "completing" intermediate steps.
+     * The `stepperFactory` factory provides a common interface to move between a number of steps forming a stepper [Material Design Stepper](https://www.google.com/design/spec/components/steppers.html#steppers-specs).
+     * Other components should import `stepperFactory`, create a new stepper object using `stepperFactory()` and add steps to it in the order they appear in the template.
+     * Only one step can be active at a time; you can move forward and backwards, or jump to any step optionally "completing" intermediate steps.
      *
      */
     angular
         .module('app.ui.common')
-        .service('stepper', Stepper);
+        .factory('stepperFactory', () => stepperFactory);
 
-    // capital 'S' because it's a constructor
-    function Stepper() {
-        const self = this;
+    function stepperFactory() {
+        const self = {
+            steps: [],
+            currentStep: null,
 
-        self.steps = [];
-        self.currentStep = null;
+            start: start,
+            reset: reset,
+            addSteps: addSteps,
+            moveToStep: moveToStep,
+            nextStep: nextStep,
+            previousStep: previousStep
+        };
 
-        self.start = start;
-        self.reset = reset;
-        self.addSteps = addSteps;
-        self.moveToStep = moveToStep;
-        self.nextStep = nextStep;
-        self.previousStep = previousStep;
+        return self;
 
         /**
          * Start stepper by activating the specified step.
