@@ -33,7 +33,7 @@
         const self = this;
         const stepper = stepperFactory();
 
-        self.closeLoaderFile = closeLoaderFile;
+        self.closeLoaderService = closeLoaderService;
 
         self.dropActive = false; // flag to indicate if file drop zone is active
 
@@ -57,33 +57,22 @@
 
             self.connect = {
                 step: {
-                    titleValue: 'Connect service',
+                    titleValue: 'Connect to a service',
                     stepNumber: 1,
                     isActive: false,
-                    isCompleted: false
+                    isCompleted: false,
+                    onContinue: () => stepper.nextStep(),
+                    onCancel: angular.noop
                 },
                 form: null,
                 serviceUrl: null,
                 serviceType: null
             };
 
-            self.select = {
-                step: {
-                    titleValue: 'Select file format',
-                    stepNumber: 2,
-                    isActive: false,
-                    isCompleted: false,
-                    onContinue: selectOnContinue,
-                    onCancel: selectOnCancel
-                },
-                form: null,
-                dataType: null
-            };
-
             self.configure = {
                 step: {
                     titleValue: 'Configure layer',
-                    stepNumber: 3,
+                    stepNumber: 2,
                     isActive: false,
                     isCompleted: false,
                     onContinue: configureOnContinue,
@@ -95,9 +84,7 @@
 
             stepper
                 .addSteps(self.connect.step)
-
-                // .addSteps(self.select.step)
-                // .addSteps(self.configure.step)
+                .addSteps(self.configure.step)
                 .start(); // activate stepper on the first step
 
             console.log(stepper);
@@ -121,34 +108,19 @@
             stepper.previousStep();
         }
 
-        function selectOnContinue() {
-            // console.log(self.select.dataType);
-            stepper.nextStep();
-        }
-
-        /**
-         * Cancels the file type selection and rolls back to file upload.
-         */
-        function selectOnCancel() {
-            // console.log('selectOnCancel');
-            stepper.previousStep();
-            self.upload.fileReset(); // reset the upload form
-            self.select.dataType = null;
-        }
-
         /**
          * Closes loader pane and switches to toc.
          */
-        function closeLoaderFile() {
+        function closeLoaderService() {
             // TODO: abstract; maybe move to stateManager itself
             const item = stateManager.state.main.history.slice(-2).shift(); // get second to last history item
             const options = {};
 
-            // reopen previous selected pane if it's not null or 'mainLoaderFile'
-            if (item !== null && item !== 'mainLoaderFile') {
+            // reopen previous selected pane if it's not null or 'mainLoaderService'
+            if (item !== null && item !== 'mainLoaderService') {
                 options[item] = true;
             } else {
-                options.mainLoaderFile = false;
+                options.mainLoaderService = false;
             }
 
             // close `mainDetails` panel
