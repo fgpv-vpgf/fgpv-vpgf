@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService($http, identifyService, layerTypes, configDefaults) {
+    function geoService($http, $q, identifyService, layerTypes, configDefaults) {
 
         // TODO update how the layerOrder works with the UI
         // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -40,11 +40,17 @@
         };
 
         let map = null; // keep map reference local to geoService
+        let mapDomNode = null;
+        let mapPromise = null;
 
         let mapManager = null;
         let identify = null;
 
         let fullExtent = null;
+
+        // selected basemap id and extentSetId
+        let selectedBasemapId = null;
+        let selectedBasemapExtentSetId = null;
 
         // FIXME: need to find a way to have the dojo URL set by the config
         service.promise = geoapi('http://js.arcgis.com/3.14/', window)
@@ -298,101 +304,61 @@
          * @param {object} config the map configuration based on the configuration schema
          */
         function buildMap(domNode, config) {
+            console.log('buildMap');
+
+            if (!mapDomNode) {
+                mapDomNode = domNode;
+            }
+
             // reset before rebuilding the map
             if (map !== null) {
+
+                if (mapManager) {
+                    if (mapManager.OverviewMapControl) {
+                        mapManager.OverviewMapControl.destroy();
+                    }
+                    if (mapManager.ScalebarControl) {
+                        mapManager.ScalebarControl.destroy();
+                    }
+                    if (mapManager.BasemapControl) {
+                        mapManager.BasemapControl.basemapGallery.destroy();
+                    }
+                }
+
                 // NOTE: Possible to have dom listeners stick around after the node is destroyed
                 map.destroy();
                 map = null;
                 service.layers = {};
+
+                fullExtent = null;
             }
 
             // FIXME remove the hardcoded settings when we have code which does this properly
-            map = service.gapi.mapManager.Map(domNode, {
-                basemap: 'gray',
-                zoom: 6,
-                center: [-100, 50]
-            });
-            if (config.services && config.services.proxyUrl) {
-                service.gapi.mapManager.setProxy(config.services.proxyUrl);
-            }
-            identify = identifyService(service.gapi, map, service.layers);
-
-            config.layers.forEach(layerConfig => {
-                const l = generateLayer(layerConfig);
-                registerLayer(l, layerConfig); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
-                map.addLayer(l);
-
-                // wait for layer to load before registering
-                service.gapi.events.wrapEvents(l, {
-                    load: () => {
-                        // get the attributes for the layer
-                        const a = service.gapi.attribs.loadLayerAttribs(l);
-
-                        // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
-                        a.then(data => {
-                            registerAttributes(data);
-                        })
-                        .catch(exception => {
-                            console.log('Error getting attributes for ' + l.name + ': ' +
-                                exception);
-                            console.log(l);
-                        });
-                    }
-                });
-            });
-
-            // setup map using configs
-            // FIXME: I should be migrated to the new config schema when geoApi is updated
-            const mapSettings = {
-                basemaps: [],
-                scalebar: {},
-                overviewMap: {}
-            };
-            if (config.baseMaps) {
-                mapSettings.basemaps = config.baseMaps;
+            // if no selected basemap, use the first item
+            if (!selectedBasemapId) {
+                setSelectedBaseMap(config.baseMaps[0].id, config);
             }
 
-            if (config.map.components.scaleBar) {
-                mapSettings.scalebar = {
-                    attachTo: 'bottom-left',
-                    scalebarUnit: 'dual'
-                };
-            }
+            // create a basemap object
+            const basemapConfig = getBasemapConfig(selectedBasemapId, config);
+            const basemap = getBasemapFromJson(basemapConfig);
 
-            if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
+            buildMapPromise(basemap, domNode);
 
-                // FIXME: overviewMap has more settings
-                mapSettings.overviewMap = config.map.components.overviewMap;
-            }
+            mapPromise.then(esriMapObject => {
+                map = esriMapObject;
+                mapManager = service.gapi.mapManager.setupMap(map, config);
 
-            if (config.map.extentSets) {
-                let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
-
-                // map extent is not available until map is loaded
-                if (lFullExtent) {
-                    service.gapi.events.wrapEvents(map, {
-                        load: () => {
-
-                            // compare map extent and setting.extent spatial-references
-                            // make sure the full extent has the same spatial reference as the map
-                            if (service.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
-                                lFullExtent.spatialReference)) {
-
-                                // same spatial reference, no reprojection required
-                                fullExtent = service.gapi.mapManager.getExtentFromJson(lFullExtent);
-                            } else {
-
-                                // need to re-project
-                                fullExtent = service.gapi.proj.projectEsriExtent(
-                                    service.gapi.mapManager.getExtentFromJson(lFullExtent),
-                                    map.extent.spatialReference);
-                            }
-                        }
-                    });
+                if (config.services && config.services.proxyUrl) {
+                    service.gapi.mapManager.setProxy(config.services.proxyUrl);
                 }
-            }
 
-            mapManager = service.gapi.mapManager.setupMap(map, mapSettings);
+                identify = identifyService(service.gapi, map, service.layers);
+
+                // setup layers
+                setupLayers(config);
+                initMapFullExtentValue(config);
+            });
 
             // FIXME temp link for debugging
             window.FGPV = {
@@ -404,12 +370,31 @@
          * Switch basemap based on the uid provided.
          * @param {string} id identifier for a specific basemap layerbower
          */
-        function selectBasemap(id) {
+        function selectBasemap(id, configService) {
             if (typeof (mapManager) === 'undefined' || !mapManager.BasemapControl) {
                 console.error('Error: Map manager or basemap control is not setup,' +
                     ' please setup map manager by calling setupMap().');
             } else {
+
                 mapManager.BasemapControl.setBasemap(id);
+
+                // check to see if spatial references are the same
+                const newBasemap = getBasemapConfig(id, configService);
+                const oldBasemap = getBasemapConfig(selectedBasemapId, configService);
+
+                if (newBasemap.wkid === oldBasemap.wkid) {
+                    console.log('same wkid: ' + newBasemap.wkid);
+                    mapManager.BasemapControl.setBasemap(id);
+                    mapManager.OverviewMapControl.destroy();
+                    mapManager.OverviewMapControl = service.gapi.mapManager.getOverviewMap(map, configService);
+                    mapManager.OverviewMapControl.startup();
+                } else {
+
+                    // extent is different, build the map
+                    console.log('different wkid: ' + newBasemap.wkid);
+                    setSelectedBaseMap(id, configService);
+                    buildMap(mapDomNode, configService);
+                }
             }
         }
 
@@ -445,6 +430,8 @@
         function setFullExtent() {
             if (map) {
                 if (fullExtent) {
+                    console.log('setFullExtent');
+                    console.log(fullExtent);
                     map.setExtent(fullExtent);
                 } else {
                     console.warn('GeoService: fullExtent value is not set.');
@@ -456,15 +443,14 @@
 
         /*
         * Retrieve full extent from extentSets
+        * @param {object} extentSets from config settings of map
+        * @return {object} fullExtent from map settings
         */
         function getFullExtFromExtentSets(extentSets) {
 
-            // FIXME: default basemap should be indicated in the config as well
-            const currentBasemapExtentSetId = '123456789';
-
             // In configSchema, at least one extent for a basemap
             const extentSetForId = extentSets.find(extentSet => {
-                if (extentSet.id === currentBasemapExtentSetId) {
+                if (extentSet.id === selectedBasemapExtentSetId) {
                     return true;
                 }
             });
@@ -497,5 +483,141 @@
                 }
             });
         }
+
+        /**
+        * set selected basemap values
+        * internal use only
+        */
+        function setSelectedBaseMap(id, config) {
+
+            selectedBasemapId = id;
+            const selectedBaseMapConfig = getBasemapConfig(selectedBasemapId, config);
+            selectedBasemapExtentSetId = selectedBaseMapConfig.extentId;
+
+        }
+
+        /**
+        * set up map full extent value
+        * @param {object} config settings
+        */
+        function initMapFullExtentValue(config) {
+
+            let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
+
+            // map extent is not available until map is loaded
+            if (lFullExtent) {
+
+                // compare map extent and setting.extent spatial-references
+                // make sure the full extent has the same spatial reference as the map
+                if (service.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
+                    lFullExtent.spatialReference)) {
+
+                    // same spatial reference, no reprojection required
+                    console.log('same spatial reference');
+                    fullExtent = service.gapi.mapManager.getExtentFromJson(lFullExtent);
+                } else {
+
+                    // need to re-project
+                    console.log('different spatial reference, needs re-projection');
+                    fullExtent = service.gapi.proj.projectEsriExtent(
+                        service.gapi.mapManager.getExtentFromJson(lFullExtent),
+                        map.extent.spatialReference);
+                }
+            }
+        }
+
+        /**
+        * Setup map layers from config settings
+        * @param {object} config settings
+        */
+        function setupLayers(config) {
+            config.layers.forEach(layerConfig => {
+                const l = generateLayer(layerConfig);
+                registerLayer(l, layerConfig); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                map.addLayer(l);
+
+                // wait for layer to load before registering
+                service.gapi.events.wrapEvents(l, {
+                    load: () => {
+                        // get the attributes for the layer
+                        const a = service.gapi.attribs.loadLayerAttribs(l);
+
+                        // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
+                        a.then(data => {
+                            registerAttributes(data);
+                        })
+                        .catch(exception => {
+                            console.log('Error getting attributes for ' + l.name + ': ' +
+                                exception);
+                            console.log(l);
+                        });
+                    }
+                });
+            });
+        }
+
+        /*
+         * Get basemap config from basemap id
+         * @param id base Map id
+         * @param config config object
+         * @return {object} base map json object
+         */
+        function getBasemapConfig(id, config) {
+            return config.baseMaps.find(basemapConfig => {
+                return (basemapConfig.id === id);
+            });
+        }
+
+        /*
+        * create a basemap from a basemap config setting
+        * @param {object} basemapConfig in JSON format
+        * @return {object} esri basemap object
+        */
+        function getBasemapFromJson(basemapConfig) {
+            const basemapLayers = [];
+            if (basemapConfig.layers) {
+                basemapConfig.layers.forEach(layer => {
+                    let basemapLayer = service.gapi.basemap.BasemapLayer({ url: layer.url });
+                    basemapLayers.push(basemapLayer);
+                });
+            }
+
+            const basemap = new service.gapi.basemap.Basemap({
+                id: basemapConfig.id,
+                layers: basemapLayers,
+                title: basemapConfig.name,
+                thumbnailUrl: basemapConfig.thumbnailUrl,
+                wkid: basemapConfig.wkid
+            });
+
+            return basemap;
+        }
+
+        /**
+        * Return a promise wrapping map creation
+        */
+        function buildMapPromise(initialBasemap, domNode) {
+
+            mapPromise = $q((resolve, reject) => {
+
+                const esriMapObject = new service.gapi.mapManager.Map(domNode, {
+                    basemap: initialBasemap,
+                    zoom: 4,
+                    center: [-100, 50]
+                });
+
+                service.gapi.events.wrapEvents(esriMapObject, {
+                    load: () => {
+                        // map loaded
+                        resolve(esriMapObject);
+                    },
+                    error: () => {
+                        reject('map failed to load.');
+                    }
+                });
+            });
+
+        }
+
     }
 })();
