@@ -976,16 +976,28 @@
                 name: layer.name
             };
 
-            // temporary data loading
-            // FIXME: remove default ecogeo data once filters is disabled for layers with no attribs
-            const newData = $timeout(() => {
-                const attrs = geoService.layers[layer.id] && geoService.layers[layer.id].attribs ?
-                    geoService.getFormattedAttributes(layer.id, geoService.layers[layer.id].attribs.indexes[
-                        0]) :
-                    geoService.getFormattedAttributes('ecogeo', '0');
+            // wait for attributes to be loaded, then process them into grid format
+            const dataPromise = geoService.layers[layer.id].attribs.then(attribBundle => {
+                let layerId = layer.id;
+                let layerIdx;
 
+                // FIXME: remove default ecogeo data once filters is disabled for layers with no attribs.
+                //        can get rid of the layerId and layerIdx vars to (they are used to support the hack)
+                if (attribBundle.indexes.length === 0) {
+                    layerId = 'ecogeo';
+                    layerIdx = '0';
+                } else {
+                    // FIXME once the TOC has layer indexes assigned to its elements, and available to
+                    //       the button that triggers the grid view, we should be using that.  for now,
+                    //       hack by grabbing the first index available (.indexes[0])
+                    layerIdx = attribBundle.indexes[0];
+                }
+
+                return geoService.getFormattedAttributes(layerId, layerIdx);
+            }).then(attrs => {
                 return {
                     data: {
+                        // TODO remove .isNumber stuff once proper table support is completed
                         columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) *
                             5),
                         data: attrs.data.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 50),
@@ -995,7 +1007,7 @@
                     },
                     isLoaded: false
                 };
-            }, 0);
+            });
 
             stateManager.setActive({
                 other: false
@@ -1004,7 +1016,7 @@
                 .setActive({
                     side: false
                 })
-                .then(() => stateManager.toggleDisplayPanel('filtersFulldata', newData, requester, 0));
+                .then(() => stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0));
         }
 
         /**

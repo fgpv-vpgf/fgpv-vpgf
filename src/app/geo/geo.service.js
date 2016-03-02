@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService($http, identifyService, layerTypes, configDefaults) {
+    function geoService($http, $q, identifyService, layerTypes, configDefaults) {
 
         // TODO update how the layerOrder works with the UI
         // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -29,7 +29,6 @@
             epsgLookup,
             getFormattedAttributes,
             registerLayer,
-            registerAttributes,
             setZoom,
             shiftZoom,
             selectBasemap,
@@ -92,7 +91,7 @@
          * Adds a layer object to the layers registry
          * @param {object} layer the API layer object
          * @param {object} initialState a configuration fragment used to generate the layer
-         * @param {object} attribs an optional object containing the attributes associated with the layer
+         * @param {promise} attribs a promise resolving with the attributes associated with the layer (empty set if no attributes)
          * @param {number} position an optional index indicating at which position the layer was added to the map
          * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
          */
@@ -100,28 +99,23 @@
             // TODO determine the proper docstrings for a non-service function that lives in a service
 
             if (!layer.id) {
-                // TODO replace with proper error handling mechanism
                 console.error('Attempt to register layer without id property');
                 console.log(layer);
                 console.log(initialState);
             }
 
             if (service.layers[layer.id]) {
-                // TODO replace with proper error handling mechanism
-                console.log('Error: attempt to register layer already registered.  id: ' + layer.id);
+                console.error('attempt to register layer already registered.  id: ' + layer.id);
             }
 
-            // TODO should attribs be defined and set to null, or simply omitted from the object?  some layers will not have attributes. others will be added after they load
-            let l = {
+            const l = {
                 layer,
+                attribs,
 
                 // apply layer option defaults
                 state: angular.merge({}, configDefaults.layerOptions, configDefaults.layerFlags, initialState)
             };
 
-            if (attribs) {
-                l.attribs = attribs;
-            }
             service.layers[layer.id] = l;
 
             if (position === undefined) {
@@ -134,80 +128,65 @@
         }
 
         /**
-         * Adds an attribute dataset to the layers registry
-         * @param  {object} attribData an attribute dataset
-         */
-        function registerAttributes(attribData) {
-            // TODO determine the proper docstrings for a non-service function that lives in a service
-
-            if (!attribData.layerId) {
-                // TODO replace with proper error handling mechanism
-                console.log('Error: attempt to register attribute dataset without layerId property');
-            }
-
-            if (!service.layers[attribData.layerId]) {
-                // TODO replace with proper error handling mechanism
-                console.log('Error: attempt to register layer attributes against unregistered layer.  id: ' +
-                    attribData.layerId);
-            }
-
-            service.layers[attribData.layerId].attribs = attribData;
-        }
-
-        /**
          * Returns nicely bundled attributes for the layer described by layerId.
          * The bundles are used in the datatable.
          *
          * @param   {String} layerId        The id for the layer
          * @param   {String} featureIndex   The index for the feature (attribute set) within the layer
-         * @return  {?Object}               The column headers and data to show in the datatable
+         * @return  {Promise}               Resolves with the column headers and data to show in the datatable
          */
         function getFormattedAttributes(layerId, featureIndex) {
+            // FIXME change to new promise format of attributes.  return a promise from this function.
+
             if (!service.layers[layerId]) {
                 throw new Error('Cannot get attributes for unregistered layer');
             }
-            if (!service.layers[layerId].attribs) {
-                // return null as attributes are not loaded yet
-                return null;
-            }
-            if (!service.layers[layerId].attribs[featureIndex]) {
-                throw new Error('Cannot get attributes for feature that does not exist');
-            }
 
-            // get the attributes and single out the first one
-            const attr = service.layers[layerId].attribs[featureIndex];
-            const first = attr.features[0];
+            // waits for attributes to be loaded, then resolves with formatted data
+            return service.layers[layerId].attribs.then(attribBundle => {
+                if (!attribBundle[featureIndex] || attribBundle[featureIndex].features.length === 0) {
+                    throw new Error('Cannot get attributes for feature set that does not exist');
+                }
 
-            // columns for the data table
-            const columns = [];
+                // get the attributes and single out the first one
+                const attr = attribBundle[featureIndex];
+                const first = attr.features[0];
 
-            // data for the data table
-            const data = [];
+                // columns for the data table
+                const columns = [];
 
-            // used to track order of columns
-            const columnOrder = [];
+                // data for the data table
+                const data = [];
 
-            // get the attribute keys to use as column headers
-            Object.keys(first.attributes)
-                .forEach((key, index) => {
-                    columns[index] = {
-                        title: key
-                    };
-                    columnOrder[index] = key;
+                // used to track order of columns
+                const columnOrder = [];
+
+                identify = identifyService(service.gapi, map, service.layers);
+
+                // get the attribute keys to use as column headers
+                Object.keys(first.attributes)
+                    .forEach((key, index) => {
+                        const title = identify.aliasedFieldName(key, attr.fields);
+
+                        columns[index] = {
+                            title
+                        };
+                        columnOrder[index] = key;
+                    });
+
+                // get the attribute data from every feature
+                attr.features.forEach((feat, index) => {
+                    data[index] = [];
+                    angular.forEach(feat.attributes, (value, key) => {
+                        data[index][columnOrder.indexOf(key)] = value;
+                    });
                 });
 
-            // get the attribute data from every feature
-            attr.features.forEach((element, index) => {
-                data[index] = [];
-                angular.forEach(element.attributes, (value, key) => {
-                    data[index][columnOrder.indexOf(key)] = value;
-                });
+                return {
+                    columns,
+                    data
+                };
             });
-
-            return {
-                columns,
-                data
-            };
         }
 
         /**
@@ -319,26 +298,34 @@
 
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
-                registerLayer(l, layerConfig); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
-                map.addLayer(l);
+                const pAttrib = $q((resolve, reject) => { // handles the asynch loading of attributes
 
-                // wait for layer to load before registering
-                service.gapi.events.wrapEvents(l, {
-                    load: () => {
-                        // get the attributes for the layer
-                        const a = service.gapi.attribs.loadLayerAttribs(l);
+                    // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
+                    service.gapi.events.wrapEvents(l, {
+                        load: () => {
+                            // FIXME look at layer config for flags indicating not to load attributes
+                            // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
 
-                        // TODO: leave a promise in the layer object that resolves when the attributes are loaded/registered
-                        a.then(data => {
-                            registerAttributes(data);
-                        })
-                        .catch(exception => {
-                            console.log('Error getting attributes for ' + l.name + ': ' +
-                                exception);
-                            console.log(l);
-                        });
-                    }
+                            // get the attributes for the layer
+                            const a = service.gapi.attribs.loadLayerAttribs(l);
+
+                            a.then(data => {
+                                // registerAttributes(data);
+                                resolve(data);
+                            })
+                            .catch(exception => {
+                                console.error('Error getting attributes for ' + l.name + ': ' +
+                                    exception);
+                                console.log(l);
+
+                                // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
+                                reject(exception);
+                            });
+                        }
+                    });
                 });
+                registerLayer(l, layerConfig, pAttrib); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                map.addLayer(l);
             });
 
             // setup map using configs
