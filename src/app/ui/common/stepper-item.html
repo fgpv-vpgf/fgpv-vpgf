@@ -30,7 +30,7 @@
                 ng-if="self.onCancel || self.step.onCancel || self.onContinue || self.step.onContinue">
 
                 <md-button
-                    class="rv-button-square"
+                    class="rv-button-square rv-stepper-item-footer-cancel"
                     ng-disabled="!self.isCancelEnabled && !self.step.isCancelEnabled"
                     ng-if="self.onCancel || self.step.onCancel"
                     ng-click="self.onCancelBefore()">
@@ -38,7 +38,7 @@
                 </md-button>
 
                 <md-button
-                    class="rv-button-square md-primary"
+                    class="rv-button-square rv-stepper-item-footer-continue md-raised md-primary"
                     ng-disabled="!(self.stepForm.$valid && (self.isContinueEnabled || self.step.isContinueEnabled))"
                     ng-if="self.onContinue || self.step.onContinue"
                     ng-click="(self.onContinue || self.step.onContinue)()">
