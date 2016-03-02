@@ -1,0 +1,97 @@
+<rv-content-pane close-panel="self.closeLoaderService()" floating-header="true">
+
+    <!-- TODO: add translate filters -->
+
+    <div class="rv-loader-service">
+        <rv-stepper-item step="self.upload.step" form="self.upload.form" summary-value="{{ self.upload.file && self.upload.step.isCompleted ? self.upload.file.name : 'GeoJSON, CSV, or Shapefile' }}">
+
+            <md-input-container class="md-block">
+                <label>Layer Name</label>
+                <input name="layerName" ng-model="self.configure.options.layerName" required>
+                <!-- TODO: decide whether and how to display a hint or error messages -->
+                <!--div ng-messages="self.configure.form.layerName.$error">
+                        <div ng-message="required">This is required!</div>
+                        <div ng-message="md-maxlength">That's too long!</div>
+                    </div-->
+            </md-input-container>
+
+        </rv-stepper-item>
+
+        <rv-stepper-item form="self.select.form" step="self.select.step" summary-value="{{ self.select.dataType && self.select.step.isCompleted ? self.dataTypes[self.select.dataType] : '' }}">
+
+            <md-input-container class="md-block">
+                <label>File Format</label>
+                <md-select name="dataType" ng-model="self.select.dataType" required>
+                    <md-option ng-repeat="(value, key) in self.dataTypes" value="{{ value }}">
+                        {{ key }}
+                    </md-option>
+                </md-select>
+
+                <!-- TODO: decide whether and how to display a hint or error messages; can use md-on-close="self.select.form.dataType.$setDirty()" -->
+                <!--div
+                        class="errors"
+                        ng-messages="self.select.form.dataType.$error"
+                        ng-if="self.select.form.dataType.$dirty">
+                        <div ng-message="required">Required</div>
+                    </div>
+                    <div class="rv-hint">Tell us what it is.</div-->
+
+            </md-input-container>
+        </rv-stepper-item>
+
+        <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.select.dataType">
+
+            <md-input-container class="md-block">
+                <label>Layer Name</label>
+                <input name="layerName" ng-model="self.configure.options.layerName" required>
+                <!-- TODO: decide whether and how to display a hint or error messages -->
+                <!--div ng-messages="self.configure.form.layerName.$error">
+                        <div ng-message="required">This is required!</div>
+                        <div ng-message="md-maxlength">That's too long!</div>
+                    </div-->
+            </md-input-container>
+
+            <md-input-container class="md-block">
+                <label>Primary Field</label>
+                <md-select name="primaryField" ng-model="self.configure.options.primaryField" required>
+                    <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
+                        {{ key }}
+                    </md-option>
+                </md-select>
+                <!-- TODO: decide whether and how to display a hint or error messages -->
+                <!--div class="errors" ng-messages="self.configure.form.primaryField.$error">
+                        <div ng-message="required">Required</div>
+                    </div-->
+            </md-input-container>
+
+            <div layout="row" ng-switch-when="csv">
+                <md-input-container class="md-block" flex>
+                    <label>Latitude Field</label>
+                    <md-select name="latitude" ng-model="self.configure.options.latitude" required>
+                        <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
+                            {{ key }}
+                        </md-option>
+                    </md-select>
+                    <!-- TODO: decide whether and how to display a hint or error messages -->
+                    <!--div class="errors" ng-messages="self.configure.form.latitude.$error">
+                            <div ng-message="required">Required</div>
+                        </div-->
+                </md-input-container>
+                <md-input-container class="md-block" flex>
+                    <label>Longitude Field</label>
+                    <md-select name="longitude" ng-model="self.configure.options.longitude" required>
+                        <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
+                            {{ key }}
+                        </md-option>
+                    </md-select>
+                    <!-- TODO: decide whether and how to display a hint or error messages -->
+                    <!--div class="errors" ng-messages="self.configure.form.longitude.$error">
+                            <div ng-message="required">Required</div>
+                        </div-->
+                </md-input-container>
+            </div>
+
+        </rv-stepper-item>
+    </div>
+
+</rv-content-pane>
