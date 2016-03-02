@@ -8,7 +8,7 @@
      * @restrict A
      * @description
      *
-     * The `rv-loader-file` directive description.
+     * The `rv-loader-file` directive creates a stepper interface for loading local files with geodata and turning them into layers.
      *
      */
     angular
@@ -35,104 +35,184 @@
         }
     }
 
-    function Controller($timeout) {
+    function Controller($timeout, stateManager, stepper) {
         'ngInject';
         const self = this;
 
+        self.closeLoaderFile = closeLoaderFile;
+
+        self.dropActive = false; // flag to indicate if file drop zone is active
+
         // TODO: get datatypes from a loader service
-        self.steps = [];
         self.dataTypes = {
             geojson: 'GeoJSON',
             csv: 'CSV',
             shapefile: 'Shapefile'
         };
-
-        self.dropActive = false;
-        self.file = null;
-        self.dataType = null;
-
-        self.filesSubmitted = filesSubmitted;
-        self.fileSuccess = fileSuccess;
+        self.fields = {
+            one: 'one',
+            two: 'two',
+            three: 'three'
+        };
 
         activate();
 
         /*********/
 
         function activate() {
-            self.steps.push({
-                titleValue: 'Upload data',
-                stepNumber: 1,
-                isActive: true,
-                isCompleted: false
-            }, {
-                titleValue: 'Confirm data type',
-                stepNumber: 2,
-                isActive: false,
-                isCompleted: false,
-                onContinue: () => {
-                    console.log(self.dataType);
-                    forward(1);
+
+            self.upload = {
+                step: {
+                    titleValue: 'Upload data',
+                    stepNumber: 1,
+                    isActive: false,
+                    isCompleted: false
                 },
-                onCancel: () => {
-                    back(1);
-                    self.file.cancel();
-                    self.file = null;
+                form: null,
+                file: null,
+                filesSubmitted: uploadFilesSubmitted,
+                fileSuccess: uploadFileSuccess,
+                fileError: uploadFileError,
+                fileReset: uploadFileReset,
+            };
 
-                    self.dataType = null;
-                }
-            }, {
-                titleValue: 'Configure layer',
-                stepNumber: 3,
-                isActive: false,
-                isCompleted: false,
-                onContinue: () => {
-                    forward(2);
+            self.select = {
+                step: {
+                    titleValue: 'Select file format',
+                    stepNumber: 2,
+                    isActive: false,
+                    isCompleted: false,
+                    onContinue: selectOnContinue,
+                    onCancel: selectOnCancel
                 },
-                onCancel: () => {
-                    back(2);
+                form: null,
+                dataType: null
+            };
 
-                    // self.dataType = null;
-                }
-            });
+            self.configure = {
+                step: {
+                    titleValue: 'Configure layer',
+                    stepNumber: 3,
+                    isActive: false,
+                    isCompleted: false,
+                    onContinue: configureOnContinue,
+                    onCancel: configureOnCancel
+                },
+                form: null,
+                options: {}
+            };
+
+            stepper
+                .addSteps(self.upload.step)
+                .addSteps(self.select.step)
+                .addSteps(self.configure.step)
+                .start(); // activate stepper on the first step
         }
 
-        function filesSubmitted(files, event, flow) {
-            console.log(files, event, flow);
-            self.file = files[0];
-            flow.upload();
+        /**
+         * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
+         */
+        function configureOnContinue() {
+            // TODO: try to build layer and add it to the map
+            // TODO: display error message if something breaks
+            stepper.nextStep();
         }
 
-        function fileSuccess(file, message, flow) {
-            console.log(file, message, flow);
-            $timeout(() => forward(0), 300);
+        /**
+         * Cancels the layer configuration step and rolls back to file type selection.
+         */
+        function configureOnCancel() {
+            self.configure.options = {}; // reset layer options
+
+            stepper.previousStep();
         }
 
-        // TODO: this will be reused, so it needs to go into a service
-        // move the stepper forward to the next step (if any)
-        function forward(fromStepNumber) {
-            const fromStep = self.steps[fromStepNumber];
-            const toStep = self.steps[fromStepNumber + 1];
+        function selectOnContinue() {
+            // console.log(self.select.dataType);
+            stepper.nextStep();
+        }
 
-            fromStep.isCompleted = true;
-            fromStep.isActive = false;
-            if (toStep) {
-                toStep.isActive = true;
+        /**
+         * Cancels the file type selection and rolls back to file upload.
+         */
+        function selectOnCancel() {
+            // console.log('selectOnCancel');
+            stepper.previousStep();
+            self.upload.fileReset(); // reset the upload form
+            self.select.dataType = null;
+        }
+
+        /**
+         * Starts file upload.
+         * @param  {Array} files uploaded array of files
+         * @param  {Object} event submitted event
+         * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
+         */
+        function uploadFilesSubmitted(files, event, flow) {
+            // TODO: if current step is not the first and user drag-drops file, go back to first step
+            // console.log('submitted', files, event, flow);
+            if (files.length > 0) {
+                self.upload.file = files[0]; // store the first file from the array;
+                flow.upload();
             }
         }
 
-        // TODO: this will be reused, so it needs to go into a service
-        // move the stepper backward to the previous step (if any)
-        function back(fromStepNumber) {
-            const fromStep = self.steps[fromStepNumber];
-            const toStep = self.steps[fromStepNumber - 1];
+        /**
+         * When a file is uploaded, calls gapi to get data type and field names if possible.
+         * @param  {Object} file    uploaded flow file object
+         * @param  {Object} message a success message
+         * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
+         */
+        function uploadFileSuccess() { // file, message, flow) {
+            // console.log('success', file, message, flow);
+            // TODO: call geoapi to guess filetype :_ ; throw erorr if unsupported format
+            $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
+        }
 
-            fromStep.isCompleted = false;
-            toStep.isCompleted = false;
+        /**
+         * Displays an error message if a file fails to upload
+         * @param  {Object} file    flow file object
+         * @param  {String} message error message
+         * @param  {Object} flow    flow object https://github.com/flowjs/ng-flow
+         */
+        function uploadFileError() { // file, message, flow) {
+            // console.log('error', file, flow);
+            const upload = self.upload;
+            upload.form.$setValidity('upload-error', false, upload.step);
+        }
 
-            if (toStep) {
-                fromStep.isActive = false;
-                toStep.isActive = true;
+        /**
+         * Reset the file upload form removing custom messages.
+         */
+        function uploadFileReset() {
+            const upload = self.upload;
+
+            if (upload.file) { // if there is a file in the queue
+                upload.file.cancel(); // removes the file from the upload queue
             }
+            upload.file = null; // kill reference as well
+
+            // arguments as follows: name of the error, state of the error, a controller object which will be stored against the error; when removing the same error, need to provide the same controller object
+            upload.form.$setValidity('upload-error', true, upload.step); // remove errors from the form
+        }
+
+        /**
+         * Closes loader pane and switches to toc.
+         */
+        function closeLoaderFile() {
+            // TODO: abstract; maybe move to stateManager itself
+            const item = stateManager.state.main.history.slice(-2).shift(); // get second to last history item
+            const options = {};
+
+            // reopen previous selected pane if it's not null or 'mainLoaderFile'
+            if (item !== null && item !== 'mainLoaderFile') {
+                options[item] = true;
+            } else {
+                options.mainLoaderFile = false;
+            }
+
+            // close `mainDetails` panel
+            stateManager.setActive(options);
         }
     }
 })();

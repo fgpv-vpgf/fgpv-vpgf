@@ -21,6 +21,7 @@
 @import "_filters.scss";
 @import "_help.scss";
 @import "_stepper.scss";
+@import "_file-drop.scss";
 @import "_loader.scss";
 
 @include core;
@@ -42,4 +43,5 @@
 @include filters;
 @include help;
 @include stepper;
+@include file-drop;
 @include loader;

@@ -47,6 +47,7 @@
              * Creates a new datatables instance (destroying existing if any). It pulls the data from the stateManager display store.
              */
             function createTable() {
+                // TODO: move hardcoded stuff in consts
                 containerNode = containerNode || el.find('.rv-filters-data-container');
                 self.destroyTable();
 

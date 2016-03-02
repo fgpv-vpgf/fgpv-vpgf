@@ -19,27 +19,6 @@
             }
         }
 
-        &-drop-title {
-            display: block;
-            line-height: rem(3.6);
-            text-align: center;
-            margin: rem(0.6) 0;
-        }
-
-        &-drop {
-            position: relative;
-
-            &:after {
-                position: absolute;
-                content: "";
-                top: 0;
-                bottom: -2px;
-                border: 2px dashed grey;
-                right: 0;
-                left: 0;
-            }
-        }
-
         &-caption {
             display: block;
             text-align: center;

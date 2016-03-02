@@ -8,10 +8,15 @@
      * @restrict E
      * @description
      *
-     * The `rvStepperItem` directive is a step.
+     * The `rvStepperItem` directive is a step implementation in Material Design stepper component.
+     * Material Design has specs for a [Stepper component](https://www.google.com/design/spec/components/steppers.html#steppers-specs). Steppers display progress through a sequence by breaking it up into multiple logical and numbered steps. Unfortunatelly, Angular Material didn't implement it yet, so we have to build our own.
+     * This directive represents a single step (`Stepper` service provides navigation between linked steps) which wraps the specified content in a form to provide field validation. `Continue` and `Cancel` buttons can be display in each step. `Continue` button is disabled unless the form is valid. `Cancel` button clears the form and remove all the standard error messages.
      *
+     * `Stepper-items` should not be nested.
+     *
+     * // TODO: check if individual overrides even make sense and useful; removing them will siplify the template;
      * `title-value` a string to be displayed in the step's header
-     * `summary-value` a string to be displayed under the step's header; now shown if omitted
+     * `summary-value` a string to be displayed under the step's header; not shown if omitted
      * `step-number` the step number to be displayed
      * `is-active` a boolean flag specifying if the step is active (open) at the moment
      * `is-complete` a boolean flag specifying is the step has been completed (checkmark is shown instead of the step's number)
@@ -20,6 +25,7 @@
      * `is-continue-enabled` a boolean flag indicating if the `continue` button is enabled; doesn't make sense if `on-cancel` is omitted
      * `is-cancel-enabled` a boolean flag indicating if the `cancel` button is enabled; doesn't make sense if `on-continue` is omitted
      * `step` a shortcut for all other properties which can be supplied in an object; first, a explicit binding takes precedence over anything supplied in the `step` property
+     * `step-form` is an object reference to which stepper item's form will be bound, so it can be access from the parent directive
      *
      * Usage example:
      * ```html
@@ -55,7 +61,8 @@
                 onContinue: '&?',
                 onCancel: '&?',
                 isContinueEnabled: '=?',
-                isCancelEnabled: '=?'
+                isCancelEnabled: '=?',
+                stepForm: '=?form'
             },
             transclude: true,
             link: link,
@@ -94,14 +101,22 @@
     }
 
     function Controller() {
-        // const self = this;
+        const self = this;
 
-        activate();
+        self.onCancelBefore = onCancelBefore;
 
         /*********/
 
-        function activate() {
+        /**
+         * Called when the `Cancel` button is clicked; this resets the inner form to its default state, hiding all the standard error messages, executes extrenal callback after.
+         */
+        function onCancelBefore() {
+            // reset the form on cancel
+            self.stepForm.$setPristine();
+            self.stepForm.$setUntouched();
 
+            // call cancel function
+            (self.onCancel || self.step.onCancel)();
         }
     }
 })();

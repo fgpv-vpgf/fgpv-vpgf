@@ -33,7 +33,7 @@
         </md-button>
     </div>
 
-    <md-content class="rv-content" ng-if="!self.staticContent" rv-resize>
+    <md-content class="rv-content" ng-if="!self.staticContent" rv-detect-scrollbar>
         <!-- hide content when it's loading and hideWhenLoading is "true" -->
         <ng-transclude class="rv-hide-animate" ng-class="{ 'rv-hide': self.isLoading && self.hideWhenLoading }"></ng-transclude>
     </md-content>

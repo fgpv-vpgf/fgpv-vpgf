@@ -403,13 +403,13 @@
                         items: [
                             {
                                 type: 'layer',
-                                name: 'Group 2 Layer Name 1',
+                                name: 'Survey of Radioactivity in Richmond Hill',
                                 layerType: 'esriImage',
                                 id: 11,
                                 symbology: [
                                     {
                                         icon: 'url',
-                                        name: 'something'
+                                        name: 'Test Conducted'
                                     }
                                 ],
                                 options: {

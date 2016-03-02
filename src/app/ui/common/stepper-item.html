@@ -19,31 +19,35 @@
 
     <div class="rv-stepper-item-content rv-toggle-slide" ng-show="self.isActive || self.step.isActive">
 
-        <div class="rv-stepper-item-body">
-            <ng-transclude></ng-transclude>
-        </div>
+        <form name="self.stepForm">
 
-        <div
-            class="rv-stepper-item-footer"
-            ng-if="self.onCancel || self.step.onCancel || self.onContinue || self.step.onContinue">
+            <div class="rv-stepper-item-body">
+                <ng-transclude></ng-transclude>
+            </div>
 
-            <md-button
-                class="rv-button-square"
-                ng-disabled="!self.isCancelEnabled && !self.step.isCancelEnabled"
-                ng-if="self.onCancel || self.step.onCancel"
-                ng-click="(self.onCancel || self.step.onCancel)()">
-                cancel
-            </md-button>
+            <div
+                class="rv-stepper-item-footer"
+                ng-if="self.onCancel || self.step.onCancel || self.onContinue || self.step.onContinue">
 
-            <md-button
-                class="rv-button-square md-primary"
-                ng-disabled="!self.isContinueEnabled && !self.step.isContinueEnabled"
-                ng-if="self.onContinue || self.step.onContinue"
-                ng-click="(self.onContinue || self.step.onContinue)()">
-                continue
-            </md-button>
+                <md-button
+                    class="rv-button-square"
+                    ng-disabled="!self.isCancelEnabled && !self.step.isCancelEnabled"
+                    ng-if="self.onCancel || self.step.onCancel"
+                    ng-click="self.onCancelBefore()">
+                    cancel
+                </md-button>
 
-        </div>
+                <md-button
+                    class="rv-button-square md-primary"
+                    ng-disabled="!(self.stepForm.$valid && (self.isContinueEnabled || self.step.isContinueEnabled))"
+                    ng-if="self.onContinue || self.step.onContinue"
+                    ng-click="(self.onContinue || self.step.onContinue)()">
+                    continue
+                </md-button>
+
+            </div>
+
+        </form>
     </div>
 
 </div>

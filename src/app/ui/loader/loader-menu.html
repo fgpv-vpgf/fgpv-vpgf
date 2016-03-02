@@ -1,0 +1,40 @@
+<md-menu md-position-mode="target target">
+
+    <!-- TODO: add translate filters -->
+
+    <md-button
+        aria-label="Import Layers"
+        class="md-icon-button primary"
+        ng-click="$mdOpenMenu($event)"
+        ng-class="{ selected: self.state.active }">
+        <md-tooltip>Import Layers</md-tooltip>
+        <md-icon md-svg-src="content:add"></md-icon>
+    </md-button>
+
+    <md-menu-content class="rv-menu rv-dense" width="4">
+
+        <md-menu-item>
+            <md-button ng-click="self.openFileLoader()" aria-label="From local file">
+                <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
+                From local file
+            </md-button>
+        </md-menu-item>
+
+        <md-menu-item>
+            <md-button ng-click="self.openServiceLoader()" ng-disabled="true" aria-label="From Internet">
+                <md-icon md-svg-icon="file:cloud"></md-icon>
+                From Internet
+            </md-button>
+        </md-menu-item>
+
+        <md-menu-divider></md-menu-divider>
+
+        <md-menu-item >
+            <md-button ng-click="self.openCatalogueLoader()" ng-disabled="true" aria-label="From Data Catalogue">
+                <md-icon md-svg-icon="action:shopping_cart"></md-icon>
+                From Data Catalogue
+            </md-button>
+        </md-menu-item>
+
+    </md-menu-content>
+</md-menu>

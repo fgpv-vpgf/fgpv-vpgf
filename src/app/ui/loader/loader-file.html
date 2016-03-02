@@ -1,75 +1,131 @@
-<rv-content-pane >
-    <div class="rv-loader-file" flow-init="{ singleFile: true }" flow-prevent-drop>
+<rv-content-pane
+    close-panel="self.closeLoaderFile()"
+    floating-header="true"
+    flow-drag-enter="self.dropActive = true"
+    flow-drag-leave="self.dropActive = false"
+    flow-prevent-drop
+    class="rv-file-drop"
+    ng-class="{'rv-file-drop-active': self.dropActive}">
 
-        <rv-stepper-item
-            summary-value="{{ self.file && self.steps[0].isCompleted ? self.file.name : 'GeoJSON, CSV, or Shapefile' }}"
-            step="self.steps[0]">
+    <!-- TODO: add translate filters -->
 
-            <div
-                flow-drag-enter="self.dropActive = true"
-                flow-drag-leave="self.dropActive = false"
-                flow-drop
-                flow-files-submitted="self.filesSubmitted($files, $event, $flow)"
-                flow-file-success="self.fileSuccess($file, $flow)"
-                ng-class="{'rv-loader-file-drop': self.dropActive}">
+    <div class="rv-loader-file" flow-init="{ singleFile: true }">
+        <!-- add `
+            , permanentErrors: [200, 201, 202, 404, 415, 500, 501], successStatuses: []`
+         to flow-init to simulate error during upload  -->
 
-                <span class="md-title rv-loader-file-drop-title" ng-if="self.dropActive">Drop to upload your file</span>
+        <div class="rv-file-drop-blur">
 
-                <md-button
-                    ng-if="!self.dropActive"
-                    class="rv-button-square rv-loader-file-select-button"
-                    flow-btn
-                    flow-progress="console.log()">Select a file</md-button>
+            <rv-stepper-item
+                step="self.upload.step"
+                form="self.upload.form"
+                summary-value="{{ self.upload.file && self.upload.step.isCompleted ? self.upload.file.name : 'GeoJSON, CSV, or Shapefile' }}">
 
-                <!--span class="md-caption rv-loader-file-caption">GeoJSON, CSV, and Shapefile data types are supported</span-->
+                <md-input-container class="md-block rv-loader-file-em" flex>
+                    <div
+                        flow-files-submitted="self.upload.filesSubmitted($files, $event, $flow)"
+                        flow-file-success="self.upload.fileSuccess($file, $flow)"
+                        flow-error="self.upload.fileError($file, $message, $flow)">
 
-                <md-progress-linear md-mode="determinate" value="{{ self.file ? self.file.progress() * 100 : 0 }}"></md-progress-linear>
+                        <md-button
+                            class="rv-button-square rv-loader-file-select-button"
+                            flow-btn
+                            flow-progress="console.log()"
+                            ng-click="self.upload.fileReset()">Select a file</md-button>
 
-            </div>
-            <!--span class="label label-info">Total Size:
-                {{ $flow.getSize() }}bytes</span>
+                        <md-progress-linear md-mode="determinate" value="{{ self.upload.file ? self.upload.file.progress() * 100 : 0 }}"></md-progress-linear>
 
-            <table>
-                <tr ng-repeat="file in $flow.files">
-                    <td>{{$index+1}}</td>
-                    <td>{{file.name}}</td>
-                    <td>{{file.msg}}</td>
-                    <td>{{ file.progress() * 100 }}% Complete</td>
-                </tr>
-            </table-->
+                    </div>
+                    <div class="errors" ng-messages="self.upload.form.$error" ng-if="self.upload.form.$invalid">
+                        <div ng-message="upload-error">Can't access file.</div>
+                    </div>
+                </md-input-container>
 
-        </rv-stepper-item>
+            </rv-stepper-item>
 
-        <rv-stepper-item
-            step="self.steps[1]"
-            summary-value="{{ self.dataType && self.steps[1].isCompleted ? self.dataTypes[self.dataType] : '' }}"
-            is-continue-enabled="self.dataType">
+            <rv-stepper-item
+                form="self.select.form"
+                step="self.select.step"
+                summary-value="{{ self.select.dataType && self.select.step.isCompleted ? self.dataTypes[self.select.dataType] : '' }}">
 
-            <md-input-container class="md-block">
-                <label>Select data type</label>
-                <md-select ng-model="self.dataType">
-                    <md-option ng-repeat="(value, key) in self.dataTypes" value="{{ value }}">
-                        {{ key }}
-                    </md-option>
-                </md-select>
-            </md-input-container>
-        </rv-stepper-item>
+                <md-input-container class="md-block">
+                    <label>File Format</label>
+                    <md-select name="dataType" ng-model="self.select.dataType" required>
+                        <md-option ng-repeat="(value, key) in self.dataTypes" value="{{ value }}">
+                            {{ key }}
+                        </md-option>
+                    </md-select>
 
-        <rv-stepper-item step="self.steps[2]">
-            It's in French!
-        </rv-stepper-item>
+                    <!-- TODO: decide whether and how to display a hint or error messages; can use md-on-close="self.select.form.dataType.$setDirty()" -->
+                    <!--div
+                        class="errors"
+                        ng-messages="self.select.form.dataType.$error"
+                        ng-if="self.select.form.dataType.$dirty">
+                        <div ng-message="required">Required</div>
+                    </div>
+                    <div class="rv-hint">Tell us what it is.</div-->
 
-        <!--md-button ng-click="self.expanded = !self.expanded">
-            Expand first step</md-button>
+                </md-input-container>
+            </rv-stepper-item>
 
-        <md-button ng-click="self.expanded2 = !self.expanded2">
-            Expand second step</md-button>
-        <br/>
-        <md-button ng-click="self.completed = !self.completed">
-            Complete first step</md-button>
+            <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.select.dataType">
 
-        <md-button ng-click="self.completed2 = !self.completed2">
-            Complete second step</md-button-->
+                <md-input-container class="md-block">
+                    <label>Layer Name</label>
+                    <input name="layerName" ng-model="self.configure.options.layerName" required>
+                    <!-- TODO: decide whether and how to display a hint or error messages -->
+                    <!--div ng-messages="self.configure.form.layerName.$error">
+                        <div ng-message="required">This is required!</div>
+                        <div ng-message="md-maxlength">That's too long!</div>
+                    </div-->
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>Primary Field</label>
+                    <md-select name="primaryField" ng-model="self.configure.options.primaryField" required>
+                        <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
+                            {{ key }}
+                        </md-option>
+                    </md-select>
+                    <!-- TODO: decide whether and how to display a hint or error messages -->
+                    <!--div class="errors" ng-messages="self.configure.form.primaryField.$error">
+                        <div ng-message="required">Required</div>
+                    </div-->
+                </md-input-container>
+
+                <div layout="row" ng-switch-when="csv">
+                    <md-input-container class="md-block" flex>
+                        <label>Latitude Field</label>
+                        <md-select name="latitude" ng-model="self.configure.options.latitude" required>
+                            <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
+                                {{ key }}
+                            </md-option>
+                        </md-select>
+                        <!-- TODO: decide whether and how to display a hint or error messages -->
+                        <!--div class="errors" ng-messages="self.configure.form.latitude.$error">
+                            <div ng-message="required">Required</div>
+                        </div-->
+                    </md-input-container>
+                    <md-input-container class="md-block" flex>
+                        <label>Longitude Field</label>
+                        <md-select name="longitude" ng-model="self.configure.options.longitude" required>
+                            <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
+                                {{ key }}
+                            </md-option>
+                        </md-select>
+                        <!-- TODO: decide whether and how to display a hint or error messages -->
+                        <!--div class="errors" ng-messages="self.configure.form.longitude.$error">
+                            <div ng-message="required">Required</div>
+                        </div-->
+                    </md-input-container>
+                </div>
+
+            </rv-stepper-item>
+        </div>
+
+        <div class="rv-file-drop-container" flow-drop>
+            <span class="md-display-2 rv-file-drop-title">Drop to upload your file</span>
+        </div>
     </div>
 
-</rv-main-panel-content>
+</rv-content-pane>
