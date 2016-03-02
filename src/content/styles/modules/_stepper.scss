@@ -9,6 +9,7 @@
             margin: 0 rem(1.6);
             position: relative;
 
+            // lines connecting steps
             &:after {
                 content: "";
                 position: absolute;
@@ -120,6 +121,10 @@
         display: flex;
         justify-content: flex-end;
         padding-bottom: rem(2.4);
+
+        &-continue {
+            min-width: rem(12.0);
+        }
 
         .md-button {
             margin: 0 rem(0.8) 0 0;
