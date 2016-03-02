@@ -78,7 +78,7 @@
                     // check if it's a valid JSON
                     try {
                         configJson = angular.fromJson(configAttr);
-                        configInitialized(configJson, 'en');
+                        addConfig($q.resolve(configJson), 'en');
                     } catch (e) {
                         console.log('Not valid JSON, attempting to load a file with this name');
                     }
@@ -88,62 +88,55 @@
                             langs = angular.fromJson(langAttr);
                         } catch (e) {
                             console.log('Could not parse langs, defaulting to en and fr');
+
+                            // TODO: better way to handle when no languages are specified?
+                            langs = ['en', 'fr'];
                         }
                     }
 
-                    // TODO: better way to handle when no languages are specified?
-                    if (!langs) {
-                        langs = ['en', 'fr'];
-                    }
-
-                    // TODO: switch to loading only the first (default) config?
-                    // load all but attach promises and load app once first config has loaded?
-                    let promises;
+                    // start loading every config file
                     if (!configJson) {
-                        // promise array to start up app after all of the config files have loaded
-                        promises = langs.map(lang => {
+                        langs.forEach(lang => {
                             // try to load config file
-                            return $http
-                                .get(configAttr.replace('$LANG', lang))
-                                .then(function (data) {
-                                    if (data.data) {
-                                        configInitialized(data.data, lang);
-                                    }
-                                })
-                                .catch(function (error) {
-                                    console.error('Config initialization failed');
-                                    console.log(error);
-                                    reject();
-                                });
+                            let p = $http.get(configAttr.replace('${lang}', lang));
+                            addConfig(p, lang);
                         });
-                    } else {
-                        // resolved promise to allow app to initialize
-                        promises = [$q.resolve(null)];
                     }
 
-                    $q.all(promises).then(() => {
-                        // set language to the first specified
-                        isInitialized = true;
-                        fulfill();
-                    });
-                } else {
-                    configInitialized({}, 'en');
-                }
-
-                /**
-                 * Initialization complete handler
-                 * @param  {object} config config object
-                 * @param  {string} lang the language to tie the config object to
-                 */
-                function configInitialized(config, lang) {
-                    // apply any defaults from layoutConfigDefaults, then merge config on top
-                    // TODO: this is an exampe; actual merging of the defaults is more complicated
-                    service.data[lang] = {};
-                    angular.merge(service.data[lang], configDefaults, config);
+                    // initialize the app once the default language's config is loaded
+                    // FIXME: replace with getCurrent().then / service.data[Default language] if we have a way to check
+                    service.data[langs[0]]
+                        .then(() => {
+                            isInitialized = true;
+                            fulfill();
+                        })
+                        .catch(error => {
+                            reject(error);
+                            console.error(error);
+                        });
                 }
             });
 
             return initializePromise;
+        }
+
+        /**
+         * Adds a config (promise) to the registry
+         * @param  {Promise}    configPromise  promise that will resolve with config object
+         * @param  {string}     lang    the language to tie the config object to
+         */
+        function addConfig(configPromise, lang) {
+            service.data[lang] = configPromise
+                    .then(data => {
+                        if (data.data) {
+                            // apply any defaults from layoutConfigDefaults, then merge config on top
+                            // TODO: this is an example; actual merging of the defaults is more complicated
+                            return angular.merge({}, configDefaults, data.data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
         }
 
         /**
