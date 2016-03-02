@@ -977,7 +977,7 @@
             };
 
             // wait for attributes to be loaded, then process them into grid format
-            const newData = geoService.layers[layer.id].attribs.then(attribBundle => {
+            const dataPromise = geoService.layers[layer.id].attribs.then(attribBundle => {
                 let layerId = layer.id;
                 let layerIdx;
 
@@ -993,20 +993,20 @@
                     layerIdx = attribBundle.indexes[0];
                 }
 
-                return geoService.getFormattedAttributes(layerId, layerIdx).then(attrs => {
-                    return {
-                        data: {
-                            // TODO investigate .isNumber call.  layer.id is generally never a number
-                            columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) *
-                                5),
-                            data: attrs.data.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 50),
+                return geoService.getFormattedAttributes(layerId, layerIdx);
+            }).then(attrs => {
+                return {
+                    data: {
+                        // TODO remove .isNumber stuff once proper table support is completed
+                        columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) *
+                            5),
+                        data: attrs.data.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 50),
 
-                            // FIXME: this after dynamic layer index gets refactored to proper separate layers
-                            featureIndex: '0'
-                        },
-                        isLoaded: false
-                    };
-                });
+                        // FIXME: this after dynamic layer index gets refactored to proper separate layers
+                        featureIndex: '0'
+                    },
+                    isLoaded: false
+                };
             });
 
             stateManager.setActive({
@@ -1016,7 +1016,7 @@
                 .setActive({
                     side: false
                 })
-                .then(() => stateManager.toggleDisplayPanel('filtersFulldata', newData, requester, 0));
+                .then(() => stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0));
         }
 
         /**

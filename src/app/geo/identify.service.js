@@ -50,17 +50,13 @@
             let fName = attribName;
 
             // search for aliases
-            // TODO add IE polyfill for array.find and use it instead of array.every
             if (fields) {
-                fields.every(function (field) {
-                    if (field.name === attribName) {
-                        if (field.alias && field.alias.length > 0) {
-                            fName = field.alias;
-                        }
-                        return false; // break the loop
-                    }
-                    return true; // keep looping
+                const attribField = fields.find(field => {
+                    return field.name === attribName;
                 });
+                if (attribField && attribField.alias && attribField.alias.length > 0) {
+                    fName = attribField.alias;
+                }
             }
             return fName;
         }
