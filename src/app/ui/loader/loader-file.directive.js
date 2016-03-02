@@ -35,9 +35,10 @@
         }
     }
 
-    function Controller($timeout, stateManager, stepper) {
+    function Controller($timeout, stateManager, stepperFactory) {
         'ngInject';
         const self = this;
+        const stepper = stepperFactory(); // make new stepper
 
         self.closeLoaderFile = closeLoaderFile;
 
