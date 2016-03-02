@@ -29,7 +29,6 @@
             epsgLookup,
             getFormattedAttributes,
             registerLayer,
-            registerAttributes,
             setZoom,
             shiftZoom,
             selectBasemap,
@@ -129,28 +128,6 @@
         }
 
         /**
-         * Adds an attribute dataset to the layers registry
-         * @param  {promise} attribData a promise resolving in an attribute dataset
-         */
-        function registerAttributes(attribData) {
-            // FIXME this function may be obsolete? if not, update doc and code to be $q compliant.
-            // TODO determine the proper docstrings for a non-service function that lives in a service
-
-            if (!attribData.layerId) {
-                // TODO replace with proper error handling mechanism
-                console.log('Error: attempt to register attribute dataset without layerId property');
-            }
-
-            if (!service.layers[attribData.layerId]) {
-                // TODO replace with proper error handling mechanism
-                console.log('Error: attempt to register layer attributes against unregistered layer.  id: ' +
-                    attribData.layerId);
-            }
-
-            service.layers[attribData.layerId].attribs = attribData;
-        }
-
-        /**
          * Returns nicely bundled attributes for the layer described by layerId.
          * The bundles are used in the datatable.
          *
@@ -184,25 +161,12 @@
                 // used to track order of columns
                 const columnOrder = [];
 
+                identify = identifyService(service.gapi, map, service.layers);
+
                 // get the attribute keys to use as column headers
                 Object.keys(first.attributes)
                     .forEach((key, index) => {
-                        let title = key;
-
-                        // search for aliases
-                        // TODO add IE polyfill for array.find and use it instead of array.every
-                        // TODO duplicate alias search code as found in indentify.service. refactor to be in magic angular shared location
-                        if (attr.fields) {
-                            attr.fields.every(function (field) {
-                                if (field.name === key) {
-                                    if (field.alias && field.alias.length > 0) {
-                                        title = field.alias;
-                                    }
-                                    return false; // break the loop
-                                }
-                                return true; // keep looping
-                            });
-                        }
+                        const title = identify.aliasedFieldName(key, attr.fields);
 
                         columns[index] = {
                             title

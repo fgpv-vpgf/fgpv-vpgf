@@ -32,12 +32,38 @@
                  * @param {Object} layer an ESRI FeatureLayer object
                  * @param {String} name the display name of the layer
                  */
-                addFeatureLayer: (layer, name) => featureLayers.push({ layer, name })
+                addFeatureLayer: (layer, name) => featureLayers.push({ layer, name }),
+
+                aliasedFieldName
 
             };
         };
 
         /******/
+
+        /**
+         * Get the best user-friendly name of a field. Uses alias if alias is defined, else uses the system attribute name.
+         * @param {String} attribName the attribute name we want a nice name for
+         * @param {Object} fields array of field definitions. the attribute should belong to the provided set of fields
+         */
+        function aliasedFieldName(attribName, fields) {
+            let fName = attribName;
+
+            // search for aliases
+            // TODO add IE polyfill for array.find and use it instead of array.every
+            if (fields) {
+                fields.every(function (field) {
+                    if (field.name === attribName) {
+                        if (field.alias && field.alias.length > 0) {
+                            fName = field.alias;
+                        }
+                        return false; // break the loop
+                    }
+                    return true; // keep looping
+                });
+            }
+            return fName;
+        }
 
         // returns the number of visible layers that have been registered with the identify service
         function getVisibleLayers() {
@@ -53,21 +79,7 @@
             // simple array of text mapping for demonstration purposes. fancy grid formatting later?
 
             return Object.keys(attribs).map(key => {
-                let fieldName = key;
-
-                // search for aliases
-                // TODO add IE polyfill for array.find and use it instead of array.every
-                if (fields) {
-                    fields.every(function (field) {
-                        if (field.name === key) {
-                            if (field.alias && field.alias.length > 0) {
-                                fieldName = field.alias;
-                            }
-                            return false; // break the loop
-                        }
-                        return true; // keep looping
-                    });
-                }
+                let fieldName = aliasedFieldName(key, fields);
 
                 // FIXME change this output into a tabular format that is compatible with the detail pane (format yet to be decided)
                 return `${fieldName} - ${attribs[key]}`;

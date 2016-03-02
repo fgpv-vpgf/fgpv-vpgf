@@ -46,32 +46,6 @@ describe('geo', () => {
                 .toBe('on');
         });
 
-        // TODO if we decide registerAttributes is obsolete, remove this test
-        /*
-        // check registering a attribute object
-        it('should register attributes', () => {
-            let tempLayer = {
-                id: 'sausages',
-                setVisibility: () => {}
-            };
-            let tempConfig = {
-                url: 'http://www.sausagelayer.com/'
-            };
-            geoService.registerLayer(tempLayer, tempConfig, {});
-
-            let tempAttribs = {
-                layerId: 'sausages'
-            };
-            geoService.registerAttributes(tempAttribs);
-
-            // attribute object is attached to correct layer
-            expect(geoService.layers.sausages.attribs)
-                .toBeDefined();
-            expect(geoService.layers.sausages.attribs.layerId)
-                .toBe('sausages');
-        });
-        */
-
         // FIXME re-enable and correct this test once getFormattedAttributes is migrated
         xit('should bundle attributes correctly', () => {
             let tempLayer = {
