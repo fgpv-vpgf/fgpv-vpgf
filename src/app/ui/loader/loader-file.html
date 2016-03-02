@@ -31,6 +31,7 @@
                             class="rv-button-square rv-loader-file-select-button"
                             flow-btn
                             flow-progress="console.log()"
+                            flow-attrs="{ accept: '.csv,.zip,.json' }"
                             ng-click="self.upload.fileReset()">Select a file</md-button>
 
                         <md-progress-linear md-mode="determinate" value="{{ self.upload.file ? self.upload.file.progress() * 100 : 0 }}"></md-progress-linear>
