@@ -47,7 +47,9 @@
         'ngInject';
         const self = this;
 
-        self.config = configService.getCurrent();
+        configService.getCurrent().then(config => {
+            self.config = config;
+        });
         self.isLoading = true;
         self.version = version;
 
@@ -150,7 +152,9 @@
         // FIXME: move to a directive or sidenav
         function languageSwitch(lang) {
             $translate.use(lang);
-            geoService.buildMap($('div[rv-init-map]')[0], configService.getCurrent());
+            configService.getCurrent().then(config => {
+                geoService.buildMap($('div[rv-init-map]')[0], config);
+            });
         }
 
         // TODO: hack
