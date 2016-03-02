@@ -7,7 +7,7 @@
      * @module app.ui.common
      * @description
      *
-     * The `stepper` service provides a common interface to move between a number of steps forming a stepper (Material Desing).
+     * The `stepper` service provides a common interface to move between a number of steps forming a stepper [Material Desing Stepper](https://www.google.com/design/spec/components/steppers.html#steppers-specs).
      * Other components should import `Stepper` and add steps to it in the order they appear in the template.
      * Only one step can be active at a time. `Stepper` can move forward and backwards, or jump to any step optionally "completing" intermediate steps.
      *
@@ -62,7 +62,10 @@
 
         /**
          * Adds steps to this instance of the Stepper service.
-         * @param {Array|Object} steps step object to be added
+         * a step object must have two properties: `isActive` and `isCompleted`; they are bound to the `step-item` template and determine the visual appearance of a step;
+         * `isActive` indicates that a step's content is exposed to the user and awaits user input; only one step should be active at a time;
+         * `isCompleted` indicates that user input satisfies this step's validation; step's number badge is replaced with a checkmark icon;
+         * @param {Array|Object} steps step object(s) to be added; either an array of step objects or a single step object can be added; the order in which steps are added to the stepper service will be used for navigation between steps;
          * @return {Object}            itself for chaining
          */
         function addSteps(steps) {

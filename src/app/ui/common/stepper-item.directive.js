@@ -9,7 +9,7 @@
      * @description
      *
      * The `rvStepperItem` directive is a step implementation in Material Design stepper component.
-     * Material Design has specs for a Stepper component (https://www.google.com/design/spec/components/steppers.html#steppers-specs). Steppers display progress through a sequence by breaking it up into multiple logical and numbered steps. Unfortunatelly, Angular Material didn't implement it yet, so we have to build our own.
+     * Material Design has specs for a [Stepper component](https://www.google.com/design/spec/components/steppers.html#steppers-specs). Steppers display progress through a sequence by breaking it up into multiple logical and numbered steps. Unfortunatelly, Angular Material didn't implement it yet, so we have to build our own.
      * This directive represents a single step (`Stepper` service provides navigation between linked steps) which wraps the specified content in a form to provide field validation. `Continue` and `Cancel` buttons can be display in each step. `Continue` button is disabled unless the form is valid. `Cancel` button clears the form and remove all the standard error messages.
      *
      * `Stepper-items` should not be nested.

@@ -21,36 +21,23 @@
             restrict: 'E',
             templateUrl: 'app/ui/loader/loader-menu.html',
             scope: {},
-            link: link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
-
-        /***/
-
-        function link() { // scope, el, attr, ctrl) {
-
-        }
     }
 
     function Controller(stateManager) {
         'ngInject';
         const self = this;
 
-        self.stateManager = stateManager;
+        self.state = stateManager.state.mainLoaderFile;
 
         self.openFileLoader = openFileLoader;
 
-        activate();
-
         /***/
-
-        function activate() {
-
-        }
 
         function openFileLoader() {
             // TODO: hack
