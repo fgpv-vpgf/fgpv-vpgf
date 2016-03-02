@@ -1,27 +1,32 @@
 @mixin loader {
-    .rv-loader-file {
-        rv-stepper-item {
-            &:first-of-type .rv-stepper-item-container:before {
-                display: none;
+    .rv-loader {
+        &-file,
+        &-service {
+            rv-stepper-item {
+                // hides connecting lines before the first and after the last step in a sequence
+                &:first-of-type .rv-stepper-item-container:before {
+                    display: none;
+                }
+
+                &:last-of-type .rv-stepper-item-container:after {
+                    display: none;
+                }
             }
 
-            &:last-of-type .rv-stepper-item-container:after {
-                display: none;
+            // local file select button
+            &-select-button {
+                display: block;
+                width: 100%;
+                margin: {
+                    left: 0;
+                    right: 0;
+                }
             }
-        }
 
-        &-select-button {
-            display: block;
-            width: 100%;
-            margin: {
-                left: 0;
-                right: 0;
+            &-caption {
+                display: block;
+                text-align: center;
             }
-        }
-
-        &-caption {
-            display: block;
-            text-align: center;
         }
     }
 }

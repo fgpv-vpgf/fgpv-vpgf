@@ -57,6 +57,8 @@
             self.markerImageSrc = data.logoUrl;
         });
 
+        self.loaderService = loaderService;
+
         self.menu = [{
                 name: 'Options',
                 type: 'heading',
