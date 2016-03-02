@@ -1,4 +1,4 @@
-/* global bard, geoService, $httpBackend */
+/* global bard, geoService, $httpBackend, $q */
 
 describe('geo', () => {
 
@@ -7,7 +7,7 @@ describe('geo', () => {
         bard.appModule('app.geo', 'app.common.router');
 
         // inject services
-        bard.inject('geoService', '$httpBackend');
+        bard.inject('geoService', '$httpBackend', '$q');
         geoService.promise.then(() => done());
     });
 
@@ -46,8 +46,7 @@ describe('geo', () => {
                 .toBe('on');
         });
 
-        // FIXME re-enable and correct this test once getFormattedAttributes is migrated
-        xit('should bundle attributes correctly', () => {
+        it('should bundle attributes correctly', () => {
             let tempLayer = {
                 id: 'sausages',
                 setVisibility: () => {}
@@ -55,9 +54,7 @@ describe('geo', () => {
             let tempConfig = {
                 url: 'http://www.sausagelayer.com/'
             };
-            geoService.registerLayer(tempLayer, tempConfig);
-
-            let tempAttribs = {
+            let tempAttribPromise = $q.resolve({
                 layerId: 'sausages',
                 0: {
                     features: [{
@@ -66,14 +63,16 @@ describe('geo', () => {
                         }
                     }]
                 }
-            };
-            geoService.registerAttributes(tempAttribs);
+            });
 
-            let bundledAttributes = geoService.getFormattedAttributes(tempLayer.id, '0');
-            expect(bundledAttributes.data)
-                .toBeDefined();
-            expect(bundledAttributes.columns)
-                .toBeDefined();
+            geoService.registerLayer(tempLayer, tempConfig, tempAttribPromise);
+
+            geoService.getFormattedAttributes(tempLayer.id, '0').then(bundledAttributes => {
+                expect(bundledAttributes.data)
+                    .toBeDefined();
+                expect(bundledAttributes.columns)
+                    .toBeDefined();
+            });
         });
 
         it('should set zoom correctly', () => {
