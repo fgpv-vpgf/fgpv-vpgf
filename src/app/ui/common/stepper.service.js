@@ -7,7 +7,7 @@
      * @module app.ui.common
      * @description
      *
-     * The `stepper` service provides a common interface to move between a number of steps forming a stepper [Material Desing Stepper](https://www.google.com/design/spec/components/steppers.html#steppers-specs).
+     * The `stepper` service provides a common interface to move between a number of steps forming a stepper [Material Design Stepper](https://www.google.com/design/spec/components/steppers.html#steppers-specs).
      * Other components should import `Stepper` and add steps to it in the order they appear in the template.
      * Only one step can be active at a time. `Stepper` can move forward and backwards, or jump to any step optionally "completing" intermediate steps.
      *

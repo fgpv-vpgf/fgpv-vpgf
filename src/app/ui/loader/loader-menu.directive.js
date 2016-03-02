@@ -33,9 +33,11 @@
         'ngInject';
         const self = this;
 
-        self.state = stateManager.state.mainLoaderFile;
+        // TODO: need a better way to determine if the layer loader is active or not
+        self.state = stateManager.state;
 
         self.openFileLoader = openFileLoader;
+        self.openServiceLoader = openServiceLoader;
 
         /***/
 
@@ -43,6 +45,13 @@
             // TODO: hack
             stateManager.setActive({
                 mainLoaderFile: true
+            });
+        }
+
+        function openServiceLoader() {
+            // TODO: hack
+            stateManager.setActive({
+                mainLoaderService: true
             });
         }
     }
