@@ -39,12 +39,10 @@
             zoomToGraphic
         };
 
-        let map = null; // keep map reference local to geoService
         let mapDomNode = null;
         let mapPromise = null;
-
-        let mapManager = null;
-        let identify = null;
+        let identifyPromise = null;
+        let mapManagerPromise = null;
 
         let fullExtent = null;
 
@@ -79,19 +77,23 @@
          * TODO: needs more work for removing dynamic layers and its children;
          */
         function removeLayer(layerId) {
-            const l = service.layers[layerId];
 
-            if (!l) {
-                return;
-            }
+            mapPromise.then(map => {
+                const l = service.layers[layerId];
 
-            map.removeLayer(l.layer);
+                if (!l) {
+                    return;
+                }
 
-            // TODO: needs more work to manager layerOrder
-            const index = service.layerOrder.indexOf(layerId);
-            if (index !== -1) {
-                service.layerOrder.splice(index, 1);
-            }
+                map.removeLayer(l.layer);
+
+                // TODO: needs more work to manager layerOrder
+                const index = service.layerOrder.indexOf(layerId);
+                if (index !== -1) {
+                    service.layerOrder.splice(index, 1);
+                }
+            });
+
         }
 
         /**
@@ -219,9 +221,10 @@
         /**
          * Takes a layer in the config format and generates an appropriate layer object.
          * @param {object} layerConfig a configuration fragment for a single layer
+         * @param {object} identify FIXME: description
          * @return {object} a layer object matching one of the esri/layers objects based on the layer type
          */
-        function generateLayer(layerConfig) {
+        function generateLayer(layerConfig, identify) {
             const handlers = {};
             const commonConfig = {
                 id: layerConfig.id,
@@ -304,36 +307,32 @@
          * @param {object} config the map configuration based on the configuration schema
          */
         function buildMap(domNode, config) {
-            console.log('buildMap');
+            console.log('superBuildMap');
 
             if (!mapDomNode) {
                 mapDomNode = domNode;
             }
 
             // reset before rebuilding the map
-            if (map !== null) {
+            if (mapPromise) {
+                mapPromise.then(map => {
 
-                if (mapManager) {
-                    if (mapManager.OverviewMapControl) {
-                        mapManager.OverviewMapControl.destroy();
-                    }
-                    if (mapManager.ScalebarControl) {
-                        mapManager.ScalebarControl.destroy();
-                    }
-                    if (mapManager.BasemapControl) {
-                        mapManager.BasemapControl.basemapGallery.destroy();
-                    }
-                }
+                    map.destroy();
+                    service.layers = {};
 
-                // NOTE: Possible to have dom listeners stick around after the node is destroyed
-                map.destroy();
-                map = null;
-                service.layers = {};
+                    fullExtent = null;
 
-                fullExtent = null;
+                });
             }
 
-            // FIXME remove the hardcoded settings when we have code which does this properly
+            if (mapManagerPromise) {
+                mapManagerPromise.then(mapManager => {
+                    mapManager.BasemapControl.basemapGallery.destroy();
+                    mapManager.OverviewMapControl.destroy();
+                    mapManager.ScalebarControl.destroy();
+                });
+            }
+
             // if no selected basemap, use the first item
             if (!selectedBasemapId) {
                 setSelectedBaseMap(config.baseMaps[0].id, config);
@@ -343,21 +342,42 @@
             const basemapConfig = getBasemapConfig(selectedBasemapId, config);
             const basemap = getBasemapFromJson(basemapConfig);
 
-            buildMapPromise(basemap, domNode);
+            mapPromise = buildMapPromise(basemap, domNode);
 
-            mapPromise.then(esriMapObject => {
-                map = esriMapObject;
-                mapManager = service.gapi.mapManager.setupMap(map, config);
+            mapPromise.then(map => {
 
+                mapManagerPromise = $q((resolve, reject) => {
+                    const mapManager = service.gapi.mapManager.setupMap(map, config);
+
+                    if (mapManager) {
+                        resolve(mapManager);
+                    } else {
+                        reject('failed to setup mapManager');
+                    }
+                });
+
+                // mapManager = service.gapi.mapManager.setupMap(map, config);
                 if (config.services && config.services.proxyUrl) {
                     service.gapi.mapManager.setProxy(config.services.proxyUrl);
                 }
 
-                identify = identifyService(service.gapi, map, service.layers);
+                identifyPromise = $q((resolve, reject) => {
+                    const identify = identifyService(service.gapi, map, service.layers);
 
-                // setup layers
-                setupLayers(config);
-                initMapFullExtentValue(config);
+                    if (identify) {
+                        resolve(identify);
+                    } else {
+                        reject('failed to setup identify service');
+                    }
+                }).then(identify => {
+
+                    // setup layers
+                    setupLayers(config, map, identify);
+                }).catch(err => {
+                    console.error('identify not available. Err:' + err);
+                });
+
+                initMapFullExtentValue(config, map);
             });
 
             // FIXME temp link for debugging
@@ -371,31 +391,35 @@
          * @param {string} id identifier for a specific basemap layerbower
          */
         function selectBasemap(id, configService) {
-            if (typeof (mapManager) === 'undefined' || !mapManager.BasemapControl) {
-                console.error('Error: Map manager or basemap control is not setup,' +
-                    ' please setup map manager by calling setupMap().');
-            } else {
 
-                mapManager.BasemapControl.setBasemap(id);
+            mapManagerPromise.then(mapManager => {
 
-                // check to see if spatial references are the same
-                const newBasemap = getBasemapConfig(id, configService);
-                const oldBasemap = getBasemapConfig(selectedBasemapId, configService);
-
-                if (newBasemap.wkid === oldBasemap.wkid) {
-                    console.log('same wkid: ' + newBasemap.wkid);
+                return mapPromise.then(map=> {
                     mapManager.BasemapControl.setBasemap(id);
-                    mapManager.OverviewMapControl.destroy();
-                    mapManager.OverviewMapControl = service.gapi.mapManager.getOverviewMap(map, configService);
-                    mapManager.OverviewMapControl.startup();
-                } else {
 
-                    // extent is different, build the map
-                    console.log('different wkid: ' + newBasemap.wkid);
-                    setSelectedBaseMap(id, configService);
-                    buildMap(mapDomNode, configService);
-                }
-            }
+                    // check to see if spatial references are the same
+                    const newBasemap = getBasemapConfig(id, configService);
+                    const oldBasemap = getBasemapConfig(selectedBasemapId, configService);
+
+                    if (newBasemap.wkid === oldBasemap.wkid) {
+                        console.log('same wkid: ' + newBasemap.wkid);
+                        mapManager.BasemapControl.setBasemap(id);
+                        mapManager.OverviewMapControl.destroy();
+                        mapManager.OverviewMapControl = service.gapi.mapManager.getOverviewMap(map, configService);
+                        mapManager.OverviewMapControl.startup();
+                    } else {
+
+                        // extent is different, build the map
+                        console.log('different wkid: ' + newBasemap.wkid);
+                        setSelectedBaseMap(id, configService);
+                        buildMap(mapDomNode, configService);
+                    }
+
+                });
+            }).catch(err => {
+                console.error('selectBasemap: ' + err);
+            });
+
         }
 
         /**
@@ -403,11 +427,12 @@
          * @param {number} value a zoom level number
          */
         function setZoom(value) {
-            if (map) {
+            mapPromise.then(map => {
                 map.setZoom(value);
-            } else {
-                console.warn('GeoService: map is not yet created.');
-            }
+            }).catch(err => {
+                console.warn('GeoService: map is not yet created.  Err:' + err);
+            });
+
         }
 
         /**
@@ -415,20 +440,19 @@
          * @param  {number} byValue a number of zoom levels to shift by
          */
         function shiftZoom(byValue) {
-            if (map) {
+            mapPromise.then(map => {
                 let newValue = map.getZoom() + byValue;
                 map.setZoom(newValue);
-            } else {
-                console.warn('GeoService: map is not yet created.');
-            }
-
+            }).catch(err => {
+                console.warn('GeoService: map is not yet created. Err:' + err);
+            });
         }
 
         /**
          * Set the map to full extent
          */
         function setFullExtent() {
-            if (map) {
+            mapPromise.then(map => {
                 if (fullExtent) {
                     console.log('setFullExtent');
                     console.log(fullExtent);
@@ -436,9 +460,10 @@
                 } else {
                     console.warn('GeoService: fullExtent value is not set.');
                 }
-            } else {
-                console.warn('GeoService: map is not yet created.');
-            }
+            }).catch(err => {
+                console.warn('GeoService: map is not yet created. Err:' + err);
+            });
+
         }
 
         /*
@@ -479,7 +504,9 @@
             const geo = service.gapi.layer.getFeatureInfo(layerUrl, objId);
             geo.then(geoInfo => {
                 if (geoInfo) {
-                    map.centerAndZoom(geoInfo.feature.geometry, 10);
+                    mapPromise.then(map => {
+                        map.centerAndZoom(geoInfo.feature.geometry, 10);
+                    });
                 }
             });
         }
@@ -499,8 +526,9 @@
         /**
         * set up map full extent value
         * @param {object} config settings
+        * @param {object} map esri map object
         */
-        function initMapFullExtentValue(config) {
+        function initMapFullExtentValue(config, map) {
 
             let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
 
@@ -529,10 +557,11 @@
         /**
         * Setup map layers from config settings
         * @param {object} config settings
+        * @param {object} map esri map object
         */
-        function setupLayers(config) {
+        function setupLayers(config, map, identify) {
             config.layers.forEach(layerConfig => {
-                const l = generateLayer(layerConfig);
+                const l = generateLayer(layerConfig, identify);
                 registerLayer(l, layerConfig); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                 map.addLayer(l);
 
@@ -598,7 +627,7 @@
         */
         function buildMapPromise(initialBasemap, domNode) {
 
-            mapPromise = $q((resolve, reject) => {
+            return $q((resolve, reject) => {
 
                 const esriMapObject = new service.gapi.mapManager.Map(domNode, {
                     basemap: initialBasemap,
