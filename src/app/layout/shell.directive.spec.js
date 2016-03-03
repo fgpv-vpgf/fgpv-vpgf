@@ -97,6 +97,8 @@ describe('rvShell', () => {
             .respond({});
         $httpBackend.expectGET('content/images/iconsets/image-icons.svg')
             .respond({});
+        $httpBackend.expectGET('content/images/iconsets/file-icons.svg')
+            .respond({});
         $httpBackend.expectGET('content/images/iconsets/hardware-icons.svg')
             .respond({});
         $httpBackend.expectGET('src/config.en-CA.json')
