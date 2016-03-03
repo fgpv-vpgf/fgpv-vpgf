@@ -281,6 +281,8 @@
             if (map !== null) {
                 // NOTE: Possible to have dom listeners stick around after the node is destroyed
                 map.destroy();
+                mapManager.OverviewMapControl.destroy();
+                mapManager.ScalebarControl.destroy();
                 map = null;
                 service.layers = {};
             }

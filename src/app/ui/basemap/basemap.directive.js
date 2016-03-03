@@ -97,47 +97,49 @@
 
             var wkidArray = [];
 
-            // FIXME: in case there is no basemaps; fall back to some default one or something
-            var basemaps = configService.data.baseMaps || [];
+            configService.getCurrent().then(config => {
+                // FIXME: in case there is no basemaps; fall back to some default one or something
+                var basemaps = config.baseMaps || [];
 
-            basemaps.forEach(basemap => {
+                basemaps.forEach(basemap => {
 
-                // make new projection if not exists
-                var wkid = basemap.wkid;
-                var idx;
+                    // make new projection if not exists
+                    var wkid = basemap.wkid;
+                    var idx;
 
-                if (wkidArray.indexOf(wkid) !== -1) {
-                    console.log('in if wkidArray');
-                    idx = wkidArray.indexOf(wkid);
-                } else {
+                    if (wkidArray.indexOf(wkid) !== -1) {
+                        console.log('in if wkidArray');
+                        idx = wkidArray.indexOf(wkid);
+                    } else {
 
-                    // TODO: decision needed on how we handle different type of projection,
-                    // adding all of them here, or it won't be an issue if we predefine all
-                    // in config.
-                    self.projections.push({
-                        wkid: wkid,
-                        name: (wkid === 3978) ? 'Lambert' :
-                            (wkid === 102100) ? 'Mercator' : 'Other',
-                        items: []
+                        // TODO: decision needed on how we handle different type of projection,
+                        // adding all of them here, or it won't be an issue if we predefine all
+                        // in config.
+                        self.projections.push({
+                            wkid: wkid,
+                            name: (wkid === 3978) ? 'Lambert' :
+                                (wkid === 102100) ? 'Mercator' : 'Other',
+                            items: []
+                        });
+
+                        wkidArray.push(wkid);
+
+                        idx = wkidArray.indexOf(wkid);
+                    }
+
+                    self.projections[idx].items.push({
+                        name: basemap.name,
+                        type: basemap.type,
+                        id: basemap.id,
+                        url: basemap.layers[0].url,
+                        wkid: basemap.wkid,
+                        selected: false
                     });
 
-                    wkidArray.push(wkid);
-
-                    idx = wkidArray.indexOf(wkid);
-                }
-
-                self.projections[idx].items.push({
-                    name: basemap.name,
-                    type: basemap.type,
-                    id: basemap.id,
-                    url: basemap.layers[0].url,
-                    wkid: basemap.wkid,
-                    selected: false
                 });
 
+                console.log(basemaps);
             });
-
-            console.log(basemaps);
 
         });
 

@@ -1,4 +1,4 @@
-/* global bard, $compile, $rootScope, $httpBackend */
+/* global bard, $compile, $rootScope, $httpBackend, $q */
 
 describe('rvShell', () => {
     let scope;
@@ -13,12 +13,26 @@ describe('rvShell', () => {
         $translateProvider.useLoader('customLoader');
     }
 
+    function mockConfigService($provide) {
+        $provide.service('configService', () => {
+            return {
+                initialize: () => {},
+                getCurrent: () => {
+                    return $q.resolve({});
+                },
+                ready: () => {
+                    return $q.resolve({});
+                }
+            };
+        });
+    }
+
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.layout', 'app.templates', 'app.ui', customTranslateLoader);
+        bard.appModule('app.layout', 'app.templates', 'app.ui', customTranslateLoader, mockConfigService);
 
         // inject angular services
-        bard.inject('$compile', '$rootScope', '$httpBackend');
+        bard.inject('$compile', '$rootScope', '$httpBackend', '$q');
 
         // crete new scope
         scope = $rootScope.$new();
@@ -44,6 +58,10 @@ describe('rvShell', () => {
         $httpBackend.expectGET('content/images/iconsets/image-icons.svg')
             .respond({});
         $httpBackend.expectGET('content/images/iconsets/hardware-icons.svg')
+            .respond({});
+        $httpBackend.expectGET('src/config.en.json')
+            .respond({});
+        $httpBackend.expectGET('src/config.fr.json')
             .respond({});
 
         directiveElement = $compile(directiveElement)(scope);

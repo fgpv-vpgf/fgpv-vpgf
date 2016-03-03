@@ -38,14 +38,14 @@
         .module('app.core')
         .factory('configService', configService);
 
-    function configService($q, $rootElement, $timeout, $http, configDefaults) {
+    function configService($q, $rootElement, $timeout, $http, configDefaults, $translate) {
         let initializePromise;
         let isInitialized = false;
 
         const service = {
-            data: {},
+            data: { },
+            getCurrent,
             initialize: initialize,
-            reset,
             ready: ready
         };
 
@@ -56,10 +56,7 @@
         /**
          * Initializes `configService` by fetching and parsing `config` object.
          */
-        function initialize(lang) {
-            if (lang !== undefined) {
-                console.log('got a language');
-            }
+        function initialize() {
             if (initializePromise) {
                 return initializePromise;
             }
@@ -67,7 +64,9 @@
             // store the promise and return it on all future calls; this way initialize can be called one time only
             initializePromise = $q((fulfill, reject) => {
                 const configAttr = $rootElement.attr('th-config');
+                const langAttr = $rootElement.attr('rv-langs');
                 let configJson;
+                let langs;
 
                 // This function can only be called once.
                 if (isInitialized) {
@@ -79,56 +78,74 @@
                     // check if it's a valid JSON
                     try {
                         configJson = angular.fromJson(configAttr);
-                        configInitialized(configJson);
+                        addConfig($q.resolve(configJson), 'en');
                     } catch (e) {
                         console.log('Not valid JSON, attempting to load a file with this name');
                     }
 
-                    // try to load config file
-                    if (!configJson) {
-                        $http
-                            .get(configAttr)
-                            .then(function (data) {
-                                if (data.data) {
-                                    configJson = data.data;
-                                }
+                    if (langAttr) {
+                        try {
+                            langs = angular.fromJson(langAttr);
+                        } catch (e) {
+                            console.log('Could not parse langs, defaulting to en and fr');
 
-                                // simulate delay to show loading splash
-                                return $timeout(function () {
-                                    configInitialized(configJson);
-                                }, 2000);
-                            })
-                            .catch(function (error) {
-                                console.error('Config initialization failed');
-                                console.log(error);
-                                reject();
-                            });
+                            // TODO: better way to handle when no languages are specified?
+                            langs = ['en', 'fr'];
+                        }
                     }
-                } else {
-                    configInitialized({});
-                }
 
-                /**
-                 * Initialization complete handler
-                 * @param  {object} config config object
-                 */
-                function configInitialized(config) {
-                    // apply any defaults from layoutConfigDefaults, then merge config on top
-                    // TODO: this is an exampe; actual merging of the defaults is more complicated
-                    angular.merge(service.data, configDefaults, config);
+                    // start loading every config file
+                    if (!configJson) {
+                        langs.forEach(lang => {
+                            // try to load config file
+                            let p = $http.get(configAttr.replace('${lang}', lang));
+                            addConfig(p, lang);
+                        });
+                    }
 
-                    isInitialized = true;
-
-                    return fulfill();
+                    // initialize the app once the default language's config is loaded
+                    // FIXME: replace with getCurrent().then / service.data[Default language] if we have a way to check
+                    service.data[langs[0]]
+                        .then(() => {
+                            isInitialized = true;
+                            fulfill();
+                        })
+                        .catch(error => {
+                            reject(error);
+                            console.error(error);
+                        });
                 }
             });
 
             return initializePromise;
         }
 
-        function reset(lang) {
-            initializePromise = undefined;
-            return initialize(lang);
+        /**
+         * Adds a config (promise) to the registry
+         * @param  {Promise}    configPromise  promise that will resolve with config object
+         * @param  {string}     lang    the language to tie the config object to
+         */
+        function addConfig(configPromise, lang) {
+            service.data[lang] = configPromise
+                    .then(data => {
+                        if (data.data) {
+                            // apply any defaults from layoutConfigDefaults, then merge config on top
+                            // TODO: this is an example; actual merging of the defaults is more complicated
+                            return angular.merge({}, configDefaults, data.data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+        }
+
+        /**
+         * Returns the currently used config. Language is determined by asking $translate.
+         * @return {object}     The config object tied to the current language
+         */
+        function getCurrent() {
+            const currentLang = ($translate.proposedLanguage() || $translate.use()).split('-')[0];
+            return service.data[currentLang];
         }
 
         /**
