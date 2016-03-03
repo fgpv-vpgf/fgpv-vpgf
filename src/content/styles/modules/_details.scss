@@ -103,9 +103,9 @@
             list-style-type: none;
             padding: 0;
             // FIXME zebra stripe is hard
-            /* > li: nth-child(even) {
+            > li:nth-child(even) {
                 background-color: #ddd;
-            } */
+            }
         }
 
         .rv-details-attrib-key {
