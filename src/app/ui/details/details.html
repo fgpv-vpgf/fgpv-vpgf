@@ -18,11 +18,27 @@ and collates multiple hits per layer into one view
                 </div>
 
                 <div class="rv-subcontent">
-                    <h5 class="rv-sub-subhead" ng-repeat-start="item in self.display.data[0].data">{{ item.name }}</h5>
 
-                    <p ng-repeat-end ng-repeat="paragraph in item.data">
-                        {{ paragraph }}
-                    </p>
+                    <!-- Feature Key-Value list presentation  -->
+                    <div ng-if="self.selectedItem.format === 'EsriFeature'">
+                        <h5 class="rv-sub-subhead" ng-repeat-start="item in self.display.data[0].data">{{ item.name }}</h5>
+
+                        <ul ng-repeat-end class="rv-details-zebra-list">
+                            <li ng-repeat="keyval in item.data">
+                                <div class="rv-details-attrib-key">{{ keyval.key }}</div>
+                                <div class="rv-details-attrib-value">{{ keyval.value }}</div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Plain text presentation  -->
+                    <div ng-if="self.selectedItem.format === 'Text'">
+                        <h5 class="rv-sub-subhead" ng-repeat-start="item in self.display.data[0].data">{{ item.name }}</h5>
+
+                        <p ng-repeat-end ng-repeat="paragraph in item.data">
+                            {{ paragraph }}
+                        </p>
+                    </div>
 
                 </div>
 
