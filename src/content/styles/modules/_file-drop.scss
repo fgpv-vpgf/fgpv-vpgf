@@ -17,23 +17,30 @@
             }
 
             .rv-file-drop-blur {
-                filter: blur(rem(0.2));
+                filter:blur(rem(0.2));
             }
         }
 
         &-title {
-            display: block;
-            text-align: center;
-            margin: {
+            top: 12%;
+            position: absolute;
+            color: $secondary-text-color;
+            width: 100%;
+            padding: {
                 left: rem(2.0);
                 right: rem(2.0);
             }
-            top: 22%;
-            position: absolute;
-            color: $secondary-text-color;
+
+            md-icon {
+                display: block;
+                height: rem(5);
+                width: rem(5);
+                margin-top: 18px;
+            }
         }
 
         &-container {
+            text-align: center;
             display: none;
             position: absolute;
             top: 0;
@@ -41,6 +48,7 @@
             right: 0;
             left: 0;
             background-color: rgba(white,0.86);
+            z-index: 1; // to overlay close button
         }
     }
 }
