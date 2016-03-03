@@ -96,5 +96,41 @@
                 margin-left: rem(4.8);
             }
         }
+
+        // TODO enhance to proper sassyness
+
+        .rv-details-zebra-list {
+            list-style-type: none;
+            padding: 0;
+            // FIXME zebra stripe is hard
+            /* > li: nth-child(even) {
+                background-color: #ddd;
+            } */
+        }
+
+        .rv-details-attrib-key {
+            margin-right: 0;
+            padding: 0;
+            position: relative;
+            font-weight: bold;
+            width: 33.3333%;
+            float: left;
+        }
+
+        .rv-details-attrib-value {
+            margin-right: 0;
+            padding: 0;
+            position: relative;
+            width: 66.6667%;
+            float: left;
+        }
+
+        // FIXME our friend colon will not show
+        &:before {
+            content: ":";
+            position: absolute;
+            left: -10px;
+            font-weight: bold;
+        }
     }
 }
