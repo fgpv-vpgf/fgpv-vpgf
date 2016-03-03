@@ -46,9 +46,12 @@ and collates multiple hits per layer into one view
                     <div ng-if="self.selectedItem.format === 'EsriFeature'">
                         <h5 class="rv-sub-subhead" ng-repeat-start="item in self.selectedItem.data">{{ item.name }}</h5>
 
-                        <p ng-repeat-end ng-repeat="keyval in item.data">
-                            I HAVE BEEN ENHANCED {{ keyval.key }} - {{ keyval.value }}
-                        </p>
+                        <ul ng-repeat-end class="rv-details-zebra-list">
+                            <li ng-repeat="keyval in item.data">
+                                <div class="rv-details-attrib-key">{{ keyval.key }}</div>
+                                <div class="rv-details-attrib-value">{{ keyval.value }}</div>
+                            </li>
+                        </ul>
                     </div>
 
                     <!-- Plain text presentation  -->
