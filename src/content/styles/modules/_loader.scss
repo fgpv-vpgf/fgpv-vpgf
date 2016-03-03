@@ -13,19 +13,44 @@
                 }
             }
 
+            &-caption {
+                display: block;
+                text-align: center;
+            }
+        }
+
+        // TODO: this is horrible; need to organize it better
+        &-file {
+            &-upload {
+                &-drop {
+                    text-align: center;
+
+                    md-icon {
+                        display: block;
+                        margin-top: rem(1.0);
+                        color: #000000;
+                    }
+
+                    .md-errors-spacer, .md-input {
+                        display: none;
+                    }
+                }
+
+                &-or {
+                    display: block;
+                    text-align: center;
+                }
+            }
             // local file select button
             &-select-button {
                 display: block;
                 width: 100%;
+                font-size: rem(1.2);
                 margin: {
                     left: 0;
                     right: 0;
+                    bottom: 0;
                 }
-            }
-
-            &-caption {
-                display: block;
-                text-align: center;
             }
         }
     }
