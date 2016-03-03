@@ -115,6 +115,7 @@
             font-weight: bold;
             width: 33.3333%;
             float: left;
+            overflow: hidden;
         }
 
         .rv-details-attrib-value {
@@ -123,14 +124,12 @@
             position: relative;
             width: 66.6667%;
             float: left;
-        }
-
-        // FIXME our friend colon will not show
-        &:before {
-            content: ":";
-            position: absolute;
-            left: -10px;
-            font-weight: bold;
+            &:before {
+                content: ":";
+                position: absolute;
+                left: -10px;
+                font-weight: bold;
+            }
         }
     }
 }
