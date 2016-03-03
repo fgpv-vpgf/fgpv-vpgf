@@ -1,3 +1,7 @@
+<!--
+Shows details for a feature. Allows user to switch between layers that have results,
+and collates multiple hits per layer into one view       
+-->
 <rv-content-pane
     close-panel="self.closeDetails()"
     static-content="true"
@@ -5,6 +9,7 @@
     is-loading="self.display.isLoading"
     hide-when-loading="self.display.data.length === 1 || !self.display.data">
 
+    <!-- this handles the case of only one layer returning results. hides the side selector  -->
     <div class="rv-details" ng-if="self.display.data.length === 1">
         <md-content class="rv-details-data rv-content" rv-detect-scrollbar>
             <div class="rv-subsection">
@@ -25,7 +30,9 @@
         </md-content>
     </div>
 
+    <!-- this handles the case of multiple layers returning results. shows the side selector  -->
     <div class="rv-details rv-multiple" ng-if="self.display.data.length > 1">
+        <!-- the detail content  -->
         <md-content class="rv-details-data rv-content" rv-detect-scrollbar>
             <div
                 class="rv-subsection rv-hide-animate"
@@ -35,17 +42,29 @@
                 </div>
 
                 <div class="rv-subcontent">
-                    <h5 class="rv-sub-subhead" ng-repeat-start="item in self.selectedItem.data">{{ item.name }}</h5>
+                    <!-- Feature Key-Value list presentation  -->
+                    <div ng-if="self.selectedItem.format === 'EsriFeature'">
+                        <h5 class="rv-sub-subhead" ng-repeat-start="item in self.selectedItem.data">{{ item.name }}</h5>
 
-                    <p ng-repeat-end ng-repeat="paragraph in item.data">
-                        {{ paragraph }}
-                    </p>
+                        <p ng-repeat-end ng-repeat="keyval in item.data">
+                            I HAVE BEEN ENHANCED {{ keyval.key }} - {{ keyval.value }}
+                        </p>
+                    </div>
 
+                    <!-- Plain text presentation  -->
+                    <div ng-if="self.selectedItem.format === 'Text'">
+                        <h5 class="rv-sub-subhead" ng-repeat-start="item in self.selectedItem.data">{{ item.name }}</h5>
+
+                        <p ng-repeat-end ng-repeat="paragraph in item.data">
+                            {{ paragraph }}
+                        </p>
+                    </div>
                 </div>
 
             </div>
         </md-content>
 
+        <!-- the side selector  -->
         <div
             class="rv-details-layer-list"
             ng-mouseenter="self.onEnter()"
