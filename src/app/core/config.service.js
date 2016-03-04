@@ -65,6 +65,8 @@
             initializePromise = $q((fulfill, reject) => {
                 const configAttr = $rootElement.attr('th-config');
                 const langAttr = $rootElement.attr('rv-langs');
+                const svcAttr = $rootElement.attr('rv-service-endpoint');
+                const keysAttr = $rootElement.attr('rv-keys');
                 let configJson;
                 let langs;
 
@@ -91,6 +93,22 @@
 
                             // TODO: better way to handle when no languages are specified?
                             langs = ['en', 'fr'];
+                        }
+                    }
+
+                    let layerFragmentsPromise = $q.resolve([]);
+                    if (svcAttr) {
+                        const endpoint = svcAttr.endsWith('/') ? svcAttr : svcAttr + '/';
+                        if (keysAttr) {
+                            try {
+                                const keys = angular.fromJson(keysAttr);
+                                layerFragmentsPromise = $http.get(`${endpoint}v2/docs/${langs[0]}/${keys.join(',')}`);
+                            } catch (e) {
+                                console.error(e);
+                                console.error('RCS key retrieval failed');
+                            }
+                        } else {
+                            console.warn('RCS endpoint set but no keys were specified');
                         }
                     }
 
