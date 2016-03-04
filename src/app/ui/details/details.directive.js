@@ -109,23 +109,12 @@
         }
 
         /**
-         * Closes details pane and switches to toc.
+         * Closes loader pane and switches to the previous pane if any.
          */
         function closeDetails() {
-            const item = stateManager.state.main.history.slice(-2).shift(); // get second to last history item
-            const options = {};
-
-            // reopen previous selected pane if it's not null or 'mainDetails'
-            if (item !== null && item !== 'mainDetails') {
-                options[item] = true;
-            } else {
-                options.mainDetails = false;
-            }
-
-            // close `mainDetails` panel
             stateManager
-                .setActive(options)
-                .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display
+                .openPrevious('mainDetails')
+                .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display;
         }
 
         /**
