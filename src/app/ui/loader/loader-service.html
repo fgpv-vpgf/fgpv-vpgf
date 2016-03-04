@@ -7,12 +7,15 @@
 
             <md-input-container class="md-block">
                 <label>Service layer URL</label>
-                <input name="serviceUrl" type="url" ng-model="self.connect.serviceUrl" ng-model-options="{ updateOn: 'default blur', debounce: { default: 500, blur: 0 } }" required>
-                <!-- TODO: decide whether and how to display a hint or error messages -->
-                <!--div ng-messages="self.configure.form.layerName.$error">
-                        <div ng-message="required">This is required!</div>
-                        <div ng-message="md-maxlength">That's too long!</div>
-                    </div-->
+                <input
+                    name="serviceUrl"
+                    type="url"
+                    ng-model="self.connect.serviceUrl"
+                    ng-model-options="{ updateOn: 'default blur', debounce: { default: 500, blur: 0 } }"
+                    required>
+                <div ng-messages="self.connect.form.serviceUrl.$error">
+                    <div ng-message="url">This is not a valid URL</div>
+                </div>
             </md-input-container>
 
             <md-input-container class="md-block">
@@ -22,16 +25,6 @@
                         {{ key }}
                     </md-option>
                 </md-select>
-
-                <!-- TODO: decide whether and how to display a hint or error messages; can use md-on-close="self.select.form.dataType.$setDirty()" -->
-                <!--div
-                        class="errors"
-                        ng-messages="self.select.form.dataType.$error"
-                        ng-if="self.select.form.dataType.$dirty">
-                        <div ng-message="required">Required</div>
-                    </div>
-                    <div class="rv-hint">Tell us what it is.</div-->
-
             </md-input-container>
 
         </rv-stepper-item>
@@ -51,7 +44,6 @@
                     </div-->
             </md-input-container>
 
-
             <md-input-container class="md-block" ng-switch-when="ogcWms">
                 <label>Layer Name</label>
                 <md-select name="layerName" ng-model="self.configure.options.layerName" required>
@@ -66,7 +58,11 @@
                     </div-->
             </md-input-container>
 
-            <img src="https://d13yacurqjgara.cloudfront.net/users/355650/screenshots/2181500/unicorn_drib_v2.gif" style="width: 100%;" alt="" ng-switch-when="unicorn" />
+            <img
+                src="https://d13yacurqjgara.cloudfront.net/users/355650/screenshots/2181500/unicorn_drib_v2.gif"
+                style="width: 100%;"
+                alt=""
+                ng-switch-when="unicorn"/>
 
         </rv-stepper-item>
     </div>
