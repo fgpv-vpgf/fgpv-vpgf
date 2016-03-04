@@ -42,6 +42,33 @@
         let initializePromise;
         let isInitialized = false;
 
+        const basicLayerDefaults = {
+            visibility: {
+                enabled: true,
+                value: 'on'
+            },
+            opacity: {
+                enabled: true,
+                value: 1
+            },
+            metadata: {
+                enabled: true,
+            },
+            settings: {
+                enabled: true,
+            },
+            refresh: {
+                enabled: true,
+            },
+            remove: {
+                enabled: true,
+            },
+            boundingBox: {
+                enabled: true,
+                value: true
+            }
+        };
+
         const service = {
             data: { },
             getCurrent,
@@ -96,29 +123,13 @@
                         }
                     }
 
-                    let layerFragmentsPromise = $q.resolve([]);
                     if (svcAttr) {
-                        const endpoint = svcAttr.endsWith('/') ? svcAttr : svcAttr + '/';
-                        if (keysAttr) {
-                            try {
-                                const keys = angular.fromJson(keysAttr);
-                                layerFragmentsPromise = $http.get(`${endpoint}v2/docs/${langs[0]}/${keys.join(',')}`);
-                            } catch (e) {
-                                console.error(e);
-                                console.error('RCS key retrieval failed');
-                            }
-                        } else {
-                            console.warn('RCS endpoint set but no keys were specified');
-                        }
+                        rcsInit(svcAttr, keysAttr, langs);
                     }
 
                     // start loading every config file
                     if (!configJson) {
-                        langs.forEach(lang => {
-                            // try to load config file
-                            let p = $http.get(configAttr.replace('${lang}', lang));
-                            addConfig(p, lang);
-                        });
+                        fileInit(configAttr, langs);
                     }
 
                     // initialize the app once the default language's config is loaded
@@ -157,6 +168,27 @@
                     });
         }
 
+        function applyBasicDefaults(fragmentPromise) {
+            return fragmentPromise
+                .then(fragment => {
+                    let d = angular.merge({}, basicLayerDefaults, fragment);
+                    return {
+                        data: d
+                    };
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
+        function fileInit(configAttr, langs) {
+            langs.forEach(lang => {
+                // try to load config file
+                let p = $http.get(configAttr.replace('${lang}', lang));
+                addConfig(p, lang);
+            });
+        }
+
         /**
          * Returns the currently used config. Language is determined by asking $translate.
          * @return {object}     The config object tied to the current language
@@ -166,6 +198,25 @@
             return service.data[currentLang];
         }
 
+        function rcsInit(svcAttr, keysAttr, langs) {
+            const endpoint = svcAttr.endsWith('/') ? svcAttr : svcAttr + '/';
+            let keys;
+            if (keysAttr) {
+                try {
+                    keys = angular.fromJson(keysAttr);
+                } catch (e) {
+                    console.error(e);
+                    console.error('RCS key retrieval failed');
+                }
+
+                langs.forEach(lang => {
+                    let p = $http.get(`${endpoint}v2/docs/${lang}/${keys.join(',')}`);
+                    addConfig(applyBasicDefaults(p));
+                });
+            } else {
+                console.warn('RCS endpoint set but no keys were specified');
+            }
+        }
         /**
          * Checks if the service is ready to use.
          * @param  {object} nextPromises optional promises to be resolved before returning
