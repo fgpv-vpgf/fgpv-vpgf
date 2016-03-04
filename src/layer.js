@@ -38,6 +38,47 @@ const serviceType = {
     Error: 'error'
 };
 
+// attempts to determine if a path points to a location on the internet,
+// or is a local file.  Returns true if internetish
+function isServerFile(url) {
+    // TODO enhance to be better check, possibly magic regex.
+    // These samples give a starting point, though we would likely need to change some conditions.
+    // http://blog.mattheworiordan.com/post/13174566389/url-regular-expression-for-links-with-or-without
+    // https://gist.github.com/searls/1033143
+
+    const netPrefixes = ['http', 'ftp']; // TODO more valid prefixes?
+    const lowUrl = url.toLowerCase();
+    let found = false;
+    netPrefixes.forEach(prefix => {
+        if (lowUrl.substr(0, prefix.length) === prefix) {
+            found = true;
+        }
+    });
+    return found;
+}
+
+// will grab a file from a server address as binary.
+// returns a promise that resolves with the file data.
+function getServerFile(url, esriBundle) {
+    return new Promise((resolve, reject) => {
+        // extract info for this service
+        const defService = esriBundle.esriRequest({
+            url: url,
+            handleAs: 'arraybuffer'
+        });
+
+        defService.then(srvResult => {
+            resolve(srvResult);
+        }, error => {
+            // something went wrong
+            // TODO remove these debug outputs
+            console.log('i am errrorrrrr');
+            console.log(error);
+            reject(error);
+        });
+    });
+}
+
 // returns a standard information object with serviceType
 // supports predictLayerUrl
 // type is serviceType enum value
@@ -57,6 +98,25 @@ function makeLayerInfo(type, name, json) {
     const info = makeInfo(type);
     info.name = json[name] || '';
     return info;
+}
+
+// returns promise of standard information object with serviceType
+// and fileData if file is located online (not on disk).
+function makeFileInfo(type, url, esriBundle) {
+    return new Promise(resolve => {
+        const info = makeInfo(type);
+        if (url && isServerFile(url)) {
+            // be a pal and download the file content
+            console.log('HOSSS i made it here, horah');
+            getServerFile(url, esriBundle).then(data => {
+                console.log('HOSSS got some data back from server');
+                info.fileData = data;
+                resolve(info);
+            });
+        } else {
+            resolve(info);
+        }
+    });
 }
 
 // inspects the JSON that was returned from a service.
@@ -176,31 +236,38 @@ function pokeEsriService(url, esriBundle, hint) {
     });
 }
 
-function pokeFile(url, hint) {
+// tests a URL to see if the value is a file
+// providing the known type as a hint will cause the function to run the
+// specific logic for that file type, rather than guessing and trying everything
+// resolves with promise of information object
+// - serviceType : the type of file (CSV, Shape, GeoJSON, Unknown)
+// - fileData : if the file is located on a server, will xhr
+function pokeFile(url, esriBundle, hint) {
 
     // reaction functions to different files
     // overkill right now, as files just identify the type right now
-    // but structure will let us enhance to scrape field names for use in import wizard
+    // but structure will let us enhance for custom things if we need to
     const fileHandler = {};
 
     // csv
     fileHandler[serviceType.CSV] = () => {
-        makeInfo(serviceType.CSV);
+        return makeFileInfo(serviceType.CSV, url, esriBundle);
     };
 
     // geojson
     fileHandler[serviceType.GeoJSON] = () => {
-        makeInfo(serviceType.GeoJSON);
+        return makeFileInfo(serviceType.GeoJSON, url, esriBundle);
     };
 
     // csv
     fileHandler[serviceType.Shapefile] = () => {
-        makeInfo(serviceType.Shapefile);
+        return makeFileInfo(serviceType.Shapefile, url, esriBundle);
     };
 
     // couldnt figure it out
     fileHandler[serviceType.Unknown] = () => {
-        makeInfo(serviceType.Unknown);
+        // dont supply url, as we don't want to download random files
+        return makeFileInfo(serviceType.Unknown);
     };
 
     return new Promise(resolve => {
@@ -263,9 +330,9 @@ function predictLayerUrlBuilder(esriBundle) {
                 mapper[serviceType.ImageService] = 'F_ESRI';
                 mapper[serviceType.WMS] = 'F_WMS';
 
-                // flavour to flavour handler
+                // hint flavour to flavour-handler
                 mapper.F_FILE = () => {
-                    pokeFile(url, hint).then(info => resolve(info));
+                    pokeFile(url, esriBundle, hint).then(info => resolve(info));
                 };
 
                 mapper.F_ESRI = () => {
@@ -281,11 +348,11 @@ function predictLayerUrlBuilder(esriBundle) {
                 mapper[mapper[hint]]();
 
             } else {
-                resolve(null);
-
-                // do multiple tests on url
-                pokeFile(url).then(infoFile => {
+                // no hint. run tests until we find a match.
+                // test for file
+                pokeFile(url, esriBundle).then(infoFile => {
                     if (infoFile.serviceType === serviceType.Unknown) {
+                        // not a file, test for ESRI
                         pokeEsriService(url, esriBundle).then(infoEsri => {
                             if (infoEsri.serviceType === serviceType.Unknown) {
                                 // FIXME REAL LOGIC COMING SOON

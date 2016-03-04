@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <div id="map" style="height:90%; width: 100%;"></div>
+    <p id="mess" />
+    <script src="dist/geoapi.min.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+           
+            // lets test some paths
+
+            api.layer.predictLayerUrl('c:\dogguts\dash.csv').then(data => {
+                console.log('local file CSV, no hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('c:\dogguts\dash.csv', api.layer.serviceType.CSV).then(data => {
+                console.log('local file CSV, hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/test.csv').then(data => {
+                console.log('web file CSV, no hint');
+                console.log(data);
+            });
+
+
+
+        });
+    </script>
+</body>
+</html>
