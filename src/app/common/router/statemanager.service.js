@@ -34,6 +34,8 @@
             setActive,
             setMorph,
 
+            openPrevious,
+
             callback,
 
             state: angular.copy(initialState),
@@ -49,7 +51,7 @@
         const fulfillStore = {}; // keeping references to promise fulfill functions
 
         const displayService = displayManager(service); // init displayManager
-        angular.extend(service, displayService); // merge displayManager service function into stateManager
+        angular.extend(service, displayService); // merge displayManager service functions into stateManager
 
         return service;
 
@@ -254,6 +256,36 @@
 
                 return;
             });
+        }
+
+        /**
+         * Given a content pane name, closes it and opens a previously opened pane from the history.
+         * @param  {String} currenPaneName name of the content pane
+         * @return {Promise}                returns a promise which is resolved when opening animation completes; or resolves immediately if nothing happens
+         */
+        function openPrevious(currenPaneName) {
+            const panel = getParent(currenPaneName);
+            const history = panel.item.history;
+
+            // no history; do nothing
+            if (history.length === 0) {
+                return $q.resolve();
+            }
+
+            // TODO: abstract; maybe move to stateManager itself
+            // get second to last history item from history
+            const item = history.splice(-2).shift();
+            const options = {};
+
+            // reopen previous selected pane if it's not null or currenPaneName
+            if (item !== null && item !== currenPaneName) {
+                options[item] = true;
+            } else {
+                options[currenPaneName] = false;
+            }
+
+            // close `mainDetails` panel
+            return service.setActive(options);
         }
 
         /**
