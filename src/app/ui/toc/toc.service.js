@@ -1038,35 +1038,44 @@
                 if (layer.cache.metadata) {
                     fulfill(layer.cache.metadata);
                 } else {
-                    // TODO: generate some metadata to display functionality
-                    // const mdata = HolderIpsum.paragraphs(2, true);
+
+                    console.log('jkw: layer');
+                    console.log(layer);
 
                     // TODO: xmlUrl should come from layer
                     // following is a test xmlUrl layer
-                    const testXmlUrl = 'http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/' +
-                        'eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=' +
-                        'csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845';
+                    // const testXmlUrl = 'http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/' +
+                    //     'eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=' +
+                    //     'csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845';
 
-                    // TODO: xsl should come from service constant? or is this layer specific
-                    // following is a test xsl from RAMP, should be updated for FGPV
-                    const xslUrl = 'http://ramp-pcar.github.io/demos/NRSTC/v5.4.2/ramp-pcar/' +
-                        'assets/metadata/xstyle_default_en.xsl';
+                    if (layer.metadataUrl) {
+                        const xmlUrl = layer.metadataUrl;
 
-                    // transform xml
-                    metadataService.transformXML(testXmlUrl, xslUrl).then(mdata => {
+                        // TODO: xsl should come from service constant? or is this layer specific
+                        // following is a test xsl from RAMP, should be updated for FGPV
+                        const xslUrl = 'http://ramp-pcar.github.io/demos/NRSTC/v5.4.2/ramp-pcar/' +
+                            'assets/metadata/xstyle_default_en.xsl';
 
-                        // result is wrapped in an array due to previous setup
-                        // TODO: chagee the following when changing associated directive service
-                        layer.cache.metadata = [mdata[0].innerText];
-                        fulfill(layer.cache.metadata);
-                    });
+                        // transform xml
+                        metadataService.transformXML(xmlUrl, xslUrl).then(mdata => {
 
-                    // // TODO: remove; simulating delay on retrieving metadata
-                    // $timeout(() => {
-                    //     layer.cache.metadata = mdata;
+                            // result is wrapped in an array due to previous setup
+                            // TODO: chagee the following when changing associated directive service
+                            layer.cache.metadata = [mdata[0].innerText];
+                            fulfill(layer.cache.metadata);
+                        });
+                    } else {
+                        // TODO: generate some metadata to display functionality
+                        const mdata = HolderIpsum.paragraphs(2, true);
 
-                    //     fulfill(layer.cache.metadata);
-                    // }, Math.random() * 3000 + 300); // random delay
+                        // TODO: remove; simulating delay on retrieving metadata
+                        $timeout(() => {
+                            layer.cache.metadata = mdata;
+
+                            fulfill(layer.cache.metadata);
+                        }, Math.random() * 3000 + 300); // random delay
+                    }
+
                 }
             });
 
