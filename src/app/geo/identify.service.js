@@ -155,8 +155,10 @@
                     const result = {
                         isLoading: true,
                         requestId: -1,
-                        requester: name,
-                        format: 'EsriFeature',
+                        requester: {
+                            name,
+                            format: 'EsriFeature'
+                        },
                         data: []
                     };
                     opts.tolerance = getTolerance(layerRegistry, layer);
@@ -203,8 +205,10 @@
                     const result = {
                         isLoading: true,
                         requestId: -1,
-                        requester: name,
-                        format: 'EsriFeature',
+                        requester: {
+                            name,
+                            format: 'EsriFeature'
+                        },
                         data: []
                     };
                     details.data.push(result);
