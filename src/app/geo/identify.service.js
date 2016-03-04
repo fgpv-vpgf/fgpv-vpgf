@@ -77,8 +77,10 @@
             return Object.keys(attribs).map(key => {
                 let fieldName = aliasedFieldName(key, fields);
 
-                // FIXME change this output into a tabular format that is compatible with the detail pane (format yet to be decided)
-                return `${fieldName} - ${attribs[key]}`;
+                return {
+                    key: fieldName,
+                    value: attribs[key]
+                };
             });
         }
 
@@ -153,7 +155,10 @@
                     const result = {
                         isLoading: true,
                         requestId: -1,
-                        requester: name,
+                        requester: {
+                            name,
+                            format: 'EsriFeature'
+                        },
                         data: []
                     };
                     opts.tolerance = getTolerance(layerRegistry, layer);
@@ -200,7 +205,10 @@
                     const result = {
                         isLoading: true,
                         requestId: -1,
-                        requester: name,
+                        requester: {
+                            name,
+                            format: 'EsriFeature'
+                        },
                         data: []
                     };
                     details.data.push(result);

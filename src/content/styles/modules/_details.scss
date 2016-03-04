@@ -96,5 +96,44 @@
                 margin-left: rem(4.8);
             }
         }
+
+        // TODO enhance to proper sassyness
+
+        .rv-details-zebra-list {
+            list-style-type: none;
+            padding: 0;
+            > li {
+                padding: 5px;
+                overflow: auto;
+            }
+            > li:nth-child(even) {
+                background-color: #ddd;
+            }
+        }
+
+        .rv-details-attrib-key {
+            margin-right: 0;
+            padding-right: 10px;
+            position: relative;
+            font-weight: bold;
+            width: 33.3333%;
+            float: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rv-details-attrib-value {
+            margin-right: 0;
+            padding-left: 15px;
+            position: relative;
+            width: 66.6667%;
+            float: left;
+            &:before {
+                content: ":";
+                position: absolute;
+                left: 0px;
+                font-weight: bold;
+            }
+        }
     }
 }
