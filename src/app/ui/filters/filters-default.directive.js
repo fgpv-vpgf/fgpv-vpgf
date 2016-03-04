@@ -75,10 +75,12 @@
                         columns: stateManager.display.filters.data.columns,
                         data: stateManager.display.filters.data.data,
                         deferRender: true,
-                        scrollY: true, // allow verstical scroller
+                        scrollY: true, // allow vertical scroller
                         scrollX: true, // allow horizontal scroller
                         autoWidth: false, // without autoWidth, few columns will be stretched to fill avaialbe width, and many columns will cause the table to scroll horizontally
-                        scroller: true, // turn on virtual scroller extension
+                        scroller: {
+                            displayBuffer: 3 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer
+                        }, // turn on virtual scroller extension
                         select: true // allow row select
                     });
 
