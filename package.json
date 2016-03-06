@@ -1,8 +1,8 @@
 {
   "name": "r2v2",
   "private": true,
-  "version": "0.8.0",
-  "description": "A starter project for AngularJS",
+  "version": "0.9.0",
+  "description": "FGP R2 Viewer",
   "repository": "https://github.com/fgpv-vpgf/fgpv-vpgf",
   "license": "MIT",
   "devDependencies": {
