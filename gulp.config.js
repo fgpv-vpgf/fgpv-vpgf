@@ -78,6 +78,8 @@ module.exports = function () {
             src + 'config*.json'
         ],
 
+        schema: src + 'schema.json',
+
         vetjs: [src + '**/*.js', '*.js', 'e2e-test/**/*.js', 'test/**/*.js', 'docs/app/js/app.js',
             'docs/config/**/*.js', '!docs/config/templates/*.js', '!docs/config/tag-defs/*.js'],
 

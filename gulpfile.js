@@ -3,19 +3,22 @@
 /* global -$ */
 'use strict';
 
-var gulp = require('gulp');
-var glob = require('glob');
-var del = require('del');
-var pkg = require('./package.json');
-var $ = require('gulp-load-plugins')({ lazy: true });
-var args = require('yargs').argv;
-var bowerFiles = require('main-bower-files');
-var Dgeni = require('dgeni');
-var config = require('./gulp.config')();
-var Server = require('karma').Server;
-var dateFormat = require('dateformat');
-var through = require('through2');
-var merge = require('merge-stream');
+const gulp = require('gulp');
+const glob = require('glob');
+const del = require('del');
+const pkg = require('./package.json');
+const $ = require('gulp-load-plugins')({ lazy: true });
+const args = require('yargs').argv;
+const bowerFiles = require('main-bower-files');
+const Dgeni = require('dgeni');
+const config = require('./gulp.config')();
+const Server = require('karma').Server;
+const dateFormat = require('dateformat');
+const through = require('through2');
+const merge = require('merge-stream');
+
+const jsDefaults = require('json-schema-defaults');
+const jsRefParser = require('json-schema-ref-parser');
 
 require('gulp-help')(gulp);
 
@@ -107,6 +110,14 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
             .pipe($.connect.reload());
     });
 
+/**
+ * Inject config schema default snippets into the code.
+ * @param  {String} contents stringified contents of the core/constant.service
+ */
+function injectConfigDefaults(contents) {
+    return contents.replace('_DEFAULTS_', JSON.stringify(pkg.schemaDefaults));
+}
+
 function injectVersion(contents) {
     // inject version into the version constant service
     Object.keys(pkg._v).forEach(key => {
@@ -164,13 +175,21 @@ function templatecache() {
 function jsbuild() {
     injectError(false);
 
-    let versionFilter = $.filter('**/version.*.js', { restore: true });
+    const versionFilter = $.filter('**/version.*.js', { restore: true });
+    const configDefaultsFilter  = $.filter('**/core/constant.service.js', { restore: true });
 
     return gulp
         .src(config.js)
+
+        // inject version info
         .pipe(versionFilter)
         .pipe($.insert.transform(injectVersion))
         .pipe(versionFilter.restore)
+
+        // inject config defaults generated from the config schema
+        .pipe(configDefaultsFilter)
+        .pipe($.insert.transform(injectConfigDefaults))
+        .pipe(configDefaultsFilter.restore)
 
         // TODO: fix this: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/293
         // .pipe($.sourcemaps.init())
@@ -203,7 +222,7 @@ gulp.task('translate', 'Split translation csv into internationalized files',
     });
 
 gulp.task('jsrollup', 'Roll up all js into one file',
-    ['jsinjector', 'validate', 'version'],
+    ['jsinjector', 'validate', 'version', 'configdefaults'],
     function () {
 
         const jslib = libbuild();
@@ -553,10 +572,30 @@ function log(msg) {
 }
 
 /**
+ * Generates defaults from selected config schema definitions.
+ */
+gulp.task('configdefaults', done => {
+    jsRefParser.dereference(config.schema).then(schema => {
+        const defs = [
+            'basicLayerOptionsNode',
+            'featureLayerOptionsNode',
+            'compoundLayerOptionsNode'
+        ];
+
+        pkg.schemaDefaults = {};
+        defs.forEach(def => {
+            pkg.schemaDefaults[def] = jsDefaults(schema.definitions[def]);
+        });
+
+        done();
+    });
+});
+
+/**
  * Stores version info on the pkg object.
  */
 gulp.task('version', function (done) {
-    let version = getVersion();
+    const version = getVersion();
 
     $.git.revParse({ args: '--short HEAD' }, function (err, hash) {
         if (err) {
@@ -575,8 +614,8 @@ gulp.task('version', function (done) {
  * @return {Object} version info
  */
 function getVersion() {
-    let now = new Date();
-    let version = pkg.version.split('.');
+    const now = new Date();
+    const version = pkg.version.split('.');
 
     return {
         major: version[0],
