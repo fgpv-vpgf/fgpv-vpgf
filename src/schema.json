@@ -494,8 +494,7 @@
                             "visibleOnLoad": { "type": "boolean","default":true },
                             "queryable": { "type": "boolean", "default": true },
                             "data": { "type": "boolean", "default": false, "description": "Indicates if this index has attribute data that should be requested by the viewer." },
-                            "outfields": { "type": "string", "default": "*", "description": "A comma separated list of attribute names that should be requested on query." },
-                            "queryable": { "type": "boolean", "default": true }
+                            "outfields": { "type": "string", "default": "*", "description": "A comma separated list of attribute names that should be requested on query." }
                         },
                         "required": ["index"],
                         "additionalProperties": false
