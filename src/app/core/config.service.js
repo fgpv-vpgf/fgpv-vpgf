@@ -93,7 +93,7 @@
 
             // store the promise and return it on all future calls; this way initialize can be called one time only
             initializePromise = $q((fulfill, reject) => {
-                const configAttr = $rootElement.attr('th-config');
+                const configAttr = $rootElement.attr('rv-config');
                 const langAttr = $rootElement.attr('rv-langs');
                 const svcAttr = $rootElement.attr('rv-service-endpoint');
                 const keysAttr = $rootElement.attr('rv-keys');
