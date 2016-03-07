@@ -426,7 +426,7 @@
                 "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
-                "metadataUrl": { "type": "string", "description": "The metadata url of the layer service" },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriImage", "esriTile" ] },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
                 "options": { "$ref": "#/definitions/basicLayerOptionsNode" }
@@ -440,7 +440,7 @@
                 "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
-                "metadataUrl": { "type": "string", "description": "The metadata url of the layer service" },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriFeature" ] },
                 "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
@@ -455,7 +455,7 @@
                 "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
-                "metadataUrl": { "type": "string", "description": "The metadata url of the layer service" },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "layerEntries": {
                     "type": "array",
                     "items": {
@@ -486,7 +486,7 @@
                 "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
-                "metadataUrl": { "type": "string", "description": "The metadata url of the layer service" },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriDynamic" ] },
                 "layerEntries": {
                     "type": "array",
