@@ -19,17 +19,8 @@
      */
     angular
         .module('app.core')
-        .constant('configDefaults', {
-            title: 'Dawn RAM'
-        })
+        .constant('configDefaults', '_DEFAULTS_')
         .constant('events', {
             rvReady: 'rvReady'
-        })
-        .constant('templateRegistry', {
-            appbar: 'app/ui/appbar/appbar.html',
-            toc: 'app/ui/toc/toc.html',
-            toolbox: 'app/ui/toolbox/toolbox.html',
-            metadata: 'app/ui/metadata/metadata.html',
-            settings: 'app/ui/settings/settings.html'
         });
 })();
