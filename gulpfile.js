@@ -260,7 +260,7 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
 
 gulp.task('tgz', 'Generate tarball for distribution', ['inject'], function () {
     return gulp
-        .src(['build/*'])
+        .src(['build/**'])
         .pipe($.tar('fgpv-' + pkg.version + '.tgz'))
         .pipe($.gzip({ append: false }))
         .pipe(gulp.dest('dist'));
@@ -268,7 +268,7 @@ gulp.task('tgz', 'Generate tarball for distribution', ['inject'], function () {
 
 gulp.task('zip', 'Generate zip for distribution', ['inject'], function () {
     return gulp
-        .src(['build/*'])
+        .src(['build/**'])
         .pipe($.zip('fgpv-' + pkg.version + '.zip'))
         .pipe(gulp.dest('dist'));
 });

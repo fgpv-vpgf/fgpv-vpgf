@@ -60,12 +60,6 @@
       "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0"
     },
     {
-      "id":"cesi_ozone",
-      "name": "CESI Ozone Levels",
-      "layerType":"esriFeature",
-      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_Ozone/MapServer/3"
-    },
-    {
       "id":"aafc_dynamic_layer",
       "name": "AAFC Census of Agriculture 2011",
       "layerType":"esriDynamic",

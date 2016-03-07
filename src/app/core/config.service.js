@@ -42,12 +42,42 @@
         let initializePromise;
         let isInitialized = false;
 
+        const basicLayerDefaults = {
+            visibility: {
+                enabled: true,
+                value: 'on'
+            },
+            opacity: {
+                enabled: true,
+                value: 1
+            },
+            metadata: {
+                enabled: true,
+            },
+            settings: {
+                enabled: true,
+            },
+            refresh: {
+                enabled: true,
+            },
+            remove: {
+                enabled: true,
+            },
+            boundingBox: {
+                enabled: true,
+                value: true
+            }
+        };
+
         const service = {
             data: { },
             getCurrent,
+            applyBasicDefaults, // silence JSHint since we might want this later after all the hacks are removed
             initialize: initialize,
             ready: ready
         };
+
+        const partials = {}; // partial config promises, one array per language entry
 
         return service;
 
@@ -63,8 +93,10 @@
 
             // store the promise and return it on all future calls; this way initialize can be called one time only
             initializePromise = $q((fulfill, reject) => {
-                const configAttr = $rootElement.attr('th-config');
+                const configAttr = $rootElement.attr('rv-config');
                 const langAttr = $rootElement.attr('rv-langs');
+                const svcAttr = $rootElement.attr('rv-service-endpoint');
+                const keysAttr = $rootElement.attr('rv-keys');
                 let configJson;
                 let langs;
 
@@ -94,14 +126,36 @@
                         }
                     }
 
+                    langs.forEach(lang => partials[lang] = []);
+
+                    if (svcAttr) {
+                        rcsInit(svcAttr, keysAttr, langs);
+                    }
+
                     // start loading every config file
                     if (!configJson) {
-                        langs.forEach(lang => {
-                            // try to load config file
-                            let p = $http.get(configAttr.replace('${lang}', lang));
-                            addConfig(p, lang);
-                        });
+                        fileInit(configAttr, langs);
                     }
+
+                    langs.forEach(lang => {
+                        service.data[lang] = $q.all(partials[lang]).then(configParts => {
+                            const config = { layers: [] };
+
+                            // FIXME ugly hack for temporary merging of layers
+                            configParts.forEach(part => {
+                                Object.keys(part).forEach(key => {
+                                    if (key === 'layers') {
+                                        config[key] = config[key].concat(part[key]);
+                                    } else {
+                                        config[key] = part[key];
+                                    }
+                                });
+                            });
+                            console.info(config);
+                            return config;
+                        });
+
+                    });
 
                     // initialize the app once the default language's config is loaded
                     // FIXME: replace with getCurrent().then / service.data[Default language] if we have a way to check
@@ -139,6 +193,28 @@
                     });
         }
 
+        function applyBasicDefaults(fragmentPromise) {
+            return fragmentPromise
+                .then(fragment => {
+                    const d = angular.merge({}, basicLayerDefaults, fragment);
+                    console.info(d);
+                    return {
+                        data: d
+                    };
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
+        function fileInit(configAttr, langs) {
+            langs.forEach(lang => {
+                // try to load config file
+                const p = $http.get(configAttr.replace('${lang}', lang)).then(xhr => xhr.data);
+                partials[lang].push(p);
+            });
+        }
+
         /**
          * Returns the currently used config. Language is determined by asking $translate.
          * @return {object}     The config object tied to the current language
@@ -148,6 +224,30 @@
             return service.data[currentLang];
         }
 
+        function rcsInit(svcAttr, keysAttr, langs) {
+            const endpoint = svcAttr.endsWith('/') ? svcAttr : svcAttr + '/';
+            let keys;
+            if (keysAttr) {
+                try {
+                    keys = angular.fromJson(keysAttr);
+                } catch (e) {
+                    console.error(e);
+                    console.error('RCS key retrieval failed');
+                }
+
+                langs.forEach(lang => {
+                    const p = $http.get(`${endpoint}v2/docs/${lang}/${keys.join(',')}`).then(resp => {
+                        const result = {};
+                        result.layers = resp.data.map(layerEntry =>
+                            angular.merge({}, basicLayerDefaults, layerEntry.layers[0]));
+                        return result;
+                    });
+                    partials[lang].push(p);
+                });
+            } else {
+                console.warn('RCS endpoint set but no keys were specified');
+            }
+        }
         /**
          * Checks if the service is ready to use.
          * @param  {object} nextPromises optional promises to be resolved before returning
