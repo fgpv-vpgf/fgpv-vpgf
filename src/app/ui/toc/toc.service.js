@@ -1039,15 +1039,6 @@
                     fulfill(layer.cache.metadata);
                 } else {
 
-                    console.log('jkw: layer');
-                    console.log(layer);
-
-                    // TODO: xmlUrl should come from layer
-                    // following is a test xmlUrl layer
-                    // const testXmlUrl = 'http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/' +
-                    //     'eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=' +
-                    //     'csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845';
-
                     if (layer.metadataUrl) {
                         const xmlUrl = layer.metadataUrl;
 
