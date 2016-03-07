@@ -72,9 +72,12 @@
         const service = {
             data: { },
             getCurrent,
+            applyBasicDefaults, // silence JSHint since we might want this later after all the hacks are removed
             initialize: initialize,
             ready: ready
         };
+
+        const partials = {}; // partial config promises, one array per language entry
 
         return service;
 
@@ -123,6 +126,8 @@
                         }
                     }
 
+                    langs.forEach(lang => partials[lang] = []);
+
                     if (svcAttr) {
                         rcsInit(svcAttr, keysAttr, langs);
                     }
@@ -131,6 +136,26 @@
                     if (!configJson) {
                         fileInit(configAttr, langs);
                     }
+
+                    langs.forEach(lang => {
+                        service.data[lang] = $q.all(partials[lang]).then(configParts => {
+                            const config = { layers: [] };
+
+                            // FIXME ugly hack for temporary merging of layers
+                            configParts.forEach(part => {
+                                Object.keys(part).forEach(key => {
+                                    if (key === 'layers') {
+                                        config[key] = config[key].concat(part[key]);
+                                    } else {
+                                        config[key] = part[key];
+                                    }
+                                });
+                            });
+                            console.info(config);
+                            return config;
+                        });
+
+                    });
 
                     // initialize the app once the default language's config is loaded
                     // FIXME: replace with getCurrent().then / service.data[Default language] if we have a way to check
@@ -171,7 +196,8 @@
         function applyBasicDefaults(fragmentPromise) {
             return fragmentPromise
                 .then(fragment => {
-                    let d = angular.merge({}, basicLayerDefaults, fragment);
+                    const d = angular.merge({}, basicLayerDefaults, fragment);
+                    console.info(d);
                     return {
                         data: d
                     };
@@ -184,8 +210,8 @@
         function fileInit(configAttr, langs) {
             langs.forEach(lang => {
                 // try to load config file
-                let p = $http.get(configAttr.replace('${lang}', lang));
-                addConfig(p, lang);
+                const p = $http.get(configAttr.replace('${lang}', lang)).then(xhr => xhr.data);
+                partials[lang].push(p);
             });
         }
 
@@ -210,8 +236,13 @@
                 }
 
                 langs.forEach(lang => {
-                    let p = $http.get(`${endpoint}v2/docs/${lang}/${keys.join(',')}`);
-                    addConfig(applyBasicDefaults(p));
+                    const p = $http.get(`${endpoint}v2/docs/${lang}/${keys.join(',')}`).then(resp => {
+                        const result = {};
+                        result.layers = resp.data.map(layerEntry =>
+                            angular.merge({}, basicLayerDefaults, layerEntry.layers[0]));
+                        return result;
+                    });
+                    partials[lang].push(p);
                 });
             } else {
                 console.warn('RCS endpoint set but no keys were specified');
