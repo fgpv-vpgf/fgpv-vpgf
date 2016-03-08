@@ -18,7 +18,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager, geoService) {
+    function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager, geoService, metadataService) {
         // TODO: remove after switching to the real config
         // jscs:disable maximumLineLength
         const service = {
@@ -1038,15 +1038,35 @@
                 if (layer.cache.metadata) {
                     fulfill(layer.cache.metadata);
                 } else {
-                    // TODO: generate some metadata to display functionality
-                    const mdata = HolderIpsum.paragraphs(2, true);
 
-                    // TODO: remove; simulating delay on retrieving metadata
-                    $timeout(() => {
-                        layer.cache.metadata = mdata;
+                    if (layer.metadataUrl) {
+                        const xmlUrl = layer.metadataUrl;
 
-                        fulfill(layer.cache.metadata);
-                    }, Math.random() * 3000 + 300); // random delay
+                        // TODO: xsl should come from service constant? or is this layer specific
+                        // following is a test xsl from RAMP, should be updated for FGPV
+                        const xslUrl = 'http://ramp-pcar.github.io/demos/NRSTC/v5.4.2/ramp-pcar/' +
+                            'assets/metadata/xstyle_default_en.xsl';
+
+                        // transform xml
+                        metadataService.transformXML(xmlUrl, xslUrl).then(mdata => {
+
+                            // result is wrapped in an array due to previous setup
+                            // TODO: chagee the following when changing associated directive service
+                            layer.cache.metadata = [mdata[0].innerText];
+                            fulfill(layer.cache.metadata);
+                        });
+                    } else {
+                        // TODO: generate some metadata to display functionality
+                        const mdata = HolderIpsum.paragraphs(2, true);
+
+                        // TODO: remove; simulating delay on retrieving metadata
+                        $timeout(() => {
+                            layer.cache.metadata = mdata;
+
+                            fulfill(layer.cache.metadata);
+                        }, Math.random() * 3000 + 300); // random delay
+                    }
+
                 }
             });
 
