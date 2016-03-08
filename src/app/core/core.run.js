@@ -13,9 +13,9 @@
         .module('app.core')
         .run(runBlock);
 
-    function runBlock(configService, $rootScope, $translate, $q, events, geoService) {
+    function runBlock(configService, $rootScope, $translate, $q, events, gapi) {
         const promises = [];
-        promises.push(geoService.promise);
+        promises.push(gapi.ready());
         promises.push(configService.initialize());
 
         // wait on the config and geoapi

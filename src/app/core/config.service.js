@@ -250,8 +250,8 @@
         }
         /**
          * Checks if the service is ready to use.
-         * @param  {object} nextPromises optional promises to be resolved before returning
-         * @return {object}              promise to be resolved on config service initialization
+         * @param  {Promise|Array} nextPromises optional promises to be resolved before returning
+         * @return {Promise}              promise to be resolved on config service initialization
          */
         function ready(nextPromises) {
             return initializePromise
