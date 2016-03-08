@@ -14,8 +14,7 @@
     function identifyService($q, gapiService, mapService, layerRegistry, stateManager, layerTypes) {
 
         const service = {
-            init,
-            aliasedFieldName
+            init
         };
 
         return service;
@@ -55,26 +54,6 @@
 
         /******/
 
-        /**
-         * Get the best user-friendly name of a field. Uses alias if alias is defined, else uses the system attribute name.
-         * @param {String} attribName the attribute name we want a nice name for
-         * @param {Object} fields array of field definitions. the attribute should belong to the provided set of fields
-         */
-        function aliasedFieldName(attribName, fields) {
-            let fName = attribName;
-
-            // search for aliases
-            if (fields) {
-                const attribField = fields.find(field => {
-                    return field.name === attribName;
-                });
-                if (attribField && attribField.alias && attribField.alias.length > 0) {
-                    fName = attribField.alias;
-                }
-            }
-            return fName;
-        }
-
         // returns the number of visible layers that have been registered with the identify service
         function getVisibleLayers() {
             // use .filter to count boolean true values
@@ -90,7 +69,7 @@
             // simple array of text mapping for demonstration purposes. fancy grid formatting later?
 
             return Object.keys(attribs).map(key => {
-                let fieldName = aliasedFieldName(key, fields);
+                let fieldName = layerRegistry.aliasedFieldName(key, fields);
 
                 return {
                     key: fieldName,

@@ -26,8 +26,10 @@
 
             generateLayer,
             registerLayer,
+            getFormattedAttributes,
             removeLayer,
-            setLayerVisibility
+            setLayerVisibility,
+            aliasedFieldName
         };
 
         return service;
@@ -155,6 +157,86 @@
             } else {
                 throw new Error('Your layer type is unacceptable');
             }
+        }
+
+        /**
+         * Returns nicely bundled attributes for the layer described by layerId.
+         * The bundles are used in the datatable.
+         *
+         * @param   {String} layerId        The id for the layer
+         * @param   {String} featureIndex   The index for the feature (attribute set) within the layer
+         * @return  {Promise}               Resolves with the column headers and data to show in the datatable
+         */
+        function getFormattedAttributes(layerId, featureIndex) {
+            // FIXME change to new promise format of attributes.  return a promise from this function.
+
+            if (!layers[layerId]) {
+                throw new Error('Cannot get attributes for unregistered layer');
+            }
+
+            // waits for attributes to be loaded, then resolves with formatted data
+            return layers[layerId].attribs.then(attribBundle => {
+                if (!attribBundle[featureIndex] || attribBundle[featureIndex].features.length === 0) {
+                    throw new Error('Cannot get attributes for feature set that does not exist');
+                }
+
+                // get the attributes and single out the first one
+                const attr = attribBundle[featureIndex];
+                const first = attr.features[0];
+
+                // columns for the data table
+                const columns = [];
+
+                // data for the data table
+                const data = [];
+
+                // used to track order of columns
+                const columnOrder = [];
+
+                // get the attribute keys to use as column headers
+                Object.keys(first.attributes)
+                    .forEach((key, index) => {
+                        const title = aliasedFieldName(key, attr.fields);
+
+                        columns[index] = {
+                            title
+                        };
+                        columnOrder[index] = key;
+                    });
+
+                // get the attribute data from every feature
+                attr.features.forEach((feat, index) => {
+                    data[index] = [];
+                    angular.forEach(feat.attributes, (value, key) => {
+                        data[index][columnOrder.indexOf(key)] = value;
+                    });
+                });
+
+                return {
+                    columns,
+                    data
+                };
+            });
+        }
+
+        /**
+         * Get the best user-friendly name of a field. Uses alias if alias is defined, else uses the system attribute name.
+         * @param {String} attribName the attribute name we want a nice name for
+         * @param {Object} fields array of field definitions. the attribute should belong to the provided set of fields
+         */
+        function aliasedFieldName(attribName, fields) {
+            let fName = attribName;
+
+            // search for aliases
+            if (fields) {
+                const attribField = fields.find(field => {
+                    return field.name === attribName;
+                });
+                if (attribField && attribField.alias && attribField.alias.length > 0) {
+                    fName = attribField.alias;
+                }
+            }
+            return fName;
         }
     }
 })();
