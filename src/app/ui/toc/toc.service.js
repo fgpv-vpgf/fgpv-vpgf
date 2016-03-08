@@ -18,7 +18,8 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager, layerRegistry, metadataService) {
+    function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager,
+        layerRegistry, metadataService) {
         // TODO: remove after switching to the real config
         // jscs:disable maximumLineLength
         const service = {

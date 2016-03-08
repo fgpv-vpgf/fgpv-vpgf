@@ -153,11 +153,8 @@
         function languageSwitch(lang) {
             $translate.use(lang);
 
-            // TODO: Make init-map register its node with config/geo so that
-            //       dom manipulations stay in link functions
-            configService.getCurrent().then(config => {
-                geoService.buildMap($('div[rv-init-map]')[0], config);
-            });
+            // TODO: move this somewhere more appropriate
+            geoService.buildMap();
         }
 
         // TODO: hack

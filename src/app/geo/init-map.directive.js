@@ -26,20 +26,6 @@
         function linkFunc(scope, el) {
 
             mapService.registerMapNode(el[0]);
-
-            /*
-            scope.$watch(attr.rvInitMap, val => {
-                if (val === true) {
-                    console.log('Switched to true');
-                    console.log(el);
-
-                    // there should only be one instance of the directive as the application bootstrap takes care
-                    // of handling multiple instances at that level
-                    configService.getCurrent().then(config => {
-                        geoService.buildMap(el[0], config);
-                    });
-                }
-            });*/
         }
     }
 

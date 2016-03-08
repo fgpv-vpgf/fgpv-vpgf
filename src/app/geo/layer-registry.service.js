@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistry);
 
-    function layerRegistry(gapiService, layerTypes, configDefaults) {
+    function layerRegistry(gapiService, mapService, layerTypes, configDefaults) {
 
         const layers = {}; // layer collection
         const legend = []; // legend construct, to be consumed by toc; deflection +2
@@ -24,6 +24,7 @@
             legend,
             layers, // TODO: remove raw layer array
 
+            reset,
             generateLayer,
             registerLayer,
             getFormattedAttributes,
@@ -35,6 +36,16 @@
         return service;
 
         /***/
+
+        function reset() {
+            // clear layers array
+            Object.keys(layers)
+                .forEach(key => delete layers[key]);
+
+            // clear legend: http://stackoverflow.com/questions/1232040/how-do-i-empty-an-array-in-javascript
+            // I want to preserve the array reference
+            legend.splice(0, legend.length);
+        }
 
         /**
          * Sets layer visiblity value.
@@ -63,7 +74,7 @@
                 return;
             }
 
-            // map.removeLayer(l.layer);
+            mapService.map.removeLayer(l.layer);
 
             // TODO: needs more work to manager layerOrder
             const index = service.legend.indexOf(layerId);

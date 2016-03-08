@@ -76,10 +76,8 @@
          * TODO: refactor this behemoth
          */
         function buildMap() {
-            console.log('BBBBBBBBBBBBBB');
             return configService.getCurrent()
                 .then(config => {
-                    console.log('AAAAAAAAAA', config);
 
                     // reset before rebuilding the map
                     if (mapService.map !== null) {
@@ -88,7 +86,7 @@
                         mapService.map.mapManager.OverviewMapControl.destroy();
                         mapService.map.mapManager.ScalebarControl.destroy();
                         mapService.map = null;
-                        layerRegistry.layers = {};
+                        layerRegistry.reset();
                     }
 
                     // FIXME remove the hardcoded settings when we have code which does this properly
@@ -203,6 +201,10 @@
                     window.FGPV = {
                         layers: service.layers
                     };
+                })
+                .catch(error => {
+                    console.error('Failed to build the map');
+                    console.error(error);
                 });
         }
 
