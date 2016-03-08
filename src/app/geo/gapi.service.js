@@ -14,7 +14,7 @@
      */
     angular
         .module('app.geo')
-        .factory('gapi', gapi);
+        .factory('gapiService', gapi);
 
     function gapi($q) {
         // wait for `gapiPromise` from the global registry to resolve

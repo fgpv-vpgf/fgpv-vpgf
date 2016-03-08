@@ -14,7 +14,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService($http, $q, gapi, identifyService, layerTypes, configDefaults) {
+    function geoService($http, $q, gapiService, identifyService, layerTypes, configDefaults) {
 
         // TODO update how the layerOrder works with the UI
         // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -207,15 +207,15 @@
             };
 
             handlers[layerTypes.esriDynamic] = config => {
-                const l = new gapi.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
+                const l = new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
                 identify.addDynamicLayer(l, config.name);
                 return l;
             };
             handlers[layerTypes.esriFeature] = config => {
                 commonConfig.mode = config.snapshot ?
-                    gapi.gapi.layer.FeatureLayer.MODE_SNAPSHOT :
-                    gapi.gapi.layer.FeatureLayer.MODE_ONDEMAND;
-                const l = new gapi.gapi.layer.FeatureLayer(config.url, commonConfig);
+                    gapiService.gapi.layer.FeatureLayer.MODE_SNAPSHOT :
+                    gapiService.gapi.layer.FeatureLayer.MODE_ONDEMAND;
+                const l = new gapiService.gapi.layer.FeatureLayer(config.url, commonConfig);
                 identify.addFeatureLayer(l, config.name);
                 return l;
             };
@@ -223,14 +223,14 @@
 
                 // FIXME don't hardcode opacity
                 commonConfig.opacity = 0.3;
-                return new gapi.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig);
+                return new gapiService.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig);
             };
             handlers[layerTypes.esriTile] = config => {
-                return new gapi.gapi.layer.TileLayer(config.url, commonConfig);
+                return new gapiService.gapi.layer.TileLayer(config.url, commonConfig);
             };
             handlers[layerTypes.ogcWms] = config => {
                 commonConfig.visibleLayers = [config.layerName];
-                return new gapi.gapi.layer.WmsLayer(config.url, commonConfig);
+                return new gapiService.gapi.layer.WmsLayer(config.url, commonConfig);
             };
 
             if (handlers.hasOwnProperty(layerConfig.layerType)) {
@@ -292,13 +292,13 @@
             }
 
             // FIXME remove the hardcoded settings when we have code which does this properly
-            map = gapi.gapi.mapManager.Map(domNode, {
+            map = gapiService.gapi.mapManager.Map(domNode, {
                 basemap: 'gray',
                 zoom: 6,
                 center: [-100, 50]
             });
             if (config.services && config.services.proxyUrl) {
-                gapi.gapi.mapManager.setProxy(config.services.proxyUrl);
+                gapiService.gapi.mapManager.setProxy(config.services.proxyUrl);
             }
             identify = identifyService(map, service.layers);
 
@@ -307,13 +307,13 @@
                 const pAttrib = $q((resolve, reject) => { // handles the asynch loading of attributes
 
                     // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
-                    gapi.gapi.events.wrapEvents(l, {
+                    gapiService.gapi.events.wrapEvents(l, {
                         load: () => {
                             // FIXME look at layer config for flags indicating not to load attributes
                             // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
 
                             // get the attributes for the layer
-                            const a = gapi.gapi.attribs.loadLayerAttribs(l);
+                            const a = gapiService.gapi.attribs.loadLayerAttribs(l);
 
                             a.then(data => {
                                 // registerAttributes(data);
@@ -363,21 +363,21 @@
 
                 // map extent is not available until map is loaded
                 if (lFullExtent) {
-                    gapi.gapi.events.wrapEvents(map, {
+                    gapiService.gapi.events.wrapEvents(map, {
                         load: () => {
 
                             // compare map extent and setting.extent spatial-references
                             // make sure the full extent has the same spatial reference as the map
-                            if (gapi.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
+                            if (gapiService.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
                                 lFullExtent.spatialReference)) {
 
                                 // same spatial reference, no reprojection required
-                                fullExtent = gapi.gapi.mapManager.getExtentFromJson(lFullExtent);
+                                fullExtent = gapiService.gapi.mapManager.getExtentFromJson(lFullExtent);
                             } else {
 
                                 // need to re-project
-                                fullExtent = gapi.gapi.proj.projectEsriExtent(
-                                    gapi.gapi.mapManager.getExtentFromJson(lFullExtent),
+                                fullExtent = gapiService.gapi.proj.projectEsriExtent(
+                                    gapiService.gapi.mapManager.getExtentFromJson(lFullExtent),
                                     map.extent.spatialReference);
                             }
                         }
@@ -385,7 +385,7 @@
                 }
             }
 
-            mapManager = gapi.gapi.mapManager.setupMap(map, mapSettings);
+            mapManager = gapiService.gapi.mapManager.setupMap(map, mapSettings);
 
             // FIXME temp link for debugging
             window.FGPV = {
@@ -483,7 +483,7 @@
          * @param  {objId} objId is ID of object that was clicked on datatable to be zoomed to
          */
         function zoomToGraphic(layerUrl, objId) {
-            const geo = gapi.gapi.layer.getFeatureInfo(layerUrl, objId);
+            const geo = gapiService.gapi.layer.getFeatureInfo(layerUrl, objId);
             geo.then(geoInfo => {
                 if (geoInfo) {
                     map.centerAndZoom(geoInfo.feature.geometry, 10);

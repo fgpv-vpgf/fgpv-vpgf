@@ -11,13 +11,13 @@
         .module('app.geo')
         .factory('identifyService', identifyService);
 
-    function identifyService($q, gapi, stateManager) {
+    function identifyService($q, gapiService, stateManager) {
 
         const dynamicLayers = [];
         const featureLayers = [];
 
         return (map, layerRegistry) => {
-            gapi.gapi.events.wrapEvents(map, { click: clickHandlerBuilder(map, layerRegistry) });
+            gapiService.gapi.events.wrapEvents(map, { click: clickHandlerBuilder(map, layerRegistry) });
 
             return {
                 /**
@@ -108,7 +108,7 @@
             const buffSize = 2 * tolerance * map.extent.getWidth() / map.width;
 
             // Build tolerance envelope of correct size
-            const cBuff = new gapi.gapi.mapManager.Extent(1, 1, buffSize, buffSize, point.spatialReference);
+            const cBuff = new gapiService.gapi.mapManager.Extent(1, 1, buffSize, buffSize, point.spatialReference);
 
             // move the envelope so it is centered around the point
             return cBuff.centerAt(point);
@@ -163,7 +163,7 @@
                     };
                     opts.tolerance = getTolerance(layerRegistry, layer);
                     details.data.push(result);
-                    return gapi.gapi.layer.serverLayerIdentify(layer, opts)
+                    return gapiService.gapi.layer.serverLayerIdentify(layer, opts)
                         .then(clickResults => {
                             console.log('got a click result');
                             console.log(clickResults);
@@ -214,7 +214,7 @@
                     details.data.push(result);
 
                     // run a spatial query
-                    const qry = new gapi.gapi.layer.Query();
+                    const qry = new gapiService.gapi.layer.Query();
                     qry.outFields = ['*']; // this will result in just objectid fields, as that is all we have in feature layers
                     qry.geometry = makeClickBuffer(clickEvent.mapPoint, map, getTolerance(layerRegistry, layer));
 
