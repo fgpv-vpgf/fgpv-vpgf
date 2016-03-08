@@ -14,7 +14,8 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService($http, $q, gapiService, identifyService, layerTypes, configDefaults) {
+    function geoService($http, $q, gapiService, identifyService, layerTypes, configDefaults, mapService,
+        configService) {
 
         // TODO update how the layerOrder works with the UI
         // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -277,120 +278,129 @@
 
         /**
          * Constructs a map on the given DOM node.
-         * @param {object} domNode the DOM node on which the map should be initialized
          * @param {object} config the map configuration based on the configuration schema
          */
-        function buildMap(domNode, config) {
-            // reset before rebuilding the map
-            if (map !== null) {
-                // NOTE: Possible to have dom listeners stick around after the node is destroyed
-                map.destroy();
-                mapManager.OverviewMapControl.destroy();
-                mapManager.ScalebarControl.destroy();
-                map = null;
-                service.layers = {};
-            }
+        function buildMap() {
+            configService.getCurrent()
+                .then(config => {
 
-            // FIXME remove the hardcoded settings when we have code which does this properly
-            map = gapiService.gapi.mapManager.Map(domNode, {
-                basemap: 'gray',
-                zoom: 6,
-                center: [-100, 50]
-            });
-            if (config.services && config.services.proxyUrl) {
-                gapiService.gapi.mapManager.setProxy(config.services.proxyUrl);
-            }
-            identify = identifyService(map, service.layers);
+                    // reset before rebuilding the map
+                    if (map !== null) {
+                        // NOTE: Possible to have dom listeners stick around after the node is destroyed
+                        map.destroy();
+                        mapManager.OverviewMapControl.destroy();
+                        mapManager.ScalebarControl.destroy();
+                        map = null;
+                        service.layers = {};
+                    }
 
-            config.layers.forEach(layerConfig => {
-                const l = generateLayer(layerConfig);
-                const pAttrib = $q((resolve, reject) => { // handles the asynch loading of attributes
+                    // FIXME remove the hardcoded settings when we have code which does this properly
+                    map = gapiService.gapi.mapManager.Map(mapService.mapNode, {
+                        basemap: 'gray',
+                        zoom: 6,
+                        center: [-100, 50]
+                    });
+                    if (config.services && config.services.proxyUrl) {
+                        gapiService.gapi.mapManager.setProxy(config.services.proxyUrl);
+                    }
+                    identify = identifyService(map, service.layers);
 
-                    // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
-                    gapiService.gapi.events.wrapEvents(l, {
-                        load: () => {
-                            // FIXME look at layer config for flags indicating not to load attributes
-                            // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
+                    config.layers.forEach(layerConfig => {
+                        const l = generateLayer(layerConfig);
+                        const pAttrib = $q((resolve, reject) => { // handles the asynch loading of attributes
 
-                            // get the attributes for the layer
-                            const a = gapiService.gapi.attribs.loadLayerAttribs(l);
+                            // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
+                            gapiService.gapi.events.wrapEvents(l, {
+                                load: () => {
+                                    // FIXME look at layer config for flags indicating not to load attributes
+                                    // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
 
-                            a.then(data => {
-                                // registerAttributes(data);
-                                resolve(data);
-                            })
-                            .catch(exception => {
-                                console.error('Error getting attributes for ' + l.name + ': ' +
-                                    exception);
-                                console.log(l);
+                                    // get the attributes for the layer
+                                    const a = gapiService.gapi.attribs.loadLayerAttribs(
+                                        l);
 
-                                // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
-                                reject(exception);
+                                    a
+                                        .then(data => {
+                                            // registerAttributes(data);
+                                            resolve(data);
+                                        })
+                                        .catch(exception => {
+                                            console.error(
+                                                'Error getting attributes for ' +
+                                                l.name + ': ' +
+                                                exception);
+                                            console.log(l);
+
+                                            // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
+                                            reject(exception);
+                                        });
+                                }
+                            });
+                        });
+                        registerLayer(l, layerConfig, pAttrib); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                        map.addLayer(l);
+                    });
+
+                    // setup map using configs
+                    // FIXME: I should be migrated to the new config schema when geoApi is updated
+                    const mapSettings = {
+                        basemaps: [],
+                        scalebar: {},
+                        overviewMap: {}
+                    };
+                    if (config.baseMaps) {
+                        mapSettings.basemaps = config.baseMaps;
+                    }
+
+                    if (config.map.components.scaleBar) {
+                        mapSettings.scalebar = {
+                            attachTo: 'bottom-left',
+                            scalebarUnit: 'dual'
+                        };
+                    }
+
+                    if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
+
+                        // FIXME: overviewMap has more settings
+                        mapSettings.overviewMap = config.map.components.overviewMap;
+                    }
+
+                    if (config.map.extentSets) {
+                        let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
+
+                        // map extent is not available until map is loaded
+                        if (lFullExtent) {
+                            gapiService.gapi.events.wrapEvents(map, {
+                                load: () => {
+
+                                    // compare map extent and setting.extent spatial-references
+                                    // make sure the full extent has the same spatial reference as the map
+                                    if (gapiService.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
+                                            lFullExtent.spatialReference)) {
+
+                                        // same spatial reference, no reprojection required
+                                        fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
+                                            lFullExtent);
+                                    } else {
+
+                                        // need to re-project
+                                        fullExtent = gapiService.gapi.proj.projectEsriExtent(
+                                            gapiService.gapi.mapManager.getExtentFromJson(
+                                                lFullExtent),
+                                            map.extent.spatialReference);
+                                    }
+                                }
                             });
                         }
-                    });
+                    }
+
+                    mapManager = gapiService.gapi.mapManager.setupMap(map, mapSettings);
+
+                    // FIXME temp link for debugging
+                    window.FGPV = {
+                        layers: service.layers
+                    };
                 });
-                registerLayer(l, layerConfig, pAttrib); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
-                map.addLayer(l);
-            });
-
-            // setup map using configs
-            // FIXME: I should be migrated to the new config schema when geoApi is updated
-            const mapSettings = {
-                basemaps: [],
-                scalebar: {},
-                overviewMap: {}
-            };
-            if (config.baseMaps) {
-                mapSettings.basemaps = config.baseMaps;
-            }
-
-            if (config.map.components.scaleBar) {
-                mapSettings.scalebar = {
-                    attachTo: 'bottom-left',
-                    scalebarUnit: 'dual'
-                };
-            }
-
-            if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
-
-                // FIXME: overviewMap has more settings
-                mapSettings.overviewMap = config.map.components.overviewMap;
-            }
-
-            if (config.map.extentSets) {
-                let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
-
-                // map extent is not available until map is loaded
-                if (lFullExtent) {
-                    gapiService.gapi.events.wrapEvents(map, {
-                        load: () => {
-
-                            // compare map extent and setting.extent spatial-references
-                            // make sure the full extent has the same spatial reference as the map
-                            if (gapiService.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
-                                lFullExtent.spatialReference)) {
-
-                                // same spatial reference, no reprojection required
-                                fullExtent = gapiService.gapi.mapManager.getExtentFromJson(lFullExtent);
-                            } else {
-
-                                // need to re-project
-                                fullExtent = gapiService.gapi.proj.projectEsriExtent(
-                                    gapiService.gapi.mapManager.getExtentFromJson(lFullExtent),
-                                    map.extent.spatialReference);
-                            }
-                        }
-                    });
-                }
-            }
-
-            mapManager = gapiService.gapi.mapManager.setupMap(map, mapSettings);
-
-            // FIXME temp link for debugging
-            window.FGPV = {
-                layers: service.layers
-            };
         }
 
         /**
@@ -448,8 +458,8 @@
         }
 
         /*
-        * Retrieve full extent from extentSets
-        */
+         * Retrieve full extent from extentSets
+         */
         function getFullExtFromExtentSets(extentSets) {
 
             // FIXME: default basemap should be indicated in the config as well

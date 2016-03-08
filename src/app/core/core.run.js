@@ -13,10 +13,12 @@
         .module('app.core')
         .run(runBlock);
 
-    function runBlock(configService, $rootScope, $translate, $q, events, gapiService) {
-        const promises = [];
-        promises.push(gapiService.ready());
-        promises.push(configService.initialize());
+    function runBlock($rootScope, $translate, $q, events, configService, gapiService, mapService, geoService) {
+        const promises = [
+            gapiService.ready(),
+            configService.initialize(),
+            mapService.isReady
+        ];
 
         // wait on the config and geoapi
         $q.all(promises)
@@ -24,6 +26,7 @@
                 // initialize other services, if any
                 console.log('Config initialized');
                 $rootScope.$broadcast(events.rvReady);
+                geoService.buildMap();
             })
             .catch(reason => {
                 console.error('Everything broke');

@@ -15,7 +15,7 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
-    function rvInitMap(geoService, configService) {
+    function rvInitMap(mapService) {
 
         const directive = {
             restrict: 'A',
@@ -23,8 +23,11 @@
         };
         return directive;
 
-        function linkFunc(scope, el, attr) {
+        function linkFunc(scope, el) {
 
+            mapService.registerMapNode(el[0]);
+
+            /*
             scope.$watch(attr.rvInitMap, val => {
                 if (val === true) {
                     console.log('Switched to true');
@@ -36,7 +39,7 @@
                         geoService.buildMap(el[0], config);
                     });
                 }
-            });
+            });*/
         }
     }
 
