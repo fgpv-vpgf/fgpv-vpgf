@@ -1,14 +1,37 @@
-/* global bard, geoService, $httpBackend, $q */
+/* global bard, geoService, gapiService, $httpBackend, $q */
 
 describe('geo', () => {
 
-    beforeEach((done) => {
+    // make a fake map object
+    const map = {
+        setZoom: () => {},
+        getZoom: () => 5,
+        extent: {}
+    };
 
-        bard.appModule('app.geo', 'app.common.router');
+    // fake gapi service
+    function mockGapiService($provide) {
+        $provide.factory('gapiService', () => {
+            return {
+                gapi: {
+                    mapManager: {
+                        Map: () => map,
+                        setupMap: () => {}
+                    },
+                    events: {
+                        wrapEvents: () => {}
+                    }
+                }
+            };
+        });
+    }
+
+    beforeEach(() => {
+
+        bard.appModule('app.geo', 'app.common.router', mockGapiService);
 
         // inject services
-        bard.inject('geoService', '$httpBackend', '$q');
-        geoService.promise.then(() => done());
+        bard.inject('geoService', 'gapiService', '$httpBackend', '$q');
     });
 
     describe('geoService', () => {
@@ -67,39 +90,34 @@ describe('geo', () => {
 
             geoService.registerLayer(tempLayer, tempConfig, tempAttribPromise);
 
-            geoService.getFormattedAttributes(tempLayer.id, '0').then(bundledAttributes => {
-                expect(bundledAttributes.data)
-                    .toBeDefined();
-                expect(bundledAttributes.columns)
-                    .toBeDefined();
-            });
+            geoService.getFormattedAttributes(tempLayer.id, '0')
+                .then(bundledAttributes => {
+                    expect(bundledAttributes.data)
+                        .toBeDefined();
+                    expect(bundledAttributes.columns)
+                        .toBeDefined();
+                });
         });
 
         it('should set zoom correctly', () => {
-            // make a fake map object
-            const map = {
-                setZoom: () => {},
-                getZoom: () => 5,
-                extent: {}
-            };
-
             // set a spy on it
             spyOn(map, 'setZoom');
-
-            // fake a map creating function
-            geoService.gapi = {
-                mapManager: {
-                    Map: () => map,
-                    setupMap: () => {}
-                },
-                events: { wrapEvents: () => {} }
-            };
 
             // create a fake map
             geoService.buildMap({}, {
                 layers: [],
-                map: { extentSets: [{ id: '123456789', default: { spatialReference: { wkid: 3978 } } }],
-                    components: { scaleBar: {} }
+                map: {
+                    extentSets: [{
+                        id: '123456789',
+                        default: {
+                            spatialReference: {
+                                wkid: 3978
+                            }
+                        }
+                    }],
+                    components: {
+                        scaleBar: {}
+                    }
                 }
             });
 
@@ -122,8 +140,15 @@ describe('geo', () => {
             const emptyConfig = {
                 layers: [],
                 map: {
-                    extentSets: [{ id: '123456789', full: {}, default: {} }],
-                    components: { scaleBar: {}, overviewMap: {} }
+                    extentSets: [{
+                        id: '123456789',
+                        full: {},
+                        default: {}
+                    }],
+                    components: {
+                        scaleBar: {},
+                        overviewMap: {}
+                    }
                 }
             };
             const layerConfig = {
@@ -142,7 +167,7 @@ describe('geo', () => {
             const el = angular.element('<div id="randomMap" />');
 
             it('should make a map', () => {
-                const m = geoService.gapi.mapManager;
+                const m = gapiService.gapi.mapManager;
                 spyOn(m, 'Map')
                     .and.callThrough();
                 geoService.buildMap(el[0], emptyConfig);
@@ -152,7 +177,7 @@ describe('geo', () => {
 
             // TODO: mock responses to layer endpoint calls before re-enabling
             xit('should add all the configured layers', () => {
-                const l = geoService.gapi.layer;
+                const l = gapiService.gapi.layer;
                 spyOn(l, 'FeatureLayer');
                 spyOn(l, 'WmsLayer');
                 spyOn(l, 'ArcGISDynamicMapServiceLayer');
