@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistry);
 
-    function layerRegistry(gapiService, identifyService, layerTypes, configDefaults) {
+    function layerRegistry(gapiService, layerTypes, configDefaults) {
 
         const layers = {}; // layer collection
         const legend = []; // legend construct, to be consumed by toc; deflection +2
@@ -115,7 +115,7 @@
          * @param {object} layerConfig a configuration fragment for a single layer
          * @return {object} a layer object matching one of the esri/layers objects based on the layer type
          */
-        function generateLayer(layerConfig, map) {
+        function generateLayer(layerConfig) {
             const handlers = {};
             const commonConfig = {
                 id: layerConfig.id,
@@ -126,8 +126,6 @@
             handlers[layerTypes.esriDynamic] = config => {
                 const l = new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
 
-                identifyService(map, layerRegistry.layers)
-                    .addDynamicLayer(l, config.name);
                 return l;
             };
             handlers[layerTypes.esriFeature] = config => {
@@ -136,8 +134,6 @@
                     gapiService.gapi.layer.FeatureLayer.MODE_ONDEMAND;
                 const l = new gapiService.gapi.layer.FeatureLayer(config.url, commonConfig);
 
-                identifyService(map, layerRegistry.layers)
-                    .addFeatureLayer(l, config.name);
                 return l;
             };
             handlers[layerTypes.esriImage] = config => {

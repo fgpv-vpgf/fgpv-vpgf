@@ -72,7 +72,7 @@
                 // get the attribute keys to use as column headers
                 Object.keys(first.attributes)
                     .forEach((key, index) => {
-                        const title = identifyService(layerRegistry.layers).aliasedFieldName(key, attr.fields);
+                        const title = identifyService.aliasedFieldName(key, attr.fields);
 
                         columns[index] = {
                             title
@@ -162,9 +162,12 @@
                         gapiService.gapi.mapManager.setProxy(config.services.proxyUrl);
                     }
 
+                    // init idenitfy service when a new map is created
+                    identifyService.init();
+
                     config.layers.forEach(layerConfig => {
                         // TODO: decouple identifyservice from everything
-                        const l = layerRegistry.generateLayer(layerConfig, map);
+                        const l = layerRegistry.generateLayer(layerConfig);
                         const pAttrib = $q((resolve, reject) => { // handles the asynch loading of attributes
 
                             // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded

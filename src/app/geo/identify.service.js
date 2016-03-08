@@ -11,34 +11,47 @@
         .module('app.geo')
         .factory('identifyService', identifyService);
 
-    function identifyService($q, gapiService, stateManager) {
+    function identifyService($q, gapiService, mapService, layerRegistry, stateManager, layerTypes) {
 
-        const dynamicLayers = [];
-        const featureLayers = [];
-
-        return (map, layerRegistry) => {
-            gapiService.gapi.events.wrapEvents(
-                map, { click: clickHandlerBuilder(map, layerRegistry) });
-
-            return {
-                /**
-                 * Add a dynamic layer to identify when map click events happen.
-                 * @param {Object} layer an ESRI ArcGISDynamicMapServiceLayer object
-                 * @param {String} name the display name of the layer
-                 */
-                addDynamicLayer: (layer, name) => dynamicLayers.push({ layer, name }),
-
-                /**
-                 * Add a feature layer to identify when map click events happen.
-                 * @param {Object} layer an ESRI FeatureLayer object
-                 * @param {String} name the display name of the layer
-                 */
-                addFeatureLayer: (layer, name) => featureLayers.push({ layer, name }),
-
-                aliasedFieldName
-
-            };
+        const service = {
+            init,
+            aliasedFieldName
         };
+
+        return service;
+
+        /***/
+
+        /**
+         * Initializes identify service. This needs to be called everytime the map is created.
+         */
+        function init() {
+            gapiService.gapi.events.wrapEvents(
+                mapService.map, { click: clickHandlerBuilder(mapService.map) });
+        }
+
+        /**
+         * Retrieves dynamic layres
+         * @return {Array} array of dynamic layers
+         */
+        function getDynamicLayers() {
+            console.log(layerRegistry.layers);
+
+            return Object.keys(layerRegistry.layers)
+                .map(key => layerRegistry.layers[key])
+                .filter(layer => layer.state.layerType === layerTypes.esriDynamic);
+        }
+
+        /**
+         * Retrieves feature layres
+         * @return {Array} array of feature layers
+         */
+        function getFeatureLayers() {
+            console.log(layerRegistry.layers);
+            return Object.keys(layerRegistry.layers)
+                .map(key => layerRegistry.layers[key])
+                .filter(layer => layer.state.layerType === layerTypes.esriFeature);
+        }
 
         /******/
 
@@ -65,7 +78,8 @@
         // returns the number of visible layers that have been registered with the identify service
         function getVisibleLayers() {
             // use .filter to count boolean true values
-            return dynamicLayers.concat(featureLayers).filter(l => l.layer.visibleAtMapScale).length;
+            // TODO: make nicer
+            return getDynamicLayers().concat(getFeatureLayers()).filter(l => l.layer.visibleAtMapScale).length;
         }
 
         // takes an attribute set (key-value mapping) and converts it to a format
@@ -116,15 +130,16 @@
         }
 
         // attempt to get a tolerance from the layer state, otherwise return a default
-        function getTolerance(layerRegistry, layer) {
-            if (layerRegistry[layer.id] && layerRegistry[layer.id].state && layerRegistry[layer.id].state.tolerance) {
-                return layerRegistry[layer.id].state.tolerance;
+        function getTolerance(layer) {
+            if (layerRegistry.layers[layer.id] && layerRegistry.layers[layer.id].state &&
+                layerRegistry.layers[layer.id].state.tolerance) {
+                return layerRegistry.layers[layer.id].state.tolerance;
             } else {
                 return 5;
             }
         }
 
-        function clickHandlerBuilder(map, layerRegistry) {
+        function clickHandlerBuilder(map) {
 
             /**
              * Handles global map clicks.  Currently configured to walk through all registered dynamic
@@ -148,7 +163,10 @@
 
                 // run through all registered dynamic layers and trigger
                 // an identify task for each layer
-                let idPromises = dynamicLayers.map(({ layer, name }) => {
+                let idPromises = getDynamicLayers().map(item => {
+                    const layer = item.layer;
+                    const name = item.state.name;
+
                     if (!layer.visibleAtMapScale) {
                         return $q.resolve(null);
                     }
@@ -195,7 +213,9 @@
 
                 // run through all registered feature layers and trigger
                 // an spatial query for each layer
-                idPromises = idPromises.concat(featureLayers.map(({ layer, name }) => {
+                idPromises = idPromises.concat(getFeatureLayers().map(item => {
+                    const layer = item.layer;
+                    const name = item.state.name;
 
                     if (!layer.visibleAtMapScale) {
                         return $q.resolve(null);
@@ -217,19 +237,19 @@
                     // run a spatial query
                     const qry = new gapiService.gapi.layer.Query();
                     qry.outFields = ['*']; // this will result in just objectid fields, as that is all we have in feature layers
-                    qry.geometry = makeClickBuffer(clickEvent.mapPoint, map, getTolerance(layerRegistry, layer));
+                    qry.geometry = makeClickBuffer(clickEvent.mapPoint, map, getTolerance(layer));
 
                     return $q((resolve, reject) => {
 
                         // TODO might want to abstract some of this out into a "get attibutes from feature" function
                         // get the id and attribute bundle of the layer belonging to the feature that was clicked
-                        if (!layerRegistry[layer.id]) {
+                        if (!layerRegistry.layers[layer.id]) {
                             throw new Error('Click on unregistered layer ' + layer.id);
                         }
-                        const layerState = layerRegistry[layer.id].state;
+                        const layerState = layerRegistry.layers[layer.id].state;
 
                         // ensure attributes are downloaded.  wait for them if not.
-                        layerRegistry[layer.id].attribs.then(attribsBundle => {
+                        layerRegistry.layers[layer.id].attribs.then(attribsBundle => {
 
                             if (attribsBundle.indexes.length === 0) {
                                 // TODO do we really want to error, or just do nothing (i.e. user clicks on no-data feature -- so what?)
