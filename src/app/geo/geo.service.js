@@ -1,4 +1,4 @@
-/* global geoapi */
+/* global RV */
 (() => {
     'use strict';
 
@@ -46,7 +46,12 @@
         let fullExtent = null;
 
         // FIXME: need to find a way to have the dojo URL set by the config
-        service.promise = geoapi('http://js.arcgis.com/3.14/', window)
+        // service.promise = geoapi('http://js.arcgis.com/3.14/', window)
+        //    .then(initializedGeoApi => service.gapi = initializedGeoApi);
+
+        // console.log(RV);
+        // use RV registry to get gapiPromise
+        service.promise = RV.gapiPromise
             .then(initializedGeoApi => service.gapi = initializedGeoApi);
 
         return service;

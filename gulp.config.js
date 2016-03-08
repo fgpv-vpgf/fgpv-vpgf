@@ -40,11 +40,11 @@ module.exports = function () {
             '!' + app + '**/*.spec.js'
         ],
         jsOrder: [
-            '**/app.module.js',
-            '**/*.module.js',
-            '**/!(app-seed).js',
-            '**/*.js',
-            '**/app-seed.js'
+            'lib.js',
+            'global-registry.js',
+            'app.js',
+            'templates.js',
+            'app-seed.js'
         ],
 
         // please rename if there are better shorter names
@@ -63,6 +63,9 @@ module.exports = function () {
 
         // angular template cache file to be injected
         templates: tmp + 'templates.js',
+
+        jsAppSeed: app + 'app-seed.js', // initializes viewer instances
+        jsGlobalRegistry: app + 'global-registry.js', // create global registry; loads gapi, etc.
 
         jsInjectorFile: app + 'injector.js',
         jsInjectorFilePath: build + 'injector.js',

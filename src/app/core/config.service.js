@@ -73,8 +73,8 @@
             data: { },
             getCurrent,
             applyBasicDefaults, // silence JSHint since we might want this later after all the hacks are removed
-            initialize: initialize,
-            ready: ready
+            initialize,
+            ready
         };
 
         const partials = {}; // partial config promises, one array per language entry

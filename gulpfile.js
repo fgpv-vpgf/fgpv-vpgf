@@ -228,16 +228,12 @@ gulp.task('jsrollup', 'Roll up all js into one file',
         const jslib = libbuild();
         const jscache = templatecache();
         const jsapp = jsbuild();
-        const seed = gulp.src(`${config.app}app-seed.js`); // app-seed `must` be the last item
+        const registry = gulp.src(config.jsGlobalRegistry); // global registry goes after the lib package
+        const seed = gulp.src(config.jsAppSeed); // app-seed `must` be the last item
 
         // merge all js streams to avoid writing individual files to disk
-        return merge(jslib, jscache, jsapp, seed) // merge doesn't guarantee file order :(
-            .pipe($.order([
-                'lib.js',
-                'app.js',
-                'templates.js',
-                'app-seed.js'
-            ]))
+        return merge(jslib, registry, jscache, jsapp, seed) // merge doesn't guarantee file order :(
+            .pipe($.order(config.jsOrder))
             .pipe($.concat(config.jsCoreFile))
             .pipe(gulp.dest(config.build));
     });
