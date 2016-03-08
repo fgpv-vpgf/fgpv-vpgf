@@ -18,7 +18,7 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager, geoService, metadataService) {
+    function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager, layerRegistry, metadataService) {
         // TODO: remove after switching to the real config
         // jscs:disable maximumLineLength
         const service = {
@@ -805,22 +805,22 @@
 
         // remove
         $timeout(() => {
-            service.data.items[0].items = geoService.layerOrder.map(id => {
+            service.data.items[0].items = layerRegistry.legend.map(id => {
                 // add some fake symbology for now
-                geoService.layers[id].state.symbology = [
+                layerRegistry.layers[id].state.symbology = [
                     {
                         icon: 'url',
                         name: HolderIpsum.words(3, true)
                     }
                 ];
-                geoService.layers[id].state.cache = {};
-                geoService.layers[id].state.flags.type.value = geoService.layers[id].state.layerType;
+                layerRegistry.layers[id].state.cache = {};
+                layerRegistry.layers[id].state.flags.type.value = layerRegistry.layers[id].state.layerType;
 
-                return geoService.layers[id].state;
+                return layerRegistry.layers[id].state;
             });
 
             // console.log('--->', service.data.items[0]);
-        }, 7000); // FIXME: wait for layer to be added to the layer registry; this will not be needed as we are going to bind directly to layer/legend construction from geoservice; this is needed right now to keep the fake layers in the layer selector as well.
+        }, 7000); // FIXME: wait for layer to be added to the layer registry; this will not be needed as we are going to bind directly to layer/legend construction from layerRegistry; this is needed right now to keep the fake layers in the layer selector as well.
 
         // set state change watches on metadata, settings and filters panel
         watchPanelState('sideMetadata', 'metadata');
@@ -852,7 +852,7 @@
          * Simple function to remove layers.
          * TODO: needs more work to handle dynamic layer and other crazy stuff
          * TODO: need to consider what happens when removing the only layer in the group; remove the group as well? etc.
-         * Hides the layer data and removes the node from the layer selector; removes the layer from geoservice after toast delay has passed;adds the layer back to the layer selctor if user click `undo`.
+         * Hides the layer data and removes the node from the layer selector; removes the layer from
          * @param  {Object} layer layerItem object from the layer selector
          */
         function removeLayer(layer) {
@@ -893,7 +893,7 @@
                         toggleVisiblity(layer, layerOriginalVisibility);
                     } else {
                         // remove layer for real now
-                        geoService.removeLayer(layer.id);
+                        layerRegistry.removeLayer(layer.id);
                     }
                 });
         }
@@ -939,7 +939,7 @@
 
             value = value || toggle[control.value];
 
-            geoService.setLayerVisibility(layer.id, value);
+            layerRegistry.setLayerVisibility(layer.id, value);
         }
 
         // temp function to open layer groups
@@ -977,7 +977,7 @@
             };
 
             // wait for attributes to be loaded, then process them into grid format
-            const dataPromise = geoService.layers[layer.id].attribs.then(attribBundle => {
+            const dataPromise = layerRegistry.layers[layer.id].attribs.then(attribBundle => {
                 let layerId = layer.id;
                 let layerIdx;
 
@@ -993,7 +993,7 @@
                     layerIdx = attribBundle.indexes[0];
                 }
 
-                return geoService.getFormattedAttributes(layerId, layerIdx);
+                return layerRegistry.getFormattedAttributes(layerId, layerIdx);
             }).then(attrs => {
                 return {
                     data: {

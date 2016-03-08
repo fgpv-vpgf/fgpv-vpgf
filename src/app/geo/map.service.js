@@ -15,21 +15,17 @@
         .module('app.geo')
         .factory('mapService', mapService);
 
-    function mapService($q, gapiService) {
-        let mapNode;
-
+    function mapService($q) {
         const service = {
-            map: null,
-
             mapNode: null,
+            map: null, // contains a reference to `mapManager`
+            // { mapManager: <Object>, fullExtent: <Object> }
 
             isReady: null,
             registerMapNode: null,
         };
 
         init();
-
-        console.log(gapiService);
 
         return service;
 
@@ -52,11 +48,11 @@
          * @param  {Object} node    dom node to build the map on
          */
         function registerMapNode(resolve, reject, node) {
-            if (typeof mapNode === 'undefined' && node) {
-                mapNode = node;
+            if (service.mapNode === null && node) {
                 service.mapNode = node;
                 resolve();
             }
         }
+
     }
 })();

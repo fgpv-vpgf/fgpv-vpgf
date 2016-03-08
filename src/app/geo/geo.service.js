@@ -14,8 +14,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService($http, $q, gapiService, identifyService, layerTypes, configDefaults, mapService,
-        configService) {
+    function geoService($http, $q, gapiService, mapService, layerRegistry, configService, identifyService) {
 
         // TODO update how the layerOrder works with the UI
         // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -23,114 +22,18 @@
         // pieces of code can react to the change in the order
 
         const service = {
-            layers: {},
-            layerOrder: [],
-            buildMap,
             epsgLookup,
             getFormattedAttributes,
-            registerLayer,
+            buildMap,
             setZoom,
             shiftZoom,
             selectBasemap,
             setFullExtent,
-            setLayerVisibility,
-            removeLayer,
-            zoomToGraphic
+            zoomToGraphic,
+            getFullExtFromExtentSets,
         };
 
-        let map = null; // keep map reference local to geoService
-
-        let mapManager = null;
-        let identify = null;
-
-        let fullExtent = null;
-
-        // FIXME: need to find a way to have the dojo URL set by the config
-        // service.promise = geoapi('http://js.arcgis.com/3.14/', window)
-        //    .then(initializedGeoApi => service.gapi = initializedGeoApi);
-
-        // console.log(RV);
-        // use RV registry to get gapiPromise
-        // service.promise = RV.gapiPromise
-        //    .then(initializedGeoApi => service.gapi = initializedGeoApi);
-
         return service;
-
-        /**
-         * Sets layer visiblity value.
-         * @param {Number} layerId id of the layer in the layer registry
-         * @param {String} value   visibility state; Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only. Any value except for 'on' means the layer is hidden. 'off', 'zoomIn', and 'zoomOut' specify an icon and action for the layer toggle.
-         * TODO: needs more work for toggling on/off dynamic layers and its children;
-         */
-        function setLayerVisibility(layerId, value) {
-            const l = service.layers[layerId];
-
-            if (l) {
-                l.state.options.visibility.value = value; // update layer state value
-                l.layer.setVisibility(value === 'on' ? true : false);
-            }
-        }
-
-        /**
-         * Removes the layer from the map and from the layer registry
-         * @param {Number} layerId  the id of the layer to be removed
-         * TODO: needs more work for removing dynamic layers and its children;
-         */
-        function removeLayer(layerId) {
-            const l = service.layers[layerId];
-
-            if (!l) {
-                return;
-            }
-
-            map.removeLayer(l.layer);
-
-            // TODO: needs more work to manager layerOrder
-            const index = service.layerOrder.indexOf(layerId);
-            if (index !== -1) {
-                service.layerOrder.splice(index, 1);
-            }
-        }
-
-        /**
-         * Adds a layer object to the layers registry
-         * @param {object} layer the API layer object
-         * @param {object} initialState a configuration fragment used to generate the layer
-         * @param {promise} attribs a promise resolving with the attributes associated with the layer (empty set if no attributes)
-         * @param {number} position an optional index indicating at which position the layer was added to the map
-         * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
-         */
-        function registerLayer(layer, initialState, attribs, position) {
-            // TODO determine the proper docstrings for a non-service function that lives in a service
-
-            if (!layer.id) {
-                console.error('Attempt to register layer without id property');
-                console.log(layer);
-                console.log(initialState);
-            }
-
-            if (service.layers[layer.id]) {
-                console.error('attempt to register layer already registered.  id: ' + layer.id);
-            }
-
-            const l = {
-                layer,
-                attribs,
-
-                // apply layer option defaults
-                state: angular.merge({}, configDefaults.layerOptions, configDefaults.layerFlags, initialState)
-            };
-
-            service.layers[layer.id] = l;
-
-            if (position === undefined) {
-                position = service.layerOrder.length;
-            }
-            service.layerOrder.splice(position, 0, layer.id);
-
-            // TODO: apply config values
-            service.setLayerVisibility(l.layer.id, l.state.options.visibility.value);
-        }
 
         /**
          * Returns nicely bundled attributes for the layer described by layerId.
@@ -143,12 +46,12 @@
         function getFormattedAttributes(layerId, featureIndex) {
             // FIXME change to new promise format of attributes.  return a promise from this function.
 
-            if (!service.layers[layerId]) {
+            if (!layerRegistry.layers[layerId]) {
                 throw new Error('Cannot get attributes for unregistered layer');
             }
 
             // waits for attributes to be loaded, then resolves with formatted data
-            return service.layers[layerId].attribs.then(attribBundle => {
+            return layerRegistry.layers[layerId].attribs.then(attribBundle => {
                 if (!attribBundle[featureIndex] || attribBundle[featureIndex].features.length === 0) {
                     throw new Error('Cannot get attributes for feature set that does not exist');
                 }
@@ -166,12 +69,10 @@
                 // used to track order of columns
                 const columnOrder = [];
 
-                identify = identifyService(map, service.layers);
-
                 // get the attribute keys to use as column headers
                 Object.keys(first.attributes)
                     .forEach((key, index) => {
-                        const title = identify.aliasedFieldName(key, attr.fields);
+                        const title = identifyService(layerRegistry.layers).aliasedFieldName(key, attr.fields);
 
                         columns[index] = {
                             title
@@ -192,53 +93,6 @@
                     data
                 };
             });
-        }
-
-        /**
-         * Takes a layer in the config format and generates an appropriate layer object.
-         * @param {object} layerConfig a configuration fragment for a single layer
-         * @return {object} a layer object matching one of the esri/layers objects based on the layer type
-         */
-        function generateLayer(layerConfig) {
-            const handlers = {};
-            const commonConfig = {
-                id: layerConfig.id,
-                visible: layerConfig.visibility === 'on',
-                opacity: layerConfig.opacity || 1
-            };
-
-            handlers[layerTypes.esriDynamic] = config => {
-                const l = new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
-                identify.addDynamicLayer(l, config.name);
-                return l;
-            };
-            handlers[layerTypes.esriFeature] = config => {
-                commonConfig.mode = config.snapshot ?
-                    gapiService.gapi.layer.FeatureLayer.MODE_SNAPSHOT :
-                    gapiService.gapi.layer.FeatureLayer.MODE_ONDEMAND;
-                const l = new gapiService.gapi.layer.FeatureLayer(config.url, commonConfig);
-                identify.addFeatureLayer(l, config.name);
-                return l;
-            };
-            handlers[layerTypes.esriImage] = config => {
-
-                // FIXME don't hardcode opacity
-                commonConfig.opacity = 0.3;
-                return new gapiService.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig);
-            };
-            handlers[layerTypes.esriTile] = config => {
-                return new gapiService.gapi.layer.TileLayer(config.url, commonConfig);
-            };
-            handlers[layerTypes.ogcWms] = config => {
-                commonConfig.visibleLayers = [config.layerName];
-                return new gapiService.gapi.layer.WmsLayer(config.url, commonConfig);
-            };
-
-            if (handlers.hasOwnProperty(layerConfig.layerType)) {
-                return handlers[layerConfig.layerType](layerConfig);
-            } else {
-                throw new Error('Your layer type is unacceptable');
-            }
         }
 
         /**
@@ -279,34 +133,38 @@
         /**
          * Constructs a map on the given DOM node.
          * @param {object} config the map configuration based on the configuration schema
+         * TODO: refactor this behemoth
          */
         function buildMap() {
             configService.getCurrent()
                 .then(config => {
-
                     // reset before rebuilding the map
-                    if (map !== null) {
+                    if (mapService.map !== null) {
                         // NOTE: Possible to have dom listeners stick around after the node is destroyed
-                        map.destroy();
-                        mapManager.OverviewMapControl.destroy();
-                        mapManager.ScalebarControl.destroy();
-                        map = null;
-                        service.layers = {};
+                        mapService.map.destroy();
+                        mapService.map.mapManager.OverviewMapControl.destroy();
+                        mapService.map.mapManager.ScalebarControl.destroy();
+                        mapService.map = null;
+                        layerRegistry.layers = {};
                     }
 
                     // FIXME remove the hardcoded settings when we have code which does this properly
-                    map = gapiService.gapi.mapManager.Map(mapService.mapNode, {
+                    mapService.map = gapiService.gapi.mapManager.Map(mapService.mapNode, {
                         basemap: 'gray',
                         zoom: 6,
                         center: [-100, 50]
                     });
+
+                    // keep map reference for sanity
+                    let map = mapService.map;
+
                     if (config.services && config.services.proxyUrl) {
                         gapiService.gapi.mapManager.setProxy(config.services.proxyUrl);
                     }
-                    identify = identifyService(map, service.layers);
 
                     config.layers.forEach(layerConfig => {
-                        const l = generateLayer(layerConfig);
+                        // TODO: decouple identifyservice from everything
+                        const l = layerRegistry.generateLayer(layerConfig, map);
                         const pAttrib = $q((resolve, reject) => { // handles the asynch loading of attributes
 
                             // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
@@ -316,8 +174,7 @@
                                     // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
 
                                     // get the attributes for the layer
-                                    const a = gapiService.gapi.attribs.loadLayerAttribs(
-                                        l);
+                                    const a = gapiService.gapi.attribs.loadLayerAttribs(l);
 
                                     a
                                         .then(data => {
@@ -337,7 +194,7 @@
                                 }
                             });
                         });
-                        registerLayer(l, layerConfig, pAttrib); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                        layerRegistry.registerLayer(l, layerConfig, pAttrib); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                         map.addLayer(l);
                     });
 
@@ -379,12 +236,12 @@
                                             lFullExtent.spatialReference)) {
 
                                         // same spatial reference, no reprojection required
-                                        fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
+                                        map.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
                                             lFullExtent);
                                     } else {
 
                                         // need to re-project
-                                        fullExtent = gapiService.gapi.proj.projectEsriExtent(
+                                        map.fullExtent = gapiService.gapi.proj.projectEsriExtent(
                                             gapiService.gapi.mapManager.getExtentFromJson(
                                                 lFullExtent),
                                             map.extent.spatialReference);
@@ -394,7 +251,7 @@
                         }
                     }
 
-                    mapManager = gapiService.gapi.mapManager.setupMap(map, mapSettings);
+                    map.mapManager = gapiService.gapi.mapManager.setupMap(map, mapSettings);
 
                     // FIXME temp link for debugging
                     window.FGPV = {
@@ -408,7 +265,9 @@
          * @param {string} id identifier for a specific basemap layerbower
          */
         function selectBasemap(id) {
-            if (typeof (mapManager) === 'undefined' || !mapManager.BasemapControl) {
+            const mapManager = mapService.map.mapManager;
+
+            if (typeof mapManager === 'undefined' || !mapManager.BasemapControl) {
                 console.error('Error: Map manager or basemap control is not setup,' +
                     ' please setup map manager by calling setupMap().');
             } else {
@@ -421,6 +280,7 @@
          * @param {number} value a zoom level number
          */
         function setZoom(value) {
+            const map = mapService.map;
             if (map) {
                 map.setZoom(value);
             } else {
@@ -433,28 +293,45 @@
          * @param  {number} byValue a number of zoom levels to shift by
          */
         function shiftZoom(byValue) {
+            const map = mapService.map;
             if (map) {
                 let newValue = map.getZoom() + byValue;
                 map.setZoom(newValue);
             } else {
                 console.warn('GeoService: map is not yet created.');
             }
-
         }
 
         /**
          * Set the map to full extent
          */
         function setFullExtent() {
+            const map = mapService.map;
             if (map) {
-                if (fullExtent) {
-                    map.setExtent(fullExtent);
+                if (map.fullExtent) {
+                    map.setExtent(map.fullExtent);
                 } else {
                     console.warn('GeoService: fullExtent value is not set.');
                 }
             } else {
                 console.warn('GeoService: map is not yet created.');
             }
+        }
+
+        // only handles feature layers right now. zoom to dynamic/wms layers obj won't work
+        /**
+         * Fetches a point in a layer given the layerUrl and objId of the object and then zooms to it
+         * @param  {layerUrl} layerUrl is the URL that the point to be zoomed to belongs to
+         * @param  {objId} objId is ID of object that was clicked on datatable to be zoomed to
+         */
+        function zoomToGraphic(layerUrl, objId) {
+            const map = mapService.map;
+            const geo = gapiService.gapi.layer.getFeatureInfo(layerUrl, objId);
+            geo.then(geoInfo => {
+                if (geoInfo) {
+                    map.centerAndZoom(geoInfo.feature.geometry, 10);
+                }
+            });
         }
 
         /*
@@ -483,22 +360,6 @@
                 (extentSetForId.maximum) ? extentSetForId.maximum : null;
 
             return lFullExtent;
-
-        }
-
-        // only handles feature layers right now. zoom to dynamic/wms layers obj won't work
-        /**
-         * Fetches a point in a layer given the layerUrl and objId of the object and then zooms to it
-         * @param  {layerUrl} layerUrl is the URL that the point to be zoomed to belongs to
-         * @param  {objId} objId is ID of object that was clicked on datatable to be zoomed to
-         */
-        function zoomToGraphic(layerUrl, objId) {
-            const geo = gapiService.gapi.layer.getFeatureInfo(layerUrl, objId);
-            geo.then(geoInfo => {
-                if (geoInfo) {
-                    map.centerAndZoom(geoInfo.feature.geometry, 10);
-                }
-            });
         }
     }
 })();

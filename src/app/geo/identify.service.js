@@ -17,7 +17,8 @@
         const featureLayers = [];
 
         return (map, layerRegistry) => {
-            gapiService.gapi.events.wrapEvents(map, { click: clickHandlerBuilder(map, layerRegistry) });
+            gapiService.gapi.events.wrapEvents(
+                map, { click: clickHandlerBuilder(map, layerRegistry) });
 
             return {
                 /**
