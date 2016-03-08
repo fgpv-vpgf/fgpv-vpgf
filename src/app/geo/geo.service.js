@@ -165,7 +165,7 @@
                 // used to track order of columns
                 const columnOrder = [];
 
-                identify = identifyService(gapi.gapi, map, service.layers);
+                identify = identifyService(map, service.layers);
 
                 // get the attribute keys to use as column headers
                 Object.keys(first.attributes)
@@ -300,7 +300,7 @@
             if (config.services && config.services.proxyUrl) {
                 gapi.gapi.mapManager.setProxy(config.services.proxyUrl);
             }
-            identify = identifyService(gapi.gapi, map, service.layers);
+            identify = identifyService(map, service.layers);
 
             config.layers.forEach(layerConfig => {
                 const l = generateLayer(layerConfig);
