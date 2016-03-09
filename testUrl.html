@@ -26,13 +26,94 @@
                 console.log(data);
             });
 
+            api.layer.predictLayerUrl('c:\dogguts\dash.json', api.layer.serviceType.GeoJSON).then(data => {
+                console.log('local file GeoJSON, hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('c:\dogguts\dash.json').then(data => {
+                console.log('local file GeoJSON, no hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('c:\dogguts\dash.zip', api.layer.serviceType.Shapefile).then(data => {
+                console.log('local file shape, hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('c:\dogguts\dash.zip').then(data => {
+                console.log('local file shape, no hint');
+                console.log(data);
+            });
+           
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_WaterLevels/MapServer/1').then(data => {
+                console.log('feature layer, no hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_WaterLevels/MapServer/1', api.layer.serviceType.FeatureLayer).then(data => {
+                console.log('feature layer, hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_WaterLevels/MapServer/').then(data => {
+                console.log('dynamic layer, no hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_WaterLevels/MapServer/', api.layer.serviceType.DynamicService).then(data => {
+                console.log('dynamic layer, hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/E2MS_Atlantic_region_data/MapServer/1').then(data => {
+                console.log('group layer, no hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/E2MS_Atlantic_region_data/MapServer/1', api.layer.serviceType.GroupLayer).then(data => {
+                console.log('group layer, hint');
+                console.log(data);
+            });
+            
+            api.layer.predictLayerUrl('http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_crop_spatial_density_barley/MapServer/0').then(data => {
+                console.log('raster layer, no hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_crop_spatial_density_barley/MapServer/0', api.layer.serviceType.RasterLayer).then(data => {
+                console.log('raster layer, hint');
+                console.log(data);
+            });
+           
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSandsBasemap/MapServer').then(data => {
+                console.log('tile layer, no hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSandsBasemap/MapServer', api.layer.serviceType.TileService).then(data => {
+                console.log('tile layer, hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://www.agr.gc.ca/atlas/rest/services/imageservices/mb_colour_orthos_50cm/ImageServer').then(data => {
+                console.log('imagesrv layer, no hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://www.agr.gc.ca/atlas/rest/services/imageservices/mb_colour_orthos_50cm/ImageServer', api.layer.serviceType.ImageService).then(data => {
+                console.log('imagesrv layer, hint');
+                console.log(data);
+            });
+
+            // need a CORS endpiont or proxy magic
+            /*
             api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/test.csv').then(data => {
                 console.log('web file CSV, no hint');
                 console.log(data);
             });
-
-
-
+            */
+        
         });
     </script>
 </body>

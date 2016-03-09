@@ -181,32 +181,32 @@ function pokeEsriService(url, esriBundle, hint) {
 
     // no treats for raster (for now)
     srvHandler[serviceType.RasterLayer] = srvJson => {
-        makeLayerInfo(serviceType.RasterLayer, 'name', srvJson);
+        return makeLayerInfo(serviceType.RasterLayer, 'name', srvJson);
     };
 
     // no treats for group (for now)
     srvHandler[serviceType.GroupLayer] = srvJson => {
-        makeLayerInfo(serviceType.GroupLayer, 'name', srvJson);
+        return makeLayerInfo(serviceType.GroupLayer, 'name', srvJson);
     };
 
     // no treats for tile (for now)
     srvHandler[serviceType.TileService] = srvJson => {
-        makeLayerInfo(serviceType.TileService, 'mapName', srvJson);
+        return makeLayerInfo(serviceType.TileService, 'mapName', srvJson);
     };
 
     // no treats for mapserver / dynamic (for now)
     srvHandler[serviceType.DynamicService] = srvJson => {
-        makeLayerInfo(serviceType.DynamicService, 'mapName', srvJson);
+        return makeLayerInfo(serviceType.DynamicService, 'mapName', srvJson);
     };
 
     // no treats for imageserver (for now)
     srvHandler[serviceType.ImageService] = srvJson => {
-        makeLayerInfo(serviceType.ImageService, 'name', srvJson);
+        return makeLayerInfo(serviceType.ImageService, 'name', srvJson);
     };
 
     // couldnt figure it out
     srvHandler[serviceType.Unknown] = () => {
-        makeInfo(serviceType.Unknown);
+        return makeInfo(serviceType.Unknown);
     };
 
     return new Promise(resolve => {
