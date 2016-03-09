@@ -71,9 +71,6 @@ function getServerFile(url, esriBundle) {
             resolve(srvResult);
         }, error => {
             // something went wrong
-            // TODO remove these debug outputs
-            console.log('i am errrorrrrr');
-            console.log(error);
             reject(error);
         });
     });
@@ -107,9 +104,7 @@ function makeFileInfo(type, url, esriBundle) {
         const info = makeInfo(type);
         if (url && isServerFile(url)) {
             // be a pal and download the file content
-            console.log('HOSSS i made it here, horah');
             getServerFile(url, esriBundle).then(data => {
-                console.log('HOSSS got some data back from server');
                 info.fileData = data;
                 resolve(info);
             });
@@ -201,7 +196,9 @@ function pokeEsriService(url, esriBundle, hint) {
 
     // no treats for imageserver (for now)
     srvHandler[serviceType.ImageService] = srvJson => {
-        return makeLayerInfo(serviceType.ImageService, 'name', srvJson);
+        const info = makeLayerInfo(serviceType.ImageService, 'name', srvJson);
+        info.fields = srvJson.fields;
+        return info;
     };
 
     // couldnt figure it out
@@ -301,11 +298,15 @@ function predictLayerUrlBuilder(esriBundle) {
     * Attempts to determine what kind of layer the URL most likely is, and
     * if possible, return back some useful information about the layer
     *
-    * TODO add specs of return object
+    * - serviceType: the type of layer the function thinks the url is referring to. is a value of serviceType enumeration (string)
+    * - fileData: file contents in an array buffer. only present if the URL points to a file that exists on an internet server (i.e. not a local disk drive)
+    * - name: best attempt at guessing the name of the service (string). only present for ESRI service URLs
+    * - fields: array of field definitions for the layer. conforms to ESRI's REST field standard. only present for feature layer and image service URLs.
+    * - geometryType: describes the geometry of the layer (string). conforms to ESRI's REST geometry type enum values. only present for feature layer URLs.
     *
     * @method predictLayerUrl
     * @param {String} url a url to something that is hopefully a map service
-    * @param {String} hint optional. allows the caller to specify the url type, allowing the function to run the data logic for that type
+    * @param {String} hint optional. allows the caller to specify the url type, forcing the function to run the data logic for that type
     * @returns {Promise} a promise resolving with an infomation object
     */
     return (url, hint) => {
