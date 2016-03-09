@@ -115,7 +115,7 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
  * @param  {String} contents stringified contents of the core/constant.service
  */
 function injectConfigDefaults(contents) {
-    return contents.replace('_DEFAULTS_', JSON.stringify(pkg.schemaDefaults));
+    return contents.replace('\'_DEFAULTS_\'', JSON.stringify(pkg.schemaDefaults));
 }
 
 function injectVersion(contents) {
