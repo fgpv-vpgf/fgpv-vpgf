@@ -5,10 +5,10 @@
      * @ngdoc service
      * @name mapService
      * @module app.geo
-     * @requires dependencies
+     * @requires $q
      * @description
      *
-     * The `mapService` factory description.
+     * The `mapService` factory holds references to the map dom node and the currently active map object.
      *
      */
     angular
@@ -21,8 +21,10 @@
             map: null, // contains a reference to `mapManager`
             // { mapManager: <Object>, fullExtent: <Object> }
 
+            buildMapObject,
+
             isReady: null,
-            registerMapNode: null,
+            registerMapNode: null
         };
 
         init();
@@ -31,28 +33,29 @@
 
         /***/
 
+        // TODO: placeholder function
+        function buildMapObject() {}
+
         /**
          * Sets an `isReady` promise resolving when the map node is registered.
          */
         function init() {
             service.isReady =
-                $q((resolve, reject) =>
-                    service.registerMapNode = (node => registerMapNode(resolve, reject, node))
+                $q(resolve =>
+                    service.registerMapNode = (node => registerMapNode(resolve, node))
                 );
         }
 
         /**
          * Stores a reference to the map node.
          * @param  {Function} resolve function to resolve ready promise
-         * @param  {Function} reject  function to reject ready promise
          * @param  {Object} node    dom node to build the map on
          */
-        function registerMapNode(resolve, reject, node) {
-            if (service.mapNode === null && node) {
+        function registerMapNode(resolve, node) {
+            if (service.mapNode === null) {
                 service.mapNode = node;
                 resolve();
             }
         }
-
     }
 })();

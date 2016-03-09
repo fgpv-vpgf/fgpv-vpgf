@@ -21,11 +21,11 @@ describe('layerRegistry', () => {
 
         // check registering a layer
         it('should register a layer', () => {
-            let tempLayer = {
+            const tempLayer = {
                 id: 'sausages',
                 setVisibility: () => {}
             };
-            let tempConfig = {
+            const tempConfig = {
                 url: 'http://www.sausagelayer.com/'
             };
             layerRegistry.registerLayer(tempLayer, tempConfig, {});
@@ -53,14 +53,14 @@ describe('layerRegistry', () => {
         });
 
         it('should bundle attributes correctly', () => {
-            let tempLayer = {
+            const tempLayer = {
                 id: 'sausages',
                 setVisibility: () => {}
             };
-            let tempConfig = {
+            const tempConfig = {
                 url: 'http://www.sausagelayer.com/'
             };
-            let tempAttribPromise = $q.resolve({
+            const tempAttribPromise = $q.resolve({
                 layerId: 'sausages',
                 0: {
                     features: [{
@@ -81,6 +81,5 @@ describe('layerRegistry', () => {
                         .toBeDefined();
                 });
         });
-
     });
 });

@@ -154,7 +154,7 @@
             $translate.use(lang);
 
             // TODO: move this somewhere more appropriate
-            geoService.buildMap();
+            geoService.assembleMap();
         }
 
         // TODO: hack

@@ -30,19 +30,22 @@
         }
 
         /**
-         * Retrieves dynamic layres
+         * Retrieves dynamic layers
          * @return {Array} array of dynamic layers
          */
         function getDynamicLayers() {
             console.log(layerRegistry.layers);
 
+            // TODO: Pretty experimental, but how about Object.entries instead of having to go with keys().map(key => object)?
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries
+            // TODO: this and `getFeatureLayers` might be simplified and moved to the `layerRegistry`
             return Object.keys(layerRegistry.layers)
                 .map(key => layerRegistry.layers[key])
                 .filter(layer => layer.state.layerType === layerTypes.esriDynamic);
         }
 
         /**
-         * Retrieves feature layres
+         * Retrieves feature layers
          * @return {Array} array of feature layers
          */
         function getFeatureLayers() {

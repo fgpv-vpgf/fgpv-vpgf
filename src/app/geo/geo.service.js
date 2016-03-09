@@ -5,6 +5,7 @@
      * @ngdoc service
      * @name geoService
      * @module app.geo
+     * @requires $http, $q, gapiService, mapService, layerRegistry, configService, identifyService
      *
      * @description
      * `geoService` wraps all calls to geoapi and also tracks the state of anything map related
@@ -23,7 +24,7 @@
 
         const service = {
             epsgLookup,
-            buildMap,
+            assembleMap,
             setZoom,
             shiftZoom,
             selectBasemap,
@@ -70,12 +71,11 @@
         }
 
         /**
-         * Constructs a map on the given DOM node.
-         * @param {object} config the map configuration based on the configuration schema
+         * Constructs a map on the given DOM node given the current config object.
          * @return {Promise} resolving when all the map building is done
-         * TODO: refactor this behemoth
+         * TODO: break this function and move some of it (stuff related to actual map building) to `mapService.buildMapObject` function
          */
-        function buildMap() {
+        function assembleMap() {
             return configService.getCurrent()
                 .then(config => {
 
@@ -118,7 +118,8 @@
                                     // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
 
                                     // get the attributes for the layer
-                                    const a = gapiService.gapi.attribs.loadLayerAttribs(l);
+                                    const a = gapiService.gapi.attribs.loadLayerAttribs(
+                                        l);
 
                                     a
                                         .then(data => {

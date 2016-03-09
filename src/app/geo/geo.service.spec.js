@@ -73,7 +73,7 @@ describe('geo', () => {
             });
 
             // create a fake map
-            geoService.buildMap()
+            geoService.assembleMap()
                 .then(() => {
                     // call setZoom with different arguments
 
@@ -134,7 +134,7 @@ describe('geo', () => {
 
                 mapService.registerMapNode(el[0]);
                 configService.setCurrent(emptyConfig);
-                geoService.buildMap()
+                geoService.assembleMap()
                     .then(() => {
                         console.log('map is done');
                         expect(m.Map)
@@ -151,7 +151,7 @@ describe('geo', () => {
                 spyOn(l, 'FeatureLayer');
                 spyOn(l, 'WmsLayer');
                 spyOn(l, 'ArcGISDynamicMapServiceLayer');
-                geoService.buildMap(el[0], layerConfig);
+                geoService.assembleMap(el[0], layerConfig);
                 expect(l.FeatureLayer)
                     .toHaveBeenCalled();
                 expect(l.WmsLayer)

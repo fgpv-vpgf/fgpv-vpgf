@@ -5,10 +5,10 @@
      * @ngdoc service
      * @name layerRegistry
      * @module app.geo
-     * @requires
+     * @requires gapiService, mapService, layerTypes, configDefaults
      * @description
      *
-     * The `layerRegistry` factory description.
+     * The `layerRegistry` factory tracks active layers and constructs legend, provide all layer-related functionality like registering, removing, changing visibility, changing opacity, etc.
      *
      */
     angular
@@ -22,9 +22,10 @@
 
         const service = {
             legend,
-            layers, // TODO: remove raw layer array
+            layers,
 
             reset,
+
             generateLayer,
             registerLayer,
             getFormattedAttributes,
@@ -37,6 +38,9 @@
 
         /***/
 
+        /**
+         * Resets layer and legend storage.
+         */
         function reset() {
             // clear layers array
             Object.keys(layers)
@@ -70,6 +74,7 @@
         function removeLayer(layerId) {
             const l = layers[layerId];
 
+            // TODO: don't fail silently; thrown and error; maybe shown message to the user.
             if (!l) {
                 return;
             }
