@@ -48,14 +48,14 @@
                     .then(config => {
                         let mapObject;
 
-                        // reset before rebuilding the map
-                        if (service.mapObject !== null) {
+                        // reset before rebuilding the map if `geoState` already has an instance of mapService
+                        if (typeof geoState.mapService !== 'undefined') {
                             // NOTE: Possible to have dom listeners stick around after the node is destroyed
-                            mapObject = service.mapObject;
-                            mapObject.destroy();
-                            mapObject.mapManager.ScalebarControl.destroy();
-                            mapObject.mapManager.OverviewMapControl.destroy();
-                            mapObject = null;
+                            const mapService = geoState.mapService;
+                            mapService.mapObject.destroy();
+                            mapService.mapManager.ScalebarControl.destroy();
+                            mapService.mapManager.OverviewMapControl.destroy();
+                            mapService.mapObject = null;
                         }
 
                         // FIXME remove the hardcoded settings when we have code which does this properly

@@ -103,7 +103,9 @@
          * TODO: break this function and move some of it (stuff related to actual map building) to `mapService.buildMapObject` function
          */
         function assembleMap() {
-            const state = {
+            // reuse the previous state or create the new one
+            // when reusing existing state, its map will be destroyed
+            const state = service.state || {
                 mapNode: ref.mapNode
             };
 
