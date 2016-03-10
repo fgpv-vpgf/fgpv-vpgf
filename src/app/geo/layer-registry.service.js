@@ -16,13 +16,9 @@
         .factory('layerRegistry', layerRegistryFactory);
 
     function layerRegistryFactory($q, gapiService, layerTypes, configService, configDefaults) {
-        return geoState => layerRegistry(geoState);
+        return geoState => layerRegistry(geoState, geoState.mapService.mapObject);
 
-        function layerRegistry(geoState) {
-            // keep useful references from geoState
-            const ref = {
-                map: geoState.mapService.mapObject
-            };
+        function layerRegistry(geoState, mapObject) {
 
             const layers = {}; // layer collection
             const legend = []; // legend construct, to be consumed by toc; deflection +2
@@ -82,7 +78,7 @@
                                 });
                             });
                             service.registerLayer(l, layerConfig, pAttrib); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
-                            ref.map.addLayer(l);
+                            mapObject.addLayer(l);
                         });
 
                         // store service in geoState
@@ -120,7 +116,7 @@
                     return;
                 }
 
-                ref.map.removeLayer(l.layer);
+                mapObject.removeLayer(l.layer);
 
                 // TODO: needs more work to manager layerOrder
                 const index = service.legend.indexOf(layerId);

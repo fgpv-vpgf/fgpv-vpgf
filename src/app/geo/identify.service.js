@@ -12,16 +12,13 @@
         .factory('identifyService', identifyServiceFactory);
 
     function identifyServiceFactory($q, gapiService, stateManager, layerTypes) {
-        return geoState => identifyService(geoState);
+        return geoState => identifyService(
+            geoState,
+            geoState.mapService.mapObject,
+            geoState.layerRegistry
+        );
 
-        function identifyService(geoState) {
-
-            // commonly used references
-            const ref = {
-                map: geoState.mapService.mapObject,
-                layerRegistry: geoState.layerRegistry,
-                layers: geoState.layerRegistry.layers
-            };
+        function identifyService(geoState, mapObject, layerRegistry) {
 
             return init();
 
@@ -32,8 +29,8 @@
              */
             function init() {
                 gapiService.gapi.events.wrapEvents(
-                    ref.map, {
-                        click: clickHandlerBuilder(ref.map)
+                    mapObject, {
+                        click: clickHandlerBuilder(mapObject)
                     });
 
                 return null;
@@ -44,13 +41,13 @@
              * @return {Array} array of dynamic layers
              */
             function getDynamicLayers() {
-                // console.log(ref.layers);
+                // console.log(layerRegistry.layers);
 
                 // TODO: Pretty experimental, but how about Object.entries instead of having to go with keys().map(key => object)?
                 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries
                 // TODO: this and `getFeatureLayers` might be simplified and moved to the `layerRegistry`
-                return Object.keys(ref.layers)
-                    .map(key => ref.layers[key])
+                return Object.keys(layerRegistry.layers)
+                    .map(key => layerRegistry.layers[key])
                     .filter(layer => layer.state.layerType === layerTypes.esriDynamic);
             }
 
@@ -59,10 +56,10 @@
              * @return {Array} array of feature layers
              */
             function getFeatureLayers() {
-                // console.log(ref.layers);
+                // console.log(layerRegistry.layers);
 
-                return Object.keys(ref.layers)
-                    .map(key => ref.layers[key])
+                return Object.keys(layerRegistry.layers)
+                    .map(key => layerRegistry.layers[key])
                     .filter(layer => layer.state.layerType === layerTypes.esriFeature);
             }
 
@@ -87,7 +84,7 @@
 
                 return Object.keys(attribs)
                     .map(key => {
-                        let fieldName = ref.layerRegistry.aliasedFieldName(key, fields);
+                        let fieldName = layerRegistry.aliasedFieldName(key, fields);
 
                         return {
                             key: fieldName,
@@ -128,9 +125,9 @@
 
             // attempt to get a tolerance from the layer state, otherwise return a default
             function getTolerance(layer) {
-                if (ref.layers[layer.id] && ref.layers[layer.id].state &&
-                    ref.layers[layer.id].state.tolerance) {
-                    return ref.layers[layer.id].state.tolerance;
+                if (layerRegistry.layers[layer.id] && layerRegistry.layers[layer.id].state &&
+                    layerRegistry.layers[layer.id].state.tolerance) {
+                    return layerRegistry.layers[layer.id].state.tolerance;
                 } else {
                     return 5;
                 }
@@ -246,13 +243,13 @@
 
                                 // TODO might want to abstract some of this out into a "get attibutes from feature" function
                                 // get the id and attribute bundle of the layer belonging to the feature that was clicked
-                                if (!ref.layers[layer.id]) {
+                                if (!layerRegistry.layers[layer.id]) {
                                     throw new Error('Click on unregistered layer ' + layer.id);
                                 }
-                                const layerState = ref.layers[layer.id].state;
+                                const layerState = layerRegistry.layers[layer.id].state;
 
                                 // ensure attributes are downloaded.  wait for them if not.
-                                ref.layers[layer.id].attribs.then(attribsBundle => {
+                                layerRegistry.layers[layer.id].attribs.then(attribsBundle => {
 
                                     if (attribsBundle.indexes.length === 0) {
                                         // TODO do we really want to error, or just do nothing (i.e. user clicks on no-data feature -- so what?)
