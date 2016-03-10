@@ -1,4 +1,3 @@
-/* global RV */
 (() => {
     'use strict';
 
@@ -16,25 +15,24 @@
         .module('app.geo')
         .factory('gapiService', gapi);
 
-    function gapi($q) {
-        // wait for `gapiPromise` from the global registry to resolve
-        const initializePromise = RV.gapiPromise;
-
+    function gapi($q, globalRegistry) {
         const service = {
             gapi: null, // actual gapi interface; available after gapiPromise resovles
-            ready
+            isReady: null
         };
+
+        init();
 
         return service;
 
         /***/
 
         /**
-         * Checks if the service is ready to use.
-         * @return {Promise} promise to be resolved when gapi loads
+         * Sets `isReady` promise which is resolved when gapi loads
          */
-        function ready() {
-            return initializePromise
+        function init() {
+            // wait for `gapiPromise` from the global registry to resolve
+            service.isReady = globalRegistry.gapiPromise
                 .then(gapi => {
                     service.gapi = gapi;
                     console.info('gapi is ready');

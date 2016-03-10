@@ -15,8 +15,8 @@
 
     function runBlock($rootScope, $translate, $q, events, configService, gapiService, mapService, geoService) {
         const promises = [
-            gapiService.ready(),
             configService.initialize(),
+            gapiService.isReady,
             mapService.isReady
         ];
 
