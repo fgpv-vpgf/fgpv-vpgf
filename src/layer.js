@@ -1,4 +1,10 @@
 'use strict';
+
+// TODO consider splitting this module into different modules.  in particular,
+//      file-based stuff vs server based stuff, and layer creation vs layer support
+
+// TODO convert internal function header comments to JSDoc, and use the @private tag
+
 const csv2geojson = require('csv2geojson');
 const Terraformer = require('terraformer');
 const shp = require('shpjs');
@@ -41,20 +47,12 @@ const serviceType = {
 // attempts to determine if a path points to a location on the internet,
 // or is a local file.  Returns true if internetish
 function isServerFile(url) {
-    // TODO enhance to be better check, possibly magic regex.
-    // These samples give a starting point, though we would likely need to change some conditions.
-    // http://blog.mattheworiordan.com/post/13174566389/url-regular-expression-for-links-with-or-without
-    // https://gist.github.com/searls/1033143
+    // TODO possibly enhance to be better check, or support more cases
 
-    const netPrefixes = ['http', 'ftp']; // TODO more valid prefixes?
     const lowUrl = url.toLowerCase();
-    let found = false;
-    netPrefixes.forEach(prefix => {
-        if (lowUrl.substr(0, prefix.length) === prefix) {
-            found = true;
-        }
-    });
-    return found;
+    const tests = [/^http:/, /^https:/, /^ftp:/, /^\/\//];
+    return tests.some(test => lowUrl.match(test));
+
 }
 
 // will grab a file from a server address as binary.
@@ -317,36 +315,37 @@ function predictLayerUrlBuilder(esriBundle) {
         return new Promise(resolve => {
             if (hint) {
                 // go directly to appropriate logic block
-                const mapper = {}; // why? cuz cyclomatic complexity + OBEY RULES
+                const hintToFlavour = {}; // why? cuz cyclomatic complexity + OBEY RULES
+                const flavourToHandler = {};
 
                 // hint type to hint flavour
-                mapper[serviceType.CSV] = 'F_FILE';
-                mapper[serviceType.GeoJSON] = 'F_FILE';
-                mapper[serviceType.Shapefile] = 'F_FILE';
-                mapper[serviceType.FeatureLayer] = 'F_ESRI';
-                mapper[serviceType.RasterLayer] = 'F_ESRI';
-                mapper[serviceType.GroupLayer] = 'F_ESRI';
-                mapper[serviceType.TileService] = 'F_ESRI';
-                mapper[serviceType.DynamicService] = 'F_ESRI';
-                mapper[serviceType.ImageService] = 'F_ESRI';
-                mapper[serviceType.WMS] = 'F_WMS';
+                hintToFlavour[serviceType.CSV] = 'F_FILE';
+                hintToFlavour[serviceType.GeoJSON] = 'F_FILE';
+                hintToFlavour[serviceType.Shapefile] = 'F_FILE';
+                hintToFlavour[serviceType.FeatureLayer] = 'F_ESRI';
+                hintToFlavour[serviceType.RasterLayer] = 'F_ESRI';
+                hintToFlavour[serviceType.GroupLayer] = 'F_ESRI';
+                hintToFlavour[serviceType.TileService] = 'F_ESRI';
+                hintToFlavour[serviceType.DynamicService] = 'F_ESRI';
+                hintToFlavour[serviceType.ImageService] = 'F_ESRI';
+                hintToFlavour[serviceType.WMS] = 'F_WMS';
 
                 // hint flavour to flavour-handler
-                mapper.F_FILE = () => {
+                flavourToHandler.F_FILE = () => {
                     pokeFile(url, esriBundle, hint).then(info => resolve(info));
                 };
 
-                mapper.F_ESRI = () => {
+                flavourToHandler.F_ESRI = () => {
                     pokeEsriService(url, esriBundle, hint).then(info => resolve(info));
                 };
 
-                mapper.F_WMS = () => {
+                flavourToHandler.F_WMS = () => {
                     // FIXME REAL LOGIC COMING SOON
                     resolve(makeInfo(serviceType.WMS));
                 };
 
-                // execute handler.  hint -> handler -> run it!
-                mapper[mapper[hint]]();
+                // execute handler.  hint -> flavour -> handler -> run it!
+                flavourToHandler[hintToFlavour[hint]]();
 
             } else {
                 // no hint. run tests until we find a match.
