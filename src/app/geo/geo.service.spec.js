@@ -1,4 +1,4 @@
-/* global bard, geoService, gapiService, $rootScope, configService, mapService, $httpBackend */
+/* global bard, geoService, gapiService, $rootScope, configService, $httpBackend */
 
 describe('geo', () => {
 
@@ -44,7 +44,7 @@ describe('geo', () => {
         bard.appModule('app.geo', 'app.common.router', mockGapiService, mockConfigService);
 
         // inject services
-        bard.inject('geoService', 'gapiService', '$rootScope', 'mapService', 'configService',
+        bard.inject('geoService', 'gapiService', '$rootScope', 'configService',
             '$httpBackend');
     });
 
@@ -54,7 +54,7 @@ describe('geo', () => {
             // set a spy on it
             spyOn(map, 'setZoom');
 
-            mapService.registerMapNode({});
+            geoService.registerMapNode({});
             configService.setCurrent({
                 layers: [],
                 map: {
@@ -132,7 +132,7 @@ describe('geo', () => {
                 spyOn(m, 'Map')
                     .and.callThrough();
 
-                mapService.registerMapNode(el[0]);
+                geoService.registerMapNode(el[0]);
                 configService.setCurrent(emptyConfig);
                 geoService.assembleMap()
                     .then(() => {

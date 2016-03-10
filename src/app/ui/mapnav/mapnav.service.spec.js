@@ -12,6 +12,13 @@ describe('mapNavigationService', () => {
         });
     }
 
+    // fake gapi service
+    function mockGeoService($provide) {
+        $provide.factory('geoService', () => {
+            return {};
+        });
+    }
+
     beforeEach(() => {
         /*
             mock the module with bardjs: https://github.com/wardbell/bardjs#appmodule
@@ -20,7 +27,7 @@ describe('mapNavigationService', () => {
             Here 'app.ui.mapnav' module is identified as we are testing `mapNavigationService` service. We also need 'app.common.router' module since mapNavigationService uses StateManager.
         */
         bard.appModule('app.ui.mapnav', 'app.common.router', 'app.geo', 'pascalprecht.translate',
-            mockConfigService);
+            mockConfigService, mockGeoService);
 
         /*
             injects angular components needed for testing and stores them on the global window object: https://github.com/wardbell/bardjs#inject

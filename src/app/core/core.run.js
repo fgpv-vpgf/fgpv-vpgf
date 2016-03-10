@@ -25,8 +25,8 @@
             .then(() => {
                 // initialize other services, if any
                 console.log('Config initialized');
-                $rootScope.$broadcast(events.rvReady);
                 geoService.assembleMap();
+                $rootScope.$broadcast(events.rvReady);
             })
             .catch(reason => {
                 console.error('Everything broke');

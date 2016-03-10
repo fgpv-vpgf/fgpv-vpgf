@@ -24,6 +24,13 @@ describe('rvLayerItemFlag', () => {
         $provide.factory('layoutService', $q => () => $q(fulfill => fulfill()));
     }
 
+    // fake gapi service
+    function mockGeoService($provide) {
+        $provide.factory('geoService', () => {
+            return {};
+        });
+    }
+
     function mockToast($provide) {
         $provide.service('$mdToast', () => {});
     }
@@ -31,7 +38,7 @@ describe('rvLayerItemFlag', () => {
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
         bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo',
-            'pascalprecht.translate', mockLayoutService, mockToast);
+            'pascalprecht.translate', mockLayoutService, mockGeoService, mockToast);
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
