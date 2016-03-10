@@ -19,7 +19,7 @@
         .factory('tocService', tocService);
 
     function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager,
-        layerRegistry, metadataService) {
+        geoService, metadataService) {
         // TODO: remove after switching to the real config
         // jscs:disable maximumLineLength
         const service = {
@@ -806,22 +806,23 @@
 
         // remove
         $timeout(() => {
-            service.data.items[0].items = layerRegistry.legend.map(id => {
+            console.info(geoService);
+            service.data.items[0].items = geoService.legend.map(id => {
                 // add some fake symbology for now
-                layerRegistry.layers[id].state.symbology = [
+                geoService.layers[id].state.symbology = [
                     {
                         icon: 'url',
                         name: HolderIpsum.words(3, true)
                     }
                 ];
-                layerRegistry.layers[id].state.cache = {};
-                layerRegistry.layers[id].state.flags.type.value = layerRegistry.layers[id].state.layerType;
+                geoService.layers[id].state.cache = {};
+                geoService.layers[id].state.flags.type.value = geoService.layers[id].state.layerType;
 
-                return layerRegistry.layers[id].state;
+                return geoService.layers[id].state;
             });
 
             // console.log('--->', service.data.items[0]);
-        }, 7000); // FIXME: wait for layer to be added to the layer registry; this will not be needed as we are going to bind directly to layer/legend construction from layerRegistry; this is needed right now to keep the fake layers in the layer selector as well.
+        }, 7000); // FIXME: wait for layer to be added to the layer registry; this will not be needed as we are going to bind directly to layer/legend construction from geoService; this is needed right now to keep the fake layers in the layer selector as well.
 
         // set state change watches on metadata, settings and filters panel
         watchPanelState('sideMetadata', 'metadata');
@@ -894,7 +895,7 @@
                         toggleVisiblity(layer, layerOriginalVisibility);
                     } else {
                         // remove layer for real now
-                        layerRegistry.removeLayer(layer.id);
+                        geoService.removeLayer(layer.id);
                     }
                 });
         }
@@ -940,7 +941,7 @@
 
             value = value || toggle[control.value];
 
-            layerRegistry.setLayerVisibility(layer.id, value);
+            geoService.setLayerVisibility(layer.id, value);
         }
 
         // temp function to open layer groups
@@ -978,7 +979,7 @@
             };
 
             // wait for attributes to be loaded, then process them into grid format
-            const dataPromise = layerRegistry.layers[layer.id].attribs.then(attribBundle => {
+            const dataPromise = geoService.layers[layer.id].attribs.then(attribBundle => {
                 let layerId = layer.id;
                 let layerIdx;
 
@@ -994,7 +995,7 @@
                     layerIdx = attribBundle.indexes[0];
                 }
 
-                return layerRegistry.getFormattedAttributes(layerId, layerIdx);
+                return geoService.getFormattedAttributes(layerId, layerIdx);
             }).then(attrs => {
                 return {
                     data: {

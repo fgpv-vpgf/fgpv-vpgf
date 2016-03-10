@@ -15,7 +15,7 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
-    function rvInitMap(mapService) {
+    function rvInitMap(geoService) {
 
         const directive = {
             restrict: 'A',
@@ -25,7 +25,7 @@
 
         function linkFunc(scope, el) {
 
-            mapService.registerMapNode(el[0]);
+            geoService.registerMapNode(el[0]);
         }
     }
 

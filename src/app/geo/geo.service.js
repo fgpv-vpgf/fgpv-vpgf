@@ -22,18 +22,45 @@
         // Add a function to update the layer order. This function will raise a change event so other interested
         // pieces of code can react to the change in the order
 
-        const service = {
-            epsgLookup,
-            assembleMap,
-            setZoom,
-            shiftZoom,
-            selectBasemap,
-            setFullExtent,
-            zoomToGraphic,
-            getFullExtFromExtentSets,
+        const ref = {
+            mapNode: null
         };
 
+        const service = {
+            isReady: null,
+            registerMapNode: null,
+
+            epsgLookup,
+            assembleMap,
+
+            state: null
+        };
+
+        init();
+
         return service;
+
+        /**
+         * Sets an `isReady` promise resolving when the map node is registered.
+         */
+        function init() {
+            service.isReady =
+                $q(resolve =>
+                    service.registerMapNode = (node => registerMapNode(resolve, node))
+                );
+        }
+
+        /**
+         * Stores a reference to the map node.
+         * @param  {Function} resolve function to resolve ready promise
+         * @param  {Object} node    dom node to build the map on
+         */
+        function registerMapNode(resolve, node) {
+            if (ref.mapNode === null) {
+                ref.mapNode = node;
+                resolve();
+            }
+        }
 
         /**
          * Lookup a proj4 style projection definition for a given ESPG code.
@@ -76,239 +103,37 @@
          * TODO: break this function and move some of it (stuff related to actual map building) to `mapService.buildMapObject` function
          */
         function assembleMap() {
-            return configService.getCurrent()
-                .then(config => {
+            const state = {
+                mapNode: ref.mapNode
+            };
 
-                    // reset before rebuilding the map
-                    if (mapService.map !== null) {
-                        // NOTE: Possible to have dom listeners stick around after the node is destroyed
-                        mapService.map.destroy();
-                        mapService.map.mapManager.OverviewMapControl.destroy();
-                        mapService.map.mapManager.ScalebarControl.destroy();
-                        mapService.map = null;
-                        layerRegistry.reset();
-                    }
+            // assemble geo state object
+            return mapService(state)
+                .then(ms => {
+                    // expose mapService on geoService
+                    angular.extend(service, ms);
 
-                    // FIXME remove the hardcoded settings when we have code which does this properly
-                    mapService.map = gapiService.gapi.mapManager.Map(mapService.mapNode, {
-                        basemap: 'gray',
-                        zoom: 6,
-                        center: [-100, 50]
-                    });
+                    return layerRegistry(state);
+                })
+                .then(lr => {
+                    // expose layerRegistry service on geoService
+                    angular.extend(service, lr);
 
-                    // keep map reference for sanity
-                    let map = mapService.map;
+                    return identifyService(state);
+                })
+                .then(id => {
+                    // expose idenitifyService on geoService
+                    angular.extend(service, id);
 
-                    if (config.services && config.services.proxyUrl) {
-                        gapiService.gapi.mapManager.setProxy(config.services.proxyUrl);
-                    }
+                    // store geo state
+                    service.state = state;
 
-                    // init idenitfy service when a new map is created
-                    identifyService.init();
-
-                    config.layers.forEach(layerConfig => {
-                        // TODO: decouple identifyservice from everything
-                        const l = layerRegistry.generateLayer(layerConfig);
-                        const pAttrib = $q((resolve, reject) => { // handles the asynch loading of attributes
-
-                            // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
-                            gapiService.gapi.events.wrapEvents(l, {
-                                load: () => {
-                                    // FIXME look at layer config for flags indicating not to load attributes
-                                    // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
-
-                                    // get the attributes for the layer
-                                    const a = gapiService.gapi.attribs.loadLayerAttribs(
-                                        l);
-
-                                    a
-                                        .then(data => {
-                                            // registerAttributes(data);
-                                            resolve(data);
-                                        })
-                                        .catch(exception => {
-                                            console.error(
-                                                'Error getting attributes for ' +
-                                                l.name + ': ' +
-                                                exception);
-                                            console.log(l);
-
-                                            // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
-                                            reject(exception);
-                                        });
-                                }
-                            });
-                        });
-                        layerRegistry.registerLayer(l, layerConfig, pAttrib); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
-                        map.addLayer(l);
-                    });
-
-                    // setup map using configs
-                    // FIXME: I should be migrated to the new config schema when geoApi is updated
-                    const mapSettings = {
-                        basemaps: [],
-                        scalebar: {},
-                        overviewMap: {}
-                    };
-                    if (config.baseMaps) {
-                        mapSettings.basemaps = config.baseMaps;
-                    }
-
-                    if (config.map.components.scaleBar) {
-                        mapSettings.scalebar = {
-                            attachTo: 'bottom-left',
-                            scalebarUnit: 'dual'
-                        };
-                    }
-
-                    if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
-
-                        // FIXME: overviewMap has more settings
-                        mapSettings.overviewMap = config.map.components.overviewMap;
-                    }
-
-                    if (config.map.extentSets) {
-                        let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
-
-                        // map extent is not available until map is loaded
-                        if (lFullExtent) {
-                            gapiService.gapi.events.wrapEvents(map, {
-                                load: () => {
-
-                                    // compare map extent and setting.extent spatial-references
-                                    // make sure the full extent has the same spatial reference as the map
-                                    if (gapiService.gapi.proj.isSpatialRefEqual(map.extent.spatialReference,
-                                            lFullExtent.spatialReference)) {
-
-                                        // same spatial reference, no reprojection required
-                                        map.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
-                                            lFullExtent);
-                                    } else {
-
-                                        // need to re-project
-                                        map.fullExtent = gapiService.gapi.proj.projectEsriExtent(
-                                            gapiService.gapi.mapManager.getExtentFromJson(
-                                                lFullExtent),
-                                            map.extent.spatialReference);
-                                    }
-                                }
-                            });
-                        }
-                    }
-
-                    map.mapManager = gapiService.gapi.mapManager.setupMap(map, mapSettings);
-
-                    // FIXME temp link for debugging
-                    window.FGPV = {
-                        layers: service.layers
-                    };
+                    return service;
                 })
                 .catch(error => {
-                    console.error('Failed to build the map');
+                    console.error('Failed to assemble the map');
                     console.error(error);
                 });
-        }
-
-        /**
-         * Switch basemap based on the uid provided.
-         * @param {string} id identifier for a specific basemap layerbower
-         */
-        function selectBasemap(id) {
-            const mapManager = mapService.map.mapManager;
-
-            if (typeof mapManager === 'undefined' || !mapManager.BasemapControl) {
-                console.error('Error: Map manager or basemap control is not setup,' +
-                    ' please setup map manager by calling setupMap().');
-            } else {
-                mapManager.BasemapControl.setBasemap(id);
-            }
-        }
-
-        /**
-         * Sets zoom level of the map to the specified level
-         * @param {number} value a zoom level number
-         */
-        function setZoom(value) {
-            const map = mapService.map;
-            if (map) {
-                map.setZoom(value);
-            } else {
-                console.warn('GeoService: map is not yet created.');
-            }
-        }
-
-        /**
-         * Changes the zoom level by the specified value relative to the current level; can be negative
-         * @param  {number} byValue a number of zoom levels to shift by
-         */
-        function shiftZoom(byValue) {
-            const map = mapService.map;
-            if (map) {
-                let newValue = map.getZoom() + byValue;
-                map.setZoom(newValue);
-            } else {
-                console.warn('GeoService: map is not yet created.');
-            }
-        }
-
-        /**
-         * Set the map to full extent
-         */
-        function setFullExtent() {
-            const map = mapService.map;
-            if (map) {
-                if (map.fullExtent) {
-                    map.setExtent(map.fullExtent);
-                } else {
-                    console.warn('GeoService: fullExtent value is not set.');
-                }
-            } else {
-                console.warn('GeoService: map is not yet created.');
-            }
-        }
-
-        // only handles feature layers right now. zoom to dynamic/wms layers obj won't work
-        /**
-         * Fetches a point in a layer given the layerUrl and objId of the object and then zooms to it
-         * @param  {layerUrl} layerUrl is the URL that the point to be zoomed to belongs to
-         * @param  {objId} objId is ID of object that was clicked on datatable to be zoomed to
-         */
-        function zoomToGraphic(layerUrl, objId) {
-            const map = mapService.map;
-            const geo = gapiService.gapi.layer.getFeatureInfo(layerUrl, objId);
-            geo.then(geoInfo => {
-                if (geoInfo) {
-                    map.centerAndZoom(geoInfo.feature.geometry, 10);
-                }
-            });
-        }
-
-        /*
-         * Retrieve full extent from extentSets
-         */
-        function getFullExtFromExtentSets(extentSets) {
-
-            // FIXME: default basemap should be indicated in the config as well
-            const currentBasemapExtentSetId = '123456789';
-
-            // In configSchema, at least one extent for a basemap
-            const extentSetForId = extentSets.find(extentSet => {
-                if (extentSet.id === currentBasemapExtentSetId) {
-                    return true;
-                }
-            });
-
-            // no matching id in the extentset
-            if (angular.isUndefined(extentSetForId)) {
-                throw new Error('could not find an extent set with matching id.');
-            }
-
-            // find the full extent type from extentSetForId
-            const lFullExtent = (extentSetForId.full) ? extentSetForId.full :
-                (extentSetForId.default) ? extentSetForId.default :
-                (extentSetForId.maximum) ? extentSetForId.maximum : null;
-
-            return lFullExtent;
         }
     }
 })();
