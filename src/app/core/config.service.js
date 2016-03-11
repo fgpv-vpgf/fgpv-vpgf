@@ -128,12 +128,14 @@
 
         /**
          * Applies the appropriate layer defaults to a config object
-         * @param {object}  config    config object to modify
+         * @param  {object}  config     base config object
+         * @return {object}             config object with modified layer entries
          */
         function applyLayerDefaults(config) {
-            config.layers.forEach(layerEntry => {
-                layerEntry = angular.merge({}, layerDefaults[layerTypes[layerEntry.layerType]], layerEntry);
-            });
+            const newConfig = config;
+            newConfig.layers = config.layers.map(layerEntry =>
+                angular.merge({}, layerDefaults[layerTypes[layerEntry.layerType]], layerEntry));
+            return newConfig;
         }
 
         /**
