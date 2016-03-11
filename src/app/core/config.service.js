@@ -38,41 +38,13 @@
         .module('app.core')
         .factory('configService', configService);
 
-    function configService($q, $rootElement, $timeout, $http, configDefaults, $translate) {
+    function configService($q, $rootElement, $timeout, $http, $translate, layerDefaults, layerTypes) {
         let initializePromise;
         let isInitialized = false;
-
-        const basicLayerDefaults = {
-            visibility: {
-                enabled: true,
-                value: 'on'
-            },
-            opacity: {
-                enabled: true,
-                value: 1
-            },
-            metadata: {
-                enabled: true,
-            },
-            settings: {
-                enabled: true,
-            },
-            refresh: {
-                enabled: true,
-            },
-            remove: {
-                enabled: true,
-            },
-            boundingBox: {
-                enabled: true,
-                value: true
-            }
-        };
 
         const service = {
             data: { },
             getCurrent,
-            applyBasicDefaults, // silence JSHint since we might want this later after all the hacks are removed
             initialize,
             ready
         };
@@ -107,14 +79,6 @@
 
                 // check if config attribute exist
                 if (configAttr) {
-                    // check if it's a valid JSON
-                    try {
-                        configJson = angular.fromJson(configAttr);
-                        addConfig($q.resolve(configJson), 'en');
-                    } catch (e) {
-                        console.log('Not valid JSON, attempting to load a file with this name');
-                    }
-
                     if (langAttr) {
                         try {
                             langs = angular.fromJson(langAttr);
@@ -124,6 +88,8 @@
                             // TODO: better way to handle when no languages are specified?
                             langs = ['en', 'fr'];
                         }
+                    } else {
+                        langs = ['en', 'fr'];
                     }
 
                     langs.forEach(lang => partials[lang] = []);
@@ -139,22 +105,8 @@
 
                     langs.forEach(lang => {
                         service.data[lang] = $q.all(partials[lang]).then(configParts => {
-                            const config = { layers: [] };
-
-                            // FIXME ugly hack for temporary merging of layers
-                            configParts.forEach(part => {
-                                Object.keys(part).forEach(key => {
-                                    if (key === 'layers') {
-                                        config[key] = config[key].concat(part[key]);
-                                    } else {
-                                        config[key] = part[key];
-                                    }
-                                });
-                            });
-                            console.info(config);
-                            return config;
+                            return applyLayerDefaults(mergeConfigParts(configParts));
                         });
-
                     });
 
                     // initialize the app once the default language's config is loaded
@@ -175,38 +127,20 @@
         }
 
         /**
-         * Adds a config (promise) to the registry
-         * @param  {Promise}    configPromise  promise that will resolve with config object
-         * @param  {string}     lang    the language to tie the config object to
+         * Applies the appropriate layer defaults to a config object
+         * @param {object}  config    config object to modify
          */
-        function addConfig(configPromise, lang) {
-            service.data[lang] = configPromise
-                    .then(data => {
-                        if (data.data) {
-                            // apply any defaults from layoutConfigDefaults, then merge config on top
-                            // TODO: this is an example; actual merging of the defaults is more complicated
-                            return angular.merge({}, configDefaults, data.data);
-                        }
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
+        function applyLayerDefaults(config) {
+            config.layers.forEach(layerEntry => {
+                layerEntry = angular.merge({}, layerDefaults[layerTypes[layerEntry.layerType]], layerEntry);
+            });
         }
 
-        function applyBasicDefaults(fragmentPromise) {
-            return fragmentPromise
-                .then(fragment => {
-                    const d = angular.merge({}, basicLayerDefaults, fragment);
-                    console.info(d);
-                    return {
-                        data: d
-                    };
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-
+        /**
+         * Config initialization block for file-based configs
+         * @param {string}  configAttr  the file path tied to the config attribute
+         * @param {array}   langs       array of languages which have configs
+         */
         function fileInit(configAttr, langs) {
             langs.forEach(lang => {
                 // try to load config file
@@ -224,6 +158,34 @@
             return service.data[currentLang];
         }
 
+        /**
+         * Returns a config built by merging separate config chunks.
+         * @param {array}   configParts  array of config chunks to merge
+         * @return {object} config       the merged config object
+         */
+        function mergeConfigParts(configParts) {
+            const config = { layers: [] }; // angular.merge({}, { layers: [] }, configDefaults);
+
+            configParts.forEach(part => {
+                angular.forEach(part, (value, key) => {
+                    // if this section is an array just concat, e.g. layers, basemaps
+                    // otherwise merge into existing section
+                    if (Array.isArray(config[key])) {
+                        config[key] = config[key].concat(value);
+                    } else {
+                        config[key] = value;
+                    }
+                });
+            });
+            return config;
+        }
+
+        /**
+         * Config initialization block for rcs retrieved config snippets
+         * @param {string}  svcAttr     the server path tied to the config attribute
+         * @param {string}  keysAttr    list of keys marking which layers to retrieve
+         * @param {array}   langs       array of languages which have configs
+         */
         function rcsInit(svcAttr, keysAttr, langs) {
             const endpoint = svcAttr.endsWith('/') ? svcAttr : svcAttr + '/';
             let keys;
@@ -238,8 +200,9 @@
                 langs.forEach(lang => {
                     const p = $http.get(`${endpoint}v2/docs/${lang}/${keys.join(',')}`).then(resp => {
                         const result = {};
-                        result.layers = resp.data.map(layerEntry =>
-                            angular.merge({}, basicLayerDefaults, layerEntry.layers[0]));
+                        result.layers = resp.data.map(layerEntry => {
+                            return layerEntry.layers[0];
+                        });
                         return result;
                     });
                     partials[lang].push(p);
