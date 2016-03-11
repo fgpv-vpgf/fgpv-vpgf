@@ -965,7 +965,8 @@
          */
         function toggleSettings(layer) {
             const requester = {
-                id: layer.id
+                id: layer.id,
+                layerItem: geoService.layers[layer.id].layer
             };
             const panelToClose = {
                 filters: false
