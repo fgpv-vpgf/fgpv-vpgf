@@ -10,8 +10,8 @@
                 <div class="rv-icon-20 rv-slider-setting">
                     <md-icon md-svg-icon="action:opacity"></md-icon>
                     <div class="rv-slider-setting-body">
-                        <span translate class="rv-slider-setting-label">settings.label.opacity</span>
-                        <md-slider class="md-primary" max="100" min="0" ng-model="opacityValue"></md-slider>
+                        <md-slider class="md-primary" max="1" min="0" step="0.05" ng-model="self.opacity"></md-slider>
+                        <span class="rv-slider-setting-indicator">{{round(self.opacity * 100)}}%</span>
                     </div>
                     <span class="rv-slider-setting-indicator">{{opacityValue}}%</span>
                 </div>
@@ -42,7 +42,8 @@
         <p>
             // TODO: remove
             paragraph to show that panel content is actually changing </br>
-            layer display data: <b>{{ self.display }}</b>
+            layer display data: <b>{{ self.display.requester.id }}</b>
+            <b>{{ self.display.requester.layerItem.opacity }}</b>
         </p>
 
     </div>
