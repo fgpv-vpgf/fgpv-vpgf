@@ -38,36 +38,9 @@
         .module('app.core')
         .factory('configService', configService);
 
-    function configService($q, $rootElement, $timeout, $http, configDefaults, $translate) {
+    function configService($q, $rootElement, $timeout, $http, $translate, layerDefaults, layerTypes) {
         let initializePromise;
         let isInitialized = false;
-
-        const basicLayerDefaults = {
-            visibility: {
-                enabled: true,
-                value: 'on'
-            },
-            opacity: {
-                enabled: true,
-                value: 1
-            },
-            metadata: {
-                enabled: true,
-            },
-            settings: {
-                enabled: true,
-            },
-            refresh: {
-                enabled: true,
-            },
-            remove: {
-                enabled: true,
-            },
-            boundingBox: {
-                enabled: true,
-                value: true
-            }
-        };
 
         const service = {
             data: { },
@@ -132,7 +105,7 @@
 
                     langs.forEach(lang => {
                         service.data[lang] = $q.all(partials[lang]).then(configParts => {
-                            return mergeConfigParts(configParts);
+                            return applyLayerDefaults(mergeConfigParts(configParts));
                         });
                     });
 
@@ -153,19 +126,21 @@
             return initializePromise;
         }
 
-        function applyBasicLayerDefaults(layersPromise) {
-            return layersPromise
-                .then(resp => {
-                    const result = {};
-                    result.layers = resp.data.map(layerEntry =>
-                        angular.merge({}, basicLayerDefaults, layerEntry.layers[0]));
-                    return result;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+        /**
+         * Applys the appropriate layer defaults to a config object
+         * @param {object}  config    config object to modify
+         */
+        function applyLayerDefaults(config) {
+            config.layers.forEach(layerEntry => {
+                layerEntry = angular.merge({}, layerDefaults[layerTypes[layerEntry.layerType]], layerEntry);
+            });
         }
 
+        /**
+         * Config initialization block for file-based configs
+         * @param {string}  configAttr  the file path tied to the config attribute
+         * @param {array}   langs       array of languages which have configs
+         */
         function fileInit(configAttr, langs) {
             langs.forEach(lang => {
                 // try to load config file
@@ -183,6 +158,11 @@
             return service.data[currentLang];
         }
 
+        /**
+         * Returns a config built by merging separate config chunks.
+         * @param {array}   configParts  array of config chunks to merge
+         * @return {object} config       the merged config object
+         */
         function mergeConfigParts(configParts) {
             const config = { layers: [] }; // angular.merge({}, { layers: [] }, configDefaults);
 
@@ -200,6 +180,12 @@
             return config;
         }
 
+        /**
+         * Config initialization block for rcs retrieved config snippets
+         * @param {string}  svcAttr     the server path tied to the config attribute
+         * @param {string}  keysAttr    list of keys marking which layers to retrieve
+         * @param {array}   langs       array of languages which have configs
+         */
         function rcsInit(svcAttr, keysAttr, langs) {
             const endpoint = svcAttr.endsWith('/') ? svcAttr : svcAttr + '/';
             let keys;
@@ -212,7 +198,13 @@
                 }
 
                 langs.forEach(lang => {
-                    const p = applyBasicLayerDefaults($http.get(`${endpoint}v2/docs/${lang}/${keys.join(',')}`));
+                    const p = $http.get(`${endpoint}v2/docs/${lang}/${keys.join(',')}`).then(resp => {
+                        const result = {};
+                        result.layers = resp.data.map(layerEntry => {
+                            return layerEntry.layers[0];
+                        });
+                        return result;
+                    });
                     partials[lang].push(p);
                 });
             } else {
