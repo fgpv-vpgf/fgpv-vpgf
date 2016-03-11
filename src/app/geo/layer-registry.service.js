@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, gapiService, layerTypes, configService, layerDefaults) {
+    function layerRegistryFactory($q, gapiService, layerTypes, configService) {
         return geoState => layerRegistry(geoState, geoState.mapService.mapObject);
 
         function layerRegistry(geoState, mapObject) {
@@ -152,9 +152,7 @@
                 const l = {
                     layer,
                     attribs,
-
-                    // apply layer option defaults
-                    state: angular.merge({}, layerDefaults[initialState.layerType], initialState)
+                    state: initialState
                 };
 
                 layers[layer.id] = l;
