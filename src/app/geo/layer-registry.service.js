@@ -196,11 +196,20 @@
              */
             function generateLayer(layerConfig) {
                 const handlers = {};
+                let opacityObj;
+
+                // populate opacity object if options exists (or else null error happens)
+                if (layerConfig.options && layerConfig.options.opacity) {
+                    opacityObj = layerConfig.options.opacity.value;
+                } else {
+                    opacityObj = 1;
+                }
                 const commonConfig = {
                     id: layerConfig.id,
                     visible: layerConfig.visibility === 'on',
-                    opacity: layerConfig.opacity || 1
+                    opacity: opacityObj
                 };
+                console.log('GGGGGGGGGGGGGGGGGG', commonConfig.opacity);
 
                 handlers[layerTypes.esriDynamic] = config => {
                     const l = new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
