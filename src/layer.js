@@ -291,6 +291,18 @@ function pokeFile(url, esriBundle, hint) {
     });
 }
 
+// tests a URL to see if the value is a wms
+// resolves with promise of information object
+// - serviceType : the type of service (WMS, Unknown)
+function pokeWms(url, esriBundle) {
+
+    // FIXME add some WMS detection logic.  that would be nice
+
+    console.log(url, esriBundle); // to stop jslint from quacking. remove when params are actually used
+
+    return Promise.resolve(makeInfo(serviceType.WMS));
+}
+
 function predictLayerUrlBuilder(esriBundle) {
     /**
     * Attempts to determine what kind of layer the URL most likely is, and
@@ -312,42 +324,51 @@ function predictLayerUrlBuilder(esriBundle) {
         // TODO this function has lots of room to improve.  there are many valid urls that it will
         //      fail to identify correctly in it's current state
 
-        return new Promise(resolve => {
-            if (hint) {
-                // go directly to appropriate logic block
-                const hintToFlavour = {}; // why? cuz cyclomatic complexity + OBEY RULES
-                const flavourToHandler = {};
+        // TODO refactor how this function works.
+        //      wait for the web service request library to not be esri/request
+        //      use new library to make a head call on the url provided
+        //      examine the content type of the head call result
+        //        if xml, assume WMS
+        //        if json, assume esri  (may need extra logic to differentiate from json file?)
+        //        file case is explicit (e.g text/json)
+        //      then hit appropriate handler, do a second web request for content if required
 
-                // hint type to hint flavour
-                hintToFlavour[serviceType.CSV] = 'F_FILE';
-                hintToFlavour[serviceType.GeoJSON] = 'F_FILE';
-                hintToFlavour[serviceType.Shapefile] = 'F_FILE';
-                hintToFlavour[serviceType.FeatureLayer] = 'F_ESRI';
-                hintToFlavour[serviceType.RasterLayer] = 'F_ESRI';
-                hintToFlavour[serviceType.GroupLayer] = 'F_ESRI';
-                hintToFlavour[serviceType.TileService] = 'F_ESRI';
-                hintToFlavour[serviceType.DynamicService] = 'F_ESRI';
-                hintToFlavour[serviceType.ImageService] = 'F_ESRI';
-                hintToFlavour[serviceType.WMS] = 'F_WMS';
+        if (hint) {
+            // go directly to appropriate logic block
+            const hintToFlavour = {}; // why? cuz cyclomatic complexity + OBEY RULES
+            const flavourToHandler = {};
 
-                // hint flavour to flavour-handler
-                flavourToHandler.F_FILE = () => {
-                    pokeFile(url, esriBundle, hint).then(info => resolve(info));
-                };
+            // hint type to hint flavour
+            hintToFlavour[serviceType.CSV] = 'F_FILE';
+            hintToFlavour[serviceType.GeoJSON] = 'F_FILE';
+            hintToFlavour[serviceType.Shapefile] = 'F_FILE';
+            hintToFlavour[serviceType.FeatureLayer] = 'F_ESRI';
+            hintToFlavour[serviceType.RasterLayer] = 'F_ESRI';
+            hintToFlavour[serviceType.GroupLayer] = 'F_ESRI';
+            hintToFlavour[serviceType.TileService] = 'F_ESRI';
+            hintToFlavour[serviceType.DynamicService] = 'F_ESRI';
+            hintToFlavour[serviceType.ImageService] = 'F_ESRI';
+            hintToFlavour[serviceType.WMS] = 'F_WMS';
 
-                flavourToHandler.F_ESRI = () => {
-                    pokeEsriService(url, esriBundle, hint).then(info => resolve(info));
-                };
+            // hint flavour to flavour-handler
+            flavourToHandler.F_FILE = () => {
+                return pokeFile(url, esriBundle, hint);
+            };
 
-                flavourToHandler.F_WMS = () => {
-                    // FIXME REAL LOGIC COMING SOON
-                    resolve(makeInfo(serviceType.WMS));
-                };
+            flavourToHandler.F_ESRI = () => {
+                return pokeEsriService(url, esriBundle, hint);
+            };
 
-                // execute handler.  hint -> flavour -> handler -> run it!
-                flavourToHandler[hintToFlavour[hint]]();
+            flavourToHandler.F_WMS = () => {
+                // FIXME REAL LOGIC COMING SOON
+                return pokeWms(url, esriBundle);
+            };
 
-            } else {
+            // execute handler.  hint -> flavour -> handler -> run it -> promise
+            return flavourToHandler[hintToFlavour[hint]]();
+
+        } else {
+            return new Promise(resolve => {
                 // no hint. run tests until we find a match.
                 // test for file
                 pokeFile(url, esriBundle).then(infoFile => {
@@ -368,8 +389,8 @@ function predictLayerUrlBuilder(esriBundle) {
                         resolve(infoFile);
                     }
                 });
-            }
-        });
+            });
+        }
     };
 }
 
