@@ -54,7 +54,6 @@ describe('geo', () => {
             // set a spy on it
             spyOn(map, 'setZoom');
 
-            geoService.registerMapNode({});
             configService.setCurrent({
                 layers: [],
                 map: {
@@ -73,7 +72,7 @@ describe('geo', () => {
             });
 
             // create a fake map
-            geoService.assembleMap()
+            geoService.assembleMap({})
                 .then(() => {
                     // call setZoom with different arguments
 
@@ -132,9 +131,8 @@ describe('geo', () => {
                 spyOn(m, 'Map')
                     .and.callThrough();
 
-                geoService.registerMapNode(el[0]);
                 configService.setCurrent(emptyConfig);
-                geoService.assembleMap()
+                geoService.assembleMap(el[0])
                     .then(() => {
                         console.log('map is done');
                         expect(m.Map)

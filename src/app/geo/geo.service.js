@@ -23,7 +23,7 @@
         // pieces of code can react to the change in the order
 
         const service = {
-            isReady: false, // flag indicating that the map is ready
+            isMapReady: false, // flag indicating that the map is ready
 
             epsgLookup,
             assembleMap,
@@ -70,9 +70,15 @@
 
         /**
          * Constructs a map on the given DOM node given the current config object.
+         * When switching languages, switch language using `$translate` and call `assembleMap` without parameters. This will rebuild the map using the exising map node.
+         *
+         * ```js
+         * $translate.use(lang);
+         * geoService.assembleMap();
+         * ```
+         *
          * @param  {Object} mapNode    dom node to build the map on; need to be specified only the first time the map is created;
          * @return {Promise} resolving when all the map building is done
-         * TODO: break this function and move some of it (stuff related to actual map building) to `mapService.buildMapObject` function
          */
         function assembleMap(mapNode) {
             // reuse the previous state or create the new one
@@ -80,8 +86,6 @@
             const state = service.state || {
                 mapNode: mapNode
             };
-
-            service.isReady = false;
 
             // assemble geo state object
             return mapService(state)
@@ -102,7 +106,7 @@
                     angular.extend(service, id);
 
                     service.state = state; // store geo state
-                    service.isReady = true;
+                    service.isMapReady = true;
 
                     return service;
                 })

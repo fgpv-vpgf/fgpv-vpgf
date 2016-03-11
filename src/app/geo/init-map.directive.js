@@ -24,7 +24,7 @@
         return directive;
 
         function linkFunc(scope, el) {
-            // degerister after the first `rvReady` event as it's fired only once
+            // deregister after the first `rvReady` event as it's fired only once
             const deRegister = scope.$on(events.rvReady, () => {
                 geoService.assembleMap(el[0]);
                 deRegister();
