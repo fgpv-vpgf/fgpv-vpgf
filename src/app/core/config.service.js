@@ -133,9 +133,8 @@
          */
         function applyLayerDefaults(config) {
             const newConfig = config;
-            newConfig.layers = config.layers.map(layerEntry => {
-                return angular.merge({}, layerDefaults[layerTypes[layerEntry.layerType]], layerEntry);
-            });
+            newConfig.layers = config.layers.map(layerEntry =>
+                angular.merge({}, layerDefaults[layerTypes[layerEntry.layerType]], layerEntry));
             return newConfig;
         }
 
