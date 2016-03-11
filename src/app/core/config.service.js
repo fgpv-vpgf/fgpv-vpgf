@@ -127,7 +127,7 @@
         }
 
         /**
-         * Applys the appropriate layer defaults to a config object
+         * Applies the appropriate layer defaults to a config object
          * @param {object}  config    config object to modify
          */
         function applyLayerDefaults(config) {
