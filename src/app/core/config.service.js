@@ -73,8 +73,8 @@
             data: { },
             getCurrent,
             applyBasicDefaults, // silence JSHint since we might want this later after all the hacks are removed
-            initialize: initialize,
-            ready: ready
+            initialize,
+            ready
         };
 
         const partials = {}; // partial config promises, one array per language entry
@@ -217,7 +217,7 @@
 
         /**
          * Returns the currently used config. Language is determined by asking $translate.
-         * @return {object}     The config object tied to the current language
+         * @return {Promise}     The config promise object tied to the current language resolving with that config
          */
         function getCurrent() {
             const currentLang = ($translate.proposedLanguage() || $translate.use()).split('-')[0];
@@ -250,8 +250,8 @@
         }
         /**
          * Checks if the service is ready to use.
-         * @param  {object} nextPromises optional promises to be resolved before returning
-         * @return {object}              promise to be resolved on config service initialization
+         * @param  {Promise|Array} nextPromises optional promises to be resolved before returning
+         * @return {Promise}              promise to be resolved on config service initialization
          */
         function ready(nextPromises) {
             return initializePromise

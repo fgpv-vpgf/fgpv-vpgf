@@ -5,6 +5,23 @@ describe('rvShell', () => {
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;
 
+    // fake gapi service
+    function mockGapiService($provide) {
+        $provide.factory('gapiService', () => {
+            return {};
+        });
+    }
+
+    // fake gapi service
+    function mockGeoService($provide) {
+        $provide.factory('geoService', () => {
+            return {
+                assembleMap: angular.noop,
+                registerMapNode: angular.noop,
+            };
+        });
+    }
+
     // mock custom loader module
     function customTranslateLoader($provide, $translateProvider) {
         // for customLoader use a function returning a self-fulfilling promise to mock the service
@@ -29,7 +46,8 @@ describe('rvShell', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.layout', 'app.templates', 'app.ui', customTranslateLoader, mockConfigService);
+        bard.appModule('app.layout', 'app.templates', 'app.ui', customTranslateLoader,
+            mockConfigService, mockGapiService, mockGeoService);
 
         // inject angular services
         bard.inject('$compile', '$rootScope', '$httpBackend', '$q');

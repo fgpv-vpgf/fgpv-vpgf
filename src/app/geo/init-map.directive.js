@@ -15,7 +15,7 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
-    function rvInitMap(geoService, configService) {
+    function rvInitMap(geoService, events) {
 
         const directive = {
             restrict: 'A',
@@ -23,21 +23,12 @@
         };
         return directive;
 
-        function linkFunc(scope, el, attr) {
-
-            scope.$watch(attr.rvInitMap, val => {
-                if (val === true) {
-                    console.log('Switched to true');
-                    console.log(el);
-
-                    // there should only be one instance of the directive as the application bootstrap takes care
-                    // of handling multiple instances at that level
-                    configService.getCurrent().then(config => {
-                        geoService.buildMap(el[0], config);
-                    });
-                }
+        function linkFunc(scope, el) {
+            // deregister after the first `rvReady` event as it's fired only once
+            const deRegister = scope.$on(events.rvReady, () => {
+                geoService.assembleMap(el[0]);
+                deRegister();
             });
         }
     }
-
 })();

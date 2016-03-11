@@ -1,129 +1,114 @@
-/* global bard, geoService, $httpBackend, $q */
+/* global bard, geoService, gapiService, $rootScope, configService, $httpBackend */
 
 describe('geo', () => {
 
-    beforeEach((done) => {
+    // make a fake map object
+    const map = {
+        setZoom: () => {},
+        getZoom: () => 5,
+        extent: {}
+    };
 
-        bard.appModule('app.geo', 'app.common.router');
+    // fake gapi service
+    function mockGapiService($provide) {
+        $provide.factory('gapiService', () => {
+            return {
+                gapi: {
+                    mapManager: {
+                        Map: () => map,
+                        setupMap: () => {}
+                    },
+                    events: {
+                        wrapEvents: () => {}
+                    }
+                }
+            };
+        });
+    }
+
+    function mockConfigService($provide) {
+        $provide.factory('configService', $q => {
+            let current;
+
+            console.log(current);
+
+            return {
+                getCurrent: () => $q.resolve(current),
+                setCurrent: config => current = config
+            };
+        });
+    }
+
+    beforeEach(() => {
+
+        bard.appModule('app.geo', 'app.common.router', mockGapiService, mockConfigService);
 
         // inject services
-        bard.inject('geoService', '$httpBackend', '$q');
-        geoService.promise.then(() => done());
+        bard.inject('geoService', 'gapiService', '$rootScope', 'configService',
+            '$httpBackend');
     });
 
     describe('geoService', () => {
 
-        // check registering a layer
-        it('should register a layer', () => {
-            let tempLayer = {
-                id: 'sausages',
-                setVisibility: () => {}
-            };
-            let tempConfig = {
-                url: 'http://www.sausagelayer.com/'
-            };
-            geoService.registerLayer(tempLayer, tempConfig, {});
-
-            // layer is now in registry
-            expect(geoService.layers.sausages)
-                .toBeDefined();
-            expect(geoService.layers.sausages.layer)
-                .toBeDefined();
-            expect(geoService.layers.sausages.layer.id)
-                .toBe('sausages');
-            expect(geoService.layers.sausages.state)
-                .toBeDefined();
-            expect(geoService.layers.sausages.attribs)
-                .toBeDefined();
-            expect(geoService.layers.sausages.state.url)
-                .toBe('http://www.sausagelayer.com/');
-            expect(geoService.layerOrder)
-                .toContain('sausages');
-
-            expect(geoService.layers.sausages.state.options)
-                .toBeDefined();
-            expect(geoService.layers.sausages.state.options.visibility.value)
-                .toBe('on');
-        });
-
-        it('should bundle attributes correctly', () => {
-            let tempLayer = {
-                id: 'sausages',
-                setVisibility: () => {}
-            };
-            let tempConfig = {
-                url: 'http://www.sausagelayer.com/'
-            };
-            let tempAttribPromise = $q.resolve({
-                layerId: 'sausages',
-                0: {
-                    features: [{
-                        attributes: {
-                            abc: '123'
-                        }
-                    }]
-                }
-            });
-
-            geoService.registerLayer(tempLayer, tempConfig, tempAttribPromise);
-
-            geoService.getFormattedAttributes(tempLayer.id, '0').then(bundledAttributes => {
-                expect(bundledAttributes.data)
-                    .toBeDefined();
-                expect(bundledAttributes.columns)
-                    .toBeDefined();
-            });
-        });
-
-        it('should set zoom correctly', () => {
-            // make a fake map object
-            const map = {
-                setZoom: () => {},
-                getZoom: () => 5,
-                extent: {}
-            };
-
+        it('should set zoom correctly', done => {
             // set a spy on it
             spyOn(map, 'setZoom');
 
-            // fake a map creating function
-            geoService.gapi = {
-                mapManager: {
-                    Map: () => map,
-                    setupMap: () => {}
-                },
-                events: { wrapEvents: () => {} }
-            };
-
-            // create a fake map
-            geoService.buildMap({}, {
+            configService.setCurrent({
                 layers: [],
-                map: { extentSets: [{ id: '123456789', default: { spatialReference: { wkid: 3978 } } }],
-                    components: { scaleBar: {} }
+                map: {
+                    extentSets: [{
+                        id: '123456789',
+                        default: {
+                            spatialReference: {
+                                wkid: 3978
+                            }
+                        }
+                    }],
+                    components: {
+                        scaleBar: {}
+                    }
                 }
             });
 
-            // call setZoom with different arguments
+            // create a fake map
+            geoService.assembleMap({})
+                .then(() => {
+                    // call setZoom with different arguments
 
-            geoService.setZoom(2);
-            expect(map.setZoom)
-                .toHaveBeenCalledWith(2);
+                    console.log('AAAAAAAAAAA');
 
-            geoService.shiftZoom(2);
-            expect(map.setZoom)
-                .toHaveBeenCalledWith(7);
+                    geoService.setZoom(2);
+                    expect(map.setZoom)
+                        .toHaveBeenCalledWith(2);
 
-            geoService.shiftZoom(-2);
-            expect(map.setZoom)
-                .toHaveBeenCalledWith(3);
+                    geoService.shiftZoom(2);
+                    expect(map.setZoom)
+                        .toHaveBeenCalledWith(7);
+
+                    geoService.shiftZoom(-2);
+                    expect(map.setZoom)
+                        .toHaveBeenCalledWith(3);
+
+                    done();
+                });
+
+            $rootScope.$digest();
         });
 
         describe('map', () => {
             const emptyConfig = {
                 layers: [],
                 map: {
-                    extentSets: [{ id: '123456789', full: {}, default: {} }],
-                    components: { scaleBar: {}, overviewMap: {} }
+                    extentSets: [{
+                        id: '123456789',
+                        full: {},
+                        default: {}
+                    }],
+                    components: {
+                        scaleBar: {},
+                        overviewMap: {}
+                    }
                 }
             };
             const layerConfig = {
@@ -141,22 +126,30 @@ describe('geo', () => {
             };
             const el = angular.element('<div id="randomMap" />');
 
-            it('should make a map', () => {
-                const m = geoService.gapi.mapManager;
+            it('should make a map', done => {
+                const m = gapiService.gapi.mapManager;
                 spyOn(m, 'Map')
                     .and.callThrough();
-                geoService.buildMap(el[0], emptyConfig);
-                expect(m.Map)
-                    .toHaveBeenCalled();
+
+                configService.setCurrent(emptyConfig);
+                geoService.assembleMap(el[0])
+                    .then(() => {
+                        console.log('map is done');
+                        expect(m.Map)
+                            .toHaveBeenCalled();
+                        done();
+                    });
+
+                $rootScope.$digest();
             });
 
             // TODO: mock responses to layer endpoint calls before re-enabling
             xit('should add all the configured layers', () => {
-                const l = geoService.gapi.layer;
+                const l = gapiService.gapi.layer;
                 spyOn(l, 'FeatureLayer');
                 spyOn(l, 'WmsLayer');
                 spyOn(l, 'ArcGISDynamicMapServiceLayer');
-                geoService.buildMap(el[0], layerConfig);
+                geoService.assembleMap(el[0], layerConfig);
                 expect(l.FeatureLayer)
                     .toHaveBeenCalled();
                 expect(l.WmsLayer)
@@ -183,6 +176,7 @@ describe('geo', () => {
                     });
                 $httpBackend.flush();
             });
+
             it('should fetch an EPSG string code', (done) => {
                 /* jscs:disable maximumLineLength */
                 $httpBackend.expectGET('http://epsg.io/3979.proj4')

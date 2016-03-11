@@ -48,7 +48,7 @@
   "layers": [
     {
       "id":"ecogeo",
-      "name": "Eco Geo",
+      "name": "[fr] Eco Geo",
       "layerType":"esriDynamic",
       "layerEntries": [{"index": 0}],
       "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer"
@@ -68,9 +68,9 @@
     },
     {
       "id":"rail_wms",
-      "name": "Railways",
+      "name": "French Railways",
       "layerType":"ogcWms",
-      "url":"http://maps.geogratis.gc.ca/wms/railway_en",
+      "url":"http://maps.geogratis.gc.ca/wms/railway_fr",
       "layerEntries": [ {"id": "railway.track"} ]
     },
     {
