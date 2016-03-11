@@ -50,7 +50,12 @@ describe('layerRegistry', () => {
                 setVisibility: () => {}
             };
             const tempConfig = {
-                url: 'http://www.sausagelayer.com/'
+                url: 'http://www.sausagelayer.com/',
+                options: {
+                    visibility: {
+                        value: 'on'
+                    }
+                }
             };
             layerRegistry(geoState) // create an instance of layerRegistry
                 .then(lr => {
@@ -100,7 +105,12 @@ describe('layerRegistry', () => {
                 setVisibility: () => {}
             };
             const tempConfig = {
-                url: 'http://www.sausagelayer.com/'
+                url: 'http://www.sausagelayer.com/',
+                options: {
+                    visibility: {
+                        value: 'on'
+                    }
+                }
             };
             const tempAttribPromise = $q.resolve({
                 layerId: 'sausages',
