@@ -1,7 +1,4 @@
 /* global HolderIpsum */
-/* jshint maxparams: 999 */
-
-// TODO: re-enable maxparam rule
 (() => {
     'use strict';
 
@@ -12,9 +9,9 @@
      * @restrict E
      * @description
      *
+     * // TODO: update comments since it's a directive now and much had changed.
      * The `ShellController` controller handles the shell which is the visible part of the layout.
      * `self.isLoading` is initially `true` and causes the loading overlay to be displayed; when `configService` resolves, it's set to `false` and the loading overly is removed.
-     * // TODO: update comments since it's a directive now.
      */
     angular
         .module('app.layout')
@@ -40,18 +37,17 @@
         }
     }
 
-    // disable jshint maxparam rule; this module will be trimmed down - there is a lot of garbage/demo code here
-    function Controller($timeout, $q, configService, $rootScope, $mdDialog, events, version, sideNavigationService,
-        stateManager, $translate, geoService) {
-        /* jshint maxparams: 10 */
+    // TODO: clean; there is a lot of garbage/demo code here
+    function Controller($timeout, $q, $mdDialog, version, stateManager, sideNavigationService, $translate,
+        geoService) {
         'ngInject';
         const self = this;
 
-        configService.getCurrent().then(config => {
-            self.config = config;
-        });
-        self.isLoading = true;
+        self.geoService = geoService;
+
         self.version = version;
+
+        /***/
 
         self.singlePoint = singlePoint;
         self.multiplePoints = multiplePoints;
@@ -108,7 +104,7 @@
             }
         ];
 
-        activate();
+        /***/
 
         /**************/
 
@@ -133,20 +129,6 @@
                 self.helpSummary.push(section);
             }
             console.log(self);
-        }
-
-        /**
-         * Controller's activate function.
-         */
-        function activate() {
-            $rootScope.$on(events.rvReady, hideLoadingScreen);
-        }
-
-        /**
-         * Sets `self.isLoading` to false which hides the loading overlay.
-         */
-        function hideLoadingScreen() {
-            self.isLoading = false;
         }
 
         // FIXME: move to a directive or sidenav

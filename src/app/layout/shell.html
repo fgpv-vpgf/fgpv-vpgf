@@ -3,13 +3,13 @@
 
         <!-- TODO: add proper loading message or animation to the loading splash -->
         <div class="rv-loading" layout layout-align="center center"
-            ng-class="{ 'rv-loaded': !self.isLoading }">
+            ng-class="{ 'rv-loaded': self.geoService.isReady }">
             <div class="rv-loading-section rv-left"></div>
             <div class="rv-loading-section rv-right"></div>
             <div class="rv-spinner google-spin-wrapper"><div class="google-spin"></div></div>
         </div>
 
-        <div class="rv-esri-map" rv-init-map="!self.isLoading"></div>
+        <div class="rv-esri-map" rv-init-map></div>
 
         <rv-mapnav rv-morph="mapnav"></rv-mapnav>
 
@@ -38,10 +38,7 @@
 
         <!--div ng-class="{ active: self.active }" ui-view="geoSearchPlug"></div-->
 
-        <md-whiteframe class="md-whiteframe-z1" layout layout-align="center center" style="display: none;">I'm
-            {{ self.config.title }}
-            and
-            {{ 'page.title' | translate }}</md-whiteframe>
+        <!-- TODO: The following is garbage and should be removed at some point before release -->
 
             <md-button class="md-raised" ng-click="self.loaderFile()" style="    left: 50%;
         position: fixed; bottom: 150px;">Layer Loader File</md-button>

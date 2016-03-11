@@ -15,7 +15,7 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
-    function rvInitMap(geoService) {
+    function rvInitMap(geoService, events) {
 
         const directive = {
             restrict: 'A',
@@ -24,9 +24,11 @@
         return directive;
 
         function linkFunc(scope, el) {
-
-            geoService.registerMapNode(el[0]);
+            // degerister after the first `rvReady` event as it's fired only once
+            const deRegister = scope.$on(events.rvReady, () => {
+                geoService.assembleMap(el[0]);
+                deRegister();
+            });
         }
     }
-
 })();

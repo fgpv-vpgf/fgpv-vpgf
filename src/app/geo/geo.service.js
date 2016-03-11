@@ -22,13 +22,8 @@
         // Add a function to update the layer order. This function will raise a change event so other interested
         // pieces of code can react to the change in the order
 
-        const ref = {
-            mapNode: null
-        };
-
         const service = {
-            isReady: null,
-            registerMapNode: null,
+            isReady: false, // flag indicating that the map is ready
 
             epsgLookup,
             assembleMap,
@@ -36,31 +31,7 @@
             state: null
         };
 
-        init();
-
         return service;
-
-        /**
-         * Sets an `isReady` promise resolving when the map node is registered.
-         */
-        function init() {
-            service.isReady =
-                $q(resolve =>
-                    service.registerMapNode = (node => registerMapNode(resolve, node))
-                );
-        }
-
-        /**
-         * Stores a reference to the map node.
-         * @param  {Function} resolve function to resolve ready promise
-         * @param  {Object} node    dom node to build the map on
-         */
-        function registerMapNode(resolve, node) {
-            if (ref.mapNode === null) {
-                ref.mapNode = node;
-                resolve();
-            }
-        }
 
         /**
          * Lookup a proj4 style projection definition for a given ESPG code.
@@ -99,15 +70,18 @@
 
         /**
          * Constructs a map on the given DOM node given the current config object.
+         * @param  {Object} mapNode    dom node to build the map on; need to be specified only the first time the map is created;
          * @return {Promise} resolving when all the map building is done
          * TODO: break this function and move some of it (stuff related to actual map building) to `mapService.buildMapObject` function
          */
-        function assembleMap() {
+        function assembleMap(mapNode) {
             // reuse the previous state or create the new one
             // when reusing existing state, its map will be destroyed
             const state = service.state || {
-                mapNode: ref.mapNode
+                mapNode: mapNode
             };
+
+            service.isReady = false;
 
             // assemble geo state object
             return mapService(state)
@@ -127,8 +101,8 @@
                     // expose idenitifyService on geoService
                     angular.extend(service, id);
 
-                    // store geo state
-                    service.state = state;
+                    service.state = state; // store geo state
+                    service.isReady = true;
 
                     return service;
                 })
