@@ -118,6 +118,9 @@
 
                 mapObject.removeLayer(l.layer);
 
+                delete service.layers[layerId]; // remove layer from the registry
+
+                // remove layer item from the legend
                 // TODO: needs more work to manager layerOrder
                 const index = service.legend.indexOf(layerId);
                 if (index !== -1) {

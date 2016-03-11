@@ -6,7 +6,8 @@ describe('layerRegistry', () => {
     const geoState = {
         mapService: {
             mapObject: {
-                addLayer: () => {}
+                addLayer: angular.noop,
+                removeLayer: angular.noop
             }
         }
     };
@@ -75,6 +76,17 @@ describe('layerRegistry', () => {
                         .toBeDefined();
                     expect(lr.layers.sausages.state.options.visibility.value)
                         .toBe('on');
+
+                    // check if the layer is removed correctly ...
+                    lr.removeLayer('sausages'); // should remove layer
+
+                    // from `layers` object ...
+                    expect(lr.layers.sausages)
+                        .not.toBeDefined();
+
+                    // and from `legend` as well
+                    expect(lr.legend.indexOf(tempLayer.id))
+                        .toBe(-1);
 
                     done();
                 });
