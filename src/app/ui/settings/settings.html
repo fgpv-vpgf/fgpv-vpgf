@@ -10,8 +10,8 @@
                 <div class="rv-icon-20 rv-slider-setting">
                     <md-icon md-svg-icon="action:opacity"></md-icon>
                     <div class="rv-slider-setting-body">
-                        <md-slider class="md-primary" max="1" min="0" step="0.05" ng-model="self.opacity"></md-slider>
-                        <span class="rv-slider-setting-indicator">{{round(self.opacity * 100)}}%</span>
+                        <md-slider class="md-primary" max="1" min="0" step="0.1" ng-model="self.opacity"></md-slider>
+                        <span class="rv-slider-setting-indicator">{{self.opacity * 100}}%</span>
                     </div>
                     <span class="rv-slider-setting-indicator">{{opacityValue}}%</span>
                 </div>
