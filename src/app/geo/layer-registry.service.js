@@ -199,6 +199,7 @@
                 let opacityObj;
 
                 // populate opacity object if options exists (or else null error happens)
+                // TODO: fix this after layer selector is done being wired to config
                 if (layerConfig.options && layerConfig.options.opacity) {
                     opacityObj = layerConfig.options.opacity.value;
                 } else {
