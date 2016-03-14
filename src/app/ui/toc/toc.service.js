@@ -3,6 +3,13 @@
 (() => {
     'use strict';
 
+    // mapping between layer option names and content display names
+    const DISPLAY_SWITCH = {
+        metadata: 'metadata',
+        settings: 'settings',
+        filters: 'data'
+    };
+
     /**
      * @ngdoc service
      * @name tocService
@@ -802,10 +809,10 @@
 
         // set layer control defaults
         // TODO: should be done when parsing config file
-        initLayers(service.data.items);
+        // initLayers(service.data.items);
 
         // remove
-        $timeout(() => {
+        /* $timeout(() => {
             console.info(geoService);
             service.data.items[0].items = geoService.legend.map(id => {
                 // add some fake symbology for now
@@ -823,6 +830,7 @@
 
             // console.log('--->', service.data.items[0]);
         }, 7000); // FIXME: wait for layer to be added to the layer registry; this will not be needed as we are going to bind directly to layer/legend construction from geoService; this is needed right now to keep the fake layers in the layer selector as well.
+        */
 
         // set state change watches on metadata, settings and filters panel
         watchPanelState('sideMetadata', 'metadata');
@@ -834,8 +842,8 @@
         // FIXME: updating config layer objects with default values for options and flags
         // this should be done when applying defaults to the config file
         // items is an array
-        function initLayers(items) {
-            /*jshint forin: false */
+        /*function initLayers(items) {
+            // jshint forin: false /
 
             // ^ kills jshint error abour for .. in loop
             for (let item of items) {
@@ -848,7 +856,7 @@
                     initLayers(item.items);
                 }
             }
-        }
+        }*/
 
         /**
          * Simple function to remove layers.
@@ -863,7 +871,7 @@
             let layerOriginalVisibility = layer.options.visibility.value;
 
             // find where the layer is in layer selector
-            iterateLayers(service.data, (item, index, group) => {
+            iterateLayers(geoService.legend, (item, index, group) => {
                 if (item.id === layer.id && index !== -1) {
                     layerGroup = group;
                     layerIndex = index;
@@ -1116,7 +1124,8 @@
          * @param  {Boolean} newValue    indicates whether the `displayName` display data is visible or not
          */
         function changeContentState(layerId, displayName, newValue = true) {
-            let layer = findLayer(layerId);
+            const layer = findLayer(layerId);
+            const optionName = DISPLAY_SWITCH[displayName];
 
             if (layer) {
                 if (newValue) {
@@ -1126,19 +1135,21 @@
                         }
 
                         layer.selected = false;
-                        Object.keys(layer.options)
-                            .forEach(optionName => {
-                                layer.options[optionName].selected = false;
-                            });
+
+                        angular.forEach(DISPLAY_SWITCH, value => layer.options[value].selected = false);
                     });
                 }
 
                 // TODO: revise; maybe also store filters values here or something
-                layer.options[displayName].selected = newValue; // select the toggle to stay visible
+                layer.options[optionName].selected = newValue; // select the toggle to stay visible
 
                 // check if any toggle is selected; if so, select the layer
-                let layerSelectedValue = Object.keys(layer.options)
-                    .some(optionName => layer.options[optionName].selected);
+                let layerSelectedValue = Object.keys(DISPLAY_SWITCH)
+                    .some(key => {
+                        const value = DISPLAY_SWITCH[key];
+                        return layer.options[value].selected;
+                    });
+
                 layer.selected = layerSelectedValue; // newValue; // change layer's selected state
             }
         }

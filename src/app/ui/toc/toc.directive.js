@@ -39,12 +39,13 @@
         }
     }
 
-    function Controller(tocService, stateManager) {
+    function Controller(tocService, stateManager, geoService) {
         'ngInject';
         const self = this;
 
         self.toggleFiltersFull = toggleFiltersFull;
 
+        self.geoService = geoService;
         self.config = tocService.data;
         self.presets = tocService.presets;
 

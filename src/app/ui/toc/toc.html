@@ -1,9 +1,12 @@
 <rv-content-pane close-panel="self.actions.toggleLayerGroup()">
     <div class="rv-toc">
 
+        <!--{{ self.geoService.legend }} -->
+
         <!-- Do not ask me what `dx-start-with` and `dx-connect` are and how this whole thing works as I'm not completely understan it myself. I'll update this comment when I get it. Read this is you are curious: https://github.com/dotJEM/angular-tree -->
-        <ul class="rv-layer-list rv-root" dx-start-with="self.config">
-            <li ng-repeat="item in $dxPrior.items">
+        <ul class="rv-layer-list rv-root" dx-start-with="self.geoService.legend">
+            <!--{ item }}-->
+            <li ng-repeat="item in $dxPrior.items track by item.id">
                 <rv-layer-item layer="item" ng-class="item.state" ng-if="item.items === undefined"></rv-layer-item>
                 <div class="rv-layer-level rv-{{ $dxLevel }}" ng-if="item.items !== undefined">
 
