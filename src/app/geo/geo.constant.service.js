@@ -17,6 +17,9 @@
         ogcWms: 'compoundLayerOptionsNode'
     };
 
+    // this is populated with default schema snippets during build;
+    const LAYER_CONFIG_DEFAULTS = '_LAYER_CONFIG_DEFAULTS_';
+
     /**
      * @ngdoc service
      * @name layerTypes
@@ -28,5 +31,40 @@
     angular
         .module('app.geo')
         .constant('layerTypes', LAYER_TYPES)
-        .constant('layerTypeOptions', LAYER_TYPE_OPTIONS);
+        .constant('layerTypeOptions', LAYER_TYPE_OPTIONS)
+
+        // construct layer default options and flags objects from schema snippets
+        .service('layerDefaults', layerTypeOptions => {
+            const flagDefaults = {
+                type: {
+                    visible: true
+                },
+                data: {
+                    visible: false
+                },
+                query: {
+                    visible: false
+                },
+                user: {
+                    visible: false
+                },
+                scale: {
+                    visible: false
+                }
+            };
+
+            const service = {};
+
+            angular.forEach(layerTypeOptions, (value, key) => {
+                service[key] = {
+                    // get default options for a specific layer type
+                    options: LAYER_CONFIG_DEFAULTS[value],
+
+                    // flags are same for all layer types right now
+                    flags: flagDefaults
+                };
+            });
+
+            return service;
+        });
 })();
