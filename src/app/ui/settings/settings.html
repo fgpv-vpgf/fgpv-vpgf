@@ -15,8 +15,8 @@
                 <div class="rv-slider-setting">
                     <span translate class="rv-slider-setting-label">settings.label.opacity</span>
                     <div class="rv-slider-setting-body">
-                        <md-slider class="md-primary" max="1" min="0" step="0.1" ng-model="self.opacity"></md-slider>
-                        <span class="rv-slider-setting-indicator">{{self.opacity * 100}}%</span>
+                        <md-slider class="md-primary" max="1" min="0" step="0.01" ng-model="self.display.data.opacity.value"></md-slider>
+                        <span class="rv-slider-setting-indicator">{{ self.Math.round(self.display.data.opacity.value * 100) }}%</span>
                     </div>
                 </div>
             </div>
