@@ -15,13 +15,19 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, gapiService, layerTypes, layerDefaults) {
+    function layerRegistryFactory($q, gapiService, legendService, layerTypes, layerDefaults) {
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
         function layerRegistry(geoState, mapObject, config) {
 
             const layers = {}; // layer collection
-            const legend = []; // legend construct, to be consumed by toc; deflection +2
+            const legend = {
+                items: []
+            }; // legend construct, to be consumed by toc; deflection +2
+
+            const ref = {
+                legendService: legendService(config, layers, legend)
+            };
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -112,15 +118,15 @@
                 }
 
                 mapObject.removeLayer(l.layer);
-
                 delete service.layers[layerId]; // remove layer from the registry
+                ref.legendService.removeLayer(l);
 
                 // remove layer item from the legend
                 // TODO: needs more work to manager layerOrder
-                const index = service.legend.indexOf(layerId);
+                /*const index = service.legend.indexOf(layerId);
                 if (index !== -1) {
                     service.legend.splice(index, 1);
-                }
+                }*/
             }
 
             /**
@@ -131,7 +137,7 @@
              * @param {number} position an optional index indicating at which position the layer was added to the map
              * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
              */
-            function registerLayer(layer, initialState, attribs, position) {
+            function registerLayer(layer, initialState, attribs) {
                 // TODO determine the proper docstrings for a non-service function that lives in a service
 
                 // QUESTION: If the layer doesn't not have an id property, can we just generate one?
@@ -151,18 +157,26 @@
                     attribs,
 
                     // applies the appropriate layer defaults to a config object
-                    state: angular.merge({}, layerDefaults[layerTypes[initialState.layerType]], initialState)
+                    state: angular.merge({
+                            cache: {} // to cache stuff like retrieved metadata info
+                        },
+                        layerDefaults[layerTypes[initialState.layerType]],
+                        initialState
+                    )
                 };
 
                 layers[layer.id] = l;
 
+                /*
                 if (position === undefined) {
                     position = service.legend.length;
                 }
                 service.legend.splice(position, 0, layer.id);
+                */
 
                 // TODO: apply config values
                 service.setLayerVisibility(l.layer.id, l.state.options.visibility.value);
+                ref.legendService.addLayer(l);
             }
 
             /**
