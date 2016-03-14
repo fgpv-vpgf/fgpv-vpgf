@@ -575,7 +575,8 @@ gulp.task('configdefaults', done => {
         const defs = [
             'basicLayerOptionsNode',
             'featureLayerOptionsNode',
-            'compoundLayerOptionsNode'
+            'compoundLayerOptionsNode',
+            'dynamicLayerOptionsNode'
         ];
 
         pkg.schemaDefaults = {};

@@ -10,7 +10,7 @@
     };
 
     const LAYER_TYPE_OPTIONS = {
-        esriDynamic: 'compoundLayerOptionsNode',
+        esriDynamic: 'dynamicLayerOptionsNode',
         esriFeature: 'featureLayerOptionsNode',
         esriImage: 'basicLayerOptionsNode',
         esriTile: 'basicLayerOptionsNode',
