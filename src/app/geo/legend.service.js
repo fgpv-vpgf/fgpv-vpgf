@@ -4,6 +4,8 @@
     // layer group ids should not collide
     let groupIdCounter = 0;
 
+    // jscs doesn't like enhanced object notation
+    // jscs:disable requireSpacesInAnonymousFunctionExpression
     const LAYER_GROUP = (name, expanded = false) => {
         return {
             type: 'group',
@@ -32,6 +34,8 @@
             }
         };
     };
+
+    // jscs:enable requireSpacesInAnonymousFunctionExpression
 
     /**
      * @ngdoc service
