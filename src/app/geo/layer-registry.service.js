@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, gapiService, layerTypes, configService) {
+    function layerRegistryFactory($q, gapiService, layerTypes, configService, layerDefaults) {
         return geoState => layerRegistry(geoState, geoState.mapService.mapObject);
 
         function layerRegistry(geoState, mapObject) {
@@ -139,6 +139,7 @@
             function registerLayer(layer, initialState, attribs, position) {
                 // TODO determine the proper docstrings for a non-service function that lives in a service
 
+                // QUESTION: If the layer doesn't not have an id property, can we just generate one?
                 if (!layer.id) {
                     console.error('Attempt to register layer without id property');
                     console.log(layer);
@@ -147,12 +148,15 @@
 
                 if (layers[layer.id]) {
                     console.error('attempt to register layer already registered.  id: ' + layer.id);
+                    return false;
                 }
 
                 const l = {
                     layer,
                     attribs,
-                    state: initialState
+
+                    // applies the appropriate layer defaults to a config object
+                    state: angular.merge({}, layerDefaults[layerTypes[initialState.layerType]], initialState)
                 };
 
                 layers[layer.id] = l;
