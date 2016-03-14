@@ -87,13 +87,20 @@
                 mapNode: mapNode
             };
 
-            // assemble geo state object
-            return mapService(state)
+            let config; // reference to the current config
+
+            return configService.getCurrent()
+                .then(cf => {
+                    config = cf;
+
+                    // assemble geo state object
+                    return mapService(state, config);
+                })
                 .then(ms => {
                     // expose mapService on geoService
                     angular.extend(service, ms);
 
-                    return layerRegistry(state);
+                    return layerRegistry(state, config);
                 })
                 .then(lr => {
                     // expose layerRegistry service on geoService
