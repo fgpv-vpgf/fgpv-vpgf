@@ -38,12 +38,12 @@
         .module('app.core')
         .factory('configService', configService);
 
-    function configService($q, $rootElement, $timeout, $http, $translate, layerDefaults, layerTypes) {
+    function configService($q, $rootElement, $timeout, $http, $translate) {
         let initializePromise;
         let isInitialized = false;
 
         const service = {
-            data: { },
+            data: {},
             getCurrent,
             initialize,
             ready
@@ -104,9 +104,8 @@
                     }
 
                     langs.forEach(lang => {
-                        service.data[lang] = $q.all(partials[lang]).then(configParts => {
-                            return applyLayerDefaults(mergeConfigParts(configParts));
-                        });
+                        service.data[lang] = $q.all(partials[lang])
+                            .then(configParts => mergeConfigParts(configParts));
                     });
 
                     // initialize the app once the default language's config is loaded
@@ -127,18 +126,6 @@
         }
 
         /**
-         * Applies the appropriate layer defaults to a config object
-         * @param  {object}  config     base config object
-         * @return {object}             config object with modified layer entries
-         */
-        function applyLayerDefaults(config) {
-            const newConfig = config;
-            newConfig.layers = config.layers.map(layerEntry =>
-                angular.merge({}, layerDefaults[layerTypes[layerEntry.layerType]], layerEntry));
-            return newConfig;
-        }
-
-        /**
          * Config initialization block for file-based configs
          * @param {string}  configAttr  the file path tied to the config attribute
          * @param {array}   langs       array of languages which have configs
@@ -146,7 +133,8 @@
         function fileInit(configAttr, langs) {
             langs.forEach(lang => {
                 // try to load config file
-                const p = $http.get(configAttr.replace('${lang}', lang)).then(xhr => xhr.data);
+                const p = $http.get(configAttr.replace('${lang}', lang))
+                    .then(xhr => xhr.data);
                 partials[lang].push(p);
             });
         }
@@ -166,7 +154,9 @@
          * @return {object} config       the merged config object
          */
         function mergeConfigParts(configParts) {
-            const config = { layers: [] }; // angular.merge({}, { layers: [] }, configDefaults);
+            const config = {
+                layers: []
+            }; // angular.merge({}, { layers: [] }, configDefaults);
 
             configParts.forEach(part => {
                 angular.forEach(part, (value, key) => {
@@ -200,13 +190,14 @@
                 }
 
                 langs.forEach(lang => {
-                    const p = $http.get(`${endpoint}v2/docs/${lang}/${keys.join(',')}`).then(resp => {
-                        const result = {};
-                        result.layers = resp.data.map(layerEntry => {
-                            return layerEntry.layers[0];
+                    const p = $http.get(`${endpoint}v2/docs/${lang}/${keys.join(',')}`)
+                        .then(resp => {
+                            const result = {};
+                            result.layers = resp.data.map(layerEntry => {
+                                return layerEntry.layers[0];
+                            });
+                            return result;
                         });
-                        return result;
-                    });
                     partials[lang].push(p);
                 });
             } else {
