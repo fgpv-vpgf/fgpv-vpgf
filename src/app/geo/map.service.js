@@ -15,10 +15,10 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, gapiService, configService) {
-        return geoState => mapService(geoState);
+    function mapServiceFactory($q, gapiService) {
+        return (...args) => mapService(...args);
 
-        function mapService(geoState) {
+        function mapService(geoState, config) {
             const ref = {
                 fullExtent: null // Object
             };
@@ -44,101 +44,97 @@
              * @return {Object} returns `service` object
              */
             function buildMapObject() {
-                return configService.getCurrent()
-                    .then(config => {
-                        let mapObject;
+                let mapObject;
 
-                        // reset before rebuilding the map if `geoState` already has an instance of mapService
-                        if (typeof geoState.mapService !== 'undefined') {
-                            // NOTE: Possible to have dom listeners stick around after the node is destroyed
-                            const mapService = geoState.mapService;
-                            mapService.mapObject.destroy();
-                            mapService.mapManager.ScalebarControl.destroy();
-                            mapService.mapManager.OverviewMapControl.destroy();
-                            mapService.mapObject = null;
-                        }
+                // reset before rebuilding the map if `geoState` already has an instance of mapService
+                if (typeof geoState.mapService !== 'undefined') {
+                    // NOTE: Possible to have dom listeners stick around after the node is destroyed
+                    const mapService = geoState.mapService;
+                    mapService.mapObject.destroy();
+                    mapService.mapManager.ScalebarControl.destroy();
+                    mapService.mapManager.OverviewMapControl.destroy();
+                    mapService.mapObject = null;
+                }
 
-                        // FIXME remove the hardcoded settings when we have code which does this properly
-                        mapObject = gapiService.gapi.mapManager.Map(geoState.mapNode, {
-                            basemap: 'gray',
-                            zoom: 6,
-                            center: [-100, 50]
-                        });
+                // FIXME remove the hardcoded settings when we have code which does this properly
+                mapObject = gapiService.gapi.mapManager.Map(geoState.mapNode, {
+                    basemap: 'gray',
+                    zoom: 6,
+                    center: [-100, 50]
+                });
 
-                        // store map object in service
-                        service.mapObject = mapObject;
+                // store map object in service
+                service.mapObject = mapObject;
 
-                        if (config.services && config.services.proxyUrl) {
-                            gapiService.gapi.mapManager.setProxy(config.services.proxyUrl);
-                        }
+                if (config.services && config.services.proxyUrl) {
+                    gapiService.gapi.mapManager.setProxy(config.services.proxyUrl);
+                }
 
-                        // setup map using configs
-                        // FIXME: I should be migrated to the new config schema when geoApi is updated
-                        const mapSettings = {
-                            basemaps: [],
-                            scalebar: {},
-                            overviewMap: {}
-                        };
+                // setup map using configs
+                // FIXME: I should be migrated to the new config schema when geoApi is updated
+                const mapSettings = {
+                    basemaps: [],
+                    scalebar: {},
+                    overviewMap: {}
+                };
 
-                        if (config.baseMaps) {
-                            mapSettings.basemaps = config.baseMaps;
-                        }
+                if (config.baseMaps) {
+                    mapSettings.basemaps = config.baseMaps;
+                }
 
-                        if (config.map.components.scaleBar) {
-                            mapSettings.scalebar = {
-                                attachTo: 'bottom-left',
-                                scalebarUnit: 'dual'
-                            };
-                        }
+                if (config.map.components.scaleBar) {
+                    mapSettings.scalebar = {
+                        attachTo: 'bottom-left',
+                        scalebarUnit: 'dual'
+                    };
+                }
 
-                        if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
+                if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
 
-                            // FIXME: overviewMap has more settings
-                            mapSettings.overviewMap = config.map.components.overviewMap;
-                        }
+                    // FIXME: overviewMap has more settings
+                    mapSettings.overviewMap = config.map.components.overviewMap;
+                }
 
-                        if (config.map.extentSets) {
-                            let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
+                if (config.map.extentSets) {
+                    let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
 
-                            // map extent is not available until map is loaded
-                            if (lFullExtent) {
-                                gapiService.gapi.events.wrapEvents(mapObject, {
-                                    load: () => {
+                    // map extent is not available until map is loaded
+                    if (lFullExtent) {
+                        gapiService.gapi.events.wrapEvents(mapObject, {
+                            load: () => {
 
-                                        // compare map extent and setting.extent spatial-references
-                                        // make sure the full extent has the same spatial reference as the map
-                                        if (gapiService.gapi.proj.isSpatialRefEqual(mapObject.extent
-                                                .spatialReference,
-                                                lFullExtent.spatialReference)) {
+                                // compare map extent and setting.extent spatial-references
+                                // make sure the full extent has the same spatial reference as the map
+                                if (gapiService.gapi.proj.isSpatialRefEqual(
+                                        mapObject.extent.spatialReference,
+                                        lFullExtent.spatialReference)) {
 
-                                            // same spatial reference, no reprojection required
-                                            ref.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
-                                                lFullExtent);
-                                        } else {
+                                    // same spatial reference, no reprojection required
+                                    ref.fullExtent =
+                                        gapiService.gapi.mapManager.getExtentFromJson(lFullExtent);
+                                } else {
 
-                                            // need to re-project
-                                            ref.fullExtent = gapiService.gapi.proj.projectEsriExtent(
-                                                gapiService.gapi.mapManager.getExtentFromJson(
-                                                    lFullExtent),
-                                                mapObject.extent.spatialReference);
-                                        }
-                                    }
-                                });
+                                    // need to re-project
+                                    ref.fullExtent = gapiService.gapi.proj.projectEsriExtent(
+                                        gapiService.gapi.mapManager.getExtentFromJson(lFullExtent),
+                                        mapObject.extent.spatialReference);
+                                }
                             }
-                        }
+                        });
+                    }
+                }
 
-                        service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
+                service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
 
-                        // FIXME temp link for debugging
-                        window.FGPV = {
-                            layers: service.layers
-                        };
+                // FIXME temp link for debugging
+                window.FGPV = {
+                    layers: service.layers
+                };
 
-                        // store service in geoState
-                        geoState.mapService = service;
+                // store service in geoState
+                geoState.mapService = service;
 
-                        return service;
-                    });
+                return service;
             }
 
             /*
