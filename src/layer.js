@@ -369,26 +369,26 @@ function predictLayerUrlBuilder(esriBundle) {
 
         } else {
 
-            // TODO potential restructure.  this approach cleans up the pyramid of doom,
-            //      but ends up triggering all tests immediately.
-            //      Needs to store test result promises in array and do resolve if all of
-            //      them are unknown.
+            // TODO restructure.  this approach cleans up the pyramid of doom.
+            //      Needs to add check for empty tests, resolve as unknown.
             //      Still a potential to take advantage of the nice structure.  Will depend
             //      what comes first:  WMS logic (adding a 3rd test), or changing the request
             //      library, meaning we get the type early from the head request.
             /*
-            Promise(resolve => {
-                tests = [pokeFile, pokeService];
+            tests = [pokeFile, pokeService];
 
-                tests.forEach(test => {
-                    test(url, esriBundle).then(info => {
-                        if (info.serviceType !== serviceType.Unknown) {
-                            resolve(info);
-                            break;
-                        }
-                    });
+            function runTests() {
+                test = tests.pop();
+                test(url, esriBundle).then(info => {
+                    if (info.serviceType !== serviceType.Unknown) {
+                        resolve(info);
+                        return;
+                    }
+                    runTests();
                 });
-            });
+            }
+
+            runTests();
             */
 
             return new Promise(resolve => {
