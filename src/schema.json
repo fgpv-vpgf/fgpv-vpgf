@@ -123,39 +123,96 @@
             },
             "description": "Specifies if the corresponding control, option or function is interactive. Doesn't not have any effect on actual state, if any, of the corresponding option"
         },
+        "visibilityOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "string",
+                    "enum": [ "on", "off" ],
+                    "default": "on",
+                    "description": "Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only."
+                }
+            },
+            "description": "Visibility toggle in the layer selector and its current state.",
+            "additionalProperties": false
+        },
+        "opacityOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Specifies the opacity of the layer. Should be between 0 and 1 inclusively."
+                }
+            },
+            "description": "Specifies the opacity of the layer.",
+            "additionalProperties": false
+        },
+        "boundingBoxOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies the initial state of the bounding box option. True: the layer bounding box is visible; False: the bounding box is hidden."
+                }
+            },
+            "description": "Displays layers bounding box",
+            "additionalProperties": false
+        },
+        "queryOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "True: layer attribute data (or wms results, etc.) can be accessed by clicking on layer features; False: layer attribute data (not wms results), if any, can only be accessed through the data panel"
+                }
+            },
+            "description": "Specifies if the layer can be queried by clicking on the map",
+            "additionalProperties": false
+        },
+        "snapshotOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies the layer data will be initially retrieved. True: everything is fetched upfront; False: fetched based on map extent."
+                }
+            },
+            "description": "Specifies how layer attributes are loaded",
+            "additionalProperties": false
+        },
+
         "basicLayerOptionsNode": {
             "type": "object",
             "properties": {
                 "visibility": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "string",
-                                    "enum": [ "on", "off" ],
-                                    "default": "on",
-                                    "description": "Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only."
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Visibility toggle in the layer selector and its current state."
+                    "$ref": "#/definitions/visibilityOptionNode"
                 },
                 "opacity": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "number",
-                                    "default": 1,
-                                    "description": "Specifies the opacity of the layer. Should be between 0 and 1 inclusively."
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Specifies the opacity of the layer."
+                    "$ref": "#/definitions/opacityOptionNode"
                 },
                 "metadata": {
                     "$ref": "#/definitions/option",
@@ -174,19 +231,7 @@
                     "description": "Remove control in the layer selector"
                 },
                 "boundingBox": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "boolean",
-                                    "default": true,
-                                    "description": "Specifies the initial state of the bounding box option. True: the layer bounding box is visible; False: the bounding box is hidden."
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Displays layers bounding box"
+                    "$ref": "#/definitions/boundingBoxOptionNode"
                 }
             },
             "additionalProperties": false
@@ -195,35 +240,10 @@
             "type": "object",
             "properties": {
                 "visibility": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "string",
-                                    "enum": [ "on", "off" ],
-                                    "default": "on",
-                                    "description": "Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only."
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Visibility toggle in the layer selector and its current state."
+                    "$ref": "#/definitions/visibilityOptionNode"
                 },
                 "opacity": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "number",
-                                    "default": 1,
-                                    "description": "Specifies the opacity of the layer. Should be between 0 and 1 inclusively."
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Specifies the opacity of the layer."
+                    "$ref": "#/definitions/opacityOptionNode"
                 },
                 "metadata": {
                     "$ref": "#/definitions/option",
@@ -242,49 +262,51 @@
                     "description": "Remove control in the layer selector"
                 },
                 "boundingBox": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "boolean",
-                                    "default": true,
-                                    "description": "Specifies the initial state of the bounding box option. True: the layer bounding box is visible; False: the bounding box is hidden."
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Displays layers bounding box"
+                    "$ref": "#/definitions/boundingBoxOptionNode"
                 },
                 "query": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "boolean",
-                                    "default": true,
-                                    "description": "Specifies the initial state of the layer visibility. True: layer attribute data (or wms results, etc.) can be accessed by clicking on layer features; False: layer attribute data (not wms results), if any, can only be accessed through the data panel"
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Specifies if the layer can be queried by clicking on the map"
+                    "$ref": "#/definitions/queryOptionNode"
                 },
                 "snapshot": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "boolean",
-                                    "default": false,
-                                    "description": "Specifies the layer data will be initially retrieved. True: everything is fetched upfront; False: fetched based on map extent."
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Specifies how layer attributes are loaded"
+                    "$ref": "#/definitions/snapshotOptionNode"
+                },
+                "data": {
+                    "$ref": "#/definitions/option",
+                    "description": "Enables data panel"
+                }
+            },
+            "additionalProperties": false
+        },
+        "dynamicLayerOptionsNode": {
+            "type": "object",
+            "properties": {
+                "visibility": {
+                    "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "opacity": {
+                    "$ref": "#/definitions/opacityOptionNode"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "refresh": {
+                    "$ref": "#/definitions/option",
+                    "description": "Refresh control in the layer selector"
+                },
+                "remove": {
+                    "$ref": "#/definitions/option",
+                    "description": "Remove control in the layer selector"
+                },
+                "boundingBox": {
+                    "$ref": "#/definitions/boundingBoxOptionNode"
+                },
+                "query": {
+                    "$ref": "#/definitions/queryOptionNode"
                 },
                 "data": {
                     "$ref": "#/definitions/option",
@@ -297,35 +319,10 @@
             "type": "object",
             "properties": {
                 "visibility": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "string",
-                                    "enum": [ "on", "off" ],
-                                    "default": "on",
-                                    "description": "Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only."
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Visibility toggle in the layer selector and its current state."
+                    "$ref": "#/definitions/visibilityOptionNode"
                 },
                 "opacity": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "number",
-                                    "default": 1,
-                                    "description": "Specifies the opacity of the layer. Should be between 0 and 1 inclusively."
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Specifies the opacity of the layer."
+                    "$ref": "#/definitions/opacityOptionNode"
                 },
                 "metadata": {
                     "$ref": "#/definitions/option",
@@ -344,34 +341,10 @@
                     "description": "Remove control in the layer selector"
                 },
                 "boundingBox": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "boolean",
-                                    "default": true,
-                                    "description": "Specifies the initial state of the bounding box option. True: the layer bounding box is visible; False: the bounding box is hidden."
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Displays layers bounding box"
+                    "$ref": "#/definitions/boundingBoxOptionNode"
                 },
                 "query": {
-                    "allOf": [
-                        { "$ref": "#/definitions/option" },
-                        {
-                            "properties": {
-                                "value": {
-                                    "type": "boolean",
-                                    "default": true,
-                                    "description": "Specifies the initial state of the layer visibility. True: layer attribute data (or wms results, etc.) can be accessed by clicking on layer features; False: layer attribute data (not wms results), if any, can only be accessed through the data panel"
-                                }
-                            }
-                        }
-                    ],
-                    "description": "Specifies if the layer can be queried by clicking on the map"
+                    "$ref": "#/definitions/queryOptionNode"
                 }
             },
             "additionalProperties": false
@@ -507,7 +480,7 @@
                 },
                 "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
-                "options": { "$ref": "#/definitions/compoundLayerOptionsNode" }
+                "options": { "$ref": "#/definitions/dynamicLayerOptionsNode" }
             },
             "required": [ "id", "layerType", "layerEntries", "url" ],
             "additionalProperties": false
