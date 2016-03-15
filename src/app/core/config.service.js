@@ -159,7 +159,7 @@
             }; // angular.merge({}, { layers: [] }, configDefaults);
 
             configParts.forEach(part => {
-                angular.forEach(part, (value, key) => {
+                Object.entries(part).forEach(([key, value]) => {
                     // if this section is an array just concat, e.g. layers, basemaps
                     // otherwise merge into existing section
                     if (Array.isArray(config[key])) {
