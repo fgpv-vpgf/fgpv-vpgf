@@ -56,6 +56,9 @@ describe('geo', () => {
 
             configService.setCurrent({
                 layers: [],
+                legend: {
+                    type: 'autopopulate'
+                },
                 map: {
                     extentSets: [{
                         id: '123456789',
@@ -99,6 +102,9 @@ describe('geo', () => {
         describe('map', () => {
             const emptyConfig = {
                 layers: [],
+                legend: {
+                    type: 'autopopulate'
+                },
                 map: {
                     extentSets: [{
                         id: '123456789',
