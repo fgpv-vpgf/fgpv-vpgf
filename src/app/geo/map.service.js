@@ -108,9 +108,31 @@
                     mapSettings.overviewMap = config.map.components.overviewMap;
                 }
 
+
                 if (config.map.extentSets) {
                     initMapFullExtent(config);
                 }
+
+                // TODO: move to gapi?
+                service.mapManager.BasemapControl.basemapGallery.on('selection-change', () => {
+                    service.mapManager.OverviewMapControl.destroy();
+
+                    // setup expandFactor to 1, by default it's 2. and most of the time overview map
+                    // show a blank page until we zoom in to certain extent
+                    service.mapManager.OverviewMapControl =  gapiService.gapi.mapManager.OverviewMap({
+                        map: mapObject,
+                        expandFactor: 1,
+                        visible: true
+                    });
+
+                    service.mapManager.OverviewMapControl.startup();
+                });
+
+                // FIXME temp link for debugging
+                window.FGPV = {
+                    layers: service.layers
+                };
+
 
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
                 service.mapManager.BasemapControl.setBasemap(ref.selectedBaseMapId);
@@ -161,7 +183,8 @@
              */
             function selectBasemap(id) {
                 const mapManager = service.mapManager;
-                const map = service.mapObject;
+
+                // const map = service.mapObject;
 
                 if (typeof mapManager === 'undefined' || !mapManager.BasemapControl) {
                     console.error('Error: Map manager or basemap control is not setup,' +
@@ -183,16 +206,21 @@
                             console.log('base map has same wkid, new: ' + newBaseMap.wkid);
                             console.log('base map has same wkid, old: ' + oldBaseMap.wkid);
                             mapManager.BasemapControl.setBasemap(id);
-                            mapManager.OverviewMapControl.destroy();
 
-                            console.log(gapiService.gapi.mapManager);
+                            // mapManager.BasemapControl.basemapGallery.on('selection-change', () => {
+                            //     mapManager.OverviewMapControl.destroy();
 
-                            mapManager.OverviewMapControl =  gapiService.gapi.mapManager.OverviewMap({
-                                map: map,
-                                visible: true
-                            });
+                            //     console.log(gapiService.gapi.mapManager);
 
-                            mapManager.OverviewMapControl.startup();
+                            //     mapManager.OverviewMapControl =  gapiService.gapi.mapManager.OverviewMap({
+                            //         map: map,
+                            //         expandFactor: 0.5,
+                            //         visible: true
+                            //     });
+
+                            //     mapManager.OverviewMapControl.startup();
+                            // });
+
                         } else {
 
                             // extent is different, build the map again
