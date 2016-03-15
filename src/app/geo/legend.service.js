@@ -49,6 +49,12 @@
         };
     };
 
+    // TODO: move this somewhere later
+    // jscs:disable maximumLineLength
+    const NO_IMAGE =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUJJREFUeNrs172Kg0AQB/BcOLHSRhBFEF/B5/cBrMRGsLESFBFsFAs/ivuTheW4kOBN1mSLmWJB0PGHM6vjV5IkF/3ietEymMUsZjGLWcxiltas7+OnNk3T9/22bYTbGIbhum4QBIpZMJVl+coDGIYB60HZUVZd11ht27Ysi2CapmkcRyRRzFqWBWsYhp7nEVhd1xVFIZLwTnwQaMd1XfVi5XmOjZJlGUF2Pc8ktt48z23basGSpg/0FkqTpinKpNxEZ8GEpkGB0NS/ZUpMRJY0iUN8kdSaKKw/Jsdx4jhWa6KwsK3ONr3U8ueZ6KxTTf+btyQIw5MYBDAXuLd4fgnmDll3xSzTNPd9l5PJ/evqSWCkEecjiWKW7/tVVY23IJcGSRSzoihC7bQbmsW8ezwv/5Axi1nMYhazmMWst8ePAAMA0CzGRisOjIgAAAAASUVORK5CYII=';
+    // jscs:enable maximumLineLength
+
     // jscs:enable requireSpacesInAnonymousFunctionExpression
 
     /**
@@ -66,7 +72,7 @@
         .module('app.geo')
         .factory('legendService', legendServiceFactory);
 
-    function legendServiceFactory() {
+    function legendServiceFactory($http, $q) {
         const legendSwitch = {
             structured: structuredLegendService,
             autopopulate: autoLegendService
@@ -121,14 +127,9 @@
              * @param {Object} layer object from `layerRegistry` `layers` object
              */
             function addLayer(layer) {
-                // TODO: remove; temp until scraper is done
-                layer.state.symbology = [
-                    {
-                        icon: 'url',
-                        name: 'hello'
-                    }
-                ];
                 layerTypeGroups[layer.state.layerType].add(layer.state);
+
+                getSymbology(layer);
             }
 
             /**
@@ -144,15 +145,60 @@
 
         }
 
-        /*
-        function getFeatureSymbology(url) {
-            //snip off last slash if there
-            const index = url.indexOf('/', url.length - 1);
-            if (index > -1) {
-                url = url.substring(0, idx - 1);
-            } else {
-                url = url;
-            }
-        }*/
+        /**
+         * TODO: Work in progress... Works fine for feature layers only right now; everything else gest a generic icon;
+         * Scrapes feaure and dynamic layers for their symbology;
+         *
+         * @param  {Object} layer layer object from `layerRegistry`
+         */
+        function getSymbology(layer) {
+            const reg = /(.+?)(\/(\d))?$/; // separate layer id from the rest of the url
+            const url = layer.state.url.replace(/\/+$/, ''); // strip trailing slashes
+
+            // jscs also doesn't like fancy destructuring
+            // jscs:disable requireSpaceAfterComma
+            const [, legendUrl, , index = -1] = reg.exec(url); // https://babeljs.io/docs/learn-es2015/#destructuring
+            // jscs:enable requireSpaceAfterComma
+
+            $http.jsonp(`${legendUrl}/legend?f=json&callback=JSON_CALLBACK`)
+                .then(result => {
+                    // console.log(legendUrl, index, result);
+
+                    if (result.data.error) {
+                        return $q.reject(result.data.error);
+                    }
+                    return result.data;
+                })
+                .then(data => {
+                    if (index !== -1) {
+                        const legend = data.layers[index].legend;
+                        const symbology = legend.map(item => {
+                            return {
+                                icon: `data:${item.contentType};base64,${item.imageData}`,
+                                name: item.label
+                            };
+                        });
+
+                        layer.state.symbology = symbology;
+
+                        console.log('symbology', symbology);
+                    } else {
+                        // TODO: do better; set noimage image just so there is something
+                        layer.state.symbology = [{
+                            icon: NO_IMAGE,
+                            name: ''
+                        }];
+                    }
+                })
+                .catch(error => {
+                    // TODO: do better; this is likely an image layer; set noimage image temporarily just so there is some icon in toc
+                    layer.state.symbology = [{
+                        icon: NO_IMAGE,
+                        name: ''
+                    }];
+
+                    console.error(error);
+                });
+        }
     }
 })();

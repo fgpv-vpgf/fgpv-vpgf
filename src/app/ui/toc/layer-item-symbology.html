@@ -1,7 +1,7 @@
 <div class="rv-layer-item-icon rv-single" ng-if="self.symbology.length == 1">
 
     <div class="rv-symbology-item">
-        <img alt="" class="md-whiteframe-z1" ng-src="http://lorempixel.com/32/32/?{{self.random}}"/>
+        <img alt="" class="md-whiteframe-z1" ng-src="{{ self.symbology[0].icon }}"/>
     </div>
 </div>
 
@@ -21,8 +21,8 @@
     <div class="rv-symbology-container">
 
         <div class="rv-symbology-item" ng-repeat="symbol in self.symbology">
-            <img class="md-whiteframe-z1" alt="" ng-src="http://lorempixel.com/32/32/?{{self.random}}{{$index}}"/>
-            <span class="rv-symbology-item-name">{{symbol.name}}</span>
+            <img class="md-whiteframe-z1" alt="" ng-src="{{ symbol.icon }}"/>
+            <span class="rv-symbology-item-name">{{ symbol.name }}</span>
         </div>
 
     </div>

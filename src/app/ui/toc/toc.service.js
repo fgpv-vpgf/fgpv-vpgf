@@ -1144,7 +1144,7 @@
                 layer.options[optionName].selected = newValue; // select the toggle to stay visible
 
                 // check if any toggle is selected; if so, select the layer
-                let layerSelectedValue = Object.keys(DISPLAY_SWITCH)
+                const layerSelectedValue = Object.keys(DISPLAY_SWITCH)
                     .some(key => {
                         const value = DISPLAY_SWITCH[key];
                         return layer.options[value].selected;
