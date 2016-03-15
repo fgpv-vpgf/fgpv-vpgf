@@ -49,44 +49,49 @@
             function constructLayers() {
                 config.layers.forEach(layerConfig => {
                     // TODO: decouple identifyservice from everything
-                    const l = service.generateLayer(layerConfig);
-                    const pAttrib = $q((resolve, reject) => { // handles the asynch loading of attributes
+                    const layer = service.generateLayer(layerConfig);
 
-                        // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
-                        gapiService.gapi.events.wrapEvents(l, {
-                            load: () => {
-                                // FIXME look at layer config for flags indicating not to load attributes
-                                // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
+                    // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
+                    gapiService.gapi.events.wrapEvents(layer, {
+                        // TODO: add error event handler to register a failed layer, so the user can reload it
+                        load: () => {
 
-                                // get the attributes for the layer
-                                const a = gapiService.gapi.attribs.loadLayerAttribs(l);
+                            // FIXME look at layer config for flags indicating not to load attributes
+                            // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
 
-                                a
-                                    .then(data => {
-                                        // registerAttributes(data);
-                                        resolve(data);
-                                    })
-                                    .catch(exception => {
-                                        console.error(
-                                            'Error getting attributes for ' +
-                                            l.name + ': ' +
-                                            exception);
-                                        console.log(l);
-
-                                        // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
-                                        reject(exception);
-                                    });
-                            }
-                        });
+                            // handles the asynch loading of attributes
+                            // get the attributes for the layer
+                            const attributesPromise = loadLayerAttributes(layer);
+                            service.registerLayer(layer, layerConfig, attributesPromise); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                        }
                     });
-                    service.registerLayer(l, layerConfig, pAttrib); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
-                    mapObject.addLayer(l);
+
+                    // add layer to the map triggering its loading process
+                    mapObject.addLayer(layer);
                 });
 
                 // store service in geoState
                 geoState.layerRegistry = service;
 
                 return service;
+            }
+
+            function loadLayerAttributes(layer) {
+                return gapiService.gapi.attribs.loadLayerAttribs(layer)
+                    /*.then(data => {
+                        // registerAttributes(data);
+                        resolve(data);
+                    })*/
+                    .catch(exception => {
+                        console.error(
+                            'Error getting attributes for ' +
+                            layer.name + ': ' +
+                            exception);
+                        console.log(layer);
+
+                        // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
+                        $q.reject(exception);
+                    });
             }
 
             /**
