@@ -179,7 +179,7 @@
       "altText": "altText - World Imagery",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Imagery",
@@ -195,7 +195,7 @@
       "altText": "altText - World Physical Map",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Physical_Map",
@@ -211,7 +211,7 @@
       "altText": "altText - World Shaded Relief",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Shaded_Relief",
@@ -227,7 +227,7 @@
       "altText": "altText - ESWorld Street Map",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Street_Map",
@@ -243,7 +243,7 @@
       "altText": "altText - World Terrain Base",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Terrain_Base",
@@ -259,7 +259,7 @@
       "altText": "altText - World Topographic Map",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Topo_Map",
