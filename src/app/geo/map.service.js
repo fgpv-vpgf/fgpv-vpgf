@@ -128,12 +128,6 @@
                     service.mapManager.OverviewMapControl.startup();
                 });
 
-                // FIXME temp link for debugging
-                window.FGPV = {
-                    layers: service.layers
-                };
-
-
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
                 service.mapManager.BasemapControl.setBasemap(ref.selectedBaseMapId);
 
@@ -271,7 +265,7 @@
             function setFullExtent() {
                 const map = service.mapObject;
                 if (ref.fullExtent) {
-                    map.setExtent(map.fullExtent);
+                    map.setExtent(ref.fullExtent);
                 } else {
                     console.warn('GeoService: fullExtent value is not set.');
                 }
