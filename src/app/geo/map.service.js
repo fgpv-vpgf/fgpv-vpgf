@@ -197,7 +197,7 @@
 
                             // extent is different, build the map again
                             console.log('base map has different wkid: ' + newBaseMap.wkid);
-                            setSelectedBaseMap(id, config);
+                            ref.mapExtent = setSelectedBaseMap(id, config);
                             console.log('buildMapObject');
 
                             reAssembleAvenger();
