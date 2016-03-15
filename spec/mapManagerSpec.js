@@ -19,8 +19,9 @@ describe('Map Manager', () => {
         }
     };
 
-    function fakeEsriExtent(xmin, ymin, xmax, ymax, spatialReference) {
-        return { xmin: xmin, ymin: ymin, xmax: xmax, ymax: ymax, spatialReference: spatialReference };
+    function fakeEsriExtent(json) {
+        return { xmin: json.xmin, ymin: json.ymin, xmax: json.xmax, ymax: json.ymax,
+            spatialReference: { wkid: json.wkid } };
     }
 
     const mapManager = mapManagerInit(fakeEsri);
