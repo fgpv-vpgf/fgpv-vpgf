@@ -71,7 +71,7 @@ module.exports = function (esriBundle) {
         // display message
         // TODO: add ui hook? to display msg on screen
         basemapGallery.on('error', msg => {
-          console.error('basemap gallery error:', msg);
+            console.error('basemap gallery error:', msg);
         });
 
         // Set basemap by id
