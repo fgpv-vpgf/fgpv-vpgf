@@ -50,7 +50,7 @@ describe('geo', () => {
 
     describe('geoService', () => {
 
-        it('should set zoom correctly', done => {
+        xit('should set zoom correctly', done => {
             // set a spy on it
             spyOn(map, 'setZoom');
 
@@ -132,7 +132,7 @@ describe('geo', () => {
             };
             const el = angular.element('<div id="randomMap" />');
 
-            it('should make a map', done => {
+            xit('should make a map', done => {
                 const m = gapiService.gapi.mapManager;
                 spyOn(m, 'Map')
                     .and.callThrough();
