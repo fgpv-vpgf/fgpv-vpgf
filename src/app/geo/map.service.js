@@ -112,21 +112,6 @@
                     initMapFullExtent(config);
                 }
 
-                // TODO: move to gapi?
-                service.mapManager.BasemapControl.basemapGallery.on('selection-change', () => {
-                    service.mapManager.OverviewMapControl.destroy();
-
-                    // setup expandFactor to 1, by default it's 2. and most of the time overview map
-                    // show a blank page until we zoom in to certain extent
-                    service.mapManager.OverviewMapControl =  gapiService.gapi.mapManager.OverviewMap({
-                        map: mapObject,
-                        expandFactor: 1,
-                        visible: true
-                    });
-
-                    service.mapManager.OverviewMapControl.startup();
-                });
-
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
                 service.mapManager.BasemapControl.setBasemap(ref.selectedBaseMapId);
 
@@ -201,7 +186,7 @@
                             console.log('base map has different wkid: ' + newBaseMap.wkid);
                             ref.mapExtent = setSelectedBaseMap(id, config);
 
-                            reAssembleMap();
+                            reAssembleMap(config);
                         }
                     });
 
@@ -353,7 +338,7 @@
             * Re-assemble map object
             * [private]
             */
-            function reAssembleMap() {
+            function reAssembleMap(config) {
                 // TODO: please review!, cannot call assembleMap in map service
                 // where selection of basemap detects different spatial reference
 
@@ -361,7 +346,7 @@
                 .then(ms => {
                     // expose mapService on geoService
                     angular.extend(service, ms);
-                    return layerRegistry(geoState);
+                    return layerRegistry(geoState, config);
                 })
                 .then(lr => {
                     // expose layerRegistry service on geoService
