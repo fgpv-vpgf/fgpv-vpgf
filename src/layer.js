@@ -417,6 +417,130 @@ function predictLayerUrlBuilder(esriBundle) {
     };
 }
 
+/**
+* Converts an array buffer to a string
+*
+* @method arrayBufferToString
+* @private
+* @param {Arraybuffer} buffer an array buffer containing stuff (ideally string-friendly)
+* @returns {String} array buffer in string form
+*/
+function arrayBufferToString(buffer) {
+    // handles UTF8 encoding
+    return String.fromCharCode.apply(null, new Uint8Array(buffer));
+}
+
+/**
+* Performs validation on GeoJson object. Returns validation object.
+* Worker function for validateFile, see that file for return value specs
+*
+* @method validateGeoJson
+* @private
+* @param {Object} geoJson feature collection in geojson form
+* @returns {Object} information on the geoJson object
+*/
+function validateGeoJson(geoJson) {
+    // GeoJSON geometry type to ESRI geometry type
+    const geomMap = {
+        Point: 'esriGeometryPoint',
+        MultiPoint: 'esriGeometryMultipoint',
+        LineString: 'esriGeometryPolyline',
+        MultiLineString: 'esriGeometryPolyline',
+        Polygon: 'esriGeometryPolygon',
+        MultiPolygon: 'esriGeometryPolygon'
+    };
+    const res = {};
+
+    res.fields = extractFields(geoJson);
+    res.geometryType = geomMap[geoJson.features[0].geometry.type];
+    if (!res.geometryType) {
+        throw new Error('Unexpected geometry type in GeoJSON');
+    }
+    res.formattedData = geoJson;
+
+    // TODO optional check: iterate through every feature, ensure geometry type and properties are all identical
+
+    return res;
+}
+
+/**
+* Validates file content.  Does some basic checking for errors. Attempts to get field list, and
+* if possible, provide the file in a more useful format. Promise rejection indicates failed validation
+*
+* - formattedData: file contents in a more useful format. JSON for GeoJSON and Shapefile. String for CSV
+* - fields: array of field definitions for the file. conforms to ESRI's REST field standard.
+* - geometryType: describes the geometry of the file (string). conforms to ESRI's REST geometry type enum values.
+*
+* @method validateFile
+* @param {String} type the format of file. aligns to serviceType enum (CSV, Shapefile, GeoJSON)
+* @param {Arraybuffer} data the file content in binary
+* @returns {Promise} a promise resolving with an infomation object
+*/
+function validateFile(type, data) {
+
+    const fileHandler = {}; // maps handlers for different file types
+
+    fileHandler[serviceType.CSV] = data => {
+        return new Promise((resolve, reject) => {
+
+            // convert from arraybuffer to string to parsed csv. store string format for later
+            const res = {
+                formattedData: arrayBufferToString(data)
+            };
+
+            const fileArr = csvPeek(res.formattedData, ',');
+
+            // validations
+            if (fileArr.length === 0) {
+                // fail, no rows
+                reject(new Error('File has no rows'));
+            } else {
+                // field count of first row.
+                const fc = fileArr[0].length;
+                if (fc < 2) {
+                    // fail not enough columns
+                    reject(new Error('File has less than two columns'));
+                } else {
+                    // check field counts of each row
+                    if (fileArr.every(rowArr => rowArr.length === fc)) {
+                        // make field list esri-ish for consistancy
+                        res.fields = fileArr[0].map(field => ({
+                            name: field,
+                            type: 'esriFieldTypeString'
+                        }));
+                        res.geometryType = 'esriGeometryPoint'; // always point for CSV
+                        resolve(res);
+                    } else {
+                        reject(new Error('File has no rows'));
+                    }
+                }
+            }
+        });
+    };
+
+    fileHandler[serviceType.GeoJSON] = data => {
+        return new Promise(resolve => {
+            // convert from arraybuffer to string to json
+            const geoJson = JSON.parse(arrayBufferToString(data));
+            resolve(validateGeoJson(geoJson));
+        });
+    };
+
+    fileHandler[serviceType.Shapefile] = data => {
+        return new Promise((resolve, reject) => {
+            // convert from arraybuffer (containing zipped shapefile) to json (using shp library)
+            shp(data).then(geoJson => {
+                resolve(validateGeoJson(geoJson));
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    };
+
+    // trigger off the appropriate handler, return promise
+    return fileHandler[type](data);
+}
+
 function serverLayerIdentifyBuilder(esriBundle) {
     // TODO we are using layerIds option property as it aligns with what the ESRI identify parameter
     //      object uses.  However, in r2 terminology, a layerId is specific to a full map layer, not
@@ -846,6 +970,7 @@ module.exports = function (esriBundle, geoApi) {
         makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi),
         serverLayerIdentify: serverLayerIdentifyBuilder(esriBundle),
         predictLayerUrl: predictLayerUrlBuilder(esriBundle),
+        validateFile,
         csvPeek,
         serviceType
     };
