@@ -167,7 +167,7 @@
             // set the current basemap as selected.
             basemap.selected = true;
 
-            if (geoService.baseMapHasSameSP(basemap.id)){
+            if (geoService.baseMapHasSameSP(basemap.id)) {
                 console.log('------ yo -------');
             }
 
