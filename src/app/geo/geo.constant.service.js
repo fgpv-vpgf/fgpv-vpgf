@@ -55,7 +55,7 @@
 
         const service = {};
 
-        angular.forEach(layerTypeOptions, (value, key) => {
+        Object.entries(layerTypeOptions).forEach(([key, value]) => {
             service[key] = {
                 // get default options for a specific layer type
                 options: LAYER_CONFIG_DEFAULTS[value],

@@ -16,7 +16,7 @@
         .factory('mapService', mapServiceFactory);
 
     function mapServiceFactory($q, gapiService) {
-        return (...args) => mapService(...args);
+        return mapService;
 
         function mapService(geoState, config) {
             const ref = {

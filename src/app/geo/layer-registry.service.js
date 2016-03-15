@@ -140,7 +140,6 @@
             function registerLayer(layer, initialState, attribs) {
                 // TODO determine the proper docstrings for a non-service function that lives in a service
 
-                // QUESTION: If the layer doesn't not have an id property, can we just generate one?
                 if (!layer.id) {
                     console.error('Attempt to register layer without id property');
                     console.log(layer);

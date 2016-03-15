@@ -1136,7 +1136,7 @@
 
                         layer.selected = false;
 
-                        angular.forEach(DISPLAY_SWITCH, value => layer.options[value].selected = false);
+                        Object.entries(DISPLAY_SWITCH).forEach(([key, value]) => layer.options[value].selected = false);
                     });
                 }
 
