@@ -108,7 +108,6 @@
                     mapSettings.overviewMap = config.map.components.overviewMap;
                 }
 
-
                 if (config.map.extentSets) {
                     initMapFullExtent(config);
                 }
@@ -193,34 +192,14 @@
 
                         if (newBaseMap.wkid === oldBaseMap.wkid) {
 
-                            console.log('config:');
-                            console.log(config);
-                            console.log(newBaseMap);
-                            console.log(oldBaseMap);
                             console.log('base map has same wkid, new: ' + newBaseMap.wkid);
-                            console.log('base map has same wkid, old: ' + oldBaseMap.wkid);
                             mapManager.BasemapControl.setBasemap(id);
-
-                            // mapManager.BasemapControl.basemapGallery.on('selection-change', () => {
-                            //     mapManager.OverviewMapControl.destroy();
-
-                            //     console.log(gapiService.gapi.mapManager);
-
-                            //     mapManager.OverviewMapControl =  gapiService.gapi.mapManager.OverviewMap({
-                            //         map: map,
-                            //         expandFactor: 0.5,
-                            //         visible: true
-                            //     });
-
-                            //     mapManager.OverviewMapControl.startup();
-                            // });
 
                         } else {
 
                             // extent is different, build the map again
                             console.log('base map has different wkid: ' + newBaseMap.wkid);
                             ref.mapExtent = setSelectedBaseMap(id, config);
-                            console.log('buildMapObject');
 
                             reAssembleAvenger();
                         }
@@ -229,6 +208,11 @@
                 }
             }
 
+            /*
+            * check to see if given basemap id has same wkid value
+            * @param {id} base map id
+            * @retur {bool} true if current basemap has the same wkid as the previous one
+            */
             function baseMapHasSameSP(id) {
 
                 configService.getCurrent()
@@ -287,32 +271,33 @@
                 });
             }
 
-            /* Helper functions */
+            /*
+            * Sets the current selected map id and extent set id, creates the fullExtent
+            * [private]
+            * @param {id} base map id
+            * @param {config} json config settings
+            */
             function setSelectedBaseMap(id, config) {
 
                 ref.selectedBaseMapId = id;
-
-                console.log('--- selectedBasemapId');
-                console.log(ref.selectedBaseMapId);
 
                 const selectedBaseMap = config.baseMaps.find(baseMap => {
                     return (baseMap.id === ref.selectedBaseMapId);
                 });
 
-                console.log('--- selectedBaseMap');
-                console.log(selectedBaseMap);
-
                 ref.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
 
-                console.log('--- base map extentId:' + ref.selectedBaseMapExtentSetId);
-
                 const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
-
                 const extent = gapiService.gapi.mapManager.Extent(fullExtentJson);
 
                 return extent;
             }
 
+            /*
+            * Initialize map full extent
+            * [private]
+            * @param {config} config object
+            */
             function initMapFullExtent(config) {
                 let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
                 const map = service.mapObject;
@@ -346,6 +331,7 @@
 
             /*
              * Get basemap config from basemap id
+             * [private]
              * @param id base Map id
              * @param config config object
              * @return {object} base map json object
@@ -363,25 +349,28 @@
                 });
             }
 
-            function reAssembleAvenger() {
+            /*
+            * Re-assemble map object
+            * [private]
+            */
+            function reAssembleMap() {
+                // TODO: please review!, cannot call assembleMap in map service
+                // where selection of basemap detects different spatial reference
 
                 buildMapObject()
                 .then(ms => {
                     // expose mapService on geoService
                     angular.extend(service, ms);
-                    console.log('jkw: layerRegistry');
                     return layerRegistry(geoState);
                 })
                 .then(lr => {
                     // expose layerRegistry service on geoService
                     angular.extend(service, lr);
-                    console.log('jkw: identifyService');
                     return identifyService(geoState);
                 })
                 .then(id => {
                     // expose identifyService on geoService
                     angular.extend(service, id);
-                    console.log('jkw: isMapReady');
                     service.state = geoState; // store geo state
                     service.isMapReady = true;
 
