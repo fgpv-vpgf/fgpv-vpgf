@@ -86,9 +86,6 @@
     "requireSemicolons": true,
     "requireVarDeclFirst": false,
 
-    "requirePaddingNewLinesBeforeLineComments": {
-        "allExcept": "firstAfterCurly"
-    },
     "safeContextKeyword": "self",
 
     "maximumLineLength": {
