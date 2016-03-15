@@ -115,7 +115,7 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
  * @param  {String} contents stringified contents of the core/constant.service
  */
 function injectConfigDefaults(contents) {
-    return contents.replace('\'_DEFAULTS_\'', JSON.stringify(pkg.schemaDefaults));
+    return contents.replace('\'_LAYER_CONFIG_DEFAULTS_\'', JSON.stringify(pkg.schemaDefaults, null, '    '));
 }
 
 function injectVersion(contents) {
@@ -176,7 +176,7 @@ function jsbuild() {
     injectError(false);
 
     const versionFilter = $.filter('**/version.*.js', { restore: true });
-    const configDefaultsFilter  = $.filter('**/core/constant.service.js', { restore: true });
+    const configDefaultsFilter  = $.filter('**/geo/geo.constant.service.js', { restore: true });
 
     return gulp
         .src(config.js)
@@ -575,7 +575,8 @@ gulp.task('configdefaults', done => {
         const defs = [
             'basicLayerOptionsNode',
             'featureLayerOptionsNode',
-            'compoundLayerOptionsNode'
+            'compoundLayerOptionsNode',
+            'dynamicLayerOptionsNode'
         ];
 
         pkg.schemaDefaults = {};

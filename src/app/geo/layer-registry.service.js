@@ -15,13 +15,19 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, gapiService, layerTypes, configService) {
-        return geoState => layerRegistry(geoState, geoState.mapService.mapObject);
+    function layerRegistryFactory($q, gapiService, legendService, layerTypes, layerDefaults) {
+        return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
-        function layerRegistry(geoState, mapObject) {
+        function layerRegistry(geoState, mapObject, config) {
 
             const layers = {}; // layer collection
-            const legend = []; // legend construct, to be consumed by toc; deflection +2
+            const legend = {
+                items: []
+            }; // legend construct, to be consumed by toc; deflection +2
+
+            const ref = {
+                legendService: legendService(config, layers, legend)
+            };
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -41,51 +47,46 @@
             /***/
 
             function constructLayers() {
-                return configService.getCurrent()
-                    .then(config => {
+                config.layers.forEach(layerConfig => {
+                    // TODO: decouple identifyservice from everything
+                    const l = service.generateLayer(layerConfig);
+                    const pAttrib = $q((resolve, reject) => { // handles the asynch loading of attributes
 
-                        config.layers.forEach(layerConfig => {
-                            // TODO: decouple identifyservice from everything
-                            const l = service.generateLayer(layerConfig);
-                            const pAttrib = $q((resolve, reject) => { // handles the asynch loading of attributes
+                        // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
+                        gapiService.gapi.events.wrapEvents(l, {
+                            load: () => {
+                                // FIXME look at layer config for flags indicating not to load attributes
+                                // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
 
-                                // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
-                                gapiService.gapi.events.wrapEvents(l, {
-                                    load: () => {
-                                        // FIXME look at layer config for flags indicating not to load attributes
-                                        // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
+                                // get the attributes for the layer
+                                const a = gapiService.gapi.attribs.loadLayerAttribs(l);
 
-                                        // get the attributes for the layer
-                                        const a = gapiService.gapi.attribs.loadLayerAttribs(
-                                            l);
+                                a
+                                    .then(data => {
+                                        // registerAttributes(data);
+                                        resolve(data);
+                                    })
+                                    .catch(exception => {
+                                        console.error(
+                                            'Error getting attributes for ' +
+                                            l.name + ': ' +
+                                            exception);
+                                        console.log(l);
 
-                                        a
-                                            .then(data => {
-                                                // registerAttributes(data);
-                                                resolve(data);
-                                            })
-                                            .catch(exception => {
-                                                console.error(
-                                                    'Error getting attributes for ' +
-                                                    l.name + ': ' +
-                                                    exception);
-                                                console.log(l);
-
-                                                // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
-                                                reject(exception);
-                                            });
-                                    }
-                                });
-                            });
-                            service.registerLayer(l, layerConfig, pAttrib); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
-                            mapObject.addLayer(l);
+                                        // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
+                                        reject(exception);
+                                    });
+                            }
                         });
-
-                        // store service in geoState
-                        geoState.layerRegistry = service;
-
-                        return service;
                     });
+                    service.registerLayer(l, layerConfig, pAttrib); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                    mapObject.addLayer(l);
+                });
+
+                // store service in geoState
+                geoState.layerRegistry = service;
+
+                return service;
             }
 
             /**
@@ -117,15 +118,15 @@
                 }
 
                 mapObject.removeLayer(l.layer);
-
                 delete service.layers[layerId]; // remove layer from the registry
+                ref.legendService.removeLayer(l);
 
                 // remove layer item from the legend
                 // TODO: needs more work to manager layerOrder
-                const index = service.legend.indexOf(layerId);
+                /*const index = service.legend.indexOf(layerId);
                 if (index !== -1) {
                     service.legend.splice(index, 1);
-                }
+                }*/
             }
 
             /**
@@ -136,7 +137,7 @@
              * @param {number} position an optional index indicating at which position the layer was added to the map
              * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
              */
-            function registerLayer(layer, initialState, attribs, position) {
+            function registerLayer(layer, initialState, attribs) {
                 // TODO determine the proper docstrings for a non-service function that lives in a service
 
                 if (!layer.id) {
@@ -147,23 +148,34 @@
 
                 if (layers[layer.id]) {
                     console.error('attempt to register layer already registered.  id: ' + layer.id);
+                    return false;
                 }
 
                 const l = {
                     layer,
                     attribs,
-                    state: initialState
+
+                    // applies the appropriate layer defaults to a config object
+                    state: angular.merge({
+                            cache: {} // to cache stuff like retrieved metadata info
+                        },
+                        layerDefaults[layerTypes[initialState.layerType]],
+                        initialState
+                    )
                 };
 
                 layers[layer.id] = l;
 
+                /*
                 if (position === undefined) {
                     position = service.legend.length;
                 }
                 service.legend.splice(position, 0, layer.id);
+                */
 
                 // TODO: apply config values
                 service.setLayerVisibility(l.layer.id, l.state.options.visibility.value);
+                ref.legendService.addLayer(l);
             }
 
             /**
