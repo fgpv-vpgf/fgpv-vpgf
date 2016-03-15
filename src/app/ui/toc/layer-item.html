@@ -3,6 +3,7 @@
     <md-button
         class="rv-layer-body-button rv-button-square"
         rv-help="layer-item"
+        ng-if="self.layer.options.data"
         ng-click="self.toggleLayerFiltersPanel(self.layer)">
         <!-- TODO: add aria attribues on the button to provide context on what it does; also mute the actual layer name below, so a screen reader wouldn't pronounce it twice-->
     </md-button>
