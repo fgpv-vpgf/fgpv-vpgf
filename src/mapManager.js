@@ -98,10 +98,22 @@ module.exports = function (esriBundle) {
 
             overviewMapCtrl = mapManager.OverviewMap({
                 map: map,
+                expandFactor: 1,
                 visible: settings.overviewMap.enabled
             });
 
             overviewMapCtrl.startup();
+
+            basemapCtrl.basemapGallery.on('selection-change', () => {
+                overviewMapCtrl = mapManager.OverviewMap({
+                    map: map,
+                    expandFactor: 1,
+                    visible: settings.overviewMap.enabled
+                });
+
+                overviewMapCtrl.startup();
+            });
+
         } else {
             console.warn('overviewMap setting does not exist, or it\'s visible' +
                 ' setting is set to false.');
@@ -141,8 +153,8 @@ module.exports = function (esriBundle) {
      */
     function getExtentFromJson(extentJson) {
 
-        return esriBundle.Extent(extentJson.xmin, extentJson.ymin, extentJson.xmax,
-            extentJson.ymax, extentJson.spatialReference);
+        return esriBundle.Extent({ 'xmin': extentJson.xmin, 'ymin': extentJson.ymin, 'xmax': extentJson.xmax,
+            'ymax': extentJson.ymax, 'spatialReference': { 'wkid': extentJson.spatialReference.wkid }});
     }
 
     return mapManager;
