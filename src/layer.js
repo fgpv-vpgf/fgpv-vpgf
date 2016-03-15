@@ -426,7 +426,7 @@ function predictLayerUrlBuilder(esriBundle) {
 * @returns {String} array buffer in string form
 */
 function arrayBufferToString(buffer) {
-    // TODO does this need to be more robust?  handle magic encodings?
+    // handles UTF8 encoding
     return String.fromCharCode.apply(null, new Uint8Array(buffer));
 }
 
@@ -451,27 +451,22 @@ function validateGeoJson(geoJson) {
     };
     const res = {};
 
-    try {
-        res.fields = extractFields(geoJson);
-        res.geometryType = geomMap[geoJson.features[0].geometry.type];
-        res.formattedData = geoJson;
-        res.valid = !!res.geometryType; // true if we found a geometry type
-
-        // TODO optional check: iterate through every feature, ensure geometry type and properties are all identical
-
-    } catch (e) {
-        // json is not in the format we would like
-        res.valid = false;
+    res.fields = extractFields(geoJson);
+    res.geometryType = geomMap[geoJson.features[0].geometry.type];
+    if (!res.geometryType) {
+        throw new Error('Unexpected geometry type in GeoJSON');
     }
+    res.formattedData = geoJson;
+
+    // TODO optional check: iterate through every feature, ensure geometry type and properties are all identical
 
     return res;
 }
 
 /**
 * Validates file content.  Does some basic checking for errors. Attempts to get field list, and
-* if possible, provide the file in a more useful format
+* if possible, provide the file in a more useful format. Promise rejection indicates failed validation
 *
-* - valid: validity of the file. true means the easy tests passed (boolean)
 * - formattedData: file contents in a more useful format. JSON for GeoJSON and Shapefile. String for CSV
 * - fields: array of field definitions for the file. conforms to ESRI's REST field standard.
 * - geometryType: describes the geometry of the file (string). conforms to ESRI's REST geometry type enum values.
@@ -482,63 +477,68 @@ function validateGeoJson(geoJson) {
 * @returns {Promise} a promise resolving with an infomation object
 */
 function validateFile(type, data) {
-    return new Promise(resolve => {
-        // TODO would an error message property on result be useful?
 
-        const res = {}; // result
-        const fileHandler = {}; // maps handlers for different file types
+    const fileHandler = {}; // maps handlers for different file types
 
-        fileHandler[serviceType.CSV] = data => {
+    fileHandler[serviceType.CSV] = data => {
+        return new Promise((resolve, reject) => {
+
             // convert from arraybuffer to string to parsed csv. store string format for later
-            res.formattedData = arrayBufferToString(data);
+            const res = {
+                formattedData: arrayBufferToString(data)
+            };
+
             const fileArr = csvPeek(res.formattedData, ',');
 
             // validations
             if (fileArr.length === 0) {
                 // fail, no rows
-                res.valid = false;
+                reject(new Error('File has no rows'));
             } else {
                 // field count of first row.
                 const fc = fileArr[0].length;
                 if (fc < 2) {
                     // fail not enough columns
-                    res.valid = false;
+                    reject(new Error('File has less than two columns'));
                 } else {
                     // check field counts of each row
-                    res.valid = fileArr.every(rowArr => rowArr.length === fc);
-
-                    // make field list esri-ish for consistancy
-                    res.fields = fileArr[0].map(field => ({
-                        name: field,
-                        type: 'esriFieldTypeString'
-                    }));
-                    res.geometryType = 'esriGeometryPoint'; // always point for CSV
+                    if (fileArr.every(rowArr => rowArr.length === fc)) {
+                        // make field list esri-ish for consistancy
+                        res.fields = fileArr[0].map(field => ({
+                            name: field,
+                            type: 'esriFieldTypeString'
+                        }));
+                        res.geometryType = 'esriGeometryPoint'; // always point for CSV
+                        resolve(res);
+                    } else {
+                        reject(new Error('File has no rows'));
+                    }
                 }
             }
-            resolve(res);
-        };
+        });
+    };
 
-        fileHandler[serviceType.GeoJSON] = data => {
-
+    fileHandler[serviceType.GeoJSON] = data => {
+        return new Promise(resolve => {
             // convert from arraybuffer to string to json
             const geoJson = JSON.parse(arrayBufferToString(data));
             resolve(validateGeoJson(geoJson));
-        };
+        });
+    };
 
-        fileHandler[serviceType.Shapefile] = data => {
+    fileHandler[serviceType.Shapefile] = data => {
+        return new Promise((resolve, reject) => {
             // convert from arraybuffer (containing zipped shapefile) to json (using shp library)
             shp(data).then(geoJson => {
                 resolve(validateGeoJson(geoJson));
-            }).catch(() => {
-                res.valid = false;
-                resolve(res);
+            }).catch(err => {
+                reject(err);
             });
-        };
+        });
+    };
 
-        // trigger off the appropriate handler
-        fileHandler[type](data);
-
-    });
+    // trigger off the appropriate handler, return promise
+    return fileHandler[type](data);
 }
 
 function serverLayerIdentifyBuilder(esriBundle) {
