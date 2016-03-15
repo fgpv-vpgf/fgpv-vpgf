@@ -201,7 +201,7 @@
                             console.log('base map has different wkid: ' + newBaseMap.wkid);
                             ref.mapExtent = setSelectedBaseMap(id, config);
 
-                            reAssembleAvenger();
+                            reAssembleMap();
                         }
                     });
 
