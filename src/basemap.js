@@ -68,6 +68,12 @@ module.exports = function (esriBundle) {
         // finalize basmap gallery
         basemapGallery.startup();
 
+        // display message
+        // TODO: add ui hook? to display msg on screen
+        basemapGallery.on('error', msg => {
+          console.error('basemap gallery error:', msg);
+        });
+
         // Set basemap by id
         function setBasemap(id) {
             // set the basemap based on the id provided
