@@ -153,8 +153,9 @@ module.exports = function (esriBundle) {
      */
     function getExtentFromJson(extentJson) {
 
-        return esriBundle.Extent({ 'xmin': extentJson.xmin, 'ymin': extentJson.ymin, 'xmax': extentJson.xmax,
-            'ymax': extentJson.ymax, 'spatialReference': { 'wkid': extentJson.spatialReference.wkid }});
+        return esriBundle.Extent({ xmin: extentJson.xmin, ymin: extentJson.ymin,
+            xmax: extentJson.xmax, ymax: extentJson.ymax,
+            spatialReference: { wkid: extentJson.spatialReference.wkid } });
     }
 
     return mapManager;
