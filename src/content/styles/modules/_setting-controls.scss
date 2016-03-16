@@ -1,11 +1,31 @@
 @mixin setting-controls {
     @include slider-setting;
     @include toggle-setting;
+    @include boundingbox-setting;
+}
+
+@mixin boundingbox-setting {
+    .rv-boundingbox-setting {
+        > span {
+            vertical-align: middle;
+            margin: rem(1.6);
+            line-height: rem(2.8);
+            height: rem(3);
+            width: 100%;
+            margin-left: 0;
+        }
+    }
 }
 
 // more styling on top of the default material slider control
 @mixin slider-setting {
     .rv-slider-setting {
+        border-bottom: 1px dashed $divider-color-light;
+
+        > div {
+            width: 100%;
+        }
+
         .rv-slider-setting-label {
             margin-bottom: - rem(1.4);
             display: block;
@@ -17,6 +37,7 @@
 
             md-slider {
                 flex: 1;
+                margin-left: 0;
             }
 
             .rv-slider-setting-indicator {
@@ -24,6 +45,10 @@
                 min-width: 45px;
                 text-align: right;
             }
+        }
+
+        md-icon {
+            margin-right: 5%;
         }
     }
 }
