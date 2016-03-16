@@ -49,7 +49,7 @@
         };
     };
 
-    // lyaer item generator
+    // layer item generator
     const LAYER_ITEM = (name, type, options, flags) => {
         return {
             type: 'layer',
@@ -59,10 +59,8 @@
             options,
             flags
         };
-    }
-
+    };
     // jscs:enable requireSpacesInAnonymousFunctionExpression
-
 
     // TODO: move this somewhere later
     // jscs:disable maximumLineLength
@@ -121,9 +119,9 @@
                 esriDynamic: dynamicGenerator,
                 esriFeature: featureGenerator,
                 esriImage: imageGenerator,
-                esriTile: imageGenerator,
+                esriTile: imageGenerator, // TODO: add tile generator; retrieve symbology same was as for feature/dynamic
                 ogcWms: imageGenerator
-            }
+            };
 
             const service = {
                 addLayer,
@@ -138,16 +136,20 @@
 
             /**
              * Initializes autolegend by adding data and image groups to it.
-             * @return {[type]} [description]
              */
             function init() {
                 ref.root.push(ref.dataGroup, ref.imageGroup);
             }
 
+            /**
+             * Parses a dynamic layer object and creates a legend item (with nested groups and symbology)
+             * @param  {Object} layer layer object from `layerRegistry`
+             * @return {Object}       legend item
+             */
             function dynamicGenerator(layer) {
                 const symbologyPromise = getMapServerSymbology(layer);
 
-                const dynamicGroup = LAYER_GROUP(layer.state.name, true);
+                const dynamicGroup = LAYER_GROUP(layer.state.name);
                 dynamicGroup.slaves = [];
 
                 layer.layer.layerInfos.forEach(layerInfo => {
@@ -165,35 +167,37 @@
 
                             // TODO: temp
                             layerDefaults[layerTypes[layer.state.layerType]]
-                        )
+                        );
 
                         assignDirectMaster(layerItem, layerInfo.parentLayerId);
                     }
                 });
 
-
-
+                // wait for symbology to load and ...
                 symbologyPromise
-                    .then(({ data, index }) => {
-                        data.layers.forEach(layer => {
-                            applySymbology(dynamicGroup.slaves[layer.layerId], layer);
-                        });
+                    .then(({ data }) => { // ... and apply them to existing child items
+                        data.layers.forEach(layer => applySymbology(dynamicGroup.slaves[layer.layerId], layer));
 
+                        // add some default image if there missing symbology
                         dynamicGroup.slaves.forEach(slave => {
                             if (slave.symbology) {
                                 return;
                             }
 
-                            // add some default image if there missing symbology
                             slave.symbology = [{
                                 icon: NO_IMAGE,
                                 name: slave.name
                             }];
-                        })
+                        });
                     });
 
                 return dynamicGroup;
 
+                /**
+                 * Finds direct parent of a child item in dynamic layer group and adds it to its items array.
+                 * @param  {Object} item     layer or group item
+                 * @param  {Number} masterId id of the direct parent
+                 */
                 function assignDirectMaster(item, masterId) {
                     const directMaster = masterId === -1 ? dynamicGroup : dynamicGroup.slaves[masterId];
                     item.master = dynamicGroup; // store a reference to the root group item of the dynamic layer
@@ -202,6 +206,11 @@
                 }
             }
 
+            /**
+             * Parses feature layer object and create a legend entry with symbology
+             * @param  {Object} layer layer object from `layerRegistry`
+             * @return {Object}       legend item
+             */
             function featureGenerator(layer) {
                 const symbologyPromise = getMapServerSymbology(layer);
                 const state = layer.state;
@@ -211,6 +220,11 @@
                 return state;
             }
 
+            /**
+             * Parses esri image layer object and create a legend entry with symbology
+             * @param  {Object} layer layer object from `layerRegistry`
+             * @return {Object}       legend item
+             */
             function imageGenerator(layer) {
                 const state = layer.state;
 
@@ -267,7 +281,7 @@
 
             // jscs also doesn't like fancy destructuring
             // jscs:disable requireSpaceAfterComma
-            const [, legendUrl, , index = -1] = reg.exec(url); // https://babeljs.io/docs/learn-es2015/#destructuring
+            const [, legendUrl,, index = -1] = reg.exec(url); // https://babeljs.io/docs/learn-es2015/#destructuring
             // jscs:enable requireSpaceAfterComma
 
             return $http.jsonp(`${legendUrl}/legend?f=json&callback=JSON_CALLBACK`)
