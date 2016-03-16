@@ -50,6 +50,8 @@ describe('geo', () => {
 
     describe('geoService', () => {
 
+        // TODO: re-enable the test after unit test code updated
+        // temporary disabled for basemap reprojection code
         xit('should set zoom correctly', done => {
             // set a spy on it
             spyOn(map, 'setZoom');
@@ -132,6 +134,8 @@ describe('geo', () => {
             };
             const el = angular.element('<div id="randomMap" />');
 
+            // TODO: re-enable the test after unit test code updated
+            // temporary disabled for basemap reprojection code
             xit('should make a map', done => {
                 const m = gapiService.gapi.mapManager;
                 spyOn(m, 'Map')
