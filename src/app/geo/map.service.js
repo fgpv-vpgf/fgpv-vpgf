@@ -132,7 +132,7 @@
 
             /*
              * Retrieve full extent from extentSets
-             * [private]
+             * @private
              */
             function getFullExtFromExtentSets(extentSets) {
 
@@ -277,10 +277,10 @@
 
             /*
             * Initialize map full extent
-            * [private]
+            * @private
             */
             function initMapFullExtent() {
-                let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
+                const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
                 const map = service.mapObject;
 
                 // map extent is not available until map is loaded
@@ -312,15 +312,13 @@
 
             /*
              * Get basemap config from basemap id
-             * [private]
+             * @private
              * @param id base Map id
              * @param config config object
              * @return {object} base map json object
              */
             function getBaseMapConfig(id) {
-                return config.baseMaps.find(basemapConfig => {
-                    return (basemapConfig.id === id);
-                });
+                return config.baseMaps.find(basemapConfig => (basemapConfig.id === id));
             }
 
         }
