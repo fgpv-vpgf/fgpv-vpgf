@@ -15,17 +15,20 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, gapiService,  configService, layerRegistry, identifyService) {
+    function mapServiceFactory($q, gapiService) {
         return mapService;
 
         function mapService(geoState, config) {
-            const ref = {
-                fullExtent: null, // Object
 
-                mapExtent: null,
-                selectedBaseMapId: null,
-                selectedBaseMapExtentSetId: null
-            };
+            if (angular.isUndefined(geoState.ref)) {
+                geoState.ref = {
+                    fullExtent: null, // Object
+
+                    mapExtent: null,
+                    selectedBaseMapId: null,
+                    selectedBaseMapExtentSetId: null
+                };
+            }
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -37,6 +40,7 @@
                 shiftZoom,
                 selectBasemap,
                 setFullExtent,
+                setSelectedBaseMap,
                 zoomToGraphic,
             };
 
@@ -63,15 +67,15 @@
                 }
 
                 // set selected base map id
-                if (!ref.selectedBaseMapId) {
-                    ref.mapExtent = setSelectedBaseMap(config.baseMaps[0].id, config);
+                if (!geoState.ref.selectedBaseMapId) {
+                    setSelectedBaseMap(config.baseMaps[0].id, config);
                 }
 
                 // FIXME remove the hardcoded settings when we have code which does this properly
                 mapObject = gapiService.gapi.mapManager.Map(geoState.mapNode, {
 
                     // basemap: 'gray',
-                    extent: ref.mapExtent,
+                    extent: geoState.ref.mapExtent,
                     zoom: 6,
                     center: [-100, 50]
                 });
@@ -113,7 +117,7 @@
                 }
 
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
-                service.mapManager.BasemapControl.setBasemap(ref.selectedBaseMapId);
+                service.mapManager.BasemapControl.setBasemap(geoState.ref.selectedBaseMapId);
 
                 // FIXME temp link for debugging
                 window.FGPV = {
@@ -137,7 +141,7 @@
 
                 // In configSchema, at least one extent for a basemap
                 const extentSetForId = extentSets.find(extentSet => {
-                    if (extentSet.id === ref.selectedBaseMapExtentSetId) {
+                    if (extentSet.id === geoState.ref.selectedBaseMapExtentSetId) {
                         return true;
                     }
                 });
@@ -170,25 +174,20 @@
                 } else {
 
                     // mapManager.BasemapControl.setBasemap(id);
-                    configService.getCurrent()
-                    .then(config => {
-                        const newBaseMap = getBaseMapConfig(id, config);
-                        const oldBaseMap = getBaseMapConfig(ref.selectedBaseMapId, config);
+                    const newBaseMap = getBaseMapConfig(id, config);
+                    const oldBaseMap = getBaseMapConfig(geoState.ref.selectedBaseMapId, config);
 
-                        if (newBaseMap.wkid === oldBaseMap.wkid) {
+                    if (newBaseMap.wkid === oldBaseMap.wkid) {
 
-                            console.log('base map has same wkid, new: ' + newBaseMap.wkid);
-                            mapManager.BasemapControl.setBasemap(id);
+                        console.log('base map has same wkid, new: ' + newBaseMap.wkid);
+                        mapManager.BasemapControl.setBasemap(id);
 
-                        } else {
+                    } else {
 
-                            // extent is different, build the map again
-                            console.log('base map has different wkid: ' + newBaseMap.wkid);
-                            ref.mapExtent = setSelectedBaseMap(id, config);
-
-                            reAssembleMap(config);
-                        }
-                    });
+                        // extent is different, build the map again
+                        console.log('base map has different wkid: ' + newBaseMap.wkid);
+                        setSelectedBaseMap(id, config);
+                    }
 
                 }
             }
@@ -200,13 +199,10 @@
             */
             function baseMapHasSameSP(id) {
 
-                configService.getCurrent()
-                    .then(config => {
-                        const newBaseMap = getBaseMapConfig(id, config);
-                        const oldBaseMap = getBaseMapConfig(ref.selectedBaseMapId, config);
+                const newBaseMap = getBaseMapConfig(id, config);
+                const oldBaseMap = getBaseMapConfig(geoState.ref.selectedBaseMapId, config);
 
-                        return (newBaseMap.wkid === oldBaseMap.wkid);
-                    });
+                return (newBaseMap.wkid === oldBaseMap.wkid);
 
             }
 
@@ -233,8 +229,8 @@
              */
             function setFullExtent() {
                 const map = service.mapObject;
-                if (ref.fullExtent) {
-                    map.setExtent(ref.fullExtent);
+                if (geoState.ref.fullExtent) {
+                    map.setExtent(geoState.ref.fullExtent);
                 } else {
                     console.warn('GeoService: fullExtent value is not set.');
                 }
@@ -258,32 +254,32 @@
 
             /*
             * Sets the current selected map id and extent set id, creates the fullExtent
-            * [private]
             * @param {id} base map id
-            * @param {config} json config settings
             */
-            function setSelectedBaseMap(id, config) {
+            function setSelectedBaseMap(id) {
 
-                ref.selectedBaseMapId = id;
+                console.log('setSelectdBaseMap, basemapId:' + id);
+
+                geoState.ref.selectedBaseMapId = id;
 
                 const selectedBaseMap = config.baseMaps.find(baseMap => {
-                    return (baseMap.id === ref.selectedBaseMapId);
+                    return (baseMap.id === geoState.ref.selectedBaseMapId);
                 });
 
-                ref.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
+                geoState.ref.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
 
                 const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
-                const extent = gapiService.gapi.mapManager.Extent(fullExtentJson);
+                geoState.ref.mapExtent = gapiService.gapi.mapManager.Extent(fullExtentJson);
 
-                return extent;
+                console.log('finish setSelectdBaseMap');
+
             }
 
             /*
             * Initialize map full extent
             * [private]
-            * @param {config} config object
             */
-            function initMapFullExtent(config) {
+            function initMapFullExtent() {
                 let lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
                 const map = service.mapObject;
 
@@ -299,12 +295,12 @@
                                     lFullExtent.spatialReference)) {
 
                                 // same spatial reference, no reprojection required
-                                ref.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
+                                geoState.ref.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
                                     lFullExtent);
                             } else {
 
                                 // need to re-project
-                                ref.fullExtent = gapiService.gapi.proj.projectEsriExtent(
+                                geoState.ref.fullExtent = gapiService.gapi.proj.projectEsriExtent(
                                     gapiService.gapi.mapManager.getExtentFromJson(
                                         lFullExtent),
                                     map.extent.spatialReference);
@@ -321,52 +317,9 @@
              * @param config config object
              * @return {object} base map json object
              */
-            function getBaseMapConfig(id, config) {
-
-                // return configService.getCurrent()
-                //     .then(config => {
-                //         return config.baseMaps.find(basemapConfig => {
-                //             return (basemapConfig.id === id);
-                //         });
-                //     });
+            function getBaseMapConfig(id) {
                 return config.baseMaps.find(basemapConfig => {
                     return (basemapConfig.id === id);
-                });
-            }
-
-            /*
-            * Re-assemble map object
-            * [private]
-            */
-            function reAssembleMap(config) {
-                // TODO: please review!, cannot call assembleMap in map service
-                // where selection of basemap detects different spatial reference
-
-                $q(resolve => {
-                    const lMapService = buildMapObject();
-                    resolve(lMapService);
-                })
-                .then(ms => {
-                    // expose mapService on geoService
-                    angular.extend(service, ms);
-                    return layerRegistry(geoState, config);
-                })
-                .then(lr => {
-                    // expose layerRegistry service on geoService
-                    angular.extend(service, lr);
-                    return identifyService(geoState);
-                })
-                .then(id => {
-                    // expose identifyService on geoService
-                    angular.extend(service, id);
-                    service.state = geoState; // store geo state
-                    service.isMapReady = true;
-
-                    return service;
-                })
-                .catch(error => {
-                    console.error('Failed to assemble the map');
-                    console.error(error);
                 });
             }
 
