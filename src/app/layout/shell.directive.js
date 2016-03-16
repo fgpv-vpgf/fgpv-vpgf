@@ -69,17 +69,17 @@
                     {
                         name: 'Share',
                         type: 'link'
-                    },
+                    }/*,
                     {
                         name: 'Print',
                         type: 'link'
-                    }
+                    }*/
                 ]
             },
-            {
+            /*{
                 name: 'About',
                 type: 'link'
-            },
+            },*/
             {
                 name: 'Help',
                 type: 'link',
