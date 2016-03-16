@@ -105,6 +105,8 @@ module.exports = function (esriBundle) {
             overviewMapCtrl.startup();
 
             basemapCtrl.basemapGallery.on('selection-change', () => {
+                overviewMapCtrl.destroy();
+
                 overviewMapCtrl = mapManager.OverviewMap({
                     map: map,
                     expandFactor: 1,
