@@ -2,7 +2,7 @@
     'use strict';
 
     // layer group ids should not collide
-    let groupIdCounter = 0;
+    let itemIdCounter = 0;
 
     // jscs doesn't like enhanced object notation
     // jscs:disable requireSpacesInAnonymousFunctionExpression
@@ -10,7 +10,7 @@
         return {
             type: 'group',
             name,
-            id: 'lg_' + groupIdCounter++,
+            id: 'rv_lt_' + itemIdCounter++,
             expanded,
             items: [],
 
@@ -49,13 +49,26 @@
         };
     };
 
+    // lyaer item generator
+    const LAYER_ITEM = (name, type, options, flags) => {
+        return {
+            type: 'layer',
+            name,
+            id: 'rv_lt_' + itemIdCounter++,
+            layerType: type,
+            options,
+            flags
+        };
+    }
+
+    // jscs:enable requireSpacesInAnonymousFunctionExpression
+
+
     // TODO: move this somewhere later
     // jscs:disable maximumLineLength
     const NO_IMAGE =
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUJJREFUeNrs172Kg0AQB/BcOLHSRhBFEF/B5/cBrMRGsLESFBFsFAs/ivuTheW4kOBN1mSLmWJB0PGHM6vjV5IkF/3ietEymMUsZjGLWcxiltas7+OnNk3T9/22bYTbGIbhum4QBIpZMJVl+coDGIYB60HZUVZd11ht27Ysi2CapmkcRyRRzFqWBWsYhp7nEVhd1xVFIZLwTnwQaMd1XfVi5XmOjZJlGUF2Pc8ktt48z23basGSpg/0FkqTpinKpNxEZ8GEpkGB0NS/ZUpMRJY0iUN8kdSaKKw/Jsdx4jhWa6KwsK3ONr3U8ueZ6KxTTf+btyQIw5MYBDAXuLd4fgnmDll3xSzTNPd9l5PJ/evqSWCkEecjiWKW7/tVVY23IJcGSRSzoihC7bQbmsW8ezwv/5Axi1nMYhazmMWst8ePAAMA0CzGRisOjIgAAAAASUVORK5CYII=';
     // jscs:enable maximumLineLength
-
-    // jscs:enable requireSpacesInAnonymousFunctionExpression
 
     /**
      * @ngdoc service
@@ -72,7 +85,7 @@
         .module('app.geo')
         .factory('legendService', legendServiceFactory);
 
-    function legendServiceFactory($http, $q) {
+    function legendServiceFactory($http, $q, layerDefaults, layerTypes) {
         const legendSwitch = {
             structured: structuredLegendService,
             autopopulate: autoLegendService
@@ -94,7 +107,7 @@
                 root: legend.items
             };
 
-            // map layerTypes to default layergroups
+            // maps layerTypes to default layergroups
             const layerTypeGroups = {
                 esriDynamic: ref.dataGroup,
                 esriFeature: ref.dataGroup,
@@ -103,10 +116,18 @@
                 ogcWms: ref.imageGroup
             };
 
+            // maps layerTypes to layer item generators
+            const layerTypeGenerators = {
+                esriDynamic: dynamicGenerator,
+                esriFeature: featureGenerator,
+                esriImage: imageGenerator,
+                esriTile: imageGenerator,
+                ogcWms: imageGenerator
+            }
+
             const service = {
                 addLayer,
-                removeLayer,
-                updateLegend
+                removeLayer
             };
 
             init();
@@ -115,11 +136,91 @@
 
             /***/
 
+            /**
+             * Initializes autolegend by adding data and image groups to it.
+             * @return {[type]} [description]
+             */
             function init() {
                 ref.root.push(ref.dataGroup, ref.imageGroup);
             }
 
-            function updateLegend() {}
+            function dynamicGenerator(layer) {
+                const symbologyPromise = getMapServerSymbology(layer);
+
+                const dynamicGroup = LAYER_GROUP(layer.state.name, true);
+                dynamicGroup.slaves = [];
+
+                layer.layer.layerInfos.forEach(layerInfo => {
+                    if (layerInfo.subLayerIds) { // group item
+                        const groupItem = LAYER_GROUP(layerInfo.name);
+
+                        assignDirectMaster(groupItem, layerInfo.parentLayerId);
+                    } else { // leaf item
+                        const layerItem = LAYER_ITEM(layerInfo.name, layerTypes.esriDynamic);
+
+                        // TODO: need generate options and flags presets for group layer children
+                        angular.merge(layerItem, {
+                                cache: {} // to cache stuff like retrieved metadata info
+                            },
+
+                            // TODO: temp
+                            layerDefaults[layerTypes[layer.state.layerType]]
+                        )
+
+                        assignDirectMaster(layerItem, layerInfo.parentLayerId);
+                    }
+                });
+
+
+
+                symbologyPromise
+                    .then(({ data, index }) => {
+                        data.layers.forEach(layer => {
+                            applySymbology(dynamicGroup.slaves[layer.layerId], layer);
+                        });
+
+                        dynamicGroup.slaves.forEach(slave => {
+                            if (slave.symbology) {
+                                return;
+                            }
+
+                            // add some default image if there missing symbology
+                            slave.symbology = [{
+                                icon: NO_IMAGE,
+                                name: slave.name
+                            }];
+                        })
+                    });
+
+                return dynamicGroup;
+
+                function assignDirectMaster(item, masterId) {
+                    const directMaster = masterId === -1 ? dynamicGroup : dynamicGroup.slaves[masterId];
+                    item.master = dynamicGroup; // store a reference to the root group item of the dynamic layer
+                    dynamicGroup.slaves.push(item); // store in slave reference array
+                    directMaster.add(item); // add to master's items list
+                }
+            }
+
+            function featureGenerator(layer) {
+                const symbologyPromise = getMapServerSymbology(layer);
+                const state = layer.state;
+
+                symbologyPromise.then(({ data, index }) => applySymbology(state, data.layers[index]));
+
+                return state;
+            }
+
+            function imageGenerator(layer) {
+                const state = layer.state;
+
+                state.symbology = [{
+                    icon: NO_IMAGE,
+                    name: state.name
+                }];
+
+                return state;
+            }
 
             /**
              * Add a provided layer to the appropriate group;
@@ -127,9 +228,10 @@
              * @param {Object} layer object from `layerRegistry` `layers` object
              */
             function addLayer(layer) {
-                layerTypeGroups[layer.state.layerType].add(layer.state);
+                const layerType = layer.state.layerType;
+                const entry = layerTypeGenerators[layerType](layer);
 
-                getSymbology(layer);
+                layerTypeGroups[layerType].add(entry);
             }
 
             /**
@@ -141,6 +243,7 @@
             }
         }
 
+        // TODO: maybe this should be split into a separate service; it can get messy otherwise in here
         function structuredLegendService() {
 
         }
@@ -149,9 +252,16 @@
          * TODO: Work in progress... Works fine for feature layers only right now; everything else gest a generic icon;
          * Scrapes feaure and dynamic layers for their symbology;
          *
+         * * data.layers [
+         *     {
+         *         layerId: Number,
+         *         legend: Array
+         *     },
+         *     ...
+         * ]
          * @param  {Object} layer layer object from `layerRegistry`
          */
-        function getSymbology(layer) {
+        function getMapServerSymbology(layer) {
             const reg = /(.+?)(\/(\d))?$/; // separate layer id from the rest of the url
             const url = layer.state.url.replace(/\/+$/, ''); // strip trailing slashes
 
@@ -160,45 +270,36 @@
             const [, legendUrl, , index = -1] = reg.exec(url); // https://babeljs.io/docs/learn-es2015/#destructuring
             // jscs:enable requireSpaceAfterComma
 
-            $http.jsonp(`${legendUrl}/legend?f=json&callback=JSON_CALLBACK`)
+            return $http.jsonp(`${legendUrl}/legend?f=json&callback=JSON_CALLBACK`)
                 .then(result => {
                     // console.log(legendUrl, index, result);
 
                     if (result.data.error) {
                         return $q.reject(result.data.error);
                     }
-                    return result.data;
-                })
-                .then(data => {
-                    if (index !== -1) {
-                        const legend = data.layers[index].legend;
-                        const symbology = legend.map(item => {
-                            return {
-                                icon: `data:${item.contentType};base64,${item.imageData}`,
-                                name: item.label
-                            };
-                        });
-
-                        layer.state.symbology = symbology;
-
-                        console.log('symbology', symbology);
-                    } else {
-                        // TODO: do better; set noimage image just so there is something
-                        layer.state.symbology = [{
-                            icon: NO_IMAGE,
-                            name: ''
-                        }];
-                    }
+                    return {
+                        data: result.data,
+                        index
+                    };
                 })
                 .catch(error => {
-                    // TODO: do better; this is likely an image layer; set noimage image temporarily just so there is some icon in toc
-                    layer.state.symbology = [{
-                        icon: NO_IMAGE,
-                        name: ''
-                    }];
-
+                    // TODO: apply default symbology to the layer in question in this case
                     console.error(error);
                 });
+        }
+
+        /**
+         * Applies retrieved symbology to the layer item's state
+         * @param  {Object} state     layer item
+         * @param  {Object} layerData data from the legend endpoint
+         */
+        function applySymbology(state, layerData) {
+            state.symbology = layerData.legend.map(item => {
+                return {
+                    icon: `data:${item.contentType};base64,${item.imageData}`,
+                    name: item.label
+                };
+            });
         }
     }
 })();
