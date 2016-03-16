@@ -40,8 +40,7 @@
         self.Math = window.Math;
 
         // watch for changing slider to set actual layer opacity
-        $scope.$watch('self.display.data.opacity.value', (newValue, oldValue) => {
-            console.log(newValue, oldValue);
+        $scope.$watch('self.display.data.opacity.value', newValue => {
             if (newValue) {
                 self.display.data.layerItem.setOpacity(newValue);
             }
