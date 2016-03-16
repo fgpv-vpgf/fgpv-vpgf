@@ -342,7 +342,10 @@
                 // TODO: please review!, cannot call assembleMap in map service
                 // where selection of basemap detects different spatial reference
 
-                buildMapObject()
+                $q(resolve => {
+                    const lMapService = buildMapObject();
+                    resolve(lMapService);
+                })
                 .then(ms => {
                     // expose mapService on geoService
                     angular.extend(service, ms);
