@@ -20,14 +20,17 @@
 
         function mapService(geoState, config) {
 
-            if (angular.isUndefined(geoState.ref)) {
-                geoState.ref = {
-                    fullExtent: null, // Object
-
-                    mapExtent: null,
-                    selectedBaseMapId: null,
-                    selectedBaseMapExtentSetId: null
-                };
+            if (angular.isUndefined(geoState.fullExtent)) {
+                geoState.fullExtent = null;
+            }
+            if (angular.isUndefined(geoState.mapExtent)) {
+                geoState.mapExtent = null;
+            }
+            if (angular.isUndefined(geoState.selectedBaseMapId)) {
+                geoState.selectedBaseMapId = null;
+            }
+            if (angular.isUndefined(geoState.selectedBaseMapExtentSetId)) {
+                geoState.selectedBaseMapExtentSetId = null;
             }
 
             // this `service` object will be exposed through `geoService`
@@ -67,7 +70,7 @@
                 }
 
                 // set selected base map id
-                if (!geoState.ref.selectedBaseMapId) {
+                if (!geoState.selectedBaseMapId) {
                     setSelectedBaseMap(config.baseMaps[0].id, config);
                 }
 
@@ -75,7 +78,7 @@
                 mapObject = gapiService.gapi.mapManager.Map(geoState.mapNode, {
 
                     // basemap: 'gray',
-                    extent: geoState.ref.mapExtent,
+                    extent: geoState.mapExtent,
                     zoom: 6,
                     center: [-100, 50]
                 });
@@ -117,7 +120,7 @@
                 }
 
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
-                service.mapManager.BasemapControl.setBasemap(geoState.ref.selectedBaseMapId);
+                service.mapManager.BasemapControl.setBasemap(geoState.selectedBaseMapId);
 
                 // FIXME temp link for debugging
                 window.FGPV = {
@@ -141,7 +144,7 @@
 
                 // In configSchema, at least one extent for a basemap
                 const extentSetForId = extentSets.find(extentSet => {
-                    if (extentSet.id === geoState.ref.selectedBaseMapExtentSetId) {
+                    if (extentSet.id === geoState.selectedBaseMapExtentSetId) {
                         return true;
                     }
                 });
@@ -175,7 +178,7 @@
 
                     // mapManager.BasemapControl.setBasemap(id);
                     const newBaseMap = getBaseMapConfig(id, config);
-                    const oldBaseMap = getBaseMapConfig(geoState.ref.selectedBaseMapId, config);
+                    const oldBaseMap = getBaseMapConfig(geoState.selectedBaseMapId, config);
 
                     if (newBaseMap.wkid === oldBaseMap.wkid) {
 
@@ -200,7 +203,7 @@
             function baseMapHasSameSP(id) {
 
                 const newBaseMap = getBaseMapConfig(id, config);
-                const oldBaseMap = getBaseMapConfig(geoState.ref.selectedBaseMapId, config);
+                const oldBaseMap = getBaseMapConfig(geoState.selectedBaseMapId, config);
 
                 return (newBaseMap.wkid === oldBaseMap.wkid);
 
@@ -229,8 +232,8 @@
              */
             function setFullExtent() {
                 const map = service.mapObject;
-                if (geoState.ref.fullExtent) {
-                    map.setExtent(geoState.ref.fullExtent);
+                if (geoState.fullExtent) {
+                    map.setExtent(geoState.fullExtent);
                 } else {
                     console.warn('GeoService: fullExtent value is not set.');
                 }
@@ -260,16 +263,16 @@
 
                 console.log('setSelectdBaseMap, basemapId:' + id);
 
-                geoState.ref.selectedBaseMapId = id;
+                geoState.selectedBaseMapId = id;
 
                 const selectedBaseMap = config.baseMaps.find(baseMap => {
-                    return (baseMap.id === geoState.ref.selectedBaseMapId);
+                    return (baseMap.id === geoState.selectedBaseMapId);
                 });
 
-                geoState.ref.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
+                geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
 
                 const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
-                geoState.ref.mapExtent = gapiService.gapi.mapManager.Extent(fullExtentJson);
+                geoState.mapExtent = gapiService.gapi.mapManager.Extent(fullExtentJson);
 
                 console.log('finish setSelectdBaseMap');
 
@@ -295,12 +298,12 @@
                                     lFullExtent.spatialReference)) {
 
                                 // same spatial reference, no reprojection required
-                                geoState.ref.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
+                                geoState.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
                                     lFullExtent);
                             } else {
 
                                 // need to re-project
-                                geoState.ref.fullExtent = gapiService.gapi.proj.projectEsriExtent(
+                                geoState.fullExtent = gapiService.gapi.proj.projectEsriExtent(
                                     gapiService.gapi.mapManager.getExtentFromJson(
                                         lFullExtent),
                                     map.extent.spatialReference);
