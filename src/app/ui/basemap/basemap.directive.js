@@ -168,11 +168,14 @@
             basemap.selected = true;
 
             if (geoService.baseMapHasSameSP(basemap.id)) {
-                console.log('------ yo -------');
-            }
 
-            // geoService.baseMapHasSameSP(basemap.id)
-            geoService.selectBasemap(basemap.id);
+                // set the selected basemap
+                geoService.selectBasemap(basemap.id);
+            } else {
+                console.log('-- reload map --');
+                geoService.setSelectedBaseMap(basemap.id);
+                geoService.assembleMap();
+            }
 
         }
     }
