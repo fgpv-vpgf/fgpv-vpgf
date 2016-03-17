@@ -186,10 +186,10 @@
 
     .esriOverviewMap .ovwHighlight {
         position: absolute;
-        //display: none !important;
         z-index: 99;
         cursor: move;
-        //background-color: rgba(0, 0, 0, 0.1) !important;
+        border: 1px solid $primary-color-dark !important;
+        background-color: rgba(0, 0, 0, 0.1) !important;
     }
 
     .esriOverviewMap .ovwButton {
