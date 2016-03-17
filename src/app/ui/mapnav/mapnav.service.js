@@ -25,10 +25,11 @@
             config: {
                 zoom: 'buttons', // 'all', 'slider', 'buttons'
                 extra: [
-                    'geoLocation',
-                    'marquee',
+                    // NOTE: geoLocation, marquee and history buttons kept as options for future functionality
+                    // 'geoLocation',
+                    // 'marquee',
                     'home',
-                    'history',
+                    // 'history',
                     'basemap'
                 ]
             },

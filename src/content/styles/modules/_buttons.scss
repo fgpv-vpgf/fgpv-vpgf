@@ -5,8 +5,8 @@
     @include button-group;
     @include button-effects;
 
-    .rv-checkbox {
-        width: 100%;
+    .rv-switch {
+        flex-direction: row-reverse;
 
         > .md-ink-ripple {
             right: 0;
@@ -15,6 +15,7 @@
 
         > .md-label {
             margin-left: 0;
+            flex: 1;
         }
     }
 }
