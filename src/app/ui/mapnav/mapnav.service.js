@@ -24,7 +24,7 @@
             // FIXME: this config snippet should obvisouly come from config service
             config: {
                 zoom: 'buttons', // 'all', 'slider', 'buttons'
-                extra: [
+                extra: [ // NOTE: geoLocation, marquee and history buttons kept as options for future functionality
                     // 'geoLocation',
                     // 'marquee',
                     'home',
