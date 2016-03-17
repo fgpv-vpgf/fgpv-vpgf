@@ -166,7 +166,17 @@
 
             // set the current basemap as selected.
             basemap.selected = true;
-            geoService.selectBasemap(basemap.id);
+
+            if (geoService.baseMapHasSameSP(basemap.id)) {
+
+                // set the selected basemap
+                geoService.selectBasemap(basemap.id);
+            } else {
+                console.log('-- reload map --');
+                geoService.setSelectedBaseMap(basemap.id);
+                geoService.assembleMap();
+            }
+
         }
     }
 })();

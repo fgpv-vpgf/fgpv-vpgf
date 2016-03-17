@@ -39,6 +39,18 @@
             "wkid": 3978
           }
         }
+      },
+      {
+        "id": "3456789123",
+        "default": {
+          "xmin": -14545988.445533132,
+          "ymin": 4822907.964742964,
+          "xmax": -4507771.626060756,
+          "ymax": 9815875.184845109,
+          "spatialReference": {
+            "wkid": 102100
+          }
+        }
       }
     ]
   },
@@ -175,7 +187,7 @@
       "altText": "altText - World Imagery",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Imagery",
@@ -191,7 +203,7 @@
       "altText": "altText - World Physical Map",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Physical_Map",
@@ -207,7 +219,7 @@
       "altText": "altText - World Shaded Relief",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Shaded_Relief",
@@ -223,7 +235,7 @@
       "altText": "altText - ESWorld Street Map",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Street_Map",
@@ -239,7 +251,7 @@
       "altText": "altText - World Terrain Base",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Terrain_Base",
@@ -255,7 +267,7 @@
       "altText": "altText - World Topographic Map",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
-      "extentId": "123456789",
+      "extentId": "3456789123",
       "layers": [
         {
           "id": "World_Topo_Map",
