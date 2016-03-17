@@ -73,6 +73,12 @@
       "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0"
     },
     {
+      "id":"stb_eos",
+      "name": "STB EOS 2014 CI ON 30m v2",
+      "layerType":"esriTile",
+      "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3857/MapServer"
+    },
+    {
       "id":"aafc_plant_hardiness_zones",
       "name": "AAFC Plant Hardiness Zones",
       "layerType":"esriDynamic",
