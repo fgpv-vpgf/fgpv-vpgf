@@ -32,6 +32,9 @@
             if (angular.isUndefined(geoState.selectedBaseMapExtentSetId)) {
                 geoState.selectedBaseMapExtentSetId = null;
             }
+            if (angular.isUndefined(geoState.blankBaseMapId)) {
+                geoState.blankBaseMapId = null;
+            }
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -176,20 +179,37 @@
                         ' please setup map manager by calling setupMap().');
                 } else {
 
-                    // mapManager.BasemapControl.setBasemap(id);
-                    const newBaseMap = getBaseMapConfig(id, config);
-                    const oldBaseMap = getBaseMapConfig(geoState.selectedBaseMapId, config);
+                    if (id === 'no_basemap') {
 
-                    if (newBaseMap.wkid === oldBaseMap.wkid) {
+                        // get the current selected basemap id
+                        setBaseMapVisibility(true);
+                        geoState.blankBaseMapId = id;
+                    } else if (geoState.blankBaseMapId === id) {
 
-                        console.log('base map has same wkid, new: ' + newBaseMap.wkid);
-                        mapManager.BasemapControl.setBasemap(id);
-
+                        // basemap was hidden
+                        geoState.blankBaseMapId = null;
+                        setBaseMapVisibility(false);
                     } else {
 
-                        // extent is different, build the map again
-                        console.log('base map has different wkid: ' + newBaseMap.wkid);
-                        setSelectedBaseMap(id, config);
+                        geoState.blankBaseMapId = null;
+
+                        mapManager.BasemapControl.setBasemap(id);
+
+                        // mapManager.BasemapControl.setBasemap(id);
+                        // const newBaseMap = getBaseMapConfig(id, config);
+                        // const oldBaseMap = getBaseMapConfig(geoState.selectedBaseMapId, config);
+
+                        // if (newBaseMap.wkid === oldBaseMap.wkid) {
+
+                        //     console.log('base map has same wkid, new: ' + newBaseMap.wkid);
+                        //     mapManager.BasemapControl.setBasemap(id);
+
+                        // } else {
+
+                        //     // extent is different, build the map again
+                        //     console.log('base map has different wkid: ' + newBaseMap.wkid);
+                        //     setSelectedBaseMap(id, config);
+                        // }
                     }
 
                 }
@@ -379,6 +399,22 @@
                 $timeout.cancel(service.loadingTimeout);
                 service.loadingTimeout = $timeout(() => service.mapObject.isMapLoading = isLoading, delay);
             }
+
+            /*
+             * change basemap opacity
+             * @param blankMap flag indicates if basemap should be visible
+             */
+            function setBaseMapVisibility(blankMap) {
+                const mapManager = service.mapManager;
+
+                const basemap = mapManager.BasemapControl.basemapGallery.getId(geoState.blankBaseMapId);
+                const basemapLayers = basemap.getLayers();
+
+                for (let basemapLayer of basemapLayers) {
+                    basemapLayer.opacity = (blankMap === true) ? 0 : 1;
+                }
+            }
+
         }
     }
 })();
