@@ -69,14 +69,14 @@
                     {
                         name: 'Share',
                         type: 'link'
-                    }/*,
+                    }/*, // TODO: re-enable if map-export functionality ever exists
                     {
                         name: 'Print',
                         type: 'link'
                     }*/
                 ]
             },
-            /*{
+            /*{ // TODO: re-enable if needed in the future
                 name: 'About',
                 type: 'link'
             },*/
