@@ -6,6 +6,8 @@
     @include button-effects;
 
     .rv-switch {
+        flex-direction: row-reverse;
+
         > .md-ink-ripple {
             right: 0;
             left: auto;
@@ -13,6 +15,7 @@
 
         > .md-label {
             margin-left: 0;
+            flex: 1;
         }
     }
 }

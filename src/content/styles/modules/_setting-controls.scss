@@ -1,19 +1,6 @@
 @mixin setting-controls {
     @include slider-setting;
-    @include toggle-setting;
-    @include boundingbox-setting;
-}
-
-@mixin boundingbox-setting {
-    .rv-boundingbox-setting {
-        > md-switch {
-            flex-direction: row-reverse;
-        }
-
-        > md-switch .md-label {
-          flex: 1;
-        }
-    }
+    @include toggle-setting;    
 }
 
 // more styling on top of the default material slider control
