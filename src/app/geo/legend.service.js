@@ -119,7 +119,7 @@
                 esriDynamic: dynamicGenerator,
                 esriFeature: featureGenerator,
                 esriImage: imageGenerator,
-                esriTile: imageGenerator, // TODO: add tile generator; retrieve symbology same was as for feature/dynamic
+                esriTile: dynamicGenerator, // TODO: add tile generator; retrieve symbology same was as for feature/dynamic
                 ogcWms: imageGenerator
             };
 

@@ -744,19 +744,22 @@
                         esriFeature: 'community:vector-square',
                         esriDynamic: 'action:settings',
                         ogcWms: 'image:photo',
-                        esriImage: 'image:photo'
+                        esriImage: 'image:photo',
+                        esriTile: 'image:photo'
                     },
                     label: {
                         esriFeature: 'toc.label.flag.feature',
                         esriDynamic: 'toc.label.flag.dynamic',
                         ogcWms: 'toc.label.flag.wms',
-                        esriImage: 'toc.label.flag.image'
+                        esriImage: 'toc.label.flag.image',
+                        esriTile: 'toc.label.flag.tile'
                     },
                     tooltip: {
                         esriFeature: 'toc.tooltip.flag.feature',
                         esriDynamic: 'toc.tooltip.flag.dynamic',
                         ogcWms: 'toc.tooltip.flag.wms',
-                        esriImage: 'toc.tooltip.flag.image'
+                        esriImage: 'toc.tooltip.flag.image',
+                        esriTile: 'toc.label.flag.tile'
                     }
                 },
                 scale: {
