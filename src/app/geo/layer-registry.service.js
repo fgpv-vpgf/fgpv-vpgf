@@ -46,6 +46,11 @@
 
             /***/
 
+            /**
+             * Creates esri layer object for a set of layers provided by the config, triggers attribute loading on layer load event and adds it to the legend afterwards.
+             * // TODO: might need to abstract this further to accomodate user-added layers as they need to go through the same process
+             * @return {Object} self for chaining
+             */
             function constructLayers() {
                 config.layers.forEach(layerConfig => {
                     // TODO: decouple identifyservice from everything
@@ -76,12 +81,13 @@
                 return service;
             }
 
+            /**
+             * Starts loading attributes for the specified layer.
+             * @param  {Object} layer esri layer object
+             * @return {Promise} a promise resolving with the retrieved attribute data
+             */
             function loadLayerAttributes(layer) {
                 return gapiService.gapi.attribs.loadLayerAttribs(layer)
-                    /*.then(data => {
-                        // registerAttributes(data);
-                        resolve(data);
-                    })*/
                     .catch(exception => {
                         console.error(
                             'Error getting attributes for ' +

@@ -264,6 +264,7 @@
 
         /**
          * TODO: Work in progress... Works fine for feature layers only right now; everything else gest a generic icon;
+         * TODO: move to geoapi as it's stateless and very specific
          * Scrapes feaure and dynamic layers for their symbology;
          *
          * * data.layers [
