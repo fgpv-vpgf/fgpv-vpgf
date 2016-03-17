@@ -7,20 +7,18 @@
             </div>
 
             <div class="rv-subcontent">
-                <div layout='row' layout-align='start' class="rv-icon-20 rv-slider-setting">
+                <div class="rv-icon-20 rv-slider-setting">
                     <md-icon md-svg-icon="action:opacity"></md-icon>
-                    <div>
+                    <div class="rv-slider-setting-body">
                         <span translate class="rv-slider-setting-label">settings.label.opacity</span>
-                        <div class="rv-slider-setting-body">
-                            <md-slider class="md-primary" max="100" min="0" ng-model="opacityValue"></md-slider>
-                            <span class="rv-slider-setting-indicator">{{opacityValue}}%</span>
-                        </div>
+                        <md-slider class="md-primary" max="100" min="0" ng-model="opacityValue"></md-slider>
                     </div>
+                    <span class="rv-slider-setting-indicator">{{opacityValue}}%</span>
                 </div>
 
-                <div layout='row' layout-align='end' class="rv-boundingbox-setting">
-                    <span translate>settings.label.boundingBox</span>
-                    <md-switch translate translate-attr-aria-label="settings.aria.boundingBox" class="md-primary rv-switch" ng-model="isChecked">
+                <div class="rv-boundingbox-setting">
+                    <md-switch translate-attr-aria-label="settings.aria.boundingBox" class="md-primary rv-switch" ng-model="isChecked">
+                        {{'settings.label.boundingBox' | translate}}
                     </md-switch>
                 </div>
             </div>

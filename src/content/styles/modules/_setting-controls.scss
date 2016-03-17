@@ -6,13 +6,12 @@
 
 @mixin boundingbox-setting {
     .rv-boundingbox-setting {
-        > span {
-            vertical-align: middle;
-            margin: rem(1.6);
-            line-height: rem(2.8);
-            height: rem(3);
-            width: 100%;
-            margin-left: 0;
+        > md-switch {
+            flex-direction: row-reverse;
+        }
+
+        > md-switch .md-label {
+          flex: 1;
         }
     }
 }
@@ -21,34 +20,31 @@
 @mixin slider-setting {
     .rv-slider-setting {
         border-bottom: 1px dashed $divider-color-light;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
 
-        > div {
-            width: 100%;
-        }
-
-        .rv-slider-setting-label {
-            margin-bottom: - rem(1.4);
-            display: block;
+        > md-icon {
+            margin-right: rem(1);
         }
 
         .rv-slider-setting-body {
-            display: flex;
-            align-items: center;
+            flex: 1;
 
-            md-slider {
-                flex: 1;
-                margin-left: 0;
+            .rv-slider-setting-label {
+                margin-bottom: - rem(1.4);
+                display: block;
             }
 
-            .rv-slider-setting-indicator {
-                padding-left: 10px;
-                min-width: 45px;
-                text-align: right;
+            > md-slider {
+                margin-left: 0;
             }
         }
 
-        md-icon {
-            margin-right: 5%;
+        .rv-slider-setting-indicator {
+            padding-left: rem(1);
+            min-width: rem(4.5);
+            text-align: right;
         }
     }
 }
