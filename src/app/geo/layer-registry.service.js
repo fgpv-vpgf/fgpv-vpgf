@@ -189,6 +189,10 @@
                 service.setLayerVisibility(l.layer.id, l.state.options.visibility.value);
                 service.setLayerOpacity(l.layer, l.state.options.opacity.value);
                 ref.legendService.addLayer(l);
+
+                // FIXME:
+                window.RV.layers = window.RV.layers || {};
+                window.RV.layers[layer.id] = l;
             }
 
             /**
