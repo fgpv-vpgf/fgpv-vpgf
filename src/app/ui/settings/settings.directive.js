@@ -33,10 +33,18 @@
         return directive;
     }
 
-    function Controller(stateManager) {
+    function Controller(stateManager, $scope) {
         'ngInject';
         const self = this;
         self.display = stateManager.display.settings;
+        self.Math = window.Math;
+
+        // watch for changing slider to set actual layer opacity
+        $scope.$watch('self.display.data.opacity.value', newValue => {
+            if (newValue) {
+                self.display.data.layerItem.setOpacity(newValue);
+            }
+        });
 
         activate();
 

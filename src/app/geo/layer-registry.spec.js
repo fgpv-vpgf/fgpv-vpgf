@@ -40,12 +40,16 @@ describe('layerRegistry', () => {
         it('should register a layer', () => {
             const tempLayer = {
                 id: 'sausages',
-                setVisibility: () => {}
+                setVisibility: () => {},
+                setOpacity: () => {}
             };
             const tempConfig = {
                 url: 'http://www.sausagelayer.com/',
                 layerType: 'esriFeature',
                 options: {
+                    opacity: {
+                        value: 0.5
+                    },
                     visibility: {
                         value: 'on'
                     }
@@ -92,12 +96,16 @@ describe('layerRegistry', () => {
         it('should bundle attributes correctly', () => {
             const tempLayer = {
                 id: 'sausages',
-                setVisibility: () => {}
+                setVisibility: () => {},
+                setOpacity: () => {}
             };
             const tempConfig = {
                 url: 'http://www.sausagelayer.com/',
                 layerType: 'esriFeature',
                 options: {
+                    opacity: {
+                        value: 0.5
+                    },
                     visibility: {
                         value: 'on'
                     }

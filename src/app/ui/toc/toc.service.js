@@ -967,13 +967,19 @@
             const requester = {
                 id: layer.id
             };
+
+            const data = {
+                opacity: layer.options.opacity,
+                layerItem: geoService.layers[layer.id].layer
+            };
+
             const panelToClose = {
                 filters: false
             };
 
             stateManager
                 .setActive(panelToClose)
-                .then(() => stateManager.toggleDisplayPanel('sideSettings', {}, requester));
+                .then(() => stateManager.toggleDisplayPanel('sideSettings', data, requester));
         }
 
         /**

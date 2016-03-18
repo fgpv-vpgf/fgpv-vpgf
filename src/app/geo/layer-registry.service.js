@@ -39,7 +39,8 @@
                 getFormattedAttributes,
                 removeLayer,
                 setLayerVisibility,
-                aliasedFieldName
+                aliasedFieldName,
+                setLayerOpacity
             };
 
             return constructLayers();
@@ -186,6 +187,7 @@
 
                 // TODO: apply config values
                 service.setLayerVisibility(l.layer.id, l.state.options.visibility.value);
+                service.setLayerOpacity(l.layer, l.state.options.opacity.value);
                 ref.legendService.addLayer(l);
             }
 
@@ -196,12 +198,11 @@
              */
             function generateLayer(layerConfig) {
                 const handlers = {};
+
                 const commonConfig = {
                     id: layerConfig.id,
                     visible: layerConfig.visibility === 'on',
-                    opacity: layerConfig.opacity || 1
                 };
-
                 handlers[layerTypes.esriDynamic] = config => {
                     const l = new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
 
@@ -314,6 +315,15 @@
                     }
                 }
                 return fName;
+            }
+
+            /**
+             * Set the opacity of given layer to a value.
+             * @param {Object} layer set the opacity value of this layer
+             * @param {Number} opacity value that layer will be set to
+             */
+            function setLayerOpacity(layer, opacity) {
+                layer.setOpacity(opacity);
             }
         }
     }
