@@ -1,0 +1,329 @@
+{
+  "version": "-1",
+  "services": {
+    "proxyUrl": "http://cp.zz9.ca/index"
+  },
+  "map": {
+    "components": {
+      "geoSearch": {
+        "enabled": true,
+        "showGraphic": true,
+        "showInfo": true
+      },
+      "mouseInfo": {
+        "enabled": true,
+        "spatialReference": {
+          "wkid": 102100
+        }
+      },
+      "northArrow": {
+        "enabled": true
+      },
+      "overviewMap": {
+        "enabled": true,
+        "layerType": "imagery"
+      },
+      "scaleBar": {
+        "enabled": true
+      }
+    },
+    "extentSets": [
+      {
+        "id": "123456789",
+        "default": {
+          "xmin": -2681457,
+          "ymin": -883440,
+          "xmax": 3549492,
+          "ymax": 3482193,
+          "spatialReference": {
+            "wkid": 3978
+          }
+        }
+      },
+      {
+        "id": "3456789123",
+        "default": {
+          "xmin": -14545988.445533132,
+          "ymin": 4822907.964742964,
+          "xmax": -4507771.626060756,
+          "ymax": 9815875.184845109,
+          "spatialReference": {
+            "wkid": 102100
+          }
+        }
+      }
+    ]
+  },
+  "legend": {
+    "type": "autopopulate"
+  },
+  "layers": [
+    {
+      "id":"esri_feature_service_layer",
+      "name": "Impact Labels",
+      "layerType":"esriFeature",
+      "url":"http://www.agr.gc.ca/atlas/rest/services/app_cdm_ssc/canadian_drought_monitor_editing/FeatureServer/0"
+    },
+    {
+      "id":"esri_map_service",
+      "name": "Test Points",
+      "layerType":"esriDynamic",
+      "layerEntries": [{"index": 0}],
+      "url":"http://ec.gc.ca/arcgis/rest/services/data_donnees/16074bd5-66ed-45a5-b9c3-a9c33cf58e6c/MapServer"
+    },
+    {
+      "id":"esri_map_service_feature_layer",
+      "name": "Test Locations",
+      "layerType":"esriFeature",
+      "url":"http://ec.gc.ca/arcgis/rest/services/data_donnees/16074bd5-66ed-45a5-b9c3-a9c33cf58e6c/MapServer/0",
+      "options": {
+        "opacity": {
+          "value": 0.4
+        }
+      }
+    },
+    {
+      "id":"esri_map_service_group",
+      "name": "Nature",
+      "layerType":"esriDynamic",
+      "layerEntries": [{"index": 0}],
+      "url":"http://ec.gc.ca/arcgis/rest/services/CESI_FGP_All_Layers/MapServer/"
+    },
+    {
+      "id":"esri_map_service_dynamic",
+      "name": "AAFC Census of Agriculture 2011",
+      "layerType":"esriDynamic",
+      "layerEntries": [{"index": 0}],
+      "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_census_of_agriculture_2011_ccs/MapServer"
+    },
+    {
+      "id":"esri_map_service_raster_access",
+      "name": "Spatial Density of Barley in Canada",
+      "layerType":"esriDynamic",
+      "layerEntries": [{"index": 0}],
+      "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_crop_spatial_density_barley/MapServer/"
+    },
+    {
+      "id":"esri_image",
+      "name": "Manitoba 2007-2011 Colour 50cm Resolution Imagery",
+      "layerType":"esriImage",
+      "url":"http://www.agr.gc.ca/atlas/rest/services/imageservices/mb_colour_orthos_50cm/ImageServer",
+      "options": {
+        "visibility": {
+          "value": "off"
+        }
+      }
+    },
+    {
+      "id":"esri_tile_cache",
+      "name": "Transportation",
+      "layerType":"esriDynamic",
+      "layerEntries": [
+          {"index": 0},
+          {"index": 1}
+      ],
+      "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3857/MapServer"
+    },
+    {
+      "id":"ogc_map_service",
+      "name": "Railway Network",
+      "layerType":"ogcWms",
+      "layerEntries": [
+          {"id": "railway.track"},
+          {"id": "railway.crossing"},
+          {"id": "railway.ferry"},
+          {"id": "railway.station"}
+      ],
+      "url":"http://maps.geogratis.gc.ca/wms/railway_en?SERVICE=WMS&REQUEST=GetCapabilities"
+    },
+    {
+      "id":"ogc_map_service_layer",
+      "name": "Railways",
+      "layerType":"ogcWms",
+      "layerEntries": [ {"id": "railway.track"} ],
+      "url":"http://maps.geogratis.gc.ca/wms/railway_en?SERVICE=WMS&REQUEST=GetCapabilities&layers=railway"
+      }
+  ],
+  "baseMaps": [
+    {
+      "id": "baseNrCan",
+      "name": "The Canada Base Map - Transportation (CBMT)",
+      "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+      "altText": "altText - The Canada Base Map - Transportation (CBMT)",
+      "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
+      "wkid": 3978,
+      "extentId": "123456789",
+      "layers": [
+        {
+          "id": "CBMT",
+          "layerType": "esriFeature",
+          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+        }
+      ]
+    },
+    {
+      "id": "baseSimple",
+      "name": "Canada Base Map - Simple",
+      "description": "@@config.basemaps.baseSimple.description",
+      "altText": "altText - Canada base map - Simple",
+      "thumbnailUrl": "assets/images/basemap/baseSimple.jpg",
+      "wkid": 3978,
+      "extentId": "123456789",
+      "layers": [
+        {
+          "id": "SMR",
+          "layerType": "esriFeature",
+          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+        },
+        {
+          "id": "SMW",
+          "layerType": "esriFeature",
+          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_TXT_3978/MapServer"
+        },
+        {
+          "id": "SMB",
+          "layerType": "esriFeature",
+          "url": "http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/RAMP_NRSTC/MapServer"
+        }
+      ]
+    },
+    {
+      "id": "baseCBME_CBCE_HS_RO_3978",
+      "name": "Canada Base Map&#92;Carte de Base du Canada - Elevation&#92;Élevation",
+      "description": " The Canada Base Map - Elevation(CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
+      "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Elevation&#92;Élevation",
+      "thumbnailUrl": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
+      "wkid": 3978,
+      "extentId": "123456789",
+      "layers": [
+        {
+          "id": "CBME_CBCE_HS_RO_3978",
+          "layerType": "esriFeature",
+          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
+        }
+      ]
+    },
+    {
+      "id": "baseCBMT_CBCT_GEOM_3978",
+      "name": "Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
+      "description": " The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+      "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
+      "thumbnailUrl": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
+      "wkid": 3978,
+      "extentId": "123456789",
+      "layers": [
+        {
+          "id": "CBMT_CBCT_GEOM_3978",
+          "layerType": "esriFeature",
+          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
+        }
+      ]
+    },
+    {
+      "id": "baseEsriWorld",
+      "name": "World Imagery",
+      "description": "World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.",
+      "altText": "altText - World Imagery",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extentId": "3456789123",
+      "layers": [
+        {
+          "id": "World_Imagery",
+          "layerType": "esriFeature",
+          "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
+        }
+      ]
+    },
+    {
+      "id": "baseEsriPhysical",
+      "name": "World Physical Map",
+      "description": " This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States. ",
+      "altText": "altText - World Physical Map",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extentId": "3456789123",
+      "layers": [
+        {
+          "id": "World_Physical_Map",
+          "layerType": "esriFeature",
+          "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
+        }
+      ]
+    },
+    {
+      "id": "baseEsriRelief",
+      "name": "World Shaded Relief",
+      "description": "This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map. ",
+      "altText": "altText - World Shaded Relief",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extentId": "3456789123",
+      "layers": [
+        {
+          "id": "World_Shaded_Relief",
+          "layerType": "esriFeature",
+          "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
+        }
+      ]
+    },
+    {
+      "id": "baseEsriStreet",
+      "name": "World Street Map",
+      "description": "This worldwide street map presents highway-level data for the world.",
+      "altText": "altText - ESWorld Street Map",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extentId": "3456789123",
+      "layers": [
+        {
+          "id": "World_Street_Map",
+          "layerType": "esriFeature",
+          "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
+        }
+      ]
+    },
+    {
+      "id": "baseEsriTerrain",
+      "name": "World Terrain Base",
+      "description": "This map is designed to be used as a base map by GIS professionals to overlay other thematic layers such as demographics or land cover.",
+      "altText": "altText - World Terrain Base",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extentId": "3456789123",
+      "layers": [
+        {
+          "id": "World_Terrain_Base",
+          "layerType": "esriFeature",
+          "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
+        }
+      ]
+    },
+    {
+      "id": "baseEsriTopo",
+      "name": "World Topographic Map",
+      "description": "This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.",
+      "altText": "altText - World Topographic Map",
+      "thumbnailUrl": "assets/images/basemap/imagery.jpg",
+      "wkid": 102100,
+      "extentId": "3456789123",
+      "layers": [
+        {
+          "id": "World_Topo_Map",
+          "layerType": "esriFeature",
+          "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
+        }
+      ]
+    }
+  ],
+  "navBar": {
+    "zoom": "buttons",
+    "extra": [
+      "geoLocator",
+      "marquee",
+      "home",
+      "history",
+      "basemap"
+    ]
+  }
+}
