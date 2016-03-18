@@ -4,13 +4,22 @@
     // layer group ids should not collide
     let itemIdCounter = 0;
 
+    const GROUP_TYPES = {
+        regular: 'regular', // this group can be deleted but has no extra controls
+        immutable: 'immutable', // this group has no extra controls and cannot be deleted
+        esriDynamic: 'esriDynamic', // this group can be deleted and has extra controls such as setting (opacity, query), metadata,
+        esriTile: 'esriTile' // this group can be deleted and has extra controls such as settings (opacity)
+    };
+
     // jscs doesn't like enhanced object notation
     // jscs:disable requireSpacesInAnonymousFunctionExpression
-    const LAYER_GROUP = (name, expanded = false) => {
+    // groupType: 'regular', 'dynamic'
+    const LAYER_GROUP = (name, groupType = GROUP_TYPES.regular, expanded = false) => {
         return {
             type: 'group',
+            groupType,
             name,
-            id: 'rv_lt_' + itemIdCounter++,
+            id: 'rv_lg_' + itemIdCounter++,
             expanded,
             items: [],
 
@@ -50,12 +59,12 @@
     };
 
     // layer item generator
-    const LAYER_ITEM = (name, type, options, flags) => {
+    const LAYER_ITEM = (name, layerType, options, flags) => {
         return {
             type: 'layer',
             name,
             id: 'rv_lt_' + itemIdCounter++,
-            layerType: type,
+            layerType,
             options,
             flags
         };
@@ -100,8 +109,8 @@
          */
         function autoLegendService(config, layers, legend) {
             const ref = {
-                dataGroup: LAYER_GROUP('Data layers', true),
-                imageGroup: LAYER_GROUP('Image layers', true),
+                dataGroup: LAYER_GROUP('Data layers', GROUP_TYPES.immutable, true),
+                imageGroup: LAYER_GROUP('Image layers', GROUP_TYPES.immutable, true),
                 root: legend.items
             };
 
@@ -119,7 +128,7 @@
                 esriDynamic: dynamicGenerator,
                 esriFeature: featureGenerator,
                 esriImage: imageGenerator,
-                esriTile: dynamicGenerator, // TODO: add tile generator; retrieve symbology same was as for feature/dynamic
+                esriTile: tileGenerator,
                 ogcWms: imageGenerator
             };
 
@@ -142,23 +151,24 @@
             }
 
             /**
-             * Parses a dynamic layer object and creates a legend item (with nested groups and symbology)
-             * @param  {Object} layer layer object from `layerRegistry`
-             * @return {Object}       legend item
+             * Creates a grouped layer toc entry (for dynamic and tile layers)
+             * @param  {Object} layer layer object from the `layerRegistry`
+             * @return {Object}       toc layer entry with hierarchy of sublayers and added symbology
+             * @private
              */
-            function dynamicGenerator(layer) {
+            function createGroupedLayerEntry(layer) {
                 const symbologyPromise = getMapServerSymbology(layer);
-
-                const dynamicGroup = LAYER_GROUP(layer.state.name);
+                const dynamicGroup = LAYER_GROUP(layer.state.name, layer.state.layerType);
                 dynamicGroup.slaves = [];
 
+                // generate all the slave sublayers upfornt ...
                 layer.layer.layerInfos.forEach(layerInfo => {
                     if (layerInfo.subLayerIds) { // group item
-                        const groupItem = LAYER_GROUP(layerInfo.name);
+                        const groupItem = LAYER_GROUP(layerInfo.name, layer.state.layerType);
 
                         assignDirectMaster(groupItem, layerInfo.parentLayerId);
                     } else { // leaf item
-                        const layerItem = LAYER_ITEM(layerInfo.name, layerTypes.esriDynamic);
+                        const layerItem = LAYER_ITEM(layerInfo.name, layer.state.layerType);
 
                         // TODO: need generate options and flags presets for group layer children
                         angular.merge(layerItem, {
@@ -199,11 +209,50 @@
                  * @param  {Number} masterId id of the direct parent
                  */
                 function assignDirectMaster(item, masterId) {
-                    const directMaster = masterId === -1 ? dynamicGroup : dynamicGroup.slaves[masterId];
                     item.master = dynamicGroup; // store a reference to the root group item of the dynamic layer
                     dynamicGroup.slaves.push(item); // store in slave reference array
-                    directMaster.add(item); // add to master's items list
+
+                    if (masterId !== -1) {
+                        dynamicGroup.slaves[masterId].add(item); // add to master's items list only if it's not the root
+                    }
                 }
+            }
+
+            /**
+             * Parses a dynamic layer object and creates a legend item (with nested groups and symbology)
+             * @param  {Object} layer layer object from `layerRegistry`
+             * @return {Object}       legend item
+             */
+            function dynamicGenerator(layer) {
+                const tocEntry = createGroupedLayerEntry(layer);
+
+                // add to the legend only once that are specified
+                // NOTE:  :point_up: [March 18, 2016 12:53 PM](https://gitter.im/RAMP-PCAR/TeamRoom?at=56ec3281bb4a1731739b0d33)
+                // We assume the inclusion is properly formatted (ex: [1, 2] will result in sublayer 2 being included twice - once under root and once more time under 1).
+                layer.state.layerEntries.forEach(({ index }) => {
+                    // if layerEntry id is incorrect, ignore it
+                    if (index > tocEntry.slaves.length - 1) {
+                        return;
+                    }
+                    tocEntry.add(tocEntry.slaves[index]);
+                });
+
+                return tocEntry;
+            }
+
+            /**
+             * Parses a tile layer object and creates a legend item (with nested groups and symbology)
+             * Uses the same logic as dynamic layers to generate symbology hierarchy
+             * @param  {Object} layer layer object from `layerRegistry`
+             * @return {Object}       legend item
+             */
+            function tileGenerator(layer) {
+                const tocEntry = createGroupedLayerEntry(layer);
+
+                // add all tile sublayers to the toc entry
+                tocEntry.slaves.forEach(slave => tocEntry.add(slave));
+
+                return tocEntry;
             }
 
             /**
@@ -215,7 +264,10 @@
                 const symbologyPromise = getMapServerSymbology(layer);
                 const state = layer.state;
 
-                symbologyPromise.then(({ data, index }) => applySymbology(state, data.layers[index]));
+                symbologyPromise.then(({
+                    data,
+                    index
+                }) => applySymbology(state, data.layers[index]));
 
                 return state;
             }
