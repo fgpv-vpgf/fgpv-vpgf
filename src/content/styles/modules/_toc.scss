@@ -1,11 +1,17 @@
+$toc-padding: rem(0.4);
+
+$group-item-height: rem(4);
+$layer-item-height: rem(4.8);
+
+
 @mixin toc {
     .rv-toc {
         // to hide scrollbars when animating layer items
         // TODO: revisit; this is temporary; consider adding an option on the content pane to set custom css class to style it differently based on the content; to remove default padding from the pane or something like that; this way we can set the overflow directly on the list; if you do it now, part of the layre item on-hover highlight is cut off (8px on left and right);
         margin: - rem(0.8);
         overflow-x: hidden;
-        padding: rem(0.8);
-
+        // TODO: march 18
+        padding: rem(0.8) $toc-padding;
         @include layer-list;
     }
 }
@@ -17,7 +23,7 @@
 
         .rv-layer-list-divider {
             position: absolute;
-            right: -8px;
+            right: - $toc-padding;
         }
 
         @for $i from 0 to 10 {
@@ -27,7 +33,6 @@
 
     .rv-layer-list {
         list-style: none;
-        //padding: 0 0 0 rem(1);
         padding: 0;
         max-width: 100%;
 
@@ -37,13 +42,11 @@
             $de: $swift-ease-in-duration * 0.3;
 
             &.ng-enter {
-                transition: transform $du + $de $swift-ease-in-out-timing-function $de,
-                            margin $du $swift-ease-in-out-timing-function 0s;
+                transition: transform $du + $de $swift-ease-in-out-timing-function $de, margin $du $swift-ease-in-out-timing-function 0s;
             }
 
             &.ng-leave {
-                transition: transform $du $swift-ease-in-out-timing-function 0s,
-                            margin $du + $de $swift-ease-in-out-timing-function $de;
+                transition: transform $du $swift-ease-in-out-timing-function 0s, margin $du + $de $swift-ease-in-out-timing-function $de;
             }
 
             &.ng-enter {
@@ -93,7 +96,6 @@
             // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
             background-color: transparent !important;
         }
-
         @include layer-group-toggle;
         @include layer-item;
     }
@@ -101,7 +103,7 @@
     // it helps to visualize which layers will be affected by the group toggle
     .rv-shadow {
         position: absolute;
-        right: rem(-0.8);
+        right: -$toc-padding;
         top: 0;
         bottom: 0;
         width: rem(0.3);
@@ -112,18 +114,21 @@
 }
 // http://krasimirtsonev.com/blog/article/Two-handy-and-advanced-SASS-features-and-their-limitations
 // adjust layer item, layer group toggle, and layer list divider indent
+
 @mixin layer-level-step($index) {
     &.rv-#{$index} {
-        rv-layer-item .rv-layer-item-inner-container {
-            padding-left: rem(0.8) * ($index + 1);
+        $offset: rem(1.6);
+
+        rv-layer-item {
+            padding-left: $offset * ($index + 1) + rem(1.0);
         }
 
-        rv-layer-group-toggle .rv-layer-group-body-button {
-            padding-left: rem(0.8) * ($index + 1);
+        rv-layer-group-toggle {
+            padding-left: $offset * ($index) + rem(1.0);
         }
 
         .rv-layer-list-divider {
-            left: rem(0.8) * ($index - 1);
+            left: ($offset + rem(1.0) + $toc-padding) * $index - $toc-padding;
         }
     }
 }
@@ -131,17 +136,14 @@
 absolutely position a button underneath an item so it acts like a button body for the item; add content to it using aria labels; make the actual text not pronounceable by aria as well or something like that. this should work for both layer items and layer group toggles;
 */
 @mixin layer-group-toggle {
-    $toggleHeight: rem(4.0);
 
     rv-layer-group-toggle {
-        height: $toggleHeight;
+        height: $group-item-height;
         position: relative;
         display: flex;
         align-items: center;
+        z-index: 0;
 
-        .md-button {
-            margin: 0;
-        }
         // setting layer list shadow color when hover over layer group toggle
         &:hover ~ .rv-shadow {
             background-color: $primary-color;
@@ -153,58 +155,61 @@ absolutely position a button underneath an item so it acts like a button body fo
             padding: 0;
             margin: 0;
             top: 0; // anchor the button to its parent container
-            left: - rem(0.8);
-            width: calc(100% + #{rem(1.6)});
-
-            .rv-primary {
-                line-height: $toggleHeight;
-            }
-
-            .md-toggle-icon {
-                display: inline-block; // why? http://stackoverflow.com/a/25667784
-            }
+            bottom: 0;
+            left: - $toc-padding;
+            width: calc(100% + #{$toc-padding * 2});
+            z-index: 1; // this is needed to place the button over the rotating icon as it's creating a new stacking content when transformed
         }
 
-        .rv-layer-group-controls {}
+        .rv-layer-group-controls {
+            z-index: 2;
+        }
+
+        .rv-layer-group-toggle-icon {
+            padding: rem(0.4);
+        }
+
+        .rv-layer-group-toggle-name {
+            margin-left: rem(0.5);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+        }
     }
 }
 
 @mixin layer-item {
     rv-layer-item {
         @include layer-item-symbology;
-        display: block;
 
-        .rv-layer-item-inner-container {
-            display: flex;
-            align-items: center;
-            height: rem(4.8);
-            position: relative;
+        display: flex;
+        align-items: center;
+        height: $layer-item-height;
+        position: relative;
 
-            rv-layer-item-button .md-button {
-                margin: 0;
+        // visually highlights selected layer item in the list
+        &.rv-selected {
+            // don't hide toggles on a selected layer
+            .rv-layer-item-toggles > md-menu {
+                display: inline !important; // IE doesn't support `initial`
             }
-            // visually highlights selected layer item in the list
-            &.rv-selected {
-                // don't hide toggles on a selected layer
-                .rv-layer-item-toggles > md-menu {
-                    display: inline; // IE doesn't support `initial`
-                }
 
-                &:before {
-                    background-color: $accent-color;
-                }
-            }
-            // selection indicator
             &:before {
-                position: absolute;
-                content: "";
-                background-color: transparent;
-                width: rem(0.3);
-                right: - rem(0.8);
-                height: 100%;
-                top: 0;
-                transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+                background-color: $accent-color;
             }
+        }
+
+        // selection indicator
+        &:before {
+            position: absolute;
+            content: "";
+            background-color: transparent;
+            width: rem(0.3);
+            right: - $toc-padding;
+            height: 100%;
+            top: 0;
+            transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
         }
 
         .rv-layer-body-button {
@@ -214,8 +219,8 @@ absolutely position a button underneath an item so it acts like a button body fo
             margin: 0;
             // makes the button appear to be a bit larger on the left size
             // #{...} is a way to include variables and functions in `calc`: http://stackoverflow.com/a/20236515
-            width: calc(100% + #{rem(1.6)});
-            left: - rem(0.8);
+            width: calc(100% + #{$toc-padding * 2});
+            left: - $toc-padding;
             top: 0;
             bottom: 0;
         }
