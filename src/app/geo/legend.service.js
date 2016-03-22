@@ -343,9 +343,9 @@
                 // set initial visiblity of the sublayers
                 // TODO: might want to rethink this a bit; want to get it working right now
                 if (tocEntry.options.visibility.value === 'on') {
-                    tocEntry.setVisibility(null, true)
+                    tocEntry.setVisibility(null, true);
                 } else {
-                    tocEntry.setVisibility('off')
+                    tocEntry.setVisibility('off');
                 }
 
                 return tocEntry;
@@ -425,10 +425,8 @@
                 const symbologyPromise = getMapServerSymbology(layer);
                 const state = layer.state;
 
-                symbologyPromise.then(({
-                    data,
-                    index
-                }) => applySymbology(state, data.layers[index]));
+                symbologyPromise.then(
+                    ({ data, index }) => applySymbology(state, data.layers[index]));
 
                 return state;
             }

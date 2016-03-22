@@ -1153,8 +1153,8 @@
         }
 
         // another one
-        // TODO: replace
-        function findLayer(id) {
+        // TODO: remove
+        /*function findLayer(id) {
             let layer;
 
             iterateLayers(service.data, item => {
@@ -1164,6 +1164,6 @@
             });
 
             return layer;
-        }
+        }*/
     }
 })();
