@@ -80,7 +80,7 @@
             },
 
             /**
-             * Returns visiblity of the group legend entry
+             * Returns visibility of the group legend entry
              * @return {Boolean} true - visible; false - not visbile; undefined - visible and invisible at the same time
              */
             getVisibility() {
@@ -136,7 +136,7 @@
             },
 
             /**
-             * Returns visiblity of the layer legend entry
+             * Returns visibility of the layer legend entry
              * @return {Boolean} true - visible; false - not visbile; undefined - visible and invisible at the same time
              */
             getVisibility() {
@@ -306,21 +306,42 @@
 
             /**
              * Parses a dynamic layer object and creates a legend item (with nested groups and symbology)
+             * For a dynamic layer, there are two visibility functions:
+             *     - `setVisibility`: https://developers.arcgis.com/javascript/jsapi/arcgisdynamicmapservicelayer-amd.html#setvisibility
+             *      sets visibility of the whole layer; if this is set to false, using `setVisibleLayers` will not change anything
+             *
+             *  - `setVisibleLayers`: https://developers.arcgis.com/javascript/jsapi/arcgisdynamicmapservicelayer-amd.html#setvisiblelayers
+             *      sets visibility of sublayers;
+             *
+             * A tocEntry for a dynamic layer contains subgroups and leaf nodes, each one with a visibility toggle.
+             *  - User clicks on leaf's visibility toggle:
+             *      toggle visibility of the leaf's layer item;
+             *      notify the root group of this dynamic layer;
+             *      walk root's children to find out which leaves are visible, omitting any subgroups
+             *      call `setVisibleLayers` on the layer object to change the visibility of the layer
+             *
+             *  - User clicks on subgroup's visibility toggle:
+             *      toggle visibility of the subgroup item;
+             *      toggle all its children (prevent children from notifying the root when they are toggled)
+             *      notify the root group of this dynamic layer;
+             *      walk root's children to find out which leaves are visible, omitting any subgroups
+             *      call `setVisibleLayers` on the layer object to change the visibility of the layer
+             *
+             *  - User clicks on root's visibility toggle:
+             *      toggle all its children (prevent children from notifying the root when they are toggled)
+             *      walk root's children to find out which leaves are visible, omitting any subgroups
+             *      call `setVisibleLayers` on the layer object to change the visibility of the layer
+             *
              * @param  {Object} layer layer object from `layerRegistry`
              * @return {Object}       legend item
              */
             function dynamicGenerator(layer) {
                 const tocEntry = createGroupedLayerEntry(layer);
 
-                tocEntry.decorate('setVisibility', applyDynamicRootVisibility);
-                tocEntry.decorate('getVisibility', getDynamicRootVisibility);
+                tocEntry.decorate('setVisibility', setVisibilityDynamicRoot);
 
                 // decorate all leaves
-                tocEntry.slaves.forEach(slave => {
-                    if (slave.type === 'layer') {
-                        slave.decorate('setVisibility', applyDynamicLeafVisibility);
-                    }
-                });
+                tocEntry.slaves.forEach(slave => slave.decorate('setVisibility', setVisibilityDynamicChild));
 
                 // add to the legend only once that are specified
                 // NOTE:  :point_up: [March 18, 2016 12:53 PM](https://gitter.im/RAMP-PCAR/TeamRoom?at=56ec3281bb4a1731739b0d33)
@@ -338,55 +359,47 @@
                     tocEntry.add(slave);
                 });
 
-                layer.layer.setVisibility(true); // make the layer itself visible
-
-                // set initial visiblity of the sublayers
-                // TODO: might want to rethink this a bit; want to get it working right now
-                if (tocEntry.options.visibility.value === 'on') {
-                    tocEntry.setVisibility(null, true);
-                } else {
-                    tocEntry.setVisibility('off');
-                }
+                // set initial visibility of the sublayers;
+                // this cannot be set in `layerRegistry` because legend entry for dynamic layer didn't exist yet;
+                tocEntry.setVisibility(null, true);
 
                 return tocEntry;
 
                 /**
-                 * Returns visibility array for the dynamic layer
-                 * @return {Array} an array of visible sublayers (e.g. [1,4,6])
-                 */
-                function getDynamicRootVisibility() {
-                    return tocEntry.walkItems(item => {
-                        // get sublayer index from the slaves array
-                        const index = tocEntry.slaves.indexOf(item);
-                        return item.getVisibility() ? index : -1;
-                    }).filter(index => index !== -1);
-                }
-
-                /**
-                 * Set visiblity of the root group in the dynamic layer
+                 * Set visibility of the root group in the dynamic layer
                  * @param  {Function}  targetFunction original `setVisibility` function from LAYER_GROUP
-                 * @param  {Bollean}  value          target visibility value; if undefined, toggle visibility
+                 * @param  {Boolean}  value          target visibility value; if undefined, toggle visibility
                  * @param  {Boolean} isNotified     defaults to false; flag indicating if root was notified by a child; this is used to avoid multiple calls between root and children; if true, value is ignored
                  */
-                function applyDynamicRootVisibility(targetFunction, value, isNotified = false) {
+                function setVisibilityDynamicRoot(targetFunction, value, isNotified = false) {
                     if (!isNotified) {
                         targetFunction(value, false);
                     }
 
-                    console.log(tocEntry.name + ' set to ' + tocEntry.getVisibility());
+                    // get an array of visible sublayers (e.g. [1,4,6])
+                    const visibleSublayerIds = tocEntry.walkItems(item => {
+                        // get sublayer index from the slaves array
+                        const index = tocEntry.slaves.indexOf(item);
+                        return item.getVisibility() ? index : -1;
+                    }).filter(index => index !== -1);
 
-                    // finally, set actual visibility :confetti_ball:
-                    layer.layer.setVisibleLayers(tocEntry.getVisibility());
+                    console.log(tocEntry.name + ' set to ' + tocEntry.getVisibility() + ' ' + visibleSublayerIds);
+
+                    // set visibility of the dynamic layer
+                    layer.layer.setVisibility(tocEntry.getVisibility());
+
+                    // finally, set visibility of the sublayers
+                    layer.layer.setVisibleLayers(visibleSublayerIds);
                 }
 
                 /**
-                 * Set visibility of the dynamic layer leaf sublayer; notifies root if not suppressed
-                 * @param  {Function} targetFunction original `setVisibility` function from LAYER_ITEM
+                 * Set visibility of the dynamic child (group or leaf); notifies root if not suppressed
+                 * @param  {Function} targetFunction original `setVisibility` function from LAYER_ITEM or LAYER_GROUP
                  * @param  {Boolean} value          target visibility value; if undefined, toggle visibility
                  * @param  {Boolean} notifyMaster   defaults to true; flag indicating if children should be notified; this is used to avoid multiple calls between root and children
                  */
-                function applyDynamicLeafVisibility(targetFunction, value, notifyMaster = true) {
-                    targetFunction(value);
+                function setVisibilityDynamicChild(targetFunction, value, notifyMaster = true) {
+                    targetFunction(value, false);
 
                     if (notifyMaster) {
                         tocEntry.setVisibility(null, true);
@@ -454,13 +467,13 @@
 
             /**
              * Add a provided layer to the appropriate group;
+             *
              * TODO: hide groups with no layers;
              * @param {Object} layer object from `layerRegistry` `layers` object
              */
             function addLayer(layer) {
                 const layerType = layer.state.layerType;
                 const entry = layerTypeGenerators[layerType](layer);
-                layer.entry = entry;
 
                 layerTypeGroups[layerType].add(entry);
             }
@@ -490,9 +503,6 @@
                     layer.layer.setVisibility(layer.state.getVisibility());
                 }
             );
-
-            // apply the initial visibility value
-            layer.layer.setVisibility(layer.state.getVisibility());
         }
 
         /**

@@ -45,9 +45,9 @@
          * @param  {callback} callback
          */
         function toggleOpen(element, callback) {
-            let targetHeight = getTargetHeight(element);
+            const targetHeight = getTargetHeight(element);
 
-            let animation = new TimelineLite();
+            const animation = new TimelineLite();
 
             animation.fromTo(element, RV_TOGGLE_SLIDE_DURATION, {
                 height: 0
@@ -72,7 +72,7 @@
          * @param  {callback} callback
          */
         function toggleClose(element, callback) {
-            let animation = new TimelineLite();
+            const animation = new TimelineLite();
 
             animation.fromTo(element, RV_TOGGLE_OPACITY_DURATION, {
                 opacity: 1
