@@ -913,46 +913,16 @@
 
         // FIXME: placeholder method for toggling group visibility
         function toggleGroupVisibility(group, value) {
-            console.log('I am error', group);
-
-            let control = group.options.visibility;
-
-            // visibility toggle logic goes here
-            const toggle = {
-                off: 'on',
-                on: 'off'
-            };
-
-            control.value = value || toggle[control.value];
-
-            for (let item of group.items) {
-                console.log('item', item);
-
-                if (item.items !== undefined) {
-                    toggleGroupVisibility(item, control.value);
-                } else {
-                    toggleVisiblity(item, control.value);
-                }
-            }
+            console.log('Toggle visiblity of group: ' + group.name);
+            group.setVisibility(value);
         }
 
         // FIXME: placeholder method for toggling visibility
         // TODO: rename to something like `setVisibility` to make it clearer what this does
         // if 'value' is not specified, toggle
         function toggleVisiblity(layer, value) {
-            const control = layer.options.visibility;
-
-            // visibility toggle logic goes here
-            const toggle = {
-                off: 'on',
-                on: 'off',
-                zoomIn: 'zoomOut',
-                zoomOut: 'zoomIn'
-            };
-
-            value = value || toggle[control.value];
-
-            geoService.setLayerVisibility(layer.id, value);
+            console.log('Toggle visiblity of layer: ' + layer.name);
+            layer.setVisibility(value);
         }
 
         // temp function to open layer groups
