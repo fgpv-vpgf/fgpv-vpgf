@@ -169,6 +169,7 @@ module.exports = function (esriBundle) {
         addProjection: proj4.defs, // straight passthrough at the moment, maybe add arg checking (two args)?
         getProjection: proj4.defs, // straight passthrough at the moment, maybe add arg checking (one arg)?
         esriServerProject: esriServiceBuilder(esriBundle),
+        graphicsExtent: esriBundle.graphicsExtent,
         isSpatialRefEqual,
         localProjectExtent,
         projectGeojson,
