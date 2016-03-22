@@ -68,7 +68,7 @@ $layer-item-height: rem(4.8);
             &.ng-leave-stagger {
                 transition-duration: 0;
                 transition-delay: 200ms;
-            }
+            }*/
         }
         // rotate the icon on the toggle button on open
         .md-toggle-icon {
@@ -245,6 +245,17 @@ absolutely position a button underneath an item so it acts like a button body fo
                 position: relative; // why? http://philipwalton.com/articles/what-no-one-told-you-about-z-index/
             }
         }
+
+        // remove margins between toggle on legend layer entry
+        .rv-layer-item-toggles > * {
+            &:first-child > .md-button {
+                margin-right: 0;
+            }
+            &:last-child > .md-button {
+                margin-left: 0;
+            }
+        }
+
         // hide layer toggles except the visibility toggle
         .rv-layer-item-toggles > md-menu {
             &:not([name='visibility']) {
