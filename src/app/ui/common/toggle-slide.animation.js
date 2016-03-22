@@ -1,8 +1,9 @@
-/* global Ease, BezierEasing, TweenLite */
+/* global Ease, BezierEasing, TimelineLite */
 (() => {
     'use strict';
 
-    const RV_TOGGLE_SLIDE_DURATION = 0.3;
+    const RV_TOGGLE_SLIDE_DURATION = 0.25;
+    const RV_TOGGLE_OPACITY_DURATION = 0.1;
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
     /**
@@ -46,10 +47,17 @@
         function toggleOpen(element, callback) {
             let targetHeight = getTargetHeight(element);
 
-            TweenLite.fromTo(element, RV_TOGGLE_SLIDE_DURATION, {
+            let animation = new TimelineLite();
+
+            animation.fromTo(element, RV_TOGGLE_SLIDE_DURATION, {
                 height: 0
             }, {
                 height: targetHeight,
+                ease: RV_SWIFT_IN_OUT_EASE
+            }).fromTo(element, RV_TOGGLE_OPACITY_DURATION, {
+                opacity: 0
+            }, {
+                opacity: 1,
                 ease: RV_SWIFT_IN_OUT_EASE,
                 onComplete: () => {
                     element.css('height', 'auto');
@@ -64,7 +72,14 @@
          * @param  {callback} callback
          */
         function toggleClose(element, callback) {
-            TweenLite.to(element, RV_TOGGLE_SLIDE_DURATION, {
+            let animation = new TimelineLite();
+
+            animation.fromTo(element, RV_TOGGLE_OPACITY_DURATION, {
+                opacity: 1
+            }, {
+                opacity: 0,
+                ease: RV_SWIFT_IN_OUT_EASE
+            }).to(element, RV_TOGGLE_SLIDE_DURATION, {
                 height: 0,
                 ease: RV_SWIFT_IN_OUT_EASE,
                 onComplete: () => callback()

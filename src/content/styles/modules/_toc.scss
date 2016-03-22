@@ -41,7 +41,7 @@ $layer-item-height: rem(4.8);
             $du: $swift-ease-in-duration;
             $de: $swift-ease-in-duration * 0.3;
 
-            &.ng-enter {
+            /*&.ng-enter {
                 transition: transform $du + $de $swift-ease-in-out-timing-function $de, margin $du $swift-ease-in-out-timing-function 0s;
             }
 
