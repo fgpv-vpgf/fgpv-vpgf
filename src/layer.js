@@ -8,6 +8,7 @@
 const csv2geojson = require('csv2geojson');
 const Terraformer = require('terraformer');
 const shp = require('shpjs');
+const ogc = require('./ogc/ogc.js');
 const defaultRenderers = require('./defaultRenderers.json');
 Terraformer.ArcGIS = require('terraformer-arcgis-parser');
 
@@ -963,7 +964,7 @@ module.exports = function (esriBundle, geoApi) {
         FeatureLayer: esriBundle.FeatureLayer,
         Query: esriBundle.Query,
         TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
-        WmsLayer: esriBundle.WmsLayer,
+        ogc: ogc(esriBundle),
         getFeatureInfo: getFeatureInfoBuilder(esriBundle),
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),

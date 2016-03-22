@@ -11,9 +11,18 @@
     <div id="map"></div>
     <script src="dist/geoapi.min.js"></script>
     <script>
+        var esriMap;
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-            var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
-            map.addLayer(new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0'));
+            api.mapManager.setProxy('http://cp.zz9.ca/index');
+            esriMap = api.mapManager.Map(document.getElementById('map'), { basemap: 'gray', zoom: 5, center: [-90, 45] });
+            esriMap.addLayer(new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0'));
+            var layers = ['railway.track', 'railway.station'];
+            var l = new api.layer.ogc.WmsLayer('http://maps.geogratis.gc.ca/wms/railway_en', {visibleLayers:layers});
+            esriMap.addLayer(l);
+            esriMap.on('click', function (e) {
+                api.layer.ogc.getFeatureInfo(l, e, layers, 'text/plain').then(function(x) { console.log(x); });
+
+            });
         });
     </script>
 </body>
