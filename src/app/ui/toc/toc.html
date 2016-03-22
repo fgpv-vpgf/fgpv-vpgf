@@ -9,9 +9,8 @@
             <li ng-repeat="item in $dxPrior.items track by item.id">
                 <rv-layer-item
                     layer="item"
-                    ng-class="item.state"
                     ng-if="item.items === undefined"
-                    ng-class="{ 'rv-selected': self.layer.selected }"></rv-layer-item>
+                    ng-class="[{ 'rv-selected': item.selected }, item.state ]"></rv-layer-item>
 
                 <div class="rv-layer-level rv-{{ $dxLevel }}" ng-if="item.items !== undefined">
 

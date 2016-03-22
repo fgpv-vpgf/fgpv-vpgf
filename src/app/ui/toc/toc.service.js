@@ -1103,19 +1103,26 @@
          * @param  {Boolean} newValue    indicates whether the `displayName` display data is visible or not
          */
         function changeContentState(layerId, displayName, newValue = true) {
-            const layer = findLayer(layerId);
+            const layer = geoService.layers[layerId].state;
             const optionName = DISPLAY_SWITCH[displayName];
 
+            // TODO: this function need to be fixed; it's old
             if (layer) {
                 if (newValue) {
-                    iterateLayers(service.data, layer => {
+                    iterateLayers(geoService.legend, layer => {
                         if (layer.id === layerId) {
                             return;
                         }
 
                         layer.selected = false;
 
-                        Object.entries(DISPLAY_SWITCH).forEach(([key, value]) => layer.options[value].selected = false);
+                        Object.entries(DISPLAY_SWITCH).forEach(
+                            ([key, value]) => {
+                                if (typeof layer.options[value] !== 'undefined') {
+                                    layer.options[value].selected = false;
+                                }
+                            }
+                        );
                     });
                 }
 
@@ -1126,7 +1133,7 @@
                 const layerSelectedValue = Object.keys(DISPLAY_SWITCH)
                     .some(key => {
                         const value = DISPLAY_SWITCH[key];
-                        return layer.options[value].selected;
+                        return typeof layer.options[value] !== 'undefined' ? layer.options[value].selected : true;
                     });
 
                 layer.selected = layerSelectedValue; // newValue; // change layer's selected state
