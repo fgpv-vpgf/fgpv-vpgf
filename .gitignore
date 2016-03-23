@@ -4,6 +4,7 @@ logs
 node_modules/
 dist/
 .vscode/
+.vagrant/
 
 *~
 *.swp
