@@ -18,7 +18,7 @@ function getFeatureInfoBuilder(esriBundle) {
             wkid = esriMap.spatialReference.wkid;
         }
         if (wmsLayer.version === '1.3' || wmsLayer.version === '1.3.0') {
-            req = { CRS: 'EPSG:' + wkid, I: clickEvent.screenPoint.x, J: clickEvent.screenPoint.y };
+            req = { CRS: 'EPSG:' + wkid, I: clickEvent.screenPoint.x, J: clickEvent.screenPoint.y, STYLES: '', FORMAT: wmsLayer.imageFormat };
         } else {
             req = { SRS: 'EPSG:' + wkid, X: clickEvent.screenPoint.x, Y: clickEvent.screenPoint.y };
         }
