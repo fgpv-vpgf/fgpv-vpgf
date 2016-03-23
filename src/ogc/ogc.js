@@ -1,3 +1,4 @@
+const yxList = require('./reversedAxis.json');
 
 function getFeatureInfoBuilder(esriBundle) {
     /**
@@ -18,15 +19,21 @@ function getFeatureInfoBuilder(esriBundle) {
             wkid = esriMap.spatialReference.wkid;
         }
         if (wmsLayer.version === '1.3' || wmsLayer.version === '1.3.0') {
-            req = { CRS: 'EPSG:' + wkid, I: clickEvent.screenPoint.x, J: clickEvent.screenPoint.y, STYLES: '', FORMAT: wmsLayer.imageFormat };
+            req = { CRS: 'EPSG:' + wkid, I: clickEvent.screenPoint.x, J: clickEvent.screenPoint.y,
+                    STYLES: '', FORMAT: wmsLayer.imageFormat };
+            if (yxList.indexOf(String(wkid))) {
+                req.BBOX = `${ext.ymin},${ext.xmin},${ext.ymax},${ext.xmax}`;
+            }
         } else {
             req = { SRS: 'EPSG:' + wkid, X: clickEvent.screenPoint.x, Y: clickEvent.screenPoint.y };
+        }
+        if (!req.hasOwnProperty('BBOX')) {
+            req.BBOX = `${ext.xmin},${ext.ymin},${ext.xmax},${ext.ymax}`;
         }
         const settings = {
             SERVICE: 'WMS',
             REQUEST: 'GetFeatureInfo',
             VERSION: wmsLayer.version,
-            BBOX: `${ext.xmin},${ext.ymin},${ext.xmax},${ext.ymax}`,
             WIDTH: esriMap.width,
             HEIGHT: esriMap.height,
             QUERY_LAYERS: layers,
