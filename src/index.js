@@ -45,7 +45,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/dijit/Scalebar', 'Scalebar'],
         ['esri/geometry/Extent', 'Extent'],
         ['esri/geometry/Point', 'Point'],
-        ['esri/graphicUtils/graphicsExtent', 'graphicsExtent'],
+        ['esri/graphicsUtils', 'graphicsUtils'],
         ['esri/layers/ArcGISDynamicMapServiceLayer', 'ArcGISDynamicMapServiceLayer'],
         ['esri/layers/ArcGISImageServiceLayer', 'ArcGISImageServiceLayer'],
         ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],
