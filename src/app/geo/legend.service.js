@@ -338,6 +338,10 @@
             function dynamicGenerator(layer) {
                 const tocEntry = createGroupedLayerEntry(layer);
 
+                // TODO: Aly's points:
+                // decorators in JS are much harder to read / track than in languages that have proper annotations
+                // make an explicit class hierarchy and have subclasses add their own setVisiblity implementations
+
                 tocEntry.decorate('setVisibility', setVisibilityDynamicRoot);
 
                 // decorate all leaves
