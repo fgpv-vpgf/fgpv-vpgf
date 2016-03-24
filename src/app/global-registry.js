@@ -22,6 +22,9 @@
     // initialize gapi and store a return promise
     RV.gapiPromise = geoapi(RV.dojoURL, window);
 
+    RV.appRegistry = {};
+    RV.switchLanguage = switchLanguage;
+
     /***/
 
     /**
@@ -33,5 +36,13 @@
         if (typeof RV[name] === 'undefined') {
             RV[name] = value;
         }
+    }
+
+    function switchLanguage(lang) {
+        Object.entries(RV.appRegistry).forEach(([id, appPromise]) => {
+            appPromise.then(app => {
+                app.setLanguage(lang);
+            });
+        });
     }
 })();
