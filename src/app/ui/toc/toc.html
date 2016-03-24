@@ -6,7 +6,7 @@
         <!-- Do not ask me what `dx-start-with` and `dx-connect` are and how this whole thing works as I'm not completely understan it myself. I'll update this comment when I get it. Read this is you are curious: https://github.com/dotJEM/angular-tree -->
         <ul class="rv-layer-list rv-root" dx-start-with="self.geoService.legend">
             <!--{ item }}-->
-            <li ng-repeat="item in $dxPrior.items track by item.id">
+            <li ng-repeat="item in $dxPrior.items track by item.id" class="rv-toggle-slide">
                 <rv-layer-item
                     layer="item"
                     ng-if="item.items === undefined"
@@ -21,7 +21,7 @@
                     <div class="rv-shadow"></div>
 
                     <md-progress-linear class="rv-toc-progress-indicator" md-mode="indeterminate" ng-show="item.isLoading"></md-progress-linear>
-                    
+
                 </div>
             </li>
             <md-divider class="rv-layer-list-divider"></md-divider>

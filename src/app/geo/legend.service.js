@@ -177,7 +177,7 @@
         .module('app.geo')
         .factory('legendService', legendServiceFactory);
 
-    function legendServiceFactory($http, $q, layerDefaults, layerTypes) {
+    function legendServiceFactory($http, $q, $timeout, layerDefaults, layerTypes, layerStates) {
         const legendSwitch = {
             structured: structuredLegendService,
             autopopulate: autoLegendService
@@ -219,7 +219,9 @@
 
             const service = {
                 addLayer,
-                removeLayer
+                removeLayer,
+                setLayerState,
+                setLayerLoadingFlag
             };
 
             init();
@@ -244,6 +246,9 @@
             function createGroupedLayerEntry(layer) {
                 const symbologyPromise = getMapServerSymbology(layer);
                 const dynamicGroup = LAYER_GROUP(layer.state.name, layer.state.layerType);
+
+                layer.state = angular.merge(dynamicGroup, layer.state);
+
                 dynamicGroup.slaves = [];
                 dynamicGroup.options.visibility.value = layer.state.options.visibility.value;
 
@@ -258,7 +263,8 @@
 
                         // TODO: need generate options and flags presets for group layer children
                         angular.merge(layerItem, {
-                                cache: {} // to cache stuff like retrieved metadata info
+                                cache: {}, // to cache stuff like retrieved metadata info
+                                state: layerStates.default // TODO: fix this sublayers should track state of the root
                             },
 
                             // TODO: temp
@@ -491,6 +497,38 @@
              */
             function removeLayer(layer) {
                 layerTypeGroups[layer.state.layerType].remove(layer.state);
+            }
+
+            /**
+             * Sets state of the layer entry: error, default, out-of-scale, etc
+             * @param {Object} layer layer object from `layerRegistry`
+             * @param {String} state defaults to `default`; state name
+             * @param {Number} delay defaults to 0; delay before setting the state
+             */
+            function setLayerState(layer, state = layerStates.default, delay = 0) {
+                const legendEntry = layer.state;
+
+                // same as with map loading indicator, need timeout since it's a non-Angular async call
+                $timeout.cancel(legendEntry.stateTimeout);
+                legendEntry.stateTimeout = $timeout(() => {
+                    legendEntry.state = state;
+                }, delay);
+            }
+
+            /**
+             * Sets `isLoading` flag on the legend entry.
+             * @param {Object} layer layer object from `layerRegistry`
+             * @param {Boolean} isLoading defaults to true; flag indicating if the layer is updating their content
+             * @param {Number} delay defaults to 0; delay before setting the state
+             */
+            function setLayerLoadingFlag(layer, isLoading = true, delay = 0) {
+                const legendEntry = layer.state;
+
+                // same as with map loading indicator, need timeout since it's a non-Angular async call
+                $timeout.cancel(legendEntry.loadingTimeout);
+                legendEntry.loadingTimeout = $timeout(() => {
+                    legendEntry.isLoading = isLoading;
+                }, delay);
             }
         }
 

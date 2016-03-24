@@ -281,9 +281,13 @@ absolutely position a button underneath an item so it acts like a button body fo
             }
         }
         // TODO: fix
-        &.error {
+        &.rv-error {
             .rv-layer-item-toggles > md-menu {
                 display: inline-block;
+            }
+
+            &:before {
+                background-color: $alert-color;
             }
         }
 

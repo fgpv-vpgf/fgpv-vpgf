@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, gapiService, legendService, layerTypes, layerDefaults) {
+    function layerRegistryFactory($q, $timeout, gapiService, legendService, layerTypes, layerStates, layerDefaults) {
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
         function layerRegistry(geoState, mapObject, config) {
@@ -68,6 +68,20 @@
                             // get the attributes for the layer
                             const attributesPromise = loadLayerAttributes(layer);
                             service.registerLayer(layer, layerConfig, attributesPromise); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                            ref.legendService.setLayerState(service.layers[layer.id], layerStates.default);
+                        },
+                        'update-start': (data) => {
+                            console.log('update-start', layer.id, data);
+
+                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id], true, 300);
+                        },
+                        'update-end': (data) => {
+                            console.log('update-end', layer.id, data);
+
+                            const layerState = layerStates[data.error ? 'error' : 'default'];
+
+                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id], false, 100);
+                            ref.legendService.setLayerState(service.layers[layer.id], layerState, 100);
                         }
                     });
 
