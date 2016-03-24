@@ -23,6 +23,7 @@
 @import "_stepper.scss";
 @import "_file-drop.scss";
 @import "_loader.scss";
+@import "_progress-indicator.scss";
 
 @include core;
 @include loading;
@@ -45,3 +46,4 @@
 @include stepper;
 @include file-drop;
 @include loader;
+@include progress-indicator;

@@ -13,6 +13,7 @@
     <div class="rv-layer-item-name">
         {{ self.layer.name }}
     </div>
+
     <div class="rv-layer-item-flags">
         <rv-layer-item-flag name="type"></rv-layer-item-flag>
         <rv-layer-item-flag name="data"></rv-layer-item-flag>
@@ -20,16 +21,15 @@
         <rv-layer-item-flag name="scale"></rv-layer-item-flag>
         <rv-layer-item-flag name="query"></rv-layer-item-flag>
     </div>
+
 </div>
 
 <div class="rv-layer-item-toggles" ng-if="self.layer.state === 'error'">
-
     <rv-layer-item-button name="reload"></rv-layer-item-button>
     <rv-layer-item-button name="remove"></rv-layer-item-button>
-
 </div>
 
-<div class="rv-layer-item-toggles" ng-if="self.layer.state !== 'error'">
+<div class="rv-layer-item-toggles" ng-if="self.layer.state === 'default'">
 
     <md-menu md-position-mode="target-right target">
         <md-button
@@ -47,8 +47,7 @@
         </md-menu-content>
     </md-menu>
 
-    <!--rv-layer-item-button name="metadata"></rv-layer-item-button>
-        <rv-layer-item-button name="settings"></rv-layer-item-button-->
-
     <rv-layer-item-button name="visibility"></rv-layer-item-button>
 </div>
+
+<md-progress-linear class="rv-toc-progress-indicator" md-mode="indeterminate" ng-show="self.layer.isLoading"></md-progress-linear>
