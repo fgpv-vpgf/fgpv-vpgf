@@ -1,39 +1,44 @@
+<ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
 
-    <ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
+<!-- TODO: add proper loading message or animation to the loading splash -->
+<div class="rv-loading" layout layout-align="center center" ng-class="{ 'rv-loaded': self.geoService.isMapReady }">
+    <div class="rv-loading-section rv-left"></div>
+    <div class="rv-loading-section rv-right"></div>
+    <div class="rv-spinner google-spin-wrapper">
+        <div class="google-spin"></div>
+    </div>
+</div>
 
-        <!-- TODO: add proper loading message or animation to the loading splash -->
-        <div class="rv-loading" layout layout-align="center center"
-            ng-class="{ 'rv-loaded': self.geoService.isMapReady }">
-            <div class="rv-loading-section rv-left"></div>
-            <div class="rv-loading-section rv-right"></div>
-            <div class="rv-spinner google-spin-wrapper"><div class="google-spin"></div></div>
-        </div>
+<div class="rv-esri-map" rv-init-map></div>
 
-        <div class="rv-esri-map" rv-init-map></div>
+<rv-mapnav rv-morph="mapnav"></rv-mapnav>
 
-        <rv-mapnav rv-morph="mapnav"></rv-mapnav>
-
-        <!--
+<!--
             Each plug has a permanent position on the page defined through CSS; plugs themselves don't move or change size (with a small exception when the plug needs to change size to accomodate content's shadow). Plug's child is a panel (panelPlug - mainPanel), which does animate on enter and leave events. Panels take all availables space in their plug.
 
             A panel can display a content pane - mainPanel can display either toc or toolbox content panes. When switching between toc and tollbox, the panel doesn't not animate (fade in/out animations), but the content pane does on etner and leave events.
 
             Panel - Content Pane - Content
         -->
-        <rv-appbar></rv-appbar>
+<rv-appbar></rv-appbar>
 
-        <rv-help-overlay rv-state='help'></rv-help-overlay>
+<rv-help-overlay rv-state='help'></rv-help-overlay>
 
-        <!-- rv-plug-slide-down class specifies the type of animation applied to the plug's panel on enter/leave  -->
-        <rv-panel type="main" close-button="false" rv-state="main" class="rv-plug-slide-down"></rv-panel>
+<!-- rv-plug-slide-down class specifies the type of animation applied to the plug's panel on enter/leave  -->
+<rv-panel type="main" close-button="false" rv-state="main" class="rv-plug-slide-down"></rv-panel>
 
-        <rv-panel type="side" rv-state="side" class="rv-plug-slide-right"></rv-panel>
+<rv-panel type="side" rv-state="side" class="rv-plug-slide-right"></rv-panel>
 
-        <!-- rv-morph animates transitions between values stored in state -->
-        <rv-panel type="filters" rv-state="filters" rv-morph="filters" class="rv-plug-slide-down-grand"></rv-panel>
+<!-- rv-morph animates transitions between values stored in state -->
+<rv-panel type="filters" rv-state="filters" rv-morph="filters" class="rv-plug-slide-down-grand"></rv-panel>
 
-        <rv-panel type="other" rv-state="other" class="rv-plug-slide-left"></rv-panel>
+<rv-panel type="other" rv-state="other" class="rv-plug-slide-left"></rv-panel>
 
-        <!--div ng-class="{ active: self.active }" ui-view="detailsPlug"></div-->
+<!--div ng-class="{ active: self.active }" ui-view="detailsPlug"></div-->
 
-        <!--div ng-class="{ active: self.active }" ui-view="geoSearchPlug"></div-->
+<!--div ng-class="{ active: self.active }" ui-view="geoSearchPlug"></div-->
+
+<md-progress-linear
+    class="rv-shell-progress-indicator"
+    md-mode="indeterminate"
+    ng-show="self.geoService.mapObject.isMapLoading"></md-progress-linear>

@@ -5,7 +5,7 @@
 
         &.ng-hide-add,
         &.ng-hide-remove {
-            transition: all $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
         }
 
         &.ng-hide {

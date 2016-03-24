@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, gapiService) {
+    function mapServiceFactory($q, $timeout, gapiService) {
         return mapService;
 
         function mapService(geoState, config) {
@@ -71,7 +71,7 @@
 
                 // set selected base map id
                 if (!geoState.selectedBaseMapId) {
-                    setSelectedBaseMap(config.baseMaps[0].id, config);
+                    setSelectedBaseMap(config.baseMaps[5].id, config);
                 }
 
                 // FIXME remove the hardcoded settings when we have code which does this properly
@@ -116,7 +116,7 @@
                 }
 
                 if (config.map.extentSets) {
-                    initMapFullExtent(config);
+                    initMapFullExtent();
                 }
 
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
@@ -286,6 +286,8 @@
                 const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
                 const map = service.mapObject;
 
+                setMapLoadingFlag(true);
+
                 // map extent is not available until map is loaded
                 if (lFullExtent) {
                     gapiService.gapi.events.wrapEvents(map, {
@@ -308,6 +310,18 @@
                                         lFullExtent),
                                     map.extent.spatialReference);
                             }
+
+                            setMapLoadingFlag(false);
+                        },
+                        'update-start': () => {
+                            console.log('map update START!');
+
+                            setMapLoadingFlag(true, 300);
+                        },
+                        'update-end': () => {
+                            console.log('map update END!');
+
+                            setMapLoadingFlag(false, 100);
                         }
                     });
                 }
@@ -324,6 +338,17 @@
                 return config.baseMaps.find(basemapConfig => (basemapConfig.id === id));
             }
 
+            /**
+             * Sets `isMapLoading` flag indicating map layers are updating.
+             * @param {Boolean} isLoading defaults to true; flag indicating if one or more layers begins updating their content
+             * @param {Number}  delay     defaults to 0; delay before setting `isMapLoading` state; useful to avoid setting indicator for a small amounts of time
+             * @private
+             */
+            function setMapLoadingFlag(isLoading = true, delay = 0) {
+                // need to wrap this in a timeout since these are esri events, Angular wouldn't pick up on any changes unless a new digest cycle is triggered
+                $timeout.cancel(service.loadingTimeout);
+                service.loadingTimeout = $timeout(() => service.mapObject.isMapLoading = isLoading, delay);
+            }
         }
     }
 })();

@@ -1,0 +1,10 @@
+@mixin shell {
+    rv-shell {
+        .rv-shell-progress-indicator {
+            bottom: 0;
+            position: absolute;
+            height: 2px;
+            overflow: hidden;
+        }
+    }
+}
