@@ -7,7 +7,11 @@
         <ul class="rv-layer-list rv-root" dx-start-with="self.geoService.legend">
             <!--{ item }}-->
             <li ng-repeat="item in $dxPrior.items track by item.id">
-                <rv-layer-item layer="item" ng-class="item.state" ng-if="item.items === undefined"></rv-layer-item>
+                <rv-layer-item
+                    layer="item"
+                    ng-if="item.items === undefined"
+                    ng-class="[{ 'rv-selected': item.selected }, item.state ]"></rv-layer-item>
+
                 <div class="rv-layer-level rv-{{ $dxLevel }}" ng-if="item.items !== undefined">
 
                     <md-divider class="rv-layer-list-divider" ng-if="!$first || $dxLevel !== 0" ng-show="item.expanded"></md-divider>

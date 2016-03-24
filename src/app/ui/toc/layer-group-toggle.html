@@ -4,15 +4,22 @@
     rv-help="group-toggle">
 
     <div class="rv-primary">
-        <span class="md-toggle-icon" ng-class="{ 'rv-toggled' : self.group.expanded }">
-            <md-icon md-svg-src="hardware:keyboard_arrow_right"></md-icon>
-        </span>
-
-        {{ self.group.name }}
+        <span class="md-toggle-icon" ng-class="{ 'rv-toggled' : self.group.expanded }"></span>
 
     </div>
 
 </md-button>
+
+<div class="rv-icon-24 rv-layer-group-toggle-icon">
+    <md-icon
+        class="md-toggle-icon"
+        ng-class="{ 'rv-toggled' : self.group.expanded }"
+        md-svg-src="hardware:keyboard_arrow_right"></md-icon>
+</div>
+
+<span class="rv-layer-group-toggle-name md-body-2">
+    {{ self.group.name }}
+</span>
 
 <span flex></span>
 
