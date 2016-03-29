@@ -56,14 +56,14 @@ WARNING be sure to change the detail content display logic in both blocks (singl
     <div class="rv-details rv-multiple" ng-if="self.display.data.length > 1">
         <!-- the detail content  -->
         <md-content class="rv-details-data rv-content" rv-detect-scrollbar>
-            <div
-                class="rv-subsection rv-hide-animate"
-                ng-class="{ 'rv-hide': (self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data }">
+            <div class="rv-subsection rv-hide-animate">
                 <div class="rv-subheader">
                     <h4 class="md-subhead">{{ self.selectedItem.requester.name }}</h4>
                 </div>
 
-                <div class="rv-subcontent">
+                <div
+                    class="rv-subcontent"
+                    ng-class="{ 'rv-hide': (self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data }">
                     <!-- Feature Key-Value list presentation  -->
                     <div ng-if="self.selectedItem.requester.format === 'EsriFeature'">
                         <h5 class="rv-sub-subhead" ng-repeat-start="item in self.selectedItem.data">{{ item.name }}</h5>
@@ -103,7 +103,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
                     class="rv-details-layer-list-item">
 
                     <md-button aria-label='point details' class="rv-button-square rv-details-layer-button" ng-click="self.selectItem(item)"></md-button>
-                    <rv-layer-item-symbology symbology="item.requester.layer.symbology"></rv-layer-item-symbology>
+                    <rv-layer-item-symbology symbology="item.requester.symbology"></rv-layer-item-symbology>
                     <md-progress-circular md-diameter="48" class="md-primary" md-mode="indeterminate" ng-if="item.isLoading"></md-progress-circular>
                     <span class="rv-details-layer-name">{{ item.requester.name }}</span>
 

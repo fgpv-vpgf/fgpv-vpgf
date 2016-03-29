@@ -55,6 +55,8 @@
                     position: absolute;
                     left: 0;
                     top: 0;
+                    z-index: 0;
+
                     // this makes the symbology image more opaque when the loading indicator is visible
                     &:before {
                         content: "";
@@ -63,14 +65,10 @@
                         top: 0;
                         right: 0;
                         bottom: 0;
-                        background-color: rgba(255, 255,255,0);
+                        background-color: rgba(255, 255,255,0.8);
                         transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
                     }
-
-                    &.rv-progress:before {
-                        background-color: rgba(255, 255,255,0.8);
-                    }
-                }                
+                }
 
                 rv-layer-item-symbology {
                     margin: rem(0.8);

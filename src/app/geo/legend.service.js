@@ -367,7 +367,10 @@
                 // this cannot be set in `layerRegistry` because legend entry for dynamic layer didn't exist yet;
                 tocEntry.setVisibility(null, true);
 
-                return tocEntry;
+                // merge toc entry into layer state so others have access to it
+                layer.state = angular.merge(tocEntry, layer.state);
+
+                return layer.state;
 
                 /**
                  * Set visibility of the root group in the dynamic layer
