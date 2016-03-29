@@ -43,8 +43,15 @@
                 font-weight: normal;
                 margin: rem(0.8);
                 text-overflow: ellipsis;
-                white-space: nowrap;
+                display: flex;
+                flex-direction: column;
                 overflow: hidden;
+
+                > span {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
             }
         }
 
@@ -77,7 +84,6 @@
                     margin: rem(0.8);
                     opacity: 1;
                     transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
-
                     // this makes the symbology image more opaque when the loading indicator is visible
                     &.rv-disabled {
                         opacity: 0.2;

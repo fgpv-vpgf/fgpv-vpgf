@@ -181,6 +181,7 @@
                                     requester: {
                                         symbology: subItem.symbology,
                                         name: subItem.name,
+                                        caption: state.name,
                                         format: 'EsriFeature'
                                     },
                                     data: []
