@@ -214,10 +214,7 @@
                                     Object.entries(subResults).forEach(([key, value]) => {
                                         if (value.isLoading) {
                                             value.isLoading = false;
-                                            value.data = [{
-                                                name: 'girls',
-                                                data: ['drink']
-                                            }];
+                                            value.data = []; // no data items
                                         }
                                     });
                                     console.log(details);
@@ -228,10 +225,8 @@
 
                                     Object.entries(subResults).forEach(([key, value]) => {
                                         value.isLoading = false;
-                                        value.data = [{
-                                            name: 'girls@@@',
-                                            data: JSON.stringify(err)
-                                        }];
+                                        value.data = null;
+                                        value.error = JSON.stringify(err);
                                     });
                                 });
                         });

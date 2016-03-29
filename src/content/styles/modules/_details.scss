@@ -21,6 +21,21 @@
                 z-index: 1;
             }
 
+            &-badge {
+                position: absolute;
+                bottom: rem(0.3);
+                height: rem(1.6);
+                width: rem(1.6);
+                left: rem(3.2) - rem(0.3);
+                font-size: rem(1.0);
+                display: flex;
+                background-color: $primary-color-dark;
+                color: $primary-color-text;
+                border-radius: 50%;
+                align-items: center;
+                justify-content: center;
+            }
+
             &-name {
                 text-transform: none;
                 font-size: rem(1.6);
@@ -72,6 +87,10 @@
 
                 rv-layer-item-symbology {
                     margin: rem(0.8);
+
+                    &.rv-disabled {
+                        opacity: 0.2;
+                    }
                 }
 
                 &.rv-selected {
