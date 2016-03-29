@@ -1,8 +1,8 @@
 <!--
 Shows details for a feature. Allows user to switch between layers that have results,
-and collates multiple hits per layer into one view    
+and collates multiple hits per layer into one view
 
-WARNING be sure to change the detail content display logic in both blocks (single view and list view)   
+WARNING be sure to change the detail content display logic in both blocks (single view and list view)
 -->
 <rv-content-pane
     close-panel="self.closeDetails()"
@@ -12,7 +12,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
     hide-when-loading="self.display.data.length === 1 || !self.display.data">
 
     <!-- TODO refactor file so that inner logic of both single case and multi case are in one spot, avoiding duplicate data  -->
-    <!-- TODO move inner detail content generation elsewhere, then inject into this structure. Generating here involves a 
+    <!-- TODO move inner detail content generation elsewhere, then inject into this structure. Generating here involves a
          DOM operation for every element created -->
 
     <!-- this handles the case of only one layer returning results. hides the side selector  -->
@@ -97,17 +97,16 @@ WARNING be sure to change the detail content display logic in both blocks (singl
             ng-show="self.display.data.length > 1">
 
             <ul class="rv-list">
-                <li ng-repeat="item in self.display.data">
-                    <md-button
-                        class="rv-button-square rv-details-layer-item"
-                        ng-class="{'rv-selected': item === self.selectedItem }"
-                        ng-click="self.selectItem(item)">
-                        <div class="rv-symbology-item" ng-class="{ 'rv-progress' : item.isLoading }">
-                            <img alt="" class="md-whiteframe-z1" ng-src="http://lorempixel.com/32/32/technics/?{{ $index }}"/>
-                            <md-progress-circular md-diameter="48" class="md-primary" md-mode="{{ item.isLoading ? 'indeterminate' : '' }}"></md-progress-circular>
-                            <span class="rv-symbology-item-name">{{ item.requester.name }}</span>
-                        </div>
-                    </md-button>
+                <li
+                    ng-repeat="item in self.display.data"
+                    ng-class="{'rv-selected': item === self.selectedItem }"
+                    class="rv-details-layer-list-item">
+
+                    <md-button aria-label='point details' class="rv-button-square rv-details-layer-button" ng-click="self.selectItem(item)"></md-button>
+                    <rv-layer-item-symbology symbology="item.requester.layer.symbology"></rv-layer-item-symbology>
+                    <md-progress-circular md-diameter="48" class="md-primary" md-mode="indeterminate" ng-if="item.isLoading"></md-progress-circular>
+                    <span class="rv-details-layer-name">{{ item.requester.name }}</span>
+
                 </li>
             </ul>
 
