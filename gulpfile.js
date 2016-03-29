@@ -229,7 +229,7 @@ gulp.task('jsrollup', 'Roll up all js into one file',
         const jscache = templatecache();
         const jsapp = jsbuild();
         const registry = gulp.src(config.jsGlobalRegistry); // global registry goes after the lib package
-        const seed = gulp.src(config.jsAppSeed); // app-seed `must` be the last item
+        const seed = args.protractor ? gulp.src('') : gulp.src(config.jsAppSeed); // app-seed `must` be the last item
 
         // merge all js streams to avoid writing individual files to disk
         return merge(jslib, registry, jscache, jsapp, seed) // merge doesn't guarantee file order :(
@@ -250,14 +250,8 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
     ['sass', 'jsrollup', 'assetcopy', 'translate'],
     function () {
         var index = config.index;
-        var js = config.js;
 
         log('Injecting JS');
-
-        if (args.protractor) {
-            index = config.indexProtractor;
-            js.push('!' + config.app + 'app-seed.js'); // remove app-seed from injectables
-        }
 
         function injectOpts(name) {
             var res = { ignorePath: '../build/', relative: true };
