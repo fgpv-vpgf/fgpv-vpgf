@@ -89,13 +89,16 @@
                     const objId = dt.context[0].aoData[indexes[0]]._aData[0];
                     const layerId = self.display.requester.id;
                     const featureIndex = self.display.data.featureIndex;
-                    let layerUrl = layerRegistry.layers[layerId].layer.url + '/';
+                    console.log(geoService, layerRegistry);
+                    console.log(geoService.layers);
+                    const layer = geoService.layers[layerId].layer;
+                    let layerUrl = layer.url + '/';
 
-                    if (layerRegistry.layers[layerId].layer.layerInfos) {
+                    if (layer.layerInfos) {
                         layerUrl += featureIndex + '/';
                     }
 
-                    geoService.zoomToGraphic(layerUrl, objId);
+                    geoService.zoomToGraphic(layerUrl, layer, objId);
                 });
             }
 
