@@ -7,6 +7,8 @@
     <!-- TODO: add aria attribues on the button to provide context on what it does; also mute the actual layer name below, so a screen reader wouldn't pronounce it twice-->
 </md-button>
 
+<!-- TODO: maybe have a wrapper div so we can toggle the error template in one place instead of in pieces -->
+
 <div ng-if="self.layer.state === 'rv-error'" class="rv-icon-32">
     <md-icon md-svg-src="community:emoticon-sad"></md-icon>
 </div>
@@ -17,7 +19,8 @@
         {{ self.layer.name }}
     </div>
 
-    <div ng-if="self.layer.state === 'rv-error'">
+    <!-- TODO: add translation -->
+    <div class="rv-layer-item-caption md-caption" ng-if="self.layer.state === 'rv-error'">
         Can't load layer
     </div>
 
@@ -55,6 +58,8 @@
     </md-menu>
 
     <rv-layer-item-button name="visibility"></rv-layer-item-button>
+</div>
+
 </div>
 
 <md-progress-linear class="rv-toc-progress-indicator" md-mode="indeterminate" ng-show="self.layer.isLoading"></md-progress-linear>

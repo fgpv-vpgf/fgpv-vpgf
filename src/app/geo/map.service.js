@@ -314,12 +314,12 @@
                             setMapLoadingFlag(false);
                         },
                         'update-start': () => {
-                            console.log('map update START!');
+                            console.log('   Map update START!');
 
                             setMapLoadingFlag(true, 300);
                         },
                         'update-end': () => {
-                            console.log('map update END!');
+                            console.log('   Map update END!');
 
                             setMapLoadingFlag(false, 100);
                         }

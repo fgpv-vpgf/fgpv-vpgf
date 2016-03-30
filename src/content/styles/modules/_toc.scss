@@ -205,30 +205,6 @@ absolutely position a button underneath an item so it acts like a button body fo
         position: relative;
         padding-right: $toc-padding;
 
-        // visually highlights selected layer item in the list
-        &.rv-selected {
-            // don't hide toggles on a selected layer
-            .rv-layer-item-toggles > md-menu {
-                display: inline !important; // IE doesn't support `initial`
-            }
-
-            &:before {
-                background-color: $accent-color;
-            }
-        }
-
-        // selection indicator
-        &:before {
-            position: absolute;
-            content: "";
-            background-color: transparent;
-            width: rem(0.3);
-            right: 0;
-            height: 100%;
-            top: 0;
-            transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
-        }
-
         .rv-layer-body-button {
             text-align: left;
             position: absolute;
@@ -280,10 +256,39 @@ absolutely position a button underneath an item so it acts like a button body fo
                 display: none;
             }
         }
+
+        // visually highlights selected layer item in the list
+        &.rv-selected {
+            // don't hide toggles on a selected layer
+            .rv-layer-item-toggles > md-menu {
+                display: inline !important; // IE doesn't support `initial`
+            }
+
+            &:before {
+                background-color: $accent-color;
+            }
+        }
+
+        // selection indicator
+        &:before {
+            position: absolute;
+            content: "";
+            background-color: transparent;
+            width: rem(0.3);
+            right: 0;
+            height: 100%;
+            top: 0;
+            transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+        }
+
         // TODO: fix
         &.rv-error {
             .rv-layer-item-toggles > md-menu {
                 display: inline-block;
+            }
+
+            .rv-layer-item-caption {
+                color: $alert-color;
             }
 
             &:before {
