@@ -14,7 +14,11 @@
         {{ self.layer.name }}
     </div>
 
-    <div class="rv-layer-item-flags">
+    <div ng-if="self.layer.state === 'rv-error'">
+        Can't load layer
+    </div>
+
+    <div class="rv-layer-item-flags" ng-if="self.layer.state === 'rv-default'">
         <rv-layer-item-flag name="type"></rv-layer-item-flag>
         <rv-layer-item-flag name="data"></rv-layer-item-flag>
         <rv-layer-item-flag name="user"></rv-layer-item-flag>

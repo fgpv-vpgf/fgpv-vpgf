@@ -374,7 +374,7 @@
                 tocEntry.setVisibility(null, true);
 
                 // merge toc entry into layer state so others have access to it
-                layer.state = angular.merge(tocEntry, layer.state);
+                layer.state = angular.extend(tocEntry, layer.state);
 
                 return layer.state;
 
@@ -443,7 +443,7 @@
              */
             function featureGenerator(layer) {
                 // merge default layer things
-                layer.state = angular.merge(LAYER_ITEM(), layer.state);
+                layer.state = angular.extend(LAYER_ITEM(), layer.state);
 
                 // decorate default setVisibility function to actually toggle visibility of the corresponding layer
                 applySimpleVisibility(layer);
@@ -464,7 +464,7 @@
              */
             function imageGenerator(layer) {
                 // merge default layer things
-                layer.state = angular.merge(LAYER_ITEM(), layer.state);
+                layer.state = angular.extend(LAYER_ITEM(), layer.state);
 
                 applySimpleVisibility(layer);
 
@@ -512,6 +512,10 @@
                 $timeout.cancel(legendEntry.stateTimeout);
                 legendEntry.stateTimeout = $timeout(() => {
                     legendEntry.state = state;
+
+                    /*switch (state) {
+                        case: layerStates
+                    }*/
                 }, delay);
             }
 

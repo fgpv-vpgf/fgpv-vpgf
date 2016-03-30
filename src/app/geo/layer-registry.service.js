@@ -70,18 +70,23 @@
                             service.registerLayer(layer, layerConfig, attributesPromise); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                             ref.legendService.setLayerState(service.layers[layer.id], layerStates.default);
                         },
-                        'update-start': (data) => {
+                        error: data => {
+                            console.log('layer error', layer.id, data);
+                            ref.legendService.setLayerState(service.layers[layer.id], layerStates.error, 100);
+                        },
+                        'update-start': data => {
                             console.log('update-start', layer.id, data);
 
                             ref.legendService.setLayerLoadingFlag(service.layers[layer.id], true, 300);
                         },
-                        'update-end': (data) => {
+                        'update-end': data => {
                             console.log('update-end', layer.id, data);
 
-                            const layerState = layerStates[data.error ? 'error' : 'default'];
+                            // const layerState = layerStates[data.error ? 'error' : 'default'];
 
                             ref.legendService.setLayerLoadingFlag(service.layers[layer.id], false, 100);
-                            ref.legendService.setLayerState(service.layers[layer.id], layerState, 100);
+
+                            // ref.legendService.setLayerState(service.layers[layer.id], layerState, 100);
                         }
                     });
 
