@@ -31,7 +31,7 @@
 
     function rvLayerItemSymbology($q) {
         const directive = {
-            require: '^rvLayerItem', // need access to layerItem to get its element reference
+            require: '^?rvLayerItem', // need access to layerItem to get its element reference
             restrict: 'E',
             templateUrl: 'app/ui/toc/layer-item-symbology.html',
             scope: {
@@ -53,6 +53,7 @@
             self.expanded = false; // holds the state of symbology section
             self.toggleSymbology = toggleSymbology;
             self.wiggleSymbology = wiggleSymbology;
+            self.isInteractive = ctrl ? true : false;
 
             // TODO: remove temp var to randomize images loaded
             self.random = Math.random();

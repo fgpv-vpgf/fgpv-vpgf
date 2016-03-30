@@ -164,23 +164,33 @@
                     let idPromises = getDynamicLayers()
                         .map(item => {
                             const layer = item.layer;
-                            const name = item.state.name;
+                            const state = item.state;
 
                             if (!layer.visibleAtMapScale) {
                                 return $q.resolve(null);
                             }
 
-                            const result = {
-                                isLoading: true,
-                                requestId: -1,
-                                requester: {
-                                    name,
-                                    format: 'EsriFeature'
-                                },
-                                data: []
-                            };
+                            const subResults = {};
+
+                            // every dynamic layer is a group in toc; walk its items to create an entry in details panel
+                            state.walkItems(subItem => {
+                                const index = state.slaves.indexOf(subItem); // get real index of the sublayer; needed to match with `layerId` from clickResults
+                                const result = {
+                                    isLoading: true,
+                                    requestId: -1,
+                                    requester: {
+                                        symbology: subItem.symbology,
+                                        name: subItem.name,
+                                        caption: state.name,
+                                        format: 'EsriFeature'
+                                    },
+                                    data: []
+                                };
+                                subResults[index] = result;
+                                details.data.push(result);
+                            });
+
                             opts.tolerance = getTolerance(layer);
-                            details.data.push(result);
                             return gapiService.gapi.layer.serverLayerIdentify(layer, opts)
                                 .then(clickResults => {
                                     console.log('got a click result');
@@ -192,21 +202,33 @@
                                     // each feature will have its attributes converted into a table
                                     // placeholder for now until we figure out how to signal the panel that
                                     // we want to make a nice table
-                                    result.data = clickResults.map(ele => {
+                                    clickResults.forEach(ele => {
                                         // NOTE: the identify service returns aliased field names, so no need to look them up here
-                                        return {
+                                        const subResult = subResults[ele.layerId];
+                                        subResult.data.push({
                                             name: ele.value,
                                             data: attributesToDetails(ele.feature.attributes)
-                                        };
+                                        });
+                                        subResult.isLoading = false;
                                     });
-                                    result.isLoading = false;
+                                    // set the rest of the entries to loading false
+                                    Object.entries(subResults).forEach(([key, value]) => {
+                                        if (value.isLoading) {
+                                            value.isLoading = false;
+                                            value.data = []; // no data items
+                                        }
+                                    });
                                     console.log(details);
                                 })
                                 .catch(err => {
                                     console.warn('Identify failed');
                                     console.warn(err);
-                                    result.data = JSON.stringify(err);
-                                    result.isLoading = false;
+
+                                    Object.entries(subResults).forEach(([key, value]) => {
+                                        value.isLoading = false;
+                                        value.data = null;
+                                        value.error = JSON.stringify(err);
+                                    });
                                 });
                         });
 
@@ -215,7 +237,7 @@
                     idPromises = idPromises.concat(getFeatureLayers()
                         .map(item => {
                             const layer = item.layer;
-                            const name = item.state.name;
+                            const state = item.state;
 
                             if (!layer.visibleAtMapScale) {
                                 return $q.resolve(null);
@@ -227,7 +249,8 @@
                                 isLoading: true,
                                 requestId: -1,
                                 requester: {
-                                    name,
+                                    name: state.name,
+                                    symbology: state.symbology,
                                     format: 'EsriFeature'
                                 },
                                 data: []
