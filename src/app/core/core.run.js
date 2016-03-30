@@ -11,6 +11,7 @@
      */
     angular
         .module('app.core')
+        .run(apiBlock)
         .run(runBlock);
 
     function runBlock($rootScope, $translate, $q, events, configService, gapiService) {
@@ -38,5 +39,31 @@
 
         // TODO: write language detection routine
         $translate.use('en-CA');
+    }
+
+    function apiBlock($translate, $rootElement, $rootScope, $q, globalRegistry, geoService, events) {
+        const service = {
+            setLanguage
+        };
+
+        // Attaches a promise to the appRegistry which resolves with apiService
+        const apiPromise = $q(resolve => {
+            $rootScope.$on(events.rvReady, resolve(service));
+            console.info('registered');
+        });
+
+        globalRegistry.appRegistry[$rootElement.attr('id')] = apiPromise;
+
+        /**********************/
+
+        /**
+         * Sets the translation language and reloads the map
+         *
+         * @param {String}  lang    the language to switch to
+         */
+        function setLanguage(lang) {
+            $translate.use(lang);
+            geoService.assembleMap();
+        }
     }
 })();
