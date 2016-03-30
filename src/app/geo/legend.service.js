@@ -45,19 +45,6 @@
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         // groupType: 'regular', 'dynamic'
-        const DYNAMIC_LAYER_GROUP = (initialState, expanded) => {
-            // get defaults for specific layerType
-            const defaults = layerDefaults[layerTypes.esriDynamic];
-
-            return angular.merge(
-                LAYER_GROUP(initialState.name, GROUP_TYPES.esriDynamic, expanded),
-                {
-                    slaves: [],
-                    options: defaults.options
-                },
-                initialState
-            );
-        };
 
         const LAYER_GROUP = (name, groupType = GROUP_TYPES.regular, expanded = false) => {
             return {
@@ -152,23 +139,37 @@
             };
         };
 
-        // layer item generator
+        const DYNAMIC_LAYER_GROUP = (initialState, expanded) => {
+            // get defaults for specific layerType
+            const defaults = layerDefaults[layerTypes.esriDynamic];
+
+            return angular.merge(
+                {},
+                LAYER_GROUP(initialState.name, GROUP_TYPES.esriDynamic, expanded),
+                {
+                    slaves: [],
+                    options: angular.extend({}, defaults.options)
+                },
+                initialState
+            );
+        };
+
         /**
-         * [description]
-         * @param  {[type]} initialState __must__ have `layerType` property
-         * @return {[type]}              [description]
+         * Generates a layer entry to be displayed in toc
+         * @param  {Object} initialState __must__ have `layerType` property
+         * @return {Object}              lyaer entry
          */
         const LAYER_ITEM = (initialState) => {
             // get defaults for specific layerType
             const defaults = layerDefaults[layerTypes[initialState.layerType]];
 
             // merge initialState on top of the defaults
-            return angular.merge({
+            return angular.merge({}, {
                 type: 'layer',
                 name: 'dogguts',
                 id: 'rv_lt_' + itemIdCounter++,
-                options: defaults.options,
-                flags: defaults.flags,
+                options: angular.extend({}, defaults.options),
+                flags: angular.extend({}, defaults.flags),
                 state: layerStates.default,
                 cache: {}, // to cache stuff like retrieved metadata info
                 symbology: [{
@@ -293,17 +294,6 @@
                             // TODO: add options override from the config
                         });
 
-                        /*
-                        // TODO: need generate options and flags presets for group layer children
-                        angular.merge(layerItem, {
-                                cache: {}, // to cache stuff like retrieved metadata info
-                                state: layerStates.default // TODO: fix this sublayers should track state of the root
-                            },
-
-                            // TODO: temp
-                            layerDefaults[layerTypes[layer.state.layerType]]
-                        );*/
-
                         assignDirectMaster(layerItem, layerInfo.parentLayerId);
                     }
                 });
@@ -312,18 +302,6 @@
                 symbologyPromise
                     .then(({ data }) => { // ... and apply them to existing child items
                         data.layers.forEach(layer => applySymbology(dynamicGroup.slaves[layer.layerId], layer));
-
-                        // add some default image if there missing symbology
-                        /*dynamicGroup.slaves.forEach(slave => {
-                            if (slave.symbology) {
-                                return;
-                            }
-
-                            slave.symbology = [{
-                                icon: NO_IMAGE,
-                                name: slave.name
-                            }];
-                        });*/
                     });
 
                 return dynamicGroup;
@@ -405,9 +383,6 @@
                 // set initial visibility of the sublayers;
                 // this cannot be set in `layerRegistry` because legend entry for dynamic layer didn't exist yet;
                 tocEntry.setVisibility(null, true);
-
-                // merge toc entry into layer state so others have access to it
-                ///////layer.state = angular.extend(tocEntry, layer.state);
 
                 return tocEntry;
 
@@ -503,11 +478,6 @@
 
                 const state = layer.state;
 
-                /*state.symbology = [{
-                    icon: NO_IMAGE,
-                    name: state.name
-                }];*/
-
                 return state;
             }
 
@@ -515,7 +485,7 @@
              * Add a provided layer to the appropriate group;
              *
              * TODO: hide groups with no layers;
-             * @param {Object} layerRecord object from `layerRegistry` `layers` object
+             * @param {Object} layer object from `layerRegistry` `layers` object
              */
             function addLayer(layer) {
                 const layerType = layer.initialState.layerType;
