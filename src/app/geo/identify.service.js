@@ -205,10 +205,10 @@
                                     clickResults.forEach(ele => {
                                         // NOTE: the identify service returns aliased field names, so no need to look them up here
                                         const subResult = subResults[ele.layerId];
-                                        subResult.data = [{
+                                        subResult.data.push({
                                             name: ele.value,
                                             data: attributesToDetails(ele.feature.attributes)
-                                        }];
+                                        });
                                         subResult.isLoading = false;
                                     });
                                     // set the rest of the entries to loading false
