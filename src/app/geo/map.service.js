@@ -243,14 +243,44 @@
             /**
              * Fetches a point in a layer given the layerUrl and objId of the object and then zooms to it
              * @param  {layerUrl} layerUrl is the URL that the point to be zoomed to belongs to
+             * @param  {layer} layer is the layer object of graphic to zoom
              * @param  {objId} objId is ID of object that was clicked on datatable to be zoomed to
              */
-            function zoomToGraphic(layerUrl, objId) {
+            function zoomToGraphic(layerUrl, layer, objId) {
                 const map = service.mapObject;
+
+                // FIXME: support file based layers with no url
                 const geo = gapiService.gapi.layer.getFeatureInfo(layerUrl, objId);
+                console.log('enhance ', layer, objId);
                 geo.then(geoInfo => {
                     if (geoInfo) {
-                        map.centerAndZoom(geoInfo.feature.geometry, 10);
+                        // make new graphic with proper spatialReference
+                        geoInfo.feature.geometry.spatialReference = layer.spatialReference;
+                        const newg = gapiService.gapi.proj.Graphic({
+                            geometry: geoInfo.feature.geometry,
+                            attributes: geoInfo.feature.attributes
+                        });
+
+                        // reproject graphic to spatialReference of the map
+                        const gextent = gapiService.gapi.proj.localProjectExtent(
+                            gapiService.gapi.proj.graphicsUtils.graphicsExtent([newg]),
+                            map.spatialReference);
+
+                        // need to make new esri extent to use getCenter function
+                        const newExt = gapiService.gapi.mapManager.Extent(gextent.x1, gextent.y1,
+                            gextent.x0, gextent.y0, gextent.sr);
+
+                        if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
+                            map.setExtent(newExt.expand(3));
+                        } else {
+                            // zoom to the new point from spatialreference
+                            // FIXME: change config/schema to support zoom level
+                            const zoomSize = 20000;
+                            const padExtent = gapiService.gapi.mapManager.Extent(gextent.x1 -
+                                zoomSize, gextent.y1 - zoomSize,
+                                gextent.x0 + zoomSize, gextent.y0 + zoomSize, gextent.sr);
+                            map.setExtent(padExtent);
+                        }
                     }
                 });
             }
