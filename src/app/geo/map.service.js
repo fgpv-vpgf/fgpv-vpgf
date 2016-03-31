@@ -270,10 +270,14 @@
                         const newExt = gapiService.gapi.mapManager.Extent(gextent.x1, gextent.y1,
                             gextent.x0, gextent.y0, gextent.sr);
 
-                        // zoom to the new point from spatialreference
-                        // FIXME: change config/schema to support zoom level
-                        const newpt = newExt.getCenter();
-                        map.centerAndZoom(newpt, 0.5);
+                        if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
+                            map.setExtent(newExt.expand(3));
+                        } else {
+                            // zoom to the new point from spatialreference
+                            // FIXME: change config/schema to support zoom level
+                            const newpt = newExt.getCenter();
+                            map.centerAndZoom(newpt, 0.5);
+                        }
                     }
                 });
             }
