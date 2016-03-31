@@ -275,8 +275,11 @@
                         } else {
                             // zoom to the new point from spatialreference
                             // FIXME: change config/schema to support zoom level
-                            const newpt = newExt.getCenter();
-                            map.centerAndZoom(newpt, 0.5);
+                            const zoomSize = 20000;
+                            const padExtent = gapiService.gapi.mapManager.Extent(gextent.x1 -
+                                zoomSize, gextent.y1 - zoomSize,
+                                gextent.x0 + zoomSize, gextent.y0 + zoomSize, gextent.sr);
+                            map.setExtent(padExtent);
                         }
                     }
                 });
