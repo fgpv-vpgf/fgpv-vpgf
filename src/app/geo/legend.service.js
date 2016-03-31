@@ -20,142 +20,6 @@
         esriTile: 'esriTile' // this group can be deleted and has extra controls such as settings (opacity)
     };
 
-    // jscs doesn't like enhanced object notation
-    // jscs:disable requireSpacesInAnonymousFunctionExpression
-    // groupType: 'regular', 'dynamic'
-    const LAYER_GROUP = (name, groupType = GROUP_TYPES.regular, expanded = false) => {
-        return {
-            type: 'group',
-            groupType,
-            name,
-            id: 'rv_lg_' + itemIdCounter++,
-            expanded,
-            items: [],
-
-            // TODO: add hook to set group options
-            options: {
-                visibility: {
-                    value: 'on', // 'off', 'zoomIn', 'zoomOut'
-                    enabled: true
-                }
-            },
-
-            /**
-             * Adds an item (layer or another group) to a layer group.
-             * @param {Object} item     layer or group item to add
-             * @param {Number} position position to insert the item at; defaults to the last position in the array
-             */
-            add(item, position = this.items.length) { // <- awesome! default is re-evaluated everytime the function is called
-                item.parent = this;
-                this.items.splice(position, 0, item);
-            },
-
-            /**
-             * Removes a given item (layer or another group) from a layer group.
-             * @param {Object} item     layer or group item to add
-             * @return {Number}      index of the item before removal or -1 if the item is not in the group
-             */
-            remove(item) {
-                const index = this.items.indexOf(item);
-                if (index !== -1) {
-                    delete item.parent;
-                    this.items.splice(index, 1);
-                }
-
-                return index;
-            },
-
-            /**
-             * Sets or toggles visibility of the group legend entry and all it's children
-             * @param {Boolean|undefined} value target visibility value; toggles visibility if not set
-             * Other arguments are passed straight to child functions; useful for decorators;
-             */
-            setVisibility(value, ...arg) {
-                const option = this.options.visibility;
-                option.value = value || VISIBILITY_TOGGLE[option.value];
-
-                if (this.type === 'group') {
-                    this.items.forEach(item => item.setVisibility(option.value, ...arg));
-                }
-            },
-
-            /**
-             * Returns visibility of the group legend entry
-             * @return {Boolean} true - visible; false - not visbile; undefined - visible and invisible at the same time
-             */
-            getVisibility() {
-                return this.options.visibility.value === 'on';
-            },
-
-            /**
-             * Walks child items executing the provided function on each leaf;
-             * Returns a flatten array of results from the provided function;
-             * @param  {Function} action function which is passed the following arguments: legend layer entry, its index in its parent's array, parent
-             * @return {Array}        flat array of results
-             */
-            walkItems(action) {
-                // roll in the results into a flat array
-                return [].concat.apply([], this.items.map((item, index) => {
-                    if (item.type === 'group') {
-                        return item.walkItems(action);
-                    } else {
-                        return action(item, index, this);
-                    }
-                }));
-            },
-
-            /**
-             * Wraps a default function of the group legend entry
-             * @param  {String} name    Name of the local function to wrap
-             * @param  {Function} wrapper a wrapper function; it recieves the original funciton as the first argument; it's context is set to this
-             */
-            decorate(name, wrapper) {
-                const target = this[name].bind(this);
-                this[name] = (...arg) => wrapper.bind(this)(target, ...arg);
-            }
-        };
-    };
-
-    // layer item generator
-    const LAYER_ITEM = (name, layerType, options, flags) => {
-        return {
-            type: 'layer',
-            name,
-            id: 'rv_lt_' + itemIdCounter++,
-            layerType,
-            options,
-            flags,
-
-            /**
-             * Sets or toggles visibility of the layer legend entry
-             * @param {Boolean|undefined} value target visibility value; toggles visibiliyt if not set
-             */
-            setVisibility(value) {
-                const option = this.options.visibility;
-                option.value = value || VISIBILITY_TOGGLE[option.value];
-            },
-
-            /**
-             * Returns visibility of the layer legend entry
-             * @return {Boolean} true - visible; false - not visbile; undefined - visible and invisible at the same time
-             */
-            getVisibility() {
-                return this.options.visibility.value === 'on';
-            },
-
-            /**
-             * Wraps a default function of the layer legend entry
-             * @param  {String} name    Name of the local function to wrap
-             * @param  {Function} wrapper a wrapper function; it recieves the original funciton as the first argument; it's context is set to this
-             */
-            decorate(name, wrapper) {
-                const target = this[name].bind(this);
-                this[name] = (...arg) => wrapper.bind(this)(target, ...arg);
-            }
-        };
-    };
-    // jscs:enable requireSpacesInAnonymousFunctionExpression
-
     // TODO: move this somewhere later
     // jscs:disable maximumLineLength
     const NO_IMAGE =
@@ -177,7 +41,172 @@
         .module('app.geo')
         .factory('legendService', legendServiceFactory);
 
-    function legendServiceFactory($http, $q, layerDefaults, layerTypes) {
+    function legendServiceFactory($http, $q, $timeout, layerDefaults, layerTypes, layerStates) {
+        // jscs doesn't like enhanced object notation
+        // jscs:disable requireSpacesInAnonymousFunctionExpression
+        // groupType: 'regular', 'dynamic'
+
+        const LAYER_GROUP = (name, groupType = GROUP_TYPES.regular, expanded = false) => {
+            return {
+                type: 'group',
+                groupType,
+                name,
+                id: 'rv_lg_' + itemIdCounter++,
+                expanded,
+                items: [],
+
+                // TODO: add hook to set group options
+                options: {
+                    visibility: {
+                        value: 'on', // 'off', 'zoomIn', 'zoomOut'
+                        enabled: true
+                    }
+                },
+
+                /**
+                 * Adds an item (layer or another group) to a layer group.
+                 * @param {Object} item     layer or group item to add
+                 * @param {Number} position position to insert the item at; defaults to the last position in the array
+                 */
+                add(item, position = this.items.length) { // <- awesome! default is re-evaluated everytime the function is called
+                    item.parent = this;
+                    this.items.splice(position, 0, item);
+                },
+
+                /**
+                 * Removes a given item (layer or another group) from a layer group.
+                 * @param {Object} item     layer or group item to add
+                 * @return {Number}      index of the item before removal or -1 if the item is not in the group
+                 */
+                remove(item) {
+                    const index = this.items.indexOf(item);
+                    if (index !== -1) {
+                        delete item.parent;
+                        this.items.splice(index, 1);
+                    }
+
+                    return index;
+                },
+
+                /**
+                 * Sets or toggles visibility of the group legend entry and all it's children
+                 * @param {Boolean|undefined} value target visibility value; toggles visibility if not set
+                 * Other arguments are passed straight to child functions; useful for decorators;
+                 */
+                setVisibility(value, ...arg) {
+                    const option = this.options.visibility;
+                    option.value = value || VISIBILITY_TOGGLE[option.value];
+
+                    if (this.type === 'group') {
+                        this.items.forEach(item => item.setVisibility(option.value, ...arg));
+                    }
+                },
+
+                /**
+                 * Returns visibility of the group legend entry
+                 * @return {Boolean} true - visible; false - not visbile; undefined - visible and invisible at the same time
+                 */
+                getVisibility() {
+                    return this.options.visibility.value === 'on';
+                },
+
+                /**
+                 * Walks child items executing the provided function on each leaf;
+                 * Returns a flatten array of results from the provided function;
+                 * @param  {Function} action function which is passed the following arguments: legend layer entry, its index in its parent's array, parent
+                 * @return {Array}        flat array of results
+                 */
+                walkItems(action) {
+                    // roll in the results into a flat array
+                    return [].concat.apply([], this.items.map((item, index) => {
+                        if (item.type === 'group') {
+                            return item.walkItems(action);
+                        } else {
+                            return action(item, index, this);
+                        }
+                    }));
+                },
+
+                /**
+                 * Wraps a default function of the group legend entry
+                 * @param  {String} name    Name of the local function to wrap
+                 * @param  {Function} wrapper a wrapper function; it recieves the original funciton as the first argument; it's context is set to this
+                 */
+                decorate(name, wrapper) {
+                    const target = this[name].bind(this);
+                    this[name] = (...arg) => wrapper.bind(this)(target, ...arg);
+                }
+            };
+        };
+
+        const DYNAMIC_LAYER_GROUP = (initialState, expanded) => {
+            // get defaults for specific layerType
+            const defaults = layerDefaults[layerTypes.esriDynamic];
+
+            return angular.merge(
+                {},
+                LAYER_GROUP(initialState.name, GROUP_TYPES.esriDynamic, expanded),
+                {
+                    slaves: [],
+                    options: angular.extend({}, defaults.options)
+                },
+                initialState
+            );
+        };
+
+        /**
+         * Generates a layer entry to be displayed in toc
+         * @param  {Object} initialState __must__ have `layerType` property
+         * @return {Object}              lyaer entry
+         */
+        const LAYER_ITEM = (initialState) => {
+            // get defaults for specific layerType
+            const defaults = layerDefaults[layerTypes[initialState.layerType]];
+
+            // merge initialState on top of the defaults
+            return angular.merge({}, {
+                type: 'layer',
+                name: 'dogguts',
+                id: 'rv_lt_' + itemIdCounter++,
+                options: angular.extend({}, defaults.options),
+                flags: angular.extend({}, defaults.flags),
+                state: layerStates.default,
+                cache: {}, // to cache stuff like retrieved metadata info
+                symbology: [{
+                    icon: NO_IMAGE,
+                    name: ''
+                }],
+
+                /**
+                 * Sets or toggles visibility of the layer legend entry
+                 * @param {Boolean|undefined} value target visibility value; toggles visibiliyt if not set
+                 */
+                setVisibility(value) {
+                    const option = this.options.visibility;
+                    option.value = value || VISIBILITY_TOGGLE[option.value];
+                },
+
+                /**
+                 * Returns visibility of the layer legend entry
+                 * @return {Boolean} true - visible; false - not visbile; undefined - visible and invisible at the same time
+                 */
+                getVisibility() {
+                    return this.options.visibility.value === 'on';
+                },
+
+                /**
+                 * Wraps a default function of the layer legend entry
+                 * @param  {String} name    Name of the local function to wrap
+                 * @param  {Function} wrapper a wrapper function; it recieves the original funciton as the first argument; it's context is set to this
+                 */
+                decorate(name, wrapper) {
+                    const target = this[name].bind(this);
+                    this[name] = (...arg) => wrapper.bind(this)(target, ...arg);
+                }
+            }, initialState);
+        };
+        // jscs:enable requireSpacesInAnonymousFunctionExpression
+
         const legendSwitch = {
             structured: structuredLegendService,
             autopopulate: autoLegendService
@@ -219,7 +248,9 @@
 
             const service = {
                 addLayer,
-                removeLayer
+                removeLayer,
+                setLayerState,
+                setLayerLoadingFlag
             };
 
             init();
@@ -242,28 +273,26 @@
              * @private
              */
             function createGroupedLayerEntry(layer) {
+                const dynamicGroup = DYNAMIC_LAYER_GROUP(layer.initialState);
+                layer.state = dynamicGroup;
+
                 const symbologyPromise = getMapServerSymbology(layer);
-                const dynamicGroup = LAYER_GROUP(layer.state.name, layer.state.layerType);
-                dynamicGroup.slaves = [];
-                dynamicGroup.options.visibility.value = layer.state.options.visibility.value;
 
                 // generate all the slave sublayers upfornt ...
                 layer.layer.layerInfos.forEach(layerInfo => {
                     if (layerInfo.subLayerIds) { // group item
-                        const groupItem = LAYER_GROUP(layerInfo.name, layer.state.layerType);
+                        const groupItem = DYNAMIC_LAYER_GROUP({
+                            name: layerInfo.name
+                            // TODO: add options override from the config
+                        });
 
                         assignDirectMaster(groupItem, layerInfo.parentLayerId);
                     } else { // leaf item
-                        const layerItem = LAYER_ITEM(layerInfo.name, layer.state.layerType);
-
-                        // TODO: need generate options and flags presets for group layer children
-                        angular.merge(layerItem, {
-                                cache: {} // to cache stuff like retrieved metadata info
-                            },
-
-                            // TODO: temp
-                            layerDefaults[layerTypes[layer.state.layerType]]
-                        );
+                        const layerItem = LAYER_ITEM({
+                            layerType: dynamicGroup.layerType,
+                            name: layerInfo.name
+                            // TODO: add options override from the config
+                        });
 
                         assignDirectMaster(layerItem, layerInfo.parentLayerId);
                     }
@@ -273,18 +302,6 @@
                 symbologyPromise
                     .then(({ data }) => { // ... and apply them to existing child items
                         data.layers.forEach(layer => applySymbology(dynamicGroup.slaves[layer.layerId], layer));
-
-                        // add some default image if there missing symbology
-                        dynamicGroup.slaves.forEach(slave => {
-                            if (slave.symbology) {
-                                return;
-                            }
-
-                            slave.symbology = [{
-                                icon: NO_IMAGE,
-                                name: slave.name
-                            }];
-                        });
                     });
 
                 return dynamicGroup;
@@ -367,10 +384,7 @@
                 // this cannot be set in `layerRegistry` because legend entry for dynamic layer didn't exist yet;
                 tocEntry.setVisibility(null, true);
 
-                // merge toc entry into layer state so others have access to it
-                layer.state = angular.merge(tocEntry, layer.state);
-
-                return layer.state;
+                return tocEntry;
 
                 /**
                  * Set visibility of the root group in the dynamic layer
@@ -436,8 +450,8 @@
              * @return {Object}       legend item
              */
             function featureGenerator(layer) {
-                // merge default layer things
-                layer.state = angular.merge(LAYER_ITEM(), layer.state);
+                // generate toc entry
+                layer.state = LAYER_ITEM(layer.initialState);
 
                 // decorate default setVisibility function to actually toggle visibility of the corresponding layer
                 applySimpleVisibility(layer);
@@ -457,17 +471,12 @@
              * @return {Object}       legend item
              */
             function imageGenerator(layer) {
-                // merge default layer things
-                layer.state = angular.merge(LAYER_ITEM(), layer.state);
+                // generate toc entry
+                layer.state = LAYER_ITEM(layer.initialState);
 
                 applySimpleVisibility(layer);
 
                 const state = layer.state;
-
-                state.symbology = [{
-                    icon: NO_IMAGE,
-                    name: state.name
-                }];
 
                 return state;
             }
@@ -479,7 +488,7 @@
              * @param {Object} layer object from `layerRegistry` `layers` object
              */
             function addLayer(layer) {
-                const layerType = layer.state.layerType;
+                const layerType = layer.initialState.layerType;
                 const entry = layerTypeGenerators[layerType](layer);
 
                 layerTypeGroups[layerType].add(entry);
@@ -491,6 +500,42 @@
              */
             function removeLayer(layer) {
                 layerTypeGroups[layer.state.layerType].remove(layer.state);
+            }
+
+            /**
+             * Sets state of the layer entry: error, default, out-of-scale, etc
+             * @param {Object} layer layer object from `layerRegistry`
+             * @param {String} state defaults to `default`; state name
+             * @param {Number} delay defaults to 0; delay before setting the state
+             */
+            function setLayerState(layer, state = layerStates.default, delay = 0) {
+                const legendEntry = layer.state;
+
+                // same as with map loading indicator, need timeout since it's a non-Angular async call
+                $timeout.cancel(legendEntry.stateTimeout);
+                legendEntry.stateTimeout = $timeout(() => {
+                    legendEntry.state = state;
+
+                    /*switch (state) {
+                        case: layerStates
+                    }*/
+                }, delay);
+            }
+
+            /**
+             * Sets `isLoading` flag on the legend entry.
+             * @param {Object} layer layer object from `layerRegistry`
+             * @param {Boolean} isLoading defaults to true; flag indicating if the layer is updating their content
+             * @param {Number} delay defaults to 0; delay before setting the state
+             */
+            function setLayerLoadingFlag(layer, isLoading = true, delay = 0) {
+                const legendEntry = layer.state;
+
+                // same as with map loading indicator, need timeout since it's a non-Angular async call
+                $timeout.cancel(legendEntry.loadingTimeout);
+                legendEntry.loadingTimeout = $timeout(() => {
+                    legendEntry.isLoading = isLoading;
+                }, delay);
             }
         }
 
@@ -510,6 +555,10 @@
                     layer.layer.setVisibility(layer.state.getVisibility());
                 }
             );
+
+            // set initial visibility
+            // TODO: change visibility config value to boolean instead of 'on/off'? It gets confusing.
+            layer.state.setVisibility(layer.state.options.visibility.value);
         }
 
         /**

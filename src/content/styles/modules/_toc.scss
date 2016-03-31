@@ -1,18 +1,29 @@
 $toc-padding: rem(0.4);
 
 $group-item-height: rem(4);
-$layer-item-height: rem(4.8);
-
+$layer-item-height: rem(6.0);
 
 @mixin toc {
+
+    rv-toc {
+        // override default padding on the content
+        .rv-content-pane .rv-content {
+            padding: 0;
+        }
+    }
+
     .rv-toc {
-        // to hide scrollbars when animating layer items
-        // TODO: revisit; this is temporary; consider adding an option on the content pane to set custom css class to style it differently based on the content; to remove default padding from the pane or something like that; this way we can set the overflow directly on the list; if you do it now, part of the layre item on-hover highlight is cut off (8px on left and right);
-        margin: - rem(0.8);
-        overflow-x: hidden;
-        // TODO: march 18
-        padding: rem(0.8) $toc-padding;
+        padding: rem(0.8) 0;
         @include layer-list;
+
+        &-progress-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            overflow: hidden;
+            z-index: 10;
+        }
     }
 }
 
@@ -20,11 +31,6 @@ $layer-item-height: rem(4.8);
     .rv-layer-level {
         // relative boxes list shadow to the current list
         position: relative;
-
-        .rv-layer-list-divider {
-            position: absolute;
-            right: - $toc-padding;
-        }
 
         @for $i from 0 to 10 {
             @include layer-level-step($i);
@@ -37,9 +43,10 @@ $layer-item-height: rem(4.8);
         max-width: 100%;
 
         > li {
+            overflow: auto;
             // TODO: move to a separate file maybe or a separate mixin
-            $du: $swift-ease-in-duration;
-            $de: $swift-ease-in-duration * 0.3;
+            //$du: $swift-ease-in-duration;
+            //$de: $swift-ease-in-duration * 0.3;
 
             /*&.ng-enter {
                 transition: transform $du + $de $swift-ease-in-out-timing-function $de, margin $du $swift-ease-in-out-timing-function 0s;
@@ -90,12 +97,21 @@ $layer-item-height: rem(4.8);
         &.rv-root {
             padding-left: 0;
             margin: 0;
+            position: relative;
         }
 
         &.ng-hide + .rv-shadow {
             // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
             background-color: transparent !important;
         }
+
+        .rv-layer-list-divider {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
         @include layer-group-toggle;
         @include layer-item;
     }
@@ -103,7 +119,7 @@ $layer-item-height: rem(4.8);
     // it helps to visualize which layers will be affected by the group toggle
     .rv-shadow {
         position: absolute;
-        right: -$toc-padding;
+        right: 0;
         top: 0;
         bottom: 0;
         width: rem(0.3);
@@ -117,18 +133,18 @@ $layer-item-height: rem(4.8);
 
 @mixin layer-level-step($index) {
     &.rv-#{$index} {
-        $offset: rem(1.6);
+        $offset: rem(0.8); // multiplied by the indentation level
 
         rv-layer-item {
-            padding-left: $offset * ($index + 1) + rem(1.0);
+            padding-left: $offset * ($index + 1) + rem(1.0) + $toc-padding;
         }
 
         rv-layer-group-toggle {
-            padding-left: $offset * ($index) + rem(1.0);
+            padding-left: $offset * ($index) + rem(1.0) + $toc-padding;
         }
 
         .rv-layer-list-divider {
-            left: ($offset + rem(1.0) + $toc-padding) * $index - $toc-padding;
+            left: ($offset + rem(1.0) + $toc-padding) * $index;
         }
     }
 }
@@ -143,6 +159,7 @@ absolutely position a button underneath an item so it acts like a button body fo
         display: flex;
         align-items: center;
         z-index: 0;
+        padding-right: $toc-padding;
 
         // setting layer list shadow color when hover over layer group toggle
         &:hover ~ .rv-shadow {
@@ -156,8 +173,8 @@ absolutely position a button underneath an item so it acts like a button body fo
             margin: 0;
             top: 0; // anchor the button to its parent container
             bottom: 0;
-            left: - $toc-padding;
-            width: calc(100% + #{$toc-padding * 2});
+            left: 0;
+            width: 100%;
             z-index: 1; // this is needed to place the button over the rotating icon as it's creating a new stacking content when transformed
         }
 
@@ -170,11 +187,11 @@ absolutely position a button underneath an item so it acts like a button body fo
         }
 
         .rv-layer-group-toggle-name {
-            margin-left: rem(0.5);
+            margin-left: rem(0.8);
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
-            text-transform: uppercase;
+            font-size: rem(1.6);
         }
     }
 }
@@ -186,40 +203,15 @@ absolutely position a button underneath an item so it acts like a button body fo
         align-items: center;
         height: $layer-item-height;
         position: relative;
-
-        // visually highlights selected layer item in the list
-        &.rv-selected {
-            // don't hide toggles on a selected layer
-            .rv-layer-item-toggles > md-menu {
-                display: inline !important; // IE doesn't support `initial`
-            }
-
-            &:before {
-                background-color: $accent-color;
-            }
-        }
-
-        // selection indicator
-        &:before {
-            position: absolute;
-            content: "";
-            background-color: transparent;
-            width: rem(0.3);
-            right: - $toc-padding;
-            height: 100%;
-            top: 0;
-            transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
-        }
+        padding-right: $toc-padding;
 
         .rv-layer-body-button {
             text-align: left;
             position: absolute;
             padding: 0;
             margin: 0;
-            // makes the button appear to be a bit larger on the left size
-            // #{...} is a way to include variables and functions in `calc`: http://stackoverflow.com/a/20236515
-            width: calc(100% + #{$toc-padding * 2});
-            left: - $toc-padding;
+            left: 0;
+            width: 100%;
             top: 0;
             bottom: 0;
         }
@@ -227,7 +219,7 @@ absolutely position a button underneath an item so it acts like a button body fo
         .rv-layer-item-content {
             flex: 1; // content tries to take all available space
             min-width: 0; // Firefox fix for flexbox not wanting to shrink: http://stackoverflow.com/a/31349707
-            margin-right: rem(1.0);
+            margin: 0 rem(1.0) 0 rem(1.6);
 
             .rv-layer-item-name {
                 font-size: rem(1.6);
@@ -239,9 +231,12 @@ absolutely position a button underneath an item so it acts like a button body fo
 
             .rv-layer-item-flag {
                 display: inline-block;
-                margin: rem(0.1) rem(0.2);
+                margin: 0 rem(0.2);
                 // main layer item button was overlapting the flag
                 position: relative; // why? http://philipwalton.com/articles/what-no-one-told-you-about-z-index/
+                &:first-child {
+                    margin-left: 0;
+                }
             }
         }
 
@@ -261,10 +256,43 @@ absolutely position a button underneath an item so it acts like a button body fo
                 display: none;
             }
         }
+
+        // visually highlights selected layer item in the list
+        &.rv-selected {
+            // don't hide toggles on a selected layer
+            .rv-layer-item-toggles > md-menu {
+                display: inline !important; // IE doesn't support `initial`
+            }
+
+            &:before {
+                background-color: $accent-color;
+            }
+        }
+
+        // selection indicator
+        &:before {
+            position: absolute;
+            content: "";
+            background-color: transparent;
+            width: rem(0.3);
+            right: 0;
+            height: 100%;
+            top: 0;
+            transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+        }
+
         // TODO: fix
-        &.error {
+        &.rv-error {
             .rv-layer-item-toggles > md-menu {
                 display: inline-block;
+            }
+
+            .rv-layer-item-caption {
+                color: $alert-color;
+            }
+
+            &:before {
+                background-color: $alert-color;
             }
         }
 

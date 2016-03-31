@@ -2,12 +2,6 @@
     class="rv-layer-group-body-button rv-button-square"
     ng-click="self.toggleLayerGroup(self.group)"
     rv-help="group-toggle">
-
-    <div class="rv-primary">
-        <span class="md-toggle-icon" ng-class="{ 'rv-toggled' : self.group.expanded }"></span>
-
-    </div>
-
 </md-button>
 
 <div class="rv-icon-24 rv-layer-group-toggle-icon">
@@ -17,7 +11,7 @@
         md-svg-src="hardware:keyboard_arrow_right"></md-icon>
 </div>
 
-<span class="rv-layer-group-toggle-name md-body-2">
+<span class="rv-layer-group-toggle-name">
     {{ self.group.name }}
 </span>
 
