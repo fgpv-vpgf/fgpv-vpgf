@@ -138,6 +138,14 @@
 
                 });
 
+                // FIXME add appropriate safeguards for no basemaps, if not handled by fixme above.
+                try {
+                    // select first basemap so UI displays it
+                    self.projections[0].items[0].selected = true;
+                } catch (e) {
+                    // no basemaps. ignore :'D
+                }
+
                 console.log(basemaps);
             });
 

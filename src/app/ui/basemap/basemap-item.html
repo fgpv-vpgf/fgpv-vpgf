@@ -15,11 +15,13 @@
 
         <div class="rv-basemap-footer">
             <span>
+                <md-icon class="rv-basemap-check" md-svg-src="navigation:check" ng-if="self.basemap.selected"></md-icon>
+            </span>
+            <span>
                 <span class="rv-basemap-name md-body-2">{{ self.basemap.name }}</span>,
                 <span class="rv-basemap-type md-caption">{{ self.basemap.type }}</span>
             </span>
             <span flex></span>
-            <md-icon class="rv-basemap-check" md-svg-src="navigation:check" ng-if="self.basemap.selected"></md-icon>
         </div>
     </md-button>
 
