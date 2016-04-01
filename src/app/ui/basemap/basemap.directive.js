@@ -127,6 +127,13 @@
                         idx = wkidArray.indexOf(wkid);
                     }
 
+                    // FIXME: move to config?
+                    const maxLength = 35;
+
+                    if (basemap.name.length > maxLength) {
+                        basemap.name = basemap.name.substring(0, maxLength - 3) + '...';
+                    }
+
                     self.projections[idx].items.push({
                         name: basemap.name,
                         type: basemap.type,
@@ -137,6 +144,14 @@
                     });
 
                 });
+
+                // FIXME add appropriate safeguards for no basemaps, if not handled by fixme above.
+                try {
+                    // select first basemap so UI displays it
+                    self.projections[0].items[0].selected = true;
+                } catch (e) {
+                    // no basemaps. ignore :'D
+                }
 
                 console.log(basemaps);
             });
