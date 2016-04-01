@@ -744,19 +744,22 @@
                         esriFeature: 'community:vector-square',
                         esriDynamic: 'action:settings',
                         ogcWms: 'image:photo',
-                        esriImage: 'image:photo'
+                        esriImage: 'image:photo',
+                        esriTile: 'image:photo'
                     },
                     label: {
                         esriFeature: 'toc.label.flag.feature',
                         esriDynamic: 'toc.label.flag.dynamic',
                         ogcWms: 'toc.label.flag.wms',
-                        esriImage: 'toc.label.flag.image'
+                        esriImage: 'toc.label.flag.image',
+                        esriTile: 'toc.label.flag.tile'
                     },
                     tooltip: {
                         esriFeature: 'toc.tooltip.flag.feature',
                         esriDynamic: 'toc.tooltip.flag.dynamic',
                         ogcWms: 'toc.tooltip.flag.wms',
-                        esriImage: 'toc.tooltip.flag.image'
+                        esriImage: 'toc.tooltip.flag.image',
+                        esriTile: 'toc.label.flag.tile'
                     }
                 },
                 scale: {
@@ -910,46 +913,16 @@
 
         // FIXME: placeholder method for toggling group visibility
         function toggleGroupVisibility(group, value) {
-            console.log('I am error', group);
-
-            let control = group.options.visibility;
-
-            // visibility toggle logic goes here
-            const toggle = {
-                off: 'on',
-                on: 'off'
-            };
-
-            control.value = value || toggle[control.value];
-
-            for (let item of group.items) {
-                console.log('item', item);
-
-                if (item.items !== undefined) {
-                    toggleGroupVisibility(item, control.value);
-                } else {
-                    toggleVisiblity(item, control.value);
-                }
-            }
+            console.log('Toggle visiblity of group: ' + group.name);
+            group.setVisibility(value);
         }
 
         // FIXME: placeholder method for toggling visibility
         // TODO: rename to something like `setVisibility` to make it clearer what this does
         // if 'value' is not specified, toggle
         function toggleVisiblity(layer, value) {
-            const control = layer.options.visibility;
-
-            // visibility toggle logic goes here
-            const toggle = {
-                off: 'on',
-                on: 'off',
-                zoomIn: 'zoomOut',
-                zoomOut: 'zoomIn'
-            };
-
-            value = value || toggle[control.value];
-
-            geoService.setLayerVisibility(layer.id, value);
+            console.log('Toggle visiblity of layer: ' + layer.name);
+            layer.setVisibility(value);
         }
 
         // temp function to open layer groups
@@ -1130,19 +1103,26 @@
          * @param  {Boolean} newValue    indicates whether the `displayName` display data is visible or not
          */
         function changeContentState(layerId, displayName, newValue = true) {
-            const layer = findLayer(layerId);
+            const layer = geoService.layers[layerId].state;
             const optionName = DISPLAY_SWITCH[displayName];
 
+            // TODO: this function need to be fixed; it's old
             if (layer) {
                 if (newValue) {
-                    iterateLayers(service.data, layer => {
+                    iterateLayers(geoService.legend, layer => {
                         if (layer.id === layerId) {
                             return;
                         }
 
                         layer.selected = false;
 
-                        Object.entries(DISPLAY_SWITCH).forEach(([key, value]) => layer.options[value].selected = false);
+                        Object.entries(DISPLAY_SWITCH).forEach(
+                            ([key, value]) => {
+                                if (typeof layer.options[value] !== 'undefined') {
+                                    layer.options[value].selected = false;
+                                }
+                            }
+                        );
                     });
                 }
 
@@ -1153,7 +1133,7 @@
                 const layerSelectedValue = Object.keys(DISPLAY_SWITCH)
                     .some(key => {
                         const value = DISPLAY_SWITCH[key];
-                        return layer.options[value].selected;
+                        return typeof layer.options[value] !== 'undefined' ? layer.options[value].selected : true;
                     });
 
                 layer.selected = layerSelectedValue; // newValue; // change layer's selected state
@@ -1173,8 +1153,8 @@
         }
 
         // another one
-        // TODO: replace
-        function findLayer(id) {
+        // TODO: remove
+        /*function findLayer(id) {
             let layer;
 
             iterateLayers(service.data, item => {
@@ -1184,6 +1164,6 @@
             });
 
             return layer;
-        }
+        }*/
     }
 })();

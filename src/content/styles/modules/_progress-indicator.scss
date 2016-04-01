@@ -1,0 +1,15 @@
+@mixin progress-indicator {
+    md-progress-linear,
+    md-progress-circular {
+        opacity: 1;
+
+        &.ng-hide-add,
+        &.ng-hide-remove {
+            transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+        }
+
+        &.ng-hide {
+            opacity: 0;
+        }
+    }
+}

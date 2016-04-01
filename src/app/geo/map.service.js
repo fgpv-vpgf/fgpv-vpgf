@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, gapiService) {
+    function mapServiceFactory($q, $timeout, gapiService) {
         return mapService;
 
         function mapService(geoState, config) {
@@ -116,7 +116,7 @@
                 }
 
                 if (config.map.extentSets) {
-                    initMapFullExtent(config);
+                    initMapFullExtent();
                 }
 
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
@@ -243,14 +243,44 @@
             /**
              * Fetches a point in a layer given the layerUrl and objId of the object and then zooms to it
              * @param  {layerUrl} layerUrl is the URL that the point to be zoomed to belongs to
+             * @param  {layer} layer is the layer object of graphic to zoom
              * @param  {objId} objId is ID of object that was clicked on datatable to be zoomed to
              */
-            function zoomToGraphic(layerUrl, objId) {
+            function zoomToGraphic(layerUrl, layer, objId) {
                 const map = service.mapObject;
+
+                // FIXME: support file based layers with no url
                 const geo = gapiService.gapi.layer.getFeatureInfo(layerUrl, objId);
+                console.log('enhance ', layer, objId);
                 geo.then(geoInfo => {
                     if (geoInfo) {
-                        map.centerAndZoom(geoInfo.feature.geometry, 10);
+                        // make new graphic with proper spatialReference
+                        geoInfo.feature.geometry.spatialReference = layer.spatialReference;
+                        const newg = gapiService.gapi.proj.Graphic({
+                            geometry: geoInfo.feature.geometry,
+                            attributes: geoInfo.feature.attributes
+                        });
+
+                        // reproject graphic to spatialReference of the map
+                        const gextent = gapiService.gapi.proj.localProjectExtent(
+                            gapiService.gapi.proj.graphicsUtils.graphicsExtent([newg]),
+                            map.spatialReference);
+
+                        // need to make new esri extent to use getCenter function
+                        const newExt = gapiService.gapi.mapManager.Extent(gextent.x1, gextent.y1,
+                            gextent.x0, gextent.y0, gextent.sr);
+
+                        if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
+                            map.setExtent(newExt.expand(3));
+                        } else {
+                            // zoom to the new point from spatialreference
+                            // FIXME: change config/schema to support zoom level
+                            const zoomSize = 20000;
+                            const padExtent = gapiService.gapi.mapManager.Extent(gextent.x1 -
+                                zoomSize, gextent.y1 - zoomSize,
+                                gextent.x0 + zoomSize, gextent.y0 + zoomSize, gextent.sr);
+                            map.setExtent(padExtent);
+                        }
                     }
                 });
             }
@@ -286,6 +316,8 @@
                 const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
                 const map = service.mapObject;
 
+                setMapLoadingFlag(true);
+
                 // map extent is not available until map is loaded
                 if (lFullExtent) {
                     gapiService.gapi.events.wrapEvents(map, {
@@ -308,6 +340,18 @@
                                         lFullExtent),
                                     map.extent.spatialReference);
                             }
+
+                            setMapLoadingFlag(false);
+                        },
+                        'update-start': () => {
+                            console.log('   Map update START!');
+
+                            setMapLoadingFlag(true, 300);
+                        },
+                        'update-end': () => {
+                            console.log('   Map update END!');
+
+                            setMapLoadingFlag(false, 100);
                         }
                     });
                 }
@@ -324,6 +368,17 @@
                 return config.baseMaps.find(basemapConfig => (basemapConfig.id === id));
             }
 
+            /**
+             * Sets `isMapLoading` flag indicating map layers are updating.
+             * @param {Boolean} isLoading defaults to true; flag indicating if one or more layers begins updating their content
+             * @param {Number}  delay     defaults to 0; delay before setting `isMapLoading` state; useful to avoid setting indicator for a small amounts of time
+             * @private
+             */
+            function setMapLoadingFlag(isLoading = true, delay = 0) {
+                // need to wrap this in a timeout since these are esri events, Angular wouldn't pick up on any changes unless a new digest cycle is triggered
+                $timeout.cancel(service.loadingTimeout);
+                service.loadingTimeout = $timeout(() => service.mapObject.isMapLoading = isLoading, delay);
+            }
         }
     }
 })();

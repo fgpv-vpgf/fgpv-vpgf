@@ -18,7 +18,7 @@
      *
      * @return {object} directive body
      */
-    function rvFiltersDefault($timeout, $q, stateManager, geoService, layerRegistry) {
+    function rvFiltersDefault($timeout, $q, stateManager, geoService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default.html',
@@ -89,13 +89,14 @@
                     const objId = dt.context[0].aoData[indexes[0]]._aData[0];
                     const layerId = self.display.requester.id;
                     const featureIndex = self.display.data.featureIndex;
-                    let layerUrl = layerRegistry.layers[layerId].layer.url + '/';
+                    const layer = geoService.layers[layerId].layer;
+                    let layerUrl = layer.url + '/';
 
-                    if (layerRegistry.layers[layerId].layer.layerInfos) {
+                    if (layer.layerInfos) {
                         layerUrl += featureIndex + '/';
                     }
 
-                    geoService.zoomToGraphic(layerUrl, objId);
+                    geoService.zoomToGraphic(layerUrl, layer, objId);
                 });
             }
 

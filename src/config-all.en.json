@@ -38,15 +38,6 @@
           "spatialReference": {
             "wkid": 3978
           }
-        },
-        "full": {
-          "xmin": -4282638.06150141,
-          "ymin": -5153821.09213678,
-          "xmax": 4852210.1755664,
-          "ymax": 4376714.4420974,
-          "spatialReference": {
-            "wkid": 3978
-          }
         }
       },
       {
@@ -68,48 +59,95 @@
   },
   "layers": [
     {
-      "id":"ecogeo",
-      "name": "[fr] Eco Geo",
+      "id":"esri_feature_service_layer",
+      "name": "Impact Labels",
+      "layerType":"esriFeature",
+      "url":"http://www.agr.gc.ca/atlas/rest/services/app_cdm_ssc/canadian_drought_monitor_editing/FeatureServer/0"
+    },
+    {
+      "id":"esri_map_service",
+      "name": "Test Points",
       "layerType":"esriDynamic",
       "layerEntries": [{"index": 0}],
-      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer"
+      "url":"http://ec.gc.ca/arcgis/rest/services/data_donnees/16074bd5-66ed-45a5-b9c3-a9c33cf58e6c/MapServer"
     },
     {
-      "id":"josm",
-      "name": "Joint Canada-Alberta Implementation Plan for Oil Sands Monitoring",
+      "id":"esri_map_service_feature_layer",
+      "name": "Test Locations",
       "layerType":"esriFeature",
-      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0"
+      "url":"http://ec.gc.ca/arcgis/rest/services/data_donnees/16074bd5-66ed-45a5-b9c3-a9c33cf58e6c/MapServer/0",
+      "options": {
+        "opacity": {
+          "value": 0.4
+        }
+      }
     },
     {
-      "id":"aafc_dynamic_layer",
+      "id":"esri_map_service_group",
+      "name": "Nature",
+      "layerType":"esriDynamic",
+      "layerEntries": [{"index": 0}],
+      "url":"http://ec.gc.ca/arcgis/rest/services/CESI_FGP_All_Layers/MapServer/"
+    },
+    {
+      "id":"esri_map_service_dynamic",
       "name": "AAFC Census of Agriculture 2011",
       "layerType":"esriDynamic",
       "layerEntries": [{"index": 0}],
       "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_census_of_agriculture_2011_ccs/MapServer"
     },
     {
-      "id":"rail_wms",
-      "name": "French Railways",
-      "layerType":"ogcWms",
-      "url":"http://maps.geogratis.gc.ca/wms/railway_fr",
-      "layerEntries": [ {"id": "railway.track"} ]
+      "id":"esri_map_service_raster_access",
+      "name": "Spatial Density of Barley in Canada",
+      "layerType":"esriDynamic",
+      "layerEntries": [{"index": 0}],
+      "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_crop_spatial_density_barley/MapServer/"
     },
     {
-      "id":"sample_temp",
-      "name": "Temperature",
+      "id":"esri_image",
+      "name": "Manitoba 2007-2011 Colour 50cm Resolution Imagery",
       "layerType":"esriImage",
-      "url":"http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/World/Temperature/ImageServer",
+      "url":"http://www.agr.gc.ca/atlas/rest/services/imageservices/mb_colour_orthos_50cm/ImageServer",
       "options": {
         "visibility": {
           "value": "off"
         }
       }
-    }
+    },
+    {
+      "id":"esri_tile_cache",
+      "name": "Transportation",
+      "layerType":"esriDynamic",
+      "layerEntries": [
+          {"index": 0},
+          {"index": 1}
+      ],
+      "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3857/MapServer"
+    },
+    {
+      "id":"ogc_map_service",
+      "name": "Railway Network",
+      "layerType":"ogcWms",
+      "layerEntries": [
+          {"id": "railway.track"},
+          {"id": "railway.crossing"},
+          {"id": "railway.ferry"},
+          {"id": "railway.station"}
+      ],
+      "url":"http://maps.geogratis.gc.ca/wms/railway_en?SERVICE=WMS&REQUEST=GetCapabilities"
+    },
+    {
+      "id":"ogc_map_service_layer",
+      "name": "Railways",
+      "layerType":"ogcWms",
+      "layerEntries": [ {"id": "railway.track"} ],
+      "url":"http://maps.geogratis.gc.ca/wms/railway_en?SERVICE=WMS&REQUEST=GetCapabilities&layers=railway"
+      }
   ],
   "baseMaps": [
     {
       "id": "baseNrCan",
-      "name": "Canada Base Map - Transportation",
+      "name": "The Canada Base Map - Transportation (CBMT)",
       "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
       "altText": "altText - The Canada Base Map - Transportation (CBMT)",
       "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
@@ -125,8 +163,8 @@
     },
     {
       "id": "baseSimple",
-      "name": "fr - Canada Base Map - Simple",
-      "description": "fr - Canada Base Map -Simple",
+      "name": "Canada Base Map - Simple",
+      "description": "@@config.basemaps.baseSimple.description",
       "altText": "altText - Canada base map - Simple",
       "thumbnailUrl": "assets/images/basemap/baseSimple.jpg",
       "wkid": 3978,
@@ -151,9 +189,9 @@
     },
     {
       "id": "baseCBME_CBCE_HS_RO_3978",
-      "name": "Carte de Base du Canada - Élevation",
-      "description": "The Canada Base Map - Elevation(CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
-      "altText": "Carte de Base du Canada - Élevation",
+      "name": "Canada Base Map&#92;Carte de Base du Canada - Elevation&#92;Élevation",
+      "description": " The Canada Base Map - Elevation(CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
+      "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Elevation&#92;Élevation",
       "thumbnailUrl": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
       "wkid": 3978,
       "extentId": "123456789",
@@ -167,8 +205,8 @@
     },
     {
       "id": "baseCBMT_CBCT_GEOM_3978",
-      "name": "Carte de Base du Canada - Transportation",
-      "description": "fr - Carte de Base du Canada - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+      "name": "Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
+      "description": " The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
       "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
       "thumbnailUrl": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
       "wkid": 3978,

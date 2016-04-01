@@ -38,6 +38,7 @@
         'ngInject';
         const self = this;
         self.select = select;
+        self.selectedWkid = null;
 
         // TODO: remove this; revise when config schema is finalized
         // mocking basemap part of the config
@@ -127,16 +128,46 @@
                         idx = wkidArray.indexOf(wkid);
                     }
 
+                    // FIXME: move to config?
+                    const maxLength = 35;
+
+                    if (basemap.name.length > maxLength) {
+                        basemap.name = basemap.name.substring(0, maxLength - 3) + '...';
+                    }
+
                     self.projections[idx].items.push({
                         name: basemap.name,
                         type: basemap.type,
                         id: basemap.id,
                         url: basemap.layers[0].url,
                         wkid: basemap.wkid,
-                        selected: false
+                        selected: false,
+                        needMapRefresh: false
                     });
 
                 });
+
+                // FIXME add appropriate safeguards for no basemaps, if not handled by fixme above.
+                try {
+                    // select first basemap so UI displays it
+                    self.projections[0].items[0].selected = true;
+
+                    self.selectedWkid = self.projections[0].items[0].wkid;
+
+                    const projections = self.projections;
+
+                    projections.forEach(projection => {
+                        const items = projection.items;
+
+                        items.forEach(item => {
+                            item.needMapRefresh = (self.selectedWkid === item.wkid) ? false : true;
+                        });
+
+                    });
+
+                } catch (e) {
+                    // no basemaps. ignore :'D
+                }
 
                 console.log(basemaps);
             });
@@ -160,9 +191,13 @@
             // un-select the previous basemap
             self.projections.forEach(projection => {
                 projection.items.forEach(item => {
+                    item.needMapRefresh = (basemap.wkid === item.wkid) ? false : true;
                     item.selected = false;
                 });
             });
+
+            // set the selected wkid
+            self.selectedWkid = basemap.wkid;
 
             // set the current basemap as selected.
             basemap.selected = true;

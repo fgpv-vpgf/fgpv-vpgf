@@ -67,17 +67,36 @@
       "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
     },
     {
+      "id":"aafc_agri_environmental_indicators",
+      "name": "AAFC AGRI Environmental Indicators",
+      "layerType":"esriDynamic",
+      "layerEntries": [{"index": 0}, {"index": 4}, {"index": 13}],
+      "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_agri_environmental_indicators/MapServer",
+      "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
+    },
+    {
       "id":"josm",
       "name": "Joint Canada-Alberta Implementation Plan for Oil Sands Monitoring",
       "layerType":"esriFeature",
       "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0"
     },
     {
+      "id":"stb_eos",
+      "name": "STB EOS 2014 CI ON 30m v2",
+      "layerType":"esriTile",
+      "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3857/MapServer"
+    },
+    {
       "id":"aafc_plant_hardiness_zones",
       "name": "AAFC Plant Hardiness Zones",
       "layerType":"esriDynamic",
       "layerEntries": [{"index": 0}],
-      "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_plant_hardiness_zones/MapServer"
+      "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_plant_hardiness_zones/MapServer",
+      "options": {
+        "visibility": {
+          "value": "off"
+        }
+      }
     },
     {
       "id":"aafc_dynamic_layer",
@@ -108,7 +127,7 @@
   "baseMaps": [
     {
       "id": "baseNrCan",
-      "name": "The Canada Base Map - Transportation (CBMT)",
+      "name": "Canada Base Map - Transportation",
       "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
       "altText": "altText - The Canada Base Map - Transportation (CBMT)",
       "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
@@ -125,7 +144,7 @@
     {
       "id": "baseSimple",
       "name": "Canada Base Map - Simple",
-      "description": "@@config.basemaps.baseSimple.description",
+      "description": "Canada Base Map - Simple",
       "altText": "altText - Canada base map - Simple",
       "thumbnailUrl": "assets/images/basemap/baseSimple.jpg",
       "wkid": 3978,
@@ -150,9 +169,9 @@
     },
     {
       "id": "baseCBME_CBCE_HS_RO_3978",
-      "name": "Canada Base Map&#92;Carte de Base du Canada - Elevation&#92;Élevation",
-      "description": " The Canada Base Map - Elevation(CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
-      "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Elevation&#92;Élevation",
+      "name": "Canada Base Map - Elevation",
+      "description": "The Canada Base Map - Elevation(CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
+      "altText": "altText - Canada Base Map - Elevation",
       "thumbnailUrl": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
       "wkid": 3978,
       "extentId": "123456789",
@@ -166,9 +185,9 @@
     },
     {
       "id": "baseCBMT_CBCT_GEOM_3978",
-      "name": "Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
+      "name": "Canada Base Map - Transportation",
       "description": " The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
-      "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
+      "altText": "altText - Canada Base Map - Transportation",
       "thumbnailUrl": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
       "wkid": 3978,
       "extentId": "123456789",

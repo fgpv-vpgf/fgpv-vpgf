@@ -54,8 +54,6 @@
 
         self.loaderFile = loaderFile;
 
-        self.languageSwitch = languageSwitch;
-
         // TODO: mock settings; replace by config
         self.menu = [
             {
@@ -129,14 +127,6 @@
                 self.helpSummary.push(section);
             }
             console.log(self);
-        }
-
-        // FIXME: move to a directive or sidenav
-        function languageSwitch(lang) {
-            $translate.use(lang);
-
-            // TODO: move this somewhere more appropriate
-            geoService.assembleMap();
         }
 
         // TODO: hack

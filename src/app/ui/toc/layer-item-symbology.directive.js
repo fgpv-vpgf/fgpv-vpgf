@@ -31,7 +31,7 @@
 
     function rvLayerItemSymbology($q) {
         const directive = {
-            require: '^rvLayerItem', // need access to layerItem to get its element reference
+            require: '^?rvLayerItem', // need access to layerItem to get its element reference
             restrict: 'E',
             templateUrl: 'app/ui/toc/layer-item-symbology.html',
             scope: {
@@ -53,6 +53,7 @@
             self.expanded = false; // holds the state of symbology section
             self.toggleSymbology = toggleSymbology;
             self.wiggleSymbology = wiggleSymbology;
+            self.isInteractive = ctrl ? true : false;
 
             // TODO: remove temp var to randomize images loaded
             self.random = Math.random();
@@ -136,7 +137,7 @@
                     });
 
                     // in pixels
-                    const symbologyListTopOffset = 45;
+                    const symbologyListTopOffset = 48;
                     const symbologyListTopMargin = 8;
                     const symbologyListBottomMargin = 15;
                     const symbologyItemHeight = 36;
@@ -148,7 +149,7 @@
                     }, 0));
                     items.forEach((img, index) => tlshift.to(img, RV_DURATION, {
                         left: 0,
-                        top: (symbologyListTopOffset + index * symbologyItemHeight) +
+                        top: (symbologyListTopOffset + symbologyListTopMargin + index * symbologyItemHeight) +
                             'px',
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, 0));
@@ -162,8 +163,7 @@
 
                     // expand layer item container (ctrl.element) to accomodate symbology list
                     tlshift.to(ctrl.element, RV_DURATION, {
-                        height: symbologyListTopOffset +
-                            symbologyListTopMargin +
+                        marginBottom: symbologyListTopMargin +
                             items.length *
                             symbologyItemHeight +
                             symbologyListBottomMargin,

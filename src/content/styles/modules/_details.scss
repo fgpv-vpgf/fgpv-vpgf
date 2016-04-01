@@ -9,51 +9,84 @@
         right: 0;
         left: 0;
 
-        .rv-details-layer-list {
+        &-layer {
+            &-button {
+                padding: 0;
+                margin: 0;
+                position: absolute;
+                left: 0;
+                width: 100%;
+                top: 0;
+                bottom: 0;
+                z-index: 1;
+            }
+
+            &-badge {
+                position: absolute;
+                bottom: rem(0.3);
+                height: rem(1.6);
+                width: rem(1.6);
+                left: rem(3.2) - rem(0.3);
+                font-size: rem(1.0);
+                display: flex;
+                background-color: $primary-color-dark;
+                color: $primary-color-text;
+                border-radius: 50%;
+                align-items: center;
+                justify-content: center;
+            }
+
+            &-name {
+                text-transform: none;
+                font-size: rem(1.6);
+                line-height: rem(2.0);
+                font-weight: normal;
+                margin: rem(0.8);
+                text-overflow: ellipsis;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+
+                > span {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+
+        &-layer-list {
             width: rem(4.8);
             position: absolute;
             background: white;
             left: 0;
             top: 0;
             bottom: - rem(0.8);
-            //padding: 8px;
             border-right: solid 1px $divider-color-light;
             overflow: hidden;
 
-            .rv-details-layer-item {
-                //display: block;
-                padding: rem(0.8);
-                margin: 0;
+            &-item {
                 width: $slide-out-width;
+                display: flex;
+                position: relative;
+                height: rem(4.8);
+                align-items: center;
+                position: relative;
 
-                .rv-symbology-item {
-                    &-name {
-                        text-transform: none;
-                        font-size: rem(1.6);
-                        line-height: rem(2.0);
-                        font-weight: normal;
-                    }
+                md-progress-circular {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    z-index: 0;
+                }
 
-                    md-progress-circular {
-                        position: absolute;
-                        left: - rem(0.8);
-                        top: - rem(0.8);
-                    }
-
+                rv-layer-item-symbology {
+                    margin: rem(0.8);
+                    opacity: 1;
+                    transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
                     // this makes the symbology image more opaque when the loading indicator is visible
-                    &:after {
-                        content: "";
-                        position: absolute;
-                        height: 32px;
-                        width: 32px;
-                        left: 0;
-                        top: 0;
-                        background-color: rgba(255, 255,255,0);
-                        transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
-                    }
-
-                    &.rv-progress:after {
-                        background-color: rgba(255, 255,255,0.8);
+                    &.rv-disabled {
+                        opacity: 0.2;
                     }
                 }
 
@@ -72,6 +105,7 @@
                     width: 3px;
                     background-color: transparent;
                     transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+                    z-index: 3;
                 }
             }
         }
@@ -96,16 +130,16 @@
                 margin-left: rem(4.8);
             }
         }
-
         // TODO enhance to proper sassyness
-
         .rv-details-zebra-list {
             list-style-type: none;
             padding: 0;
+
             > li {
                 padding: 5px;
                 overflow: auto;
             }
+
             > li:nth-child(even) {
                 background-color: #ddd;
             }
@@ -128,10 +162,11 @@
             position: relative;
             width: 66.6667%;
             float: left;
+
             &:before {
                 content: ":";
                 position: absolute;
-                left: 0px;
+                left: 0;
                 font-weight: bold;
             }
         }

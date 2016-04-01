@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, gapiService, legendService, layerTypes, layerDefaults) {
+    function layerRegistryFactory($q, $timeout, gapiService, legendService, layerTypes, layerStates) {
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
         function layerRegistry(geoState, mapObject, config) {
@@ -38,7 +38,6 @@
                 registerLayer,
                 getFormattedAttributes,
                 removeLayer,
-                setLayerVisibility,
                 aliasedFieldName,
                 setLayerOpacity
             };
@@ -61,6 +60,7 @@
                     gapiService.gapi.events.wrapEvents(layer, {
                         // TODO: add error event handler to register a failed layer, so the user can reload it
                         load: () => {
+                            console.log('layer load', layer.id);
 
                             // FIXME look at layer config for flags indicating not to load attributes
                             // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
@@ -69,6 +69,21 @@
                             // get the attributes for the layer
                             const attributesPromise = loadLayerAttributes(layer);
                             service.registerLayer(layer, layerConfig, attributesPromise); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                        },
+                        error: data => {
+                            console.log('layer error', layer.id, data);
+
+                            ref.legendService.setLayerState(service.layers[layer.id], layerStates.error, 100);
+                        },
+                        'update-start': data => {
+                            console.log('update-start', layer.id, data);
+
+                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id], true, 300);
+                        },
+                        'update-end': data => {
+                            console.log('update-end', layer.id, data);
+
+                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id], false, 100);
                         }
                     });
 
@@ -102,21 +117,6 @@
             }
 
             /**
-             * Sets layer visiblity value.
-             * @param {Number} layerId id of the layer in the layer registry
-             * @param {String} value   visibility state; Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only. Any value except for 'on' means the layer is hidden. 'off', 'zoomIn', and 'zoomOut' specify an icon and action for the layer toggle.
-             * TODO: needs more work for toggling on/off dynamic layers and its children;
-             */
-            function setLayerVisibility(layerId, value) {
-                const l = layers[layerId];
-
-                if (l) {
-                    l.state.options.visibility.value = value; // update layer state value
-                    l.layer.setVisibility(value === 'on' ? true : false);
-                }
-            }
-
-            /**
              * Removes the layer from the map and from the layer registry
              * @param {Number} layerId  the id of the layer to be removed
              * TODO: needs more work for removing dynamic layers and its children;
@@ -124,21 +124,15 @@
             function removeLayer(layerId) {
                 const l = layers[layerId];
 
-                // TODO: don't fail silently; thrown and error; maybe shown message to the user.
+                // TODO: don't fail silently; throw an error; maybe shown message to the user.
                 if (!l) {
                     return;
                 }
 
                 mapObject.removeLayer(l.layer);
                 delete service.layers[layerId]; // remove layer from the registry
-                ref.legendService.removeLayer(l);
 
-                // remove layer item from the legend
-                // TODO: needs more work to manager layerOrder
-                /*const index = service.legend.indexOf(layerId);
-                if (index !== -1) {
-                    service.legend.splice(index, 1);
-                }*/
+                ref.legendService.removeLayer(l);
             }
 
             /**
@@ -163,32 +157,21 @@
                     return false;
                 }
 
-                const l = {
+                const layerRecord = {
                     layer,
                     attribs,
-
-                    // applies the appropriate layer defaults to a config object
-                    state: angular.merge({
-                            cache: {} // to cache stuff like retrieved metadata info
-                        },
-                        layerDefaults[layerTypes[initialState.layerType]],
-                        initialState
-                    )
+                    initialState
                 };
 
-                layers[layer.id] = l;
-
-                /*
-                if (position === undefined) {
-                    position = service.legend.length;
-                }
-                service.legend.splice(position, 0, layer.id);
-                */
+                layers[layer.id] = layerRecord;
 
                 // TODO: apply config values
-                service.setLayerVisibility(l.layer.id, l.state.options.visibility.value);
-                service.setLayerOpacity(l.layer, l.state.options.opacity.value);
-                ref.legendService.addLayer(l);
+                // -->>>> service.setLayerOpacity(layer, initialState.options.opacity.value);
+                ref.legendService.addLayer(layerRecord);
+
+                // FIXME:
+                window.RV.layers = window.RV.layers || {};
+                window.RV.layers[layer.id] = layerRecord;
             }
 
             /**

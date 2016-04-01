@@ -4,6 +4,7 @@ describe('rvShell', () => {
     let scope;
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;
+    // window.globalRegistry = { appRegistry: {} };
 
     // fake gapi service
     function mockGapiService($provide) {
@@ -20,6 +21,10 @@ describe('rvShell', () => {
                 registerMapNode: angular.noop,
             };
         });
+    }
+
+    function mockGlobalRegistry($provide) {
+        $provide.constant('globalRegistry', { appRegistry: {} });
     }
 
     // mock custom loader module
@@ -47,7 +52,7 @@ describe('rvShell', () => {
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
         bard.appModule('app.layout', 'app.templates', 'app.ui', customTranslateLoader,
-            mockConfigService, mockGapiService, mockGeoService);
+            mockConfigService, mockGapiService, mockGeoService, mockGlobalRegistry);
 
         // inject angular services
         bard.inject('$compile', '$rootScope', '$httpBackend', '$q');
