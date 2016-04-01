@@ -38,6 +38,15 @@
           "spatialReference": {
             "wkid": 3978
           }
+        },
+        "full": {
+          "xmin": -4282638.06150141,
+          "ymin": -5153821.09213678,
+          "xmax": 4852210.1755664,
+          "ymax": 4376714.4420974,
+          "spatialReference": {
+            "wkid": 3978
+          }
         }
       },
       {
@@ -100,7 +109,7 @@
   "baseMaps": [
     {
       "id": "baseNrCan",
-      "name": "The Canada Base Map - Transportation (CBMT)",
+      "name": "Canada Base Map - Transportation",
       "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
       "altText": "altText - The Canada Base Map - Transportation (CBMT)",
       "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
@@ -116,8 +125,8 @@
     },
     {
       "id": "baseSimple",
-      "name": "Canada Base Map - Simple",
-      "description": "@@config.basemaps.baseSimple.description",
+      "name": "fr - Canada Base Map - Simple",
+      "description": "fr - Canada Base Map -Simple",
       "altText": "altText - Canada base map - Simple",
       "thumbnailUrl": "assets/images/basemap/baseSimple.jpg",
       "wkid": 3978,
@@ -142,9 +151,9 @@
     },
     {
       "id": "baseCBME_CBCE_HS_RO_3978",
-      "name": "Canada Base Map&#92;Carte de Base du Canada - Elevation&#92;Élevation",
-      "description": " The Canada Base Map - Elevation(CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
-      "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Elevation&#92;Élevation",
+      "name": "Carte de Base du Canada - Élevation",
+      "description": "The Canada Base Map - Elevation(CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
+      "altText": "Carte de Base du Canada - Élevation",
       "thumbnailUrl": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
       "wkid": 3978,
       "extentId": "123456789",
@@ -158,8 +167,8 @@
     },
     {
       "id": "baseCBMT_CBCT_GEOM_3978",
-      "name": "Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
-      "description": " The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+      "name": "Carte de Base du Canada - Transportation",
+      "description": "fr - Carte de Base du Canada - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
       "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
       "thumbnailUrl": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
       "wkid": 3978,
