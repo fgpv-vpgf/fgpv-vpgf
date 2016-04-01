@@ -127,11 +127,11 @@
                         idx = wkidArray.indexOf(wkid);
                     }
 
-                    //FIXME: move to config?
+                    // FIXME: move to config?
                     const maxLength = 35;
 
                     if (basemap.name.length > maxLength) {
-                        basemap.name = basemap.name.substring(0, maxLength-3) + '...';
+                        basemap.name = basemap.name.substring(0, maxLength - 3) + '...';
                     }
 
                     self.projections[idx].items.push({
