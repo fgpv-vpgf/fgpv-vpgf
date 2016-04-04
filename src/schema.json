@@ -96,19 +96,23 @@
         "lodNode": {
             "type": "object",
             "properties": {
-                "id": { "type": "number" },
-                "lod": {
-                    "type": "object",
-                    "properties": {
-                        "level": { "type": "number" },
-                        "resolution": { "type": "number" },
-                        "scale": { "type": "number" }
+                "id": { "type": "string" },
+                "lods": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "level": { "type": "number" },
+                            "resolution": { "type": "number" },
+                            "scale": { "type": "number" }
+                        },
+                        "required": [ "level", "resolution", "scale" ],
+                        "additionalProperties": false
                     },
-                    "required": [ "level", "resolution", "scale" ],
-                    "additionalProperties": false
+                    "description": "Level of details for a specific tile schema"
                 }
             },
-            "required": [ "id", "lod" ],
+            "required": [ "id", "lods" ],
             "additionalProperties": false
         },
 
