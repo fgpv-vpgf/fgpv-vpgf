@@ -32,6 +32,9 @@
     "datatables-buttons": "~1.1.2"
   },
   "overrides": {
+    "jquery": {
+      "ignore": true
+    },
     "ng-flow": {
       "main": "dist/ng-flow-standalone.js"
     },
