@@ -160,7 +160,7 @@
                         const items = projection.items;
 
                         items.forEach(item => {
-                            item.needMapRefresh = (self.selectedWkid === item.wkid) ? false : true;
+                            item.needMapRefresh = (self.selectedWkid !== item.wkid);
                         });
 
                     });
