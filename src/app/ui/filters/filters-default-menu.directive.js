@@ -35,13 +35,14 @@
         }
     }
 
-    function Controller(stateManager) {
+    function Controller($scope, stateManager, events) {
         'ngInject';
         const self = this;
 
         self.setMode = setMode;
-
         self.filtersMode = filtersMode;
+        self.dataPrint = dataPrint;
+        self.dataExportCSV = dataExportCSV;
 
         activate();
 
@@ -57,6 +58,22 @@
 
         function filtersMode() {
             return stateManager.state.filters.morph;
+        }
+
+        /**
+         * Emits a data print event.
+         * TODO: eschew events; needed here since it's very hard to communicate with main filters directive; angular 1.5 should solve it using directives with multiple transclusions
+         */
+        function dataPrint() {
+            $scope.$emit(events.rvDataPrint);
+        }
+
+        /**
+         * Emits a data expor csv event.
+         * TODO: eschew events; needed here since it's very hard to communicate with main filters directive; angular 1.5 should solve it using directives with multiple transclusions
+         */
+        function dataExportCSV() {
+            $scope.$emit(events.rvDataExportCSV);
         }
     }
 })();
