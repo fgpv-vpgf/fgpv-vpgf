@@ -20,17 +20,24 @@
 
         function mapService(geoState, config) {
 
+            // TODO change this to array of properties, loop through
             if (angular.isUndefined(geoState.fullExtent)) {
                 geoState.fullExtent = null;
             }
             if (angular.isUndefined(geoState.mapExtent)) {
                 geoState.mapExtent = null;
             }
+            if (angular.isUndefined(geoState.lods)) {
+                geoState.lods = null;
+            }
             if (angular.isUndefined(geoState.selectedBaseMapId)) {
                 geoState.selectedBaseMapId = null;
             }
             if (angular.isUndefined(geoState.selectedBaseMapExtentSetId)) {
                 geoState.selectedBaseMapExtentSetId = null;
+            }
+            if (angular.isUndefined(geoState.selectedBaseMapLodId)) {
+                geoState.selectedBaseMapLodId = null;
             }
 
             // this `service` object will be exposed through `geoService`
@@ -79,9 +86,11 @@
 
                     // basemap: 'gray',
                     extent: geoState.mapExtent,
-                    zoom: 6,
-                    center: [-100, 50]
+                    lods: geoState.lods
                 });
+
+                console.log('I AM MAP EXTENT', geoState.mapExtent);
+                console.log('I AM THE MAP', mapObject);
 
                 // store map object in service
                 service.mapObject = mapObject;
@@ -160,6 +169,27 @@
                     (extentSetForId.maximum) ? extentSetForId.maximum : null;
 
                 return lFullExtent;
+            }
+
+            /*
+             * Retrieve level of details array from config for current basemap
+             * @private
+             */
+            function getLod(lodSets) {
+
+                // In configSchema, at least one extent for a basemap
+                const lodForId = lodSets.find(lodSet => {
+                    if (lodSet.id === geoState.selectedBaseMapLodId) {
+                        return true;
+                    }
+                });
+
+                // no matching id in the extentset
+                if (angular.isUndefined(lodForId)) {
+                    throw new Error('could not find an LOD set with matching id.');
+                }
+
+                return lodForId.lods;
             }
 
             /**
@@ -300,9 +330,11 @@
                 });
 
                 geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
+                geoState.selectedBaseMapLodId = selectedBaseMap.lodId;
 
                 const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
                 geoState.mapExtent = gapiService.gapi.mapManager.Extent(fullExtentJson);
+                geoState.lods = getLod(config.map.lods);
 
                 console.log('finish setSelectdBaseMap');
 
