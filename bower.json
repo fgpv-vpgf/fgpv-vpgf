@@ -28,7 +28,8 @@
     "datatables.net-dt": "~1.10.10",
     "datatables-scroller": "~1.4.0",
     "datatables-select": "~1.1.2",
-    "ng-flow": "~2.7.1"
+    "ng-flow": "~2.7.1",
+    "datatables-buttons": "~1.1.2"
   },
   "overrides": {
     "ng-flow": {
@@ -36,6 +37,14 @@
     },
     "datatables-scroller": {
       "main": "js/dataTables.scroller.js",
+      "dependencies": null
+    },
+    "datatables-buttons": {
+      "main": [
+        "js/dataTables.buttons.js",
+        "js/buttons.html5.js",
+        "js/buttons.print.js"
+      ],
       "dependencies": null
     },
     "datatables-select": {

@@ -46,23 +46,23 @@
                 {{'filter.menu.enableFilters' | translate}}
             </md-button>
         </md-menu-item>
+        -->
 
         <md-menu-divider></md-menu-divider>
 
         <md-menu-item>
-            <md-button ng-click="self.toggleNotifications()">
+            <md-button ng-click="self.dataPrint()">
                 <md-icon md-svg-icon="action:print"></md-icon>
-                {{'filter.menu.print' | translate}}
+                {{ 'filter.menu.print' | translate }}
             </md-button>
         </md-menu-item>
 
         <md-menu-item>
-            <md-button ng-click="self.toggleNotifications()">
+            <md-button ng-click="self.dataExportCSV()">
                 <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
-                {{'filter.menu.export' | translate}}
+                {{ 'filter.menu.export' | translate }}
             </md-button>
         </md-menu-item>
-        -->
 
     </md-menu-content>
 </md-menu>
