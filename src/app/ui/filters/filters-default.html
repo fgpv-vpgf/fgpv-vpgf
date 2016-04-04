@@ -2,8 +2,9 @@
     header-controls="rv-filters-default-menu"
     static-content="true"
     title-style="title"
-    title-value="{{'filter.title' | translate}}{{ self.display.requester.name }}"
+    title-value="{{ 'filter.title' | translate }}{{ self.display.requester.name }}"
     is-loading="self.display.isLoading">
+
     <div class="rv-filters">
 
         <!--md-button ng-click="self.draw()">click this button if you don't see the table below</md-button-->

@@ -81,7 +81,19 @@
                         scroller: {
                             displayBuffer: 3 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer
                         }, // turn on virtual scroller extension
-                        select: true // allow row select
+                        select: true, // allow row select,
+                        buttons: [
+                            // 'excelHtml5',
+                            // 'pdfHtml5',
+                            {
+                                extend: 'print',
+                                title: self.display.requester.name
+                            },
+                            {
+                                extend: 'csvHtml5',
+                                title: self.display.requester.name
+                            },
+                        ]
                     });
 
                 self.table.on('select', function (e, dt, type, indexes) {
@@ -117,7 +129,7 @@
      * Controller watches for panel morph changes and redraws the table after the change is complete;
      * it also watches for dispaly data changes and re-creates the table when it does change.
      */
-    function Controller($scope, $timeout, tocService, stateManager) {
+    function Controller($scope, $timeout, tocService, stateManager, events) {
         'ngInject';
         const self = this;
 
@@ -165,6 +177,20 @@
                     self.destroyTable();
                 }
             });
+
+            // wait for print event and print the table
+            $scope.$on(events.rvDataPrint, () => {
+                console.log('Printing Datatable');
+
+                triggerTableButton(0);
+            });
+
+            // wait for data export CSV event and export
+            $scope.$on(events.rvDataExportCSV, () => {
+                console.log('Exporting CSV Datatable');
+
+                triggerTableButton(1);
+            });
         }
 
         // re draw the table using scroller extension
@@ -174,6 +200,17 @@
                 self.table.scroller.measure();
 
                 // self.table.columns.adjust().draw();
+            }
+        }
+
+        /**
+         * Triggers a button on the table with the specified index
+         * @param  {Number|String} index button selector: https://datatables.net/reference/api/button()
+         */
+        function triggerTableButton(index) {
+            const button = self.table.button(index);
+            if (button) {
+                button.trigger();
             }
         }
     }
