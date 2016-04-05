@@ -94,8 +94,8 @@
                     lods: geoState.lods
                 });
 
-                console.log('I AM MAP EXTENT', geoState.mapExtent);
-                console.log('I AM THE MAP', mapObject);
+                // console.log('I AM MAP EXTENT', geoState.mapExtent);
+                // console.log('I AM THE MAP', mapObject);
 
                 // store map object in service
                 service.mapObject = mapObject;
