@@ -22,4 +22,11 @@
             background-image: url($pathPrefix + "sort_desc_disabled.png");
         }
     }
+
+    table.dataTable tbody {
+        .material-icons {
+            cursor: pointer;
+            float: right;
+        }
+    }
 }

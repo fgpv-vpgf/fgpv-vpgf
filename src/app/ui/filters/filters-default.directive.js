@@ -19,7 +19,6 @@
      * @return {object} directive body
      */
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService) {
-        // , geoService
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default.html',
@@ -61,19 +60,10 @@
                 const tableNode = angular.element('<table class="display nowrap rv-data-table"></table>');
                 containerNode.append(tableNode);
 
-                /*let extraColumn = [{
-                    className:      'zoom-in',
-                    orderable:      false,
-                    data:           null,
-                    defaultContent: ''
-                }].push(stateManager.display.filters.data.columns);*/
-
-                // console.log(extraColumn);
-
+                // make icon then add to the first row
                 const icon = $compile('<md-icon md-svg-src="action:zoom_in"></md-icon>')(scope).html();
                 console.log('icon', icon);
                 stateManager.display.filters.data.data.forEach(row => {
-                    // console.log('eeeeeeeeeeeeeee', row);
                     row[0] += ' <md-icon md-svg-src="action:visibility" class="ng-scope ng-isolate-scope' +
                     ' material-icons" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fit="" ' +
                     'height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">' +
@@ -81,8 +71,6 @@
                     '13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L' +
                     '20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5' +
                     ' 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-4h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></g></svg></md-icon>';
-                    // row[0] += '  <md-icon md-svg-src="action:zoom_in"></md-icon>';
-                    console.log(row[0]);
                 });
 
                 // I hate DataTables
