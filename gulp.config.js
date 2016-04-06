@@ -146,6 +146,7 @@ module.exports = function () {
     function getKarmaOptions() {
         var options = {
             files: [].concat(
+                bowerModules + 'jquery/dist/jquery.js',
                 bowerFiles(),
                 nodedir + 'babel-core/browser-polyfill.js',
                 bowerModules + 'angular-mocks/angular-mocks.js',
