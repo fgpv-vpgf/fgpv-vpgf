@@ -1,6 +1,6 @@
 /* global bard, $compile, $rootScope, $httpBackend, tocService */
 
-describe('rvLayerGroupToggleButton', () => {
+xdescribe('rvLayerGroupToggleButton', () => {
     let scope;
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;

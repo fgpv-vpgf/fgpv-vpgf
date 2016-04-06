@@ -12,7 +12,7 @@
      *
      * ```html
      * <!-- `name` attribute specifies the name of the flag; flag's control object is fetched from the layerItem directive -->
-     * <rv-layer-item-flag name="scale"></rv-layer-item-flag>
+     * <rv-toc-entry-flag name="scale"></rv-toc-entry-flag>
      * ```
      *
      */

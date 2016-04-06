@@ -8,7 +8,15 @@
      * @restrict E
      * @description
      *
-     * The `rvTocEntryControl` directive description.
+     * The `rvTocEntryControl` directive is one of the layer toggle buttons: visiblity, settings, metadata, etc.
+     *
+     * ```html
+     * <!-- `option` attribute specifies the name of the toggle; toggle's control object and its template are fetched from the layerItem directive -->
+     * <rv-toc-entry-control option="settings"></toc-entry-control>
+     *
+     * <!-- `type` attribute specifies the template to be used for the control; it defaults to `entry-button.html`; another option is `entry-control-menu-item.html` -->
+     * <rv-toc-entry-control option="metadata" type="menu-item"></rv-toc-entry-control>
+     * ```
      *
      */
     angular
@@ -43,6 +51,7 @@
             const self = scope.self;
 
             // getting toggle object from the layer item controller directly using toggle's name
+            self.entry = ctrl.entry;
             self.control = ctrl.entry.options[self.option];
             self.template = tocService.presets.options[self.option];
             self.action = self.action || self.template.action;

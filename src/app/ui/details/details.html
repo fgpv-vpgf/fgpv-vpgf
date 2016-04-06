@@ -107,9 +107,9 @@ WARNING be sure to change the detail content display logic in both blocks (singl
                     class="rv-details-layer-list-item">
 
                     <md-button aria-label='point details' class="rv-button-square rv-details-layer-button" ng-click="self.selectItem(item)"></md-button>
-                    <rv-layer-item-symbology
+                    <rv-toc-entry-symbology
                         symbology="item.requester.symbology"
-                        ng-class="{ 'rv-disabled' : item.data.length === 0 || item.isLoading }"></rv-layer-item-symbology>
+                        ng-class="{ 'rv-disabled' : item.data.length === 0 || item.isLoading }"></rv-toc-entry-symbology>
                     <span class="rv-details-layer-badge" ng-if="item.data.length > 0">{{ item.data.length }}</span>
                     <md-progress-circular md-diameter="48" class="md-primary" md-mode="indeterminate" ng-if="item.isLoading"></md-progress-circular>
                     <div class="rv-details-layer-name">

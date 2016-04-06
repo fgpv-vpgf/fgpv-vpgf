@@ -8,7 +8,13 @@
      * @restrict EA
      * @description
      *
-     * The `rvTocEntry` directive description.
+     * The `rvTocEntry` directive is a UI compoenent for a layer or a layer gropu in the layer selector (toc).
+     *
+     * ```html
+     * <!-- `entry` attribute binds to the layer item in toc -->
+     * <!-- `type` attribute indicates which template will be used -->
+     * <rv-toc-entry entry="item" type="group"></rv-toc-entry>
+     * ```
      *
      */
     angular
