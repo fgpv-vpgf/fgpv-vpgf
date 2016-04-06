@@ -1,28 +1,23 @@
 /* global bard, $compile, $rootScope, $httpBackend, tocService */
 
-describe('rvLayerItem', () => {
+xdescribe('rvLayerItemButton', () => {
     let scope;
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;
 
-    // mock a group object
-    const mockLayer = {
-        type: 'layer',
-        name: 'Layer Name 1 Layer Name 1 Layer Name 1 Layer Name 1',
-        layerType: 'feature',
-        id: 0,
-        legend: [
-            {
-                icon: 'url',
-                name: 'something'
+    // mock part of the controller required by rvLayerItemButton directive
+    const rvLayerItemController = {
+        layer: {
+            type: 'layer',
+            name: 'Image Layers 1',
+            layerType: 'image',
+            id: 1,
+            options: {
+                visibility: {
+                    value: 'on', // 'off', 'zoomIn', 'zoomOut'
+                    enabled: true
+                }
             }
-        ],
-        options: {
-            // needed for layer-item-button directives
-        },
-        state: 'default', // error, loading,
-        flags: {
-            // needed for layer-item-flag directives
         }
     };
 
@@ -49,26 +44,22 @@ describe('rvLayerItem', () => {
         // inject angular services
         bard.inject('$compile', '$rootScope', '$httpBackend', 'tocService');
 
-        // spy on group visibility toggle method
-        spyOn(tocService.actions, 'toggleLayerFiltersPanel');
+        // spy on visibility toggle method
+        spyOn(tocService.presets.options.visibility, 'action');
 
         // crete new scope
         scope = $rootScope.$new();
 
-        // add mockGroup object to the scope, so directive has access to it
-        scope.item = mockLayer;
-
         directiveElement = angular.element(
-            '<rv-layer-item layer="item"></rv-layer-item>'
+            '<rv-layer-item-button name="visibility"></rv-layer-item-button>'
         );
 
-        // layer-item directive tries to load icon resources on compile
-        // need to mock that
+        // need to mock the required controller inside the directive being tested;
+        // http://stackoverflow.com/a/19951141
+        directiveElement.data('$rvLayerItemController',
+            rvLayerItemController);
+
         $httpBackend.expectGET('content/images/iconsets/action-icons.svg')
-            .respond({});
-        $httpBackend.expectGET('content/images/iconsets/image-icons.svg')
-            .respond({});
-        $httpBackend.expectGET('content/images/iconsets/navigation-icons.svg')
             .respond({});
 
         directiveElement = $compile(directiveElement)(scope);
@@ -79,21 +70,25 @@ describe('rvLayerItem', () => {
         directiveScope = directiveElement.isolateScope();
     });
 
-    describe('rvLayerItem', () => {
+    describe('rvLayerItemButton', () => {
         it('should be created successfully', () => {
             // check that directive element exists
             expect(directiveElement)
                 .toBeDefined();
 
-            // check that directive pulled the toggleGroup function from mocked tocController
-            expect(directiveScope.self.toggleLayerFiltersPanel)
+            // check that directive correctly pulled control object from the mocked controller
+            expect(directiveScope.self.control.value)
+                .toBe('on');
+
+            // check that directive pulled an action frunction from tocService
+            expect(directiveScope.self.action)
                 .toBeDefined();
 
-            // call toggleGroup method on the directive
-            directiveScope.self.toggleLayerFiltersPanel();
+            // call action method on the directive
+            directiveScope.self.action(directiveScope.self.layer);
 
-            // check if the corresponding method has been called
-            expect(tocService.actions.toggleLayerFiltersPanel)
+            // check if the corresponding method on tocService has been called
+            expect(tocService.presets.options.visibility.action)
                 .toHaveBeenCalled();
         });
     });
