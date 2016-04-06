@@ -17,8 +17,33 @@
 
 <span flex></span>
 
-<div class="rv-layer-group-controls">
+{{ self.group.groupType }}
 
-    <rv-layer-group-toggle-button name="visibility"></rv-layer-group-toggle-button>
+<div class="rv-layer-group-controls" ng-switch on="self.group.groupType">
+
+    <div ng-switch-when="regular">
+        <md-menu md-position-mode="target-right target">
+            <md-button
+                aria-label="{{ 'toc.layer.aria.openData' | translate }}"
+                class="md-icon-button rv-button-40"
+                ng-click="$mdOpenMenu($event)">
+                <md-icon md-svg-src="navigation:more_horiz"></md-icon>
+            </md-button>
+
+            <md-menu-content class="rv-menu rv-dense" width="4">
+                <rv-toc-entry-control type="menu-item" option="remove" entry="self.group"></rv-toc-entry-control>
+            </md-menu-content>
+        </md-menu>
+
+        <rv-layer-group-toggle-button name="visibility"></rv-layer-group-toggle-button>
+    </div>
+
+    <div ng-switch-when="esriDynamicRoot">
+        <rv-layer-group-toggle-button name="visibility"></rv-layer-group-toggle-button>
+    </div>
+
+    <div ng-switch-when="esriDynamic">
+        <rv-layer-group-toggle-button name="visibility"></rv-layer-group-toggle-button>
+    </div>
 
 </div>

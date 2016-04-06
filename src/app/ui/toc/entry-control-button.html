@@ -1,0 +1,12 @@
+<md-button
+    aria-label="{{ self.template.label[self.control.value] || self.template.label | translate }}"
+    class="md-icon-button rv-icon-20"
+    ng-class="{ selected: self.control.selected }"
+    ng-click="self.action(self.entry)"
+    ng-disabled="!self.control.enabled"
+    rv-help="{{ self.option }}">
+
+    <md-tooltip md-direction="top">{{ self.template.tooltip[self.control.value] || self.template.tooltip | translate }}</md-tooltip>
+    <md-icon md-svg-src="{{ self.template.icon[self.control.value] || self.template.icon }}"></md-icon>
+
+</md-button>

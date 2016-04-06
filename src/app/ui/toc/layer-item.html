@@ -17,6 +17,7 @@
 <div class="rv-layer-item-content">
     <div class="rv-layer-item-name">
         {{ self.layer.name }}
+        {{ self.layer.layerType }}
     </div>
 
     <!-- TODO: add translation -->
@@ -58,8 +59,6 @@
     </md-menu>
 
     <rv-layer-item-button name="visibility"></rv-layer-item-button>
-</div>
-
 </div>
 
 <md-progress-linear class="rv-toc-progress-indicator" md-mode="indeterminate" ng-show="self.layer.isLoading"></md-progress-linear>

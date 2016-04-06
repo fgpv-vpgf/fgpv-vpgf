@@ -44,7 +44,7 @@
             // getting toggle object from the layer item controller directly using toggle's name
             self.group = ctrl.group;
             self.control = ctrl.group.options[self.name];
-            self.template = tocService.presets.groupOptions[self.name];
+            self.template = tocService.presets.options[self.name];
             self.action = self.action || self.template.action;
         }
     }

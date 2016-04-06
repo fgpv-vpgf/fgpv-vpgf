@@ -1,0 +1,10 @@
+<md-menu-item>
+    <md-button
+        ng-click="self.action(self.entry)"
+        ng-class="{ selected: self.control.selected }"
+        ng-disabled="!self.control.enabled"
+        aria-label="{{ self.template.label[self.control.value] || self.template.label | translate }}">
+        <md-icon md-svg-icon="{{ self.template.icon[self.control.value] || self.template.icon }}"></md-icon>
+        {{ self.template.label[self.control.value] || self.template.label | translate }}
+    </md-button>
+</md-menu-item>

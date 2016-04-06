@@ -14,9 +14,16 @@
     // TODO: ignore this for now;
     const GROUP_TYPES = {
         regular: 'regular', // this group can be deleted but has no extra controls
-        immutable: 'immutable', // this group has no extra controls and cannot be deleted
+
+        ogcWms: 'ogcWms',
+
+        esriImage: 'esriImage',
         esriFeature: 'esriFeature',
+
+        esriDynamicRoot: 'esriDynamicRoot',
         esriDynamic: 'esriDynamic', // this group can be deleted and has extra controls such as setting (opacity, query), metadata,
+
+        esriTileRoot: 'esriTileRoot',
         esriTile: 'esriTile' // this group can be deleted and has extra controls such as settings (opacity)
     };
 
@@ -46,10 +53,10 @@
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         // groupType: 'regular', 'dynamic'
 
-        const LAYER_GROUP = (name, groupType = GROUP_TYPES.regular, expanded = false) => {
+        const LAYER_GROUP = (name, expanded = false) => {
             return {
                 type: 'group',
-                groupType,
+                groupType: GROUP_TYPES.regular,
                 name,
                 id: 'rv_lg_' + itemIdCounter++,
                 expanded,
@@ -59,6 +66,9 @@
                 options: {
                     visibility: {
                         value: 'on', // 'off', 'zoomIn', 'zoomOut'
+                        enabled: true
+                    },
+                    remove: {
                         enabled: true
                     }
                 },
@@ -139,20 +149,37 @@
             };
         };
 
-        const DYNAMIC_LAYER_GROUP = (initialState, expanded) => {
+        const GROUPED_LAYER_ENTRY = (initialState, isRoot = false, expanded = false) => {
             // get defaults for specific layerType
-            const defaults = layerDefaults[layerTypes.esriDynamic];
+            const defaults = layerDefaults[initialState.layerType];
 
             return angular.merge(
                 {},
-                LAYER_GROUP(initialState.name, GROUP_TYPES.esriDynamic, expanded),
+                LAYER_GROUP(initialState.name, expanded),
                 {
+                    groupType: initialState.layerType + (isRoot ? 'Root' : ''),
                     slaves: [],
                     options: angular.extend({}, defaults.options)
                 },
                 initialState
             );
         };
+
+        /*const DYNAMIC_LAYER_GROUP = (initialState, groupType, expanded = false) => {
+            // get defaults for specific layerType
+            const defaults = layerDefaults[groupType];
+
+            return angular.merge(
+                {},
+                LAYER_GROUP(initialState.name, expanded),
+                groupType,
+                {
+                    slaves: [],
+                    options: angular.extend({}, defaults.options)
+                },
+                initialState
+            );
+        };*/
 
         /**
          * Generates a layer entry to be displayed in toc
@@ -223,8 +250,8 @@
          */
         function autoLegendService(config, layers, legend) {
             const ref = {
-                dataGroup: LAYER_GROUP('Data layers', GROUP_TYPES.immutable, true),
-                imageGroup: LAYER_GROUP('Image layers', GROUP_TYPES.immutable, true),
+                dataGroup: LAYER_GROUP('Data layers', true),
+                imageGroup: LAYER_GROUP('Image layers', true),
                 root: legend.items
             };
 
@@ -273,7 +300,7 @@
              * @private
              */
             function createGroupedLayerEntry(layer) {
-                const dynamicGroup = DYNAMIC_LAYER_GROUP(layer.initialState);
+                const dynamicGroup = GROUPED_LAYER_ENTRY(layer.initialState, true);
                 layer.state = dynamicGroup;
 
                 const symbologyPromise = getMapServerSymbology(layer);
@@ -281,8 +308,9 @@
                 // generate all the slave sublayers upfornt ...
                 layer.layer.layerInfos.forEach(layerInfo => {
                     if (layerInfo.subLayerIds) { // group item
-                        const groupItem = DYNAMIC_LAYER_GROUP({
-                            name: layerInfo.name
+                        const groupItem = GROUPED_LAYER_ENTRY({
+                            name: layerInfo.name,
+                            layerType: layer.initialState.layerType
                             // TODO: add options override from the config
                         });
 
