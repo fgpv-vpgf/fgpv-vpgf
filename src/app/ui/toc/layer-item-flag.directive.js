@@ -22,7 +22,7 @@
 
     function rvLayerItemFlag(tocService) {
         const directive = {
-            require: '^rvLayerItem',
+            require: '^rvTocEntry',
             restrict: 'E',
             templateUrl: 'app/ui/toc/layer-item-flag.html',
             scope: {
@@ -42,7 +42,7 @@
             const self = scope.self;
 
             // getting toggle object from the layer item controller directly using toggle's name
-            self.control = ctrl.layer.flags[self.name];
+            self.control = ctrl.entry.flags[self.name];
             self.template = tocService.presets.flags[self.name];
         }
     }

@@ -1,0 +1,64 @@
+<md-button
+    aria-label='layer data'
+    class="rv-layer-body-button rv-button-square"
+    rv-help="layer-item"
+    ng-if="self.entry.options.data"
+    ng-click="self.defaultAction(self.entry)">
+    <!-- TODO: add aria attribues on the button to provide context on what it does; also mute the actual layer name below, so a screen reader wouldn't pronounce it twice-->
+</md-button>
+
+<!-- TODO: maybe have a wrapper div so we can toggle the error template in one place instead of in pieces -->
+
+<div ng-if="self.entry.state === 'rv-error'" class="rv-icon-32">
+    <md-icon md-svg-src="community:emoticon-sad"></md-icon>
+</div>
+<rv-layer-item-symbology symbology="self.entry.symbology" ng-if="self.entry.state === 'rv-default'"></rv-layer-item-symbology>
+
+<div class="rv-layer-item-content">
+    <div class="rv-layer-item-name">
+        {{ self.entry.name }}
+        {{ self.entry.layerType }}
+    </div>
+
+    <!-- TODO: add translation -->
+    <div class="rv-layer-item-caption md-caption" ng-if="self.entry.state === 'rv-error'">
+        Can't load layer
+    </div>
+
+    <div class="rv-layer-item-flags" ng-if="self.entry.state === 'rv-default'">
+        <rv-layer-item-flag name="type"></rv-layer-item-flag>
+        <rv-layer-item-flag name="data"></rv-layer-item-flag>
+        <rv-layer-item-flag name="user"></rv-layer-item-flag>
+        <rv-layer-item-flag name="scale"></rv-layer-item-flag>
+        <rv-layer-item-flag name="query"></rv-layer-item-flag>
+    </div>
+
+</div>
+
+<div class="rv-layer-item-toggles" ng-if="self.entry.state === 'rv-error'">
+    <rv-toc-entry-control option="reload" entry="self.entry"></rv-toc-entry-control>
+    <rv-toc-entry-control option="remove" entry="self.entry"></rv-toc-entry-control>
+</div>
+
+<div class="rv-layer-item-toggles" ng-if="self.entry.state === 'rv-default'">
+
+    <md-menu md-position-mode="target-right target">
+        <md-button
+            aria-label="{{'toc.entry.aria.openData' | translate}}"
+            class="md-icon-button rv-button-40"
+            ng-click="$mdOpenMenu($event)">
+            <md-icon md-svg-src="navigation:more_horiz"></md-icon>
+        </md-button>
+
+        <md-menu-content class="rv-menu rv-dense" width="4">
+            <rv-toc-entry-control type="menu-item" option="metadata" entry="self.entry"></rv-toc-entry-control>
+            <rv-toc-entry-control type="menu-item" option="settings" entry="self.entry"></rv-toc-entry-control>
+            <md-menu-divider></md-menu-divider>
+            <rv-toc-entry-control type="menu-item" option="remove" entry="self.entry"></rv-toc-entry-control>
+        </md-menu-content>
+    </md-menu>
+
+    <rv-toc-entry-control option="visibility" entry="self.entry"></rv-toc-entry-control>
+</div>
+
+<md-progress-linear class="rv-toc-progress-indicator" md-mode="indeterminate" ng-show="self.entry.isLoading"></md-progress-linear>

@@ -135,11 +135,11 @@ $layer-item-height: rem(6.0);
     &.rv-#{$index} {
         $offset: rem(0.8); // multiplied by the indentation level
 
-        rv-layer-item {
+        .rv-toc-layer-entry{
             padding-left: $offset * ($index + 1) + rem(1.0) + $toc-padding;
         }
 
-        rv-layer-group-toggle {
+        .rv-toc-group-entry {
             padding-left: $offset * ($index) + rem(1.0) + $toc-padding;
         }
 
@@ -153,7 +153,7 @@ absolutely position a button underneath an item so it acts like a button body fo
 */
 @mixin layer-group-toggle {
 
-    rv-layer-group-toggle {
+    .rv-toc-group-entry {
         height: $group-item-height;
         position: relative;
         display: flex;
@@ -197,7 +197,7 @@ absolutely position a button underneath an item so it acts like a button body fo
 }
 
 @mixin layer-item {
-    rv-layer-item {
+    .rv-toc-layer-entry{
 
         display: flex;
         align-items: center;

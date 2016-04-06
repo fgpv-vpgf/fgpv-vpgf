@@ -17,6 +17,7 @@
 
     function rvTocEntryControl(tocService) {
         const directive = {
+            require: '^rvTocEntry',
             restrict: 'E',
             templateUrl: (elm, attr) => {
                 // returns a different template based on the value of the type attribute
@@ -25,7 +26,7 @@
             },
             scope: {
                 action: '&?', // overloading default template action
-                entry: '=',
+                // entry: '=',
                 option: '@'
             },
             link: link,
@@ -38,11 +39,11 @@
 
         /***/
 
-        function link(scope) { // , el, attr, ctrl) {
+        function link(scope, el, attr, ctrl) {
             const self = scope.self;
 
             // getting toggle object from the layer item controller directly using toggle's name
-            self.control = self.entry.options[self.option];
+            self.control = ctrl.entry.options[self.option];
             self.template = tocService.presets.options[self.option];
             self.action = self.action || self.template.action;
         }

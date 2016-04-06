@@ -7,14 +7,15 @@
         <ul class="rv-layer-list rv-root" dx-start-with="self.geoService.legend">
             <!--{ item }}-->
             <li ng-repeat="item in $dxPrior.items track by item.id" class="rv-toggle-slide">
-                <rv-layer-item
-                    layer="item"
+                <rv-toc-entry
+                    class="rv-toc-{{ item.type }}-entry"
+                    entry="item"
                     ng-if="item.items === undefined"
-                    ng-class="[{ 'rv-selected': item.selected }, item.state ]"></rv-layer-item>
+                    ng-class="[ { 'rv-selected': item.selected }, item.state ]"></rv-toc-entry>
 
                 <div class="rv-layer-level rv-{{ $dxLevel }}" ng-if="item.items !== undefined">
 
-                    <rv-layer-group-toggle group="item"></rv-layer-group-toggle>
+                    <rv-toc-entry class="rv-toc-{{ item.type }}-entry" entry="item" type="group"></rv-toc-entry>
 
                     <ul class="rv-layer-list rv-toggle-slide" dx-connect="item" ng-show="item.expanded"></ul>
 
