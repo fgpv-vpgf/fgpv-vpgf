@@ -3,12 +3,12 @@
 
     /**
      * @ngdoc directive
-     * @name rvLayerItemFlag
+     * @name rvTocEntryFlag
      * @module app.ui.toc
      * @restrict E
      * @description
      *
-     * The `rvLayerItemFlag` directive is one of the layer flags: type, data, out-of-scale, user-added.
+     * The `rvTocEntryFlag` directive is one of the layer flags: type, data, out-of-scale, user-added.
      *
      * ```html
      * <!-- `name` attribute specifies the name of the flag; flag's control object is fetched from the layerItem directive -->
@@ -18,13 +18,13 @@
      */
     angular
         .module('app.ui.toc')
-        .directive('rvLayerItemFlag', rvLayerItemFlag);
+        .directive('rvTocEntryFlag', rvTocEntryFlag);
 
-    function rvLayerItemFlag(tocService) {
+    function rvTocEntryFlag(tocService) {
         const directive = {
             require: '^rvTocEntry',
             restrict: 'E',
-            templateUrl: 'app/ui/toc/layer-item-flag.html',
+            templateUrl: 'app/ui/toc/templates/entry-flag.html',
             scope: {
                 name: '@'
             },

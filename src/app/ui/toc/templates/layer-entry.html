@@ -25,19 +25,19 @@
         Can't load layer
     </div>
 
-    <div class="rv-layer-item-flags" ng-if="self.entry.state === 'rv-default'">
-        <rv-layer-item-flag name="type"></rv-layer-item-flag>
-        <rv-layer-item-flag name="data"></rv-layer-item-flag>
-        <rv-layer-item-flag name="user"></rv-layer-item-flag>
-        <rv-layer-item-flag name="scale"></rv-layer-item-flag>
-        <rv-layer-item-flag name="query"></rv-layer-item-flag>
+    <div class="rv-toc-entry-flags" ng-if="self.entry.state === 'rv-default'">
+        <rv-toc-entry-flag name="type"></rv-toc-entry-flag>
+        <rv-toc-entry-flag name="data"></rv-toc-entry-flag>
+        <rv-toc-entry-flag name="user"></rv-toc-entry-flag>
+        <rv-toc-entry-flag name="scale"></rv-toc-entry-flag>
+        <rv-toc-entry-flag name="query"></rv-toc-entry-flag>
     </div>
 
 </div>
 
 <div class="rv-layer-item-toggles" ng-if="self.entry.state === 'rv-error'">
-    <rv-toc-entry-control option="reload" entry="self.entry"></rv-toc-entry-control>
-    <rv-toc-entry-control option="remove" entry="self.entry"></rv-toc-entry-control>
+    <rv-toc-entry-control option="reload"></rv-toc-entry-control>
+    <rv-toc-entry-control option="remove"></rv-toc-entry-control>
 </div>
 
 <div class="rv-layer-item-toggles" ng-if="self.entry.state === 'rv-default'">
@@ -51,14 +51,14 @@
         </md-button>
 
         <md-menu-content class="rv-menu rv-dense" width="4">
-            <rv-toc-entry-control type="menu-item" option="metadata" entry="self.entry"></rv-toc-entry-control>
-            <rv-toc-entry-control type="menu-item" option="settings" entry="self.entry"></rv-toc-entry-control>
+            <rv-toc-entry-control type="menu-item" option="metadata"></rv-toc-entry-control>
+            <rv-toc-entry-control type="menu-item" option="settings"></rv-toc-entry-control>
             <md-menu-divider></md-menu-divider>
-            <rv-toc-entry-control type="menu-item" option="remove" entry="self.entry"></rv-toc-entry-control>
+            <rv-toc-entry-control type="menu-item" option="remove"></rv-toc-entry-control>
         </md-menu-content>
     </md-menu>
 
-    <rv-toc-entry-control option="visibility" entry="self.entry"></rv-toc-entry-control>
+    <rv-toc-entry-control option="visibility"></rv-toc-entry-control>
 </div>
 
 <md-progress-linear class="rv-toc-progress-indicator" md-mode="indeterminate" ng-show="self.entry.isLoading"></md-progress-linear>
