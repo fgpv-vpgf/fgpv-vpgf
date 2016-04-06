@@ -322,7 +322,7 @@
                 geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
 
                 const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
-                geoState.mapExtent = gapiService.gapi.mapManager.Extent(fullExtentJson);
+                geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(fullExtentJson);
 
                 console.log('finish setSelectdBaseMap');
 
