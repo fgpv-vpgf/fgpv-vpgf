@@ -30,11 +30,19 @@
 
     headNode.appendChild(fontsLink);
 
+    // inject jQuery if it is not already present
+    if (!window.jQuery) {
+        const jQScript = d.createElement('script');
+        jQScript.src = 'https://code.jquery.com/jquery-2.2.1.min.js';
+        jQScript.type = 'text/javascript';
+
+        bodyNode.appendChild(jQScript);
+    }
+
     // inject core js
     const coreScript = d.createElement('script');
     coreScript.src = `${repo}/core.js`;
     coreScript.type = 'text/javascript';
 
     bodyNode.appendChild(coreScript);
-
 })();
