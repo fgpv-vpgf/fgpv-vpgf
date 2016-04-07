@@ -353,7 +353,66 @@
             },
             "additionalProperties": false
         },
+        "wmsLayerEntryNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer entry in the WMS" },
+                "visibility": {
+                    "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "opacity": {
+                    "$ref": "#/definitions/opacityOptionNode"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "query": {
+                    "$ref": "#/definitions/queryOptionNode"
+                }
+            },
+            "required": ["id"],
+            "additionalProperties": false
+        },
 
+        "dynamicLayerEntryNode": {
+            "type": "object",
+            "properties": {
+                "index": { "type": "number", "description": "The index of the layer in the map service." },
+                "visibility": {
+                    "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "opacity": {
+                    "$ref": "#/definitions/opacityOptionNode"
+                },
+                "remove": {
+                    "$ref": "#/definitions/option",
+                    "description": "Remove control in the layer selector"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "query": {
+                    "$ref": "#/definitions/queryOptionNode"
+                },
+                "data": {
+                    "$ref": "#/definitions/option",
+                    "description": "Enables data panel"
+                },
+                "outfields": { "type": "string", "default": "*", "description": "A comma separated list of attribute names that should be requested on query." }
+            },
+            "required": ["index"],
+            "additionalProperties": false
+        },
 
         "legendAuto": {
             "type": "object",
@@ -435,17 +494,7 @@
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "layerEntries": {
                     "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "id": {"type": "string", "description": "The id of the layer entry in the WMS"},
-                            "enableVisibilityControl": { "type": "boolean", "default":false },
-                            "visibleOnLoad": { "type": "boolean","default":true },
-                            "queryable": { "type": "boolean", "default": true }
-                        },
-                        "required": ["id"],
-                        "additionalProperties": false
-                    },
+                    "items": { "$ref": "#/definitions/wmsLayerEntryNode" },
                     "minItems": 1
                 },
                 "layerType": { "type": "string", "enum": [ "ogcWms" ] },
@@ -467,19 +516,7 @@
                 "layerType": { "type": "string", "enum": [ "esriDynamic" ] },
                 "layerEntries": {
                     "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "index": {"type": "number", "description": "The index of the layer in the map service."},
-                            "enableVisibilityControl": { "type": "boolean", "default":false },
-                            "visibleOnLoad": { "type": "boolean","default":true },
-                            "queryable": { "type": "boolean", "default": true },
-                            "data": { "type": "boolean", "default": false, "description": "Indicates if this index has attribute data that should be requested by the viewer." },
-                            "outfields": { "type": "string", "default": "*", "description": "A comma separated list of attribute names that should be requested on query." }
-                        },
-                        "required": ["index"],
-                        "additionalProperties": false
-                    },
+                    "items": { "$ref": "#/definitions/dynamicLayerEntryNode" },
                     "minItems": 1
                 },
                 "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
