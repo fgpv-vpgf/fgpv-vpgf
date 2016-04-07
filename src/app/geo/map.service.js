@@ -20,30 +20,14 @@
 
         function mapService(geoState, config) {
 
-            // TODO change this to array of properties, loop through
-            if (angular.isUndefined(geoState.fullExtent)) {
-                geoState.fullExtent = null;
-            }
-            if (angular.isUndefined(geoState.mapExtent)) {
-                geoState.mapExtent = null;
-            }
-            if (angular.isUndefined(geoState.lods)) {
-                geoState.lods = null;
-            }
-            if (angular.isUndefined(geoState.selectedBaseMapId)) {
-                geoState.selectedBaseMapId = null;
-            }
-            if (angular.isUndefined(geoState.selectedBaseMapExtentSetId)) {
-                geoState.selectedBaseMapExtentSetId = null;
-            }
+            const initProps = ['fullExtent', 'mapExtent', 'lods', 'selectedBaseMapId',
+                'selectedBaseMapExtentSetId', 'selectedBaseMapLodId', 'blankBaseMapId'];
 
-            if (angular.isUndefined(geoState.blankBaseMapId)) {
-                geoState.blankBaseMapId = null;
-            }
-
-            if (angular.isUndefined(geoState.selectedBaseMapLodId)) {
-                geoState.selectedBaseMapLodId = null;
-            }
+            initProps.forEach(prop => {
+                if (angular.isUndefined(geoState[prop])) {
+                    geoState[prop] = null;
+                }
+            });
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -129,14 +113,7 @@
                     mapSettings.overviewMap = config.map.components.overviewMap;
                 }
 
-                // TODO be sure to handle the check for missing map.extents that is commented out below
-                service.mapLoaded = initMapFullExtent();
-
-                /*
-                if (config.map.extentSets) {
-                    initMapFullExtent();
-                }
-                */
+                service.mapLoaded = prepMapLoad();
 
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
                 service.mapManager.BasemapControl.setBasemap(geoState.selectedBaseMapId);
@@ -161,24 +138,28 @@
                 // FIXME: default basemap should be indicated in the config as well
                 // const currentBasemapExtentSetId = '123456789';
 
-                // In configSchema, at least one extent for a basemap
-                const extentSetForId = extentSets.find(extentSet => {
-                    if (extentSet.id === geoState.selectedBaseMapExtentSetId) {
-                        return true;
+                if (extentSets) {
+                    // In configSchema, at least one extent for a basemap
+                    const extentSetForId = extentSets.find(extentSet => {
+                        if (extentSet.id === geoState.selectedBaseMapExtentSetId) {
+                            return true;
+                        }
+                    });
+
+                    // no matching id in the extentset
+                    if (angular.isUndefined(extentSetForId)) {
+                        throw new Error('could not find an extent set with matching id.');
                     }
-                });
 
-                // no matching id in the extentset
-                if (angular.isUndefined(extentSetForId)) {
-                    throw new Error('could not find an extent set with matching id.');
+                    // find the full extent type from extentSetForId
+                    const lFullExtent = (extentSetForId.full) ? extentSetForId.full :
+                        (extentSetForId.default) ? extentSetForId.default :
+                        (extentSetForId.maximum) ? extentSetForId.maximum : null;
+
+                    return lFullExtent;
+                } else {
+                    return null;
                 }
-
-                // find the full extent type from extentSetForId
-                const lFullExtent = (extentSetForId.full) ? extentSetForId.full :
-                    (extentSetForId.default) ? extentSetForId.default :
-                    (extentSetForId.maximum) ? extentSetForId.maximum : null;
-
-                return lFullExtent;
             }
 
             /*
@@ -391,16 +372,16 @@
             }
 
             /*
-            * Initialize map full extent
+            * Ready a trigger on the map load event
+            * Also initialize map full extent
             * @private
             */
-            function initMapFullExtent() {
-                // TODO prolly change this function once we prove this works.
+            function prepMapLoad() {
                 // we are returning a promise that resolves when the map load happens.
 
                 return $q(resolve => {
-                    const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
                     const map = service.mapObject;
+                    const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
 
                     setMapLoadingFlag(true);
 
@@ -408,25 +389,25 @@
                     if (lFullExtent) {
                         gapiService.gapi.events.wrapEvents(map, {
                             load: () => {
+                                if (lFullExtent) {
+                                    // compare map extent and setting.extent spatial-references
+                                    // make sure the full extent has the same spatial reference as the map
+                                    if (gapiService.gapi.proj.isSpatialRefEqual(map.extent
+                                            .spatialReference,
+                                            lFullExtent.spatialReference)) {
 
-                                // compare map extent and setting.extent spatial-references
-                                // make sure the full extent has the same spatial reference as the map
-                                if (gapiService.gapi.proj.isSpatialRefEqual(map.extent
-                                        .spatialReference,
-                                        lFullExtent.spatialReference)) {
+                                        // same spatial reference, no reprojection required
+                                        geoState.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
+                                            lFullExtent);
+                                    } else {
 
-                                    // same spatial reference, no reprojection required
-                                    geoState.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
-                                        lFullExtent);
-                                } else {
-
-                                    // need to re-project
-                                    geoState.fullExtent = gapiService.gapi.proj.projectEsriExtent(
-                                        gapiService.gapi.mapManager.getExtentFromJson(
-                                            lFullExtent),
-                                        map.extent.spatialReference);
+                                        // need to re-project
+                                        geoState.fullExtent = gapiService.gapi.proj.projectEsriExtent(
+                                            gapiService.gapi.mapManager.getExtentFromJson(
+                                                lFullExtent),
+                                            map.extent.spatialReference);
+                                    }
                                 }
-
                                 setMapLoadingFlag(false);
                                 resolve();
                             },
