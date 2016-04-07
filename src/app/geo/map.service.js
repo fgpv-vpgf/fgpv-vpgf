@@ -317,42 +317,36 @@
             * @param {id} base map id
             */
             function setSelectedBaseMap(id) {
-
-                console.log('setSelectdBaseMap, basemapId:' + id);
-
                 const blankBaseMapIdPattern = 'blank_basemap_';
 
-                if (!id.startsWith(blankBaseMapIdPattern)) {
-                    geoState.selectedBaseMapId = id;
+                geoState.selectedBaseMapId = id;
 
-                    const selectedBaseMap = config.baseMaps.find(baseMap => {
+                let selectedBaseMap;
+
+                // search base map config based on  'blank_basemap_' condition
+                if (!id.startsWith(blankBaseMapIdPattern)) {
+
+                    selectedBaseMap = config.baseMaps.find(baseMap => {
                         return (baseMap.id === geoState.selectedBaseMapId);
                     });
 
-                    geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
-
-                    const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
-                    geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(fullExtentJson);
-
-                    console.log('finish setSelectdBaseMap');
                 } else {
-
-                    geoState.selectedBaseMapId = id;
                     const wkid = parseInt(id.slice(blankBaseMapIdPattern.length, id.length));
 
                     // find the first base map that has the matching wkid
-                    const selectedBaseMap = config.baseMaps.find(baseMap => {
+                    selectedBaseMap = config.baseMaps.find(baseMap => {
                         return (baseMap.wkid === wkid);
                     });
-
-                    geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
-
-                    const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
-                    geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(fullExtentJson);
 
                     geoState.blankBaseMapId = selectedBaseMap.id;
                     hideBaseMap(true);
                 }
+
+                // get selected base map extent set id, so we can store teh map extent
+                geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
+
+                const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
+                geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(fullExtentJson);
 
             }
 
