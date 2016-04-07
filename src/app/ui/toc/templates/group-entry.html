@@ -1,8 +1,7 @@
 <md-button
     class="rv-layer-group-body-button rv-button-square"
     ng-click="self.defaultAction(self.entry)"
-    rv-help="group-toggle">
-</md-button>
+    rv-help="group-toggle"></md-button>
 
 <div class="rv-icon-24 rv-layer-group-toggle-icon">
     <md-icon
@@ -13,7 +12,6 @@
 
 <span class="rv-layer-group-toggle-name">
     {{ self.entry.name }}
-    {{ self.entry.groupType }}
 </span>
 
 <div class="rv-layer-group-controls">
@@ -36,32 +34,3 @@
     <rv-toc-entry-control option="visibility"></rv-toc-entry-control>
 
 </div>
-
-<!--div class="rv-layer-group-controls" ng-switch on="self.entry.groupType">
-
-    <div ng-switch-when="regular">
-        <md-menu md-position-mode="target-right target">
-            <md-button
-                aria-label="{{ 'toc.layer.aria.openData' | translate }}"
-                class="md-icon-button rv-button-40"
-                ng-click="$mdOpenMenu($event)">
-                <md-icon md-svg-src="navigation:more_horiz"></md-icon>
-            </md-button>
-
-            <md-menu-content class="rv-menu rv-dense" width="4">
-                <rv-toc-entry-control type="menu-item" option="remove"></rv-toc-entry-control>
-            </md-menu-content>
-        </md-menu>
-
-        <rv-toc-entry-control option="visibility"></rv-toc-entry-control>
-    </div>
-
-    <div ng-switch-when="esriDynamicRoot">
-        <rv-toc-entry-control option="visibility"></rv-toc-entry-control>
-    </div>
-
-    <div ng-switch-when="esriDynamic">
-        <rv-toc-entry-control option="visibility"></rv-toc-entry-control>
-    </div>
-
-</div-->

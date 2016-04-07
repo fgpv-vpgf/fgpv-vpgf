@@ -11,20 +11,6 @@
         on: 'off'
     };
 
-    // TODO: ignore this for now;
-    const GROUP_TYPES = {
-        regular: 'regular', // this group can be deleted but has no extra controls
-        ogcWms: 'ogcWms',
-        esriImage: 'esriImage',
-        esriFeature: 'esriFeature',
-
-        esriDynamicRoot: 'esriDynamicRoot',
-        esriDynamic: 'esriDynamic', // this group can be deleted and has extra controls such as setting (opacity, query), metadata,
-
-        esriTileRoot: 'esriTileRoot',
-        esriTile: 'esriTile' // this group can be deleted and has extra controls such as settings (opacity)
-    };
-
     // TODO: move this somewhere later
     // jscs:disable maximumLineLength
     const NO_IMAGE =
@@ -49,12 +35,10 @@
     function legendServiceFactory($http, $q, $timeout, layerDefaults, layerTypes, layerStates) {
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
-        // groupType: 'regular', 'dynamic'
 
         const LAYER_GROUP = (name, expanded = false) => {
             return {
                 type: 'group',
-                groupType: GROUP_TYPES.regular,
                 name,
                 id: 'rv_lg_' + itemIdCounter++,
                 expanded,
@@ -67,7 +51,7 @@
                         enabled: true
                     },
                     remove: {
-                        enabled: true
+                        enabled: false
                     }
                 },
 
@@ -156,33 +140,13 @@
             const defaults = layerDefaults[initialState.layerType] || {};
 
             return angular.merge(
-
-                // {},
                 LAYER_GROUP(initialState.name, expanded),
                 {
-                    //groupType: initialState.layerType + (isRoot ? 'Root' : ''),
-                    //slaves: [],
                     options: angular.extend({}, defaults.options)
                 },
                 initialState
             );
         };
-
-        /*const DYNAMIC_LAYER_GROUP = (initialState, groupType, expanded = false) => {
-            // get defaults for specific layerType
-            const defaults = layerDefaults[groupType];
-
-            return angular.merge(
-                {},
-                LAYER_GROUP(initialState.name, expanded),
-                groupType,
-                {
-                    slaves: [],
-                    options: angular.extend({}, defaults.options)
-                },
-                initialState
-            );
-        };*/
 
         /**
          * Generates a layer entry to be displayed in toc
