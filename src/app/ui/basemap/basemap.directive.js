@@ -169,6 +169,21 @@
                     // no basemaps. ignore :'D
                 }
 
+                self.projections.forEach(projection => {
+                    // get the wkid from the first
+                    const wkid = projection.items[0].wkid;
+
+                    // add blank map
+                    projection.items.push({
+                        name: 'blank map',
+                        type: 'blank',
+                        id: 'blank_basemap_' + wkid,
+                        url: '',
+                        wkid: wkid,
+                        selected: false
+                    });
+                });
+
                 console.log(basemaps);
             });
 
