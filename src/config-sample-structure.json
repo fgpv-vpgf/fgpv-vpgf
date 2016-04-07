@@ -39,7 +39,7 @@
       "layerType": "ogcWms",
       "url": "http://localhost/",
       "layerEntries": [
-          {"id": "A", "enableVisibilityControl": true},
+          {"id": "A", "visibility": {"enabled": false}},
           {"id": "B"}
       ],
       "options": {
@@ -51,7 +51,7 @@
       "layerType": "esriDynamic",
       "url": "http://localhost/",
       "layerEntries": [
-          {"index": 4, "enableVisibilityControl": true},
+          {"index": 4},
           {"index": 7, "outfields": "OBJFIELD33, OBJFIELD99"}
       ],
       "options": {
