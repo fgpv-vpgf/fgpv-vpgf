@@ -1,5 +1,6 @@
 // this overrides vendor classes of node created outside the main viewer container
 // this is why it's special :)
+
 .rv-hide {
     visibility: hidden !important;
     opacity: 0 !important;
@@ -22,6 +23,14 @@
 md-menu-content {
     &.rv-menu {
         max-height: rem(40);
+
+        // hide divider if it's the first or the last item in the menu
+        md-menu-divider {
+            &:first-child,
+            &:last-child {
+                display: none;
+            }
+        }
     }
 
     &.rv-dense {

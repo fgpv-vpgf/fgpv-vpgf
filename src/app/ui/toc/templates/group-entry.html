@@ -13,13 +13,31 @@
 
 <span class="rv-layer-group-toggle-name">
     {{ self.entry.name }}
+    {{ self.entry.groupType }}
 </span>
 
-<span flex></span>
+<div class="rv-layer-group-controls">
 
-{{ self.entry.groupType }}
+    <md-menu md-position-mode="target-right target">
+        <md-button
+            aria-label="{{ 'toc.layer.aria.openData' | translate }}"
+            class="md-icon-button rv-button-40"
+            ng-click="$mdOpenMenu($event)">
+            <md-icon md-svg-src="navigation:more_horiz"></md-icon>
+        </md-button>
 
-<div class="rv-layer-group-controls" ng-switch on="self.entry.groupType">
+        <md-menu-content class="rv-menu rv-dense" width="4">
+            <rv-toc-entry-control type="menu-item" option="settings"></rv-toc-entry-control>
+            <md-menu-divider></md-menu-divider>
+            <rv-toc-entry-control type="menu-item" option="remove"></rv-toc-entry-control>
+        </md-menu-content>
+    </md-menu>
+
+    <rv-toc-entry-control option="visibility"></rv-toc-entry-control>
+
+</div>
+
+<!--div class="rv-layer-group-controls" ng-switch on="self.entry.groupType">
 
     <div ng-switch-when="regular">
         <md-menu md-position-mode="target-right target">
@@ -46,4 +64,4 @@
         <rv-toc-entry-control option="visibility"></rv-toc-entry-control>
     </div>
 
-</div>
+</div-->

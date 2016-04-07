@@ -14,9 +14,7 @@
     // TODO: ignore this for now;
     const GROUP_TYPES = {
         regular: 'regular', // this group can be deleted but has no extra controls
-
         ogcWms: 'ogcWms',
-
         esriImage: 'esriImage',
         esriFeature: 'esriFeature',
 

@@ -37,7 +37,9 @@
                 // entry: '=',
                 option: '@'
             },
-            link: link,
+            link: {
+                pre: link
+            },
             controller: () => {},
             controllerAs: 'self',
             bindToController: true
@@ -53,6 +55,14 @@
             // getting toggle object from the layer item controller directly using toggle's name
             self.entry = ctrl.entry;
             self.control = ctrl.entry.options[self.option];
+
+            // if the control is undefined, selfdestruct
+            if (typeof self.control === 'undefined') {
+                el.remove();
+                scope.$destroy();
+                return;
+            }
+
             self.template = tocService.presets.options[self.option];
             self.action = self.action || self.template.action;
         }

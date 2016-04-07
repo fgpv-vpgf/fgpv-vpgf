@@ -192,6 +192,7 @@ absolutely position a button underneath an item so it acts like a button body fo
             white-space: nowrap;
             text-overflow: ellipsis;
             font-size: rem(1.6);
+            flex: 1;
         }
     }
 }
