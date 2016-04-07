@@ -30,19 +30,19 @@
 
     headNode.appendChild(fontsLink);
 
-    // inject jQuery if it is not already present
+    const scriptsArr = [];
+
+    // append proper srcs to scriptsArray
     if (!window.jQuery) {
-        const jQScript = d.createElement('script');
-        jQScript.src = 'https://code.jquery.com/jquery-2.2.1.min.js';
-        jQScript.type = 'text/javascript';
-
-        bodyNode.appendChild(jQScript);
+        scriptsArr.push('http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.1.min.js');
     }
+    scriptsArr.push(`${repo}/core.js`);
 
-    // inject core js
-    const coreScript = d.createElement('script');
-    coreScript.src = `${repo}/core.js`;
-    coreScript.type = 'text/javascript';
-
-    bodyNode.appendChild(coreScript);
+    scriptsArr.forEach(src => {
+        const currScript = d.createElement('script');
+        currScript.src = src;
+        currScript.async = false;
+        currScript.type = 'text/javascript';
+        bodyNode.appendChild(currScript);
+    });
 })();
