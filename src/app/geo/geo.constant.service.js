@@ -11,10 +11,12 @@
 
     const LAYER_TYPE_OPTIONS = {
         esriDynamic: 'dynamicLayerOptionsNode',
+        esriDynamicLayerEntry: 'dynamicLayerEntryNode',
         esriFeature: 'featureLayerOptionsNode',
         esriImage: 'basicLayerOptionsNode',
         esriTile: 'basicLayerOptionsNode',
-        ogcWms: 'compoundLayerOptionsNode'
+        ogcWms: 'compoundLayerOptionsNode',
+        ogcWmsLayerEntry: 'wmsLayerEntryNode'
     };
 
     // this is populated with default schema snippets during build;
@@ -31,12 +33,11 @@
     angular
         .module('app.geo')
         .constant('layerTypes', LAYER_TYPES)
-        .constant('layerTypeOptions', LAYER_TYPE_OPTIONS)
         .constant('layerStates', { // these are used as css classes; hence the `rv` prefix
             default: 'rv-default',
             error: 'rv-error'
         })
-        .service('layerDefaults', layerTypeOptions => {
+        .service('layerDefaults', () => {
             // construct layer default options and flags objects from schema snippets
             const flagDefaults = {
                 type: {
@@ -58,7 +59,7 @@
 
             const service = {};
 
-            Object.entries(layerTypeOptions)
+            Object.entries(LAYER_TYPE_OPTIONS)
                 .forEach(([key, value]) => {
                     service[key] = {
                         // get default options for a specific layer type

@@ -103,10 +103,14 @@
                  */
                 setVisibility(value, ...arg) {
                     const option = this.options.visibility;
-                    option.value = value || VISIBILITY_TOGGLE[option.value];
+                    if (typeof value !== 'undefined') {
+                        option.value = value ? 'on' : 'off';
+                    } else {
+                        option.value = VISIBILITY_TOGGLE[option.value];
+                    }
 
                     if (this.type === 'group') {
-                        this.items.forEach(item => item.setVisibility(option.value, ...arg));
+                        this.items.forEach(item => item.setVisibility(option.value === 'on', ...arg));
                     }
                 },
 
@@ -149,14 +153,15 @@
 
         const GROUPED_LAYER_ENTRY = (initialState, isRoot = false, expanded = false) => {
             // get defaults for specific layerType
-            const defaults = layerDefaults[initialState.layerType];
+            const defaults = layerDefaults[initialState.layerType] || {};
 
             return angular.merge(
-                {},
+
+                // {},
                 LAYER_GROUP(initialState.name, expanded),
                 {
-                    groupType: initialState.layerType + (isRoot ? 'Root' : ''),
-                    slaves: [],
+                    //groupType: initialState.layerType + (isRoot ? 'Root' : ''),
+                    //slaves: [],
                     options: angular.extend({}, defaults.options)
                 },
                 initialState
@@ -186,7 +191,7 @@
          */
         const LAYER_ITEM = (initialState) => {
             // get defaults for specific layerType
-            const defaults = layerDefaults[layerTypes[initialState.layerType]];
+            const defaults = layerDefaults[initialState.layerType];
 
             // merge initialState on top of the defaults
             return angular.merge({}, {
@@ -208,7 +213,12 @@
                  */
                 setVisibility(value) {
                     const option = this.options.visibility;
-                    option.value = value || VISIBILITY_TOGGLE[option.value];
+
+                    if (typeof value !== 'undefined') {
+                        option.value = value ? 'on' : 'off';
+                    } else {
+                        option.value = VISIBILITY_TOGGLE[option.value];
+                    }
                 },
 
                 /**
@@ -299,7 +309,9 @@
              */
             function createGroupedLayerEntry(layer) {
                 const dynamicGroup = GROUPED_LAYER_ENTRY(layer.initialState, true);
+                const layerEntryType = `${layer.initialState.layerType}LayerEntry`;
                 layer.state = dynamicGroup;
+                dynamicGroup.slaves = [];
 
                 const symbologyPromise = getMapServerSymbology(layer);
 
@@ -308,15 +320,15 @@
                     if (layerInfo.subLayerIds) { // group item
                         const groupItem = GROUPED_LAYER_ENTRY({
                             name: layerInfo.name,
-                            layerType: layer.initialState.layerType
+                            layerType: layerEntryType
                             // TODO: add options override from the config
                         });
 
                         assignDirectMaster(groupItem, layerInfo.parentLayerId);
                     } else { // leaf item
                         const layerItem = LAYER_ITEM({
-                            layerType: dynamicGroup.layerType,
-                            name: layerInfo.name
+                            name: layerInfo.name,
+                            layerType: layerEntryType
                             // TODO: add options override from the config
                         });
 
@@ -393,15 +405,16 @@
                 // add to the legend only once that are specified
                 // NOTE:  :point_up: [March 18, 2016 12:53 PM](https://gitter.im/RAMP-PCAR/TeamRoom?at=56ec3281bb4a1731739b0d33)
                 // We assume the inclusion is properly formatted (ex: [1, 2] will result in sublayer 2 being included twice - once under root and once more time under 1).
-                layer.state.layerEntries.forEach(({ index }) => {
+                layer.state.layerEntries.forEach(layerEntry => {
+                    const index = layerEntry.index;
                     // if layerEntry id is incorrect, ignore it
                     if (index > tocEntry.slaves.length - 1) {
                         return;
                     }
                     const slave = tocEntry.slaves[index];
+                    angular.merge(slave.options, layerEntry);
 
-                    // TODO: for now assume all layer entries should be visible; need to change this later
-                    slave.options.visibility.value = 'on';
+                    slave.setVisibility(slave.options.visibility.value === 'on', false);
 
                     tocEntry.add(slave);
                 });
@@ -584,7 +597,7 @@
 
             // set initial visibility
             // TODO: change visibility config value to boolean instead of 'on/off'? It gets confusing.
-            layer.state.setVisibility(layer.state.options.visibility.value);
+            layer.state.setVisibility(layer.state.options.visibility.value === 'on');
         }
 
         /**
