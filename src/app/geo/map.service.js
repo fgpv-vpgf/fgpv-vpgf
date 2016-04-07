@@ -129,9 +129,14 @@
                     mapSettings.overviewMap = config.map.components.overviewMap;
                 }
 
+                // TODO be sure to handle the check for missing map.extents that is commented out below
+                service.mapLoaded = initMapFullExtent();
+
+                /*
                 if (config.map.extentSets) {
                     initMapFullExtent();
                 }
+                */
 
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
                 service.mapManager.BasemapControl.setBasemap(geoState.selectedBaseMapId);
@@ -390,48 +395,54 @@
             * @private
             */
             function initMapFullExtent() {
-                const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
-                const map = service.mapObject;
+                // TODO prolly change this function once we prove this works.
+                // we are returning a promise that resolves when the map load happens.
 
-                setMapLoadingFlag(true);
+                return $q(resolve => {
+                    const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
+                    const map = service.mapObject;
 
-                // map extent is not available until map is loaded
-                if (lFullExtent) {
-                    gapiService.gapi.events.wrapEvents(map, {
-                        load: () => {
+                    setMapLoadingFlag(true);
 
-                            // compare map extent and setting.extent spatial-references
-                            // make sure the full extent has the same spatial reference as the map
-                            if (gapiService.gapi.proj.isSpatialRefEqual(map.extent
-                                    .spatialReference,
-                                    lFullExtent.spatialReference)) {
+                    // map extent is not available until map is loaded
+                    if (lFullExtent) {
+                        gapiService.gapi.events.wrapEvents(map, {
+                            load: () => {
 
-                                // same spatial reference, no reprojection required
-                                geoState.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
-                                    lFullExtent);
-                            } else {
+                                // compare map extent and setting.extent spatial-references
+                                // make sure the full extent has the same spatial reference as the map
+                                if (gapiService.gapi.proj.isSpatialRefEqual(map.extent
+                                        .spatialReference,
+                                        lFullExtent.spatialReference)) {
 
-                                // need to re-project
-                                geoState.fullExtent = gapiService.gapi.proj.projectEsriExtent(
-                                    gapiService.gapi.mapManager.getExtentFromJson(
-                                        lFullExtent),
-                                    map.extent.spatialReference);
+                                    // same spatial reference, no reprojection required
+                                    geoState.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
+                                        lFullExtent);
+                                } else {
+
+                                    // need to re-project
+                                    geoState.fullExtent = gapiService.gapi.proj.projectEsriExtent(
+                                        gapiService.gapi.mapManager.getExtentFromJson(
+                                            lFullExtent),
+                                        map.extent.spatialReference);
+                                }
+
+                                setMapLoadingFlag(false);
+                                resolve();
+                            },
+                            'update-start': () => {
+                                console.log('   Map update START!');
+
+                                setMapLoadingFlag(true, 300);
+                            },
+                            'update-end': () => {
+                                console.log('   Map update END!');
+
+                                setMapLoadingFlag(false, 100);
                             }
-
-                            setMapLoadingFlag(false);
-                        },
-                        'update-start': () => {
-                            console.log('   Map update START!');
-
-                            setMapLoadingFlag(true, 300);
-                        },
-                        'update-end': () => {
-                            console.log('   Map update END!');
-
-                            setMapLoadingFlag(false, 100);
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             }
 
             /*
