@@ -179,38 +179,24 @@
                         ' please setup map manager by calling setupMap().');
                 } else {
 
-                    if (id === 'no_basemap') {
+                    if (id.startsWith('blank_basemap_')) {
 
                         // get the current selected basemap id
-                        setBaseMapVisibility(true);
-                        geoState.blankBaseMapId = id;
-                    } else if (geoState.blankBaseMapId === id) {
+                        const oldBaseMap = mapManager.BasemapControl.basemapGallery.getSelected();
+                        geoState.blankBaseMapId = oldBaseMap.id;
+                        hideBaseMap(true);
 
-                        // basemap was hidden
-                        geoState.blankBaseMapId = null;
-                        setBaseMapVisibility(false);
+                        // update id
+                        id = oldBaseMap.id;
                     } else {
 
-                        geoState.blankBaseMapId = null;
-
-                        mapManager.BasemapControl.setBasemap(id);
-
-                        // mapManager.BasemapControl.setBasemap(id);
-                        // const newBaseMap = getBaseMapConfig(id, config);
-                        // const oldBaseMap = getBaseMapConfig(geoState.selectedBaseMapId, config);
-
-                        // if (newBaseMap.wkid === oldBaseMap.wkid) {
-
-                        //     console.log('base map has same wkid, new: ' + newBaseMap.wkid);
-                        //     mapManager.BasemapControl.setBasemap(id);
-
-                        // } else {
-
-                        //     // extent is different, build the map again
-                        //     console.log('base map has different wkid: ' + newBaseMap.wkid);
-                        //     setSelectedBaseMap(id, config);
-                        // }
+                        // restore opacity from previous hidden base map hide if needed
+                        if (geoState.blankBaseMapId !== null) {
+                            hideBaseMap(false);
+                        }
                     }
+                    // call this to set the basemap
+                    mapManager.BasemapControl.setBasemap(id);
 
                 }
             }
@@ -222,10 +208,30 @@
             */
             function baseMapHasSameSP(id) {
 
-                const newBaseMap = getBaseMapConfig(id, config);
-                const oldBaseMap = getBaseMapConfig(geoState.selectedBaseMapId, config);
+                console.log('basemap has id:' + id);
 
-                return (newBaseMap.wkid === oldBaseMap.wkid);
+                const blankBaseMapIdPattern = 'blank_basemap_';
+                let newWkid;
+
+                if (id.startsWith(blankBaseMapIdPattern)) {
+                    newWkid = parseInt(id.slice(blankBaseMapIdPattern.length, id.length));
+                    console.log('--- Newly selected basemap is a blank basemap, and has wkid:' + newWkid);
+                } else {
+                    const newBaseMap = getBaseMapConfig(id, config);
+                    newWkid = newBaseMap.wkid;
+                }
+
+                let oldWkid;
+
+                if (geoState.selectedBaseMapId.startsWith(blankBaseMapIdPattern)) {
+                    oldWkid = parseInt(geoState.selectedBaseMapId.slice(blankBaseMapIdPattern.length, geoState.selectedBaseMapId.length));
+                    console.log('--- Previously selected basemap is a blank basemap, and has wkid:' + newWkid);
+                } else {
+                    const oldBaseMap = getBaseMapConfig(geoState.selectedBaseMapId, config);
+                    oldWkid = oldBaseMap.wkid;
+                }
+
+                return (oldWkid === newWkid);
 
             }
 
@@ -313,18 +319,42 @@
 
                 console.log('setSelectdBaseMap, basemapId:' + id);
 
-                geoState.selectedBaseMapId = id;
+                const blankBaseMapIdPattern = 'blank_basemap_';
 
-                const selectedBaseMap = config.baseMaps.find(baseMap => {
-                    return (baseMap.id === geoState.selectedBaseMapId);
-                });
+                if (!id.startsWith(blankBaseMapIdPattern)) {
+                    geoState.selectedBaseMapId = id;
 
-                geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
+                    const selectedBaseMap = config.baseMaps.find(baseMap => {
+                        return (baseMap.id === geoState.selectedBaseMapId);
+                    });
 
-                const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
-                geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(fullExtentJson);
+                    geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
 
-                console.log('finish setSelectdBaseMap');
+                    const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
+                    geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(fullExtentJson);
+
+                    console.log('finish setSelectdBaseMap');
+                } else {
+
+                    geoState.selectedBaseMapId = id;
+                    const wkid = parseInt(id.slice(blankBaseMapIdPattern.length, id.length));
+
+                    // find the first base map that has the matching wkid
+                    const selectedBaseMap = config.baseMaps.find(baseMap => {
+                        return (baseMap.wkid === wkid);
+                    });
+
+                    geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
+
+                    const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
+                    geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(fullExtentJson);
+
+                    geoState.blankBaseMapId = selectedBaseMap.id;
+                    hideBaseMap(true);
+                }
+
+                // handle blank basemap selection without the first item selected
+                // setSelectedBaseMap(config.baseMaps[0].id, config);
 
             }
 
@@ -404,15 +434,37 @@
              * change basemap opacity
              * @param blankMap flag indicates if basemap should be visible
              */
-            function setBaseMapVisibility(blankMap) {
+            function hideBaseMap(blankMap) {
                 const mapManager = service.mapManager;
 
-                const basemap = mapManager.BasemapControl.basemapGallery.getId(geoState.blankBaseMapId);
-                const basemapLayers = basemap.getLayers();
+                const mapObject = service.mapObject;
 
+                console.log('---mapOjbect---');
+                console.log(mapObject);
+
+                console.log('--blankBaseMapId--');
+                console.log(geoState.blankBaseMapId);
+
+                const basemap = mapManager.BasemapControl.basemapGallery.get(geoState.blankBaseMapId);
+
+                console.log('--- basemap ---');
+                console.log(basemap);
+
+                let visibleLayerIds = [];
+                visibleLayerIds.push(-1);
+
+                const basemapLayers = basemap.getLayers();
+                // basemapLayers.setVisibleLayers(visibleLayerIds);
+
+                // change visibility
                 for (let basemapLayer of basemapLayers) {
-                    basemapLayer.opacity = (blankMap === true) ? 0 : 1;
+                    basemapLayer.opacity = (blankMap === true) ? 0.0 : 1.0;
                 }
+
+                if (!blankMap) {
+                    geoState.blankBaseMapId = null;
+                }
+
             }
 
         }
