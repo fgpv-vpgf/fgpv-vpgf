@@ -32,6 +32,9 @@
             if (angular.isUndefined(geoState.selectedBaseMapExtentSetId)) {
                 geoState.selectedBaseMapExtentSetId = null;
             }
+            if (angular.isUndefined(geoState.blankBaseMapId)) {
+                geoState.blankBaseMapId = null;
+            }
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -176,36 +179,60 @@
                         ' please setup map manager by calling setupMap().');
                 } else {
 
-                    // mapManager.BasemapControl.setBasemap(id);
-                    const newBaseMap = getBaseMapConfig(id, config);
-                    const oldBaseMap = getBaseMapConfig(geoState.selectedBaseMapId, config);
+                    if (id.startsWith('blank_basemap_')) {
 
-                    if (newBaseMap.wkid === oldBaseMap.wkid) {
+                        // get the current selected basemap id
+                        const oldBaseMap = mapManager.BasemapControl.basemapGallery.getSelected();
+                        geoState.blankBaseMapId = oldBaseMap.id;
+                        hideBaseMap(true);
 
-                        console.log('base map has same wkid, new: ' + newBaseMap.wkid);
-                        mapManager.BasemapControl.setBasemap(id);
-
+                        // update id
+                        id = oldBaseMap.id;
                     } else {
 
-                        // extent is different, build the map again
-                        console.log('base map has different wkid: ' + newBaseMap.wkid);
-                        setSelectedBaseMap(id, config);
+                        // restore opacity from previous hidden base map hide if needed
+                        if (geoState.blankBaseMapId !== null) {
+                            hideBaseMap(false);
+                        }
                     }
+
+                    // call this to set the base map, need to call this for all, this will force
+                    // update for the blank base map.
+                    mapManager.BasemapControl.setBasemap(id);
 
                 }
             }
 
             /*
-            * check to see if given basemap id has same wkid value
+            * Check to see if given base map id has same wkid value as previously selected base map
             * @param {id} base map id
-            * @retur {bool} true if current basemap has the same wkid as the previous one
+            * @return {bool} true if current base map has the same wkid as the previous one
             */
             function baseMapHasSameSP(id) {
 
-                const newBaseMap = getBaseMapConfig(id, config);
-                const oldBaseMap = getBaseMapConfig(geoState.selectedBaseMapId, config);
+                const blankBaseMapIdPattern = 'blank_basemap_';
+                let newWkid;
 
-                return (newBaseMap.wkid === oldBaseMap.wkid);
+                // check to see if current base map is blank base map, get wkid accordingly
+                if (id.startsWith(blankBaseMapIdPattern)) {
+                    newWkid = parseInt(id.slice(blankBaseMapIdPattern.length, id.length));
+                } else {
+                    const newBaseMap = getBaseMapConfig(id, config);
+                    newWkid = newBaseMap.wkid;
+                }
+
+                let oldWkid;
+
+                // check to see if previous selected base map is blank or not, get wkid accordingly
+                if (geoState.selectedBaseMapId.startsWith(blankBaseMapIdPattern)) {
+                    oldWkid = parseInt(geoState.selectedBaseMapId.slice(blankBaseMapIdPattern.length,
+                        geoState.selectedBaseMapId.length));
+                } else {
+                    const oldBaseMap = getBaseMapConfig(geoState.selectedBaseMapId, config);
+                    oldWkid = oldBaseMap.wkid;
+                }
+
+                return (oldWkid === newWkid);
 
             }
 
@@ -290,21 +317,36 @@
             * @param {id} base map id
             */
             function setSelectedBaseMap(id) {
-
-                console.log('setSelectdBaseMap, basemapId:' + id);
+                const blankBaseMapIdPattern = 'blank_basemap_';
 
                 geoState.selectedBaseMapId = id;
 
-                const selectedBaseMap = config.baseMaps.find(baseMap => {
-                    return (baseMap.id === geoState.selectedBaseMapId);
-                });
+                let selectedBaseMap;
 
+                // search base map config based on  'blank_basemap_' condition
+                if (!id.startsWith(blankBaseMapIdPattern)) {
+
+                    selectedBaseMap = config.baseMaps.find(baseMap => {
+                        return (baseMap.id === geoState.selectedBaseMapId);
+                    });
+
+                } else {
+                    const wkid = parseInt(id.slice(blankBaseMapIdPattern.length, id.length));
+
+                    // find the first base map that has the matching wkid
+                    selectedBaseMap = config.baseMaps.find(baseMap => {
+                        return (baseMap.wkid === wkid);
+                    });
+
+                    geoState.blankBaseMapId = selectedBaseMap.id;
+                    hideBaseMap(true);
+                }
+
+                // get selected base map extent set id, so we can store teh map extent
                 geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
 
                 const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
-                geoState.mapExtent = gapiService.gapi.mapManager.Extent(fullExtentJson);
-
-                console.log('finish setSelectdBaseMap');
+                geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(fullExtentJson);
 
             }
 
@@ -379,6 +421,34 @@
                 $timeout.cancel(service.loadingTimeout);
                 service.loadingTimeout = $timeout(() => service.mapObject.isMapLoading = isLoading, delay);
             }
+
+            /*
+             * Hide base map
+             * @param hide flag indicates if basemap should be visible
+             */
+            function hideBaseMap(hide) {
+
+                // TODO: move geoState stuff outside of the hidebasemap
+                const mapManager = service.mapManager;
+                const basemap = mapManager.BasemapControl.basemapGallery.get(geoState.blankBaseMapId);
+
+                const basemapLayers = basemap.getLayers();
+
+                // let visibleLayerIds = [];
+                // visibleLayerIds.push(-1);
+                // basemapLayers.setVisibleLayers(visibleLayerIds);
+
+                // hide basemap by change visibility
+                for (let basemapLayer of basemapLayers) {
+                    basemapLayer.opacity = (hide === true) ? 0.0 : 1.0;
+                }
+
+                if (!hide) {
+                    geoState.blankBaseMapId = null;
+                }
+
+            }
+
         }
     }
 })();
