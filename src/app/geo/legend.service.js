@@ -43,6 +43,7 @@
                 id: 'rv_lg_' + itemIdCounter++,
                 expanded,
                 items: [],
+                cache: {}, // to cache stuff like retrieved metadata info
 
                 // TODO: add hook to set group options
                 options: {
@@ -306,6 +307,12 @@
                         data.layers.forEach(layer => applySymbology(dynamicGroup.slaves[layer.layerId], layer));
                     });
 
+                // if there is no metadataurl, remove metadata options altogether
+                if (typeof dynamicGroup.metadataUrl === 'undefined') {
+                    delete dynamicGroup.options.metadata;
+                    dynamicGroup.slaves.forEach(slave => delete slave.options.metadata);
+                }
+
                 return dynamicGroup;
 
                 /**
@@ -454,13 +461,18 @@
              */
             function featureGenerator(layer) {
                 // generate toc entry
-                layer.state = LAYER_ITEM(layer.initialState);
+                const state = LAYER_ITEM(layer.initialState);
+                layer.state = state;
 
                 // decorate default setVisibility function to actually toggle visibility of the corresponding layer
                 applySimpleVisibility(layer);
 
+                // if there is no metadataurl, remove metadata options altogether
+                if (typeof state.metadataUrl === 'undefined') {
+                    delete state.options.metadata;
+                }
+
                 const symbologyPromise = getMapServerSymbology(layer);
-                const state = layer.state;
 
                 symbologyPromise.then(
                     ({ data, index }) => applySymbology(state, data.layers[index]));
@@ -475,11 +487,14 @@
              */
             function imageGenerator(layer) {
                 // generate toc entry
-                layer.state = LAYER_ITEM(layer.initialState);
-
+                const state = LAYER_ITEM(layer.initialState);
+                layer.state = state;
                 applySimpleVisibility(layer);
 
-                const state = layer.state;
+                // if there is no metadataurl, remove metadata options altogether
+                if (typeof state.metadataUrl === 'undefined') {
+                    delete state.options.metadata;
+                }
 
                 return state;
             }

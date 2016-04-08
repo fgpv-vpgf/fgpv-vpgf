@@ -819,8 +819,6 @@
 
         /**
          * Simple function to remove layers.
-         * TODO: needs more work to handle dynamic layer and other crazy stuff
-         * TODO: need to consider what happens when removing the only layer in the group; remove the group as well? etc.
          * Hides the layer data and removes the node from the layer selector; removes the layer from
          * @param  {Object} entry layerItem object from the `legendService`
          */
@@ -949,15 +947,18 @@
         /**
          * Opens metadata panel with data from the provided layer object.
          * // FIXME: generates some garbage text instead of proper metadata
-         * @param  {Object} layer layer object whose data should be displayed.
+         * @param  {Object} entry layer object whose data should be displayed.
          */
-        function toggleMetadata(layer) {
+        function toggleMetadata(entry) {
             const requester = {
-                id: layer.id
+                id: entry.id
             };
             const panelToClose = {
                 filters: false
             };
+
+            // if a sublayer of a group, select its root
+            const layer = entry.master ? entry.master : entry;
 
             // construct a temp promise which resolves when data is generated or retrieved;
             const dataPromise = $q(fulfill => {
@@ -966,34 +967,22 @@
                     fulfill(layer.cache.metadata);
                 } else {
 
-                    if (layer.metadataUrl) {
-                        const xmlUrl = layer.metadataUrl;
+                    const xmlUrl = layer.metadataUrl;
 
-                        // TODO: xsl should come from service constant? or is this layer specific
-                        // following is a test xsl from RAMP, should be updated for FGPV
-                        const xslUrl = 'http://ramp-pcar.github.io/demos/NRSTC/v5.4.2/ramp-pcar/' +
-                            'assets/metadata/xstyle_default_en.xsl';
+                    // TODO: xsl should come from service constant? or is this layer specific
+                    // following is a test xsl from RAMP, should be updated for FGPV
+                    const xslUrl = 'http://ramp-pcar.github.io/demos/NRSTC/v5.4.2/ramp-pcar/' +
+                        'assets/metadata/xstyle_default_en.xsl';
 
-                        // transform xml
-                        metadataService.transformXML(xmlUrl, xslUrl).then(mdata => {
+                    // TODO: need to handle errors
+                    // transform xml
+                    metadataService.transformXML(xmlUrl, xslUrl).then(mdata => {
 
-                            // result is wrapped in an array due to previous setup
-                            // TODO: chagee the following when changing associated directive service
-                            layer.cache.metadata = [mdata[0].innerText];
-                            fulfill(layer.cache.metadata);
-                        });
-                    } else {
-                        // TODO: generate some metadata to display functionality
-                        const mdata = HolderIpsum.paragraphs(2, true);
-
-                        // TODO: remove; simulating delay on retrieving metadata
-                        $timeout(() => {
-                            layer.cache.metadata = mdata;
-
-                            fulfill(layer.cache.metadata);
-                        }, Math.random() * 3000 + 300); // random delay
-                    }
-
+                        // result is wrapped in an array due to previous setup
+                        // TODO: chagee the following when changing associated directive service
+                        layer.cache.metadata = [mdata[0].innerText];
+                        fulfill(layer.cache.metadata);
+                    });
                 }
             });
 
