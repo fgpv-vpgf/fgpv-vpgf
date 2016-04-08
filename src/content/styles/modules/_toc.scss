@@ -128,6 +128,7 @@ $layer-item-height: rem(6.0);
         transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
     }
 }
+
 // http://krasimirtsonev.com/blog/article/Two-handy-and-advanced-SASS-features-and-their-limitations
 // adjust layer item, layer group toggle, and layer list divider indent
 
@@ -154,6 +155,9 @@ absolutely position a button underneath an item so it acts like a button body fo
 @mixin layer-group-toggle {
 
     .rv-toc-group-entry {
+
+        @include entry-controls;
+
         height: $group-item-height;
         position: relative;
         display: flex;
@@ -162,8 +166,12 @@ absolutely position a button underneath an item so it acts like a button body fo
         padding-right: $toc-padding;
 
         // setting layer list shadow color when hover over layer group toggle
-        &:hover ~ .rv-shadow {
-            background-color: $primary-color;
+        &:hover {
+            @include entry-controls-hover;
+
+            & ~ .rv-shadow {
+                background-color: $primary-color;
+            }
         }
 
         .rv-layer-group-body-button {
@@ -176,10 +184,6 @@ absolutely position a button underneath an item so it acts like a button body fo
             left: 0;
             width: 100%;
             z-index: 1; // this is needed to place the button over the rotating icon as it's creating a new stacking content when transformed
-        }
-
-        .rv-layer-group-controls {
-            z-index: 2;
         }
 
         .rv-layer-group-toggle-icon {
@@ -199,6 +203,8 @@ absolutely position a button underneath an item so it acts like a button body fo
 
 @mixin layer-item {
     .rv-toc-layer-entry{
+
+        @include entry-controls;
 
         display: flex;
         align-items: center;
@@ -241,29 +247,10 @@ absolutely position a button underneath an item so it acts like a button body fo
             }
         }
 
-        // remove margins between toggle on legend layer entry
-        .rv-layer-item-toggles > * {
-            &:first-child > .md-button {
-                margin-right: 0;
-            }
-            &:last-child > .md-button {
-                margin-left: 0;
-            }
-        }
-
-        // hide layer toggles except the visibility toggle
-        .rv-layer-item-toggles > md-menu {
-            &:not([name='visibility']) {
-                display: none;
-            }
-        }
-
         // visually highlights selected layer item in the list
         &.rv-selected {
             // don't hide toggles on a selected layer
-            .rv-layer-item-toggles > md-menu {
-                display: inline !important; // IE doesn't support `initial`
-            }
+            @include entry-controls-hover;
 
             &:before {
                 background-color: $accent-color;
@@ -284,9 +271,7 @@ absolutely position a button underneath an item so it acts like a button body fo
 
         // TODO: fix
         &.rv-error {
-            .rv-layer-item-toggles > md-menu {
-                display: inline-block;
-            }
+            @include entry-controls-hover;
 
             .rv-layer-item-caption {
                 color: $alert-color;
@@ -298,9 +283,40 @@ absolutely position a button underneath an item so it acts like a button body fo
         }
 
         &:hover {
-            .rv-layer-item-toggles > md-menu {
-                display: inline-block;
+            @include entry-controls-hover;
+        }
+    }
+}
+
+@mixin entry-controls {
+    .rv-toc-entry-controls {
+        z-index: 2;
+
+        // remove margins between toggle on legend layer entry
+        & > * {
+            & > .md-button {
+                margin: 0;
+            }
+
+            &:first-child > .md-button {
+                margin-left: rem(0.6);
+            }
+            &:last-child > .md-button {
+                margin-right: rem(0.6);
             }
         }
+
+        // hide layer toggles except the visibility toggle
+        & > md-menu {
+            &:not([name='visibility']) {
+                display: none;
+            }
+        }
+    }
+}
+
+@mixin entry-controls-hover {
+    .rv-toc-entry-controls > * {
+        display: inline !important;
     }
 }
