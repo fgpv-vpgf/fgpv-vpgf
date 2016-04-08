@@ -100,10 +100,6 @@
                     // expose mapService on geoService
                     angular.extend(service, ms);
 
-                    // wait for map load to happen prior to adding layers
-                    return ms.mapLoaded;
-                })
-                .then(() => {
                     return layerRegistry(state, config);
                 })
                 .then(lr => {

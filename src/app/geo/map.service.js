@@ -113,7 +113,7 @@
                     mapSettings.overviewMap = config.map.components.overviewMap;
                 }
 
-                service.mapLoaded = prepMapLoad();
+                const onMapLoad = prepMapLoad();
 
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
                 service.mapManager.BasemapControl.setBasemap(geoState.selectedBaseMapId);
@@ -126,7 +126,8 @@
                 // store service in geoState
                 geoState.mapService = service;
 
-                return service;
+                // return a promise that resolves in the service once the map has loaded
+                return onMapLoad.then(() => service);
             }
 
             /*
