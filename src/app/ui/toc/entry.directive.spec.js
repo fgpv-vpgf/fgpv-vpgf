@@ -1,23 +1,28 @@
 /* global bard, $compile, $rootScope, $httpBackend, tocService */
 
-xdescribe('rvLayerItemButton', () => {
+describe('rvTocEntry', () => {
     let scope;
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;
 
-    // mock part of the controller required by rvLayerItemButton directive
-    const rvLayerItemController = {
-        layer: {
-            type: 'layer',
-            name: 'Image Layers 1',
-            layerType: 'image',
-            id: 1,
-            options: {
-                visibility: {
-                    value: 'on', // 'off', 'zoomIn', 'zoomOut'
-                    enabled: true
-                }
+    // mock a group object
+    const mockLayer = {
+        type: 'layer',
+        name: 'Layer Name 1 Layer Name 1 Layer Name 1 Layer Name 1',
+        layerType: 'feature',
+        id: 0,
+        legend: [
+            {
+                icon: 'url',
+                name: 'something'
             }
+        ],
+        options: {
+            // needed for layer-item-button directives
+        },
+        state: 'default', // error, loading,
+        flags: {
+            // needed for layer-item-flag directives
         }
     };
 
@@ -44,22 +49,26 @@ xdescribe('rvLayerItemButton', () => {
         // inject angular services
         bard.inject('$compile', '$rootScope', '$httpBackend', 'tocService');
 
-        // spy on visibility toggle method
-        spyOn(tocService.presets.options.visibility, 'action');
+        // spy on group visibility toggle method
+        spyOn(tocService.actions, 'toggleLayerFiltersPanel');
 
         // crete new scope
         scope = $rootScope.$new();
 
+        // add mockGroup object to the scope, so directive has access to it
+        scope.item = mockLayer;
+
         directiveElement = angular.element(
-            '<rv-layer-item-button name="visibility"></rv-layer-item-button>'
+            '<rv-toc-entry entry="item"></rv-toc-entry>'
         );
 
-        // need to mock the required controller inside the directive being tested;
-        // http://stackoverflow.com/a/19951141
-        directiveElement.data('$rvLayerItemController',
-            rvLayerItemController);
-
+        // layer-item directive tries to load icon resources on compile
+        // need to mock that
         $httpBackend.expectGET('content/images/iconsets/action-icons.svg')
+            .respond({});
+        $httpBackend.expectGET('content/images/iconsets/image-icons.svg')
+            .respond({});
+        $httpBackend.expectGET('content/images/iconsets/navigation-icons.svg')
             .respond({});
 
         directiveElement = $compile(directiveElement)(scope);
@@ -70,25 +79,21 @@ xdescribe('rvLayerItemButton', () => {
         directiveScope = directiveElement.isolateScope();
     });
 
-    describe('rvLayerItemButton', () => {
+    describe('rvTocEntry', () => {
         it('should be created successfully', () => {
             // check that directive element exists
             expect(directiveElement)
                 .toBeDefined();
 
-            // check that directive correctly pulled control object from the mocked controller
-            expect(directiveScope.self.control.value)
-                .toBe('on');
-
-            // check that directive pulled an action frunction from tocService
-            expect(directiveScope.self.action)
+            // check that directive pulled the toggleGroup function from mocked tocController
+            expect(directiveScope.self.defaultAction)
                 .toBeDefined();
 
-            // call action method on the directive
-            directiveScope.self.action(directiveScope.self.layer);
+            // call toggleGroup method on the directive
+            directiveScope.self.defaultAction();
 
-            // check if the corresponding method on tocService has been called
-            expect(tocService.presets.options.visibility.action)
+            // check if the corresponding method has been called
+            expect(tocService.actions.toggleLayerFiltersPanel)
                 .toHaveBeenCalled();
         });
     });

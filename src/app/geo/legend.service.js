@@ -136,7 +136,7 @@
             };
         };
 
-        const GROUPED_LAYER_ENTRY = (initialState, isRoot = false, expanded = false) => {
+        const GROUPED_LAYER_ENTRY = (initialState, expanded = false) => {
             // get defaults for specific layerType
             const defaults = layerDefaults[initialState.layerType] || {};
 

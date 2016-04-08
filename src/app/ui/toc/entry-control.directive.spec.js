@@ -1,23 +1,24 @@
-/* global bard, $compile, $rootScope */
+/* global bard, $compile, $rootScope, $httpBackend, tocService */
 
-xdescribe('rvLayerItemFlag', () => {
+describe('rvTocEntryControl', () => {
     let scope;
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;
 
-    // mock part of the controller required by rvLayerItemFlag directive
-    const rvLayerItemController = {
-        layer: {
+    // mock part of the controller required by rvLayerItemButton directive
+    const rvTocEntryController = {
+        entry: {
             type: 'layer',
-            name: 'Layer Name 1 Layer Name 1 Layer Name 1 Layer Name 1',
-            layerType: 'feature',
-            id: 0,
-            flags: {
-                user: {
-                    visible: true
+            name: 'Image Layers 1',
+            layerType: 'image',
+            id: 1,
+            options: {
+                visibility: {
+                    value: 'on', // 'off', 'zoomIn', 'zoomOut'
+                    enabled: true
                 }
             }
-        },
+        }
     };
 
     function mockLayoutService($provide) {
@@ -41,19 +42,26 @@ xdescribe('rvLayerItemFlag', () => {
             'pascalprecht.translate', mockLayoutService, mockGeoService, mockToast);
 
         // inject angular services
-        bard.inject('$compile', '$rootScope');
+        bard.inject('$compile', '$rootScope', '$httpBackend', 'tocService');
+
+        // spy on visibility toggle method
+        spyOn(tocService.presets.options.visibility, 'action');
 
         // crete new scope
         scope = $rootScope.$new();
 
         directiveElement = angular.element(
-            '<rv-layer-item-flag name="user"></rv-layer-item-flag>'
+            '<rv-toc-entry-control option="visibility"></rv-toc-entry-control>'
         );
 
         // need to mock the required controller inside the directive being tested;
         // http://stackoverflow.com/a/19951141
-        directiveElement.data('$rvLayerItemController',
-            rvLayerItemController);
+        directiveElement.data('$rvTocEntryController',
+            rvTocEntryController);
+
+        $httpBackend.expectGET('content/images/iconsets/action-icons.svg')
+            .respond({});
+
         directiveElement = $compile(directiveElement)(scope);
         scope.$digest();
 
@@ -62,15 +70,26 @@ xdescribe('rvLayerItemFlag', () => {
         directiveScope = directiveElement.isolateScope();
     });
 
-    describe('rvLayerItemFlag', () => {
+    describe('rvTocEntryControl', () => {
         it('should be created successfully', () => {
             // check that directive element exists
             expect(directiveElement)
                 .toBeDefined();
 
             // check that directive correctly pulled control object from the mocked controller
-            expect(directiveScope.self.control.visible)
-                .toBe(true);
+            expect(directiveScope.self.control.value)
+                .toBe('on');
+
+            // check that directive pulled an action frunction from tocService
+            expect(directiveScope.self.action)
+                .toBeDefined();
+
+            // call action method on the directive
+            directiveScope.self.action(directiveScope.self.layer);
+
+            // check if the corresponding method on tocService has been called
+            expect(tocService.presets.options.visibility.action)
+                .toHaveBeenCalled();
         });
     });
 });

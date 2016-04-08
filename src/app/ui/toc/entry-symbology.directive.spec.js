@@ -1,12 +1,12 @@
 /* global bard, $compile, $rootScope */
 
-xdescribe('rvLayerItemSymbology', () => {
+describe('rvTocEntrySymbology', () => {
     let scope;
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;
 
     // mock part of the controller required by rvLayerItemFlag directive
-    const rvLayerItemController = {
+    const rvTocEntryController = {
         element: angular.element('<div></div>')
     };
 
@@ -31,13 +31,13 @@ xdescribe('rvLayerItemSymbology', () => {
         ];
 
         directiveElement = angular.element(
-            '<rv-layer-item-symbology symbology="symbology"></rv-layer-item-symbology>'
+            '<rv-toc-entry-symbology symbology="symbology"></rv-toc-entry-symbology>'
         );
 
         // need to mock the required controller inside the directive being tested;
         // http://stackoverflow.com/a/19951141
-        directiveElement.data('$rvLayerItemController',
-            rvLayerItemController);
+        directiveElement.data('$rvTocEntryController',
+            rvTocEntryController);
         directiveElement = $compile(directiveElement)(scope);
         scope.$digest();
 
@@ -46,7 +46,7 @@ xdescribe('rvLayerItemSymbology', () => {
         directiveScope = directiveElement.isolateScope();
     });
 
-    describe('rvLayerItemSymbology', () => {
+    describe('rvTocEntrySymbology', () => {
         it('should be created successfully', () => {
             // check that directive element exists
             expect(directiveElement)
