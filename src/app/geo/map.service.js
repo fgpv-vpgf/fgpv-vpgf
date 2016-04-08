@@ -317,15 +317,10 @@
                             gextent.x0, gextent.y0, gextent.sr);
 
                         if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
-                            map.setExtent(newExt.expand(3));
+                            const eExt = newExt.expand(3)
+                            map.setExtent(eExt.offset(0, (eExt.ymax - eExt.ymin) / 4));
                         } else {
-                            // zoom to the new point from spatialreference
-                            // FIXME: change config/schema to support zoom level
-                            const zoomSize = 20000;
-                            const padExtent = gapiService.gapi.mapManager.Extent(gextent.x1 -
-                                zoomSize, gextent.y1 - zoomSize,
-                                gextent.x0 + zoomSize, gextent.y0 + zoomSize, gextent.sr);
-                            map.setExtent(padExtent);
+                            map.centerAndZoom(newExt.getCenter(), 8);
                         }
                     }
                 });
