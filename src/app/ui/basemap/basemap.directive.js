@@ -130,7 +130,7 @@
 
                     // FIXME: move to config?
                     const maxLength = 35;
-                    const maxDescriptionLength = 60;
+                    const maxDescriptionLength = 100;
 
                     if (basemap.name.length > maxLength) {
                         basemap.name = basemap.name.substring(0, maxLength - 3) + '...';
@@ -182,6 +182,7 @@
                     // add blank map
                     projection.items.push({
                         name: 'blank map',
+                        description: 'Remove base map',
                         type: 'blank',
                         id: 'blank_basemap_' + wkid,
                         url: '',

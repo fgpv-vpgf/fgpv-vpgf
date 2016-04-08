@@ -21,8 +21,7 @@
             <span flex></span>
             <md-icon class="rv-basemap-check" md-svg-src="navigation:check" ng-if="self.basemap.selected"></md-icon>
         </div>
-        <md-tooltip ng-if="self.basemap.needMapRefresh">{{ self.basemap.description }} + "<br/> Different projection, map refresh required"</md-tooltip>
-        <md-tooltip ng-if="self.basemap.needMapRefresh == false">{{ self.basemap.description }}</md-tooltip>
+        <md-tooltip md-direction="left">{{ self.basemap.description }}</md-tooltip>
     </md-button>
 
 </div>
