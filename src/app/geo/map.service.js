@@ -20,21 +20,14 @@
 
         function mapService(geoState, config) {
 
-            if (angular.isUndefined(geoState.fullExtent)) {
-                geoState.fullExtent = null;
-            }
-            if (angular.isUndefined(geoState.mapExtent)) {
-                geoState.mapExtent = null;
-            }
-            if (angular.isUndefined(geoState.selectedBaseMapId)) {
-                geoState.selectedBaseMapId = null;
-            }
-            if (angular.isUndefined(geoState.selectedBaseMapExtentSetId)) {
-                geoState.selectedBaseMapExtentSetId = null;
-            }
-            if (angular.isUndefined(geoState.blankBaseMapId)) {
-                geoState.blankBaseMapId = null;
-            }
+            const initProps = ['fullExtent', 'mapExtent', 'lods', 'selectedBaseMapId',
+                'selectedBaseMapExtentSetId', 'selectedBaseMapLodId', 'blankBaseMapId'];
+
+            initProps.forEach(prop => {
+                if (angular.isUndefined(geoState[prop])) {
+                    geoState[prop] = null;
+                }
+            });
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -82,9 +75,11 @@
 
                     // basemap: 'gray',
                     extent: geoState.mapExtent,
-                    zoom: 6,
-                    center: [-100, 50]
+                    lods: geoState.lods
                 });
+
+                // console.log('I AM MAP EXTENT', geoState.mapExtent);
+                // console.log('I AM THE MAP', mapObject);
 
                 // store map object in service
                 service.mapObject = mapObject;
@@ -118,9 +113,7 @@
                     mapSettings.overviewMap = config.map.components.overviewMap;
                 }
 
-                if (config.map.extentSets) {
-                    initMapFullExtent();
-                }
+                const onMapLoad = prepMapLoad();
 
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
                 service.mapManager.BasemapControl.setBasemap(geoState.selectedBaseMapId);
@@ -133,7 +126,8 @@
                 // store service in geoState
                 geoState.mapService = service;
 
-                return service;
+                // return a promise that resolves in the service once the map has loaded
+                return onMapLoad.then(() => service);
             }
 
             /*
@@ -145,24 +139,49 @@
                 // FIXME: default basemap should be indicated in the config as well
                 // const currentBasemapExtentSetId = '123456789';
 
+                if (extentSets) {
+                    // In configSchema, at least one extent for a basemap
+                    const extentSetForId = extentSets.find(extentSet => {
+                        if (extentSet.id === geoState.selectedBaseMapExtentSetId) {
+                            return true;
+                        }
+                    });
+
+                    // no matching id in the extentset
+                    if (angular.isUndefined(extentSetForId)) {
+                        throw new Error('could not find an extent set with matching id.');
+                    }
+
+                    // find the full extent type from extentSetForId
+                    const lFullExtent = (extentSetForId.full) ? extentSetForId.full :
+                        (extentSetForId.default) ? extentSetForId.default :
+                        (extentSetForId.maximum) ? extentSetForId.maximum : null;
+
+                    return lFullExtent;
+                } else {
+                    return null;
+                }
+            }
+
+            /*
+             * Retrieve level of details array from config for current basemap
+             * @private
+             */
+            function getLod(lodSets) {
+
                 // In configSchema, at least one extent for a basemap
-                const extentSetForId = extentSets.find(extentSet => {
-                    if (extentSet.id === geoState.selectedBaseMapExtentSetId) {
+                const lodForId = lodSets.find(lodSet => {
+                    if (lodSet.id === geoState.selectedBaseMapLodId) {
                         return true;
                     }
                 });
 
                 // no matching id in the extentset
-                if (angular.isUndefined(extentSetForId)) {
-                    throw new Error('could not find an extent set with matching id.');
+                if (angular.isUndefined(lodForId)) {
+                    throw new Error('could not find an LOD set with matching id.');
                 }
 
-                // find the full extent type from extentSetForId
-                const lFullExtent = (extentSetForId.full) ? extentSetForId.full :
-                    (extentSetForId.default) ? extentSetForId.default :
-                    (extentSetForId.maximum) ? extentSetForId.maximum : null;
-
-                return lFullExtent;
+                return lodForId.lods;
             }
 
             /**
@@ -344,59 +363,68 @@
 
                 // get selected base map extent set id, so we can store teh map extent
                 geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
+                geoState.selectedBaseMapLodId = selectedBaseMap.lodId;
 
                 const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
                 geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(fullExtentJson);
 
+                geoState.lods = getLod(config.map.lods);
+
             }
 
             /*
-            * Initialize map full extent
+            * Ready a trigger on the map load event
+            * Also initialize map full extent
             * @private
             */
-            function initMapFullExtent() {
-                const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
-                const map = service.mapObject;
+            function prepMapLoad() {
+                // we are returning a promise that resolves when the map load happens.
 
-                setMapLoadingFlag(true);
+                return $q(resolve => {
+                    const map = service.mapObject;
+                    const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
 
-                // map extent is not available until map is loaded
-                if (lFullExtent) {
-                    gapiService.gapi.events.wrapEvents(map, {
-                        load: () => {
+                    setMapLoadingFlag(true);
 
-                            // compare map extent and setting.extent spatial-references
-                            // make sure the full extent has the same spatial reference as the map
-                            if (gapiService.gapi.proj.isSpatialRefEqual(map.extent
-                                    .spatialReference,
-                                    lFullExtent.spatialReference)) {
+                    // map extent is not available until map is loaded
+                    if (lFullExtent) {
+                        gapiService.gapi.events.wrapEvents(map, {
+                            load: () => {
+                                if (lFullExtent) {
+                                    // compare map extent and setting.extent spatial-references
+                                    // make sure the full extent has the same spatial reference as the map
+                                    if (gapiService.gapi.proj.isSpatialRefEqual(map.extent
+                                            .spatialReference,
+                                            lFullExtent.spatialReference)) {
 
-                                // same spatial reference, no reprojection required
-                                geoState.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
-                                    lFullExtent);
-                            } else {
+                                        // same spatial reference, no reprojection required
+                                        geoState.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
+                                            lFullExtent);
+                                    } else {
 
-                                // need to re-project
-                                geoState.fullExtent = gapiService.gapi.proj.projectEsriExtent(
-                                    gapiService.gapi.mapManager.getExtentFromJson(
-                                        lFullExtent),
-                                    map.extent.spatialReference);
+                                        // need to re-project
+                                        geoState.fullExtent = gapiService.gapi.proj.projectEsriExtent(
+                                            gapiService.gapi.mapManager.getExtentFromJson(
+                                                lFullExtent),
+                                            map.extent.spatialReference);
+                                    }
+                                }
+                                setMapLoadingFlag(false);
+                                resolve();
+                            },
+                            'update-start': () => {
+                                console.log('   Map update START!');
+
+                                setMapLoadingFlag(true, 300);
+                            },
+                            'update-end': () => {
+                                console.log('   Map update END!');
+
+                                setMapLoadingFlag(false, 100);
                             }
-
-                            setMapLoadingFlag(false);
-                        },
-                        'update-start': () => {
-                            console.log('   Map update START!');
-
-                            setMapLoadingFlag(true, 300);
-                        },
-                        'update-end': () => {
-                            console.log('   Map update END!');
-
-                            setMapLoadingFlag(false, 100);
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             }
 
             /*
