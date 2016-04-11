@@ -33,7 +33,7 @@
             const service = {
                 legend,
                 layers,
-
+                constructLayers,
                 generateLayer,
                 registerLayer,
                 getFormattedAttributes,
@@ -41,17 +41,29 @@
                 aliasedFieldName
             };
 
-            return constructLayers();
+            return initialRegistration();
 
             /***/
 
             /**
-             * Creates esri layer object for a set of layers provided by the config, triggers attribute loading on layer load event and adds it to the legend afterwards.
-             * // TODO: might need to abstract this further to accomodate user-added layers as they need to go through the same process
+             * Registers the initial batch of layers.
              * @return {Object} self for chaining
              */
-            function constructLayers() {
-                config.layers.forEach(layerConfig => {
+            function initialRegistration() {
+                constructLayers(config.layers);
+
+                // store service in geoState
+                geoState.layerRegistry = service;
+
+                return service;
+            }
+
+            /**
+             * Creates esri layer object for a set of layer config objects, triggers attribute loading on layer load event and adds it to the legend afterwards.
+             * @param  {Array} layerConfigs array of layer configuration objects
+             */
+            function constructLayers(layerConfigs) {
+                layerConfigs.forEach(layerConfig => {
                     // TODO: decouple identifyservice from everything
                     const layer = service.generateLayer(layerConfig);
 
@@ -89,11 +101,6 @@
                     // add layer to the map triggering its loading process
                     mapObject.addLayer(layer);
                 });
-
-                // store service in geoState
-                geoState.layerRegistry = service;
-
-                return service;
             }
 
             /**
