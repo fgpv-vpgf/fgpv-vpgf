@@ -19,12 +19,12 @@
 
     /**
      * @ngdoc service
-     * @name factory
+     * @name legendEntryFactory
      * @module app.geo
-     * @requires dependencies
+     * @requires layerDefaults
      * @description
      *
-     * The `factory` factory description.
+     * The `legendEntryFactory` factory creates legend entries to be added to the toc.
      *
      */
     angular
@@ -34,8 +34,8 @@
     function legendEntryFactory(layerDefaults) {
 
         const service = {
-            singleLayerEntry,
-            dynamicLayerEntry,
+            singleEntryItem,
+            dynamicEntryItem,
             entryGroup,
             dynamicEntryGroup,
             dynamicEntryMasterGroup
@@ -96,12 +96,45 @@
                 }
 
                 // this.state = layerStates.default; ??
-            },
+            }
+        };
 
-            // TODO: reMOVE!
-            decorate(name, wrapper) {
-                const target = this[name].bind(this);
-                this[name] = (...arg) => wrapper.bind(this)(target, ...arg);
+        const SINGLE_ENTRY_ITEM = Object.create(ENTRY_ITEM);
+
+        SINGLE_ENTRY_ITEM.init = function (initialState, layerRef) {
+            ENTRY_ITEM.init.call(this, initialState, layerRef);
+            this.setVisibility(this.getVisibility());
+
+            return this;
+        };
+
+        /**
+         * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
+         * @param  {Boolean} value visibility value
+         */
+        SINGLE_ENTRY_ITEM.setVisibility = function (value) {
+            ENTRY_ITEM.setVisibility.call(this, value);
+            this._layerRef.setVisibility(this.getVisibility());
+        };
+
+        const DYNAMIC_ENTRY_ITEM = Object.create(ENTRY_ITEM);
+
+        DYNAMIC_ENTRY_ITEM.init = function (initialState, layerRef) {
+            ENTRY_ITEM.init.call(this, initialState, layerRef);
+
+            return this;
+        };
+
+        /**
+         * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
+         * @param  {Boolean} value visibility value
+         * @param  {Boolean} isTrigger flag specifying if the actual layer visibility should be set
+         */
+        DYNAMIC_ENTRY_ITEM.setVisibility = function (value, isTrigger = true) {
+            ENTRY_ITEM.setVisibility.call(this, value, false);
+
+            if (isTrigger) {
+                this.master._setVisibility();
             }
         };
 
@@ -205,45 +238,6 @@
 
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
-        const SINGLE_ENTRY_ITEM = Object.create(ENTRY_ITEM);
-        SINGLE_ENTRY_ITEM.init = function (initialState, layerRef) {
-            ENTRY_ITEM.init.call(this, initialState, layerRef);
-
-            this.setVisibility(this.getVisibility());
-
-            return this;
-        };
-
-        /**
-         * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
-         * @param  {Boolean} value visibility value
-         */
-        SINGLE_ENTRY_ITEM.setVisibility = function (value) {
-            ENTRY_ITEM.setVisibility.call(this, value);
-            this._layerRef.setVisibility(this.getVisibility());
-        };
-
-        const DYNAMIC_ENTRY_ITEM = Object.create(ENTRY_ITEM);
-        DYNAMIC_ENTRY_ITEM.init = function (initialState, layerRef) {
-            ENTRY_ITEM.init.call(this, initialState, layerRef);
-
-            // this.setVisibility(this.getVisibility());
-
-            return this;
-        };
-
-        /**
-         * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
-         * @param  {Boolean} value visibility value
-         */
-        DYNAMIC_ENTRY_ITEM.setVisibility = function (value, isTrigger = true) {
-            ENTRY_ITEM.setVisibility.call(this, value, false);
-
-            if (isTrigger) {
-                this.master._setVisibility();
-            }
-        };
-
         const DYNAMIC_ENTRY_GROUP = Object.create(ENTRY_GROUP);
 
         DYNAMIC_ENTRY_GROUP.init = function (initialState, layerRef, expanded) {
@@ -254,7 +248,7 @@
 
             this._layerRef = layerRef;
             this.expanded = expanded;
-            this.options = angular.merge({}, defaults.options)
+            this.options = angular.merge({}, defaults.options);
             angular.merge(this, initialState);
 
             return this;
@@ -263,6 +257,7 @@
         /**
          * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
          * @param  {Boolean} value visibility value
+         * @param  {Boolean} isTrigger flag specifying if the actual layer visibility should be set
          */
         DYNAMIC_ENTRY_GROUP.setVisibility = function (value, isTrigger = true) {
             ENTRY_GROUP.setVisibility.call(this, value, false);
@@ -283,6 +278,7 @@
         /**
          * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
          * @param  {Boolean} value visibility value
+         * @param  {Boolean} isTrigger flag specifying if the actual layer visibility should be set
          */
         DYNAMIC_ENTRY_MASTER_GROUP.setVisibility = function (value, isTrigger = true) {
             DYNAMIC_ENTRY_GROUP.setVisibility.call(this, value, false);
@@ -292,13 +288,18 @@
             }
         };
 
-        DYNAMIC_ENTRY_MASTER_GROUP._setVisibility = function() {
+        /**
+         * Set visibility of the dynamic legend entry based on the visibility of its individual components.
+         */
+        DYNAMIC_ENTRY_MASTER_GROUP._setVisibility = function () {
             // get an array of visible sublayers (e.g. [1,4,6])
-            const visibleSublayerIds = this.walkItems(item => {
-                // get sublayer index from the slaves array
-                const index = this.slaves.indexOf(item);
-                return item.getVisibility() ? index : -1;
-            }).filter(index => index !== -1);
+            const visibleSublayerIds =
+                this.walkItems(item => {
+                    // get sublayer index from the slaves array
+                    const index = this.slaves.indexOf(item);
+                    return item.getVisibility() ? index : -1;
+                })
+                .filter(index => index !== -1);
 
             console.log(this.name + ' set to ' + this.getVisibility() + ' ' + visibleSublayerIds);
 
@@ -307,32 +308,31 @@
 
             // finally, set visibility of the sublayers
             this._layerRef.setVisibleLayers(visibleSublayerIds);
+        };
+
+        function singleEntryItem(initialState, layerRef) {
+            return Object.create(SINGLE_ENTRY_ITEM)
+                .init(initialState, layerRef);
         }
 
-        function singleLayerEntry(initialState, layerRef) {
-            const featureLayerEntry = Object.create(SINGLE_ENTRY_ITEM);
-            featureLayerEntry.init(initialState, layerRef);
-
-            return featureLayerEntry;
-        }
-
-        function dynamicLayerEntry(initialState, layerRef) {
-            const dynamicLayerEntry = Object.create(DYNAMIC_ENTRY_ITEM);
-            dynamicLayerEntry.init(initialState, layerRef);
-
-            return dynamicLayerEntry;
+        function dynamicEntryItem(initialState, layerRef) {
+            return Object.create(DYNAMIC_ENTRY_ITEM)
+                .init(initialState, layerRef);
         }
 
         function entryGroup(name, expanded) {
-            return Object.create(ENTRY_GROUP).init(name, expanded);
+            return Object.create(ENTRY_GROUP)
+                .init(name, expanded);
         }
 
         function dynamicEntryGroup(initialState, layerRef, expanded) {
-            return Object.create(DYNAMIC_ENTRY_GROUP).init(initialState, layerRef, expanded);
+            return Object.create(DYNAMIC_ENTRY_GROUP)
+                .init(initialState, layerRef, expanded);
         }
 
         function dynamicEntryMasterGroup(initialState, layerRef, expanded) {
-            return Object.create(DYNAMIC_ENTRY_MASTER_GROUP).init(initialState, layerRef, expanded);
+            return Object.create(DYNAMIC_ENTRY_MASTER_GROUP)
+                .init(initialState, layerRef, expanded);
         }
 
         return service;
