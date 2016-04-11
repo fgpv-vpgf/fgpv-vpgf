@@ -175,6 +175,9 @@
       "options": {
         "visibility": {
           "value": "off"
+        },
+        "opacity": {
+            "value": 0.5
         }
       }
     }

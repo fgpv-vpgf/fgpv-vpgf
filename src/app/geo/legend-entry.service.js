@@ -79,6 +79,10 @@
                 return this.options.visibility.value === 'on';
             },
 
+            setOpacity(value) {
+                this.options.opacity.value = value;
+            },
+
             init(initialState, layerRef) {
                 const defaults = layerDefaults[initialState.layerType];
 
@@ -115,6 +119,11 @@
         SINGLE_ENTRY_ITEM.setVisibility = function (value) {
             ENTRY_ITEM.setVisibility.call(this, value);
             this._layerRef.setVisibility(this.getVisibility());
+        };
+
+        SINGLE_ENTRY_ITEM.setOpacity = function (value) {
+            ENTRY_ITEM.setOpacity.call(this, value);
+            this._layerRef.setOpacity(value);
         };
 
         const DYNAMIC_ENTRY_ITEM = Object.create(ENTRY_ITEM);
