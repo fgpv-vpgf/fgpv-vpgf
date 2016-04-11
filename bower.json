@@ -35,6 +35,9 @@
     "jquery": {
       "ignore": true
     },
+    "datatables.net": {
+      "ignore": true  
+    },
     "ng-flow": {
       "main": "dist/ng-flow-standalone.js"
     },

@@ -34,7 +34,11 @@
 
     // append proper srcs to scriptsArray
     if (!window.jQuery) {
+        // TODO: should we use a local file here instead?
         scriptsArr.push('http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.1.min.js');
+        scriptsArr.push('https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js');
+    } else if (!$.fn.dataTable) {
+        scriptsArr.push('https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js');
     }
     scriptsArr.push(`${repo}/core.js`);
 
