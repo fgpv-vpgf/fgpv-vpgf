@@ -32,7 +32,7 @@
         .module('app.geo')
         .factory('legendService', legendServiceFactory);
 
-    function legendServiceFactory($http, $q, $timeout, layerDefaults, layerTypes, layerStates) {
+    function legendServiceFactory($http, $q, $timeout, layerDefaults, layerTypes, layerStates, legendEntryFactory) {
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
 
@@ -291,7 +291,13 @@
 
                         assignDirectMaster(groupItem, layerInfo.parentLayerId);
                     } else { // leaf item
-                        const layerItem = LAYER_ITEM({
+                        /*const layerItem = LAYER_ITEM({
+                            name: layerInfo.name,
+                            layerType: layerEntryType
+                            // TODO: add options override from the config
+                        });*/
+
+                        const layerItem = legendEntryFactory.dynamicLayerEntry({
                             name: layerInfo.name,
                             layerType: layerEntryType
                             // TODO: add options override from the config
@@ -445,8 +451,7 @@
              * @return {Object}       legend item
              */
             function tileGenerator(layer) {
-                const tocEntry = createGroupedLayerEntry(layer);
-                applySimpleVisibility(layer);
+                const tocEntry = legendEntryFactory.singleLayerEntry(layer.initialState, layer.layer);
 
                 // add all tile sublayers to the toc entry
                 tocEntry.slaves.forEach(slave => tocEntry.add(slave));
@@ -461,16 +466,8 @@
              */
             function featureGenerator(layer) {
                 // generate toc entry
-                const state = LAYER_ITEM(layer.initialState);
+                const state = legendEntryFactory.singleLayerEntry(layer.initialState, layer.layer);
                 layer.state = state;
-
-                // decorate default setVisibility function to actually toggle visibility of the corresponding layer
-                applySimpleVisibility(layer);
-
-                // if there is no metadataurl, remove metadata options altogether
-                if (typeof state.metadataUrl === 'undefined') {
-                    delete state.options.metadata;
-                }
 
                 const symbologyPromise = getMapServerSymbology(layer);
 
@@ -487,14 +484,8 @@
              */
             function imageGenerator(layer) {
                 // generate toc entry
-                const state = LAYER_ITEM(layer.initialState);
+                const state = legendEntryFactory.singleLayerEntry(layer.initialState, layer.layer);
                 layer.state = state;
-                applySimpleVisibility(layer);
-
-                // if there is no metadataurl, remove metadata options altogether
-                if (typeof state.metadataUrl === 'undefined') {
-                    delete state.options.metadata;
-                }
 
                 return state;
             }
@@ -560,23 +551,6 @@
         // TODO: maybe this should be split into a separate service; it can get messy otherwise in here
         function structuredLegendService() {
 
-        }
-
-        /**
-         * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
-         * @param  {Object} layer object from `layerRegistry`
-         */
-        function applySimpleVisibility(layer) {
-            layer.state.decorate('setVisibility',
-                (targetFunction, value) => {
-                    targetFunction(value);
-                    layer.layer.setVisibility(layer.state.getVisibility());
-                }
-            );
-
-            // set initial visibility
-            // TODO: change visibility config value to boolean instead of 'on/off'? It gets confusing.
-            layer.state.setVisibility(layer.state.options.visibility.value === 'on');
         }
 
         /**
