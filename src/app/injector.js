@@ -4,6 +4,10 @@
      * TODO: need to check how viewer works if there is already a version of jQuery on the page; maybe load a jQuery-less version of the viewer then.
      * Reference on script loading: http://www.html5rocks.com/en/tutorials/speed/script-loading/
      */
+    const URLs = {
+        jQuery: 'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.1.min.js',
+        dataTables: 'https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js'
+    };
     const d = document;
     const scripts = d.getElementsByTagName('script'); // get scripts
 
@@ -35,10 +39,9 @@
     // append proper srcs to scriptsArray
     if (!window.jQuery) {
         // TODO: should we use a local file here instead?
-        scriptsArr.push('http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.1.min.js');
-        scriptsArr.push('https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js');
+        scriptsArr.push(URLs.jQuery, URLs.dataTables);
     } else if (!$.fn.dataTable) {
-        scriptsArr.push('https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js');
+        scriptsArr.push(URLs.dataTables);
     }
     scriptsArr.push(`${repo}/core.js`);
 
