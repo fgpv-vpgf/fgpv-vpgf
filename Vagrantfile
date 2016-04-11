@@ -14,7 +14,7 @@ Vagrant.configure(2) do |config|
     curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
     echo 'deb https://deb.nodesource.com/node_5.x trusty main' > /etc/apt/sources.list.d/nodesource.list
     apt-get update
-    apt-get install -y nodejs build-essential
+    apt-get install -y nodejs build-essential git
     cd /vagrant
     sudo npm install -g gulp
     sudo npm install
