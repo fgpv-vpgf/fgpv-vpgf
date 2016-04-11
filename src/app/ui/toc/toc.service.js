@@ -743,21 +743,27 @@
                     icon: {
                         esriFeature: 'community:vector-square',
                         esriDynamic: 'action:settings',
+                        esriDynamicLayerEntry: 'image:photo',
                         ogcWms: 'image:photo',
+                        ogcWmsLayerEntry: 'image:photo',
                         esriImage: 'image:photo',
                         esriTile: 'image:photo'
                     },
                     label: {
                         esriFeature: 'toc.label.flag.feature',
                         esriDynamic: 'toc.label.flag.dynamic',
+                        esriDynamicLayerEntry: 'toc.label.flag.dynamic',
                         ogcWms: 'toc.label.flag.wms',
+                        ogcWmsLayerEntry: 'toc.label.flag.wms',
                         esriImage: 'toc.label.flag.image',
                         esriTile: 'toc.label.flag.tile'
                     },
                     tooltip: {
                         esriFeature: 'toc.tooltip.flag.feature',
                         esriDynamic: 'toc.tooltip.flag.dynamic',
+                        esriDynamicLayerEntry: 'toc.tooltip.flag.dynamic',
                         ogcWms: 'toc.tooltip.flag.wms',
+                        ogcWmsLayerEntry: 'toc.tooltip.flag.wms',
                         esriImage: 'toc.tooltip.flag.image',
                         esriTile: 'toc.label.flag.tile'
                     }
@@ -870,16 +876,11 @@
         /**
          * Opens settings panel with settings from the provided layer object.
          * // FIXME: opens the same settings right now.
-         * @param  {Object} layer layer object whose settings should be opened.
+         * @param  {Object} entry layer object whose settings should be opened.
          */
-        function toggleSettings(layer) {
+        function toggleSettings(entry) {
             const requester = {
-                id: layer.id
-            };
-
-            const data = {
-                opacity: layer.options.opacity,
-                layerItem: geoService.layers[layer.id].layer
+                id: entry.id
             };
 
             const panelToClose = {
@@ -888,7 +889,7 @@
 
             stateManager
                 .setActive(panelToClose)
-                .then(() => stateManager.toggleDisplayPanel('sideSettings', data, requester));
+                .then(() => stateManager.toggleDisplayPanel('sideSettings', entry, requester));
         }
 
         /**
