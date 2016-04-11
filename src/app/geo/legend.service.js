@@ -223,8 +223,8 @@
          */
         function autoLegendService(config, layers, legend) {
             const ref = {
-                dataGroup: LAYER_GROUP('Data layers', true),
-                imageGroup: LAYER_GROUP('Image layers', true),
+                dataGroup: legendEntryFactory.entryGroup('Data layers', true),
+                imageGroup: legendEntryFactory.entryGroup('Image layers', true),
                 root: legend.items
             };
 
@@ -272,8 +272,9 @@
              * @return {Object}       toc layer entry with hierarchy of sublayers and added symbology
              * @private
              */
-            function createGroupedLayerEntry(layer) {
-                const dynamicGroup = GROUPED_LAYER_ENTRY(layer.initialState, true);
+            function createGroupedLayerEntry(layer, layerEntriesOptions = {}) {
+                const dynamicGroup = legendEntryFactory.dynamicEntryMasterGroup(
+                    layer.initialState, layer.layer, true);
                 const layerEntryType = `${layer.initialState.layerType}LayerEntry`;
                 layer.state = dynamicGroup;
                 dynamicGroup.slaves = [];
@@ -281,25 +282,23 @@
                 const symbologyPromise = getMapServerSymbology(layer);
 
                 // generate all the slave sublayers upfornt ...
-                layer.layer.layerInfos.forEach(layerInfo => {
+                layer.layer.layerInfos.forEach((layerInfo, index) => {
+                    const layerEntryOptions = layerEntriesOptions[index] || {};
+
                     if (layerInfo.subLayerIds) { // group item
-                        const groupItem = GROUPED_LAYER_ENTRY({
+                        const groupItem = legendEntryFactory.dynamicEntryGroup({
                             name: layerInfo.name,
-                            layerType: layerEntryType
+                            layerType: layerEntryType,
+                            options: layerEntryOptions
                             // TODO: add options override from the config
                         });
 
                         assignDirectMaster(groupItem, layerInfo.parentLayerId);
                     } else { // leaf item
-                        /*const layerItem = LAYER_ITEM({
-                            name: layerInfo.name,
-                            layerType: layerEntryType
-                            // TODO: add options override from the config
-                        });*/
-
                         const layerItem = legendEntryFactory.dynamicLayerEntry({
                             name: layerInfo.name,
-                            layerType: layerEntryType
+                            layerType: layerEntryType,
+                            options: layerEntryOptions
                             // TODO: add options override from the config
                         });
 
@@ -368,37 +367,44 @@
              * @return {Object}       legend item
              */
             function dynamicGenerator(layer) {
-                const tocEntry = createGroupedLayerEntry(layer);
+
+                const layerEntriesOptions = {};
+                layer.initialState.layerEntries.forEach(layerEntry => {
+                    layerEntriesOptions[layerEntry.index] = layerEntry;
+                });
+
+                const tocEntry = createGroupedLayerEntry(layer, layerEntriesOptions);
 
                 // TODO: Aly's points:
                 // decorators in JS are much harder to read / track than in languages that have proper annotations
                 // make an explicit class hierarchy and have subclasses add their own setVisiblity implementations
-
+                /*
                 tocEntry.decorate('setVisibility', setVisibilityDynamicRoot);
 
                 // decorate all leaves
                 tocEntry.slaves.forEach(slave => slave.decorate('setVisibility', setVisibilityDynamicChild));
-
+                */
                 // add to the legend only once that are specified
                 // NOTE:  :point_up: [March 18, 2016 12:53 PM](https://gitter.im/RAMP-PCAR/TeamRoom?at=56ec3281bb4a1731739b0d33)
                 // We assume the inclusion is properly formatted (ex: [1, 2] will result in sublayer 2 being included twice - once under root and once more time under 1).
-                layer.state.layerEntries.forEach(layerEntry => {
-                    const index = layerEntry.index;
-                    // if layerEntry id is incorrect, ignore it
-                    if (index > tocEntry.slaves.length - 1) {
-                        return;
-                    }
+
+
+
+                layer.state.layerEntries.forEach(({ index }) => {
                     const slave = tocEntry.slaves[index];
-                    angular.merge(slave.options, layerEntry);
+                    // if layerEntry id is incorrect, ignore it
+                    if (slave) {
+                        slave.setVisibility(slave.getVisibility(), false);
 
-                    slave.setVisibility(slave.options.visibility.value === 'on', false);
-
-                    tocEntry.add(slave);
+                        tocEntry.add(slave);
+                    }
                 });
-
+                /*
                 // set initial visibility of the sublayers;
                 // this cannot be set in `layerRegistry` because legend entry for dynamic layer didn't exist yet;
                 tocEntry.setVisibility(null, true);
+                */
+                tocEntry._setVisibility();
 
                 return tocEntry;
 
