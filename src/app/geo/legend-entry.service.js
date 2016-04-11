@@ -34,7 +34,8 @@
     function legendEntryFactory(layerDefaults) {
 
         const service = {
-            singleLayerEntry
+            singleLayerEntry,
+            dynamicLayerEntry
         };
 
         // jscs doesn't like enhanced object notation
@@ -75,21 +76,21 @@
                 return this.options.visibility.value === 'on';
             },
 
-            init(layer) {
-                const defaults = layerDefaults[layer.initialState.layerType];
+            init(initialState, layerRef) {
+                const defaults = layerDefaults[initialState.layerType];
 
-                this._layerRef = layer.layer;
+                this._layerRef = layerRef;
                 this.id = 'rv_lt_' + itemIdCounter++;
                 this.options = angular.extend({}, defaults.options);
                 this.flags = angular.extend({}, defaults.flags);
 
-                angular.extend(this, layer.initialState);
+                angular.merge(this, initialState);
 
                 // if there is no metadataurl, remove metadata options altogether
                 if (typeof this.metadataUrl === 'undefined') {
                     delete this.options.metadata;
                 }
-                
+
                 // this.state = layerStates.default; ??
             },
 
@@ -103,22 +104,50 @@
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         const SINGLE_LAYER_ENTRY = Object.create(LAYER_ENTRY);
-        SINGLE_LAYER_ENTRY.init = function (layer) {
-            LAYER_ENTRY.init.call(this, layer);
+        SINGLE_LAYER_ENTRY.init = function (initialState, layerRef) {
+            LAYER_ENTRY.init.call(this, initialState, layerRef);
 
             this.setVisibility(this.getVisibility());
         };
 
+        /**
+         * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
+         * @param  {Boolean} value visibility value
+         */
         SINGLE_LAYER_ENTRY.setVisibility = function (value) {
             LAYER_ENTRY.setVisibility.call(this, value);
             this._layerRef.setVisibility(this.getVisibility());
         };
 
-        function singleLayerEntry(layer) {
+        const DYNAMIC_LAYER_ENTRY = Object.create(LAYER_ENTRY);
+        DYNAMIC_LAYER_ENTRY.init = function (initialState, layerRef) {
+            LAYER_ENTRY.init.call(this, initialState, layerRef);
+
+            // this.setVisibility(this.getVisibility());
+        };
+
+        /**
+         * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
+         * @param  {Boolean} value visibility value
+         */
+        DYNAMIC_LAYER_ENTRY.setVisibility = function (value, notifyMaster = true) {
+            LAYER_ENTRY.setVisibility.call(this, value);
+
+            // more stuff
+        };
+
+        function singleLayerEntry(initialState, layerRef) {
             const featureLayerEntry = Object.create(SINGLE_LAYER_ENTRY);
-            featureLayerEntry.init(layer);
+            featureLayerEntry.init(initialState, layerRef);
 
             return featureLayerEntry;
+        }
+
+        function dynamicLayerEntry(initialState, layerRef) {
+            const dynamicLayerEntry = Object.create(DYNAMIC_LAYER_ENTRY);
+            dynamicLayerEntry.init(initialState, layerRef);
+
+            return dynamicLayerEntry;
         }
 
         return service;
