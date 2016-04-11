@@ -147,6 +147,7 @@ module.exports = function () {
         var options = {
             files: [].concat(
                 bowerModules + 'jquery/dist/jquery.js',
+                bowerModules + 'datatables.net/js/jquery.dataTables.js',
                 bowerFiles(),
                 nodedir + 'babel-core/browser-polyfill.js',
                 bowerModules + 'angular-mocks/angular-mocks.js',
