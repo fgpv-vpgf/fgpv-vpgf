@@ -1,6 +1,6 @@
 <md-menu-item>
     <md-button
-        ng-click="self.action(self.layer)"
+        ng-click="self.action(self.entry)"
         ng-class="{ selected: self.control.selected }"
         ng-disabled="!self.control.enabled"
         aria-label="{{ self.template.label[self.control.value] || self.template.label | translate }}">

@@ -27,13 +27,13 @@
      */
     angular
         .module('app.ui.toc')
-        .directive('rvLayerItemSymbology', rvLayerItemSymbology);
+        .directive('rvTocEntrySymbology', rvLayerItemSymbology);
 
     function rvLayerItemSymbology($q) {
         const directive = {
-            require: '^?rvLayerItem', // need access to layerItem to get its element reference
+            require: '^?rvTocEntry', // need access to layerItem to get its element reference
             restrict: 'E',
-            templateUrl: 'app/ui/toc/layer-item-symbology.html',
+            templateUrl: 'app/ui/toc/templates/entry-symbology.html',
             scope: {
                 symbology: '='
             },

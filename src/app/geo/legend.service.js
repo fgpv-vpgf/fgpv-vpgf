@@ -11,15 +11,6 @@
         on: 'off'
     };
 
-    // TODO: ignore this for now;
-    const GROUP_TYPES = {
-        regular: 'regular', // this group can be deleted but has no extra controls
-        immutable: 'immutable', // this group has no extra controls and cannot be deleted
-        esriFeature: 'esriFeature',
-        esriDynamic: 'esriDynamic', // this group can be deleted and has extra controls such as setting (opacity, query), metadata,
-        esriTile: 'esriTile' // this group can be deleted and has extra controls such as settings (opacity)
-    };
-
     // TODO: move this somewhere later
     // jscs:disable maximumLineLength
     const NO_IMAGE =
@@ -44,22 +35,24 @@
     function legendServiceFactory($http, $q, $timeout, layerDefaults, layerTypes, layerStates) {
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
-        // groupType: 'regular', 'dynamic'
 
-        const LAYER_GROUP = (name, groupType = GROUP_TYPES.regular, expanded = false) => {
+        const LAYER_GROUP = (name, expanded = false) => {
             return {
                 type: 'group',
-                groupType,
                 name,
                 id: 'rv_lg_' + itemIdCounter++,
                 expanded,
                 items: [],
+                cache: {}, // to cache stuff like retrieved metadata info
 
                 // TODO: add hook to set group options
                 options: {
                     visibility: {
                         value: 'on', // 'off', 'zoomIn', 'zoomOut'
                         enabled: true
+                    },
+                    remove: {
+                        enabled: false
                     }
                 },
 
@@ -95,10 +88,14 @@
                  */
                 setVisibility(value, ...arg) {
                     const option = this.options.visibility;
-                    option.value = value || VISIBILITY_TOGGLE[option.value];
+                    if (typeof value !== 'undefined') {
+                        option.value = value ? 'on' : 'off';
+                    } else {
+                        option.value = VISIBILITY_TOGGLE[option.value];
+                    }
 
                     if (this.type === 'group') {
-                        this.items.forEach(item => item.setVisibility(option.value, ...arg));
+                        this.items.forEach(item => item.setVisibility(option.value === 'on', ...arg));
                     }
                 },
 
@@ -139,15 +136,13 @@
             };
         };
 
-        const DYNAMIC_LAYER_GROUP = (initialState, expanded) => {
+        const GROUPED_LAYER_ENTRY = (initialState, expanded = false) => {
             // get defaults for specific layerType
-            const defaults = layerDefaults[layerTypes.esriDynamic];
+            const defaults = layerDefaults[initialState.layerType] || {};
 
             return angular.merge(
-                {},
-                LAYER_GROUP(initialState.name, GROUP_TYPES.esriDynamic, expanded),
+                LAYER_GROUP(initialState.name, expanded),
                 {
-                    slaves: [],
                     options: angular.extend({}, defaults.options)
                 },
                 initialState
@@ -161,7 +156,7 @@
          */
         const LAYER_ITEM = (initialState) => {
             // get defaults for specific layerType
-            const defaults = layerDefaults[layerTypes[initialState.layerType]];
+            const defaults = layerDefaults[initialState.layerType];
 
             // merge initialState on top of the defaults
             return angular.merge({}, {
@@ -183,7 +178,12 @@
                  */
                 setVisibility(value) {
                     const option = this.options.visibility;
-                    option.value = value || VISIBILITY_TOGGLE[option.value];
+
+                    if (typeof value !== 'undefined') {
+                        option.value = value ? 'on' : 'off';
+                    } else {
+                        option.value = VISIBILITY_TOGGLE[option.value];
+                    }
                 },
 
                 /**
@@ -223,8 +223,8 @@
          */
         function autoLegendService(config, layers, legend) {
             const ref = {
-                dataGroup: LAYER_GROUP('Data layers', GROUP_TYPES.immutable, true),
-                imageGroup: LAYER_GROUP('Image layers', GROUP_TYPES.immutable, true),
+                dataGroup: LAYER_GROUP('Data layers', true),
+                imageGroup: LAYER_GROUP('Image layers', true),
                 root: legend.items
             };
 
@@ -273,24 +273,27 @@
              * @private
              */
             function createGroupedLayerEntry(layer) {
-                const dynamicGroup = DYNAMIC_LAYER_GROUP(layer.initialState);
+                const dynamicGroup = GROUPED_LAYER_ENTRY(layer.initialState, true);
+                const layerEntryType = `${layer.initialState.layerType}LayerEntry`;
                 layer.state = dynamicGroup;
+                dynamicGroup.slaves = [];
 
                 const symbologyPromise = getMapServerSymbology(layer);
 
                 // generate all the slave sublayers upfornt ...
                 layer.layer.layerInfos.forEach(layerInfo => {
                     if (layerInfo.subLayerIds) { // group item
-                        const groupItem = DYNAMIC_LAYER_GROUP({
-                            name: layerInfo.name
+                        const groupItem = GROUPED_LAYER_ENTRY({
+                            name: layerInfo.name,
+                            layerType: layerEntryType
                             // TODO: add options override from the config
                         });
 
                         assignDirectMaster(groupItem, layerInfo.parentLayerId);
                     } else { // leaf item
                         const layerItem = LAYER_ITEM({
-                            layerType: dynamicGroup.layerType,
-                            name: layerInfo.name
+                            name: layerInfo.name,
+                            layerType: layerEntryType
                             // TODO: add options override from the config
                         });
 
@@ -303,6 +306,12 @@
                     .then(({ data }) => { // ... and apply them to existing child items
                         data.layers.forEach(layer => applySymbology(dynamicGroup.slaves[layer.layerId], layer));
                     });
+
+                // if there is no metadataurl, remove metadata options altogether
+                if (typeof dynamicGroup.metadataUrl === 'undefined') {
+                    delete dynamicGroup.options.metadata;
+                    dynamicGroup.slaves.forEach(slave => delete slave.options.metadata);
+                }
 
                 return dynamicGroup;
 
@@ -367,15 +376,16 @@
                 // add to the legend only once that are specified
                 // NOTE:  :point_up: [March 18, 2016 12:53 PM](https://gitter.im/RAMP-PCAR/TeamRoom?at=56ec3281bb4a1731739b0d33)
                 // We assume the inclusion is properly formatted (ex: [1, 2] will result in sublayer 2 being included twice - once under root and once more time under 1).
-                layer.state.layerEntries.forEach(({ index }) => {
+                layer.state.layerEntries.forEach(layerEntry => {
+                    const index = layerEntry.index;
                     // if layerEntry id is incorrect, ignore it
                     if (index > tocEntry.slaves.length - 1) {
                         return;
                     }
                     const slave = tocEntry.slaves[index];
+                    angular.merge(slave.options, layerEntry);
 
-                    // TODO: for now assume all layer entries should be visible; need to change this later
-                    slave.options.visibility.value = 'on';
+                    slave.setVisibility(slave.options.visibility.value === 'on', false);
 
                     tocEntry.add(slave);
                 });
@@ -451,13 +461,18 @@
              */
             function featureGenerator(layer) {
                 // generate toc entry
-                layer.state = LAYER_ITEM(layer.initialState);
+                const state = LAYER_ITEM(layer.initialState);
+                layer.state = state;
 
                 // decorate default setVisibility function to actually toggle visibility of the corresponding layer
                 applySimpleVisibility(layer);
 
+                // if there is no metadataurl, remove metadata options altogether
+                if (typeof state.metadataUrl === 'undefined') {
+                    delete state.options.metadata;
+                }
+
                 const symbologyPromise = getMapServerSymbology(layer);
-                const state = layer.state;
 
                 symbologyPromise.then(
                     ({ data, index }) => applySymbology(state, data.layers[index]));
@@ -472,11 +487,14 @@
              */
             function imageGenerator(layer) {
                 // generate toc entry
-                layer.state = LAYER_ITEM(layer.initialState);
-
+                const state = LAYER_ITEM(layer.initialState);
+                layer.state = state;
                 applySimpleVisibility(layer);
 
-                const state = layer.state;
+                // if there is no metadataurl, remove metadata options altogether
+                if (typeof state.metadataUrl === 'undefined') {
+                    delete state.options.metadata;
+                }
 
                 return state;
             }
@@ -558,7 +576,7 @@
 
             // set initial visibility
             // TODO: change visibility config value to boolean instead of 'on/off'? It gets confusing.
-            layer.state.setVisibility(layer.state.options.visibility.value);
+            layer.state.setVisibility(layer.state.options.visibility.value === 'on');
         }
 
         /**

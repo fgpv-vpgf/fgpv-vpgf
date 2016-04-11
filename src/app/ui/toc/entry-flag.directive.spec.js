@@ -6,8 +6,8 @@ describe('rvLayerItemFlag', () => {
     let directiveElement;
 
     // mock part of the controller required by rvLayerItemFlag directive
-    const rvLayerItemController = {
-        layer: {
+    const rvTocEntryController = {
+        entry: {
             type: 'layer',
             name: 'Layer Name 1 Layer Name 1 Layer Name 1 Layer Name 1',
             layerType: 'feature',
@@ -47,13 +47,13 @@ describe('rvLayerItemFlag', () => {
         scope = $rootScope.$new();
 
         directiveElement = angular.element(
-            '<rv-layer-item-flag name="user"></rv-layer-item-flag>'
+            '<rv-toc-entry-flag name="user"></rv-toc-entry-flag>'
         );
 
         // need to mock the required controller inside the directive being tested;
         // http://stackoverflow.com/a/19951141
-        directiveElement.data('$rvLayerItemController',
-            rvLayerItemController);
+        directiveElement.data('$rvTocEntryController',
+            rvTocEntryController);
         directiveElement = $compile(directiveElement)(scope);
         scope.$digest();
 
@@ -62,7 +62,7 @@ describe('rvLayerItemFlag', () => {
         directiveScope = directiveElement.isolateScope();
     });
 
-    describe('rvLayerItemFlag', () => {
+    describe('rvTocEntryFlag', () => {
         it('should be created successfully', () => {
             // check that directive element exists
             expect(directiveElement)

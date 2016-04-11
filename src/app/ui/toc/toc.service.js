@@ -666,7 +666,7 @@
         service.presets = {
             groupOptions: {
                 visibility: {
-                    action: toggleGroupVisibility,
+                    action: null,
                     icon: {
                         on: 'action:visibility',
                         off: 'action:visibility_off',
@@ -810,31 +810,6 @@
 
         // jscs:enable maximumLineLength
 
-        // set layer control defaults
-        // TODO: should be done when parsing config file
-        // initLayers(service.data.items);
-
-        // remove
-        /* $timeout(() => {
-            console.info(geoService);
-            service.data.items[0].items = geoService.legend.map(id => {
-                // add some fake symbology for now
-                geoService.layers[id].state.symbology = [
-                    {
-                        icon: 'url',
-                        name: HolderIpsum.words(3, true)
-                    }
-                ];
-                geoService.layers[id].state.cache = {};
-                geoService.layers[id].state.flags.type.value = geoService.layers[id].state.layerType;
-
-                return geoService.layers[id].state;
-            });
-
-            // console.log('--->', service.data.items[0]);
-        }, 7000); // FIXME: wait for layer to be added to the layer registry; this will not be needed as we are going to bind directly to layer/legend construction from geoService; this is needed right now to keep the fake layers in the layer selector as well.
-        */
-
         // set state change watches on metadata, settings and filters panel
         watchPanelState('sideMetadata', 'metadata');
         watchPanelState('sideSettings', 'settings');
@@ -842,50 +817,18 @@
 
         return service;
 
-        // FIXME: updating config layer objects with default values for options and flags
-        // this should be done when applying defaults to the config file
-        // items is an array
-        /*function initLayers(items) {
-            // jshint forin: false /
-
-            // ^ kills jshint error abour for .. in loop
-            for (let item of items) {
-                if (item.items === undefined) {
-                    // TODO: remove/revise; layer object should have cache created before; or outsource cache to something else
-                    // should store cache in layer registry
-                    item.cache = item.cache || {};
-
-                } else {
-                    initLayers(item.items);
-                }
-            }
-        }*/
-
         /**
          * Simple function to remove layers.
-         * TODO: needs more work to handle dynamic layer and other crazy stuff
-         * TODO: need to consider what happens when removing the only layer in the group; remove the group as well? etc.
          * Hides the layer data and removes the node from the layer selector; removes the layer from
-         * @param  {Object} layer layerItem object from the layer selector
+         * @param  {Object} entry layerItem object from the `legendService`
          */
-        function removeLayer(layer) {
-            let layerGroup;
-            let layerIndex;
-            let layerOriginalVisibility = layer.options.visibility.value;
-
-            // find where the layer is in layer selector
-            iterateLayers(geoService.legend, (item, index, group) => {
-                if (item.id === layer.id && index !== -1) {
-                    layerGroup = group;
-                    layerIndex = index;
-                }
-            });
-
-            // console.log(layerGroup, layerIndex);
+        function removeLayer(entry) {
+            const isEntryVisible = entry.getVisibility();
+            const entryParent = entry.parent;
 
             // pretend we removed the layer by setting it's visibility to off and remove it from the layer selector
-            layerGroup.items.splice(layerIndex, 1);
-            toggleVisiblity(layer, 'off');
+            entry.setVisibility(false);
+            const entryPosition = entryParent.remove(entry);
 
             // create notification toast
             const undoToast = $mdToast.simple()
@@ -899,30 +842,23 @@
                 .then(response => {
                     if (response === 'ok') { // promise resolves with 'ok' when user clicks 'undo'
                         // restore layer visibility on undo; and add it back to layer selector
-                        layerGroup.items.splice(layerIndex, 0, layer);
+                        entryParent.add(entry, entryPosition);
 
                         // restore original visibility, so if he removed and restored already invisible layer,
                         // it is restored also invisible
-                        toggleVisiblity(layer, layerOriginalVisibility);
+                        entry.setVisibility(isEntryVisible);
                     } else {
                         // remove layer for real now
-                        geoService.removeLayer(layer.id);
+                        geoService.removeLayer(entry.id);
                     }
                 });
         }
 
-        // FIXME: placeholder method for toggling group visibility
-        function toggleGroupVisibility(group, value) {
-            console.log('Toggle visiblity of group: ' + group.name);
-            group.setVisibility(value);
-        }
-
-        // FIXME: placeholder method for toggling visibility
         // TODO: rename to something like `setVisibility` to make it clearer what this does
         // if 'value' is not specified, toggle
-        function toggleVisiblity(layer, value) {
-            console.log('Toggle visiblity of layer: ' + layer.name);
-            layer.setVisibility(value);
+        function toggleVisiblity(tocEntry, value) {
+            console.log('Toggle visiblity of layer: ' + tocEntry.name);
+            tocEntry.setVisibility(value);
         }
 
         // temp function to open layer groups
@@ -1011,15 +947,18 @@
         /**
          * Opens metadata panel with data from the provided layer object.
          * // FIXME: generates some garbage text instead of proper metadata
-         * @param  {Object} layer layer object whose data should be displayed.
+         * @param  {Object} entry layer object whose data should be displayed.
          */
-        function toggleMetadata(layer) {
+        function toggleMetadata(entry) {
             const requester = {
-                id: layer.id
+                id: entry.id
             };
             const panelToClose = {
                 filters: false
             };
+
+            // if a sublayer of a group, select its root
+            const layer = entry.master ? entry.master : entry;
 
             // construct a temp promise which resolves when data is generated or retrieved;
             const dataPromise = $q(fulfill => {
@@ -1028,34 +967,22 @@
                     fulfill(layer.cache.metadata);
                 } else {
 
-                    if (layer.metadataUrl) {
-                        const xmlUrl = layer.metadataUrl;
+                    const xmlUrl = layer.metadataUrl;
 
-                        // TODO: xsl should come from service constant? or is this layer specific
-                        // following is a test xsl from RAMP, should be updated for FGPV
-                        const xslUrl = 'http://ramp-pcar.github.io/demos/NRSTC/v5.4.2/ramp-pcar/' +
-                            'assets/metadata/xstyle_default_en.xsl';
+                    // TODO: xsl should come from service constant? or is this layer specific
+                    // following is a test xsl from RAMP, should be updated for FGPV
+                    const xslUrl = 'http://ramp-pcar.github.io/demos/NRSTC/v5.4.2/ramp-pcar/' +
+                        'assets/metadata/xstyle_default_en.xsl';
 
-                        // transform xml
-                        metadataService.transformXML(xmlUrl, xslUrl).then(mdata => {
+                    // TODO: need to handle errors
+                    // transform xml
+                    metadataService.transformXML(xmlUrl, xslUrl).then(mdata => {
 
-                            // result is wrapped in an array due to previous setup
-                            // TODO: chagee the following when changing associated directive service
-                            layer.cache.metadata = [mdata[0].innerText];
-                            fulfill(layer.cache.metadata);
-                        });
-                    } else {
-                        // TODO: generate some metadata to display functionality
-                        const mdata = HolderIpsum.paragraphs(2, true);
-
-                        // TODO: remove; simulating delay on retrieving metadata
-                        $timeout(() => {
-                            layer.cache.metadata = mdata;
-
-                            fulfill(layer.cache.metadata);
-                        }, Math.random() * 3000 + 300); // random delay
-                    }
-
+                        // result is wrapped in an array due to previous setup
+                        // TODO: chagee the following when changing associated directive service
+                        layer.cache.metadata = [mdata[0].innerText];
+                        fulfill(layer.cache.metadata);
+                    });
                 }
             });
 
