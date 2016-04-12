@@ -965,6 +965,7 @@ module.exports = function (esriBundle, geoApi) {
         Query: esriBundle.Query,
         TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
         ogc: ogc(esriBundle),
+        LayerDrawingOptions: esriBundle.LayerDrawingOptions,
         getFeatureInfo: getFeatureInfoBuilder(esriBundle),
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
