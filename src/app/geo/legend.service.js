@@ -35,7 +35,7 @@
             const ref = {
                 dataGroup: legendEntryFactory.entryGroup('Data layers', true),
                 imageGroup: legendEntryFactory.entryGroup('Image layers', true),
-                root: legend.items
+                legend: legend
             };
 
             // maps layerTypes to default layergroups
@@ -73,7 +73,8 @@
              * Initializes autolegend by adding data and image groups to it.
              */
             function init() {
-                ref.root.push(ref.dataGroup, ref.imageGroup);
+                ref.legend.items.push(ref.dataGroup, ref.imageGroup);
+                ref.legend.getLegendEntry = getLegendEntry;
             }
 
             /**
@@ -304,6 +305,20 @@
                 legendEntry.loadingTimeout = $timeout(() => {
                     legendEntry.isLoading = isLoading;
                 }, delay);
+            }
+
+            function getLegendEntry(id) {
+                let result;
+
+                ref.legend.items.forEach(entryGroup => {
+                    entryGroup.walkItems(item => {
+                        if (item.id === id) {
+                            result = item;
+                        }
+                    });
+                });
+
+                return result;
             }
         }
 
