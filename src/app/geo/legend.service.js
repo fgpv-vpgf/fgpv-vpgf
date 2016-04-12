@@ -100,7 +100,8 @@
                         const groupItem = legendEntryFactory.dynamicEntryGroup({
                             name: layerInfo.name,
                             layerType: layerEntryType,
-                            options: layerEntryOptions
+                            options: layerEntryOptions,
+                            _subId: index
                         });
 
                         assignDirectMaster(groupItem, layerInfo.parentLayerId);
@@ -108,7 +109,8 @@
                         const layerItem = legendEntryFactory.dynamicEntryItem({
                             name: layerInfo.name,
                             layerType: layerEntryType,
-                            options: layerEntryOptions
+                            options: layerEntryOptions,
+                            _subId: index
                         });
 
                         assignDirectMaster(layerItem, layerInfo.parentLayerId);
@@ -125,6 +127,11 @@
                 if (typeof dynamicGroup.metadataUrl === 'undefined') {
                     delete dynamicGroup.options.metadata;
                     dynamicGroup.slaves.forEach(slave => delete slave.options.metadata);
+                }
+
+                // if the 'supportsDynamicLayers' flag is off, remove sublayer opacity options
+                if (!layer.layer.supportsDynamicLayers) {
+                    dynamicGroup.slaves.forEach(slave => delete slave.options.opacity);
                 }
 
                 return dynamicGroup;

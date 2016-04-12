@@ -31,7 +31,7 @@
         .module('app.geo')
         .service('legendEntryFactory', legendEntryFactory);
 
-    function legendEntryFactory(layerDefaults) {
+    function legendEntryFactory(gapiService, layerDefaults) {
 
         const service = {
             singleEntryItem,
@@ -94,11 +94,6 @@
 
                 angular.merge(this, initialState);
 
-                // if there is no metadataurl, remove metadata options altogether
-                if (typeof this.metadataUrl === 'undefined') {
-                    delete this.options.metadata;
-                }
-
                 // this.state = layerStates.default; ??
             }
         };
@@ -108,6 +103,11 @@
         SINGLE_ENTRY_ITEM.init = function (initialState, layerRef) {
             ENTRY_ITEM.init.call(this, initialState, layerRef);
             this.setVisibility(this.getVisibility());
+
+            // if there is no metadataurl, remove metadata options altogether
+            if (typeof this.metadataUrl === 'undefined') {
+                delete this.options.metadata;
+            }
 
             return this;
         };
@@ -145,6 +145,11 @@
             if (isTrigger) {
                 this.master._setVisibility();
             }
+        };
+
+        DYNAMIC_ENTRY_ITEM.setOpacity = function (value) {
+            ENTRY_ITEM.setOpacity.call(this, value, false);
+            this.master.setOpacity(value, this._subId);
         };
 
         const ENTRY_GROUP = {
@@ -217,6 +222,10 @@
                 return this.options.visibility.value === 'on';
             },
 
+            setOpacity(value) {
+                this.options.opacity.value = value;
+            },
+
             /**
              * Walks child items executing the provided function on each leaf;
              * Returns a flatten array of results from the provided function;
@@ -276,6 +285,11 @@
             }
         };
 
+        DYNAMIC_ENTRY_GROUP.setOpacity = function (value) {
+            ENTRY_GROUP.setOpacity.call(this, value);
+            this.master.setOpacity(value, this._subId);
+        };
+
         const DYNAMIC_ENTRY_MASTER_GROUP = Object.create(DYNAMIC_ENTRY_GROUP);
 
         DYNAMIC_ENTRY_MASTER_GROUP.init = function (initialState, layerRef, expanded) {
@@ -317,6 +331,24 @@
 
             // finally, set visibility of the sublayers
             this._layerRef.setVisibleLayers(visibleSublayerIds);
+        };
+
+        DYNAMIC_ENTRY_MASTER_GROUP.setOpacity = function (value, subId = -1) {
+            if (subId !== -1) {
+
+                const drawingOptions = new gapiService.gapi.layer.LayerDrawingOptions();
+                drawingOptions.transparency = (value - 1) * -100;
+
+                const optionsArray = [];
+                optionsArray[subId] = drawingOptions;
+
+                this._layerRef.setLayerDrawingOptions(optionsArray);
+                this._layerRef.show();
+
+            } else {
+                ENTRY_GROUP.setOpacity.call(this, value);
+                this._layerRef.setOpacity(value);
+            }
         };
 
         function singleEntryItem(initialState, layerRef) {
