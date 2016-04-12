@@ -3,13 +3,6 @@
 (() => {
     'use strict';
 
-    // mapping between layer option names and content display names
-    const DISPLAY_SWITCH = {
-        metadata: 'metadata',
-        settings: 'settings',
-        filters: 'data'
-    };
-
     /**
      * @ngdoc service
      * @name tocService
@@ -993,7 +986,7 @@
         }
 
         /**
-         * Sets a watch on StateManager for layer data panels. When the requester is changed, calls changeContentState to dehighlight layer options and checks the state of the layer item itself (selected / not selected).
+         * Sets a watch on StateManager for layer data panels. When the requester is changed, calls setTocEntrySelectedState to dehighlight layer options and checks the state of the layer item itself (selected / not selected).
          *
          * @param  {String} panelName    name of the panel to watch as specified in the stateManager
          * @param  {String} displayName type of the display data (layer toggle name: 'settings', 'metadata', 'filters')
@@ -1011,87 +1004,28 @@
                 if (newRequester !== null) {
                     // deselect layer from the old requester if layer ids don't match
                     if (oldRequester !== null && oldRequester.id !== newRequester.id) {
-                        changeContentState(oldRequester.id, displayName, false);
+                        setTocEntrySelectedState(oldRequester.id, false);
                     }
 
                     // select the new layer
-                    changeContentState(newRequester.id, displayName);
+                    setTocEntrySelectedState(newRequester.id);
                 } else if (oldRequester !== null) {
                     // deselect the old layer since the panel is closed as the newRequester is null
-                    changeContentState(oldRequester.id, displayName, false);
+                    setTocEntrySelectedState(oldRequester.id, false);
                 }
             });
         }
 
         /**
-         * Changes the state of the specified layer content (metadata, settings, and filters) to the value provided. If any one of them is selected, the layer is considered selected as well and has a visual indicator of that.
-         *
-         * @param  {Integer} layerId     id of the layer whose data is displayed
-         * @param  {String} displayName  type of the data displayed
-         * @param  {Boolean} newValue    indicates whether the `displayName` display data is visible or not
+         * Sets selected state of the toc entry with the specified id to the specified value
+         * @param {Stromg} id    toc entry id; it can be different from a layer id (sublayers of a dynamic layer will have generated ids)
+         * @param {Boolean} value defaults to true;
          */
-        function changeContentState(layerId, displayName, newValue = true) {
-            const layer = geoService.layers[layerId].state;
-            const optionName = DISPLAY_SWITCH[displayName];
-
-            // TODO: this function need to be fixed; it's old
-            if (layer) {
-                if (newValue) {
-                    iterateLayers(geoService.legend, layer => {
-                        if (layer.id === layerId) {
-                            return;
-                        }
-
-                        layer.selected = false;
-
-                        Object.entries(DISPLAY_SWITCH).forEach(
-                            ([key, value]) => {
-                                if (typeof layer.options[value] !== 'undefined') {
-                                    layer.options[value].selected = false;
-                                }
-                            }
-                        );
-                    });
-                }
-
-                // TODO: revise; maybe also store filters values here or something
-                layer.options[optionName].selected = newValue; // select the toggle to stay visible
-
-                // check if any toggle is selected; if so, select the layer
-                const layerSelectedValue = Object.keys(DISPLAY_SWITCH)
-                    .some(key => {
-                        const value = DISPLAY_SWITCH[key];
-                        return typeof layer.options[value] !== 'undefined' ? layer.options[value].selected : true;
-                    });
-
-                layer.selected = layerSelectedValue; // newValue; // change layer's selected state
+        function setTocEntrySelectedState(id, value = true) {
+            const entry = geoService.legend.getLegendEntry(id);
+            if (entry) {
+                entry.selected = value;
             }
         }
-
-        // sergei helper functions; should be handled by layer registry or something
-        // TODO: replace
-        function iterateLayers(group, func) {
-            group.items.forEach((item, index) => {
-                if (item.items === undefined) {
-                    func(item, index, group);
-                } else {
-                    iterateLayers(item, func);
-                }
-            });
-        }
-
-        // another one
-        // TODO: remove
-        /*function findLayer(id) {
-            let layer;
-
-            iterateLayers(service.data, item => {
-                if (item.id === id) {
-                    layer = item;
-                }
-            });
-
-            return layer;
-        }*/
     }
 })();
