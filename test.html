@@ -25,7 +25,7 @@
             esriMap.on('click', function (e) {
                 api.layer.ogc.getFeatureInfo(l, e, layers, 'text/plain').then(function(x) {console.log(x);});
                 //api.layer.ogc.getFeatureInfo(l2, e, layers2, 'text/plain').then(function(x) {console.log(x);});
-
+                console.log(api.layer.ogc.getLegendUrls(l2, layers2));
             });
         });
     </script>

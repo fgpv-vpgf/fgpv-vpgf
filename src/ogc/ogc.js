@@ -2,8 +2,13 @@ const yxList = require('./reversedAxis.json');
 
 function getFeatureInfoBuilder(esriBundle) {
     /**
+     * Handles click events for WMS layers (makes a WMS GetFeatureInfo call behind the scenes).
      *
-     * @returns {Promise} a promise which resolves
+     * @param {WMSLayer} wmsLayer an ESRI WMSLayer object to be queried
+     * @param {Object} clickEvent an ESRI map click event (used for screen coordinates)
+     * @param {Array} layerList a list of strings identifying the WMS layers to be queried
+     * @param {String} mimeType the format to be requested for the response
+     * @returns {Promise} a promise which resolves with the raw text of the GetFeatureInfo response
      */
     return (wmsLayer, clickEvent, layerList, mimeType) => {
         let wkid;
@@ -51,9 +56,23 @@ function getFeatureInfoBuilder(esriBundle) {
     };
 }
 
+/**
+ * Finds the appropriate legend URLs for WMS layers.
+ *
+ * @param {WMSLayer} wmsLayer an ESRI WMSLayer object to be queried
+ * @param {Array} layerList a list of strings identifying the WMS layers to be queried
+ * @returns {Array} a list of strings containing URLs for specified layers (order is preserved)
+ */
+function getLegendUrls(wmsLayer, layerList) {
+    const liMap = new Map(); // use Map in case someone clever uses a WMS layer name that matches an Object's default properties
+    wmsLayer.layerInfos.forEach(li => liMap.set(li.name, li.legendURL));
+    return layerList.map(l => liMap.get(l));
+}
+
 module.exports = esriBundle => {
     return {
         WmsLayer: esriBundle.WmsLayer,
-        getFeatureInfo: getFeatureInfoBuilder(esriBundle)
+        getFeatureInfo: getFeatureInfoBuilder(esriBundle),
+        getLegendUrls
     };
 };
