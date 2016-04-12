@@ -130,13 +130,19 @@
 
                     // FIXME: move to config?
                     const maxLength = 35;
+                    const maxDescriptionLength = 100;
 
                     if (basemap.name.length > maxLength) {
                         basemap.name = basemap.name.substring(0, maxLength - 3) + '...';
                     }
 
+                    if (basemap.description.length > maxDescriptionLength) {
+                        basemap.description = basemap.description.substring(0, maxDescriptionLength - 3) + '...';
+                    }
+
                     self.projections[idx].items.push({
                         name: basemap.name,
+                        description: basemap.description,
                         type: basemap.type,
                         id: basemap.id,
                         url: basemap.layers[0].url,
@@ -176,6 +182,7 @@
                     // add blank map
                     projection.items.push({
                         name: 'blank map',
+                        description: 'Remove base map',
                         type: 'blank',
                         id: 'blank_basemap_' + wkid,
                         url: '',
