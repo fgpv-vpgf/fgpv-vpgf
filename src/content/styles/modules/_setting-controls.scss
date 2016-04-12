@@ -1,12 +1,18 @@
 @mixin setting-controls {
+    @include setting-option;
     @include slider-setting;
-    @include toggle-setting;    
+    @include toggle-setting;
+}
+
+@mixin setting-option {
+    .rv-setting-option {
+        border-bottom: 1px dashed $divider-color-light;
+    }
 }
 
 // more styling on top of the default material slider control
 @mixin slider-setting {
     .rv-slider-setting {
-        border-bottom: 1px dashed $divider-color-light;
         display: flex;
         flex-direction: row;
         align-items: center;
