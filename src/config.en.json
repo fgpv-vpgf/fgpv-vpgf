@@ -157,7 +157,12 @@
       "id":"aafc_dynamic_layer",
       "name": "AAFC Census of Agriculture 2011",
       "layerType":"esriDynamic",
-      "layerEntries": [{"index": 0}],
+      "layerEntries": [{"index": 0, "opacity": { "value": 0.5 }}],
+      "options": {
+        "opacity": {
+          "value": 0.8
+        }
+      },
       "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_census_of_agriculture_2011_ccs/MapServer"
     },
     {

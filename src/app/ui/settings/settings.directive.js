@@ -52,7 +52,7 @@
 
         activateOpacitySetting();
 
-        /*********/
+        /***/
 
         function activateOpacitySetting() {
             // flag indicating the opacity timeout is active
@@ -72,7 +72,7 @@
             });
 
             /**
-             * Sets actual opacity value on the tocEntry if it differs from the current opacity value.
+             * Applies current opacity value from the settings panel to the tocEntry if it differs from its current opacity value.
              */
             function setTocEntryOpacity() {
                 if (self.tocEntry.options.opacity.value !== self.opacityValue) {

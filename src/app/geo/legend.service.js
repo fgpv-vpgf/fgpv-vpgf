@@ -206,7 +206,9 @@
 
                 // set initial visibility of the sublayers;
                 // this cannot be set in `layerRegistry` because legend entry for dynamic layer didn't exist yet;
+                // TODO: move this to legendEntry service and apply during initialization of the entry
                 tocEntry._setVisibility();
+                tocEntry._setOpacity(); // apply initial opacity
 
                 return tocEntry;
             }

@@ -103,6 +103,7 @@
         SINGLE_ENTRY_ITEM.init = function (initialState, layerRef) {
             ENTRY_ITEM.init.call(this, initialState, layerRef);
             this.setVisibility(this.getVisibility());
+            this.setOpacity(this.options.opacity.value);
 
             // if there is no metadataurl, remove metadata options altogether
             if (typeof this.metadataUrl === 'undefined') {
@@ -121,6 +122,10 @@
             this._layerRef.setVisibility(this.getVisibility());
         };
 
+        /**
+         * Sets opacity of a simple layero bject, one which is represented by a single entry in the legend
+         * @param {Number} value opacity value 0 to 1 where 0 is fully transparent
+         */
         SINGLE_ENTRY_ITEM.setOpacity = function (value) {
             ENTRY_ITEM.setOpacity.call(this, value);
             this._layerRef.setOpacity(value);
@@ -137,7 +142,7 @@
         /**
          * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
          * @param  {Boolean} value visibility value
-         * @param  {Boolean} isTrigger flag specifying if the actual layer visibility should be set
+         * @param  {Boolean} isTrigger flag specifying if the visibility value should be applied to the actual layer; this is used to avoid setting visiblity multiple times for items in a subgroup when propagating
          */
         DYNAMIC_ENTRY_ITEM.setVisibility = function (value, isTrigger = true) {
             ENTRY_ITEM.setVisibility.call(this, value, false);
@@ -147,9 +152,14 @@
             }
         };
 
+        /**
+         * Sets opacity value of the dynamic sublayer.
+         * This makes the sublayer and all its children transparent relative to other subgroups/layers, not relative to other layers on the map.
+         * @param {Number} value opacity value 0 to 100 where 100 is fully transparent
+         */
         DYNAMIC_ENTRY_ITEM.setOpacity = function (value) {
             ENTRY_ITEM.setOpacity.call(this, value, false);
-            this.master.setOpacity(value, this._subId);
+            this.master._setOpacity([this._subId]);
         };
 
         const ENTRY_GROUP = {
@@ -275,7 +285,7 @@
         /**
          * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
          * @param  {Boolean} value visibility value
-         * @param  {Boolean} isTrigger flag specifying if the actual layer visibility should be set
+         * @param  {Boolean} isTrigger flag specifying if the visibility value should be applied to the actual layer; this is used to avoid setting visiblity multiple times for items in a subgroup when propagating
          */
         DYNAMIC_ENTRY_GROUP.setVisibility = function (value, isTrigger = true) {
             ENTRY_GROUP.setVisibility.call(this, value, false);
@@ -285,9 +295,14 @@
             }
         };
 
+        /**
+         * Sets opacity value of the dynamic subgroup.
+         * This makes the subgroup and all its children transparent relative to other subgroups/layers, not relative to other layers on the map.
+         * @param {Number} value opacity value 0 to 100 where 100 is fully transparent
+         */
         DYNAMIC_ENTRY_GROUP.setOpacity = function (value) {
             ENTRY_GROUP.setOpacity.call(this, value);
-            this.master.setOpacity(value, this._subId);
+            this.master._setOpacity([this._subId]);
         };
 
         const DYNAMIC_ENTRY_MASTER_GROUP = Object.create(DYNAMIC_ENTRY_GROUP);
@@ -299,9 +314,9 @@
         };
 
         /**
-         * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
+         * Sets visibility of a dynamic entry root object.
          * @param  {Boolean} value visibility value
-         * @param  {Boolean} isTrigger flag specifying if the actual layer visibility should be set
+         * @param  {Boolean} isTrigger flag specifying if the visibility value should be applied to the actual layer; this is used to avoid setting visiblity multiple times for items in a subgroup when propagating
          */
         DYNAMIC_ENTRY_MASTER_GROUP.setVisibility = function (value, isTrigger = true) {
             DYNAMIC_ENTRY_GROUP.setVisibility.call(this, value, false);
@@ -312,7 +327,17 @@
         };
 
         /**
-         * Set visibility of the dynamic legend entry based on the visibility of its individual components.
+         * Sets opacity value of the dynamic layer itself, not individual sublayers
+         * This actually makes the layer transparent, allowing to basemap and other layer to show through
+         * @param {Number} value opacity value 0 to 1 where 0 is fully transparent
+         */
+        DYNAMIC_ENTRY_MASTER_GROUP.setOpacity = function (value) {
+            ENTRY_GROUP.setOpacity.call(this, value);
+            this._setOpacity();
+        };
+
+        /**
+         * Applies current visibility values of the sublayers of a dynamic layer.
          */
         DYNAMIC_ENTRY_MASTER_GROUP._setVisibility = function () {
             // get an array of visible sublayers (e.g. [1,4,6])
@@ -322,32 +347,41 @@
                     const index = this.slaves.indexOf(item);
                     return item.getVisibility() ? index : -1;
                 })
-                .filter(index => index !== -1);
+                .filter(index => index !== -1); // filter out ones that are not visible
 
-            console.log(this.name + ' set to ' + this.getVisibility() + ' ' + visibleSublayerIds);
+            // console.log(this.name + ' set to ' + this.getVisibility() + ' ' + visibleSublayerIds);
 
-            // set visibility of the dynamic layer
+            // apply visibility to the dynamic layer itself
             this._layerRef.setVisibility(this.getVisibility());
 
-            // finally, set visibility of the sublayers
+            // finally, apply visibility values to the sublayers
             this._layerRef.setVisibleLayers(visibleSublayerIds);
         };
 
-        DYNAMIC_ENTRY_MASTER_GROUP.setOpacity = function (value, subId = -1) {
-            if (subId !== -1) {
+        /**
+         * Applies current opacity values to the specified sublayers of a dynamic layer.
+         * @param {Array} subIds array of sublayer to apply the current opacity value to; if none specified, apply current opacity value to the layer itself and all its children
+         */
+        DYNAMIC_ENTRY_MASTER_GROUP._setOpacity = function (subIds) {
+            if (typeof subIds === 'undefined') {
+                subIds = this.walkItems(item => this.slaves.indexOf(item));
 
-                const drawingOptions = new gapiService.gapi.layer.LayerDrawingOptions();
-                drawingOptions.transparency = (value - 1) * -100;
+                // apply opacity to the whole layer
+                this._layerRef.setOpacity(this.options.opacity.value);
+            }
 
-                const optionsArray = [];
-                optionsArray[subId] = drawingOptions;
+            // well, if it's not supported, we can't set opacity for sublayers, bummer
+            if (this._layerRef.supportsDynamicLayers) {
+                const optionsArray = subIds.map(subId => {
+                    const opacityValue = this.slaves[subId].options.opacity.value;
+                    const drawingOptions = new gapiService.gapi.layer.LayerDrawingOptions();
+                    drawingOptions.transparency = (opacityValue - 1) * -100; // instead of being consistent, esri using value from 0 to 100 for sublayer transparency where 100 is fully transparent
+
+                    return drawingOptions;
+                });
 
                 this._layerRef.setLayerDrawingOptions(optionsArray);
-                this._layerRef.show();
-
-            } else {
-                ENTRY_GROUP.setOpacity.call(this, value);
-                this._layerRef.setOpacity(value);
+                this._layerRef.show(); // ? is this necessary
             }
         };
 
