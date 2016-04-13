@@ -809,6 +809,8 @@
 
         // jscs:enable maximumLineLength
 
+        const selectedLayerLog = {};
+
         // set state change watches on metadata, settings and filters panel
         watchPanelState('sideMetadata', 'metadata');
         watchPanelState('sideSettings', 'settings');
@@ -1024,7 +1026,11 @@
         function setTocEntrySelectedState(id, value = true) {
             const entry = geoService.legend.getLegendEntry(id);
             if (entry) {
-                entry.selected = value;
+                // toc entry is considered selected if its metadata, settings, or data panel is opened;
+                // when switching between panels (opening metadata when settings is already open), events may happen out of order
+                // to ensure a toc entry is not deselected untimely, keep count of open/close events
+                selectedLayerLog[id] = (selectedLayerLog[id] || 0) + (value ? 1 : -1);
+                entry.selected = selectedLayerLog[id] > 0 ? true : false;
             }
         }
     }
