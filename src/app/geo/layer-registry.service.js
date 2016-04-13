@@ -181,8 +181,7 @@
                 const handlers = {};
 
                 const commonConfig = {
-                    id: layerConfig.id,
-                    visible: layerConfig.visibility === 'on',
+                    id: layerConfig.id
                 };
                 handlers[layerTypes.esriDynamic] = config => {
                     const l = new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
