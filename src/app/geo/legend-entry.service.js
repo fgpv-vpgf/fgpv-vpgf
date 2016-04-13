@@ -377,12 +377,15 @@
 
             // well, if it's not supported, we can't set opacity for sublayers, bummer
             if (this._layerRef.supportsDynamicLayers) {
-                const optionsArray = subIds.map(subId => {
+                const optionsArray = [];
+
+                // create an array of drawing options
+                subIds.forEach(subId => {
                     const opacityValue = this.slaves[subId].options.opacity.value;
                     const drawingOptions = new gapiService.gapi.layer.LayerDrawingOptions();
                     drawingOptions.transparency = (opacityValue - 1) * -100; // instead of being consistent, esri using value from 0 to 100 for sublayer transparency where 100 is fully transparent
 
-                    return drawingOptions;
+                    optionsArray[subId] = drawingOptions;
                 });
 
                 this._layerRef.setLayerDrawingOptions(optionsArray);
