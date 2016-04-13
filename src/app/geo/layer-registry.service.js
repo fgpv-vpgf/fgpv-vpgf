@@ -38,8 +38,7 @@
                 registerLayer,
                 getFormattedAttributes,
                 removeLayer,
-                aliasedFieldName,
-                setLayerOpacity
+                aliasedFieldName
             };
 
             return constructLayers();
@@ -166,7 +165,6 @@
                 layers[layer.id] = layerRecord;
 
                 // TODO: apply config values
-                // -->>>> service.setLayerOpacity(layer, initialState.options.opacity.value);
                 ref.legendService.addLayer(layerRecord);
 
                 // FIXME:
@@ -200,9 +198,6 @@
                     return l;
                 };
                 handlers[layerTypes.esriImage] = config => {
-
-                    // FIXME don't hardcode opacity
-                    commonConfig.opacity = 0.3;
                     return new gapiService.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig);
                 };
                 handlers[layerTypes.esriTile] = config => {
@@ -298,15 +293,6 @@
                     }
                 }
                 return fName;
-            }
-
-            /**
-             * Set the opacity of given layer to a value.
-             * @param {Object} layer set the opacity value of this layer
-             * @param {Number} opacity value that layer will be set to
-             */
-            function setLayerOpacity(layer, opacity) {
-                layer.setOpacity(opacity);
             }
         }
     }
