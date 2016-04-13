@@ -1,6 +1,16 @@
 (() => {
     'use strict';
 
+    const SETTING_SECTIONS = {
+        display: [
+            'boundingBox',
+            'opacity'
+        ],
+        data: [
+            'snapshot'
+        ]
+    };
+
     /**
      * @ngdoc directive
      * @name rvSettings
@@ -38,6 +48,12 @@
         const self = this;
         self.Math = window.Math;
 
+        // indicates which setting sections are displayed based on the available toc entry settings
+        self.settingSectionVisibility = {
+            display: true,
+            data: true
+        };
+
         self.display = stateManager.display.settings;
         self.tocEntry = null;
         self.opacityValue = 0;
@@ -46,7 +62,17 @@
         $scope.$watch('self.display.data', newValue => {
             if (newValue) {
                 self.tocEntry = newValue;
-                self.opacityValue = self.tocEntry.options.opacity.value;
+                if (self.tocEntry.options.opacity) {
+                    self.opacityValue = self.tocEntry.options.opacity.value;
+                }
+
+                // check which setting sections should be visible
+                Object.entries(SETTING_SECTIONS)
+                    .forEach(([key, value]) =>
+                        self.settingSectionVisibility[key] = value.some(element =>
+                            typeof self.tocEntry.options[element] !== 'undefined'
+                        )
+                    );
             }
         });
 

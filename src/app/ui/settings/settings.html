@@ -1,7 +1,7 @@
 <rv-content-pane title-style="title" title-value="{{'settings.title' | translate}}">
     <div>
 
-        <div class="rv-subsection">
+        <div class="rv-subsection" ng-if="self.settingSectionVisibility.display">
             <div class="rv-subheader">
                 <h4 translate class="md-subhead">settings.label.display</h4>
             </div>
@@ -19,7 +19,7 @@
                     </div>
                 </div>
 
-                <div class="rv-setting-option">
+                <div class="rv-setting-option" ng-if="self.tocEntry.options.boundingBox">
                     <md-switch translate-attr-aria-label="settings.aria.boundingBox" class="md-primary rv-switch" ng-model="isChecked">
                         {{'settings.label.boundingBox' | translate}}
                     </md-switch>
@@ -29,17 +29,19 @@
 
         </div>
 
-        <div class="rv-subsection">
+        <div class="rv-subsection" ng-if="self.settingSectionVisibility.data">
 
             <div class="rv-subheader">
                 <h4 translate class="md-subhead">settings.label.data</h4>
             </div>
             <div class="rv-subcontent">
 
-                <div class="rv-toggle-setting">
-                    <span translate>settings.label.snapshot</span>
-                    <span flex></span>
-                    <md-button class="rv-button-square">{{'settings.label.snapshotEnable' | translate}}</md-button>
+                <div class="rv-setting-option" ng-if="self.tocEntry.options.snapshot">
+                    <div class="rv-toggle-setting">
+                        <span translate>settings.label.snapshot</span>
+                        <span flex></span>
+                        <md-button class="rv-button-square">{{'settings.label.snapshotEnable' | translate}}</md-button>
+                    </div>
                 </div>
             </div>
 
