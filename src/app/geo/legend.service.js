@@ -324,7 +324,7 @@
                         if (item.id === id) {
                             result = item;
                         }
-                    });
+                    }, true);
                 });
 
                 return result;

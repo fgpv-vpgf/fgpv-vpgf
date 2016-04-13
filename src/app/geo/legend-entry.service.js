@@ -240,13 +240,18 @@
              * Walks child items executing the provided function on each leaf;
              * Returns a flatten array of results from the provided function;
              * @param  {Function} action function which is passed the following arguments: legend layer entry, its index in its parent's array, parent
+             * @param  {Boolean} defaults to false; includeGroups flag specifying if the action should be applied to group items as well.
              * @return {Array}        flat array of results
              */
-            walkItems(action) {
+            walkItems(action, includeGroups = false) {
                 // roll in the results into a flat array
                 return [].concat.apply([], this.items.map((item, index) => {
                     if (item.type === 'group') {
-                        return item.walkItems(action);
+                        if (includeGroups) {
+                            return [].concat(action(item, index, this), item.walkItems(action, true));
+                        } else {
+                            return item.walkItems(action);
+                        }
                     } else {
                         return action(item, index, this);
                     }
