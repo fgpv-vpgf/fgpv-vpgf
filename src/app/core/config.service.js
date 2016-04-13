@@ -83,13 +83,13 @@
                         try {
                             langs = angular.fromJson(langAttr);
                         } catch (e) {
-                            console.log('Could not parse langs, defaulting to en and fr');
+                            console.log('Could not parse langs, defaulting to en-CA and fr-CA');
 
                             // TODO: better way to handle when no languages are specified?
-                            langs = ['en', 'fr'];
+                            langs = ['en-CA', 'fr-CA'];
                         }
                     } else {
-                        langs = ['en', 'fr'];
+                        langs = ['en-CA', 'fr-CA'];
                     }
 
                     langs.forEach(lang => partials[lang] = []);
@@ -112,7 +112,7 @@
                     // FIXME: replace with getCurrent().then / service.data[Default language] if we have a way to check
                     service.data[langs[0]]
                         .then(() => {
-                            $translate.use(langs[0] + '-CA');
+                            $translate.use(langs[0]);
                             isInitialized = true;
                             fulfill();
                         })
@@ -145,7 +145,7 @@
          * @return {Promise}     The config promise object tied to the current language resolving with that config
          */
         function getCurrent() {
-            const currentLang = ($translate.proposedLanguage() || $translate.use()).split('-')[0];
+            const currentLang = ($translate.proposedLanguage() || $translate.use());
             return service.data[currentLang];
         }
 
@@ -191,7 +191,16 @@
                 }
 
                 langs.forEach(lang => {
-                    const p = $http.get(`${endpoint}v2/docs/${lang}/${keys.join(',')}`)
+                    // remove country code
+                    let rcsLang = lang.split('-')[0];
+
+                    // rcs can only handle english and french
+                    // TODO: update if RCS supports more languages
+                    if (['en', 'fr'].indexOf(rcsLang) === -1) {
+                        rcsLang = 'en';
+                    }
+
+                    const p = $http.get(`${endpoint}v2/docs/${rcsLang}/${keys.join(',')}`)
                         .then(resp => {
                             const result = {};
                             result.layers = resp.data.map(layerEntry => {
