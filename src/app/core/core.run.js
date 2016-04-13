@@ -41,9 +41,10 @@
         $translate.use('en-CA');
     }
 
-    function apiBlock($translate, $rootElement, $rootScope, $q, globalRegistry, geoService, events) {
+    function apiBlock($translate, $rootElement, $rootScope, $q, globalRegistry, geoService, configService, events) {
         const service = {
-            setLanguage
+            setLanguage,
+            loadRcsLayers
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
@@ -64,6 +65,21 @@
         function setLanguage(lang) {
             $translate.use(lang);
             geoService.assembleMap();
+        }
+
+        /**
+         * Load RCS layers after the map has been instantiated
+         *
+         * @param {Array}  keys  array of RCS keys (String) to be added
+         */
+        function loadRcsLayers(keys) {
+
+            // trigger RCS web call, insert into config
+            configService.rcsAddKeys(keys).then(newLayerConfigs => {
+                // call layer register in geo module on those nodes
+                geoService.constructLayers(newLayerConfigs);
+            });
+
         }
     }
 })();

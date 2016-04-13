@@ -46,7 +46,9 @@
             data: {},
             getCurrent,
             initialize,
-            ready
+            ready,
+            rcsAddKeys,
+            rcsUrl: ''
         };
 
         const partials = {}; // partial config promises, one array per language entry
@@ -95,6 +97,7 @@
                     langs.forEach(lang => partials[lang] = []);
 
                     if (svcAttr) {
+                        service.rcsUrl = svcAttr;  // store for future RCS loads
                         rcsInit(svcAttr, keysAttr, langs);
                     }
 
@@ -149,12 +152,19 @@
         }
 
         /**
+         * Returns the currently language.
+         * @return {String} the current language string
+         */
+        function currentLang() {
+            return ($translate.proposedLanguage() || $translate.use());
+        }
+
+        /**
          * Returns the currently used config. Language is determined by asking $translate.
          * @return {Promise}     The config promise object tied to the current language resolving with that config
          */
         function getCurrent() {
-            const currentLang = ($translate.proposedLanguage() || $translate.use());
-            return service.data[currentLang];
+            return service.data[currentLang()];
         }
 
         /**
@@ -203,6 +213,54 @@
         }
 
         /**
+         * Add RCS config layers to configuration after startup has finished
+         * @param {Array}  keys    list of keys marking which layers to retrieve
+         * @return {Promise} promise of full config nodes for newly added layers
+         */
+        function rcsAddKeys(keys) {
+
+            // strip languages out of data object.  alt approach: store langs array on service during initialize()
+            const langs = [];
+            angular.forEach(service.data, (value, key) => {
+                langs.push(key);
+            });
+
+            // get array of promises containing RCS bundles per language
+            const rcsDataSet = rcsLoad(service.rcsUrl, keys, langs);
+
+            return $q(resolve => {
+                const currLang = currentLang();
+                let newIds;
+
+                langs.forEach(lang => {
+                    // wait for rcs data to finish loading
+                    rcsDataSet[lang].then(rcsConfig => {
+                        if (lang === currLang) {
+                            // store list of layer ids, so we can identify new items in the config later
+                            newIds = rcsConfig.layers.map(layer => layer.id);
+                        }
+
+                        service.data[lang].then(fullConfig => {
+                            // call the merge into config, passing result and targeting innards of config service (all languages)
+                            mergeConfigParts(fullConfig, rcsConfig);
+
+                            if (lang === currLang) {
+                                // pull fully populated layer config nodes out the main config
+                                const newConfigs = fullConfig.filter(testConfig => {
+                                    return newIds.indexOf(testConfig.id) > -1;
+                                });
+
+                                // return the new configs to the caller
+                                resolve(newConfigs);
+                            }
+                        });
+                    });
+                });
+
+            });
+        }
+
+        /**
          * Retrieve a set of config snippets from RCS
          * @param {string}  svcPath     the server path of RCS
          * @param {array}  keys    array of keys marking which layers to retrieve
@@ -232,6 +290,9 @@
 
                         // there is an array of layer configs in resp.data.
                         // moosh them into one single layer array on the result
+                        // FIXME may want to consider a more flexible approach than just assuming RCS
+                        // always returns nothing but a single layer per key.  Being able to inject any
+                        // part of the config via would be more robust
                         result.layers = resp.data.map(layerEntry => {
                             return layerEntry.layers[0];
                         });
