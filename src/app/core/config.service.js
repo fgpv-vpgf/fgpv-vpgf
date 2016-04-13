@@ -112,6 +112,7 @@
                     // FIXME: replace with getCurrent().then / service.data[Default language] if we have a way to check
                     service.data[langs[0]]
                         .then(() => {
+                            $translate.use(langs[0] + '-CA');
                             isInitialized = true;
                             fulfill();
                         })
