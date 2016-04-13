@@ -52,6 +52,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],
         ['esri/layers/FeatureLayer', 'FeatureLayer'],
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
+        ['esri/layers/LayerDrawingOptions', 'LayerDrawingOptions'],
         ['esri/layers/WMSLayer', 'WmsLayer'],
         ['esri/map', 'Map'],
         ['esri/request', 'esriRequest'],
@@ -92,7 +93,7 @@ module.exports = function (esriLoaderUrl, window) {
     return new Promise(function (resolve, reject) {
         if (window.require) {
             console.warn('window.require has been set, ' +
-                         'attempting to reuse existing loader with no new script tag created');
+                'attempting to reuse existing loader with no new script tag created');
             resolve();
             return;
         }
