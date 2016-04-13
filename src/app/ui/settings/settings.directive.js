@@ -42,8 +42,6 @@
         self.tocEntry = null;
         self.opacityValue = 0;
 
-        let opacityTimoutActive = false;
-
         // watch for changing display value and store reference to new tocEntry and its opacity value
         $scope.$watch('self.display.data', newValue => {
             if (newValue) {
@@ -52,32 +50,38 @@
             }
         });
 
-        // watch for changing slider to set actual layer opacity
-        $scope.$watch('self.opacityValue', newValue => {
-            console.log('opacity --->', newValue);
-            if (angular.isNumber(newValue) && self.tocEntry && !opacityTimoutActive) {
-                console.log('         set--->', newValue);
-                self.tocEntry.setOpacity(newValue);
-
-                opacityTimoutActive = true;
-                $timeout(opacityTimeoutComplete, 20);
-            }
-        });
-
-        activate();
+        activateOpacitySetting();
 
         /*********/
 
-        function activate() {
+        function activateOpacitySetting() {
+            // flag indicating the opacity timeout is active
+            let opacityTimeoutActive = false;
+            const opacityTimeoutDuration = 30; // in ms
 
-        }
+            // watch for changing slider to set actual layer opacity
+            $scope.$watch('self.opacityValue', newValue => {
+                // console.log('opacity --->', newValue, self.opacityValue);
 
-        function opacityTimeoutComplete() {
-            if (self.tocEntry.options.opacity.value !== self.opacityValue) {
-                console.log('update opacity to', self.opacityValue);
-                self.tocEntry.setOpacity(self.opacityValue);
+                if (angular.isNumber(newValue) && self.tocEntry && !opacityTimeoutActive) {
+                    // set opacity immediately
+                    setTocEntryOpacity();
+                    opacityTimeoutActive = true;
+                    $timeout(setTocEntryOpacity, opacityTimeoutDuration); // wait a bit before setting opacity again
+                }
+            });
+
+            /**
+             * Sets actual opacity value on the tocEntry if it differs from the current opacity value.
+             */
+            function setTocEntryOpacity() {
+                if (self.tocEntry.options.opacity.value !== self.opacityValue) {
+                    console.log('update opacity to', self.opacityValue);
+                    self.tocEntry.setOpacity(self.opacityValue);
+                }
+
+                opacityTimeoutActive = false;
             }
-            opacityTimoutActive = false;
         }
     }
 })();
