@@ -78,80 +78,6 @@
             }
 
             /**
-             * Creates a grouped layer toc entry (for dynamic and tile layers)
-             * @param  {Object} layer layer object from the `layerRegistry`
-             * @return {Object}       toc layer entry with hierarchy of sublayers and added symbology
-             * @private
-             */
-            function createGroupedLayerEntry(layer, layerEntriesOptions = {}) {
-                const dynamicGroup = legendEntryFactory.dynamicEntryMasterGroup(
-                    layer.initialState, layer.layer, true);
-                const layerEntryType = `${layer.initialState.layerType}LayerEntry`;
-                layer.state = dynamicGroup;
-                dynamicGroup.slaves = [];
-
-                const symbologyPromise = getMapServerSymbology(layer);
-
-                // generate all the slave sublayers upfornt ...
-                layer.layer.layerInfos.forEach((layerInfo, index) => {
-                    const layerEntryOptions = layerEntriesOptions[index] || {};
-
-                    if (layerInfo.subLayerIds) { // group item
-                        const groupItem = legendEntryFactory.dynamicEntryGroup({
-                            name: layerInfo.name,
-                            layerType: layerEntryType,
-                            options: layerEntryOptions,
-                            _subId: index
-                        });
-
-                        assignDirectMaster(groupItem, layerInfo.parentLayerId);
-                    } else { // leaf item
-                        const layerItem = legendEntryFactory.dynamicEntryItem({
-                            name: layerInfo.name,
-                            layerType: layerEntryType,
-                            options: layerEntryOptions,
-                            _subId: index
-                        });
-
-                        assignDirectMaster(layerItem, layerInfo.parentLayerId);
-                    }
-                });
-
-                // wait for symbology to load and ...
-                symbologyPromise
-                    .then(({ data }) => { // ... and apply them to existing child items
-                        data.layers.forEach(layer => applySymbology(dynamicGroup.slaves[layer.layerId], layer));
-                    });
-
-                // if there is no metadataurl, remove metadata options altogether
-                if (typeof dynamicGroup.metadataUrl === 'undefined') {
-                    delete dynamicGroup.options.metadata;
-                    dynamicGroup.slaves.forEach(slave => delete slave.options.metadata);
-                }
-
-                // if the 'supportsDynamicLayers' flag is off, remove sublayer opacity options
-                if (!layer.layer.supportsDynamicLayers) {
-                    dynamicGroup.slaves.forEach(slave => delete slave.options.opacity);
-                }
-
-                return dynamicGroup;
-
-                /**
-                 * Finds direct parent of a child item in dynamic layer group and adds it to its items array.
-                 * @param  {Object} item     layer or group item
-                 * @param  {Number} masterId id of the direct parent
-                 */
-                function assignDirectMaster(item, masterId) {
-                    item.master = dynamicGroup; // store a reference to the root group item of the dynamic layer
-                    dynamicGroup.slaves.push(item); // store in slave reference array
-
-                    if (masterId !== -1) {
-                        dynamicGroup.slaves[masterId].add(item); // add to master's items list only if it's not the root
-                    }
-                }
-            }
-
-            /**
              * Parses a dynamic layer object and creates a legend item (with nested groups and symbology)
              * For a dynamic layer, there are two visibility functions:
              *     - `setVisibility`: https://developers.arcgis.com/javascript/jsapi/arcgisdynamicmapservicelayer-amd.html#setvisibility
@@ -183,34 +109,19 @@
              * @return {Object}       legend item
              */
             function dynamicGenerator(layer) {
-                // morph layerEntries array into an object where keys are indexes of sublayers
-                const layerEntriesOptions = {};
-                layer.initialState.layerEntries.forEach(layerEntry => {
-                    layerEntriesOptions[layerEntry.index] = layerEntry;
-                });
+                const state = legendEntryFactory.dynamicEntryMasterGroup(
+                    layer.initialState, layer.layer, true);
+                layer.state = state;
 
-                const tocEntry = createGroupedLayerEntry(layer, layerEntriesOptions);
+                const symbologyPromise = getMapServerSymbology(layer);
 
-                // add to the legend only once that are specified
-                // NOTE:  :point_up: [March 18, 2016 12:53 PM](https://gitter.im/RAMP-PCAR/TeamRoom?at=56ec3281bb4a1731739b0d33)
-                // We assume the inclusion is properly formatted (ex: [1, 2] will result in sublayer 2 being included twice - once under root and once more time under 1).
-                layer.state.layerEntries.forEach(({ index }) => {
-                    const slave = tocEntry.slaves[index];
-                    // if layerEntry id is incorrect, ignore it
-                    if (slave) {
-                        slave.setVisibility(slave.getVisibility(), false);
+                // wait for symbology to load and ...
+                symbologyPromise
+                    .then(({ data }) => { // ... and apply them to existing child items
+                        data.layers.forEach(layer => applySymbology(state.slaves[layer.layerId], layer));
+                    });
 
-                        tocEntry.add(slave);
-                    }
-                });
-
-                // set initial visibility of the sublayers;
-                // this cannot be set in `layerRegistry` because legend entry for dynamic layer didn't exist yet;
-                // TODO: move this to legendEntry service and apply during initialization of the entry
-                tocEntry._setVisibility();
-                tocEntry._setOpacity(); // apply initial opacity
-
-                return tocEntry;
+                return state;
             }
 
             /**
@@ -220,12 +131,11 @@
              * @return {Object}       legend item
              */
             function tileGenerator(layer) {
-                const tocEntry = createGroupedLayerEntry(layer);
+                const state = legendEntryFactory.dynamicEntryMasterGroup(
+                    layer.initialState, layer.layer, true);
+                layer.state = state;
 
-                // add all tile sublayers to the toc entry
-                tocEntry.slaves.forEach(slave => tocEntry.add(slave));
-
-                return tocEntry;
+                return state;
             }
 
             /**
@@ -316,6 +226,11 @@
                 }, delay);
             }
 
+            /**
+             * Finds and returns a legend entry object with the specified id.
+             * @param  {Number} id
+             * @return {Object}    legend entry object
+             */
             function getLegendEntry(id) {
                 let result;
 
@@ -324,7 +239,7 @@
                         if (item.id === id) {
                             result = item;
                         }
-                    }, true);
+                    }, true); // true is important here as we want to test entry groups as well
                 });
 
                 return result;

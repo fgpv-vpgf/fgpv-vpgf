@@ -219,6 +219,7 @@
                     option.value = VISIBILITY_TOGGLE[option.value];
                 }
 
+                // set visibility to the rest of the group
                 if (this.type === 'group') {
                     this.items.forEach(item => item.setVisibility(option.value === 'on', ...arg));
                 }
@@ -315,7 +316,85 @@
         DYNAMIC_ENTRY_MASTER_GROUP.init = function (initialState, layerRef, expanded) {
             DYNAMIC_ENTRY_GROUP.init.call(this, initialState, layerRef, expanded);
 
+            // morph layerEntries array into an object where keys are indexes of sublayers:
+            // { 1: {index: 1, ...}, 4: { index: 4, ...} }
+            const layerEntriesOptions = {};
+            this.layerEntries.forEach(layerEntry => {
+                layerEntriesOptions[layerEntry.index] = layerEntry;
+            });
+
+            const layerEntryType = `${initialState.layerType}LayerEntry`;
+            this.slaves = [];
+
+            // generate all the slave sublayers upfornt ...
+            this._layerRef.layerInfos.forEach((layerInfo, index) => {
+                let sublayerEntry;
+                const sublayerEntryInitialState = {
+                    name: layerInfo.name,
+                    layerType: layerEntryType,
+                    options: layerEntriesOptions[index] || {},
+                    _subId: index
+                };
+
+                if (layerInfo.subLayerIds) { // group item
+                    sublayerEntry = service.dynamicEntryGroup(sublayerEntryInitialState);
+                } else { // leaf item
+                    sublayerEntry = service.dynamicEntryItem(sublayerEntryInitialState);
+                }
+
+                assignDirectMaster.call(this, sublayerEntry, layerInfo.parentLayerId);
+            });
+
+            // if there is no metadataurl, remove metadata options altogether
+            if (typeof this.metadataUrl === 'undefined') {
+                delete this.options.metadata;
+                this.slaves.forEach(slave => delete slave.options.metadata);
+            }
+
+            // if the 'supportsDynamicLayers' flag is false, remove sublayer opacity options
+            if (!this._layerRef.supportsDynamicLayers) {
+                this.slaves.forEach(slave => delete slave.options.opacity);
+            }
+
+            if (this.layerEntries) {
+                // add to the legend only once that are specified
+                // NOTE:  :point_up: [March 18, 2016 12:53 PM](https://gitter.im/RAMP-PCAR/TeamRoom?at=56ec3281bb4a1731739b0d33)
+                // We assume the inclusion is properly formatted (ex: [1, 2] will result in sublayer 2 being included twice - once under root and once more time under 1).
+                this.layerEntries.forEach(({ index }) => {
+                    const slave = this.slaves[index];
+                    // if layerEntry id is incorrect, ignore it
+                    if (slave) {
+                        slave.setVisibility(slave.getVisibility(), false); // set visibility on the item which will propagate down if it has any items of its own
+                        this.add(slave); // add layer entry to the master group
+                    }
+                });
+            } else {
+                // add all tile sublayers to the toc entry
+                this.slaves.forEach(slave => this.add(slave));
+            }
+
+            // set initial visibility of the sublayers;
+            // this cannot be set in `layerRegistry` because legend entry for dynamic layer didn't exist yet;
+            this._setVisibility(); // apply initial visibility values
+            this._setOpacity(); // apply initial opacity values
+
             return this;
+
+            /**
+             * Finds direct parent of a child item in dynamic layer group and adds it to its items array.
+             * `this` refers to the master group entry;
+             * @param  {Object} item     layer or group item
+             * @param  {Number} masterId id of the direct parent
+             */
+            function assignDirectMaster(item, masterId) {
+                /*jshint validthis:true */
+                item.master = this; // store a reference to the root group item of the dynamic layer
+                this.slaves.push(item); // store in slave reference array
+
+                if (masterId !== -1) {
+                    this.slaves[masterId].add(item); // add to master's items list only if it's not the root
+                }
+            }
         };
 
         /**
