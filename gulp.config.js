@@ -29,7 +29,9 @@ module.exports = function () {
         index: [
             src + 'index-many.html',
             src + 'index-one.html',
-            src + 'index-wet.html'
+            src + 'index-wet.html',
+            src + 'index-fgp-en.html',
+            src + 'index-fgp-fr.html'
         ],
         indexProtractor: src + 'index-protractor.html',
 
