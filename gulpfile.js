@@ -233,11 +233,19 @@ gulp.task('jsrollup', 'Roll up all js into one file',
             .pipe($.babel())
             .pipe($.if(args.prod, $.uglify()))
             .pipe($.plumber.stop());
+
+        const polyfills = gulp.src(config.jsPolyfills)
+            .pipe($.plumber({ errorHandler: injectError }))
+            // .pipe($.babel())
+            .pipe($.if(args.prod, $.uglify()))
+            .pipe($.plumber.stop())
+            .pipe($.concat(config.jsPolyfillsFile));
+
         // global registry goes after the lib package
         // app-seed `must` be the last item
 
         // merge all js streams to avoid writing individual files to disk
-        return merge(jslib, jscache, jsapp, seed) // merge doesn't guarantee file order :(
+        return merge(jslib, jscache, jsapp, seed, polyfills) // merge doesn't guarantee file order :(
             .pipe($.order(config.jsOrder))
             .pipe($.concat(config.jsCoreFile))
             .pipe(gulp.dest(config.build));

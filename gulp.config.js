@@ -38,16 +38,19 @@ module.exports = function () {
         js: [
             app + '*/**/*.js',
             app + 'app.module.js',
-            src + 'polyfill/*.js',
             '!' + app + '**/*.spec.js'
         ],
         jsOrder: [
+            'polyfills.js',
             'lib.js',
             'global-registry.js',
             'app.js',
             'templates.js',
             'app-seed.js'
         ],
+
+        jsPolyfills: src + 'polyfill/*.js',
+        jsPolyfillsFile: 'polyfills.js',
 
         // please rename if there are better shorter names
         jsSingleFile: 'app.js',
