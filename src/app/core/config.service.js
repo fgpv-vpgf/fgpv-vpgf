@@ -242,12 +242,13 @@
 
                         service.data[lang].then(fullConfig => {
                             // call the merge into config, passing result and targeting innards of config service (all languages)
-                            mergeConfigParts(fullConfig, rcsConfig);
+                            // make rcs value an array, as it will be a singleton with all things mooshed into .layers
+                            mergeConfigParts(fullConfig, [rcsConfig]);
 
                             if (lang === currLang) {
                                 // pull fully populated layer config nodes out the main config
-                                const newConfigs = fullConfig.filter(testConfig => {
-                                    return newIds.indexOf(testConfig.id) > -1;
+                                const newConfigs = fullConfig.layers.filter(layerConfig => {
+                                    return newIds.indexOf(layerConfig.id) > -1;
                                 });
 
                                 // return the new configs to the caller
