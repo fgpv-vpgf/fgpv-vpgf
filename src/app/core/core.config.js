@@ -46,7 +46,10 @@
          * Adds svg iconsets to the md icon provider.
          */
         function configureIconsets() {
+            // default icon set is needed because some of Angular Material directives have hardcoded svg icon names;
+            // radio menu options use `check` icon which can be found in `navigation` icon set; since there is no easy way of overriding the icon name, the default icon set will have duplicates needed by such directives
             $mdIconProvider
+                .defaultIconSet('content/images/iconsets/default-icons.svg', 24)
                 .iconSet('action', 'content/images/iconsets/action-icons.svg', 24)
                 .iconSet('alert', 'content/images/iconsets/alert-icons.svg', 24)
                 .iconSet('av', 'content/images/iconsets/av-icons.svg', 24)
