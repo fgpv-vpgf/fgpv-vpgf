@@ -40,7 +40,7 @@
         const self = this;
 
         self.setMode = setMode;
-        self.filtersMode = filtersMode;
+        self.filtersMode = stateManager.state.filters.morph;
         self.dataPrint = dataPrint;
         self.dataExportCSV = dataExportCSV;
 
@@ -54,10 +54,6 @@
 
         function setMode(mode) {
             stateManager.setMorph('filters', mode);
-        }
-
-        function filtersMode() {
-            return stateManager.state.filters.morph;
         }
 
         /**
