@@ -204,7 +204,7 @@
                 };
                 handlers[layerTypes.ogcWms] = config => {
                     commonConfig.visibleLayers = [config.layerName];
-                    return new gapiService.gapi.layer.WmsLayer(config.url, commonConfig);
+                    return new gapiService.gapi.layer.ogc.WmsLayer(config.url, commonConfig);
                 };
 
                 if (handlers.hasOwnProperty(layerConfig.layerType)) {
