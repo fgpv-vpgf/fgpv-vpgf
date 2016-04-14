@@ -15,7 +15,11 @@
 
                 <div class="rv-layer-level rv-{{ $dxLevel }}" ng-if="item.items !== undefined">
 
-                    <rv-toc-entry class="rv-toc-{{ item.type }}-entry" entry="item" type="group"></rv-toc-entry>
+                    <rv-toc-entry
+                        class="rv-toc-{{ item.type }}-entry"
+                        ng-class="{ 'rv-selected': item.selected }"
+                        entry="item"
+                        type="group"></rv-toc-entry>
 
                     <ul class="rv-layer-list rv-toggle-slide" dx-connect="item" ng-show="item.expanded"></ul>
 

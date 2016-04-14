@@ -38,8 +38,7 @@
                 registerLayer,
                 getFormattedAttributes,
                 removeLayer,
-                aliasedFieldName,
-                setLayerOpacity
+                aliasedFieldName
             };
 
             return constructLayers();
@@ -166,7 +165,6 @@
                 layers[layer.id] = layerRecord;
 
                 // TODO: apply config values
-                // -->>>> service.setLayerOpacity(layer, initialState.options.opacity.value);
                 ref.legendService.addLayer(layerRecord);
 
                 // FIXME:
@@ -183,8 +181,7 @@
                 const handlers = {};
 
                 const commonConfig = {
-                    id: layerConfig.id,
-                    visible: layerConfig.visibility === 'on',
+                    id: layerConfig.id
                 };
                 handlers[layerTypes.esriDynamic] = config => {
                     const l = new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
@@ -200,9 +197,6 @@
                     return l;
                 };
                 handlers[layerTypes.esriImage] = config => {
-
-                    // FIXME don't hardcode opacity
-                    commonConfig.opacity = 0.3;
                     return new gapiService.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig);
                 };
                 handlers[layerTypes.esriTile] = config => {
@@ -210,7 +204,7 @@
                 };
                 handlers[layerTypes.ogcWms] = config => {
                     commonConfig.visibleLayers = [config.layerName];
-                    return new gapiService.gapi.layer.WmsLayer(config.url, commonConfig);
+                    return new gapiService.gapi.layer.ogc.WmsLayer(config.url, commonConfig);
                 };
 
                 if (handlers.hasOwnProperty(layerConfig.layerType)) {
@@ -298,15 +292,6 @@
                     }
                 }
                 return fName;
-            }
-
-            /**
-             * Set the opacity of given layer to a value.
-             * @param {Object} layer set the opacity value of this layer
-             * @param {Number} opacity value that layer will be set to
-             */
-            function setLayerOpacity(layer, opacity) {
-                layer.setOpacity(opacity);
             }
         }
     }

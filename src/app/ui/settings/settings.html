@@ -1,51 +1,60 @@
 <rv-content-pane title-style="title" title-value="{{'settings.title' | translate}}">
     <div>
 
-        <div class="rv-subsection">
+        <div class="rv-subsection" ng-if="self.settingSectionVisibility.display">
             <div class="rv-subheader">
                 <h4 translate class="md-subhead">settings.label.display</h4>
             </div>
 
             <div class="rv-subcontent">
-                {{'settings.label.opacity' | translate}}
-                <div class="rv-icon-20 rv-slider-setting">
-                    <md-icon md-svg-icon="action:opacity"></md-icon>
-                    <div class="rv-slider-setting-body">
-                        <md-slider class="md-primary" max="1" min="0" step="0.01" ng-model="self.display.data.opacity.value"></md-slider>
+
+                <div class="rv-setting-option" ng-if="self.tocEntry.options.opacity">
+                    {{'settings.label.opacity' | translate}}
+                    <div class="rv-icon-20 rv-slider-setting">
+                        <md-icon md-svg-icon="action:opacity"></md-icon>
+                        <div class="rv-slider-setting-body">
+                            <md-slider class="md-primary" max="1" min="0" step="0.01" ng-model="self.opacityValue"></md-slider>
+                        </div>
+                        <span class="rv-slider-setting-indicator">{{ self.Math.round(self.opacityValue * 100) }}%</span>
                     </div>
-                    <span class="rv-slider-setting-indicator">{{ self.Math.round(self.display.data.opacity.value * 100) }}%</span>
                 </div>
 
-                <md-switch translate-attr-aria-label="settings.aria.boundingBox" class="md-primary rv-switch" ng-model="isChecked">
+                <div class="rv-setting-option" ng-if="self.tocEntry.options.boundingBox">
+                    <md-switch translate-attr-aria-label="settings.aria.boundingBox" class="md-primary rv-switch" ng-model="isChecked">
                         {{'settings.label.boundingBox' | translate}}
-                </md-switch>
+                    </md-switch>
+                </div>
+
             </div>
 
         </div>
 
-        <div class="rv-subsection">
+        <div class="rv-subsection" ng-if="self.settingSectionVisibility.data">
 
             <div class="rv-subheader">
                 <h4 translate class="md-subhead">settings.label.data</h4>
             </div>
             <div class="rv-subcontent">
 
-                <div class="rv-toggle-setting">
-                    <span translate>settings.label.snapshot</span>
-                    <span flex></span>
-                    <md-button class="rv-button-square">{{'settings.label.snapshotEnable' | translate}}</md-button>
+                <div class="rv-setting-option" ng-if="self.tocEntry.options.snapshot">
+                    <div class="rv-toggle-setting">
+                        <span translate>settings.label.snapshot</span>
+                        <span flex></span>
+                        <md-button class="rv-button-square">{{'settings.label.snapshotEnable' | translate}}</md-button>
+                    </div>
                 </div>
             </div>
 
         </div>
 
         <p>
-            // TODO: remove
-            paragraph to show that panel content is actually changing </br>
-            layer display data: <b>{{ self.display.requester.id }}</b>
-            <b>{{ self.display.requester.layerItem.opacity }}</b>
-        </p>
+            // TODO: remove paragraph to show that panel content is actually changing
+        </br>
+        layer display data:
+        <b>{{ self.display.requester.id }}</b>
+        <b>{{ self.display.requester.layerItem.opacity }}</b>
+    </p>
 
-    </div>
+</div>
 
 </rv-content-pane>

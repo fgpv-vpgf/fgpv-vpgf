@@ -157,6 +157,7 @@ absolutely position a button underneath an item so it acts like a button body fo
     .rv-toc-group-entry {
 
         @include entry-controls;
+        @include selected-layer-entry;
 
         height: $group-item-height;
         position: relative;
@@ -201,11 +202,36 @@ absolutely position a button underneath an item so it acts like a button body fo
     }
 }
 
+@mixin selected-layer-entry {
+    // visually highlights selected layer item in the list
+    &.rv-selected {
+        // don't hide toggles on a selected layer
+        @include entry-controls-hover;
+
+        &:before {
+            background-color: $accent-color;
+        }
+    }
+
+    // selection indicator
+    &:before {
+        position: absolute;
+        content: "";
+        background-color: transparent;
+        width: rem(0.3);
+        right: 0;
+        height: 100%;
+        top: 0;
+        transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+    }
+}
+
 @mixin layer-item {
-    .rv-toc-layer-entry{
+    .rv-toc-layer-entry {
 
         @include entry-controls;
-
+        @include selected-layer-entry;
+        
         display: flex;
         align-items: center;
         height: $layer-item-height;
@@ -245,28 +271,6 @@ absolutely position a button underneath an item so it acts like a button body fo
                     margin-left: 0;
                 }
             }
-        }
-
-        // visually highlights selected layer item in the list
-        &.rv-selected {
-            // don't hide toggles on a selected layer
-            @include entry-controls-hover;
-
-            &:before {
-                background-color: $accent-color;
-            }
-        }
-
-        // selection indicator
-        &:before {
-            position: absolute;
-            content: "";
-            background-color: transparent;
-            width: rem(0.3);
-            right: 0;
-            height: 100%;
-            top: 0;
-            transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
         }
 
         // TODO: fix
