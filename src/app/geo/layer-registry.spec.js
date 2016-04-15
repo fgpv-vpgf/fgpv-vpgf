@@ -26,9 +26,13 @@ describe('layerRegistry', () => {
         });
     }
 
+    function mockTranslateService($provide) {
+        $provide.service('$translate', $q => () => $q.resolve());
+    }
+
     beforeEach(() => {
 
-        bard.appModule('app.geo', mockGapiService);
+        bard.appModule('app.geo', mockGapiService, mockTranslateService);
 
         // inject services
         bard.inject('layerRegistry', '$q');
@@ -57,7 +61,7 @@ describe('layerRegistry', () => {
             };
             const lr = layerRegistry(geoState, currentConfig); // create an instance of layerRegistry
 
-            lr.registerLayer(tempLayer, tempConfig, {});
+            lr.registerLayer(tempLayer, tempConfig, $q.resolve());
 
             // layer is now in registry
             expect(lr.layers.sausages)
