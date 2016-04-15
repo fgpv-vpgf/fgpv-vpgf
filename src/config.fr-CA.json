@@ -88,7 +88,7 @@
         ]
       },
       {
-        "id": "LOD_ESRI_World_AuxMerc_3857",       
+        "id": "LOD_ESRI_World_AuxMerc_3857",
         "lods": [
             { "level": 0, "resolution": 156543.03392800014, "scale": 591657527.591555 },
             { "level": 1, "resolution": 78271.51696399994, "scale": 295828763.795777 },
@@ -164,18 +164,18 @@
   "baseMaps": [
     {
       "id": "baseNrCan",
-      "name": "Canada Base Map - Transportation",
-      "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
-      "altText": "altText - The Canada Base Map - Transportation (CBMT)",
+      "name": "La Carte de Base du Canada – Transport (CBCT)",
+      "description": "La Carte de Base du Canada – Transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
+      "altText": "altText - La Carte de Base du Canada – Transport (CBCT)",
       "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
       "wkid": 3978,
       "extentId": "EXT_NRCAN_Lambert_3978",
       "lodId": "LOD_NRCAN_Lambert_3978",
       "layers": [
         {
-          "id": "CBMT",
+          "id": "CBCT",
           "layerType": "esriFeature",
-          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT3978/MapServer"
         }
       ]
     },
