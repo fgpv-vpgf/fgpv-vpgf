@@ -16,7 +16,8 @@
         .module('app.geo')
         .factory('legendService', legendServiceFactory);
 
-    function legendServiceFactory($http, $q, $timeout, layerTypes, layerStates, legendEntryFactory) {
+    function legendServiceFactory($translate, $http, $q, $timeout,
+            geometryTypes, layerTypes, layerStates, legendEntryFactory) {
         const legendSwitch = {
             structured: structuredLegendService,
             autopopulate: autoLegendService
@@ -117,9 +118,16 @@
 
                 // wait for symbology to load and ...
                 symbologyPromise
-                    .then(({ data }) => { // ... and apply them to existing child items
-                        data.layers.forEach(layer => applySymbology(state.slaves[layer.layerId], layer));
-                    });
+                    .then(({ data }) =>  // ... and apply them to existing child items
+                        data.layers.forEach(layer => applySymbology(state.slaves[layer.layerId], layer))
+                    );
+
+                layer.attribs
+                    .then(data =>
+                        data.indexes.forEach(index =>
+                            applyFeatureCount(layer.layer.geometryType, state.slaves[index], data[index])
+                        )
+                    );
 
                 return state;
             }
@@ -150,8 +158,12 @@
 
                 const symbologyPromise = getMapServerSymbology(layer);
 
-                symbologyPromise.then(
-                    ({ data, index }) => applySymbology(state, data.layers[index]));
+                symbologyPromise
+                    .then(({ data, index }) => applySymbology(state, data.layers[index]));
+
+                layer.attribs.then(data =>
+                    applyFeatureCount(layer.layer.geometryType, state, data[data.indexes[0]])
+                );
 
                 return state;
             }
@@ -290,6 +302,18 @@
                     // TODO: apply default symbology to the layer in question in this case
                     console.error(error);
                 });
+        }
+
+        /**
+         * Applies feature count to the toc entries.
+         * @param  {String} geometryType one of geometry types
+         * @param  {Object} state legend entry object
+         * @param  {Object} data  layer attributes
+         */
+        function applyFeatureCount(geometryType, state, data) {
+            state.features.count = data.features.length;
+            $translate(geometryTypes[geometryType]).then(type =>
+                state.features.type = type.split('|')[state.features.count > 1 ? 1 : 0]);
         }
 
         /**

@@ -19,6 +19,13 @@
         ogcWmsLayerEntry: 'wmsLayerEntryNode'
     };
 
+    const GEOMETRY_TYPES = {
+        esriGeometryPoint: 'geometry.type.esriGeometryPoint',
+        esriGeometryPolygon: 'geometry.type.esriGeometryPolygon',
+        esriGeometryPolyline: 'geometry.type.esriGeometryPolyline',
+        generic: 'geometry.type.generic'
+    };
+
     // this is populated with default schema snippets during build;
     const LAYER_CONFIG_DEFAULTS = '_LAYER_CONFIG_DEFAULTS_';
 
@@ -37,6 +44,7 @@
             default: 'rv-default',
             error: 'rv-error'
         })
+        .constant('geometryTypes', GEOMETRY_TYPES)
         .service('layerDefaults', () => {
             // construct layer default options and flags objects from schema snippets
             const flagDefaults = {

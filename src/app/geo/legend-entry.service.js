@@ -31,7 +31,7 @@
         .module('app.geo')
         .service('legendEntryFactory', legendEntryFactory);
 
-    function legendEntryFactory(gapiService, layerDefaults) {
+    function legendEntryFactory($translate, gapiService, layerDefaults, geometryTypes) {
 
         const service = {
             singleEntryItem,
@@ -52,6 +52,7 @@
             flags: null,
             state: 'rv-default', // TODO: replace
             cache: null, // to cache stuff like retrieved metadata info
+            features: null,
             symbology: [{
                 icon: NO_IMAGE,
                 name: ''
@@ -91,6 +92,15 @@
                 this.options = angular.merge({}, defaults.options);
                 this.flags = angular.merge({}, defaults.flags);
                 this.cache = {};
+                this.features = {
+                    count: '...counting'
+                };
+
+                // sets default geometry type which is 'feature'
+                // to avoid pulling in angular translate interpolation message format plugin for now,
+                // store both plural and singular strings as the same transltion separated by a |
+                $translate(geometryTypes.generic).then(type =>
+                    this.features.type = type.split('|')[1]);
 
                 angular.merge(this, initialState);
 
