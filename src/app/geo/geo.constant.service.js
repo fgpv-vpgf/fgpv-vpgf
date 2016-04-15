@@ -9,6 +9,8 @@
         ogcWms: 'ogcWms'
     };
 
+    const LAYER_NOATTRS = ['esriImage', 'esriTile', 'ogcWms'];
+
     const LAYER_TYPE_OPTIONS = {
         esriDynamic: 'dynamicLayerOptionsNode',
         esriDynamicLayerEntry: 'dynamicLayerEntryNode',
@@ -45,6 +47,7 @@
             error: 'rv-error'
         })
         .constant('geometryTypes', GEOMETRY_TYPES)
+        .constant('layerNoattrs', LAYER_NOATTRS)
         .service('layerDefaults', () => {
             // construct layer default options and flags objects from schema snippets
             const flagDefaults = {
