@@ -26,7 +26,8 @@
             restrict: 'E',
             templateUrl: 'app/ui/toc/templates/entry-flag.html',
             scope: {
-                name: '@'
+                name: '@',
+                data: '=?'
             },
             link: link,
             controller: () => {},
@@ -40,6 +41,8 @@
 
         function link(scope, el, attr, ctrl) {
             const self = scope.self;
+
+            self.data = angular.isDefined(self.data) ? self.data : {};
 
             // getting toggle object from the layer item controller directly using toggle's name
             self.control = ctrl.entry.flags[self.name];
