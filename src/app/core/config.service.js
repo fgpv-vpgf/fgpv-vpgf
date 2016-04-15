@@ -219,11 +219,8 @@
          */
         function rcsAddKeys(keys) {
 
-            // strip languages out of data object.  alt approach: store langs array on service during initialize()
-            const langs = [];
-            angular.forEach(service.data, (value, key) => {
-                langs.push(key);
-            });
+            // strip languages out of data object.
+            const langs =  Object.keys(service.data);
 
             // get array of promises containing RCS bundles per language
             const rcsDataSet = rcsLoad(service.rcsUrl, keys, langs);
