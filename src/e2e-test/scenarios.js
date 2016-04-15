@@ -10,7 +10,7 @@ describe('my app', function () {
         expect(browser.getLocationAbsUrl()).toMatch('/view1');
     });*/
 
-    describe('view1', function () {
+    xdescribe('view1', function () {
         beforeEach(function () {
             browser.get('index-protractor.html');
         });
