@@ -234,6 +234,7 @@ gulp.task('jsrollup', 'Roll up all js into one file',
             .pipe($.if(args.prod, $.uglify()))
             .pipe($.plumber.stop());
 
+        // we don't run babel on the polyfills as it tries to restrict their access to global/window scope
         const polyfills = gulp.src(config.jsPolyfills)
             .pipe($.plumber({ errorHandler: injectError }))
             // .pipe($.babel())
