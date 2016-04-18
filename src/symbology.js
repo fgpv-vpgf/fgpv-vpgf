@@ -22,7 +22,7 @@ function createSymbologyConfig(renderer, legend) {
     switch (symb.type) {
         case 'SimpleRenderer':
             symb.label = renderer.label;
-            symb.imageUrl = legendLookup[renderer.label].imageData;
+            symb.imageUrl = legendLookup[renderer.label].icon;
 
             break;
 
@@ -37,7 +37,7 @@ function createSymbologyConfig(renderer, legend) {
                 return {
                     label: uvi.label,
                     value: uvi.value,
-                    imageUrl: legendLookup[uvi.label].imageData
+                    imageUrl: legendLookup[uvi.label].icon
                 };
             });
 
@@ -52,7 +52,7 @@ function createSymbologyConfig(renderer, legend) {
                 return {
                     label: cbi.label,
                     maxValue: cbi.maxValue,
-                    imageUrl: legendLookup[cbi.label].imageData
+                    imageUrl: legendLookup[cbi.label].icon
                 };
             });
 
@@ -169,7 +169,7 @@ function labelObj(array) {
     const finalObj = {};
 
     array.forEach(o => {
-        finalObj[o.label] = o;
+        finalObj[o.name] = o;
     });
     return finalObj;
 }
