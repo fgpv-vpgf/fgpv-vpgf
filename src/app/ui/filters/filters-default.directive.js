@@ -69,6 +69,13 @@
                     const featureIdx = stateManager.display.filters.data.featureIndex;
                     stateManager.display.filters.data.data.forEach(row => {
                         let fData = data[featureIdx];
+
+                        // FIXME: featureIndex is hard coded to '0' right now, iterate if a layer's feature index is showing up properly
+                        let i = 0;
+                        while (!fData) {
+                            fData = data[i];
+                            i++;
+                        }
                         const objId = row[0];
                         const icon = geoService.retrieveSymbol(objId, fData, renderer, legend);
                         row[0] += ' <img src=\"' + icon + '\" class="symbology-icon" />';
