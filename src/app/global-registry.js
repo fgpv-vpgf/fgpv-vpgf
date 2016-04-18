@@ -24,6 +24,7 @@
 
     RV.appRegistry = {};
     RV.switchLanguage = switchLanguage;
+    RV.addRcsKeys = addRcsKeys;
 
     /***/
 
@@ -44,5 +45,21 @@
                 app.setLanguage(lang);
             });
         });
+    }
+
+    /**
+     * Add RCS layers on a given map.  Can be used after a map has already been loaded
+     * @param  {String} mapId  the map to add the RCS layers to
+     * @param  {Array} keys  array of RCS keys (String) to be added
+     */
+    function addRcsKeys(mapId, keys) {
+        if (RV.appRegistry[mapId]) {
+            RV.appRegistry[mapId].then(app => {
+                // load the rcs keys into the map app
+                app.loadRcsLayers(keys);
+            });
+        } else {
+            console.warn('Add RCS Keys - Map id not found: ' + mapId);
+        }
     }
 })();

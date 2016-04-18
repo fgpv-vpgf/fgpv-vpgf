@@ -46,7 +46,9 @@
             data: {},
             getCurrent,
             initialize,
-            ready
+            ready,
+            rcsAddKeys,
+            rcsUrl: ''
         };
 
         const partials = {}; // partial config promises, one array per language entry
@@ -95,6 +97,7 @@
                     langs.forEach(lang => partials[lang] = []);
 
                     if (svcAttr) {
+                        service.rcsUrl = svcAttr;  // store for future RCS loads
                         rcsInit(svcAttr, keysAttr, langs);
                     }
 
@@ -105,7 +108,15 @@
 
                     langs.forEach(lang => {
                         service.data[lang] = $q.all(partials[lang])
-                            .then(configParts => mergeConfigParts(configParts));
+                            .then(configParts => {
+                                // generate a blank config, merge in all the stuff we have loaded
+                                // the merged config is our promise result for all to use
+                                const newConfig = {
+                                    layers: []
+                                };
+                                mergeConfigParts(newConfig, configParts);
+                                return newConfig;
+                            });
                     });
 
                     // initialize the app once the default language's config is loaded
@@ -141,36 +152,38 @@
         }
 
         /**
+         * Returns the currently language.
+         * @return {String} the current language string
+         */
+        function currentLang() {
+            return ($translate.proposedLanguage() || $translate.use());
+        }
+
+        /**
          * Returns the currently used config. Language is determined by asking $translate.
          * @return {Promise}     The config promise object tied to the current language resolving with that config
          */
         function getCurrent() {
-            const currentLang = ($translate.proposedLanguage() || $translate.use());
-            return service.data[currentLang];
+            return service.data[currentLang()];
         }
 
         /**
-         * Returns a config built by merging separate config chunks.
+         * Modifies a config by merging in separate config chunks.
+         * @param {object} targetConfig  the config object to merge things into. Object will be modified
          * @param {array}   configParts  array of config chunks to merge
-         * @return {object} config       the merged config object
          */
-        function mergeConfigParts(configParts) {
-            const config = {
-                layers: []
-            }; // angular.merge({}, { layers: [] }, configDefaults);
-
+        function mergeConfigParts(targetConfig, configParts) {
             configParts.forEach(part => {
                 Object.entries(part).forEach(([key, value]) => {
                     // if this section is an array just concat, e.g. layers, basemaps
                     // otherwise merge into existing section
-                    if (Array.isArray(config[key])) {
-                        config[key] = config[key].concat(value);
+                    if (Array.isArray(targetConfig[key])) {
+                        targetConfig[key] = targetConfig[key].concat(value);
                     } else {
-                        config[key] = value;
+                        targetConfig[key] = value;
                     }
                 });
             });
-            return config;
         }
 
         /**
@@ -180,7 +193,6 @@
          * @param {array}   langs       array of languages which have configs
          */
         function rcsInit(svcAttr, keysAttr, langs) {
-            const endpoint = svcAttr.endsWith('/') ? svcAttr : svcAttr + '/';
             let keys;
             if (keysAttr) {
                 try {
@@ -190,30 +202,106 @@
                     console.error('RCS key retrieval failed');
                 }
 
+                const rcsData = rcsLoad(svcAttr, keys, langs);
                 langs.forEach(lang => {
-                    // remove country code
-                    let rcsLang = lang.split('-')[0];
-
-                    // rcs can only handle english and french
-                    // TODO: update if RCS supports more languages
-                    if (['en', 'fr'].indexOf(rcsLang) === -1) {
-                        rcsLang = 'en';
-                    }
-
-                    const p = $http.get(`${endpoint}v2/docs/${rcsLang}/${keys.join(',')}`)
-                        .then(resp => {
-                            const result = {};
-                            result.layers = resp.data.map(layerEntry => {
-                                return layerEntry.layers[0];
-                            });
-                            return result;
-                        });
-                    partials[lang].push(p);
+                    // add the rcs data promises to our partials set
+                    partials[lang].push(rcsData[lang]);
                 });
             } else {
                 console.warn('RCS endpoint set but no keys were specified');
             }
         }
+
+        /**
+         * Add RCS config layers to configuration after startup has finished
+         * @param {Array}  keys    list of keys marking which layers to retrieve
+         * @return {Promise} promise of full config nodes for newly added layers
+         */
+        function rcsAddKeys(keys) {
+
+            // strip languages out of data object.
+            const langs =  Object.keys(service.data);
+
+            // get array of promises containing RCS bundles per language
+            const rcsDataSet = rcsLoad(service.rcsUrl, keys, langs);
+
+            return $q(resolve => {
+                const currLang = currentLang();
+                let newIds;
+
+                langs.forEach(lang => {
+                    // wait for rcs data to finish loading
+                    rcsDataSet[lang].then(rcsConfig => {
+                        if (lang === currLang) {
+                            // store list of layer ids, so we can identify new items in the config later
+                            newIds = rcsConfig.layers.map(layer => layer.id);
+                        }
+
+                        service.data[lang].then(fullConfig => {
+                            // call the merge into config, passing result and targeting innards of config service (all languages)
+                            // make rcs value an array, as it will be a singleton with all things mooshed into .layers
+                            mergeConfigParts(fullConfig, [rcsConfig]);
+
+                            if (lang === currLang) {
+                                // pull fully populated layer config nodes out the main config
+                                const newConfigs = fullConfig.layers.filter(layerConfig => {
+                                    return newIds.indexOf(layerConfig.id) > -1;
+                                });
+
+                                // return the new configs to the caller
+                                resolve(newConfigs);
+                            }
+                        });
+                    });
+                });
+
+            });
+        }
+
+        /**
+         * Retrieve a set of config snippets from RCS
+         * @param {string}  svcPath     the server path of RCS
+         * @param {array}  keys    array of keys marking which layers to retrieve
+         * @param {array}   langs       array of languages which have configs
+         * @return {Object}  mapping of language to promise that resolves in RCS config object
+         */
+        function rcsLoad(svcPath, keys, langs) {
+            const endpoint = svcPath.endsWith('/') ? svcPath : svcPath + '/';
+            const results = {};
+
+            langs.forEach(lang => {
+                // hit RCS for each language
+
+                // remove country code
+                let rcsLang = lang.split('-')[0];
+
+                // rcs can only handle english and french
+                // TODO: update if RCS supports more languages
+                // TODO: make this language array a configuration option
+                if (['en', 'fr'].indexOf(rcsLang) === -1) {
+                    rcsLang = 'en';
+                }
+
+                const p = $http.get(`${endpoint}v2/docs/${rcsLang}/${keys.join(',')}`)
+                    .then(resp => {
+                        const result = {};
+
+                        // there is an array of layer configs in resp.data.
+                        // moosh them into one single layer array on the result
+                        // FIXME may want to consider a more flexible approach than just assuming RCS
+                        // always returns nothing but a single layer per key.  Being able to inject any
+                        // part of the config via would be more robust
+                        result.layers = resp.data.map(layerEntry => {
+                            return layerEntry.layers[0];
+                        });
+                        return result;
+                    });
+                results[lang] = p;
+            });
+
+            return results;
+        }
+
         /**
          * Checks if the service is ready to use.
          * @param  {Promise|Array} nextPromises optional promises to be resolved before returning
