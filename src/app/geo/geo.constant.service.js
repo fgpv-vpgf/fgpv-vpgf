@@ -11,6 +11,13 @@
 
     const LAYER_NOATTRS = ['esriImage', 'esriTile', 'ogcWms'];
 
+    const WMS_INFO_MAP = {
+        'text/html;fgpv=summary': 'HTML',
+        'text/html': 'HTML',
+        'text/plain': 'Text',
+        'application/json': 'EsriFeature'
+    };
+
     const LAYER_TYPE_OPTIONS = {
         esriDynamic: 'dynamicLayerOptionsNode',
         esriDynamicLayerEntry: 'dynamicLayerEntryNode',
@@ -48,6 +55,7 @@
         })
         .constant('geometryTypes', GEOMETRY_TYPES)
         .constant('layerNoattrs', LAYER_NOATTRS)
+        .constant('wmsInfoMap', WMS_INFO_MAP)
         .service('layerDefaults', () => {
             // construct layer default options and flags objects from schema snippets
             const flagDefaults = {

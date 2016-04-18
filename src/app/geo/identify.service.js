@@ -11,7 +11,7 @@
         .module('app.geo')
         .factory('identifyService', identifyServiceFactory);
 
-    function identifyServiceFactory($q, gapiService, stateManager, layerTypes) {
+    function identifyServiceFactory($q, gapiService, stateManager, layerTypes, wmsInfoMap) {
         return geoState => identifyService(
             geoState,
             geoState.mapService.mapObject,
@@ -176,19 +176,25 @@
             }
 
             function identifyWmsLayer(layer, state, clickEvent, panelData) {
+                console.info(wmsInfoMap, state);
+                if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType)) {
+                    return;
+                }
+                console.info("WMS click continues");
+
                 const result = {
                     isLoading: true,
                     requestId: -1,
                     requester: {
                         name: state.name,
-                        format: 'Text'
+                        format: wmsInfoMap[state.featureInfoMimeType]
                     },
                     data: []
                 };
                 panelData.push(result);
 
                 return gapiService.gapi.layer.ogc
-                    .getFeatureInfo(layer, clickEvent, state.layerEntries.map(le => le.id), 'text/plain')
+                    .getFeatureInfo(layer, clickEvent, state.layerEntries.map(le => le.id), state.featureInfoMimeType)
                     .then(data => {
                         result.isLoading = false;
                         result.data.push(data);
@@ -303,14 +309,13 @@
                         mapExtent: map.extent,
                     };
 
-                    // run through all registered dynamic layers and trigger
-                    // an identify task for each layer
                     const dynmaicPromises = layerRegistry
                         .getLayersByType(layerTypes.esriDynamic)
                         .map(item => identifyDynamicLayer(item.layer, item.state, opts, details.data));
 
                     const wmsPromises = layerRegistry
                         .getLayersByType(layerTypes.ogcWms)
+                        .filter(item => item.state.featureInfoMimeType)
                         .map(item => identifyWmsLayer(item.layer, item.state, clickEvent, details.data));
 
                     const featurePromises = layerRegistry

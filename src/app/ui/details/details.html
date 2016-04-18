@@ -42,6 +42,10 @@ WARNING be sure to change the detail content display logic in both blocks (singl
                         <pre>{{ self.display.data[0].data[0] }}</pre>
                     </div>
 
+                    <!-- Raw HTML presentation  -->
+                    <div ng-if="self.selectedItem.requester.format === 'HTML'" ng-bind-html="self.display.data[0].data[0]">
+                    </div>
+
                 </div>
 
             </div>
@@ -79,6 +83,10 @@ WARNING be sure to change the detail content display logic in both blocks (singl
                     <!-- Plain text presentation  -->
                     <div ng-if="self.selectedItem.requester.format === 'Text'">
                         <pre>{{ self.selectedItem.data[0] }}</pre>
+                    </div>
+
+                    <!-- Raw HTML presentation  -->
+                    <div ng-if="self.selectedItem.requester.format === 'HTML'" ng-bind-html="self.selectedItem.data[0]">
                     </div>
                 </div>
 
