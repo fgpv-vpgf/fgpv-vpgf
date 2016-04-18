@@ -217,8 +217,8 @@
             }
 
             /**
-            * Run a getFeatureInfo on a WMS layer, return the result as a promise.  Fills the panelData array on resolution.
-            * @param {Object} layer an ESRI WmsLayer object
+            * Run a query on a feature layer, return the result as a promise.  Fills the panelData array on resolution.
+            * @param {Object} layer an ESRI FeatureLayer object
             * @param {Object} state the current layer state
             * @param {Object} clickEvent the ESRI click event
             * @param {Object} map the ESRI map object
