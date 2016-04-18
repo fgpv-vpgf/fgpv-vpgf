@@ -27,6 +27,7 @@
 
             epsgLookup,
             assembleMap,
+            retrieveSymbol,
 
             state: null
         };
@@ -121,6 +122,12 @@
                     console.error('Failed to assemble the map');
                     console.error(error);
                 });
+        }
+
+        function retrieveSymbol(oid, fData, renderer, legend) {
+            const sConfig = gapiService.gapi.symbology.createSymbologyConfig(renderer, legend);
+            const icon = gapiService.gapi.symbology.getGraphicIcon(fData, sConfig, oid);
+            return icon;
         }
     }
 })();
