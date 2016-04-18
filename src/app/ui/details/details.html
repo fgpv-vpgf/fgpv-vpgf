@@ -39,11 +39,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
 
                     <!-- Plain text presentation  -->
                     <div ng-if="self.display.data[0].requester.format === 'Text'">
-                        <h5 class="rv-sub-subhead" ng-repeat-start="item in self.display.data[0].data">{{ item.name }}</h5>
-
-                        <p ng-repeat-end ng-repeat="paragraph in item.data">
-                            {{ paragraph }}
-                        </p>
+                        <pre>{{ self.display.data[0].data[0] }}</pre>
                     </div>
 
                 </div>
@@ -82,11 +78,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
 
                     <!-- Plain text presentation  -->
                     <div ng-if="self.selectedItem.requester.format === 'Text'">
-                        <h5 class="rv-sub-subhead" ng-repeat-start="item in self.selectedItem.data">{{ item.name }}</h5>
-
-                        <p ng-repeat-end ng-repeat="paragraph in item.data">
-                            {{ paragraph }}
-                        </p>
+                        <pre>{{ self.selectedItem.data[0] }}</pre>
                     </div>
                 </div>
 
