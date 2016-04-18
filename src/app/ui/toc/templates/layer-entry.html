@@ -17,7 +17,6 @@
 <div class="rv-layer-item-content">
     <div class="rv-layer-item-name">
         {{ self.entry.name }}
-        {{ self.entry.layerType }}
     </div>
 
     <!-- TODO: add translation -->
@@ -26,7 +25,7 @@
     </div>
 
     <div class="rv-toc-entry-flags" ng-if="self.entry.state === 'rv-default'">
-        <rv-toc-entry-flag name="type"></rv-toc-entry-flag>
+        <rv-toc-entry-flag name="type" data="self.entry.features"></rv-toc-entry-flag>
         <rv-toc-entry-flag name="data"></rv-toc-entry-flag>
         <rv-toc-entry-flag name="user"></rv-toc-entry-flag>
         <rv-toc-entry-flag name="scale"></rv-toc-entry-flag>

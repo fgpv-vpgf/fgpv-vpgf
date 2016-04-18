@@ -39,9 +39,13 @@ describe('geo', () => {
         });
     }
 
+    function mockTranslateService($provide) {
+        $provide.service('$translate', $q => () => $q.resolve());
+    }
+
     beforeEach(() => {
 
-        bard.appModule('app.geo', 'app.common.router', mockGapiService, mockConfigService);
+        bard.appModule('app.geo', 'app.common.router', mockGapiService, mockConfigService, mockTranslateService);
 
         // inject services
         bard.inject('geoService', 'gapiService', '$rootScope', 'configService',
