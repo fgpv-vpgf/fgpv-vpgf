@@ -38,7 +38,7 @@
         .module('app.core')
         .factory('configService', configService);
 
-    function configService($q, $rootElement, $timeout, $http, $translate) {
+    function configService($q, $rootElement, $timeout, $http, $translate, $mdToast) {
         let initializePromise;
         let isInitialized = false;
 
@@ -52,6 +52,7 @@
         };
 
         const partials = {}; // partial config promises, one array per language entry
+        const configFile = {};
 
         return service;
 
@@ -116,6 +117,17 @@
                                 };
                                 mergeConfigParts(newConfig, configParts);
                                 return newConfig;
+                            })
+                            .catch(() => {
+                                console.info('RCS failed, starting app with file-only config.');
+                                let toast = $mdToast.simple()
+                                    .textContent('Layers could not be retrieved from the server, refresh to try again') // TODO: translate
+                                    .action('DISMISS') // TODO: translate
+                                    .highlightAction(true)
+                                    .hideDelay(0)
+                                    .position('bottom rv-flex-global');
+                                $mdToast.show(toast);
+                                return configFile[lang];
                             });
                     });
 
@@ -148,6 +160,7 @@
                 const p = $http.get(configAttr.replace('${lang}', lang))
                     .then(xhr => xhr.data);
                 partials[lang].push(p);
+                configFile[lang] = p;
             });
         }
 

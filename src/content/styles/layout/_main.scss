@@ -4,6 +4,12 @@ rv-appbar {
     position: absolute;
 }
 
+md-toast.md-rv-flex-global {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
 rv-panel md-toast.md-rv-flex {
     width: 100%;
     padding: {
