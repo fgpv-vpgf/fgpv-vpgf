@@ -164,7 +164,7 @@
       "name": "Railways",
       "layerType":"ogcWms",
       "url":"http://maps.geogratis.gc.ca/wms/railway_en",
-      "layerEntries": [ {"id": "railway.track"} ]
+      "layerEntries": [ {"id": "railway.track"}, {"id": "railway.station"} ]
     },
     {
       "id":"sample_temp",
