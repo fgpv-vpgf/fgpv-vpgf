@@ -62,9 +62,7 @@
 
                 const renderer = geoService.layers[stateManager.display.filters.requester.id].layer.renderer;
                 const legend = geoService.layers[stateManager.display.filters.requester.id].state.symbology;
-                console.log('ggggggggggggggg', stateManager.display.filters.requester);
                 const fDataPromise = geoService.layers[stateManager.display.filters.requester.id].attribs;
-                console.log(fDataPromise);
 
                 // jscs:disable maximumLineLength
                 fDataPromise.then(data => {
@@ -123,8 +121,6 @@
                             const featureIndex = self.display.data.featureIndex;
                             const layer = geoService.layers[layerId].layer;
                             let layerUrl = layer.url + '/';
-
-                            console.log('EEEEEFFFFFFFGGGGGSSSSSSSSSSSS', geoService.layers[layerId]);
 
                             if (layer.layerInfos) {
                                 layerUrl += featureIndex + '/';
