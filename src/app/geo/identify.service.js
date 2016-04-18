@@ -332,7 +332,7 @@
                         mapExtent: map.extent,
                     };
 
-                    const dynmaicPromises = layerRegistry
+                    const dynamicPromises = layerRegistry
                         .getLayersByType(layerTypes.esriDynamic)
                         .map(item => identifyDynamicLayer(item.layer, item.state, opts, details.data));
 
@@ -346,7 +346,7 @@
                         .map(item => identifyFeatureLayer(item.layer, item.state, clickEvent, map, details.data));
 
                     let idPromises = [];
-                    idPromises = idPromises.concat(dynmaicPromises);
+                    idPromises = idPromises.concat(dynamicPromises);
                     idPromises = idPromises.concat(wmsPromises);
                     idPromises = idPromises.concat(featurePromises);
 
