@@ -60,70 +60,78 @@
                 const tableNode = angular.element('<table class="display nowrap rv-data-table"></table>');
                 containerNode.append(tableNode);
 
-                // make icon then add to the first row
-                const icon = $compile('<md-icon md-svg-src="action:zoom_in"></md-icon>')(scope).html();
-                console.log('icon', icon);
-                stateManager.display.filters.data.data.forEach(row => {
-                    row[0] += ' <md-icon md-svg-src="action:visibility" class="ng-scope ng-isolate-scope' +
-                    ' material-icons" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fit="" ' +
-                    'height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">' +
-                    '<g id="zoom_in"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 ' +
-                    '13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L' +
-                    '20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5' +
-                    ' 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-4h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></g></svg></md-icon>';
-                });
+                const renderer = geoService.layers[stateManager.display.filters.requester.id].layer.renderer;
+                const legend = geoService.layers[stateManager.display.filters.requester.id].state.symbology;
+                console.log('ggggggggggggggg', stateManager.display.filters.requester);
+                const fDataPromise = geoService.layers[stateManager.display.filters.requester.id].attribs;
+                console.log(fDataPromise);
 
-                // I hate DataTables
-                self.table = tableNode
-                    .on('init.dt', () => {
-                        // turn off loading indicator after the table initialized or the forced delay whichever takes longer; cancel loading timeout as well
-                        forcedDelay.then(() => {
-                            // TODO: these ought to be moved to a helper function in displayManager
-                            stateManager.display.filters.isLoading = false;
-                            $timeout.cancel(stateManager.display.filters.loadingTimeout);
-                        });
-                    })
-                    .DataTable({
-                        dom: 'rti',
-                        columns: stateManager.display.filters.data.columns,
-                        data: stateManager.display.filters.data.data,
-                        deferRender: true,
-                        scrollY: true, // allow vertical scroller
-                        scrollX: true, // allow horizontal scroller
-                        autoWidth: false, // without autoWidth, few columns will be stretched to fill avaialbe width, and many columns will cause the table to scroll horizontally
-                        scroller: {
-                            displayBuffer: 3 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer
-                        }, // turn on virtual scroller extension
-                        select: true, // allow row select,
-                        buttons: [
-                            // 'excelHtml5',
-                            // 'pdfHtml5',
-                            {
-                                extend: 'print',
-                                title: self.display.requester.name
-                            },
-                            {
-                                extend: 'csvHtml5',
-                                title: self.display.requester.name
-                            },
-                        ]
+                // jscs:disable maximumLineLength
+                fDataPromise.then(data => {
+                    const featureIdx = stateManager.display.filters.data.featureIndex;
+                    stateManager.display.filters.data.data.forEach(row => {
+                        let fData = data[featureIdx];
+                        const objId = row[0];
+                        const icon = geoService.retrieveSymbol(objId, fData, renderer, legend);
+                        row[0] += ' <img src=\"' + icon + '\" class="symbology-icon" />';
+                        row[0] += ' <md-icon md-svg-src="action:visibility" class="ng-scope ng-isolate-scope material-icons" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g id="zoom_in"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-4h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></g></svg></md-icon>';
                     });
-                // on select row and clicking the zoom button
-                self.table.on('select', function (e, dt, type, indexes) {
-                    self.table.on('click', 'md-icon.material-icons', function () {
-                        // FIXME: Assumes OBJECTID always first column; make it not so
-                        const id = dt.context[0].aoData[indexes[0]]._aData[0];
-                        const objId = id.split(' ')[0];
-                        const layerId = self.display.requester.id;
-                        const featureIndex = self.display.data.featureIndex;
-                        const layer = geoService.layers[layerId].layer;
-                        let layerUrl = layer.url + '/';
+                    // jscs:enable maximumLineLength
 
-                        if (layer.layerInfos) {
-                            layerUrl += featureIndex + '/';
-                        }
+                    // I hate DataTables
+                    self.table = tableNode
+                        .on('init.dt', () => {
+                            // turn off loading indicator after the table initialized or the forced delay whichever takes longer; cancel loading timeout as well
+                            forcedDelay.then(() => {
+                                // TODO: these ought to be moved to a helper function in displayManager
+                                stateManager.display.filters.isLoading = false;
+                                $timeout.cancel(stateManager.display.filters.loadingTimeout);
+                            });
+                        })
+                        .DataTable({
+                            dom: 'rti',
+                            columns: stateManager.display.filters.data.columns,
+                            data: stateManager.display.filters.data.data,
+                            deferRender: true,
+                            scrollY: true, // allow vertical scroller
+                            scrollX: true, // allow horizontal scroller
+                            autoWidth: false, // without autoWidth, few columns will be stretched to fill avaialbe width, and many columns will cause the table to scroll horizontally
+                            scroller: {
+                                displayBuffer: 3 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer
+                            }, // turn on virtual scroller extension
+                            select: true, // allow row select,
+                            buttons: [
+                                // 'excelHtml5',
+                                // 'pdfHtml5',
+                                {
+                                    extend: 'print',
+                                    title: self.display.requester.name
+                                },
+                                {
+                                    extend: 'csvHtml5',
+                                    title: self.display.requester.name
+                                },
+                            ]
+                        });
+                    // on select row and clicking the zoom button
+                    self.table.on('select', function (e, dt, type, indexes) {
+                        self.table.on('click', 'md-icon.material-icons', function () {
+                            // FIXME: Assumes OBJECTID always first column; make it not so
+                            const id = dt.context[0].aoData[indexes[0]]._aData[0];
+                            const objId = id.split(' ')[0];
+                            const layerId = self.display.requester.id;
+                            const featureIndex = self.display.data.featureIndex;
+                            const layer = geoService.layers[layerId].layer;
+                            let layerUrl = layer.url + '/';
 
-                        geoService.zoomToGraphic(layerUrl, layer, objId);
+                            console.log('EEEEEFFFFFFFGGGGGSSSSSSSSSSSS', geoService.layers[layerId]);
+
+                            if (layer.layerInfos) {
+                                layerUrl += featureIndex + '/';
+                            }
+
+                            geoService.zoomToGraphic(layerUrl, layer, objId);
+                        });
                     });
                 });
             }
