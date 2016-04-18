@@ -108,6 +108,14 @@
                 }
             }
 
+            /**
+            * Run a query on a dynamic layer, return the result as a promise.  Fills the panelData array on resolution.
+            * @param {Object} layer an ESRI DynamicLayer object
+            * @param {Object} state the current layer state
+            * @param {Object} opts click threshold options
+            * @param {Array} panelData an array to be filled with query results
+            * @returns {Promise} a promise which resolves when the query completes
+            */
             function identifyDynamicLayer(layer, state, opts, panelData) {
                 if (!layer.visibleAtMapScale) {
                     return $q.resolve(null);
@@ -175,12 +183,18 @@
 
             }
 
+            /**
+            * Run a getFeatureInfo on a WMS layer, return the result as a promise.  Fills the panelData array on resolution.
+            * @param {Object} layer an ESRI WmsLayer object
+            * @param {Object} state the current layer state
+            * @param {Object} clickEvent the ESRI click event
+            * @param {Array} panelData an array to be filled with query results
+            * @returns {Promise} a promise which resolves when the query completes
+            */
             function identifyWmsLayer(layer, state, clickEvent, panelData) {
-                console.info(wmsInfoMap, state);
                 if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType)) {
                     return;
                 }
-                console.info("WMS click continues");
 
                 const result = {
                     isLoading: true,
@@ -202,6 +216,15 @@
                     });
             }
 
+            /**
+            * Run a getFeatureInfo on a WMS layer, return the result as a promise.  Fills the panelData array on resolution.
+            * @param {Object} layer an ESRI WmsLayer object
+            * @param {Object} state the current layer state
+            * @param {Object} clickEvent the ESRI click event
+            * @param {Object} map the ESRI map object
+            * @param {Array} panelData an array to be filled with query results
+            * @returns {Promise} a promise which resolves when the query completes
+            */
             function identifyFeatureLayer(layer, state, clickEvent, map, panelData) {
                 if (!layer.visibleAtMapScale) {
                     return $q.resolve(null);
