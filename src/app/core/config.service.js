@@ -119,8 +119,9 @@
                                 return newConfig;
                             })
                             .catch(() => {
-                                console.info('RCS failed, starting app with file-only config.');
-                                let toast = $mdToast.simple()
+                                // TODO: possibly retry rcsLoad?
+                                console.warn('RCS failed, starting app with file-only config.');
+                                const toast = $mdToast.simple()
                                     .textContent('Layers could not be retrieved from the server, refresh to try again') // TODO: translate
                                     .action('DISMISS') // TODO: translate
                                     .highlightAction(true)
