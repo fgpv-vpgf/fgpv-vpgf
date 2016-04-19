@@ -156,7 +156,7 @@
 
                     // make symbology names visible
                     names.forEach(name => tlshift.to(name, RV_DURATION - 0.1, {
-                        autoAlpha: 1, // https://greensock.com/docs/#/HTML5/GSAP/Plugins/CSSPlugin/
+                        opacity: 1,
                         display: 'block',
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, 0.1));
