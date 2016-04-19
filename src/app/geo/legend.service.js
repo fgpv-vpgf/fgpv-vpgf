@@ -190,7 +190,9 @@
                 const state = legendEntryFactory.singleEntryItem(layer.initialState, layer.layer);
                 state.symbology = gapiService.gapi.layer.ogc
                     .getLegendUrls(layer.layer, state.layerEntries.map(le => le.id))
-                    .map((url, idx) => { return { name: state.layerEntries[idx].id, icon: url }; });
+                    .map((url, idx) => {
+                        return { name: state.layerEntries[idx].name || state.layerEntries[idx].id, icon: url };
+                    });
                 layer.state = state;
 
                 return state;

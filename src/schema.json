@@ -357,6 +357,7 @@
             "type": "object",
             "properties": {
                 "id": { "type": "string", "description": "The id of the layer entry in the WMS" },
+                "name": { "type": "string", "description": "A descriptive name for the layer.  To be used in the legend." },
                 "visibility": {
                     "$ref": "#/definitions/visibilityOptionNode"
                 },
