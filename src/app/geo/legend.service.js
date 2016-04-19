@@ -16,7 +16,7 @@
         .module('app.geo')
         .factory('legendService', legendServiceFactory);
 
-    function legendServiceFactory($translate, $http, $q, $timeout,
+    function legendServiceFactory($translate, $http, $q, $timeout, gapiService,
             geometryTypes, layerTypes, layerStates, legendEntryFactory) {
         const legendSwitch = {
             structured: structuredLegendService,
@@ -54,7 +54,7 @@
                 esriFeature: featureGenerator,
                 esriImage: imageGenerator,
                 esriTile: tileGenerator,
-                ogcWms: imageGenerator
+                ogcWms: wmsGenerator
             };
 
             const service = {
@@ -176,6 +176,21 @@
             function imageGenerator(layer) {
                 // generate toc entry
                 const state = legendEntryFactory.singleEntryItem(layer.initialState, layer.layer);
+                layer.state = state;
+
+                return state;
+            }
+
+            /**
+             * Parses WMS layer object and create a legend entry with symbology
+             * @param  {Object} layer layer object from `layerRegistry`
+             * @return {Object}       legend item
+             */
+            function wmsGenerator(layer) {
+                const state = legendEntryFactory.singleEntryItem(layer.initialState, layer.layer);
+                state.symbology = gapiService.gapi.layer.ogc
+                    .getLegendUrls(layer.layer, state.layerEntries.map(le => le.id))
+                    .map((url, idx) => { return { name: state.layerEntries[idx].id, icon: url }; });
                 layer.state = state;
 
                 return state;
