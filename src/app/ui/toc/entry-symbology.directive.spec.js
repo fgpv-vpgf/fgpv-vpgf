@@ -12,7 +12,7 @@ describe('rvTocEntrySymbology', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.toc', 'app.templates', 'pascalprecht.translate');
+        bard.appModule('app.ui.toc', 'app.templates', 'pascalprecht.translate', 'app.ui.common');
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
