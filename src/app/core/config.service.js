@@ -297,16 +297,20 @@
 
                 const p = $http.get(`${endpoint}v2/docs/${rcsLang}/${keys.join(',')}`)
                     .then(resp => {
-                        const result = {};
+                        const result = { layers: [] };
 
                         // there is an array of layer configs in resp.data.
                         // moosh them into one single layer array on the result
                         // FIXME may want to consider a more flexible approach than just assuming RCS
                         // always returns nothing but a single layer per key.  Being able to inject any
                         // part of the config via would be more robust
-                        result.layers = resp.data.map(layerEntry => {
-                            return layerEntry.layers[0];
+                        resp.data.forEach(layerEntry => {
+                            // if the key is wrong rcs will return null
+                            if (layerEntry) {
+                                result.layers.push(layerEntry.layers[0]);
+                            }
                         });
+
                         return result;
                     });
                 results[lang] = p;
