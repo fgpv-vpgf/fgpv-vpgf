@@ -164,7 +164,16 @@
       "name": "Railways",
       "layerType":"ogcWms",
       "url":"http://maps.geogratis.gc.ca/wms/railway_en",
-      "layerEntries": [ {"id": "railway.track"} ]
+      "layerEntries": [ {"id": "railway.track"}, {"id": "railway.station"} ],
+      "featureInfoMimeType": "text/plain"
+    },
+    {
+      "id":"gin",
+      "name": "Groundwater Information Network",
+      "layerType":"ogcWms",
+      "url":"http://gin.gw-info.net/service/gin/wms/mediator/gin_en",
+      "layerEntries": [ {"id": "WaterWells"} ],
+      "featureInfoMimeType": "text/html"
     },
     {
       "id":"sample_temp",

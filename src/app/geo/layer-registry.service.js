@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, $timeout, gapiService, legendService, layerTypes, layerStates) {
+    function layerRegistryFactory($q, $timeout, gapiService, legendService, layerTypes, layerStates, layerNoattrs) {
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
         function layerRegistry(geoState, mapObject, config) {
@@ -38,7 +38,8 @@
                 registerLayer,
                 getFormattedAttributes,
                 removeLayer,
-                aliasedFieldName
+                aliasedFieldName,
+                getLayersByType
             };
 
             return initialRegistration();
@@ -46,7 +47,17 @@
             /***/
 
             /**
-             * Registers the initial batch of layers.
+             * Retrieves all layers of the specified type
+             * @return {Array} array of layers
+             */
+            function getLayersByType(layerType) {
+                return Object.keys(layers).map(key => layers[key])
+                    .filter(layer => layer.state && layer.state.layerType === layerType);
+            }
+
+            /**
+             * Creates esri layer object for a set of layers provided by the config, triggers attribute loading on layer load event and adds it to the legend afterwards.
+             * // TODO: might need to abstract this further to accomodate user-added layers as they need to go through the same process
              * @return {Object} self for chaining
              */
             function initialRegistration() {
@@ -78,7 +89,10 @@
 
                             // handles the asynch loading of attributes
                             // get the attributes for the layer
-                            const attributesPromise = loadLayerAttributes(layer);
+                            let attributesPromise = $q.resolve(null);
+                            if (layerNoattrs.indexOf(layerConfig.layerType) < 0) {
+                                attributesPromise = loadLayerAttributes(layer);
+                            }
                             service.registerLayer(layer, layerConfig, attributesPromise); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                         },
                         error: data => {
@@ -210,7 +224,7 @@
                     return new gapiService.gapi.layer.TileLayer(config.url, commonConfig);
                 };
                 handlers[layerTypes.ogcWms] = config => {
-                    commonConfig.visibleLayers = [config.layerName];
+                    commonConfig.visibleLayers = config.layerEntries.map(le => le.id);
                     return new gapiService.gapi.layer.ogc.WmsLayer(config.url, commonConfig);
                 };
 
