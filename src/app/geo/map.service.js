@@ -317,7 +317,7 @@
                             gextent.x0, gextent.y0, gextent.sr);
 
                         if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
-                            const eExt = newExt.expand(3)
+                            const eExt = newExt.expand(3);
                             map.setExtent(eExt.offset(0, (eExt.ymax - eExt.ymin) / 4));
                         } else {
                             map.centerAndZoom(newExt.getCenter(), 8);
