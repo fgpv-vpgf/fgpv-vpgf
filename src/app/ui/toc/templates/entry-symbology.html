@@ -1,18 +1,14 @@
-<div class="rv-layer-item-icon rv-single" ng-if="self.symbology.length == 1">
+<div
+    class="rv-layer-item-icon "
+    ng-class='[{ "rv-expanded" : self.expanded }, { "rv-compound" : self.symbology.length > 1}]'>
 
-    <div class="rv-symbology-item">
-        <img alt="" class="md-whiteframe-z1" ng-src="{{ self.symbology[0].icon }}"/>
+    <div class="rv-symbology-item" ng-repeat="symbol in self.symbology | rvReverse">
+        <img class="md-whiteframe-z1" alt="" ng-src="{{ symbol.icon }}"/>
+        <span class="rv-symbology-item-name">{{ symbol.name }}</span>
     </div>
 
-</div>
-
-<div
-    class="rv-layer-item-icon rv-compound"
-    ng-class='{ "rv-expanded" : self.expanded }'
-    ng-if="self.symbology.length > 1">
-
     <md-button
-        class='rv-symbology-trigger rv-button-32 rv-icon-24 md-icon-button'
+        class="rv-symbology-trigger rv-button-32 rv-icon-24 md-icon-button"
         ng-if="self.isInteractive"
         ng-click="self.toggleSymbology()"
         ng-focus="self.wiggleSymbology(true)"
@@ -22,14 +18,5 @@
         <md-tooltip md-direction="top">{{ self.expanded ? 'toc.layer.label.symbologyHide' : 'toc.layer.label.symbologyShow' | translate }}</md-tooltip>
         <md-icon md-svg-src="navigation:close"></md-icon>
     </md-button>
-
-    <div class="rv-symbology-container">
-
-        <div class="rv-symbology-item" ng-repeat="symbol in self.symbology">
-            <img class="md-whiteframe-z1" alt="" ng-src="{{ symbol.icon }}"/>
-            <span class="rv-symbology-item-name">{{ symbol.name }}</span>
-        </div>
-
-    </div>
 
 </div>
