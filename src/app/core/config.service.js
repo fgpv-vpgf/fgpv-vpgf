@@ -38,7 +38,7 @@
         .module('app.core')
         .factory('configService', configService);
 
-    function configService($q, $rootElement, $timeout, $http, $translate) {
+    function configService($q, $rootElement, $timeout, $http, $translate, $mdToast) {
         let initializePromise;
         let isInitialized = false;
 
@@ -52,6 +52,7 @@
         };
 
         const partials = {}; // partial config promises, one array per language entry
+        const configFile = {};
 
         return service;
 
@@ -116,6 +117,18 @@
                                 };
                                 mergeConfigParts(newConfig, configParts);
                                 return newConfig;
+                            })
+                            .catch(() => {
+                                // TODO: possibly retry rcsLoad?
+                                console.warn('RCS failed, starting app with file-only config.');
+                                const toast = $mdToast.simple()
+                                    .textContent('Layers could not be retrieved from the server, refresh to try again') // TODO: translate
+                                    .action('DISMISS') // TODO: translate
+                                    .highlightAction(true)
+                                    .hideDelay(0)
+                                    .position('bottom rv-flex-global');
+                                $mdToast.show(toast);
+                                return configFile[lang];
                             });
                     });
 
@@ -148,6 +161,7 @@
                 const p = $http.get(configAttr.replace('${lang}', lang))
                     .then(xhr => xhr.data);
                 partials[lang].push(p);
+                configFile[lang] = p;
             });
         }
 
@@ -284,16 +298,20 @@
 
                 const p = $http.get(`${endpoint}v2/docs/${rcsLang}/${keys.join(',')}`)
                     .then(resp => {
-                        const result = {};
+                        const result = { layers: [] };
 
                         // there is an array of layer configs in resp.data.
                         // moosh them into one single layer array on the result
                         // FIXME may want to consider a more flexible approach than just assuming RCS
                         // always returns nothing but a single layer per key.  Being able to inject any
                         // part of the config via would be more robust
-                        result.layers = resp.data.map(layerEntry => {
-                            return layerEntry.layers[0];
+                        resp.data.forEach(layerEntry => {
+                            // if the key is wrong rcs will return null
+                            if (layerEntry) {
+                                result.layers.push(layerEntry.layers[0]);
+                            }
                         });
+
                         return result;
                     });
                 results[lang] = p;
