@@ -84,6 +84,14 @@
                 this.options.opacity.value = value;
             },
 
+            setCache(name, value) {
+                this.cache[name] = value;
+            },
+
+            getCache(name) {
+                return this.cache[name];
+            },
+
             init(initialState, layerRef) {
                 const defaults = layerDefaults[initialState.layerType];
 
@@ -119,6 +127,10 @@
             if (typeof this.metadataUrl === 'undefined') {
                 delete this.options.metadata;
             }
+
+            // get the featureid from the end of the url
+            // `replace` strips trailing slashes
+            this.featureId = initialState.url.replace(/\/+$/, '').split('/').pop();
 
             return this;
         };
@@ -169,7 +181,7 @@
          */
         DYNAMIC_ENTRY_ITEM.setOpacity = function (value) {
             ENTRY_ITEM.setOpacity.call(this, value, false);
-            this.master._setOpacity([this._subId]);
+            this.master._setOpacity([this.featureId]);
         };
 
         const ENTRY_GROUP = {
@@ -318,7 +330,7 @@
          */
         DYNAMIC_ENTRY_GROUP.setOpacity = function (value) {
             ENTRY_GROUP.setOpacity.call(this, value);
-            this.master._setOpacity([this._subId]);
+            this.master._setOpacity([this.featureId]);
         };
 
         const DYNAMIC_ENTRY_MASTER_GROUP = Object.create(DYNAMIC_ENTRY_GROUP);
@@ -343,7 +355,7 @@
                     name: layerInfo.name,
                     layerType: layerEntryType,
                     options: layerEntriesOptions[index] || {},
-                    _subId: index
+                    featureId: index
                 };
 
                 if (layerInfo.subLayerIds) { // group item
