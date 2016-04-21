@@ -5,10 +5,10 @@
      * @ngdoc directive
      * @name rvTocEntry
      * @module app.ui.toc
-     * @restrict EA
+     * @restrict E
      * @description
      *
-     * The `rvTocEntry` directive is a UI compoenent for a layer or a layer gropu in the layer selector (toc).
+     * The `rvTocEntry` directive is a UI component for a layer or a layer group in the layer selector (toc).
      *
      * ```html
      * <!-- `entry` attribute binds to the layer item in toc -->
