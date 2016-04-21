@@ -130,6 +130,8 @@
 
             // get the featureid from the end of the url
             // `replace` strips trailing slashes
+            // TODO: Aly's comment:
+            // I think we have more than one of these strip trailing slash and get the feature index in our codebase. We should move it as a utility into geoApi at some point.
             this.featureId = initialState.url.replace(/\/+$/, '').split('/').pop();
 
             return this;

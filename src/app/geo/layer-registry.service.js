@@ -236,7 +236,7 @@
             }
 
             /**
-             * Formats raw attributes to the form consumed by the datatabe
+             * Formats raw attributes to the form consumed by the datatable
              * @param  {Object} attributeData raw attribute data returned from geoapi
              * @return {Object}               formatted attribute data { data: Array, columns: Array}
              */
