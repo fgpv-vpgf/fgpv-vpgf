@@ -15,18 +15,11 @@
 
     function storageService() {
         const service = {
-            controller: Controller,
             panels: {},
             panes: {} // registry for content pane nodes
         };
 
         return service;
 
-    }
-
-    function Controller() {
-        const self = this;
-
-        self.storageService = storageService();
     }
 })();
