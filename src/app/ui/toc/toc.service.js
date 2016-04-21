@@ -264,7 +264,8 @@
         function toggleLayerFiltersPanel(entry) {
             const requester = {
                 id: entry.id,
-                name: entry.name
+                name: entry.name,
+                legendEntry: entry
             };
 
             // FIXME: this is likely unnecessary

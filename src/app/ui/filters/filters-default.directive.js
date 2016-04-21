@@ -51,6 +51,8 @@
                 containerNode = containerNode || el.find('.rv-filters-data-container');
                 self.destroyTable();
 
+                const requester = stateManager.display.filters.requester;
+
                 // forced delay of a 100 to prevent the loading indicator from flickering if the table is created too fast; it's annoying; it means that switching tables takes at least 100ms no matter how small the table is; in majority of cases it should take more than 100ms to get data and create a table anyway;
                 const forcedDelay = $q(fulfill =>
                     $timeout(() => fulfill(), 100)
@@ -66,7 +68,7 @@
 
                 // jscs:disable maximumLineLength
                 fDataPromise.then(data => {
-                    const featureIdx = stateManager.display.filters.data.featureIndex;
+                    const featureIdx = requester.legendEntry.featureId;
                     stateManager.display.filters.data.data.forEach(row => {
                         let fData = data[featureIdx];
 
