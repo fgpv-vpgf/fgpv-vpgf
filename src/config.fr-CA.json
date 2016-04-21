@@ -156,7 +156,7 @@
       "url":"http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/World/Temperature/ImageServer",
       "options": {
         "visibility": {
-          "value": "off"
+          "value": false
         }
       }
     }
