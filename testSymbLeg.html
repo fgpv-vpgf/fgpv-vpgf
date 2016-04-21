@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <div id='map' style='height:10%; width: 10%;'></div>
+    <div id='bucket1' />
+    <div id='bucket2' />
+    <div id='bucket3' />
+    <div id='bucket4' />
+    <p id='mess' />
+    <script src='dist/geoapi.min.js'></script>
+    <script>
+        function addImg( hostDivId, legenditem ) {
+            // add a check for base64 data    myimg.src = "data:image/png;base64," + icon;
+            var comma;
+            if (legenditem.contentType === 'image/svg+xml') {
+              comma = ",";
+            } else {
+              comma = ";base64,"
+            }
+            
+            var dataurl = 'data:' + legenditem.contentType + comma + legenditem.imageData;
+            var mydiv = document.getElementById(hostDivId);
+            var myimg = new Image(32, 32);
+            myimg.border = "1px";
+            myimg.hspace = 20;
+            myimg.vspace = 20;
+            myimg.src = dataurl;
+            
+            mydiv.appendChild(myimg);
+
+            myspan = document.createElement('span');
+            myspan.innerHTML = legenditem.label;
+            mydiv.appendChild(myspan);
+            // maybe add some text?
+        }
+      
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
+
+            // unique value picture markers            
+            var layer1 = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0');
+
+            layer1.on('load', function(evt) {
+               
+                var legend1 = api.symbology.rendererToLegend(layer1.renderer , 0);
+                console.log('legend1', legend1);
+                
+                legend1.layers[0].legend.forEach(legItem => {
+                    addImg('bucket1', legItem);
+                })
+                             
+            });
+            
+            
+            // simple markers
+            var layer2 = new api.layer.FeatureLayer('http://ec.gc.ca/arcgis/rest/services/data/73865ed2-5063-4df8-803a-8e4204307758/MapServer/0');
+
+            layer2.on('load', function(evt) {
+               
+                var legend2 = api.symbology.rendererToLegend(layer2.renderer , 0);
+                console.log('legend2', legend2);
+                
+                legend2.layers[0].legend.forEach(legItem => {
+                    addImg('bucket2', legItem);
+                })
+                             
+            });
+
+            // simple fill
+            var layer3 = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/2');
+
+            layer3.on('load', function(evt) {
+               
+                var legend3 = api.symbology.rendererToLegend(layer3.renderer , 0);
+                console.log('legend3', legend3);
+                
+                legend3.layers[0].legend.forEach(legItem => {
+                    addImg('bucket3', legItem);
+                })
+                             
+            });
+
+            // unique value lines
+            var layer4 = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSandsBasemap/MapServer/32');
+
+            layer4.on('load', function(evt) {
+               
+                var legend4 = api.symbology.rendererToLegend(layer4.renderer , 0);
+                console.log('legend4', legend4);
+                
+                legend4.layers[0].legend.forEach(legItem => {
+                    addImg('bucket4', legItem);
+                })
+                             
+            });
+            
+        });
+    </script>
+    
+</body>
+</html>
