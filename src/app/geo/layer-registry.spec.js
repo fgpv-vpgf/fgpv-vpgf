@@ -129,7 +129,8 @@ describe('layerRegistry', () => {
             const lr = layerRegistry(geoState, currentConfig);
             lr.registerLayer(tempLayer, tempConfig, tempAttribPromise);
 
-            lr.getFormattedAttributes(tempLayer.id, '0')
+            lr.layers.sausages.attribs
+                .then(data => lr.formatAttributes(data))
                 .then(bundledAttributes => {
                     expect(bundledAttributes.data)
                         .toBeDefined();

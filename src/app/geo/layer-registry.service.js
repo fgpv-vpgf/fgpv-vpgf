@@ -25,10 +25,6 @@
                 items: []
             }; // legend construct, to be consumed by toc; deflection +2
 
-            const ref = {
-                legendService: legendService(config, layers, legend)
-            };
-
             // this `service` object will be exposed through `geoService`
             const service = {
                 legend,
@@ -36,10 +32,14 @@
                 constructLayers,
                 generateLayer,
                 registerLayer,
-                getFormattedAttributes,
                 removeLayer,
+                formatLayerAttributes,
                 aliasedFieldName,
                 getLayersByType
+            };
+
+            const ref = {
+                legendService: legendService(config, service)
             };
 
             return initialRegistration();
@@ -236,28 +236,16 @@
             }
 
             /**
-             * Returns nicely bundled attributes for the layer described by layerId.
-             * The bundles are used in the datatable.
-             *
-             * @param   {String} layerId        The id for the layer
-             * @param   {String} featureIndex   The index for the feature (attribute set) within the layer
-             * @return  {Promise}               Resolves with the column headers and data to show in the datatable
+             * Formats raw attributes to the form consumed by the datatable
+             * @param  {Object} attributeData raw attribute data returned from geoapi
+             * @return {Object}               formatted attribute data { data: Array, columns: Array}
              */
-            function getFormattedAttributes(layerId, featureIndex) {
-                // FIXME change to new promise format of attributes.  return a promise from this function.
+            function formatLayerAttributes(attributeData) {
+                const formattedAttributeData = {};
 
-                if (!layers[layerId]) {
-                    throw new Error('Cannot get attributes for unregistered layer');
-                }
-
-                // waits for attributes to be loaded, then resolves with formatted data
-                return layers[layerId].attribs.then(attribBundle => {
-                    if (!attribBundle[featureIndex] || attribBundle[featureIndex].features.length === 0) {
-                        throw new Error('Cannot get attributes for feature set that does not exist');
-                    }
-
+                attributeData.indexes.forEach(featureIndex => {
                     // get the attributes and single out the first one
-                    const attr = attribBundle[featureIndex];
+                    const attr = attributeData[featureIndex];
                     const first = attr.features[0];
 
                     // columns for the data table
@@ -288,11 +276,13 @@
                         });
                     });
 
-                    return {
+                    formattedAttributeData[featureIndex] = {
                         columns,
                         data
                     };
                 });
+
+                return formattedAttributeData;
             }
 
             /**

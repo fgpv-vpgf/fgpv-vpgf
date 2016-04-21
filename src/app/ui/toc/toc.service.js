@@ -18,8 +18,7 @@
 
     function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager,
         geoService, metadataService) {
-        // TODO: remove after switching to the real config
-        // jscs:disable maximumLineLength
+
         const service = {
             // method called by the options and flags set on the layer item
             actions: {
@@ -181,8 +180,6 @@
             }
         };
 
-        // jscs:enable maximumLineLength
-
         const selectedLayerLog = {};
 
         // set state change watches on metadata, settings and filters panel
@@ -244,7 +241,6 @@
 
         /**
          * Opens settings panel with settings from the provided layer object.
-         * // FIXME: opens the same settings right now.
          * @param  {Object} entry layer object whose settings should be opened.
          */
         function toggleSettings(entry) {
@@ -263,46 +259,25 @@
 
         /**
          * Opens filters panel with data from the provided layer object.
-         * @param  {Object} layer layer object whose data should be displayed.
+         * @param  {Object} entry layer object whose data should be displayed.
          */
-        function toggleLayerFiltersPanel(layer) {
+        function toggleLayerFiltersPanel(entry) {
             const requester = {
-                id: layer.id,
-                name: layer.name
+                id: entry.id,
+                name: entry.name,
+                legendEntry: entry
             };
 
-            // wait for attributes to be loaded, then process them into grid format
-            const dataPromise = geoService.layers[layer.id].attribs.then(attribBundle => {
-                let layerId = layer.id;
-                let layerIdx;
+            // FIXME: this is likely unnecessary
+            requester.id = (entry.master ? entry.master : entry).id;
 
-                // FIXME: remove default ecogeo data once filters is disabled for layers with no attribs.
-                //        can get rid of the layerId and layerIdx vars to (they are used to support the hack)
-                if (attribBundle.indexes.length === 0) {
-                    layerId = 'ecogeo';
-                    layerIdx = '0';
-                } else {
-                    // FIXME once the TOC has layer indexes assigned to its elements, and available to
-                    //       the button that triggers the grid view, we should be using that.  for now,
-                    //       hack by grabbing the first index available (.indexes[0])
-                    layerIdx = attribBundle.indexes[0];
-                }
-
-                return geoService.getFormattedAttributes(layerId, layerIdx);
-            }).then(attrs => {
-                return {
-                    data: {
-                        // TODO remove .isNumber stuff once proper table support is completed
-                        columns: attrs.columns.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) *
-                            5),
-                        data: attrs.data.slice(0, ((angular.isNumber(layer.id) ? layer.id : 0) + 1) * 50),
-
-                        // FIXME: this after dynamic layer index gets refactored to proper separate layers
-                        featureIndex: '0'
-                    },
-                    isLoaded: false
-                };
-            });
+            const dataPromise = entry.getCache('attributes')
+                .then(attributes => {
+                    return {
+                        data: attributes,
+                        isLoaded: false
+                    };
+                });
 
             stateManager.setActive({
                 other: false
