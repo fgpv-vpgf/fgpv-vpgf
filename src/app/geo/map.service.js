@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, $timeout, gapiService) {
+    function mapServiceFactory($q, $timeout, gapiService, storageService) {
         return mapService;
 
         function mapService(geoState, config) {
@@ -300,8 +300,13 @@
                 console.log('enhance ', layer, objId);
                 geo.then(geoInfo => {
                     if (geoInfo) {
-                        const barWidth = $('.main-appbar').outerWidth();
-                        const mapWidth = $('.fgpv').outerWidth();
+                        const barWidth = storageService.panels.sidePanel.outerWidth();
+                        const mapWidth = storageService.panels.map.outerWidth();
+
+                        // barWidth/mapWidth is the % of map blocked by side panel
+                        // shifting by 1/2 % of blocked map offsets point to center of visible map
+                        // this ratio always changes based on window resizing/map resizing
+                        // since the side panel is always 400px; need ratio every time zoom happens
                         const ratio = (barWidth / mapWidth) / 2;
 
                         // make new graphic with proper spatialReference
