@@ -20,15 +20,20 @@
      *
      * @return {object} directive body
      */
-    function rvAppbar() {
+    function rvAppbar(storageService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/appbar/appbar.html',
             scope: {},
+            link: link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
         };
+
+        function link(scope, el) {
+            storageService.panels.sidePanel = el;
+        }
 
         return directive;
     }

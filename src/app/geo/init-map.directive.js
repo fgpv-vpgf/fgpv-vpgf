@@ -15,7 +15,7 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
-    function rvInitMap(geoService, events) {
+    function rvInitMap(geoService, events, storageService) {
 
         const directive = {
             restrict: 'A',
@@ -26,6 +26,7 @@
         function linkFunc(scope, el) {
             // deregister after the first `rvReady` event as it's fired only once
             const deRegister = scope.$on(events.rvReady, () => {
+                storageService.panels.map = el;
                 geoService.assembleMap(el[0]);
                 deRegister();
             });
