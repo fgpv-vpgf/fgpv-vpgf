@@ -300,6 +300,10 @@
                 console.log('enhance ', layer, objId);
                 geo.then(geoInfo => {
                     if (geoInfo) {
+                        const barWidth = $('.main-appbar').outerWidth();
+                        const mapWidth = $('.fgpv').outerWidth();
+                        const ratio = (barWidth / mapWidth) / 2;
+
                         // make new graphic with proper spatialReference
                         geoInfo.feature.geometry.spatialReference = layer.spatialReference;
                         const newg = gapiService.gapi.proj.Graphic({
@@ -316,11 +320,21 @@
                         const newExt = gapiService.gapi.mapManager.Extent(gextent.x1, gextent.y1,
                             gextent.x0, gextent.y0, gextent.sr);
 
+                        // handles extent
                         if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
-                            const eExt = newExt.expand(3);
-                            map.setExtent(eExt.offset(0, (eExt.ymax - eExt.ymin) / 4));
+                            const eExt = newExt.expand(4);
+                            const xOffset = (eExt.xmax - eExt.xmin) * ratio * (-1);
+                            const gExt = eExt.offset(xOffset, (eExt.ymax - eExt.ymin) / 4);
+                            map.setExtent(gExt);
                         } else {
-                            map.centerAndZoom(newExt.getCenter(), 8);
+                            // handles points
+                            const pt = newExt.getCenter();
+                            const zoomed = map.setZoom(8);
+                            zoomed.then(() => {
+                                const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
+                                const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
+                                map.centerAt(newPt, 8);
+                            });
                         }
                     }
                 });
