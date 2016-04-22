@@ -4,13 +4,6 @@
     // layer group ids should not collide
     let itemIdCounter = 0;
 
-    // visibility toggle logic goes here
-    // TODO: deal with out-of-scale visibility state
-    const VISIBILITY_TOGGLE = {
-        off: 'on',
-        on: 'off'
-    };
-
     // TODO: move this somewhere later
     // jscs:disable maximumLineLength
     const NO_IMAGE =
@@ -60,16 +53,11 @@
 
             /**
              * Sets or toggles visibility of the layer legend entry
-             * @param {Boolean|undefined} value target visibility value; toggles visibiliyt if not set
+             * @param {Boolean|undefined} value target visibility value; toggles visibility if not set
              */
             setVisibility(value) {
                 const option = this.options.visibility;
-
-                if (typeof value !== 'undefined') {
-                    option.value = value ? 'on' : 'off';
-                } else {
-                    option.value = VISIBILITY_TOGGLE[option.value];
-                }
+                option.value = typeof value !== 'undefined' ? value : !option.value;
             },
 
             /**
@@ -77,7 +65,7 @@
              * @return {Boolean} true - visible; false - not visbile; undefined - visible and invisible at the same time
              */
             getVisibility() {
-                return this.options.visibility.value === 'on';
+                return this.options.visibility.value;
             },
 
             setOpacity(value) {
@@ -197,7 +185,7 @@
             // TODO: add hook to set group options
             options: {
                 visibility: {
-                    value: 'on', // 'off', 'zoomIn', 'zoomOut'
+                    value: true,
                     enabled: true
                 },
                 remove: {
@@ -237,24 +225,20 @@
              */
             setVisibility(value, ...arg) {
                 const option = this.options.visibility;
-                if (typeof value !== 'undefined') {
-                    option.value = value ? 'on' : 'off';
-                } else {
-                    option.value = VISIBILITY_TOGGLE[option.value];
-                }
+                option.value = typeof value !== 'undefined' ? value : !option.value;
 
                 // set visibility to the rest of the group
                 if (this.type === 'group') {
-                    this.items.forEach(item => item.setVisibility(option.value === 'on', ...arg));
+                    this.items.forEach(item => item.setVisibility(option.value, ...arg));
                 }
             },
 
             /**
              * Returns visibility of the group legend entry
-             * @return {Boolean} true - visible; false - not visbile; undefined - visible and invisible at the same time
+             * @return {Boolean} true - visible; false - not visible; undefined - visible and invisible at the same time (AKA blink)
              */
             getVisibility() {
-                return this.options.visibility.value === 'on';
+                return this.options.visibility.value;
             },
 
             setOpacity(value) {
