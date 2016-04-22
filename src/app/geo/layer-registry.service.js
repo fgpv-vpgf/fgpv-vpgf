@@ -21,13 +21,10 @@
         function layerRegistry(geoState, mapObject, config) {
 
             const layers = {}; // layer collection
-            const legend = {
-                items: []
-            }; // legend construct, to be consumed by toc; deflection +2
 
             // this `service` object will be exposed through `geoService`
             const service = {
-                legend,
+                legend: null,
                 layers,
                 constructLayers,
                 generateLayer,
@@ -41,6 +38,8 @@
             const ref = {
                 legendService: legendService(config, service)
             };
+
+            service.legend = ref.legendService.legend;
 
             return initialRegistration();
 

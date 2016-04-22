@@ -31,7 +31,7 @@
             },
             scope: {
                 entry: '=',
-                type: '=?'
+                type: '@?'
             },
             link: link,
             controller: () => {},
