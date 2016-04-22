@@ -10,10 +10,8 @@
 const maxW = 32;
 const maxH = 32;
 
-// switch quotes to be single, so they will not be escaped (less space in browser)
-// jscs:disable validateQuoteMarks
-const emptySVG = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'></svg>"; // jshint ignore:line
-// jscs:enable validateQuoteMarks
+// use single quotes so they will not be escaped (less space in browser)
+const emptySVG = `<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'></svg>`;
 
 /**
 * Determines the type (class) of a renderer object.
@@ -381,60 +379,6 @@ function getGlyphCorners(size) {
 }
 
 /**
-* Calculate an SVG path for an X marker.
-* @private
-* @param  {Object} symbol a SimpleMarker ESRI symbol object, X style.
-* @return {String} SVG path of an X, sized and centered
-*/
-function makePathX(symbol) {
-    const c = getGlyphCorners(symbol.size);
-    return `M ${c.upLeft},${c.upLeft} ${c.loRite},${c.loRite} M ${c.upLeft},${c.loRite} ${c.loRite},${c.upLeft}`;
-}
-
-/**
-* Calculate an SVG path for a square marker.
-* @private
-* @param  {Object} symbol a SimpleMarker ESRI symbol object, square style.
-* @return {String} SVG path of an square, sized and centered
-*/
-function makePathSquare(symbol) {
-    const c = getGlyphCorners(symbol.size);
-    return `M ${c.upLeft},${c.upLeft} ${c.upLeft},${c.loRite} ${c.loRite},${c.loRite} ${c.loRite},${c.upLeft} Z`;
-}
-
-/**
-* Calculate an SVG path for a cross marker.
-* @private
-* @param  {Object} symbol a SimpleMarker ESRI symbol object, cross style.
-* @return {String} SVG path of an cross, sized and centered
-*/
-function makePathCross(symbol) {
-    const c = getGlyphCorners(symbol.size);
-    return `M ${c.upLeft},${c.middle} ${c.loRite},${c.middle} M ${c.middle},${c.loRite} ${c.middle},${c.upLeft}`;
-}
-
-/**
-* Calculate an SVG path for a diamond marker.
-* @private
-* @param  {Object} symbol a SimpleMarker ESRI symbol object, X style.
-* @return {String} SVG path of an X, sized and centered
-*/
-function makePathDiamond(symbol) {
-    const c = getGlyphCorners(symbol.size);
-    return `M ${c.upLeft},${c.middle} ${c.middle},${c.loRite} ${c.loRite},${c.middle} ${c.middle},${c.upLeft} Z`;
-}
-
-/**
-* Calculate an SVG path for a path marker.
-* @private
-* @param  {Object} symbol a SimpleMarker ESRI symbol object, path style.
-* @return {String} SVG path of the path
-*/
-function makePathPath(symbol) {
-    return symbol.path || '';
-}
-
-/**
 * Generate an SVG object for a non-circle marker symbol.
 * @private
 * @param  {Object} symbol a SimpleMarker ESRI symbol object, non-circle style.
@@ -442,17 +386,33 @@ function makePathPath(symbol) {
 */
 function makeGlyphSVG(symbol) {
     const glyphSVG = newSVG('path');
-    const pathMap = {
-        cross: makePathCross,
-        diamond: makePathDiamond,
-        square: makePathSquare,
-        x: makePathX,
-        path: makePathPath
-    };
+    let path;
 
     // get the appropriate drawing path for the symbol
-    glyphSVG.addProp('d', pathMap[symbol.style](symbol));
+    if (symbol.style === 'path') {
+        path = symbol.path;
+    } else {
+        // jscs:disable maximumLineLength
+        const c = getGlyphCorners(symbol.size);
+        switch (symbol.style) {
+            case 'cross':
+                path = `M ${c.upLeft},${c.middle} ${c.loRite},${c.middle} M ${c.middle},${c.loRite} ${c.middle},${c.upLeft}`;
+                break;
+            case 'diamond':
+                path = `M ${c.upLeft},${c.middle} ${c.middle},${c.loRite} ${c.loRite},${c.middle} ${c.middle},${c.upLeft} Z`;
+                break;
+            case 'square':
+                path = `M ${c.upLeft},${c.upLeft} ${c.upLeft},${c.loRite} ${c.loRite},${c.loRite} ${c.loRite},${c.upLeft} Z`;
+                break;
+            case 'x':
+                path = `M ${c.upLeft},${c.upLeft} ${c.loRite},${c.loRite} M ${c.upLeft},${c.loRite} ${c.loRite},${c.upLeft}`;
+                break;
+        }
 
+        // jscs:enable maximumLineLength
+    }
+
+    glyphSVG.addProp('d', path);
     return glyphSVG;
 }
 
@@ -535,26 +495,9 @@ function makeSVG(symbol) {
 
     const svg = typeHandler[symbol.type](symbol);
 
-    // switch quotes to be single, so they will not be escaped (less space in browser)
-    // jscs:disable validateQuoteMarks
-    return (head + svg.belch() +  foot).replace(/"/g, "'"); // jshint ignore:line
-    // jscs:enable validateQuoteMarks
-}
+    // use single quotes so they will not be escaped (less space in browser)
+    return (head + svg.belch() +  foot).replace(/"/g, `'`);
 
-/**
-* Generate an object defining a single legend item.
-* @private
-* @param  {String} label label of the legend item
-* @param  {String} imageData legend icon in a data-url compatible format
-* @param  {String} contentType content type of the image data
-* @return {Object} a legend object populated with the parameter values
-*/
-function newLegendItem(label, imageData, contentType) {
-    return {
-        label,
-        imageData,
-        contentType
-    };
 }
 
 /**
@@ -565,6 +508,8 @@ function newLegendItem(label, imageData, contentType) {
 * @return {Object} a legend object populated with the symbol and label
 */
 function symbolToLegend(symbol, label) {
+    let imageData = emptySVG;
+    let contentType = 'image/svg+xml';
 
     try {
         switch (symbol.type) {
@@ -573,8 +518,8 @@ function symbolToLegend(symbol, label) {
             case 'simplefillsymbol':
             case 'cartographiclinesymbol':
 
-                const svgData = makeSVG(symbol);
-                return newLegendItem(label, svgData, 'image/svg+xml');
+                imageData = makeSVG(symbol);
+                break;
 
             case 'picturemarkersymbol':
             case 'picturefillsymbol':
@@ -590,8 +535,9 @@ function symbolToLegend(symbol, label) {
                 }
 
                 // normal url content should be in format 'data:image/png;base64,iVBORw0KGgo...'
-                const base64Data = symbol.url.substr(symbol.url.indexOf(',') + 1);
-                return newLegendItem(label, base64Data, symbol.contentType);
+                imageData = symbol.url.substr(symbol.url.indexOf(',') + 1);
+                contentType = symbol.contentType;
+                break;
 
             case 'textsymbol':
 
@@ -601,8 +547,9 @@ function symbolToLegend(symbol, label) {
         }
     } catch (e) {
         console.error('Issue encountered when converting symbol to legend image', e);
-        return newLegendItem('Error!', emptySVG, 'image/svg+xml');
+        label = 'Error!';
     }
+    return { label, imageData, contentType };
 }
 
 /**

@@ -13,6 +13,7 @@
     <div id='bucket2' />
     <div id='bucket3' />
     <div id='bucket4' />
+    <div id='bucket5' />
     <p id='mess' />
     <script src='dist/geoapi.min.js'></script>
     <script>
@@ -97,6 +98,21 @@
                 
                 legend4.layers[0].legend.forEach(legItem => {
                     addImg('bucket4', legItem);
+                })
+                             
+            });
+            
+            // class breaks fill
+            var layer5 = new api.layer.FeatureLayer('http://section917.cloudapp.net/arcgis/rest/services/TestData/ClassBreaks/MapServer/0');
+
+
+            layer5.on('load', function(evt) {
+               
+                var legend5 = api.symbology.rendererToLegend(layer5.renderer , 0);
+                console.log('legend5', legend5);
+                
+                legend5.layers[0].legend.forEach(legItem => {
+                    addImg('bucket5', legItem);
                 })
                              
             });
