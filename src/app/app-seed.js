@@ -8,12 +8,7 @@ angular.element(document)
         var nodes = Array.from(document.getElementsByClassName('fgpv'));
         var child;
 
-        var counter = 0;
-
         nodes.forEach(node => {
-            if (!node.getAttribute('id')) {
-                node.setAttribute('id', 'rv-app-' + counter++);
-            }
 
             // load shell template into the node
             // we need to create an explicit child under app's root node, otherwise animation

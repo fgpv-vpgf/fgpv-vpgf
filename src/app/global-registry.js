@@ -22,12 +22,6 @@
     // initialize gapi and store a return promise
     RV.gapiPromise = geoapi(RV.dojoURL, window);
 
-    RV.appRegistry = {};
-    RV.switchLanguage = switchLanguage;
-    RV.addRcsKeys = addRcsKeys;
-
-    /***/
-
     /**
      * Checks if a property is already set and applies the default.
      * @param  {String} name  property name
@@ -36,30 +30,6 @@
     function applyDefault(name, value) {
         if (typeof RV[name] === 'undefined') {
             RV[name] = value;
-        }
-    }
-
-    function switchLanguage(lang) {
-        Object.entries(RV.appRegistry).forEach(([id, appPromise]) => {
-            appPromise.then(app => {
-                app.setLanguage(lang);
-            });
-        });
-    }
-
-    /**
-     * Add RCS layers on a given map.  Can be used after a map has already been loaded
-     * @param  {String} mapId  the map to add the RCS layers to
-     * @param  {Array} keys  array of RCS keys (String) to be added
-     */
-    function addRcsKeys(mapId, keys) {
-        if (RV.appRegistry[mapId]) {
-            RV.appRegistry[mapId].then(app => {
-                // load the rcs keys into the map app
-                app.loadRcsLayers(keys);
-            });
-        } else {
-            console.warn('Add RCS Keys - Map id not found: ' + mapId);
         }
     }
 })();
