@@ -52,4 +52,69 @@
         currScript.type = 'text/javascript';
         bodyNode.appendChild(currScript);
     });
+
+    // check if the global RV registry object already extists
+    if (typeof window.RV === 'undefined') {
+        window.RV = {};
+    }
+
+    const RV = window.RV; // just a reference
+
+    // "private" registry of map proxies
+    const _mapRegistry = [];
+    RV._mapRegistry = _mapRegistry;
+    RV.getMap = getMap;
+
+    // appeasing this rule makes the code fail disallowSpaceAfterObjectKeys
+    /* jscs:disable requireSpacesInAnonymousFunctionExpression */
+    const mapProxy = {
+        _appInstance: null,
+
+        _proxy(action, ...args) {
+            this._appInstance.then(appInstance =>
+                appInstance[action](...args)
+            );
+        },
+
+        loadRcsLayers(keys) {
+            this._proxy('loadRcsLayers', keys);
+        },
+
+        setLanguage(lang) {
+            this._proxy('setLanguage', lang);
+        },
+
+        _init() {
+            this._appInstance = new Promise((resolve) => {
+                // store a callback function in the proxy object itself for map instances to call upon readiness
+                this._registerMap = appInstance => {
+                    // store actual instance of the map; after this point, all queued calls to `addRcsLayer`, `switchLanguage`, etc. will trigger
+                    resolve(appInstance);
+                };
+            });
+
+            return this;
+        }
+    };
+    /* jshint:enable requireSpacesInAnonymousFunctionExpression */
+
+    const nodes = Array.from(document.getElementsByClassName('fgpv'));
+    let counter = 0;
+
+    nodes.forEach(node => {
+
+        if (!node.getAttribute('id')) {
+            node.setAttribute('id', 'rv-app-' + counter++);
+        }
+
+        _mapRegistry[node.getAttribute('id')] = Object.create(mapProxy)._init();
+    });
+
+    /***/
+
+    // external "sync" function to retrieve a map instance
+    // in reality it returns a map proxy queueing calls to the map until it's ready
+    function getMap(id) {
+        return _mapRegistry[id];
+    }
 })();
