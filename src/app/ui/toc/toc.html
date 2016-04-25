@@ -4,31 +4,31 @@
         <!--{{ self.geoService.legend }} -->
 
         <!-- Do not ask me what `dx-start-with` and `dx-connect` are and how this whole thing works as I'm not completely understan it myself. I'll update this comment when I get it. Read this is you are curious: https://github.com/dotJEM/angular-tree -->
-        <ul class="rv-layer-list rv-root rv-layer-level-0" dx-start-with="self.geoService.legend">
+        <ul class="rv-layer-list rv-root rv-layer-level-0" dx-start-with="::self.geoService.legend">
             <!--{ item }}-->
 
             <li ng-repeat="item in $dxPrior.items track by item.id" class="rv-toggle-slide">
 
                 <rv-toc-entry
-                    class="rv-toc-{{ item.type }}-entry"
-                    entry="item"
-                    ng-if="item.type === 'layer'"
+                    class="rv-toc-{{ ::item.type }}-entry"
+                    entry="::item"
+                    ng-if="::item.type === 'layer'"
                     ng-class="[ { 'rv-selected': item.selected }, item.state ]"></rv-toc-entry>
 
                 <rv-toc-entry
-                    class="rv-toc-{{ item.type }}-entry"
+                    class="rv-toc-{{ ::item.type }}-entry"
+                    entry="::item"
+                    ng-if="::item.type === 'group'"
                     ng-class="{ 'rv-selected': item.selected }"
-                    ng-if="item.type === 'group'"
-                    entry="item"
                     type="group"></rv-toc-entry>
 
                 <ul
-                    class="rv-layer-list rv-toggle-slide rv-layer-level-{{ $dxLevel }}"
-                    ng-if="item.type === 'group'"
+                    class="rv-layer-list rv-toggle-slide rv-layer-level-{{ ::$dxLevel }}"
+                    ng-if="::item.type === 'group'"
                     dx-connect="item"
                     ng-show="item.expanded"></ul>
 
-                <div class="rv-shadow" ng-if="item.type === 'group'"></div>
+                <div class="rv-shadow" ng-if="::item.type === 'group'"></div>
 
                 <md-progress-linear class="rv-toc-progress-indicator" md-mode="indeterminate" ng-show="item.isLoading"></md-progress-linear>
 

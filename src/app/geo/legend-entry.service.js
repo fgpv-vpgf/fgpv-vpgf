@@ -263,7 +263,7 @@
 
             /**
              * Finds and returns a legend entry object with the specified id.
-             * @param  {Number} id
+             * @param  {Number} entryId
              * @return {Object}    legend entry object or undefined if nothing is found
              */
             getItemById(entryId) {

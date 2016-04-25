@@ -237,7 +237,7 @@
                     /*switch (state) {
                         case: layerStates
                     }*/
-                 }, delay);
+                }, delay);
             }
 
             /**
