@@ -15,7 +15,7 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, $timeout, gapiService) {
+    function mapServiceFactory($q, $timeout, gapiService, storageService) {
         return mapService;
 
         function mapService(geoState, config) {
@@ -300,6 +300,15 @@
                 console.log('enhance ', layer, objId);
                 geo.then(geoInfo => {
                     if (geoInfo) {
+                        const barWidth = storageService.panels.sidePanel.outerWidth();
+                        const mapWidth = storageService.panels.map.outerWidth();
+
+                        // barWidth/mapWidth is the % of map blocked by side panel
+                        // shifting by 1/2 % of blocked map offsets point to center of visible map
+                        // this ratio always changes based on window resizing/map resizing
+                        // since the side panel is always 400px; need ratio every time zoom happens
+                        const ratio = (barWidth / mapWidth) / 2;
+
                         // make new graphic with proper spatialReference
                         geoInfo.feature.geometry.spatialReference = layer.spatialReference;
                         const newg = gapiService.gapi.proj.Graphic({
@@ -316,16 +325,21 @@
                         const newExt = gapiService.gapi.mapManager.Extent(gextent.x1, gextent.y1,
                             gextent.x0, gextent.y0, gextent.sr);
 
+                        // handles extent
                         if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
-                            map.setExtent(newExt.expand(3));
+                            const eExt = newExt.expand(4);
+                            const xOffset = (eExt.xmax - eExt.xmin) * ratio * (-1);
+                            const gExt = eExt.offset(xOffset, (eExt.ymax - eExt.ymin) / 4);
+                            map.setExtent(gExt);
                         } else {
-                            // zoom to the new point from spatialreference
-                            // FIXME: change config/schema to support zoom level
-                            const zoomSize = 20000;
-                            const padExtent = gapiService.gapi.mapManager.Extent(gextent.x1 -
-                                zoomSize, gextent.y1 - zoomSize,
-                                gextent.x0 + zoomSize, gextent.y0 + zoomSize, gextent.sr);
-                            map.setExtent(padExtent);
+                            // handles points
+                            const pt = newExt.getCenter();
+                            const zoomed = map.setZoom(8);
+                            zoomed.then(() => {
+                                const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
+                                const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
+                                map.centerAt(newPt, 8);
+                            });
                         }
                     }
                 });
