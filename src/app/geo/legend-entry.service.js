@@ -217,7 +217,7 @@
 
             /**
              * Removes a given item (layer or another group) from a layer group.
-             * @param {Object} item     layer or group item to add
+             * @param {Object} item     layer or group item to remove
              * @return {Number}      index of the item before removal or -1 if the item is not in the group
              */
             remove(item) {

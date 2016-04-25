@@ -46,7 +46,6 @@
                 legend: legendEntryFactory.entryGroup(), // this is legend's invisible root group; to be consumed by toc
 
                 addLayer,
-                removeLayer,
                 setLayerState,
                 setLayerLoadingFlag
             };
@@ -221,31 +220,24 @@
             }
 
             /**
-             * Removes a provided layer from the appropriate group.
-             * @param {Object} layer object from `layerRegistry` `layers` object
-             */
-            function removeLayer(layer) {
-                layerTypeGroups[layer.state.layerType].remove(layer.state);
-            }
-
-            /**
              * Sets state of the layer entry: error, default, out-of-scale, etc
              * @param {Object} layer layer object from `layerRegistry`
              * @param {String} state defaults to `default`; state name
              * @param {Number} delay defaults to 0; delay before setting the state
              */
             function setLayerState(layer, state = layerStates.default, delay = 0) {
-                /*const legendEntry = layer.state;
+
+                const legendEntry = layer.state;
 
                 // same as with map loading indicator, need timeout since it's a non-Angular async call
                 $timeout.cancel(legendEntry.stateTimeout);
                 legendEntry.stateTimeout = $timeout(() => {
-                    legendEntry.state = state;*/
+                    legendEntry.state = state;
 
                     /*switch (state) {
                         case: layerStates
                     }*/
-                //}, delay);
+                 }, delay);
             }
 
             /**

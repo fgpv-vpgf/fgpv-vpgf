@@ -136,7 +136,7 @@
             }
 
             /**
-             * Removes the layer from the map and from the layer registry
+             * Removes the layer from the map and from the layer registry; This will not remove the corresponding legend entry.
              * @param {Number} layerId  the id of the layer to be removed
              * TODO: needs more work for removing dynamic layers and its children;
              */
@@ -150,8 +150,6 @@
 
                 mapObject.removeLayer(l.layer);
                 delete service.layers[layerId]; // remove layer from the registry
-
-                ref.legendService.removeLayer(l);
             }
 
             /**
