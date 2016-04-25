@@ -1,4 +1,4 @@
-/* global bard, $compile, $rootScope, $httpBackend, $q */
+/* global bard, $compile, $rootScope, $rootElement, $httpBackend, $q */
 
 describe('rvShell', () => {
     let scope;
@@ -24,7 +24,13 @@ describe('rvShell', () => {
     }
 
     function mockGlobalRegistry($provide) {
-        $provide.constant('globalRegistry', { appRegistry: {} });
+        $provide.constant('globalRegistry', {
+            _mapRegistry: {
+                'rv-app-0': {
+                    _registerMap: angular.noop
+                }
+            }
+        });
     }
 
     // mock custom loader module
@@ -55,7 +61,10 @@ describe('rvShell', () => {
             mockConfigService, mockGapiService, mockGeoService, mockGlobalRegistry);
 
         // inject angular services
-        bard.inject('$compile', '$rootScope', '$httpBackend', '$q');
+        bard.inject('$compile', '$rootScope', '$rootElement', '$httpBackend', '$q');
+
+        // set root element id as the app's id
+        $rootElement.attr('id', 'rv-app-0');
 
         // crete new scope
         scope = $rootScope.$new();
