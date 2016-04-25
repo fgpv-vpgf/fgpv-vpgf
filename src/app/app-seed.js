@@ -3,19 +3,14 @@ angular.element(document)
         'use strict';
         // NOTE: let and const cannot be used in this file due to protractor problems
 
-        // convert html collection to array:
-        // https://babeljs.io/docs/learn-es2015/#math-number-string-object-apis
-        var nodes = Array.from(document.getElementsByClassName('fgpv'));
-        var child;
-
-        nodes.forEach(node => {
+        // Object.entries converts _mapRegistry into an array of [id, map] pairs
+        window.RV._nodes.forEach(node => {
 
             // load shell template into the node
             // we need to create an explicit child under app's root node, otherwise animation
             // doesnt' work; see this plunk: http://plnkr.co/edit/7EIM71IOwC8h1HdguIdD
             // or this one: http://plnkr.co/edit/Ds8e8d?p=preview
-            child = angular.element('<rv-shell class="md-body-1">')[0];
-            node.appendChild(child);
+            node.appendChild(angular.element('<rv-shell class="md-body-1">')[0]);
 
             // bootstrap each node as an Angular app
             // strictDi enforces explicit dependency names on each component: ngAnnotate should find most automatically

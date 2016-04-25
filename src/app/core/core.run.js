@@ -49,7 +49,7 @@
 
         // Attaches a promise to the appRegistry which resolves with apiService
         $rootScope.$on(events.rvReady, () => {
-            globalRegistry._mapRegistry[$rootElement.attr('id')]._registerMap(service);
+            globalRegistry.getMap($rootElement.attr('id'))._registerMap(service);
             console.log($rootElement.attr('id') + ' registered');
         });
 

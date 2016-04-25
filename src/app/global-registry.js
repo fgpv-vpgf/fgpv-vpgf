@@ -8,7 +8,7 @@
         dojoURL: 'http://js.arcgis.com/3.14/'
     };
 
-    // check if the global RV registry object already extists
+    // check if the global RV registry object already exists
     if (typeof window.RV === 'undefined') {
         window.RV = {};
     }

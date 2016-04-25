@@ -53,16 +53,15 @@
         bodyNode.appendChild(currScript);
     });
 
-    // check if the global RV registry object already extists
+    // check if the global RV registry object already exists
     if (typeof window.RV === 'undefined') {
         window.RV = {};
     }
 
     const RV = window.RV; // just a reference
 
-    // "private" registry of map proxies
-    const _mapRegistry = [];
-    RV._mapRegistry = _mapRegistry;
+    // registry of map proxies
+    const mapRegistry = [];
     RV.getMap = getMap;
 
     // appeasing this rule makes the code fail disallowSpaceAfterObjectKeys
@@ -85,20 +84,26 @@
         },
 
         _init() {
-            this._appInstance = new Promise((resolve) => {
+            this._appInstance = new Promise((resolve) =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness
-                this._registerMap = appInstance => {
-                    // store actual instance of the map; after this point, all queued calls to `addRcsLayer`, `switchLanguage`, etc. will trigger
-                    resolve(appInstance);
-                };
-            });
+                this._registerMap = appInstance =>
+                    // resolve with the actual instance of the map;
+                    // after this point, all queued calls to `loadRcsLayers`, `setLanguage`, etc. will trigger
+                    resolve(appInstance)
+            );
 
             return this;
         }
     };
     /* jshint:enable requireSpacesInAnonymousFunctionExpression */
 
+    // convert html collection to array:
+    // https://babeljs.io/docs/learn-es2015/#math-number-string-object-apis
     const nodes = Array.from(document.getElementsByClassName('fgpv'));
+
+    // store nodes to use in app-seed; avoids a second DOM traversal
+    RV._nodes = nodes;
+
     let counter = 0;
 
     nodes.forEach(node => {
@@ -107,7 +112,7 @@
             node.setAttribute('id', 'rv-app-' + counter++);
         }
 
-        _mapRegistry[node.getAttribute('id')] = Object.create(mapProxy)._init();
+        mapRegistry[node.getAttribute('id')] = Object.create(mapProxy)._init(node);
     });
 
     /***/
@@ -115,6 +120,6 @@
     // external "sync" function to retrieve a map instance
     // in reality it returns a map proxy queueing calls to the map until it's ready
     function getMap(id) {
-        return _mapRegistry[id];
+        return mapRegistry[id];
     }
 })();
