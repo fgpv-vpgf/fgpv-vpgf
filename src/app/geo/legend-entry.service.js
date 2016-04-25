@@ -262,6 +262,18 @@
             },
 
             /**
+             * Finds and returns a legend entry object with the specified id.
+             * @param  {Number} id
+             * @return {Object}    legend entry object or undefined if nothing is found
+             */
+            getItemById(entryId) {
+                return this.walkItems(item =>
+                    item.id === entryId ? item : [],
+                    true
+                )[0]; // true is important here as we want to test entry groups as well
+            },
+
+            /**
              * Walks child items executing the provided function on each leaf;
              * Returns a flatten array of results from the provided function;
              * @param  {Function} action function which is passed the following arguments: legend layer entry, its index in its parent's array, parent

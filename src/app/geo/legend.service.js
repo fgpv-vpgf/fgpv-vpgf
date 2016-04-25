@@ -61,7 +61,6 @@
              * Initializes autolegend by adding data and image groups to it.
              */
             function init() {
-                service.legend.getLegendEntry = getLegendEntry;
             }
 
             /**
@@ -263,25 +262,6 @@
                 legendEntry.loadingTimeout = $timeout(() => {
                     legendEntry.isLoading = isLoading;
                 }, delay);
-            }
-
-            /**
-             * Finds and returns a legend entry object with the specified id.
-             * @param  {Number} id
-             * @return {Object}    legend entry object
-             */
-            function getLegendEntry(id) {
-                let result;
-
-                service.legend.items.forEach(entryGroup => {
-                    entryGroup.walkItems(item => {
-                        if (item.id === id) {
-                            result = item;
-                        }
-                    }, true); // true is important here as we want to test entry groups as well
-                });
-
-                return result;
             }
         }
 
