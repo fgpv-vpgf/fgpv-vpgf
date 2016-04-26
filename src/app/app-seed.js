@@ -3,7 +3,7 @@ angular.element(document)
         'use strict';
         // NOTE: let and const cannot be used in this file due to protractor problems
 
-        // Object.entries converts _mapRegistry into an array of [id, map] pairs
+        // The app nodes in the dom
         window.RV._nodes.forEach(node => {
 
             // load shell template into the node
