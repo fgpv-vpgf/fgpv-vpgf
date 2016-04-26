@@ -68,9 +68,27 @@
 
                 // jscs:disable maximumLineLength
                 fDataPromise.then(data => {
+                    let oidInd;
+
+                    // find column where object ID is
+                    stateManager.display.filters.data.columns.every((value, index) => {
+                        if (value.title === 'OBJECTID') {
+                            oidInd = index;
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    });
+
+                    // duplicate object ID column then add as last column to table
+                    stateManager.display.filters.data.columns.push(stateManager.display.filters.data.columns[oidInd]);
+
                     const featureIdx = requester.legendEntry.featureId;
                     stateManager.display.filters.data.data.forEach(row => {
                         let fData = data[featureIdx];
+
+                        // populate object ID column
+                        row.push(row[oidInd]);
 
                         // FIXME: featureIndex is hard coded to '0' right now, iterate if a layer's feature index is showing up properly
                         let i = 0;
@@ -97,6 +115,12 @@
                         })
                         .DataTable({
                             dom: 'rti',
+                            columnDefs: [
+                                {
+                                    targets: [stateManager.display.filters.data.columns.length - 1],
+                                    visible: false
+                                }
+                            ],
                             columns: stateManager.display.filters.data.columns,
                             data: stateManager.display.filters.data.data,
                             deferRender: true,
@@ -124,8 +148,8 @@
                     self.table.on('select', function (e, dt, type, indexes) {
                         self.table.on('click', 'md-icon.material-icons', function () {
                             // FIXME: Assumes OBJECTID always first column; make it not so
-                            const id = dt.context[0].aoData[indexes[0]]._aData[0];
-                            const objId = id.split(' ')[0];
+                            const ind = dt.context[0].aoData[indexes[0]]._aData.length - 1;
+                            const objId = dt.context[0].aoData[indexes[0]]._aData[ind];
                             const layerId = self.display.requester.id;
                             const featureIndex = self.display.data.featureIndex;
                             const layer = geoService.layers[layerId].layer;
