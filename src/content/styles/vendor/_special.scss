@@ -20,6 +20,10 @@
     top: - rem(999);
 }
 
+md-sidenav {
+    display: flex;
+}
+
 md-menu-content {
     // a bit of hack on top of the md-menu-item
     // the original uses absolute positioning inside a menubar menu, since we are not using menubar, it breaks;
@@ -29,7 +33,7 @@ md-menu-content {
         &[type='checkbox'] {
             &.md-indent {
 
-                // indent menu items which are not selected 
+                // indent menu items which are not selected
                 .md-button[aria-checked="false"] {
                     padding-left: rem(1.6) + rem(2.4) + rem(1.6);
                 }
