@@ -217,7 +217,7 @@
 
             /**
              * Removes a given item (layer or another group) from a layer group.
-             * @param {Object} item     layer or group item to add
+             * @param {Object} item     layer or group item to remove
              * @return {Number}      index of the item before removal or -1 if the item is not in the group
              */
             remove(item) {
@@ -259,6 +259,18 @@
 
             setOpacity(value) {
                 this.options.opacity.value = value;
+            },
+
+            /**
+             * Finds and returns a legend entry object with the specified id.
+             * @param  {Number} entryId
+             * @return {Object}    legend entry object or undefined if nothing is found
+             */
+            getItemById(entryId) {
+                return this.walkItems(item =>
+                    item.id === entryId ? item : [],
+                    true
+                )[0]; // true is important here as we want to test entry groups as well
             },
 
             /**

@@ -43,39 +43,8 @@ $layer-item-height: rem(6.0);
         max-width: 100%;
 
         > li {
+            position: relative;
             overflow: auto;
-            // TODO: move to a separate file maybe or a separate mixin
-            //$du: $swift-ease-in-duration;
-            //$de: $swift-ease-in-duration * 0.3;
-
-            /*&.ng-enter {
-                transition: transform $du + $de $swift-ease-in-out-timing-function $de, margin $du $swift-ease-in-out-timing-function 0s;
-            }
-
-            &.ng-leave {
-                transition: transform $du $swift-ease-in-out-timing-function 0s, margin $du + $de $swift-ease-in-out-timing-function $de;
-            }
-
-            &.ng-enter {
-                transform: translate3d(100%, 0, 0);
-                margin-bottom: - rem(4.8); // make sure it matches layer item height
-            }
-
-            &.ng-leave-active {
-                transform: translate3d(-100%, 0, 0);
-                margin-bottom: - rem(4.8); // make sure it matches layer item height
-            }
-
-            &.ng-enter-active {
-                transform: translate3d(0, 0, 0);
-                margin-bottom: 0;
-            }
-
-            &.ng-enter-stagger,
-            &.ng-leave-stagger {
-                transition-duration: 0;
-                transition-delay: 200ms;
-            }*/
         }
         // rotate the icon on the toggle button on open
         .md-toggle-icon {
@@ -133,15 +102,15 @@ $layer-item-height: rem(6.0);
 // adjust layer item, layer group toggle, and layer list divider indent
 
 @mixin layer-level-step($index) {
-    &.rv-#{$index} {
+    &-#{$index} {
         $offset: rem(0.8); // multiplied by the indentation level
 
         .rv-toc-layer-entry{
-            padding-left: $offset * ($index + 1) + rem(1.0) + $toc-padding;
+            padding-left: $offset * ($index) + rem(1.6) + $toc-padding;
         }
 
         .rv-toc-group-entry {
-            padding-left: $offset * ($index) + rem(1.0) + $toc-padding;
+            padding-left: $offset * ($index) + rem(1.6) + $toc-padding;
         }
 
         .rv-layer-list-divider {
@@ -231,7 +200,7 @@ absolutely position a button underneath an item so it acts like a button body fo
 
         @include entry-controls;
         @include selected-layer-entry;
-        
+
         display: flex;
         align-items: center;
         height: $layer-item-height;

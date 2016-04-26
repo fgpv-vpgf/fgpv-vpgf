@@ -373,7 +373,7 @@
          * @param {Boolean} value defaults to true;
          */
         function setTocEntrySelectedState(id, value = true) {
-            const entry = geoService.legend.getLegendEntry(id);
+            const entry = geoService.legend.getItemById(id);
             if (entry) {
                 // toc entry is considered selected if its metadata, settings, or data panel is opened;
                 // when switching between panels (opening metadata when settings is already open), events may happen out of order

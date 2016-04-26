@@ -21,13 +21,10 @@
         function layerRegistry(geoState, mapObject, config) {
 
             const layers = {}; // layer collection
-            const legend = {
-                items: []
-            }; // legend construct, to be consumed by toc; deflection +2
 
             // this `service` object will be exposed through `geoService`
             const service = {
-                legend,
+                legend: null,
                 layers,
                 constructLayers,
                 generateLayer,
@@ -41,6 +38,8 @@
             const ref = {
                 legendService: legendService(config, service)
             };
+
+            service.legend = ref.legendService.legend;
 
             return initialRegistration();
 
@@ -137,7 +136,7 @@
             }
 
             /**
-             * Removes the layer from the map and from the layer registry
+             * Removes the layer from the map and from the layer registry; This will not remove the corresponding legend entry.
              * @param {Number} layerId  the id of the layer to be removed
              * TODO: needs more work for removing dynamic layers and its children;
              */
@@ -151,8 +150,6 @@
 
                 mapObject.removeLayer(l.layer);
                 delete service.layers[layerId]; // remove layer from the registry
-
-                ref.legendService.removeLayer(l);
             }
 
             /**
