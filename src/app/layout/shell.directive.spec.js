@@ -25,11 +25,12 @@ describe('rvShell', () => {
 
     function mockGlobalRegistry($provide) {
         $provide.constant('globalRegistry', {
-            _mapRegistry: {
-                'rv-app-0': {
+            getMap: () => {
+                return {
                     _registerMap: angular.noop
-                }
-            }
+                };
+            },
+            _nodes: {}
         });
     }
 
@@ -68,6 +69,9 @@ describe('rvShell', () => {
 
         // crete new scope
         scope = $rootScope.$new();
+
+        // "mock" the node array that app-seed uses
+        window.RV._nodes = [];
 
         directiveElement = angular.element(
             '<rv-shell></rv-shell>'
