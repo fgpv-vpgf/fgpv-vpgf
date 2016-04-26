@@ -48,12 +48,10 @@
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
-        const apiPromise = $q(resolve => {
-            $rootScope.$on(events.rvReady, resolve(service));
-            console.info('registered');
+        $rootScope.$on(events.rvReady, () => {
+            globalRegistry.getMap($rootElement.attr('id'))._registerMap(service);
+            console.log($rootElement.attr('id') + ' registered');
         });
-
-        globalRegistry.appRegistry[$rootElement.attr('id')] = apiPromise;
 
         /**********************/
 
