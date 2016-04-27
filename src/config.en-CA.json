@@ -136,6 +136,19 @@
       "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0"
     },
     {
+      "id":"geomet_temp",
+      "name":"GeoMet Temp",
+      "layerType":"ogcWms",
+      "featureInfoMimeType": "text/plain",
+      "layerEntries":[{"id":"GDPS.ETA_TT"}],
+      "url":"http://geo.weather.gc.ca/geomet/",
+      "options": {
+        "opacity": {
+          "value": 0.4
+        }
+      }
+    },
+    {
       "id":"aafc_plant_hardiness_zones",
       "name": "AAFC Plant Hardiness Zones",
       "layerType":"esriDynamic",

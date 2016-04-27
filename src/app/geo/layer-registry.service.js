@@ -95,9 +95,10 @@
                             service.registerLayer(layer, layerConfig, attributesPromise); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                         },
                         error: data => {
-                            console.log('layer error', layer.id, data);
+                            console.error('layer error', layer.id, data);
 
-                            ref.legendService.setLayerState(service.layers[layer.id], layerStates.error, 100);
+                            // FIXME layers that fail on initial load will never be added to the layers list
+                            // ref.legendService.setLayerState(service.layers[layer.id], layerStates.error, 100);
                         },
                         'update-start': data => {
                             console.log('update-start', layer.id, data);
