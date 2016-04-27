@@ -117,7 +117,7 @@
             * @returns {Promise} a promise which resolves when the query completes
             */
             function identifyDynamicLayer(layer, state, opts, panelData) {
-                if (!layer.visibleAtMapScale) {
+                if (!layer.visibleAtMapScale || !layer.visible) {
                     return $q.resolve(null);
                 }
 
@@ -192,7 +192,7 @@
             * @returns {Promise} a promise which resolves when the query completes
             */
             function identifyWmsLayer(layer, state, clickEvent, panelData) {
-                if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType)) {
+                if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType) || !layer.visible) {
                     return;
                 }
 
@@ -201,6 +201,7 @@
                     requestId: -1,
                     requester: {
                         name: state.name,
+                        symbology: state.symbology,
                         format: wmsInfoMap[state.featureInfoMimeType]
                     },
                     data: []
@@ -226,7 +227,7 @@
             * @returns {Promise} a promise which resolves when the query completes
             */
             function identifyFeatureLayer(layer, state, clickEvent, map, panelData) {
-                if (!layer.visibleAtMapScale) {
+                if (!layer.visibleAtMapScale || !layer.visible) {
                     return $q.resolve(null);
                 }
 
