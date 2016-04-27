@@ -160,8 +160,7 @@ module.exports = function () {
                 bowerModules + 'bardjs/dist/bard.js',
 
                 app + '**/*module*.js',
-                app + '**/!(injector).js', // excluding injector
-                app + 'app-seed.js',
+                app + '**/!(app-seed|injector).js', // excluding injector
                 config.templates,
 
                 config.specs,
