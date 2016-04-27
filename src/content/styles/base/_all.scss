@@ -4,6 +4,10 @@
 body & {
     color: $primary-text-color;
     background-color: #FFFFFF;
+
+    rv-shell {
+        background-color: #FFFFFF;
+    }
 }
 
 a {

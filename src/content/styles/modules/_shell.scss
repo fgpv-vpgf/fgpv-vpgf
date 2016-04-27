@@ -1,5 +1,7 @@
 @mixin shell {
     rv-shell {
+        overflow: hidden;
+
         .rv-shell-progress-indicator {
             bottom: 0;
             position: absolute;
