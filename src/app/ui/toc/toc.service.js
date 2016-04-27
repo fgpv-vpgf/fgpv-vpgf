@@ -245,7 +245,8 @@
          */
         function toggleSettings(entry) {
             const requester = {
-                id: entry.id
+                id: entry.id,
+                name: entry.name
             };
 
             const panelToClose = {
@@ -296,7 +297,8 @@
          */
         function toggleMetadata(entry) {
             const requester = {
-                id: entry.id
+                id: entry.id,
+                name: entry.name
             };
             const panelToClose = {
                 filters: false

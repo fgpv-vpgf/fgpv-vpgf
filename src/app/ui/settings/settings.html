@@ -1,4 +1,4 @@
-<rv-content-pane title-style="title" title-value="{{'settings.title' | translate}}">
+<rv-content-pane title-style="title" title-value="{{'settings.title' | translate}}: {{ self.display.requester.name }}">
     <div>
 
         <div class="rv-subsection" ng-if="self.settingSectionVisibility.display">
@@ -46,15 +46,6 @@
             </div>
 
         </div>
-
-        <p>
-            // TODO: remove paragraph to show that panel content is actually changing
-        </br>
-        layer display data:
-        <b>{{ self.display.requester.id }}</b>
-        <b>{{ self.display.requester.layerItem.opacity }}</b>
-    </p>
-
-</div>
+    </div>
 
 </rv-content-pane>
