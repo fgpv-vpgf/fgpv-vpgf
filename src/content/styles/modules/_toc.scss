@@ -91,7 +91,7 @@ $layer-item-height: rem(6.0);
         right: 0;
         top: 0;
         bottom: 0;
-        width: rem(0.3);
+        width: rem(0.5);
         opacity: 0.45;
         background-color: transparent;
         transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
@@ -177,6 +177,9 @@ absolutely position a button underneath an item so it acts like a button body fo
         // don't hide toggles on a selected layer
         @include entry-controls-hover;
 
+        // the colour md-buttons get on hover
+        background-color: rgba(158,158,158,0.2);
+
         &:before {
             background-color: $accent-color;
         }
@@ -187,7 +190,7 @@ absolutely position a button underneath an item so it acts like a button body fo
         position: absolute;
         content: "";
         background-color: transparent;
-        width: rem(0.3);
+        width: rem(0.5);
         right: 0;
         height: 100%;
         top: 0;
