@@ -26,7 +26,7 @@ function getFeatureInfoBuilder(esriBundle) {
         if (wmsLayer.version === '1.3' || wmsLayer.version === '1.3.0') {
             req = { CRS: 'EPSG:' + wkid, I: clickEvent.screenPoint.x, J: clickEvent.screenPoint.y,
                     STYLES: '', FORMAT: wmsLayer.imageFormat };
-            if (yxList.indexOf(String(wkid))) {
+            if (yxList.indexOf(String(wkid)) > -1) {
                 req.BBOX = `${ext.ymin},${ext.xmin},${ext.ymax},${ext.xmax}`;
             }
         } else {

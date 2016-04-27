@@ -962,6 +962,7 @@ module.exports = function (esriBundle, geoApi) {
         ArcGISImageServiceLayer: esriBundle.ArcGISImageServiceLayer,
         GraphicsLayer: esriBundle.GraphicsLayer,
         FeatureLayer: esriBundle.FeatureLayer,
+        ScreenPoint: esriBundle.ScreenPoint,
         Query: esriBundle.Query,
         TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
         ogc: ogc(esriBundle),
