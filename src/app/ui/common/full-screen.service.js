@@ -19,7 +19,7 @@
         .module('app.ui.common')
         .factory('fullScreenService', fullScreenService);
 
-    function fullScreenService($rootElement, $timeout, events, storageService, gapiService, geoService) {
+    function fullScreenService($rootElement, $timeout, storageService, gapiService, geoService) {
         const service = {
             toggle
         };
@@ -27,8 +27,6 @@
         const ref = {
             isExpanded: false,
             tl: undefined,
-
-            tlCollapse: undefined,
 
             mapContainerNode: undefined,
             shellNode: undefined,
@@ -47,9 +45,11 @@
 
             // pause and kill current running animation
             if (ref.tl) {
-                ref.tl.pause().kill();
+                ref.tl.pause()
+                    .kill();
             }
 
+            // store current center point of the map
             ref.trueCenterPoint = geoService.mapObject.extent.getCenter();
 
             if (!ref.isExpanded) {
@@ -59,15 +59,18 @@
                     onComplete
                 });
 
+                // get the container of all map layers
                 ref.mapContainerNode = storageService.panels.map.find('> .container > .container');
                 ref.shellNode = storageService.panels.shell;
                 ref.shellNodeBox = ref.shellNode[0].getBoundingClientRect();
 
                 // make overflow on the root element visible so we can 'pop' the map shell out
                 ref.tl.set($rootElement, {
-                    overflow: 'visible'
+                    overflow: 'visible',
+                    'z-index': 999
                 });
 
+                // pop out shell to make it ready for animation
                 ref.tl.set(ref.shellNode, {
                     position: 'fixed',
                     top: ref.shellNodeBox.top,
@@ -80,14 +83,14 @@
                     margin: 0
                 });
 
-                ref.tl.to(ref.mapContainerNode, RV_DURATION,
-                    {
-                        top: window.innerHeight / 2 - ref.shellNodeBox.height / 2,
-                        left: document.body.clientWidth / 2 - ref.shellNodeBox.width / 2,
-                        ease: RV_SWIFT_IN_OUT_EASE
-                    }, 0
-                );
+                // animate map layer container in the opposite direction to counteract its drifting up and left
+                ref.tl.to(ref.mapContainerNode, RV_DURATION, {
+                    top: window.innerHeight / 2 - ref.shellNodeBox.height / 2,
+                    left: document.body.clientWidth / 2 - ref.shellNodeBox.width / 2,
+                    ease: RV_SWIFT_IN_OUT_EASE
+                }, 0);
 
+                // animate shell taking over the page
                 ref.tl.to(ref.shellNode, RV_DURATION, {
                     top: 0,
                     left: 0,
@@ -104,14 +107,14 @@
                     onComplete
                 });
 
-                ref.tl.to(ref.mapContainerNode, RV_DURATION,
-                    {
-                        top: -(window.innerHeight / 2 - ref.shellNodeBox.height / 2),
-                        left: -(document.body.clientWidth / 2 - ref.shellNodeBox.width / 2),
-                        ease: RV_SWIFT_IN_OUT_EASE
-                    }, 0
-                );
+                // animate map layer container in the oppositve directive to counteract collapse of the shell
+                ref.tl.to(ref.mapContainerNode, RV_DURATION, {
+                    top: -(window.innerHeight / 2 - ref.shellNodeBox.height / 2),
+                    left: -(document.body.clientWidth / 2 - ref.shellNodeBox.width / 2),
+                    ease: RV_SWIFT_IN_OUT_EASE
+                }, 0);
 
+                // animate collapse of the shell to its previous size
                 ref.tl.to(ref.shellNode, RV_DURATION, {
                     top: ref.shellNodeBox.top,
                     left: ref.shellNodeBox.left,
@@ -120,10 +123,12 @@
                     ease: RV_SWIFT_IN_OUT_EASE
                 }, 0);
 
+                // clear all properties left after animation completes
                 ref.tl.set(ref.shellNode, {
                     clearProps: 'all'
                 });
 
+                // clear all properties left after animation completes
                 ref.tl.set($rootElement, {
                     clearProps: 'all'
                 });
@@ -134,9 +139,14 @@
         }
 
         function onComplete() {
-            const originalPanDuration = gapiService.gapi.esriBundle().esriConfig.defaults.map.panDuration;
-            gapiService.gapi.esriBundle().esriConfig.defaults.map.panDuration = 0;
+            // FIXME:
+            const originalPanDuration = gapiService.gapi.esriBundle()
+                .esriConfig.defaults.map.panDuration;
+            gapiService.gapi.esriBundle()
+                .esriConfig.defaults.map.panDuration = 0;
 
+            // wait for a bit before recentring the map
+            // if call right after animation completes, the map object still confused about its true size and extent
             $timeout(() => {
                 // center the map
                 geoService.mapObject.centerAt(ref.trueCenterPoint);
@@ -147,7 +157,9 @@
                 });
 
                 // restore orignal pan duration value
-                gapiService.gapi.esriBundle().esriConfig.defaults.map.panDuration = originalPanDuration;
+                // FIXME:
+                gapiService.gapi.esriBundle()
+                    .esriConfig.defaults.map.panDuration = originalPanDuration;
             }, RV_DURATION * 1.5 * 1000);
         }
     }
