@@ -13,24 +13,23 @@
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
                
-            var mahLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0/');
+            var mahLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0/', {id:'test1'});
             
             mahLayer.on('load', function(evt) {  //update-end
 				
 				console.log('feature layer load');
 				
                 //test standard attribute loading of a feature layer
-                var nuggetPromise1 = api.attribs.loadLayerAttribs(mahLayer);
+                var nugget1 = api.attribs.loadLayerAttribs(mahLayer);
                 
-                nuggetPromise1.then(
-                    function (nugget) { 
-                        console.log('feature layer result - normal case');
-                        console.log(nugget);
-                        document.getElementById('mess').innerHTML = 'DONE';
+                console.log('feature layer result - normal case - top ', nugget1);
+                
+                nugget1["0"].getAttribs().then(
+                    function (attribD) { 
+                        console.log('feature layer result - normal case - attrib data', attribD);
                     },
                     function (iAmError) {
-                        console.log(iAmError);
-                        document.getElementById('mess').innerHTML = 'I AM ERROR';
+                        console.log('I AM ATTRIB ERROR', iAmError);                       
                     }
                 );
                 
@@ -63,11 +62,9 @@
                         document.getElementById('mess').innerHTML = 'I AM ERROR';
                     }
                 );
-                
 
-                
 			});
-                        
+
             var mahBigLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_AirEmissions_NOx/MapServer/0');
             
             mahBigLayer.on('load', function(evt) {  
@@ -250,7 +247,7 @@
                 
            
             });
-            
+
         });
 </script>
 </body>

@@ -176,6 +176,8 @@ function createAttribSet(oidField, featureData) {
         // use toString, as objectid is integer and will act funny using array notation.
         res.oidIndex[elem.attributes[oidField].toString()] = idx;
     });
+
+    return res;
 }
 
 // skim the last number off the Url
