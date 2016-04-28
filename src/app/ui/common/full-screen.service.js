@@ -24,13 +24,17 @@
             toggle
         };
 
-        let tlFullScreen;
-
         const ref = {
-            mapContainerNode: null,
-            shellNode: null,
-            rootBox: null,
-            trueCenterPoint: null
+            isExpanded: false,
+            tl: undefined,
+
+            tlCollapse: undefined,
+
+            mapContainerNode: undefined,
+            shellNode: undefined,
+            shellNodeBox: undefined,
+
+            trueCenterPoint: undefined
         };
 
         return service;
@@ -41,63 +45,91 @@
             // FIXME:
             gapiService.gapi.debug(true);
 
-            if (typeof tlFullScreen === 'undefined') {
-                tlFullScreen = new TimelineLite({
+            // pause and kill current running animation
+            if (ref.tl) {
+                ref.tl.pause().kill();
+            }
+
+            ref.trueCenterPoint = geoService.mapObject.extent.getCenter();
+
+            if (!ref.isExpanded) {
+
+                ref.tl = new TimelineLite({
                     paused: true,
-                    onComplete,
-                    onReverseComplete
+                    onComplete
                 });
 
                 ref.mapContainerNode = storageService.panels.map.find('> .container > .container');
                 ref.shellNode = storageService.panels.shell;
-                ref.rootBox = $rootElement[0].getBoundingClientRect();
-
-                const mapContainerNodeOffset = ref.mapContainerNode[0].getBoundingClientRect();
-                const trueCenterOffset = {
-                    top: window.innerHeight / 2 - mapContainerNodeOffset.top,
-                    left: document.body.clientWidth / 2 - mapContainerNodeOffset.left
-                };
-
-                ref.trueCenterPoint = geoService.mapObject.toMap(
-                    gapiService.gapi.esriBundle().ScreenPoint(
-                        trueCenterOffset.left, trueCenterOffset.top)
-                );
+                ref.shellNodeBox = ref.shellNode[0].getBoundingClientRect();
 
                 // make overflow on the root element visible so we can 'pop' the map shell out
-                tlFullScreen.set($rootElement, {
+                ref.tl.set($rootElement, {
                     overflow: 'visible'
                 });
 
-                //
-                tlFullScreen.set(ref.shellNode, {
+                ref.tl.set(ref.shellNode, {
                     position: 'fixed',
-                    top: ref.rootBox.top,
-                    bottom: window.innerHeight - ref.rootBox.bottom,
-                    right: document.body.clientWidth - ref.rootBox.right, // width without scrollbars
-                    left: ref.rootBox.left,
+                    top: ref.shellNodeBox.top,
+                    left: ref.shellNodeBox.left,
+                    bottom: window.innerHeight - ref.shellNodeBox.bottom,
+                    right: document.body.clientWidth - ref.shellNodeBox.right, // width without scrollbars
                     'z-index': 999,
                     height: 'auto',
                     width: 'auto',
                     margin: 0
                 });
 
-                tlFullScreen.to(ref.mapContainerNode, RV_DURATION * 5, {
-                    top: ref.rootBox.top,
-                    left: ref.rootBox.left,
-                    ease: RV_SWIFT_IN_OUT_EASE
-                }, 0);
+                ref.tl.to(ref.mapContainerNode, RV_DURATION,
+                    {
+                        top: window.innerHeight / 2 - ref.shellNodeBox.height / 2,
+                        left: document.body.clientWidth / 2 - ref.shellNodeBox.width / 2,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, 0
+                );
 
-                tlFullScreen.to(ref.shellNode, RV_DURATION * 5, {
+                ref.tl.to(ref.shellNode, RV_DURATION, {
                     top: 0,
                     left: 0,
-                    right: 0,
                     bottom: 0,
+                    right: 0,
                     ease: RV_SWIFT_IN_OUT_EASE
                 }, 0);
 
-                tlFullScreen.play();
+                ref.isExpanded = !ref.isExpanded;
+                ref.tl.play();
             } else {
-                tlFullScreen.reverse();
+                ref.tl = new TimelineLite({
+                    paused: true,
+                    onComplete
+                });
+
+                ref.tl.to(ref.mapContainerNode, RV_DURATION,
+                    {
+                        top: -(window.innerHeight / 2 - ref.shellNodeBox.height / 2),
+                        left: -(document.body.clientWidth / 2 - ref.shellNodeBox.width / 2),
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, 0
+                );
+
+                ref.tl.to(ref.shellNode, RV_DURATION, {
+                    top: ref.shellNodeBox.top,
+                    left: ref.shellNodeBox.left,
+                    bottom: window.innerHeight - ref.shellNodeBox.bottom,
+                    right: document.body.clientWidth - ref.shellNodeBox.right, // width without scrollbars
+                    ease: RV_SWIFT_IN_OUT_EASE
+                }, 0);
+
+                ref.tl.set(ref.shellNode, {
+                    clearProps: 'all'
+                });
+
+                ref.tl.set($rootElement, {
+                    clearProps: 'all'
+                });
+
+                ref.isExpanded = !ref.isExpanded;
+                ref.tl.play();
             }
         }
 
@@ -116,11 +148,7 @@
 
                 // restore orignal pan duration value
                 gapiService.gapi.esriBundle().esriConfig.defaults.map.panDuration = originalPanDuration;
-            }, RV_DURATION * 1000);
-        }
-
-        function onReverseComplete() {
-
+            }, RV_DURATION * 1.5 * 1000);
         }
     }
 })();
