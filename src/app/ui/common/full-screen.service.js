@@ -145,6 +145,9 @@
             gapiService.gapi.esriBundle()
                 .esriConfig.defaults.map.panDuration = 0;
 
+            geoService.mapObject.resize();
+            geoService.mapObject.reposition();
+
             // wait for a bit before recentring the map
             // if call right after animation completes, the map object still confused about its true size and extent
             $timeout(() => {
@@ -160,7 +163,7 @@
                 // FIXME:
                 gapiService.gapi.esriBundle()
                     .esriConfig.defaults.map.panDuration = originalPanDuration;
-            }, RV_DURATION * 1.5 * 1000);
+            }, RV_DURATION * 1000);
         }
     }
 })();
