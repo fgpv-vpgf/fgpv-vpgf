@@ -9,10 +9,10 @@
      * @ngdoc service
      * @name fullscreen
      * @module app.ui.common
-     * @requires dependencies
+     * @requires $rootElement, $timeout, storageService, gapiService, geoService
      * @description
      *
-     * The `fullscreen` factory description.
+     * The `fullscreen` factory makes the map go "Boom!".
      *
      */
     angular
@@ -139,11 +139,9 @@
         }
 
         function onComplete() {
-            // FIXME:
-            const originalPanDuration = gapiService.gapi.esriBundle()
-                .esriConfig.defaults.map.panDuration;
-            gapiService.gapi.esriBundle()
-                .esriConfig.defaults.map.panDuration = 0;
+            const mapManager = gapiService.gapi.mapManager;
+            const originalPanDuration = mapManager.mapDefault('panDuration');
+            mapManager.mapDefault('panDuration', 0);
 
             geoService.mapObject.resize();
             geoService.mapObject.reposition();
@@ -159,10 +157,7 @@
                     clearProps: 'top,left'
                 });
 
-                // restore orignal pan duration value
-                // FIXME:
-                gapiService.gapi.esriBundle()
-                    .esriConfig.defaults.map.panDuration = originalPanDuration;
+                mapManager.mapDefault('panDuration', originalPanDuration);
             }, RV_DURATION * 1000);
         }
     }
