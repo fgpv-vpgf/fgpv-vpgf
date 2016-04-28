@@ -633,7 +633,8 @@
                     "type": "object",
                     "$ref": "#/definitions/mapComponentsNode"
                 }
-            }
+            },
+            "required": ["lods"]
         },
         "baseMaps": {
             "type": "array",
