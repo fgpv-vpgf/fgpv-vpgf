@@ -1,35 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <title>title</title>
+    <head>
+        <meta charset="utf-8">
+        <title>title</title>
 
-    <style>
-        .fgpv {
-            height: 700px;
-            border: 1px solid black;
-            margin: 50px;
-            position: relative;
-        }
-        .weird-dimension {
-            width: 1200px;
-            height: 900px;
-        }
-    </style>
-</head>
+        <style>
 
-<body>
+            _body:after {
+                position: fixed;
+                content: "";
+                width: 50%;
+                height: 50%;
+                top: 0;
+                right: 0;
+                border: 1px solid darkorange;
+            }
 
-    <div class="fgpv" rv-config='config-all.en.json'></div>
+            .fgpv {
+                border: 1px solid black;
+                margin: 50px;
+                position: relative;
+            }
 
-    <div class="fgpv" rv-config="config.en-CA.json"></div>
+            ._fgpv:after {
+                position: absolute;
+                content: "";
+                width: 50%;
+                height: 50%;
+                top: 0;
+                right: 0;
+                border: 1px solid darkgreen;
+            }
 
-    <div class="fgpv weird-dimension" rv-config="config.en-CA.json"></div>
+            .row {
+                display: flex;
+                height: 650px;
+            }
 
-    <!-- inject:js -->
-    <!-- endinject -->
+            .one {
+                height: 700px;
+            }
 
-</body>
+            .two {
+                flex: 2;
+
+            }
+
+            .three {
+                flex: 3;
+            }
+
+        </style>
+    </head>
+
+    <body>
+
+        <div class="fgpv one" rv-config='config.rcs.en-CA.json'></div>
+
+        <div class="row">
+            <div class="fgpv two" rv-config="config.fr-CA.json"></div>
+            <div class="fgpv three" rv-config="config.en-CA.json"></div>
+        </div>
+
+        <!-- inject:js -->
+        <!-- endinject -->
+
+    </body>
 
 </html>
