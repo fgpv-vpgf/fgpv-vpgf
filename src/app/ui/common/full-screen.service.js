@@ -39,14 +39,16 @@
 
         /***/
 
+        /**
+         * Toggles the full-screen state by running animation which expands the shell node to take over the entire page at the same time animating the map container node to the map centered in the expanding container; reverse animation works similarly.
+         */
         function toggle() {
             // FIXME:
             gapiService.gapi.debug(true);
 
-            // pause and kill current running animation
+            // pause and kill currently running animation
             if (ref.tl) {
-                ref.tl.pause()
-                    .kill();
+                ref.tl.pause().kill();
             }
 
             // store current center point of the map
@@ -138,6 +140,10 @@
             }
         }
 
+        /**
+         * Cleans up after the full-screen animation completes.
+         * Removes leftover properties from the map container node and re-centers the map.
+         */
         function onComplete() {
             const mapManager = gapiService.gapi.mapManager;
             const originalPanDuration = mapManager.mapDefault('panDuration');
