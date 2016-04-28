@@ -41,7 +41,9 @@
         }
 
         &.rv-loaded {
-            transform: translate3d(0%, -100%, 0);
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility, opacity;
             transition-delay: $reveal-duration + $swift-ease-in-duration;
             transition-duration: 0.1s;
 
