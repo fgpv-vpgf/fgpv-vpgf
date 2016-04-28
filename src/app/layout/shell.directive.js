@@ -1,4 +1,4 @@
-/* global HolderIpsum */
+/* global HolderIpsum  */
 (() => {
     'use strict';
 
@@ -17,7 +17,7 @@
         .module('app.layout')
         .directive('rvShell', rvShell);
 
-    function rvShell() {
+    function rvShell(storageService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/layout/shell.html',
@@ -32,14 +32,13 @@
 
         /********/
 
-        function link() { // scope, el, attr, ctrl) {
-
+        function link(scope, el) { // , attr, ctrl) {
+            storageService.panels.shell = el;
         }
     }
 
     // TODO: clean; there is a lot of garbage/demo code here
-    function Controller($timeout, $q, $mdDialog, version, stateManager, sideNavigationService, $translate,
-        geoService) {
+    function Controller($mdDialog, version, stateManager, sideNavigationService, geoService, fullScreenService) {
         'ngInject';
         const self = this;
 
@@ -49,25 +48,24 @@
 
         /***/
 
-        self.singlePoint = singlePoint;
-        self.multiplePoints = multiplePoints;
-
         self.loaderFile = loaderFile;
 
         // TODO: mock settings; replace by config
-        self.menu = [
-            {
+        self.menu = [{
                 name: 'Options',
                 type: 'heading',
-                children: [
-                    {
+                children: [{
                         name: 'Full Screen',
-                        type: 'link'
-                    },
-                    {
+                        type: 'link',
+                        action: () => {
+                            sideNavigationService.close();
+                            fullScreenService.toggle();
+                        }
+                    }, {
                         name: 'Share',
                         type: 'link'
-                    }/*, // TODO: re-enable if map-export functionality ever exists
+                    }
+                    /*, // TODO: re-enable if map-export functionality ever exists
                     {
                         name: 'Print',
                         type: 'link'
@@ -132,77 +130,6 @@
         // TODO: hack
         function loaderFile() {
             stateManager.setActive('mainLoaderFile');
-        }
-
-        // TODO: remove; hacky functions to display some details data
-        function singlePoint() {
-            // generate some data and pretend you are retrieving it
-            const dataPromise = $timeout(() => {
-                return generateDetailsData(1)
-                    .items;
-            }, Math.random() * 9000 + 300);
-
-            // open panel and prep;
-            stateManager.toggleDisplayPanel('mainDetails', dataPromise);
-        }
-
-        // TODO: remove; hacky functions to display some details data
-        function multiplePoints() {
-            const requester = {
-                id: Date.now()
-            };
-
-            const {
-                items,
-                promises
-            } = generateDetailsData(6);
-
-            // open panel and prep;
-            stateManager
-                .toggleDisplayPanel('mainDetails', {
-                    data: items,
-                    isLoaded: $q.all(promises)
-                        .then(() => true)
-                }, requester, 0);
-        }
-
-        // TODO: remove; hacky functions to display some details data
-        function generateDetailsData(n) {
-            const items = [];
-            const promises = [];
-
-            // generate garbage details
-            for (let i = 0; i < n; i++) {
-                let item = {
-                    isLoading: true,
-                    requestId: -1,
-                    requester: HolderIpsum.words(3, true),
-                    data: {}
-                };
-
-                // clears loading indicator for individual items
-                promises.push($timeout(() => {
-                    item.data = [
-                        {
-                            name: HolderIpsum.words(3, true),
-                            data: [HolderIpsum.sentence(), HolderIpsum.sentence(), HolderIpsum.sentence(),
-                                HolderIpsum.sentence()]
-                        },
-                        {
-                            name: HolderIpsum.words(3, true),
-                            data: [HolderIpsum.sentence(), HolderIpsum.sentence()]
-                        }
-                    ];
-                    item.isLoading = false;
-                }, n === 1 ? 0 : Math.random() * 5000 + 200));
-
-                items.push(item);
-            }
-
-            return {
-                items,
-                promises
-            };
         }
     }
 })();
