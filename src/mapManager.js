@@ -28,7 +28,8 @@ module.exports = function (esriBundle) {
         Scalebar: esriBundle.Scalebar,
         getExtentFromJson,
         setupMap,
-        setProxy
+        setProxy,
+        mapDefault
     };
 
     /**
@@ -142,6 +143,24 @@ module.exports = function (esriBundle) {
      */
     function setProxy(proxyUrl) {
         esriBundle.esriConfig.defaults.io.proxyUrl = proxyUrl;
+    }
+
+    /**
+     * @ngdoc method
+     * @name mapDefault
+     * @memberof mapManager
+     * @description
+     * Sets or gets map default config values.
+     *
+     * @param {String} key name of the default property
+     * @param {Any} value value to set for the specified default property
+     */
+    function mapDefault(key, value = null) {
+        if (value === null) {
+            return esriBundle.esriConfig.defaults.map[key];
+        } else {
+            esriBundle.esriConfig.defaults.map[key] = value;
+        }
     }
 
     /**
