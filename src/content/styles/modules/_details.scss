@@ -134,6 +134,7 @@
         .rv-details-zebra-list {
             list-style-type: none;
             padding: 0;
+            border-bottom: 1px solid $divider-color-light;
 
             > li {
                 padding: 5px;
@@ -150,25 +151,18 @@
             padding-right: 10px;
             position: relative;
             font-weight: bold;
-            width: 33.3333%;
             float: left;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .rv-details-attrib-value {
             margin-right: 0;
             padding-left: 15px;
             position: relative;
-            width: 66.6667%;
-            float: left;
+            float: right;
+        }
 
-            &:before {
-                content: ":";
-                position: absolute;
-                left: 0;
-                font-weight: bold;
-            }
+        .rv-sub-subhead {
+            font-size: rem(1.6);
         }
     }
 }
