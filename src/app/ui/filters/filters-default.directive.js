@@ -143,40 +143,16 @@
                                 },
                             ]
                         });
-                    // on select row and clicking the zoom button
-                    /*self.table.on('select', (e, dt, type, indexes) => {
-                        self.table.on('click', 'md-icon.material-icons', () => {
-                            const ind = dt.context[0].aoData[indexes[0]]._aData.length - 1;
-                            const objId = dt.context[0].aoData[indexes[0]]._aData[ind];
-                            const layerId = self.display.requester.id;
-                            const featureIndex = requester.legendEntry.featureId;
-                            const layer = geoService.layers[layerId].layer;
-                            let layerUrl = layer.url + '/';
 
-                            if (layer.layerInfos) {
-                                layerUrl += featureIndex + '/';
-                            }
-
-                            geoService.zoomToGraphic(layerUrl, layer, objId);
-                        });
-                    });*/
-
-                    self.table.on('click', 'md-icon.material-icons', () => {
-                        const tr = $(this).closest('tr');
+                    self.table.on('click', 'md-icon.rv-zoom-to', event => {
+                        const tr = $(event.target).closest('tr');
                         const row = self.table.row(tr);
-                        return;
-                        const ind = dt.context[0].aoData[indexes[0]]._aData.length - 1;
-                        const objId = dt.context[0].aoData[indexes[0]]._aData[ind];
-                        const layerId = self.display.requester.id;
-                        const featureIndex = requester.legendEntry.featureId;
-                        const layer = geoService.layers[layerId].layer;
-                        let layerUrl = layer.url + '/';
 
-                        if (layer.layerInfos) {
-                            layerUrl += featureIndex + '/';
-                        }
+                        // get object id from row data
+                        const objId = row.data()[displayData.oidField];
+                        const layer = geoService.layers[requester.layerId].layer
 
-                        geoService.zoomToGraphic(layerUrl, layer, objId);
+                        geoService.zoomToGraphic(layer, objId);
                     });
                 });
             }
