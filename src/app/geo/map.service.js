@@ -296,9 +296,11 @@
 
                 // layerUrl is the URL that the point to be zoomed to belongs to
                 let layerUrl = `${layer.url}/`;
-                if (layer.layerInfos) {
-                    layerUrl += `${featureIndex}/`;
-                }
+
+                // FIXME: this looks to be related to dynamic layers
+                /*if (layer.layerInfos) {
+                    layerUrl += featureIndex;
+                }*/
 
                 // FIXME: support file based layers with no url
                 const geo = gapiService.gapi.layer.getFeatureInfo(layerUrl, objId);

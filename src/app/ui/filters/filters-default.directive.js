@@ -154,7 +154,7 @@
 
                     // get object id from row data
                     const objId = row.data()[displayData.oidField];
-                    const layer = geoService.layers[requester.layerId].layer
+                    const layer = geoService.layers[requester.layerId].layer;
 
                     geoService.zoomToGraphic(layer, objId);
                 });
@@ -179,7 +179,8 @@
             function addColumnInteractivity(column) {
                 // use render function to augment button to displayed data when the table is rendered
                 column.render = (data) => {
-                    return `<div class="rv-wrapper rv-icon-16"><span class="rv-data">${data}</span>${ZOOM_TO_ICON}</div>`;
+                    return `<div class="rv-wrapper rv-icon-16"><span class="rv-data">${data}</span>
+                        ${ZOOM_TO_ICON}</div>`;
                 };
             }
         }

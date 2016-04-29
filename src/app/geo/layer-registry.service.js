@@ -250,7 +250,7 @@
                         .filter(field =>
                             // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
                             // filter out fields where there is no corresponding attribute data
-                            attr.features[0].attributes.hasOwnProperty( field.name ))
+                            attr.features[0].attributes.hasOwnProperty(field.name))
                         .map(field => {
                             return {
                                 data: field.name,
