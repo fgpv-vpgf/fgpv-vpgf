@@ -23,9 +23,14 @@ this is a layer Package.  it contains information about a single server-side lay
 note this is not always 1-to-1 with client side. a client side DynamicLayer can have
 many server-side sublayers, each with their own attribute sets
 
+AVOID accessing the .attribData property directly, as it will not exist until the first
+request for attributes.  use the function .getAttribs(), as it will properly handle the
+initial request, or return the previously loaded result (always as a promise)
+
 {
     "layerId": "<layerid>",
     "layerIdx": 3,
+    "getAttribs": getAttribs(),
     "attribData": Promise(
         <instance of a attribute data object, see below>
     ),
