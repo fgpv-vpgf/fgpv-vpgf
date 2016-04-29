@@ -31,5 +31,13 @@
         .symbology-icon {
             float: right;
         }
+        .tooltip-class {
+            visibility: hidden;
+        }
+        .zoom-class:hover {
+            .tooltip-class {
+                visibility: visible;
+            }
+        }
     }
 }
