@@ -99,7 +99,7 @@
 
     // convert html collection to array:
     // https://babeljs.io/docs/learn-es2015/#math-number-string-object-apis
-    const nodes = Array.from(document.getElementsByClassName('fgpv'));
+    const nodes = [].slice.call(document.getElementsByClassName('fgpv'));
 
     // store nodes to use in app-seed; avoids a second DOM traversal
     RV._nodes = nodes;
