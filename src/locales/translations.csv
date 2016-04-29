@@ -2,8 +2,8 @@
 Language code (ISO 639-2/T),lang.code.iso.639.2,eng,fra
 Language direction,lang.dir,ltr,ltr
 Language name (English),lang.en,English,French
-Language name (French),lang.fr,anglais,franÃ§ais
-Language name (native),lang.native,English,FranÃ§ais
+Language name (French),lang.fr,anglais,français
+Language name (native),lang.native,English,Français
 Appbar tooltip for layers icon,appbar.tooltip.layers,Legend,[fr] Legend
 Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Point Information,[fr] Point Information
 Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,[fr] Menu
