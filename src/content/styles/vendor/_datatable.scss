@@ -21,5 +21,10 @@
         .sorting_desc_disabled {
             background-image: url($pathPrefix + "sort_desc_disabled.png");
         }
+
+        th, td {
+            padding: rem(1) rem(3.6) rem(1) rem(1);
+            text-align: left;
+        }
     }
 }

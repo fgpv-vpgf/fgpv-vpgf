@@ -35,17 +35,27 @@
                         background: lighten($divider-color, 20%);
 
                         tbody {
-                            .rv-iteractive {
+                            .rv-wrapper {
                                 display: flex;
+                                align-items: center;
 
-                                .rv-data {
-                                    flex: 1;
+                                &.rv-symbol {
+                                    justify-content: center;
+                                    img {
+                                        display: block;
+                                    }
                                 }
+                            }
 
-                                // FIXME: should be removed when using real button in datatables
-                                .rv-icon {
-                                    cursor: pointer;
-                                }
+                            .rv-data {
+                                flex: 1;
+                            }
+
+
+
+                            // FIXME: should be removed when using real button in datatables
+                            .rv-icon {
+                                cursor: pointer;
                             }
                         }
                     }
