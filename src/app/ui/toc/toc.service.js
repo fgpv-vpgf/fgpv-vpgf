@@ -270,9 +270,6 @@
                 legendEntry: entry
             };
 
-            // FIXME: this is likely unnecessary
-            requester.id = (entry.master ? entry.master : entry).id;
-
             const dataPromise = entry.getCache('attributes')
                 .then(attributes => {
                     return {
