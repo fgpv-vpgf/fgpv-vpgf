@@ -2,20 +2,6 @@
 
     <rv-content-pane close-panel="self.closeHelpSummary()" title-style="title" title-value="Help Summary">
 
-        <!--div class="rv-subsection" ng-repeat="section in self.helpSummary">
-            <div class="rv-subheader">
-                <h4 class="md-subhead">{{ section.name }}</h4>
-            </div>
-
-            <div class="rv-subcontent">
-                <p ng-repeat="paragraph in section.items">
-                    {{ paragraph }}
-                </p>
-
-            </div>
-
-        </div-->
-
         <!-- <br> tags in translation strings only get interpreted with the directive, not the filter -->
             <div class="rv-subsection" ng-repeat="section in self.sections">
                 <div translate-namespace="help.{{ section }}">
