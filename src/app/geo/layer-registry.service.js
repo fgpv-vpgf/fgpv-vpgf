@@ -82,6 +82,20 @@
             }
 
             /**
+             * Move a given layer within the map to match a specific position in the legend.
+             * NOTE this does not modify the legend, movement within the legend should be handled separately, ideally
+             * calling this function immediately before or after the legend is updated
+             *
+             * @param {String} id the id of the layer to be moved
+             * @param {Number} position the new position of the layer within the legend
+             */
+            function moveLayer(id, position) {
+                const curPos = service.legend.items.findIndex(e => e.id === id);
+                const layer = service.legend.items[curPos].layer;
+                mapObject.reorderLayer(layer, getLayerIndexAbove(position));
+            }
+
+            /**
              * Creates esri layer object for a set of layers provided by the config, triggers attribute loading on layer load event and adds it to the legend afterwards.
              * // TODO: might need to abstract this further to accomodate user-added layers as they need to go through the same process
              * @return {Object} self for chaining
