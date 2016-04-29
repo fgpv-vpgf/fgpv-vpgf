@@ -1,7 +1,7 @@
 (() => {
 
     // jscs:disable maximumLineLength
-    const ZOOM_TO_ICON = '<md-icon class="rv-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g id="zoom_in"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-4h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></g></svg></md-icon>';
+    const ZOOM_TO_ICON = '<md-icon class="rv-icon rv-zoom-to" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g id="zoom_in"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-4h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></g></svg></md-icon>';
     // jscs:enable maximumLineLength
 
     /**
@@ -96,11 +96,41 @@
 
                     */
 
-                    // TODO: try to compile an angular compoent and insert that instead maybe ???
+                    // TODO: try to compile an angular compoent and insert that instead maybe with a normal click handler ???
                     // FIXME: turn this into a real button for keyboard accessibility
-                    const firstColumn = displayData.columns[0];
+                    const firstColumn = displayData.columns.find(column =>
+                        column.data === displayData.oidField);
                     addColumnInteractivity(firstColumn);
 
+                    if (!displayData.data[0].hasOwnProperty('rvSymbol')) {
+                        displayData.data.forEach((row, index) => {
+                            const objId = row[displayData.oidField];
+                            const renderer = geoService.layers[requester.layerId].layer.renderer;
+                            const legend = requester.legendEntry.symbology;
+
+                            // FIXME: mock fdata object for this particular item
+                            const fData = {
+                                features: {
+                                    [index]: {
+                                        attributes: row
+                                    }
+                                },
+                                oidIndex: {
+                                    [objId]: index
+                                }
+                            };
+
+                            row.rvSymbol = geoService.retrieveSymbol(objId, fData, renderer, legend);
+                            row.rvSymbol = `<div class="rv-wrapper rv-symbol"><img src="${row.rvSymbol}" /></div>`;
+
+                        });
+
+                        displayData.columns.unshift({
+                            data: 'rvSymbol',
+                            title: '',
+                            orderable: false
+                        });
+                    }
 
                     // ~~I hate DataTables~~ Datatables are cool!
                     self.table = tableNode
@@ -114,12 +144,6 @@
                         })
                         .DataTable({
                             dom: 'rti',
-                            /*columnDefs: [
-                                {
-                                    targets: [stateManager.display.filters.data.columns.length - 1],
-                                    visible: false
-                                }
-                            ],*/
                             columns: displayData.columns,
                             data: displayData.data,
                             deferRender: true,
@@ -129,7 +153,7 @@
                             scroller: {
                                 displayBuffer: 3 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer
                             }, // turn on virtual scroller extension
-                            select: true, // allow row select,
+                            /*select: true,*/ // allow row select,
                             buttons: [
                                 // 'excelHtml5',
                                 // 'pdfHtml5',
@@ -176,11 +200,8 @@
             function addColumnInteractivity(column) {
                 // use render function to augment button to displayed data when the table is rendered
                 column.render = (data) => {
-                    return `<span class="rv-data">${data}</span>${ZOOM_TO_ICON}`;
+                    return `<div class="rv-wrapper rv-icon-16"><span class="rv-data">${data}</span>${ZOOM_TO_ICON}</div>`;
                 };
-
-                // set custom css class on the cell to style it properly
-                column.className = 'rv-iteractive rv-icon-16';
             }
         }
     }

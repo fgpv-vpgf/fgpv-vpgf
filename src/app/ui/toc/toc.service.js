@@ -266,6 +266,7 @@
             const requester = {
                 id: entry.id,
                 name: entry.name,
+                layerId: (entry.master ? entry.master : entry).id,
                 legendEntry: entry
             };
 
