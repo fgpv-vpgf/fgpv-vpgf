@@ -119,33 +119,25 @@ function newLayerPackage(layerIdx, esriBundle) {
                 // NOTE: by the time the application has access to getAttribs(), the .layerData
                 //       property will have been created.
                 layerPackage.layerData.then(layerData => {
+                    // FIXME switch to native Promise
+                    const defFinished = new esriBundle.Deferred();
 
-                    // if layerData is empty object.  will want to not pull data
-                    if (Object.keys(layerData).length > 0) {
+                    // begin the loading process
+                    loadDataBatch(-1, layerData.load.initBatchSize, layerData.load.layerUrl, layerData.oidField,
+                            layerData.load.attribs, defFinished, esriBundle);
 
-                        // FIXME switch to native Promise
-                        const defFinished = new esriBundle.Deferred();
+                    // after all data has been loaded
+                    defFinished.promise.then(features => {
+                        delete layerData.load; // no longer need this info
 
-                        // begin the loading process
-                        loadDataBatch(-1, layerData.load.initBatchSize, layerData.load.layerUrl, layerData.oidField,
-                                layerData.load.attribs, defFinished, esriBundle);
+                        // resolve the promise with the attribute set
+                        resolve(createAttribSet(layerData.oidField, features));
+                    }, error => {
+                        console.warn('error getting attribute data for ' + layerData.load.layerUrl);
 
-                        // after all data has been loaded
-                        defFinished.promise.then(features => {
-                            delete layerData.load; // no longer need this info
-
-                            // resolve the promise with the attribute set
-                            resolve(createAttribSet(layerData.oidField, features));
-                        }, error => {
-                            console.warn('error getting attribute data for ' + layerData.load.layerUrl);
-
-                            // return the error as part of the promise
-                            reject(error);
-                        });
-                    } else {
-                        // TODO again, we may want to reconsider the return object for things that have no attributes
-                        resolve({});
-                    }
+                        // return the error as part of the promise
+                        reject(error);
+                    });
                 });
             });
         }
@@ -290,13 +282,6 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
 
                 if (serviceResult.type === 'Feature Layer') {
 
-                    // temporarily store things for delayed attributes
-                    layerData.load = {
-                        initBatchSize: serviceResult.maxRecordCount || -1, // 10.0 server will not supply a max record value
-                        layerUrl,
-                        attribs
-                    };
-
                     layerData.fields = serviceResult.fields;
 
                     // find object id field
@@ -320,6 +305,13 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
                     // add renderer
                     layerData.renderer = serviceResult.drawingInfo.renderer;
 
+                    // temporarily store things for delayed attributes
+                    layerData.load = {
+                        initBatchSize: serviceResult.maxRecordCount || -1, // 10.0 server will not supply a max record value
+                        layerUrl,
+                        attribs
+                    };
+
                     // return the layer data promise result
                     resolve(layerData);
 
@@ -328,7 +320,7 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
                     // return an empty object
                     // (should not be error, as dynamic crawler can come across non feature layers)
                     // TODO revist incase we want a differnt return value in this case.
-                    resolve({});
+                    reject({});
                 }
             } else {
                 // case where error happened but service request was successful
@@ -468,10 +460,10 @@ function processDynamicLayer(layer, options, esriBundle) {
             if (!opts.skip) {
                 // load the features, store promise in array
                 result.registerData(loadFeatureAttribs(layer.url + '/' + idx.toString(), opts.attribs, esriBundle));
-
-                // advance the loop
-                idx += 1;
             }
+
+            // advance the loop
+            idx += 1;
         }
 
     }
