@@ -5,9 +5,8 @@ const shared = require('./shared.js');
 /*
 Structure and naming:
 
-an attribute structure generally looks like this
-
-this is the Bundle.  it packages up attributes for an entire layer object (i.e. FeatureLayer, DynamicLayer)
+this is the Bundle. it is the topmost object in the structure.
+it packages up attributes for an entire layer object (i.e. FeatureLayer, DynamicLayer)
 {
     layerId: <layerId for layer>,
     indexes: ["6", "7"],
@@ -23,7 +22,7 @@ this is a layer Package.  it contains information about a single server-side lay
 note this is not always 1-to-1 with client side. a client side DynamicLayer can have
 many server-side sublayers, each with their own attribute sets
 
-AVOID accessing the .attribData property directly, as it will not exist until the first
+DO NOT access the .attribData property directly, as it will not exist until the first
 request for attributes.  use the function .getAttribs(), as it will properly handle the
 initial request, or return the previously loaded result (always as a promise)
 
@@ -125,6 +124,7 @@ function newLayerPackage(layerIdx, esriBundle) {
                 //       property will have been created.
                 layerPackage.layerData.then(layerData => {
                     // FIXME switch to native Promise
+                    //       refactor the loadDataBatch to take less parameters at the same time
                     const defFinished = new esriBundle.Deferred();
 
                     // begin the loading process
