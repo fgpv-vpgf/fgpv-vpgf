@@ -1,5 +1,9 @@
 (() => {
 
+    // jscs:disable maximumLineLength
+    const ZOOM_TO_ICON = '<md-icon class="rv-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g id="zoom_in"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-4h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></g></svg></md-icon>';
+    // jscs:enable maximumLineLength
+
     /**
      * @ngdoc directive
      * @name rvFiltersDefault
@@ -52,6 +56,7 @@
                 self.destroyTable();
 
                 const requester = stateManager.display.filters.requester;
+                const displayData = stateManager.display.filters.data;
 
                 // forced delay of a 100 to prevent the loading indicator from flickering if the table is created too fast; it's annoying; it means that switching tables takes at least 100ms no matter how small the table is; in majority of cases it should take more than 100ms to get data and create a table anyway;
                 const forcedDelay = $q(fulfill =>
@@ -66,9 +71,8 @@
                 const legend = geoService.layers[stateManager.display.filters.requester.id].state.symbology;
                 const fDataPromise = geoService.layers[stateManager.display.filters.requester.id].attribs;
 
-                // jscs:disable maximumLineLength
                 fDataPromise.then(data => {
-                    const featureIdx = requester.legendEntry.featureId;
+                    /*const featureIdx = requester.legendEntry.featureId;
 
                     const oidInd = stateManager.display.filters.data.columns.findIndex((element, index, array) => {
                         console.log(index, array);
@@ -89,9 +93,16 @@
                         row[0] += ' <img src=\"' + icon + '\" class="symbology-icon" />';
                         row[0] += ' <md-button class="zoom-class"><md-icon md-svg-src="action:visibility" class="ng-scope ng-isolate-scope material-icons" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g id="zoom_in"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-4h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></g></svg><md-tooltip class="ng-scope ng-isolate-scope md-show tooltip-class" role="tooltip"><div class="md-content md-show" ng-transclude="" style="transform-origin: center top 0px;"><span class="ng-binding ng-scope">Zoom to Feature</span></div></md-tooltip></md-icon></md-button>';
                     });
-                    // jscs:enable maximumLineLength
 
-                    // I hate DataTables
+                    */
+
+                    // TODO: try to compile an angular compoent and insert that instead maybe ???
+                    // FIXME: turn this into a real button for keyboard accessibility
+                    const firstColumn = displayData.columns[0];
+                    addColumnInteractivity(firstColumn);
+
+
+                    // ~~I hate DataTables~~ Datatables are cool!
                     self.table = tableNode
                         .on('init.dt', () => {
                             // turn off loading indicator after the table initialized or the forced delay whichever takes longer; cancel loading timeout as well
@@ -103,14 +114,14 @@
                         })
                         .DataTable({
                             dom: 'rti',
-                            columnDefs: [
+                            /*columnDefs: [
                                 {
                                     targets: [stateManager.display.filters.data.columns.length - 1],
                                     visible: false
                                 }
-                            ],
-                            columns: stateManager.display.filters.data.columns,
-                            data: stateManager.display.filters.data.data,
+                            ],*/
+                            columns: displayData.columns,
+                            data: displayData.data,
                             deferRender: true,
                             scrollY: true, // allow vertical scroller
                             scrollX: true, // allow horizontal scroller
@@ -133,7 +144,7 @@
                             ]
                         });
                     // on select row and clicking the zoom button
-                    self.table.on('select', (e, dt, type, indexes) => {
+                    /*self.table.on('select', (e, dt, type, indexes) => {
                         self.table.on('click', 'md-icon.material-icons', () => {
                             const ind = dt.context[0].aoData[indexes[0]]._aData.length - 1;
                             const objId = dt.context[0].aoData[indexes[0]]._aData[ind];
@@ -148,6 +159,24 @@
 
                             geoService.zoomToGraphic(layerUrl, layer, objId);
                         });
+                    });*/
+
+                    self.table.on('click', 'md-icon.material-icons', () => {
+                        const tr = $(this).closest('tr');
+                        const row = self.table.row(tr);
+                        return;
+                        const ind = dt.context[0].aoData[indexes[0]]._aData.length - 1;
+                        const objId = dt.context[0].aoData[indexes[0]]._aData[ind];
+                        const layerId = self.display.requester.id;
+                        const featureIndex = requester.legendEntry.featureId;
+                        const layer = geoService.layers[layerId].layer;
+                        let layerUrl = layer.url + '/';
+
+                        if (layer.layerInfos) {
+                            layerUrl += featureIndex + '/';
+                        }
+
+                        geoService.zoomToGraphic(layerUrl, layer, objId);
                     });
                 });
             }
@@ -161,6 +190,21 @@
                     self.table.destroy(true); // https://datatables.net/reference/api/destroy()
                     delete self.table; // kill the reference
                 }
+            }
+
+            // TODO: add details button
+            /**
+             * Adds zoom and details buttons to the column provided.
+             * @param {Object} column from the formatted attributes bundle
+             */
+            function addColumnInteractivity(column) {
+                // use render function to augment button to displayed data when the table is rendered
+                column.render = (data) => {
+                    return `<span class="rv-data">${data}</span>${ZOOM_TO_ICON}`;
+                };
+
+                // set custom css class on the cell to style it properly
+                column.className = 'rv-iteractive rv-icon-16';
             }
         }
     }
