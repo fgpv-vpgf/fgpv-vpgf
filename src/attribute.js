@@ -515,9 +515,7 @@ function loadLayerAttribsBuilder(esriBundle) {
             // case 'WmsLayer':
             // case 'ArcGISTiledMapServiceLayer':
             default:
-                return new Promise((resolve, reject) => {
-                    reject('no support for loading attributes from layer type ' + lType);
-                });
+                throw new Error('no support for loading attributes from layer type ' + lType);
         }
     };
 }
