@@ -33,6 +33,40 @@
                     .dataTables_scrollBody {
                         flex: 1; // this needed for the body to fill available space
                         background: lighten($divider-color, 20%);
+
+                        tbody {
+                            .rv-wrapper {
+                                display: flex;
+                                align-items: center;
+
+                                &.rv-symbol {
+                                    justify-content: center;
+                                    img {
+                                        display: block;
+                                    }
+                                }
+                            }
+
+                            .rv-data {
+                                flex: 1;
+                            }
+
+                            // FIXME: should be removed when using real button in datatables
+                            .rv-icon {
+                                cursor: pointer;
+                            }
+
+                            .rv-zoom-to {
+
+                                md-tooltip {
+                                    display: none;
+                                }
+
+                                &:hover md-tooltip {
+                                    display: block;
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -242,41 +242,30 @@
                 const formattedAttributeData = {};
 
                 attributeData.indexes.forEach(featureIndex => {
-                    // get the attributes and single out the first one
+                    // get the attributes
                     const attr = attributeData[featureIndex];
-                    const first = attr.features[0];
 
-                    // columns for the data table
-                    const columns = [];
-
-                    // data for the data table
-                    const data = [];
-
-                    // used to track order of columns
-                    const columnOrder = [];
-
-                    // get the attribute keys to use as column headers
-                    Object.keys(first.attributes)
-                        .forEach((key, index) => {
-                            const title = aliasedFieldName(key, attr.fields);
-
-                            columns[index] = {
-                                title
+                    // create columns array consumable by datables
+                    const columns = attr.fields
+                        .filter(field =>
+                            // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
+                            // filter out fields where there is no corresponding attribute data
+                            attr.features[0].attributes.hasOwnProperty(field.name))
+                        .map(field => {
+                            return {
+                                data: field.name,
+                                title: field.alias || field.name
                             };
-                            columnOrder[index] = key;
                         });
 
-                    // get the attribute data from every feature
-                    attr.features.forEach((feat, index) => {
-                        data[index] = [];
-                        angular.forEach(feat.attributes, (value, key) => {
-                            data[index][columnOrder.indexOf(key)] = value;
-                        });
-                    });
+                    // extract attributes to an array consumable by datatables
+                    const data = attr.features.map(feature => feature.attributes);
 
                     formattedAttributeData[featureIndex] = {
                         columns,
-                        data
+                        data,
+                        oidField: attr.oidField, // keep a reference to id field ...
+                        oidIndex: attr.oidIndex // ... and keep id mapping array
                     };
                 });
 

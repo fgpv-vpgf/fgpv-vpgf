@@ -21,23 +21,10 @@
         .sorting_desc_disabled {
             background-image: url($pathPrefix + "sort_desc_disabled.png");
         }
-    }
 
-    table.dataTable tbody {
-        .material-icons {
-            cursor: pointer;
-            float: right;
-        }
-        .symbology-icon {
-            float: right;
-        }
-        .tooltip-class {
-            visibility: hidden;
-        }
-        .zoom-class:hover {
-            .tooltip-class {
-                visibility: visible;
-            }
+        th, td {
+            padding: rem(1) rem(3.6) rem(1) rem(1);
+            text-align: left;
         }
     }
 }

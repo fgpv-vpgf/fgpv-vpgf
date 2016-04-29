@@ -266,11 +266,9 @@
             const requester = {
                 id: entry.id,
                 name: entry.name,
+                layerId: (entry.master ? entry.master : entry).id,
                 legendEntry: entry
             };
-
-            // FIXME: this is likely unnecessary
-            requester.id = (entry.master ? entry.master : entry).id;
 
             const dataPromise = entry.getCache('attributes')
                 .then(attributes => {
