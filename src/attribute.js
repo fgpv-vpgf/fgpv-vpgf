@@ -482,7 +482,7 @@ function loadLayerAttribsBuilder(esriBundle) {
     * Fetch attributes from a server-based Layer
     * @param {Object} layer an ESRI API layer object
     * @param {Object} options settings to determine if sub layers or certain attributes should be skipped.
-    * @return {Promise} promise of attributes in proper format
+    * @return {Object} attributes bundle for given layer
     */
     return (layer, options) => {
         /*
