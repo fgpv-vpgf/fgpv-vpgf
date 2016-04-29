@@ -244,13 +244,14 @@
                 attributeData.indexes.forEach(featureIndex => {
                     // get the attributes and single out the first one
                     const attr = attributeData[featureIndex];
+                    /*
                     const first = attr.features[0];
 
                     // columns for the data table
-                    const columns = [];
+                    let columns = [];
 
                     // data for the data table
-                    const data = [];
+                    let data = [];
 
                     // used to track order of columns
                     const columnOrder = [];
@@ -268,15 +269,31 @@
 
                     // get the attribute data from every feature
                     attr.features.forEach((feat, index) => {
-                        data[index] = [];
-                        angular.forEach(feat.attributes, (value, key) => {
-                            data[index][columnOrder.indexOf(key)] = value;
+                            data[index] = [];
+                            angular.forEach(feat.attributes, (value, key) => {
+                                data[index][columnOrder.indexOf(key)] = value;
+                            });
+                        }
+                    );
+                    */
+                    const columns = attr.fields
+                        .filter(field =>
+                            // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
+                            attr.features[0].attributes.hasOwnProperty( field.name ))
+                        .map(field => {
+                            return {
+                                data: field.name,
+                                title: field.alias || field.name
+                            };
                         });
-                    });
+
+                    const data = attr.features.map(feature => feature.attributes);
 
                     formattedAttributeData[featureIndex] = {
                         columns,
-                        data
+                        data,
+                        oidField: attr.oidField,
+                        oidIndex: attr.oidIndex
                     };
                 });
 
