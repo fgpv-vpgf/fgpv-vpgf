@@ -1,4 +1,3 @@
-/* global HolderIpsum  */
 (() => {
     'use strict';
 
