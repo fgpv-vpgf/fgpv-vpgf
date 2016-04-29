@@ -32,7 +32,8 @@
                 removeLayer,
                 formatLayerAttributes,
                 aliasedFieldName,
-                getLayersByType
+                getLayersByType,
+                getLayerIndexAbove
             };
 
             const ref = {
@@ -52,6 +53,23 @@
             function getLayersByType(layerType) {
                 return Object.keys(layers).map(key => layers[key])
                     .filter(layer => layer.state && layer.state.layerType === layerType);
+            }
+
+            /**
+             * Returns the index of the layer in the ESRI stack which is above the given legend position.
+             * NOTE the ESRI map stack does not reflect the legend
+             * @param {Number} legendPosition index of the layer within the legend
+             * @return {Number} the position of the layer above in the particular ESRI layer stack
+             */
+            function getLayerIndexAbove(legendPosition) {
+                const layer = service.legend.items[legendPosition];
+                const list = layerNoattrs.indexOf(layer.layerType) < 0 ? mapObject.layerIds : mapObject.graphicLayerIds;
+                const nextLayer = service.legend.items.find((layer, idx) =>
+                    list.indexOf(layer.id) > -1 && idx > legendPosition);
+                if (typeof nextLayer === 'undefined') {
+                    return list.length;
+                }
+                return list.indexOf(nextLayer.id);
             }
 
             /**
