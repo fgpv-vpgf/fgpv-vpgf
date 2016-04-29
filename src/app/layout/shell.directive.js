@@ -38,7 +38,7 @@
     }
 
     // TODO: clean; there is a lot of garbage/demo code here
-    function Controller($mdDialog, version, stateManager, sideNavigationService, geoService, fullScreenService) {
+    function Controller($mdDialog, $http, version, stateManager, sideNavigationService, geoService, fullScreenService) {
         'ngInject';
         const self = this;
 
@@ -107,23 +107,11 @@
         function HelpSummaryController() {
             const self = this;
             self.closeHelpSummary = () => $mdDialog.hide();
-            self.helpSummary = [];
 
-            // generate garbage help text;
-            // should ideally supplied from the translation files
-            for (let i = 0; i < 12; i++) {
-                let section = {
-                    name: HolderIpsum.words(3, true),
-                    items: []
-                };
+            $http.get(`locales/en-CA/translation.json`).then(data => {
+                self.sections = Object.keys(data.data.help);
+            });
 
-                for (let j = 0; j < Math.ceil(Math.random() * 5); j++) {
-                    section.items.push(HolderIpsum.sentence());
-                    section.items.push(HolderIpsum.sentence());
-                }
-
-                self.helpSummary.push(section);
-            }
             console.log(self);
         }
 
