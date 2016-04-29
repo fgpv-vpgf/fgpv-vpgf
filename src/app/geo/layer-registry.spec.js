@@ -100,7 +100,7 @@ describe('layerRegistry', () => {
         gstate.mapService.mapObject.graphicLayerIds = ['1', '0'];
         const lr = layerRegistry(geoState, currentConfig);
         const ltypes = ['ogcWms', 'esriTile', 'esriFeature'];
-        lr.legend.items = ltypes.map((ltype, idx) => ({ id: String(idx), layerType: ltype }));
+        lr.legend.items = ltypes.map((ltype, idx) => ({ layer: { id: String(idx), layerType: ltype } }));
         const result = lr.getLayerIndexAbove(1);
         expect(result).toBe(2);
     });
@@ -110,7 +110,7 @@ describe('layerRegistry', () => {
         gstate.mapService.mapObject.graphicLayerIds = ['2', '0'];
         const lr = layerRegistry(geoState, currentConfig);
         const ltypes = ['ogcWms', 'esriTile', 'ogcWms', 'esriTile', 'esriFeature'];
-        lr.legend.items = ltypes.map((ltype, idx) => ({ id: String(idx), layerType: ltype }));
+        lr.legend.items = ltypes.map((ltype, idx) => ({ layer: { id: String(idx), layerType: ltype } }));
         const result = lr.getLayerIndexAbove(1);
         expect(result).toBe(0);
     });
@@ -120,7 +120,7 @@ describe('layerRegistry', () => {
         gstate.mapService.mapObject.layerIds = ['a', '4', 'b', 'c'];
         const lr = layerRegistry(geoState, currentConfig);
         const ltypes = ['ogcWms', 'esriTile', 'ogcWms', 'esriTile', 'esriFeature'];
-        lr.legend.items = ltypes.map((ltype, idx) => ({ id: String(idx), layerType: ltype }));
+        lr.legend.items = ltypes.map((ltype, idx) => ({ layer: { id: String(idx), layerType: ltype } }));
         const result = lr.getLayerIndexAbove(4);
         expect(result).toBe(4);
     });
