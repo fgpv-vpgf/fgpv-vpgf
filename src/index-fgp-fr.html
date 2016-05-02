@@ -176,18 +176,14 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
             return JSON.parse(JSON.stringify(result));
         }
 
-        // Temp test to trigger RCS load.  Increase the time (10000) if it happens too fast.
-        window.setTimeout(function () {
-            // grab & process the url
-            var queryStr = queryStringToJSON(document.location);
-            var keys = queryStr.keys;
-            if (keys) {
-                // turn keys into an array, pass them to the map
-                var keysArr = keys.split(',');
-                RV.addRcsKeys('fgpmap', keysArr);
-            }
-
-        }, 10000);
+        // grab & process the url
+        var queryStr = queryStringToJSON(document.location);
+        var keys = queryStr.keys;
+        if (keys) {
+            // turn keys into an array, pass them to the map
+            var keysArr = keys.split(',');
+            RV.getMap('fgpmap').loadRcsLayers(keysArr);
+        }
 
     </script>
 </body>
