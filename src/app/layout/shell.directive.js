@@ -88,6 +88,7 @@
                         controllerAs: 'self',
                         templateUrl: 'app/ui/help/help-summary.html',
                         parent: $rootElement,
+                        disableParentScroll: false,
                         targetEvent: event,
                         clickOutsideToClose: true,
                         fullscreen: false
