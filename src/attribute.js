@@ -22,15 +22,15 @@ this is a layer Package.  it contains information about a single server-side lay
 note this is not always 1-to-1 with client side. a client side DynamicLayer can have
 many server-side sublayers, each with their own attribute sets
 
-DO NOT access the .attribData property directly, as it will not exist until the first
+DO NOT access the ._attribData property directly, as it will not exist until the first
 request for attributes.  use the function .getAttribs(), as it will properly handle the
 initial request, or return the previously loaded result (always as a promise)
 
 {
     "layerId": "<layerid>",
-    "layerIdx": 3,
+    "featureIdx": 3,
     "getAttribs": getAttribs(),
-    "attribData": Promise(
+    "_attribData": Promise(
         <instance of a attribute data object, see below>
     ),
     "layerData":  Promise(
@@ -87,8 +87,8 @@ function newLayerBundle(layerId) {
 
     function registerData(layerPackage) {
         layerPackage.layerId = bundle.layerId; // layerPackage is unaware of layerId. assign it during registration
-        bundle[layerPackage.layerIdx.toString()] = layerPackage;
-        bundle.indexes.push(layerPackage.layerIdx.toString());
+        bundle[layerPackage.featureIdx.toString()] = layerPackage;
+        bundle.indexes.push(layerPackage.featureIdx.toString());
     }
 
     return bundle;
@@ -97,15 +97,15 @@ function newLayerBundle(layerId) {
 /**
 * Will generate an empty object structure to store attributes for a single layer of features
 * @private
-* @param  {Integer} layerIdx server index of the layer
+* @param  {Integer} featureIdx server index of the layer
 * @param  {Object} esriBundle bundle of API classes
 * @return {Object} empty layer package object
 */
-function newLayerPackage(layerIdx, esriBundle) {
+function newLayerPackage(featureIdx, esriBundle) {
     // only reason this is in a function is to tack on the lazy-load
     // attribute function. all object properties are added elsewhere
     const layerPackage = {
-        layerIdx,
+        featureIdx,
         getAttribs
     };
 
@@ -115,38 +115,42 @@ function newLayerPackage(layerIdx, esriBundle) {
     * @return {Promise} promise of attribute data object
     */
     function getAttribs() {
-        if (!layerPackage.attribData) {
-            // first request for data. create the promise
-            layerPackage.attribData = new Promise((resolve, reject) => {
+        if (layerPackage._attribData) {
+            // attributes have already been downloaded.
+            return layerPackage._attribData;
+        }
 
-                // first wait for the layer specific data to finish loading
-                // NOTE: by the time the application has access to getAttribs(), the .layerData
-                //       property will have been created.
-                layerPackage.layerData.then(layerData => {
-                    // FIXME switch to native Promise
-                    //       refactor the loadDataBatch to take less parameters at the same time
-                    const defFinished = new esriBundle.Deferred();
+        // first request for data. create the promise
+        layerPackage._attribData = new Promise((resolve, reject) => {
 
-                    // begin the loading process
-                    loadDataBatch(-1, layerData.load.initBatchSize, layerData.load.layerUrl, layerData.oidField,
-                            layerData.load.attribs, defFinished, esriBundle);
+            // first wait for the layer specific data to finish loading
+            // NOTE: by the time the application has access to getAttribs(), the .layerData
+            //       property will have been created.
+            layerPackage.layerData.then(layerData => {
+                // FIXME switch to native Promise
+                //       refactor the loadDataBatch to take less parameters at the same time
+                const defFinished = new esriBundle.Deferred();
 
-                    // after all data has been loaded
-                    defFinished.promise.then(features => {
-                        delete layerData.load; // no longer need this info
+                // begin the loading process
+                loadDataBatch(-1, layerData.load.initBatchSize, layerData.load.layerUrl, layerData.oidField,
+                        layerData.load.attribs, defFinished, esriBundle);
 
-                        // resolve the promise with the attribute set
-                        resolve(createAttribSet(layerData.oidField, features));
-                    }, error => {
-                        console.warn('error getting attribute data for ' + layerData.load.layerUrl);
+                // after all data has been loaded
+                defFinished.promise.then(features => {
+                    delete layerData.load; // no longer need this info
 
-                        // return the error as part of the promise
-                        reject(error);
-                    });
+                    // resolve the promise with the attribute set
+                    resolve(createAttribSet(layerData.oidField, features));
+                }, error => {
+                    console.warn('error getting attribute data for ' + layerData.load.layerUrl);
+
+                    // return the error as part of the promise
+                    reject(error);
                 });
             });
-        }
-        return layerPackage.attribData;
+        });
+
+        return layerPackage._attribData;
     }
 
     return layerPackage;
@@ -348,9 +352,9 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
 }
 
 // extract the options (including defaults) for a layer index
-function pluckOptions(layerIdx, options = {}) {
+function pluckOptions(featureIdx, options = {}) {
     // handle missing layer
-    const opt = options[layerIdx] || {};
+    const opt = options[featureIdx] || {};
 
     return {
         skip: opt.skip || false,
@@ -390,7 +394,7 @@ function processFeatureLayer(layer, options, esriBundle) {
         const layerPackage = newLayerPackage(0, esriBundle); // files have no index (no server), so we use value 0
 
         // it's local, no need to lazy-load
-        layerPackage.attribData = Promise.resolve(createAttribSet(layer.objectIdField, layer.graphics.map(elem => {
+        layerPackage._attribData = Promise.resolve(createAttribSet(layer.objectIdField, layer.graphics.map(elem => {
             return { attributes: elem.attributes };
         })));
         layerPackage.layerData = Promise.resolve({
