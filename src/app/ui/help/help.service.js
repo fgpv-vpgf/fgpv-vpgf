@@ -14,7 +14,7 @@
         .module('app.ui.help')
         .service('helpService', helpService);
 
-    function helpService() {
+    function helpService($mdDialog, $http) {
         // all help sections (populated when elements tagged with rv-help are created)
         const registry = [];
 
@@ -22,12 +22,13 @@
         const drawnCache = [];
 
         const service = {
-            register: register,
-            unregister: unregister,
-            registry: registry,
-            drawnCache: drawnCache,
-            setDrawn: setDrawn,
-            clearDrawn: clearDrawn
+            register,
+            unregister,
+            registry,
+            drawnCache,
+            setDrawn,
+            clearDrawn,
+            HelpSummaryController
         };
 
         return service;
@@ -68,6 +69,17 @@
         */
         function clearDrawn() {
             drawnCache.length = 0;
+        }
+
+        function HelpSummaryController() {
+            const self = this;
+            self.closeHelpSummary = () => $mdDialog.hide();
+
+            $http.get(`locales/en-CA/translation.json`).then(data => {
+                self.sections = Object.keys(data.data.help);
+            });
+
+            console.log(self);
         }
     }
 })();

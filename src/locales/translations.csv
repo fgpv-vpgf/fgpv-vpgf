@@ -1,4 +1,4 @@
-Language code (ISO 639-1),lang.code.code,en-CA,fr-CA
+﻿Language code (ISO 639-1),lang.code.code,en-CA,fr-CA
 Language code (ISO 639-2/T),lang.code.iso.639.2,eng,fra
 Language direction,lang.dir,ltr,ltr
 Language name (English),lang.en,English,French
@@ -104,3 +104,154 @@ Geometry types,geometry.type.generic, feature|features, [fr] feature|[fr] featur
 Geometry types,geometry.type.esriGeometryPoint, point|points, [fr] point|[fr] points
 Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, [fr] polygon|[fr] polygon
 Geometry types,geometry.type.esriGeometryPolyline, line|lines, [fr] line|[fr] line
+,help.navigationControls.header,Navigation Controls,Contrôles de navigation
+,help.navigationControls.info,"Navigation controls are used for changing the viewing extent of the map; the datagrid updates accordingly to what's viewable in the current extent.<br>
+<br>
+Usage:<br>
+Click and drag to move the map in a particular direction.<br>
+<br>
+* Zoom In/Out: Click 'Zoom In/Out' to change the map extent<br>
+* Canada: Click 'Canada"" to view map at its full extent","Les contrôles de navigation servent à modifier la taille de l’affichage de la carte; la grille de données sera actualisée et ajustée selon le contenu visible dans l’affichage en cours.<br>
+<br>
+Utilisation :<br>
+Cliquez et faites glisser pour déplacer la carte dans une direction particulière.<br>
+<br>
+* Zoom avant/arrière : Cliquez sur 'Zoom avant' ou sur 'Zoom arrière' pour modifier la taille de l’affichage de la carte<br>
+* Canada : Cliquez sur 'Canada' pour afficher la carte en entier"
+,help.basemaps.header,Basemaps,Fonds de carte
+,help.basemaps.info,"The Basemap selector is used to modify the underlying basemap to provide a variety of geographical contexts.<br>
+<br>
+Usage: <br>
+* Basemap: Click 'Basemap'. From the slideout menu, select the basemap of your choice and the map display will update. Click 'Basemap' again to close the slideout menu.","Utilisez le sélecteur de fond de carte pour remplacer le fond de carte et afficher divers contextes géographiques.<br>
+<br>
+Utilisation : <br>
+* Fonds de carte : Cliquez sur 'Fonds de carte'. Dans le menu déroulant, sélectionnez le fond de carte désiré et la carte sera actualisée en conséquence. Cliquez sur 'Basemap' à nouveau pour fermer le menu déroulant."
+,help.overviewMap.header,Overview Map,Carte d'aperçu
+,help.overviewMap.info,"The Overview map displays a generalised view of the main map at a smaller scale.<br>
+<br>
+Usage:<br>
+Drag to change the map extent of the main map.
+
+* Hide/Show: Click 'Hide/Show' to close or open the overview map window","La Carte d'aperçu affiche une vue générale de la carte principale à plus petite échelle.<br>
+<br>
+Utilisation :<br>
+Cliquez et faites glisser pour changer l'étendue de la carte principale.
+* Masquer/Afficher: Cliquez sur 'Afficher/Masquer' pour afficher ou masquer la fenêtre de la carte d'aperçu
+"
+,help.mainMenu.header,Main Menu,Menu principal
+,help.mainMenu.info,"The main menu displays general usage options.<br>
+<br>
+Usage:<br>
+* Menu: Click 'Menu' to display the slideout menu. Click anywhere outside the slideout menu to close it. ","Le menu principal affiche les options générales d'utilisation.<br>
+<br>
+Utilisation :<br>
+* Menu : Cliquez sur 'Menu' pour afficher le menu déroulant. Cliquez en dehors du menu déroulant pour le fermer"
+,help.fullScreen.header,Full Screen,Plein écran
+,help.fullScreen.info,"Full Screen is used to collapse the departmental headers and footers to provide larger screen space for mapping.<br>
+<br>
+Usage:<br>
+FULL SCREEN: Click the FULL SCREEN option in the Menu slideout to hide departmental header and footer information. Click the FULL SCREEN option again to restore to default view.","L'option Plein écran masque le haut et le bas de page du Ministère afin d’allouer plus d’espace à l’écran pour l’affichage cartographique.<br>
+<br>
+Utilisation :<br>
+'Plein écran' : Cliquer sur l'option 'Plein écran' pour masquer le haut et le bas de page du Ministère. Cliquer de nouveau sur 'Plein écran' pour restaurer la vue par défaut."
+,help.share.header,Share,Partager
+,help.share.info,"Share is used to generate a shareable URL of the current map state with selected datasets.<br>
+<br>
+Usage:<br>
+SHARE: Click the SHARE option [add missing function and help text]","L'option Partager est utilisée pour générer une URL partageable de l'état actuel de la carte avec les ensembles de données sélectionnés.<br>
+<br>
+Utilisation:<br>
+Cliquer sur l'option 'Partager' [add missing function and fr help text]"
+,help.help.header,Help,Aide
+,help.help.info,"Help is used to display this help text.<br>
+<br>
+Usage:<br>
+HELP: Click the HELP option to open a windows and view this help text","L'option 'Aide' affiche affiche cette fenêtre d'aide.<br>
+<br>
+Utilisation:<br>
+'Aide' : Cliquez sur l'option 'Aide' pour afficher une fenêtre et voir ce texte d'aide"
+,help.legend.header,Legend,Legend
+,help.legend.info,"The Legend dropdown serves as a map legend and lists the layers available to display in the map. Feature layers also display in the data table panel. There are three types of layers that can reside in the Legend dropdown:<br>
+- Feature layers represent data that can be interacted with on the map, and viewed in the data table panel.<br>
+- Static layers provide additional geographical context against the basemap. They are not interactive and do not show in the data table panel.<br>
+- WMS layers provide an overlay of data from a Web Map Service. They can support a click interaction on the map, but do not show in the data table panel.","Le menu déroulant 'Légende' sert de légende de la carte et répertorie les couches disponible pour afficher sur la carte. Les couches d'entités s'affichent également dans le panneau Tableau de données. Il existe trois types de couches qui peuvent être affichées dans le menu déroulant 'Légende' : <br>
+- Les couches d'entités représentent des données avec lesquelles la carte peut interagire, et qui peuvent être affichées dans le panneau Tableau de données.<br>
+- Les couches statiques ajoutent un contexte géographique supplémentaire au fond de carte. Elles ne sont pas interactives et ne sont pas affichées dans le panneau Tableau de données.<br>
+- Les couches SCW fournissent une superposition de données fournies d'un service de carte Web. Ces données sont interactives sur la carte, mais ne peuvent apparaître dans le panneau Tableau de données."
+,help.layerVisibility.header,Layer Visibility,Visibilité de la couche
+,help.layerVisibility.info,"* Hide/Show: Select the ""eye"" icon next to a dataset or group name to toggle the layer display on or off on the map.",* Masquer/Afficher : Sélectionnez l’icône en forme d’œil près du nom de l’ensemble de données pour masquer ou afficher la couche sur la carte.
+,help.layerLegends.header,Layer Legends,Légende des couches
+,help.layerLegends.info,"Each layer has some symbology associated with it. For simple feature layers a single icon will be present next to the layer name. For complex feature layers (i.e. those with multiple symbols used per layer) the icon will show as a stack and maybe toggled on and off. When toggled on a section will expand beneath the layer name and show the full symbology for the layer. WMS layers may optionally have a graphical legend defined, if one is present it will be displayed in the same drop down manner.","Une certaine symbologie est associée à chaque couche. Pour des couches de fonctionnalité (feature layer) simples, une seule icône sera présente à côté du nom de la couche. Pour les couches de fonctionnalité complexes (c.-à-d. celles où de multiples symboles sont utilisés par couche), l’icône apparaîtra comme une pile qui peut être activée ou désactivée."
+,help.handlingLayerErrors.header,Handling Layer Errors,Traitement des erreurs de couche
+,help.handlingLayerErrors.info,"If a layer fails to load correctly it will be identified by an error notice. Instead of the standard layer actions you can select to either reload the layer (this is particularly helpful if there is a temporary network connectivity issue) or remove the layer. If a layer is removed it will be taken out of the layer selector completely and if it is added back via ""Undo"" or ""Add Dataset"" it will lose any previous customizations.","Si la couche ne se charge pas correctement, elle sera identifiée par un avis d’erreur. Au lieu des mesures standards liées à la couche, on peut choisir de recharger la couche (ce qui est particulièrement utile en cas de problème temporaire de connexion au réseau) ou de retirer la couche. Si une couche est retirée, elle sera retirée de la légende et si elle est rajoutée via « Annuler » ou « Ajouter une couche » elle perdra toutes les personnalisations précédentes."
+,help.layerSettings.header,Layer Settings,Paramètres de couches
+,help.layerSettings.info,"Hover over a layer name and click the ""three dots"" icon link to access additional options for the layer.<br>
+<br>
+'Metadata'<br>
+In the additional options, if it is available for that layer, select the ""Metadata"" link to display relevant metadata for that source in a slideout panel.<br>
+<br>
+'Settings'<br>
+- The layer's opacity can be adjusted using the Opacity slider control.<br>
+- If the layer has a bounding box, its visibility can be toggled using the Bounding Box toggle.<br>
+<br>
+'Remove'<br>
+- Remove the layer from the map and legend.","Passez la souris sur un nom de couche et cliquez sur l'icône de ""trois points"" pour accéder à des options supplémentaires pour la couche.<br>
+<br>
+'Métadonnées'<br>
+Dans les options supplémentaires, si elle est disponible pour cette couche, sélectionnez le lien « Métadonnées » pour afficher les métadonnées pertinentes pour cette source dans un panneau d'informations.<br>
+<br>
+<br>
+'Options' <br>
+- La transparence de la couche peut être ajustée au moyen de la commande de réglage<br>
+- Si la couche a un cadre englobant, sa visibilité peut être activée et désactivée au moyen du bouton à bascule.<br>
+<br>
+'Retirer'<br>
+- Retirer la couche de la carte et la légendre."
+,help.zoomScale.header,Zoom Scale Dependent Layers,Couches dépendantes de l’échelle de zoom
+,help.zoomScale.info,Some layers may only be visible at certain zoom levels. If a layer is not visible at a given zoom level the legend will display a notice and have an action available to zoom to the closest zoom level at which the layer will be visible (this may involve either zooming in or zooming out).,"Certaines couches peuvent être visibles uniquement à certains niveaux de zoom. Si une couche n’est pas visible à un niveau de zoom donné, la légende affichera un avis et offrira une action afin d’établir un zoom au niveau de zoom le plus prêt auquel la couche sera visible (cela peut impliquer de faire soit un zoom avant ou un zoom arrière)."
+,help.importLayers.header,Import Layers,Importer des couches
+,help.importLayers.info,"Additional layers can be added to the map viewer. Supported formats are: ESRI Feature Layer, SCW, GeoJSON, Shapefile, and CSV file. The '+' button in the at the top of the Legend menu will launch the Import Layers menu.<br>
+Usage: <br>
+- Select the 'From Local File' or 'From Internet' option.<br>
+- Specifying the Dataset Location - Enter the location of the service URL or dataset file in the location box. If the dataset is a file on your file system, you must click the 'File' button and browse to the location.<br>
+A web based URL can be typed or pasted into the box.<br>
+The Viewer will predict the dataset type, if it is incorrect, click the button that specifies the correct type.<br>
+- Click the 'Connect' or 'Load' button to initiate the loading of the dataset.<br>
+Specifying the Specifics of the Dataset - Depending on the type of dataset being loaded, various parameters can be set in this phase.<br>
+- A Feature Service allows the choice of a Primary Attribute, which determines the attribute used to identify a feature in the data table panel and map tips. All other information is derived from the service's metadata.<br>
+- A WMS Service allows the choice of the Layer Name, which determines the layer in the WMS to be used as the source for the dataset. All other information is derived from the service's metadata.<br>
+- File based datasets allow the choice of the following: a Dataset Name, which will be displayed in the Layer Selector; a Primary Attribute, which acts the same as in the Feature Service; a Symbol Colour, which determines the colour of the points / lines / polygons on the map. CSV files also allow the specification of the columns that contain the Latitude and Longitude values, used to derive the point location on the map.<br>
+Clicking the 'Add Dataset' button will insert the layer into the map.<br>","Des couches de données supplémentaires peuvent être ajoutés au visualisateur de cartes. Les formats pris en charge sont : couche de fonctionnalité (Feature Layer) ESRI, WMS, GeoJSON, Shapefile (fichier de forme) et fichier CSV. Le bouton « + » au haut du menu Légende lancera le menu « Importe des couches ».<br>
+Utilisation:<br>
+- Sélectionnez l'option « De fichier local » ou « à partir de l'Internet »<br>
+- Préciser l’emplacement de l’ensemble de données - Saisir l’emplacement du service URL ou du fichier de l’ensemble de données. Si l’ensemble de données est un fichier du système de dossiers, sélectionner le bouton « Fichier » (File) et naviguer jusqu’à l’emplacement.<br>
+Une adresse URL peut être tapée ou collée dans la case.<br>
+Le visualisateur prédira le type d’ensemble de données; si elles sont incorrectes, cliquer sur le bouton qui précise le type exact.<br>
+- Cliquer sur le bouton « Connecter » (Connect) ou « Charger » (Load) pour amorcer le chargement de l’ensemble de données.<br>
+Préciser les caractéristiques de l’ensemble de données. - Selon le type d’ensemble de données chargé, divers paramètres peuvent être établis à cette étape-ci.<br>
+Un service de fonctionnalité (Feature Service) permet de choisir un attribut primaire, qui détermine l’attribut servant à déterminer une caractéristique dans la grille de données et des conseils sur la cartographie. Tous les autres renseignements proviennent des métadonnées du service.<br>
+Un service WMS permet de choisir le nom de la couche, ce qui détermine la couche du WMS qui servira de source de l’ensemble de données. Tous les autres renseignements proviennent des métadonnées du service.<br>
+Les ensembles de données axés sur les fichiers permettent de choisir ce qui suit : le nom de l’ensemble de données, qui sera affiché dans le sélecteur de couche (Layer Selector); un attribut primaire (Primary Attribute), qui agit de la même manière que le service de fonctionnalité (Feature Service); une couleur de symbole (Symbol colour), qui détermine la couleur des points, des lignes, des polygones sur la carte.<br>
+En cliquant sur le bouton « Ajouter ensemble de données » (Add Dataset), on peut insérer la couche dans la carte."
+,help.dataTable.header,Data Table Panel,Panneau Tableau de données
+,help.dataTable.info,"The Data Table Panel lists detailed information about all the selected features and that/or are in the current map extent.<br>
+You can view, sort, print, and save the data and zoom the map to a specific entry listed in the data table.<br>
+You can also minimize, maximize, or split the panel view.<br>","Le panneau Tableau de données répertorie des informations détaillées sur tous les éléments sélectionnés et / ou qui sont dans l'étendue de la carte actuelle.<br>
+Vous pouvez afficher, trier, imprimer, et enregistrer les données et faire zoomer la carte à une entrée spécifique figurant dans le tableau de données. <br>
+Vous pouvez également réduire, agrandir, ou diviser la vue du panneau.<br>"
+,help.informationPanel.header,Information Panel (Point),Panneau d’information (Point)
+,help.informationPanel.info,"The Information Panel (Point) displays data associated with a selected feature.<br>
+Usage:<br>
+Select a feature on the map interface. The Info Panel will display information related to the selected feature. Clicking the 'X' in the top right corner of the panel will hide panel.<br>","Le panneau d’information (Point) affiche les données associées à l’élément interactif sélectionné.<br>
+Utilisation: Sélectionnez un élément interactif directement sur la carte. Le panneau d’information (Point) affichera les renseignements relatifs à l’élément sélectionné. Un clic sur le « X » située dans le coin supérieur droit du panneau masquera l’affichage du celui-ci.<br>"
+,help.accessibility.header,Accessibility,Accessibilité
+,help.accessibility.info,"This page is WCAG 2.0 AA compliant.<br>
+Keyboard Accessibility - Keyboard functionality is provided as an alternative for users who are unable to use a mouse. Use the Tab key to navigate forward to links and controls on the page. Press Shift+Tab to go back one step. Use the Enter or Spacebar keys to activate links and controls.<br>
+Navigation Controls - Zoom Slider: With the Zoom Slider highlighted, use the Up arrow key to zoom in and the Down arrow key to zoom out.
+","Cette page respecte les règles pour l’accessibilité des contenus Web WCAG 2.0 AA.<br>
+Accessibilité au clavier - La fonctionnalité du clavier est offerte en tant qu’alternative pour les utilisateurs qui sont incapables d’utiliser une souris. Utilisez la touche de tabulation pour naviguer vers les liens et les contrôles sur la page. Appuyez simultanément sur les touches Majuscule+Tabulation pour revenir un pas en arrière. Utilisez la touche Entrée ou la barre d’espace pour activer les liens et les contrôles.<br>
+Contrôles de navigation - Curseur de zoom : Avec le curseur de zoom sélectionné, utilisez la touche flèche orientée vers le haut pour effectuer un zoom avant; utilisez la touche flèche orientée vers le bas pour effectuer un zoom arrière."
+,help.loadTimes.header,Load Times / Unanticipated Behaviour,Durée du chargement / Comportement imprévu
+,help.loadTimes.info,"Load times may vary based on network location and bandwidth availability, and unanticipated behaviour may occur if any map interactions occur before data is fully loaded. Please allow the webpage to load completely before triggering any map functions. <br>
+Note: If the scrolling loading line indicator appears at the bottom of the map or in the legend, or the data table panel displays a loading message, please allow the loading indicator to disappear before triggering any function on the map.","La durée des chargements peut varier selon l’emplacement réseau et la disponibilité de la largeur de bande. Un comportement imprévu peut survenir lorsque des interactions avec la carte ont lieu avant la conclusion du chargement des données. Veuillez permettre le chargement complet de la page Web avant d’activer d’autres fonctions sur la carte.<br>
+Remarque: Si l'indicateur de chargement de ligne de défilement apparaît au bas de la carte ou dans la légende, ou lorsque la grille de données affiche un message de chargement en cours, attendez que l’indicateur de chargement disparaisse avant d’activer d’autres fonctions sur la carte."

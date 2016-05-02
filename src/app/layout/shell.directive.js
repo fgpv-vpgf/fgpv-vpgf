@@ -1,4 +1,3 @@
-/* global HolderIpsum  */
 (() => {
     'use strict';
 
@@ -38,7 +37,9 @@
     }
 
     // TODO: clean; there is a lot of garbage/demo code here
-    function Controller($mdDialog, version, stateManager, sideNavigationService, geoService, fullScreenService) {
+    function Controller($rootElement, $mdDialog, version, sideNavigationService, geoService, fullScreenService,
+        helpService) {
+
         'ngInject';
         const self = this;
 
@@ -47,8 +48,6 @@
         self.version = version;
 
         /***/
-
-        self.loaderFile = loaderFile;
 
         // TODO: mock settings; replace by config
         self.menu = [{
@@ -85,10 +84,11 @@
                     // TODO: do something better
                     // open dumb help
                     $mdDialog.show({
-                        controller: HelpSummaryController,
+                        controller: helpService.HelpSummaryController,
                         controllerAs: 'self',
                         templateUrl: 'app/ui/help/help-summary.html',
-                        parent: angular.element('.fgpv'),
+                        parent: $rootElement,
+                        disableParentScroll: false,
                         targetEvent: event,
                         clickOutsideToClose: true,
                         fullscreen: false
@@ -99,37 +99,5 @@
                 }
             }
         ];
-
-        /***/
-
-        /**************/
-
-        function HelpSummaryController() {
-            const self = this;
-            self.closeHelpSummary = () => $mdDialog.hide();
-            self.helpSummary = [];
-
-            // generate garbage help text;
-            // should ideally supplied from the translation files
-            for (let i = 0; i < 12; i++) {
-                let section = {
-                    name: HolderIpsum.words(3, true),
-                    items: []
-                };
-
-                for (let j = 0; j < Math.ceil(Math.random() * 5); j++) {
-                    section.items.push(HolderIpsum.sentence());
-                    section.items.push(HolderIpsum.sentence());
-                }
-
-                self.helpSummary.push(section);
-            }
-            console.log(self);
-        }
-
-        // TODO: hack
-        function loaderFile() {
-            stateManager.setActive('mainLoaderFile');
-        }
     }
 })();
