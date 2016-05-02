@@ -1,9 +1,13 @@
 /* global bard, helpService */
 
 describe('helpService', () => {
+    function mockDialog($provide) {
+        $provide.service('$mdDialog', () => {});
+    }
+
     beforeEach(() => {
 
-        bard.appModule('app.ui.help');
+        bard.appModule('app.ui.help', mockDialog);
 
         // inject services
         bard.inject('helpService');

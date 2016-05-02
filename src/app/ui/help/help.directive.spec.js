@@ -4,9 +4,13 @@ describe('rvHelp', () => {
     let scope;
     let directiveElement;
 
+    function mockDialog($provide) {
+        $provide.service('$mdDialog', () => {});
+    }
+
     beforeEach(() => {
         // mock the module with bardjs
-        bard.appModule('app.ui.common', 'app.ui.help');
+        bard.appModule('app.ui.common', 'app.ui.help', mockDialog);
 
         // inject angular services
         bard.inject('$compile', '$rootScope', 'helpService');
