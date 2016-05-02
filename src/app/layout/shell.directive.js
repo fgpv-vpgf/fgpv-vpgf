@@ -37,7 +37,9 @@
     }
 
     // TODO: clean; there is a lot of garbage/demo code here
-    function Controller($mdDialog, $http, version, stateManager, sideNavigationService, geoService, fullScreenService) {
+    function Controller($rootElement, $mdDialog, version, sideNavigationService, geoService, fullScreenService,
+        helpService) {
+
         'ngInject';
         const self = this;
 
@@ -46,8 +48,6 @@
         self.version = version;
 
         /***/
-
-        self.loaderFile = loaderFile;
 
         // TODO: mock settings; replace by config
         self.menu = [{
@@ -84,10 +84,10 @@
                     // TODO: do something better
                     // open dumb help
                     $mdDialog.show({
-                        controller: HelpSummaryController,
+                        controller: helpService.HelpSummaryController,
                         controllerAs: 'self',
                         templateUrl: 'app/ui/help/help-summary.html',
-                        parent: angular.element('.fgpv'),
+                        parent: $rootElement,
                         targetEvent: event,
                         clickOutsideToClose: true,
                         fullscreen: false
@@ -98,25 +98,5 @@
                 }
             }
         ];
-
-        /***/
-
-        /**************/
-
-        function HelpSummaryController() {
-            const self = this;
-            self.closeHelpSummary = () => $mdDialog.hide();
-
-            $http.get(`locales/en-CA/translation.json`).then(data => {
-                self.sections = Object.keys(data.data.help);
-            });
-
-            console.log(self);
-        }
-
-        // TODO: hack
-        function loaderFile() {
-            stateManager.setActive('mainLoaderFile');
-        }
     }
 })();
