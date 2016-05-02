@@ -32,7 +32,9 @@
                 removeLayer,
                 formatLayerAttributes,
                 aliasedFieldName,
-                getLayersByType
+                getLayersByType,
+                getLayerIndexAbove,
+                moveLayer
             };
 
             const ref = {
@@ -52,6 +54,47 @@
             function getLayersByType(layerType) {
                 return Object.keys(layers).map(key => layers[key])
                     .filter(layer => layer.state && layer.state.layerType === layerType);
+            }
+
+            /**
+             * Returns the index of the layer in the ESRI stack which is above the given legend position.
+             * Only top level items in the legend are traversed.
+             * NOTE the ESRI map stack does not reflect the legend and is arranged in reverse order
+             * for ESRI low index = low drawing order; legend: low index = high drawing order
+             * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details
+             *
+             * @param {Number} legendPosition index of the layer within the legend
+             * @return {Number} the position of the layer above in the particular ESRI layer stack
+             */
+            function getLayerIndexAbove(legendPosition) {
+                const layer = service.legend.items[legendPosition].layer;
+
+                // ESRI keeps graphical (WMS, Tile, Image) layers separate from feature layers
+                // pick the appropriate list of layer IDs based on the type of layer being interrogated
+                const list = layerNoattrs.indexOf(layer.layerType) < 0 ? mapObject.layerIds : mapObject.graphicLayerIds;
+                const nextEntry = service.legend.items.find((entry, idx) =>
+                    list.indexOf(entry.layer.id) > -1 && idx > legendPosition);
+                if (typeof nextEntry === 'undefined') {
+                    // take the last position if there are no valid layers in the legend
+                    // there may be utility layers (e.g. highlight, bounding box) which may be in the ESRI list
+                    // but not in the legend
+                    return list.length;
+                }
+                return list.indexOf(nextEntry.layer.id);
+            }
+
+            /**
+             * Move a given layer within the map to match a specific position in the legend.
+             * NOTE this does not modify the legend, movement within the legend should be handled separately, ideally
+             * calling this function immediately before or after the legend is updated
+             *
+             * @param {String} id the id of the layer to be moved
+             * @param {Number} position the new position of the layer within the legend
+             */
+            function moveLayer(id, position) {
+                const curPos = service.legend.items.findIndex(e => e.id === id);
+                const layer = service.legend.items[curPos].layer;
+                mapObject.reorderLayer(layer, getLayerIndexAbove(position));
             }
 
             /**

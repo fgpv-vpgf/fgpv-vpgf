@@ -38,105 +38,132 @@ describe('layerRegistry', () => {
         bard.inject('layerRegistry', '$q');
     });
 
-    describe('layerRegistry', () => {
-
-        // check registering a layer
-        it('should register a layer', () => {
-            const tempLayer = {
-                id: 'sausages',
-                setVisibility: () => {},
-                setOpacity: () => {}
-            };
-            const tempConfig = {
-                url: 'http://www.sausagelayer.com/',
-                layerType: 'esriFeature',
-                options: {
-                    opacity: {
-                        value: 0.5
-                    },
-                    visibility: {
-                        value: 'on'
-                    }
+    // check registering a layer
+    it('should register a layer', () => {
+        const tempLayer = {
+            id: 'sausages',
+            setVisibility: () => {},
+            setOpacity: () => {}
+        };
+        const tempConfig = {
+            url: 'http://www.sausagelayer.com/',
+            layerType: 'esriFeature',
+            options: {
+                opacity: {
+                    value: 0.5
+                },
+                visibility: {
+                    value: 'on'
                 }
-            };
-            const lr = layerRegistry(geoState, currentConfig); // create an instance of layerRegistry
+            }
+        };
+        const lr = layerRegistry(geoState, currentConfig); // create an instance of layerRegistry
 
-            lr.registerLayer(tempLayer, tempConfig, $q.resolve());
+        lr.registerLayer(tempLayer, tempConfig, $q.resolve());
 
-            // layer is now in registry
-            expect(lr.layers.sausages)
-                .toBeDefined();
-            expect(lr.layers.sausages.layer)
-                .toBeDefined();
-            expect(lr.layers.sausages.layer.id)
-                .toBe('sausages');
-            expect(lr.layers.sausages.state)
-                .toBeDefined();
-            expect(lr.layers.sausages.attribs)
-                .toBeDefined();
-            expect(lr.layers.sausages.state.url)
-                .toBe('http://www.sausagelayer.com/');
+        // layer is now in registry
+        expect(lr.layers.sausages)
+            .toBeDefined();
+        expect(lr.layers.sausages.layer)
+            .toBeDefined();
+        expect(lr.layers.sausages.layer.id)
+            .toBe('sausages');
+        expect(lr.layers.sausages.state)
+            .toBeDefined();
+        expect(lr.layers.sausages.attribs)
+            .toBeDefined();
+        expect(lr.layers.sausages.state.url)
+            .toBe('http://www.sausagelayer.com/');
 
-            // TODO: fix legend check
-            // expect(lr.legend).toContain('sausages');
+        // TODO: fix legend check
+        // expect(lr.legend).toContain('sausages');
 
-            expect(lr.layers.sausages.state.options)
-                .toBeDefined();
-            expect(lr.layers.sausages.state.options.visibility.value)
-                .toBe('on');
+        expect(lr.layers.sausages.state.options)
+            .toBeDefined();
+        expect(lr.layers.sausages.state.options.visibility.value)
+            .toBe('on');
 
-            // check if the layer is removed correctly ...
-            lr.removeLayer('sausages'); // should remove layer
+        // check if the layer is removed correctly ...
+        lr.removeLayer('sausages'); // should remove layer
 
-            // from `layers` object ...
-            expect(lr.layers.sausages)
-                .not.toBeDefined();
+        // from `layers` object ...
+        expect(lr.layers.sausages)
+            .not.toBeDefined();
 
-            // and from `legend` as well
-            // TODO: fix legend check
-            // expect(lr.legend.indexOf(tempLayer.id)).toBe(-1);
+        // and from `legend` as well
+        // TODO: fix legend check
+        // expect(lr.legend.indexOf(tempLayer.id)).toBe(-1);
+    });
+
+    it('should find the correct position to insert layers', () => {
+        const gstate = Object.create(geoState);
+        gstate.mapService.mapObject.graphicLayerIds = ['1', '0'];
+        const lr = layerRegistry(geoState, currentConfig);
+        const ltypes = ['ogcWms', 'esriTile', 'esriFeature'];
+        lr.legend.items = ltypes.map((ltype, idx) => ({ layer: { id: String(idx), layerType: ltype } }));
+        const result = lr.getLayerIndexAbove(1);
+        expect(result).toBe(2);
+    });
+
+    it('should find the correct position to insert layers when failed layers are present', () => {
+        const gstate = Object.create(geoState);
+        gstate.mapService.mapObject.graphicLayerIds = ['2', '0'];
+        const lr = layerRegistry(geoState, currentConfig);
+        const ltypes = ['ogcWms', 'esriTile', 'ogcWms', 'esriTile', 'esriFeature'];
+        lr.legend.items = ltypes.map((ltype, idx) => ({ layer: { id: String(idx), layerType: ltype } }));
+        const result = lr.getLayerIndexAbove(1);
+        expect(result).toBe(0);
+    });
+
+    it('should correctly compare with feature layers when a feature layer is selected', () => {
+        const gstate = Object.create(geoState);
+        gstate.mapService.mapObject.layerIds = ['a', '4', 'b', 'c'];
+        const lr = layerRegistry(geoState, currentConfig);
+        const ltypes = ['ogcWms', 'esriTile', 'ogcWms', 'esriTile', 'esriFeature'];
+        lr.legend.items = ltypes.map((ltype, idx) => ({ layer: { id: String(idx), layerType: ltype } }));
+        const result = lr.getLayerIndexAbove(4);
+        expect(result).toBe(4);
+    });
+
+    it('should bundle attributes correctly', () => {
+        const tempLayer = {
+            id: 'sausages',
+            setVisibility: () => {},
+            setOpacity: () => {}
+        };
+        const tempConfig = {
+            url: 'http://www.sausagelayer.com/',
+            layerType: 'esriFeature',
+            options: {
+                opacity: {
+                    value: 0.5
+                },
+                visibility: {
+                    value: 'on'
+                }
+            }
+        };
+        const tempAttribPromise = $q.resolve({
+            layerId: 'sausages',
+            0: {
+                features: [{
+                    attributes: {
+                        abc: '123'
+                    }
+                }]
+            }
         });
 
-        it('should bundle attributes correctly', () => {
-            const tempLayer = {
-                id: 'sausages',
-                setVisibility: () => {},
-                setOpacity: () => {}
-            };
-            const tempConfig = {
-                url: 'http://www.sausagelayer.com/',
-                layerType: 'esriFeature',
-                options: {
-                    opacity: {
-                        value: 0.5
-                    },
-                    visibility: {
-                        value: 'on'
-                    }
-                }
-            };
-            const tempAttribPromise = $q.resolve({
-                layerId: 'sausages',
-                0: {
-                    features: [{
-                        attributes: {
-                            abc: '123'
-                        }
-                    }]
-                }
+        const lr = layerRegistry(geoState, currentConfig);
+        lr.registerLayer(tempLayer, tempConfig, tempAttribPromise);
+
+        lr.layers.sausages.attribs
+            .then(data => lr.formatAttributes(data))
+            .then(bundledAttributes => {
+                expect(bundledAttributes.data)
+                    .toBeDefined();
+                expect(bundledAttributes.columns)
+                    .toBeDefined();
             });
-
-            const lr = layerRegistry(geoState, currentConfig);
-            lr.registerLayer(tempLayer, tempConfig, tempAttribPromise);
-
-            lr.layers.sausages.attribs
-                .then(data => lr.formatAttributes(data))
-                .then(bundledAttributes => {
-                    expect(bundledAttributes.data)
-                        .toBeDefined();
-                    expect(bundledAttributes.columns)
-                        .toBeDefined();
-                });
-        });
     });
 });
