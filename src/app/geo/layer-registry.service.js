@@ -58,7 +58,9 @@
 
             /**
              * Returns the index of the layer in the ESRI stack which is above the given legend position.
-             * NOTE the ESRI map stack does not reflect the legend
+             * Only top level items in the legend are traversed.
+             * NOTE the ESRI map stack does not reflect the legend and is arranged in reverse order
+             * for ESRI low index = low drawing order; legend: low index = high drawing order
              * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details
              *
              * @param {Number} legendPosition index of the layer within the legend
