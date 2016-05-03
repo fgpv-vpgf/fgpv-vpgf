@@ -30,7 +30,6 @@
                 generateLayer,
                 registerLayer,
                 removeLayer,
-                formatLayerAttributes,
                 aliasedFieldName,
                 getLayersByType,
                 getLayerIndexAbove,
@@ -207,20 +206,6 @@
              */
             function loadLayerAttributes(layer) {
                 return gapiService.gapi.attribs.loadLayerAttribs(layer);
-
-                /*
-                return gapiService.gapi.attribs.loadLayerAttribs(layer)
-                    .catch(exception => {
-                        console.error(
-                            'Error getting attributes for ' +
-                            layer.name + ': ' +
-                            exception);
-                        console.log(layer);
-
-                        // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
-                        $q.reject(exception);
-                    });
-                */
             }
 
             /**
@@ -266,56 +251,9 @@
                 service.layers[layer.id] = layerRecord;
                 ref.legendService.addLayer(layerRecord); // generate legend entry
 
-
                 // FIXME:
                 window.RV.layers = window.RV.layers || {};
                 window.RV.layers[layer.id] = layerRecord;
-
-                return;
-
-                // TODO determine the proper docstrings for a non-service function that lives in a service
-                /*
-                if (!layer.id) {
-                    console.error('Attempt to register layer without id property');
-                    console.log(layer);
-                    console.log(initialState);
-                }
-
-                if (layers[layer.id]) {
-                    console.error('attempt to register layer already registered.  id: ' + layer.id);
-                    return false;
-                }
-
-                // jscs doesn't like enhanced object notation
-                // jscs:disable requireSpacesInAnonymousFunctionExpression
-                const _layerRecord = {
-                    _attributeBundle: attributeBundle,
-                    _formattedAttributes: undefined,
-
-                    layer,
-                    initialState,
-
-                    getAttribs() {
-                        if (typeof this._formattedAttributes !== 'undefined') {
-                            return this._formattedAttributes;
-                        }
-
-                        this._formattedAttributes = formatAttributes(this._attributeBundle);
-
-                        return this._formattedAttributes;
-                    }
-                };
-                // jscs:enable requireSpacesInAnonymousFunctionExpression
-
-                layers[layer.id] = layerRecord;
-
-                // TODO: apply config values
-                ref.legendService.addLayer(layerRecord);
-
-                // FIXME:
-                window.RV.layers = window.RV.layers || {};
-                window.RV.layers[layer.id] = layerRecord;
-                */
             }
 
             /**
@@ -360,6 +298,12 @@
                 }
             }
 
+            /**
+             * Formats raw attributes to the form consumed by the datatable
+             * @param  {Object} attributes raw attribute data returned from geoapi
+             * @return {Object} layerData  layer data returned from geoApi
+             * @return {Object}               formatted attribute data { data: Array, columns: Array, fields: Array, oidField: String, oidIndex: Object}
+             */
             function formatAttributes(attributes, layerData) {
                 // create columns array consumable by datables
                 const columns = layerData.fields
@@ -384,45 +328,6 @@
                     oidField: layerData.oidField, // ... keep a reference to id field ...
                     oidIndex: attributes.oidIndex // ... and keep id mapping array
                 };
-            }
-
-            /**
-             * Formats raw attributes to the form consumed by the datatable
-             * @param  {Object} attributeData raw attribute data returned from geoapi
-             * @return {Object}               formatted attribute data { data: Array, columns: Array}
-             */
-            function formatLayerAttributes(attributeData) {
-                const formattedAttributeData = {};
-
-                attributeData.indexes.forEach(featureIndex => {
-                    // get the attributes
-                    const attr = attributeData[featureIndex];
-
-                    // create columns array consumable by datables
-                    const columns = attr.fields
-                        .filter(field =>
-                            // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
-                            // filter out fields where there is no corresponding attribute data
-                            attr.features[0].attributes.hasOwnProperty(field.name))
-                        .map(field => {
-                            return {
-                                data: field.name,
-                                title: field.alias || field.name
-                            };
-                        });
-
-                    // extract attributes to an array consumable by datatables
-                    const rows = attr.features.map(feature => feature.attributes);
-
-                    formattedAttributeData[featureIndex] = {
-                        columns,
-                        data: rows,
-                        oidField: attr.oidField, // keep a reference to id field ...
-                        oidIndex: attr.oidIndex // ... and keep id mapping array
-                    };
-                });
-
-                return formattedAttributeData;
             }
 
             /**

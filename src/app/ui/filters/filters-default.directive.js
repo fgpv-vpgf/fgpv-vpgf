@@ -223,8 +223,7 @@
 
             // watch filters data for changes; recreate table when data changes
             $scope.$watch('self.display.data', newValue => {
-                if (typeof newValue !== 'undefined' &&
-                    typeof newValue.rows !== 'undefined') {
+                if (newValue && newValue.rows) {
                     // console.log('Filters fullyOpen', isFullyOpen, self.display.isLoading);
                     // console.log('Filters: table data udpated', newValue);
                     if (isFullyOpen) {
