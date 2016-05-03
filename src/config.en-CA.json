@@ -143,12 +143,8 @@
       "layerEntries":[{"id":"GDPS.ETA_TT"}],
       "url":"http://geo.weather.gc.ca/geomet/",
       "options": {
-        "visibility": {
-            "value": "off"
-        },
-        "opacity": {
-          "value": 0.4
-        }
+        "visibility": { "value": false },
+        "opacity": { "value": 0.4 }
       }
     },
     {
@@ -158,9 +154,7 @@
       "layerEntries": [{"index": 0}],
       "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_plant_hardiness_zones/MapServer",
       "options": {
-        "visibility": {
-          "value": false
-        }
+        "visibility": { "value": false }
       }
     },
     {
@@ -169,9 +163,7 @@
       "layerType":"esriDynamic",
       "layerEntries": [{"index": 0, "opacity": { "value": 0.5 }}],
       "options": {
-        "opacity": {
-          "value": 0.8
-        }
+        "opacity": { "value": 0.8 }
       },
       "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_census_of_agriculture_2011_ccs/MapServer"
     },
@@ -197,12 +189,8 @@
       "layerType":"esriImage",
       "url":"http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/World/Temperature/ImageServer",
       "options": {
-        "visibility": {
-          "value": false
-        },
-        "opacity": {
-            "value": 0.5
-        }
+        "visibility": { "value": false },
+        "opacity": { "value": 0.5 }
       }
     }
   ],
