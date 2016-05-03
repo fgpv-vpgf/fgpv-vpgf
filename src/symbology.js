@@ -230,7 +230,10 @@ function colourToOpacity(c) {
 * @param  {String} type optional. the type of svg element (e.g. circle, path).
 * @return {String} colour in SVG format
 */
-function newSVG(type = '') {
+function newSVG(type) {
+    if (typeof type === 'undefined') {
+        type = '';
+    }
     const mySVG = {
         props: [],
         type
@@ -610,10 +613,45 @@ function rendererToLegend(renderer, index) {
     return legend;
 }
 
+/**
+* Takes the lod list and finds level as close to and above scale limit
+*
+* @param {Array} lods array of esri LODs https://developers.arcgis.com/javascript/jsapi/lod-amd.html
+* @param {Integer} maxScale object largest zoom level for said layer
+* @returns {Number} current LOD
+*/
+function getZoomLevel(lods, maxScale) {
+    // Find level as close to and above scaleLimit
+    const scaleLimit = maxScale; // maxScale obj in returned config
+    let found = false;
+    let currentLod = Math.ceil(lods.length / 2);
+    let lowLod = 0;
+    let highLod = lods.length - 1;
+
+    if (maxScale === 0) {
+        return lods.length - 1;
+    }
+
+    // Binary Search
+    while (!found) {
+        if (lods[currentLod].scale >= scaleLimit) {
+            lowLod = currentLod;
+        } else {
+            highLod = currentLod;
+        }
+        currentLod = Math.floor((highLod + lowLod) / 2);
+        if (highLod === lowLod + 1) {
+            found = true;
+        }
+    }
+    return currentLod;
+}
+
 module.exports = function () {
     return {
         createSymbologyConfig,
         getGraphicIcon,
-        rendererToLegend
+        rendererToLegend,
+        getZoomLevel
     };
 };
