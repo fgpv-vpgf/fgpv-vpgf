@@ -616,7 +616,7 @@ function rendererToLegend(renderer, index) {
 /**
 * Takes the lod list and finds level as close to and above scale limit
 *
-* @param {Array} lods array which contains all of the lods in config
+* @param {Array} lods array of esri LODs https://developers.arcgis.com/javascript/jsapi/lod-amd.html
 * @param {Integer} maxScale object largest zoom level for said layer
 * @returns {Number} current LOD
 */
