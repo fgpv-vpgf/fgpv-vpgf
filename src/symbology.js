@@ -230,7 +230,10 @@ function colourToOpacity(c) {
 * @param  {String} type optional. the type of svg element (e.g. circle, path).
 * @return {String} colour in SVG format
 */
-function newSVG(type = '') {
+function newSVG(type) {
+    if (typeof type === 'undefined') {
+        type = '';
+    }
     const mySVG = {
         props: [],
         type

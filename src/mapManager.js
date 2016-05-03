@@ -155,8 +155,8 @@ module.exports = function (esriBundle) {
      * @param {String} key name of the default property
      * @param {Any} value value to set for the specified default property
      */
-    function mapDefault(key, value = null) {
-        if (value === null) {
+    function mapDefault(key, value) {
+        if (typeof value === 'undefined') {
             return esriBundle.esriConfig.defaults.map[key];
         } else {
             esriBundle.esriConfig.defaults.map[key] = value;
