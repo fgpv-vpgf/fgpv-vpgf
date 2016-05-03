@@ -58,10 +58,19 @@ md-menu-content {
             height: rem(3.6);
 
             > .md-button {
-                > .rv-alt-icon {
-                    margin: {
-                        right: rem(0.8);
-                        left: rem(0.8);
+                .rv-button-flex {
+                    width: 100%;
+                    display: flex;
+
+                    span {
+                        flex: 1;
+                    }
+
+                     .rv-alt-icon {
+                        margin: {
+                            right: rem(0.8);
+                            left: rem(0.8);
+                        }
                     }
                 }
             }

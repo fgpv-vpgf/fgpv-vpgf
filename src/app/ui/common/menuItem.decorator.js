@@ -47,7 +47,10 @@
                     const icon = el.find(' > md-icon');
                     const button = el.find(' > .md-button');
                     if (icon.length > 0 && button.length > 0) {
-                        button.prepend(icon);
+                        // wrap the button content in div, so we can set flex on that div as Firefox doesn't support display: flex on button nodes yet: https://bugzilla.mozilla.org/show_bug.cgi?id=984869#c24
+                        button
+                            .prepend(icon)
+                            .wrapInner(`<div class='rv-button-flex'></div>`);
                     }
                 };
             };
