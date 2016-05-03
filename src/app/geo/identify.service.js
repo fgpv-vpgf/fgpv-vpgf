@@ -116,7 +116,7 @@
             * @returns {Promise} a promise which resolves when the query completes
             */
             function identifyDynamicLayer(layerRecord, opts, panelData) {
-                const {layer, state} = layerRecord;
+                const { layer, state } = layerRecord;
                 if (!layer.visibleAtMapScale || !layer.visible) {
                     return $q.resolve(null);
                 }
@@ -189,7 +189,7 @@
             * @returns {Promise} a promise which resolves when the query completes
             */
             function identifyWmsLayer(layerRecord, clickEvent, panelData) {
-                const {layer, state} = layerRecord;
+                const { layer, state } = layerRecord;
                 if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType) || !layer.visible) {
                     return $q.resolve(null);
                 }
@@ -230,7 +230,7 @@
             * @returns {Promise} a promise which resolves when the query completes
             */
             function identifyFeatureLayer(layerRecord, clickEvent, map, panelData) {
-                const {layer, state} = layerRecord;
+                const { layer, state } = layerRecord;
 
                 // ignore invisible layers by returning null and not adding anything to panelData
                 if (!layer.visibleAtMapScale || !layer.visible) {
