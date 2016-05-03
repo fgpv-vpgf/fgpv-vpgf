@@ -43,6 +43,46 @@
 
             service.legend = ref.legendService.legend;
 
+            // jscs doesn't like enhanced object notation
+            // jscs:disable requireSpacesInAnonymousFunctionExpression
+            const LAYER_RECORD = {
+                _attributeBundle: undefined,
+                _formattedAttributes: undefined,
+
+                layer: undefined,
+                initialState: undefined,
+                state: undefined,
+
+                getAttributes(featureIdx) {
+                    if (this._formattedAttributes.hasOwnProperty(featureIdx)) {
+                        return this._formattedAttributes[featureIdx];
+                    }
+
+                    const layerPackage = this._attributeBundle[featureIdx];
+                    const attributePromise =
+                        $q.all([
+                            layerPackage.getAttribs(),
+                            layerPackage.layerData
+                        ])
+                        .then(([attributes, layerData]) =>
+                            formatAttributes(attributes, layerData)
+                        );
+
+                    return (this._formattedAttributes[featureIdx] = attributePromise);
+                },
+
+                init(layer, initialState, attributeBundle) {
+                    this.layer = layer;
+                    this.initialState = initialState;
+                    this._attributeBundle = attributeBundle;
+
+                    this._formattedAttributes = {};
+
+                    return this;
+                }
+            };
+            // jscs:enable requireSpacesInAnonymousFunctionExpression
+
             return initialRegistration();
 
             /***/
@@ -166,6 +206,9 @@
              * @return {Promise} a promise resolving with the retrieved attribute data
              */
             function loadLayerAttributes(layer) {
+                return gapiService.gapi.attribs.loadLayerAttribs(layer);
+
+                /*
                 return gapiService.gapi.attribs.loadLayerAttribs(layer)
                     .catch(exception => {
                         console.error(
@@ -177,6 +220,7 @@
                         // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
                         $q.reject(exception);
                     });
+                */
             }
 
             /**
@@ -200,13 +244,11 @@
              * Adds a layer object to the layers registry
              * @param {object} layer the API layer object
              * @param {object} initialState a configuration fragment used to generate the layer
-             * @param {promise} attribs a promise resolving with the attributes associated with the layer (empty set if no attributes)
+             * @param {promise} attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
              * @param {number} position an optional index indicating at which position the layer was added to the map
              * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
              */
-            function registerLayer(layer, initialState, attribs) {
-                // TODO determine the proper docstrings for a non-service function that lives in a service
-
+            function registerLayer(layer, initialState, attributeBundle) {
                 if (!layer.id) {
                     console.error('Attempt to register layer without id property');
                     console.log(layer);
@@ -218,11 +260,52 @@
                     return false;
                 }
 
-                const layerRecord = {
+                const layerRecord = Object.create(LAYER_RECORD)
+                    .init(layer, initialState, attributeBundle);
+
+                service.layers[layer.id] = layerRecord;
+                ref.legendService.addLayer(layerRecord); // generate legend entry
+
+
+                // FIXME:
+                window.RV.layers = window.RV.layers || {};
+                window.RV.layers[layer.id] = layerRecord;
+
+                return;
+
+                // TODO determine the proper docstrings for a non-service function that lives in a service
+                /*
+                if (!layer.id) {
+                    console.error('Attempt to register layer without id property');
+                    console.log(layer);
+                    console.log(initialState);
+                }
+
+                if (layers[layer.id]) {
+                    console.error('attempt to register layer already registered.  id: ' + layer.id);
+                    return false;
+                }
+
+                // jscs doesn't like enhanced object notation
+                // jscs:disable requireSpacesInAnonymousFunctionExpression
+                const _layerRecord = {
+                    _attributeBundle: attributeBundle,
+                    _formattedAttributes: undefined,
+
                     layer,
-                    attribs,
-                    initialState
+                    initialState,
+
+                    getAttribs() {
+                        if (typeof this._formattedAttributes !== 'undefined') {
+                            return this._formattedAttributes;
+                        }
+
+                        this._formattedAttributes = formatAttributes(this._attributeBundle);
+
+                        return this._formattedAttributes;
+                    }
                 };
+                // jscs:enable requireSpacesInAnonymousFunctionExpression
 
                 layers[layer.id] = layerRecord;
 
@@ -232,6 +315,7 @@
                 // FIXME:
                 window.RV.layers = window.RV.layers || {};
                 window.RV.layers[layer.id] = layerRecord;
+                */
             }
 
             /**
@@ -276,6 +360,31 @@
                 }
             }
 
+            function formatAttributes(attributes, layerData) {
+                // create columns array consumable by datables
+                const columns = layerData.fields
+                    .filter(field =>
+                        // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
+                        // filter out fields where there is no corresponding attribute data
+                        attributes.features[0].attributes.hasOwnProperty(field.name))
+                    .map(field => {
+                        return {
+                            data: field.name,
+                            title: field.alias || field.name
+                        };
+                    });
+
+                // extract attributes to an array consumable by datatables
+                const rows = attributes.features.map(feature => feature.attributes);
+
+                return {
+                    columns,
+                    rows,
+                    oidField: layerData.oidField, // keep a reference to id field ...
+                    oidIndex: attributes.oidIndex // ... and keep id mapping array
+                };
+            }
+
             /**
              * Formats raw attributes to the form consumed by the datatable
              * @param  {Object} attributeData raw attribute data returned from geoapi
@@ -302,11 +411,11 @@
                         });
 
                     // extract attributes to an array consumable by datatables
-                    const data = attr.features.map(feature => feature.attributes);
+                    const rows = attr.features.map(feature => feature.attributes);
 
                     formattedAttributeData[featureIndex] = {
                         columns,
-                        data,
+                        data: rows,
                         oidField: attr.oidField, // keep a reference to id field ...
                         oidIndex: attr.oidIndex // ... and keep id mapping array
                     };
