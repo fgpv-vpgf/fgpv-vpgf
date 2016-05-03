@@ -33,12 +33,7 @@
             groupOptions: {
                 visibility: {
                     action: null,
-                    icon: {
-                        on: 'action:visibility',
-                        off: 'action:visibility_off',
-                        zoomIn: 'action:zoom_in',
-                        zoomOut: 'action:zoom_out'
-                    },
+                    icon: vis => vis ? 'action:visibility' : 'action:visibility_off',
                     label: 'toc.label.toggleGroupViz',
                     tooltip: 'toc.tooltip.toggleGroupViz'
                 }
@@ -67,12 +62,7 @@
                     action: toggleSettings
                 },
                 visibility: {
-                    icon: {
-                        on: 'action:visibility',
-                        off: 'action:visibility_off',
-                        zoomIn: 'action:zoom_in',
-                        zoomOut: 'action:zoom_out'
-                    },
+                    icon: vis => vis ? 'action:visibility' : 'action:visibility_off',
                     label: {
                         off: 'toc.label.visibility.off',
                         on: 'toc.label.visibility.on',
