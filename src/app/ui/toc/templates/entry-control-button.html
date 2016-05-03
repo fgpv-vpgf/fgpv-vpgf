@@ -7,6 +7,9 @@
     rv-help="{{ self.option }}">
 
     <md-tooltip md-direction="top">{{ self.template.tooltip[self.control.value] || self.template.tooltip | translate }}</md-tooltip>
-    <md-icon md-svg-src="{{ self.template.icon[self.control.value] || self.template.icon }}"></md-icon>
+    <!-- the terrible hack below (testing for .call) is due to angular not having typeof available in $Parse
+         https://github.com/angular/angular.js/pull/6886
+    -->
+    <md-icon md-svg-src="{{ self.template.icon.call ? self.template.icon(self.control.value) : self.template.icon }}"></md-icon>
 
 </md-button>

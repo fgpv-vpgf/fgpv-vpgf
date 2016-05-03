@@ -135,10 +135,9 @@
                     "default": true
                 },
                 "value": {
-                    "type": "string",
-                    "enum": [ "on", "off" ],
-                    "default": "on",
-                    "description": "Visibility value has four states: 'on', 'off', 'zoomIn', and 'zoomOut'. The first two can be set as initial layer visibility states; the last two are for internal use only."
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Visibility of the layer.  This value is not affected by zoom scale dependency which is a runtime value."
                 }
             },
             "description": "Visibility toggle in the layer selector and its current state.",
