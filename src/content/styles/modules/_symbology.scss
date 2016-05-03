@@ -9,6 +9,7 @@
         height: rem(3.2);
         width: rem(3.2);
         position: relative;
+        display: flex;
         align-items: center;
         justify-content: center;
         z-index: 0; // set up new stacking context
@@ -22,9 +23,9 @@
         }
 
         .rv-symbology-item {
-            display: flex;
             position: absolute;
             left: 0;
+            top: 0;
 
             // hide symbology name in collapsed state
             .rv-symbology-item-name {
@@ -41,7 +42,6 @@
 
             .rv-symbology-item {
                 // this block will move items 4 and up underneath the stack
-                display: flex;
                 top: 1px;
                 left: 1px;
                 opacity: 0;
@@ -78,6 +78,7 @@
         position: relative;
         //width: rem(3.2); // need to specify width, otherwise it's squashed
         //height: 100%;
+        display: flex;
         align-items: center;
 
         .rv-symbology-item-name {
