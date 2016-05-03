@@ -261,7 +261,7 @@
             };
 
             const layerRecord = geoService.layers[requester.layerId];
-            const dataPromise = layerRecord.getAttributes(entry.featureId)
+            const dataPromise = layerRecord.getAttributes(entry.featureIdx)
                 .then(attributes => {
                     return {
                         data: attributes,

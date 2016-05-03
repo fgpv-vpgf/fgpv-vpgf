@@ -380,7 +380,8 @@
                 return {
                     columns,
                     rows,
-                    oidField: layerData.oidField, // keep a reference to id field ...
+                    fields: layerData.fields, // keep fields for reference ...
+                    oidField: layerData.oidField, // ... keep a reference to id field ...
                     oidIndex: attributes.oidIndex // ... and keep id mapping array
                 };
             }
