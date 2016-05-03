@@ -107,26 +107,14 @@
                     );
 
                 // wait on attributes to load and ...
+                /*
                 layer.attribs
                     .then(data =>
                         data.indexes.forEach(index =>
                             // ... assign feature counts to sublayers
                             applyFeatureCount(layer.layer.geometryType, state.slaves[index], data[index])
                         )
-                    );
-
-                // wait for attributes to load, format attributes and keep them in a promise
-                const formattedAttributePromise = layer.attribs
-                    .then(attributeData => layerRegistry.formatLayerAttributes(attributeData));
-
-                // walk through child items and ...
-                state.walkItems(slave => {
-                    // ... make a subpromise which returns only a subset of attributes related to a sublayer
-                    // and store it in the cache
-                    const subPromise = formattedAttributePromise.then(formattedAttributeData =>
-                        formattedAttributeData[slave.featureId]);
-                    slave.setCache('attributes', subPromise);
-                });
+                    );*/
 
                 return state;
             }
@@ -160,17 +148,12 @@
                 symbologyPromise
                     .then(({ data, index }) => applySymbology(state, data.layers[index]));
 
+                /*
                 layer.attribs.then(data => {
                     applyFeatureCount(layer.layer.geometryType, state, data[data.indexes[0]]);
                 });
 
-                // store a promise to format attributes in state cache
-                const formattedAttributePromise = layer.attribs
-                    .then(attributeData => layerRegistry.formatLayerAttributes(attributeData))
-                    .then(formattedAttributeData => formattedAttributeData[state.featureId]);
-
-                // store formatted attribtes in cache
-                state.setCache('attributes', formattedAttributePromise);
+                */
 
                 return state;
             }
