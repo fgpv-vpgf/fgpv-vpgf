@@ -166,7 +166,6 @@
                         Object.entries(subResults).forEach(([key, value]) => {
                             if (value.isLoading) {
                                 value.isLoading = false;
-                                value.data = []; // no data items
                             }
                         });
                     })
@@ -292,6 +291,84 @@
                     });
             }
 
+            const identifyHandlers = {
+                esriFeature: identifyEsriFeature,
+                esriDynamic: identifyEsriDynamic,
+                ogcWms: identifyOgcWms
+            }
+
+            const IDENTIFY_RESULT = {
+                isLoading: true,
+                requestId: -1,
+                requester: {
+                },
+                data: [],
+
+                init(name, symbology, format, caption) {
+                    this.requester = {
+                        name,
+                        symbology,
+                        format,
+                        caption
+                    };
+
+                    return this;
+                }
+            }
+
+            /**
+            * Run a query on a feature layer, return the result as a promise.  Fills the panelData array on resolution.
+            * @param {Object} layerRecord object registered with layerRegistry
+            * @param {Object} clickEvent the ESRI click event
+            * @param {Object} map the ESRI map object
+            * @param {Array} panelData an array to be filled with query results
+            * @returns {Promise} a promise which resolves when the query completes
+            */
+            function identifyEsriFeature(layer, state, opts) {
+                // ignore invisible layers by returning null
+                if (!layer.visibleAtMapScale || !layer.visible) {
+                    return $q.resolve(null);
+                }
+
+                const result = Object.create(IDENTIFY_RESULT)
+                    .init(state.name, state.symbology, 'EsriFeature')
+
+                // run a spatial query
+                const qry = new gapiService.gapi.layer.Query();
+                qry.outFields = ['*']; // this will result in just objectid fields, as that is all we have in feature layers
+                qry.geometry = makeClickBuffer(clickEvent.mapPoint, map, getTolerance(layer));
+
+                // no need to check if the layer is registered as this object comes from an array of registered layers
+                const identifyPromise = $q.all([
+                        layerRecord.getAttributes(state.featureIdx),
+                        $q.resolve(layer.queryFeatures(qry))
+                    ])
+                    .then(([attributes, queryResult]) => {
+                        // transform attributes of query results into {name,data} objects
+                        // one object per queried feature
+                        //
+                        // each feature will have its attributes converted into a table
+                        // placeholder for now until we figure out how to signal the panel that
+                        // we want to make a nice table
+                        result.isLoading = false;
+                        result.data = queryResult.features.map(
+                            feat => {
+                                // grab the object id of the feature we clicked on.
+                                const objId = feat.attributes[attributes.oidField].toString();
+
+                                // use object id find location of our feature in the feature array, and grab its attributes
+                                const featAttribs = attributes.rows[attributes.oidIndex[objId]];
+
+                                return {
+                                    name: getFeatureName(featAttribs, state, objId),
+                                    data: attributesToDetails(featAttribs, attributes.fields)
+                                };
+                            });
+                    });
+
+                retunr { [identifyResult], identifyPromise };
+            }
+
             function clickHandlerBuilder(map) {
 
                 /**
@@ -312,11 +389,48 @@
                     };
 
                     const opts = {
+                        map,
+                        clickEvent,
                         geometry: clickEvent.mapPoint,
                         width: map.width,
                         height: map.height,
                         mapExtent: map.extent,
                     };
+
+                    const loadingPromises;
+
+                    layerRegistry
+                        .getAllQueryableLayerRecords()
+                        .forEach({ layer, state, initialState } => {
+                            const { identifyResults, identifyPromise } =
+                                identifyHandlers[initialState.layerType](layer, state, opts);
+
+                            details.data.push(dataResult);
+
+                            // modify promises to always resolve, never reject
+                            // any errors caught will be added to the details data object
+                            // resolutions of these promises are for turning off loading indicator
+                            const infallibleLoadingPromise = $q(resolve =>
+                                identifyPromise
+                                    .then(() => resolve(true))
+                                    .catch(error => {
+                                        // add common error handling
+
+                                        console.warn(`Identify query failed for ${state.name}`);
+                                        console.warn(error);
+
+                                        identifyResults.forEach(identifyResult => {
+                                            // TODO: this outputs raw error message from the service
+                                            // we might want to replace it with more user-understandable messages
+                                            dataResult.error = error.message;
+                                            dataResult.isLoading = false;
+                                        });
+
+                                        resolve(true);
+                                    });
+                            loadingPromises.push(infallibleLoadingPromise);
+                        });
+
 
                     const dynamicPromises = layerRegistry
                         .getLayersByType(layerTypes.esriDynamic)
