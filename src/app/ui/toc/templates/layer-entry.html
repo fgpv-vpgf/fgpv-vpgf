@@ -7,24 +7,14 @@
     <!-- TODO: add aria attribues on the button to provide context on what it does; also mute the actual layer name below, so a screen reader wouldn't pronounce it twice-->
 </md-button>
 
-<!-- TODO: maybe have a wrapper div so we can toggle the error template in one place instead of in pieces -->
-
-<div ng-if="self.entry.state === 'rv-error'" class="rv-icon-32">
-    <md-icon md-svg-src="community:emoticon-sad"></md-icon>
-</div>
-<rv-toc-entry-symbology symbology="self.entry.symbology" ng-if="self.entry.state === 'rv-default'"></rv-toc-entry-symbology>
+<rv-toc-entry-symbology symbology="self.entry.symbology"></rv-toc-entry-symbology>
 
 <div class="rv-layer-item-content">
     <div class="rv-layer-item-name">
         {{ self.entry.name }}
     </div>
 
-    <!-- TODO: add translation -->
-    <div class="rv-layer-item-caption md-caption" ng-if="self.entry.state === 'rv-error'">
-        Can't load layer
-    </div>
-
-    <div class="rv-toc-entry-flags" ng-if="self.entry.state === 'rv-default'">
+    <div class="rv-toc-entry-flags">
         <rv-toc-entry-flag name="type" data="self.entry.features"></rv-toc-entry-flag>
         <rv-toc-entry-flag name="data"></rv-toc-entry-flag>
         <rv-toc-entry-flag name="user"></rv-toc-entry-flag>
@@ -34,12 +24,7 @@
 
 </div>
 
-<div class="rv-toc-entry-controls" ng-if="self.entry.state === 'rv-error'">
-    <rv-toc-entry-control option="reload"></rv-toc-entry-control>
-    <rv-toc-entry-control option="remove"></rv-toc-entry-control>
-</div>
-
-<div class="rv-toc-entry-controls" ng-if="self.entry.state === 'rv-default'">
+<div class="rv-toc-entry-controls">
 
     <md-menu md-position-mode="target-right target">
         <md-button
