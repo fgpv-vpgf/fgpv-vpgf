@@ -53,8 +53,13 @@
 
                 layer: undefined,
                 initialState: undefined,
-                state: undefined,
+                state: undefined, // legend entry
 
+                /**
+                 * Retrieves attributes from a layer for a specified feature index
+                 * @param  {Number} featureIdx feature id on the service endpoint
+                 * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
+                 */
                 getAttributes(featureIdx) {
                     if (this._formattedAttributes.hasOwnProperty(featureIdx)) {
                         return this._formattedAttributes[featureIdx];
@@ -73,6 +78,13 @@
                     return (this._formattedAttributes[featureIdx] = attributePromise);
                 },
 
+                /**
+                 * Initializes layer record.
+                 * @param  {Object} layer           esri layer object
+                 * @param  {Object} initialState    layer config values
+                 * @param  {Object} attributeBundle geoApi attribute bundle
+                 * @return {Object}                 layer record object`
+                 */
                 init(layer, initialState, attributeBundle) {
                     this.layer = layer;
                     this.initialState = initialState;
@@ -90,8 +102,8 @@
             /***/
 
             /**
-             * Retrieves all layers of the specified type
-             * @return {Array} array of layers
+             * Retrieves all  layer recrods of the specified type
+             * @return {Array} array of  layer recrods
              */
             function getLayersByType(layerType) {
                 return Object.keys(layers).map(key => layers[key])
@@ -99,6 +111,10 @@
             }
 
             // FIXME  add a check to see if layer has config setting for not supporting a click
+            /**
+             * Retrieves all queryable layer recrods
+             * @return {Array} array of layer records
+             */
             function getAllQueryableLayerRecords() {
                 return Object.keys(layers).map(key => layers[key])
                     .filter(layerRecord =>

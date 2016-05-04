@@ -20,6 +20,7 @@
 
         function identifyService(geoState, mapObject, layerRegistry) {
 
+            // identify handler switch
             const identifyHandlers = {
                 esriFeature: identifyEsriFeatureLayer,
                 esriDynamic: identifyEsriDynamicLayer,
@@ -34,6 +35,14 @@
                 requester: {},
                 data: [],
 
+                /**
+                 * Initializes identify result object.
+                 * @param  {String} name      layer name of the queried layer
+                 * @param  {Array} symbology array of layer symbology to be displayed in details panel
+                 * @param  {String} format    indicates data formating template
+                 * @param  {String} caption   optional captions to be displayed along with the name
+                 * @return {Object}           identify result object
+                 */
                 init(name, symbology, format, caption) {
                     this.requester = {
                         name,
@@ -138,78 +147,6 @@
             }
 
             /**
-            * Run a query on a dynamic layer, return the result as a promise.  Fills the panelData array on resolution.
-            * @param {Object} layerRecord object registered with layerRegistry
-            * @param {Object} opts click threshold options
-            * @param {Array} panelData an array to be filled with query results
-            * @returns {Promise} a promise which resolves when the query completes
-            */
-            /*function _identifyDynamicLayer(layerRecord, opts, panelData) {
-                const { layer, state } = layerRecord;
-                if (!layer.visibleAtMapScale || !layer.visible) {
-                    return $q.resolve(null);
-                }
-
-                const subResults = {};
-
-                // every dynamic layer is a group in toc; walk its items to create an entry in details panel
-                state.walkItems(subItem => {
-                    const index = state.slaves.indexOf(subItem); // get real index of the sublayer; needed to match with `layerId` from clickResults
-                    const result = {
-                        isLoading: true,
-                        requestId: -1,
-                        requester: {
-                            symbology: subItem.symbology,
-                            name: subItem.name,
-                            caption: state.name,
-                            format: 'EsriFeature'
-                        },
-                        data: []
-                    };
-                    subResults[index] = result;
-                    panelData.push(result);
-                });
-
-                opts.tolerance = getTolerance(layer);
-                return gapiService.gapi.layer.serverLayerIdentify(layer, opts)
-                    .then(clickResults => {
-                        console.log('got a click result');
-                        console.log(clickResults);
-
-                        // transform attributes of click results into {name,data} objects
-                        // one object per identified feature
-                        //
-                        // each feature will have its attributes converted into a table
-                        // placeholder for now until we figure out how to signal the panel that
-                        // we want to make a nice table
-                        clickResults.forEach(ele => {
-                            // NOTE: the identify service returns aliased field names, so no need to look them up here
-                            const subResult = subResults[ele.layerId];
-                            subResult.data.push({
-                                name: ele.value,
-                                data: attributesToDetails(ele.feature.attributes)
-                            });
-                            subResult.isLoading = false;
-                        });
-                        // set the rest of the entries to loading false
-                        Object.entries(subResults).forEach(([key, value]) => {
-                            if (value.isLoading) {
-                                value.isLoading = false;
-                            }
-                        });
-                    })
-                    .catch(err => {
-                        console.warn('Identify failed');
-                        console.warn(err);
-
-                        Object.entries(subResults).forEach(([key, value]) => {
-                            value.isLoading = false;
-                            value.error = err.message;
-                        });
-                    });
-            }*/
-
-            /**
             * Run a query on a dynamic layer, return the result as a promise.
             * @param {Object} layerRecord esri layer object
             * @param {Object} opts additional argumets like map object, clickEvent, etc.
@@ -230,14 +167,10 @@
                         return;
                     }
 
-                    const index = state.slaves.indexOf(legendEntry); // get real index of the sublayer; needed to match with `layerId` from clickResults
-
                     const identifyResult = Object.create(IDENTIFY_RESULT)
                         .init(legendEntry.name, legendEntry.symbology, 'EsriFeature', state.name);
 
-                    console.log('index === legendEntry.featureIdx', index === legendEntry.featureIdx, index, legendEntry.featureIdx);
-
-                    identifyResults[index] = identifyResult;
+                    identifyResults[legendEntry.featureIdx] = identifyResult;
                 });
 
                 opts.tolerance = getTolerance(layer);
@@ -426,32 +359,6 @@
                             );
                             loadingPromises.push(infallibleLoadingPromise);
                         });
-
-                    /*const dynamicPromises = layerRegistry
-                        .getLayersByType(layerTypes.esriDynamic)
-                        .map(layerRecord => identifyDynamicLayer(layerRecord, opts, details.data));
-
-                    const wmsPromises = layerRegistry
-                        .getLayersByType(layerTypes.ogcWms)
-                        .filter(layerRecord => layerRecord.state.featureInfoMimeType)
-                        .map(layerRecord => identifyWmsLayer(layerRecord, clickEvent, details.data));
-
-                    const featurePromises = layerRegistry
-                        .getLayersByType(layerTypes.esriFeature)
-                        .map(layerRecord => identifyFeatureLayer(layerRecord, clickEvent, map, details.data));
-
-                    const idPromises = []
-                        .concat(dynamicPromises)
-                        .concat(wmsPromises)
-                        .concat(featurePromises);
-
-                    // modify promises to always resolve, never reject
-                    // any errors caught before will be added to the details data object
-                    // resolutions of these promises just for turning off loading indicator
-                    const trueIdPromises = idPromises.map(promise =>
-                        $q(resolve =>
-                            promise.then(() => resolve(true)).catch(() => resolve(true)))
-                    );*/
 
                     details.isLoaded = $q.all(loadingPromises).then(() => true);
 
