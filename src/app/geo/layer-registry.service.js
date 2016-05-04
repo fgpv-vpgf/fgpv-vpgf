@@ -22,7 +22,8 @@
 
         function layerRegistry(geoState, mapObject, config) {
 
-            const layers = {}; // layer collection of LAYER_RECORD objects
+            const layers = {}; // layer collection
+            const placeholders = {};
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -215,6 +216,9 @@
                     // TODO: decouple identifyservice from everything
                     const layer = service.generateLayer(layerConfig);
 
+                    // add a placeholder and store it
+                    placeholders[layer.id] = ref.legendService.addPlaceholder(layer);
+
                     // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
                     gapiService.gapi.events.wrapEvents(layer, {
                         // TODO: add error event handler to register a failed layer, so the user can reload it
@@ -230,10 +234,16 @@
                             if (layerNoattrs.indexOf(layerConfig.layerType) < 0) {
                                 attributesPromise = loadLayerAttributes(layer);
                             }
-                            service.registerLayer(layer, layerConfig, attributesPromise); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                            // replace placeholder with actual layer
+                            let index = ref.legendService.legend.remove(placeholders[layer.id]);
+                            delete placeholders[layer.id];
+                            service.registerLayer(layer, layerConfig, attributesPromise, index); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                         },
                         error: data => {
                             console.error('layer error', layer.id, data);
+
+                            // switch placeholder to error
+                            ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);
 
                             // FIXME layers that fail on initial load will never be added to the layers list
                             // ref.legendService.setLayerState(service.layers[layer.id], layerStates.error, 100);
