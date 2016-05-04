@@ -102,8 +102,8 @@
             /***/
 
             /**
-             * Retrieves all  layer recrods of the specified type
-             * @return {Array} array of  layer recrods
+             * Retrieves all  layer records of the specified type
+             * @return {Array} array of  layer records
              */
             function getLayersByType(layerType) {
                 return Object.keys(layers).map(key => layers[key])
@@ -112,7 +112,7 @@
 
             // FIXME  add a check to see if layer has config setting for not supporting a click
             /**
-             * Retrieves all queryable layer recrods
+             * Retrieves all queryable layer records
              * @return {Array} array of layer records
              */
             function getAllQueryableLayerRecords() {
