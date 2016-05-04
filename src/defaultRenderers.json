@@ -39,5 +39,22 @@
                 }
             }
         }
+    },
+    "boundingBoxPoly": {
+        "geometryType": "esriGeometryPolygon",
+        "renderer": {
+            "type": "simple",
+            "symbol": {
+                "type": "esriSFS",
+                "style": "esriSFSSolid",
+                "color": [255, 0, 0, 64],
+                "outline": {
+                    "type": "esriSLS",
+                    "style": "esriSLSSolid",
+                    "color": [240, 128, 128, 255],
+                    "width": 1
+                }
+            }
+        }
     }
 }
