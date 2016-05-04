@@ -46,7 +46,7 @@ describe('layerRegistry', () => {
             setOpacity: () => {}
         };
         const tempConfig = {
-            url: 'http://www.sausagelayer.com/',
+            url: 'http://www.sausagelayer.com/2', // <- feature layer has index
             layerType: 'esriFeature',
             options: {
                 opacity: {
@@ -71,7 +71,9 @@ describe('layerRegistry', () => {
         expect(lr.layers.sausages.state)
             .toBeDefined();
         expect(lr.layers.sausages.state.url)
-            .toBe('http://www.sausagelayer.com/');
+            .toBe('http://www.sausagelayer.com');
+        expect(lr.layers.sausages.state.featureIdx)
+            .toBe('2');
 
         // TODO: fix legend check
         // expect(lr.legend).toContain('sausages');

@@ -116,11 +116,9 @@
                 delete this.options.metadata;
             }
 
-            // get the featureidx from the end of the url
-            // `replace` strips trailing slashes
-            // TODO: Aly's comment:
-            // I think we have more than one of these strip trailing slash and get the feature index in our codebase. We should move it as a utility into geoApi at some point.
-            this.featureIdx = initialState.url.replace(/\/+$/, '').split('/').pop();
+            const urlParts = initialState.url.split('/');
+            this.featureIdx = urlParts.pop(); // get the featureidx from the end of the url
+            this.url = urlParts.join('/'); // keep the rest of the url (without the index)
 
             return this;
         };
