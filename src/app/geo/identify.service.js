@@ -21,16 +21,17 @@
         function identifyService(geoState, mapObject, layerRegistry) {
 
             const identifyHandlers = {
-                esriFeature: identifyEsriFeature//,
-                //esriDynamic: identifyEsriDynamic,
-                //ogcWms: identifyOgcWms
+                esriFeature: identifyEsriFeatureLayer,
+                esriDynamic: identifyDynamicLayer, // identifyEsriDynamic,
+                ogcWms: identifyOgcWmsLayer
             };
 
+            // jscs doesn't like enhanced object notation
+            // jscs:disable requireSpacesInAnonymousFunctionExpression
             const IDENTIFY_RESULT = {
                 isLoading: true,
                 requestId: -1,
-                requester: {
-                },
+                requester: {},
                 data: [],
 
                 init(name, symbology, format, caption) {
@@ -41,9 +42,12 @@
                         caption
                     };
 
+                    this.data = [];
+
                     return this;
                 }
             };
+            // jscs:enable requireSpacesInAnonymousFunctionExpression
 
             return init();
 
@@ -212,7 +216,7 @@
             * @param {Array} panelData an array to be filled with query results
             * @returns {Promise} a promise which resolves when the query completes
             */
-            function identifyWmsLayer(layerRecord, clickEvent, panelData) {
+            /*function _identifyWmsLayer(layerRecord, clickEvent, panelData) {
                 const { layer, state } = layerRecord;
                 if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType) || !layer.visible) {
                     return $q.resolve(null);
@@ -243,107 +247,70 @@
                         result.error = err.message;
                         result.isLoading = false;
                     });
-            }
+            }*/
 
             /**
-            * Run a query on a feature layer, return the result as a promise.  Fills the panelData array on resolution.
-            * @param {Object} layerRecord object registered with layerRegistry
-            * @param {Object} clickEvent the ESRI click event
-            * @param {Object} map the ESRI map object
-            * @param {Array} panelData an array to be filled with query results
-            * @returns {Promise} a promise which resolves when the query completes
+            * Run a getFeatureInfo on a WMS layer, return the result as a promise.  Fills the panelData array on resolution.
+            * @param {Object} layerRecord esri layer object
+            * @param {Object} opts additional argumets like map object, clickEvent, etc.
+            * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
             */
-            function identifyFeatureLayer(layerRecord, clickEvent, map, panelData) {
+            function identifyOgcWmsLayer(layerRecord, opts) {
                 const { layer, state } = layerRecord;
 
-                // ignore invisible layers by returning null and not adding anything to panelData
-                if (!layer.visibleAtMapScale || !layer.visible) {
-                    return $q.resolve(null);
+                // ignore layers with no mime type or invisible layers
+                if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType) || !layer.visible) {
+                    return {};
                 }
 
-                // FIXME  add a check to see if layer has config setting for not supporting a click
+                const identifyResult = Object.create(IDENTIFY_RESULT)
+                    .init(state.name, state.symbology, wmsInfoMap[state.featureInfoMimeType]);
 
-                const result = {
-                    isLoading: true,
-                    requestId: -1,
-                    requester: {
-                        name: state.name,
-                        symbology: state.symbology,
-                        format: 'EsriFeature'
-                    },
-                    data: []
-                };
-                panelData.push(result);
+                const identifyPromise = gapiService.gapi.layer.ogc
+                    .getFeatureInfo(
+                        layer,
+                        opts.clickEvent,
+                        state.layerEntries.map(le => le.id),
+                        state.featureInfoMimeType)
+                    .then(data => {
+                        identifyResult.isLoading = false;
+                        identifyResult.data.push(data);
 
-                // run a spatial query
-                const qry = new gapiService.gapi.layer.Query();
-                qry.outFields = ['*']; // this will result in just objectid fields, as that is all we have in feature layers
-                qry.geometry = makeClickBuffer(clickEvent.mapPoint, map, getTolerance(layer));
-
-                // no need to check if the layer is registered as this object comes from an array of registered layers
-
-                return $q.all([
-                        layerRecord.getAttributes(state.featureIdx),
-                        $q.resolve(layer.queryFeatures(qry))
-                    ])
-                    .then(([attributes, queryResult]) => {
-                        // transform attributes of query results into {name,data} objects
-                        // one object per queried feature
-                        //
-                        // each feature will have its attributes converted into a table
-                        // placeholder for now until we figure out how to signal the panel that
-                        // we want to make a nice table
-                        result.data = queryResult.features.map(
-                            feat => {
-                                // grab the object id of the feature we clicked on.
-                                const objId = feat.attributes[attributes.oidField].toString();
-
-                                // use object id find location of our feature in the feature array, and grab its attributes
-                                const featAttribs = attributes.rows[attributes.oidIndex[objId]];
-
-                                return {
-                                    name: getFeatureName(featAttribs, state, objId),
-                                    data: attributesToDetails(featAttribs, attributes.fields)
-                                };
-                            });
-                        result.isLoading = false;
-                    })
-                    .catch(err => {
-                        console.warn('Layer query failed');
-                        console.warn(err);
-                        result.isLoading = false;
-                        result.error = err.message;
+                        // console.info(data);
                     });
+
+                return { identifyResults: [identifyResult], identifyPromise };
             }
 
             /**
             * Run a query on a feature layer, return the result as a promise.  Fills the panelData array on resolution.
             * @param {Object} layerRecord esri layer object
             * @param {Object} opts additional argumets like map object, clickEvent, etc.
-            * @returns {Object} an object with identify results array and identify promise resolving when identify is complete
+            * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
             */
-            function identifyEsriFeature(layerRecord, opts) {
+            function identifyEsriFeatureLayer(layerRecord, opts) {
+                const { layer, state } = layerRecord;
+
                 // ignore invisible layers by returning empty object
-                if (!layerRecord.layer.visibleAtMapScale || !layerRecord.layer.visible) {
+                if (!layer.visibleAtMapScale || !layer.visible) {
                     return {};
                 }
 
                 const identifyResult = Object.create(IDENTIFY_RESULT)
-                    .init(layerRecord.state.name, layerRecord.state.symbology, 'EsriFeature')
+                    .init(state.name, state.symbology, 'EsriFeature');
 
                 // run a spatial query
                 const qry = new gapiService.gapi.layer.Query();
                 qry.outFields = ['*']; // this will result in just objectid fields, as that is all we have in feature layers
-                qry.geometry = makeClickBuffer(opts.clickEvent.mapPoint, opts.map, getTolerance(layerRecord.layer));
+                qry.geometry = makeClickBuffer(opts.clickEvent.mapPoint, opts.map, getTolerance(layer));
 
                 // no need to check if the layer is registered as this object comes from an array of registered layers
                 const identifyPromise = $q.all([
-                        layerRecord.getAttributes(layerRecord.state.featureIdx),
-                        $q.resolve(layerRecord.layer.queryFeatures(qry))
+                        layerRecord.getAttributes(state.featureIdx),
+                        $q.resolve(layer.queryFeatures(qry))
                     ])
                     .then(([attributes, queryResult]) => {
-                        // transform attributes of query results into {name,data} objects
-                        // one object per queried feature
+                        // transform attributes of query results into {name,data} objects one object per queried feature
                         //
                         // each feature will have its attributes converted into a table
                         // placeholder for now until we figure out how to signal the panel that
@@ -358,7 +325,7 @@
                                 const featAttribs = attributes.rows[attributes.oidIndex[objId]];
 
                                 return {
-                                    name: getFeatureName(featAttribs, layerRecord.state, objId),
+                                    name: getFeatureName(featAttribs, state, objId),
                                     data: attributesToDetails(featAttribs, attributes.fields)
                                 };
                             });
@@ -419,14 +386,14 @@
                                     .catch(error => {
                                         // add common error handling
 
-                                        console.warn(`Identify query failed for ${state.name}`);
+                                        console.warn(`Identify query failed for ${layerRecord.state.name}`);
                                         console.warn(error);
 
                                         identifyResults.forEach(identifyResult => {
                                             // TODO: this outputs raw error message from the service
                                             // we might want to replace it with more user-understandable messages
-                                            dataResult.error = error.message;
-                                            dataResult.isLoading = false;
+                                            identifyResult.error = error.message;
+                                            identifyResult.isLoading = false;
                                         });
 
                                         resolve(true);
@@ -434,7 +401,6 @@
                             );
                             loadingPromises.push(infallibleLoadingPromise);
                         });
-
 
                     /*const dynamicPromises = layerRegistry
                         .getLayersByType(layerTypes.esriDynamic)
