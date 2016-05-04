@@ -22,7 +22,7 @@
 
             const identifyHandlers = {
                 esriFeature: identifyEsriFeatureLayer,
-                esriDynamic: identifyDynamicLayer, // identifyEsriDynamic,
+                esriDynamic: identifyEsriDynamicLayer,
                 ogcWms: identifyOgcWmsLayer
             };
 
@@ -144,7 +144,7 @@
             * @param {Array} panelData an array to be filled with query results
             * @returns {Promise} a promise which resolves when the query completes
             */
-            function identifyDynamicLayer(layerRecord, opts, panelData) {
+            /*function _identifyDynamicLayer(layerRecord, opts, panelData) {
                 const { layer, state } = layerRecord;
                 if (!layer.visibleAtMapScale || !layer.visible) {
                     return $q.resolve(null);
@@ -207,47 +207,72 @@
                             value.error = err.message;
                         });
                     });
-            }
+            }*/
 
             /**
-            * Run a getFeatureInfo on a WMS layer, return the result as a promise.  Fills the panelData array on resolution.
-            * @param {Object} layerRecord object registered with layerRegistry
-            * @param {Object} clickEvent the ESRI click event
-            * @param {Array} panelData an array to be filled with query results
-            * @returns {Promise} a promise which resolves when the query completes
+            * Run a query on a dynamic layer, return the result as a promise.
+            * @param {Object} layerRecord esri layer object
+            * @param {Object} opts additional argumets like map object, clickEvent, etc.
+            * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
             */
-            /*function _identifyWmsLayer(layerRecord, clickEvent, panelData) {
+            function identifyEsriDynamicLayer(layerRecord, opts) {
                 const { layer, state } = layerRecord;
-                if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType) || !layer.visible) {
-                    return $q.resolve(null);
+                if (!layer.visibleAtMapScale || !layer.visible) {
+                    return {};
                 }
 
-                const result = {
-                    isLoading: true,
-                    requestId: -1,
-                    requester: {
-                        name: state.name,
-                        symbology: state.symbology,
-                        format: wmsInfoMap[state.featureInfoMimeType]
-                    },
-                    data: []
-                };
-                panelData.push(result);
+                const identifyResults = [];
 
-                return gapiService.gapi.layer.ogc
-                    .getFeatureInfo(layer, clickEvent, state.layerEntries.map(le => le.id), state.featureInfoMimeType)
-                    .then(data => {
-                        result.isLoading = false;
-                        result.data.push(data);
-                        console.info(data);
-                    })
-                    .catch(err => {
-                        console.warn('Wms identify failed');
-                        console.warn(err);
-                        result.error = err.message;
-                        result.isLoading = false;
+                // every dynamic layer is a group in toc; walk its items to create an entry in details panel
+                state.walkItems(legendEntry => {
+                    // ignore invisible sublayers
+                    if (!legendEntry.getVisibility()) {
+                        return;
+                    }
+
+                    const index = state.slaves.indexOf(legendEntry); // get real index of the sublayer; needed to match with `layerId` from clickResults
+
+                    const identifyResult = Object.create(IDENTIFY_RESULT)
+                        .init(legendEntry.name, legendEntry.symbology, 'EsriFeature', state.name);
+
+                    console.log('index === legendEntry.featureIdx', index === legendEntry.featureIdx, index, legendEntry.featureIdx);
+
+                    identifyResults[index] = identifyResult;
+                });
+
+                opts.tolerance = getTolerance(layer);
+
+                const identifyPromise = gapiService.gapi.layer.serverLayerIdentify(layer, opts)
+                    .then(clickResults => {
+                        console.log('got a click result');
+                        console.log(clickResults);
+
+                        // transform attributes of click results into {name,data} objects
+                        // one object per identified feature
+                        //
+                        // each feature will have its attributes converted into a table
+                        // placeholder for now until we figure out how to signal the panel that
+                        // we want to make a nice table
+                        clickResults.forEach(ele => {
+                            // NOTE: the identify service returns aliased field names, so no need to look them up here
+                            const identifyResult = identifyResults[ele.layerId];
+                            identifyResult.data.push({
+                                name: ele.value,
+                                data: attributesToDetails(ele.feature.attributes)
+                            });
+                            identifyResult.isLoading = false;
+                        });
+
+                        // set the rest of the entries to loading false
+                        identifyResults.forEach(identifyResult =>
+                                identifyResult.isLoading = false);
                     });
-            }*/
+
+                return {
+                    identifyResults: identifyResults.filter(identifyResult => identifyResult), // collapse sparse array
+                    identifyPromise
+                };
+            }
 
             /**
             * Run a getFeatureInfo on a WMS layer, return the result as a promise.  Fills the panelData array on resolution.
