@@ -46,6 +46,7 @@
                 legend: legendEntryFactory.entryGroup(), // this is legend's invisible root group; to be consumed by toc
 
                 addLayer,
+                addPlaceholder,
                 setLayerState,
                 setLayerLoadingFlag
             };
@@ -180,6 +181,15 @@
                 layer.state = state;
 
                 return state;
+            }
+
+            function addPlaceholder(layer) {
+                const entry = {};
+                entry.layer = layer;
+                entry.id = layer.id;
+                entry.type = 'placeholder';
+
+                service.legend.add(entry);
             }
 
             /**
