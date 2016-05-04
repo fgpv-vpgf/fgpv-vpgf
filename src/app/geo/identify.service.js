@@ -94,10 +94,16 @@
                 return Object.keys(attribs)
                     .map(key => {
                         let fieldName = layerRegistry.aliasedFieldName(key, fields);
+                        let val = attribs[key];
+
+                        if (layerRegistry.checkDateType(key, fields)) {
+                            let date = new Date(attribs[key]);
+                            val = date.toISOString().substring(0, 10);
+                        }
 
                         return {
                             key: fieldName,
-                            value: attribs[key]
+                            value: val
                         };
                     });
             }
