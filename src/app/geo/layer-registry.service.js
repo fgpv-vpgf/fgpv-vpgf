@@ -15,7 +15,9 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, $timeout, gapiService, legendService, layerTypes, layerStates, layerNoattrs) {
+    function layerRegistryFactory($q, $timeout, gapiService, legendService, layerTypes, layerStates, layerNoattrs,
+        layerTypesQueryable) {
+
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
         function layerRegistry(geoState, mapObject, config) {
@@ -32,6 +34,7 @@
                 removeLayer,
                 aliasedFieldName,
                 getLayersByType,
+                getAllQueryableLayerRecords,
                 getLayerIndexAbove,
                 moveLayer
             };
@@ -93,6 +96,14 @@
             function getLayersByType(layerType) {
                 return Object.keys(layers).map(key => layers[key])
                     .filter(layer => layer.state && layer.state.layerType === layerType);
+            }
+
+            // FIXME  add a check to see if layer has config setting for not supporting a click
+            function getAllQueryableLayerRecords() {
+                return Object.keys(layers).map(key => layers[key])
+                    .filter(layerRecord =>
+                        // TODO: filter out layers in error state
+                        layerTypesQueryable.indexOf(layerRecord.initialState.layerType) !== -1);
             }
 
             /**
