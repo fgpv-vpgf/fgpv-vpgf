@@ -67,9 +67,11 @@
              */
             function init() {
                 gapiService.gapi.events.wrapEvents(
-                    mapObject, {
-                        click: clickHandlerBuilder(mapObject)
-                    });
+                    mapObject,
+                    {
+                        click: clickHandlerBuilder
+                    }
+                );
 
                 return null;
             }
@@ -292,78 +294,87 @@
                 return { identifyResults: [identifyResult], identifyPromise };
             }
 
-            function clickHandlerBuilder(map) {
+            /**
+             * Modifies identify promises to always resolve, never reject
+             * any errors caught will be added to the details data object
+             * resolutions of these promises are for turning off loading indicator
+             *
+             * @param  {Promise} promise [description]
+             * @return {Promise}                 promise that doesn't reject
+             */
+            function makeInfalliblePromise(promise) {
+                const modifiedPromise = $q(resolve =>
+                    promise
+                        .then(() => resolve(true))
+                        .catch(() => resolve(true))
+                );
 
-                /**
-                 * Handles global map clicks.  Currently configured to walk through all registered dynamic
-                 * layers and trigger service side identify queries, and perform client side spatial queries
-                 * on registered feature layers.
-                 * @name clickHandler
-                 * @param {Object} clickEvent an ESRI event object for map click events
-                 */
-                return clickEvent => {
-                    if (getVisibleLayers() === 0) {
-                        return;
-                    }
+                return modifiedPromise;
+            }
 
-                    console.info('Click start');
+            /**
+             * Handles global map clicks.  Currently configured to walk through all registered dynamic
+             * layers and trigger service side identify queries, and perform client side spatial queries
+             * on registered feature layers.
+             * @name clickHandler
+             * @param {Object} clickEvent an ESRI event object for map click events
+             */
+            function clickHandlerBuilder(clickEvent) {
+                if (getVisibleLayers() === 0) {
+                    return;
+                }
 
-                    const loadingPromises = [];
-                    const details = {
-                        data: []
-                    };
+                console.info('Click start');
 
-                    const opts = {
-                        map,
-                        clickEvent,
-                        geometry: clickEvent.mapPoint,
-                        width: map.width,
-                        height: map.height,
-                        mapExtent: map.extent,
-                    };
+                const loadingPromises = [];
+                const details = {
+                    data: []
+                };
 
-                    layerRegistry
-                        .getAllQueryableLayerRecords()
-                        .forEach(layerRecord => {
-                            const { identifyResults, identifyPromise } =
-                                identifyHandlers[layerRecord.initialState.layerType](layerRecord, opts);
+                // TODO: mapObject is accessible from all function, there is no need to pass it as a parameter
+                const opts = {
+                    map: mapObject,
+                    clickEvent,
+                    geometry: clickEvent.mapPoint,
+                    width: mapObject.width,
+                    height: mapObject.height,
+                    mapExtent: mapObject.extent,
+                };
 
-                            // identify function returns undefined is the layer is cannot be queries because it's not visible or for some other reason
-                            if (typeof identifyResults === 'undefined') {
-                                return;
-                            }
+                layerRegistry
+                    .getAllQueryableLayerRecords()
+                    .forEach(layerRecord => {
+                        const { identifyResults, identifyPromise } =
+                            identifyHandlers[layerRecord.initialState.layerType](layerRecord, opts);
 
-                            details.data.push(...identifyResults);
+                        // identify function returns undefined is the layer is cannot be queries because it's not visible or for some other reason
+                        if (typeof identifyResults === 'undefined') {
+                            return;
+                        }
 
-                            // modify promises to always resolve, never reject
-                            // any errors caught will be added to the details data object
-                            // resolutions of these promises are for turning off loading indicator
-                            const infallibleLoadingPromise = $q(resolve =>
-                                identifyPromise
-                                    .then(() => resolve(true))
-                                    .catch(error => {
-                                        // add common error handling
+                        // catch error on identify promises and store error messages to be shown in the details panel.
+                        const loadingPromise = identifyPromise.catch(error => {
+                            // add common error handling
 
-                                        console.warn(`Identify query failed for ${layerRecord.state.name}`);
-                                        console.warn(error);
+                            console.warn(`Identify query failed for ${layerRecord.state.name}`);
+                            console.warn(error);
 
-                                        identifyResults.forEach(identifyResult => {
-                                            // TODO: this outputs raw error message from the service
-                                            // we might want to replace it with more user-understandable messages
-                                            identifyResult.error = error.message;
-                                            identifyResult.isLoading = false;
-                                        });
-
-                                        resolve(true);
-                                    })
-                            );
-                            loadingPromises.push(infallibleLoadingPromise);
+                            identifyResults.forEach(identifyResult => {
+                                // TODO: this outputs raw error message from the service
+                                // we might want to replace it with more user-understandable messages
+                                identifyResult.error = error.message;
+                                identifyResult.isLoading = false;
+                            });
                         });
 
-                    details.isLoaded = $q.all(loadingPromises).then(() => true);
+                        const infallibleLoadingPromise = makeInfalliblePromise(loadingPromise);
 
-                    stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
-                };
+                        details.data.push(...identifyResults);
+                        loadingPromises.push(infallibleLoadingPromise);
+                    });
+
+                details.isLoaded = $q.all(loadingPromises).then(() => true);
+                stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
             }
         }
     }
