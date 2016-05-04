@@ -41,10 +41,14 @@ describe('rvTocEntry', () => {
         $provide.service('$mdToast', () => {});
     }
 
+    function mockReverseFilter($provide) {
+        $provide.value('rvReverseFilter', value => value);
+    }
+
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
         bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo',
-            'pascalprecht.translate', mockLayoutService, mockGeoService, mockToast);
+            'pascalprecht.translate', mockLayoutService, mockGeoService, mockToast, mockReverseFilter);
 
         // inject angular services
         bard.inject('$compile', '$rootScope', '$httpBackend', 'tocService');
