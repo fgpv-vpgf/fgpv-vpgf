@@ -73,8 +73,8 @@
 
                     // add symbol as the first column
                     // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
-                    if (!displayData.data[0].hasOwnProperty('rvSymbol')) {
-                        displayData.data.forEach((row, index) => {
+                    if (!displayData.rows[0].hasOwnProperty('rvSymbol')) {
+                        displayData.rows.forEach((row, index) => {
                             const objId = row[displayData.oidField];
                             const renderer = geoService.layers[requester.layerId].layer.renderer;
                             const legend = requester.legendEntry.symbology;
@@ -124,7 +124,7 @@
                     .DataTable({
                         dom: 'rti',
                         columns: displayData.columns,
-                        data: displayData.data,
+                        data: displayData.rows,
                         order: [],
                         deferRender: true,
                         scrollY: true, // allow vertical scroller
@@ -178,7 +178,7 @@
              */
             function addColumnInteractivity(column) {
                 // use render function to augment button to displayed data when the table is rendered
-                column.render = (data) => {
+                column.render = data => {
                     return `<div class="rv-wrapper rv-icon-16"><span class="rv-data">${data}</span>
                         ${ZOOM_TO_ICON}</div>`;
                 };
@@ -223,7 +223,7 @@
 
             // watch filters data for changes; recreate table when data changes
             $scope.$watch('self.display.data', newValue => {
-                if (newValue && newValue.data) {
+                if (newValue && newValue.rows) {
                     // console.log('Filters fullyOpen', isFullyOpen, self.display.isLoading);
                     // console.log('Filters: table data udpated', newValue);
                     if (isFullyOpen) {

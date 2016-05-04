@@ -15,7 +15,9 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, $timeout, gapiService, legendService, layerTypes, layerStates, layerNoattrs) {
+    function layerRegistryFactory($q, $timeout, gapiService, legendService, layerTypes, layerStates, layerNoattrs,
+        layerTypesQueryable) {
+
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
         function layerRegistry(geoState, mapObject, config) {
@@ -30,9 +32,9 @@
                 generateLayer,
                 registerLayer,
                 removeLayer,
-                formatLayerAttributes,
                 aliasedFieldName,
                 getLayersByType,
+                getAllQueryableLayerRecords,
                 getLayerIndexAbove,
                 moveLayer
             };
@@ -43,17 +45,81 @@
 
             service.legend = ref.legendService.legend;
 
+            // jscs doesn't like enhanced object notation
+            // jscs:disable requireSpacesInAnonymousFunctionExpression
+            const LAYER_RECORD = {
+                _attributeBundle: undefined,
+                _formattedAttributes: undefined,
+
+                layer: undefined,
+                initialState: undefined,
+                state: undefined, // legend entry
+
+                /**
+                 * Retrieves attributes from a layer for a specified feature index
+                 * @param  {Number} featureIdx feature id on the service endpoint
+                 * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
+                 */
+                getAttributes(featureIdx) {
+                    if (this._formattedAttributes.hasOwnProperty(featureIdx)) {
+                        return this._formattedAttributes[featureIdx];
+                    }
+
+                    const layerPackage = this._attributeBundle[featureIdx];
+                    const attributePromise =
+                        $q.all([
+                            layerPackage.getAttribs(),
+                            layerPackage.layerData
+                        ])
+                        .then(([attributes, layerData]) =>
+                            formatAttributes(attributes, layerData)
+                        );
+
+                    return (this._formattedAttributes[featureIdx] = attributePromise);
+                },
+
+                /**
+                 * Initializes layer record.
+                 * @param  {Object} layer           esri layer object
+                 * @param  {Object} initialState    layer config values
+                 * @param  {Object} attributeBundle geoApi attribute bundle
+                 * @return {Object}                 layer record object`
+                 */
+                init(layer, initialState, attributeBundle) {
+                    this.layer = layer;
+                    this.initialState = initialState;
+                    this._attributeBundle = attributeBundle;
+
+                    this._formattedAttributes = {};
+
+                    return this;
+                }
+            };
+            // jscs:enable requireSpacesInAnonymousFunctionExpression
+
             return initialRegistration();
 
             /***/
 
             /**
-             * Retrieves all layers of the specified type
-             * @return {Array} array of layers
+             * Retrieves all  layer records of the specified type
+             * @return {Array} array of  layer records
              */
             function getLayersByType(layerType) {
                 return Object.keys(layers).map(key => layers[key])
                     .filter(layer => layer.state && layer.state.layerType === layerType);
+            }
+
+            // FIXME  add a check to see if layer has config setting for not supporting a click
+            /**
+             * Retrieves all queryable layer records
+             * @return {Array} array of layer records
+             */
+            function getAllQueryableLayerRecords() {
+                return Object.keys(layers).map(key => layers[key])
+                    .filter(layerRecord =>
+                        // TODO: filter out layers in error state
+                        layerTypesQueryable.indexOf(layerRecord.initialState.layerType) !== -1);
             }
 
             /**
@@ -166,17 +232,7 @@
              * @return {Promise} a promise resolving with the retrieved attribute data
              */
             function loadLayerAttributes(layer) {
-                return gapiService.gapi.attribs.loadLayerAttribs(layer)
-                    .catch(exception => {
-                        console.error(
-                            'Error getting attributes for ' +
-                            layer.name + ': ' +
-                            exception);
-                        console.log(layer);
-
-                        // TODO we may want to resolve with an empty attribute item. depends how breaky things get with the bad layer
-                        $q.reject(exception);
-                    });
+                return gapiService.gapi.attribs.loadLayerAttribs(layer);
             }
 
             /**
@@ -200,13 +256,11 @@
              * Adds a layer object to the layers registry
              * @param {object} layer the API layer object
              * @param {object} initialState a configuration fragment used to generate the layer
-             * @param {promise} attribs a promise resolving with the attributes associated with the layer (empty set if no attributes)
+             * @param {promise} attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
              * @param {number} position an optional index indicating at which position the layer was added to the map
              * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
              */
-            function registerLayer(layer, initialState, attribs) {
-                // TODO determine the proper docstrings for a non-service function that lives in a service
-
+            function registerLayer(layer, initialState, attributeBundle) {
                 if (!layer.id) {
                     console.error('Attempt to register layer without id property');
                     console.log(layer);
@@ -218,16 +272,11 @@
                     return false;
                 }
 
-                const layerRecord = {
-                    layer,
-                    attribs,
-                    initialState
-                };
+                const layerRecord = Object.create(LAYER_RECORD)
+                    .init(layer, initialState, attributeBundle);
 
-                layers[layer.id] = layerRecord;
-
-                // TODO: apply config values
-                ref.legendService.addLayer(layerRecord);
+                service.layers[layer.id] = layerRecord;
+                ref.legendService.addLayer(layerRecord); // generate legend entry
 
                 // FIXME:
                 window.RV.layers = window.RV.layers || {};
@@ -278,41 +327,34 @@
 
             /**
              * Formats raw attributes to the form consumed by the datatable
-             * @param  {Object} attributeData raw attribute data returned from geoapi
-             * @return {Object}               formatted attribute data { data: Array, columns: Array}
+             * @param  {Object} attributes raw attribute data returned from geoapi
+             * @return {Object} layerData  layer data returned from geoApi
+             * @return {Object}               formatted attribute data { data: Array, columns: Array, fields: Array, oidField: String, oidIndex: Object}
              */
-            function formatLayerAttributes(attributeData) {
-                const formattedAttributeData = {};
+            function formatAttributes(attributes, layerData) {
+                // create columns array consumable by datables
+                const columns = layerData.fields
+                    .filter(field =>
+                        // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
+                        // filter out fields where there is no corresponding attribute data
+                        attributes.features[0].attributes.hasOwnProperty(field.name))
+                    .map(field => {
+                        return {
+                            data: field.name,
+                            title: field.alias || field.name
+                        };
+                    });
 
-                attributeData.indexes.forEach(featureIndex => {
-                    // get the attributes
-                    const attr = attributeData[featureIndex];
+                // extract attributes to an array consumable by datatables
+                const rows = attributes.features.map(feature => feature.attributes);
 
-                    // create columns array consumable by datables
-                    const columns = attr.fields
-                        .filter(field =>
-                            // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
-                            // filter out fields where there is no corresponding attribute data
-                            attr.features[0].attributes.hasOwnProperty(field.name))
-                        .map(field => {
-                            return {
-                                data: field.name,
-                                title: field.alias || field.name
-                            };
-                        });
-
-                    // extract attributes to an array consumable by datatables
-                    const data = attr.features.map(feature => feature.attributes);
-
-                    formattedAttributeData[featureIndex] = {
-                        columns,
-                        data,
-                        oidField: attr.oidField, // keep a reference to id field ...
-                        oidIndex: attr.oidIndex // ... and keep id mapping array
-                    };
-                });
-
-                return formattedAttributeData;
+                return {
+                    columns,
+                    rows,
+                    fields: layerData.fields, // keep fields for reference ...
+                    oidField: layerData.oidField, // ... keep a reference to id field ...
+                    oidIndex: attributes.oidIndex // ... and keep id mapping array
+                };
             }
 
             /**

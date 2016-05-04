@@ -260,7 +260,8 @@
                 legendEntry: entry
             };
 
-            const dataPromise = entry.getCache('attributes')
+            const layerRecord = geoService.layers[requester.layerId];
+            const dataPromise = layerRecord.getAttributes(entry.featureIdx)
                 .then(attributes => {
                     return {
                         data: attributes,

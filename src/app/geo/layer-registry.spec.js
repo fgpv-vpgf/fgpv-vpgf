@@ -70,8 +70,6 @@ describe('layerRegistry', () => {
             .toBe('sausages');
         expect(lr.layers.sausages.state)
             .toBeDefined();
-        expect(lr.layers.sausages.attribs)
-            .toBeDefined();
         expect(lr.layers.sausages.state.url)
             .toBe('http://www.sausagelayer.com/');
 
@@ -143,24 +141,26 @@ describe('layerRegistry', () => {
                 }
             }
         };
-        const tempAttribPromise = $q.resolve({
+        const tempAttribPromise = {
             layerId: 'sausages',
             0: {
-                features: [{
-                    attributes: {
-                        abc: '123'
-                    }
-                }]
+                getAttribs: () => $q.resolve({
+                    features: [{
+                        attributes: {
+                            abc: '123'
+                        }
+                    }]
+                }),
+                layerData: $q.resolve()
             }
-        });
+        };
 
         const lr = layerRegistry(geoState, currentConfig);
         lr.registerLayer(tempLayer, tempConfig, tempAttribPromise);
 
-        lr.layers.sausages.attribs
-            .then(data => lr.formatAttributes(data))
+        lr.layers.sausages.getAttributes(0)
             .then(bundledAttributes => {
-                expect(bundledAttributes.data)
+                expect(bundledAttributes.rows)
                     .toBeDefined();
                 expect(bundledAttributes.columns)
                     .toBeDefined();

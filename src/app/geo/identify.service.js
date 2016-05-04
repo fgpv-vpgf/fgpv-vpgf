@@ -20,6 +20,44 @@
 
         function identifyService(geoState, mapObject, layerRegistry) {
 
+            // identify handler switch
+            const identifyHandlers = {
+                esriFeature: identifyEsriFeatureLayer,
+                esriDynamic: identifyEsriDynamicLayer,
+                ogcWms: identifyOgcWmsLayer
+            };
+
+            // jscs doesn't like enhanced object notation
+            // jscs:disable requireSpacesInAnonymousFunctionExpression
+            const IDENTIFY_RESULT = {
+                isLoading: true,
+                requestId: -1,
+                requester: {},
+                data: [],
+
+                /**
+                 * Initializes identify result object.
+                 * @param  {String} name      layer name of the queried layer
+                 * @param  {Array} symbology array of layer symbology to be displayed in details panel
+                 * @param  {String} format    indicates data formating template
+                 * @param  {String} caption   optional captions to be displayed along with the name
+                 * @return {Object}           identify result object
+                 */
+                init(name, symbology, format, caption) {
+                    this.requester = {
+                        name,
+                        symbology,
+                        format,
+                        caption
+                    };
+
+                    this.data = [];
+
+                    return this;
+                }
+            };
+            // jscs:enable requireSpacesInAnonymousFunctionExpression
+
             return init();
 
             /***/
@@ -29,9 +67,11 @@
              */
             function init() {
                 gapiService.gapi.events.wrapEvents(
-                    mapObject, {
-                        click: clickHandlerBuilder(mapObject)
-                    });
+                    mapObject,
+                    {
+                        click: clickHandlerBuilder
+                    }
+                );
 
                 return null;
             }
@@ -109,40 +149,35 @@
             }
 
             /**
-            * Run a query on a dynamic layer, return the result as a promise.  Fills the panelData array on resolution.
-            * @param {Object} layer an ESRI DynamicLayer object
-            * @param {Object} state the current layer state
-            * @param {Object} opts click threshold options
-            * @param {Array} panelData an array to be filled with query results
-            * @returns {Promise} a promise which resolves when the query completes
+            * Run a query on a dynamic layer, return the result as a promise.
+            * @param {Object} layerRecord esri layer object
+            * @param {Object} opts additional argumets like map object, clickEvent, etc.
+            * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
             */
-            function identifyDynamicLayer(layer, state, opts, panelData) {
+            function identifyEsriDynamicLayer(layerRecord, opts) {
+                const { layer, state } = layerRecord;
                 if (!layer.visibleAtMapScale || !layer.visible) {
-                    return $q.resolve(null);
+                    return {};
                 }
 
-                const subResults = {};
+                const identifyResults = [];
 
                 // every dynamic layer is a group in toc; walk its items to create an entry in details panel
-                state.walkItems(subItem => {
-                    const index = state.slaves.indexOf(subItem); // get real index of the sublayer; needed to match with `layerId` from clickResults
-                    const result = {
-                        isLoading: true,
-                        requestId: -1,
-                        requester: {
-                            symbology: subItem.symbology,
-                            name: subItem.name,
-                            caption: state.name,
-                            format: 'EsriFeature'
-                        },
-                        data: []
-                    };
-                    subResults[index] = result;
-                    panelData.push(result);
+                state.walkItems(legendEntry => {
+                    // ignore invisible sublayers
+                    if (!legendEntry.getVisibility()) {
+                        return;
+                    }
+
+                    const identifyResult = Object.create(IDENTIFY_RESULT)
+                        .init(legendEntry.name, legendEntry.symbology, 'EsriFeature', state.name);
+
+                    identifyResults[legendEntry.featureIdx] = identifyResult;
                 });
 
                 opts.tolerance = getTolerance(layer);
-                return gapiService.gapi.layer.serverLayerIdentify(layer, opts)
+
+                const identifyPromise = gapiService.gapi.layer.serverLayerIdentify(layer, opts)
                     .then(clickResults => {
                         console.log('got a click result');
                         console.log(clickResults);
@@ -155,206 +190,191 @@
                         // we want to make a nice table
                         clickResults.forEach(ele => {
                             // NOTE: the identify service returns aliased field names, so no need to look them up here
-                            const subResult = subResults[ele.layerId];
-                            subResult.data.push({
+                            const identifyResult = identifyResults[ele.layerId];
+                            identifyResult.data.push({
                                 name: ele.value,
                                 data: attributesToDetails(ele.feature.attributes)
                             });
-                            subResult.isLoading = false;
+                            identifyResult.isLoading = false;
                         });
-                        // set the rest of the entries to loading false
-                        Object.entries(subResults).forEach(([key, value]) => {
-                            if (value.isLoading) {
-                                value.isLoading = false;
-                                value.data = []; // no data items
-                            }
-                        });
-                    })
-                    .catch(err => {
-                        console.warn('Identify failed');
-                        console.warn(err);
 
-                        Object.entries(subResults).forEach(([key, value]) => {
-                            value.isLoading = false;
-                            value.data = null;
-                            value.error = JSON.stringify(err);
-                        });
+                        // set the rest of the entries to loading false
+                        identifyResults.forEach(identifyResult =>
+                                identifyResult.isLoading = false);
                     });
 
+                return {
+                    identifyResults: identifyResults.filter(identifyResult => identifyResult), // collapse sparse array
+                    identifyPromise
+                };
             }
 
             /**
             * Run a getFeatureInfo on a WMS layer, return the result as a promise.  Fills the panelData array on resolution.
-            * @param {Object} layer an ESRI WmsLayer object
-            * @param {Object} state the current layer state
-            * @param {Object} clickEvent the ESRI click event
-            * @param {Array} panelData an array to be filled with query results
-            * @returns {Promise} a promise which resolves when the query completes
+            * @param {Object} layerRecord esri layer object
+            * @param {Object} opts additional argumets like map object, clickEvent, etc.
+            * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
             */
-            function identifyWmsLayer(layer, state, clickEvent, panelData) {
+            function identifyOgcWmsLayer(layerRecord, opts) {
+                const { layer, state } = layerRecord;
+
+                // ignore layers with no mime type or invisible layers
                 if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType) || !layer.visible) {
-                    return;
+                    return {};
                 }
 
-                const result = {
-                    isLoading: true,
-                    requestId: -1,
-                    requester: {
-                        name: state.name,
-                        symbology: state.symbology,
-                        format: wmsInfoMap[state.featureInfoMimeType]
-                    },
-                    data: []
-                };
-                panelData.push(result);
+                const identifyResult = Object.create(IDENTIFY_RESULT)
+                    .init(state.name, state.symbology, wmsInfoMap[state.featureInfoMimeType]);
 
-                return gapiService.gapi.layer.ogc
-                    .getFeatureInfo(layer, clickEvent, state.layerEntries.map(le => le.id), state.featureInfoMimeType)
+                const identifyPromise = gapiService.gapi.layer.ogc
+                    .getFeatureInfo(
+                        layer,
+                        opts.clickEvent,
+                        state.layerEntries.map(le => le.id),
+                        state.featureInfoMimeType)
                     .then(data => {
-                        result.isLoading = false;
-                        result.data.push(data);
-                        console.info(data);
+                        identifyResult.isLoading = false;
+                        identifyResult.data.push(data);
+
+                        // console.info(data);
                     });
+
+                return { identifyResults: [identifyResult], identifyPromise };
             }
 
             /**
             * Run a query on a feature layer, return the result as a promise.  Fills the panelData array on resolution.
-            * @param {Object} layer an ESRI FeatureLayer object
-            * @param {Object} state the current layer state
-            * @param {Object} clickEvent the ESRI click event
-            * @param {Object} map the ESRI map object
-            * @param {Array} panelData an array to be filled with query results
-            * @returns {Promise} a promise which resolves when the query completes
+            * @param {Object} layerRecord esri layer object
+            * @param {Object} opts additional argumets like map object, clickEvent, etc.
+            * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
             */
-            function identifyFeatureLayer(layer, state, clickEvent, map, panelData) {
+            function identifyEsriFeatureLayer(layerRecord, opts) {
+                const { layer, state } = layerRecord;
+
+                // ignore invisible layers by returning empty object
                 if (!layer.visibleAtMapScale || !layer.visible) {
-                    return $q.resolve(null);
+                    return {};
                 }
 
-                // FIXME  add a check to see if layer has config setting for not supporting a click
-
-                const result = {
-                    isLoading: true,
-                    requestId: -1,
-                    requester: {
-                        name: state.name,
-                        symbology: state.symbology,
-                        format: 'EsriFeature'
-                    },
-                    data: []
-                };
-                panelData.push(result);
+                const identifyResult = Object.create(IDENTIFY_RESULT)
+                    .init(state.name, state.symbology, 'EsriFeature');
 
                 // run a spatial query
                 const qry = new gapiService.gapi.layer.Query();
                 qry.outFields = ['*']; // this will result in just objectid fields, as that is all we have in feature layers
-                qry.geometry = makeClickBuffer(clickEvent.mapPoint, map, getTolerance(layer));
+                qry.geometry = makeClickBuffer(opts.clickEvent.mapPoint, opts.map, getTolerance(layer));
 
-                return $q((resolve, reject) => {
-
-                    // TODO might want to abstract some of this out into a "get attibutes from feature" function
-                    // get the id and attribute bundle of the layer belonging to the feature that was clicked
-                    if (!layerRegistry.layers[layer.id]) {
-                        throw new Error('Click on unregistered layer ' + layer.id);
-                    }
-                    const layerState = layerRegistry.layers[layer.id].state;
-
-                    // ensure attributes are downloaded.  wait for them if not.
-                    layerRegistry.layers[layer.id].attribs.then(attribsBundle => {
-
-                        if (attribsBundle.indexes.length === 0) {
-                            // TODO do we really want to error, or just do nothing (i.e. user clicks on no-data feature -- so what?)
-                            throw new Error(`Click on layer without downloaded attributes ${layer.id}`);
-                        }
-
-                        // feature layers have only one index, so the first one is ours. grab the attribute set for that index.
-                        const attribSet = attribsBundle[attribsBundle.indexes[0]];
-
-                        // queryFeatures returns a dojo-style promise, so cannot use .catch
+                // no need to check if the layer is registered as this object comes from an array of registered layers
+                const identifyPromise = $q.all([
+                        layerRecord.getAttributes(state.featureIdx),
                         $q.resolve(layer.queryFeatures(qry))
-                            .then(queryResult => {
-                                // transform attributes of query results into {name,data} objects
-                                // one object per queried feature
-                                //
-                                // each feature will have its attributes converted into a table
-                                // placeholder for now until we figure out how to signal the panel that
-                                // we want to make a nice table
-                                result.data = queryResult.features.map(
-                                    feat => {
+                    ])
+                    .then(([attributes, queryResult]) => {
+                        // transform attributes of query results into {name,data} objects one object per queried feature
+                        //
+                        // each feature will have its attributes converted into a table
+                        // placeholder for now until we figure out how to signal the panel that
+                        // we want to make a nice table
+                        identifyResult.isLoading = false;
+                        identifyResult.data = queryResult.features.map(
+                            feat => {
+                                // grab the object id of the feature we clicked on.
+                                const objId = feat.attributes[attributes.oidField].toString();
 
-                                        // grab the object id of the feature we clicked on.
-                                        const objId = feat.attributes[attribSet.oidField].toString();
+                                // use object id find location of our feature in the feature array, and grab its attributes
+                                const featAttribs = attributes.rows[attributes.oidIndex[objId]];
 
-                                        // use object id find location of our feature in the feature array, and grab its attributes
-                                        const featAttribs = attribSet.features[attribSet.oidIndex[objId]].attributes;
-
-                                        return {
-                                            name: getFeatureName(feat.attribs, layerState, objId),
-                                            data: attributesToDetails(featAttribs, attribSet.fields)
-                                        };
-                                    });
-                                result.isLoading = false;
-                                resolve(true);
-                            })
-                            .catch(err => {
-                                console.warn('Layer query failed');
-                                console.warn(err);
-                                result.data = JSON.stringify(err);
-                                result.isLoading = false;
-                                reject(err);
+                                return {
+                                    name: getFeatureName(featAttribs, state, objId),
+                                    data: attributesToDetails(featAttribs, attributes.fields)
+                                };
                             });
                     });
-                });
+
+                return { identifyResults: [identifyResult], identifyPromise };
             }
 
-            function clickHandlerBuilder(map) {
+            /**
+             * Modifies identify promises to always resolve, never reject
+             * any errors caught will be added to the details data object
+             * resolutions of these promises are for turning off loading indicator
+             *
+             * @param  {Promise} promise [description]
+             * @return {Promise}                 promise that doesn't reject
+             */
+            function makeInfalliblePromise(promise) {
+                const modifiedPromise = $q(resolve =>
+                    promise
+                        .then(() => resolve(true))
+                        .catch(() => resolve(true))
+                );
 
-                /**
-                 * Handles global map clicks.  Currently configured to walk through all registered dynamic
-                 * layers and trigger service side identify queries, and perform client side spatial queries
-                 * on registered feature layers.
-                 * @name clickHandler
-                 * @param {Object} clickEvent an ESRI event object for map click events
-                 */
-                return clickEvent => {
-                    if (getVisibleLayers() === 0) {
-                        return;
-                    }
+                return modifiedPromise;
+            }
 
-                    console.info('Click start');
-                    const details = {
-                        data: []
-                    };
+            /**
+             * Handles global map clicks.  Currently configured to walk through all registered dynamic
+             * layers and trigger service side identify queries, and perform client side spatial queries
+             * on registered feature layers.
+             * @name clickHandler
+             * @param {Object} clickEvent an ESRI event object for map click events
+             */
+            function clickHandlerBuilder(clickEvent) {
+                if (getVisibleLayers() === 0) {
+                    return;
+                }
 
-                    const opts = {
-                        geometry: clickEvent.mapPoint,
-                        width: map.width,
-                        height: map.height,
-                        mapExtent: map.extent,
-                    };
+                console.info('Click start');
 
-                    const dynamicPromises = layerRegistry
-                        .getLayersByType(layerTypes.esriDynamic)
-                        .map(item => identifyDynamicLayer(item.layer, item.state, opts, details.data));
-
-                    const wmsPromises = layerRegistry
-                        .getLayersByType(layerTypes.ogcWms)
-                        .filter(item => item.state.featureInfoMimeType)
-                        .map(item => identifyWmsLayer(item.layer, item.state, clickEvent, details.data));
-
-                    const featurePromises = layerRegistry
-                        .getLayersByType(layerTypes.esriFeature)
-                        .map(item => identifyFeatureLayer(item.layer, item.state, clickEvent, map, details.data));
-
-                    let idPromises = [];
-                    idPromises = idPromises.concat(dynamicPromises);
-                    idPromises = idPromises.concat(wmsPromises);
-                    idPromises = idPromises.concat(featurePromises);
-
-                    details.isLoaded = $q.all(idPromises).then(() => true);
-
-                    stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
+                const loadingPromises = [];
+                const details = {
+                    data: []
                 };
+
+                // TODO: mapObject is accessible from all function, there is no need to pass it as a parameter
+                const opts = {
+                    map: mapObject,
+                    clickEvent,
+                    geometry: clickEvent.mapPoint,
+                    width: mapObject.width,
+                    height: mapObject.height,
+                    mapExtent: mapObject.extent,
+                };
+
+                layerRegistry
+                    .getAllQueryableLayerRecords()
+                    .forEach(layerRecord => {
+                        const { identifyResults, identifyPromise } =
+                            identifyHandlers[layerRecord.initialState.layerType](layerRecord, opts);
+
+                        // identify function returns undefined is the layer is cannot be queries because it's not visible or for some other reason
+                        if (typeof identifyResults === 'undefined') {
+                            return;
+                        }
+
+                        // catch error on identify promises and store error messages to be shown in the details panel.
+                        const loadingPromise = identifyPromise.catch(error => {
+                            // add common error handling
+
+                            console.warn(`Identify query failed for ${layerRecord.state.name}`);
+                            console.warn(error);
+
+                            identifyResults.forEach(identifyResult => {
+                                // TODO: this outputs raw error message from the service
+                                // we might want to replace it with more user-understandable messages
+                                identifyResult.error = error.message;
+                                identifyResult.isLoading = false;
+                            });
+                        });
+
+                        const infallibleLoadingPromise = makeInfalliblePromise(loadingPromise);
+
+                        details.data.push(...identifyResults);
+                        loadingPromises.push(infallibleLoadingPromise);
+                    });
+
+                details.isLoaded = $q.all(loadingPromises).then(() => true);
+                stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
             }
         }
     }

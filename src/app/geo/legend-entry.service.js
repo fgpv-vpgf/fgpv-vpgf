@@ -116,11 +116,11 @@
                 delete this.options.metadata;
             }
 
-            // get the featureid from the end of the url
+            // get the featureidx from the end of the url
             // `replace` strips trailing slashes
             // TODO: Aly's comment:
             // I think we have more than one of these strip trailing slash and get the feature index in our codebase. We should move it as a utility into geoApi at some point.
-            this.featureId = initialState.url.replace(/\/+$/, '').split('/').pop();
+            this.featureIdx = initialState.url.replace(/\/+$/, '').split('/').pop();
 
             return this;
         };
@@ -171,7 +171,7 @@
          */
         DYNAMIC_ENTRY_ITEM.setOpacity = function (value) {
             ENTRY_ITEM.setOpacity.call(this, value, false);
-            this.master._setOpacity([this.featureId]);
+            this.master._setOpacity([this.featureIdx]);
         };
 
         const ENTRY_GROUP = {
@@ -328,7 +328,7 @@
          */
         DYNAMIC_ENTRY_GROUP.setOpacity = function (value) {
             ENTRY_GROUP.setOpacity.call(this, value);
-            this.master._setOpacity([this.featureId]);
+            this.master._setOpacity([this.featureIdx]);
         };
 
         const DYNAMIC_ENTRY_MASTER_GROUP = Object.create(DYNAMIC_ENTRY_GROUP);
@@ -353,7 +353,7 @@
                     name: layerInfo.name,
                     layerType: layerEntryType,
                     options: layerEntriesOptions[index] || {},
-                    featureId: index
+                    featureIdx: index
                 };
 
                 if (layerInfo.subLayerIds) { // group item
