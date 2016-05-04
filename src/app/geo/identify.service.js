@@ -97,7 +97,7 @@
                         let val = attribs[key];
 
                         if (layerRegistry.checkDateType(key, fields)) {
-                            let date = new Date(attribs[key]);
+                            const date = new Date(val);
                             val = date.toISOString().substring(0, 10);
                         }
 
