@@ -36,7 +36,8 @@
                 getLayersByType,
                 getAllQueryableLayerRecords,
                 getLayerIndexAbove,
-                moveLayer
+                moveLayer,
+                checkDateType
             };
 
             const ref = {
@@ -375,6 +376,22 @@
                     }
                 }
                 return fName;
+            }
+
+            /**
+             * Check to see if the attribute in question is an esriFieldTypeDate type
+             * @param {String} attribName the attribute name we want to check if it's a date or not
+             * @param {Object} fields array of field definitions. the attribute should belong to the provided set of fields
+             */
+            function checkDateType(attribName, fields) {
+                if (fields) {
+                    const attribField = fields.find(field => {
+                        return field.name === attribName;
+                    });
+                    if (attribField && attribField.type) {
+                        return attribField.type === 'esriFieldTypeDate';
+                    }
+                }
             }
         }
     }
