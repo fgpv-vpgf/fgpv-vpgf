@@ -7,7 +7,7 @@ describe('rvContentPane0', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.panels', 'app.templates', 'pascalprecht.translate');
+        bard.appModule('app.ui.panels', 'app.templates', 'pascalprecht.translate', 'app.common.router');
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
@@ -63,7 +63,7 @@ describe('rvContentPane1', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.panels', 'app.templates', 'pascalprecht.translate');
+        bard.appModule('app.ui.panels', 'app.templates', 'pascalprecht.translate', 'app.common.router');
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
@@ -118,10 +118,10 @@ describe('rvContentPane2', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.panels', 'app.templates', 'pascalprecht.translate');
+        bard.appModule('app.ui.panels', 'app.templates', 'pascalprecht.translate', 'app.common.router');
 
         // inject angular services
-        bard.inject('$compile', '$rootScope');
+        bard.inject('$compile', '$rootScope', '$document', 'stateManager');
 
         // need to create a spy before directive is created, otherwise it will pull in the reference to the function before the spy is created
         spyOn(fakeController, 'closePanel');
