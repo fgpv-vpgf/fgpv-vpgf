@@ -341,12 +341,17 @@
              */
             function formatAttributes(attributes, layerData) {
                 // create columns array consumable by datables
+                const fieldNameArray = [];
                 const columns = layerData.fields
                     .filter(field =>
                         // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
                         // filter out fields where there is no corresponding attribute data
                         attributes.features[0].attributes.hasOwnProperty(field.name))
                     .map(field => {
+                        // check if date type; append key to fieldNameArray if so
+                        if (field.type === 'esriFieldTypeDate') {
+                            fieldNameArray.push(field.name);
+                        }
                         return {
                             data: field.name,
                             title: field.alias || field.name
@@ -355,6 +360,14 @@
 
                 // extract attributes to an array consumable by datatables
                 const rows = attributes.features.map(feature => feature.attributes);
+
+                // convert each date cell to ISO format
+                fieldNameArray.forEach(fieldName => {
+                    rows.forEach(row => {
+                        const date = new Date(row[fieldName]);
+                        row[fieldName] = date.toISOString().substring(0, 10);
+                    });
+                });
 
                 return {
                     columns,
@@ -400,6 +413,7 @@
                         return attribField.type === 'esriFieldTypeDate';
                     }
                 }
+                return false;
             }
         }
     }
