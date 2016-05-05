@@ -8,7 +8,8 @@
 const csv2geojson = require('csv2geojson');
 const Terraformer = require('terraformer');
 const shp = require('shpjs');
-const ogc = require('./ogc/ogc.js');
+const ogc = require('./layer/ogc.js');
+const shared = require('./shared.js');
 const defaultRenderers = require('./defaultRenderers.json');
 Terraformer.ArcGIS = require('terraformer-arcgis-parser');
 
@@ -614,25 +615,6 @@ function serverLayerIdentifyBuilder(esriBundle) {
 }
 
 /**
-* Get a 'good enough' uuid. For backup purposes if client does not supply its own
-* unique layer id
-*
-* @method  generateUUID
-* @returns {String} a uuid
-*/
-function generateUUID() {
-    let d = Date.now();
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-        // do math!
-        /*jslint bitwise: true */
-        const r = (d + Math.random() * 16) % 16 | 0;
-        d = Math.floor(d / 16);
-        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-        /*jslint bitwise: false */
-    });
-}
-
-/**
 * Performs in place assignment of integer ids for a GeoJSON FeatureCollection.
 * Assumes all features have ids or all do not.  May fail (create duplicate keys) if some do and some don't
 */
@@ -751,7 +733,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
             if (opts.layerId) {
                 layerId = opts.layerId;
             } else {
-                layerId = generateUUID();
+                layerId = shared.generateUUID();
             }
 
             // TODO add support for renderer option, or drop the option

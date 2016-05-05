@@ -53,7 +53,6 @@ describe('events wrapping', () => {
         const myevent = events();
         spyOn(sampleLayer, 'on').and.callThrough();
         myevent.wrapEvents(sampleLayer, {click: (x) => {
-            console.log('yeezy');
             expect(sampleLayer.on).toHaveBeenCalled();
             done();
             }
