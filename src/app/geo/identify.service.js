@@ -29,32 +29,26 @@
 
             // jscs doesn't like enhanced object notation
             // jscs:disable requireSpacesInAnonymousFunctionExpression
-            const IDENTIFY_RESULT = {
-                isLoading: true,
-                requestId: -1,
-                requester: {},
-                data: [],
-
-                /**
-                 * Initializes identify result object.
-                 * @param  {String} name      layer name of the queried layer
-                 * @param  {Array} symbology array of layer symbology to be displayed in details panel
-                 * @param  {String} format    indicates data formating template
-                 * @param  {String} caption   optional captions to be displayed along with the name
-                 * @return {Object}           identify result object
-                 */
-                init(name, symbology, format, caption) {
-                    this.requester = {
+            /**
+             * Create an identify result object.
+             * @param  {String} name      layer name of the queried layer
+             * @param  {Array} symbology array of layer symbology to be displayed in details panel
+             * @param  {String} format    indicates data formating template
+             * @param  {String} caption   optional captions to be displayed along with the name
+             * @return {Object}           identify result object
+             */
+            const IDENTIFY_RESULT = (name, symbology, format, caption) => {
+                return {
+                    isLoading: true,
+                    requestId: -1,
+                    requester: {
                         name,
                         symbology,
                         format,
                         caption
-                    };
-
-                    this.data = [];
-
-                    return this;
-                }
+                    },
+                    data: []
+                };
             };
             // jscs:enable requireSpacesInAnonymousFunctionExpression
 
@@ -169,8 +163,8 @@
                         return;
                     }
 
-                    const identifyResult = Object.create(IDENTIFY_RESULT)
-                        .init(legendEntry.name, legendEntry.symbology, 'EsriFeature', state.name);
+                    const identifyResult =
+                        IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature', state.name);
 
                     identifyResults[legendEntry.featureIdx] = identifyResult;
                 });
@@ -223,8 +217,8 @@
                     return {};
                 }
 
-                const identifyResult = Object.create(IDENTIFY_RESULT)
-                    .init(state.name, state.symbology, wmsInfoMap[state.featureInfoMimeType]);
+                const identifyResult =
+                    IDENTIFY_RESULT(state.name, state.symbology, wmsInfoMap[state.featureInfoMimeType]);
 
                 const identifyPromise = gapiService.gapi.layer.ogc
                     .getFeatureInfo(
@@ -256,8 +250,8 @@
                     return {};
                 }
 
-                const identifyResult = Object.create(IDENTIFY_RESULT)
-                    .init(state.name, state.symbology, 'EsriFeature');
+                const identifyResult =
+                    IDENTIFY_RESULT(state.name, state.symbology, 'EsriFeature');
 
                 // run a spatial query
                 const qry = new gapiService.gapi.layer.Query();

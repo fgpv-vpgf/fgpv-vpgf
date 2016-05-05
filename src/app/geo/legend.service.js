@@ -98,23 +98,17 @@
                     layer.initialState, layer.layer, true);
                 layer.state = state;
 
-                const symbologyPromise = getMapServerSymbology(layer);
+                const symbologyPromise = getMapServerSymbology(state.url);
 
                 // wait for symbology to load and ...
-                symbologyPromise
-                    .then(({ data }) =>  // ... and apply them to existing child items
-                        data.layers.forEach(layer => applySymbology(state.slaves[layer.layerId], layer))
-                    );
+                symbologyPromise.then(data =>  // ... and apply them to existing child items
+                        data.layers.forEach(layer => applySymbology(state.slaves[layer.layerId], layer)));
 
-                // wait on attributes to load and ...
-                /*
-                layer.attribs
-                    .then(data =>
-                        data.indexes.forEach(index =>
-                            // ... assign feature counts to sublayers
-                            applyFeatureCount(layer.layer.geometryType, state.slaves[index], data[index])
-                        )
-                    );*/
+                // assign feature counts only to active sublayers
+                state.walkItems(layerEntry => {
+                    getServiceFeatureCount(`${state.url}/${layerEntry.featureIdx}`).then(count =>
+                        applyFeatureCount(layer.layer.geometryType, layerEntry, count));
+                });
 
                 return state;
             }
@@ -143,17 +137,14 @@
                 const state = legendEntryFactory.singleEntryItem(layer.initialState, layer.layer);
                 layer.state = state;
 
-                const symbologyPromise = getMapServerSymbology(layer);
+                const symbologyPromise = getMapServerSymbology(state.url);
 
-                symbologyPromise
-                    .then(({ data, index }) => applySymbology(state, data.layers[index]));
+                symbologyPromise.then(data =>
+                    applySymbology(state, data.layers[state.featureIdx]));
 
-                /*
-                layer.attribs.then(data => {
-                    applyFeatureCount(layer.layer.geometryType, state, data[data.indexes[0]]);
-                });
-
-                */
+                // assign feature count
+                getServiceFeatureCount(`${state.url}/${state.featureIdx}`).then(count =>
+                    applyFeatureCount(layer.layer.geometryType, state, count));
 
                 return state;
             }
@@ -253,35 +244,19 @@
          * TODO: move to geoapi as it's stateless and very specific
          * Scrapes feaure and dynamic layers for their symbology;
          *
-         * * data.layers [
-         *     {
-         *         layerId: Number,
-         *         legend: Array
-         *     },
-         *     ...
-         * ]
-         * @param  {Object} layer layer object from `layerRegistry`
+         * @param  {String} layerUrl service url
+         * @returns {Array} array of legend items
          */
-        function getMapServerSymbology(layer) {
-            const reg = /(.+?)(\/(\d))?$/; // separate layer id from the rest of the url
-            const url = layer.state.url.replace(/\/+$/, ''); // strip trailing slashes
-
-            // jscs also doesn't like fancy destructuring
-            // jscs:disable requireSpaceAfterComma
-            const [, legendUrl,, index = -1] = reg.exec(url); // https://babeljs.io/docs/learn-es2015/#destructuring
-            // jscs:enable requireSpaceAfterComma
-
-            return $http.jsonp(`${legendUrl}/legend?f=json&callback=JSON_CALLBACK`)
+        function getMapServerSymbology(layerUrl) {
+            return $http.jsonp(`${layerUrl}/legend?f=json&callback=JSON_CALLBACK`)
                 .then(result => {
                     // console.log(legendUrl, index, result);
 
                     if (result.data.error) {
                         return $q.reject(result.data.error);
                     }
-                    return {
-                        data: result.data,
-                        index
-                    };
+
+                    return result.data;
                 })
                 .catch(error => {
                     // TODO: apply default symbology to the layer in question in this case
@@ -290,16 +265,32 @@
         }
 
         /**
+        * Get feature count from a layer.
+         * @param  {String} layerUrl layer url
+         * @return {Promise}          promise resolving with a feature count
+         */
+        function getServiceFeatureCount(layerUrl) {
+            /* jscs:disable maximumLineLength */
+            return $http.jsonp(`${layerUrl}/query?where=1=1&returnCountOnly=true&returnGeometry=false&f=json&callback=JSON_CALLBACK`)
+                .then(result => {
+                    console.log(layerUrl, result);
+                    return result.data.count;
+                });
+            /* jscs:enable maximumLineLength */
+        }
+
+        /**
          * Applies feature count to the toc entries.
          * @param  {String} geometryType one of geometry types
          * @param  {Object} state legend entry object
-         * @param  {Object} data  layer attributes
+         * @param  {Number} count  number of features in the layer
          */
-        /*function applyFeatureCount(geometryType, state, data) {
-            state.features.count = data.features.length;
+        function applyFeatureCount(geometryType, state, count) {
+            state.features.count = count;
+
             $translate(geometryTypes[geometryType]).then(type =>
                 state.features.type = type.split('|')[state.features.count > 1 ? 1 : 0]);
-        }*/
+        }
 
         /**
          * Applies retrieved symbology to the layer item's state
