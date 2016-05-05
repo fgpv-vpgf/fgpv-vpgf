@@ -48,7 +48,7 @@
      *
      * @return {object} directive body
      */
-    function rvContentPane($compile) {
+    function rvContentPane($compile, $document, stateManager) {
         const directive = {
             restrict: 'E',
             require: '?^rvPanel', // require plug controller
@@ -90,9 +90,27 @@
                 self.closePanel = ctrl.closePanel || undefined;
             }
 
+            initEscapeListener();
             initHeaderControls();
             initFloatingHeader();
             initFooter();
+
+            function initEscapeListener() {
+                // hide all panels when the escape key is pressed.
+                $document.bind('keydown', function (event) {
+                    if (event.which === 27) {
+                        scope.$apply(function () {
+                            for (var pName in stateManager.state) {
+                                if (stateManager.state.hasOwnProperty(pName)) {
+                                    let obj = {};
+                                    obj[pName] = false;
+                                    stateManager.setActive(obj);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
 
             function initHeaderControls() {
                 // `self.headerControls` is a string of directive names separated by ';' to be inserted in the content pane's header
