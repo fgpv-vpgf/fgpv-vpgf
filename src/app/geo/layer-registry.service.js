@@ -298,7 +298,7 @@
                 // `replace` strips trailing slashes
                 // TODO: Aly's comment:
                 // I think we have more than one of these strip trailing slash and get the feature index in our codebase. We should move it as a utility into geoApi at some point.
-                // Aleks: I suggest this as the only place to stip slashes from urls;
+                // Aleks: I suggest this as the only place to strip slashes from urls;
                 layerConfig.url = layerConfig.url.replace(/\/+$/, '');
 
                 handlers[layerTypes.esriDynamic] = config => {
