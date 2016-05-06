@@ -110,6 +110,8 @@
         PLACEHOLDER_ENTRY_ITEM.init = function(initialState, layerRef) {
             ENTRY_ITEM.init.call(this, initialState, layerRef);
 
+            // TODO: suggestion: separate legend entry ids from layer object ids
+            this.id += 'placeholder';
             this.type = 'placeholder';
             this.state = 'rv-loading';
 
