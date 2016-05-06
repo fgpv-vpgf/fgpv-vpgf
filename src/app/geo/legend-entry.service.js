@@ -27,6 +27,7 @@
     function legendEntryFactory($translate, gapiService, layerDefaults, geometryTypes) {
 
         const service = {
+            placeholderEntryItem,
             singleEntryItem,
             dynamicEntryItem,
             entryGroup,
@@ -103,6 +104,17 @@
                 // this.state = layerStates.default; ??
             }
         };
+
+        const PLACEHOLDER_ENTRY_ITEM = Object.create(ENTRY_ITEM);
+
+        PLACEHOLDER_ENTRY_ITEM.init = function(initialState, layerRef) {
+            ENTRY_ITEM.init.call(this, initialState, layerRef);
+
+            this.type = 'placeholder';
+            this.state = 'rv-loading';
+
+            return this;
+        }
 
         const SINGLE_ENTRY_ITEM = Object.create(ENTRY_ITEM);
 
@@ -489,6 +501,11 @@
                 this._layerRef.show(); // ? is this necessary
             }
         };
+
+        function placeholderEntryItem(initialState, layerRef) {
+            return Object.create(PLACEHOLDER_ENTRY_ITEM)
+                .init(initialState, layerRef);
+        }
 
         function singleEntryItem(initialState, layerRef) {
             return Object.create(SINGLE_ENTRY_ITEM)

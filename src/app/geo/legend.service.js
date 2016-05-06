@@ -184,10 +184,7 @@
             }
 
             function addPlaceholder(layer) {
-                const entry = {};
-                entry.layer = layer;
-                entry.id = layer.id;
-                entry.type = 'placeholder';
+                const entry = legendEntryFactory.placeholderEntryItem(layer.initialState, layer.layer);
 
                 service.legend.add(entry);
             }
