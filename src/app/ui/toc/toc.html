@@ -12,23 +12,16 @@
                 <rv-toc-entry
                     class="rv-toc-{{ ::item.type }}-entry"
                     entry="::item"
-                    ng-if="::item.type === 'layer'"
+                    type="::item.type"
                     ng-class="[ { 'rv-selected': item.selected }, item.state ]"></rv-toc-entry>
-
-                <rv-toc-entry
-                    class="rv-toc-{{ ::item.type }}-entry"
-                    entry="::item"
-                    ng-if="::item.type === 'group'"
-                    ng-class="{ 'rv-selected': item.selected }"
-                    type="group"></rv-toc-entry>
 
                 <ul
                     class="rv-layer-list rv-toggle-slide rv-layer-level-{{ ::$dxLevel }}"
-                    ng-if="::item.type === 'group'"
+                    ng-if-start="::item.type === 'group'"
                     dx-connect="item"
                     ng-show="item.expanded"></ul>
 
-                <div class="rv-shadow" ng-if="::item.type === 'group'"></div>
+                <div class="rv-shadow" ng-if-end></div>
 
                 <md-progress-linear class="rv-toc-progress-indicator" md-mode="indeterminate" ng-show="item.isLoading"></md-progress-linear>
 
