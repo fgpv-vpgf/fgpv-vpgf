@@ -40,7 +40,7 @@
                 selectBasemap,
                 setFullExtent,
                 setSelectedBaseMap,
-                zoomToGraphic,
+                zoomToGraphic
             };
 
             return buildMapObject();
@@ -293,6 +293,7 @@
              */
             function zoomToGraphic(layer, objId) {
                 const map = service.mapObject;
+                const zoomLevel = gapiService.gapi.symbology.getZoomLevel(map.__tileInfo.lods, layer.maxScale);
 
                 // layerUrl is the URL that the point to be zoomed to belongs to
                 let layerUrl = `${layer.url}/`;
@@ -341,11 +342,11 @@
                         } else {
                             // handles points
                             const pt = newExt.getCenter();
-                            const zoomed = map.setZoom(8);
+                            const zoomed = map.setZoom(zoomLevel);
                             zoomed.then(() => {
                                 const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
                                 const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
-                                map.centerAt(newPt, 8);
+                                map.centerAt(newPt, zoomLevel);
                             });
                         }
                     }
