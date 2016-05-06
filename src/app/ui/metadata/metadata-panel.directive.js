@@ -3,27 +3,27 @@
 
     /**
      * @ngdoc directive
-     * @name rvMetadata
+     * @name rvMetadataPanel
      * @module app.ui.metadata
      * @restrict E
      * @description
      *
-     * The `rvMetadata` directive wraps the side panel's metadata content.
+     * The `rvMetadataPanel` directive wraps the side panel's metadata content.
      *
      */
     angular
         .module('app.ui.metadata')
-        .directive('rvMetadata', rvMetadata);
+        .directive('rvMetadataPanel', rvMetadataPanel);
 
     /**
-     * `rvMetadata` directive body.
+     * `rvMetadataPanel` directive body.
      *
      * @return {object} directive body
      */
-    function rvMetadata() {
+    function rvMetadataPanel() {
         const directive = {
             restrict: 'E',
-            templateUrl: 'app/ui/metadata/metadata.html',
+            templateUrl: 'app/ui/metadata/metadata-panel.html',
             scope: {},
             controller: Controller,
             controllerAs: 'self',
@@ -33,18 +33,7 @@
         return directive;
     }
 
-    function Controller(stateManager) {
+    function Controller() {
         'ngInject';
-        const self = this;
-
-        self.display = stateManager.display.metadata;
-
-        activate();
-
-        /*********/
-
-        function activate() {
-
-        }
     }
 })();
