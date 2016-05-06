@@ -53,11 +53,5 @@
         function closePanel() {
             stateManager.setActive($attrs.type);
         }
-
-        activate();
-
-        /********/
-
-        function activate() {}
     }
 })();
