@@ -83,6 +83,7 @@ $layer-item-height: rem(6.0);
 
         @include layer-group-toggle;
         @include layer-item;
+        @include entry-placeholder;
     }
     // rv-shadow is a thin guideline drawn on the right side of the list when group toggle is hovered over;
     // it helps to visualize which layers will be affected by the group toggle
@@ -104,6 +105,10 @@ $layer-item-height: rem(6.0);
 @mixin layer-level-step($index) {
     &-#{$index} {
         $offset: rem(0.8); // multiplied by the indentation level
+
+        .rv-toc-placeholder-entry {
+            padding-left: $offset * ($index) + rem(1.6) + $toc-padding;
+        }
 
         .rv-toc-layer-entry{
             padding-left: $offset * ($index) + rem(1.6) + $toc-padding;
@@ -195,6 +200,32 @@ absolutely position a button underneath an item so it acts like a button body fo
         height: 100%;
         top: 0;
         transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+    }
+}
+
+@mixin entry-placeholder {
+    .rv-toc-placeholder-entry {
+        @include entry-controls;
+
+        display: flex;
+        align-items: center;
+        height: $layer-item-height;
+        position: relative;
+        padding-right: $toc-padding;
+
+        .rv-toc-entry-content {
+            flex: 1; // content tries to take all available space
+            min-width: 0; // Firefox fix for flexbox not wanting to shrink: http://stackoverflow.com/a/31349707
+            margin: 0 rem(1.0) 0 rem(1.6);
+
+            .rv-toc-entry-name {
+                font-size: rem(1.6);
+                // truncate layer name if it's too long
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
     }
 }
 
