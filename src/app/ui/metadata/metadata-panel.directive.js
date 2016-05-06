@@ -33,7 +33,10 @@
         return directive;
     }
 
-    function Controller() {
+    function Controller(stateManager) {
         'ngInject';
+        const self = this;
+
+        self.display = stateManager.display.metadata;
     }
 })();

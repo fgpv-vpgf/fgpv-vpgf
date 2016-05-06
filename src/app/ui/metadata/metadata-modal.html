@@ -1,16 +1,7 @@
-<md-dialog aria-label="List dialog">
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <h2>Metadata: {{display.requester.name}}</h2>
-        <span flex></span>
-        <md-button class="md-icon-button" ng-click="cancel()">
-            <md-icon md-svg-src="navigation:close"></md-icon>
-        </md-button>
-      </div>
-    </md-toolbar>
-    <md-dialog-content>
+<md-dialog aria-label="Help Summary" ng-cloak class="rv-help-summary">
+    <rv-content-pane close-panel="cancel()" title-style="title" title-value="Metadata: {{display.requester.name}}">
         <div class="md-dialog-content">
             <rv-metadata-content></rv-metadata-content>
         </div>
-    </md-dialog-content>
+    </rv-content-pane>
 </md-dialog>

@@ -38,12 +38,7 @@
         'ngInject';
         const self = this;
 
-        self.expandPanel = showExpandPanel ? expandPanel : undefined;
-        self.showExpandPanel = showExpandPanel;
-
-        function showExpandPanel() {
-            return stateManager.state.sideMetadata.active === true;
-        }
+        self.expandPanel = expandPanel;
 
         function expandPanel() {
             $mdDialog.show({
