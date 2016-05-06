@@ -51,7 +51,7 @@ describe('rvContentPane0', () => {
             expect(directiveElement.find('.rv-header')
                     .children()
                     .length)
-                .toBe(3);
+                .toBe(2);
         });
     });
 });
@@ -163,7 +163,7 @@ describe('rvContentPane2', () => {
             expect(directiveElement.find('.rv-header')
                     .children()
                     .length)
-                .toBe(5);
+                .toBe(4);
         });
     });
 });
