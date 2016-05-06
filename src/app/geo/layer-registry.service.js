@@ -23,7 +23,6 @@
         function layerRegistry(geoState, mapObject, config) {
 
             const layers = {}; // layer collection
-            const placeholders = {};
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -216,8 +215,14 @@
                     // TODO: decouple identifyservice from everything
                     const layer = service.generateLayer(layerConfig);
 
+                    const layerRecord = {
+                        layer,
+                        initialState: layerConfig
+                    };
+
                     // add a placeholder and store it
-                    placeholders[layer.id] = ref.legendService.addPlaceholder(layer);
+                    ref.legendService.addPlaceholder(layerRecord);
+                    ref.legendService.setLayerLoadingFlag(layerRecord.state, true);
 
                     // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
                     gapiService.gapi.events.wrapEvents(layer, {
@@ -234,29 +239,30 @@
                             if (layerNoattrs.indexOf(layerConfig.layerType) < 0) {
                                 attributesPromise = loadLayerAttributes(layer);
                             }
+
                             // replace placeholder with actual layer
-                            let index = ref.legendService.legend.remove(placeholders[layer.id]);
-                            delete placeholders[layer.id];
+                            let index = ref.legendService.legend.remove(layerRecord.state);
                             service.registerLayer(layer, layerConfig, attributesPromise, index); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                         },
                         error: data => {
                             console.error('layer error', layer.id, data);
 
                             // switch placeholder to error
-                            ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);
+                            // ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);
 
                             // FIXME layers that fail on initial load will never be added to the layers list
-                            // ref.legendService.setLayerState(service.layers[layer.id], layerStates.error, 100);
+                            ref.legendService.setLayerState(layerRecord.state, layerStates.error, 10100);
+                            ref.legendService.setLayerLoadingFlag(layerRecord.state, false, 10100);
                         },
                         'update-start': data => {
                             console.log('update-start', layer.id, data);
 
-                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id], true, 300);
+                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, true, 300);
                         },
                         'update-end': data => {
                             console.log('update-end', layer.id, data);
 
-                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id], false, 100);
+                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, false, 100);
                         }
                     });
 
