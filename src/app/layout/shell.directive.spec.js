@@ -81,9 +81,9 @@ describe('rvShell', () => {
             .respond({});
         $httpBackend.expectGET('content/images/iconsets/maps-icons.svg')
             .respond({});
-        $httpBackend.expectGET('content/images/iconsets/default-icons.svg')
-            .respond({});
         $httpBackend.expectGET('content/images/iconsets/action-icons.svg')
+            .respond({});
+        $httpBackend.expectGET('content/images/iconsets/default-icons.svg')
             .respond({});
         $httpBackend.expectGET('content/images/iconsets/editor-icons.svg')
             .respond({});
