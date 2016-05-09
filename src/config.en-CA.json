@@ -375,5 +375,8 @@
       "history",
       "basemap"
     ]
+  },
+  "menuPanel": {
+    "markerImage": "content/images/Map-icon.png"
   }
 }
