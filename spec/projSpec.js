@@ -50,6 +50,13 @@ describe('Local projection', () => {
         'x0 x1 y0 y1'.split(' ').forEach(x => expect(res[x]).toBeCloseTo(sampleData[x],5));
     });
 
+    it('should reproject from mercator to lambert', () => {
+        const josmExtent = {"type":"extent","xmin":-13316443.76,"ymin":6388804.5583,"xmax":-10471824.465,"ymax":9225974.5022,"spatialReference":{"wkid":102100}}; // jshint ignore:line
+        const expectedRes = {"x0":-1729118.683387185,"y0":74576.19391872548,"x1":66964.16600783693,"y1":1810940.2344750422}; // jshint ignore:line
+        let res = proj.localProjectExtent(josmExtent, 3978);
+        'x0 x1 y0 y1'.split(' ').forEach(x => expect(res[x]).toBeCloseTo(expectedRes[x],5));
+    });
+
     it('should not fail silently if a projection is not set', () => {
         expect(() => proj.localProjectExtent(sampleExtent, 111111)).toThrow();
     });
@@ -68,7 +75,7 @@ describe('geojson reprojection', () => {
     })
 })
 
-describe("test for esri projection conversion function", () => {
+describe("esri projection conversion function", () => {
     const sampleData = {x0:-95,y0:49,x1:-94.5,y1:49.5,sr:4326};
     const sampleExtent = makeFakeEsriExtent(sampleData);
     let esri;
@@ -100,7 +107,7 @@ describe("test for esri projection conversion function", () => {
     });
 });
 
-describe('test for spatialReference comparison', () => {
+describe('spatialReference comparison', () => {
     const sr1_3978 = { wkid: 3978 };
     const sr2_3978 = { wkid: 3978 };
     const sr3_10200 = { wkid: 10200 };
