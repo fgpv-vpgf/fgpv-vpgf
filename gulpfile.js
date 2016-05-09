@@ -63,7 +63,7 @@ gulp.task('build', 'Transpile and concatenate the code', function () {
 gulp.task('test', 'Run unit tests in jasmine', ['check', 'build'], function () {
     return gulp
         .src('spec/*Spec.js')
-        .pipe($.jasmine());
+        .pipe($.jasmine({ verbose: true }));
 });
 
 gulp.task('default', 'Check style and unit tests', ['check', 'test']);
