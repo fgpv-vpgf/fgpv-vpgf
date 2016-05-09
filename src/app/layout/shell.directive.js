@@ -29,8 +29,6 @@
 
         return directive;
 
-        /********/
-
         function link(scope, el) {
             storageService.panels.shell = el;
 
@@ -46,20 +44,19 @@
         }
     }
 
-    // TODO: clean; there is a lot of garbage/demo code here
     function Controller($rootElement, $mdDialog, version, sideNavigationService, geoService, fullScreenService,
-        helpService) {
-
+        helpService, configService) {
         'ngInject';
         const self = this;
 
         self.geoService = geoService;
-
         self.version = version;
+        self.minimize = sideNavigationService.close;
 
-        /***/
+        configService.getCurrent().then(data => {
+            self.markerImageSrc = data.menuPanel.markerImage;
+        });
 
-        // TODO: mock settings; replace by config
         self.menu = [{
                 name: 'Options',
                 type: 'heading',
@@ -74,25 +71,14 @@
                         name: 'Share',
                         type: 'link'
                     }
-                    /*, // TODO: re-enable if map-export functionality ever exists
-                    {
-                        name: 'Print',
-                        type: 'link'
-                    }*/
                 ]
             },
-            /*{ // TODO: re-enable if needed in the future
-                name: 'About',
-                type: 'link'
-            },*/
             {
                 name: 'Help',
                 type: 'link',
                 action: event => {
                     sideNavigationService.close();
 
-                    // TODO: do something better
-                    // open dumb help
                     $mdDialog.show({
                         controller: helpService.HelpSummaryController,
                         controllerAs: 'self',
@@ -103,9 +89,6 @@
                         clickOutsideToClose: true,
                         fullscreen: false
                     });
-
-                    // stateManager.setActive('help');
-                    // console.log('Halp!');
                 }
             }
         ];
