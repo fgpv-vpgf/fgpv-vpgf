@@ -1,4 +1,5 @@
 // Common functions for use across other geoApi modules
+'use strict';
 
 function getLayerTypeBuilder(esriBundle) {
     /**

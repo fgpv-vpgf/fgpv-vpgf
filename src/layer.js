@@ -934,6 +934,20 @@ function getFeatureInfoBuilder(esriBundle) {
     };
 }
 
+/**
+* Given 2D array in column x row format, check if all entries in the two given columns are numeric.
+*
+* @param {Array} arr is a 2D array based on the CSV file that contains row information for all of the rows
+* @param {Integer} ind1 is a user specified index when uploading the CSV that specifies lat or long column (whichever isn't specified by ind2)
+* @param {Integer} ind2 is a user specified index when uploading the CSV that specifies lat or long column (whichever isn't specified by ind1)
+* @return {Boolean} returns true or false based on whether or not all all columns at ind1 and ind2 are numbers
+*/
+function validateLatLong(arr, ind1, ind2) {
+    return arr.every(row => {
+        return !(isNaN(row[ind1]) || isNaN(row[ind2]));
+    });
+}
+
 // CAREFUL NOW!
 // we are passing in a reference to geoApi.  it is a pointer to the object that contains this module,
 // along with other modules. it lets us access other modules without re-instantiating them in here.
@@ -957,6 +971,7 @@ module.exports = function (esriBundle, geoApi) {
         predictLayerUrl: predictLayerUrlBuilder(esriBundle),
         validateFile,
         csvPeek,
-        serviceType
+        serviceType,
+        validateLatLong
     };
 };
