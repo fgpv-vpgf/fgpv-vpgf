@@ -42,9 +42,11 @@
 
         function expandPanel() {
             $mdDialog.show({
-                controller: ($scope, display, cancel) => {
-                    $scope.display = display;
-                    $scope.cancel = cancel;
+                controller: (display, cancel) => {
+                    const self = this;
+
+                    self.display = display;
+                    self.cancel = cancel;
                 },
                 locals: {
                     display: stateManager.display.metadata,
@@ -52,7 +54,9 @@
                 },
                 templateUrl: 'app/ui/metadata/metadata-modal.html',
                 clickOutsideToClose: true,
-                escapeToClose: true
+                escapeToClose: true,
+                controllerAs: 'self',
+                bindToController: true
             });
         }
     }
