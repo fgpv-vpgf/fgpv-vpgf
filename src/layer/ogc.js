@@ -1,3 +1,4 @@
+'use strict';
 const yxList = require('./reversedAxis.json');
 
 function getFeatureInfoBuilder(esriBundle) {
