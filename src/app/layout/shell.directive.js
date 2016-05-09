@@ -54,7 +54,7 @@
         self.minimize = sideNavigationService.close;
 
         configService.getCurrent().then(data => {
-            self.markerImageSrc = data.menuPanel.markerImage;
+            self.markerImageSrc = data.logoUrl;
         });
 
         self.menu = [{
