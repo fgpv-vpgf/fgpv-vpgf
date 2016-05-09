@@ -21,7 +21,7 @@ function bboxBuilder(esriBundle, apiRef) {
             projectedExtent = apiRef.proj.projectEsriExtent(extent, targetSr);
         }
         result.add(new esriBundle.Graphic({
-            geometry: extent,
+            geometry: projectedExtent,
             symbol: defaultRenderers.boundingBoxPoly.renderer.symbol
         }));
         return result;
