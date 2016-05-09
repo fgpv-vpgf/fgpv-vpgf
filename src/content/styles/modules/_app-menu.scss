@@ -39,7 +39,6 @@
                 margin: 0 auto;
                 border-bottom-color: $primary-color-light;
                 
-
                 > img {
                     height: 150px;
                     width: auto;
@@ -47,20 +46,17 @@
                     transform-origin: 50% 0;
                     transform: scale(1);
                 }
-
             }
-            
+
             .minimize-button {
                 position:absolute;
                 top:0;
                 right:0;
             }
-            
+
             > .minimize-button {
                 margin: 10px;
             }
-            
-            
 
             .app-logotype {
                 color: black;

@@ -1,5 +1,6 @@
 {
   "version": "-1",
+  "logoUrl": "content/images/Map-icon.png",
   "services": {
     "proxyUrl": "http://cp.zz9.ca/index"
   },
@@ -375,8 +376,5 @@
       "history",
       "basemap"
     ]
-  },
-  "menuPanel": {
-    "markerImage": "content/images/Map-icon.png"
   }
 }
