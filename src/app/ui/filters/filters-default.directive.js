@@ -1,4 +1,7 @@
 (() => {
+    // jscs:disable maximumLineLength
+    const ZOOM_TO_ICON = tooltip => `<md-icon class="rv-icon rv-zoom-to" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g id="zoom_in"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-4h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></g></svg><md-tooltip role="tooltip"><div class="md-content md-show"><span>${tooltip}</span></div></md-tooltip></md-icon>`;
+    // jscs:enable maximumLineLength
 
     /**
      * @ngdoc directive
@@ -18,7 +21,7 @@
      *
      * @return {object} directive body
      */
-    function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, configService) {
+    function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default.html',
@@ -47,15 +50,7 @@
              * Creates a new datatables instance (destroying existing if any). It pulls the data from the stateManager display store.
              */
             function createTable() {
-                let zoomText;
-                if (configService.currentLang() === 'en-CA') {
-                    zoomText = 'Zoom To Feature';
-                } else if (configService.currentLang() === 'fr-CA') {
-                    zoomText = 'Zoom à l\'Élément';
-                }
-                // jscs:disable maximumLineLength
-                const ZOOM_TO_ICON = '<md-icon class="rv-icon rv-zoom-to" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g id="zoom_in"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-4h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></g></svg><md-tooltip role="tooltip"><div class="md-content md-show"><span>' + zoomText + '</span></div></md-tooltip></md-icon>';
-                // jscs:enable maximumLineLength
+                const zoomText = $translate.instant('filter.tooltip.zoom');
 
                 // TODO: move hardcoded stuff in consts
                 containerNode = containerNode || el.find('.rv-filters-data-container');
@@ -114,7 +109,7 @@
                     // get the first column after the symbol column
                     const interactiveColumn = displayData.columns.find(column =>
                         column.data !== 'rvSymbol');
-                    addColumnInteractivity(interactiveColumn, ZOOM_TO_ICON);
+                    addColumnInteractivity(interactiveColumn, ZOOM_TO_ICON(zoomText));
                 }
 
                 // ~~I hate DataTables~~ Datatables are cool!
@@ -182,11 +177,11 @@
              * Adds zoom and details buttons to the column provided.
              * @param {Object} column from the formatted attributes bundle
              */
-            function addColumnInteractivity(column, ZOOM_TO_ICON) {
+            function addColumnInteractivity(column, zoomIcon) {
                 // use render function to augment button to displayed data when the table is rendered
                 column.render = data => {
                     return `<div class="rv-wrapper rv-icon-16"><span class="rv-data">${data}</span>
-                        ${ZOOM_TO_ICON}</div>`;
+                        ${zoomIcon}</div>`;
                 };
             }
         }
