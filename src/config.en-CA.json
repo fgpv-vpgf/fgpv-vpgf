@@ -133,7 +133,10 @@
       "id":"josm",
       "name": "Joint Canada-Alberta Implementation Plan for Oil Sands Monitoring",
       "layerType":"esriFeature",
-      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0"
+      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0",
+      "options": {
+        "boundingBox": { "value": true }
+      }
     },
     {
       "id":"geomet_temp",

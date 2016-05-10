@@ -168,7 +168,7 @@
                 },
                 "value": {
                     "type": "boolean",
-                    "default": true,
+                    "default": false,
                     "description": "Specifies the initial state of the bounding box option. True: the layer bounding box is visible; False: the bounding box is hidden."
                 }
             },
