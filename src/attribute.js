@@ -1,5 +1,7 @@
 'use strict';
 
+// TODO consider refactoring this file so that the geoApi object is passed in along with the
+//      esriBundle, then reference the shared module from it.  See layer.js as example.
 const shared = require('./shared.js');
 
 /*
