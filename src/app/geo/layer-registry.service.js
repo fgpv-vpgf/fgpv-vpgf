@@ -22,7 +22,7 @@
 
         function layerRegistry(geoState, mapObject, config) {
 
-            const layers = {}; // layer collection
+            const layers = {}; // collection of LAYER_RECORD objects
 
             // this `service` object will be exposed through `geoService`
             const service = {
