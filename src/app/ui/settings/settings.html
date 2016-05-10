@@ -20,7 +20,9 @@
                 </div>
 
                 <div class="rv-setting-option" ng-if="self.tocEntry.options.boundingBox">
-                    <md-switch translate-attr-aria-label="settings.aria.boundingBox" class="md-primary rv-switch" ng-model="isChecked">
+                    <md-switch translate-attr-aria-label="settings.aria.boundingBox" class="md-primary rv-switch"
+                               ng-model="self.tocEntry.options.boundingBox.value"
+                               ng-change="self.setBbox(self.tocEntry.options.boundingBox.value)">
                         {{'settings.label.boundingBox' | translate}}
                     </md-switch>
                 </div>

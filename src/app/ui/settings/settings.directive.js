@@ -43,7 +43,7 @@
         return directive;
     }
 
-    function Controller(stateManager, $scope, $timeout) {
+    function Controller(stateManager, $scope, $timeout, geoService) {
         'ngInject';
         const self = this;
         self.Math = window.Math;
@@ -74,6 +74,13 @@
                         )
                     );
             }
+        });
+
+        $scope.$watch('self.display.data.options.boundingBox.value', val => {
+            if (typeof val === 'undefined') {
+                return;
+            }
+            geoService.setBboxState(self.tocEntry, val);
         });
 
         activateOpacitySetting();
