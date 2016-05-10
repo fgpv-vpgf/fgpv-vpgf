@@ -307,6 +307,13 @@
                 service.layers[layer.id] = layerRecord;
                 ref.legendService.addLayer(layerRecord); // generate legend entry
 
+                // TODO refactor this as it has nothing to do with layer registration;
+                // will likely change as a result of layer reloading / reordering / properly ordered legend
+                const opts = layerRecord.state.options;
+                if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
+                    setBboxState(layerRecord.state, true);
+                }
+
                 // FIXME:
                 window.RV.layers = window.RV.layers || {};
                 window.RV.layers[layer.id] = layerRecord;
