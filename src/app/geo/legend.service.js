@@ -183,6 +183,11 @@
                 return state;
             }
 
+            /**
+             * Add a placeholder for the provided layer
+             *
+             * @param {Object} layer object from `layerRegistry` `layers` object
+             */
             function addPlaceholder(layer) {
                 const entry = legendEntryFactory.placeholderEntryItem(layer.initialState, layer.layer);
                 layer.state = entry;

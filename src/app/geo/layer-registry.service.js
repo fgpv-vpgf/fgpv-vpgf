@@ -243,7 +243,7 @@
                                 }
 
                                 // replace placeholder with actual layer
-                                let index = ref.legendService.legend.remove(layerRecord.state);
+                                const index = ref.legendService.legend.remove(layerRecord.state);
                                 service.registerLayer(layer, layerConfig, attributesPromise, index); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                             }
                         },
@@ -273,9 +273,7 @@
                                 ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, false, 100);
                             } else {
                                 // If the placeholder was removed then remove the layer from the map object
-                                mapObject.removeLayer(
-                                    mapObject.getLayer(layer.id)
-                                );
+                                mapObject.removeLayer(mapObject.getLayer(layer.id));
                             }
                         }
                     });
@@ -307,8 +305,7 @@
 
                 // TODO: don't fail silently; throw an error; maybe shown message to the user.
                 if (!l) {
-                    console.error(`Could not find layer to remove: ${layerId}`);
-                    return;
+                    throw new Error();
                 }
 
                 mapObject.removeLayer(l.layer);
