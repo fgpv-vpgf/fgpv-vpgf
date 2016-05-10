@@ -302,10 +302,10 @@
              * @param {object} layer the API layer object
              * @param {object} initialState a configuration fragment used to generate the layer
              * @param {promise} attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
-             * @param {number} position an optional index indicating at which position the layer was added to the map
+             * @param {number} index an optional index indicating at which position the layer was added to the map
              * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
              */
-            function registerLayer(layer, initialState, attributeBundle) {
+            function registerLayer(layer, initialState, attributeBundle, index) {
                 if (!layer.id) {
                     console.error('Attempt to register layer without id property');
                     console.log(layer);
@@ -321,7 +321,7 @@
                     .init(layer, initialState, attributeBundle);
 
                 service.layers[layer.id] = layerRecord;
-                ref.legendService.addLayer(layerRecord); // generate legend entry
+                ref.legendService.addLayer(layerRecord, index); // generate legend entry
 
                 // TODO refactor this as it has nothing to do with layer registration;
                 // will likely change as a result of layer reloading / reordering / properly ordered legend

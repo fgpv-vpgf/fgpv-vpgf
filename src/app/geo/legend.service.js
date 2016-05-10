@@ -195,13 +195,14 @@
              *
              * TODO: hide groups with no layers;
              * @param {Object} layer object from `layerRegistry` `layers` object
+             * @param {Number} index position to insert layer into the legend
              */
-            function addLayer(layer) {
+            function addLayer(layer, index) {
                 const layerType = layer.initialState.layerType;
                 const entry = layerTypeGenerators[layerType](layer);
 
                 // layerTypeGroups[layerType].add(entry);
-                service.legend.add(entry);
+                service.legend.add(entry, index);
             }
 
             /**
