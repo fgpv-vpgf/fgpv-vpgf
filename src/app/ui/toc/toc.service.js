@@ -200,6 +200,8 @@
                 .parent(layoutService.panes.toc)
                 .position('bottom rv-flex');
 
+            entry.removed = true;
+
             $mdToast.show(undoToast)
                 .then(response => {
                     if (response === 'ok') { // promise resolves with 'ok' when user clicks 'undo'
@@ -210,8 +212,10 @@
                         // it is restored also invisible
                         entry.setVisibility(isEntryVisible);
                     } else {
-                        // remove layer for real now
-                        geoService.removeLayer(entry.id);
+                        if (entry.type !== 'placeholder') {
+                            // remove layer for real now
+                            geoService.removeLayer(entry.id);
+                        }
                     }
                 });
         }
