@@ -233,16 +233,19 @@
                             // FIXME look at layer config for flags indicating not to load attributes
                             // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
 
-                            // handles the asynch loading of attributes
-                            // get the attributes for the layer
-                            let attributesPromise = $q.resolve(null);
-                            if (layerNoattrs.indexOf(layerConfig.layerType) < 0) {
-                                attributesPromise = loadLayerAttributes(layer);
-                            }
+                            // make sure the placeholder hasn't been removed
+                            if (!layerRecord.state.removed) {
+                                // handles the asynch loading of attributes
+                                // get the attributes for the layer
+                                let attributesPromise = $q.resolve(null);
+                                if (layerNoattrs.indexOf(layerConfig.layerType) < 0) {
+                                    attributesPromise = loadLayerAttributes(layer);
+                                }
 
-                            // replace placeholder with actual layer
-                            let index = ref.legendService.legend.remove(layerRecord.state);
-                            service.registerLayer(layer, layerConfig, attributesPromise, index); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                                // replace placeholder with actual layer
+                                let index = ref.legendService.legend.remove(layerRecord.state);
+                                service.registerLayer(layer, layerConfig, attributesPromise, index); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+                            }
                         },
                         error: data => {
                             console.error('layer error', layer.id, data);
@@ -257,17 +260,31 @@
                         'update-start': data => {
                             console.log('update-start', layer.id, data);
 
-                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, true, 300);
+                            // in case the layer registration was bypassed (e.g. placeholder removed)
+                            if (service.layers[layer.id]) {
+                                ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, true, 300);
+                            }
                         },
                         'update-end': data => {
                             console.log('update-end', layer.id, data);
 
-                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, false, 100);
+                            // in case the layer registration was bypassed (e.g. placeholder removed)
+                            if (service.layers[layer.id]) {
+                                ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, false, 100);
+                            } else {
+                                // If the placeholder was removed then remove the layer from the map object
+                                mapObject.removeLayer(
+                                    mapObject.getLayer(layer.id)
+                                );
+                            }
                         }
                     });
 
-                    // add layer to the map triggering its loading process
-                    mapObject.addLayer(layer);
+                    // Make sure the placeholder is still there
+                    if (!layerRecord.state.removed) {
+                        // add layer to the map triggering its loading process
+                        mapObject.addLayer(layer);
+                    }
                 });
             }
 
@@ -290,6 +307,7 @@
 
                 // TODO: don't fail silently; throw an error; maybe shown message to the user.
                 if (!l) {
+                    console.error(`Could not find layer to remove: ${layerId}`);
                     return;
                 }
 
