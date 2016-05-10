@@ -1,3 +1,4 @@
+/* global angularDragula */
 (() => {
     'use strict';
 
@@ -24,6 +25,7 @@
          */
         'pascalprecht.translate',
         'dotjem.angular.tree',
-        'flow'
+        'flow',
+        angularDragula(angular)
     ]);
 })();
