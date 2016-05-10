@@ -116,7 +116,7 @@
             this.state = 'rv-loading';
 
             return this;
-        }
+        };
 
         const SINGLE_ENTRY_ITEM = Object.create(ENTRY_ITEM);
 
