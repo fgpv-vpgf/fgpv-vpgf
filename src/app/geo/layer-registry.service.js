@@ -22,7 +22,7 @@
 
         function layerRegistry(geoState, mapObject, config) {
 
-            const layers = {}; // layer collection
+            const layers = {}; // layer collection of LAYER_RECORD objects
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -37,7 +37,8 @@
                 getAllQueryableLayerRecords,
                 getLayerIndexAbove,
                 moveLayer,
-                checkDateType
+                checkDateType,
+                setBboxState
             };
 
             const ref = {
@@ -55,6 +56,7 @@
                 layer: undefined,
                 initialState: undefined,
                 state: undefined, // legend entry
+                bbox: undefined, // bounding box layer
 
                 /**
                  * Retrieves attributes from a layer for a specified feature index
@@ -145,6 +147,7 @@
                     // take the last position if there are no valid layers in the legend
                     // there may be utility layers (e.g. highlight, bounding box) which may be in the ESRI list
                     // but not in the legend
+                    // FIXME with bounding boxes this will no longer work
                     return list.length;
                 }
                 return list.indexOf(nextEntry.layer.id);
@@ -162,6 +165,31 @@
                 const curPos = service.legend.items.findIndex(e => e.id === id);
                 const layer = service.legend.items[curPos].layer;
                 mapObject.reorderLayer(layer, getLayerIndexAbove(position));
+            }
+
+            /**
+             * Set the visibility of the bounding box for the specified layer.
+             * @param {Object} layerEntry the layer entry used to generate the bounding box
+             * @param {Boolean} visible the visibility state of the bounding box,
+             * it is permitted to attempt to transition from true->true or false->false
+             * these transitions will be ignored by the method
+             */
+            function setBboxState(layerEntry, visible) {
+                const esriLayer = layers[layerEntry.id].layer;
+                const makeBbox = gapiService.gapi.layer.bbox.makeBoundingBox; // because our names are way too long
+                if (!visible) {
+                    if (layers[layerEntry.id].bbox) {
+                        mapObject.removeLayer(layers[layerEntry.id].bbox);
+                        layers[layerEntry.id].bbox = undefined;
+                    }
+                    return;
+                }
+                if (visible && layers[layerEntry.id].bbox) {
+                    return;
+                }
+                const box = makeBbox(`bbox_${layerEntry.id}`, esriLayer.fullExtent, mapObject.extent.spatialReference);
+                mapObject.addLayer(box);
+                layers[layerEntry.id].bbox = box;
             }
 
             /**
