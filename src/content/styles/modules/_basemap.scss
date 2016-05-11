@@ -3,7 +3,7 @@
 
     ul.rv-basemap-list {
         > li {
-            margin-bottom: 22px;
+            margin-bottom: rem(2.2);
         }
     }
 
@@ -60,7 +60,9 @@
                 color: rgb(255,255,255);
                 top: 24px;
                 z-index: 1;
-                padding: 0px;
+                text-transform: none;
+                padding: rem(0.5) rem(1);
+                text-align: left; 
                 display: none;
                 font-size: 12px;
                 overflow: hidden;
