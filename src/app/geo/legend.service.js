@@ -17,7 +17,7 @@
         .factory('legendService', legendServiceFactory);
 
     function legendServiceFactory($translate, $http, $q, $timeout, gapiService,
-            geometryTypes, layerTypes, layerStates, legendEntryFactory) {
+            geometryTypes, layerTypes, layerSortGroups, layerStates, legendEntryFactory) {
 
         const legendSwitch = {
             structured: structuredLegendService,
@@ -97,7 +97,7 @@
              */
             function dynamicGenerator(layer) {
                 const state = legendEntryFactory.dynamicEntryMasterGroup(
-                    layer.initialState, layer.layer, true);
+                    layer.initialState, layer.layer, false);
                 layer.state = state;
 
                 const symbologyPromise = getMapServerSymbology(state.url);
@@ -123,7 +123,7 @@
              */
             function tileGenerator(layer) {
                 const state = legendEntryFactory.dynamicEntryMasterGroup(
-                    layer.initialState, layer.layer, true);
+                    layer.initialState, layer.layer, false);
                 layer.state = state;
 
                 return state;

@@ -16,7 +16,7 @@
         .factory('layerRegistry', layerRegistryFactory);
 
     function layerRegistryFactory($q, $timeout, gapiService, legendService, layerTypes, layerStates, layerNoattrs,
-        layerTypesQueryable) {
+        layerTypesQueryable, layerSortGroups) {
 
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
@@ -35,7 +35,6 @@
                 aliasedFieldName,
                 getLayersByType,
                 getAllQueryableLayerRecords,
-                getLayerIndexAbove,
                 moveLayer,
                 checkDateType,
                 setBboxState
@@ -208,45 +207,47 @@
             }
 
             /**
-             * Returns the index of the layer in the ESRI stack which is above the given legend position.
-             * Only top level items in the legend are traversed.
+             * Move a source layer within the map on top (visually) of the target layer.
+             *
+             * NOTE this does not modify the legend, movement within the legend should be handled separately, ideally
+             * calling this function immediately before or after the legend is updated
+             *
              * NOTE the ESRI map stack does not reflect the legend and is arranged in reverse order
              * for ESRI low index = low drawing order; legend: low index = high drawing order
              * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details
              *
-             * @param {Number} legendPosition index of the layer within the legend
-             * @return {Number} the position of the layer above in the particular ESRI layer stack
+             * @param {String} sourceId the id of the layer to be moved
+             * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
              */
-            function getLayerIndexAbove(legendPosition) {
-                const layer = service.legend.items[legendPosition].layer;
+            function moveLayer(sourceId, targetId) {
+                const { layer: sourceLayer, state: sourceEntry } = service.layers[sourceId];
+                const targetEntry = targetId !== -1 ? service.layers[targetId].state : null;
 
-                // ESRI keeps graphical (WMS, Tile, Image) layers separate from feature layers
-                // pick the appropriate list of layer IDs based on the type of layer being interrogated
-                const list = layerNoattrs.indexOf(layer.layerType) < 0 ? mapObject.layerIds : mapObject.graphicLayerIds;
-                const nextEntry = service.legend.items.find((entry, idx) =>
-                    list.indexOf(entry.layer.id) > -1 && idx > legendPosition);
-                if (typeof nextEntry === 'undefined') {
-                    // take the last position if there are no valid layers in the legend
-                    // there may be utility layers (e.g. highlight, bounding box) which may be in the ESRI list
-                    // but not in the legend
-                    // FIXME with bounding boxes this will no longer work
-                    return list.length;
+                const mapStackSwitch = [
+                    mapObject.graphicsLayerIds,
+                    mapObject.layerIds
+                ];
+
+                let targetIndex;
+
+                // if targetEntry is null, meaning the layer is dropped at the end of the list or
+                // the layer is dropped on top of a different group
+                if (targetEntry === null || sourceEntry.sortGroup !== targetEntry.sortGroup) {
+                    // put the layer at the bottom of its sort group
+                    targetIndex = mapStackSwitch[sourceEntry.sortGroup].findIndex(layerId =>
+                        service.layers.hasOwnProperty(layerId));
+
+                // if the layer is dropped on another layer in its sort group, get index of that layer
+                } else if (sourceEntry.sortGroup === targetEntry.sortGroup) {
+                    // due to layer order reversed on map stack, add one to index
+                    targetIndex = mapStackSwitch[sourceEntry.sortGroup].indexOf(targetEntry.id) + 1;
+                } else {
+                    // TODO: I'm not sure what happened; unforseen condition
+                    throw new Error('Halp!');
                 }
-                return list.indexOf(nextEntry.layer.id);
-            }
 
-            /**
-             * Move a given layer within the map to match a specific position in the legend.
-             * NOTE this does not modify the legend, movement within the legend should be handled separately, ideally
-             * calling this function immediately before or after the legend is updated
-             *
-             * @param {String} id the id of the layer to be moved
-             * @param {Number} position the new position of the layer within the legend
-             */
-            function moveLayer(id, position) {
-                const curPos = service.legend.items.findIndex(e => e.id === id);
-                const layer = service.legend.items[curPos].layer;
-                mapObject.reorderLayer(layer, getLayerIndexAbove(position));
+                //console.log(`reodder ${sourceId} on ${targetIndex}`);
+                mapObject.reorderLayer(sourceLayer, targetIndex);
             }
 
             /**
