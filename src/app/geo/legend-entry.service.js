@@ -27,6 +27,7 @@
     function legendEntryFactory($translate, gapiService, layerDefaults, geometryTypes) {
 
         const service = {
+            placeholderEntryItem,
             singleEntryItem,
             dynamicEntryItem,
             entryGroup,
@@ -102,6 +103,30 @@
 
                 // this.state = layerStates.default; ??
             }
+        };
+
+        const PLACEHOLDER_ENTRY_ITEM = Object.create(ENTRY_ITEM);
+
+        PLACEHOLDER_ENTRY_ITEM.init = function(initialState, layerRef) {
+            ENTRY_ITEM.init.call(this, initialState, layerRef);
+
+            // TODO: suggestion: separate legend entry ids from layer object ids
+            this.id += 'placeholder';
+            this.type = 'placeholder';
+            this.state = 'rv-loading';
+
+            // let placeholders have reload and/or remove buttons when needed (error gets both, loading gets remove only)
+            // FIXME: shouldn't be inline here (harder to maintain), move this to somewhere more appropriate
+            this.options = {
+                reload: {
+                    enabled: true
+                },
+                remove: {
+                    enabled: true
+                }
+            };
+
+            return this;
         };
 
         const SINGLE_ENTRY_ITEM = Object.create(ENTRY_ITEM);
@@ -489,6 +514,11 @@
                 this._layerRef.show(); // ? is this necessary
             }
         };
+
+        function placeholderEntryItem(initialState, layerRef) {
+            return Object.create(PLACEHOLDER_ENTRY_ITEM)
+                .init(initialState, layerRef);
+        }
 
         function singleEntryItem(initialState, layerRef) {
             return Object.create(SINGLE_ENTRY_ITEM)

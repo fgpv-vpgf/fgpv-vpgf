@@ -1,0 +1,38 @@
+<div class="rv-icon-32" ng-if-start="self.entry.state === 'rv-error'">
+    <md-icon md-svg-src="community:emoticon-sad"></md-icon>
+</div>
+
+<div class="rv-toc-entry-content">
+    <div class="rv-toc-entry-name">
+        {{ self.entry.name }}
+    </div>
+
+    <!-- TODO: add translation -->
+    <div class="rv-toc-entry-caption md-caption">
+        Can't load layer
+    </div>
+</div>
+
+<div class="rv-toc-entry-controls" ng-if-end>
+    <rv-toc-entry-control option="reload"></rv-toc-entry-control>
+    <rv-toc-entry-control option="remove"></rv-toc-entry-control>
+</div>
+
+<div class="rv-icon-32" ng-if-start="self.entry.state !== 'rv-error'">
+    <md-icon md-svg-src="community:emoticon-happy"></md-icon>
+</div>
+
+<div class="rv-toc-entry-content">
+    <div class="rv-toc-entry-name">
+        {{ self.entry.name }}
+    </div>
+
+    <!-- TODO: add translation -->
+    <div class="rv-toc-entry-caption md-caption">
+        Loading layer...
+    </div>
+</div>
+
+<div class="rv-toc-entry-controls" ng-if-end>
+    <rv-toc-entry-control option="remove"></rv-toc-entry-control>
+</div>

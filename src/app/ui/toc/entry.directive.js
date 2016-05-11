@@ -21,14 +21,9 @@
         .module('app.ui.toc')
         .directive('rvTocEntry', rvTocEntry);
 
-    function rvTocEntry(tocService) {
+    function rvTocEntry(tocService, $compile, $templateCache) {
         const directive = {
             restrict: 'E',
-            templateUrl: (elm, attr) => {
-                // returns a different template based on the value of the type attribute
-                const type = attr.type || 'layer'; // `type` is a string, so no need to check if it's defined or not
-                return `app/ui/toc/templates/${type}-entry.html`;
-            },
             scope: {
                 entry: '=',
                 type: '@?'
@@ -50,13 +45,17 @@
         function link(scope, element) {
             const self = scope.self;
 
+            // get template from cache
+            const template = $templateCache.get(`app/ui/toc/templates/${self.entry.type}-entry.html`);
+            element.append($compile(template)(scope));
+
             // store reference to element on the scope for legend directive to access
             self.element = element;
 
             if (self.entry.type === 'layer') {
                 // call toggleGroup function on the tocController with the group object (see template)
                 self.defaultAction = tocService.actions.toggleLayerFiltersPanel;
-            } else {
+            } else if (self.entry.type === 'group') {
                 // call toggleGroup function on the tocController with the group object (see template)
                 self.defaultAction = tocService.actions.toggleLayerGroup;
             }

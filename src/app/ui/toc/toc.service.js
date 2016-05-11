@@ -80,7 +80,8 @@
                 reload: {
                     icon: 'navigation:refresh',
                     label: 'toc.label.reload',
-                    tooltip: 'toc.tooltip.reload'
+                    tooltip: 'toc.tooltip.reload',
+                    action: () => { console.log('layer reload'); }
                 },
                 remove: {
                     icon: 'action:delete',
@@ -200,6 +201,8 @@
                 .parent(layoutService.panes.toc)
                 .position('bottom rv-flex');
 
+            entry.removed = true;
+
             $mdToast.show(undoToast)
                 .then(response => {
                     if (response === 'ok') { // promise resolves with 'ok' when user clicks 'undo'
@@ -209,9 +212,12 @@
                         // restore original visibility, so if he removed and restored already invisible layer,
                         // it is restored also invisible
                         entry.setVisibility(isEntryVisible);
+                        entry.removed = false;
                     } else {
-                        // remove layer for real now
-                        geoService.removeLayer(entry.id);
+                        if (entry.type !== 'placeholder') {
+                            // remove layer for real now
+                            geoService.removeLayer(entry.id);
+                        }
                     }
                 });
         }

@@ -46,6 +46,7 @@
                 legend: legendEntryFactory.entryGroup(), // this is legend's invisible root group; to be consumed by toc
 
                 addLayer,
+                addPlaceholder,
                 setLayerState,
                 setLayerLoadingFlag
             };
@@ -183,53 +184,57 @@
             }
 
             /**
-             * Add a provided layer to the appropriate group;
+             * Add a placeholder for the provided layer
              *
-             * TODO: hide groups with no layers;
              * @param {Object} layer object from `layerRegistry` `layers` object
              */
-            function addLayer(layer) {
-                const layerType = layer.initialState.layerType;
-                const entry = layerTypeGenerators[layerType](layer);
+            function addPlaceholder(layer) {
+                const entry = legendEntryFactory.placeholderEntryItem(layer.initialState, layer.layer);
+                layer.state = entry;
 
-                // layerTypeGroups[layerType].add(entry);
                 service.legend.add(entry);
             }
 
             /**
+             * Add a provided layer to the appropriate group;
+             *
+             * TODO: hide groups with no layers;
+             * @param {Object} layer object from `layerRegistry` `layers` object
+             * @param {Number} index position to insert layer into the legend
+             */
+            function addLayer(layer, index) {
+                const layerType = layer.initialState.layerType;
+                const entry = layerTypeGenerators[layerType](layer);
+
+                // layerTypeGroups[layerType].add(entry);
+                service.legend.add(entry, index);
+            }
+
+            /**
              * Sets state of the layer entry: error, default, out-of-scale, etc
-             * @param {Object} layer layer object from `layerRegistry`
+             * @param {Object} entry entry object from the legend
              * @param {String} state defaults to `default`; state name
              * @param {Number} delay defaults to 0; delay before setting the state
              */
-            function setLayerState(layer, state = layerStates.default, delay = 0) {
-
-                const legendEntry = layer.state;
-
+            function setLayerState(entry, state = layerStates.default, delay = 0) {
                 // same as with map loading indicator, need timeout since it's a non-Angular async call
-                $timeout.cancel(legendEntry.stateTimeout);
-                legendEntry.stateTimeout = $timeout(() => {
-                    legendEntry.state = state;
-
-                    /*switch (state) {
-                        case: layerStates
-                    }*/
+                $timeout.cancel(entry._stateTimeout);
+                entry._stateTimeout = $timeout(() => {
+                    entry.state = state;
                 }, delay);
             }
 
             /**
              * Sets `isLoading` flag on the legend entry.
-             * @param {Object} layer layer object from `layerRegistry`
+             * @param {Object} entry entry object from the legend
              * @param {Boolean} isLoading defaults to true; flag indicating if the layer is updating their content
              * @param {Number} delay defaults to 0; delay before setting the state
              */
-            function setLayerLoadingFlag(layer, isLoading = true, delay = 0) {
-                const legendEntry = layer.state;
-
+            function setLayerLoadingFlag(entry, isLoading = true, delay = 0) {
                 // same as with map loading indicator, need timeout since it's a non-Angular async call
-                $timeout.cancel(legendEntry.loadingTimeout);
-                legendEntry.loadingTimeout = $timeout(() => {
-                    legendEntry.isLoading = isLoading;
+                $timeout.cancel(entry._loadingTimeout);
+                entry._loadingTimeout = $timeout(() => {
+                    entry.isLoading = isLoading;
                 }, delay);
             }
         }

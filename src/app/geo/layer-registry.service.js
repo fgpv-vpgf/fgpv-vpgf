@@ -22,7 +22,7 @@
 
         function layerRegistry(geoState, mapObject, config) {
 
-            const layers = {}; // layer collection of LAYER_RECORD objects
+            const layers = {}; // collection of LAYER_RECORD objects
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -215,6 +215,15 @@
                     // TODO: decouple identifyservice from everything
                     const layer = service.generateLayer(layerConfig);
 
+                    // TODO: create layerRecord only once
+                    const layerRecord = {
+                        layer,
+                        initialState: layerConfig
+                    };
+
+                    // add a placeholder and store it
+                    ref.legendService.addPlaceholder(layerRecord);
+
                     // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
                     gapiService.gapi.events.wrapEvents(layer, {
                         // TODO: add error event handler to register a failed layer, so the user can reload it
@@ -224,34 +233,56 @@
                             // FIXME look at layer config for flags indicating not to load attributes
                             // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
 
-                            // handles the asynch loading of attributes
-                            // get the attributes for the layer
-                            let attributesPromise = $q.resolve(null);
-                            if (layerNoattrs.indexOf(layerConfig.layerType) < 0) {
-                                attributesPromise = loadLayerAttributes(layer);
+                            // make sure the placeholder hasn't been removed
+                            if (!layerRecord.state.removed) {
+                                // handles the asynch loading of attributes
+                                // get the attributes for the layer
+                                let attributesPromise = $q.resolve(null);
+                                if (layerNoattrs.indexOf(layerConfig.layerType) < 0) {
+                                    attributesPromise = loadLayerAttributes(layer);
+                                }
+
+                                // replace placeholder with actual layer
+                                const index = ref.legendService.legend.remove(layerRecord.state);
+                                service.registerLayer(layer, layerConfig, attributesPromise, index); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                             }
-                            service.registerLayer(layer, layerConfig, attributesPromise); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
                         },
                         error: data => {
                             console.error('layer error', layer.id, data);
 
+                            // switch placeholder to error
+                            // ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);
+
                             // FIXME layers that fail on initial load will never be added to the layers list
-                            // ref.legendService.setLayerState(service.layers[layer.id], layerStates.error, 100);
+                            ref.legendService.setLayerState(layerRecord.state, layerStates.error, 100);
+                            ref.legendService.setLayerLoadingFlag(layerRecord.state, false, 100);
                         },
                         'update-start': data => {
                             console.log('update-start', layer.id, data);
 
-                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id], true, 300);
+                            // in case the layer registration was bypassed (e.g. placeholder removed)
+                            if (service.layers[layer.id]) {
+                                ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, true, 300);
+                            }
                         },
                         'update-end': data => {
                             console.log('update-end', layer.id, data);
 
-                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id], false, 100);
+                            // in case the layer registration was bypassed (e.g. placeholder removed)
+                            if (service.layers[layer.id]) {
+                                ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, false, 100);
+                            } else {
+                                // If the placeholder was removed then remove the layer from the map object
+                                mapObject.removeLayer(mapObject.getLayer(layer.id));
+                            }
                         }
                     });
 
-                    // add layer to the map triggering its loading process
-                    mapObject.addLayer(layer);
+                    // Make sure the placeholder is still there
+                    if (!layerRecord.state.removed) {
+                        // add layer to the map triggering its loading process
+                        mapObject.addLayer(layer);
+                    }
                 });
             }
 
@@ -274,7 +305,7 @@
 
                 // TODO: don't fail silently; throw an error; maybe shown message to the user.
                 if (!l) {
-                    return;
+                    throw new Error();
                 }
 
                 mapObject.removeLayer(l.layer);
@@ -286,10 +317,10 @@
              * @param {object} layer the API layer object
              * @param {object} initialState a configuration fragment used to generate the layer
              * @param {promise} attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
-             * @param {number} position an optional index indicating at which position the layer was added to the map
+             * @param {number} index an optional index indicating at which position the layer was added to the map
              * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
              */
-            function registerLayer(layer, initialState, attributeBundle) {
+            function registerLayer(layer, initialState, attributeBundle, index) {
                 if (!layer.id) {
                     console.error('Attempt to register layer without id property');
                     console.log(layer);
@@ -305,7 +336,7 @@
                     .init(layer, initialState, attributeBundle);
 
                 service.layers[layer.id] = layerRecord;
-                ref.legendService.addLayer(layerRecord); // generate legend entry
+                ref.legendService.addLayer(layerRecord, index); // generate legend entry
 
                 // TODO refactor this as it has nothing to do with layer registration;
                 // will likely change as a result of layer reloading / reordering / properly ordered legend
