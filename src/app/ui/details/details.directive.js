@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TimelineLite */
+/* global Ease, BezierEasing, TimelineLite, TweenLite */
 (() => {
     'use strict';
 
@@ -44,7 +44,11 @@
 
             // create animation timeline
             const tl = new TimelineLite({
-                paused: true
+                paused: true,
+                onReverseComplete: () =>
+                    TweenLite.set(layerList, {
+                        clearProps: 'all'
+                    })
             });
 
             // expand and collapse item selector list when multiple items are displayed
@@ -61,6 +65,9 @@
                             width: 280,
                             ease: RV_SWIFT_IN_OUT_EASE
                         })
+                        .set(layerList, {
+                            'overflow-y': 'auto'
+                        }, RV_SLIDE_DURATION / 2)
                         .to(section, RV_SLIDE_DURATION, {
                             className: '+=rv-expanded'
                         }, 0);
