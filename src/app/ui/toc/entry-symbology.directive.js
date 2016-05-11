@@ -140,6 +140,7 @@
                             $q.resolve().then(() => self.expanded = false)
                     });
 
+                    // in pixels
                     const symbologyListTopOffset = 48;
                     const symbologyListTopMargin = 8;
                     const symbologyListLabelOffset = 28;
@@ -147,9 +148,9 @@
 
                     items.reverse().forEach(img => {
 
-                        let imageElem = img[0].firstChild;
-                        let imageHeight = Math.max(32, imageElem.naturalHeight);
-                        let imageWidth = Math.max(32, imageElem.naturalWidth);
+                        const imageElem = img[0].firstChild;
+                        const imageHeight = Math.max(32, imageElem.naturalHeight);
+                        const imageWidth = Math.max(32, imageElem.naturalWidth);
 
                         tlshift.to(imageElem, RV_DURATION, {
                             width: imageWidth,
