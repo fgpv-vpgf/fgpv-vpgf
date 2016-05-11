@@ -3,7 +3,7 @@
 
     ul.rv-basemap-list {
         > li {
-            margin-bottom: $list-item-gap;
+            margin-bottom: rem(2.2);
         }
     }
 
@@ -35,8 +35,7 @@
                 @include wkid(3978, -60px, -60px);
             }
 
-            &:hover,
-            &:focus {
+            &:hover {
                 // expand basemap preview button on hover
                 top: -$list-item-gap;
                 bottom: -$list-item-gap;
@@ -45,35 +44,66 @@
                     // shift image up to keep it fixed relative to the screen
                     margin-top: $list-item-gap;
                 }
-            }
-        }
 
-        .rv-basemap-footer {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            height: rem(2.4);
-            color: #fff;
-            overflow: hidden;
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            padding-left: rem(1.0);
-            background-color: rgba(0, 0, 0, 0.68);
-            text-transform: none;
-            font-weight: normal;
+                .basemap-desc {
+                    display: block;
+                }
 
-            .rv-basemap-name {
-                text-transform: capitalize;
+                .rv-basemap-footer {
+                    top: 0px;
+                }
             }
 
-            .rv-basemap-type {
-                text-transform: capitalize;
+            .basemap-desc {
+                position: relative;
+                background-color: rgba(0,0,0,0.68);
+                color: rgb(255,255,255);
+                top: 24px;
+                z-index: 1;
+                text-transform: none;
+                padding: rem(0.5) rem(1);
+                text-align: left; 
+                display: none;
+                font-size: 12px;
+                overflow: hidden;
+                height: 78px;
+                white-space: normal;
+                line-height: 14px;
+
+                &:hover {
+                    .rv-basemap-footer {
+                        top: 0px;
+                    }
+                }
             }
 
-            .rv-basemap-check {
-                color: white;
+            .rv-basemap-footer {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                height: rem(2.4);
+                color: #fff;
+                overflow: hidden;
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                padding-left: rem(1.0);
+                background-color: rgba(0, 0, 0, 0.85);
+                text-transform: none;
+                font-weight: normal;
+
+                .rv-basemap-name {
+                    text-transform: capitalize;
+                }
+
+                .rv-basemap-type {
+                    text-transform: capitalize;
+                }
+
+                .rv-basemap-check {
+                    color: white;
+                }
             }
         }
     }
