@@ -62,6 +62,7 @@ $layer-item-height: rem(6.0);
                 transition: none;
             }
         }
+
         // do not add padding to the root level layer list
         &.rv-root {
             padding-left: 0;
@@ -96,6 +97,31 @@ $layer-item-height: rem(6.0);
         opacity: 0.45;
         background-color: transparent;
         transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+    }
+
+    .rv-root {
+        @for $i from 0 to 2 {
+            @include sort-group($i);
+        }
+    }
+}
+
+@mixin sort-group($index) {
+    &[data-sort-group="#{$index}"] {
+
+        > li:not([data-sort-group="#{$index}"]) {
+            opacity: 0.5 !important;
+
+            &:after {
+                content: '';
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.2);
+            }
+        }
     }
 }
 
