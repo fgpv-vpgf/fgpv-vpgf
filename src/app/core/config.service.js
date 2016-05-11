@@ -45,6 +45,7 @@
         const service = {
             data: {},
             getCurrent,
+            currentLang,
             initialize,
             ready,
             rcsAddKeys,
