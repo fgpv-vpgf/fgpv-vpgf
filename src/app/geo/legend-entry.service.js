@@ -115,7 +115,8 @@
             this.type = 'placeholder';
             this.state = 'rv-loading';
 
-            // FIXME:
+            // let placeholders have reload and/or remove buttons when needed (error gets both, loading gets remove only)
+            // FIXME: shouldn't be inline here (harder to maintain), move this to somewhere more appropriate
             this.options = {
                 reload: {
                     enabled: true
