@@ -215,6 +215,7 @@
                     // TODO: decouple identifyservice from everything
                     const layer = service.generateLayer(layerConfig);
 
+                    // TODO: create layerRecord only once
                     const layerRecord = {
                         layer,
                         initialState: layerConfig
@@ -222,7 +223,6 @@
 
                     // add a placeholder and store it
                     ref.legendService.addPlaceholder(layerRecord);
-                    ref.legendService.setLayerLoadingFlag(layerRecord.state, true);
 
                     // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
                     gapiService.gapi.events.wrapEvents(layer, {
@@ -254,8 +254,8 @@
                             // ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);
 
                             // FIXME layers that fail on initial load will never be added to the layers list
-                            ref.legendService.setLayerState(layerRecord.state, layerStates.error, 10100);
-                            ref.legendService.setLayerLoadingFlag(layerRecord.state, false, 10100);
+                            ref.legendService.setLayerState(layerRecord.state, layerStates.error, 100);
+                            ref.legendService.setLayerLoadingFlag(layerRecord.state, false, 100);
                         },
                         'update-start': data => {
                             console.log('update-start', layer.id, data);

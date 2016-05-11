@@ -115,6 +115,16 @@
             this.type = 'placeholder';
             this.state = 'rv-loading';
 
+            // FIXME:
+            this.options = {
+                reload: {
+                    enabled: true
+                },
+                remove: {
+                    enabled: true
+                }
+            };
+
             return this;
         };
 
