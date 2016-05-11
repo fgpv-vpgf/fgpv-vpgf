@@ -206,6 +206,10 @@
                 const layerType = layer.initialState.layerType;
                 const entry = layerTypeGenerators[layerType](layer);
 
+                // find appropriate sort group based on the initial layer type
+                entry.sortGroup = layerSortGroups.findIndex(sortGroup =>
+                    sortGroup.indexOf(layer.initialState.layerType) !== -1);
+
                 // layerTypeGroups[layerType].add(entry);
                 service.legend.add(entry, index);
             }

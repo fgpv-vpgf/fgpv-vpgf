@@ -9,6 +9,21 @@
         ogcWms: 'ogcWms'
     };
 
+    // jscs doesn't like enhanced object notation
+    // jscs:disable requireSpacesInAnonymousFunctionExpression
+    const LAYER_SORT_GROUPS = [
+        [
+            LAYER_TYPES.esriFeature
+        ],
+        [
+            LAYER_TYPES.esriDynamic,
+            LAYER_TYPES.esriImage,
+            LAYER_TYPES.esriTile,
+            LAYER_TYPES.ogcWms
+        ]
+    ];
+    // jscs:enable requireSpacesInAnonymousFunctionExpression
+
     const LAYER_NOATTRS = ['esriImage', 'esriTile', 'ogcWms'];
     const LAYER_TYPES_QUERYABLE = ['esriDynamic', 'esriFeature', 'ogcWms'];
 
@@ -57,6 +72,7 @@
         .constant('geometryTypes', GEOMETRY_TYPES)
         .constant('layerNoattrs', LAYER_NOATTRS)
         .constant('layerTypesQueryable', LAYER_TYPES_QUERYABLE)
+        .constant('layerSortGroups', LAYER_SORT_GROUPS)
         .constant('wmsInfoMap', WMS_INFO_MAP)
         .service('layerDefaults', () => {
             // construct layer default options and flags objects from schema snippets
