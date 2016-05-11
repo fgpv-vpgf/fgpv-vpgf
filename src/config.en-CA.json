@@ -140,6 +140,12 @@
       }
     },
     {
+      "id":"josm2",
+      "name": "Fake Josm2",
+      "layerType":"esriFeature",
+      "url":"http://ec.gc.ca/arcgis/rest/services/data_donnees/be12386d/MapServer/0"
+    },
+    {
       "id":"geomet_temp",
       "name":"GeoMet Temp",
       "layerType":"ogcWms",
