@@ -130,14 +130,9 @@
 
                     // FIXME: move to config?
                     const maxLength = 35;
-                    const maxDescriptionLength = 100;
 
                     if (basemap.name.length > maxLength) {
                         basemap.name = basemap.name.substring(0, maxLength - 3) + '...';
-                    }
-
-                    if (basemap.description.length > maxDescriptionLength) {
-                        basemap.description = basemap.description.substring(0, maxDescriptionLength - 3) + '...';
                     }
 
                     self.projections[idx].items.push({
