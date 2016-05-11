@@ -220,10 +220,13 @@
              * Adds an item (layer or another group) to a layer group.
              * @param {Object} item     layer or group item to add
              * @param {Number} position position to insert the item at; defaults to the last position in the array
+             * @return position of the inserted item
              */
             add(item, position = this.items.length) { // <- awesome! default is re-evaluated everytime the function is called
                 item.parent = this;
                 this.items.splice(position, 0, item);
+
+                return position;
             },
 
             /**
