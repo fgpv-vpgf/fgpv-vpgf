@@ -2,7 +2,8 @@
 @mixin sidenav {
     md-sidenav {
         &.site-sidenav {
-            width: 320px;
+            max-width: 256px;
+            min-width: 256px;
             flex-direction: column;
 
             > md-content {
@@ -38,6 +39,7 @@
                 padding: 0 0 16px;
                 margin: 0 auto;
                 border-bottom-color: $primary-color-light;
+                background: linear-gradient(#CFD8DC, #FFFFFF);
                 
                 > img {
                     height: 150px;
