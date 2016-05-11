@@ -140,46 +140,44 @@
                             $q.resolve().then(() => self.expanded = false)
                     });
 
-                    // in pixels
                     const symbologyListTopOffset = 48;
                     const symbologyListTopMargin = 8;
-                    const symbologyListBottomMargin = 15;
-                    const symbologyItemHeight = 36;
+                    const symbologyListLabelOffset = 28;
+                    let totalHeight = 0;
 
-                    // move all the symbology items from stack into list
-                    // TODO: I think hardcoding '300px' has something to do with https://github.com/fgpv-vpgf/fgpv-vpgf/issues/262
-                    items.forEach(img => tlshift.set(img, {
-                        width: '300px'
-                    }, 0));
-                    items.reverse().forEach((img, index) => {
+                    items.reverse().forEach(img => {
+
+                        let imageElem = img[0].firstChild;
+                        let imageHeight = Math.max(32, imageElem.naturalHeight);
+                        let imageWidth = Math.max(32, imageElem.naturalWidth);
+
+                        tlshift.to(imageElem, RV_DURATION, {
+                            width: imageWidth,
+                            height: imageHeight,
+                        }, 0);
+
                         tlshift.to(img, RV_DURATION, {
-                            left: 0,
-                            top: (symbologyListTopOffset + symbologyListTopMargin + index * symbologyItemHeight) +
-                                'px',
-                            ease: RV_SWIFT_IN_OUT_EASE
-                        }, 0);
-
-                        // make the rest of the symbology items visible when expanding
-                        tlshift.to(img, RV_DURATION / 3, {
+                            top: (symbologyListTopOffset + symbologyListTopMargin + totalHeight),
                             autoAlpha: 1,
+                            height: imageHeight + symbologyListLabelOffset,
                             ease: RV_SWIFT_IN_OUT_EASE
                         }, 0);
 
+                        totalHeight += imageHeight + symbologyListLabelOffset;
                     });
 
                     // make symbology names visible
-                    names.forEach(name => tlshift.to(name, RV_DURATION - 0.1, {
-                        opacity: 1,
-                        display: 'block',
-                        ease: RV_SWIFT_IN_OUT_EASE
-                    }, 0.1));
+                    names.forEach(name =>
+                        tlshift.to(name, RV_DURATION - 0.1, {
+                            opacity: 1,
+                            display: 'block',
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        }, 0.1)
+                    );
 
                     // expand layer item container (ctrl.element) to accomodate symbology list
                     tlshift.to(ctrl.element, RV_DURATION, {
-                        marginBottom: symbologyListTopMargin +
-                            items.length *
-                            symbologyItemHeight +
-                            symbologyListBottomMargin,
+                        marginBottom: totalHeight + symbologyListLabelOffset,
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, 0);
 
