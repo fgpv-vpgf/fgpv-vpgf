@@ -1,8 +1,11 @@
 <md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2" md-component-id="left">
+    <md-button class="md-icon-button black rv-button-32 minimize-button" ng-click="self.minimize()">
+        <md-icon md-svg-src="community:chevron-double-left"></md-icon>
+    </md-button>
 
     <header class="nav-header">
         <a class="app-logo" href="#">
-            <img src="content/images/Map-icon.png" alt="">
+            <img ng-src="{{self.markerImageSrc}}" alt="">
             <h1 translate class="app-logotype md-heading">sidenav.title</h1>
         </a>
     </header>

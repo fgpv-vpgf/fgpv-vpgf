@@ -47,7 +47,7 @@ describe('rvShell', () => {
             return {
                 initialize: () => {},
                 getCurrent: () => {
-                    return $q.resolve({});
+                    return $q.resolve({ menuPanel: { markerImage: '' } });
                 },
                 ready: () => {
                     return $q.resolve({});
@@ -89,6 +89,8 @@ describe('rvShell', () => {
             .respond({});
         $httpBackend.expectGET('content/images/iconsets/content-icons.svg')
             .respond({});
+        $httpBackend.expectGET('content/images/iconsets/mdi-icons.svg')
+            .respond({});
         $httpBackend.expectGET('content/images/iconsets/editor-icons.svg')
             .respond({});
         $httpBackend.expectGET('content/images/iconsets/social-icons.svg')
@@ -97,9 +99,9 @@ describe('rvShell', () => {
             .respond({});
         $httpBackend.expectGET('content/images/iconsets/hardware-icons.svg')
             .respond({});
-        $httpBackend.expectGET('src/config.en.json')
+        $httpBackend.expectGET('src/config.en-CA.json')
             .respond({});
-        $httpBackend.expectGET('src/config.fr.json')
+        $httpBackend.expectGET('src/config.fr-CA.json')
             .respond({});
 
         directiveElement = $compile(directiveElement)(scope);
