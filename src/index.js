@@ -1,10 +1,11 @@
 'use strict';
-const layer = require('./layer.js');
-const proj = require('./proj.js');
-const basemap = require('./basemap.js');
-const mapManager = require('./mapManager.js');
 const attribute = require('./attribute.js');
+const basemap = require('./basemap.js');
 const events = require('./events.js');
+const layer = require('./layer.js');
+const mapManager = require('./mapManager.js');
+const proj = require('./proj.js');
+const shared = require('./shared.js');
 const symbology = require('./symbology.js');
 
 function initAll(esriBundle) {
@@ -18,6 +19,7 @@ function initAll(esriBundle) {
     api.attribs = attribute(esriBundle);
     api.symbology = symbology();
     api.events = events();
+    api.shared = shared(esriBundle);
     api.debug = function () {
         if (arguments.length === 1) {
             debug = arguments[0] === true;

@@ -10,7 +10,6 @@ const Terraformer = require('terraformer');
 const shp = require('shpjs');
 const ogc = require('./layer/ogc.js');
 const bbox = require('./layer/bbox.js');
-const shared = require('./shared.js');
 const defaultRenderers = require('./defaultRenderers.json');
 Terraformer.ArcGIS = require('terraformer-arcgis-parser');
 
@@ -734,7 +733,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
             if (opts.layerId) {
                 layerId = opts.layerId;
             } else {
-                layerId = shared.generateUUID();
+                layerId = geoApi.shared.generateUUID();
             }
 
             // TODO add support for renderer option, or drop the option

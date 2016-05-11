@@ -1,5 +1,7 @@
 'use strict';
 
+// TODO consider refactoring this file so that the geoApi object is passed in along with the
+//      esriBundle, then reference the shared module from it.  See layer.js as example.
 const shared = require('./shared.js');
 
 /*
@@ -68,7 +70,10 @@ this is a layer data object.  it contains information describing the server-side
         ...
     ],
     "oidField": "objectid",
-    "renderer": {...}
+    "renderer": {...},
+    "geometryType": "esriGeometryPoint",
+    "minScale": 0,
+    "maxScale": 0
 }
 
 */
@@ -311,8 +316,11 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
                         }
                     }
 
-                    // add renderer
+                    // add renderer, geometry type, min & max scale
                     layerData.renderer = serviceResult.drawingInfo.renderer;
+                    layerData.geometryType = serviceResult.geometryType;
+                    layerData.minScale = serviceResult.minScale;
+                    layerData.maxScale = serviceResult.maxScale;
 
                     // temporarily store things for delayed attributes
                     layerData.load = {
@@ -397,10 +405,15 @@ function processFeatureLayer(layer, options, esriBundle) {
         layerPackage._attribData = Promise.resolve(createAttribSet(layer.objectIdField, layer.graphics.map(elem => {
             return { attributes: elem.attributes };
         })));
+
+        // TODO revisit the geometry type. ideally, fix our GeoJSON to Feature to populate the property
         layerPackage.layerData = Promise.resolve({
             oidField: layer.objectIdField,
             fields: layer.fields,
-            renderer: layer.renderer
+            renderer: layer.renderer,
+            geometryType: layer.geometryType || JSON.parse(layer._json).layerDefinition.drawingInfo.geometryType,
+            minScale: layer.minScale,
+            maxScale: layer.maxScale
         });
 
         result.registerData(layerPackage);
