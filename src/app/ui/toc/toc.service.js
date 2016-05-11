@@ -80,7 +80,8 @@
                 reload: {
                     icon: 'navigation:refresh',
                     label: 'toc.label.reload',
-                    tooltip: 'toc.tooltip.reload'
+                    tooltip: 'toc.tooltip.reload',
+                    action: () => { console.log('layer reload'); }
                 },
                 remove: {
                     icon: 'action:delete',
@@ -211,6 +212,7 @@
                         // restore original visibility, so if he removed and restored already invisible layer,
                         // it is restored also invisible
                         entry.setVisibility(isEntryVisible);
+                        entry.removed = false;
                     } else {
                         if (entry.type !== 'placeholder') {
                             // remove layer for real now
