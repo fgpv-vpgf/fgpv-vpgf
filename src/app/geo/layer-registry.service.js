@@ -228,6 +228,7 @@
                     mapObject.layerIds
                 ];
 
+                const sourceIndex = mapStackSwitch[sourceEntry.sortGroup].indexOf(sourceId);
                 let targetIndex;
 
                 // if targetEntry is null, meaning the layer is dropped at the end of the list or
@@ -243,6 +244,9 @@
                 } else if (sourceEntry.sortGroup === targetEntry.sortGroup) {
                     // get the index of the target layer in the appropriate map stack
                     targetIndex = mapStackSwitch[sourceEntry.sortGroup].indexOf(targetId);
+
+                    // need to add 1 when moving layer up in the legend (down in the map stack)
+                    targetIndex += sourceIndex > targetIndex ? 1 : 0;
                 } else {
                     // TODO: I'm not sure what happened; unforseen condition
                     throw new Error('Halp!');
