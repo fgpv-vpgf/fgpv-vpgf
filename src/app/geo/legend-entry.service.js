@@ -47,6 +47,7 @@
             state: 'rv-default', // TODO: replace
             cache: null, // to cache stuff like retrieved metadata info
             features: null,
+            sortGroup: -1,
             symbology: [{
                 icon: NO_IMAGE,
                 name: ''
@@ -204,6 +205,7 @@
             expanded: null,
             items: null,
             cache: null, // to cache stuff like retrieved metadata info
+            sortGroup: -1,
 
             // TODO: add hook to set group options
             options: {
