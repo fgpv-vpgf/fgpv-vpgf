@@ -260,14 +260,15 @@
                 } else if (legendEntry.layerEntries) {
                     // walk through layerEntries and update each one
                     legendEntry.layerEntries.forEach(ent => {
-                        // TODO remove this test once it has passed the test of time
-                        if (typeof scaleSet[legendEntry.slaves[ent.index].featureIdx] === 'undefined') {
-                            console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
-                        }
-
                         const slave = legendEntry.slaves[ent.index];
-                        slave.flags.scale.visible = scaleSet[slave.featureIdx];
 
+                        if (slave.flags) {
+                            // TODO remove this test once it has passed the test of time
+                            if (typeof scaleSet[slave.featureIdx] === 'undefined') {
+                                console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
+                            }
+                            slave.flags.scale.visible = scaleSet[slave.featureIdx];
+                        }
                     });
                 }
 
