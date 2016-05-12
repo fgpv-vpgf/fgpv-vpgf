@@ -99,6 +99,11 @@
             };
             // jscs:enable requireSpacesInAnonymousFunctionExpression
 
+            // FIXME: for debug purposes
+            // FIXME: remove
+            window.RV.layers = service.layers;
+            window.RV.legend = service.legend;
+
             return initialRegistration();
 
             /***/
@@ -351,10 +356,6 @@
                     .init(layer, initialState);
 
                 service.layers[layer.id] = layerRecord;
-
-                // FIXME:
-                window.RV.layers = window.RV.layers || {};
-                window.RV.layers[layer.id] = layerRecord;
 
                 return layerRecord;
             }

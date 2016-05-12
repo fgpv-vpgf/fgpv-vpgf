@@ -142,6 +142,7 @@
                 delete this.options.metadata;
             }
 
+            // FIXME: this should be done only on feature layers, nothing else!
             const urlParts = initialState.url.split('/');
             this.featureIdx = urlParts.pop(); // get the featureidx from the end of the url
             this.url = urlParts.join('/'); // keep the rest of the url (without the index)
