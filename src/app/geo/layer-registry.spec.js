@@ -1,6 +1,6 @@
 /* global bard, layerRegistry, $q */
 
-describe('layerRegistry', () => {
+xdescribe('layerRegistry', () => {
 
     // make a fake map object
     const geoState = {
