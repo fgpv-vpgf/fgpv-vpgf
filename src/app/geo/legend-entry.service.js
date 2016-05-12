@@ -24,7 +24,7 @@
         .module('app.geo')
         .service('legendEntryFactory', legendEntryFactory);
 
-    function legendEntryFactory($translate, gapiService, layerDefaults, geometryTypes) {
+    function legendEntryFactory($translate, gapiService, layerDefaults, layerSortGroups, geometryTypes) {
 
         const service = {
             placeholderEntryItem,
@@ -93,6 +93,10 @@
                 this.features = {
                     count: '...counting'
                 };
+
+                // find appropriate sort group based on the initial layer type
+                this.sortGroup = layerSortGroups.findIndex(sortGroup =>
+                    sortGroup.indexOf(initialState.layerType) !== -1);
 
                 // sets default geometry type which is 'feature'
                 // to avoid pulling in angular translate interpolation message format plugin for now,
@@ -371,6 +375,10 @@
             this.layerEntries.forEach(layerEntry => {
                 layerEntriesOptions[layerEntry.index] = layerEntry;
             });
+
+            // find appropriate sort group based on the initial layer type
+            this.sortGroup = layerSortGroups.findIndex(sortGroup =>
+                sortGroup.indexOf(initialState.layerType) !== -1);
 
             const layerEntryType = `${initialState.layerType}LayerEntry`;
             this.slaves = [];

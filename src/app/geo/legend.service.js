@@ -192,7 +192,14 @@
                 const entry = legendEntryFactory.placeholderEntryItem(layer.initialState, layer.layer);
                 layer.state = entry;
 
-                service.legend.add(entry);
+                // find a position where to insert new placeholder based on its sortGroup value
+                let position = service.legend.items.findIndex(et => et.sortGroup > entry.sortGroup);
+                position = position !== -1 ? position : undefined;
+                position = service.legend.add(entry, position);
+
+                console.log(`Inserting placeholder ${entry.name} ${position}`);
+
+                return position;
             }
 
             /**
@@ -206,11 +213,8 @@
                 const layerType = layer.initialState.layerType;
                 const entry = layerTypeGenerators[layerType](layer);
 
-                // find appropriate sort group based on the initial layer type
-                entry.sortGroup = layerSortGroups.findIndex(sortGroup =>
-                    sortGroup.indexOf(layer.initialState.layerType) !== -1);
+                console.log(`Inserting legend entry ${entry.name} ${index}`);
 
-                // layerTypeGroups[layerType].add(entry);
                 service.legend.add(entry, index);
             }
 
@@ -318,7 +322,7 @@
             /* jscs:disable maximumLineLength */
             return $http.jsonp(`${layerUrl}/query?where=1=1&returnCountOnly=true&returnGeometry=false&f=json&callback=JSON_CALLBACK`)
                 .then(result => {
-                    console.log(layerUrl, result);
+                    // console.log(layerUrl, result);
                     return result.data.count;
                 });
             /* jscs:enable maximumLineLength */
