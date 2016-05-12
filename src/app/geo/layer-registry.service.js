@@ -50,7 +50,7 @@
             // jscs doesn't like enhanced object notation
             // jscs:disable requireSpacesInAnonymousFunctionExpression
             const LAYER_RECORD = {
-                _attributeBundle: undefined,
+                attributeBundle: undefined,
                 _formattedAttributes: undefined,
 
                 layer: undefined,
@@ -68,7 +68,7 @@
                         return this._formattedAttributes[featureIdx];
                     }
 
-                    const layerPackage = this._attributeBundle[featureIdx];
+                    const layerPackage = this.attributeBundle[featureIdx];
                     const attributePromise =
                         $q.all([
                             layerPackage.getAttribs(),
@@ -91,7 +91,7 @@
                 init(layer, initialState, attributeBundle) {
                     this.layer = layer;
                     this.initialState = initialState;
-                    this._attributeBundle = attributeBundle;
+                    this.attributeBundle = attributeBundle;
 
                     this._formattedAttributes = {};
 
@@ -141,29 +141,18 @@
             function extentChangeHandler(params) {
                 if (params.levelChange) {
                     // refresh scale state of all layers
-                    setScaleDepStateBulk();
+                    Object.keys(service.layers).forEach(layerId => {
+                        setScaleDepState(layerId);
+                    });
                 }
             }
 
             /**
-             * Update scale status of all active layers
-             * @private
-             */
-            function setScaleDepStateBulk() {
-                const lReg = service.layers;
-
-                // process each layer registry item
-                Object.keys(lReg).forEach(layerId => {
-                    setScaleDepStateInd(layerId);
-                });
-            }
-
-            /**
-             * Update scale status of an individual layer
+             * Update scale status of a layer
              * @private
              * @param  {String} layerId       layer id of layer to update
              */
-            function setScaleDepStateInd(layerId) {
+            function setScaleDepState(layerId) {
                 const lReg = service.layers;
                 makeScaleSet(lReg[layerId]).then(scaleSet => {
                     ref.legendService.setLayerScaleFlag(lReg[layerId], scaleSet);
@@ -199,14 +188,12 @@
                 const result = {};
                 const promises = []; // list of promises that must resolve before we are ready
 
-                // TODO _attributeBundle -- someone made it private-named, but is a useful object.
-                //      making a function to just return it seems redundant.  discuss in code review.
                 // TODO will likely need to adjust logic to take WMS/OpenFormat layers scale properties
-                if (layerRegItem._attributeBundle && layerRegItem._attributeBundle.indexes) {
+                if (layerRegItem.attributeBundle && layerRegItem.attributeBundle.indexes) {
                     // attributes were loaded for this layer. iterate through all sublayers in the bundle
-                    layerRegItem._attributeBundle.indexes.forEach(featureIdx => {
+                    layerRegItem.attributeBundle.indexes.forEach(featureIdx => {
                         // wait for medatadata to load, then calculate the scale
-                        promises.push(layerRegItem._attributeBundle[featureIdx].layerData.then(layerData => {
+                        promises.push(layerRegItem.attributeBundle[featureIdx].layerData.then(layerData => {
                             result[featureIdx] = isOffScale(currScale, layerData.minScale, layerData.maxScale);
                         }));
 
@@ -440,7 +427,7 @@
                 }
 
                 // set scale state
-                setScaleDepStateInd(layer.id);
+                setScaleDepState(layer.id);
 
                 // FIXME:
                 window.RV.layers = window.RV.layers || {};
