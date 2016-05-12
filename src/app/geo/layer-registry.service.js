@@ -100,6 +100,14 @@
             };
             // jscs:enable requireSpacesInAnonymousFunctionExpression
 
+            // set event handler for extent changes
+            gapiService.gapi.events.wrapEvents(
+                geoState.mapService.mapObject,
+                {
+                    'extent-change': extentChangeHandler
+                }
+            );
+
             return initialRegistration();
 
             /***/
@@ -123,6 +131,93 @@
                     .filter(layerRecord =>
                         // TODO: filter out layers in error state
                         layerTypesQueryable.indexOf(layerRecord.initialState.layerType) !== -1);
+            }
+
+            /**
+             * Handler for map extent change.
+             * @private
+             * @param  {Object} params event parameters
+             */
+            function extentChangeHandler(params) {
+                if (params.levelChange) {
+                    // refresh scale state of all layers
+                    setScaleDepStateBulk();
+                }
+            }
+
+            /**
+             * Update scale status of all active layers
+             * @private
+             */
+            function setScaleDepStateBulk() {
+                const lReg = service.layers;
+
+                // process each layer registry item
+                Object.keys(lReg).forEach(layerId => {
+                    setScaleDepStateInd(layerId);
+                });
+            }
+
+            /**
+             * Update scale status of an individual layer
+             * @private
+             * @param  {String} layerId       layer id of layer to update
+             */
+            function setScaleDepStateInd(layerId) {
+                const lReg = service.layers;
+                makeScaleSet(lReg[layerId]).then(scaleSet => {
+                    ref.legendService.setLayerScaleFlag(lReg[layerId], scaleSet);
+                });
+            }
+
+            /**
+             * Determines if a scale is outside the given bounds
+             * @private
+             * @param  {Integer} scale           scale value to test
+             * @param  {Integer} minScale        minimum invalid scale level for zoom out, 0 for none
+             * @param  {Integer} maxScale        maximum invalid scale level for zoom in, 0 for none
+             * @return {Boolean}                 true if scale is outside valid bound
+             */
+            function isOffScale(scale, minScale, maxScale) {
+                // GIS for dummies.
+                // scale increases as you zoom out, decreases as you zoom in
+                // minScale means if you zoom out beyond this number, hide the layer
+                // maxScale means if you zoom in past this number, hide the layer
+                // 0 value for min or max scale means there is no hiding in effect
+                return (scale < maxScale && maxScale !== 0) || (scale > minScale && minScale !== 0);
+            }
+
+            /**
+             * Generate a mapping of feature indexes to off-scale status for a layer
+             * @private
+             * @param  {Object} layerRegItem  layer registry entry for the layer to analyze
+             * @return {Promise}              resolves with mapping of layer indexes to boolean off-scale status
+             */
+            function makeScaleSet(layerRegItem) {
+
+                const currScale = geoState.mapService.mapObject.getScale();
+                const result = {};
+                const promises = []; // list of promises that must resolve before we are ready
+
+                // TODO _attributeBundle -- someone made it private-named, but is a useful object.
+                //      making a function to just return it seems redundant.  discuss in code review.
+                // TODO will likely need to adjust logic to take WMS/OpenFormat layers scale properties
+                if (layerRegItem._attributeBundle && layerRegItem._attributeBundle.indexes) {
+                    // attributes were loaded for this layer. iterate through all sublayers in the bundle
+                    layerRegItem._attributeBundle.indexes.forEach(featureIdx => {
+                        // wait for medatadata to load, then calculate the scale
+                        promises.push(layerRegItem._attributeBundle[featureIdx].layerData.then(layerData => {
+                            result[featureIdx] = isOffScale(currScale, layerData.minScale, layerData.maxScale);
+                        }));
+
+                    });
+                } else {
+                    // grab min and max from layer itself, use zero as featureIdx
+                    result['0'] = isOffScale(currScale, layerRegItem.layer.minScale, layerRegItem.layer.maxScale);
+                }
+
+                // promise of result that resovles after all promises[] resolve
+                return $q.all(promises).then(() => result);
             }
 
             /**
@@ -194,7 +289,6 @@
 
             /**
              * Creates esri layer object for a set of layers provided by the config, triggers attribute loading on layer load event and adds it to the legend afterwards.
-             * // TODO: might need to abstract this further to accomodate user-added layers as they need to go through the same process
              * @return {Object} self for chaining
              */
             function initialRegistration() {
@@ -344,6 +438,9 @@
                 if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
                     setBboxState(layerRecord.state, true);
                 }
+
+                // set scale state
+                setScaleDepStateInd(layer.id);
 
                 // FIXME:
                 window.RV.layers = window.RV.layers || {};
