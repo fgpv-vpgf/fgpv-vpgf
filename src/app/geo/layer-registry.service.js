@@ -214,7 +214,7 @@
 
             function getLayerInsertPosition(sourceId, targetId) {
                 const { layer: sourceLayer, state: sourceEntry } = service.layers[sourceId];
-                const targetEntry = targetId !== -1 ? service.layers[targetId].state : null;
+                const targetEntry = typeof targetId !== 'undefined' ? service.layers[targetId].state : null;
 
                 const mapStackSwitch = [
                     mapObject.graphicsLayerIds,
@@ -226,7 +226,8 @@
                 // if targetEntry is null, meaning the layer is dropped at the end of the list or
                 // the layer is dropped on top of a different group
                 if (targetEntry === null || sourceEntry.sortGroup !== targetEntry.sortGroup) {
-                    // put the layer at the bottom of its sort group
+                    // put the layer at the bottom of its sort group on top of any unregistered layers (basemap layers)
+                    // this finds the first layer which is in the map stack and not registered (basemap layer)
                     targetIndex = mapStackSwitch[sourceEntry.sortGroup].findIndex(layerId =>
                         service.layers.hasOwnProperty(layerId));
                     targetIndex = targetIndex !== -1 ? targetIndex : mapStackSwitch[sourceEntry.sortGroup].length;
@@ -234,7 +235,7 @@
                 // if the layer is dropped on another layer in its sort group, get index of that layer
                 } else if (sourceEntry.sortGroup === targetEntry.sortGroup) {
                     // due to layer order reversed on map stack, add one to index
-                    targetIndex = mapStackSwitch[sourceEntry.sortGroup].indexOf(targetEntry.id) + 1;
+                    targetIndex = mapStackSwitch[sourceEntry.sortGroup].indexOf(targetId) + 1;
                 } else {
                     // TODO: I'm not sure what happened; unforseen condition
                     throw new Error('Halp!');
@@ -252,6 +253,8 @@
              * NOTE the ESRI map stack does not reflect the legend and is arranged in reverse order
              * for ESRI low index = low drawing order; legend: low index = high drawing order
              * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details
+             *
+             * IMPORTANT NOTE: targetId __must__ be the id of the layer which is actually in the map stack; this can't be a placholder which is not added to the map object
              *
              * @param {String} sourceId the id of the layer to be moved
              * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
@@ -321,7 +324,7 @@
                     gapiService.gapi.events.wrapEvents(layer, {
                         // TODO: add error event handler to register a failed layer, so the user can reload it
                         load: () => {
-                            console.log('layer load', layer.id);
+                            // console.log('layer load', layer.id);
 
                             // FIXME look at layer config for flags indicating not to load attributes
                             // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
@@ -362,7 +365,7 @@
                             ref.legendService.setLayerLoadingFlag(layerRecord.state, false, 100);
                         },
                         'update-start': data => {
-                            console.log('update-start', layer.id, data);
+                            // console.log('update-start', layer.id, data);
 
                             // in case the layer registration was bypassed (e.g. placeholder removed)
                             if (service.layers[layer.id]) {
@@ -370,7 +373,7 @@
                             }
                         },
                         'update-end': data => {
-                            console.log('update-end', layer.id, data);
+                            // console.log('update-end', layer.id, data);
 
                             // in case the layer registration was bypassed (e.g. placeholder removed)
                             if (service.layers[layer.id]) {
@@ -386,10 +389,13 @@
                     if (!layerRecord.state.removed) {
 
                         let targetId = service.legend.items[sourceIndex + 1];
-                        targetId = typeof targetId === 'undefined' ? -1 : targetId.id.replace('placeholder', '');
+
+                        // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
+                        targetId = typeof targetId === 'undefined' ? targetId : targetId.id.replace('placeholder', '');
                         const targetIndex = getLayerInsertPosition(layerRecord.initialState.id, targetId);
 
-                        console.log(`adding to map at ${targetIndex}`);
+                        console.log(`adding ${layerRecord.state.name} to map at ${targetIndex}`);
+
                         // add layer to the map triggering its loading process
                         mapObject.addLayer(layer, targetIndex);
                     }
