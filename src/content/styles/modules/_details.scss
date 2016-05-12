@@ -11,6 +11,10 @@
 
         .rv-subheader {
             padding-right: 20px;
+
+            .md-subhead {
+                display: block;
+            }
         }
 
         &-layer {
