@@ -20,7 +20,7 @@
      *
      * @return {object} directive body
      */
-    function rvToc(layoutService, dragulaService, $timeout) {
+    function rvToc($timeout, layoutService, dragulaService, geoService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/toc/toc.html',
@@ -34,39 +34,70 @@
         return directive;
 
         function link(scope, el) {
+            const self = scope.self;
+
             // register toc node with layoutService so it can be targeted
             layoutService.panes.toc = el;
 
-            scope.self.dragulaScope = scope;
+            self.dragulaOptions = {
+                accepts: (el, target, source, sibling) => {
+                    // el and sibling are raw dom nodes, need to use `angular.element` to get jquery wrappers
+                    [el, sibling] = [angular.element(el), angular.element(sibling)];
 
-            /*dragulaService.options(scope, 'bag-two', {
-                mirrorContainer: el[0]
-            });*/
+                    // get item above the drop position
+                    const aboveItem = sibling.prev(); // can be [] if it's the fisrt item in the list
+                    const aboveSortGroup = aboveItem.length > 0 ? aboveItem.scope().item.sortGroup : -1;
 
-            $timeout(() => {
+                    // docs says sibling can be null when trying to drop on the last place in the list
+                    // it doesn't seem to happen this way; if the sibling is the draggable item iself (has `gu-mirror` class), assume it's the end of the list
+                    const belowItem = sibling.hasClass('gu-mirror') ? [] : sibling;
+                    const belowSortGroup = belowItem.length > 0 ? belowItem.scope().item.sortGroup : -1;
 
-                /*const drake = dragulaService.find(scope, 'bag-one');
-                drake.drake.containers.pop();
-                drake.drake.containers.push(el.find('.rv-root')[0]);
-                console.log(drake);*/
+                    const elementSortGroup = el.scope().item.sortGroup;
 
-            }, 2000);
+                    // console.log(`accept check, ${aboveSortGroup}, ${belowSortGroup}, ${elementSortGroup}`);
 
-            /*scope
-                .$on('bag-one.cloned', (event, clone, original, type) => {
-                    //el.addClass('over');
-                    console.log('bag-one.cloned', event, clone, original, type);
+                    // if the drop place is surrounded by sort groups different from the element's sort group, forbid drop
+                    if (elementSortGroup !== aboveSortGroup && elementSortGroup !== belowSortGroup) {
+                        return false;
+                    }
 
-                    el.find('.rv-root').append(clone);
-                });*/
+                    // accept drop
+                    return true;
+                }
+            }
 
-            /*scope
-                .$on('toc-bag.cloned', (event, clone, original, type) => {
-                    //el.addClass('over');
-                    console.log('bag-one.cloned', event, clone, original, type);
+            // on drag start, add data attribute to the list indicating which sort group the dragged layer can be accepted into
+            // this will highlight invalid drop target
+            scope.$on('toc-bag.drag', (evt, el, source) => {
+                const sortGroup = el.scope().item.sortGroup;
+                source.attr('data-sort-group', sortGroup);
 
-                    el.find('.rv-root').append(clone);
-            });*/
+                // console.log('Drag start', evt, el, source);
+            });
+
+            // on drop, remove data attribute from the list restoring normal appearance
+            // call geoService to reorder layers
+            scope.$on('toc-bag.drop', (evt, el, target, source, sibling) => { // , sibling) => {
+                source.removeAttr('data-sort-group');
+
+                // hack
+                // when dropped at the end of the list, sibling, instead of being null as per docs, is the mirror node, argh...
+                const siblingLayerId = sibling.hasClass('gu-mirror') ? -1 : sibling.scope().item.id;
+                const elementLayerId = el.scope().item.id;
+
+                console.log(elementLayerId, siblingLayerId);
+
+                geoService.moveLayer(elementLayerId, siblingLayerId);
+                // console.log('Drag complete', evt, el, target, source, sibling);
+            });
+
+            // on cancle, remove data attribute from the list restoring normal appearance
+            scope.$on('toc-bag.cancel', (evt, el, target, source) => { // , sibling) => {
+                source.removeAttr('data-sort-group');
+
+                // console.log('Drag complete', evt, el, target, source, sibling);
+            });
         }
     }
 
@@ -80,33 +111,9 @@
         self.config = tocService.data;
         self.presets = tocService.presets;
 
-        /*dragulaService.options(scope, 'bag-one', {
-            mirrorContainer: el.find('.rv-root')[0]
-        });*/
-
         activate();
 
-        /*
-        dragulaService.options($scope, 'bag-one', {
-            invalid: (el, handle) => {
-                console.log(el, handle);
-
-                //return el.tagName !== 'toc-entry';
-            }
-        });
-
-        $scope
-            .$on('bag-one.over', (e, el) => {
-                el.addClass('over');
-                console.log(e, el);
-            });
-
-        $scope.$on('bag-one.out', (e, el) => {
-            el.removeClass('over');
-            console.log(e, el);
-        });*/
-
-        /*************/
+        /***/
 
         // hacky way to toggle filters panel modes;
         // TODO: replace with a sane methods

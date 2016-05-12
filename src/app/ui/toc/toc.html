@@ -8,7 +8,7 @@
             rv-dragula="toc-bag" rv-dragula-options="dragulaOptions" rv-dragula-model="self.geoService.legend.items">
 
             <li ng-repeat="item in $dxPrior.items track by item.id"
-                class="rv-toggle-slide" data-sort-group="{{ ::item.sortGroup }}" data-layer-id="{{ ::item.id }}">
+                class="rv-toggle-slide" data-sort-group="{{ ::item.sortGroup }}">
 
                 <rv-toc-entry
                     class="rv-toc-{{ ::item.type }}-entry"
