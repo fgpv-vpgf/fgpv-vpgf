@@ -2,18 +2,13 @@
 
 describe('layerRegistry', () => {
 
-    // fake scale function. arrow declaration in geoState angers jslint
-    function getScale() {
-        return 0;
-    }
-
     // make a fake map object
     const geoState = {
         mapService: {
             mapObject: {
                 addLayer: angular.noop,
                 removeLayer: angular.noop,
-                getScale
+                getScale: () => 0
             }
         }
     };
