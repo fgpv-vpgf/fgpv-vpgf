@@ -16,7 +16,7 @@
         .factory('layerRegistry', layerRegistryFactory);
 
     function layerRegistryFactory($q, $timeout, gapiService, legendService, layerTypes, layerStates, layerNoattrs,
-        layerTypesQueryable, layerSortGroups) {
+        layerTypesQueryable) {
 
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
@@ -206,20 +206,7 @@
                 return $q.all(promises).then(() => result);
             }
 
-            /**
-             * Move a source layer within the map on top (visually) of the target layer.
-             *
-             * NOTE this does not modify the legend, movement within the legend should be handled separately, ideally
-             * calling this function immediately before or after the legend is updated
-             *
-             * NOTE the ESRI map stack does not reflect the legend and is arranged in reverse order
-             * for ESRI low index = low drawing order; legend: low index = high drawing order
-             * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details
-             *
-             * @param {String} sourceId the id of the layer to be moved
-             * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
-             */
-            function moveLayer(sourceId, targetId) {
+            function getLayerInsertPosition(sourceId, targetId) {
                 const { layer: sourceLayer, state: sourceEntry } = service.layers[sourceId];
                 const targetEntry = targetId !== -1 ? service.layers[targetId].state : null;
 
@@ -236,6 +223,7 @@
                     // put the layer at the bottom of its sort group
                     targetIndex = mapStackSwitch[sourceEntry.sortGroup].findIndex(layerId =>
                         service.layers.hasOwnProperty(layerId));
+                    targetIndex = targetIndex !== -1 ? targetIndex : mapStackSwitch[sourceEntry.sortGroup].length;
 
                 // if the layer is dropped on another layer in its sort group, get index of that layer
                 } else if (sourceEntry.sortGroup === targetEntry.sortGroup) {
@@ -245,6 +233,26 @@
                     // TODO: I'm not sure what happened; unforseen condition
                     throw new Error('Halp!');
                 }
+
+                return targetIndex;
+            }
+
+            /**
+             * Move a source layer within the map on top (visually) of the target layer.
+             *
+             * NOTE this does not modify the legend, movement within the legend should be handled separately, ideally
+             * calling this function immediately before or after the legend is updated
+             *
+             * NOTE the ESRI map stack does not reflect the legend and is arranged in reverse order
+             * for ESRI low index = low drawing order; legend: low index = high drawing order
+             * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details
+             *
+             * @param {String} sourceId the id of the layer to be moved
+             * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
+             */
+            function moveLayer(sourceId, targetId) {
+                const sourceLayer = service.layers[sourceId].layer;
+                const targetIndex = getLayerInsertPosition(sourceId, targetId);
 
                 //console.log(`reodder ${sourceId} on ${targetIndex}`);
                 mapObject.reorderLayer(sourceLayer, targetIndex);
@@ -297,14 +305,11 @@
                     // TODO: decouple identifyservice from everything
                     const layer = service.generateLayer(layerConfig);
 
-                    // TODO: create layerRecord only once
-                    const layerRecord = {
-                        layer,
-                        initialState: layerConfig
-                    };
+                    // create layerRecord only once
+                    const layerRecord = registerLayer(layer, layerConfig);
 
-                    // add a placeholder and store it
-                    ref.legendService.addPlaceholder(layerRecord);
+                    // add a placeholder and store its index
+                    const sourceIndex = ref.legendService.addPlaceholder(layerRecord);
 
                     // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
                     gapiService.gapi.events.wrapEvents(layer, {
@@ -326,7 +331,18 @@
 
                                 // replace placeholder with actual layer
                                 const index = ref.legendService.legend.remove(layerRecord.state);
-                                service.registerLayer(layer, layerConfig, attributesPromise, index); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+
+                                // set attribute bundle on the layer record
+                                // TODO: refactor;
+                                layerRecord._attributeBundle = attributesPromise;
+                                ref.legendService.addLayer(layerRecord, index); // generate actual legend entry
+
+                                // TODO refactor this as it has nothing to do with layer registration;
+                                // will likely change as a result of layer reloading / reordering / properly ordered legend
+                                const opts = layerRecord.state.options;
+                                if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
+                                    setBboxState(layerRecord.state, true);
+                            }
                             }
                         },
                         error: data => {
@@ -362,8 +378,14 @@
 
                     // Make sure the placeholder is still there
                     if (!layerRecord.state.removed) {
+
+                        let targetId = service.legend.items[sourceIndex + 1];
+                        targetId = typeof targetId === 'undefined' ? -1 : targetId.id.replace('placeholder', '');
+                        const targetIndex = getLayerInsertPosition(layerRecord.initialState.id, targetId);
+
+                        console.log(`adding to map at ${targetIndex}`);
                         // add layer to the map triggering its loading process
-                        mapObject.addLayer(layer);
+                        mapObject.addLayer(layer, targetIndex);
                     }
                 });
             }
@@ -394,6 +416,30 @@
                 delete service.layers[layerId]; // remove layer from the registry
             }
 
+            function registerLayer(layer, initialState) {
+                if (!layer.id) {
+                    console.error('Attempt to register layer without id property');
+                    console.log(layer);
+                    console.log(initialState);
+                }
+
+                if (layers[layer.id]) {
+                    console.error('attempt to register layer already registered.  id: ' + layer.id);
+                    return false;
+                }
+
+                const layerRecord = Object.create(LAYER_RECORD)
+                    .init(layer, initialState);
+
+                service.layers[layer.id] = layerRecord;
+
+                // FIXME:
+                window.RV.layers = window.RV.layers || {};
+                window.RV.layers[layer.id] = layerRecord;
+
+                return layerRecord;
+            }
+
             /**
              * Adds a layer object to the layers registry
              * @param {object} layer the API layer object
@@ -402,7 +448,7 @@
              * @param {number} index an optional index indicating at which position the layer was added to the map
              * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
              */
-            function registerLayer(layer, initialState, attributeBundle, index) {
+            function _registerLayer(layer, initialState, attributeBundle, index) {
                 if (!layer.id) {
                     console.error('Attempt to register layer without id property');
                     console.log(layer);
