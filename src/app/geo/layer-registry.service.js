@@ -133,9 +133,13 @@
              */
             function getAllQueryableLayerRecords() {
                 return Object.keys(layers).map(key => layers[key])
+                    // filter nonqueryable layers
                     .filter(layerRecord =>
-                        // TODO: filter out layers in error state
-                        layerTypesQueryable.indexOf(layerRecord.initialState.layerType) !== -1);
+                        layerTypesQueryable.indexOf(layerRecord.initialState.layerType) !== -1)
+                    // filter out layers in the error state
+                    // FIXME: refactor with the state machine
+                    .filter(layerRecord =>
+                        layerRecord.state.state !== 'rv-error');
             }
 
             /**
@@ -324,7 +328,7 @@
                     gapiService.gapi.events.wrapEvents(layer, {
                         // TODO: add error event handler to register a failed layer, so the user can reload it
                         load: () => {
-                            // console.log('layer load', layer.id);
+                            console.log('## layer load', layer.id);
 
                             // FIXME look at layer config for flags indicating not to load attributes
                             // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
@@ -355,7 +359,10 @@
                             }
                         },
                         error: data => {
-                            console.error('layer error', layer.id, data);
+                            console.error('## layer error', layer.id, data);
+
+                            // TODO: if layer errors on initial loading, swith it to the error state
+                            // since this seems to happen sporadically, maybe don't change the template to errored placeholder on the fisrt error and wait for some time or for the next error or something like that
 
                             // switch placeholder to error
                             // ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);
@@ -365,7 +372,7 @@
                             ref.legendService.setLayerLoadingFlag(layerRecord.state, false, 100);
                         },
                         'update-start': data => {
-                            // console.log('update-start', layer.id, data);
+                            console.log('## update-start', layer.id, data);
 
                             // in case the layer registration was bypassed (e.g. placeholder removed)
                             if (service.layers[layer.id]) {
@@ -373,7 +380,9 @@
                             }
                         },
                         'update-end': data => {
-                            // console.log('update-end', layer.id, data);
+                            console.log('## update-end', layer.id, data);
+
+                            // TODO: need to restore layer to normal state if it errored previously
 
                             // in case the layer registration was bypassed (e.g. placeholder removed)
                             if (service.layers[layer.id]) {
