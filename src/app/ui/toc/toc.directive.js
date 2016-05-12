@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -65,7 +66,7 @@
                     // accept drop
                     return true;
                 }
-            }
+            };
 
             // on drag start, add data attribute to the list indicating which sort group the dragged layer can be accepted into
             // this will highlight invalid drop target
@@ -84,13 +85,32 @@
                 // hack
                 // when dropped at the end of the list, sibling, instead of being null as per docs, is the mirror node, argh...
                 // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
-                const siblingLayerId = sibling.hasClass('gu-mirror')
-                    ? undefined : sibling.scope().item.id.replace('placeholder', '');
+
                 const elementLayerId = el.scope().item.id.replace('placeholder', '');
 
-                console.log(elementLayerId, siblingLayerId);
+                let dropLayerId;
 
-                geoService.moveLayer(elementLayerId, siblingLayerId);
+                if (sibling.hasClass('gu-mirror')) {
+                    dropLayerId = undefined;
+                } else {
+                    const siblingIndex = geoService.legend.items.indexOf(sibling.scope().item);
+
+                    // go down the legend and find the first layer with is no the failed placeholder
+                    // this will be the actual layer in the map stack the element layer is be rebased on top
+                    dropLayerId = geoService.legend.items.find((item, index) =>
+                        index >= siblingIndex && item.state !== 'rv-error');
+                    dropLayerId = typeof dropLayerId === 'undefined' ?
+                        undefined : dropLayerId.id.replace('placeholder', '');
+                }
+
+                console.log(elementLayerId, dropLayerId);
+                console.log(RV._debug.layerIds);
+
+                geoService.moveLayer(elementLayerId, dropLayerId);
+
+                console.log(RV._debug.layerIds);
+                console.log('-------');
+
                 // console.log('Drag complete', evt, el, target, source, sibling);
             });
 

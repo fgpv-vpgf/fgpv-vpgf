@@ -101,8 +101,11 @@
 
 			// FIXME: for debug purposes
             // FIXME: remove
-            window.RV.layers = service.layers;
-            window.RV.legend = service.legend;
+            window.RV._debug = {};
+            window.RV._debug.layers = service.layers;
+            window.RV._debug.legend = service.legend;
+            window.RV._debug.graphicsLayerIds = mapObject.graphicsLayerIds;
+            window.RV._debug.layerIds = mapObject.layerIds;
 
 
             // set event handler for extent changes
@@ -217,7 +220,7 @@
             }
 
             function getLayerInsertPosition(sourceId, targetId) {
-                const { layer: sourceLayer, state: sourceEntry } = service.layers[sourceId];
+                const sourceEntry = service.layers[sourceId].state;
                 const targetEntry = typeof targetId !== 'undefined' ? service.layers[targetId].state : null;
 
                 const mapStackSwitch = [
@@ -238,8 +241,8 @@
 
                 // if the layer is dropped on another layer in its sort group, get index of that layer
                 } else if (sourceEntry.sortGroup === targetEntry.sortGroup) {
-                    // due to layer order reversed on map stack, add one to index
-                    targetIndex = mapStackSwitch[sourceEntry.sortGroup].indexOf(targetId) + 1;
+                    // get the index of the target layer in the appropriate map stack
+                    targetIndex = mapStackSwitch[sourceEntry.sortGroup].indexOf(targetId);
                 } else {
                     // TODO: I'm not sure what happened; unforseen condition
                     throw new Error('Halp!');
@@ -347,6 +350,10 @@
 
                                 // set attribute bundle on the layer record
                                 // TODO: refactor;
+                                /* attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
+                                *  index an optional index indicating at which position the layer was added to the map
+                                * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
+                                * */
                                 layerRecord._attributeBundle = attributesPromise;
                                 ref.legendService.addLayer(layerRecord, index); // generate actual legend entry
 
@@ -437,6 +444,12 @@
                 delete service.layers[layerId]; // remove layer from the registry
             }
 
+            /**
+             * Adds a layer object to the layers registry
+             * @param {object} layer the API layer object
+             * @param {object} initialState a configuration fragment used to generate the layer
+             *
+             */
             function registerLayer(layer, initialState) {
                 if (!layer.id) {
                     console.error('Attempt to register layer without id property');
@@ -455,39 +468,6 @@
                 service.layers[layer.id] = layerRecord;
 
                 return layerRecord;
-            }
-
-            /**
-             * Adds a layer object to the layers registry
-             * @param {object} layer the API layer object
-             * @param {object} initialState a configuration fragment used to generate the layer
-             * @param {promise} attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
-             * @param {number} index an optional index indicating at which position the layer was added to the map
-             * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
-             */
-            function _registerLayer(layer, initialState, attributeBundle, index) {
-                if (!layer.id) {
-                    console.error('Attempt to register layer without id property');
-                    console.log(layer);
-                    console.log(initialState);
-                }
-
-                if (layers[layer.id]) {
-                    console.error('attempt to register layer already registered.  id: ' + layer.id);
-                    return false;
-                }
-
-                const layerRecord = Object.create(LAYER_RECORD)
-                    .init(layer, initialState, attributeBundle);
-
-                service.layers[layer.id] = layerRecord;
-                ref.legendService.addLayer(layerRecord, index); // generate legend entry
-
-                // TODO refactor this as it has nothing to do with layer registration;
-                // will likely change as a result of layer reloading / reordering / properly ordered legend
-                const opts = layerRecord.state.options;
-                if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
-                    setBboxState(layerRecord.state, true);
                 }
 
                 // set scale state
