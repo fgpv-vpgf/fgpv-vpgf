@@ -83,8 +83,10 @@
 
                 // hack
                 // when dropped at the end of the list, sibling, instead of being null as per docs, is the mirror node, argh...
-                const siblingLayerId = sibling.hasClass('gu-mirror') ? -1 : sibling.scope().item.id;
-                const elementLayerId = el.scope().item.id;
+                // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
+                const siblingLayerId = sibling.hasClass('gu-mirror')
+                    ? undefined : sibling.scope().item.id.replace('placeholder', '');
+                const elementLayerId = el.scope().item.id.replace('placeholder', '');
 
                 console.log(elementLayerId, siblingLayerId);
 
