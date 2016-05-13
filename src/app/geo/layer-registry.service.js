@@ -236,7 +236,19 @@
                 return $q.all(promises).then(() => result);
             }
 
-            function getLayerInsertPosition(sourceId, targetId) {
+            /**
+             * Finds a position at whcich to insert the soruce layer so it's positioned directly about target layer (if one specified).
+             * If the target layer is no specified, the source layer is placed at the bottom of its sort group.
+             *
+             * NOTE the ESRI map stack does not reflect the legend and is arranged in reverse order
+             * for ESRI low index = low drawing order; legend: low index = high drawing order
+             * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details
+             *
+             * @param {String} sourceId the id of the layer to be moved
+             * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
+            * @return {Number}          index at which the source layer should be inserted in the map stack
+            */
+			function getLayerInsertPosition(sourceId, targetId) {
                 const sourceEntry = service.layers[sourceId].state;
                 const targetEntry = typeof targetId !== 'undefined' ? service.layers[targetId].state : null;
 
@@ -277,10 +289,6 @@
              *
              * NOTE this does not modify the legend, movement within the legend should be handled separately, ideally
              * calling this function immediately before or after the legend is updated
-             *
-             * NOTE the ESRI map stack does not reflect the legend and is arranged in reverse order
-             * for ESRI low index = low drawing order; legend: low index = high drawing order
-             * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details
              *
              * IMPORTANT NOTE: targetId __must__ be the id of the layer which is actually in the map stack; this can't be a placholder which is not added to the map object
              *
