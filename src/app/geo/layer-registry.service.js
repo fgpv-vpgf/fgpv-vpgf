@@ -37,7 +37,8 @@
                 getAllQueryableLayerRecords,
                 moveLayer,
                 checkDateType,
-                setBboxState
+                setBboxState,
+                _refactor_IsLayerInMapStack
             };
 
             const ref = {
@@ -119,6 +120,15 @@
             return initialRegistration();
 
             /***/
+
+            function _refactor_IsLayerInMapStack(layerId, sortGroup) {
+                const mapStackSwitch = [
+                    mapObject.graphicsLayerIds,
+                    mapObject.layerIds
+                ];
+
+                return mapStackSwitch[sortGroup].indexOf(layerId.replace('placeholder', '')) !== -1;
+            }
 
             /**
              * Retrieves all  layer records of the specified type

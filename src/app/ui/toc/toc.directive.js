@@ -95,10 +95,11 @@
                 } else {
                     const siblingIndex = geoService.legend.items.indexOf(sibling.scope().item);
 
-                    // go down the legend and find the first layer with is no the failed placeholder
-                    // this will be the actual layer in the map stack the element layer is be rebased on top
+                    // go down the legend and find the first layer which is
+                    // an actual layer in the map stack the element layer is be rebased on top
                     dropLayerId = geoService.legend.items.find((item, index) =>
-                        index >= siblingIndex && item.state !== 'rv-error');
+                        index >= siblingIndex && geoService._refactor_IsLayerInMapStack(item.id, item.sortGroup));
+
                     dropLayerId = typeof dropLayerId === 'undefined' ?
                         undefined : dropLayerId.id.replace('placeholder', '');
                 }
