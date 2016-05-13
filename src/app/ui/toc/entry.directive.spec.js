@@ -47,7 +47,7 @@ describe('rvTocEntry', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo',
+        bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo', 'app.ui.common',
             'pascalprecht.translate', mockLayoutService, mockGeoService, mockToast, mockReverseFilter);
 
         // inject angular services
