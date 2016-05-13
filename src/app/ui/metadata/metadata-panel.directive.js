@@ -20,17 +20,22 @@
      *
      * @return {object} directive body
      */
-    function rvMetadataPanel() {
+    function rvMetadataPanel(layoutService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/metadata/metadata-panel.html',
             scope: {},
+            link: link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
+
+        function link(scope, el) {
+            layoutService.panes.metadata = el;
+        }
     }
 
     function Controller(stateManager) {
