@@ -66,6 +66,18 @@
                                     display: block;
                                 }
                             }
+
+                            .rv-description {
+
+                                md-tooltip {
+                                    display: none;
+                                }
+
+                                &:hover md-tooltip {
+                                    display: block;
+                                }
+                            }
+
                         }
                     }
                 }
