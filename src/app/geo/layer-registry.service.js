@@ -38,7 +38,7 @@
                 moveLayer,
                 checkDateType,
                 setBboxState,
-                _refactor_IsLayerInMapStack
+                _refactor_isLayerInMapStack // temporary function, will likely be removed after refactor
             };
 
             const ref = {
@@ -121,7 +121,14 @@
 
             /***/
 
-            function _refactor_IsLayerInMapStack(layerId, sortGroup) {
+            /**
+             * Checks whether the supplied layer id is in the map stack;
+             * This should be not needed after state machine refactor;
+             * @param  {Number}  layerId   layer id
+             * @param  {Number}  sortGroup layer sort group
+             * @return {Boolean}           indicates if the layer is in the map stack
+             */
+            function _refactor_isLayerInMapStack(layerId, sortGroup) {
                 const mapStackSwitch = [
                     mapObject.graphicsLayerIds,
                     mapObject.layerIds
@@ -284,8 +291,37 @@
                 const sourceLayer = service.layers[sourceId].layer;
                 const targetIndex = getLayerInsertPosition(sourceId, targetId);
 
+                _test_syncCheck();
+
                 //console.log(`reodder ${sourceId} on ${targetIndex}`);
                 mapObject.reorderLayer(sourceLayer, targetIndex);
+            }
+
+            /**
+             * This is temporary function to make sure the mapstack and legend is in sync;
+             */
+            function _test_syncCheck() {
+                // remove all layer id from the map stacks which are not present in the legend
+                const fullMapStack =
+                    [].concat(mapObject.graphicsLayerIds.slice().reverse(), mapObject.layerIds.slice().reverse())
+                    .filter(layerId => service.layers.hasOwnProperty(layerId));
+
+                // remove all layer ids from the legend which are not preset in the map stack
+                const fullLegendStack = service.legend.items
+                    .filter(entry => _refactor_isLayerInMapStack(entry.id, entry.sortGroup))
+                    .map(entry => entry.id);
+
+                // compare the order of layer ids in both arrays - they should match
+                fullMapStack.forEach((layerId, index) => {
+                    if (fullLegendStack[index] !== layerId) {
+                        console.error('Map stack is out of ~~whack~~ sync!');
+                        console.warn('fullMapStack', fullMapStack);
+                        console.warn('fullLegendStack', fullLegendStack);
+                        return;
+                    }
+                });
+
+                console.log('Map stack is in sync with legend');
             }
 
             /**
