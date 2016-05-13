@@ -17,7 +17,7 @@
         .factory('tocService', tocService);
 
     function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager,
-        geoService, metadataService) {
+        geoService, metadataService, errorService) {
 
         const service = {
             // method called by the options and flags set on the layer item
@@ -282,7 +282,13 @@
                 .setActive({
                     side: false
                 })
-                .then(() => stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0));
+                .then(() => {
+                    stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0)
+                        .catch(() => {
+                            errorService.display('There was an error retrieving this resource, try again later.',
+                                layoutService.panes.filter);
+                        });
+                });
         }
 
         /**
@@ -303,7 +309,7 @@
             const layer = entry.master ? entry.master : entry;
 
             // construct a temp promise which resolves when data is generated or retrieved;
-            const dataPromise = $q(fulfill => {
+            const dataPromise = $q((fulfill, reject) => {
                 // check if metadata is cached
                 if (layer.cache.metadata) {
                     fulfill(layer.cache.metadata);
@@ -316,7 +322,6 @@
                     const xslUrl = 'http://ramp-pcar.github.io/demos/NRSTC/v5.4.2/ramp-pcar/' +
                         'assets/metadata/xstyle_default_en.xsl';
 
-                    // TODO: need to handle errors
                     // transform xml
                     metadataService.transformXML(xmlUrl, xslUrl).then(mdata => {
 
@@ -324,13 +329,17 @@
                         // TODO: chagee the following when changing associated directive service
                         layer.cache.metadata = [mdata[0].innerText];
                         fulfill(layer.cache.metadata);
-                    });
+                    }).catch(reject);
                 }
             });
 
             stateManager
                 .setActive(panelToClose)
-                .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester));
+                .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester, 0)
+                        .catch(() => {
+                            errorService.display('There was an error retrieving this resource, try again later.',
+                                layoutService.panes.metadata);
+                        }));
         }
 
         /**
