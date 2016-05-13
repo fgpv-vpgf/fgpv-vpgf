@@ -7,7 +7,8 @@ describe('layerRegistry', () => {
         mapService: {
             mapObject: {
                 addLayer: angular.noop,
-                removeLayer: angular.noop
+                removeLayer: angular.noop,
+                getScale: () => 0
             }
         }
     };
@@ -22,7 +23,13 @@ describe('layerRegistry', () => {
     // fake gapi service
     function mockGapiService($provide) {
         $provide.factory('gapiService', () => {
-            return {};
+            return {
+                gapi: {
+                    events: {
+                        wrapEvents: angular.noop
+                    }
+                }
+            };
         });
     }
 

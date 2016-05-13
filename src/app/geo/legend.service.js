@@ -48,7 +48,8 @@
                 addLayer,
                 addPlaceholder,
                 setLayerState,
-                setLayerLoadingFlag
+                setLayerLoadingFlag,
+                setLayerScaleFlag
             };
 
             init();
@@ -137,7 +138,6 @@
                 // generate toc entry
                 const state = legendEntryFactory.singleEntryItem(layer.initialState, layer.layer);
                 layer.state = state;
-
                 const symbologyPromise = getMapServerSymbology(state.url);
 
                 symbologyPromise.then(data =>
@@ -236,6 +236,42 @@
                 entry._loadingTimeout = $timeout(() => {
                     entry.isLoading = isLoading;
                 }, delay);
+            }
+
+            /**
+             * Sets `scale` flags on the legend entry.
+             * @param {Object} layer         layer object from `layerRegistry`
+             * @param {Boolean} scaleSet     mapping of featureIdx to booleans reflecting flag state
+             */
+            function setLayerScaleFlag(layer, scaleSet) {
+
+                const legendEntry = layer.state;
+                if (legendEntry.flags) {
+
+                    // currently, non-feature based things have text-ish content put in their featureIdx.  map them to 0
+                    const adjIdx = isNaN(legendEntry.featureIdx) ? '0' : legendEntry.featureIdx;
+
+                    // TODO remove this test once it has passed the test of time
+                    if (typeof scaleSet[adjIdx] === 'undefined') {
+                        console.warn('setLayerScaleFlag - indexes are not lining up');
+                    }
+                    legendEntry.flags.scale.visible = scaleSet[adjIdx];
+
+                } else if (legendEntry.layerEntries) {
+                    // walk through layerEntries and update each one
+                    legendEntry.layerEntries.forEach(ent => {
+                        const slave = legendEntry.slaves[ent.index];
+
+                        if (slave.flags) {
+                            // TODO remove this test once it has passed the test of time
+                            if (typeof scaleSet[slave.featureIdx] === 'undefined') {
+                                console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
+                            }
+                            slave.flags.scale.visible = scaleSet[slave.featureIdx];
+                        }
+                    });
+                }
+
             }
         }
 
