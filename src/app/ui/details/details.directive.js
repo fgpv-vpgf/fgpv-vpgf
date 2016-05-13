@@ -61,6 +61,14 @@
                             width: 280,
                             ease: RV_SWIFT_IN_OUT_EASE
                         })
+
+                        // This will explicitly "animate" the overflow property from hidden to auto and not try to figure
+                        // out what it was initially on the reverse run.
+                        .fromTo(layerList, 0.01, {
+                            'overflow-y': 'hidden'
+                        }, {
+                            'overflow-y': 'auto'
+                        }, RV_SLIDE_DURATION / 2)
                         .to(section, RV_SLIDE_DURATION, {
                             className: '+=rv-expanded'
                         }, 0);

@@ -9,6 +9,14 @@
         right: 0;
         left: 0;
 
+        .rv-subheader {
+            padding-right: rem(2.5);
+
+            .md-subhead {
+                display: block;
+            }
+        }
+
         &-layer {
             &-button {
                 padding: 0;
@@ -64,9 +72,10 @@
             bottom: - rem(0.8);
             border-right: solid 1px $divider-color-light;
             overflow: hidden;
+            padding: rem(0.8) 0;
 
             &-item {
-                width: $slide-out-width;
+                width: 100%;
                 display: flex;
                 position: relative;
                 height: rem(4.8);
