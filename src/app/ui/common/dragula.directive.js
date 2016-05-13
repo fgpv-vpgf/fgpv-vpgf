@@ -46,7 +46,7 @@
 
             dragulaService.options(dragulaScope, attr.rvDragula, dragulaOptions);
 
-            // compile original dragula directive in some html with actually insering it into the page
+            // compile original dragula directive in some html without actually inserting it into the page
             $compile(`<div dragula="'${attr.rvDragula}'" dragula-model="${attr.rvDragulaModel}"></div>`)(
                 dragulaScope);
         }

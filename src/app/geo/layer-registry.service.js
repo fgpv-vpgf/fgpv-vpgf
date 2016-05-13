@@ -237,7 +237,7 @@
             }
 
             /**
-             * Finds a position at whcich to insert the soruce layer so it's positioned directly about target layer (if one specified).
+             * Finds a position at which to insert the source layer so it's positioned directly above target layer (if one specified).
              * If the target layer is no specified, the source layer is placed at the bottom of its sort group.
              *
              * NOTE the ESRI map stack does not reflect the legend and is arranged in reverse order
@@ -426,8 +426,8 @@
                         error: data => {
                             console.error('## layer error', layer.id, data);
 
-                            // TODO: if layer errors on initial loading, swith it to the error state
-                            // since this seems to happen sporadically, maybe don't change the template to errored placeholder on the fisrt error and wait for some time or for the next error or something like that
+                            // TODO: if layer errors on initial loading, switch it to the error state
+                            // since this seems to happen sporadically, maybe don't change the template to errored placeholder on the first error and wait for some time or for the next error or something like that
 
                             // switch placeholder to error
                             // ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);

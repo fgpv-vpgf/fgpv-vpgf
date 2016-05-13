@@ -45,11 +45,11 @@
                     [el, sibling] = [angular.element(el), angular.element(sibling)];
 
                     // get item above the drop position
-                    const aboveItem = sibling.prev(); // can be [] if it's the fisrt item in the list
+                    const aboveItem = sibling.prev(); // can be [] if it's the first item in the list
                     const aboveSortGroup = aboveItem.length > 0 ? aboveItem.scope().item.sortGroup : -1;
 
                     // docs says sibling can be null when trying to drop on the last place in the list
-                    // it doesn't seem to happen this way; if the sibling is the draggable item iself (has `gu-mirror` class), assume it's the end of the list
+                    // it doesn't seem to happen this way; if the sibling is the draggable item itself (has `gu-mirror` class), assume it's the end of the list
                     const belowItem = sibling.hasClass('gu-mirror') ? [] : sibling;
                     const belowSortGroup = belowItem.length > 0 ? belowItem.scope().item.sortGroup : -1;
 
