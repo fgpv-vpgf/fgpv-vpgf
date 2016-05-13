@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TimelineLite, TweenLite */
+/* global Ease, BezierEasing, TimelineLite */
 (() => {
     'use strict';
 
@@ -44,11 +44,7 @@
 
             // create animation timeline
             const tl = new TimelineLite({
-                paused: true,
-                onReverseComplete: () =>
-                    TweenLite.set(layerList, {
-                        clearProps: 'all'
-                    })
+                paused: true
             });
 
             // expand and collapse item selector list when multiple items are displayed
@@ -65,7 +61,12 @@
                             width: 280,
                             ease: RV_SWIFT_IN_OUT_EASE
                         })
-                        .set(layerList, {
+
+                        // This will explicitly "animate" the overflow property from hidden to auto and not try to figure
+                        // out what it was initially on the reverse run.
+                        .fromTo(layerList, 0.01, {
+                            'overflow-y': 'hidden'
+                        }, {
                             'overflow-y': 'auto'
                         }, RV_SLIDE_DURATION / 2)
                         .to(section, RV_SLIDE_DURATION, {

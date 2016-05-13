@@ -10,7 +10,7 @@
         left: 0;
 
         .rv-subheader {
-            padding-right: 20px;
+            padding-right: 25px;
 
             .md-subhead {
                 display: block;
@@ -72,6 +72,7 @@
             bottom: - rem(0.8);
             border-right: solid 1px $divider-color-light;
             overflow: hidden;
+            padding: rem(0.8) 0;
 
             &-item {
                 width: 100%;
