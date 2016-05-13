@@ -13,6 +13,8 @@ md-icon {
 
 @import "_datatable.scss";
 @import "_esri.scss";
+@import "_dragula.scss";
 
 @include datatable;
 @include esri;
+@include dragula;
