@@ -1,4 +1,3 @@
-/* global RV */
 (() => {
     'use strict';
 
@@ -98,13 +97,13 @@
                     // go down the legend and find the first layer which is
                     // an actual layer in the map stack the element layer is be rebased on top
                     dropLayerId = geoService.legend.items.find((item, index) =>
-                        index >= siblingIndex && geoService._refactor_isLayerInMapStack(item.id, item.sortGroup));
+                        index >= siblingIndex && geoService._refactorIsLayerInMapStack(item.id, item.sortGroup));
 
                     dropLayerId = typeof dropLayerId === 'undefined' ?
                         undefined : dropLayerId.id.replace('placeholder', '');
                 }
 
-                //console.log(elementLayerId, dropLayerId);
+                // console.log(elementLayerId, dropLayerId);
 
                 geoService.moveLayer(elementLayerId, dropLayerId);
 

@@ -38,7 +38,7 @@
                 moveLayer,
                 checkDateType,
                 setBboxState,
-                _refactor_isLayerInMapStack // temporary function, will likely be removed after refactor
+                _refactorIsLayerInMapStack // temporary function, will likely be removed after refactor
             };
 
             const ref = {
@@ -128,7 +128,7 @@
              * @param  {Number}  sortGroup layer sort group
              * @return {Boolean}           indicates if the layer is in the map stack
              */
-            function _refactor_isLayerInMapStack(layerId, sortGroup) {
+            function _refactorIsLayerInMapStack(layerId, sortGroup) {
                 const mapStackSwitch = [
                     mapObject.graphicsLayerIds,
                     mapObject.layerIds
@@ -291,7 +291,7 @@
                 const sourceLayer = service.layers[sourceId].layer;
                 const targetIndex = getLayerInsertPosition(sourceId, targetId);
 
-                _test_syncCheck();
+                _testSyncCheck();
 
                 //console.log(`reodder ${sourceId} on ${targetIndex}`);
                 mapObject.reorderLayer(sourceLayer, targetIndex);
@@ -300,7 +300,7 @@
             /**
              * This is temporary function to make sure the mapstack and legend is in sync;
              */
-            function _test_syncCheck() {
+            function _testSyncCheck() {
                 // remove all layer id from the map stacks which are not present in the legend
                 const fullMapStack =
                     [].concat(mapObject.graphicsLayerIds.slice().reverse(), mapObject.layerIds.slice().reverse())
@@ -308,7 +308,7 @@
 
                 // remove all layer ids from the legend which are not preset in the map stack
                 const fullLegendStack = service.legend.items
-                    .filter(entry => _refactor_isLayerInMapStack(entry.id, entry.sortGroup))
+                    .filter(entry => _refactorIsLayerInMapStack(entry.id, entry.sortGroup))
                     .map(entry => entry.id);
 
                 // compare the order of layer ids in both arrays - they should match
