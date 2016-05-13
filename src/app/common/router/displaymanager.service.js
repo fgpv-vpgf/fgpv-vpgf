@@ -114,6 +114,7 @@
                         const isLoaded = typeof value.isLoaded !== 'undefined' ? value.isLoaded : true;
 
                         setDisplay(panelName, requestId, data, isLoaded);
+                        return $q.resolve();
                     })
                     .catch(err => {
                         $timeout.cancel(display.loadingTimeout);

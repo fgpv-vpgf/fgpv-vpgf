@@ -40,7 +40,6 @@
             if (typeof parentElem !== 'undefined') {
                 opts.parent = parentElem;
             }
-
             $mdToast.show($mdToast.simple(opts));
         }
     }
