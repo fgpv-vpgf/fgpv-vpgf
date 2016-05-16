@@ -22,6 +22,12 @@
 
         return service;
 
+        /**
+         * Renders a toast message containing the supplied errorMsg
+         *
+         * @param {String} errorMsg     The message to display inside the toast
+         * @param {Object} parentElem   optional element to attach toast message. Appears on bottom of element if supplied, default is rootElement
+         */
         function display(errorMsg, parentElem) {
 
             const opts = {
@@ -36,7 +42,6 @@
             }
 
             return $mdToast.hide().then(() => { // hide any pre-existing toast
-                console.debug(opts);
                 $mdToast.show($mdToast.simple(opts));
             });
         }
