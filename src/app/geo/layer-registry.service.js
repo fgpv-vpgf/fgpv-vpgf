@@ -100,14 +100,13 @@
             };
             // jscs:enable requireSpacesInAnonymousFunctionExpression
 
-			// FIXME: for debug purposes
+            // FIXME: for debug purposes
             // FIXME: remove
             window.RV._debug = {};
             window.RV._debug.layers = service.layers;
             window.RV._debug.legend = service.legend;
             window.RV._debug.graphicsLayerIds = mapObject.graphicsLayerIds;
             window.RV._debug.layerIds = mapObject.layerIds;
-
 
             // set event handler for extent changes
             gapiService.gapi.events.wrapEvents(
@@ -248,7 +247,7 @@
              * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
             * @return {Number}          index at which the source layer should be inserted in the map stack
             */
-			function getLayerInsertPosition(sourceId, targetId) {
+            function getLayerInsertPosition(sourceId, targetId) {
                 const sourceEntry = service.layers[sourceId].state;
                 const targetEntry = typeof targetId !== 'undefined' ? service.layers[targetId].state : null;
 
@@ -301,7 +300,7 @@
 
                 _testSyncCheck();
 
-                //console.log(`reodder ${sourceId} on ${targetIndex}`);
+                // console.log(`reodder ${sourceId} on ${targetIndex}`);
                 mapObject.reorderLayer(sourceLayer, targetIndex);
             }
 
@@ -420,7 +419,7 @@
                                 const opts = layerRecord.state.options;
                                 if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
                                     setBboxState(layerRecord.state, true);
-                            }
+                                }
                             }
                         },
                         error: data => {
@@ -525,15 +524,10 @@
 
                 service.layers[layer.id] = layerRecord;
 
-                return layerRecord;
-                }
-
                 // set scale state
                 setScaleDepState(layer.id);
 
-                // FIXME:
-                window.RV.layers = window.RV.layers || {};
-                window.RV.layers[layer.id] = layerRecord;
+                return layerRecord;
             }
 
             /**
