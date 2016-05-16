@@ -136,8 +136,17 @@ $layer-item-height: rem(6.0);
             padding-left: $offset * ($index) + rem(1.6) + $toc-padding;
         }
 
-        .rv-toc-layer-entry{
+        .rv-toc-layer-entry {
             padding-left: $offset * ($index) + rem(1.6) + $toc-padding;
+            
+            .item-name-on-top {
+            
+                .rv-symbology-item-name {
+                    position: absolute;
+                    left: -10px;
+                }
+               
+            }
         }
 
         .rv-toc-group-entry {
