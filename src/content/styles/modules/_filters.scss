@@ -54,9 +54,10 @@
                             // FIXME: should be removed when using real button in datatables
                             .rv-icon {
                                 cursor: pointer;
+                                margin: 0 0 0 rem(0.6);
                             }
 
-                            .rv-zoom-to {
+                            .rv-zoom-to, .rv-description {
 
                                 md-tooltip {
                                     display: none;

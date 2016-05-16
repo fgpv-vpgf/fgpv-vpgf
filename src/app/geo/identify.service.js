@@ -67,7 +67,10 @@
                     }
                 );
 
-                return null;
+                return {
+                    getFeatureName,
+                    attributesToDetails
+                };
             }
 
             /******/
@@ -90,7 +93,6 @@
             // TODO make this extensible / modifiable / configurable to allow different details looks for different data
             function attributesToDetails(attribs, fields) {
                 // simple array of text mapping for demonstration purposes. fancy grid formatting later?
-
                 return Object.keys(attribs)
                     .map(key => {
                         let fieldName = layerRegistry.aliasedFieldName(key, fields);
