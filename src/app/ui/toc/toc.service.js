@@ -17,7 +17,7 @@
         .factory('tocService', tocService);
 
     function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager,
-        geoService, metadataService, errorService) {
+        geoService, metadataService, errorService, $filter) {
 
         const service = {
             // method called by the options and flags set on the layer item
@@ -285,7 +285,7 @@
                 .then(() => {
                     stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0)
                         .catch(() => {
-                            errorService.display('There was an error retrieving this resource, try again later.',
+                            errorService.display($filter('translate')('toc.error.resource.loadfailed'),
                                 layoutService.panes.filter);
                         });
                 });
@@ -337,7 +337,7 @@
                 .setActive(panelToClose)
                 .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester, 0)
                         .catch(() => {
-                            errorService.display('There was an error retrieving this resource, try again later.',
+                            errorService.display($filter('translate')('toc.error.resource.loadfailed'),
                                 layoutService.panes.metadata);
                         }));
         }
