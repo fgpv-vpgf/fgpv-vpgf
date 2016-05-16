@@ -52,6 +52,10 @@ rv-panel[type='filters'] {
     &.minimized {
         @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $height: 100px);
     }
+    
+    rv-filters-default {
+        @include content-plug;
+    }
 }
 
 rv-panel[type='main'] {
