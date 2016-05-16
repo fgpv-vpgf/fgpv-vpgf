@@ -114,11 +114,11 @@
                         const isLoaded = typeof value.isLoaded !== 'undefined' ? value.isLoaded : true;
 
                         setDisplay(panelName, requestId, data, isLoaded);
-                        return $q.resolve();
                     })
-                    .catch(() => {
+                    .catch(err => {
+                        $timeout.cancel(display.loadingTimeout);
                         display.isLoading = false;
-                        return $q.reject();
+                        throw err;
                     });
             }
         }

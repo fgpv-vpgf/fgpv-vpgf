@@ -22,7 +22,7 @@
      *
      * @return {object} directive body
      */
-    function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate) {
+    function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default.html',
@@ -46,6 +46,8 @@
 
             self.createTable = createTable;
             self.destroyTable = destroyTable;
+
+            layoutService.panes.filter = el;
 
             /**
              * Creates a new datatables instance (destroying existing if any). It pulls the data from the stateManager display store.

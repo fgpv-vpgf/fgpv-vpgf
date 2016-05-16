@@ -41,9 +41,7 @@
                 opts.parent = parentElem;
             }
 
-            return $mdToast.hide().then(() => { // hide any pre-existing toast
-                $mdToast.show($mdToast.simple(opts));
-            });
+            $mdToast.show($mdToast.simple(opts));
         }
     }
 })();
