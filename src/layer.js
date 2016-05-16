@@ -39,6 +39,7 @@ const serviceType = {
     RasterLayer: 'rasterlayer',
     GroupLayer: 'grouplayer',
     TileService: 'tileservice',
+    FeatureService: 'featureservice',
     DynamicService: 'dynamicservice',
     ImageService: 'imageservice',
     WMS: 'wms',
@@ -142,7 +143,7 @@ function crawlEsriService(srvJson) {
 
     } else if (srvJson.hasOwnProperty('allowGeometryUpdates')) {
         // a feature server
-        return serviceType.DynamicService;
+        return serviceType.FeatureService;
 
     } else if (srvJson.hasOwnProperty('allowedMosaicMethods')) {
         // an image server
