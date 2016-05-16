@@ -89,7 +89,7 @@ Table of Content wms layer flag tootlip,toc.tooltip.flag.wms,OGC WMS Layer,[fr] 
 Table of Content image layer flag label,toc.label.flag.image,ESRI Image Layer,[fr] ESRI Image Layer
 Table of Content image layer flag tootlip,toc.tooltip.flag.image,ESRI Image Layer,[fr] ESRI Image Layer
 Table of Content scale flag label,toc.label.flag.scale,Toggle scale,[fr] Toggle scale
-Table of Content scale flag tootlip,toc.tooltip.flag.scale,Toggle scale,[fr] Toggle scale
+Table of Content scale flag tootlip,toc.tooltip.flag.scale,Layer Out Of Scale,[fr] Layer Out Of Scale
 Table of Content data table flag label,toc.label.flag.data.table,Layer has viewable data,[fr] Layer has viewable data
 Table of Content data table flag tootlip,toc.tooltip.flag.data.table,Layer has viewable data,[fr] Layer has viewable data
 Table of Content data filter flag label,toc.label.flag.data.filter,Layer data is filtered,[fr] Layer data is filtered
