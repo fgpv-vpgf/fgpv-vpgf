@@ -98,7 +98,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
         <!-- the side selector  -->
         <div
             class="rv-details-layer-list"
-            ng-mouseenter="self.onEnter()"
+            ng-mouseenter="self.onEnter($event)"
             ng-mouseleave="self.onLeave()"
             ng-show="self.display.data.length > 1">
 
