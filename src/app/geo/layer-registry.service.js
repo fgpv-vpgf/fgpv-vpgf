@@ -420,6 +420,9 @@
                                 if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
                                     setBboxState(layerRecord.state, true);
                                 }
+
+                                // set scale state
+                                setScaleDepState(layer.id);
                             }
                         },
                         error: data => {
@@ -523,9 +526,6 @@
                     .init(layer, initialState);
 
                 service.layers[layer.id] = layerRecord;
-
-                // set scale state
-                setScaleDepState(layer.id);
 
                 return layerRecord;
             }
