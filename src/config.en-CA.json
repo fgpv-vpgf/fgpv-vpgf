@@ -140,6 +140,15 @@
       }
     },
     {
+      "id":"land_PubStdZone_detail_proj",
+      "name": "Land Pub Standard Zone Details",
+      "layerType":"esriFeature",
+      "url":"http://ec.gc.ca/arcgis/rest/services/data_donnees/be12386d/MapServer/0",
+      "options": {
+        "opacity": { "value": 0.1 }
+      }
+    },
+    {
       "id":"geomet_temp",
       "name":"GeoMet Temp",
       "layerType":"ogcWms",

@@ -24,7 +24,7 @@
         .module('app.geo')
         .service('legendEntryFactory', legendEntryFactory);
 
-    function legendEntryFactory($translate, gapiService, layerDefaults, geometryTypes) {
+    function legendEntryFactory($translate, gapiService, layerDefaults, layerSortGroups, geometryTypes) {
 
         const service = {
             placeholderEntryItem,
@@ -47,6 +47,7 @@
             state: 'rv-default', // TODO: replace
             cache: null, // to cache stuff like retrieved metadata info
             features: null,
+            sortGroup: -1,
             symbology: [{
                 icon: NO_IMAGE,
                 name: ''
@@ -92,6 +93,10 @@
                 this.features = {
                     count: '...counting'
                 };
+
+                // find appropriate sort group based on the initial layer type
+                this.sortGroup = layerSortGroups.findIndex(sortGroup =>
+                    sortGroup.indexOf(initialState.layerType) !== -1);
 
                 // sets default geometry type which is 'feature'
                 // to avoid pulling in angular translate interpolation message format plugin for now,
@@ -141,6 +146,7 @@
                 delete this.options.metadata;
             }
 
+            // FIXME: this should be done only on feature layers, nothing else!
             const urlParts = initialState.url.split('/');
             this.featureIdx = urlParts.pop(); // get the featureidx from the end of the url
             this.url = urlParts.join('/'); // keep the rest of the url (without the index)
@@ -204,6 +210,7 @@
             expanded: null,
             items: null,
             cache: null, // to cache stuff like retrieved metadata info
+            sortGroup: -1,
 
             // TODO: add hook to set group options
             options: {
@@ -220,10 +227,13 @@
              * Adds an item (layer or another group) to a layer group.
              * @param {Object} item     layer or group item to add
              * @param {Number} position position to insert the item at; defaults to the last position in the array
+             * @return position of the inserted item
              */
             add(item, position = this.items.length) { // <- awesome! default is re-evaluated everytime the function is called
                 item.parent = this;
                 this.items.splice(position, 0, item);
+
+                return position;
             },
 
             /**
@@ -365,6 +375,10 @@
             this.layerEntries.forEach(layerEntry => {
                 layerEntriesOptions[layerEntry.index] = layerEntry;
             });
+
+            // find appropriate sort group based on the initial layer type
+            this.sortGroup = layerSortGroups.findIndex(sortGroup =>
+                sortGroup.indexOf(initialState.layerType) !== -1);
 
             const layerEntryType = `${initialState.layerType}LayerEntry`;
             this.slaves = [];

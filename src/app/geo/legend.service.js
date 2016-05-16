@@ -17,7 +17,7 @@
         .factory('legendService', legendServiceFactory);
 
     function legendServiceFactory($translate, $http, $q, $timeout, gapiService,
-            geometryTypes, layerTypes, layerStates, legendEntryFactory) {
+            geometryTypes, layerTypes, layerSortGroups, layerStates, legendEntryFactory) {
 
         const legendSwitch = {
             structured: structuredLegendService,
@@ -97,7 +97,7 @@
              */
             function dynamicGenerator(layer) {
                 const state = legendEntryFactory.dynamicEntryMasterGroup(
-                    layer.initialState, layer.layer, true);
+                    layer.initialState, layer.layer, false);
                 layer.state = state;
 
                 const symbologyPromise = getMapServerSymbology(state.url);
@@ -123,7 +123,7 @@
              */
             function tileGenerator(layer) {
                 const state = legendEntryFactory.dynamicEntryMasterGroup(
-                    layer.initialState, layer.layer, true);
+                    layer.initialState, layer.layer, false);
                 layer.state = state;
 
                 return state;
@@ -192,7 +192,14 @@
                 const entry = legendEntryFactory.placeholderEntryItem(layer.initialState, layer.layer);
                 layer.state = entry;
 
-                service.legend.add(entry);
+                // find a position where to insert new placeholder based on its sortGroup value
+                let position = service.legend.items.findIndex(et => et.sortGroup > entry.sortGroup);
+                position = position !== -1 ? position : undefined;
+                position = service.legend.add(entry, position);
+
+                console.log(`Inserting placeholder ${entry.name} ${position}`);
+
+                return position;
             }
 
             /**
@@ -206,7 +213,8 @@
                 const layerType = layer.initialState.layerType;
                 const entry = layerTypeGenerators[layerType](layer);
 
-                // layerTypeGroups[layerType].add(entry);
+                console.log(`Inserting legend entry ${entry.name} ${index}`);
+
                 service.legend.add(entry, index);
             }
 
@@ -314,7 +322,7 @@
             /* jscs:disable maximumLineLength */
             return $http.jsonp(`${layerUrl}/query?where=1=1&returnCountOnly=true&returnGeometry=false&f=json&callback=JSON_CALLBACK`)
                 .then(result => {
-                    console.log(layerUrl, result);
+                    // console.log(layerUrl, result);
                     return result.data.count;
                 });
             /* jscs:enable maximumLineLength */

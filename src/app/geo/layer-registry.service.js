@@ -35,10 +35,10 @@
                 aliasedFieldName,
                 getLayersByType,
                 getAllQueryableLayerRecords,
-                getLayerIndexAbove,
                 moveLayer,
                 checkDateType,
-                setBboxState
+                setBboxState,
+                _refactorIsLayerInMapStack // temporary function, will likely be removed after refactor
             };
 
             const ref = {
@@ -100,6 +100,14 @@
             };
             // jscs:enable requireSpacesInAnonymousFunctionExpression
 
+            // FIXME: for debug purposes
+            // FIXME: remove
+            window.RV._debug = {};
+            window.RV._debug.layers = service.layers;
+            window.RV._debug.legend = service.legend;
+            window.RV._debug.graphicsLayerIds = mapObject.graphicsLayerIds;
+            window.RV._debug.layerIds = mapObject.layerIds;
+
             // set event handler for extent changes
             gapiService.gapi.events.wrapEvents(
                 geoState.mapService.mapObject,
@@ -111,6 +119,22 @@
             return initialRegistration();
 
             /***/
+
+            /**
+             * Checks whether the supplied layer id is in the map stack;
+             * This should be not needed after state machine refactor;
+             * @param  {Number}  layerId   layer id
+             * @param  {Number}  sortGroup layer sort group
+             * @return {Boolean}           indicates if the layer is in the map stack
+             */
+            function _refactorIsLayerInMapStack(layerId, sortGroup) {
+                const mapStackSwitch = [
+                    mapObject.graphicsLayerIds,
+                    mapObject.layerIds
+                ];
+
+                return mapStackSwitch[sortGroup].indexOf(layerId.replace('placeholder', '')) !== -1;
+            }
 
             /**
              * Retrieves all  layer records of the specified type
@@ -128,9 +152,13 @@
              */
             function getAllQueryableLayerRecords() {
                 return Object.keys(layers).map(key => layers[key])
+                    // filter nonqueryable layers
                     .filter(layerRecord =>
-                        // TODO: filter out layers in error state
-                        layerTypesQueryable.indexOf(layerRecord.initialState.layerType) !== -1);
+                        layerTypesQueryable.indexOf(layerRecord.initialState.layerType) !== -1)
+                    // filter out layers in the error state
+                    // FIXME: refactor with the state machine
+                    .filter(layerRecord =>
+                        layerRecord.state.state !== 'rv-error');
             }
 
             /**
@@ -208,45 +236,99 @@
             }
 
             /**
-             * Returns the index of the layer in the ESRI stack which is above the given legend position.
-             * Only top level items in the legend are traversed.
+             * Finds a position at which to insert the source layer so it's positioned directly above target layer (if one specified).
+             * If the target layer is no specified, the source layer is placed at the bottom of its sort group.
+             *
              * NOTE the ESRI map stack does not reflect the legend and is arranged in reverse order
              * for ESRI low index = low drawing order; legend: low index = high drawing order
              * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details
              *
-             * @param {Number} legendPosition index of the layer within the legend
-             * @return {Number} the position of the layer above in the particular ESRI layer stack
-             */
-            function getLayerIndexAbove(legendPosition) {
-                const layer = service.legend.items[legendPosition].layer;
+             * @param {String} sourceId the id of the layer to be moved
+             * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
+            * @return {Number}          index at which the source layer should be inserted in the map stack
+            */
+            function getLayerInsertPosition(sourceId, targetId) {
+                const sourceEntry = service.layers[sourceId].state;
+                const targetEntry = typeof targetId !== 'undefined' ? service.layers[targetId].state : null;
 
-                // ESRI keeps graphical (WMS, Tile, Image) layers separate from feature layers
-                // pick the appropriate list of layer IDs based on the type of layer being interrogated
-                const list = layerNoattrs.indexOf(layer.layerType) < 0 ? mapObject.layerIds : mapObject.graphicLayerIds;
-                const nextEntry = service.legend.items.find((entry, idx) =>
-                    list.indexOf(entry.layer.id) > -1 && idx > legendPosition);
-                if (typeof nextEntry === 'undefined') {
-                    // take the last position if there are no valid layers in the legend
-                    // there may be utility layers (e.g. highlight, bounding box) which may be in the ESRI list
-                    // but not in the legend
-                    // FIXME with bounding boxes this will no longer work
-                    return list.length;
+                const mapStackSwitch = [
+                    mapObject.graphicsLayerIds,
+                    mapObject.layerIds
+                ];
+
+                const sourceIndex = mapStackSwitch[sourceEntry.sortGroup].indexOf(sourceId);
+                let targetIndex;
+
+                // if targetEntry is null, meaning the layer is dropped at the end of the list or
+                // the layer is dropped on top of a different group
+                if (targetEntry === null || sourceEntry.sortGroup !== targetEntry.sortGroup) {
+                    // put the layer at the bottom of its sort group on top of any unregistered layers (basemap layers)
+                    // this finds the first layer which is in the map stack and not registered (basemap layer)
+                    targetIndex = mapStackSwitch[sourceEntry.sortGroup].findIndex(layerId =>
+                        service.layers.hasOwnProperty(layerId));
+                    targetIndex = targetIndex !== -1 ? targetIndex : mapStackSwitch[sourceEntry.sortGroup].length;
+
+                // if the layer is dropped on another layer in its sort group, get index of that layer
+                } else if (sourceEntry.sortGroup === targetEntry.sortGroup) {
+                    // get the index of the target layer in the appropriate map stack
+                    targetIndex = mapStackSwitch[sourceEntry.sortGroup].indexOf(targetId);
+
+                    // need to add 1 when moving layer up in the legend (down in the map stack)
+                    targetIndex += sourceIndex > targetIndex ? 1 : 0;
+                } else {
+                    // TODO: I'm not sure what happened; unforseen condition
+                    throw new Error('Halp!');
                 }
-                return list.indexOf(nextEntry.layer.id);
+
+                return targetIndex;
             }
 
             /**
-             * Move a given layer within the map to match a specific position in the legend.
+             * Move a source layer within the map on top (visually) of the target layer.
+             *
              * NOTE this does not modify the legend, movement within the legend should be handled separately, ideally
              * calling this function immediately before or after the legend is updated
              *
-             * @param {String} id the id of the layer to be moved
-             * @param {Number} position the new position of the layer within the legend
+             * IMPORTANT NOTE: targetId __must__ be the id of the layer which is actually in the map stack; this can't be a placholder which is not added to the map object
+             *
+             * @param {String} sourceId the id of the layer to be moved
+             * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
              */
-            function moveLayer(id, position) {
-                const curPos = service.legend.items.findIndex(e => e.id === id);
-                const layer = service.legend.items[curPos].layer;
-                mapObject.reorderLayer(layer, getLayerIndexAbove(position));
+            function moveLayer(sourceId, targetId) {
+                const sourceLayer = service.layers[sourceId].layer;
+                const targetIndex = getLayerInsertPosition(sourceId, targetId);
+
+                _testSyncCheck();
+
+                // console.log(`reodder ${sourceId} on ${targetIndex}`);
+                mapObject.reorderLayer(sourceLayer, targetIndex);
+            }
+
+            /**
+             * This is temporary function to make sure the mapstack and legend is in sync;
+             */
+            function _testSyncCheck() {
+                // remove all layer id from the map stacks which are not present in the legend
+                const fullMapStack =
+                    [].concat(mapObject.graphicsLayerIds.slice().reverse(), mapObject.layerIds.slice().reverse())
+                    .filter(layerId => service.layers.hasOwnProperty(layerId));
+
+                // remove all layer ids from the legend which are not preset in the map stack
+                const fullLegendStack = service.legend.items
+                    .filter(entry => _refactorIsLayerInMapStack(entry.id, entry.sortGroup))
+                    .map(entry => entry.id);
+
+                // compare the order of layer ids in both arrays - they should match
+                fullMapStack.forEach((layerId, index) => {
+                    if (fullLegendStack[index] !== layerId) {
+                        console.error('Map stack is out of ~~whack~~ sync!');
+                        console.warn('fullMapStack', fullMapStack);
+                        console.warn('fullLegendStack', fullLegendStack);
+                        return;
+                    }
+                });
+
+                console.log('Map stack is in sync with legend');
             }
 
             /**
@@ -296,20 +378,17 @@
                     // TODO: decouple identifyservice from everything
                     const layer = service.generateLayer(layerConfig);
 
-                    // TODO: create layerRecord only once
-                    const layerRecord = {
-                        layer,
-                        initialState: layerConfig
-                    };
+                    // create layerRecord only once
+                    const layerRecord = registerLayer(layer, layerConfig);
 
-                    // add a placeholder and store it
-                    ref.legendService.addPlaceholder(layerRecord);
+                    // add a placeholder and store its index
+                    const sourceIndex = ref.legendService.addPlaceholder(layerRecord);
 
                     // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
                     gapiService.gapi.events.wrapEvents(layer, {
                         // TODO: add error event handler to register a failed layer, so the user can reload it
                         load: () => {
-                            console.log('layer load', layer.id);
+                            console.log('## layer load', layer.id);
 
                             // FIXME look at layer config for flags indicating not to load attributes
                             // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
@@ -325,11 +404,29 @@
 
                                 // replace placeholder with actual layer
                                 const index = ref.legendService.legend.remove(layerRecord.state);
-                                service.registerLayer(layer, layerConfig, attributesPromise, index); // https://reviewable.io/reviews/fgpv-vpgf/fgpv-vpgf/286#-K9cmkUQO7pwtwEPOjmK
+
+                                // set attribute bundle on the layer record
+                                // TODO: refactor;
+                                /* attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
+                                *  index an optional index indicating at which position the layer was added to the map
+                                * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
+                                * */
+                                layerRecord.attributeBundle = attributesPromise;
+                                ref.legendService.addLayer(layerRecord, index); // generate actual legend entry
+
+                                // TODO refactor this as it has nothing to do with layer registration;
+                                // will likely change as a result of layer reloading / reordering / properly ordered legend
+                                const opts = layerRecord.state.options;
+                                if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
+                                    setBboxState(layerRecord.state, true);
+                                }
                             }
                         },
                         error: data => {
-                            console.error('layer error', layer.id, data);
+                            console.error('## layer error', layer.id, data);
+
+                            // TODO: if layer errors on initial loading, switch it to the error state
+                            // since this seems to happen sporadically, maybe don't change the template to errored placeholder on the first error and wait for some time or for the next error or something like that
 
                             // switch placeholder to error
                             // ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);
@@ -339,7 +436,7 @@
                             ref.legendService.setLayerLoadingFlag(layerRecord.state, false, 100);
                         },
                         'update-start': data => {
-                            console.log('update-start', layer.id, data);
+                            console.log('## update-start', layer.id, data);
 
                             // in case the layer registration was bypassed (e.g. placeholder removed)
                             if (service.layers[layer.id]) {
@@ -347,7 +444,9 @@
                             }
                         },
                         'update-end': data => {
-                            console.log('update-end', layer.id, data);
+                            console.log('## update-end', layer.id, data);
+
+                            // TODO: need to restore layer to normal state if it errored previously
 
                             // in case the layer registration was bypassed (e.g. placeholder removed)
                             if (service.layers[layer.id]) {
@@ -361,8 +460,17 @@
 
                     // Make sure the placeholder is still there
                     if (!layerRecord.state.removed) {
+
+                        let targetId = service.legend.items[sourceIndex + 1];
+
+                        // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
+                        targetId = typeof targetId === 'undefined' ? targetId : targetId.id.replace('placeholder', '');
+                        const targetIndex = getLayerInsertPosition(layerRecord.initialState.id, targetId);
+
+                        console.log(`adding ${layerRecord.state.name} to map at ${targetIndex}`);
+
                         // add layer to the map triggering its loading process
-                        mapObject.addLayer(layer);
+                        mapObject.addLayer(layer, targetIndex);
                     }
                 });
             }
@@ -397,11 +505,9 @@
              * Adds a layer object to the layers registry
              * @param {object} layer the API layer object
              * @param {object} initialState a configuration fragment used to generate the layer
-             * @param {promise} attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
-             * @param {number} index an optional index indicating at which position the layer was added to the map
-             * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
+             *
              */
-            function registerLayer(layer, initialState, attributeBundle, index) {
+            function registerLayer(layer, initialState) {
                 if (!layer.id) {
                     console.error('Attempt to register layer without id property');
                     console.log(layer);
@@ -414,24 +520,14 @@
                 }
 
                 const layerRecord = Object.create(LAYER_RECORD)
-                    .init(layer, initialState, attributeBundle);
+                    .init(layer, initialState);
 
                 service.layers[layer.id] = layerRecord;
-                ref.legendService.addLayer(layerRecord, index); // generate legend entry
-
-                // TODO refactor this as it has nothing to do with layer registration;
-                // will likely change as a result of layer reloading / reordering / properly ordered legend
-                const opts = layerRecord.state.options;
-                if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
-                    setBboxState(layerRecord.state, true);
-                }
 
                 // set scale state
                 setScaleDepState(layer.id);
 
-                // FIXME:
-                window.RV.layers = window.RV.layers || {};
-                window.RV.layers[layer.id] = layerRecord;
+                return layerRecord;
             }
 
             /**
