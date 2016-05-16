@@ -20,7 +20,7 @@
      *
      * @return {object} directive body
      */
-    function rvPanel(layoutService) {
+    function rvPanel() {
         const directive = {
             restrict: 'E',
             templateUrl: function (element, attr) {
@@ -30,16 +30,11 @@
                 closeButton: '@closeButton'
             },
             controller: Controller,
-            link,
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
-
-        function link(scope, elem) {
-            layoutService.panes.filter = elem[0].previousSibling;
-        }
     }
 
     /**
