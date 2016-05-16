@@ -44,7 +44,7 @@ $layer-item-height: rem(6.0);
 
         > li {
             position: relative;
-            overflow: auto;
+            overflow: hidden;
         }
         // rotate the icon on the toggle button on open
         .md-toggle-icon {
