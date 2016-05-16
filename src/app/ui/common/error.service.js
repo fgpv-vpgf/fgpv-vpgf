@@ -40,7 +40,14 @@
             if (typeof parentElem !== 'undefined') {
                 opts.parent = parentElem;
             }
+<<<<<<< 756216104085fd5963f45937c74497b8dc86318a
             $mdToast.show($mdToast.simple(opts));
+=======
+
+            return $mdToast.hide().then(() => { // hide any pre-existing toast
+                $mdToast.show($mdToast.simple(opts));
+            });
+>>>>>>> chore(ui): add docs and translations
         }
     }
 })();
