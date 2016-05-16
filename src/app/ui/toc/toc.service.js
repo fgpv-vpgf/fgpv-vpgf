@@ -272,12 +272,10 @@
                 .setActive({
                     side: false
                 })
-                .then(() => {
-                    stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0)
-                        .catch(() => {
-                            errorService.display($filter('translate')('toc.error.resource.loadfailed'),
-                                layoutService.panes.filter);
-                        });
+                .then(() => stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester))
+                .catch(() => {
+                    errorService.display($filter('translate')('toc.error.resource.loadfailed'),
+                        layoutService.panes.filter);
                 });
         }
 
@@ -324,7 +322,7 @@
 
             stateManager
                 .setActive(panelToClose)
-                .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester, 0)
+                .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester)
                         .catch(() => {
                             errorService.display($filter('translate')('toc.error.resource.loadfailed'),
                                 layoutService.panes.metadata);
