@@ -51,11 +51,13 @@
             self.onEnter = onEnter;
             self.onLeave = onLeave;
 
-            function onEnter() {
-                if (!layerList) {
+            function onEnter($event) {
+                if (!layerList || layerList[0] !== $event.currentTarget) {
                     // find layer node and construct timeline
                     layerList = element.find(RV_DETAILS_LIST);
                     section = element.find(RV_DETAILS_SECTION);
+
+                    tl.clear();
 
                     tl.to(layerList, RV_SLIDE_DURATION, {
                             width: 280,
