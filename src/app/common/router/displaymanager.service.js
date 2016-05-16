@@ -63,7 +63,7 @@
          * @param  {Object} dataPromise      data object or a promise returning a data object; both can be plain data object or containers `{data: data, isLoaded: <boolean|promise> }`, where isLoaded can be a promise;
          * @param  {Object} requester        an optional object requesting display change; must have `id` attribute if you want the panel to toggle off on the same requester; requester object can be used to immediately pass content to the panel - for example passing layer name to the filters panel to be displayed in the panel header while the datatable is being constructed;
          * @param  {Number} delay            an optional time to wait (in milliseconds) before setting loading indicator
-         * @return {Object} return promise
+         * @return {Object} promise          resolves as undefined iff panel data has resolved, rejects otherwise.
          */
         function toggleDisplayPanel(panelName, dataPromise, requester = {}, delay = 100) {
             const state = stateManager.state[panelName];
