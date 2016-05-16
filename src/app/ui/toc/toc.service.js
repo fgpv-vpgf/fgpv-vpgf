@@ -272,19 +272,12 @@
                 .setActive({
                     side: false
                 })
-<<<<<<< 756216104085fd5963f45937c74497b8dc86318a
-                .then(() => stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester))
-                .catch(() => {
-                    errorService.display($filter('translate')('toc.error.resource.loadfailed'),
-                        layoutService.panes.filter);
-=======
                 .then(() => {
                     stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0)
                         .catch(() => {
                             errorService.display($filter('translate')('toc.error.resource.loadfailed'),
                                 layoutService.panes.filter);
                         });
->>>>>>> chore(ui): add docs and translations
                 });
         }
 
