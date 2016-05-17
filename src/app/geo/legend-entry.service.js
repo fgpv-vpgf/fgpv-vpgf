@@ -416,7 +416,7 @@
 
             // if the 'supportsDynamicLayers' flag is false, remove sublayer opacity options
             if (!this._layerRef.supportsDynamicLayers) {
-                this.slaves.forEach((slave) => {
+                this.slaves.forEach(slave => {
                     delete slave.options.opacity;
 
                     // check to see if we still need settings because we removed opacity
@@ -540,8 +540,12 @@
             }
         };
 
+        /**
+        * Check if we need to remove the settings value from options
+        * @private
+        * @param {Object} options layer options
+        */
         function checkSettings(options) {
-            // check if we need to remove the settings value from options
             // if opacity, bounding box and snapshot are not present, remove settings
             if (typeof options.opacity === 'undefined' &&
                 typeof options.boundingBox === 'undefined' &&
