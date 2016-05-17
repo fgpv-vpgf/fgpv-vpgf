@@ -1,12 +1,20 @@
-(() => {
+(() => { // jshint ignore:line
+    // disabled checks on above line due to 'too many statements in this function' (jshint W071)
+
     /**
      * Dynamically injects the main viewer script and styles references.
      * TODO: need to check how viewer works if there is already a version of jQuery on the page; maybe load a jQuery-less version of the viewer then.
      * Reference on script loading: http://www.html5rocks.com/en/tutorials/speed/script-loading/
      */
+
+    // versions of scripts to inject
+    const versions = {
+        jQuery: '2.2.1',
+        dataTables: '1.10.11'
+    };
     const URLs = {
-        jQuery: 'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.1.min.js',
-        dataTables: 'https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js'
+        jQuery: `http://ajax.aspnetcdn.com/ajax/jQuery/jquery-${versions.jQuery}.min.js`,
+        dataTables: `https://cdn.datatables.net/${versions.dataTables}/js/jquery.dataTables.min.js`
     };
     const d = document;
     const scripts = d.getElementsByTagName('script'); // get scripts
@@ -36,13 +44,48 @@
 
     const scriptsArr = [];
 
+    /**
+     * Compares two versions of a script, prints warnings to the console if the versions are not the same
+     *
+     * if we have version X.Y.Z, and we're comparing to A.B.C
+     * Their version is bigger if and only if
+     * A > X OR A = X and B > Y OR A = X and B = Y and C > Z
+     *
+     * Swap out '>' with '<' for seeing if their version is smaller
+     *
+     * @param  {String} ourVersion      our version of the script
+     * @param  {String} theirVersion    their version of the script
+     * @param  {String} scriptName      the name of the script
+     */
+    function versionCheck(ourVersion, theirVersion, scriptName) {
+        ourVersion = ourVersion.split('.');
+        const versionDiff = theirVersion.split('.').map((x, index) => parseInt(x) - ourVersion[index]);
+
+        if (versionDiff[0] > 0 || versionDiff[0] === 0 && versionDiff[1] > 0 ||
+            versionDiff[0] === 0 && versionDiff[1] === 0 && versionDiff[2] > 0) {
+
+            console.warn(`The current ${scriptName} version is more recent than expected for the viewer; ` +
+                         `expected: ${versions.jQuery}`);
+        } else if (versionDiff[0] < 0 || versionDiff[0] === 0 && versionDiff[1] < 0 ||
+                versionDiff[0] === 0 && versionDiff[1] === 0 && versionDiff[2] < 0) {
+
+            console.warn(`The current ${scriptName} version is older than expected for the viewer; ` +
+                         `expected: ${versions.jQuery}`);
+        }
+    }
+
     // append proper srcs to scriptsArray
     if (!window.jQuery) {
         // TODO: should we use a local file here instead?
         scriptsArr.push(URLs.jQuery, URLs.dataTables);
     } else if (!$.fn.dataTable) {
         scriptsArr.push(URLs.dataTables);
+        versionCheck(versions.jQuery, $.fn.jquery, 'jQuery');
+    } else {
+        versionCheck(versions.jQuery, $.fn.jquery, 'jQuery');
+        versionCheck(versions.dataTables, $.fn.dataTable.version, 'dataTable');
     }
+
     scriptsArr.push(`${repo}/core.js`);
 
     scriptsArr.forEach(src => {
