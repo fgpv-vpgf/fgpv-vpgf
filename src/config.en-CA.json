@@ -115,6 +115,18 @@
   },
   "layers": [
     {
+      "id":"stb_eos",
+      "name": "STB EOS 2014 CI ON 30m v2",
+      "layerType":"esriTile",
+      "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3857/MapServer"
+    },
+    {
+      "id":"basemapLCC",
+      "name": "Basemap LCC",
+      "layerType":"esriTile",
+      "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+    },
+    {
       "id":"ecogeo",
       "name": "Eco Geo",
       "layerType":"esriDynamic",

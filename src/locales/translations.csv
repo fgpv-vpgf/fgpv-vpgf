@@ -86,6 +86,8 @@ Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic La
 Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer ({{count}} {{type}}),[fr] ESRI Dynamic Layer (<x> <points|polygons|lines>)
 Table of Content wms layer flag label,toc.label.flag.wms,OGC WMS Layer,[fr] OGC WMS Layer
 Table of Content wms layer flag tootlip,toc.tooltip.flag.wms,OGC WMS Layer,[fr] OGC WMS Layer
+Table of Content tile layer flag label,toc.label.flag.tile,ESRI Tile Layer,[fr] ESRI Tile Layer
+Table of Content tile layer flag tootlip,toc.tooltip.flag.tile,ESRI Tile Layer,[fr] ESRI Tile Layer
 Table of Content image layer flag label,toc.label.flag.image,ESRI Image Layer,[fr] ESRI Image Layer
 Table of Content image layer flag tootlip,toc.tooltip.flag.image,ESRI Image Layer,[fr] ESRI Image Layer
 Table of Content scale flag label,toc.label.flag.scale,Toggle scale,[fr] Toggle scale
