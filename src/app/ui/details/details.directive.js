@@ -39,8 +39,8 @@
 
         function link(scope, element) { // scope, element, attr, ctrl) {
             const self = scope.self;
-            let section;
-            let layerList;
+            let sectionNode;
+            let layerListNode;
 
             // create animation timeline
             const tl = new TimelineLite({
@@ -51,25 +51,26 @@
             self.onEnter = onEnter;
             self.onLeave = onLeave;
 
-            function onEnter() {
-                if (!layerList) {
+            function onEnter($event) {
+                if (!layerListNode || layerListNode[0] !== $event.currentTarget) {
                     // find layer node and construct timeline
-                    layerList = element.find(RV_DETAILS_LIST);
-                    section = element.find(RV_DETAILS_SECTION);
+                    layerListNode = element.find(RV_DETAILS_LIST);
+                    sectionNode = element.find(RV_DETAILS_SECTION);
 
-                    tl.to(layerList, RV_SLIDE_DURATION, {
+                    tl.clear()
+                        .to(layerListNode, RV_SLIDE_DURATION, {
                             width: 280,
                             ease: RV_SWIFT_IN_OUT_EASE
                         })
 
                         // This will explicitly "animate" the overflow property from hidden to auto and not try to figure
                         // out what it was initially on the reverse run.
-                        .fromTo(layerList, 0.01, {
+                        .fromTo(layerListNode, 0.01, {
                             'overflow-y': 'hidden'
                         }, {
                             'overflow-y': 'auto'
                         }, RV_SLIDE_DURATION / 2)
-                        .to(section, RV_SLIDE_DURATION, {
+                        .to(sectionNode, RV_SLIDE_DURATION, {
                             className: '+=rv-expanded'
                         }, 0);
                 }
