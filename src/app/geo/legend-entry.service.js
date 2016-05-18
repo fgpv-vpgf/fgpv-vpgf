@@ -107,6 +107,9 @@
                 angular.merge(this, initialState);
 
                 // this.state = layerStates.default; ??
+
+                // check to see if we need settings
+                checkSettings(this.options);
             }
         };
 
@@ -338,6 +341,9 @@
             this.options = angular.merge({}, defaults.options);
             angular.merge(this, initialState);
 
+            // check to see if we need settings
+            checkSettings(this.options);
+
             return this;
         };
 
@@ -410,7 +416,13 @@
 
             // if the 'supportsDynamicLayers' flag is false, remove sublayer opacity options
             if (!this._layerRef.supportsDynamicLayers) {
-                this.slaves.forEach(slave => delete slave.options.opacity);
+                // FIXME: we do not use parens for arrow functions even when multilines (styleguide 8.4). Something to look at once we release the beta.
+                this.slaves.forEach(slave => {
+                    delete slave.options.opacity;
+
+                    // check to see if we still need settings because we removed opacity
+                    checkSettings(slave.options);
+                });
             }
 
             if (this.layerEntries) {
@@ -528,6 +540,20 @@
                 this._layerRef.show(); // ? is this necessary
             }
         };
+
+        /**
+        * Check if we need to remove the settings value from options
+        * @private
+        * @param {Object} options layer options
+        */
+        function checkSettings(options) {
+            // if opacity, bounding box and snapshot are not present, remove settings
+            if (typeof options.opacity === 'undefined' &&
+                typeof options.boundingBox === 'undefined' &&
+                typeof options.data.snapshot === 'undefined') {
+                delete options.settings;
+            }
+        }
 
         function placeholderEntryItem(initialState, layerRef) {
             return Object.create(PLACEHOLDER_ENTRY_ITEM)
