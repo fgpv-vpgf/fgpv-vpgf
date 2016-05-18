@@ -285,9 +285,10 @@
                 }
             }
 
-            // only handles feature layers right now (both on demand and snapshot). zoom to dynamic/wms layers obj won't work
             /**
              * Fetches a point in a layer given the layerUrl and objId of the object and then zooms to it
+             * Only handles feature layers right now (both on demand and snapshot). zoom to dynamic/wms layers obj won't work
+             *
              * @param  {layer} layer is the layer object of graphic to zoom
              * @param  {objId} objId is ID of object that was clicked on datatable to be zoomed to
              */
@@ -295,6 +296,8 @@
                 const map = service.mapObject;
                 const zoomLevel = gapiService.gapi.symbology.getZoomLevel(map.__tileInfo.lods, layer.maxScale);
 
+                // if triggers when layer has no service, or all geometry is on client, in which case we use local geometry instead of pulling from server
+                // snapshot mode is set by the constant MODE_SNAPSHOT that maps to 0 in esri's api for FeatureLayer
                 if (!layer.url || layer.mode === 0) {
                     const myG = layer.graphics.find(g => {
                         return g.attributes[layer.objectIdField] === objId;
@@ -315,19 +318,27 @@
                         layerUrl += featureIndex;
                     }*/
 
-                    // FIXME: support file based layers with no url
-                    const geo = gapiService.gapi.layer.getFeatureInfo(layerUrl, objId);
-                    geo.then(geoInfo => {
-                        if (geoInfo) {
-                            const sr = layer.spatialReference;
-                            const geo = geoInfo.feature.geometry;
-                            const attr = geoInfo.feature.attributes;
-                            zoomWithOffset(geo, attr, sr, zoomLevel);
-                        }
-                    });
+                    gapiService.gapi.layer.getFeatureInfo(layerUrl, objId)
+                        .then(geoInfo => {
+                            if (geoInfo) {
+                                const sr = layer.spatialReference;
+                                const geo = geoInfo.feature.geometry;
+                                const attr = geoInfo.feature.attributes;
+                                zoomWithOffset(geo, attr, sr, zoomLevel);
+                            }
+                        });
                 }
             }
 
+            /**
+             * Given a geometry, attributes, spatialReference and zoomlevel, reprojects geometry from its spatialReference
+             * to the map's spatialReference, then zooms to the maximum level such that the geometry is still visible
+             *
+             * @param  {Object} geo is the geometry to be zoomed to
+             * @param  {Object} attr is the attributes of the geometry to be zoomed to
+             * @param  {Object} sr is spatialReference of the incoming geometry
+             * @param  {Integer} zoomLevel is the max level of zoom such that the layer is still visible on the map and not out of scale
+             */
             function zoomWithOffset(geo, attr, sr, zoomLevel) {
                 const map = service.mapObject;
 
