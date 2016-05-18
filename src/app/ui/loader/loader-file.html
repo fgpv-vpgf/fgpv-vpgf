@@ -26,23 +26,20 @@
                 <md-input-container class="md-block rv-loader-file-upload-drop" flex>
 
                     <div class="md-block">
-                        <span class="md-title">Drop the file to upload</span>
-
-
                         <div
                             flow-files-submitted="self.upload.filesSubmitted($files, $event, $flow)"
                             flow-file-success="self.upload.fileSuccess($file, $flow)"
                             flow-error="self.upload.fileError($file, $message, $flow)">
 
                             <md-button
-                                class="rv-button-square rv-loader-file-select-button"
+                                class="rv-button-square rv-loader-file-select-button md-raised"
                                 flow-btn
                                 flow-progress="console.log()"
                                 flow-attrs="{ accept: '.csv,.zip,.json' }"
                                 ng-click="self.upload.fileReset();self.upload.fileUrlReset()">
-                                <md-icon md-svg-src="file:file_upload"></md-icon>( click to browse files )</md-button>
+                                <md-icon md-svg-src="file:file_upload"></md-icon>choose a file</md-button>
                         </div>
-
+                        <span class="md-caption">Drop the file to upload</span>
                     </div>
 
                     <md-progress-linear
