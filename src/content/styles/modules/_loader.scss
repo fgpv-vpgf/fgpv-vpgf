@@ -25,12 +25,6 @@
                 &-drop {
                     text-align: center;
 
-                    md-icon {
-                        display: block;
-                        margin-top: rem(1.0);
-                        color: #000000;
-                    }
-
                     .md-errors-spacer, .md-input {
                         display: none;
                     }
@@ -41,15 +35,13 @@
                     text-align: center;
                 }
             }
+
             // local file select button
             &-select-button {
-                display: block;
-                width: 100%;
-                font-size: rem(1.2);
-                margin: {
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
+                padding: 0 rem(2.4) 0 rem(2.0);
+
+                md-icon {
+                    margin-right: rem(0.6);
                 }
             }
         }
