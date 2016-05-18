@@ -5,6 +5,9 @@
 [![Issue Stats](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf/badge/issue?style=flat-square)](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf)<br />
 [![PR Stats](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf/badge/pr?style=flat-square)](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf)
 
+[![Code Climate](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/gpa.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)<br />
+[![Issue Count](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/issue_count.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)
+
 [![Dependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf)<br />
 [![devDependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf/dev-status.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf#info=devDependencies)
 
