@@ -295,6 +295,7 @@
                 const map = service.mapObject;
                 const zoomLevel = gapiService.gapi.symbology.getZoomLevel(map.__tileInfo.lods, layer.maxScale);
 
+                // snapshot mode is set by the constant MODE_SNAPSHOT that maps to 0 in esri's api for FeatureLayer
                 if (!layer.url || layer.mode === 0) {
                     const myG = layer.graphics.find(g => {
                         return g.attributes[layer.objectIdField] === objId;
@@ -328,6 +329,15 @@
                 }
             }
 
+            /**
+             * Given a geometry, attributes, spatialReference and zoomlevel, reprojects geometry from its spatialReference
+             * to the map's spatialReference, then zooms to the maximum level such that the geometry is still visible
+             *
+             * @param  {geo} geo is the geometry to be zoomed to
+             * @param  {attr} attr is the attributes of the geometry to be zoomed to
+             * @param  {sr} sr is spatialReference of the incoming geometry
+             * @param  {zoomLevel} zoomLevel is the max level of zoom such that the layer is still visible on the map and not out of scale
+             */
             function zoomWithOffset(geo, attr, sr, zoomLevel) {
                 const map = service.mapObject;
 
