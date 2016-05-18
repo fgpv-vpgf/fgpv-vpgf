@@ -285,7 +285,7 @@
                 }
             }
 
-            // only handles feature layers right now. zoom to dynamic/wms layers obj won't work
+            // only handles feature layers right now (both on demand and snapshot). zoom to dynamic/wms layers obj won't work
             /**
              * Fetches a point in a layer given the layerUrl and objId of the object and then zooms to it
              * @param  {layer} layer is the layer object of graphic to zoom
@@ -295,62 +295,83 @@
                 const map = service.mapObject;
                 const zoomLevel = gapiService.gapi.symbology.getZoomLevel(map.__tileInfo.lods, layer.maxScale);
 
-                // layerUrl is the URL that the point to be zoomed to belongs to
-                let layerUrl = `${layer.url}/`;
+                if (!layer.url || layer.mode === 0) {
+                    const myG = layer.graphics.find(g => {
+                        return g.attributes[layer.objectIdField] === objId;
+                    });
+                    const geo = {
+                        x: myG.geometry.x,
+                        y: myG.geometry.y
+                    };
 
-                // FIXME: this looks to be related to dynamic layers
-                /*if (layer.layerInfos) {
-                    layerUrl += featureIndex;
-                }*/
+                    zoomWithOffset(geo, myG.attributes, myG.geometry.spatialReference, zoomLevel);
+                } else {
 
-                // FIXME: support file based layers with no url
-                const geo = gapiService.gapi.layer.getFeatureInfo(layerUrl, objId);
-                console.log('enhance ', layer, objId);
-                geo.then(geoInfo => {
-                    if (geoInfo) {
-                        const barWidth = storageService.panels.sidePanel.outerWidth();
-                        const mapWidth = storageService.panels.map.outerWidth();
+                    // layerUrl is the URL that the point to be zoomed to belongs to
+                    let layerUrl = `${layer.url}/`;
 
-                        // barWidth/mapWidth is the % of map blocked by side panel
-                        // shifting by 1/2 % of blocked map offsets point to center of visible map
-                        // this ratio always changes based on window resizing/map resizing
-                        // since the side panel is always 400px; need ratio every time zoom happens
-                        const ratio = (barWidth / mapWidth) / 2;
+                    // FIXME: this looks to be related to dynamic layers
+                    /*if (layer.layerInfos) {
+                        layerUrl += featureIndex;
+                    }*/
 
-                        // make new graphic with proper spatialReference
-                        geoInfo.feature.geometry.spatialReference = layer.spatialReference;
-                        const newg = gapiService.gapi.proj.Graphic({
-                            geometry: geoInfo.feature.geometry,
-                            attributes: geoInfo.feature.attributes
-                        });
-
-                        // reproject graphic to spatialReference of the map
-                        const gextent = gapiService.gapi.proj.localProjectExtent(
-                            gapiService.gapi.proj.graphicsUtils.graphicsExtent([newg]),
-                            map.spatialReference);
-
-                        // need to make new esri extent to use getCenter function
-                        const newExt = gapiService.gapi.mapManager.Extent(gextent.x1, gextent.y1,
-                            gextent.x0, gextent.y0, gextent.sr);
-
-                        // handles extent
-                        if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
-                            const eExt = newExt.expand(4);
-                            const xOffset = (eExt.xmax - eExt.xmin) * ratio * (-1);
-                            const gExt = eExt.offset(xOffset, (eExt.ymax - eExt.ymin) / 4);
-                            map.setExtent(gExt);
-                        } else {
-                            // handles points
-                            const pt = newExt.getCenter();
-                            const zoomed = map.setZoom(zoomLevel);
-                            zoomed.then(() => {
-                                const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
-                                const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
-                                map.centerAt(newPt, zoomLevel);
-                            });
+                    // FIXME: support file based layers with no url
+                    const geo = gapiService.gapi.layer.getFeatureInfo(layerUrl, objId);
+                    geo.then(geoInfo => {
+                        if (geoInfo) {
+                            const sr = layer.spatialReference;
+                            const geo = geoInfo.feature.geometry;
+                            const attr = geoInfo.feature.attributes;
+                            zoomWithOffset(geo, attr, sr, zoomLevel);
                         }
-                    }
+                    });
+                }
+            }
+
+            function zoomWithOffset(geo, attr, sr, zoomLevel) {
+                const map = service.mapObject;
+
+                const barWidth = storageService.panels.sidePanel.outerWidth();
+                const mapWidth = storageService.panels.map.outerWidth();
+
+                // barWidth/mapWidth is the % of map blocked by side panel
+                // shifting by 1/2 % of blocked map offsets point to center of visible map
+                // this ratio always changes based on window resizing/map resizing
+                // since the side panel is always 400px; need ratio every time zoom happens
+                const ratio = (barWidth / mapWidth) / 2;
+
+                // make new graphic with proper spatialReference
+                geo.spatialReference = sr;
+                const newg = gapiService.gapi.proj.Graphic({
+                    geometry: geo,
+                    attributes: attr
                 });
+
+                // reproject graphic to spatialReference of the map
+                const gextent = gapiService.gapi.proj.localProjectExtent(
+                    gapiService.gapi.proj.graphicsUtils.graphicsExtent([newg]),
+                    map.spatialReference);
+
+                // need to make new esri extent to use getCenter function
+                const newExt = gapiService.gapi.mapManager.Extent(gextent.x1, gextent.y1,
+                    gextent.x0, gextent.y0, gextent.sr);
+
+                // handles extent
+                if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
+                    const eExt = newExt.expand(4);
+                    const xOffset = (eExt.xmax - eExt.xmin) * ratio * (-1);
+                    const gExt = eExt.offset(xOffset, (eExt.ymax - eExt.ymin) / 4);
+                    map.setExtent(gExt);
+                } else {
+                    // handles points
+                    const pt = newExt.getCenter();
+                    const zoomed = map.setZoom(zoomLevel);
+                    zoomed.then(() => {
+                        const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
+                        const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
+                        map.centerAt(newPt, zoomLevel);
+                    });
+                }
             }
 
             /*
