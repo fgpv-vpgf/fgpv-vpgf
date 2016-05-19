@@ -122,8 +122,8 @@
              * @return {Object}       legend item
              */
             function tileGenerator(layer) {
-                const state = legendEntryFactory.dynamicEntryMasterGroup(
-                    layer.initialState, layer.layer, false);
+                const state = legendEntryFactory.singleEntryItem(
+                    layer.initialState, layer.layer);
                 layer.state = state;
 
                 return state;

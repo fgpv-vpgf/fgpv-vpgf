@@ -107,6 +107,7 @@
             window.RV._debug.legend = service.legend;
             window.RV._debug.graphicsLayerIds = mapObject.graphicsLayerIds;
             window.RV._debug.layerIds = mapObject.layerIds;
+            window.RV._debug.geoState = geoState;
 
             // set event handler for extent changes
             gapiService.gapi.events.wrapEvents(
@@ -419,6 +420,14 @@
                                 const opts = layerRecord.state.options;
                                 if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
                                     setBboxState(layerRecord.state, true);
+                                }
+
+                                // if esriTile layer projection and map projection is different we can't show the layer. Disable the option.
+                                const wkid = geoState.mapService.mapObject.spatialReference.wkid;
+                                if (layerRecord.state.layerType === 'esriTile' &&
+                                    layer.spatialReference.wkid !== wkid) {
+                                    opts.visibility.enabled = false;
+                                    opts.visibility.value = false;
                                 }
 
                                 // set scale state
