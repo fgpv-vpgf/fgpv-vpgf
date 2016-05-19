@@ -93,7 +93,7 @@
         }
     }
 
-    function Controller($scope, stateManager) {
+    function Controller(stateManager) {
         'ngInject';
         const self = this;
 
