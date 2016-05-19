@@ -45,6 +45,15 @@
                         <md-button class="rv-button-square">{{'settings.label.snapshotEnable' | translate}}</md-button>
                     </div>
                 </div>
+                <div class="rv-setting-option" ng-if="self.tocEntry.options.query">
+                    <div class="rv-toggle-setting">
+                        <span translate>settings.label.query</span>
+                        <span flex></span>
+                        <md-button class="rv-button-square" ng-click="self.toggleQuery()">
+                            {{self.tocEntry.options.query.value ? 'settings.label.queryEnable' : 'settings.label.queryDisable' | translate}}
+                        </md-button>
+                    </div>
+                </div>
             </div>
 
         </div>

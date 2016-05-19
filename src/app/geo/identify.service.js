@@ -158,7 +158,9 @@
             */
             function identifyEsriDynamicLayer(layerRecord, opts) {
                 const { layer, state } = layerRecord;
-                if (!layer.visibleAtMapScale || !layer.visible) {
+
+                // ignore invisible layers and those where query option is false by returning empty object
+                if (!layer.visibleAtMapScale || !layer.visible || !state.options.query.value) {
                     return {};
                 }
 
@@ -166,8 +168,12 @@
 
                 // every dynamic layer is a group in toc; walk its items to create an entry in details panel
                 state.walkItems(legendEntry => {
-                    // ignore invisible sublayers
-                    if (!legendEntry.getVisibility()) {
+
+                    // check if a parent is disable so it behave the same way as visibility toggle
+                    const parentQuery = getParentQuery(legendEntry.parent);
+
+                    // ignore invisible sublayers and those where query option is false by returning empty object
+                    if (!legendEntry.getVisibility() || !legendEntry.options.query.value || !parentQuery) {
                         return;
                     }
 
@@ -212,6 +218,25 @@
             }
 
             /**
+            * Get query value from all parents to know if layer can be show in identify panel.
+            * @private
+            * @param {Object} parent legend entry parent.
+            */
+            function getParentQuery(parent) {
+                if (typeof parent.master !== 'undefined') {
+                    if (!parent.options.query.value) {
+                        // at least one parent is false, return false
+                        return false;
+                    } else {
+                        return getParentQuery(parent.parent);
+                    }
+                } else {
+                    // no parent are false, return true
+                    return true;
+                }
+            }
+
+            /**
             * Run a getFeatureInfo on a WMS layer, return the result as a promise.  Fills the panelData array on resolution.
             * @param {Object} layerRecord esri layer object
             * @param {Object} opts additional argumets like map object, clickEvent, etc.
@@ -220,8 +245,10 @@
             function identifyOgcWmsLayer(layerRecord, opts) {
                 const { layer, state } = layerRecord;
 
-                // ignore layers with no mime type or invisible layers
-                if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType) || !layer.visible) {
+                // ignore layers with no mime type or invisible layers and those where query option is false by returning empty object
+                if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType) ||
+                    !layer.visible ||
+                    !state.options.query.value) {
                     return {};
                 }
 
@@ -253,8 +280,8 @@
             function identifyEsriFeatureLayer(layerRecord, opts) {
                 const { layer, state } = layerRecord;
 
-                // ignore invisible layers by returning empty object
-                if (!layer.visibleAtMapScale || !layer.visible) {
+                // ignore invisible layers and those where identify option is false by returning empty object
+                if (!layer.visibleAtMapScale || !layer.visible || !state.options.query.value) {
                     return {};
                 }
 
