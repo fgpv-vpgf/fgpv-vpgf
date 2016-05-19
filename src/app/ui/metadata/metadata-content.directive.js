@@ -46,6 +46,7 @@
             scope.$watch('self.display.data', metadata => {
                 if (metadata) {
                     el.append(angular.copy(metadata)); // copy fragment so that it is inserted for both panels and modals
+                    el.find('h5').addClass('md-title').css('margin', '0');
                 }
 
                 attr.$observe('maxTextLength', function (maxTextLength) {
@@ -92,7 +93,7 @@
         }
     }
 
-    function Controller(stateManager) {
+    function Controller($scope, stateManager) {
         'ngInject';
         const self = this;
 
