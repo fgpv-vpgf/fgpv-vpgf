@@ -547,10 +547,11 @@
         * @param {Object} options layer options
         */
         function checkSettings(options) {
-            // if opacity, bounding box and snapshot are not present, remove settings
+            // if opacity, bounding box, snapshot and query are not present, remove settings
             if (typeof options.opacity === 'undefined' &&
                 typeof options.boundingBox === 'undefined' &&
-                typeof options.data.snapshot === 'undefined') {
+                typeof options.snapshot === 'undefined' &&
+                typeof options.query === 'undefined') {
                 delete options.settings;
             }
         }

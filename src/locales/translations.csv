@@ -56,6 +56,8 @@ Settings opacity slider label,settings.label.opacity,Opacity,[fr] Opacity
 Settings data header label,settings.label.data,Data,[fr] Data
 Settings snapshot mode label,settings.label.snapshot,Snapshot mode,[fr] Snapshot mode
 Settings snapshot mode enable label,settings.label.snapshotEnable,Enable,[fr] Enable
+Settings query mode label,settings.label.query,Allow query,[fr] Allow query
+Settings query mode aria,settings.aria.query,Allow query,[fr] Allow query
 Side Navigation main title,sidenav.title,FGP R2 Viewer,[fr] FGP R2 Viewer
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,[fr] Open data panel menu
 Table of Content show symbology label,toc.layer.label.symbologyShow,Show symbology,[fr] Show symbology

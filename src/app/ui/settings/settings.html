@@ -37,13 +37,19 @@
                 <h4 translate class="md-subhead">settings.label.data</h4>
             </div>
             <div class="rv-subcontent">
-
                 <div class="rv-setting-option" ng-if="self.tocEntry.options.snapshot">
                     <div class="rv-toggle-setting">
                         <span translate>settings.label.snapshot</span>
                         <span flex></span>
                         <md-button class="rv-button-square">{{'settings.label.snapshotEnable' | translate}}</md-button>
                     </div>
+                </div>
+                <div class="rv-setting-option" ng-if="self.tocEntry.options.query">
+                    <md-switch translate-attr-aria-label="settings.aria.query" class="md-primary rv-switch"
+                               ng-model="self.tocEntry.options.query.value"
+                               ng-change="self.toggleQuery(self.tocEntry, self.tocEntry.options.query.value)">
+                        {{'settings.label.query' | translate}}
+                    </md-switch>
                 </div>
             </div>
 
