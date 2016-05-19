@@ -4,7 +4,7 @@
     /**
      * @ngdoc directive
      * @name rvStepperItem
-     * @module app.ui.common
+     * @module app.ui.common.stepper
      * @restrict E
      * @description
      *
@@ -44,13 +44,13 @@
      * ```
      */
     angular
-        .module('app.ui.common')
+        .module('app.ui.common.stepper')
         .directive('rvStepperItem', rvStepperItem);
 
     function rvStepperItem() {
         const directive = {
             restrict: 'E',
-            templateUrl: 'app/ui/common/stepper-item.html',
+            templateUrl: 'app/ui/common/stepper/stepper-item.html',
             scope: {
                 step: '=?',
                 titleValue: '@?',
