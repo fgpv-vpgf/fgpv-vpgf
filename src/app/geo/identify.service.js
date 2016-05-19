@@ -11,7 +11,7 @@
         .module('app.geo')
         .factory('identifyService', identifyServiceFactory);
 
-    function identifyServiceFactory($q, gapiService, stateManager, layerTypes, wmsInfoMap) {
+    function identifyServiceFactory($q, gapiService, stateManager, Geo) {
         return geoState => identifyService(
             geoState,
             geoState.mapService.mapObject,
@@ -79,11 +79,10 @@
             function getVisibleLayers() {
                 // use .filter to count boolean true values
                 // TODO: make nicer
-                console.info(layerRegistry.getLayersByType(layerTypes.esriFeature));
-                return layerRegistry.getLayersByType(layerTypes.esriFeature)
-                    .concat(layerRegistry.getLayersByType(layerTypes.esriDynamic))
+                return layerRegistry.getLayersByType(Geo.Layer.Types.ESRI_FEATURE)
+                    .concat(layerRegistry.getLayersByType(Geo.Layer.Types.ESRI_DYNAMIC))
                     .filter(l => l.layer.visibleAtMapScale)
-                    .concat(layerRegistry.getLayersByType(layerTypes.ogcWms))
+                    .concat(layerRegistry.getLayersByType(Geo.Layer.Types.OGC_WMS))
                     .length;
             }
 
@@ -222,16 +221,17 @@
             */
             function identifyOgcWmsLayer(layerRecord, opts) {
                 const { layer, state } = layerRecord;
+                const infoMap = Geo.Layer.Ogc.INFO_FORMAT_MAP;
 
                 // ignore layers with no mime type or invisible layers and those where query option is false by returning empty object
-                if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType) ||
+                if (!infoMap.hasOwnProperty(state.featureInfoMimeType) ||
                     !layer.visible ||
                     !state.options.query.value) {
                     return {};
                 }
 
                 const identifyResult =
-                    IDENTIFY_RESULT(state.name, state.symbology, wmsInfoMap[state.featureInfoMimeType]);
+                    IDENTIFY_RESULT(state.name, state.symbology, infoMap[state.featureInfoMimeType]);
 
                 const identifyPromise = gapiService.gapi.layer.ogc
                     .getFeatureInfo(
