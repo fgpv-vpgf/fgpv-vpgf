@@ -143,13 +143,13 @@
                     // in pixels
                     const symbologyListTopOffset = 48;
                     const symbologyListTopMargin = 8;
-                    const symbologyListLabelOffset = 28;
+                    const symbologyListLabelOffset = ctrl.itemNameOnTop ? 28 : 8; // more space needed for item names positioned above symbols
                     let totalHeight = 0;
 
                     items.reverse().forEach(img => {
 
                         const imageElem = img[0].firstChild;
-                        const imageHeight = Math.max(32, imageElem.naturalHeight);
+                        const imageHeight = Math.max(32, imageElem.naturalHeight); // do not allow images less than 32px
                         const imageWidth = Math.max(32, imageElem.naturalWidth);
 
                         tlshift.to(imageElem, RV_DURATION, {
@@ -161,6 +161,7 @@
                             top: (symbologyListTopOffset + symbologyListTopMargin + totalHeight),
                             autoAlpha: 1,
                             height: imageHeight + symbologyListLabelOffset,
+                            left: 0,
                             ease: RV_SWIFT_IN_OUT_EASE
                         }, 0);
 
