@@ -24,7 +24,7 @@
         .module('app.geo')
         .service('legendEntryFactory', legendEntryFactory);
 
-    function legendEntryFactory($translate, gapiService, layerDefaults, layerSortGroups, geometryTypes) {
+    function legendEntryFactory($translate, gapiService, Geo, layerDefaults) {
 
         const service = {
             placeholderEntryItem,
@@ -101,7 +101,7 @@
                 // sets default geometry type which is 'feature'
                 // to avoid pulling in angular translate interpolation message format plugin for now,
                 // store both plural and singular strings as the same transltion separated by a |
-                $translate(geometryTypes.generic).then(type =>
+                $translate(Geo.Layer.Esri.GEOMETRY_TYPES.generic).then(type =>
                     this.features.type = type.split('|')[1]);
 
                 angular.merge(this, initialState);
