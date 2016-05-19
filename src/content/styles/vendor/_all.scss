@@ -14,7 +14,9 @@ md-icon {
 @import "_datatable.scss";
 @import "_esri.scss";
 @import "_dragula.scss";
+@import "_wet.scss";
 
 @include datatable;
 @include esri;
 @include dragula;
+@include wet;

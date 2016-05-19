@@ -1,0 +1,8 @@
+@mixin wet {
+    .container {
+        // to overwrite WET padding on container object; this solve the problem of offset
+        // when you shift click zoom or do identify feature
+        padding: 0;
+        margin: 0;
+    }
+}
