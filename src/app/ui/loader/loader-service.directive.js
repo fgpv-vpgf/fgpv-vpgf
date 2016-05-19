@@ -28,10 +28,10 @@
         return directive;
     }
 
-    function Controller($timeout, stateManager, stepperFactory) {
+    function Controller($timeout, stateManager, Stepper) {
         'ngInject';
         const self = this;
-        const stepper = stepperFactory();
+        const stepper = new Stepper();
 
         self.closeLoaderService = closeLoaderService;
 
