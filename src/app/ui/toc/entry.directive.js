@@ -59,6 +59,8 @@
                 // call toggleGroup function on the tocController with the group object (see template)
                 self.defaultAction = tocService.actions.toggleLayerGroup;
             }
+
+            self.itemNameOnTop = self.entry.layerType === 'ogcWms';
         }
     }
 })();
