@@ -1,46 +1,53 @@
 language: node_js
 node_js:
-  - '5.4'
+- '5.4'
 branches:
   only:
-    - develop
-    - master
-    - '/.+/'
-    - '/^test/.*$/'
-    - "/^v\\d+\\.\\d+\\.\\d+(-.+)?$/"
+  - develop
+  - master
+  - /.+/
+  - /^test/.*$/
+  - /^v\d+\.\d+\.\d+(-.+)?$/
 before_install:
-  - npm install -g gulp-cli
-  - npm install -g bower
+- npm install -g gulp-cli
+- npm install -g bower
 before_script:
-  - 'export DISPLAY=:99.0'
-  - sh -e /etc/init.d/xvfb start
-  - 'npm start > /dev/null &'
-  - npm run update-webdriver
-  - sleep 1
-  - 'webdriver-manager start > /dev/null &'
-  - sleep 1
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- npm start > /dev/null &
+- npm run update-webdriver
+- sleep 1
+- webdriver-manager start > /dev/null &
+- sleep 1
 script:
-  - gulp test
-  - gulp inject --protractor
-  - node_modules/.bin/protractor src/e2e-test/protractor.conf.js --browser=firefox
+- gulp test
+- gulp inject --protractor
+- node_modules/.bin/protractor src/e2e-test/protractor.conf.js --browser=firefox
 notifications:
   webhooks:
     urls:
-      - 'https://webhooks.gitter.im/e/18575ac051d21e4340b1'
+    - https://webhooks.gitter.im/e/18575ac051d21e4340b1
     on_success: always
     on_failure: always
     on_start: false
 env:
   global:
-    - CXX=g++-4.8
-    - secure: "i6434wZBSlUMqCFyVu7ytbJa3IjmfwB5h3FrqejzL/nnUEYOw7KMPy8ZqV3mWhQ2PTWVA7rmKP/SZ4wKSeNWEAuSgVRNik3dX/nCVBX8Dn7HiKn9G9BjQUHbUEcDMKE5cWz86/IVcK2OMKHFBb2GOArqN0NrPFf2Pv+TyorAtkoamXyIo57nBB31Cqok9sl0pz1a4Ft1X6fxRKh8Rr5zU4++Nh4+Ur0awvsecHSb7O9vNpk23DXaiBzwZUhxKIL3aFgVMFCt9f/ComTtB9ZhnZTxMj7epgu4StYa4uOqdwWo9nCKg1egz9SJNmVelkUgmSinC4jM3NiOEOVpWJRuZynESWlgBndZb5z782o/XSWacJjRZVDlc9m8EaowaC+gezl67dhGPP5hv6zXzQTtL3zpj4p1VTJqpps+k003PB76ASkfJQKOVS5nqgshy2RXDlpbp/l9S9Q5LFvltVZjvYfmeMqBlkzgYeKtzGLm/RM89UYOzgU2qzFSu1Ku1y41d/y0HPCHf4iOPxfJt0MwAa/KEEwZF1cKMXeIPvFmRt3TT2cQLzg2DNmneph3Iv0nUxSBvmLmj6BYGby9xnOkMUrlPkx/Ui0heQBReRjy447eAHO4qLsQn0LVhy3AMskgv+uxYhIdVGW36QbIf8HBlM9kkY30lAVizoufphwwAoA="
+  - CXX=g++-4.8
+  - secure: A5a0+y9I6Z471wluD5Ty2U2ciUoXI8GZovPtMeABbZ1jrmTmcyvmbXVOHTRE/YXjRWMMjV5YqKIAvA32ftJghFOzM2ugLWloEPvywOQ2UwDBHkHPytayZKxNqTE2LGNo1hnDhGBQKlaT7jm/aY/JraSyirpDPgmXVtsQsIKaeFB4maYaf0p+DIXYrwSz8CM3rgj6Huq9rjC9BNUD17A94QkNgmQGvmckJ2N13QMnb/w3xkHzyMhQbKsqCRQiB9sDnGy39dSqgdQJACenygm9yhMJ9eFVSTuYRmNdPcJsvJZUyWP83FAaFK6uNfpcmfu4Q6msaLCzLFNmSwhrwC1vnx8JwXZ7SEp8q/FtH1BSAedze3D7ytc9Ap7gZjPbn+cJr575w5cOKIiI7n1LkYuaLFsErU0+AINjQb2NH2al5vBvb/B4UVx3YBQtSGecjjZa8RcXsLSgj/kcGwKCWq0DNcwYSL/FcpBT17TKqU9cBeIfM0MZliemq7YirfIpr88AElluNR7N7V4kJzX+TZ6+5o+NhhrNCkJOzqnKTrtG/3YCoYRXtwkMK6fz9TgNnWAlJiOF4vcUG1rudnx35x8rD7H77R8r8pzpekcyn8XF50QTYVjH/GhSDQ0pFiCjoNM4BOXRw+WDEYYhKy8dbROPilEEUfVPKHKE2MxBi1S3rpQ=
+  - secure: qGiYJ2+c1jPawGtb1RgtrKK6ACLt/wDV0KnL+VhMvotZJBx/kc/hlhJpzbQNSJtPFBrjMmx+csBJUgonYL4s0o8tsaWbXu/BOpdz9KpaI0YbmqnTX3SMHSVc+M3AUYQyqmNsXdjDcUzzIh9SDEbJZhzWCiM+0q3NA5kyLmKBZOsZ3ciZLHnk+iXwbzzWurBgzqS6pKDEa49lLq5CVS/mw2yyljGqrQoDaQAqyj1YAfskbZSoU8PVp0HznIGu7B8V8T7bIgNCkFJ30d6dtNpOiMgh7J3+2v8wvyrsMgxdGLzjACvxDzHfrh9Z8Di390jbbTBWeB0jhG2kv3TsK5O2dS20sd6dC6oG0tbUjEFbcu69ptvBAdwQN5pbMnepLBjWAff+u4/+5bsuK2Hl80vBOkqliIC7Ml3+JuHpWo1cMWfuKPFE9A/DUbohNshfETw5U0b9cqAzihpNtxB202fSD40d8JHGrNdBaLla9SyAOrMWvnYLodiW6ShXC/8Bgst7Q5dIuJeXxIS+hXwWRGwhcgO2h/c3LgZUj5aBsDt8Y8QSkOjEB0xKrEexMg4fKe0jbemwoLXIG9aro7KiVVBwG+OLZPrAe122UG4BW/30SaOxKK9MARbiw/zjSe3b/wNiXNn/2geRrJCnoa+e+AS/tQyeAKa/nFiHDwgdwg00kj0=
+  - secure: XrI7btcJl8DFJ12OD+mbQDw9GdPoi5AXwtyU2JyQWjp4kWw1sYDqE2/GI8XwOD2hri8HBpoZFIgQwFad5DOhps2kVWjKWwAY1ruHsrp2KOy6Hn0lIjlt+ix979QfI3A78poVugHO7fNVyRx7V9k87PnVfk3PJrZnpxTX56LaKMDBhdUrqtnv56ho0TB05vLDkgHqk3RwtKCMqbH8usbeGQ4F/RGG3yPUfDg+UmTfEx3BVri72/bIYVJAkqZf+eTH/Z8tqKqTNaOgp8ycs+4lI99rkmOyviUrGMtCVxxmkVFSxBIOftvhdYB0aLPdaPx7oehTcsWOmJxYKF0mE2lCsCPYp2wPK6F3tIub7CVLlSt48kQDJqkkJVBqlPt6gRY1G2XDiJOf5q1vOTZU9WMmadqKINQAuqqKaigQzVD5EAC2k3xGrrLUSPO+xDLLLCduYmzu1WTY2izhuyE+ef+8qwKCRAakJaH+0iA7rTgsUlS8ty6Kv6IA0JVMEe62HAZctMTCrbei1SSfuO65Jb1HjHAZ4P4IOFmwSNGFo5AoXBmAJ5zDV0AuXEcx9Xkx32rUcStxwP9nCR72bzOY4x+yKDHUY+v80pDP4/punVO4ht9Fq386t6Fv0PymbtafnYv0lXm7ehJ2GA07/8GF1dAS4CApxjuI/j5faHpt4A8MeDg=
+  - secure: n9DAKfr5g3zc/13hPqgx4o2ta+YQF2kIqZL41CW3hSlQhI8QsptQyf7PCbwe1mPtFE5EMyAQSwaAMM/PIobKvZYEb535RM/WxNcEI5EG6C2/iyOV+n8jywcvDX8CU07B/REanw1Oas0tHI/k6vJq8nQVZeZJKmSc//p9MyfzIxyOtRjewK0unhzxkalax6wB48rrNr0GViVzwqYDk/M3v6Kc+0eUthA3RMtCJRwvHp1YvN7rtzj8mWPlF8KYHlp44PEF98Lc6IQ2g+mlSkqWC8Ou/WjVJaC+812pI1R2u38F2po6r2gfCKmf+SWeIYtNxUqWklkYj0GJCn541Fk/R8HW7duK7QbVKrVq2CPe9ZrolOCJ61mSttgMIE7kA2HZkvubxAwxo2nyUstuNcMilt//ksDDhl9Zeod9EwxiJ1DdbAlhScZtaELQ0ftOkb3hzn08a0r+7o/XhKA6BlCaCWIGNhMV/FT/xBngGNfRV6JnVI8CEe9Le74hjg0uneS0vGKLCe5MHhXUUgWkPFh+nWv4OkaHaTh0lxJUOhWsGMrjh/sXntOnxhHA6lzm4CFLqpOlUArJqqHNXiDfN/XYR6ugYjYPMhrj69zp9RhkZmE91C0wN/Do2x6LyYCcmKsyewtJGZjcmmn2wOzGnVJk+MCcg6HBAlIk27y1sxXF40A=
+  - secure: N3ASH9yx/knylnZxmB6Y+SaBipHnmtqPet5IESqS9laT0eErr/FopGWtASuQxI+nGHbBwsD0kAJq7Mk63ki1XsNvO5RJAwljVBWzRpVwrTTNn5zTVchxTjFkgSYbeUeLIPODW4QYQUwYpXcQNcoXjqZZ/PzkFKsSzSu5eumZMaRlbKQ3riNRpeDi9LzkV0Epfdm7C5qBjWoSjM8hnN1oaH2c3nKwB/N9mc7JFSabpyGPAo85LCAjxRQ7MZtCrGs/LUmI07xYWzs5UYGL5I46BJ0YGpAkGAnwXqBnvr4HWO6kUWwavRz2ZunBTePZMSGFWfCvQ9agmbEhV2cL2oUlL56F5hKjNQJJvokIqnzgDq93xRMTnz/UYxHTyQyqXnRWalfNHvRlKT/0waavBV8IiVo2hBWr+h9HUNrQ3FyziGnOCKAmG3/B/cJJNn7MvWM/KwP2GJdPCqvX3QNvwz1KKFcoI74/mcgMR+ThxLhtyEZZp1bquay1tmhOfdL25l1st1zIl8X4QKrcpOlLsieLBmstrW5iocd61KwchTaRNiCZxkLfAARFg+zofPwvgI6y/kXithQmTyBdHJBJ84M8l/HgE/SKtz4mxXY3Im5n3z1CuxbI1uLRoRtQ+0akXS/SH7aze84ylW6ehD7YHrXJ7cDBKotOhCf0yld80Y3WqR8=
+  - secure: 1kbKLv/zpD3d8O1JATlddZ/YoZZ3C8xhrypfASKKAAzNsfbkTOtwpoKS6hPambn3cl8HLdm9+7uVNDXK0hEV+CRtkcCi0ujUdXZ4LPOjpfJeGqEg2mdhJ2StYqsZswx6HF8TYQbcj851bbiPEdNRhNhWdRVHP4KVkoLDBwtNvT5Ki3FdWGLsZiKqZqRbfMg0pJRhlqnF4H+wYP0OJDXaGZzKCPoM74o6rCQSmdUC7r6vDvVbmncEoJh8a0Na686QV5zX/EuA4sIDROaDG5wwwDurvIe7dCBeKwUuyLVjpmLXhct3GhWbyNgcL6KCXmyf3EsDDO1dRrd3ZuoFELTw8A23p7ika7bRFyhLrOgE/ubFom0HjenznKsN124p+66b8BopEn4RSAvBWRF0bvFxsWYlAN/V93seVhtBUO5TIyYRxX6DfynrYYwtK6oRLZDSTPZr6mT2IrT58Mq6x6Vi+dkcFNxYk4zCp2YaavPn/78UKpz8fXJdhEyb6SlWqdbQMqMHOkNEDc+7DJcy/8dDmiFZaTTZZrItuUbGT10DJph1Xa/1RM0Worp1WGoGUtzzPyxUITmDQj5zZBchj5Bm0wBNM0NdNJegw6iMHY7Tya2v6koexRC/Coe4EcaJ2JvNU4fR5DBzdTzXM/K44DrSo5/fZQldQCP9QSLUxx0K0G0=
+  - secure: E9WyddWsQI0Mj0eQth6WP74fmURFcrLKN/CiGM0LQ1kKcJueQh89T7woEml+en/qKcWqonzu/pdsRKt3tUFrTeVH4UCEMyU6G5kh9NEOWBg7kQiW9kykHmhxldPkyGBkeSmgO4msf70bdhn3xoS8i+zA1veatLqGknbvuZkFofcDDew5Afx/Xvs7iakNSAd/1y3WP/Tkhs/OCm9gzh7SoSAHdkZe9WLW2k+AFqUB+RSpCSUyICX0xtsPQERTFxqgfXM5UCJLkHG8Y9f/XJrzfYI77cMdOJRwSA+Y23PGAYtpkEG3N2aqdskPE2v4GFY480Ni4mIVEFSYW71qLJZUPCXV2y4OLDcJdssQ8Rh7TwLZ+J02KHTAPDMu0+3CGl6tREbuMJsqFoM6z/AfQnnzKE+oDPe6t7TfgeA1VrH81RssM6xbMpRFzv64H3AGG4SciVxfUPKnPz5dPelZflX0J+2K9XwxaTzSLX/a5JxdkYa/J7Ci0WotaCG0Lr28DHN9e7S7DhNx9qvovjD2gOR1I+/x7uHrnDIoBsmPTEmyHJL6CzeHVOzcxNd+2RgRcygHy3ck3DahvUO/bHW2nnXseCvxAbOfrtUBuNWInQm+N920klfmdNmJWvG0crCwPl+8crKLbT9a7u08EDTUO6Qq50skQY4BxDlbNLZBXi0VzGM=
+  - secure: iCaKbVdXPVsPcbir5N7QcxEoNKBin5wOy+DY24FJQFKIWH4bwMkTlMGcr76HetSp2/C1ERbcaf3QhD75e4dBW17RddIQF5quRTSR4utjcvHV4gNJFb271K94nmZ2t7VsagxB/I2nvvIVztXOQ+Dx+fmUNOBl2hqoSbASeLHKfPCk6Jyx6IGA1EO4tYvOtZXYta3RDqncOfp6LMQ9nEpm/n1liGLhoWc218f+NhJe4gMPBAdgEElR22tirgmHMpbyWfNNg4mz7JOsfPaVfGOq/5jdzq+GtXmGdqLE1sbLZ3DVHoBxAAuDEFeVSuz+qXOlYZ+gmAJMfUgw25onFhK+EFqV/eJ18ewEv8+waCPlXmwr5JTLp+1y0+imhKJufb8N6d6PSL7KRG8QN2OSldF780Q/VWK6zM2KE+5jE9XJ9J8IPRPpRy/JOES1/HB84v2bsGY9q7cS3frW3SyaMNeTqsO0RUjiALQNBmuQMWgVv6e4WjLIr903/tB8ERRJK/CVpifx49HU0Wq6xxeL7FND0pR8IF4dveRdovOngfIVnFJLM+jknmqsQVWscU1QsI8iq5N0F3Z6D938WkHf1nxV84qy4ioxYfXGok8MnhUVj0Yv0aGxVNogCvLsOCVgSU4XqeFAnB9Hfxni8O3JQTbumPatH1AtQQA5sI8TbChhUfw=
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
     packages:
-      - g++-4.8
+    - g++-4.8
 after_success:
-  - gulp clean
-  - gulp inject
-  - source devdeploy.sh
+- gulp clean
+- gulp inject
+- source devdeploy.sh
