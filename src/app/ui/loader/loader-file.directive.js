@@ -35,7 +35,7 @@
         }
     }
 
-    function Controller($timeout, stateManager, Stepper) {
+    function Controller($timeout, stateManager, Stepper, gapi) {
         'ngInject';
         const self = this;
         const stepper = new Stepper(); // make new stepper
@@ -69,7 +69,7 @@
                     isActive: false,
                     isCompleted: false,
                     onContinue: uploadOnContinue,
-                    onCancel: uploadFileReset
+                    onCancel: uploadOnCancel
                 },
                 form: null,
                 file: null,
@@ -155,6 +155,14 @@
         }
 
         /**
+         * Clears both file selector and url field.
+         */
+        function uploadOnCancel() {
+            uploadFileReset();
+            uploadFileUrlReset();
+        }
+
+        /**
          * Starts file upload.
          * @param  {Array} files uploaded array of files
          * @param  {Object} event submitted event
@@ -175,8 +183,11 @@
          * @param  {Object} message a success message
          * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
          */
-        function uploadFileSuccess() { // file, message, flow) {
-            // console.log('success', file, message, flow);
+        function uploadFileSuccess(file, message, flow) {
+            console.log('success', file, message, flow);
+
+            file.name
+
             // TODO: call geoapi to guess filetype :_ ; throw erorr if unsupported format
             $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
         }

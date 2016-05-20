@@ -36,7 +36,7 @@
                                 flow-btn
                                 flow-progress="console.log()"
                                 flow-attrs="{ accept: '.csv,.zip,.json' }"
-                                ng-click="self.upload.fileReset();self.upload.fileUrlReset()">
+                                ng-click="self.upload.step.onCancel()">
                                 <md-icon md-svg-src="file:file_upload"></md-icon>choose a file</md-button>
                         </div>
                         <span class="md-caption">Drop the file to upload</span>
