@@ -47,31 +47,25 @@
     /**
      * Compares two versions of a script, prints warnings to the console if the versions are not the same
      *
-     * if we have version X.Y.Z, and we're comparing to A.B.C
-     * Their version is bigger if and only if
-     * A > X OR A = X and B > Y OR A = X and B = Y and C > Z
-     *
-     * Swap out '>' with '<' for seeing if their version is smaller
-     *
      * @param  {String} ourVersion      our version of the script
      * @param  {String} theirVersion    their version of the script
      * @param  {String} scriptName      the name of the script
      */
     function versionCheck(ourVersion, theirVersion, scriptName) {
         ourVersion = ourVersion.split('.');
-        const versionDiff = theirVersion.split('.').map((x, index) => parseInt(x) - ourVersion[index]);
+        const versionDiff = theirVersion.split('.')
+            // compare the two versions
+            .map((x, index) => parseInt(x) - ourVersion[index])
+            // find first non-equal part
+            .find(x => x !== 0);
 
-        if (versionDiff[0] > 0 || versionDiff[0] === 0 && versionDiff[1] > 0 ||
-            versionDiff[0] === 0 && versionDiff[1] === 0 && versionDiff[2] > 0) {
-
-            console.warn(`The current ${scriptName} version is more recent than expected for the viewer; ` +
-                         `expected: ${versions.jQuery}`);
-        } else if (versionDiff[0] < 0 || versionDiff[0] === 0 && versionDiff[1] < 0 ||
-                versionDiff[0] === 0 && versionDiff[1] === 0 && versionDiff[2] < 0) {
-
-            console.warn(`The current ${scriptName} version is older than expected for the viewer; ` +
-                         `expected: ${versions.jQuery}`);
+        if (typeof versionDiff === 'undefined') {
+            // the versions were equal
+            return;
         }
+        const fillText = versionDiff > 0 ? 'more recent' : 'older';
+        console.warn(`The current ${scriptName} version is ${fillText} than expected for the viewer; ` +
+                        `expected: ${versions.jQuery}`);
     }
 
     // append proper srcs to scriptsArray
