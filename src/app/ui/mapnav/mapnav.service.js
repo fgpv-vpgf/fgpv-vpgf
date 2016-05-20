@@ -24,8 +24,7 @@
         // open or close basemap selector when panel activity detected
         $rootScope.$on('stateChangeStart', (evt, name, prop, value) => {
             if (name === 'other' && prop === 'active') {
-                let newMode = value ? 'basemap' : 'default';
-                stateManager.setMorph('mapnav', newMode);
+                stateManager.setMorph('mapnav', value ? 'basemap' : 'default');
             }
         });
 
