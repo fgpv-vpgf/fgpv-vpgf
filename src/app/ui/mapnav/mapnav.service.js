@@ -19,7 +19,15 @@
      *
      * @return {object} service object
      */
-    function mapNavigationService(stateManager, geoService) {
+    function mapNavigationService(stateManager, geoService, $rootScope) {
+
+        // open or close basemap selector when panel activity detected
+        $rootScope.$on('stateChangeStart', (evt, name, prop, value) => {
+            if (name === 'other' && prop === 'active') {
+                stateManager.setMorph('mapnav', value ? 'basemap' : 'default');
+            }
+        });
+
         const service = {
             // FIXME: this config snippet should obvisouly come from config service
             config: {
@@ -82,15 +90,9 @@
                 icon: 'maps:map',
                 tooltip: 'nav.tooltip.basemap',
 
-                // TODO: revise how mode is detected
                 selected: () => stateManager.state.mapnav.morph !== 'default',
                 action: () => {
-                    // TODO: revise
                     stateManager.setActive('otherBasemap');
-
-                    let newMode = stateManager.state.mapnav.morph === 'default' ?
-                        'basemap' : 'default';
-                    stateManager.setMorph('mapnav', newMode);
                 }
             }
         };
