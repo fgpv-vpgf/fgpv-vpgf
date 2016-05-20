@@ -43,6 +43,7 @@ Map Navigation home tooltip,nav.tooltip.home,Canada,[fr] Canada
 Map Navigation history tooltip,nav.tooltip.history,History,[fr] History
 Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,[fr] Basemap
 Metadata pane title,metadata.title,Metadata,[fr] Metadata
+Metadata pane expand,metadata.expand.tooltip,Expand Metadata,[fr] Expand Metadata
 Settings main title,settings.title,Settings,[fr] Settings
 Settings visibility header label,settings.label.display,Display,[fr] Display
 Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,[fr] Bounding Box
