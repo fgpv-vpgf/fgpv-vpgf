@@ -17,7 +17,7 @@
         .factory('tocService', tocService);
 
     function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager,
-        geoService, metadataService) {
+        geoService, metadataService, configService) {
 
         const service = {
             // method called by the options and flags set on the layer item
@@ -313,7 +313,7 @@
 
                     // TODO: xsl should come from service constant? or is this layer specific
                     // following is a test xsl from RAMP, should be updated for FGPV
-                    const xslUrl = 'content/metadata/xstyle_default_en.xsl';
+                    const xslUrl = `content/metadata/xstyle_default_${configService.currentLang()}.xsl`;
 
                     // TODO: need to handle errors
                     // transform xml

@@ -35,10 +35,14 @@ describe('rvLayerItemFlag', () => {
         $provide.service('$mdToast', () => {});
     }
 
+    function mockConfigService($provide) {
+        $provide.service('configService', () => {});
+    }
+
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
         bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo',
-            'pascalprecht.translate', mockLayoutService, mockGeoService, mockToast);
+            'pascalprecht.translate', mockConfigService, mockLayoutService, mockGeoService, mockToast);
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
