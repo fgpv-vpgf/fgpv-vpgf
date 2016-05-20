@@ -3,10 +3,10 @@
     <div class="rv-subsection" ng-repeat="projection in self.projections">
 
         <div class="rv-subheader">
-            <h3 class="md-title">{{projection.name}} Maps</h3>
+            <h3 class="md-title">{{projection.name}} {{'basemap.title' | translate}}</h3>
             <div class="rv-icon-16" ng-show='self.selectedWkid != projection.wkid'>
                 <md-icon md-svg-src="action:info" class="rv-basemap-warning"></md-icon>
-                <span class="md-catpion" >Map refresh required</span>
+                <span class="md-catpion" >{{'basemap.refresh.req' | translate}}</span>
             </div>
         </div>
 
