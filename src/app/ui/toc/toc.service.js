@@ -322,7 +322,7 @@
 
                         // result is wrapped in an array due to previous setup
                         // TODO: chagee the following when changing associated directive service
-                        layer.cache.metadata = [mdata[0].innerText];
+                        layer.cache.metadata = mdata;
                         fulfill(layer.cache.metadata);
                     });
                 }

@@ -45,14 +45,6 @@
             }
             output = xsltProcessor.transformToFragment(xmlString, document);
 
-            // turn a document fragment into a proper jQuery object
-            if (!returnFragment) {
-                output = ($('body')
-                    .append(output)
-                    .children().last())
-                    .detach();
-            }
-
             return output;
 
         }
