@@ -68,10 +68,10 @@
                             textArr.push({ pElem, shortText, longText });
 
                             if (correctedLength > maxTextLength) {
-                                textArr[index].shortText += '... <br><a href="#" ng-click="show(' +
-                                    index + ')">Show More</a>';
-                                textArr[index].longText += ' <br><a href="#" ng-click="hide(' +
-                                    index + ')">Hide</a>';
+                                textArr[index].shortText +=
+                                    `... <br><a href="#" ng-click="show(${index})">Show More</a>`;
+                                textArr[index].longText +=
+                                    ` <br><a href="#" ng-click="hide(${index})">Hide</a>`;
                             }
 
                             pElem.html(textArr[index].shortText);
