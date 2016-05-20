@@ -112,6 +112,11 @@
                     const interactiveColumn = displayData.columns.find(column =>
                         column.data !== 'rvSymbol');
                     addColumnInteractivity(interactiveColumn, [ZOOM_TO_ICON(zoomText), DETAILS_ICON(descriptionsText)]);
+                } else {
+                    // TODO:move interactiveColumn section out of esriFeature if block and remove else block when zoom supports dynamic layers
+                    const interactiveColumn = displayData.columns.find(column =>
+                        column.data !== 'rvSymbol');
+                    addColumnInteractivity(interactiveColumn, [DETAILS_ICON(descriptionsText)]);
                 }
 
                 // ~~I hate DataTables~~ Datatables are cool!
