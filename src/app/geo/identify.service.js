@@ -264,7 +264,13 @@
                 // run a spatial query
                 const qry = new gapiService.gapi.layer.Query();
                 qry.outFields = ['*']; // this will result in just objectid fields, as that is all we have in feature layers
-                qry.geometry = makeClickBuffer(opts.clickEvent.mapPoint, opts.map, getTolerance(layer));
+
+                // more accurate results without making the buffer if we're dealing with extents
+                if (layer.geometryType === 'esriGeometryPolygon') {
+                    qry.geometry = opts.geometry;
+                } else {
+                    qry.geometry = makeClickBuffer(opts.clickEvent.mapPoint, opts.map, getTolerance(layer));
+                }
 
                 // no need to check if the layer is registered as this object comes from an array of registered layers
                 const identifyPromise = $q.all([
