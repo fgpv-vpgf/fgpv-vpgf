@@ -47,7 +47,11 @@ describe('rvShell', () => {
             return {
                 initialize: () => {},
                 getCurrent: () => {
-                    return $q.resolve({ menuPanel: { markerImage: '' } });
+                    return $q.resolve({
+                        menuPanel: {
+                            markerImage: ''
+                        }
+                    });
                 },
                 ready: () => {
                     return $q.resolve({});
@@ -59,7 +63,8 @@ describe('rvShell', () => {
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
         bard.appModule('app.layout', 'app.templates', 'app.ui', customTranslateLoader,
-            mockConfigService, mockGapiService, mockGeoService, mockGlobalRegistry, 'app.common.router');
+            mockConfigService, mockGapiService, mockGeoService, mockGlobalRegistry,
+            'app.common.router');
 
         // inject angular services
         bard.inject('$compile', '$rootScope', '$rootElement', '$httpBackend', '$q', 'stateManager');
@@ -89,6 +94,8 @@ describe('rvShell', () => {
             .respond({});
         $httpBackend.expectGET('content/images/iconsets/content-icons.svg')
             .respond({});
+        $httpBackend.expectGET('content/images/iconsets/file-icons.svg')
+            .respond({});
         $httpBackend.expectGET('content/images/iconsets/mdi-icons.svg')
             .respond({});
         $httpBackend.expectGET('content/images/iconsets/editor-icons.svg')
@@ -96,6 +103,8 @@ describe('rvShell', () => {
         $httpBackend.expectGET('content/images/iconsets/social-icons.svg')
             .respond({});
         $httpBackend.expectGET('content/images/iconsets/image-icons.svg')
+            .respond({});
+        $httpBackend.expectGET('content/images/iconsets/file-icons.svg')
             .respond({});
         $httpBackend.expectGET('content/images/iconsets/hardware-icons.svg')
             .respond({});

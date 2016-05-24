@@ -35,9 +35,10 @@
         }
     }
 
-    function Controller($timeout, stateManager, stepper) {
+    function Controller($timeout, stateManager, Stepper) {
         'ngInject';
         const self = this;
+        const stepper = new Stepper(); // make new stepper
 
         self.closeLoaderFile = closeLoaderFile;
 
@@ -66,7 +67,9 @@
                     titleValue: 'Upload data',
                     stepNumber: 1,
                     isActive: false,
-                    isCompleted: false
+                    isCompleted: false,
+                    onContinue: uploadOnContinue,
+                    onCancel: uploadFileReset
                 },
                 form: null,
                 file: null,
@@ -74,6 +77,7 @@
                 fileSuccess: uploadFileSuccess,
                 fileError: uploadFileError,
                 fileReset: uploadFileReset,
+                fileUrlReset: uploadFileUrlReset,
             };
 
             self.select = {
@@ -143,6 +147,14 @@
         }
 
         /**
+         * In cases where user provides a file link, tries to load the file and then advanced to the next step.
+         */
+        function uploadOnContinue() {
+            // TODO: try to load the file using the provided file url
+            stepper.nextStep();
+        }
+
+        /**
          * Starts file upload.
          * @param  {Array} files uploaded array of files
          * @param  {Object} event submitted event
@@ -178,7 +190,8 @@
         function uploadFileError() { // file, message, flow) {
             // console.log('error', file, flow);
             const upload = self.upload;
-            upload.form.$setValidity('upload-error', false, upload.step);
+            console.log('upload form', upload.form);
+            upload.form.fileSelect.$setValidity('upload-error', false, upload.step);
         }
 
         /**
@@ -189,11 +202,22 @@
 
             if (upload.file) { // if there is a file in the queue
                 upload.file.cancel(); // removes the file from the upload queue
+                upload.file = null; // kill reference as well
             }
-            upload.file = null; // kill reference as well
 
             // arguments as follows: name of the error, state of the error, a controller object which will be stored against the error; when removing the same error, need to provide the same controller object
-            upload.form.$setValidity('upload-error', true, upload.step); // remove errors from the form
+            upload.form.fileSelect.$setValidity('upload-error', true, upload.step); // remove errors from the form
+        }
+
+        /**
+         * Resets the file url field and removes errors in the file upload step.
+         */
+        function uploadFileUrlReset() {
+            const upload = self.upload;
+
+            upload.fileUrl = '';
+            upload.form.fileUrl.$setPristine();
+            upload.form.fileUrl.$setUntouched();
         }
 
         /**

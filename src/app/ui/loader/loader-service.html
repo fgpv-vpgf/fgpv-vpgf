@@ -1,0 +1,70 @@
+<rv-content-pane close-panel="self.closeLoaderService()" floating-header="true">
+
+    <!-- TODO: add translate filters -->
+
+    <div class="rv-loader-service">
+        <rv-stepper-item step="self.connect.step" form="self.connect.form">
+
+            <md-input-container class="md-block">
+                <label>Service layer URL</label>
+                <input
+                    name="serviceUrl"
+                    type="url"
+                    ng-model="self.connect.serviceUrl"
+                    ng-model-options="{ updateOn: 'default blur', debounce: { default: 500, blur: 0 } }"
+                    required>
+                <div ng-messages="self.connect.form.serviceUrl.$error">
+                    <div ng-message="url">This is not a valid URL</div>
+                </div>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+                <label>Service type</label>
+                <md-select name="serviceType" ng-model="self.connect.serviceType" required>
+                    <md-option ng-repeat="(value, key) in self.serviceTypes" value="{{ value }}">
+                        {{ key }}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+        </rv-stepper-item>
+
+        <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.connect.serviceType">
+
+            <md-input-container class="md-block" ng-switch-when="esriFeature">
+                <label>Primary Field</label>
+                <md-select name="primaryField" ng-model="self.configure.options.primaryField" required>
+                    <md-option ng-repeat="(value, key) in self.configure.layerFields" value="{{ value }}">
+                        {{ key }}
+                    </md-option>
+                </md-select>
+                <!-- TODO: decide whether and how to display a hint or error messages -->
+                <!--div class="errors" ng-messages="self.configure.form.primaryField.$error">
+                        <div ng-message="required">Required</div>
+                    </div-->
+            </md-input-container>
+
+            <md-input-container class="md-block" ng-switch-when="ogcWms">
+                <label>Layer Name</label>
+                <md-select name="layerName" ng-model="self.configure.options.layerName" required>
+                    <md-option ng-repeat="(value, key) in self.configure.layerNames" value="{{ value }}">
+                        {{ key }}
+                    </md-option>
+                </md-select>
+                <!-- TODO: decide whether and how to display a hint or error messages -->
+                <!--div ng-messages="self.configure.form.layerName.$error">
+                        <div ng-message="required">This is required!</div>
+                        <div ng-message="md-maxlength">That's too long!</div>
+                    </div-->
+            </md-input-container>
+
+            <img
+                src="https://d13yacurqjgara.cloudfront.net/users/355650/screenshots/2181500/unicorn_drib_v2.gif"
+                style="width: 100%;"
+                alt=""
+                ng-switch-when="unicorn"/>
+
+        </rv-stepper-item>
+    </div>
+
+</rv-content-pane>
