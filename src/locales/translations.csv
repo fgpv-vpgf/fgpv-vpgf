@@ -12,6 +12,8 @@ Appbar aria label for layers icon,appbar.aria.layers,Sets,[fr] Sets
 Appbar aria label for point info icon,appbar.aria.pointInfo,Point Information,[fr] Point Information
 Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,[fr] Open Sidenav
 Appbar aria label for tools icon,appbar.aria.tools,Tools,[fr] Tools
+rv-truncate directive show more,rv-truncate.showMore,Show More,[fr] montre plus
+rv-truncate directive show less,rv-truncate.showLess,Hide,[fr] cacher
 Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,Zoom à l'Élément
 Tooltip text for Details,filter.tooltip.description,Details,Détails
 Details pane title,details.title,Feature Information,[fr] Feature Information

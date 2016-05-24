@@ -19,21 +19,21 @@
     <div class="metadata-view">
 
       <xsl:if test="//gmd:abstract/gco:CharacterString/text() != ''">
-        <h5 class="md-title" style="margin:0;">Abstract</h5>
+        <h5 class="md-title">Abstract</h5>
         <p>
           <xsl:value-of select="//gmd:abstract/gco:CharacterString/text()" />
         </p>
       </xsl:if>
 
       <xsl:comment>
-        <h5 class="md-title" style="margin:0;">Scope</h5>
+        <h5 class="md-title">Scope</h5>
         <p>
           here be scope
         </p>
       </xsl:comment>
 
       <xsl:if test="//gml:TimePeriod//* != ''">
-        <h5 class="md-title" style="margin:0;">Time Period</h5>
+        <h5 class="md-title">Time Period</h5>
         <p>
           <xsl:value-of select="//gml:TimePeriod//gml:beginPosition" />
           <xsl:if test="//gml:TimePeriod//gml:beginPosition/text() != '' and //gml:TimePeriod//gml:endPosition/text() != ''">
@@ -45,7 +45,7 @@
 
       <xsl:comment>
         <xsl:if test="//gmd:supplementalInformation/gco:CharacterString/text() != ''">
-          <h5 class="md-title" style="margin:0;">Supplemental Data</h5>
+          <h5 class="md-title">Supplemental Data</h5>
           <p>
             <xsl:value-of select="//gmd:supplementalInformation/gco:CharacterString/text()" />
           </p>
@@ -57,7 +57,7 @@
               or //gmd:pointOfContact//gmd:positionName/gco:CharacterString/text() != ''
               or //gmd:pointOfContact//gmd:electronicMailAddress/* != ''
               or //gmd:pointOfContact//gmd:role/gmd:CI_RoleCode/@codeListValue != ''">
-        <h5 class="md-title" style="margin:0;">Contact Information</h5>
+        <h5 class="md-title">Contact Information</h5>
         <p>
           <xsl:value-of select="//gmd:pointOfContact//gmd:individualName" />
         </p>
@@ -99,7 +99,7 @@
       </xsl:if>
 
       <xsl:if test="$catalogue_url != ''">
-        <h5 class="md-title" style="margin:0;">Data Catalogue Page</h5>
+        <h5 class="md-title">Data Catalogue Page</h5>
         <p>
           <a href="{$catalogue_url}"
              rel="external" target="_blank" class="ui-link">
