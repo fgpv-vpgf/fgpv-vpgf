@@ -12,7 +12,7 @@
      * `maxTextLength` property. If the maxTextLength is reached mid-word, the entire word is truncated instead.
      * If maxTextLength is not defined or less than 1 this directive has no effect.
      *
-     * <rv-truncate limit="7">Some text to shorten</rv-truncate>
+     * <rv-truncate max-text-length="7">Some text to shorten</rv-truncate>
      * Results in `Some...`
      */
     angular
@@ -62,14 +62,8 @@
                     };
 
                     changeTxt(shortText);
-
-                    scope.show = () => {
-                        changeTxt(longText);
-                    };
-
-                    scope.hide = () => {
-                        changeTxt(shortText);
-                    };
+                    scope.show = () => changeTxt(longText);
+                    scope.hide = () => changeTxt(shortText);
                 }
             });
         }
