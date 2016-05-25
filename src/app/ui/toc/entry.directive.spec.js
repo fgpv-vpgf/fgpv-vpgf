@@ -49,11 +49,15 @@ describe('rvTocEntry', () => {
         $provide.service('configService', () => {});
     }
 
+    function mockErrorService($provide) {
+        $provide.service('errorService', () => {});
+    }
+
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
         bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo',
             'pascalprecht.translate', mockConfigService, mockLayoutService, mockGeoService,
-            mockToast, mockReverseFilter);
+            mockToast, mockReverseFilter, mockErrorService);
 
         // inject angular services
         bard.inject('$compile', '$rootScope', '$httpBackend', 'tocService');

@@ -16,8 +16,8 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager,
-        geoService, metadataService, errorService, $filter) {
+    function tocService($q, $rootScope, $mdToast, layoutService, stateManager,
+        geoService, metadataService, errorService, $filter, configService) {
 
         const service = {
             // method called by the options and flags set on the layer item
