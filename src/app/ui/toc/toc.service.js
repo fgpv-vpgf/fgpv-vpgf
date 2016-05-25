@@ -64,12 +64,7 @@
                 visibility: {
                     icon: vis => vis ? 'action:visibility' : 'action:visibility_off',
                     label: vis => vis ? 'toc.label.visibility.on' : 'toc.label.visibility.off',
-                    tooltip: {
-                        off: 'toc.tooltip.visibility.off',
-                        on: 'toc.tooltip.visibility.on',
-                        zoomIn: 'toc.tooltip.visibility.zoomIn',
-                        zoomOut: 'toc.tooltip.visibility.zoomOut'
-                    },
+                    tooltip: vis => vis ? 'toc.tooltip.visibility.on' : 'toc.tooltip.visibility.off',
                     action: toggleVisiblity
                 },
                 reload: {

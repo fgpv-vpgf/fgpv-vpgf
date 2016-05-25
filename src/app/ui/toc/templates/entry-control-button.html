@@ -6,7 +6,7 @@
     ng-disabled="!self.control.enabled"
     rv-help="{{ self.option }}">
 
-    <md-tooltip md-direction="top">{{ self.isFunction(self.template.label) ? self.template.label(self.control.value) : self.template.label | translate}}</md-tooltip>
+    <md-tooltip md-direction="top">{{ self.isFunction(self.template.tooltip) ? self.template.tooltip(self.control.value) : self.template.tooltip | translate}}</md-tooltip>
     <!-- the terrible hack below (testing for .call) is due to angular not having typeof available in $Parse
          https://github.com/angular/angular.js/pull/6886
     -->
