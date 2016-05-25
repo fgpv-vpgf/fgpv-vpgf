@@ -4,13 +4,13 @@
         <!--img alt="" ng-src="http://lorempixel.com/400/200/nature/?{{self.basemap.id}}"/-->
 
         <div class="rv-wkid rv-3978" ng-switch-when="3978">
-            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/268"/>
-            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/269"/>
+            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/268" ng-if="self.basemap.type !== 'blank'"/>
+            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/269" ng-if="self.basemap.type !== 'blank'"/>
         </div>
 
         <div class="rv-wkid rv-102100" ng-switch-when="102100">
-            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/74"/>
-            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/75"/>
+            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/74" ng-if="self.basemap.type !== 'blank'"/>
+            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/75" ng-if="self.basemap.type !== 'blank'"/>
         </div>
 
         <div class="rv-basemap-footer">
