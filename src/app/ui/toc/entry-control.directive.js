@@ -65,6 +65,7 @@
 
             self.template = tocService.presets.options[self.option];
             self.action = self.action || self.template.action;
+            self.isFunction = angular.isFunction;
         }
     }
 })();
