@@ -180,7 +180,7 @@
                         description: 'Remove base map',
                         type: 'blank',
                         id: 'blank_basemap_' + wkid,
-                        url: '',
+                        url: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7/',
                         wkid: wkid,
                         selected: false
                     });
