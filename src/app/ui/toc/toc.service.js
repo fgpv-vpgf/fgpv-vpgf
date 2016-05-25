@@ -16,8 +16,8 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager,
-        geoService, metadataService, configService) {
+    function tocService($q, $rootScope, $mdToast, layoutService, stateManager,
+        geoService, metadataService, errorService, $filter, configService) {
 
         const service = {
             // method called by the options and flags set on the layer item
@@ -272,7 +272,11 @@
                 .setActive({
                     side: false
                 })
-                .then(() => stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0));
+                .then(() => stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0))
+                .catch(() => {
+                    errorService.display($filter('translate')('toc.error.resource.loadfailed'),
+                        layoutService.panes.filter);
+                });
         }
 
         /**
@@ -293,7 +297,7 @@
             const layer = entry.master ? entry.master : entry;
 
             // construct a temp promise which resolves when data is generated or retrieved;
-            const dataPromise = $q(fulfill => {
+            const dataPromise = $q((fulfill, reject) => {
                 // check if metadata is cached
                 if (layer.cache.metadata) {
                     fulfill(layer.cache.metadata);
@@ -305,7 +309,6 @@
                     // following is a test xsl from RAMP, should be updated for FGPV
                     const xslUrl = `content/metadata/xstyle_default_${configService.currentLang()}.xsl`;
 
-                    // TODO: need to handle errors
                     // transform xml
                     metadataService.transformXML(xmlUrl, xslUrl).then(mdata => {
 
@@ -313,13 +316,17 @@
                         // TODO: chagee the following when changing associated directive service
                         layer.cache.metadata = mdata;
                         fulfill(layer.cache.metadata);
-                    });
+                    }).catch(reject);
                 }
             });
 
             stateManager
                 .setActive(panelToClose)
-                .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester));
+                .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester)
+                        .catch(() => {
+                            errorService.display($filter('translate')('toc.error.resource.loadfailed'),
+                                layoutService.panes.metadata);
+                        }));
         }
 
         /**

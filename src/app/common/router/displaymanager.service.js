@@ -63,7 +63,7 @@
          * @param  {Object} dataPromise      data object or a promise returning a data object; both can be plain data object or containers `{data: data, isLoaded: <boolean|promise> }`, where isLoaded can be a promise;
          * @param  {Object} requester        an optional object requesting display change; must have `id` attribute if you want the panel to toggle off on the same requester; requester object can be used to immediately pass content to the panel - for example passing layer name to the filters panel to be displayed in the panel header while the datatable is being constructed;
          * @param  {Number} delay            an optional time to wait (in milliseconds) before setting loading indicator
-         * @return {Number} return a data requestId; if equals -1, the panel will be closed, no further actions needed; otherwise, the panel will be opened
+         * @return {Object} promise          resolves as undefined iff panel data has resolved, rejects otherwise.
          */
         function toggleDisplayPanel(panelName, dataPromise, requester = {}, delay = 100) {
             const state = stateManager.state[panelName];
@@ -75,7 +75,6 @@
 
             const display = stateManager.display[displayName];
             const requestId = ++requestIdCounter;
-
             // if specified panel is open ...
             // and the requester id is not undefined or matches to the previous requester id ...
             if (state.active &&
@@ -88,7 +87,6 @@
             } else {
                 // cancel previous data retrieval timeout
                 $timeout.cancel(display.loadingTimeout);
-
                 if (delay === 0) {
                     display.data = null;
                     display.isLoading = true;
@@ -101,7 +99,6 @@
                         display.isLoading = true;
                     }, delay);
                 }
-
                 if (!state.active) { // panel is not open; open it
                     display.data = null; // clear data so the newly opened panel doesn't have any content
                     stateManager.setActive(panelName);
@@ -110,7 +107,6 @@
                 // update requestId and the requester object
                 display.requester = requester;
                 display.requestId = requestId;
-
                 return $q
                     .resolve(dataPromise)
                     .then(value => {
@@ -119,9 +115,10 @@
 
                         setDisplay(panelName, requestId, data, isLoaded);
                     })
-                    .catch(value => {
-                        // TODO: handle rejections properly
-                        console.log('error retrieving data apparently', value);
+                    .catch(err => {
+                        $timeout.cancel(display.loadingTimeout);
+                        display.isLoading = false;
+                        throw err;
                     });
             }
         }
