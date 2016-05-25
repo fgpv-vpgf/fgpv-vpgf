@@ -25,6 +25,7 @@
 @import "_loader.scss";
 @import "_progress-indicator.scss";
 @import "_shell.scss";
+@import "_metadata.scss";
 
 @include core;
 @include loading;
@@ -49,3 +50,4 @@
 @include loader;
 @include progress-indicator;
 @include shell;
+@include metadata;

@@ -36,10 +36,14 @@ describe('rvTocEntryControl', () => {
         $provide.service('$mdToast', () => {});
     }
 
+    function mockConfigService($provide) {
+        $provide.service('configService', () => {});
+    }
+
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
         bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo',
-            'pascalprecht.translate', mockLayoutService, mockGeoService, mockToast);
+            'pascalprecht.translate', mockConfigService, mockLayoutService, mockGeoService, mockToast);
 
         // inject angular services
         bard.inject('$compile', '$rootScope', '$httpBackend', 'tocService');
@@ -75,10 +79,6 @@ describe('rvTocEntryControl', () => {
             // check that directive element exists
             expect(directiveElement)
                 .toBeDefined();
-
-            // check that directive correctly pulled control object from the mocked controller
-            expect(directiveScope.self.control.value)
-                .toBe('on');
 
             // check that directive pulled an action frunction from tocService
             expect(directiveScope.self.action)

@@ -17,7 +17,7 @@
         .factory('tocService', tocService);
 
     function tocService($timeout, $q, $rootScope, $mdToast, layoutService, stateManager,
-        geoService, metadataService) {
+        geoService, metadataService, configService) {
 
         const service = {
             // method called by the options and flags set on the layer item
@@ -313,8 +313,7 @@
 
                     // TODO: xsl should come from service constant? or is this layer specific
                     // following is a test xsl from RAMP, should be updated for FGPV
-                    const xslUrl = 'http://ramp-pcar.github.io/demos/NRSTC/v5.4.2/ramp-pcar/' +
-                        'assets/metadata/xstyle_default_en.xsl';
+                    const xslUrl = `content/metadata/xstyle_default_${configService.currentLang()}.xsl`;
 
                     // TODO: need to handle errors
                     // transform xml
@@ -322,7 +321,7 @@
 
                         // result is wrapped in an array due to previous setup
                         // TODO: chagee the following when changing associated directive service
-                        layer.cache.metadata = [mdata[0].innerText];
+                        layer.cache.metadata = mdata;
                         fulfill(layer.cache.metadata);
                     });
                 }
