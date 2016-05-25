@@ -29,12 +29,11 @@
          * @param {Object} parentElem   optional element to attach toast message. Appears on bottom of element if supplied, default is rootElement
          */
         function display(errorMsg, parentElem) {
-
             const opts = {
                 textContent: errorMsg,
                 action: 'Close',
                 hideDelay: 0,
-                position: 'left right bottom'
+                position: 'bottom rv-flex-global'
             };
 
             if (typeof parentElem !== 'undefined') {
