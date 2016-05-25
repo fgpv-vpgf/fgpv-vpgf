@@ -63,12 +63,7 @@
                 },
                 visibility: {
                     icon: vis => vis ? 'action:visibility' : 'action:visibility_off',
-                    label: {
-                        off: 'toc.label.visibility.off',
-                        on: 'toc.label.visibility.on',
-                        zoomIn: 'toc.label.visibility.zoomIn',
-                        zoomOut: 'toc.label.visibility.zoomOut'
-                    },
+                    label: vis => vis ? 'toc.label.visibility.on' : 'toc.label.visibility.off',
                     tooltip: {
                         off: 'toc.tooltip.visibility.off',
                         on: 'toc.tooltip.visibility.on',
