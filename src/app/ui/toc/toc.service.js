@@ -63,18 +63,8 @@
                 },
                 visibility: {
                     icon: vis => vis ? 'action:visibility' : 'action:visibility_off',
-                    label: {
-                        off: 'toc.label.visibility.off',
-                        on: 'toc.label.visibility.on',
-                        zoomIn: 'toc.label.visibility.zoomIn',
-                        zoomOut: 'toc.label.visibility.zoomOut'
-                    },
-                    tooltip: {
-                        off: 'toc.tooltip.visibility.off',
-                        on: 'toc.tooltip.visibility.on',
-                        zoomIn: 'toc.tooltip.visibility.zoomIn',
-                        zoomOut: 'toc.tooltip.visibility.zoomOut'
-                    },
+                    label: vis => vis ? 'toc.label.visibility.on' : 'toc.label.visibility.off',
+                    tooltip: vis => vis ? 'toc.tooltip.visibility.on' : 'toc.tooltip.visibility.off',
                     action: toggleVisiblity
                 },
                 reload: {
