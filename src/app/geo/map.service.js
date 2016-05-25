@@ -16,6 +16,7 @@
         .factory('mapService', mapServiceFactory);
 
     function mapServiceFactory($q, $timeout, gapiService, storageService) {
+        const settings = { zoomPromise: $q.resolve(), zoomCounter: 0 };
         return mapService;
 
         function mapService(geoState, config) {
@@ -77,9 +78,6 @@
                     extent: geoState.mapExtent,
                     lods: geoState.lods
                 });
-
-                // console.log('I AM MAP EXTENT', geoState.mapExtent);
-                // console.log('I AM THE MAP', mapObject);
 
                 // store map object in service
                 service.mapObject = mapObject;
@@ -265,12 +263,20 @@
 
             /**
              * Changes the zoom level by the specified value relative to the current level; can be negative
+             * To avoid multiple chained zoom animations when rapidly pressing the zoom in/out icons, we
+             * update the zoom level only when the one before it resolves with the net zoom change.
+             *
              * @param  {number} byValue a number of zoom levels to shift by
              */
             function shiftZoom(byValue) {
-                const map = service.mapObject;
-                let newValue = map.getZoom() + byValue;
-                map.setZoom(newValue);
+                settings.zoomCounter += byValue;
+                settings.zoomPromise.then(() => {
+                    if (settings.zoomCounter !== 0) {
+                        let zoomValue = service.mapObject.getZoom() + settings.zoomCounter;
+                        settings.zoomCounter = 0;
+                        settings.zoomPromise = service.mapObject.setZoom(zoomValue);
+                    }
+                });
             }
 
             /**
