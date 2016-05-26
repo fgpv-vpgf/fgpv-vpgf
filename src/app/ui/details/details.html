@@ -28,14 +28,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
 
                     <!-- Feature Key-Value list presentation  -->
                     <div ng-if="self.display.data[0].requester.format === 'EsriFeature'">
-                        <h5 class="rv-sub-subhead" ng-repeat-start="item in self.display.data[0].data">{{ item.name }}</h5>
-
-                        <ul ng-repeat-end class="rv-details-zebra-list">
-                            <li ng-repeat="keyval in item.data">
-                                <div class="rv-details-attrib-key">{{ keyval.key }}</div>
-                                <div class="rv-details-attrib-value">{{ keyval.value }}</div>
-                            </li>
-                        </ul>
+                        <rv-details-data data="self.display.data[0].data"></rv-details-data>
                     </div>
 
                     <!-- Plain text presentation  -->
@@ -72,14 +65,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
                         Nothing found</h5>
 
                     <div ng-if="self.selectedItem.requester.format === 'EsriFeature'">
-                        <h5 class="rv-sub-subhead" ng-repeat-start="item in self.selectedItem.data">{{ item.name }}</h5>
-
-                        <ul ng-repeat-end class="rv-details-zebra-list">
-                            <li ng-repeat="keyval in item.data">
-                                <div class="rv-details-attrib-key">{{ keyval.key }}</div>
-                                <div class="rv-details-attrib-value">{{ keyval.value }}</div>
-                            </li>
-                        </ul>
+                        <rv-details-data data="self.selectedItem.data"></rv-details-data>
                     </div>
 
                     <!-- Plain text presentation  -->
