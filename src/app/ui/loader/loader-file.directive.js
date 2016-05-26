@@ -35,10 +35,10 @@
         }
     }
 
-    function Controller($timeout, stateManager, Stepper, gapi) {
+    function Controller($timeout, stateManager, Stepper, gapiService, geoService, LayerFileBlueprint) {
         'ngInject';
         const self = this;
-        const stepper = new Stepper(); // make new stepper
+        let stepper;
 
         self.closeLoaderFile = closeLoaderFile;
 
@@ -61,6 +61,7 @@
         /*********/
 
         function activate() {
+            stepper = new Stepper(); // make new stepper
 
             self.upload = {
                 step: {
@@ -71,8 +72,10 @@
                     onContinue: uploadOnContinue,
                     onCancel: uploadOnCancel
                 },
+                layerBlueprint: null,
                 form: null,
                 file: null,
+                fileData: null,
                 filesSubmitted: uploadFilesSubmitted,
                 fileSuccess: uploadFileSuccess,
                 fileError: uploadFileError,
@@ -150,8 +153,8 @@
          * In cases where user provides a file link, tries to load the file and then advanced to the next step.
          */
         function uploadOnContinue() {
-            // TODO: try to load the file using the provided file url
-            stepper.nextStep();
+            self.upload.layerBlueprint = new LayerFileBlueprint(self.upload.fileUrl);
+            onLayerBlueprintReady();
         }
 
         /**
@@ -186,10 +189,19 @@
         function uploadFileSuccess(file, message, flow) {
             console.log('success', file, message, flow);
 
-            file.name
+            self.upload.layerBlueprint = new LayerFileBlueprint(file.name, file.file, file.getExtension());
+            onLayerBlueprintReady();
+        }
 
-            // TODO: call geoapi to guess filetype :_ ; throw erorr if unsupported format
-            $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
+        function onLayerBlueprintReady() {
+            self.upload.layerBlueprint.ready
+                .then(() => {
+                    self.select.dataType = layerBlueprint.fileType;
+                    $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
+                })
+                .catch(error => {
+                    console.error('Something awful happen', error);
+                });
         }
 
         /**
@@ -235,6 +247,8 @@
          * Closes loader pane and switches to the previous pane if any.
          */
         function closeLoaderFile() {
+            // reset the loader after closing the panel
+            activate();
             stateManager.openPrevious('mainLoaderFile');
         }
     }
