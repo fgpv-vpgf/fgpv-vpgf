@@ -34,10 +34,8 @@
     angular
         .module('app.geo')
         .factory('LayerBlueprint', LayerBlueprint)
-        .factory('LayerServiceBlueprint', LayerServiceBlueprint);
-
-    // TODO: add
-    // .factory('LayerFileBlueprint', LayerFileBlueprint);
+        .factory('LayerServiceBlueprint', LayerServiceBlueprint)
+        .factory('LayerFileBlueprint', LayerFileBlueprint);
 
     function LayerBlueprint(layerDefaults) {
         let idCounter = 0; // layer counter for generating layer ids
@@ -65,12 +63,14 @@
              * Applies layer defaults based on the layer type.
              */
             _applyDefaults() {
-                const defaults = layerDefaults[this.config.layerType];
+                if (this.layerType !== null) {
+                    const defaults = layerDefaults[this.layerType];
 
-                // TODO: add defautls for wms and dynamic layerEntries
-                // this is mostly useless right now since we apply defaults in `legend-entry` service
-                this.config.options = angular.merge({}, defaults.options, this.config.options);
-                this.config.flags = angular.merge({}, defaults.flags, this.config.flags);
+                    // TODO: add defautls for wms and dynamic layerEntries
+                    // this is mostly useless right now since we apply defaults in `legend-entry` service
+                    this.config.options = angular.merge({}, defaults.options, this.initialConfig.options);
+                    this.config.flags = angular.merge({}, defaults.flags, this.initialConfig.flags);
+                }
             }
 
             /**
@@ -87,11 +87,8 @@
              */
             set layerType(value) {
                 // apply config defaults when setting layer type
-                // TODO: this can be invoked only once right now.
-                if (typeof this.config.layerType !== 'undefined') {
-                    this.config.layerType = value;
-                    this._applyDefaults();
-                }
+                this.config.layerType = value;
+                this._applyDefaults();
             }
 
             /**
@@ -102,6 +99,9 @@
                 // generate id if missing when generating layer
                 if (typeof this.config.id === 'undefined') {
                     this.config.id = `${this.layerType}#${idCounter++}`;
+
+                    // TODO: "temporary" workaround
+                    this.initialConfig.id = this.config.id;
                 }
 
                 // return common config, eh...
@@ -187,5 +187,95 @@
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         return LayerServiceBlueprint;
+    }
+
+    function LayerFileBlueprint($q, LayerBlueprint, gapiService) {
+        // jscs doesn't like enhanced object notation
+        // jscs:disable requireSpacesInAnonymousFunctionExpression
+        /**
+         * Createa a LayerFileBlueprint.
+         * Retrieves data from the file. The file can be either online or local.
+         * @param  {String} path      either file name or file url; if it's a file name, need to provide a HTML5 file object
+         * @param  {File} file      optional: HTML5 file object
+         * @param  {String} extension optional: file extension ??
+         * @return {String}           service type: 'csv', 'shapefile', 'geojosn'
+         */
+        class LayerFileBlueprint extends LayerBlueprint {
+            constructor(path, file, extension) {
+                super();
+
+                this._fileData = null;
+
+                this._gapiPromise = gapiService.gapi.layer.predictLayerUrl(path)
+                    .then(fileInfo => {
+                        // fileData is returned only if path is a url; if it's just a file name, only serviceType is returned                            this.fileData = fileInfo.fileData;
+                        this.layerType = 'esriFeature';
+                        this.fileType = fileInfo.serviceType;
+
+                        if (typeof file !== 'undefined') {
+                            // if there is file object, read it and store the data
+                            return this._readFileData(file)
+                                .then(fileData => this._fileData = fileData);
+                        } else if (typeof fileInfo.fileData !== 'undefined'){
+                            this._fileData = fileInfo.fileData;
+                            return undefined;
+                        } else {
+                            throw new Error('Cannot retrieve file data');
+                        }
+                    });
+            }
+
+            get fileType() {
+                return this._fileType;
+            }
+
+            set fileType(value) {
+                this._fileType = value;
+                // TODO: validate file
+            }
+
+            get ready() {
+                return this._gapiPromise;
+            }
+
+            /**
+             * Reads HTML5 File object data.
+             * @private
+             * @param  {File} file [description]
+             * @return {Promise}      promise resolving with file's data
+             */
+            _readFileData(file) {
+                const dataPromise = $q((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onerror = event => {
+                        console.error('Failed to read a file', event);
+                        reject('Failed to read a file');
+                    };
+                    reader.onload = event => {
+                        console.log(event, reader.result);
+                        // this.fileData = reader.result ??
+                        resolve(reader.result); // ???
+                    };
+
+                    reader.readAsArrayBuffer(file);
+                });
+
+                return dataPromise;
+            }
+
+            generateLayer() {
+                const commonConfig = super.generateLayer();
+
+                gapiService.gapi.layer.validateFile(this.fileType, this._fileData)
+                    .then(data => {
+                        console.log('111', data);
+                    })
+
+                return ;
+            }
+        }
+        // jscs:enable requireSpacesInAnonymousFunctionExpression
+
+        return LayerFileBlueprint;
     }
 })();
