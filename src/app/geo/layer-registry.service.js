@@ -29,7 +29,6 @@
                 legend: null,
                 layers,
                 constructLayers,
-                generateLayer,
                 registerLayer,
                 removeLayer,
                 aliasedFieldName,
@@ -117,7 +116,10 @@
                 }
             );
 
-            return initialRegistration();
+            // store service in geoState
+            geoState.layerRegistry = service;
+
+            return service;
 
             /***/
 
@@ -358,26 +360,17 @@
             }
 
             /**
-             * Creates esri layer object for a set of layers provided by the config, triggers attribute loading on layer load event and adds it to the legend afterwards.
-             * @return {Object} self for chaining
-             */
-            function initialRegistration() {
-                constructLayers(config.layers);
-
-                // store service in geoState
-                geoState.layerRegistry = service;
-
-                return service;
-            }
-
-            /**
              * Creates esri layer object for a set of layer config objects, triggers attribute loading on layer load event and adds it to the legend afterwards.
-             * @param  {Array} layerConfigs array of layer configuration objects
+             * @param  {Array} layerBlueprints array of layer configuration objects
              */
-            function constructLayers(layerConfigs) {
-                layerConfigs.forEach(layerConfig => {
+            function constructLayers(layerBlueprints) {
+                layerBlueprints.forEach(layerBlueprint => {
                     // TODO: decouple identifyservice from everything
-                    const layer = service.generateLayer(layerConfig);
+                    const layer = layerBlueprint.generateLayer();
+
+                    // get the layer config from blueprint
+                    // TODO: refactor further
+                    const layerConfig = layerBlueprint.initialConfig;
 
                     // create layerRecord only once
                     const layerRecord = registerLayer(layer, layerConfig);
@@ -537,55 +530,6 @@
                 service.layers[layer.id] = layerRecord;
 
                 return layerRecord;
-            }
-
-            /**
-             * Takes a layer in the config format and generates an appropriate layer object.
-             * @param {object} layerConfig a configuration fragment for a single layer
-             * @return {object} a layer object matching one of the esri/layers objects based on the layer type
-             */
-            function generateLayer(layerConfig) {
-                const handlers = {};
-
-                const commonConfig = {
-                    id: layerConfig.id
-                };
-
-                // `replace` strips trailing slashes
-                // TODO: Aly's comment:
-                // I think we have more than one of these strip trailing slash and get the feature index in our codebase. We should move it as a utility into geoApi at some point.
-                // Aleks: I suggest this as the only place to strip slashes from urls;
-                layerConfig.url = layerConfig.url.replace(/\/+$/, '');
-
-                handlers[layerTypes.esriDynamic] = config => {
-                    const l = new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig);
-
-                    return l;
-                };
-                handlers[layerTypes.esriFeature] = config => {
-                    commonConfig.mode = config.snapshot ?
-                        gapiService.gapi.layer.FeatureLayer.MODE_SNAPSHOT :
-                        gapiService.gapi.layer.FeatureLayer.MODE_ONDEMAND;
-                    const l = new gapiService.gapi.layer.FeatureLayer(config.url, commonConfig);
-
-                    return l;
-                };
-                handlers[layerTypes.esriImage] = config => {
-                    return new gapiService.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig);
-                };
-                handlers[layerTypes.esriTile] = config => {
-                    return new gapiService.gapi.layer.TileLayer(config.url, commonConfig);
-                };
-                handlers[layerTypes.ogcWms] = config => {
-                    commonConfig.visibleLayers = config.layerEntries.map(le => le.id);
-                    return new gapiService.gapi.layer.ogc.WmsLayer(config.url, commonConfig);
-                };
-
-                if (handlers.hasOwnProperty(layerConfig.layerType)) {
-                    return handlers[layerConfig.layerType](layerConfig);
-                } else {
-                    throw new Error('Your layer type is unacceptable');
-                }
             }
 
             /**

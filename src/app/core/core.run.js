@@ -41,7 +41,8 @@
         $translate.use('en-CA');
     }
 
-    function apiBlock($translate, $rootElement, $rootScope, $q, globalRegistry, geoService, configService, events) {
+    function apiBlock($translate, $rootElement, $rootScope, globalRegistry, geoService, configService, events,
+        LayerServiceBlueprint) {
         const service = {
             setLanguage,
             loadRcsLayers
@@ -73,10 +74,13 @@
         function loadRcsLayers(keys) {
 
             // trigger RCS web call, insert into config
-            configService.rcsAddKeys(keys).then(newLayerConfigs => {
-                // call layer register in geo module on those nodes
-                geoService.constructLayers(newLayerConfigs);
-            });
+            configService.rcsAddKeys(keys)
+                .then(newLayerConfigs => {
+                    // call layer register in geo module on those nodes
+                    const layerBlueprints = newLayerConfigs.map(layerConfig =>
+                        new LayerServiceBlueprint(layerConfig));
+                    geoService.constructLayers(layerBlueprints);
+                });
 
         }
     }
