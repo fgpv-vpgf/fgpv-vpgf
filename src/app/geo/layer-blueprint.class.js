@@ -189,7 +189,42 @@
         return LayerServiceBlueprint;
     }
 
-    function LayerFileBlueprint($q, LayerBlueprint, gapiService) {
+    function LayerFileBlueprint($q, LayerBlueprint, gapiService, geoService) {
+        // // FIXME:
+        // // FIXME:
+        // // FIXME:
+        // // FIXME: This function doesn't belong here!
+        // // FIXME:
+        // // FIXME:
+        // // FIXME:
+        function epsgLookup(code) {
+            console.log('imma searchin for ' + code);
+            return $q(resolve => {
+                //bring for the funtime lol switch
+                var defst = null;
+                switch (code) {
+                    case 'EPSG:102100':
+                        console.log('I FOUND A MAPJECTION');
+                        defst = '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs';
+                        break;
+
+                    case 'EPSG:3978':
+                        defst = '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
+                        break;
+
+                    case 'EPSG:3979':
+                        defst = '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
+                        break;
+
+                    case 'EPSG:54004':
+                        defst = '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs';
+                        break;
+                }
+
+                resolve(defst);
+            });
+        }
+
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         /**
@@ -277,9 +312,17 @@
                 return dataPromise;
             }
 
-            generateLayer() {
+            generateLayer(options) {
                 const commonConfig = super.generateLayer();
-                return ;
+                angular.merge(commonConfig, options, {
+                    layerId: commonConfig.id,
+                    epsgLookup: epsgLookup, // FIXME:
+                    targetWkid: geoService.mapObject.spatialReference.wkid
+                });
+
+                console.log(commonConfig);
+
+                return gapiService.gapi.layer.makeCsvLayer(this._formatedFileData.formattedData, commonConfig);
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
