@@ -27,9 +27,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
                 <div class="rv-subcontent">
 
                     <!-- Feature Key-Value list presentation  -->
-                    <div ng-if="self.display.data[0].requester.format === 'EsriFeature'">
-                        <rv-details-data data="self.display.data[0].data"></rv-details-data>
-                        
+                    <div rv-details-data data="self.display.data[0].data" ng-if="self.display.data[0].requester.format === 'EsriFeature'">
                         <!-- Original HTML using ng-repeat instead of a document fragment
                         <h5 class="rv-sub-subhead" ng-repeat-start="item in self.display.data[0].data">{{ item.name }}</h5>
                         <ul ng-repeat-end class="rv-details-zebra-list">
@@ -73,9 +71,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
                     <h5 ng-if="self.selectedItem.data.length === 0">
                         Nothing found</h5>
 
-                    <div ng-if="self.selectedItem.requester.format === 'EsriFeature'">
-                        <rv-details-data data="self.selectedItem.data"></rv-details-data>
-                        
+                    <div rv-details-data data="self.selectedItem.data" ng-if="self.selectedItem.requester.format === 'EsriFeature'">
                         <!-- Original HTML using ng-repeat instead of a document fragment
                         <h5 class="rv-sub-subhead" ng-repeat-start="item in self.selectedItem.data">{{ item.name }}</h5>
  

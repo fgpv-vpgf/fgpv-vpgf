@@ -18,7 +18,7 @@
 
     function rvDetailsData() {
         const directive = {
-            restrict: 'E',
+            restrict: 'A',
             scope: {
                 data: '='
             },
