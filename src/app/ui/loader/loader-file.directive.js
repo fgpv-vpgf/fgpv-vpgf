@@ -103,6 +103,7 @@
                     onContinue: configureOnContinue,
                     onCancel: configureOnCancel
                 },
+                fields: null,
                 form: null,
                 options: {}
             };
@@ -138,9 +139,17 @@
             console.log('User selected', self.select.dataType);
             self.layerBlueprint.fileType = self.select.dataType;
             self.layerBlueprint.valid
-                .then(() => stepper.nextStep())
+                .then(() => {
+                    self.configure.fields = {};
+                    self.layerBlueprint.fields.forEach(({ name }) =>
+                        self.configure.fields[name] = name);
+
+                    console.log(self.layerBlueprint.fields);
+
+                    stepper.nextStep();
+                })
                 .catch(error => {
-                    console.error('File type is wrong');
+                    console.error('File type is wrong', error);
                     // TODO: display error message that the file doesn not validate
                 });
         }
