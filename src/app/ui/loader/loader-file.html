@@ -113,7 +113,7 @@
                 <md-input-container class="md-block">
                     <label>Primary Field</label>
                     <md-select name="primaryField" ng-model="self.configure.options.primaryField" required>
-                        <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
+                        <md-option ng-repeat="(value, key) in self.configure.fields" value="{{ value }}">
                             {{ key }}
                         </md-option>
                     </md-select>
@@ -127,7 +127,7 @@
                     <md-input-container class="md-block" flex>
                         <label>Latitude Field</label>
                         <md-select name="latitude" ng-model="self.configure.options.latitude" required>
-                            <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
+                            <md-option ng-repeat="(value, key) in self.configure.fields" value="{{ value }}">
                                 {{ key }}
                             </md-option>
                         </md-select>
@@ -139,7 +139,7 @@
                     <md-input-container class="md-block" flex>
                         <label>Longitude Field</label>
                         <md-select name="longitude" ng-model="self.configure.options.longitude" required>
-                            <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
+                            <md-option ng-repeat="(value, key) in self.configure.fields" value="{{ value }}">
                                 {{ key }}
                             </md-option>
                         </md-select>

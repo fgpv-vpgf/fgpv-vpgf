@@ -246,6 +246,12 @@
                 return this._constructorPromise;
             }
 
+            get fields() {
+                console.log(this._formatedFileData);
+
+                return this._formatedFileData.fields;
+            }
+
             /**
              * Reads HTML5 File object data.
              * @private
