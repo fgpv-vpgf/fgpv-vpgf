@@ -41,7 +41,6 @@
         let stepper;
 
         self.closeLoaderFile = closeLoaderFile;
-
         self.dropActive = false; // flag to indicate if file drop zone is active
 
         // TODO: get datatypes from a loader service
@@ -72,7 +71,6 @@
                     onContinue: uploadOnContinue,
                     onCancel: uploadOnCancel
                 },
-                layerBlueprint: null,
                 form: null,
                 file: null,
                 fileData: null,
@@ -109,6 +107,8 @@
                 options: {}
             };
 
+            self.layerBlueprint = null;
+
             stepper
                 .addSteps(self.upload.step)
                 .addSteps(self.select.step)
@@ -135,8 +135,14 @@
         }
 
         function selectOnContinue() {
-            // console.log(self.select.dataType);
-            stepper.nextStep();
+            console.log('User selected', self.select.dataType);
+            self.layerBlueprint.fileType = self.select.dataType;
+            self.layerBlueprint.valid
+                .then(() => stepper.nextStep())
+                .catch(error => {
+                    console.error('File type is wrong');
+                    // TODO: display error message that the file doesn not validate
+                });
         }
 
         /**
@@ -153,7 +159,7 @@
          * In cases where user provides a file link, tries to load the file and then advanced to the next step.
          */
         function uploadOnContinue() {
-            self.upload.layerBlueprint = new LayerFileBlueprint(self.upload.fileUrl);
+            self.layerBlueprint = new LayerFileBlueprint(self.upload.fileUrl);
             onLayerBlueprintReady();
         }
 
@@ -189,14 +195,14 @@
         function uploadFileSuccess(file, message, flow) {
             console.log('success', file, message, flow);
 
-            self.upload.layerBlueprint = new LayerFileBlueprint(file.name, file.file, file.getExtension());
+            self.layerBlueprint = new LayerFileBlueprint(file.name, file.file, file.getExtension());
             onLayerBlueprintReady();
         }
 
         function onLayerBlueprintReady() {
-            self.upload.layerBlueprint.ready
+            self.layerBlueprint.ready
                 .then(() => {
-                    self.select.dataType = layerBlueprint.fileType;
+                    self.select.dataType = self.layerBlueprint.fileType;
                     $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
                 })
                 .catch(error => {

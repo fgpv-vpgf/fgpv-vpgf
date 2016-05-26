@@ -205,8 +205,9 @@
                 super();
 
                 this._fileData = null;
+                this._formatedFileData = null;
 
-                this._gapiPromise = gapiService.gapi.layer.predictLayerUrl(path)
+                this._constructorPromise = gapiService.gapi.layer.predictLayerUrl(path)
                     .then(fileInfo => {
                         // fileData is returned only if path is a url; if it's just a file name, only serviceType is returned                            this.fileData = fileInfo.fileData;
                         this.layerType = 'esriFeature';
@@ -231,11 +232,18 @@
 
             set fileType(value) {
                 this._fileType = value;
-                // TODO: validate file
+
+                return this;
+            }
+
+            get valid() {
+                return this._constructorPromise.then(() =>
+                        gapiService.gapi.layer.validateFile(this.fileType, this._fileData))
+                    .then(result => this._formatedFileData = result);
             }
 
             get ready() {
-                return this._gapiPromise;
+                return this._constructorPromise;
             }
 
             /**
@@ -265,12 +273,6 @@
 
             generateLayer() {
                 const commonConfig = super.generateLayer();
-
-                gapiService.gapi.layer.validateFile(this.fileType, this._fileData)
-                    .then(data => {
-                        console.log('111', data);
-                    })
-
                 return ;
             }
         }
