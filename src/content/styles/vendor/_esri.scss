@@ -147,6 +147,8 @@
 }
 
 @mixin overview {
+    $pathPrefix: "content/images/overview/";
+
     .esriOverviewMap {
         position: absolute;
         z-index: 99;
@@ -210,11 +212,11 @@
     }
 
     .esriOverviewMap .ovwMaximize {
-        background: url(../images/overview.png) 0 -130px;
+        background: url($pathPrefix + "overview.png") 0 -130px;
     }
 
     .esriOverviewMap .ovwRestore {
-        background: url(../images/overview.png) 0 -104px;
+        background: url($pathPrefix + "overview.png") 0 -104px;
     }
 
     .esriOverviewMap.ovwTL {
@@ -267,22 +269,26 @@
 
     .esriOverviewMap.ovwTL .ovwShow,
     .esriOverviewMap.ovwBR .ovwHide {
-        background: url(../images/overview.png) 0 -26px;
+        background: url($pathPrefix + "overview.png") 0 -26px;
+        margin: 10px;
     }
 
     .esriOverviewMap.ovwTR .ovwShow,
     .esriOverviewMap.ovwBL .ovwHide {
-        background: url(../images/overview.png) 0 0;
+        background: url($pathPrefix + "overview.png") 0 0;
+        margin: 10px;
     }
 
     .esriOverviewMap.ovwBL .ovwShow,
     .esriOverviewMap.ovwTR .ovwHide {
-        background: url(../images/overview.png) 0 -78px;
+        background: url($pathPrefix + "overview.png") 0 -78px;
+        margin: 10px;
     }
 
     .esriOverviewMap.ovwBR .ovwShow,
     .esriOverviewMap.ovwTL .ovwHide {
-        background: url(../images/overview.png) 0 -52px;
+        background: url($pathPrefix + "overview.png") 0 -52px;
+        margin: 10px;
     }
     /*.esriOverviewMap.ovwTL .ovwHide { background-image: url(../images/collapse-top-left.png); }
 .esriOverviewMap.ovwTR .ovwHide { background-image: url(../images/collapse-top-right.png); }
