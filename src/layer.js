@@ -108,6 +108,9 @@ function makeFileInfo(type, url, esriBundle) {
             getServerFile(url, esriBundle).then(data => {
                 info.fileData = data;
                 resolve(info);
+            }).catch(() => {
+                info.type = serviceType.Error;
+                resolve(info);
             });
         } else {
             resolve(info);
@@ -228,8 +231,8 @@ function pokeEsriService(url, esriBundle, hint) {
             }
         }, () => {
             // something went wrong, but that doesnt mean our service is invalid yet
-            // it's likely not ESRI.  return unknown and let main predictor keep investigating
-            resolve(makeInfo(serviceType.Unknown));
+            // it's likely not ESRI.  return Error and let main predictor keep investigating
+            resolve(makeInfo(serviceType.Error));
         });
     });
 }
@@ -398,13 +401,17 @@ function predictLayerUrlBuilder(esriBundle) {
                 // no hint. run tests until we find a match.
                 // test for file
                 pokeFile(url, esriBundle).then(infoFile => {
-                    if (infoFile.serviceType === serviceType.Unknown) {
+                    if (infoFile.serviceType === serviceType.Unknown ||
+                        infoFile.serviceType === serviceType.Error) {
+
                         // not a file, test for ESRI
                         pokeEsriService(url, esriBundle).then(infoEsri => {
-                            if (infoEsri.serviceType === serviceType.Unknown) {
+                            if (infoEsri.serviceType === serviceType.Unknown ||
+                                infoEsri.serviceType === serviceType.Error) {
+
                                 // FIXME REAL LOGIC COMING SOON
                                 // pokeWMS
-                                resolve(null);
+                                resolve(infoEsri);
                             } else {
                                 // it was a esri service. rejoice.
                                 resolve(infoEsri);
@@ -674,7 +681,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
     * Converts a GeoJSON object into a FeatureLayer.  Expects GeoJSON to be formed as a FeatureCollection
     * containing a uniform feature type (FeatureLayer type will be set according to the type of the first
     * feature entry).  Accepts the following options:
-    *   - targetWkid: Required. an integer for an ESRI wkid, defaults to map wkid if not specified
+    *   - targetWkid: Required. an integer for an ESRI wkid to project geometries to
     *   - renderer: a string identifying one of the properties in defaultRenders
     *   - sourceProjection: a string matching a proj4.defs projection to be used for the source data (overrides
     *     geoJson.crs)
