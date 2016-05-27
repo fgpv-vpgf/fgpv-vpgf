@@ -115,7 +115,7 @@
         return LayerBlueprint;
     }
 
-    function LayerServiceBlueprint(LayerBlueprint, gapiService, Geo) {
+    function LayerServiceBlueprint($q, LayerBlueprint, gapiService, Geo) {
         // generator functions for different layer types
         const layerServiceGenerators = {
             [Geo.Layer.Types.ESRI_DYNAMIC]: (config, commonConfig) =>
@@ -171,16 +171,16 @@
             /**
              * Generates a layer from an online service based on the layer type.
              * Takes a layer in the config format and generates an appropriate layer object.
-             * @param {object} layerConfig a configuration fragment for a single layer
-             * @return {object} a layer object matching one of the esri/layers objects based on the layer type
+             * @param {Object} layerConfig a configuration fragment for a single layer
+             * @return {Promise} resolving with a layer object matching one of the esri/layers objects based on the layer type
              */
             generateLayer() {
                 const commonConfig = super.generateLayer();
 
                 if (layerServiceGenerators.hasOwnProperty(this.layerType)) {
-                    return layerServiceGenerators[this.layerType](this.config, commonConfig);
+                    return $q.resolve(layerServiceGenerators[this.layerType](this.config, commonConfig));
                 } else {
-                    throw new Error('The layer type is not supported');
+                    return $q.reject(new Error('The layer type is not supported'));
                 }
             }
         }

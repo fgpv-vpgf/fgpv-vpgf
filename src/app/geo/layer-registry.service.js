@@ -364,13 +364,23 @@
              */
             function constructLayers(layerBlueprints) {
                 layerBlueprints.forEach(layerBlueprint => {
-                    // TODO: decouple identifyservice from everything
-                    const layer = layerBlueprint.generateLayer();
-
                     // get the layer config from blueprint
                     // TODO: refactor further
                     const layerConfig = layerBlueprint.initialConfig;
 
+                    // TODO: decouple identifyservice from everything
+                    layerBlueprint.generateLayer().then(layer =>
+                        createLayerRecord(layer, layerConfig));
+                });
+            }
+
+            /**
+             * Creates layer records for a given esri layer object and its config; add the layer to the map.
+             * @private
+             * @param  {Object} layer       esri layer object
+             * @param  {Object} layerConfig initial config object
+             */
+            function createLayerRecord(layer, layerConfig) {
                     // create layerRecord only once
                     const layerRecord = registerLayer(layer, layerConfig);
 
@@ -476,7 +486,6 @@
                         // add layer to the map triggering its loading process
                         mapObject.addLayer(layer, targetIndex);
                     }
-                });
             }
 
             /**
