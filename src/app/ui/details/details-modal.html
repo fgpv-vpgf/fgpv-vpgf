@@ -1,0 +1,14 @@
+<md-dialog aria-label="Details Summary" ng-cloak class="rv-details-summary">
+    <!-- TODO: add metadata translation -->
+    <rv-content-pane
+        close-panel="self.cancel()"
+        title-style="title"
+        title-value="{{ 'details.title' | translate }}: {{ self.display.selectedItem.requester.name }}, {{ self.display.selectedItem.requester.caption }} ">
+        <div class="rv-details">
+            <md-content class="rv-details-data rv-content" rv-detect-scrollbar>
+                <h4 class="md-subhead">{{ self.display.selectedItem.data.length }} itesm(s)</h4>
+                <rv-details-content></rv-details-content>
+            </md-content>
+        </div>
+    </rv-content-pane>
+</md-dialog>

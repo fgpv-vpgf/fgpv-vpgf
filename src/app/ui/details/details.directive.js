@@ -98,14 +98,17 @@
         self.display = stateManager.display.details; // garbage data
 
         // TODO: adding stateManger to scope to set up watch
-        $scope.$watch('self.display.data', newValue => {
-            // console.log('self.display.data', newValue);
+        $scope.$watch('self.display.isLoading', newValue => {
+            // if false, loading is finish, set the selected item
+            const data = self.display.data;
+
             // if multiple points added to the details panel ...
-            if (newValue && newValue.length > 0) {
-                // pick first point to be selected initially
-                self.selectedItem = newValue[0];
-            } else {
-                self.selectedItem = null;
+            if (!newValue && data) {
+                // pick first layer to be selected initially
+                self.selectedItem = data[0];
+
+                // set this value will trigger the watch inside details-content.directive.js
+                self.display.selectedItem = self.selectedItem;
             }
         });
 
@@ -133,6 +136,8 @@
         function selectItem(item) {
             self.selectedItem = item;
 
+            // set this value will trigger the watch inside details-content.directive.js
+            self.display.selectedItem = self.selectedItem;
             self.onLeave();
         }
     }
