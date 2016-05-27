@@ -29,7 +29,8 @@
     "datatables-scroller": "~1.4.0",
     "datatables-select": "~1.1.2",
     "ng-flow": "~2.7.1",
-    "datatables-buttons": "~1.1.2"
+    "datatables-buttons": "~1.1.2",
+    "geolocator": "~1.2.9"
   },
   "overrides": {
     "jquery": {
