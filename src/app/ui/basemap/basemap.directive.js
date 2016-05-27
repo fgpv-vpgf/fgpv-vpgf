@@ -66,24 +66,6 @@
         //     }
         // ];
 
-        // // TODO: remove this; revise when config schema is finalized
-        // // mocking basemap part of the config
-        // self.projections.forEach(projection => {
-        //     projection.items.forEach((basemap, index) => {
-        //         projection.items[index] = {
-        //             name: HolderIpsum.words(2, true),
-        //             type: HolderIpsum.words(1, true),
-        //             id: index,
-        //             url: basemap,
-        //             wkid: projection.wkid,
-        //             selected: false
-        //         };
-        //     });
-        // });
-
-        // // TODO: remove
-        // self.projections[1].items[0].selected = true;
-
         // TODO: code needs to be updated when config schema is stable
         // check to see if config service is ready
         // FIXME: clean up vars

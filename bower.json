@@ -24,7 +24,6 @@
     "bezier-easing": "^1.0.0",
     "dotjem-angular-tree": "~0.2.1",
     "geoapi": "http://fgpv.cloudapp.net/demo/gapi/geoapi-0.11.0.tgz",
-    "holder-ipsum": "https://github.com/euangoddard/holder-ipsum.git",
     "datatables.net": "~1.10.10",
     "datatables.net-dt": "~1.10.10",
     "datatables-scroller": "~1.4.0",
@@ -63,9 +62,6 @@
     },
     "datatables.net-dt": {
       "ignore": true
-    },
-    "holder-ipsum": {
-      "main": "holder-ipsum.js"
     },
     "angular-material": {
       "main": "angular-material.js"
