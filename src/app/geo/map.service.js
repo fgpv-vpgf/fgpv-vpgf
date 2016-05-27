@@ -1,3 +1,4 @@
+/*global geolocator*/
 (() => {
     'use strict';
 
@@ -41,7 +42,8 @@
                 selectBasemap,
                 setFullExtent,
                 setSelectedBaseMap,
-                zoomToGraphic
+                zoomToGraphic,
+                geolocateHere
             };
 
             return buildMapObject();
@@ -391,9 +393,35 @@
                 }
             }
 
-            /*
+            /**
+            * Fetches current location by IP address then zooms to the location
+            * @private
+            */
+            function geolocateHere() {
+                geolocator.locateByIP(location => {
+                    const map = service.mapObject;
+                    const cx = parseFloat(location.coords.longitude);
+                    const cy = parseFloat(location.coords.latitude);
+
+                    // make point into an extent so we can use Aly's localProjectExtent function
+                    const latlongExt = gapiService.gapi.mapManager.Extent(cx, cy, cx, cy,
+                            gapiService.gapi.proj.SpatialReference(4326));
+
+                    const projExt = gapiService.gapi.proj.localProjectExtent(latlongExt,
+                        map.spatialReference);
+
+                    const ext = gapiService.gapi.mapManager.Extent(projExt.x1, projExt.y1,
+                        projExt.x0, projExt.y0, projExt.sr);
+
+                    // get reprojected point and zoom to it
+                    const currPoint = ext.getCenter();
+                    map.centerAndZoom(currPoint, 8);
+                });
+            }
+
+            /**
             * Sets the current selected map id and extent set id, creates the fullExtent
-            * @param {id} base map id
+            * @param {String} id of base map
             */
             function setSelectedBaseMap(id) {
                 const blankBaseMapIdPattern = 'blank_basemap_';
@@ -432,7 +460,7 @@
 
             }
 
-            /*
+            /**
             * Ready a trigger on the map load event
             * Also initialize map full extent
             * @private
@@ -487,12 +515,11 @@
                 });
             }
 
-            /*
+            /**
              * Get basemap config from basemap id
              * @private
-             * @param id base Map id
-             * @param config config object
-             * @return {object} base map json object
+             * @param {String} id base Map id
+             * @return {Object} base map json object
              */
             function getBaseMapConfig(id) {
                 return config.baseMaps.find(basemapConfig => (basemapConfig.id === id));
@@ -510,9 +537,9 @@
                 service.loadingTimeout = $timeout(() => service.mapObject.isMapLoading = isLoading, delay);
             }
 
-            /*
+            /**
              * Hide base map
-             * @param hide flag indicates if basemap should be visible
+             * @param {Boolean} hide flag indicates if basemap should be visible
              */
             function hideBaseMap(hide) {
 
