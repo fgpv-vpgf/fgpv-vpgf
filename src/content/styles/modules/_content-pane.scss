@@ -25,6 +25,7 @@
 
             &-float {
                 display: flex;
+                flex-direction: column-reverse;
                 justify-content: flex-end;
                 position: absolute;
                 z-index: 1;

@@ -95,22 +95,16 @@
             initFooter();
 
             function initHeaderControls() {
-                // `self.headerControls` is a string of directive names separated by ';' to be inserted in the content pane's header
-                // TODO: option to add controls to the floating header?
-                if (self.headerControls) {
-                    const headerSpacer = element.find(`${HEADER_CLASS} ${SPACER_CLASS}`);
-
-                    self.headerControls.split(';')
-                        .forEach(controlName => {
-                            let controlElement = $compile(`<${controlName}></${controlName}>`)(scope);
-                            headerSpacer.after(controlElement);
-                        });
-                }
+                // add header controls
+                addHeaderControl(element, HEADER_CLASS);
             }
 
             function initFloatingHeader() {
                 if (self.floatingHeader) {
                     const floatingHeader = element.find(FLOATING_HEADER_CLASS);
+
+                    // add header controls
+                    addHeaderControl(element, FLOATING_HEADER_CLASS);
 
                     scope.$on('rv-detect-scrollbar', (evt, newValue, oldValue, scrollbarWidth) => {
                         // console.log(evt, oldValue, newValue, scrollbarWidth);
@@ -118,6 +112,25 @@
                             x: newValue ? -scrollbarWidth : 0
                         });
                     });
+                }
+            }
+
+            /**
+            * Add controls to panel header
+            * @private
+            * @param {Object} element panel header to add control to
+            * @param {String} headerClass class use to find the element where to add the controls
+            */
+            function addHeaderControl(element, headerClass) {
+                // `self.headerControls` is a string of directive names separated by ';' to be inserted in the content pane's header
+                if (self.headerControls) {
+                    const headerSpacer = element.find(`${headerClass} ${SPACER_CLASS}`);
+
+                    self.headerControls.split(';')
+                        .forEach(controlName => {
+                            let controlElement = $compile(`<${controlName}></${controlName}>`)(scope);
+                            headerSpacer.after(controlElement);
+                        });
                 }
             }
 
