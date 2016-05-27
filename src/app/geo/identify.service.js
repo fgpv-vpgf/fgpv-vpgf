@@ -158,6 +158,8 @@
             */
             function identifyEsriDynamicLayer(layerRecord, opts) {
                 const { layer, state } = layerRecord;
+
+                // ignore invisible layers by returning empty object
                 if (!layer.visibleAtMapScale || !layer.visible) {
                     return {};
                 }
@@ -166,8 +168,9 @@
 
                 // every dynamic layer is a group in toc; walk its items to create an entry in details panel
                 state.walkItems(legendEntry => {
-                    // ignore invisible sublayers
-                    if (!legendEntry.getVisibility()) {
+
+                    // ignore invisible sublayers and those where query option is false by returning empty object
+                    if (!legendEntry.getVisibility() || !legendEntry.options.query.value) {
                         return;
                     }
 
@@ -220,8 +223,10 @@
             function identifyOgcWmsLayer(layerRecord, opts) {
                 const { layer, state } = layerRecord;
 
-                // ignore layers with no mime type or invisible layers
-                if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType) || !layer.visible) {
+                // ignore layers with no mime type or invisible layers and those where query option is false by returning empty object
+                if (!wmsInfoMap.hasOwnProperty(state.featureInfoMimeType) ||
+                    !layer.visible ||
+                    !state.options.query.value) {
                     return {};
                 }
 
@@ -253,8 +258,8 @@
             function identifyEsriFeatureLayer(layerRecord, opts) {
                 const { layer, state } = layerRecord;
 
-                // ignore invisible layers by returning empty object
-                if (!layer.visibleAtMapScale || !layer.visible) {
+                // ignore invisible layers and those where identify option is false by returning empty object
+                if (!layer.visibleAtMapScale || !layer.visible || !state.options.query.value) {
                     return {};
                 }
 

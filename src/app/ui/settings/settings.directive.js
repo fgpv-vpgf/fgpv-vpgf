@@ -7,7 +7,8 @@
             'opacity'
         ],
         data: [
-            'snapshot'
+            'snapshot',
+            'query'
         ]
     };
 
@@ -57,6 +58,7 @@
         self.display = stateManager.display.settings;
         self.tocEntry = null;
         self.opacityValue = 0;
+        self.toggleQuery = toggleQuery;
 
         // watch for changing display value and store reference to new tocEntry and its opacity value
         $scope.$watch('self.display.data', newValue => {
@@ -82,6 +84,24 @@
             }
             geoService.setBboxState(self.tocEntry, val);
         });
+
+        /**
+        * Toggle the query value option. This option is use to let the layer appears in
+        * the identify window.
+        * @private
+        * @param {Object} tocEntry entry in the table of content.
+        * @param {Boolean} value enable query value.
+        */
+        function toggleQuery(tocEntry, value) {
+            // we need to set all group and item the value if we don't do it will be like This
+            // Group1 : true
+            //  Subgroup1 : false
+
+            if (tocEntry.type === 'group') {
+                // set include subgroup to true to cascade to all (group, subgroups and items)
+                tocEntry.walkItems(item => item.options.query.value = value, true);
+            }
+        }
 
         activateOpacitySetting();
 
