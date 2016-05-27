@@ -245,7 +245,7 @@
             $scope.$on('stateChangeComplete', (event, name, property, value) => { // , skip) => {
                 if (name === 'filters') {
                     console.log('Filters: ', event, name, property, value); // , skip);
-                    self.draw();
+                    self.draw(value);
 
                     if (property === 'active') {
                         isFullyOpen = value;
@@ -292,10 +292,28 @@
         }
 
         // re draw the table using scroller extension
-        function draw() {
+        function draw(value) {
             if (self.table) {
                 console.log('Filters: drawing table');
-                self.table.scroller.measure();
+
+                const scroll = self.table.scroller;
+                if (value === 'default') {
+                    // if scroll down to the bottom of the datatable and switch view from full to default,
+                    // scroller.measure() creates blank out when redraw, set measure argument to false
+                    scroll.measure(false);
+
+                    // because of no redraw datatable info does not update, set info manually
+                    // TODO: make sure it works for French translation as well
+                    const info = self.table.containers()[0].getElementsByClassName('dataTables_info')[0];
+                    const infos = info.innerText.split(' ');
+                    infos[1] = scroll.page().start + 1;
+                    infos[3] = scroll.page().end + 1;
+                    info.innerText = infos.join(' ');
+                } else if (value === 'full') {
+                    // if scroll down to the bottom of the datatable, then up a little bit and switch view from default to full,
+                    // scroller.measure(false) creates blank out when redraw, set measure argument to true
+                    scroll.measure(true);
+                }
 
                 // self.table.columns.adjust().draw();
             }
