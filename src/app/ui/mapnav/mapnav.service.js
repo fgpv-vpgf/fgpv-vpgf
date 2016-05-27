@@ -65,7 +65,7 @@
                 label: 'nav.label.geoLocation',
                 icon: 'maps:my_location',
                 tooltip: 'nav.tooltip.geoLocation',
-                action: function () {} // FIXME: user proper call
+                action: () => geoService.geolocateHere()
             },
             marquee: {
                 label: 'nav.label.search',
