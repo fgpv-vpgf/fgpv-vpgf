@@ -379,111 +379,111 @@
              * @param  {Object} layerConfig initial config object
              */
             function createLayerRecord(layer, layerConfig) {
-                    // create layerRecord only once
-                    const layerRecord = registerLayer(layer, layerConfig);
+                // create layerRecord only once
+                const layerRecord = registerLayer(layer, layerConfig);
 
-                    // add a placeholder and store its index
-                    const sourceIndex = ref.legendService.addPlaceholder(layerRecord);
+                // add a placeholder and store its index
+                const sourceIndex = ref.legendService.addPlaceholder(layerRecord);
 
-                    // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
-                    gapiService.gapi.events.wrapEvents(layer, {
-                        // TODO: add error event handler to register a failed layer, so the user can reload it
-                        load: () => {
-                            console.log('## layer load', layer.id);
+                // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
+                gapiService.gapi.events.wrapEvents(layer, {
+                    // TODO: add error event handler to register a failed layer, so the user can reload it
+                    load: () => {
+                        console.log('## layer load', layer.id);
 
-                            // FIXME look at layer config for flags indicating not to load attributes
-                            // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
+                        // FIXME look at layer config for flags indicating not to load attributes
+                        // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
 
-                            // make sure the placeholder hasn't been removed
-                            if (!layerRecord.state.removed) {
-                                // handles the asynch loading of attributes
-                                // get the attributes for the layer
-                                let attributesPromise = $q.resolve(null);
-                                if (Geo.Layer.NO_ATTRS.indexOf(layerConfig.layerType) < 0) {
-                                    attributesPromise = loadLayerAttributes(layer);
-                                }
-
-                                // replace placeholder with actual layer
-                                const index = ref.legendService.legend.remove(layerRecord.state);
-
-                                // set attribute bundle on the layer record
-                                // TODO: refactor;
-                                /* attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
-                                *  index an optional index indicating at which position the layer was added to the map
-                                * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
-                                * */
-                                layerRecord.attributeBundle = attributesPromise;
-                                ref.legendService.addLayer(layerRecord, index); // generate actual legend entry
-
-                                // TODO refactor this as it has nothing to do with layer registration;
-                                // will likely change as a result of layer reloading / reordering / properly ordered legend
-                                const opts = layerRecord.state.options;
-                                if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
-                                    setBboxState(layerRecord.state, true);
-                                }
-
-                                // if esriTile layer projection and map projection is different we can't show the layer. Disable the option.
-                                const wkid = geoState.mapService.mapObject.spatialReference.wkid;
-                                if (layerRecord.state.layerType === 'esriTile' &&
-                                    layer.spatialReference.wkid !== wkid) {
-                                    opts.visibility.enabled = false;
-                                    opts.visibility.value = false;
-                                }
-
-                                // set scale state
-                                setScaleDepState(layer.id);
+                        // make sure the placeholder hasn't been removed
+                        if (!layerRecord.state.removed) {
+                            // handles the asynch loading of attributes
+                            // get the attributes for the layer
+                            let attributesPromise = $q.resolve(null);
+                            if (Geo.Layer.NO_ATTRS.indexOf(layerConfig.layerType) < 0) {
+                                attributesPromise = loadLayerAttributes(layer);
                             }
-                        },
-                        error: data => {
-                            console.error('## layer error', layer.id, data);
 
-                            // TODO: if layer errors on initial loading, switch it to the error state
-                            // since this seems to happen sporadically, maybe don't change the template to errored placeholder on the first error and wait for some time or for the next error or something like that
+                            // replace placeholder with actual layer
+                            const index = ref.legendService.legend.remove(layerRecord.state);
 
-                            // switch placeholder to error
-                            // ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);
+                            // set attribute bundle on the layer record
+                            // TODO: refactor;
+                            /* attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
+                            *  index an optional index indicating at which position the layer was added to the map
+                            * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
+                            * */
+                            layerRecord.attributeBundle = attributesPromise;
+                            ref.legendService.addLayer(layerRecord, index); // generate actual legend entry
 
-                            // FIXME layers that fail on initial load will never be added to the layers list
-                            ref.legendService.setLayerState(layerRecord.state, Geo.Layer.States.ERROR, 100);
-                            ref.legendService.setLayerLoadingFlag(layerRecord.state, false, 100);
-                        },
-                        'update-start': data => {
-                            console.log('## update-start', layer.id, data);
-
-                            // in case the layer registration was bypassed (e.g. placeholder removed)
-                            if (service.layers[layer.id]) {
-                                ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, true, 300);
+                            // TODO refactor this as it has nothing to do with layer registration;
+                            // will likely change as a result of layer reloading / reordering / properly ordered legend
+                            const opts = layerRecord.state.options;
+                            if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
+                                setBboxState(layerRecord.state, true);
                             }
-                        },
-                        'update-end': data => {
-                            console.log('## update-end', layer.id, data);
 
-                            // TODO: need to restore layer to normal state if it errored previously
-
-                            // in case the layer registration was bypassed (e.g. placeholder removed)
-                            if (service.layers[layer.id]) {
-                                ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, false, 100);
-                            } else {
-                                // If the placeholder was removed then remove the layer from the map object
-                                mapObject.removeLayer(mapObject.getLayer(layer.id));
+                            // if esriTile layer projection and map projection is different we can't show the layer. Disable the option.
+                            const wkid = geoState.mapService.mapObject.spatialReference.wkid;
+                            if (layerRecord.state.layerType === 'esriTile' &&
+                                layer.spatialReference.wkid !== wkid) {
+                                opts.visibility.enabled = false;
+                                opts.visibility.value = false;
                             }
+
+                            // set scale state
+                            setScaleDepState(layer.id);
                         }
-                    });
+                    },
+                    error: data => {
+                        console.error('## layer error', layer.id, data);
 
-                    // Make sure the placeholder is still there
-                    if (!layerRecord.state.removed) {
+                        // TODO: if layer errors on initial loading, switch it to the error state
+                        // since this seems to happen sporadically, maybe don't change the template to errored placeholder on the first error and wait for some time or for the next error or something like that
 
-                        let targetId = service.legend.items[sourceIndex + 1];
+                        // switch placeholder to error
+                        // ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);
 
-                        // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
-                        targetId = typeof targetId === 'undefined' ? targetId : targetId.id.replace('placeholder', '');
-                        const targetIndex = getLayerInsertPosition(layerRecord.initialState.id, targetId);
+                        // FIXME layers that fail on initial load will never be added to the layers list
+                        ref.legendService.setLayerState(layerRecord.state, Geo.Layer.States.ERROR, 100);
+                        ref.legendService.setLayerLoadingFlag(layerRecord.state, false, 100);
+                    },
+                    'update-start': data => {
+                        console.log('## update-start', layer.id, data);
 
-                        console.log(`adding ${layerRecord.state.name} to map at ${targetIndex}`);
+                        // in case the layer registration was bypassed (e.g. placeholder removed)
+                        if (service.layers[layer.id]) {
+                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, true, 300);
+                        }
+                    },
+                    'update-end': data => {
+                        console.log('## update-end', layer.id, data);
 
-                        // add layer to the map triggering its loading process
-                        mapObject.addLayer(layer, targetIndex);
+                        // TODO: need to restore layer to normal state if it errored previously
+
+                        // in case the layer registration was bypassed (e.g. placeholder removed)
+                        if (service.layers[layer.id]) {
+                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, false, 100);
+                        } else {
+                            // If the placeholder was removed then remove the layer from the map object
+                            mapObject.removeLayer(mapObject.getLayer(layer.id));
+                        }
                     }
+                });
+
+                // Make sure the placeholder is still there
+                if (!layerRecord.state.removed) {
+
+                    let targetId = service.legend.items[sourceIndex + 1];
+
+                    // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
+                    targetId = typeof targetId === 'undefined' ? targetId : targetId.id.replace('placeholder', '');
+                    const targetIndex = getLayerInsertPosition(layerRecord.initialState.id, targetId);
+
+                    console.log(`adding ${layerRecord.state.name} to map at ${targetIndex}`);
+
+                    // add layer to the map triggering its loading process
+                    mapObject.addLayer(layer, targetIndex);
+                }
             }
 
             /**
