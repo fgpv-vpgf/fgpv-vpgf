@@ -22,7 +22,6 @@
     "maxdepth": 5,
     "maxstatements": 40,
     "maxcomplexity": 8,
-    "trailing": true,
 
     "asi": false,
     "boss": false,
