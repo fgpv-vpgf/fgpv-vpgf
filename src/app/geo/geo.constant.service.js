@@ -1,76 +1,63 @@
 (() => {
     'use strict';
 
-    const LAYER_TYPES = {
-        esriDynamic: 'esriDynamic',
-        esriFeature: 'esriFeature',
-        esriImage: 'esriImage',
-        esriTile: 'esriTile',
-        ogcWms: 'ogcWms'
+    const GEO = {
+        Layer: {
+            Types: {
+                ESRI_DYNAMIC: 'esriDynamic',
+                ESRI_FEATURE: 'esriFeature',
+                ESRI_IMAGE: 'esriImage',
+                ESRI_TILE: 'esriTile',
+                OGC_WMS: 'ogcWms'
+            },
+            NO_ATTRS: ['esriImage', 'esriTile', 'ogcWms'],
+            QUERYABLE: ['esriDynamic', 'esriFeature', 'ogcWms'],
+            Ogc: {
+                INFO_FORMAT_MAP: {
+                    'text/html;fgpv=summary': 'HTML',
+                    'text/html': 'HTML',
+                    'text/plain': 'Text',
+                    'application/json': 'EsriFeature'
+                }
+            },
+            Esri: {
+                GEOMETRY_TYPES: {
+                    esriGeometryPoint: 'geometry.type.esriGeometryPoint',
+                    esriGeometryPolygon: 'geometry.type.esriGeometryPolygon',
+                    esriGeometryPolyline: 'geometry.type.esriGeometryPolyline',
+                    generic: 'geometry.type.generic'
+                }
+            },
+            States: { // these are used as css classes; hence the `rv` prefix
+                DEFAULT: 'rv-default',
+                ERROR: 'rv-error'
+            }
+        }
     };
-
-    const LAYER_SORT_GROUPS = [
-        [
-            LAYER_TYPES.esriFeature
-        ],
-        [
-            LAYER_TYPES.esriDynamic,
-            LAYER_TYPES.esriImage,
-            LAYER_TYPES.esriTile,
-            LAYER_TYPES.ogcWms
+    angular.extend(GEO.Layer, {
+        NO_ATTRS: [GEO.Layer.Types.ESRI_IMAGE, GEO.Layer.Types.ESRI_TILE, GEO.Layer.Types.OGC_WMS],
+        QUERYABLE: [GEO.Layer.Types.ESRI_FEATURE, GEO.Layer.Types.ESRI_DYNAMIC, GEO.Layer.Types.OGC_WMS],
+        SORT_GROUPS: [
+            [GEO.Layer.Types.ESRI_FEATURE],
+            [GEO.Layer.Types.ESRI_IMAGE, GEO.Layer.Types.ESRI_TILE,
+             GEO.Layer.Types.ESRI_DYNAMIC, GEO.Layer.Types.OGC_WMS]
         ]
-    ];
-
-    const LAYER_NOATTRS = ['esriImage', 'esriTile', 'ogcWms'];
-    const LAYER_TYPES_QUERYABLE = ['esriDynamic', 'esriFeature', 'ogcWms'];
-
-    const WMS_INFO_MAP = {
-        'text/html;fgpv=summary': 'HTML',
-        'text/html': 'HTML',
-        'text/plain': 'Text',
-        'application/json': 'EsriFeature'
-    };
-
-    const LAYER_TYPE_OPTIONS = {
-        esriDynamic: 'dynamicLayerOptionsNode',
-        esriDynamicLayerEntry: 'dynamicLayerEntryNode',
-        esriFeature: 'featureLayerOptionsNode',
-        esriImage: 'basicLayerOptionsNode',
-        esriTile: 'basicLayerOptionsNode',
-        ogcWms: 'compoundLayerOptionsNode',
-        ogcWmsLayerEntry: 'wmsLayerEntryNode'
-    };
-
-    const GEOMETRY_TYPES = {
-        esriGeometryPoint: 'geometry.type.esriGeometryPoint',
-        esriGeometryPolygon: 'geometry.type.esriGeometryPolygon',
-        esriGeometryPolyline: 'geometry.type.esriGeometryPolyline',
-        generic: 'geometry.type.generic'
-    };
+    });
 
     // this is populated with default schema snippets during build;
     const LAYER_CONFIG_DEFAULTS = '_LAYER_CONFIG_DEFAULTS_';
 
     /**
      * @ngdoc service
-     * @name layerTypes
+     * @name Geo
      * @module app.geo
      * @description
      *
-     * The `layerTypes` constant service provides a list of supported layer types.
+     * The `Geo` constant service is a container for all app.geo related constants.
      */
     angular
         .module('app.geo')
-        .constant('layerTypes', LAYER_TYPES)
-        .constant('layerStates', { // these are used as css classes; hence the `rv` prefix
-            default: 'rv-default',
-            error: 'rv-error'
-        })
-        .constant('geometryTypes', GEOMETRY_TYPES)
-        .constant('layerNoattrs', LAYER_NOATTRS)
-        .constant('layerTypesQueryable', LAYER_TYPES_QUERYABLE)
-        .constant('layerSortGroups', LAYER_SORT_GROUPS)
-        .constant('wmsInfoMap', WMS_INFO_MAP)
+        .constant('Geo', GEO)
         .service('layerDefaults', () => {
             // construct layer default options and flags objects from schema snippets
             const flagDefaults = {
@@ -93,6 +80,15 @@
 
             const service = {};
 
+            const LAYER_TYPE_OPTIONS = {
+                esriDynamic: 'dynamicLayerOptionsNode',
+                esriDynamicLayerEntry: 'dynamicLayerEntryNode',
+                esriFeature: 'featureLayerOptionsNode',
+                esriImage: 'basicLayerOptionsNode',
+                esriTile: 'basicLayerOptionsNode',
+                ogcWms: 'compoundLayerOptionsNode',
+                ogcWmsLayerEntry: 'wmsLayerEntryNode'
+            };
             Object.entries(LAYER_TYPE_OPTIONS)
                 .forEach(([key, value]) => {
                     service[key] = {
