@@ -70,7 +70,7 @@
         }
 
         get latfield() {
-            return this._latfield
+            return this._latfield;
         }
 
         set latfield(value) {
@@ -185,7 +185,7 @@
         return LayerBlueprint;
     }
 
-    function LayerServiceBlueprint($q, LayerBlueprint, gapiService, Geo) {
+    function LayerServiceBlueprintWrapper($q, LayerBlueprint, gapiService, Geo) {
         // generator functions for different layer types
         const layerServiceGenerators = {
             [Geo.Layer.Types.ESRI_DYNAMIC]: (config, commonConfig) =>
@@ -260,49 +260,6 @@
     }
 
     function LayerFileBlueprintWrapper($q, LayerBlueprint, gapiService, geoService) {
-        // // FIXME:
-        // // FIXME:
-        // // FIXME:
-        // // FIXME: This function doesn't belong here!
-        // // FIXME:
-        // // FIXME:
-        // // FIXME:
-        // jscs:disable maximumLineLength
-        function epsgLookup(code) {
-            console.log('imma searchin for ' + code);
-            return $q(resolve => {
-                // bring for the funtime lol switch
-                var defst = null;
-                switch (code) {
-                case 'EPSG:102100':
-                    console.log('I FOUND A MAPJECTION');
-                    defst =
-                        '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs';
-                    break;
-
-                case 'EPSG:3978':
-                    defst =
-                        '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
-                    break;
-
-                case 'EPSG:3979':
-                    defst =
-                        '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
-                    break;
-
-                case 'EPSG:54004':
-                    defst =
-                        '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs';
-                    break;
-                }
-
-                resolve(defst);
-            });
-        }
-        // jscs:enable maximumLineLength
-
-
-
         /*const USER_CONFIG = {
             [gapiService.gapi.layer.serviceType.CSV]: FileCsvBlueprintUserOptions,
             [gapiService.gapi.layer.serviceType.GeoJSON]: FileGeoJsonBlueprintUserOptions,
@@ -363,7 +320,7 @@
                 this._validPromise = this._constructorPromise
                     .then(() => gapiService.gapi.layer.validateFile(this.fileType, this._fileData))
                     .then(result => {
-                        this._userConfig = new FileCsvBlueprintUserOptions;
+                        this._userConfig = new USER_CONFIG[this.fileType]();
                         this._formatedFileData = result;
                     })
                     .catch(error => console.error(error));
@@ -408,11 +365,11 @@
                 return dataPromise;
             }
 
-            generateLayer(options) {
+            generateLayer() {
                 const commonConfig = super.generateLayer();
                 angular.extend(commonConfig, this.userConfig, {
                     layerId: commonConfig.id,
-                    epsgLookup: epsgLookup, // FIXME:
+                    epsgLookup: geoService.psgLookup, // FIXME:
                     targetWkid: geoService.mapObject.spatialReference.wkid
                 });
 
