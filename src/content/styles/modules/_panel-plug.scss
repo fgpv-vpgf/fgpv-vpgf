@@ -11,7 +11,7 @@
         height: $height;
 
         // in active state, panel takes up all space in the container plug
-        .panel {
+        .rv-panel {
             top: 0;
             right: 0;
             left: 0;
@@ -73,7 +73,7 @@
         top: $top;
         bottom: $bottom;
 
-        .panel {
+        .rv-panel {
             // set magins on the panel so it stays the same exact size regardless of the expanded plug container
             margin: {
                 left: $leftBuffer;
