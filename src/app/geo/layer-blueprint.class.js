@@ -33,9 +33,9 @@
      */
     angular
         .module('app.geo')
-        .factory('LayerBlueprint', LayerBlueprint)
-        .factory('LayerServiceBlueprint', LayerServiceBlueprint)
-        .factory('LayerFileBlueprint', LayerFileBlueprint);
+        .factory('LayerBlueprint', LayerBlueprintWrapper)
+        .factory('LayerServiceBlueprint', LayerServiceBlueprintWrapper)
+        .factory('LayerFileBlueprint', LayerFileBlueprintWrapper);
 
     // jscs:disable requireSpacesInAnonymousFunctionExpression
     class BlueprintUserOptions {
@@ -99,7 +99,7 @@
     }
     // jscs:disable requireSpacesInAnonymousFunctionExpression
 
-    function LayerBlueprint(layerDefaults) {
+    function LayerBlueprintWrapper(layerDefaults) {
         let idCounter = 0; // layer counter for generating layer ids
 
         // jscs doesn't like enhanced object notation
@@ -259,7 +259,7 @@
         return LayerServiceBlueprint;
     }
 
-    function LayerFileBlueprint($q, LayerBlueprint, gapiService, geoService) {
+    function LayerFileBlueprintWrapper($q, LayerBlueprint, gapiService, geoService) {
         // // FIXME:
         // // FIXME:
         // // FIXME:
