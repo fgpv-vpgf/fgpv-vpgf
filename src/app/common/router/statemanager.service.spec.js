@@ -252,52 +252,6 @@ describe('stateManager', () => {
             $rootScope.$digest();
         });
 
-        it('should keep panel change history', done => {
-            let state = stateManager.state;
-
-            expect(state.main.history.length)
-                .toBe(0);
-
-            // open mainToc; main should open as parent
-            // need to listen on item state changes and resolve locks on the stateManager
-            $rootScope.$watch(() => state.mainToc.active, () =>
-                stateManager.callback('mainToc', 'active'));
-            $rootScope.$watch(() => state.mainToolbox.active, () =>
-                stateManager.callback('mainToolbox', 'active'));
-            $rootScope.$watch(() => state.main.active, () =>
-                stateManager.callback('main', 'active'));
-
-            $rootScope.$digest(); // need to kickstart digest cycle to init watches
-
-            stateManager.setActive('mainToc')
-                .then(() => {
-                    expect(state.main.history.length)
-                        .toBe(1);
-                    expect(state.main.history[0])
-                        .toBe('mainToc');
-
-                    // open toolbox; toc should close
-                    return stateManager.setActive('mainToolbox');
-                })
-                .then(() => {
-                    expect(state.main.history.length)
-                        .toBe(2);
-
-                    // close toolbox
-                    return stateManager.setActive('mainToolbox');
-                })
-                .then(() => {
-                    expect(state.main.history.length)
-                        .toBe(3);
-                    expect(state.main.history[2])
-                        .toEqual(null);
-
-                    done();
-                });
-
-            $rootScope.$digest();
-        });
-
         // FIXME: test is broken; it should pass after the TODO on line 146 in stateManager.js is done
         xit('should track change history properly', done => {
             let state = stateManager.state;
