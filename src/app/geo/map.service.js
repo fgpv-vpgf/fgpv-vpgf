@@ -43,7 +43,7 @@
                 setFullExtent,
                 setSelectedBaseMap,
                 zoomToGraphic,
-                geolocateHere
+                fetchLocation
             };
 
             return buildMapObject();
@@ -394,29 +394,40 @@
             }
 
             /**
-            * Fetches current location by IP address then zooms to the location
+            * Takes a location object in lat/long, converts to current map spatialReference using
+            * reprojection method in geoApi, and zooms to the point.
+            *
+            * @param {Object} location is a location object, containing geometries in lat/long
+            */
+            function geolocate(location) {
+                const map = service.mapObject;
+                const cx = parseFloat(location.coords.longitude);
+                const cy = parseFloat(location.coords.latitude);
+
+                // make point into an extent so we can use Aly's localProjectExtent function
+                const latlongExt = gapiService.gapi.mapManager.Extent(cx, cy, cx, cy,
+                        gapiService.gapi.proj.SpatialReference(4326));
+
+                const projExt = gapiService.gapi.proj.localProjectExtent(latlongExt,
+                    map.spatialReference);
+
+                const ext = gapiService.gapi.mapManager.Extent(projExt.x1, projExt.y1,
+                    projExt.x0, projExt.y0, projExt.sr);
+
+                // get reprojected point and zoom to it
+                const currPoint = ext.getCenter();
+                map.centerAndZoom(currPoint, 8);
+            }
+
+            /**
+            * Fetches current location using browser HTML5 location. If refused,
+            * falls back to fetch location by IP address then zooms to the location
             * @private
             */
-            function geolocateHere() {
-                geolocator.locateByIP(location => {
-                    const map = service.mapObject;
-                    const cx = parseFloat(location.coords.longitude);
-                    const cy = parseFloat(location.coords.latitude);
-
-                    // make point into an extent so we can use Aly's localProjectExtent function
-                    const latlongExt = gapiService.gapi.mapManager.Extent(cx, cy, cx, cy,
-                            gapiService.gapi.proj.SpatialReference(4326));
-
-                    const projExt = gapiService.gapi.proj.localProjectExtent(latlongExt,
-                        map.spatialReference);
-
-                    const ext = gapiService.gapi.mapManager.Extent(projExt.x1, projExt.y1,
-                        projExt.x0, projExt.y0, projExt.sr);
-
-                    // get reprojected point and zoom to it
-                    const currPoint = ext.getCenter();
-                    map.centerAndZoom(currPoint, 8);
-                });
+            function fetchLocation() {
+                geolocator.locate(geolocate, err => {
+                    console.warn('Geolocation error: ', err);
+                }, 0, { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 });
             }
 
             /**

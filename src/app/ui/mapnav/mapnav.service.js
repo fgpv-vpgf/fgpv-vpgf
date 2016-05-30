@@ -65,7 +65,7 @@
                 label: 'nav.label.geoLocation',
                 icon: 'maps:my_location',
                 tooltip: 'nav.tooltip.geoLocation',
-                action: () => geoService.geolocateHere()
+                action: () => geoService.fetchLocation()
             },
             marquee: {
                 label: 'nav.label.search',
