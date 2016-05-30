@@ -16,7 +16,7 @@
         .module('app.layout')
         .directive('rvShell', rvShell);
 
-    function rvShell(storageService, stateManager, $rootElement) {
+    function rvShell(storageService, stateManager) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/layout/shell.html',
@@ -31,13 +31,10 @@
 
         function link(scope, el) {
             storageService.panels.shell = el;
-
-            // close all panels when escape key is pressed
-            $rootElement.bind('keydown', event => {
+            $(window).bind('keydown', event => {
                 if (event.which === 27) {
                     scope.$apply(() => {
-                        Object.keys(stateManager.state)
-                            .forEach(pName => stateManager.setActive({ [pName]: false }));
+                        stateManager.closePanelFromHistory();
                     });
                 }
             });
