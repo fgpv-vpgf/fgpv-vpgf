@@ -12,30 +12,92 @@
      *
      */
     /**
-      * @ngdoc service
-      * @name LayerServiceBlueprint
-      * @module app.geo
-      * @requires dependencies
-      * @description
-      *
-      * The `LayerServiceBlueprint` service returns `LayerServiceBlueprint` class to be used when creating layers from online services (supplied by config, RCS or user added).
-      *
-      */
+     * @ngdoc service
+     * @name LayerServiceBlueprint
+     * @module app.geo
+     * @requires dependencies
+     * @description
+     *
+     * The `LayerServiceBlueprint` service returns `LayerServiceBlueprint` class to be used when creating layers from online services (supplied by config, RCS or user added).
+     *
+     */
     /**
-       * @ngdoc service
-       * @name LayerFileBlueprint
-       * @module app.geo
-       * @requires dependencies
-       * @description
-       *
-       * The `LayerFileBlueprint` service returns `LayerFileBlueprint` class to be used when creating layers from user-supplied files.
-       *
-       */
+     * @ngdoc service
+     * @name LayerFileBlueprint
+     * @module app.geo
+     * @requires dependencies
+     * @description
+     *
+     * The `LayerFileBlueprint` service returns `LayerFileBlueprint` class to be used when creating layers from user-supplied files.
+     *
+     */
     angular
         .module('app.geo')
         .factory('LayerBlueprint', LayerBlueprint)
         .factory('LayerServiceBlueprint', LayerServiceBlueprint)
         .factory('LayerFileBlueprint', LayerFileBlueprint);
+
+    // jscs:disable requireSpacesInAnonymousFunctionExpression
+    class BlueprintUserOptions {
+        constructor() {
+            this._layerName = '';
+            this._primaryField = '';
+        }
+
+        get layerName() {
+            return this._layerName;
+        }
+
+        set layerName(value) {
+            this._layerName = value;
+        }
+
+        get primaryField() {
+            return this._primaryField;
+        }
+
+        set primaryField(value) {
+            this._primaryField = value;
+        }
+    }
+
+    class FileCsvBlueprintUserOptions extends BlueprintUserOptions {
+        constructor() {
+            super();
+
+            this._latfield = '';
+            this._lonfield = '';
+        }
+
+        get latfield() {
+            return this._latfield
+        }
+
+        set latfield(value) {
+            this._latfield = value;
+        }
+
+        get longfield() {
+            return this._lonfield;
+        }
+
+        set longfield(value) {
+            this._lonfield = value;
+        }
+    }
+
+    class FileGeoJsonBlueprintUserOptions extends BlueprintUserOptions {
+        constructor() {
+            super();
+        }
+    }
+
+    class FileShapefileBlueprintUserOptions extends BlueprintUserOptions {
+        constructor() {
+            super();
+        }
+    }
+    // jscs:disable requireSpacesInAnonymousFunctionExpression
 
     function LayerBlueprint(layerDefaults) {
         let idCounter = 0; // layer counter for generating layer ids
@@ -57,6 +119,8 @@
                 }
 
                 this._applyDefaults();
+
+                this._userConfig = {};
             }
 
             /**
@@ -91,11 +155,17 @@
                 this._applyDefaults();
             }
 
+            get userConfig() {
+                return this._userConfig;
+            }
+
             /**
              * Generates a layer object. This is a stub function to be fully implemented by subcalasses.
              * @return {Object} "common config" ? witch contains layer id
              */
             generateLayer() {
+                // TODO: replace with a throw function
+                // TODO: move id generation to where the config is bound initially
                 // generate id if missing when generating layer
                 if (typeof this.config.id === 'undefined') {
                     this.config.id = `${this.layerType}#${idCounter++}`;
@@ -180,7 +250,7 @@
                 if (layerServiceGenerators.hasOwnProperty(this.layerType)) {
                     return $q.resolve(layerServiceGenerators[this.layerType](this.config, commonConfig));
                 } else {
-                    return $q.reject(new Error('The layer type is not supported'));
+                    throw new Error('The layer type is not supported');
                 }
             }
         }
@@ -197,33 +267,53 @@
         // // FIXME:
         // // FIXME:
         // // FIXME:
+        // jscs:disable maximumLineLength
         function epsgLookup(code) {
             console.log('imma searchin for ' + code);
             return $q(resolve => {
-                //bring for the funtime lol switch
+                // bring for the funtime lol switch
                 var defst = null;
                 switch (code) {
-                    case 'EPSG:102100':
-                        console.log('I FOUND A MAPJECTION');
-                        defst = '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs';
-                        break;
+                case 'EPSG:102100':
+                    console.log('I FOUND A MAPJECTION');
+                    defst =
+                        '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs';
+                    break;
 
-                    case 'EPSG:3978':
-                        defst = '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
-                        break;
+                case 'EPSG:3978':
+                    defst =
+                        '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
+                    break;
 
-                    case 'EPSG:3979':
-                        defst = '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
-                        break;
+                case 'EPSG:3979':
+                    defst =
+                        '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
+                    break;
 
-                    case 'EPSG:54004':
-                        defst = '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs';
-                        break;
+                case 'EPSG:54004':
+                    defst =
+                        '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs';
+                    break;
                 }
 
                 resolve(defst);
             });
         }
+        // jscs:enable maximumLineLength
+
+
+
+        /*const USER_CONFIG = {
+            [gapiService.gapi.layer.serviceType.CSV]: FileCsvBlueprintUserOptions,
+            [gapiService.gapi.layer.serviceType.GeoJSON]: FileGeoJsonBlueprintUserOptions,
+            [gapiService.gapi.layer.serviceType.Shapefile]: FileShapefileBlueprintUserOptions
+        };*/
+        // TODO: get file service types from geoapi
+        const USER_CONFIG = {
+            csv: FileCsvBlueprintUserOptions,
+            geojosn: FileGeoJsonBlueprintUserOptions,
+            shapefile: FileShapefileBlueprintUserOptions
+        };
 
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
@@ -236,11 +326,14 @@
          * @return {String}           service type: 'csv', 'shapefile', 'geojosn'
          */
         class LayerFileBlueprint extends LayerBlueprint {
-            constructor(path, file, extension) {
+            constructor(path, file) { // , extension) {
                 super();
 
                 this._fileData = null;
                 this._formatedFileData = null;
+
+                // empty blueprint is not valid by default
+                this._validPromise = $q.reject();
 
                 this._constructorPromise = gapiService.gapi.layer.predictLayerUrl(path)
                     .then(fileInfo => {
@@ -252,7 +345,7 @@
                             // if there is file object, read it and store the data
                             return this._readFileData(file)
                                 .then(fileData => this._fileData = fileData);
-                        } else if (typeof fileInfo.fileData !== 'undefined'){
+                        } else if (typeof fileInfo.fileData !== 'undefined') {
                             this._fileData = fileInfo.fileData;
                             return undefined;
                         } else {
@@ -267,14 +360,17 @@
 
             set fileType(value) {
                 this._fileType = value;
-
-                return this;
+                this._validPromise = this._constructorPromise
+                    .then(() => gapiService.gapi.layer.validateFile(this.fileType, this._fileData))
+                    .then(result => {
+                        this._userConfig = new FileCsvBlueprintUserOptions;
+                        this._formatedFileData = result;
+                    })
+                    .catch(error => console.error(error));
             }
 
             get valid() {
-                return this._constructorPromise.then(() =>
-                        gapiService.gapi.layer.validateFile(this.fileType, this._fileData))
-                    .then(result => this._formatedFileData = result);
+                return this._validPromise;
             }
 
             get ready() {
@@ -314,11 +410,13 @@
 
             generateLayer(options) {
                 const commonConfig = super.generateLayer();
-                angular.merge(commonConfig, options, {
+                angular.extend(commonConfig, this.userConfig, {
                     layerId: commonConfig.id,
                     epsgLookup: epsgLookup, // FIXME:
                     targetWkid: geoService.mapObject.spatialReference.wkid
                 });
+
+                this.config.name = this.userConfig.layerName;
 
                 console.log(commonConfig);
 

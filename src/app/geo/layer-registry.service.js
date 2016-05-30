@@ -365,12 +365,10 @@
             function constructLayers(layerBlueprints) {
                 layerBlueprints.forEach(layerBlueprint => {
                     // get the layer config from blueprint
-                    // TODO: refactor further
-                    const layerConfig = layerBlueprint.initialConfig;
-
                     // TODO: decouple identifyservice from everything
-                    layerBlueprint.generateLayer().then(layer =>
-                        createLayerRecord(layer, layerConfig));
+                    layerBlueprint.generateLayer().then(layer => {
+                        createLayerRecord(layer, layerBlueprint.config);
+                    });
                 });
             }
 

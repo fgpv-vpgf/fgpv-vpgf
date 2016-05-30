@@ -126,7 +126,7 @@
                 <div layout="row" ng-switch-when="csv">
                     <md-input-container class="md-block" flex>
                         <label>Latitude Field</label>
-                        <md-select name="latitude" ng-model="self.configure.options.latitude" required>
+                        <md-select name="latitude" ng-model="self.configure.options.latfield" required>
                             <md-option ng-repeat="(value, key) in self.configure.fields" value="{{ value }}">
                                 {{ key }}
                             </md-option>
@@ -138,7 +138,7 @@
                     </md-input-container>
                     <md-input-container class="md-block" flex>
                         <label>Longitude Field</label>
-                        <md-select name="longitude" ng-model="self.configure.options.longitude" required>
+                        <md-select name="longitude" ng-model="self.configure.options.lonfield" required>
                             <md-option ng-repeat="(value, key) in self.configure.fields" value="{{ value }}">
                                 {{ key }}
                             </md-option>
