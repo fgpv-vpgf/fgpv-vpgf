@@ -95,7 +95,7 @@
                 };
 
                 // find appropriate sort group based on the initial layer type
-                this.sortGroup = layerSortGroups.findIndex(sortGroup =>
+                this.sortGroup = Geo.Layer.SORT_GROUPS.findIndex(sortGroup =>
                     sortGroup.indexOf(initialState.layerType) !== -1);
 
                 // sets default geometry type which is 'feature'
@@ -383,7 +383,7 @@
             });
 
             // find appropriate sort group based on the initial layer type
-            this.sortGroup = layerSortGroups.findIndex(sortGroup =>
+            this.sortGroup = Geo.Layer.SORT_GROUPS.findIndex(sortGroup =>
                 sortGroup.indexOf(initialState.layerType) !== -1);
 
             const layerEntryType = `${initialState.layerType}LayerEntry`;

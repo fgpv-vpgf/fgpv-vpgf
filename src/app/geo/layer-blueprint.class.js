@@ -115,26 +115,26 @@
         return LayerBlueprint;
     }
 
-    function LayerServiceBlueprint(LayerBlueprint, gapiService, layerTypes) {
+    function LayerServiceBlueprint(LayerBlueprint, gapiService, Geo) {
         // generator functions for different layer types
         const layerServiceGenerators = {
-            [layerTypes.esriDynamic]: (config, commonConfig) =>
+            [Geo.Layer.Types.ESRI_DYNAMIC]: (config, commonConfig) =>
                 new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig),
 
-            [layerTypes.esriFeature]: (config, commonConfig) => {
+            [Geo.Layer.Types.ESRI_FEATURE]: (config, commonConfig) => {
                 commonConfig.mode = config.snapshot ?
                     gapiService.gapi.layer.FeatureLayer.MODE_SNAPSHOT :
                     gapiService.gapi.layer.FeatureLayer.MODE_ONDEMAND;
                 return new gapiService.gapi.layer.FeatureLayer(config.url, commonConfig);
             },
 
-            [layerTypes.esriImage]: (config, commonConfig) =>
+            [Geo.Layer.Types.ESRI_IMAGE]: (config, commonConfig) =>
                 new gapiService.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig),
 
-            [layerTypes.esriTile]: (config, commonConfig) =>
+            [Geo.Layer.Types.ESRI_TILE]: (config, commonConfig) =>
                 new gapiService.gapi.layer.TileLayer(config.url, commonConfig),
 
-            [layerTypes.ogcWms]: (config, commonConfig) => {
+            [Geo.Layer.Types.OGC_WMS]: (config, commonConfig) => {
                 commonConfig.visibleLayers = config.layerEntries.map(le => le.id);
                 return new gapiService.gapi.layer.ogc.WmsLayer(config.url, commonConfig);
             }
