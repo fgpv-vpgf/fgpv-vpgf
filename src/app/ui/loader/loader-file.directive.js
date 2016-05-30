@@ -146,6 +146,8 @@
 
                     console.log(self.layerBlueprint.fields);
 
+                    self.configure.options = self.layerBlueprint.userConfig;
+
                     stepper.nextStep();
                 })
                 .catch(error => {
