@@ -34,6 +34,12 @@
             }
         }
     };
+    GEO.Layer.NO_ATTRS = [GEO.Layer.Types.ESRI_IMAGE, GEO.Layer.Types.ESRI_TILE, GEO.Layer.Types.OGC_WMS];
+    GEO.Layer.QUERYABLE = [GEO.Layer.Types.ESRI_FEATURE, GEO.Layer.Types.ESRI_DYNAMIC, GEO.Layer.Types.OGC_WMS];
+    GEO.Layer.SORT_GROUPS = [
+        [GEO.Layer.Types.ESRI_FEATURE],
+        [GEO.Layer.Types.ESRI_IMAGE, GEO.Layer.Types.ESRI_TILE, GEO.Layer.Types.ESRI_DYNAMIC, GEO.Layer.Types.OGC_WMS]
+    ];
 
     // this is populated with default schema snippets during build;
     const LAYER_CONFIG_DEFAULTS = '_LAYER_CONFIG_DEFAULTS_';
