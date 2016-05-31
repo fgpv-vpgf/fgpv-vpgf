@@ -19,6 +19,7 @@ Tooltip text for Details,filter.tooltip.description,Details,Détails
 Details pane title,details.title,Feature Information,Information sur l'entité
 Details pane aria label for expand button,details.aria.expand,Expand,Agrandir
 Details pane tooltip for expand button,details.tooltip.expand,Expand,Agrandir
+Details pane label for no result,details.label.noresult,Nothing found,Aucun résultat
 Content pane aria label for close button,contentPane.aria.close,Close,Fermer
 Content pane tooltip for close button,contentPane.tooltip.close,Close,Fermer
 Filter pane title prefix,filter.title,Features: ,Entités :
