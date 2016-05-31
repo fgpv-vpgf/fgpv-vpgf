@@ -401,22 +401,12 @@
             */
             function geolocate(location) {
                 const map = service.mapObject;
-                const cx = parseFloat(location.coords.longitude);
-                const cy = parseFloat(location.coords.latitude);
-
-                // make point into an extent so we can use Aly's localProjectExtent function
-                const latlongExt = gapiService.gapi.mapManager.Extent(cx, cy, cx, cy,
-                        gapiService.gapi.proj.SpatialReference(4326));
-
-                const projExt = gapiService.gapi.proj.localProjectExtent(latlongExt,
-                    map.spatialReference);
-
-                const ext = gapiService.gapi.mapManager.Extent(projExt.x1, projExt.y1,
-                    projExt.x0, projExt.y0, projExt.sr);
 
                 // get reprojected point and zoom to it
-                const currPoint = ext.getCenter();
-                map.centerAndZoom(currPoint, 8);
+                const geoPt = gapiService.gapi.proj.localProjectPoint(4326, map.spatialReference.wkid,
+                    [parseFloat(location.coords.longitude), parseFloat(location.coords.latitude)]);
+                const zoomPt = gapiService.gapi.proj.Point(geoPt[0], geoPt[1], map.spatialReference);
+                map.centerAndZoom(zoomPt, 8);
             }
 
             /**
