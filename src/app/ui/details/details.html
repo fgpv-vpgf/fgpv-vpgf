@@ -98,8 +98,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
         </md-content>
 
         <!-- the side selector  -->
-        <rv-slider tabindex="-1"
-            ng-init="self.linkHoverIntent()"
+        <div rv-slider tabindex="-1"
             class="rv-details-layer-list"
             ng-show="self.display.data.length > 1">
             <ul class="rv-list">
@@ -113,9 +112,9 @@ WARNING be sure to change the detail content display logic in both blocks (singl
                         ng-focus="self.onEnter($event)"
                         ng-keypress="self.focusOnClose($event)"
                         aria-label='point details'
-                        class="rv-button-square rv-details-layer-button" 
+                        class="rv-button-square rv-details-layer-button"
                         ng-click="self.selectItem(item)">
-                    
+
                     </md-button>
                     <rv-toc-entry-symbology
                         symbology="item.requester.symbology"
@@ -129,7 +128,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
                 </li>
             </ul>
 
-        </rv-slider>
+        </div>
     </div>
 
 </rv-content-pane>

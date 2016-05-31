@@ -27,7 +27,7 @@
 
     // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
-    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay) {
+    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement) {
         const service = {
             addState,
 
@@ -37,7 +37,8 @@
             openPrevious,
 
             callback,
-
+            setFocusElement,
+            getFocusElement,
             state: angular.copy(initialState),
             display: angular.copy(initialDisplay),
 
@@ -256,6 +257,21 @@
 
                 return;
             });
+        }
+
+        function setFocusElement(element) {
+            if (angular.isElement) {
+                if (element.attr('tabindex') === 'undefined') {
+                    element.attr('tabindex', -1);
+                }
+                service._focusable = element;
+                console.debug('Focus set on', service._focusable);
+            }
+        }
+
+        function getFocusElement() {
+            console.debug('Get focus on', service._focusable ? service._focusable : $rootElement);
+            return service._focusable ? service._focusable : $rootElement;
         }
 
         /**
