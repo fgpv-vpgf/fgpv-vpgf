@@ -1,12 +1,5 @@
-/* global Ease, BezierEasing, TimelineLite */
 (() => {
     'use strict';
-
-    const RV_SLIDE_DURATION = 0.3;
-    const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
-    const RV_DETAILS_LIST = '.rv-details-layer-list';
-    const RV_DETAILS_SECTION = '.rv-details';
-
     /**
      * @ngdoc directive
      * @name rvDetails
@@ -22,78 +15,17 @@
         .module('app.ui.details')
         .directive('rvDetails', rvDetails);
 
-    function rvDetails(stateManager) {
+    function rvDetails() {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/details/details.html',
             scope: {},
-            link: link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
-
-        /*********/
-
-        function link(scope, element) {
-            const self = scope.self;
-            let sectionNode;
-            let layerListNode;
-
-            // create animation timeline
-            const tl = new TimelineLite({
-                paused: true
-            });
-
-            // expand and collapse item selector list when multiple items are displayed
-            self.onEnter = onEnter;
-            self.onLeave = onLeave;
-
-            angular.element(document.querySelectorAll('[rv-slider]')).hoverIntent(onEnter, onLeave);
-            self.focusOnClose = evt => {
-                if (evt.which === 13 || evt.which === 32 || evt.which === 33) {
-                    stateManager.getFocusElement().focus();
-                }
-            };
-
-            let isOpenState = false; // track if side panel is open/closed
-            function onEnter() {
-                if (!isOpenState) {
-                    // find layer node and construct timeline
-                    layerListNode = element.find(RV_DETAILS_LIST);
-                    sectionNode = element.find(RV_DETAILS_SECTION);
-
-                    tl.clear()
-                        .to(layerListNode, RV_SLIDE_DURATION, {
-                            width: 280,
-                            ease: RV_SWIFT_IN_OUT_EASE
-                        })
-
-                        // This will explicitly "animate" the overflow property from hidden to auto and not try to figure
-                        // out what it was initially on the reverse run.
-                        .fromTo(layerListNode, 0.01, {
-                            'overflow-y': 'hidden'
-                        }, {
-                            'overflow-y': 'auto'
-                        }, RV_SLIDE_DURATION / 2)
-                        .to(sectionNode, RV_SLIDE_DURATION, {
-                            className: '+=rv-expanded'
-                        }, 0);
-
-                    isOpenState = true;
-                    tl.play(0, false);
-                }
-            }
-
-            function onLeave() {
-                if (isOpenState) {
-                    tl.reverse(0, false);
-                    isOpenState = false;
-                }
-            }
-        }
     }
 
     // COMMENT to self: brief flickering of fake content is caused by immediately setting data and isLoading flag;
@@ -105,6 +37,12 @@
 
         self.closeDetails = closeDetails;
         self.selectItem = selectItem;
+
+        self.focusOnClose = evt => {
+            if (evt.which === 13 || evt.which === 32 || evt.which === 33) {
+                stateManager.getFocusElement().focus();
+            }
+        };
 
         self.display = stateManager.display.details; // garbage data
 
@@ -139,9 +77,7 @@
          * Closes loader pane and switches to the previous pane if any.
          */
         function closeDetails() {
-            stateManager
-                .openPrevious('mainDetails')
-                .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display;
+            stateManager.closePanelFromHistory();
         }
 
         /**
