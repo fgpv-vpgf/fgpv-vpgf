@@ -78,7 +78,6 @@
          */
         function link(scope, element, attr, ctrl) {
             const self = scope.self;
-
             // apply defaults
             self.isLoading = angular.isDefined(self.isLoading) ? self.isLoading : false;
             self.hideWhenLoading = angular.isDefined(self.hideWhenLoading) ? self.hideWhenLoading : true;
