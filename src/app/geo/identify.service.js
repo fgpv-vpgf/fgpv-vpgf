@@ -241,7 +241,12 @@
                         state.featureInfoMimeType)
                     .then(data => {
                         identifyResult.isLoading = false;
-                        identifyResult.data.push(data);
+
+                        // TODO: check for French service
+                        // check if a result is returned by the service. If not, do not add to the array of data
+                        if (data.indexOf('Search returned no results') === -1) {
+                            identifyResult.data.push(data);
+                        }
 
                         // console.info(data);
                     });
@@ -387,7 +392,10 @@
                     });
 
                 details.isLoaded = $q.all(loadingPromises).then(() => true);
-                stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
+                // show details panel only when there is data
+                if (details.data.length) {
+                    stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
+                }
             }
         }
     }
