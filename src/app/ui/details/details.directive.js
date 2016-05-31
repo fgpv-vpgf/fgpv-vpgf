@@ -37,7 +37,7 @@
 
         /*********/
 
-        function link(scope, element) { // scope, element, attr, ctrl) {
+        function link(scope, element) {
             const self = scope.self;
             let sectionNode;
             let layerListNode;
@@ -51,8 +51,17 @@
             self.onEnter = onEnter;
             self.onLeave = onLeave;
 
-            function onEnter($event) {
-                if (!layerListNode || layerListNode[0] !== $event.currentTarget) {
+            self.linkHoverIntent = () => $(element.find('rv-slider')).hoverIntent(onEnter, onLeave);
+
+            self.focusOnClose = evt => {
+                if (evt.which === 13) {
+                    element.find('button')[1].focus();
+                }
+            };
+
+            let isOpenState = false; // track if side panel is open/closed
+            function onEnter() {
+                if (!isOpenState) {
                     // find layer node and construct timeline
                     layerListNode = element.find(RV_DETAILS_LIST);
                     sectionNode = element.find(RV_DETAILS_SECTION);
@@ -73,15 +82,18 @@
                         .to(sectionNode, RV_SLIDE_DURATION, {
                             className: '+=rv-expanded'
                         }, 0);
-                }
 
-                tl.play();
+                    isOpenState = true;
+                    tl.play(0, false);
+                }
             }
 
             function onLeave() {
-                tl.reverse();
+                if (isOpenState) {
+                    tl.reverse(0, false);
+                    isOpenState = false;
+                }
             }
-
         }
     }
 
@@ -109,14 +121,6 @@
             }
         });
 
-        activate();
-
-        /*********/
-
-        function activate() {
-
-        }
-
         /**
          * Closes loader pane and switches to the previous pane if any.
          */
@@ -132,7 +136,6 @@
          */
         function selectItem(item) {
             self.selectedItem = item;
-
             self.onLeave();
         }
     }
