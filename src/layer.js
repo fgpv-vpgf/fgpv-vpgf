@@ -437,7 +437,8 @@ function predictLayerUrlBuilder(esriBundle) {
 */
 function arrayBufferToString(buffer) {
     // handles UTF8 encoding
-    return String.fromCharCode.apply(null, new Uint8Array(buffer));
+    return new TextDecoder('utf-8').decode(new Uint8Array(buffer));
+
 }
 
 /**
