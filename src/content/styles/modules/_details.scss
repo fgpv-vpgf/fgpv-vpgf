@@ -6,7 +6,7 @@
         width: 70%;
         border-radius: 0;
     }
-    
+
     .rv-details {
         display: flex;
         position: absolute;
@@ -23,6 +23,10 @@
             }
         }
 
+        &-content {
+            display: block;
+        }
+        
         &-layer {
             &-button {
                 padding: 0;

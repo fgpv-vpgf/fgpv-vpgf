@@ -1,28 +1,31 @@
-<div
-    class="rv-subcontent"
-    ng-class="{ 'rv-hide': (self.display.data.length > 1 && self.display.selectedItem.isLoading) || !self.display.data }">
-    <!-- Feature Key-Value list presentation  -->
-    <!-- TODO: add translations -->
-    <h5 ng-if="self.display.selectedItem.data.length === 0">
-        Nothing found</h5>
-
-    <div ng-if="self.display.selectedItem.requester.format === 'EsriFeature'">
-        <h5 class="rv-sub-subhead" ng-repeat-start="item in self.selectedItem.data">{{ item.name }}</h5>
-
-        <ul ng-repeat-end class="rv-details-zebra-list">
-            <li ng-repeat="keyval in item.data">
-                <div class="rv-details-attrib-key">{{ keyval.key }}</div>
-                <div class="rv-details-attrib-value">{{ keyval.value }}</div>
-            </li>
-        </ul>
+<div class="rv-subsection rv-hide-animate">
+    <div class="rv-subheader">
+        <h4 class="md-subhead">{{ self.item.requester.name }}</h4>
+        <span class="md-caption">{{ self.item.requester.caption }}</span>
     </div>
+    <div class="rv-subcontent" ng-class="{ 'rv-hide': self.isHidden }">
+        <!-- Feature Key-Value list presentation  -->
+        <!-- TODO: add translations -->
+        <h5 ng-if="self.display.item.data.length === 0">
+            Nothing found</h5>
 
-    <!-- Plain text presentation  -->
-    <div ng-if="self.display.selectedItem.requester.format === 'Text'">
-        <pre>{{ self.selectedItem.data[0] }}</pre>
-    </div>
+        <div ng-if="self.display.item.requester.format === 'EsriFeature'">
+            <h5 class="rv-sub-subhead" ng-repeat-start="item in self.item.data">{{ item.name }}</h5>
 
-    <!-- Raw HTML presentation  -->
-    <div ng-if="self.display.selectedItem.requester.format === 'HTML'" ng-bind-html="self.display.selectedItem.data[0]">
+            <ul ng-repeat-end class="rv-details-zebra-list">
+                <li ng-repeat="keyval in item.data">
+                    <div class="rv-details-attrib-key">{{ keyval.key }}</div>
+                    <div class="rv-details-attrib-value">{{ keyval.value }}</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Plain text presentation  -->
+        <div ng-if="self.display.item.requester.format === 'Text'">
+            <pre>{{ self.item.data[0] }}</pre>
+        </div>
+
+        <!-- Raw HTML presentation  -->
+        <div ng-if="self.display.item.requester.format === 'HTML'" ng-bind-html="self.display.item.data[0]"></div>
     </div>
 </div>
