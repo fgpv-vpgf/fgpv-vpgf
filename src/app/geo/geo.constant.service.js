@@ -59,7 +59,7 @@
              GEO.Layer.Types.ESRI_DYNAMIC, GEO.Layer.Types.OGC_WMS]
         ]
     });
-    
+
     // this is populated with default schema snippets during build;
     const LAYER_CONFIG_DEFAULTS = '_LAYER_CONFIG_DEFAULTS_';
 
