@@ -1,6 +1,8 @@
 (() => {
     'use strict';
 
+    const CONTENT_CLASS = '.rv-subcontent';
+
     /**
      * @ngdoc directive
      * @name rvDetailsContent
@@ -22,11 +24,14 @@
      */
     function rvDetailsContent($translate) {
         const directive = {
-            restrict: 'E',
+            restrict: 'A',
             templateUrl: 'app/ui/details/details-content.html',
-            scope: {},
+            scope: {
+                item: '=rvItem',
+                isHidden: '=?rvIsHidden'
+            },
             link,
-            controller: Controller,
+            controller: () => {},
             controllerAs: 'self',
             bindToController: true
         };
@@ -34,18 +39,20 @@
         return directive;
 
         function link(scope, el) {
-            scope.$watch('self.display.selectedItem', selectItem => {
+            const contentContainer = el.find(CONTENT_CLASS);
 
-                if (selectItem) {
-                    el.empty(); // clear existing data elements
+            scope.$watch('self.item', item => {
+
+                if (item) {
+                    contentContainer.empty(); // clear existing data elements
                     const frag = angular.element(document.createDocumentFragment());
 
                     // if there is data, process, otherwise show nothing found
-                    const data = selectItem.data;
+                    const data = item.data;
                     if (data.length) {
 
                         // select in function of data format
-                        if (selectItem.requester.format === 'EsriFeature') {
+                        if (item.requester.format === 'EsriFeature') {
                             // esri feature representation
                             angular.forEach(data, item => {
                                 frag.append(`<h5 class="rv-sub-subhead">${item.name}</h5>`);
@@ -60,26 +67,19 @@
 
                                 frag.append(ul);
                             });
-                        } else if (selectItem.requester.format === 'Text') {
+                        } else if (item.requester.format === 'Text') {
                             // plain text presentation
                             frag.append(`<pre>${data[0]}</pre>`);
-                        } else if (selectItem.requester.format === 'HTML') {
+                        } else if (item.requester.format === 'HTML') {
                             // raw HTML presentation
                             frag.append(`<div>${data[0]}</div>`);
                         }
                     } else {
                         frag.append(`<h5>${$translate.instant('details.label.noresult')}</h5>`);
                     }
-                    el.append(frag);
+                    contentContainer.append(frag);
                 }
             });
         }
-    }
-
-    function Controller(stateManager) {
-        'ngInject';
-        const self = this;
-
-        self.display = stateManager.display.details;
     }
 })();

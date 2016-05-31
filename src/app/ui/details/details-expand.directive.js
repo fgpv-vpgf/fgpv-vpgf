@@ -42,14 +42,9 @@
 
         function expandPanel() {
             $mdDialog.show({
-                controller: (display, cancel) => {
-                    const self = this;
-
-                    self.display = display;
-                    self.cancel = cancel;
-                },
+                controller: () => {},
                 locals: {
-                    display: stateManager.display.details,
+                    item: stateManager.display.details.selectedItem,
                     cancel: $mdDialog.cancel
                 },
                 templateUrl: 'app/ui/details/details-modal.html',

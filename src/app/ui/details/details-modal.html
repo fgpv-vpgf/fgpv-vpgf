@@ -3,11 +3,12 @@
     <rv-content-pane
         close-panel="self.cancel()"
         title-style="title"
-        title-value="{{ 'details.title' | translate }}: {{ self.display.selectedItem.requester.name }}, {{ self.display.selectedItem.requester.caption }} ">
+        title-value="{{ 'details.title' | translate }}: {{ self.item.requester.name }}, {{ self.item.requester.caption }} ">
+
         <div class="rv-details">
-            <md-content class="rv-details-data rv-content" rv-detect-scrollbar>
-                <h4 class="md-subhead">{{ self.display.selectedItem.data.length }} itesm(s)</h4>
-                <rv-details-content></rv-details-content>
+            <md-content class="rv-details-data rv-content"
+                rv-detect-scrollbar
+                rv-details-content rv-item="self.item">
             </md-content>
         </div>
     </rv-content-pane>

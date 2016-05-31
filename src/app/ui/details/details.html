@@ -18,30 +18,21 @@ WARNING be sure to change the detail content display logic in both blocks (singl
 
     <!-- this handles the case of only one layer returning results. hides the side selector  -->
     <div class="rv-details" ng-if="self.display.data.length === 1">
-        <md-content class="rv-details-data rv-content" rv-detect-scrollbar>
-            <div class="rv-subsection rv-hide-animate">
-                <div class="rv-subheader">
-                    <h4 class="md-subhead">{{ self.selectedItem.requester.name }}</h4>
-                    <span class="md-caption">{{ self.selectedItem.requester.caption }}</span>
-                </div>
-            </div>
-            <rv-details-content></rv-details-content>
+        <md-content class="rv-details-data rv-content"
+            rv-detect-scrollbar
+            rv-details-content rv-item="self.selectedItem">
         </md-content>
     </div>
 
     <!-- this handles the case of multiple layers returning results. shows the side selector  -->
     <div class="rv-details rv-multiple" ng-if="self.display.data.length > 1">
-        <!-- the detail content  -->
-        <md-content class="rv-details-data rv-content" rv-detect-scrollbar>
-            <div class="rv-subsection rv-hide-animate">
-                <div class="rv-subheader">
-                    <h4 class="md-subhead">{{ self.selectedItem.requester.name }}</h4>
-                    <span class="md-caption">{{ self.selectedItem.requester.caption }}</span>
-                </div>
-            </div>
-            <rv-details-content></rv-details-content>
+
+        <md-content class="rv-details-data rv-content"
+            rv-detect-scrollbar
+            rv-details-content rv-item="self.selectedItem" rv-is-hidden="(self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data">
         </md-content>
 
+        <!-- the detail content  -->
         <!-- the side selector  -->
         <div
             class="rv-details-layer-list"

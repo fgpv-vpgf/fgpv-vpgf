@@ -98,27 +98,17 @@
         self.display = stateManager.display.details; // garbage data
 
         // TODO: adding stateManger to scope to set up watch
-        $scope.$watch('self.display.isLoading', newValue => {
-            // if false, loading is finish, set the selected item
-            const data = self.display.data;
-
+        $scope.$watch('self.display.data', newValue => {
             // if multiple points added to the details panel ...
-            if (!newValue && data) {
-                // pick first layer to be selected initially
-                self.selectedItem = data[0];
-
-                // set this value will trigger the watch inside details-content.directive.js
-                self.display.selectedItem = self.selectedItem;
+            if (newValue && newValue.length > 0) {
+                // pick first point to be selected initially
+                selectItem(newValue[0]);
+            } else {
+                selectItem(null);
             }
         });
 
-        activate();
-
         /*********/
-
-        function activate() {
-
-        }
 
         /**
          * Closes loader pane and switches to the previous pane if any.
@@ -137,6 +127,7 @@
             self.selectedItem = item;
 
             // set this value will trigger the watch inside details-content.directive.js
+            // TODO: need a different way to pass data to expand directive; this can break easily
             self.display.selectedItem = self.selectedItem;
             self.onLeave();
         }
