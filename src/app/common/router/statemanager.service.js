@@ -30,17 +30,15 @@
     function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement) {
         const service = {
             addState,
-
             setActive,
             setMorph,
-
             openPrevious,
-
             callback,
             setFocusElement,
             getFocusElement,
             state: angular.copy(initialState),
             display: angular.copy(initialDisplay),
+            closePanelFromHistory,
 
             // temporary place to store layer data;
             // TODO: move to the initialDisplay constant service
@@ -54,6 +52,7 @@
         const displayService = displayManager(service); // init displayManager
         angular.extend(service, displayService); // merge displayManager service functions into stateManager
 
+        const panelHistory = [];
         return service;
 
         /*********/
@@ -97,10 +96,9 @@
                     one = getItem(oneName);
                 }
 
-                // console.log('Setting state item', one.name, 'to', oneTargetValue);
                 if (one.item.parent) { // item has a parent
-
                     let oneParent = getParent(one.name); // get parent
+
                     if (oneTargetValue) { // item turning on
 
                         if (!oneParent.item.active) { // if parent is off,
@@ -109,7 +107,6 @@
                         } else { // if parent is on,
                             getChildren(oneParent.name)
                                 .forEach(child => {
-                                    // console.log('child - ', child);
                                     if (child.name !== one.name) {
                                         setItemProperty(child.name, 'active', false); // animate siblings off
                                     }
@@ -121,7 +118,6 @@
                         runAfter = () => { // runAfter parent finished its transition
                             getChildren(oneParent.name)
                                 .forEach(child => {
-                                    // console.log('child 1- ', child);
                                     setItemProperty(child.name, 'active', false, true); // immediately turn off all children
                                 });
                         };
@@ -136,7 +132,6 @@
                     } else if (!oneTargetValue) { // turning off
                         runAfter = () => { // runAfter parent finished its transition
                             oneChildren.forEach(child => {
-                                // console.log('child 2- ', child);
                                 setItemProperty(child.name, 'active', false, true); // immediately turn off all children
                             });
                         };
@@ -146,8 +141,6 @@
                 // return promise for easy promise chaining
                 return setItemProperty(one.name, 'active', oneTargetValue)
                     .then(() => {
-
-                        // console.log('Continue with the rest of state items');
                         // run any `runAfter` function if exists
                         // TODO: runAfter should return a promise; return `setActive` when it resolves
                         if (runAfter) {
@@ -239,22 +232,10 @@
                         return;
                     }
 
-                    let history;
-
                     if (item.parent && value) { // add to history only when a child opens or ...
-                        history = getParent(itemName).item.history;
-                        history.push(itemName);
-                    } else if (!item.parent && !value) { // ... or the parent closes
-                        history = item.history;
-                        history.push(null); // `null` means no item was active in the panel;
-                    }
-
-                    // keep history at 10 items, I don't think we need any more
-                    if (history && history.length > 10) {
-                        history.shift();
+                        addPanelToHistory(itemName);
                     }
                 }
-
                 return;
             });
         }
@@ -272,6 +253,21 @@
         function getFocusElement() {
             console.debug('Get focus on', service._focusable ? service._focusable : $rootElement);
             return service._focusable ? service._focusable : $rootElement;
+        }
+
+        function addPanelToHistory(panelName) {
+            const panelIndex = panelHistory.indexOf(panelName);
+            if (panelIndex !== -1) {
+                panelHistory.splice(panelIndex, 1);
+            }
+            panelHistory.push(panelName);
+        }
+
+        function closePanelFromHistory() {
+            if (panelHistory.length > 0) {
+                setActive({ [service.state[panelHistory.pop()].parent]: false });
+            }
+
         }
 
         /**

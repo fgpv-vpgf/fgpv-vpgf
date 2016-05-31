@@ -16,8 +16,7 @@
         .module('app.geo')
         .factory('legendService', legendServiceFactory);
 
-    function legendServiceFactory($translate, $http, $q, $timeout, gapiService,
-            geometryTypes, layerTypes, layerSortGroups, layerStates, legendEntryFactory) {
+    function legendServiceFactory($translate, $http, $q, $timeout, gapiService, Geo, legendEntryFactory) {
 
         const legendSwitch = {
             structured: structuredLegendService,
@@ -34,6 +33,7 @@
          */
         function autoLegendService() { // config, layerRegistry) { // FIXME: remove later if not needed
             // maps layerTypes to layer item generators
+            // TODO we may want to revisit this since all the keys can be replaced by constant references
             const layerTypeGenerators = {
                 esriDynamic: dynamicGenerator,
                 esriFeature: featureGenerator,
@@ -224,7 +224,7 @@
              * @param {String} state defaults to `default`; state name
              * @param {Number} delay defaults to 0; delay before setting the state
              */
-            function setLayerState(entry, state = layerStates.default, delay = 0) {
+            function setLayerState(entry, state = Geo.Layer.States.DEFAULT, delay = 0) {
                 // same as with map loading indicator, need timeout since it's a non-Angular async call
                 $timeout.cancel(entry._stateTimeout);
                 entry._stateTimeout = $timeout(() => {
@@ -337,7 +337,7 @@
         function applyFeatureCount(geometryType, state, count) {
             state.features.count = count;
 
-            $translate(geometryTypes[geometryType]).then(type =>
+            $translate(Geo.Layer.Esri.GEOMETRY_TYPES[geometryType]).then(type =>
                 state.features.type = type.split('|')[state.features.count > 1 ? 1 : 0]);
         }
 

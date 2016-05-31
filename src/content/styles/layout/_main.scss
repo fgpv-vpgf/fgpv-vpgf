@@ -117,7 +117,7 @@ rv-panel[type='side'] {
 rv-panel[type='other'] {
     @include active-panel-plug($right: 0, $top: 0, $bottom: 0, $width: 300px, $from: right);
 
-    .panel {
+    .rv-panel {
         //background-color: rgba(0,0,0,0.68);
         background-color: rgba(255,255,255,.68);
         //color: white;

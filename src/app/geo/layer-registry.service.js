@@ -15,8 +15,7 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, $timeout, gapiService, legendService, layerTypes, layerStates, layerNoattrs,
-        layerTypesQueryable) {
+    function layerRegistryFactory($q, $timeout, gapiService, legendService, Geo) {
 
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
@@ -157,7 +156,7 @@
                 return Object.keys(layers).map(key => layers[key])
                     // filter nonqueryable layers
                     .filter(layerRecord =>
-                        layerTypesQueryable.indexOf(layerRecord.initialState.layerType) !== -1)
+                        Geo.Layer.QUERYABLE.indexOf(layerRecord.initialState.layerType) !== -1)
                     // filter out layers in the error state
                     // FIXME: refactor with the state machine
                     .filter(layerRecord =>
@@ -392,7 +391,7 @@
                                 // handles the asynch loading of attributes
                                 // get the attributes for the layer
                                 let attributesPromise = $q.resolve(null);
-                                if (layerNoattrs.indexOf(layerConfig.layerType) < 0) {
+                                if (Geo.Layer.NO_ATTRS.indexOf(layerConfig.layerType) < 0) {
                                     attributesPromise = loadLayerAttributes(layer);
                                 }
 
@@ -437,7 +436,7 @@
                             // ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);
 
                             // FIXME layers that fail on initial load will never be added to the layers list
-                            ref.legendService.setLayerState(layerRecord.state, layerStates.error, 100);
+                            ref.legendService.setLayerState(layerRecord.state, Geo.Layer.States.ERROR, 100);
                             ref.legendService.setLayerLoadingFlag(layerRecord.state, false, 100);
                         },
                         'update-start': data => {

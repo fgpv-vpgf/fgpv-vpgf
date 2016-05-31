@@ -10,7 +10,7 @@
           "name": "wms",
           "children": [
             { "icon": "something other than legend graphic for layer A", "label": "random text" },
-            { "icon": "something else which is still not legend graphic for layer A", "label": "holderIpsum.sentence()" }
+            { "icon": "something else which is still not legend graphic for layer A", "label": "some text" }
           ],
           "layerId": "wms-042",
           "index": "A"

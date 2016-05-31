@@ -4,7 +4,7 @@
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
   config.vm.network "forwarded_port", guest: 6001, host: 6001
-#  config.vm.synced_folder ".", "/vagrant"
+  # config.vm.synced_folder ".", "/vagrant"
 
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "1024"
@@ -13,7 +13,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
-    curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
+    curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
     sudo apt-get install -y nodejs build-essential git
     cd /vagrant
     npm install -g bower gulp
