@@ -22,7 +22,7 @@
         .module('app.ui.details')
         .directive('rvDetails', rvDetails);
 
-    function rvDetails() {
+    function rvDetails(stateManager) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/details/details.html',
@@ -51,11 +51,10 @@
             self.onEnter = onEnter;
             self.onLeave = onLeave;
 
-            self.linkHoverIntent = () => $(element.find('rv-slider')).hoverIntent(onEnter, onLeave);
-
+            angular.element(document.querySelectorAll('[rv-slider]')).hoverIntent(onEnter, onLeave);
             self.focusOnClose = evt => {
-                if (evt.which === 13) {
-                    element.find('button')[1].focus();
+                if (evt.which === 13 || evt.which === 32 || evt.which === 33) {
+                    stateManager.getFocusElement().focus();
                 }
             };
 
