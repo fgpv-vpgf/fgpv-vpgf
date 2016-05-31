@@ -200,7 +200,7 @@
          * Closes loader pane and switches to the previous pane if any.
          */
         function closeLoaderFile() {
-            stateManager.openPrevious('mainLoaderFile');
+            // stateManager.openPrevious('mainLoaderFile');
         }
     }
 })();

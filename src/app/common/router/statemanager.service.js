@@ -32,7 +32,6 @@
             addState,
             setActive,
             setMorph,
-            openPrevious,
             callback,
             setFocusElement,
             getFocusElement,
@@ -232,25 +231,45 @@
                         return;
                     }
 
-                    if (item.parent && value) { // add to history only when a child opens or ...
-                        addPanelToHistory(itemName);
+                    if (item.parent && value) {
+                        addPanelToHistory(itemName, item.parent);
                     }
                 }
                 return;
             });
         }
 
+
         function addPanelToHistory(panelName) {
             const panelIndex = panelHistory.indexOf(panelName);
             if (panelIndex !== -1) {
                 panelHistory.splice(panelIndex, 1);
+
+        function setFocusElement(element) {
+            if (angular.isElement) {
+                if (element.attr('tabindex') === 'undefined') {
+                    element.attr('tabindex', -1);
+                }
+                service._focusable = element;
+            }
+        }
+
+        function getFocusElement() {
+            return service._focusable ? service._focusable : $rootElement;
+        }
+
+        function addPanelToHistory(panelName, parentName) {
+            setFocusElement($(`rv-panel[type=${parentName}] [rv-focusable]`));
+            const indexInHistory = panelHistory.indexOf(panelName);
+            if (indexInHistory !== -1) {
+                panelHistory.splice(indexInHistory, 1);
             }
             panelHistory.push(panelName);
         }
 
         function closePanelFromHistory() {
             if (panelHistory.length > 0) {
-                setActive({ [service.state[panelHistory.pop()].parent]: false });
+                setActive({ [panelHistory.pop()]: false });
             }
 
         function setFocusElement(element) {
@@ -266,36 +285,6 @@
         function getFocusElement() {
             console.debug('Get focus on', service._focusable ? service._focusable : $rootElement);
             return service._focusable ? service._focusable : $rootElement;
-        }
-
-        /**
-         * Given a content pane name, closes it and opens a previously opened pane from the history.
-         * @param  {String} currentPaneName name of the content pane
-         * @return {Promise}                returns a promise which is resolved when opening animation completes; or resolves immediately if nothing happens
-         */
-        function openPrevious(currentPaneName) {
-            const panel = getParent(currentPaneName);
-            const history = panel.item.history;
-
-            // no history; do nothing
-            if (history.length === 0) {
-                return $q.resolve();
-            }
-
-            // TODO: abstract; maybe move to stateManager itself
-            // get second to last history item from history
-            const item = history.splice(-2).shift();
-            const options = {};
-
-            // reopen previous selected pane if it's not null or currentPaneName
-            if (item !== null && item !== currentPaneName) {
-                options[item] = true;
-            } else {
-                options[currentPaneName] = false;
-            }
-
-            // close `mainDetails` panel
-            return service.setActive(options);
         }
 
         /**

@@ -1,6 +1,6 @@
 <div class="rv-content-pane layout-padding">
 
-    <div class="rv-header" ng-show="self.titleValue && !self.floatingHeader" ng-switch on="self.titleStyle">
+    <div class="rv-header" ng-if="self.titleValue && !self.floatingHeader" ng-switch on="self.titleStyle">
         <!-- display an appropriate header based on `headline` value -->
         <!-- hide header if no title text provided -->
         <h2 class="md-headline" ng-switch-when="headline">{{ self.titleValue }}</h2>
@@ -22,17 +22,15 @@
         </md-button>
     </div>
 
-    <div class="rv-header-float" ng-show="self.floatingHeader && self.closePanel">
+    <div class="rv-header-float" ng-if="self.floatingHeader && self.closePanel">
 
         <span flex class="rv-spacer"></span>
-
         <!-- show floating close button if there is a closePanel function and now title value -->
         <md-button
             aria-label="Close"
             class="md-icon-button black rv-button-auto"
             rv-focusable
-            ng-click="self.closePanel()"
-            ng-if="self.closePanel">
+            ng-click="self.closePanel()">
             <md-tooltip>Close</md-tooltip>
             <md-icon md-svg-src="navigation:close"></md-icon>
         </md-button>
