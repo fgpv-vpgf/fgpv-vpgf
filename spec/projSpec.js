@@ -50,6 +50,12 @@ describe('Local projection', () => {
         'x0 x1 y0 y1'.split(' ').forEach(x => expect(res[x]).toBeCloseTo(sampleData[x],5));
     });
 
+    it('should project a single point', () => {
+        const res = proj.localProjectPoint(4326, 54004, [-95, 49]);
+        expect(res[0]).toBeCloseTo(-10575351.62536099);
+        expect(res[1]).toBeCloseTo(6242595.999953201);
+    });
+
     it('should reproject from mercator to lambert', () => {
         const josmExtent = {"type":"extent","xmin":-13316443.76,"ymin":6388804.5583,"xmax":-10471824.465,"ymax":9225974.5022,"spatialReference":{"wkid":102100}}; // jshint ignore:line
         const expectedRes = {"x0":-1729118.683387185,"y0":74576.19391872548,"x1":66964.16600783693,"y1":1810940.2344750422}; // jshint ignore:line
