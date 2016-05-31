@@ -1,68 +1,6 @@
 (() => {
     'use strict';
 
-    // jscs:disable requireSpacesInAnonymousFunctionExpression
-    class BlueprintUserOptions {
-        constructor() {
-            this._layerName = '';
-            this._primaryField = '';
-        }
-
-        get layerName() {
-            return this._layerName;
-        }
-
-        set layerName(value) {
-            this._layerName = value;
-        }
-
-        get primaryField() {
-            return this._primaryField;
-        }
-
-        set primaryField(value) {
-            this._primaryField = value;
-        }
-    }
-
-    class FileCsvBlueprintUserOptions extends BlueprintUserOptions {
-        constructor() {
-            super();
-
-            this._latfield = '';
-            this._lonfield = '';
-        }
-
-        get latfield() {
-            return this._latfield;
-        }
-
-        set latfield(value) {
-            this._latfield = value;
-        }
-
-        get longfield() {
-            return this._lonfield;
-        }
-
-        set longfield(value) {
-            this._lonfield = value;
-        }
-    }
-
-    class FileGeoJsonBlueprintUserOptions extends BlueprintUserOptions {
-        constructor() {
-            super();
-        }
-    }
-
-    class FileShapefileBlueprintUserOptions extends BlueprintUserOptions {
-        constructor() {
-            super();
-        }
-    }
-    // jscs:disable requireSpacesInAnonymousFunctionExpression
-
     /**
      * @ngdoc service
      * @name LayerBlueprintUserOptions
@@ -77,7 +15,94 @@
         .module('app.geo')
         .factory('LayerBlueprintUserOptions', factoryWrapper);
 
-    function factoryWrapper(Geo) {
+    function factoryWrapper(Geo, geoService) {
+        // jscs:disable requireSpacesInAnonymousFunctionExpression
+        class BlueprintUserOptions {
+            constructor() {
+                this._layerName = '';
+                this._primaryField = '';
+                this._layerId = '';
+            }
+
+            get layerName() {
+                return this._layerName;
+            }
+
+            set layerName(value) {
+                this._layerName = value;
+            }
+
+            get primaryField() {
+                return this._primaryField;
+            }
+
+            set primaryField(value) {
+                this._primaryField = value;
+            }
+
+            get layerId() {
+                return this._layerId;
+            }
+            set layerId(value) {
+                this._layerId = value;
+            }
+        }
+
+        class FileBlueprintUserOptions extends BlueprintUserOptions {
+            constructor() {
+                super();
+
+                this._epsgLookup = geoService.epsgLookup;
+                this._targetWkid = geoService.mapObject.spatialReference.wkid;
+            }
+
+            get epsgLookup() {
+                return this._epsgLookup;
+            }
+
+            get targetWkid() {
+                return this._targetWkid;
+            }
+        }
+
+        class FileCsvBlueprintUserOptions extends FileBlueprintUserOptions {
+            constructor() {
+                super();
+
+                this._latfield = '';
+                this._lonfield = '';
+            }
+
+            get latfield() {
+                return this._latfield;
+            }
+
+            set latfield(value) {
+                this._latfield = value;
+            }
+
+            get lonfield() {
+                return this._lonfield;
+            }
+
+            set lonfield(value) {
+                this._lonfield = value;
+            }
+        }
+
+        class FileGeoJsonBlueprintUserOptions extends FileBlueprintUserOptions {
+            constructor() {
+                super();
+            }
+        }
+
+        class FileShapefileBlueprintUserOptions extends FileBlueprintUserOptions {
+            constructor() {
+                super();
+            }
+        }
+        // jscs:disable requireSpacesInAnonymousFunctionExpression
+
         return {
             File: {
                 [Geo.Service.Types.CSV]: FileCsvBlueprintUserOptions,

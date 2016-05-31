@@ -37,68 +37,6 @@
         .factory('LayerServiceBlueprint', LayerServiceBlueprintWrapper)
         .factory('LayerFileBlueprint', LayerFileBlueprintWrapper);
 
-    // jscs:disable requireSpacesInAnonymousFunctionExpression
-    class BlueprintUserOptions {
-        constructor() {
-            this._layerName = '';
-            this._primaryField = '';
-        }
-
-        get layerName() {
-            return this._layerName;
-        }
-
-        set layerName(value) {
-            this._layerName = value;
-        }
-
-        get primaryField() {
-            return this._primaryField;
-        }
-
-        set primaryField(value) {
-            this._primaryField = value;
-        }
-    }
-
-    class FileCsvBlueprintUserOptions extends BlueprintUserOptions {
-        constructor() {
-            super();
-
-            this._latfield = '';
-            this._lonfield = '';
-        }
-
-        get latfield() {
-            return this._latfield;
-        }
-
-        set latfield(value) {
-            this._latfield = value;
-        }
-
-        get longfield() {
-            return this._lonfield;
-        }
-
-        set longfield(value) {
-            this._lonfield = value;
-        }
-    }
-
-    class FileGeoJsonBlueprintUserOptions extends BlueprintUserOptions {
-        constructor() {
-            super();
-        }
-    }
-
-    class FileShapefileBlueprintUserOptions extends BlueprintUserOptions {
-        constructor() {
-            super();
-        }
-    }
-    // jscs:disable requireSpacesInAnonymousFunctionExpression
-
     function LayerBlueprintWrapper(layerDefaults) {
         let idCounter = 0; // layer counter for generating layer ids
 
@@ -120,7 +58,7 @@
 
                 this._applyDefaults();
 
-                this._userConfig = {};
+                this._userOptions = {};
             }
 
             /**
@@ -153,10 +91,15 @@
                 // apply config defaults when setting layer type
                 this.config.layerType = value;
                 this._applyDefaults();
+
+                // generate id if missing when generating layer
+                if (typeof this.config.id === 'undefined') {
+                    this.config.id = `${this.layerType}#${idCounter++}`;
+                }
             }
 
-            get userConfig() {
-                return this._userConfig;
+            get userOptions() {
+                return this._userOptions;
             }
 
             /**
@@ -164,20 +107,7 @@
              * @return {Object} "common config" ? witch contains layer id
              */
             generateLayer() {
-                // TODO: replace with a throw function
-                // TODO: move id generation to where the config is bound initially
-                // generate id if missing when generating layer
-                if (typeof this.config.id === 'undefined') {
-                    this.config.id = `${this.layerType}#${idCounter++}`;
-
-                    // TODO: "temporary" workaround
-                    this.initialConfig.id = this.config.id;
-                }
-
-                // return common config, eh...
-                return {
-                    id: this.config.id
-                };
+                throw new Error('Call generateLayer on a subclass instead.');
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
@@ -245,7 +175,11 @@
              * @return {Promise} resolving with a layer object matching one of the esri/layers objects based on the layer type
              */
             generateLayer() {
-                const commonConfig = super.generateLayer();
+                const commonConfig = {
+                    id: this.config.id
+                };
+
+                // TODO: throw error if layer type is not defined
 
                 if (layerServiceGenerators.hasOwnProperty(this.layerType)) {
                     return $q.resolve(layerServiceGenerators[this.layerType](this.config, commonConfig));
@@ -259,17 +193,16 @@
         return LayerServiceBlueprint;
     }
 
-    function LayerFileBlueprintWrapper($q, LayerBlueprint, gapiService, geoService) {
-        /*const USER_CONFIG = {
-            [gapiService.gapi.layer.serviceType.CSV]: FileCsvBlueprintUserOptions,
-            [gapiService.gapi.layer.serviceType.GeoJSON]: FileGeoJsonBlueprintUserOptions,
-            [gapiService.gapi.layer.serviceType.Shapefile]: FileShapefileBlueprintUserOptions
-        };*/
-        // TODO: get file service types from geoapi
-        const USER_CONFIG = {
-            csv: FileCsvBlueprintUserOptions,
-            geojosn: FileGeoJsonBlueprintUserOptions,
-            shapefile: FileShapefileBlueprintUserOptions
+    function LayerFileBlueprintWrapper($q, LayerBlueprint, LayerBlueprintUserOptions, Geo, gapiService) {
+
+        // generator functions for different file types
+        const layerFileGenerators = {
+            [Geo.Service.Types.csv]: (data, commonConfig) =>
+                gapiService.gapi.layer.makeCsvLayer(this._formatedFileData.formattedData, commonConfig),
+            [Geo.Service.Types.geojson]:  (data, commonConfig) =>
+                gapiService.gapi.layer.makeGeoJsonLayer(this._formatedFileData.formattedData, commonConfig),
+            [Geo.Service.Types.shapefile]:  (data, commonConfig) =>
+                gapiService.gapi.layer.makeShapeLayer(this._formatedFileData.formattedData, commonConfig),
         };
 
         // jscs doesn't like enhanced object notation
@@ -320,7 +253,7 @@
                 this._validPromise = this._constructorPromise
                     .then(() => gapiService.gapi.layer.validateFile(this.fileType, this._fileData))
                     .then(result => {
-                        this._userConfig = new USER_CONFIG[this.fileType]();
+                        this._userOptions = new LayerBlueprintUserOptions.File[this.fileType]();
                         this._formatedFileData = result;
                     })
                     .catch(error => console.error(error));
@@ -366,18 +299,18 @@
             }
 
             generateLayer() {
-                const commonConfig = super.generateLayer();
-                angular.extend(commonConfig, this.userConfig, {
-                    layerId: commonConfig.id,
-                    epsgLookup: geoService.psgLookup, // FIXME:
-                    targetWkid: geoService.mapObject.spatialReference.wkid
-                });
+                // TODO: throw error if layer type is not defined
 
-                this.config.name = this.userConfig.layerName;
+                // set layer id to the config id; this is needed when using file layer generator function
+                this.userOptions.layerId = this.config.id;
 
-                console.log(commonConfig);
+                // apply user selected layer name to the config so it appears in the legend entry
+                this.config.name = this.userOptions.layerName;
 
-                return gapiService.gapi.layer.makeCsvLayer(this._formatedFileData.formattedData, commonConfig);
+                console.log(this.userOptions);
+                console.log(layerFileGenerators[this.fileType]);
+
+                return gapiService.gapi.layer.makeCsvLayer(this._formatedFileData.formattedData, this.userOptions);
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
