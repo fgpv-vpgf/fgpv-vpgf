@@ -17,6 +17,35 @@ function projectGeojson(geojson, outputSpatialReference, inputSpatialReference) 
 }
 
 /**
+ * Convert a projection to an EPSG string.  If it is an ESRI SpatialReference or an integer it will be converted.
+ * @param {Object|Integer|String} proj an ESRI SpatialReference, integer or string.  Strings will be unchanged and unchecked,
+ * ints and SpatialReference objects will be converted.
+ * @return {String} A string in the form EPSG:####
+ * @private
+ */
+function makeEpsgString(proj) {
+    if (typeof proj === 'object') {
+        return 'EPSG:' + proj.wkid;
+    } else if (typeof proj === 'number') {
+        return 'EPSG:' + proj;
+    } else if (typeof proj === 'string') {
+        return proj;
+    }
+    throw new Error('Bad argument type, please provide a string, integer or SpatialReference object.');
+}
+
+/**
+ * Project a single point.
+ * @param {Object|Integer|String} srcProj the spatial reference of the point (as ESRI SpatialReference, integer WKID or an EPSG string)
+ * @param {Object|Integer|String} destProj the spatial reference of the result (as ESRI SpatialReference, integer WKID or an EPSG string)
+ * @param {Array|Object} point a 2d array or object with {x,y} props containing the coordinates to Reproject
+ * @return {Array|Object} a 2d array or object containing the projected point
+ */
+function localProjectPoint(srcProj, destProj, point) {
+    return proj4(makeEpsgString(srcProj), makeEpsgString(destProj), point);
+}
+
+/**
  * Reproject an EsriExtent object on the client.  Does not require network
  * traffic, but may not handle conversion between projection types as well.
  * Internally it tests 8 points along each edge and takes the max extent
@@ -66,12 +95,7 @@ function localProjectExtent(extent, sr) {
     }
 
     // find the destination extent
-    let destProj = sr;
-    if (typeof destProj === 'object') {
-        destProj = 'EPSG:' + destProj.wkid;
-    } else if (typeof destProj === 'number') {
-        destProj = 'EPSG:' + destProj;
-    }
+    let destProj = makeEpsgString(sr);
 
     if (!proj4.defs(srcProj)) {
         throw new Error('Source projection not recognized by proj4 library');
@@ -173,6 +197,7 @@ module.exports = function (esriBundle) {
         graphicsUtils: esriBundle.graphicsUtils,
         isSpatialRefEqual,
         localProjectExtent,
+        localProjectPoint,
         projectGeojson,
         Point: esriBundle.Point,
         projectEsriExtent: projectEsriExtentBuilder(esriBundle),
