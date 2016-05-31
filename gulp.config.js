@@ -22,7 +22,7 @@ module.exports = function () {
     var report = './report/';
 
     var bowerdir = './lib/';
-    var nodedir = './node_modules/';
+    // var nodedir = './node_modules/';
 
     var config = {
 
@@ -152,10 +152,11 @@ module.exports = function () {
     function getKarmaOptions() {
         var options = {
             files: [].concat(
+                config.specHelpers, // order matters
                 bowerModules + 'jquery/dist/jquery.js',
                 bowerModules + 'datatables.net/js/jquery.dataTables.js',
                 bowerFiles(),
-                nodedir + 'babel-core/browser-polyfill.js',
+                src + 'polyfill/*.js',
                 bowerModules + 'angular-mocks/angular-mocks.js',
                 bowerModules + 'sinon/index.js',
                 bowerModules + 'bardjs/dist/bard.js',
@@ -164,8 +165,7 @@ module.exports = function () {
                 app + '**/!(app-seed|injector).js', // excluding injector
                 config.templates,
 
-                config.specs,
-                config.specHelpers
+                config.specs
                 ),
             coverage: {
                 dir: report + 'coverage',
