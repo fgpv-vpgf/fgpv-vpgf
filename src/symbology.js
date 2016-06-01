@@ -36,26 +36,26 @@ function getRendererType(renderer) {
 function createSymbologyConfig(renderer, legend) {
 
     const symb = {
-        type: getRendererType(renderer)
+        type: renderer.type
     };
 
     const legendLookup = labelObj(legend);
 
-    switch (symb.type) {
-        case 'SimpleRenderer':
+    switch (renderer.type) {
+        case 'simple':
             symb.label = renderer.label;
             symb.imageUrl = legendLookup[renderer.label].icon;
 
             break;
 
-        case 'UniqueValueRenderer':
+        case 'uniqueValue':
             if (renderer.defaultLabel) {
                 symb.defaultImageUrl = legendLookup[renderer.defaultLabel];
             }
-            symb.field1 = renderer.attributeField;
-            symb.field2 = renderer.attributeField2;
-            symb.field3 = renderer.attributeField3;
-            symb.valueMaps = renderer.infos.map(uvi => {
+            symb.field1 = renderer.field1;
+            symb.field2 = renderer.field2;
+            symb.field3 = renderer.field3;
+            symb.valueMaps = renderer.uniqueValueInfos.map(uvi => {
                 return {
                     label: uvi.label,
                     value: uvi.value,
@@ -64,13 +64,13 @@ function createSymbologyConfig(renderer, legend) {
             });
 
             break;
-        case 'ClassBreaksRenderer':
+        case 'classBreaks':
             if (renderer.defaultLabel) {
                 symb.defaultImageUrl = legendLookup[renderer.defaultLabel];
             }
-            symb.field = renderer.attributeField;
-            symb.minValue = renderer.infos[0].minValue;
-            symb.rangeMaps = renderer.infos.map(cbi => {
+            symb.field = renderer.field;
+            symb.minValue = renderer.uniqueValueInfos[0].minValue;
+            symb.rangeMaps = renderer.uniqueValueInfos.map(cbi => {
                 return {
                     label: cbi.label,
                     maxValue: cbi.maxValue,
@@ -106,10 +106,10 @@ function getGraphicIcon(fData, layerConfig, oid) {
 
     // find node in layerregistry.attribs
     switch (symbolConfig.type) {
-        case 'SimpleRenderer':
+        case 'simple':
             return symbolConfig.imageUrl;
 
-        case 'UniqueValueRenderer':
+        case 'uniqueValue':
             const oidIdx = fData.oidIndex[oid];
 
             // make a key value for the graphic in question, using comma-space delimiter if multiple fields
@@ -142,7 +142,7 @@ function getGraphicIcon(fData, layerConfig, oid) {
 
             return img;
 
-        case 'ClassBreaksRenderer':
+        case 'classBreaks':
             let gVal = fData.attributes[symbolConfig.field];
 
             // find where the value exists in the range
