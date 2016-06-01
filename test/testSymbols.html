@@ -126,22 +126,24 @@
                     }
                 ];
             layer.on('load', function(evt) {
-                console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE LOADED');
+                console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE LOADED', layer.renderer);
                 console.log(layer);
                 console.log(Object.getPrototypeOf(layer.renderer).declaredClass);
-                var lconfig = api.symbology.createSymbologyConfig(layer.renderer, legend);
-                console.log('JJJJJJJJJ', lconfig);
                 // loadLayerAttribs
                 var fData = api.attribs.loadLayerAttribs(layer);
-                fData.then(data => {
-                    var oid = 47168;
-                    console.log(data[0], lconfig);
-                    var icon = api.symbology.getGraphicIcon(data[0], lconfig, oid);
-                    var myimg = document.getElementById("mine");
-                    myimg.src = "data:image/png;base64," + icon;
-                    console.log(icon);
-                }, error => {
-                    console.warn(error);
+                console.log('GGGGGGGGGGGGGGGGGG', fData);
+
+                var oid = 47;
+                console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFF', fData[0]);
+                fData[0].layerData.then(lData => {
+                    var lconfig = api.symbology.createSymbologyConfig(lData.renderer, legend);
+                    fData[0].getAttribs().then(gData => {
+                        console.log('HHHHHHHHHHHHHHHHH', lconfig, gData);
+                        var icon = api.symbology.getGraphicIcon(gData, lconfig, oid);
+                        var myimg = document.getElementById("mine");
+                        myimg.src = "data:image/png;base64," + icon;
+                        console.log(icon);
+                    });
                 });
             });
         });
