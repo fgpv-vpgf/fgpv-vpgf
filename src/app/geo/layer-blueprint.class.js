@@ -195,16 +195,6 @@
 
     function LayerFileBlueprintWrapper($q, LayerBlueprint, LayerBlueprintUserOptions, Geo, gapiService) {
 
-        // generator functions for different file types
-        const layerFileGenerators = {
-            [Geo.Service.Types.csv]: (data, commonConfig) =>
-                gapiService.gapi.layer.makeCsvLayer(this._formatedFileData.formattedData, commonConfig),
-            [Geo.Service.Types.geojson]:  (data, commonConfig) =>
-                gapiService.gapi.layer.makeGeoJsonLayer(this._formatedFileData.formattedData, commonConfig),
-            [Geo.Service.Types.shapefile]:  (data, commonConfig) =>
-                gapiService.gapi.layer.makeShapeLayer(this._formatedFileData.formattedData, commonConfig),
-        };
-
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         /**
@@ -219,6 +209,8 @@
             constructor(path, file) { // , extension) {
                 super();
 
+                // when passing file object, path is its name
+                this._fileName = typeof file !== 'undefined' ? file.name : path;
                 this._fileData = null;
                 this._formatedFileData = null;
 
@@ -253,7 +245,9 @@
                 this._validPromise = this._constructorPromise
                     .then(() => gapiService.gapi.layer.validateFile(this.fileType, this._fileData))
                     .then(result => {
-                        this._userOptions = new LayerBlueprintUserOptions.File[this.fileType]();
+                        this._userOptions =
+                            new LayerBlueprintUserOptions.File[this.fileType]();
+                        this._userOptions.layerName = this._fileName;
                         this._formatedFileData = result;
                     })
                     .catch(error => console.error(error));
@@ -269,8 +263,11 @@
 
             get fields() {
                 console.log(this._formatedFileData);
-
-                return this._formatedFileData.fields;
+                if (this._formatedFileData !== null) {
+                    return this._formatedFileData.fields;
+                } else {
+                    return null;
+                }
             }
 
             /**
@@ -301,6 +298,16 @@
             generateLayer() {
                 // TODO: throw error if layer type is not defined
 
+                // generator functions for different file types
+                const layerFileGenerators = {
+                    [Geo.Service.Types.CSV]: () =>
+                        gapiService.gapi.layer.makeCsvLayer(this._formatedFileData.formattedData, this.userOptions),
+                    [Geo.Service.Types.GeoJSON]:  () =>
+                        gapiService.gapi.layer.makeGeoJsonLayer(this._formatedFileData.formattedData, this.userOptions),
+                    [Geo.Service.Types.Shapefile]:  () =>
+                        gapiService.gapi.layer.makeShapeLayer(this._fileData, this.userOptions),
+                };
+
                 // set layer id to the config id; this is needed when using file layer generator function
                 this.userOptions.layerId = this.config.id;
 
@@ -310,7 +317,7 @@
                 console.log(this.userOptions);
                 console.log(layerFileGenerators[this.fileType]);
 
-                return gapiService.gapi.layer.makeCsvLayer(this._formatedFileData.formattedData, this.userOptions);
+                return layerFileGenerators[this.fileType]();
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
