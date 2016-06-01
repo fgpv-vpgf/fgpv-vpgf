@@ -128,7 +128,7 @@
 
                     self.headerControls.split(';')
                         .forEach(controlName => {
-                            let controlElement = $compile(`<${controlName}></${controlName}>`)(scope);
+                            const controlElement = $compile(`<${controlName}></${controlName}>`)(scope);
                             headerSpacer.after(controlElement);
                         });
                 }
@@ -139,7 +139,7 @@
                 if (self.footer) {
                     const footer = element.find(FOOTER_CLASS);
 
-                    let footerElement = $compile(`<${self.footer}></${self.footer}>`)(scope);
+                    const footerElement = $compile(`<${self.footer}></${self.footer}>`)(scope);
                     footer.append(footerElement);
                 }
             }
