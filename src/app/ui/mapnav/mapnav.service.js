@@ -33,8 +33,8 @@
             config: {
                 zoom: 'buttons', // 'all', 'slider', 'buttons'
                 extra: [
-                    // NOTE: geoLocation, marquee and history buttons kept as options for future functionality
-                    // 'geoLocation',
+                    // NOTE: marquee and history buttons kept as options for future functionality
+                    'geoLocation',
                     // 'marquee',
                     'home',
                     // 'history',
@@ -65,7 +65,7 @@
                 label: 'nav.label.geoLocation',
                 icon: 'maps:my_location',
                 tooltip: 'nav.tooltip.geoLocation',
-                action: function () {} // FIXME: user proper call
+                action: () => geoService.fetchLocation()
             },
             marquee: {
                 label: 'nav.label.search',
