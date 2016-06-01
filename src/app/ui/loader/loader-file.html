@@ -77,11 +77,11 @@
             <rv-stepper-item
                 form="self.select.form"
                 step="self.select.step"
-                summary-value="{{ self.select.dataType && self.select.step.isCompleted ? self.dataTypes[self.select.dataType] : '' }}">
+                summary-value="{{ self.layerBlueprint.fileType && self.select.step.isCompleted ? self.dataTypes[self.layerBlueprint.fileType] : '' }}">
 
                 <md-input-container class="md-block">
                     <label>File Format</label>
-                    <md-select name="dataType" ng-model="self.select.dataType" required>
+                    <md-select name="dataType" ng-model="self.layerBlueprint.fileType" required>
                         <md-option ng-repeat="(value, key) in self.dataTypes" value="{{ value }}">
                             {{ key }}
                         </md-option>
@@ -98,11 +98,11 @@
                 </md-input-container>
             </rv-stepper-item>
 
-            <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.select.dataType">
+            <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.layerBlueprint.fileType">
 
                 <md-input-container class="md-block">
                     <label>Layer Name</label>
-                    <input name="layerName" ng-model="self.configure.options.layerName" required>
+                    <input name="layerName" ng-model="self.layerBlueprint.userOptions.layerName" required>
                     <!-- TODO: decide whether and how to display a hint or error messages -->
                     <!--div ng-messages="self.configure.form.layerName.$error">
                         <div ng-message="required">This is required!</div>
@@ -112,9 +112,9 @@
 
                 <md-input-container class="md-block">
                     <label>Primary Field</label>
-                    <md-select name="primaryField" ng-model="self.configure.options.primaryField" required>
-                        <md-option ng-repeat="(value, key) in self.configure.fields" value="{{ value }}">
-                            {{ key }}
+                    <md-select name="primaryField" ng-model="self.layerBlueprint.userOptions.primaryField" required>
+                        <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
+                            {{ field.name }}
                         </md-option>
                     </md-select>
                     <!-- TODO: decide whether and how to display a hint or error messages -->
@@ -126,9 +126,9 @@
                 <div layout="row" ng-switch-when="csv">
                     <md-input-container class="md-block" flex>
                         <label>Latitude Field</label>
-                        <md-select name="latitude" ng-model="self.configure.options.latfield" required>
-                            <md-option ng-repeat="(value, key) in self.configure.fields" value="{{ value }}">
-                                {{ key }}
+                        <md-select name="latitude" ng-model="self.layerBlueprint.userOptions.latfield" required>
+                            <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
+                                {{ field.name }}
                             </md-option>
                         </md-select>
                         <!-- TODO: decide whether and how to display a hint or error messages -->
@@ -138,9 +138,9 @@
                     </md-input-container>
                     <md-input-container class="md-block" flex>
                         <label>Longitude Field</label>
-                        <md-select name="longitude" ng-model="self.configure.options.lonfield" required>
-                            <md-option ng-repeat="(value, key) in self.configure.fields" value="{{ value }}">
-                                {{ key }}
+                        <md-select name="longitude" ng-model="self.layerBlueprint.userOptions.lonfield" required>
+                            <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
+                                {{ field.name }}
                             </md-option>
                         </md-select>
                         <!-- TODO: decide whether and how to display a hint or error messages -->

@@ -49,11 +49,6 @@
             csv: 'CSV',
             shapefile: 'Shapefile'
         };
-        self.fields = {
-            one: 'one',
-            two: 'two',
-            three: 'three'
-        };
 
         activate();
 
@@ -74,6 +69,7 @@
                 form: null,
                 file: null,
                 fileData: null,
+                fileUrl: null,
                 filesSubmitted: uploadFilesSubmitted,
                 fileSuccess: uploadFileSuccess,
                 fileError: uploadFileError,
@@ -123,31 +119,28 @@
         function configureOnContinue() {
             // TODO: try to build layer and add it to the map
             // TODO: display error message if something breaks
-            stepper.nextStep();
+
+            geoService.constructLayers([self.layerBlueprint]);
+            // self.layerBlueprint.generateLayer(self.configure.options);
+
+            // stepper.nextStep();
         }
 
         /**
          * Cancels the layer configuration step and rolls back to file type selection.
          */
         function configureOnCancel() {
-            self.configure.options = {}; // reset layer options
+            // self.configure.options = {}; // reset layer options
 
             stepper.previousStep();
         }
 
         function selectOnContinue() {
-            console.log('User selected', self.select.dataType);
-            self.layerBlueprint.fileType = self.select.dataType;
+            //console.log('User selected', self.select.dataType);
+            //self.layerBlueprint.fileType = self.select.dataType;
+            
             self.layerBlueprint.valid
                 .then(() => {
-                    self.configure.fields = {};
-                    self.layerBlueprint.fields.forEach(({ name }) =>
-                        self.configure.fields[name] = name);
-
-                    console.log(self.layerBlueprint.fields);
-
-                    self.configure.options = self.layerBlueprint.userConfig;
-
                     stepper.nextStep();
                 })
                 .catch(error => {
@@ -213,7 +206,8 @@
         function onLayerBlueprintReady() {
             self.layerBlueprint.ready
                 .then(() => {
-                    self.select.dataType = self.layerBlueprint.fileType;
+                    //self.select.dataType = self.layerBlueprint.fileType;
+
                     $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
                 })
                 .catch(error => {

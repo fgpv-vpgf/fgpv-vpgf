@@ -16,7 +16,6 @@
         .factory('LayerBlueprintUserOptions', factoryWrapper);
 
     function factoryWrapper(Geo, geoService) {
-        // jscs:disable requireSpacesInAnonymousFunctionExpression
         class BlueprintUserOptions {
             constructor() {
                 this._layerName = '';
@@ -101,7 +100,6 @@
                 super();
             }
         }
-        // jscs:disable requireSpacesInAnonymousFunctionExpression
 
         return {
             File: {
