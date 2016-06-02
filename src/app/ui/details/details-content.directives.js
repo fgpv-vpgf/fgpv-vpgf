@@ -41,7 +41,7 @@
         function link(scope, el) {
             const contentContainer = el.find(CONTENT_CLASS);
 
-            scope.$watch('self.item', item => {
+            scope.$watchCollection('self.item', item => {
 
                 if (item) {
                     contentContainer.empty(); // clear existing data elements

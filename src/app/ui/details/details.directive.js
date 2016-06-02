@@ -101,14 +101,34 @@
         $scope.$watch('self.display.data', newValue => {
             // if multiple points added to the details panel ...
             if (newValue && newValue.length > 0) {
-                // pick first point to be selected initially
-                selectItem(newValue[0]);
+                // pick selected item user previously selected one, otherwise pick the first one
+                // do not use selectItem() because we want to update selectedInfo only when user do it
+                const item = (self.selectedInfo) ? getSelectedItem(newValue) : newValue[0];
+                self.selectedItem = item;
             } else {
                 selectItem(null);
             }
         });
 
         /*********/
+
+        /**
+        * Set the selected item from the array of items if previously set.
+        * @private
+        * @param {Object} items data objects array
+        * @return {Object}      selected item in details panel
+        */
+        function getSelectedItem(items) {
+            // get selected item if there is a match
+            let selectedItem = items[0];
+            items.forEach((item) => {
+                if (`${item.requester.caption}${item.requester.name}` === self.selectedInfo) {
+                    selectedItem = item;
+                }
+            });
+
+            return selectedItem;
+        }
 
         /**
          * Closes loader pane and switches to the previous pane if any.
@@ -125,6 +145,7 @@
          */
         function selectItem(item) {
             self.selectedItem = item;
+            self.selectedInfo = (item) ? `${item.requester.caption}${item.requester.name}` : null;
 
             // set this value will trigger the watch inside details-content.directive.js
             // TODO: need a different way to pass data to expand directive; this can break easily
