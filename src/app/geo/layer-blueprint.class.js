@@ -98,6 +98,10 @@
                 }
             }
 
+            /**
+             * Returns user layer options class instance or a plain object if type is not yet set.
+             * @return {Object} user options
+             */
             get userOptions() {
                 return this._userOptions;
             }
@@ -117,6 +121,7 @@
 
     function LayerServiceBlueprintWrapper($q, LayerBlueprint, gapiService, Geo) {
         // generator functions for different layer types
+        // TODO: this is going to move to layer record
         const layerServiceGenerators = {
             [Geo.Layer.Types.ESRI_DYNAMIC]: (config, commonConfig) =>
                 new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig),
@@ -237,10 +242,18 @@
                     });
             }
 
+            /**
+             * Returns file type.
+             * @return {String} file type
+             */
             get fileType() {
                 return this._fileType;
             }
 
+            /**
+             * Sets file type. Setting file type triggers file validation.
+             * @param  {String} value file type
+             */
             set fileType(value) {
                 this._fileType = value;
                 this._validPromise = this._constructorPromise
@@ -254,16 +267,26 @@
                     .catch(error => console.error(error));
             }
 
+            // TODO: this needs to changed to display an error
             get valid() {
                 return this._validPromise;
             }
 
+            /**
+             * Returns a constructor promise which resolves when file's data is loaded and read in.
+             * @return {Promise} constructor promise
+             */
             get ready() {
                 return this._constructorPromise;
             }
 
+            /**
+             * Returns files found in the file data.
+             * @return {Array} array of fields in the form of [{ name: "Long", type: "esriFieldTypeString"}]
+             */
             get fields() {
-                console.log(this._formatedFileData);
+                // console.log(this._formatedFileData);
+
                 if (this._formatedFileData !== null) {
                     return this._formatedFileData.fields;
                 } else {
@@ -296,6 +319,10 @@
                 return dataPromise;
             }
 
+            /**
+             * Generate actual esri layer object from the file data, config and user options.
+             * @return {Promise} promise resolving with the esri layer object
+             */
             generateLayer() {
                 // TODO: throw error if layer type is not defined
 

@@ -20,36 +20,28 @@
             restrict: 'E',
             templateUrl: 'app/ui/loader/loader-file.html',
             scope: {},
-            link: link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
-
-        /*********/
-
-        function link() { // scope, el, attr, ctrl) {
-
-        }
     }
 
-    function Controller($timeout, stateManager, Stepper, gapiService, geoService, LayerFileBlueprint) {
+    function Controller($timeout, stateManager, Stepper, geoService, LayerFileBlueprint, Geo) {
         'ngInject';
         const self = this;
-        let stepper;
 
         self.closeLoaderFile = closeLoaderFile;
         self.dropActive = false; // flag to indicate if file drop zone is active
 
-        // TODO: get datatypes from a loader service
-        self.dataTypes = {
-            geojson: 'GeoJSON',
-            csv: 'CSV',
-            shapefile: 'Shapefile'
-        };
+        self.fileTypes = [
+            Geo.Service.Types.CSV,
+            Geo.Service.Types.GeoJSON,
+            Geo.Service.Types.Shapefile
+        ];
 
+        // create three steps: upload data, selecct data type, and configure layer
         self.upload = {
             step: {
                 titleValue: 'Upload data',
@@ -79,8 +71,7 @@
                 onContinue: selectOnContinue,
                 onCancel: selectOnCancel
             },
-            form: null,
-            dataType: null
+            form: null
         };
 
         self.configure = {
@@ -99,20 +90,19 @@
 
         self.layerBlueprint = null;
 
-        stepper = new Stepper();
+        const stepper = new Stepper();
         stepper
             .addSteps(self.upload.step)
             .addSteps(self.select.step)
             .addSteps(self.configure.step)
             .start(); // activate stepper on the first step
 
-        /*********/
+        /***/
 
         /**
          * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
          */
         function configureOnContinue() {
-            // TODO: try to build layer and add it to the map
             // TODO: display error message if something breaks
 
             geoService.constructLayers([self.layerBlueprint]);
@@ -123,14 +113,14 @@
          * Cancels the layer configuration step and rolls back to file type selection.
          */
         function configureOnCancel() {
-            // self.configure.options = {}; // reset layer options
+            // TODO: reset layer options on cancel
 
             stepper.previousStep();
         }
 
         function selectOnContinue() {
-            // console.log('User selected', self.select.dataType);
-            // self.layerBlueprint.fileType = self.select.dataType;
+            // console.log('User selected', self.layerBlueprint.fileType);
+            // TODO: validate file when user selects a differnt type and show an error message; also disable "continue" button
 
             self.layerBlueprint.valid
                 .then(() => {
@@ -147,9 +137,9 @@
          */
         function selectOnCancel() {
             // console.log('selectOnCancel');
+            //
             stepper.previousStep();
             self.upload.fileReset(); // reset the upload form
-            // self.select.dataType = null;
         }
 
         /**
@@ -175,7 +165,7 @@
          * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
          */
         function uploadFilesSubmitted(files, event, flow) {
-            // TODO: if current step is not the first and user drag-drops file, go back to first step
+            // TODO: if current step is not the first and user drag-drops file, go back to second step
             // console.log('submitted', files, event, flow);
             if (files.length > 0) {
                 self.upload.file = files[0]; // store the first file from the array;
@@ -196,14 +186,16 @@
             onLayerBlueprintReady();
         }
 
+        /**
+         * Waits until the layerBlueprint is create and ready (the data has been read) and moves to the next step.
+         */
         function onLayerBlueprintReady() {
             self.layerBlueprint.ready
                 .then(() => {
-                    // self.select.dataType = self.layerBlueprint.fileType;
-
                     $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
                 })
                 .catch(error => {
+                    // TODO: show a meaningful error about why upload failed.
                     console.error('Something awful happen', error);
                 });
         }

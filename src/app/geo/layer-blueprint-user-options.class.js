@@ -8,7 +8,7 @@
      * @requires dependencies
      * @description
      *
-     * The `service` service description.
+     * The `LayerBlueprintUserOptions` service returns a collection of file option classes. These specify user selectable options when importing layer.
      *
      */
     angular
@@ -53,7 +53,7 @@
             constructor() {
                 super();
 
-                this._epsgLookup = geoService.epsgLookup;
+                this._epsgLookup = geoService.epsgLookup; // this function will be moved somewhere
                 this._targetWkid = geoService.mapObject.spatialReference.wkid;
             }
 
