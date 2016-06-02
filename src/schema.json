@@ -207,6 +207,23 @@
             "description": "Specifies how layer attributes are loaded",
             "additionalProperties": false
         },
+        "offscaleOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "string",
+                    "enum": ["", "zoomin", "zoomout"],
+                    "default": "",
+                    "description": "Specifies the off scale direction. empty: on scale; zoomin: need to zoom in to see the layer; zoomout: need to zoom out to see the layer."
+                }
+            },
+            "description": "Specifies if the layer is off scale or not, this option will replace visibility option when layer is off scale and visibility is true",
+            "additionalProperties": false
+        },
 
         "basicLayerOptionsNode": {
             "type": "object",
@@ -244,6 +261,9 @@
             "properties": {
                 "visibility": {
                     "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "offscale": {
+                    "$ref": "#/definitions/offscaleOptionNode"
                 },
                 "opacity": {
                     "$ref": "#/definitions/opacityOptionNode"
@@ -285,6 +305,9 @@
             "properties": {
                 "visibility": {
                     "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "offscale": {
+                    "$ref": "#/definitions/offscaleOptionNode"
                 },
                 "opacity": {
                     "$ref": "#/definitions/opacityOptionNode"
