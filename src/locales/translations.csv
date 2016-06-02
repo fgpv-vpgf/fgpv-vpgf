@@ -118,9 +118,25 @@ Geometry types,geometry.type.generic, feature|features, entité|entités
 Geometry types,geometry.type.esriGeometryPoint, point|points, point|points
 Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, polygone|polygones
 Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
-,import.file.type.csv, CSV, [fr] CSV
-,import.file.type.shapefile, Shapefile, [fr] Shapefile
-,import.file.type.geojson, GeoJSON, [fr] GeoJSON
+,import.file.title,Import File,[fr] Import File
+,import.file.upload.title,Upload data,[fr] Upload data
+,import.file.upload.summary,"GeoJSON, CSV, or Shapefile","[fr] GeoJSON, CSV, or Shapefile"
+,import.file.upload.choose,choose a file,[fr] choose a file
+,import.file.upload.drop,Drop the file to upload,[fr] Drop the file to upload
+,import.file.upload.or,or,[fr] or
+,import.file.upload.fileurl,File URL,[fr] File URL
+,import.file.select.title,Select file format,[fr] Select file format
+,import.file.select.fileformat,File Format,[fr] File Format
+,import.file.configure.title,Configure layer,[fr] Configure layer
+,import.file.configure.layername,Layer Name,[fr] Layer Name
+,import.file.upload.primaryfield,Primary Field,[fr] Primary Field
+,import.file.upload.latitudefield,Latitude Field,[fr] Latitude Field
+,import.file.upload.longitudefield,Longitude Field,[fr] Longitude Field
+,import.file.type.csv, CSV,[fr] CSV
+,import.file.type.shapefile,Shapefile,[fr] Shapefile
+,import.file.type.geojson,GeoJSON,[fr] GeoJSON
+,stepper.continue,continue,[fr] continue
+,stepper.cancel,cancel,[fr] cancel
 ,help.navigationControls.header,Navigation Controls,Contrôles de navigation
 ,help.navigationControls.info,"Navigation controls are used for changing the viewing extent of the map; the datagrid updates accordingly to what's viewable in the current extent.<br>
 <br>

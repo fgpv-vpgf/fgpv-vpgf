@@ -44,7 +44,7 @@
         // create three steps: upload data, selecct data type, and configure layer
         self.upload = {
             step: {
-                titleValue: 'Upload data',
+                titleValue: 'import.file.upload.title',
                 stepNumber: 1,
                 isActive: false,
                 isCompleted: false,
@@ -64,7 +64,7 @@
 
         self.select = {
             step: {
-                titleValue: 'Select file format',
+                titleValue: 'import.file.select.title',
                 stepNumber: 2,
                 isActive: false,
                 isCompleted: false,
@@ -76,7 +76,7 @@
 
         self.configure = {
             step: {
-                titleValue: 'Configure layer',
+                titleValue: 'import.file.configure.title',
                 stepNumber: 3,
                 isActive: false,
                 isCompleted: false,
