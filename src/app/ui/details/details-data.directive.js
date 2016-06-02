@@ -28,7 +28,7 @@
         return directive;
 
         function link(scope, element) {
-            scope.$watch('data', data => {
+            scope.$watchCollection('data', data => {
                 if (data) {
                     element.empty(); // clear existing data elements
                     const frag = angular.element(document.createDocumentFragment());
