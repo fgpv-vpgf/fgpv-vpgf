@@ -74,7 +74,8 @@
 
                 // add icons and zoom to button only to the feature layers
                 // TODO: remove when symbology for dynamic layers is sorted out and zoom to for dynamic layers is sorted out
-                if (requester.legendEntry.layerType === 'esriFeature') {
+                // FIXME: now checking if file-based layer by looking at url since symbology generation doesn't work
+                if (requester.legendEntry.layerType === 'esriFeature' && requester.legendEntry.url) {
 
                     // add symbol as the first column
                     // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
