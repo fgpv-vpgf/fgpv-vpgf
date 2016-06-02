@@ -77,13 +77,13 @@
             <rv-stepper-item
                 form="self.select.form"
                 step="self.select.step"
-                summary-value="{{ self.layerBlueprint.fileType && self.select.step.isCompleted ? self.dataTypes[self.layerBlueprint.fileType] : '' }}">
+                summary-value="{{ self.layerBlueprint.fileType && self.select.step.isCompleted ? 'import.file.type.' + self.layerBlueprint.fileType : '' | translate }}">
 
                 <md-input-container class="md-block">
                     <label>File Format</label>
                     <md-select name="dataType" ng-model="self.layerBlueprint.fileType" required>
-                        <md-option ng-repeat="(value, key) in self.dataTypes" value="{{ value }}">
-                            {{ key }}
+                        <md-option ng-repeat="fileType in self.fileTypes" value="{{ fileType }}">
+                            {{ 'import.file.type.' + fileType | translate }}
                         </md-option>
                     </md-select>
 

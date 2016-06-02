@@ -118,6 +118,9 @@ Geometry types,geometry.type.generic, feature|features, entité|entités
 Geometry types,geometry.type.esriGeometryPoint, point|points, point|points
 Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, polygone|polygones
 Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
+,import.file.type.csv, CSV, [fr] CSV
+,import.file.type.shapefile, Shapefile, [fr] Shapefile
+,import.file.type.geojson, GeoJSON, [fr] GeoJSON
 ,help.navigationControls.header,Navigation Controls,Contrôles de navigation
 ,help.navigationControls.info,"Navigation controls are used for changing the viewing extent of the map; the datagrid updates accordingly to what's viewable in the current extent.<br>
 <br>
