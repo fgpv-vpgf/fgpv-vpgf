@@ -388,52 +388,7 @@
                 // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
                 gapiService.gapi.events.wrapEvents(layer, {
                     // TODO: add error event handler to register a failed layer, so the user can reload it
-                    load: () => {
-                        console.log('## layer load', layer.id);
-
-                        // FIXME look at layer config for flags indicating not to load attributes
-                        // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
-
-                        // make sure the placeholder hasn't been removed
-                        if (!layerRecord.state.removed) {
-                            // handles the asynch loading of attributes
-                            // get the attributes for the layer
-                            let attributesPromise = $q.resolve(null);
-                            if (Geo.Layer.NO_ATTRS.indexOf(layerConfig.layerType) < 0) {
-                                attributesPromise = loadLayerAttributes(layer);
-                            }
-
-                            // replace placeholder with actual layer
-                            const index = ref.legendService.legend.remove(layerRecord.state);
-
-                            // set attribute bundle on the layer record
-                            // TODO: refactor;
-                            /* attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
-                            *  index an optional index indicating at which position the layer was added to the map
-                            * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
-                            * */
-                            layerRecord.attributeBundle = attributesPromise;
-                            ref.legendService.addLayer(layerRecord, index); // generate actual legend entry
-
-                            // TODO refactor this as it has nothing to do with layer registration;
-                            // will likely change as a result of layer reloading / reordering / properly ordered legend
-                            const opts = layerRecord.state.options;
-                            if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
-                                setBboxState(layerRecord.state, true);
-                            }
-
-                            // if esriTile layer projection and map projection is different we can't show the layer. Disable the option.
-                            const wkid = geoState.mapService.mapObject.spatialReference.wkid;
-                            if (layerRecord.state.layerType === 'esriTile' &&
-                                layer.spatialReference.wkid !== wkid) {
-                                opts.visibility.enabled = false;
-                                opts.visibility.value = false;
-                            }
-
-                            // set scale state
-                            setScaleDepState(layer.id);
-                        }
-                    },
+                    load: onLoad,
                     error: data => {
                         console.error('## layer error', layer.id, data);
 
@@ -483,6 +438,58 @@
 
                     // add layer to the map triggering its loading process
                     mapObject.addLayer(layer, targetIndex);
+
+                    // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
+                    if (layer.loaded) {
+                        onLoad();
+                    }
+                }
+
+                function onLoad() {
+                    console.log('## layer load', layer.id);
+
+                    // FIXME look at layer config for flags indicating not to load attributes
+                    // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
+
+                    // make sure the placeholder hasn't been removed
+                    if (!layerRecord.state.removed) {
+                        // handles the asynch loading of attributes
+                        // get the attributes for the layer
+                        let attributesPromise = $q.resolve(null);
+                        if (Geo.Layer.NO_ATTRS.indexOf(layerConfig.layerType) < 0) {
+                            attributesPromise = loadLayerAttributes(layer);
+                        }
+
+                        // replace placeholder with actual layer
+                        const index = ref.legendService.legend.remove(layerRecord.state);
+
+                        // set attribute bundle on the layer record
+                        // TODO: refactor;
+                        /* attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
+                        *  index an optional index indicating at which position the layer was added to the map
+                        * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
+                        * */
+                        layerRecord.attributeBundle = attributesPromise;
+                        ref.legendService.addLayer(layerRecord, index); // generate actual legend entry
+
+                        // TODO refactor this as it has nothing to do with layer registration;
+                        // will likely change as a result of layer reloading / reordering / properly ordered legend
+                        const opts = layerRecord.state.options;
+                        if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
+                            setBboxState(layerRecord.state, true);
+                        }
+
+                        // if esriTile layer projection and map projection is different we can't show the layer. Disable the option.
+                        const wkid = geoState.mapService.mapObject.spatialReference.wkid;
+                        if (layerRecord.state.layerType === 'esriTile' &&
+                            layer.spatialReference.wkid !== wkid) {
+                            opts.visibility.enabled = false;
+                            opts.visibility.value = false;
+                        }
+
+                        // set scale state
+                        setScaleDepState(layer.id);
+                    }
                 }
             }
 

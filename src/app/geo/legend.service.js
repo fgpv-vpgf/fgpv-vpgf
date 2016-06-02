@@ -138,14 +138,19 @@
                 // generate toc entry
                 const state = legendEntryFactory.singleEntryItem(layer.initialState, layer.layer);
                 layer.state = state;
-                const symbologyPromise = getMapServerSymbology(state.url);
 
-                symbologyPromise.then(data =>
-                    applySymbology(state, data.layers[state.featureIdx]));
+                // HACK: to get file based layers working; this will be solved by the layer record ana legend entry hierarchy
+                // TODO: file based layers need to have their symbology generated
+                if (typeof state.url !== 'undefined') {
+                    const symbologyPromise = getMapServerSymbology(state.url);
 
-                // assign feature count
-                getServiceFeatureCount(`${state.url}/${state.featureIdx}`).then(count =>
-                    applyFeatureCount(layer.layer.geometryType, state, count));
+                    symbologyPromise.then(data =>
+                        applySymbology(state, data.layers[state.featureIdx]));
+
+                    // assign feature count
+                    getServiceFeatureCount(`${state.url}/${state.featureIdx}`).then(count =>
+                        applyFeatureCount(layer.layer.geometryType, state, count));
+                }
 
                 return state;
             }
