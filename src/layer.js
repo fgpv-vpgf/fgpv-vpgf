@@ -701,7 +701,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
 
         // TODO add documentation on why we only support layers with WKID (and not WKT).
         let targetWkid;
-        let srcProj;
+        let srcProj = 'EPSG:4326'; // 4326 is the default for GeoJSON with no projection defined
         let layerId;
         const layerDefinition = {
             objectIdField: 'OBJECTID',
@@ -764,6 +764,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
 
         // make the layer
         const buildLayer = new Promise(resolve => {
+
             // project data and convert to esri json format
             // console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
             geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
@@ -773,7 +774,6 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
                 features: esriJson,
                 geometryType: layerDefinition.drawingInfo.geometryType
             };
-
             const layer = new esriBundle.FeatureLayer(
                 {
                     layerDefinition: layerDefinition,
