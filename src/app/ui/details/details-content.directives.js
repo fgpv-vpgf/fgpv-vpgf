@@ -59,10 +59,14 @@
                                 let ul = angular.element('<ul class="rv-details-zebra-list"></ul>');
 
                                 angular.forEach(item.data, keyval => {
-                                    let li = angular.element('<li></li>');
-                                    li.append(`<div class="rv-details-attrib-key">${keyval.key}</div>`);
-                                    li.append(`<div class="rv-details-attrib-value">${keyval.value}</div>`);
-                                    ul.append(li);
+                                    // skip over the symbol column
+                                    // TODO: see #689
+                                    if (keyval.key !== 'rvSymbol') {
+                                        let li = angular.element('<li></li>');
+                                        li.append(`<div class="rv-details-attrib-key">${keyval.key}</div>`);
+                                        li.append(`<div class="rv-details-attrib-value">${keyval.value}</div>`);
+                                        ul.append(li);
+                                    }
                                 });
 
                                 frag.append(ul);
