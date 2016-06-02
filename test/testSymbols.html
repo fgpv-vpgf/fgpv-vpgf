@@ -13,141 +13,40 @@
     <script src='dist/geoapi.min.js'></script>
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-            var layer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0');
+        var layer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CommonGIS_AuxMerc/MapServer/0');
 
-            var legend = [
-                    {
-                      'name' : 'Status and Trend Monitoring of Listed, Rare and Difficult-to-Monitor Landbirds',
-                      'url' : '6D13AFE',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAPBQTFRF/v//AAAAAAAHBwAHBwcHBwcSEgcSEhIZGRIZGRIfGRkZHxkkHxkoHx8fJBkoJB8sJCQkKB8wKCgoLCQ3MCQ6Myg9MyhANyxDNyxFNzc3OixFOjBHPT09QDNLRTdPRTdRRTpRRzpTSTpTSTpVSz1YSz1aTUBaT0BbT0NfUUVfU0VgU0ViU0djVUdgVUdjWElmWEtpW0tqW0trW0ttXUttYE1wY1F0Y1F2Y1N4ZVN4ZlN5ZlV5aFV7aVZ8alZ8alh9bVh/bVqBbVqCblqDbluDcFuDcFuFcVuFcVuGc12HdF2HdF+IdF+Jdl+JdmCJdmCKR2xyOgAAAFB0Uk5TAP////////////////////////////////////////////////////////////////////////////////////////////////////////8MxOzIAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA/klEQVQokX2S6XKCMBRGjU1EXFrBXWm1trXuuLRo6WJr64ZceP+3KZegMyB4fiVzJrn5Ml8sdpGqckaVmxQhhB4hHik0srOl9TvObfGaW5pzlIIL3fYwP56TrlNOChZtpP8OMKV+dXjisxKNDZQC6sGbz8YwjVCkC1o8XNEB9MJPxSUdbvzKVCWkcD/fNwMvtI1vZLU3H1kgl7X9QpY/BrwKgVldARGl1qf1koh4Ye13W4/IxXRrSMMV0Ww1Qjmn+lfhsxq7ddkfeZRGMvnOnz1h/shwcDHBmKWPuXJYAPWNo03aFdG9V8ZyZB0niJykwNwfpFleKfm8bPLlev4DQVcx2xwpP3EAAAAASUVORK5CYII=',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Surface Water Quantity and Sediment Transport',
-                      'url' : 'DCCD58E9',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAARpQTFRF/v//AAAAAAAHAAcHBwcHBwcSBxISBxIZBxIfBxkfBxkkBxkoBx8sBx8wByQwByQzByg3ByxDBzpTEiQzEjdLEjdNEkBVEkBWEkVbEkdgEktmElV2GRkZGUBVGUNYGUtmGU1pGU9tGVFwGVV2GVh6GV+DGWCGGWCIGWaPGWqSGWqVGWuWGW2ZGXOfGXSgGXSiGX2uGX+wGX+yGYG0GYW5GYm8GYvBGYzFGZLNGZbSGZjUGZnWGZvYGZzZGZ3cGZ7eGZ/fGaDgGaDhGaDiGaLiGaLjHx8fH1NzH1p6H2CIH2OKH2qTH3CcH3SgH3ilH4O1H4a6H4m+H4nAH5LNJCQkJEBVJEVYJHajJIS2KCgoKFt9KH2qNzc3PT09nZWJkAAAAF50Uk5TAP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////4+ZFeoAAAAJcEhZcwAADsQAAA7EAZUrDhsAAADuSURBVCiRY2DAC2JiMUAMREaGEQuQAclEssD5bKxwJksIUCoWoVRJAcGORZHiMQ3gwi7FrG4XHMaEVUrE3MU6ShibFLuWo6t9dCgLphSzuIWrq2uQOz+mFIeuM1DK0luWFV2KWcgKKOPqpO/Bhy7F6gPS5OpqpirHgibFZwuWcXVU8eRAk5KCaHJ11fYSQJPSgEkZKouhSfnCpAIVJdCkNGFSJmqiuOzyC+dGk2L3dwTLOETIozueWdDABuTlYHUOzDDkldYzNtKRZEcKwxBYWLNw8vOxM8M4kaDE4YZIHHDA4gZJUpGYiS0Sf/IEAA66QtgwXctSAAAAAElFTkSuQmCC',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Cause-effect assessment monitoring',
-                      'url' : 'FC33792',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAT5QTFRF/v//AAAABwAABwcABwcHEgcAEhIAEhIHGRIHGRkAGRkHGRkZHx8HHx8fJCQkKCQAKCQHKCgoLCgHMCgAMCgHMCwHMywANzc3PTcAPTcHPT09QDcAQzoARz0HS0UHTUUATUcATUcHWE8HW1EHYFYHY1oHZl0HamAAamAHbmMHdGgHfG0AfW4AfnAHf3MHf3QHgXMHhHYHhXgHiXwSi30HjH0AjX4Ajn8Aj4EHkIIHlIUHlIYHmokHm4oHnIsHnYwHopAApJEApJIHpJQHp5YHqJYHqJgHqZgHqpkHqpoHsp8Ht6MAt6QHuKQAuKUAuqcAuqgAvKgAvKgHvqkAwKwHwa4Awq4Hw64AyLIAybQAyrUAzLYAzbcAz7kA0LoA0bwA0rwA1LwA1L4A1MAA1b4A1cAA1sAA1sAH2MAA2cEAIzhm1AAAAGp0Uk5TAP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////0LIEDcAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAEbSURBVCiRY2DAC8SlMIA4RIabkZGRGQpYmBghgBskI8jCyMiirgMG2loqshxgKRY+oJQUkMEenAkFKSGWQmA5KbhUWoCZqampuW1QarI7K6pUkgkr0CpWNh692DQVVKlEI6j9XM4ZbszYpRit0vxwSDHbpdkwYZVilgtMlkO1K8VJQV5eXkHZwDdenxlVKjM+AgSiEtKNOdD8lREXCgLhkQkZXgJo/rLmBwFRRcOwNE8eHC7UiI7VxOEvrsA0GxbsUkzeGQ44pDiAupixeplNNy5GFdXL9tISQCCjZB2T6cKF6uW0JDBISUvwkIT5iw9oJ7ujPwT4uFqoiYATgCAocfCyMDLzi4GBsIgAJzgEWXghSUoQM7EJ4k+eAIZ5QVNvkCE3AAAAAElFTkSuQmCC',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Wild Bird Health and Contaminants',
-                      'url' : '4E54A7C7',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAPxQTFRF/v//AAAAAAcABwcABwcHBxIABxIHBxkHEhkHEh8HEiQHEigHGRkZGSgHGSwHGTAHHx8fHzMHHzcHHzoHJCQkJEAHJEMHJEUHJEcHKCgoKEsHLE8HLFMHMFYHM1gHM1oHNzc3N1sHN18HN2AHOmMHOmYHPT09PUA9PUM6PWgSQEBAQG0HQG0SQ20SRXMSRXQSR1gwR3kSR3wSSX0SSX4SS2gsS38SS4MSS4QSS4UST4kST4oSUX4kUY0SUY4SUY8SU5ASVYMkVZQSVZUSVpYSVpgSWJkSWJoSWJwSWp8SWqASW6ASW6ISW6MSXaUSX6USX6cSX6gSYKgSYKkSLpfhXQAAAFR0Uk5TAP//////////////////////////////////////////////////////////////////////////////////////////////////////////////St5OswAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAQdJREFUKJF90mtTgkAUBmCXBRLyjklo4aVE09SuWmlZlt28FHv+/3+J3UWc4Uy+n3Z4ljMH5k0kdqbmiXRaXpSalBThofnjQ41ESXFxVH40Lz9gNVAiUosBefJsvQNAY/uetyX9IaDlqfYfwbKpYKJDxo1VFESk4XOCJxNTSdLvuYaIvgoCdkLjRNwfaassIr2/lnatx4lkRgtBU5siqh6Nbj4BbBNR2jUsvTBm+zQ+kNq9cvDQmufRGslHv8Bv1CuIjDdwxaZnaKAxgzvxtdUsomeYGuKXufEN9+7ZLCMmphVJRTUk7Yp9HWzuqQ4vRy402vW/7Y3kZKUcWbD27cvkIiybs7uef4mXMBL0DxpAAAAAAElFTkSuQmCC',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Hunter/Trapper-Harvested Wildlife Toxicology and Contaminants',
-                      'url' : 'DBFB5370',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAATVQTFRF/v//AAAAAAAHAAcHBwcHBwcSBxISBxIZBxIfBxkkBx8kBx8oByQwByQ3Byg6Byg9ByxDBzBDBzBFBzNHBzNJBzdLBzpREjBHEjNJEjpPEjpTEj1REkNYEkdgEktmEk9rElFtElFuElNxElVzElZ2Elp9Elp+EluBEmaNEmaPEnCeEnakEn2uEoK2Eoe8GRkZGUNYGU9qGVNwGVt9GWaNGWaPGWqQGWqUGXOgGXakGXqoGX2uGYG1GYKzGYO1GYS3GYa6GYe8GYi8GY3FGY3IGY7FGY7HGZDJGZHNGZPQGZTRGZXRGZjVGZnVGZrWGZrYGZzbGZ3dGZ7eGZ/eGZ/fGaDgGaDhGaDiGaLiGaLjHx8fH3agJCQkJH2oKCgoKHieMGN7Nzc3N1NiPT09PUBAPUBDQEBAsClYfwAAAGd0Uk5TAP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+XVuUgAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAEWSURBVCiRfdLpUsIwFAVgQtLWWrTuioqi4gqK4r4ioOK+SxLEKlZ9/0ewSUqdyXU4f5LJl8kkmROLtU3Tl/n58qM0leSRCOmZGjdRlLwQj4ips1V9ud2IR0QaAflqPlzlnGWMyPw/spYZ59dz5j9kHgTE7+bjkEiWBsRpCgNCmZogXkpASip6WjAAkVMm7XkW64TSD5L4jQvI2n5UtmPphNzXK0mHSQyoMLG3e874WCfRqavgjFj9R9TB+oF4dHM1WBw46wXXsIv3fWLHTAqQU2HTYjTWwYF2meXka9dcQMd0xZZfNqlfvmOfnnTLtydCapCQzCV6MdjaRzxRjnpoZLF2OdSSuqqUpwr2/fH2/hmWzWtfz18EY0YK/R+N5QAAAABJRU5ErkJggg==',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Atmospheric Deposition to Acid-Sensitive Lakes and Snowpack',
-                      'url' : '1937ECC3',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAPxQTFRF/v//AAAABwAABwcHEgAAGQAAGRkZHwAAHx8fJAAAJCQkKAAAKCgoMAAAMAcAMwAANwcANzc3OgAAOgcAPT09RQcATwcAUQcAVQcAWgcAXQcAXwcAYAcAYgcAZQcAagcAawcAbgcAcwcAdgcAegcAewcAfQcAgQcAhwcAiAcAiwcAjAcAjQcAjgcAkAcAlQcAmQcAmgcAnAcAnQcAogcApAcApQcAqgcAqwcAswcAtAcAtQcAtgcAuAcAugcAvAcAvgcAwQcAwwcAxRIAxwcAyRIA0BIA0RIA0gcA1hIA2RIA2hIA3BIA3hIA3xIA4RIA4xIA5BIA5RIA5hIAN5ZQFAAAAFR0Uk5TAP//////////////////////////////////////////////////////////////////////////////////////////////////////////////St5OswAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAO9JREFUKJF90vtTgkAQB3A9wFOhCEWL0sRKy0cWFT3MB6VWmi/c//9/EWQOao9xf9qbz+3Mzs43kdhbms6VFkgqGVMpXxQhfEti2ApZj/To62U16vV/dPDhyPFEWsufMoml4mTze5OLI8law+rtlPBEjC8AGNfyPFF749HUMkRM5GTmCbjP1yom8ckfAhg1zgiiw8VOwK23KSIzGAJ46OQR3TF6rxmIbEafFyVE94yc5jGiCqPXFxkRHbg7WQ9NvDwpdOf+7t+3lL+hemX3e4/n9M8NsywAJHOkSuzwguKHIx2FIywhHURK4cOm7I/nFnyQLr3oLIGCAAAAAElFTkSuQmCC',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Oil Sands Contaminants',
-                      'url' : '94FFB884',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAASZQTFRF/v//AAAABwAHBwASBwcHEgASEgAZEgAfGQAfGQcfGRkZHwcoHx8fJAA3JAcoJAcwJAczJCQkKAcoKAczKCgoLAc3MAdFNzc3OgdLOgdNPT09QAdYQwdbRQdTRQdWRRJJRwdTSQddSRJLTQdoTwdjTwdqTwdtUQdqVQdwVgd0WgdtWgd6Wgd+XQd/Xwd4YhJ0YweIZgeKZgePaAeLaAeNageObQeacQeecQejcweYdAeidAeneAekegereweqeweuewewfQeofgewhAe+hQeuhwfAhwfCiQDFiQfDiwe+jAfKjQfLkADRkQfPkgDYkgfSlQDbmwfhnADinQfeoADqogDsogDupADxpQD2pwD4qAD4qAD8qQD6qQD8qQD9qQD+qgD+qgD/g3PHBgAAAGJ0Uk5TAP////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+BVJDaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA8klEQVQokWNgwAvEpTCAOESGixEL4ALJiLDA+ayscCaLIFBKCqFUUx3BlkKR4vPx5sQuxWQUEazEhFVKMiAhTF8ImxSbRXRipIs8E6YUk0xQYmKiv5YwphSHbTxQKsRSlhldikk6FCiTGGevx48uxWwD0pSY6GegwIQmxR8OlkmM0TVmR5NSg2hKTLQyFUWTMoNJuWrLoUnZwaR8NRTRpMxhUl6GEmhSqjApJ0duNCk2j1iwTJSnCrrjmcScwxOAXg404cAMQ34dB3c3a2U2pDAUhCUAJk5eATZYwLOIgBIHDyJxwAELDyRJiWAmNhH8yRMAu8c3BtVbvbgAAAAASUVORK5CYII=',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Surface Water Quality',
-                      'url' : '1D676843',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAASBQTFRF/v//AAAABwAABwcABwcHEgcAGQcAGRkZHwcAHx8fJBIHJCQkKBIHKCgoLBIALBIHMxIHMxkHNxIHNxkHNzc3OhkAOhkHPRkHPT09Rx8HTR8HUyQHWiQHWiwHWygHXygHXywHYDASYywHajAHbTAHbTMHcTAHczMHeDMHeTcHfToHgjcHgjoHhD0HhzoHiUMSjkAHj0AHkkMHk0UHlEUHmEUHnUcHoEkHokcHo0cHpUkHqEkHqEsHrksHsE0Hsk0Hs1EHuFEHulMHwFEHwlMHw1MHx1UAx1UHyFgHy1YHzVgHz1gA0VoH1FoH1VoA1lsA4V8A4mAH42AH6GIA62MA7GMA7mMA72MH8mUA9WYA9mYA92YA+GYA+GgA+mgA+2gA13mIjAAAAGB0Uk5TAP//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////NrNwFAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAPFJREFUKJFjYMALRCQwgAhEhp0RC2AHyfCywPlsrHAmCzdQSgKhVEMdwZZAkeL39uLBLsVkGBGoyIRVSso/LlRfGJsUm2V0fKSTLDOmFJN8QHx8vK+WGKYUh20cUCrYXI4VXYpJJgQoEx9jryuILsVqA9IUH+9noMCMJiUQDpaJj9Uz5kCTUouBSMVbmYqjSZnFQaVcdOTQpOxgUj6aSmhSFjApTyNpNCkVmF2ODnxoUhzuELkoD1V0xzNJOoeBvBxkwoEZhgLadm6u1socSGHIDUsAzFyiQmyw+GLhBSUOTkTigAMWTkiS4sVMbLz4kycAHXo1xYU490oAAAAASUVORK5CYII=',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Plant Health and Contaminants',
-                      'url' : '4CB7AB0B',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAThQTFRF/v//AAAABwcABwcHEhIHGRIHGRkHGRkZHxkHHx8fJB8HJCQkKCQHKCQSKCgoLCQSMCgHMywSNzAHNzc3OjAHOjMHPTcHPT09QDMHQEBAQzcHQzoHQ0M9RToSRz0HRz0SSUAHSUMHS0UHT0cHT0cSUUcSUUkSWE0HWk8ZX1MHYFUSYFs3Y1gHal8Sa18Za2AHbWAHbmMHcWIHcWMZc2MSdGYHeW4oe20SfG0HfW4Hfm0ZiXsHinwHi3wSjX0Hjn8SkYESmYkHmYsZnIoHn4wZn40HoJESo5EHp5QAqJUHrJsHrpsSrpwHsJwHsJ0Hs6AHtaIHtqIHvqgHvqoHwKoAwKsHwKwHwasHxa4Hx7IHybQHy7UHzbYAzrgHzrkHz7kA0boH0rwA1LwA1L4A1sAA1sAH2MAA2cEABqc7HAAAAGh0Uk5TAP////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+H4hwbAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABEklEQVQokX3S51ICMRQFYFIAWWAtqCv2gtgLKnZFUOwNe6+Q+/5v4N7NsszkOpw/e2e+bCaZnFCoaVKOl3TaCZLSEmUY0bs4IVmQKIotcEwWHmrvOzwgEXfJ0fPQI4DKN/5zGhQ+VwBv6/I/OnUJPjc4JVFGAjXFCbF8FQmu2yiNa/rdkoTELWhb4yaxhW9tHz2EIns/2vbDJrGug1ePzjKc0PLsUflJQTYpTOpYSYxEBi9UKzc35NndSXf58H0fOYZ1+TWAl1iaJpS4gRx+5SbZ0KqoY+/t5rsJXamKhUNmzjxhy4m66/Tep92/V1z4JIvqebS+TthYjphvYrv6MlaXmK6UrQvWv3pYmvHLZjev5x85hjVFvaWCBAAAAABJRU5ErkJggg==',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Satellite',
-                      'url' : '209FE2B',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAmRQTFRF/v//AAAABwAABwAHBwcHEgcHEgcSGQcSGRkZHwcSHxISHxIZHx8fJBIZJCQkKBIZKCgoLBIZLBIfLBkkMxkkNxkkNxkoNzc3Oh8oPR8sPT09QB8sQD09QD1AQx8oQx8sQ0BAQ0BDRR8wRx8sRyQwRyQzRyQ3R0BDSUNFSyQ3TSQ3TUVHTyg6Tyg9T0VJUSg9VSg9VSxDWCxDWDBFWjBHWjBJWyxFWyxHWzBFXTBHXzBHXzNLYjNNZTNLZjdPZjdRZjdTaTdPajdRazpRazpVbjpVbj1abkBacDpTcz1VdDpTdD1Wdj1WdkBYdkVfeD1WeEBbeT1YeUBaeUNbeUVgfENffUNbfkVgf0Vif0dlgUVjgkdlg0lmg0lohElmhUtrhkloh0lmh0loh0triElmiUdjiUtoiU1riU1tik1ujE1rjUtqjktrkU1wkk9xk1F2lU9xmVFzmVN4mVN5m1F0nFh+oFiColuGo1qCo1qEpFh9pFh+qFqBqFqCqV+Jqlh9ql+JrFuGrluCrl+JrmCKsF+IsF+Js2OTtWKOtWOQtWaWtmCJtmKLtmWTuGKMumKMumOSumaZvmqfwGaUwWiWwmmZw2qgw22gxWqbxW2gxW2ix22iyG2gynOny3Ooy3SoznSq0Har0Xaw0nSn0niw1Hau1Xqy2Haq3H233X21336633+64H+64IG84YG85X+65YK+5YO+5YPA5oK+5oTA54TB6IXC6IbD6YXC6YfF6ofF64fF7IjF7IjI7ofH7ojK7onJ7onK74jF8YrL8YrM8onM8orN8ovO84vP9I3P9Y3Q9Y3RML3GhgAAAMx0Uk5TAP//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////4B9NAAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAYRJREFUKJFjYMALxKUwgDhEhoMRC+AAyQiwYJNi4QNKSSEJMDHDmVKoUrx+8cYs2KSEjLr2n1gXrcqOLiXccvzYyXSTBccO77BgQZFiq9xfntHAzphQmrlsrgiKlMfmTvnsKf6c7KwsydvzuSBSGp7OrKxFBzc0TfWRS+lwZGV0XbJzhSRYSlakIC9/65z+GfqiOoJKhRGs7NKxa3q5QVLqgrxBK08vr9HJ6a7v8xbSBLqBpXi1iSxQSjuxWnfSRmX55nx+Vv6sRjGQry13hSiCDGS361m1N7g5ySAm10bIPJUVKBW+xQGkSy9MS7LiwFIvpwm+ZiW1SpzMjEyq8xeKyAClFFTaApXaj+2bLcLEyGK12JbFcOa2ddbMEH/xplW1Hjpiz8gmKRS3frLL9A111iwwL7NKWCXsmeVWtmjeplO7txyNYmdGDg3WyGU7106bmK8VEKrEjBa8LGruptwsLIxMTFgihQklmkFSfNgTgAAocfBgkWPhgSQpAczEJoA/eQIAoLdjwuP2/hoAAAAASUVORK5CYII=',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Precipitation Chemistry',
-                      'url' : 'B461C619',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAYZQTFRF/v//AAAABwAABwcHEgAAGQAAGRkZHwAAHx8fJAAAJCQkKAAAKCgoLAAAMAAAMwAAMwcANwAANzc3OgAAOgcAPQAAPQcAPT09QAAAQAcAQDo6QD09QwAAQwcAQzo6Qz09RQcARzo6SQcASTo6SwcASzo3TQcATwcATzc3UQcAUwcAVQcAVgcAWAcAWgcAXQcAYAcAYgcAYwcAZgcAaAcAagcAbQcAbgcAcQcAcwcAdAcAdgcAeAcAegcAewcAfAcAfQcAfgcAfwcAgQcAggcAgwcAhQcAhwcAiQcAigcAiwcAjAcAjgcAjwcAkQcAkwcAlgcAmQcAmwcAnAcAoAcAogcAowcApAcApQcApwcAqAcAqgcAqwcArgcAsAcAtAcAtQcAuAcAuQcAugcAvAcAvgcAwAcAwwcAxRIAxwcAyQcAyRIAzAcAzxIA0QcA0RIA0hIA1BIA1RIA1hIA2BIA2RIA2xIA3BIA3RIA3hIA3xIA4BIA4RIA4hIA4xIA5BIA5RIA5hIAbnKm0gAAAIJ0Uk5TAP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////0HPLjoAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAF3SURBVCiRY2DAC4TEMYAQRIaNEQtgA8nwMGOTYuYCSokjCTAxwZniqFKc5g5aTNikuLWiq+sLbRVY0KW4w+vqG5y10+pqy3SYUKRYAqsDnUNYGR39XbNT+FCkTIujRd0TLdhZWZicyrzZIVLKZsYsLH5VJeGJ5hJO0UYsjKYZ5bkiYClpPh9Pr9KUuGQ1QRVuCT9bFlYxu/wYdpCUIi+7ZV5jToiKe0xorBmvEtANTL752lJAKVWnYJX4YhnRcC9uFk63MH6Q83QrLORABrIaxuRXWUQ4qdt56HPruIC8ZVNsANKlYa0iHFSTZWYcZ67jHyLDysTIJJuWLiANlJJXiLSUjKqvSuEDCuplGjBpJpcX6jFB/MXpEhxZV2fIyCLCa1+SYJxUHKLHBPMyi6CeY2WySUBGalFjZXGdLdBQ5ICyyS4vSIrzUrGwkmRCC14mBRNtdmB8waIMJVIQ0QiT4sKeAHhAiYMDixwzByRJ8WAmNh78yRMAW0hE9RkBLpgAAAAASUVORK5CYII=',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Upper Air',
-                      'url' : 'BA307083',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAklQTFRF/v//AAAAAAAHAAcHBwcHBwcSBxISBxIZBxIfBxkfBxkkBxkoBx8oBx8sBx8wByQwByQzByQ3Byg3Byg6ByxABzpTEhkkEhkoEiQwEig3Eig6Eig9Eiw9EixAEjBFEjBHEjNHEjNJEjNLEjdLEjdNEjdPEjpPEjpREjpTEj1TEj1VEkBVEkBWEkNaEkVfEklgEktjEktlEk1qEk9tElV2ElZ6Elh7Elp8Elp/EmqUGRkZGUNaGUVbGUVfGUdgGUlgGUtjGUtpGU1oGU1pGU9qGU9rGU9tGVFtGVNxGVNzGVN0GVV0GVV2GVZ2GVh6GVh7GVp8GV+EGWCHGWCIGWOKGWaOGWiRGWqUGW6cGXCbGXSkGXanGXilGXqqGX2wGX+zGYK0GYa5GYa6GYe6GYe8GYjAGYnCGYrCGYvFGYzFGZHNGZLOGZPPGZPQGZTPGZXSGZbSGZjSGZjUGZrWGZrYGZvaGZzbGZ3cGZ3dGZ/fGZ/gGaDfGaDgGaDhGaLiGaLjHx8fH0tmH01qH09qH1FuH1h5H1h6H1p8H1t/H12BH1+FH2OKH3OeH3ikH4K1H4K3H4S3H4vDH5HKH5HNH5bRH5bSH5nVH5rYH5zaH5zcH53cH5/fJCQkJFh6JFt/JGCHJGOKJGqTJG2YJG6bJHGeJHOfJHSgJHSkJHakJHqoJH+wJIGyJInAJJDLJJ3cKCgoKGWMKHGdKHakKHilKHqoKH2rKH6wKI3FLG6YNzc3PT09PT1APUBAPUBDQEBDQENFQEdLQElNQ0VHt7EmCQAAAMN0Uk5TAP//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Y1leLQAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAYBJREFUKJFjYMALdu7CADshMlaMWIAVSGY9CzYpljlAqV3IIsxw1i5UKU4jUzVmbFJiqjEVtbnesqzoUjw9VTV1AeopVdXTNJlRpFjDZ1qaR7Ix+oVaZCTyokg5FPRKdm5rYmdnZTYrDmaHSB1qtGdl7S6fsnGVk1TrclsWRof0kkmCYKk9vPO7goombFmtJKHAJbXAi5VNyCQ7mh0ktV+cw3Vt/fZFivM27djsyC0HDAGWkCz13UCpA20LFeOmSksuCeJi4epYzA9ynmap8V6QgWw2KyaXuS31V/YJ1OXSmAvylkeB3h6g1MEWecHwiomNdiud1TcskmZnYmSUTU7lAxm4T2ZZs3BUzax+XiZGZq011swqfdPztJkg/uJsX7h03Ww9RlZBbt8pW/UT8iN0mGFeZhHQ9JvRZxCWllRQV1pY6c3OjBwaLJ6ZJTnxsUFyLu5SzGjByyJiKMrOwszIxIQ1vpABSGoO9gSwHpQ4GrDIsTRAktR6zMS2Hn/yBADd2YhruZdP9wAAAABJRU5ErkJggg==',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Ambient Gases and Particles',
-                      'url' : '34572723',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAi5QTFRF/v//AAAABwAABwcABwcHEgcAEhIHGRIHGRkHGRkZHxkHHx8HHx8fJB8HJCQHJCQkKCQHKCQSKCgoLCQHLCgHMCwHMywHMzAHNzAHNzASNzMHNzc3OjMHOjMSPTMHPTcHPTcSPT09QDcHQEA6QEA9QzoHQ0BAQ0M6RT0SRUVAR0AHR0ASR0dASUMHS0UHS0USS0k9TUcHTUs9T0cHT0kHT0kSUUsHUUsSU0sHU0sSVUsHWE8HWlESW1MHW1MSX1UHX1YSYFgHYFgSYlgHY1gHY1oHY1oSY1sSZVsSZl0SaF0SaF8HaV8HaV8Sal8Hal8SamASa2ISbWMScGMScGUHcGYHcWYHc2YHc2YSdGYHdGkHdmoHdmoSeGoHeGoSeWoHeWsHeWsSemsHe20HfXASfnESfnEZgXQSgnQHg3YShHYShXYSiHoHiXsSi30Hi30SjH4HjoIHj4EHj4MSkIIZlIYSlIcSlYcHlokHmIkZmYkHmooHmosZm4oSnIwSnYwSno0HoI4SoI8HoI8SoJAHoJASoo8Ho5ISpJMHpJMZpJQHqZgHqZkSq5sSrJsHrpsHrpwHrp0Hrp0Srp4SsJ0HsKASs6AHtaIHt6QHuqUHuqgHvKkHvqgHvqkHwKsSwrAHw7AHxbAHxbIHx7IHyLMHybUHyrYHy7UHy7YHzLYAzrgHz7gHz7kH0LoH0boH0bwH0rwA1LwA1L4H1MAH1b4A1cAA1cAH1sAA2MAA2cEAJxb2JAAAALp0Uk5TAP//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////NfB1eQAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAX5JREFUKJFjYMALpBUxgDREhpMRC+AEyQixYJNi4QdKKSKLMMNZiqhS3N5RxszYpPgMWzZuXxKqxIYuJVC1ZeuOBOPpW7assWBGkWIr3FAUX87GGJuXPHeaMIqU67ImybReXw52VuboVVkcECkddyc2tpwNK2r6vGTjGu1YGF1mrZ4vAZZSEcnOyFg5tXOSrqiWgExuMBubRPiiNg6QlKYgl/+CnfPKtFNbK9s9BFSBIcCSs9BYGShlEF+s1b1cQao6g5eFN6VSFOQ887U+6iAD2eyaF67zq43Tj0i35jNLBHkrZIUtSJdRkIZ40YY5bg4dnqb5pXIcQF1K02eIqACl1OTrAmQatqybIsLMyGw5y4ZFb/LqxVbMEH9xJ5XUb9pmy8gmzhe5vMd+wtIKK2aYl1nELGPWT3QumDlt6c61KzaHgQxFhAZryOw1C/u7MjV8AmWY0YKXRd7RhIOFmZGJCWt8IQOQFD/2BCAEShw8WORYeCBJSggzsQnhT54AIFZgV29uQnsAAAAASUVORK5CYII=',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Fish Status and Ecosystem Health',
-                      'url' : 'B3E8962D',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAPlQTFRF/v//AAAAAAcABwcABwcHBxIHEhIHEhkHEh8HEiQHGRkZGR8HGSQHHx8fHywHJCQkJDMHJDoHJEAHKCgoKDoSKD0HKEMHLDcSLD0SLEkHLEsHMDoZMEkSMEsHM0sSM08SM1ESM1UHNzc3N1USN1gSOk8SOlYSPT09PV0SPWISQGASQ1YZQ2ASQ2MSQ2gSRWsSRW0SRW4SR2kZSXASSXQSSXYSS3kSTXQZTYEST4MST4YSUXoZUYUZUYkSU4kSU40SVYQZVYsZVY4SVZASVZESWpYZWpkSW5UZW50SW54ZW6ASXaASXaISX6QSX6UZX6gSYKgSYKgZYKkSZuA7pgAAAFN0Uk5TAP////////////////////////////////////////////////////////////////////////////////////////////////////////////8OgYK9AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA7UlEQVQokX3SaVeCQBQGYGCYIJawKDUr15I2FbfMFvdSK4Tu//8xgWx54Xg/zZxn5sydmZdh9lbVSFTVF4lNKckTnY/mNB7ymktGvLRcjMfGDonjkZBO3J21vEinzAK+HuQ0oqYD1muOJIk7+QSA2Y2SJNpzXFp1Tgkm7njtCtj9uoyJdL1NAPPbPEF0+LMV+L1+pIiubJ/AbCiImk5Aw9oZol5I01IWUSuk9/sMokJ41tNAQETffNtMLnHz7NHzt3flj6D3nTcUK/2XYfuc/ntDLfx1cqCIlAsmvO6FQ40TERWv+pHSk2HT98fzDwbjM0qOxIu1AAAAAElFTkSuQmCC',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Site-Specific Assessments',
-                      'url' : '591BD84C',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAANhQTFRF/v//AAAAAAAHBwcHBwcSEgcSEhIZGRIZGRIfGRkZHxkkHx8fJB8sJCQkJCQzKCQzKCQ3KCgoLCQzLCQ6MCg9MyhANyxDNyxFNzc3OjBHOjBJPTBJPTNLPTNNPTNPPT09RTdRRzpTRzpVSz1YS0BaS0BbTUNbT0NbT0NfUUVgU0ViU0diU0dlVUdmWElpWktqW0ttW01rW01uXU1tXU1wX09xYE9zYFF2YlF0Y1N2ZlV6aVZ9aVh9alh9bVqBbVqDbluDcFuFc12HdF+IdF+Jdl+JdmCJdmCK0lX44AAAAEh0Uk5TAP//////////////////////////////////////////////////////////////////////////////////////////////nf+ZOQAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAOJJREFUKJF90utWgkAUBWDhjDiKiFOplCVhRWl566qWdgPO+7+R0HCdIfavmfUNi7PO2rVaZSxbisWlqZSkGQmD9A65oxGSnT097Wdnu0Da+rVeTqrz89Etp/YWv0a0jMD18HfeAZnUox0ibs6oTGQShLS/MUEi8zMU9KcXVCS4w79sLrsgEP3m5J07RKCezwndMRXoKohpOTQFmsaCb4Njga6Tr16c9n//mj1oApFHbt5zTxxeaS2i8f33ePbCDrXh/dPq9oTkdmgku4Y6bRA1ubCoHHrWiDSg80oxuWysup4HknQrEPR7D14AAAAASUVORK5CYII=',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Avian Toxicology',
-                      'url' : '87EC644C',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAU1QTFRF/v//AAAABwAABwAHBwcHEgcHEgcSGQcSGRkZHxIZHx8fJBIfJCQkKBIZKBIfKCgoLBIfLBkkMxkoNxkoNzc3Oh8sPT09QCQzQD1AQEBAQx8zQyQzQz1ARyQ3SSQ6SyQ6Syg9TShATyg9USxFUyxFVSxDVSxFVjBJWCxFWDBHXzBJYDNNZU1baDdVaDpVbT1acz1adkNfeEVgeUNfeUViekVfe0VlfEdjf0lmgUdoglpxh0tqh0ttiU1xi090mVZ9mVZ+mlaCm1V9nFiBoFqFqWqSqmCOrGCPrl+LsGOSsGWUs26ctmaYvGqdvG2gwGugwW2kwm6kxW6kyHOoynSqy3SpzHar1Hqy1Hq01Xu01nu32Hy22X233H264IG84oK+44K+54XC54XD6IXC6YfF64jI7onK7onL74rM8YnN8orN84zP9IzQ9I3Q9Y3RqOOnOwAAAG90Uk5TAP//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////zBbJBAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAARlJREFUKJF90mdTAjEQBmBi1jsOkQPFU09RVOy9dxGwY8PeeyfJ///oJTmPmcTh/ZKdeZLMZrKhUNUkHZHWFidIUkoY8UBqZthAQcJcbOBlvHD385zFAUHUI0fWnbeM0YXKOadCZoky9rJq/kfHHrG3NawT7BGPGBnDGqHFMid21qBTn6SvdUMjuKLCvldAJTT1IYi9uhpZG5/Stk2VkLvzJOioF6vUNju+v3tP2UA9qNQ0He+20iWSwOqFMJgf8rZ3Xae0NupO3jv4jvnRGpUSl3SOr8YyqBQ7p4fitROuduEpvYjxIjOpdmgdkJtm8T+N/rui4JO5RR56gnZtPhwR32pz5cf+P4nIkbLlgLUvFTdH/GGzq4/nL46yOEbyepZRAAAAAElFTkSuQmCC',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Invertebrates and Ecosystem Health',
-                      'url' : '68B790E7',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAARFQTFRF/v//AAAABwcABwcHEgcAEgcHEhIHGRIHGRkHGRkZHxkHHx8fJCQHJCQkKCQHKCgoLCgHMCgHMCwHMywHNzAHNzc3PT09QDcHR0AHTUUST0kHU0sHU0sSVU0SWE8SWlESW1MSX1UHYlgHY1oHZVoSZlsHal8HamAScWYHcWYScWYZdmoHeGsSfW4SfXAHfnMHgnYShHYSh3oSin0HjX4HjX8Hj4ISkoQHlYcHmYkHmooHm4oSnIsHno4SoJAHp5gSqJYHqZkHqpkHq5sHrp0HsKASsqAHs6AHtaMHuKUHuqcHwq4HxbIHx7AHy7UHzbcAzrgHz7kA0LoH0bwA1LwA1b4A1b4H1sAA2MAA2MEA2cEAYl14QgAAAFt0Uk5TAP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////xninq0AAAAJcEhZcwAADsQAAA7EAZUrDhsAAADwSURBVCiRY2DAC0TFMIAoRIaTEQvgBMnwM8P5bGxwJjMvUEoMoVRNFcEWQ5Hi83DnwS7FpBfso8CEVUrCK9JfVxibFLtJaFSIvSwzphSTtHdUVJSXljCmFJdlBFDKz0yGFV2KSSoAKBMVbqMjhC7FYgHSBDRRX44JTUogCCwTFa5tyIEmpQzRFBVlbiSCJmUMk3LUlEaTsoZJearLo0mZwqTcDCTRpJRgUna2fGhSHC7hYJkwVxV0xzOJOwSC3O4LdTtKGApoWDk7mStyIIUhLyysmbmEBdlh8cXMD0oc3IjEAQfM3JAkxY+Z2PjxJ08AlhAy5gV3DVAAAAAASUVORK5CYII=',
-                      'contentType' : 'image/png'
-                    },
-                    {
-                      'name' : 'Amphibian Health and Contaminants',
-                      'url' : 'F6D20CAF',
-                      'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAUFQTFRF/v//AAAABwAABwcABwcHEgcAGQcAGQcHGRkZHwcAHwcHHx8fJCQkKBIAKBIHKCgoLBIALBIHMBIHNxIHNzc3OhkHPT09QBkHQD09QEA9QxkAQz06RRkHSR8HSx8HTR8HTx8HUR8HUSQHVSQAWCQHWiQHWyQHWygHYiwSYygHZkkwaiwHaywHcDAHeTMHfDMHfTcHfjcHgzoHhDcHhU0kizoHjEAHjT0HkD0HnkUHnkcHn0UHn0cHoEkHpUkHrFgZsEsHsk0HtU0HtU8Htk0Ht1oSulEHwFEAwVMHx1MAx1UHyFUAyVUHy1YHzlgHz1YH0FgA0VgH210H3F0H3VsA3VsH3l8H310H4l8H5mAA52AA6GIA7GIA7GMA7WMA72MA8GYH9GUA9GYA9WYA92YA+GYA+GgA+GkA+mYA+mgA+2gAoHUrygAAAGt0Uk5TAP////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9H/20fAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABGElEQVQokX3SZ0/DMBAG4NqOTUsLgVDCSpktm0LYe+8NLXuPlvr+/w8gttMg2aj36aTnfPJJbyxWs9KurI52N6q0kjgSRTJTIwxFFRdiW6J11m7LL8s4IisVkKv6njuAn2kamftH9Scc4HmB/UN1RwHB2yI2iWwLgvIYNgjNlATBRYtJOUVfS9QgWpAb4XuO6IQmPyTBq2dQYv1T2RbTCXk7T3LncRYb5E/s795zGGqmOrX5Tn+i97TiYH0hGVwdDj7Xd5MxvtFw9t4tJvxx41XTNfflgfPEeHXFD+S1ec+gc37ZKJpsnugnH/Jip2hYa3hXygqJbVYeBqpzli3CkQyNrpQec1VJqkjZKmBds3sbo2HY7Nrx/AVTWzYJSiNemAAAAABJRU5ErkJggg==',
-                      'contentType' : 'image/png'
-                    }
-                ];
-            layer.on('load', function(evt) {
-                console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE LOADED', layer.renderer);
-                console.log(layer);
-                console.log(Object.getPrototypeOf(layer.renderer).declaredClass);
-                // loadLayerAttribs
-                var fData = api.attribs.loadLayerAttribs(layer);
-                console.log('GGGGGGGGGGGGGGGGGG', fData);
+        var legend = [
+        {
+          'label' : '',
+          'url' : 'A3621BE2',
+          'imageData' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAAZQTFRF/v//AKnn3zVwoAAAAAJ0Uk5TAP9bkSK1AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAG0lEQVQokWNgIBMwYgUQKazqR6VGpfAmGzIAAHXqAFUODW1dAAAAAElFTkSuQmCC',
+          'contentType' : 'image/png'
+        }
+      ];
+        layer.on('load', function(evt) {
+            console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE LOADED', layer.renderer);
+            console.log(layer);
+            console.log(Object.getPrototypeOf(layer.renderer).declaredClass);
+            // loadLayerAttribs
+            var fData = api.attribs.loadLayerAttribs(layer);
+            console.log('GGGGGGGGGGGGGGGGGG fData', fData);
 
-                var oid = 47;
-                console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFF', fData[0]);
-                fData[0].layerData.then(lData => {
-                    var lconfig = api.symbology.createSymbologyConfig(lData.renderer, legend);
-                    fData[0].getAttribs().then(gData => {
-                        console.log('HHHHHHHHHHHHHHHHH', lconfig, gData);
-                        var icon = api.symbology.getGraphicIcon(gData, lconfig, oid);
-                        var myimg = document.getElementById("mine");
-                        myimg.src = "data:image/png;base64," + icon;
-                        console.log(icon);
-                    });
+            var oid = 7;
+            console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFF', fData[0]);
+            fData[0].layerData.then(lData => {
+                console.log('IIIIIIIIIIIIIIII renderer', lData.renderer, legend);
+                var lconfig = api.symbology.createSymbologyConfig(lData.renderer, legend);
+                fData[0].getAttribs().then(gData => {
+                    console.log('HHHHHHHHHHHHHHHHH', lconfig, gData);
+                    var icon = api.symbology.getGraphicIcon(gData, lconfig, oid);
+                    var myimg = document.getElementById('mine');
+                    myimg.src = 'data:image/png;base64,' + icon;
+                    console.log(icon);
                 });
             });
         });
+    });
     </script>
-    <img id="mine" width="32px" height="32px" border="1px" hspace="20" vspace="20" />
+    <img id='mine' width='32px' height='32px' border='1px' hspace='20' vspace='20' />
 </body>
 </html>
