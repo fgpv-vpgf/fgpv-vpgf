@@ -155,6 +155,9 @@
                 const urlParts = initialState.url.split('/');
                 this.featureIdx = urlParts.pop(); // get the featureidx from the end of the url
                 this.url = urlParts.join('/'); // keep the rest of the url (without the index)
+            } else {
+                // TODO: this should be done is a more civilized way
+                this.featureIdx = '0'; // for a file based layer, feature index should always be 0
             }
 
             return this;
