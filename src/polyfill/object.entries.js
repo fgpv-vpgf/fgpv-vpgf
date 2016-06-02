@@ -11,12 +11,22 @@ if (!Object.values) {
             return concat(v, typeof k === 'string' && isEnumerable(O, k) ? [O[k]] : []);
         }, []);
     };
+    /*
+Object.values = (object) => Object.keys(object).map(
+        (key) => object[key]
+    );
+    */
 }
 
 if (!Object.entries) {
+    /*
     Object.entries = function entries(O) {
         return reduce(keys(O), function (e, k) {
             return concat(e, typeof k === 'string' && isEnumerable(O, k) ? [[k, O[k]]] : []);
         }, []);
+    };
+    */
+    Object.entries = function (object) {
+        return Object.keys(object).map(function (key) { return [key, object[key]]; });
     };
 }
