@@ -282,7 +282,7 @@
 
             /**
              * Returns files found in the file data.
-             * @return {Array} array of fields in the form of [{ name: "Long", type: "esriFieldTypeString"}]
+             * @return {Array|null} array of fields in the form of [{ name: "Long", type: "esriFieldTypeString"}]
              */
             get fields() {
                 // console.log(this._formatedFileData);
