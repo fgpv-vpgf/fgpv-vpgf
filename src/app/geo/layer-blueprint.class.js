@@ -9,35 +9,15 @@
      * @description
      *
      * The `LayerBlueprint` service returns `LayerBlueprint` class which abstracts common elements of layer creating (either from file or online servcie).
-     *
-     */
-    /**
-     * @ngdoc service
-     * @name LayerServiceBlueprint
-     * @module app.geo
-     * @requires dependencies
-     * @description
-     *
      * The `LayerServiceBlueprint` service returns `LayerServiceBlueprint` class to be used when creating layers from online services (supplied by config, RCS or user added).
-     *
-     */
-    /**
-     * @ngdoc service
-     * @name LayerFileBlueprint
-     * @module app.geo
-     * @requires dependencies
-     * @description
-     *
      * The `LayerFileBlueprint` service returns `LayerFileBlueprint` class to be used when creating layers from user-supplied files.
      *
      */
     angular
         .module('app.geo')
-        .factory('LayerBlueprint', LayerBlueprintWrapper)
-        .factory('LayerServiceBlueprint', LayerServiceBlueprintWrapper)
-        .factory('LayerFileBlueprint', LayerFileBlueprintWrapper);
+        .factory('LayerBlueprint', LayerBlueprintFactory);
 
-    function LayerBlueprintWrapper(layerDefaults) {
+    function LayerBlueprintFactory($q, LayerBlueprintUserOptions, gapiService, Geo, layerDefaults) {
         let idCounter = 0; // layer counter for generating layer ids
 
         // jscs doesn't like enhanced object notation
@@ -116,10 +96,6 @@
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
-        return LayerBlueprint;
-    }
-
-    function LayerServiceBlueprintWrapper($q, LayerBlueprint, gapiService, Geo) {
         // generator functions for different layer types
         // TODO: this is going to move to layer record
         const layerServiceGenerators = {
@@ -195,23 +171,19 @@
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
-        return LayerServiceBlueprint;
-    }
-
-    function LayerFileBlueprintWrapper($q, LayerBlueprint, LayerBlueprintUserOptions, Geo, gapiService) {
-
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         /**
          * Createa a LayerFileBlueprint.
          * Retrieves data from the file. The file can be either online or local.
+         * @param  {Function} epsgLookup epsgLookup function
+         * @param  {Number} targetWkid wkid of the current map object
          * @param  {String} path      either file name or file url; if it's a file name, need to provide a HTML5 file object
          * @param  {File} file      optional: HTML5 file object
-         * @param  {String} extension optional: file extension ??
          * @return {String}           service type: 'csv', 'shapefile', 'geojosn'
          */
         class LayerFileBlueprint extends LayerBlueprint {
-            constructor(path, file) { // , extension) {
+            constructor(epsgLookup, targetWkid, path, file) { // , extension) {
                 super();
 
                 // when passing file object, path is its name
@@ -219,6 +191,9 @@
                 this._fileData = null;
                 this._formatedFileData = null;
                 this._fileType = null;
+
+                this._epsgLookup = epsgLookup;
+                this._targetWkid = targetWkid;
 
                 // empty blueprint is not valid by default
                 this._validPromise = $q.reject();
@@ -256,12 +231,16 @@
              */
             set fileType(value) {
                 this._fileType = value;
+
+                // create user options object basedo the layer type
+                const options = new LayerBlueprintUserOptions.File[this.fileType]
+                    (this._epsgLookup, this._targetWkid);
+                options.layerName = this._fileName;
+
                 this._validPromise = this._constructorPromise
                     .then(() => gapiService.gapi.layer.validateFile(this.fileType, this._fileData))
                     .then(result => {
-                        this._userOptions =
-                            new LayerBlueprintUserOptions.File[this.fileType]();
-                        this._userOptions.layerName = this._fileName;
+                        this._userOptions = options;
                         this._formatedFileData = result;
                     })
                     .catch(error => console.error(error));
@@ -343,13 +322,17 @@
                 this.config.name = this.userOptions.layerName;
 
                 console.log(this.userOptions);
-                console.log(layerFileGenerators[this.fileType]);
 
                 return layerFileGenerators[this.fileType]();
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
-        return LayerFileBlueprint;
+        const service = {
+            service: LayerServiceBlueprint,
+            file: LayerFileBlueprint
+        };
+
+        return service;
     }
 })();

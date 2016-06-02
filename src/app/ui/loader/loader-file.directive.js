@@ -28,7 +28,7 @@
         return directive;
     }
 
-    function Controller($timeout, stateManager, Stepper, geoService, LayerFileBlueprint, Geo) {
+    function Controller($timeout, stateManager, Stepper, geoService, LayerBlueprint, Geo) {
         'ngInject';
         const self = this;
 
@@ -146,8 +146,7 @@
          * In cases where user provides a file link, tries to load the file and then advanced to the next step.
          */
         function uploadOnContinue() {
-            self.layerBlueprint = new LayerFileBlueprint(self.upload.fileUrl);
-            onLayerBlueprintReady();
+            onLayerBlueprintReady(self.upload.fileUrl);
         }
 
         /**
@@ -182,14 +181,18 @@
         function uploadFileSuccess(file, message, flow) {
             console.log('success', file, message, flow);
 
-            self.layerBlueprint = new LayerFileBlueprint(file.name, file.file, file.getExtension());
-            onLayerBlueprintReady();
+            onLayerBlueprintReady(file.name, file.file);
         }
 
         /**
          * Waits until the layerBlueprint is create and ready (the data has been read) and moves to the next step.
+         * @param  {String} name file name or url
+         * @param  {Object} file optional: html5 file object
          */
-        function onLayerBlueprintReady() {
+        function onLayerBlueprintReady(name, file) {
+            self.layerBlueprint = new LayerBlueprint.file(
+                geoService.epsgLookup, geoService.mapObject.spatialReference.wkid,
+                name, file);
             self.layerBlueprint.ready
                 .then(() => {
                     $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
