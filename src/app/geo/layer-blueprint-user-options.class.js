@@ -13,9 +13,9 @@
      */
     angular
         .module('app.geo')
-        .factory('LayerBlueprintUserOptions', factoryWrapper);
+        .factory('LayerBlueprintUserOptions', LayerBlueprintUserOptionsFactory);
 
-    function factoryWrapper(Geo, geoService) {
+    function LayerBlueprintUserOptionsFactory(Geo) {
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         class BlueprintUserOptions {
@@ -50,11 +50,11 @@
         }
 
         class FileBlueprintUserOptions extends BlueprintUserOptions {
-            constructor() {
+            constructor(epsgLookup, targetWkid) {
                 super();
 
-                this._epsgLookup = geoService.epsgLookup; // this function will be moved somewhere
-                this._targetWkid = geoService.mapObject.spatialReference.wkid;
+                this._epsgLookup = epsgLookup;
+                this._targetWkid = targetWkid;
             }
 
             get epsgLookup() {
@@ -67,8 +67,8 @@
         }
 
         class FileCsvBlueprintUserOptions extends FileBlueprintUserOptions {
-            constructor() {
-                super();
+            constructor(epsgLookup, targetWkid) {
+                super(epsgLookup, targetWkid);
 
                 this._latfield = '';
                 this._lonfield = '';
@@ -92,14 +92,14 @@
         }
 
         class FileGeoJsonBlueprintUserOptions extends FileBlueprintUserOptions {
-            constructor() {
-                super();
+            constructor(epsgLookup, targetWkid) {
+                super(epsgLookup, targetWkid);
             }
         }
 
         class FileShapefileBlueprintUserOptions extends FileBlueprintUserOptions {
-            constructor() {
-                super();
+            constructor(epsgLookup, targetWkid) {
+                super(epsgLookup, targetWkid);
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
