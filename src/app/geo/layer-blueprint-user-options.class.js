@@ -16,6 +16,8 @@
         .factory('LayerBlueprintUserOptions', factoryWrapper);
 
     function factoryWrapper(Geo, geoService) {
+        // jscs doesn't like enhanced object notation
+        // jscs:disable requireSpacesInAnonymousFunctionExpression
         class BlueprintUserOptions {
             constructor() {
                 this._layerName = '';
@@ -100,8 +102,9 @@
                 super();
             }
         }
+        // jscs:enable requireSpacesInAnonymousFunctionExpression
 
-        return {
+        const service = {
             File: {
                 [Geo.Service.Types.CSV]: FileCsvBlueprintUserOptions,
                 [Geo.Service.Types.GeoJSON]: FileGeoJsonBlueprintUserOptions,
@@ -111,5 +114,7 @@
 
             }
         };
+
+        return service;
     }
 })();
