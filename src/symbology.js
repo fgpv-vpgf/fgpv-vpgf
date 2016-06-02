@@ -41,7 +41,7 @@ function createSymbologyConfig(renderer, legend) {
 
     const legendLookup = labelObj(legend);
 
-    switch (renderer.type) {
+    switch (symb.type) {
         case 'simple':
             symb.label = renderer.label;
             symb.imageUrl = legendLookup[renderer.label].icon;
@@ -69,11 +69,11 @@ function createSymbologyConfig(renderer, legend) {
                 symb.defaultImageUrl = legendLookup[renderer.defaultLabel];
             }
             symb.field = renderer.field;
-            symb.minValue = renderer.uniqueValueInfos[0].minValue;
-            symb.rangeMaps = renderer.uniqueValueInfos.map(cbi => {
+            symb.minValue = renderer.minValue;
+            symb.rangeMaps = renderer.classBreakInfos.map(cbi => {
                 return {
                     label: cbi.label,
-                    maxValue: cbi.maxValue,
+                    maxValue: cbi.classMaxValue,
                     imageUrl: legendLookup[cbi.label].icon
                 };
             });
