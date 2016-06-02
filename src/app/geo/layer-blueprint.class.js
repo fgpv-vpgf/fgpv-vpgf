@@ -213,6 +213,7 @@
                 this._fileName = typeof file !== 'undefined' ? file.name : path;
                 this._fileData = null;
                 this._formatedFileData = null;
+                this._fileType = null;
 
                 // empty blueprint is not valid by default
                 this._validPromise = $q.reject();

@@ -50,68 +50,63 @@
             shapefile: 'Shapefile'
         };
 
-        activate();
+        self.upload = {
+            step: {
+                titleValue: 'Upload data',
+                stepNumber: 1,
+                isActive: false,
+                isCompleted: false,
+                onContinue: uploadOnContinue,
+                onCancel: uploadOnCancel
+            },
+            form: null,
+            file: null,
+            fileData: null,
+            fileUrl: null,
+            filesSubmitted: uploadFilesSubmitted,
+            fileSuccess: uploadFileSuccess,
+            fileError: uploadFileError,
+            fileReset: uploadFileReset,
+            fileUrlReset: uploadFileUrlReset,
+        };
+
+        self.select = {
+            step: {
+                titleValue: 'Select file format',
+                stepNumber: 2,
+                isActive: false,
+                isCompleted: false,
+                onContinue: selectOnContinue,
+                onCancel: selectOnCancel
+            },
+            form: null,
+            dataType: null
+        };
+
+        self.configure = {
+            step: {
+                titleValue: 'Configure layer',
+                stepNumber: 3,
+                isActive: false,
+                isCompleted: false,
+                onContinue: configureOnContinue,
+                onCancel: configureOnCancel
+            },
+            fields: null,
+            form: null,
+            options: {}
+        };
+
+        self.layerBlueprint = null;
+
+        stepper = new Stepper();
+        stepper
+            .addSteps(self.upload.step)
+            .addSteps(self.select.step)
+            .addSteps(self.configure.step)
+            .start(); // activate stepper on the first step
 
         /*********/
-
-        function activate() {
-            stepper = new Stepper(); // make new stepper
-
-            self.upload = {
-                step: {
-                    titleValue: 'Upload data',
-                    stepNumber: 1,
-                    isActive: false,
-                    isCompleted: false,
-                    onContinue: uploadOnContinue,
-                    onCancel: uploadOnCancel
-                },
-                form: null,
-                file: null,
-                fileData: null,
-                fileUrl: null,
-                filesSubmitted: uploadFilesSubmitted,
-                fileSuccess: uploadFileSuccess,
-                fileError: uploadFileError,
-                fileReset: uploadFileReset,
-                fileUrlReset: uploadFileUrlReset,
-            };
-
-            self.select = {
-                step: {
-                    titleValue: 'Select file format',
-                    stepNumber: 2,
-                    isActive: false,
-                    isCompleted: false,
-                    onContinue: selectOnContinue,
-                    onCancel: selectOnCancel
-                },
-                form: null,
-                dataType: null
-            };
-
-            self.configure = {
-                step: {
-                    titleValue: 'Configure layer',
-                    stepNumber: 3,
-                    isActive: false,
-                    isCompleted: false,
-                    onContinue: configureOnContinue,
-                    onCancel: configureOnCancel
-                },
-                fields: null,
-                form: null,
-                options: {}
-            };
-
-            self.layerBlueprint = null;
-
-            stepper
-                .addSteps(self.upload.step)
-                .addSteps(self.select.step)
-                .addSteps(self.configure.step)
-                .start(); // activate stepper on the first step
-        }
 
         /**
          * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
@@ -121,9 +116,7 @@
             // TODO: display error message if something breaks
 
             geoService.constructLayers([self.layerBlueprint]);
-            // self.layerBlueprint.generateLayer(self.configure.options);
-
-            // stepper.nextStep();
+            closeLoaderFile();
         }
 
         /**
@@ -136,9 +129,9 @@
         }
 
         function selectOnContinue() {
-            //console.log('User selected', self.select.dataType);
-            //self.layerBlueprint.fileType = self.select.dataType;
-            
+            // console.log('User selected', self.select.dataType);
+            // self.layerBlueprint.fileType = self.select.dataType;
+
             self.layerBlueprint.valid
                 .then(() => {
                     stepper.nextStep();
@@ -156,7 +149,7 @@
             // console.log('selectOnCancel');
             stepper.previousStep();
             self.upload.fileReset(); // reset the upload form
-            self.select.dataType = null;
+            // self.select.dataType = null;
         }
 
         /**
@@ -206,7 +199,7 @@
         function onLayerBlueprintReady() {
             self.layerBlueprint.ready
                 .then(() => {
-                    //self.select.dataType = self.layerBlueprint.fileType;
+                    // self.select.dataType = self.layerBlueprint.fileType;
 
                     $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
                 })
@@ -259,7 +252,7 @@
          */
         function closeLoaderFile() {
             // reset the loader after closing the panel
-            activate();
+            stepper.reset().start();
             stateManager.openPrevious('mainLoaderFile');
         }
     }

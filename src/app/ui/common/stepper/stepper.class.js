@@ -25,11 +25,13 @@
 
         /**
          * Resets the stepper by deactivating all steps.
-         * @return {Object}            itthis for chaining
+         * @return {Object}            this for chaining
          */
         reset() {
             this.steps.forEach(step => {
-                // TODO: reset form on the step itthis
+                // call function reseting form on the step
+                step.onCancel();
+
                 step.isActive = false;
                 step.isCompleted = false;
             });
