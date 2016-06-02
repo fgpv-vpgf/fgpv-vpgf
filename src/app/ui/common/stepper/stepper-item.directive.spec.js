@@ -5,9 +5,13 @@ describe('rvStepperItem', () => {
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;
 
+    function mockTranslateFilterService($provide) {
+        $provide.value('translateFilter', value => value);
+    }
+
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.common', 'app.templates');
+        bard.appModule('app.ui.common', 'app.templates', mockTranslateFilterService);
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
