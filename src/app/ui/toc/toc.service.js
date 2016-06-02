@@ -67,6 +67,13 @@
                     tooltip: vis => vis ? 'toc.tooltip.visibility.on' : 'toc.tooltip.visibility.off',
                     action: toggleVisiblity
                 },
+                offscale: {
+                    icon: zoom => (zoom === 'zoomin') ? 'action:zoom_in' : 'action:zoom_out',
+                    label: zoom => (zoom === 'zoomin') ? 'toc.label.visibility.zoomIn' : 'toc.label.visibility.zoomOut',
+                    tooltip: zoom => (zoom === 'zoomin') ?
+                        'toc.tooltip.visibility.zoomIn' : 'toc.tooltip.visibility.zoomOut',
+                    action: zoomLayerScale
+                },
                 reload: {
                     icon: 'navigation:refresh',
                     label: 'toc.label.reload',
@@ -217,6 +224,19 @@
         function toggleVisiblity(tocEntry, value) {
             console.log('Toggle visiblity of layer: ' + tocEntry.name);
             tocEntry.setVisibility(value);
+        }
+
+        /**
+        * Zoom to layer visibility scale and set layer visible
+        * @private
+        * @param {Object} entry layer object to zoom to scale to.
+        */
+        function zoomLayerScale(entry) {
+            // zoom to layer visibility scale
+            geoService.zoomToScale(entry.id, entry.options.offscale.value);
+
+            // set the layer visible
+            toggleVisiblity(entry, true);
         }
 
         // temp function to open layer groups

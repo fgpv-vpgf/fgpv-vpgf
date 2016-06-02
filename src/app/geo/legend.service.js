@@ -265,11 +265,17 @@
                     const adjIdx = isNaN(legendEntry.featureIdx) ? '0' : legendEntry.featureIdx;
 
                     // TODO remove this test once it has passed the test of time
-                    if (typeof scaleSet[adjIdx] === 'undefined') {
+                    if (typeof scaleSet[adjIdx].value === 'undefined') {
                         console.warn('setLayerScaleFlag - indexes are not lining up');
                     }
-                    legendEntry.flags.scale.visible = scaleSet[adjIdx];
 
+                    // set scale flag properties and offscale options (only for legend entry, only on featureLayer and dynamicLayer for now)
+                    const scale = scaleSet[adjIdx];
+                    legendEntry.flags.scale.visible = scale.value;
+                    legendEntry.flags.scale.direction = scale.direction;
+                    if (legendEntry.options.offscale) {
+                        legendEntry.options.offscale.value = (scale.value) ? scale.direction : '';
+                    }
                 } else if (legendEntry.layerEntries) {
                     // walk through layerEntries and update each one
                     legendEntry.layerEntries.forEach(ent => {
@@ -277,10 +283,10 @@
 
                         if (slave.flags) {
                             // TODO remove this test once it has passed the test of time
-                            if (typeof scaleSet[slave.featureIdx] === 'undefined') {
+                            if (typeof scaleSet[slave.featureIdx].value === 'undefined') {
                                 console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
                             }
-                            slave.flags.scale.visible = scaleSet[slave.featureIdx];
+                            slave.flags.scale.visible = scaleSet[slave.featureIdx].value;
                         }
                     });
                 }
