@@ -1,6 +1,12 @@
 @mixin details {
     $slide-out-width: rem(28);
 
+    .rv-details-summary {
+        height: 80%;
+        width: 70%;
+        border-radius: 0;
+    }
+
     .rv-details {
         display: flex;
         position: absolute;
@@ -15,6 +21,10 @@
             .md-subhead {
                 display: block;
             }
+        }
+
+        &-content {
+            display: block;
         }
 
         &-layer {

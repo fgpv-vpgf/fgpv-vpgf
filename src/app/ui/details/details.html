@@ -5,6 +5,7 @@ and collates multiple hits per layer into one view
 WARNING be sure to change the detail content display logic in both blocks (single view and list view)
 -->
 <rv-content-pane
+    header-controls="rv-details-expand"
     close-panel="self.closeDetails()"
     static-content="true"
     floating-header="true"
@@ -17,86 +18,21 @@ WARNING be sure to change the detail content display logic in both blocks (singl
 
     <!-- this handles the case of only one layer returning results. hides the side selector  -->
     <div class="rv-details" ng-if="self.display.data.length === 1">
-        <md-content class="rv-details-data rv-content" rv-detect-scrollbar>
-            <div class="rv-subsection">
-                <div class="rv-subheader">
-                    <h4 class="md-subhead">{{ self.display.data[0].requester.name }}</h4>
-                    <span class="md-caption">{{ self.display.data[0].requester.caption }}</span>
-                </div>
-
-                <div class="rv-subcontent">
-
-                    <!-- Feature Key-Value list presentation  -->
-                    <div rv-details-data data="self.display.data[0].data" ng-if="self.display.data[0].requester.format === 'EsriFeature'">
-                        <!-- Original HTML using ng-repeat instead of a document fragment
-                        <h5 class="rv-sub-subhead" ng-repeat-start="item in self.display.data[0].data">{{ item.name }}</h5>
-                        <ul ng-repeat-end class="rv-details-zebra-list">
-                            <li ng-repeat="keyval in item.data">
-                                <div class="rv-details-attrib-key">{{ keyval.key }}</div>
-                                <div class="rv-details-attrib-value">{{ keyval.value }}</div>
-                            </li>
-                        </ul> -->
-                    </div>
-
-                    <!-- Plain text presentation  -->
-                    <div ng-if="self.display.data[0].requester.format === 'Text'">
-                        <pre>{{ self.display.data[0].data[0] }}</pre>
-                    </div>
-
-                    <!-- Raw HTML presentation  -->
-                    <div ng-if="self.selectedItem.requester.format === 'HTML'" ng-bind-html="self.display.data[0].data[0]">
-                    </div>
-
-                </div>
-
-            </div>
+        <md-content class="rv-details-data rv-content"
+            rv-detect-scrollbar
+            rv-details-content rv-item="self.selectedItem">
         </md-content>
     </div>
 
     <!-- this handles the case of multiple layers returning results. shows the side selector  -->
     <div class="rv-details rv-multiple" ng-if="self.display.data.length > 1">
-        <!-- the detail content  -->
-        <md-content class="rv-details-data rv-content" rv-detect-scrollbar>
-            <div class="rv-subsection rv-hide-animate">
-                <div class="rv-subheader">
-                    <h4 class="md-subhead">{{ self.selectedItem.requester.name }}</h4>
-                    <span class="md-caption">{{ self.selectedItem.requester.caption }}</span>
-                </div>
 
-                <div
-                    class="rv-subcontent"
-                    ng-class="{ 'rv-hide': (self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data }">
-                    <!-- Feature Key-Value list presentation  -->
-                    <!-- TODO: add translations -->
-                    <h5 ng-if="self.selectedItem.data.length === 0">
-                        Nothing found</h5>
-
-                    <div rv-details-data data="self.selectedItem.data" ng-if="self.selectedItem.requester.format === 'EsriFeature'">
-                        <!-- Original HTML using ng-repeat instead of a document fragment
-                        <h5 class="rv-sub-subhead" ng-repeat-start="item in self.selectedItem.data">{{ item.name }}</h5>
- 
-                        <ul ng-repeat-end class="rv-details-zebra-list">
-                            <li ng-repeat="keyval in item.data">
-                                <div class="rv-details-attrib-key">{{ keyval.key }}</div>
-                                <div class="rv-details-attrib-value">{{ keyval.value }}</div>
-                            </li>
-                        </ul>
-                        -->
-                    </div>
-
-                    <!-- Plain text presentation  -->
-                    <div ng-if="self.selectedItem.requester.format === 'Text'">
-                        <pre>{{ self.selectedItem.data[0] }}</pre>
-                    </div>
-
-                    <!-- Raw HTML presentation  -->
-                    <div ng-if="self.selectedItem.requester.format === 'HTML'" ng-bind-html="self.selectedItem.data[0]">
-                    </div>
-                </div>
-
-            </div>
+        <md-content class="rv-details-data rv-content"
+            rv-detect-scrollbar
+            rv-details-content rv-item="self.selectedItem" rv-is-hidden="(self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data">
         </md-content>
 
+        <!-- the detail content  -->
         <!-- the side selector  -->
         <div
             class="rv-details-layer-list"
@@ -110,7 +46,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
                     ng-class="{'rv-selected': item === self.selectedItem }"
                     class="rv-details-layer-list-item">
 
-                    <md-button aria-label='point details' class="rv-button-square rv-details-layer-button" ng-click="self.selectItem(item)"></md-button>
+                    <md-button aria-label="point details" class="rv-button-square rv-details-layer-button" ng-click="self.selectItem(item)"></md-button>
                     <rv-toc-entry-symbology
                         symbology="item.requester.symbology"
                         ng-class="{ 'rv-disabled' : item.data.length === 0 || item.isLoading }"></rv-toc-entry-symbology>
