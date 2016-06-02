@@ -166,6 +166,10 @@
                 this.options.opacity.value = value;
             },
 
+            getOpacity() {
+                return this.options.opacity.value;
+            },
+
             setCache(name, value) {
                 this.cache[name] = value;
             },
@@ -381,6 +385,10 @@
 
             setOpacity(value) {
                 this.options.opacity.value = value;
+            },
+
+            getOpacity() {
+                return this.options.opacity.value;
             },
 
             /**
