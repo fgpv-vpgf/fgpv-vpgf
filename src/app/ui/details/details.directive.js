@@ -120,14 +120,8 @@
         */
         function getSelectedItem(items) {
             // get selected item if there is a match
-            let selectedItem = items[0];
-            items.forEach((item) => {
-                if (`${item.requester.caption}${item.requester.name}` === self.selectedInfo) {
-                    selectedItem = item;
-                }
-            });
-
-            return selectedItem;
+            return items.find(item =>
+                `${item.requester.caption}${item.requester.name}` === self.selectedInfo) || items[0];
         }
 
         /**
