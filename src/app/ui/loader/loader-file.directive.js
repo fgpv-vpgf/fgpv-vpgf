@@ -28,7 +28,7 @@
         return directive;
     }
 
-    function Controller($timeout, stateManager, Stepper, geoService, LayerBlueprint, Geo) {
+    function Controller($scope, $q, $timeout, stateManager, Stepper, geoService, LayerBlueprint, Geo) {
         'ngInject';
         const self = this;
 
@@ -56,10 +56,10 @@
             fileData: null,
             fileUrl: null,
             filesSubmitted: uploadFilesSubmitted,
-            fileSuccess: uploadFileSuccess,
             fileError: uploadFileError,
             fileReset: uploadFileReset,
             fileUrlReset: uploadFileUrlReset,
+            progress: 0
         };
 
         self.select = {
@@ -163,25 +163,15 @@
          * @param  {Object} event submitted event
          * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
          */
-        function uploadFilesSubmitted(files, event, flow) {
+        function uploadFilesSubmitted(files) { // , event, flow) {
             // TODO: if current step is not the first and user drag-drops file, go back to second step
             // console.log('submitted', files, event, flow);
             if (files.length > 0) {
-                self.upload.file = files[0]; // store the first file from the array;
-                flow.upload();
+                const file = files[0];
+                self.upload.file = file; // store the first file from the array;
+
+                $timeout(() => onLayerBlueprintReady(file.name, file.file), 300);
             }
-        }
-
-        /**
-         * When a file is uploaded, calls gapi to get data type and field names if possible.
-         * @param  {Object} file    uploaded flow file object
-         * @param  {Object} message a success message
-         * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
-         */
-        function uploadFileSuccess(file, message, flow) {
-            console.log('success', file, message, flow);
-
-            onLayerBlueprintReady(file.name, file.file);
         }
 
         /**
@@ -192,7 +182,7 @@
         function onLayerBlueprintReady(name, file) {
             self.layerBlueprint = new LayerBlueprint.file(
                 geoService.epsgLookup, geoService.mapObject.spatialReference.wkid,
-                name, file);
+                name, file, updateProgress);
             self.layerBlueprint.ready
                 .then(() => {
                     $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
@@ -201,6 +191,24 @@
                     // TODO: show a meaningful error about why upload failed.
                     console.error('Something awful happen', error);
                 });
+
+            /**
+             * Updates file load progress status.
+             * @param  {Object} event ProgressEvent object
+             */
+            function updateProgress(event) {
+                // indicates if the resource concerned by the ProgressEvent has a length that can be calculated.
+                if (event.lengthComputable) {
+                    const percentLoaded = Math.round((event.loaded / event.total) * 100);
+                    // Increase the progress bar length.
+                    if (percentLoaded <= 100) {
+                        console.log(percentLoaded + '%');
+
+                        self.upload.progress = percentLoaded;
+                        $scope.$apply();
+                    }
+                }
+            }
         }
 
         /**
@@ -225,6 +233,7 @@
             if (upload.file) { // if there is a file in the queue
                 upload.file.cancel(); // removes the file from the upload queue
                 upload.file = null; // kill reference as well
+                upload.progress = 0; // reset progress bar to 0; otherwise, it will try to animate from 100 to 0 next time progress event happens
             }
 
             // arguments as follows: name of the error, state of the error, a controller object which will be stored against the error; when removing the same error, need to provide the same controller object

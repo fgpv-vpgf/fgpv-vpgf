@@ -27,9 +27,7 @@
 
                     <div class="md-block">
                         <div
-                            flow-files-submitted="self.upload.filesSubmitted($files, $event, $flow)"
-                            flow-file-success="self.upload.fileSuccess($file, $flow)"
-                            flow-error="self.upload.fileError($file, $message, $flow)">
+                            flow-files-submitted="self.upload.filesSubmitted($files, $event, $flow)">
 
                             <md-button
                                 class="rv-button-square rv-loader-file-select-button md-raised"
@@ -46,7 +44,7 @@
 
                     <md-progress-linear
                         md-mode="determinate"
-                        value="{{ self.upload.file ? self.upload.file.progress() * 100 : 0 }}"
+                        value="{{ self.upload.progress }}"
                         ng-class="{ 'rv-hide': !self.upload.file }"></md-progress-linear>
 
                     <!-- this field is needed to attach the error messages; is't hidden -->

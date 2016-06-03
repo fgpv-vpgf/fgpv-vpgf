@@ -180,10 +180,11 @@
          * @param  {Number} targetWkid wkid of the current map object
          * @param  {String} path      either file name or file url; if it's a file name, need to provide a HTML5 file object
          * @param  {File} file      optional: HTML5 file object
+         * @return {Function} progressCallback        optional: function to call on progress events druing when reading file
          * @return {String}           service type: 'csv', 'shapefile', 'geojson'
          */
         class LayerFileBlueprint extends LayerBlueprint {
-            constructor(epsgLookup, targetWkid, path, file) { // , extension) {
+            constructor(epsgLookup, targetWkid, path, file, progressCallback = angular.noop) { // , extension) {
                 super();
 
                 // when passing file object, path is its name
@@ -206,7 +207,7 @@
 
                         if (typeof file !== 'undefined') {
                             // if there is file object, read it and store the data
-                            return this._readFileData(file)
+                            return this._readFileData(file, progressCallback)
                                 .then(fileData => this._fileData = fileData);
                         } else if (typeof fileInfo.fileData !== 'undefined') {
                             this._fileData = fileInfo.fileData;
@@ -279,18 +280,18 @@
              * @param  {File} file [description]
              * @return {Promise}      promise resolving with file's data
              */
-            _readFileData(file) {
+            _readFileData(file, progressCallback) {
                 const dataPromise = $q((resolve, reject) => {
                     const reader = new FileReader();
-                    reader.onerror = event => {
-                        console.error('Failed to read a file', event);
+                    reader.onerror = () => {
+                        console.error('Failed to read a file');
                         reject('Failed to read a file');
                     };
-                    reader.onload = event => {
-                        console.log(event, reader.result);
-                        // this.fileData = reader.result ??
+                    reader.onload = () => {
+                        console.log('Fully loaded');
                         resolve(reader.result); // ???
                     };
+                    reader.onprogress = event => progressCallback(event);
 
                     reader.readAsArrayBuffer(file);
                 });
