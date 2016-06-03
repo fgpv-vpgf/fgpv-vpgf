@@ -13,13 +13,13 @@
     <script src='dist/geoapi.min.js'></script>
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-        var layer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CommonGIS_AuxMerc/MapServer/0');
+        var layer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CommonGIS_AuxMerc/MapServer/1');
 
         var legend = [
         {
-          'label' : '',
-          'url' : 'A3621BE2',
-          'imageData' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAAZQTFRF/v//AKnn3zVwoAAAAAJ0Uk5TAP9bkSK1AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAG0lEQVQokWNgIBMwYgUQKazqR6VGpfAmGzIAAHXqAFUODW1dAAAAAElFTkSuQmCC',
+          'name' : '',
+          'url' : 'FCBA65AE',
+          'icon' : 'iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAAXNSR0IB2cksfwAAAAZQTFRF/v//cKgArLFeagAAAAJ0Uk5TAP9bkSK1AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAG0lEQVQokWNgIBMwYgUQKazqR6VGpfAmGzIAAHXqAFUODW1dAAAAAElFTkSuQmCC',
           'contentType' : 'image/png'
         }
       ];
@@ -33,10 +33,10 @@
 
             var oid = 7;
             console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFF', fData[0]);
-            fData[0].layerData.then(lData => {
+            fData[1].layerData.then(lData => {
                 console.log('IIIIIIIIIIIIIIII renderer', lData.renderer, legend);
                 var lconfig = api.symbology.createSymbologyConfig(lData.renderer, legend);
-                fData[0].getAttribs().then(gData => {
+                fData[1].getAttribs().then(gData => {
                     console.log('HHHHHHHHHHHHHHHHH', lconfig, gData);
                     var icon = api.symbology.getGraphicIcon(gData, lconfig, oid);
                     var myimg = document.getElementById('mine');
