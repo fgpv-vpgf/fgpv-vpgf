@@ -39,12 +39,12 @@ function createSymbologyConfig(renderer, legend) {
         type: renderer.type
     };
 
-    const legendLookup = labelObj(legend, renderer.type);
+    const legendLookup = labelObj(legend);
 
     switch (symb.type) {
         case 'simple':
             symb.label = renderer.label;
-            symb.imageUrl = legend[0].imageData;
+            symb.imageUrl = legendLookup[renderer.label].icon;
 
             break;
 
@@ -74,7 +74,7 @@ function createSymbologyConfig(renderer, legend) {
                 return {
                     label: cbi.label,
                     maxValue: cbi.classMaxValue,
-                    imageUrl: legendLookup[cbi.label].imageData
+                    imageUrl: legendLookup[cbi.label].icon
                 };
             });
 
@@ -179,7 +179,7 @@ function getGraphicIcon(fData, layerConfig, oid) {
             return img;
 
         default:
-            return symbolConfig.icons['default'].imageUrl;
+            return symbolConfig.defaultImageUrl;
     }
 }
 
@@ -189,18 +189,13 @@ function getGraphicIcon(fData, layerConfig, oid) {
 * @param {Array} array that needs to be parsed into JSON obj
 * @returns {Object} an JSON config object where labels are toplevel keys
 */
-function labelObj(array, type) {
+function labelObj(array) {
     const finalObj = {};
 
-    if (type === 'uniqueValue') {
-        array.forEach(o => {
-            finalObj[o.name] = o;
-        });
-    } else if (type === 'classBreaks') {
-        array.forEach(o => {
-            finalObj[o.label] = o;
-        });
-    }
+    array.forEach(o => {
+        finalObj[o.name] = o;
+    });
+
     return finalObj;
 }
 
