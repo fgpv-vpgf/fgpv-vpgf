@@ -163,7 +163,7 @@ describe('rvContentPane2', () => {
             expect(directiveElement.find('.rv-header')
                     .children()
                     .length)
-                .toBe(4);
+                .toBe(3);
         });
     });
 });

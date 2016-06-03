@@ -46,12 +46,8 @@
 
         self.closePanel = self.closeButton !== 'false' ? closePanel : undefined;
 
-        /**
-         * Temporary function to close the panel.
-         * FIXME: this should be handled in the shatehelper
-         */
         function closePanel() {
-            stateManager.setActive($attrs.type);
+            stateManager.closePanel($attrs.type);
         }
     }
 })();
