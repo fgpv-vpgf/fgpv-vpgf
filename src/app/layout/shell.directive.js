@@ -16,7 +16,7 @@
         .module('app.layout')
         .directive('rvShell', rvShell);
 
-    function rvShell(storageService, stateManager) {
+    function rvShell(storageService, stateManager, $rootElement) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/layout/shell.html',
@@ -29,15 +29,38 @@
 
         return directive;
 
-        function link(scope, el) {
-            storageService.panels.shell = el;
-            $(window).bind('keydown', event => {
+        function link(scope, element) {
+            storageService.panels.shell = element;
+            let lastFocusedEl = [];
+
+            if (!window.rvInit) {
+                window.rvInit = true;
+                $(document).on('focusout', event => {
+                    if (event.relatedTarget === null && !$(event.target).data('focusOverride')) {
+                        revertFocus().focus();
+                    } else {
+                        lastFocusedEl.push(event.target);
+                    }
+                });
+            }
+
+            function revertFocus() {
+                if (lastFocusedEl.length > 0) {
+                    let el = lastFocusedEl.pop();
+                    return $(el).is(':visible') ? el : revertFocus();
+                } else {
+                    return $('button:first');
+                }
+            }
+
+            $rootElement.bind('keydown', event => {
                 if (event.which === 27) {
                     scope.$apply(() => {
-                        stateManager.closePanelFromHistory();
+                        stateManager.closePanel();
                     });
                 }
             });
+
         }
     }
 

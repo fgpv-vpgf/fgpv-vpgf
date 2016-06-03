@@ -1,88 +1,84 @@
+/* global Ease, BezierEasing, TimelineLite */
 (() => {
     'use strict';
-
     const RV_SLIDE_DURATION = 0.3;
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
-    const RV_DETAILS_LIST = '.rv-details-layer-list';
-    const RV_DETAILS_SECTION = '.rv-details';
 
     /**
      * @ngdoc directive
-     * @name rvDetails
+     * @name rvDetailSlider
      * @module app.ui.details
      * @restrict E
      * @description
      *
-     * The `rvDetails` directive to display point data and wms query results.
-     * Where are multiple data items, displays a selector list on the left side, letting the user to select the item.
+     * The `rvDetailSlider` directive handles the in/out sliding of the details panel.
      *
+     * The panel slides open when either any point layer is focused or on mouseover. It closes
+     * when no point layers have focus, no mouseover, or the user clicked on a point layer.
      */
     angular
         .module('app.ui.details')
         .directive('rvDetailSlider', rvDetailSlider);
 
-    function rvDetailSlider() {
+    function rvDetailSlider(stateManager) {
         const directive = {
-            restrict: 'A',
+            restrict: 'E',
+            templateUrl: 'app/ui/details/details-slider.html',
             link
         };
 
         return directive;
 
-        /*********/
-
         function link(scope, element) {
             const self = scope.self;
-            let sectionNode;
-            let layerListNode;
 
-            console.debug(element);
             // create animation timeline
             const tl = new TimelineLite({
                 paused: true
             });
 
-            self.onEnter = onEnter;
-            self.onLeave = onLeave;
+            const animateOpen = () => tl.paused() ? tl.play() : tl.reversed(false);
+            const animateClosed = () => tl.reversed(true);
 
-            $(element).hoverIntent({
-                over: onEnter,
-                out: onLeave,
-                interval: 200
+            tl.to(element, RV_SLIDE_DURATION, {
+                width: 280,
+                ease: RV_SWIFT_IN_OUT_EASE,
+                overflowY: 'auto'
             });
 
-            let isOpenState = false; // track if side panel is open/closed
-            function onEnter() {
-                if (!isOpenState) {
-                    // find layer node and construct timeline
-                    layerListNode = element.find(RV_DETAILS_LIST);
-                    sectionNode = element.find(RV_DETAILS_SECTION);
-
-                    tl.clear()
-                        .to(element, RV_SLIDE_DURATION, {
-                            width: 280,
-                            ease: RV_SWIFT_IN_OUT_EASE
-                        })
-
-                        // This will explicitly "animate" the overflow property from hidden to auto and not try to figure
-                        // out what it was initially on the reverse run.
-                        .fromTo(element, 0.01, {
-                            'overflow-y': 'hidden'
-                        }, {
-                            'overflow-y': 'auto'
-                        }, RV_SLIDE_DURATION / 2);
-
-                    isOpenState = true;
-                    tl.play(0, false);
+            element.on('focusout', event => {
+                if (!$.contains(element[0], event.relatedTarget)) {
+                    animateClosed();
+                    stateManager.nextFocus();
+                    event.stopPropagation();
                 }
-            }
+            });
 
-            function onLeave() {
-                if (isOpenState) {
-                    tl.reverse(0, false);
-                    isOpenState = false;
+            element.on('focusin', event => {
+                if ($.contains(element[0], event.target)) {
+                    animateOpen();
                 }
-            }
+
+            });
+
+            self.selectItemEvent = (event, item) => {
+                if ((event.type === 'keydown' && [13, 32, 33].indexOf(event.which) !== -1)) {
+                    animateClosed();
+                    self.selectItem(item);
+                    stateManager.nextFocus();
+
+                } else if (event.type === 'mousedown') {
+                    animateClosed();
+                    self.selectItem(item);
+                }
+            };
+
+            // create jQuery hoverIntent object to open panel on slow mouseover
+            element.hoverIntent({
+                over: animateOpen,
+                out: animateClosed,
+                interval: 200
+            });
         }
     }
 })();

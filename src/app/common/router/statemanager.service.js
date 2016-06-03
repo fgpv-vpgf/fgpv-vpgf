@@ -27,23 +27,17 @@
 
     // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
-    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement) {
+    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay) {
         const service = {
             addState,
             setActive,
             setMorph,
             callback,
-            setFocusElement,
-            getFocusElement,
             state: angular.copy(initialState),
             display: angular.copy(initialDisplay),
-            closePanelFromHistory,
-
-            // temporary place to store layer data;
-            // TODO: move to the initialDisplay constant service
-            _detailsData: {
-                layers: []
-            }
+            closePanel,
+            setNextFocusable,
+            nextFocus
         };
 
         const fulfillStore = {}; // keeping references to promise fulfill functions
@@ -52,6 +46,7 @@
         angular.extend(service, displayService); // merge displayManager service functions into stateManager
 
         const panelHistory = [];
+        const focusList = []; // store list of focusable elements
         return service;
 
         /*********/
@@ -231,14 +226,17 @@
                         return;
                     }
 
-                    if (item.parent && value) {
-                        addPanelToHistory(itemName, item.parent);
+                    if (item.parent) {
+                        if (value) {
+                            addPanelToHistory(itemName);
+                        } else {
+                            removePanelFromHistory();
+                        }
                     }
                 }
                 return;
             });
         }
-
 
         function addPanelToHistory(panelName) {
             const panelIndex = panelHistory.indexOf(panelName);
@@ -249,27 +247,92 @@
             if (angular.isElement) {
                 if (element.attr('tabindex') === 'undefined') {
                     element.attr('tabindex', -1);
+
+        /**
+         * Given a focusable element, save the element reference for later retrieval.
+         * Uses label to uniquely identify elements in the list which prevents duplicate entries
+         * @param   {Object}    element to set focus on
+         * @param   {String}    label a name for the element to prevent duplicate entries
+         */
+        function setNextFocusable(element, label) {
+            label = angular.isString(label) ? label : 'default';
+            element = $(element);
+
+            angular.forEach(focusList, (item, index) => {
+                if (item.label === label) {
+                    focusList.splice(index, 1);
                 }
-                service._focusable = element;
+            });
+
+            focusList.push({ label, element });
+        }
+
+        /**
+         * Sets the focus to the most recent focusable element
+         * @return  {Object}    html element that received focus
+         */
+        function nextFocus() {
+            let nextFocusElement = null;
+            if (focusList.length > 0) {
+                nextFocusElement = focusList[focusList.length - 1].element;
+                nextFocusElement.data('focusOverride', true);
+                nextFocusElement.focus();
+
             }
+            return nextFocusElement;
         }
 
-        function getFocusElement() {
-            return service._focusable ? service._focusable : $rootElement;
-        }
-
-        function addPanelToHistory(panelName, parentName) {
-            setFocusElement($(`rv-panel[type=${parentName}] [rv-focusable]`));
+        /**
+         * Adds a panel to history
+         * @param   {String}    panelName panel reference name
+         */
+        function addPanelToHistory(panelName) {
             const indexInHistory = panelHistory.indexOf(panelName);
-            if (indexInHistory !== -1) {
-                panelHistory.splice(indexInHistory, 1);
+            if (indexInHistory === -1) {
+                panelHistory.push(panelName);
             }
-            panelHistory.push(panelName);
         }
 
-        function closePanelFromHistory() {
-            if (panelHistory.length > 0) {
-                setActive({ [panelHistory.pop()]: false });
+        /**
+         * Removes a panel from history
+         * @param   {String}    panelName panel reference name
+         */
+        function removePanelFromHistory(panelName) {
+            const pane = getItem(panelName).item;
+            if (angular.isObject(pane)) {
+                const pList = pane.parent ? [panelName] : getChildren(panelName);
+
+                angular.forEach(pList, panel => {
+                    const indexInHistory = panelHistory.indexOf(panel.name);
+                    if (indexInHistory !== -1) {
+                        panelHistory.splice(indexInHistory, 1);
+                    }
+                });
+            }
+        }
+
+        /**
+         * Closes the panel named panelName and removes it from history.
+         * If panelName is not supplied the most recently opened panel is
+         * closed instead
+         * @param   {String}    panelName optional panel name to close
+         */
+        function closePanel(panelName) {
+            let panelToClose;
+            let replaceWithPanel;
+
+            // panelName is provided, remove from history (if present)
+            if (angular.isString(panelName)) {
+                const historyIndex = panelHistory.indexOf(panelName);
+                panelToClose = historyIndex === -1 ? getItem(panelName) : getItem(panelHistory.splice(historyIndex, 1));
+
+            // close the most recently opened panel
+            } else if (panelHistory.length > 0) {
+                panelToClose = getItem(panelHistory.pop());
+
+            // history is empty, nothing to close!
+            } else {
+                return;
             }
 
         function setFocusElement(element) {
@@ -285,6 +348,29 @@
         function getFocusElement() {
             console.debug('Get focus on', service._focusable ? service._focusable : $rootElement);
             return service._focusable ? service._focusable : $rootElement;
+            // closing parent panel
+            if (!angular.isDefined(panelToClose.item.parent)) {
+                setActive({ [panelToClose.name]: false });
+
+            // child panel - check if parent is present in history, if so we don't want to close it
+            } else {
+                angular.forEach(panelHistory, pName => {
+                    if (angular.equals(panelToClose.item.parent, getItem(pName).item.parent)) {
+                        replaceWithPanel = getItem(pName);
+                    }
+                });
+
+                // parent panel was found in history, swap child panels and keep parent open
+                // setItemProperty is used as setActive adds history record for active panels
+                if (angular.isObject(replaceWithPanel)) {
+                    setItemProperty(panelToClose.name, 'active', false, true);
+                    setItemProperty(replaceWithPanel.name, 'active', true, true);
+
+                // close the parent, children will be closed as well by setActive
+                } else {
+                    setActive({ [panelToClose.item.parent]: false });
+                }
+            }
         }
 
         /**

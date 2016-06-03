@@ -34,36 +34,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
 
         <!-- the detail content  -->
         <!-- the side selector  -->
-
-        <div rv-detail-slider class="rv-details-layer-list"
-            ng-show="self.display.data.length > 1">
-            <ul class="rv-list">
-                <li
-                    ng-repeat="item in self.display.data"
-                    ng-class="{'rv-selected': item === self.selectedItem }"
-                    class="rv-details-layer-list-item">
-
-                    <md-button
-                        ng-blur="$last ? self.onLeave() : false"
-                        ng-focus="self.onEnter($event)"
-                        ng-keypress="self.focusOnClose($event)"
-                        aria-label='point details'
-                        class="rv-button-square rv-details-layer-button"
-                        ng-click="self.selectItem(item)">
-                    </md-button>
-
-                    <rv-toc-entry-symbology
-                        symbology="item.requester.symbology"
-                        ng-class="{ 'rv-disabled' : item.data.length === 0 || item.isLoading }"></rv-toc-entry-symbology>
-                    <span class="rv-details-layer-badge" ng-if="item.data.length > 0">{{ item.data.length }}</span>
-                    <md-progress-circular md-diameter="48" class="md-primary" md-mode="indeterminate" ng-if="item.isLoading"></md-progress-circular>
-                    <div class="rv-details-layer-name">
-                        <span class="">{{ item.requester.name }}</span>
-                        <span class="md-caption" ng-if="item.requester.caption">{{ item.requester.caption }}</span>
-                    </div>
-                </li>
-            </ul>
-        </div>
+        <rv-detail-slider class="rv-details-layer-list" ng-show="self.display.data.length > 1"></rv-details-slider>
     </div>
 
 </rv-content-pane>
