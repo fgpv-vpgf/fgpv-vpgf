@@ -150,7 +150,7 @@
             }
 
             // FIXME: this should be done only on feature layers, nothing else!
-            // HACK: to get file based layers working; this will be solved by the layer record ana legend entry hierarchy
+            // HACK: to get file based layers working; this will be solved by the layer record and legend entry hierarchy
             if (typeof initialState.url !== 'undefined') {
                 const urlParts = initialState.url.split('/');
                 this.featureIdx = urlParts.pop(); // get the featureidx from the end of the url

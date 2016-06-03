@@ -12,7 +12,7 @@
         /**
          * Start stepper by activating the specified step.
          * @param  {Number} stepNumber id of the step to activate, defaults to 0
-         * @return {Object}            itthis for chaining
+         * @return {Object}            itself for chaining
          */
         start(stepNumber = 0) {
             if (!this.currentStep && this.steps.length > 0) {
@@ -47,7 +47,7 @@
          * `isActive` indicates that a step's content is exposed to the user and awaits user input; only one step should be active at a time;
          * `isCompleted` indicates that user input satisfies this step's validation; step's number badge is replaced with a checkmark icon;
          * @param {Array|Object} steps step object(s) to be added; either an array of step objects or a single step object can be added; the order in which steps are added to the stepper service will be used for navigation between steps;
-         * @return {Object}            itthis for chaining
+         * @return {Object}            itself for chaining
          */
         addSteps(steps) {
             this.steps = this.steps.concat(steps);
@@ -62,7 +62,7 @@
          * @param  {Number} stepNumber                step id to jump to
          * @param  {Boolean} completeCurrentStep       flag indicating if the current step should be completed
          * @param  {Boolean} completeIntermediateSteps  flag indicating if the steps in between should be completed
-         * @return {Object}            itthis for chaining
+         * @return {Object}            itself for chaining
          */
         moveToStep(stepNumber, completeCurrentStep = true, completeIntermediateSteps = true) {
             this.start();
@@ -98,7 +98,7 @@
         /**
          * Moves to the next step.
          * @param  {Boolean} completeCurrentStep       flag indicating if the current step should be completed
-         * @return {Object}            itthis for chaining
+         * @return {Object}            itself for chaining
          */
         nextStep(completeCurrentStep = true) {
             this.start();
@@ -121,7 +121,7 @@
         /**
          * Moves to the previous step.
          * @param  {Boolean} completeCurrentStep       flag indicating if the current step should be completed
-         * @return {Object}            itthis for chaining
+         * @return {Object}            itself for chaining
          */
         previousStep(completeCurrentStep = false) {
             this.start();
