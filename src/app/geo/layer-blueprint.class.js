@@ -174,13 +174,13 @@
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         /**
-         * Createa a LayerFileBlueprint.
+         * Create a LayerFileBlueprint.
          * Retrieves data from the file. The file can be either online or local.
          * @param  {Function} epsgLookup epsgLookup function
          * @param  {Number} targetWkid wkid of the current map object
          * @param  {String} path      either file name or file url; if it's a file name, need to provide a HTML5 file object
          * @param  {File} file      optional: HTML5 file object
-         * @return {String}           service type: 'csv', 'shapefile', 'geojosn'
+         * @return {String}           service type: 'csv', 'shapefile', 'geojson'
          */
         class LayerFileBlueprint extends LayerBlueprint {
             constructor(epsgLookup, targetWkid, path, file) { // , extension) {
@@ -232,7 +232,7 @@
             set fileType(value) {
                 this._fileType = value;
 
-                // create user options object basedo the layer type
+                // create user options object based on the layer type
                 const options = new LayerBlueprintUserOptions.File[this.fileType]
                     (this._epsgLookup, this._targetWkid);
                 options.layerName = this._fileName;
