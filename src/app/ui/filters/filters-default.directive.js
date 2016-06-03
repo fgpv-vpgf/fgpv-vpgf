@@ -73,16 +73,15 @@
                 containerNode.append(tableNode);
 
                 // add icons and zoom to button only to the feature layers
-                // TODO: remove when symbology for dynamic layers is sorted out and zoom to for dynamic layers is sorted out
-                // FIXME: now checking if file-based layer by looking at url since symbology generation doesn't work
-                if (requester.legendEntry.layerType === 'esriFeature' && requester.legendEntry.url) {
+                if (requester.legendEntry.layerType === 'esriFeature' ||
+                    requester.legendEntry.layerType === 'esriDynamicLayerEntry' && requester.legendEntry.url) {
 
                     // add symbol as the first column
                     // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
                     if (!displayData.rows[0].hasOwnProperty('rvSymbol')) {
                         displayData.rows.forEach((row, index) => {
                             const objId = row[displayData.oidField];
-                            const renderer = geoService.layers[requester.layerId].layer.renderer;
+                            const renderer = displayData.renderer;
                             const legend = requester.legendEntry.symbology;
 
                             // FIXME: mock fdata object for this particular item
@@ -108,19 +107,14 @@
                             orderable: false
                         });
                     }
-
-                    // TODO: try to compile an angular compoent and insert that instead maybe with a normal click handler ???
-                    // FIXME: turn this into a real button for keyboard accessibility
-                    // get the first column after the symbol column
-                    const interactiveColumn = displayData.columns.find(column =>
-                        column.data !== 'rvSymbol');
-                    addColumnInteractivity(interactiveColumn, [ZOOM_TO_ICON(zoomText), DETAILS_ICON(descriptionsText)]);
-                } else {
-                    // TODO:move interactiveColumn section out of esriFeature if block and remove else block when zoom supports dynamic layers
-                    const interactiveColumn = displayData.columns.find(column =>
-                        column.data !== 'rvSymbol');
-                    addColumnInteractivity(interactiveColumn, [DETAILS_ICON(descriptionsText)]);
                 }
+
+                // TODO: try to compile an angular compoent and insert that instead maybe with a normal click handler ???
+                // FIXME: turn this into a real button for keyboard accessibility
+                // get the first column after the symbol column
+                const interactiveColumn = displayData.columns.find(column =>
+                    column.data !== 'rvSymbol');
+                addColumnInteractivity(interactiveColumn, [ZOOM_TO_ICON(zoomText), DETAILS_ICON(descriptionsText)]);
 
                 // ~~I hate DataTables~~ Datatables are cool!
                 self.table = tableNode
@@ -161,13 +155,15 @@
 
                 self.table.on('click', 'md-icon.rv-zoom-to', event => {
                     const tr = $(event.target).closest('tr');
+                    const layerName = $(event.target).closest('.rv-content-pane')
+                        .find('.md-title').html().substring(10);
                     const row = self.table.row(tr);
 
                     // get object id from row data
                     const objId = row.data()[displayData.oidField];
                     const layer = geoService.layers[requester.layerId].layer;
 
-                    geoService.zoomToGraphic(layer, objId);
+                    geoService.zoomToGraphic(layer, layerName, objId);
                 });
 
                 self.table.on('click', 'md-icon.rv-description', event => {
@@ -190,6 +186,8 @@
                             name: requester.name
                         }
                     };
+
+                    console.log('333333333333', detailsObj.data[0]);
                     const details = {
                         data: [detailsObj]
                     };
