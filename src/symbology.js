@@ -10,6 +10,11 @@
 const maxW = 32;
 const maxH = 32;
 
+// layer symbology types
+const SIMPLE = 'simple';
+const UNIQUE_VALUE = 'uniqueValue';
+const CLASS_BREAKS = 'classBreaks';
+
 // use single quotes so they will not be escaped (less space in browser)
 const emptySVG = `<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'></svg>`;
 
@@ -42,13 +47,13 @@ function createSymbologyConfig(renderer, legend) {
     const legendLookup = labelObj(legend);
 
     switch (symb.type) {
-        case 'simple':
+        case SIMPLE:
             symb.label = renderer.label;
             symb.imageUrl = legendLookup[renderer.label].icon;
 
             break;
 
-        case 'uniqueValue':
+        case UNIQUE_VALUE:
             if (renderer.defaultLabel) {
                 symb.defaultImageUrl = legendLookup[renderer.defaultLabel];
             }
@@ -64,7 +69,7 @@ function createSymbologyConfig(renderer, legend) {
             });
 
             break;
-        case 'classBreaks':
+        case CLASS_BREAKS:
             if (renderer.defaultLabel) {
                 symb.defaultImageUrl = legendLookup[renderer.defaultLabel];
             }
@@ -105,11 +110,12 @@ function getGraphicIcon(fData, layerConfig, oid) {
     let graphicKey;
 
     // find node in layerregistry.attribs
+    // TODO: refactor into proper blocks
     switch (symbolConfig.type) {
-        case 'simple':
+        case SIMPLE:
             return symbolConfig.imageUrl;
 
-        case 'uniqueValue':
+        case UNIQUE_VALUE:
             const oidIdx = fData.oidIndex[oid];
 
             // make a key value for the graphic in question, using comma-space delimiter if multiple fields
@@ -142,7 +148,7 @@ function getGraphicIcon(fData, layerConfig, oid) {
 
             return img;
 
-        case 'classBreaks':
+        case CLASS_BREAKS:
             const oidIdx2 = fData.oidIndex[oid];
 
             let gVal = fData.features[oidIdx2].attributes[symbolConfig.field];
