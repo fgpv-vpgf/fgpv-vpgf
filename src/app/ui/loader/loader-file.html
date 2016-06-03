@@ -9,35 +9,66 @@
 
     <!-- TODO: add translate filters -->
 
-    <div class="rv-loader-file" flow-init="{ singleFile: true }">
-        <!-- add `
-            , permanentErrors: [200, 201, 202, 404, 415, 500, 501], successStatuses: []`
+    <div
+        class="rv-loader-file"
+        flow-init="{ singleFile: true }">
+        <!-- add `, permanentErrors: [200, 201, 202, 404, 415, 500, 501], successStatuses: []`
          to flow-init to simulate error during upload  -->
 
         <div class="rv-file-drop-blur">
 
             <rv-stepper-item
+                class="rv-loader-file-upload"
                 step="self.upload.step"
                 form="self.upload.form"
-                summary-value="{{ self.upload.file && self.upload.step.isCompleted ? self.upload.file.name : 'GeoJSON, CSV, or Shapefile' }}">
+                summary-value="{{ self.upload.file && self.upload.step.isCompleted ? self.upload.file.name : 'import.file.upload.summary' }}">
 
-                <md-input-container class="md-block rv-loader-file-em" flex>
-                    <div
-                        flow-files-submitted="self.upload.filesSubmitted($files, $event, $flow)"
-                        flow-file-success="self.upload.fileSuccess($file, $flow)"
-                        flow-error="self.upload.fileError($file, $message, $flow)">
+                <md-input-container class="md-block rv-loader-file-upload-drop" flex>
 
-                        <md-button
-                            class="rv-button-square rv-loader-file-select-button"
-                            flow-btn
-                            flow-progress="console.log()"
-                            ng-click="self.upload.fileReset()">Select a file</md-button>
+                    <div class="md-block">
+                        <div
+                            flow-files-submitted="self.upload.filesSubmitted($files, $event, $flow)">
 
-                        <md-progress-linear md-mode="determinate" value="{{ self.upload.file ? self.upload.file.progress() * 100 : 0 }}"></md-progress-linear>
-
+                            <md-button
+                                class="rv-button-square rv-loader-file-select-button md-raised"
+                                flow-btn
+                                flow-progress="console.log()"
+                                flow-attrs="{ accept: '.csv,.zip,.json' }"
+                                ng-click="self.upload.step.onCancel()">
+                                <md-icon md-svg-src="file:file_upload"></md-icon>
+                                {{ "import.file.upload.choose" | translate }}
+                            </md-button>
+                        </div>
+                        <span class="md-caption" translate>import.file.upload.drop</span>
                     </div>
-                    <div class="errors" ng-messages="self.upload.form.$error" ng-if="self.upload.form.$invalid">
+
+                    <md-progress-linear
+                        md-mode="determinate"
+                        value="{{ self.upload.progress }}"
+                        ng-class="{ 'rv-hide': !self.upload.file }"></md-progress-linear>
+
+                    <!-- this field is needed to attach the error messages; is't hidden -->
+                    <input name="fileSelect" ng-model="self.upload.fileSelect">
+                    <div ng-messages="self.upload.form.fileSelect.$error" ng-if="self.upload.form.fileSelect.$invalid">
                         <div ng-message="upload-error">Can't access file.</div>
+                    </div>
+                </md-input-container>
+
+                <span class="md-subhead rv-loader-file-upload-or" translate>import.file.upload.or</span>
+
+                <md-input-container class="md-block">
+                    <label translate>import.file.upload.fileurl</label>
+                    <input
+                        name="fileUrl"
+                        type="url"
+                        ng-focus="self.upload.fileReset()"
+                        ng-model="self.upload.fileUrl"
+                        ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
+                        required>
+
+                    <!-- TODO: decide whether and how to display a hint or error messages -->
+                    <div ng-messages="self.upload.form.fileUrl.$error">
+                        <div ng-message="url">This is not a valid URL</div>
                     </div>
                 </md-input-container>
 
@@ -46,19 +77,18 @@
             <rv-stepper-item
                 form="self.select.form"
                 step="self.select.step"
-                summary-value="{{ self.select.dataType && self.select.step.isCompleted ? self.dataTypes[self.select.dataType] : '' }}">
+                summary-value="{{ self.layerBlueprint.fileType && self.select.step.isCompleted ? 'import.file.type.' + self.layerBlueprint.fileType : '' }}">
 
                 <md-input-container class="md-block">
-                    <label>File Format</label>
-                    <md-select name="dataType" ng-model="self.select.dataType" required>
-                        <md-option ng-repeat="(value, key) in self.dataTypes" value="{{ value }}">
-                            {{ key }}
+                    <label translate>import.file.select.fileformat</label>
+                    <md-select name="dataType" ng-model="self.layerBlueprint.fileType" required>
+                        <md-option ng-repeat="fileType in self.fileTypes" value="{{ fileType }}">
+                            {{ 'import.file.type.' + fileType | translate }}
                         </md-option>
                     </md-select>
 
                     <!-- TODO: decide whether and how to display a hint or error messages; can use md-on-close="self.select.form.dataType.$setDirty()" -->
                     <!--div
-                        class="errors"
                         ng-messages="self.select.form.dataType.$error"
                         ng-if="self.select.form.dataType.$dirty">
                         <div ng-message="required">Required</div>
@@ -68,11 +98,11 @@
                 </md-input-container>
             </rv-stepper-item>
 
-            <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.select.dataType">
+            <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.layerBlueprint.fileType">
 
                 <md-input-container class="md-block">
-                    <label>Layer Name</label>
-                    <input name="layerName" ng-model="self.configure.options.layerName" required>
+                    <label translate>import.file.configure.layername</label>
+                    <input name="layerName" ng-model="self.layerBlueprint.userOptions.layerName" required>
                     <!-- TODO: decide whether and how to display a hint or error messages -->
                     <!--div ng-messages="self.configure.form.layerName.$error">
                         <div ng-message="required">This is required!</div>
@@ -81,40 +111,40 @@
                 </md-input-container>
 
                 <md-input-container class="md-block">
-                    <label>Primary Field</label>
-                    <md-select name="primaryField" ng-model="self.configure.options.primaryField" required>
-                        <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
-                            {{ key }}
+                    <label translate>import.file.upload.primaryfield</label>
+                    <md-select name="primaryField" ng-model="self.layerBlueprint.userOptions.primaryField" required>
+                        <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
+                            {{ field.name }}
                         </md-option>
                     </md-select>
                     <!-- TODO: decide whether and how to display a hint or error messages -->
-                    <!--div class="errors" ng-messages="self.configure.form.primaryField.$error">
+                    <!--div  ng-messages="self.configure.form.primaryField.$error">
                         <div ng-message="required">Required</div>
                     </div-->
                 </md-input-container>
 
                 <div layout="row" ng-switch-when="csv">
                     <md-input-container class="md-block" flex>
-                        <label>Latitude Field</label>
-                        <md-select name="latitude" ng-model="self.configure.options.latitude" required>
-                            <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
-                                {{ key }}
+                        <label translate>import.file.upload.latitudefield</label>
+                        <md-select name="latitude" ng-model="self.layerBlueprint.userOptions.latfield" required>
+                            <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
+                                {{ field.name }}
                             </md-option>
                         </md-select>
                         <!-- TODO: decide whether and how to display a hint or error messages -->
-                        <!--div class="errors" ng-messages="self.configure.form.latitude.$error">
+                        <!--div ng-messages="self.configure.form.latitude.$error">
                             <div ng-message="required">Required</div>
                         </div-->
                     </md-input-container>
                     <md-input-container class="md-block" flex>
-                        <label>Longitude Field</label>
-                        <md-select name="longitude" ng-model="self.configure.options.longitude" required>
-                            <md-option ng-repeat="(value, key) in self.fields" value="{{ value }}">
-                                {{ key }}
+                        <label translate>import.file.upload.longitudefield</label>
+                        <md-select name="longitude" ng-model="self.layerBlueprint.userOptions.lonfield" required>
+                            <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
+                                {{ field.name }}
                             </md-option>
                         </md-select>
                         <!-- TODO: decide whether and how to display a hint or error messages -->
-                        <!--div class="errors" ng-messages="self.configure.form.longitude.$error">
+                        <!--div  ng-messages="self.configure.form.longitude.$error">
                             <div ng-message="required">Required</div>
                         </div-->
                     </md-input-container>
@@ -124,7 +154,10 @@
         </div>
 
         <div class="rv-file-drop-container" flow-drop>
-            <span class="md-display-2 rv-file-drop-title">Drop to upload your file</span>
+            <div class="rv-file-drop-title">
+                <span class="md-display-2" translate>import.file.upload.drop</span>
+                <md-icon md-svg-src="file:file_upload"></md-icon>
+            </div>
         </div>
     </div>
 

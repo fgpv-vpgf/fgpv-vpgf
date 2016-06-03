@@ -42,7 +42,7 @@
     }
 
     function apiBlock($translate, $rootElement, $rootScope, globalRegistry, geoService, configService, events,
-        LayerServiceBlueprint) {
+        LayerBlueprint) {
         const service = {
             setLanguage,
             loadRcsLayers
@@ -78,7 +78,7 @@
                 .then(newLayerConfigs => {
                     // call layer register in geo module on those nodes
                     const layerBlueprints = newLayerConfigs.map(layerConfig =>
-                        new LayerServiceBlueprint(layerConfig));
+                        new LayerBlueprint.service(layerConfig));
                     geoService.constructLayers(layerBlueprints);
                 });
 

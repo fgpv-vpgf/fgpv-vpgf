@@ -1,63 +1,44 @@
 (() => {
     'use strict';
 
-    /**
-     * @ngdoc service
-     * @name stepperService
-     * @module app.ui.common
-     * @description
-     *
-     * The `stepper` service provides a common interface to move between a number of steps forming a stepper [Material Desing Stepper](https://www.google.com/design/spec/components/steppers.html#steppers-specs).
-     * Other components should import `Stepper` and add steps to it in the order they appear in the template.
-     * Only one step can be active at a time. `Stepper` can move forward and backwards, or jump to any step optionally "completing" intermediate steps.
-     *
-     */
-    angular
-        .module('app.ui.common')
-        .service('stepper', Stepper);
-
-    // capital 'S' because it's a constructor
-    function Stepper() {
-        const self = this;
-
-        self.steps = [];
-        self.currentStep = null;
-
-        self.start = start;
-        self.reset = reset;
-        self.addSteps = addSteps;
-        self.moveToStep = moveToStep;
-        self.nextStep = nextStep;
-        self.previousStep = previousStep;
+    // jscs doesn't like enhanced object notation
+    // jscs:disable requireSpacesInAnonymousFunctionExpression
+    class Stepper {
+        constructor() {
+            this.steps = [];
+            this.currentStep = null;
+        }
 
         /**
          * Start stepper by activating the specified step.
          * @param  {Number} stepNumber id of the step to activate, defaults to 0
          * @return {Object}            itself for chaining
          */
-        function start(stepNumber = 0) {
-            if (!self.currentStep && self.steps.length > 0) {
-                self.currentStep = self.steps[stepNumber];
-                self.currentStep.isActive = true;
+        start(stepNumber = 0) {
+            if (!this.currentStep && this.steps.length > 0) {
+                this.currentStep = this.steps[stepNumber];
+                this.currentStep.isActive = true;
             }
 
-            return self;
+            return this;
         }
 
         /**
          * Resets the stepper by deactivating all steps.
-         * @return {Object}            itself for chaining
+         * @return {Object}            this for chaining
          */
-        function reset() {
-            self.steps.forEach(step => {
-                // TODO: reset form on the step itself
+        reset() {
+            this.steps.forEach(step => {
+                // call function reseting form on the step
+                step.onCancel();
+
                 step.isActive = false;
                 step.isCompleted = false;
             });
 
-            self.currentStep = null;
+            this.currentStep = null;
 
-            return self;
+            return this;
         }
 
         /**
@@ -68,12 +49,12 @@
          * @param {Array|Object} steps step object(s) to be added; either an array of step objects or a single step object can be added; the order in which steps are added to the stepper service will be used for navigation between steps;
          * @return {Object}            itself for chaining
          */
-        function addSteps(steps) {
-            self.steps = self.steps.concat(steps);
+        addSteps(steps) {
+            this.steps = this.steps.concat(steps);
 
-            // console.log('self.steps', self.steps);
+            // console.log('this.steps', this.steps);
 
-            return self;
+            return this;
         }
 
         /**
@@ -83,35 +64,35 @@
          * @param  {Boolean} completeIntermediateSteps  flag indicating if the steps in between should be completed
          * @return {Object}            itself for chaining
          */
-        function moveToStep(stepNumber, completeCurrentStep = true, completeIntermediateSteps = true) {
-            self.start();
+        moveToStep(stepNumber, completeCurrentStep = true, completeIntermediateSteps = true) {
+            this.start();
 
-            const currentStepNumber = self.steps.indexOf(self.currentStep);
+            const currentStepNumber = this.steps.indexOf(this.currentStep);
 
             if (stepNumber === currentStepNumber) {
-                return self;
+                return this;
             }
 
             if (stepNumber > currentStepNumber) {
                 for (let i = currentStepNumber + 1; i < stepNumber; i++) {
                     // console.log(i);
-                    const step = self.steps[i];
+                    const step = this.steps[i];
                     step.isCompleted = completeIntermediateSteps;
                 }
-                self.currentStep = self.steps[stepNumber - 1];
-                self.nextStep(completeCurrentStep);
+                this.currentStep = this.steps[stepNumber - 1];
+                this.nextStep(completeCurrentStep);
             } else {
                 // TODO: when moving back, need to call reset on steps to clear their respective forms
                 for (let i = currentStepNumber - 1; i > stepNumber; i--) {
                     // console.log(i);
-                    const step = self.steps[i];
+                    const step = this.steps[i];
                     step.isCompleted = completeIntermediateSteps;
                 }
-                self.currentStep = self.steps[stepNumber + 1];
-                self.previousStep(completeCurrentStep);
+                this.currentStep = this.steps[stepNumber + 1];
+                this.previousStep(completeCurrentStep);
             }
 
-            return self;
+            return this;
         }
 
         /**
@@ -119,22 +100,22 @@
          * @param  {Boolean} completeCurrentStep       flag indicating if the current step should be completed
          * @return {Object}            itself for chaining
          */
-        function nextStep(completeCurrentStep = true) {
-            self.start();
+        nextStep(completeCurrentStep = true) {
+            this.start();
 
-            const currentStepNumber = self.steps.indexOf(self.currentStep);
-            const toStep = self.steps[currentStepNumber + 1];
+            const currentStepNumber = this.steps.indexOf(this.currentStep);
+            const toStep = this.steps[currentStepNumber + 1];
 
-            self.currentStep.isCompleted = completeCurrentStep;
-            self.currentStep.isActive = false;
+            this.currentStep.isCompleted = completeCurrentStep;
+            this.currentStep.isActive = false;
 
             if (toStep) {
                 toStep.isActive = true;
             }
 
-            self.currentStep = toStep;
+            this.currentStep = toStep;
 
-            return self;
+            return this;
         }
 
         /**
@@ -142,23 +123,39 @@
          * @param  {Boolean} completeCurrentStep       flag indicating if the current step should be completed
          * @return {Object}            itself for chaining
          */
-        function previousStep(completeCurrentStep = false) {
-            self.start();
+        previousStep(completeCurrentStep = false) {
+            this.start();
 
-            const currentStepNumber = self.steps.indexOf(self.currentStep);
-            const toStep = self.steps[currentStepNumber - 1];
+            const currentStepNumber = this.steps.indexOf(this.currentStep);
+            const toStep = this.steps[currentStepNumber - 1];
 
-            self.currentStep.isCompleted = completeCurrentStep;
+            this.currentStep.isCompleted = completeCurrentStep;
 
             if (toStep) {
-                self.currentStep.isActive = false;
+                this.currentStep.isActive = false;
                 toStep.isActive = true;
                 toStep.isCompleted = false;
             }
 
-            self.currentStep = toStep;
+            this.currentStep = toStep;
 
-            return self;
+            return this;
         }
     }
+    // jscs:enable requireSpacesInAnonymousFunctionExpression
+
+    /**
+     * @ngdoc constant
+     * @name Stepper
+     * @module app.ui.common.stepper
+     * @description
+     *
+     * The `Stepper` class provides a common interface to move between a number of steps forming a stepper [Material Design Stepper](https://www.google.com/design/spec/components/steppers.html#steppers-specs).
+     * Other components should import `Stepper`, create a new stepper object using `new Stepper()` and add steps to it in the order they appear in the template.
+     * Only one step can be active at a time; you can move forward and backwards, or jump to any step optionally "completing" intermediate steps.
+     *
+     */
+    angular
+        .module('app.ui.common.stepper')
+        .constant('Stepper', Stepper);
 })();

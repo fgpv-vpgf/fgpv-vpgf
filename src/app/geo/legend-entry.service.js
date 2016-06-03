@@ -150,9 +150,15 @@
             }
 
             // FIXME: this should be done only on feature layers, nothing else!
-            const urlParts = initialState.url.split('/');
-            this.featureIdx = urlParts.pop(); // get the featureidx from the end of the url
-            this.url = urlParts.join('/'); // keep the rest of the url (without the index)
+            // HACK: to get file based layers working; this will be solved by the layer record and legend entry hierarchy
+            if (typeof initialState.url !== 'undefined') {
+                const urlParts = initialState.url.split('/');
+                this.featureIdx = urlParts.pop(); // get the featureidx from the end of the url
+                this.url = urlParts.join('/'); // keep the rest of the url (without the index)
+            } else {
+                // TODO: this should be done is a more civilized way
+                this.featureIdx = '0'; // for a file based layer, feature index should always be 0
+            }
 
             return this;
         };

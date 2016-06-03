@@ -16,7 +16,7 @@
         .factory('geoService', geoService);
 
     function geoService($http, $q, gapiService, mapService, layerRegistry, configService, identifyService,
-        LayerServiceBlueprint) {
+        LayerBlueprint) {
 
         // TODO update how the layerOrder works with the UI
         // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -109,7 +109,7 @@
                     angular.extend(service, lr);
 
                     const layerBlueprints = config.layers.map(layerConfig =>
-                        new LayerServiceBlueprint(layerConfig));
+                        new LayerBlueprint.service(layerConfig));
                     service.constructLayers(layerBlueprints);
 
                     return identifyService(state);

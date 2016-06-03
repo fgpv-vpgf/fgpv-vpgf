@@ -1,27 +1,49 @@
 @mixin loader {
-    .rv-loader-file {
-        rv-stepper-item {
-            &:first-of-type .rv-stepper-item-container:before {
-                display: none;
+    .rv-loader {
+        &-file,
+        &-service {
+            rv-stepper-item {
+                // hides connecting lines before the first and after the last step in a sequence
+                &:first-of-type .rv-stepper-item-container:before {
+                    display: none;
+                }
+
+                &:last-of-type .rv-stepper-item-container:after {
+                    display: none;
+                }
             }
 
-            &:last-of-type .rv-stepper-item-container:after {
-                display: none;
+            &-caption {
+                display: block;
+                text-align: center;
             }
         }
 
-        &-select-button {
-            display: block;
-            width: 100%;
-            margin: {
-                left: 0;
-                right: 0;
-            }
-        }
+        // TODO: this is horrible; need to organize it better
+        &-file {
+            &-upload {
+                &-drop {
+                    text-align: center;
 
-        &-caption {
-            display: block;
-            text-align: center;
+                    .md-errors-spacer, .md-input {
+                        display: none;
+                    }
+                }
+
+                &-or {
+                    display: block;
+                    text-align: center;
+                }
+            }
+
+            // local file select button
+            &-select-button {
+                padding: 0 rem(2.4) 0 rem(2.0);
+
+                md-icon {
+                    margin-right: rem(0.6);
+                }
+            }
         }
     }
 }

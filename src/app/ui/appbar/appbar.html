@@ -13,11 +13,14 @@
 
     <div class="rv-appbar-title">
         <h2 class="md-headline" translate ng-if="self.stateManager.state.mainToc.active">appbar.tooltip.layers</h2>
-        <h2 class="md-headline" translate ng-if="self.stateManager.state.mainLoaderFile.active">Import layer</h2>
+        <h2 class="md-headline" translate ng-if="self.stateManager.state.mainLoaderFile.active">import.file.title</h2>
+        <h2 class="md-headline" translate ng-if="self.stateManager.state.mainLoaderService.active">Import Service</h2>
         <h2 class="md-headline" translate ng-if="self.stateManager.state.mainDetails.active">appbar.tooltip.pointInfo</h2>
     </div>
 
-    <rv-loader-menu ng-if="self.stateManager.state.mainToc.active || self.stateManager.state.mainLoaderFile.active"></rv-loader-menu>
+    <!-- TODO: need a better way to determine when to include layer loader menu -->
+
+    <rv-loader-menu ng-if="self.stateManager.state.mainToc.active || self.stateManager.state.mainLoaderFile.active || self.stateManager.state.mainLoaderService.active"></rv-loader-menu>
 
     <span class="rv-appbar-divider"></span>
 

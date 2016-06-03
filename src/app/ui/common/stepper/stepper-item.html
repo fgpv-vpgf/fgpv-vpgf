@@ -11,8 +11,8 @@
             ng-if="self.isCompleted || self.step.isCompleted"></md-icon>
 
         <div class="rv-stepper-item-title">
-            <h5 class="md-body-2">{{ self.titleValue || self.step.titleValue }}</h5>
-            <span class="md-caption">{{ self.summaryValue || self.step.summaryValue }}</span>
+            <h5 class="md-body-2">{{ self.titleValue || self.step.titleValue | translate }}</h5>
+            <span class="md-caption">{{ self.summaryValue || self.step.summaryValue | translate }}</span>
         </div>
 
     </div>
@@ -30,19 +30,19 @@
                 ng-if="self.onCancel || self.step.onCancel || self.onContinue || self.step.onContinue">
 
                 <md-button
-                    class="rv-button-square"
+                    class="rv-button-square rv-stepper-item-footer-cancel"
                     ng-disabled="!self.isCancelEnabled && !self.step.isCancelEnabled"
                     ng-if="self.onCancel || self.step.onCancel"
                     ng-click="self.onCancelBefore()">
-                    cancel
+                    {{ 'stepper.cancel' | translate }}
                 </md-button>
 
                 <md-button
-                    class="rv-button-square md-primary"
+                    class="rv-button-square rv-stepper-item-footer-continue md-raised md-primary"
                     ng-disabled="!(self.stepForm.$valid && (self.isContinueEnabled || self.step.isContinueEnabled))"
                     ng-if="self.onContinue || self.step.onContinue"
                     ng-click="(self.onContinue || self.step.onContinue)()">
-                    continue
+                    {{ 'stepper.continue' | translate }}
                 </md-button>
 
             </div>
