@@ -121,12 +121,6 @@
       "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3857/MapServer"
     },
     {
-      "id":"basemapLCC",
-      "name": "Basemap LCC",
-      "layerType":"esriTile",
-      "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
-    },
-    {
       "id":"ecogeo",
       "name": "Eco Geo",
       "layerType":"esriDynamic",
@@ -149,15 +143,6 @@
       "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0",
       "options": {
         "boundingBox": { "value": true }
-      }
-    },
-    {
-      "id":"land_PubStdZone_detail_proj",
-      "name": "Land Pub Standard Zone Details",
-      "layerType":"esriFeature",
-      "url":"http://ec.gc.ca/arcgis/rest/services/data_donnees/be12386d/MapServer/0",
-      "options": {
-        "opacity": { "value": 0.1 }
       }
     },
     {
