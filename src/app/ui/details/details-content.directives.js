@@ -11,6 +11,8 @@
      * @description
      *
      * The `rvDetailsContent` directive renders the data content of details.
+     * To improve efficency a document fragment is first created prior to
+     * DOM insertion.
      *
      */
     angular
