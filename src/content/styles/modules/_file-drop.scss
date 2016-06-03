@@ -14,7 +14,7 @@
         }
 
         &-title {
-            top: 12%;
+            top: 12%; // this is very random, need a better way to offset the drop label
             position: absolute;
             color: $secondary-text-color;
             width: 100%;
@@ -26,7 +26,7 @@
                 display: block;
                 height: rem(5);
                 width: rem(5);
-                margin-top: 18px;
+                margin-top: rem(1.8);
             }
         }
 

@@ -118,6 +118,7 @@ Geometry types,geometry.type.generic, feature|features, entité|entités
 Geometry types,geometry.type.esriGeometryPoint, point|points, point|points
 Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, polygone|polygones
 Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
+,import.title,Import Layers,[fr] Import Layres
 ,import.file.title,Import File,[fr] Import File
 ,import.file.upload.title,Upload data,[fr] Upload data
 ,import.file.upload.summary,"GeoJSON, CSV, or Shapefile","[fr] GeoJSON, CSV, or Shapefile"
@@ -135,6 +136,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.file.type.csv, CSV,[fr] CSV
 ,import.file.type.shapefile,Shapefile,[fr] Shapefile
 ,import.file.type.geojson,GeoJSON,[fr] GeoJSON
+,import.service.title,Import Service,[fr] Import Service
 ,stepper.continue,continue,[fr] continue
 ,stepper.cancel,cancel,[fr] cancel
 ,help.navigationControls.header,Navigation Controls,Contrôles de navigation
