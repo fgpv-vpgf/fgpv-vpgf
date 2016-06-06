@@ -27,6 +27,10 @@
                 }
             },
             States: { // these are used as css classes; hence the `rv` prefix
+                NEW: 'rv-new',
+                REFRESH: 'rv-refresh',
+                LOADING: 'rv-loading',
+                LOADED: 'rv-loaded', // TODO maybe loaded and default are the same?
                 DEFAULT: 'rv-default',
                 ERROR: 'rv-error'
             }
