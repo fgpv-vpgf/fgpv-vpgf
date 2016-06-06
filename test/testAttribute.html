@@ -9,169 +9,169 @@
 </head>
 <body>
     <p id="mess" />
-    <script src="dist/geoapi.min.js"></script>
+    <script src="../dist/geoapi.min.js"></script>
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-  
-               
+
+
             var mahLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0/', {id:'test1'});
-            
+
             mahLayer.on('load', function(evt) {  //update-end
-				
+
                 //test standard attribute loading of a feature layer
                 var nugget1 = api.attribs.loadLayerAttribs(mahLayer);
-                
+
                 console.log('feature layer result - normal case - top ', nugget1);
-                
+
                 nugget1["0"].getAttribs().then(
-                    function (attribD) { 
+                    function (attribD) {
                         console.log('feature layer result - normal case - attrib data', attribD);
                     },
                     function (iAmError) {
-                        console.log('I AM ATTRIB ERROR', iAmError);                       
+                        console.log('I AM ATTRIB ERROR', iAmError);
                     }
                 );
-               
-                //test filtered attribute loading of a feature layer 
+
+                //test filtered attribute loading of a feature layer
                 var nugget2 = api.attribs.loadLayerAttribs(mahLayer, {"0": {"attribs":"latitude,siteEventType_en,siteID"}});
-                
+
                 console.log('feature layer result - filtered case - top ', nugget2);
-                
+
                 nugget2["0"].getAttribs().then(
-                    function (attribD) { 
+                    function (attribD) {
                         console.log('feature layer result - filtered case - attrib data', attribD);
                     },
                     function (iAmError) {
-                        console.log('I AM ATTRIB ERROR', iAmError);                       
+                        console.log('I AM ATTRIB ERROR', iAmError);
                     }
                 );
-               
-                
-                //test skip attribute loading of a feature layer 
+
+
+                //test skip attribute loading of a feature layer
                 var nugget3 = api.attribs.loadLayerAttribs(mahLayer, {"0": {"skip":true}}); //,OBJECTID
-                
+
                 console.log('feature layer result - skip case - top ', nugget3);
-                
+
 			});
 
             var mahBigLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_AirEmissions_NOx/MapServer/0', {id:'gerth'});
-            
-            mahBigLayer.on('load', function(evt) {  
-            
-                //test large attribute loading of a feature layer 
-                var nugget4 = api.attribs.loadLayerAttribs(mahBigLayer); 
-                                
+
+            mahBigLayer.on('load', function(evt) {
+
+                //test large attribute loading of a feature layer
+                var nugget4 = api.attribs.loadLayerAttribs(mahBigLayer);
+
                 console.log('feature layer result - big case - top ', nugget4);
-                
+
                 nugget4["0"].getAttribs().then(
-                    function (attribD) { 
+                    function (attribD) {
                         console.log('feature layer result - big case - attrib data', attribD);
                     },
                     function (iAmError) {
-                        console.log('I AM ATTRIB ERROR', iAmError);                       
+                        console.log('I AM ATTRIB ERROR', iAmError);
                     }
                 );
-                
+
             });
 
             var mahNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_OzonePeak/MapServer', {id:'mapjection'});
 
-            mahNestedLayer.on('load', function(evt) {  
+            mahNestedLayer.on('load', function(evt) {
 
-                //test full loading of a dynamic layer 
-                var nugget5 = api.attribs.loadLayerAttribs(mahNestedLayer); 
+                //test full loading of a dynamic layer
+                var nugget5 = api.attribs.loadLayerAttribs(mahNestedLayer);
 
                 console.log('dynamic layer result - full with groups - top', nugget5);
-                
+
                 nugget5["1"].getAttribs().then(
-                    function (attribD) { 
+                    function (attribD) {
                         console.log('dynamic layer result - full with groups - attrib data 1', attribD);
                     },
                     function (iAmError) {
-                        console.log('I AM ATTRIB ERROR', iAmError);                       
+                        console.log('I AM ATTRIB ERROR', iAmError);
                     }
                 );
 
-                //test skip leaf loading of a dynamic layer 
-                var nugget6 = api.attribs.loadLayerAttribs(mahNestedLayer, {"3": {"skip":true}}); 
+                //test skip leaf loading of a dynamic layer
+                var nugget6 = api.attribs.loadLayerAttribs(mahNestedLayer, {"3": {"skip":true}});
 
                 console.log('dynamic layer result - skip leaf - top', nugget6);
-                
+
                 nugget6["1"].getAttribs().then(
-                    function (attribD) { 
+                    function (attribD) {
                         console.log('dynamic layer result - skip leaf - attrib data 1', attribD);
                     },
                     function (iAmError) {
-                        console.log('I AM ATTRIB ERROR', iAmError);                       
+                        console.log('I AM ATTRIB ERROR', iAmError);
                     }
                 );
 
-                //test skip group loading of a dynamic layer 
-                var nugget7 = api.attribs.loadLayerAttribs(mahNestedLayer, {"0": {"skip":true}}); 
+                //test skip group loading of a dynamic layer
+                var nugget7 = api.attribs.loadLayerAttribs(mahNestedLayer, {"0": {"skip":true}});
 
 
                 console.log('dynamic layer result - skip group - top', nugget7);
 
             });
-          
+
            var mahFancyNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/E2MS_Atlantic_region_data/MapServer/', {id:'pants'});
-            
-            mahFancyNestedLayer.on('load', function(evt) {  
-            
+
+            mahFancyNestedLayer.on('load', function(evt) {
+
                 var skipper = {
                     "1": {"skip":true},
-                    "8": {"skip":true}, 
-                    "11": {"skip":true}, 
-                    "16": {"skip":true}, 
-                    "22": {"skip":true}, 
-                    "23": {"skip":true}, 
-                    "29": {"skip":true}  
+                    "8": {"skip":true},
+                    "11": {"skip":true},
+                    "16": {"skip":true},
+                    "22": {"skip":true},
+                    "23": {"skip":true},
+                    "29": {"skip":true}
                 };
-            
-                //test large attribute loading of a feature layer 
-                var nugget8= api.attribs.loadLayerAttribs(mahFancyNestedLayer, skipper); 
-                
+
+                //test large attribute loading of a feature layer
+                var nugget8= api.attribs.loadLayerAttribs(mahFancyNestedLayer, skipper);
+
                 console.log('dynamic layer result - complex nesting with skips - top', nugget8);
-                
+
                 nugget8["7"].getAttribs().then(
-                    function (attribD) { 
+                    function (attribD) {
                         console.log('dynamic layer result - complex nesting with skips - attrib data 7', attribD);
                     },
                     function (iAmError) {
-                        console.log('I AM ATTRIB ERROR', iAmError);                       
+                        console.log('I AM ATTRIB ERROR', iAmError);
                     }
-                );               
-                
+                );
+
             });
 
            var mahDeepNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/TaxParcel/AssessorsBasemap/MapServer', {id:'horseface'});
-            
-            mahDeepNestedLayer.on('load', function(evt) {  
-            
+
+            mahDeepNestedLayer.on('load', function(evt) {
+
                 var skipper = {
                     "2": {"skip":true},
-                    "29": {"skip":true}, 
-                    "31": {"skip":true}                     
+                    "29": {"skip":true},
+                    "31": {"skip":true}
                 };
-            
-                //test large attribute loading of a feature layer 
-                var nugget9= api.attribs.loadLayerAttribs(mahDeepNestedLayer, skipper); 
-                
+
+                //test large attribute loading of a feature layer
+                var nugget9= api.attribs.loadLayerAttribs(mahDeepNestedLayer, skipper);
+
                 console.log('dynamic layer result - deep nesting with skips (should see 1, 28, 30, 32) - top', nugget9);
-                
+
                 nugget9["1"].getAttribs().then(
-                    function (attribD) { 
+                    function (attribD) {
                         console.log('dynamic layer result - complex nesting with skips - attrib data 1', attribD);
                     },
                     function (iAmError) {
-                        console.log('I AM ATTRIB ERROR', iAmError);                       
+                        console.log('I AM ATTRIB ERROR', iAmError);
                     }
-                ); 
-                
-            });  
-         
-             // TEST GEOJSON LAYER   
-            
+                );
+
+            });
+
+             // TEST GEOJSON LAYER
+
             var happyData = {
                 "type": "FeatureCollection",
                 "features": [
@@ -201,28 +201,28 @@
                     }
                 ]
             }
-            
+
             var opts = {
                 targetWkid: 102100,
                 sourceProjection: 'EPSG:4326'
             };
-           
-            
-            api.layer.makeGeoJsonLayer(happyData, opts).then(function (happyLayer) {               
+
+
+            api.layer.makeGeoJsonLayer(happyData, opts).then(function (happyLayer) {
                  //file based layer
-                var nugget10= api.attribs.loadLayerAttribs(happyLayer); 
+                var nugget10= api.attribs.loadLayerAttribs(happyLayer);
 
                 console.log('file layer result - top', nugget10);
-                
+
                 nugget10["0"].getAttribs().then(
-                    function (attribD) { 
+                    function (attribD) {
                         console.log('file layer result - attrib data 0', attribD);
                     },
                     function (iAmError) {
-                        console.log('I AM ATTRIB ERROR', iAmError);                       
+                        console.log('I AM ATTRIB ERROR', iAmError);
                     }
-                ); 
-           
+                );
+
             });
 
         });
