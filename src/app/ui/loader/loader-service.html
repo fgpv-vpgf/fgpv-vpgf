@@ -17,12 +17,14 @@
                     <div ng-message="url">This is not a valid URL</div>
                 </div>
             </md-input-container>
+        </rv-stepper-item>
 
+        <rv-stepper-item step="self.select.step" form="self.select.form">
             <md-input-container class="md-block">
-                <label>Service type</label>
-                <md-select name="serviceType" ng-model="self.connect.serviceType" required>
-                    <md-option ng-repeat="(value, key) in self.serviceTypes" value="{{ value }}">
-                        {{ key }}
+                <label translate>import.file.select.fileformat</label>
+                <md-select name="serviceType" ng-model="self.layerBlueprint.serviceType" required>
+                    <md-option ng-repeat="serviceType in self.serviceTypes" value="{{ serviceType }}">
+                        {{ 'import.service.type.' + serviceType | translate }}
                     </md-option>
                 </md-select>
             </md-input-container>
