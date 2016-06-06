@@ -43,9 +43,6 @@
          * Toggles the full-screen state by running animation which expands the shell node to take over the entire page at the same time animating the map container node to the map centered in the expanding container; reverse animation works similarly.
          */
         function toggle() {
-            // FIXME:
-            gapiService.gapi.debug(true);
-
             // pause and kill currently running animation
             if (ref.tl) {
                 ref.tl.pause().kill();
