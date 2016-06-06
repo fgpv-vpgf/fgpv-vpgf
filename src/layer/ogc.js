@@ -57,6 +57,68 @@ function getFeatureInfoBuilder(esriBundle) {
     };
 }
 
+function parseCapabilitiesBuilder(esriBundle) {
+
+    const query = esriBundle.dojoQuery;
+
+    /**
+     * Fetch layer data from a WMS endpoint.  This method will execute a WMS GetCapabilities
+     * request against the specified URL, it requests WMS 1.3 and it is capable of parsing
+     * 1.3 or 1.1.1 responses.  It returns a promise which will resolve with basic layer
+     * metadata and querying information.
+     *
+     * metadata response format:
+     *   { queryTypes: [mimeType(str)],
+     *     layers: [
+     *       {name(str), desc(str), queryable(bool), layers:[recursive] }
+     *     ] }
+     *
+     * @param {string} wmsEndpoint a URL pointing to a WMS server (it must not include a query string)
+     * @return {Promise} a promise resolving with a metadata object (as specified above)
+     */
+    return (wmsEndpoint) => {
+        const reqPromise = Promise.resolve(new esriBundle.esriRequest({
+            url: wmsEndpoint + '?service=WMS&version=1.3&request=GetCapabilities',
+            handleAs: 'xml'
+        }).promise);
+
+        // there might already be a way to do this in the parsing API
+        // I don't know XML parsing well enough (and I don't want to)
+        // this has now been ported from RAMP to FGPV and I still, happily,
+        // do not know any more about XML parsing now
+        function getImmediateChild(node, childName) {
+            for (let i = 0; i < node.childNodes.length; ++i) {
+                if (node.childNodes[i].nodeName === childName) {
+                    return node.childNodes[i];
+                }
+            }
+            return undefined;
+        }
+
+        // find all <Layer> nodes under the given XML node
+        // pick title, name and queryable nodes/attributes
+        // recursively called on all child <Layer> nodes
+        function getLayers(xmlNode) {
+            return query('> Layer', xmlNode).map(layer => {
+                const nameNode = getImmediateChild(layer, 'Name');
+                const titleNode = getImmediateChild(layer, 'Title');
+                return {
+                    name: nameNode ? nameNode.textContent : null,
+                    desc: titleNode.textContent,
+                    queryable: layer.getAttribute('queryable') === '1',
+                    layers: getLayers(layer)
+                };
+            });
+        }
+
+        return reqPromise.then(data => ({
+            layers: getLayers(query('Capability', data)[0]),
+            queryTypes: query('GetFeatureInfo > Format', data).map(node => node.textContent)
+        }));
+    };
+
+}
+
 /**
  * Finds the appropriate legend URLs for WMS layers.
  *
@@ -74,6 +136,7 @@ module.exports = esriBundle => {
     return {
         WmsLayer: esriBundle.WmsLayer,
         getFeatureInfo: getFeatureInfoBuilder(esriBundle),
+        parseCapabilities: parseCapabilitiesBuilder(esriBundle),
         getLegendUrls
     };
 };

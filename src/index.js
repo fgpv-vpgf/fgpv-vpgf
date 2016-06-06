@@ -41,6 +41,7 @@ module.exports = function (esriLoaderUrl, window) {
     // in esriBundle
     const esriDeps = [
         ['dojo/Deferred', 'Deferred'],
+        ['dojo/query', 'dojoQuery'],
         ['esri/config', 'esriConfig'],
         ['esri/dijit/Basemap', 'Basemap'],
         ['esri/dijit/BasemapGallery', 'BasemapGallery'],
