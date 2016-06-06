@@ -73,8 +73,8 @@
                 containerNode.append(tableNode);
 
                 // add icons and zoom to button only to the feature layers
-                if (requester.legendEntry.layerType === 'esriFeature' ||
-                    requester.legendEntry.layerType === 'esriDynamicLayerEntry' && requester.legendEntry.url) {
+                if ((requester.legendEntry.layerType === 'esriFeature' && requester.legendEntry.url) ||
+                    requester.legendEntry.layerType === 'esriDynamicLayerEntry') {
 
                     // add symbol as the first column
                     // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
@@ -97,7 +97,13 @@
                                 }
                             };
 
-                            const symbol = geoService.retrieveSymbol(objId, fData, renderer, legend);
+                            let symbol = geoService.retrieveSymbol(objId, fData, renderer, legend);
+                            if (!symbol) {
+                                // jscs:disable maximumLineLength
+                                // TODO: have geoApi symbology detect and set empty gifs
+                                symbol = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                                // jscs:enable maximumLineLength
+                            }
                             row.rvSymbol = `<div class="rv-wrapper rv-symbol"><img src="${symbol}" /></div>`;
                         });
 
@@ -187,7 +193,6 @@
                         }
                     };
 
-                    console.log('333333333333', detailsObj.data[0]);
                     const details = {
                         data: [detailsObj]
                     };
