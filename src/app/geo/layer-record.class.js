@@ -64,6 +64,7 @@
 
             _stateChange (newState) {
                 this._state = newState;
+                console.log(newState);
                 this._stateListeners.forEach(l => l(this._state));
             }
 
@@ -72,16 +73,26 @@
                 return listenerCallback;
             }
 
+            removeStateListener (listenerCallback) {
+                const idx = this._stateListeners.indexOf(listenerCallback);
+                if (idx < 0) {
+                    throw new Error('Attempting to remove a listener which is not registered.');
+                }
+                this._stateListeners.splice(idx, 1);
+            }
+
             onLoad () {
                 if (this.legendEntry && this.legendEntry.removed) { return; }
-                console.info(`Layer loaded: ${this.layer.id}`);
+                console.info(`Layer loaded: ${this._layer.id}`);
 
                 // no attributes are set by default, layers with attributes should override
                 this._attributeBundle = $q.resolve(null);
                 this._stateChange(Geo.Layer.States.LOADING);
             }
 
-            onError () {
+            onError (e) {
+                console.warn(`Layer error: ${e}`);
+                console.warn(e);
                 this._stateChange(Geo.Layer.States.ERROR);
             }
 
@@ -160,10 +171,10 @@
 
                 gapi().events.wrapEvents(this._layer, {
                     // wrapping the function calls to keep `this` bound correctly
-                    load: () => this.onLoad,
-                    error: () => this.onError,
-                    'update-start': () => this.onUpdateStart,
-                    'update-end': () => this.onUpdateEnd
+                    load: () => this.onLoad(),
+                    error: e => this.onError(e),
+                    'update-start': () => this.onUpdateStart(),
+                    'update-end': () => this.onUpdateEnd()
                 });
 
                 // NOTE layer registry is responsible for adding the layer to the map
@@ -182,7 +193,7 @@
             }
             get supportsDynamicLayers () { return this._layer.supportsDynamicLayers; }
             get layerInfos () { return this._layer.layerInfos; }
-            get layerClass () { return gapi().layer.ArcGISImageServiceLayer; }
+            get layerClass () { return gapi().layer.ArcGISDynamicMapServiceLayer; }
         }
 
         class TileRecord extends LayerRecord {
@@ -195,6 +206,7 @@
             makeLayerConfig () {
                 const cfg = super.makeLayerConfig();
                 cfg.visibleLayers = this.config.layerEntries.map(le => le.id);
+                return cfg;
             }
         }
 

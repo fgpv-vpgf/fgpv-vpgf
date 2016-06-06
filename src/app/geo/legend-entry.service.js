@@ -396,6 +396,8 @@
             this.slaves = [];
 
             // generate all the slave sublayers upfornt ...
+            console.log(this._layerRecord);
+            console.log(initialState);
             this._layerRecord.layerInfos.forEach((layerInfo, index) => {
                 let sublayerEntry;
                 const sublayerEntryInitialState = {
@@ -543,7 +545,7 @@
                 });
 
                 this._layerRecord.setLayerDrawingOptions(optionsArray);
-                this._layerRecord.show(); // ? is this necessary
+                // this._layerRecord.show(); // ? is this necessary
             }
         };
 
