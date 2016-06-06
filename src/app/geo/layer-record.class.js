@@ -2,7 +2,7 @@
     angular.module('app.geo').factory('LayerRecordFactory', LayerRecordFactory);
 
     function LayerRecordFactory(Geo, gapiService, $q) {
-        const gapi = gapiService.gapi;
+        const gapi = () => gapiService.gapi;
 
         class LayerRecord {
             get layerClass () { throw new Error('This should be overridden in subclasses'); }
@@ -12,6 +12,8 @@
             set legendEntry (value) { this._legendEntry = value; }
             get bbox () { return this._bbox; } // bounding box layer
             get state () { return this._state; }
+            get layerId () { return this.config.id; }
+            get _layerPassthroughBindings () { return ['setOpacity', 'setVisibility']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
             /**
              * Retrieves attributes from a layer for a specified feature index
@@ -35,6 +37,27 @@
                 return (this._formattedAttributes[featureIdx] = attributePromise);
             }
 
+            /**
+             * Generate a bounding box for the layer on the given map.
+             */
+            createBbox (map) {
+                if (this._bbox) {
+                    throw new Error('Bbox is already setup');
+                }
+                this._bbox = gapi().layer.bbox.makeBoundingBox(`bbox_${this._layer.id}`,
+                                                               this._layer.fullExtent,
+                                                               map.extent.spatialReference);
+                map.addLayer(this._bbox);
+            }
+
+            /**
+             * Destroy bounding box
+             */
+            destroyBbox (map) {
+                map.removeLayer(this._bbox);
+                this._bbox = undefined;
+            }
+
             constructLayer () {
                 return new this.layerClass(this.config.url, this.makeLayerConfig());
             }
@@ -46,6 +69,7 @@
 
             addStateListener (listenerCallback) {
                 this._stateListeners.push(listenerCallback);
+                return listenerCallback;
             }
 
             onLoad () {
@@ -128,14 +152,17 @@
                 this.initialConfig = initialState;
                 this._formattedAttributes = {};
                 this._stateListeners = [];
-                this.layer = this.constructLayer(initialState);
+                this._layer = this.constructLayer(initialState);
                 this.state = Geo.Layer.States.NEW;
+                this._layerPassthroughBindings.forEach(bindingName =>
+                    this[bindingName] = (...args) => this._layer[bindingName](...args));
 
-                gapi.events.wrapEvents(this.layer, {
-                    load: this.onLoad,
-                    error: this.onError,
-                    'update-start': this.onUpdateStart,
-                    'update-end': this.onUpdateEnd
+                gapi().events.wrapEvents(this._layer, {
+                    // wrapping the function calls to keep `this` bound correctly
+                    load: () => this.onLoad,
+                    error: () => this.onError,
+                    'update-start': () => this.onUpdateStart,
+                    'update-end': () => this.onUpdateEnd
                 });
 
                 // NOTE layer registry is responsible for adding the layer to the map
@@ -145,19 +172,24 @@
         }
 
         class ImageRecord extends LayerRecord {
-            get layerClass () { return gapi.layer.ArcGISImageServiceLayer; }
+            get layerClass () { return gapi().layer.ArcGISImageServiceLayer; }
         }
 
         class DynamicRecord extends LayerRecord {
-            get layerClass () { return gapi.layer.ArcGISImageServiceLayer; }
+            get _layerPassthroughBindings () {
+                return ['setOpacity', 'setVisibility', 'setVisibleLayers', 'setLayerDrawingOptions'];
+            }
+            get supportsDynamicLayers () { return this._layer.supportsDynamicLayers; }
+            get layerInfos () { return this._layer.layerInfos; }
+            get layerClass () { return gapi().layer.ArcGISImageServiceLayer; }
         }
 
         class TileRecord extends LayerRecord {
-            get layerClass () { return gapi.layer.TileLayer; }
+            get layerClass () { return gapi().layer.TileLayer; }
         }
 
         class WmsRecord extends LayerRecord {
-            get layerClass () { return gapi.layer.ogc.WmsLayer; }
+            get layerClass () { return gapi().layer.ogc.WmsLayer; }
 
             makeLayerConfig () {
                 const cfg = super.makeLayerConfig();
@@ -165,8 +197,14 @@
             }
         }
 
+        class CsvRecord extends LayerRecord {
+            constructLayer () {
+                return gapi().layer.makeCsvLayer;
+            }
+        }
+
         class FeatureRecord extends LayerRecord {
-            get layerClass () { return gapi.layer.FeatureLayer; }
+            get layerClass () { return gapi().layer.FeatureLayer; }
 
             makeLayerConfig () {
                 const cfg = super.makeLayerConfig();
@@ -182,6 +220,7 @@
                 [types.ESRI_IMAGE]: ImageRecord,
                 [types.ESRI_DYNAMIC]: DynamicRecord,
                 [types.OGC_WMS]: WmsRecord,
+                csv: CsvRecord
             };
             return new typeToClass[config.layerType](config);
         }
