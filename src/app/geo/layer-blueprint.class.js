@@ -96,33 +96,6 @@
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
-        // generator functions for different layer types
-        // TODO: this is going to move to layer record
-        /*
-        const layerServiceGenerators = {
-            [Geo.Layer.Types.ESRI_DYNAMIC]: (config, commonConfig) =>
-                new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig),
-
-            [Geo.Layer.Types.ESRI_FEATURE]: (config, commonConfig) => {
-                commonConfig.mode = config.snapshot ?
-                    gapiService.gapi.layer.FeatureLayer.MODE_SNAPSHOT :
-                    gapiService.gapi.layer.FeatureLayer.MODE_ONDEMAND;
-                return new gapiService.gapi.layer.FeatureLayer(config.url, commonConfig);
-            },
-
-            [Geo.Layer.Types.ESRI_IMAGE]: (config, commonConfig) =>
-                new gapiService.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig),
-
-            [Geo.Layer.Types.ESRI_TILE]: (config, commonConfig) =>
-                new gapiService.gapi.layer.TileLayer(config.url, commonConfig),
-
-            [Geo.Layer.Types.OGC_WMS]: (config, commonConfig) => {
-                commonConfig.visibleLayers = config.layerEntries.map(le => le.id);
-                return new gapiService.gapi.layer.ogc.WmsLayer(config.url, commonConfig);
-            }
-        };
-        */
-
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         class LayerServiceBlueprint extends LayerBlueprint {
@@ -159,20 +132,6 @@
              */
             generateLayer() {
                 return $q.resolve(LayerRecordFactory.makeRecord(this.config));
-                /*
-                const commonConfig = {
-                    id: this.config.id
-                };
-
-
-
-
-                if (layerServiceGenerators.hasOwnProperty(this.layerType)) {
-                    return $q.resolve(layerServiceGenerators[this.layerType](this.config, commonConfig));
-                } else {
-                    throw new Error('The layer type is not supported');
-                }
-                */
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
