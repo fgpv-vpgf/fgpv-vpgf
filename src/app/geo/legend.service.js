@@ -96,9 +96,8 @@
              * @return {Object}       legend item
              */
             function dynamicGenerator(layer) {
-                const state = legendEntryFactory.dynamicEntryMasterGroup(
-                    layer.initialState, layer.layer, false);
-                layer.state = state;
+                const state = legendEntryFactory.dynamicEntryMasterGroup(layer.config, layer, false);
+                layer.legendEntry = state;
 
                 const symbologyPromise = getMapServerSymbology(state.url);
 
@@ -122,9 +121,8 @@
              * @return {Object}       legend item
              */
             function tileGenerator(layer) {
-                const state = legendEntryFactory.singleEntryItem(
-                    layer.initialState, layer.layer);
-                layer.state = state;
+                const state = legendEntryFactory.singleEntryItem(layer.config, layer);
+                layer.legendEntry = state;
 
                 return state;
             }
@@ -136,8 +134,8 @@
              */
             function featureGenerator(layer) {
                 // generate toc entry
-                const state = legendEntryFactory.singleEntryItem(layer.initialState, layer.layer);
-                layer.state = state;
+                const state = legendEntryFactory.singleEntryItem(layer.config, layer);
+                layer.legendEntry = state;
 
                 // HACK: to get file based layers working; this will be solved by the layer record ana legend entry hierarchy
                 // TODO: file based layers need to have their symbology generated
@@ -148,8 +146,9 @@
                         applySymbology(state, data.layers[state.featureIdx]));
 
                     // assign feature count
+                    // FIXME _layer call is bad
                     getServiceFeatureCount(`${state.url}/${state.featureIdx}`).then(count =>
-                        applyFeatureCount(layer.layer.geometryType, state, count));
+                        applyFeatureCount(layer._layer.geometryType, state, count));
                 }
 
                 return state;
@@ -162,8 +161,8 @@
              */
             function imageGenerator(layer) {
                 // generate toc entry
-                const state = legendEntryFactory.singleEntryItem(layer.initialState, layer.layer);
-                layer.state = state;
+                const state = legendEntryFactory.singleEntryItem(layer.config, layer);
+                layer.legendEntry = state;
 
                 return state;
             }
@@ -174,16 +173,16 @@
              * @return {Object}       legend item
              */
             function wmsGenerator(layer) {
-                const state = legendEntryFactory.singleEntryItem(layer.initialState, layer.layer);
+                const state = legendEntryFactory.singleEntryItem(layer.config, layer);
                 state.symbology = gapiService.gapi.layer.ogc
-                    .getLegendUrls(layer.layer, state.layerEntries.map(le => le.id))
+                    .getLegendUrls(layer._layer, state.layerEntries.map(le => le.id))
                     .map((url, idx) => {
                         // jscs:disable maximumLineLength
                         // FIXME remove the horrible URL when the TODO in entry-symbology.html is complete (icon should then be null / undefined)
                         return { name: state.layerEntries[idx].name || state.layerEntries[idx].id, icon: url || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUJJREFUeNrs172Kg0AQB/BcOLHSRhBFEF/B5/cBrMRGsLESFBFsFAs/ivuTheW4kOBN1mSLmWJB0PGHM6vjV5IkF/3ietEymMUsZjGLWcxiltas7+OnNk3T9/22bYTbGIbhum4QBIpZMJVl+coDGIYB60HZUVZd11ht27Ysi2CapmkcRyRRzFqWBWsYhp7nEVhd1xVFIZLwTnwQaMd1XfVi5XmOjZJlGUF2Pc8ktt48z23basGSpg/0FkqTpinKpNxEZ8GEpkGB0NS/ZUpMRJY0iUN8kdSaKKw/Jsdx4jhWa6KwsK3ONr3U8ueZ6KxTTf+btyQIw5MYBDAXuLd4fgnmDll3xSzTNPd9l5PJ/evqSWCkEecjiWKW7/tVVY23IJcGSRSzoihC7bQbmsW8ezwv/5Axi1nMYhazmMWst8ePAAMA0CzGRisOjIgAAAAASUVORK5CYII=' };
                         // jscs:enable maximumLineLength
                     });
-                layer.state = state;
+                layer.legendEntry = state;
 
                 return state;
             }
@@ -191,11 +190,11 @@
             /**
              * Add a placeholder for the provided layer
              *
-             * @param {Object} layer object from `layerRegistry` `layers` object
+             * @param {Object} layerRecord object from `layerRegistry` `layers` object
              */
-            function addPlaceholder(layer) {
-                const entry = legendEntryFactory.placeholderEntryItem(layer.initialState, layer.layer);
-                layer.state = entry;
+            function addPlaceholder(layerRecord) {
+                const entry = legendEntryFactory.placeholderEntryItem(layerRecord.config, layerRecord);
+                layerRecord.legendEntry = entry;
 
                 // find a position where to insert new placeholder based on its sortGroup value
                 let position = service.legend.items.findIndex(et => et.sortGroup > entry.sortGroup);
@@ -215,7 +214,7 @@
              * @param {Number} index position to insert layer into the legend
              */
             function addLayer(layer, index) {
-                const layerType = layer.initialState.layerType;
+                const layerType = layer.config.layerType;
                 const entry = layerTypeGenerators[layerType](layer);
 
                 console.log(`Inserting legend entry ${entry.name} ${index}`);
@@ -253,12 +252,11 @@
 
             /**
              * Sets `scale` flags on the legend entry.
-             * @param {Object} layer         layer object from `layerRegistry`
+             * @param {Object} legendEntry   a LegendEntry object
              * @param {Boolean} scaleSet     mapping of featureIdx to booleans reflecting flag state
              */
-            function setLayerScaleFlag(layer, scaleSet) {
+            function setLayerScaleFlag(legendEntry, scaleSet) {
 
-                const legendEntry = layer.state;
                 if (legendEntry.flags) {
 
                     // currently, non-feature based things have text-ish content put in their featureIdx.  map them to 0

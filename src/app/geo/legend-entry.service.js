@@ -38,7 +38,7 @@
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         const ENTRY_ITEM = {
-            _layerRef: null,
+            _layerRecord: null,
             type: 'layer',
             name: 'dogguts',
             id: 0,
@@ -82,10 +82,10 @@
                 return this.cache[name];
             },
 
-            init(initialState, layerRef) {
+            init(initialState, layerRec) {
                 const defaults = layerDefaults[initialState.layerType];
 
-                this._layerRef = layerRef;
+                this._layerRecord = layerRec;
                 this.id = 'rv_lt_' + itemIdCounter++;
                 this.options = angular.merge({}, defaults.options);
                 this.flags = angular.merge({}, defaults.flags);
@@ -115,8 +115,8 @@
 
         const PLACEHOLDER_ENTRY_ITEM = Object.create(ENTRY_ITEM);
 
-        PLACEHOLDER_ENTRY_ITEM.init = function(initialState, layerRef) {
-            ENTRY_ITEM.init.call(this, initialState, layerRef);
+        PLACEHOLDER_ENTRY_ITEM.init = function(initialState, layerRec) {
+            ENTRY_ITEM.init.call(this, initialState, layerRec);
 
             // TODO: suggestion: separate legend entry ids from layer object ids
             this.id += 'placeholder';
@@ -139,8 +139,8 @@
 
         const SINGLE_ENTRY_ITEM = Object.create(ENTRY_ITEM);
 
-        SINGLE_ENTRY_ITEM.init = function (initialState, layerRef) {
-            ENTRY_ITEM.init.call(this, initialState, layerRef);
+        SINGLE_ENTRY_ITEM.init = function (initialState, layerRec) {
+            ENTRY_ITEM.init.call(this, initialState, layerRec);
             this.setVisibility(this.getVisibility());
             this.setOpacity(this.options.opacity.value);
 
@@ -169,7 +169,7 @@
          */
         SINGLE_ENTRY_ITEM.setVisibility = function (value) {
             ENTRY_ITEM.setVisibility.call(this, value);
-            this._layerRef.setVisibility(this.getVisibility());
+            this._layerRecord.setVisibility(this.getVisibility());
         };
 
         /**
@@ -178,13 +178,13 @@
          */
         SINGLE_ENTRY_ITEM.setOpacity = function (value) {
             ENTRY_ITEM.setOpacity.call(this, value);
-            this._layerRef.setOpacity(value);
+            this._layerRecord.setOpacity(value);
         };
 
         const DYNAMIC_ENTRY_ITEM = Object.create(ENTRY_ITEM);
 
-        DYNAMIC_ENTRY_ITEM.init = function (initialState, layerRef) {
-            ENTRY_ITEM.init.call(this, initialState, layerRef);
+        DYNAMIC_ENTRY_ITEM.init = function (initialState, layerRec) {
+            ENTRY_ITEM.init.call(this, initialState, layerRec);
 
             return this;
         };
@@ -336,13 +336,13 @@
 
         const DYNAMIC_ENTRY_GROUP = Object.create(ENTRY_GROUP);
 
-        DYNAMIC_ENTRY_GROUP.init = function (initialState, layerRef, expanded) {
+        DYNAMIC_ENTRY_GROUP.init = function (initialState, layerRec, expanded) {
             ENTRY_GROUP.init.call(this);
 
             // get defaults for specific layerType
             const defaults = layerDefaults[initialState.layerType] || {};
 
-            this._layerRef = layerRef;
+            this._layerRecord = layerRec;
             this.expanded = expanded;
             this.options = angular.merge({}, defaults.options);
             angular.merge(this, initialState);
@@ -378,8 +378,8 @@
 
         const DYNAMIC_ENTRY_MASTER_GROUP = Object.create(DYNAMIC_ENTRY_GROUP);
 
-        DYNAMIC_ENTRY_MASTER_GROUP.init = function (initialState, layerRef, expanded) {
-            DYNAMIC_ENTRY_GROUP.init.call(this, initialState, layerRef, expanded);
+        DYNAMIC_ENTRY_MASTER_GROUP.init = function (initialState, layerRec, expanded) {
+            DYNAMIC_ENTRY_GROUP.init.call(this, initialState, layerRec, expanded);
 
             // morph layerEntries array into an object where keys are indexes of sublayers:
             // { 1: {index: 1, ...}, 4: { index: 4, ...} }
@@ -396,7 +396,7 @@
             this.slaves = [];
 
             // generate all the slave sublayers upfornt ...
-            this._layerRef.layerInfos.forEach((layerInfo, index) => {
+            this._layerRecord.layerInfos.forEach((layerInfo, index) => {
                 let sublayerEntry;
                 const sublayerEntryInitialState = {
                     name: layerInfo.name,
@@ -421,7 +421,7 @@
             }
 
             // if the 'supportsDynamicLayers' flag is false, remove sublayer opacity options
-            if (!this._layerRef.supportsDynamicLayers) {
+            if (!this._layerRecord.supportsDynamicLayers) {
                 // FIXME: we do not use parens for arrow functions even when multilines (styleguide 8.4). Something to look at once we release the beta.
                 this.slaves.forEach(slave => {
                     delete slave.options.opacity;
@@ -511,10 +511,10 @@
             // console.log(this.name + ' set to ' + this.getVisibility() + ' ' + visibleSublayerIds);
 
             // apply visibility to the dynamic layer itself
-            this._layerRef.setVisibility(this.getVisibility());
+            this._layerRecord.setVisibility(this.getVisibility());
 
             // finally, apply visibility values to the sublayers
-            this._layerRef.setVisibleLayers(visibleSublayerIds);
+            this._layerRecord.setVisibleLayers(visibleSublayerIds);
         };
 
         /**
@@ -526,11 +526,11 @@
                 subIds = this.walkItems(item => this.slaves.indexOf(item));
 
                 // apply opacity to the whole layer
-                this._layerRef.setOpacity(this.options.opacity.value);
+                this._layerRecord.setOpacity(this.options.opacity.value);
             }
 
             // well, if it's not supported, we can't set opacity for sublayers, bummer
-            if (this._layerRef.supportsDynamicLayers) {
+            if (this._layerRecord.supportsDynamicLayers) {
                 const optionsArray = [];
 
                 // create an array of drawing options
@@ -542,8 +542,8 @@
                     optionsArray[subId] = drawingOptions;
                 });
 
-                this._layerRef.setLayerDrawingOptions(optionsArray);
-                this._layerRef.show(); // ? is this necessary
+                this._layerRecord.setLayerDrawingOptions(optionsArray);
+                this._layerRecord.show(); // ? is this necessary
             }
         };
 
@@ -562,19 +562,19 @@
             }
         }
 
-        function placeholderEntryItem(initialState, layerRef) {
+        function placeholderEntryItem(initialState, layerRec) {
             return Object.create(PLACEHOLDER_ENTRY_ITEM)
-                .init(initialState, layerRef);
+                .init(initialState, layerRec);
         }
 
-        function singleEntryItem(initialState, layerRef) {
+        function singleEntryItem(initialState, layerRec) {
             return Object.create(SINGLE_ENTRY_ITEM)
-                .init(initialState, layerRef);
+                .init(initialState, layerRec);
         }
 
-        function dynamicEntryItem(initialState, layerRef) {
+        function dynamicEntryItem(initialState, layerRec) {
             return Object.create(DYNAMIC_ENTRY_ITEM)
-                .init(initialState, layerRef);
+                .init(initialState, layerRec);
         }
 
         function entryGroup(name, expanded) {
@@ -582,14 +582,14 @@
                 .init(name, expanded);
         }
 
-        function dynamicEntryGroup(initialState, layerRef, expanded) {
+        function dynamicEntryGroup(initialState, layerRec, expanded) {
             return Object.create(DYNAMIC_ENTRY_GROUP)
-                .init(initialState, layerRef, expanded);
+                .init(initialState, layerRec, expanded);
         }
 
-        function dynamicEntryMasterGroup(initialState, layerRef, expanded) {
+        function dynamicEntryMasterGroup(initialState, layerRec, expanded) {
             return Object.create(DYNAMIC_ENTRY_MASTER_GROUP)
-                .init(initialState, layerRef, expanded);
+                .init(initialState, layerRec, expanded);
         }
 
         return service;
