@@ -45,59 +45,6 @@
 
             service.legend = ref.legendService.legend;
 
-            // jscs doesn't like enhanced object notation
-            // jscs:disable requireSpacesInAnonymousFunctionExpression
-            const LAYER_RECORD = {
-                attributeBundle: undefined,
-                _formattedAttributes: undefined,
-
-                layer: undefined,
-                initialState: undefined,
-                state: undefined, // legend entry
-                bbox: undefined, // bounding box layer
-
-                /**
-                 * Retrieves attributes from a layer for a specified feature index
-                 * @param  {Number} featureIdx feature id on the service endpoint
-                 * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
-                 */
-                getAttributes(featureIdx) {
-                    if (this._formattedAttributes.hasOwnProperty(featureIdx)) {
-                        return this._formattedAttributes[featureIdx];
-                    }
-
-                    const layerPackage = this.attributeBundle[featureIdx];
-                    const attributePromise =
-                        $q.all([
-                            layerPackage.getAttribs(),
-                            layerPackage.layerData
-                        ])
-                        .then(([attributes, layerData]) =>
-                            formatAttributes(attributes, layerData)
-                        );
-
-                    return (this._formattedAttributes[featureIdx] = attributePromise);
-                },
-
-                /**
-                 * Initializes layer record.
-                 * @param  {Object} layer           esri layer object
-                 * @param  {Object} initialState    layer config values
-                 * @param  {Object} attributeBundle geoApi attribute bundle
-                 * @return {Object}                 layer record object`
-                 */
-                init(layer, initialState, attributeBundle) {
-                    this.layer = layer;
-                    this.initialState = initialState;
-                    this.attributeBundle = attributeBundle;
-
-                    this._formattedAttributes = {};
-
-                    return this;
-                }
-            };
-            // jscs:enable requireSpacesInAnonymousFunctionExpression
-
             // FIXME: for debug purposes
             // FIXME: remove
             window.RV._debug = {};
@@ -144,7 +91,7 @@
              */
             function getLayersByType(layerType) {
                 return Object.keys(layers).map(key => layers[key])
-                    .filter(layer => layer.state && layer.state.layerType === layerType);
+                    .filter(lr => lr.config.layerType === layerType);
             }
 
             // FIXME  add a check to see if layer has config setting for not supporting a click
@@ -156,11 +103,11 @@
                 return Object.keys(layers).map(key => layers[key])
                     // filter nonqueryable layers
                     .filter(layerRecord =>
-                        Geo.Layer.QUERYABLE.indexOf(layerRecord.initialState.layerType) !== -1)
+                        Geo.Layer.QUERYABLE.indexOf(layerRecord.config.layerType) !== -1)
                     // filter out layers in the error state
                     // FIXME: refactor with the state machine
                     .filter(layerRecord =>
-                        layerRecord.state.state !== 'rv-error');
+                        layerRecord.state !== Geo.Layer.);
             }
 
             /**
