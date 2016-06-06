@@ -108,7 +108,8 @@
                 // assign feature counts only to active sublayers
                 state.walkItems(layerEntry => {
                     getServiceFeatureCount(`${state.url}/${layerEntry.featureIdx}`).then(count =>
-                        applyFeatureCount(layer.layer.geometryType, layerEntry, count));
+                        applyFeatureCount(layer._layer.geometryType, layerEntry, count));
+                        // FIXME _layer reference is bad
                 });
 
                 return state;
@@ -202,6 +203,16 @@
                 position = service.legend.add(entry, position);
 
                 console.log(`Inserting placeholder ${entry.name} ${position}`);
+                const listener = state => {
+                    console.info(`Listener fired ${state} ${layerRecord.layerId}`);
+                    if (state === Geo.Layer.States.LOADED) {
+                        // swap the placeholder with the real legendEntry
+                        const index = service.legend.remove(entry);
+                        addLayer(layerRecord, index);
+                        layerRecord.removeStateListener(listener);
+                    }
+                };
+                layerRecord.addStateListener(listener);
 
                 return position;
             }
