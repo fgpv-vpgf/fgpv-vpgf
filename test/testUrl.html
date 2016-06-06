@@ -10,12 +10,12 @@
 <body>
     <div id="map" style="height:90%; width: 100%;"></div>
     <p id="mess" />
-    <script src="dist/geoapi.min.js"></script>
+    <script src="../dist/geoapi.min.js"></script>
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-           
+
             api.mapManager.setProxy('proxy/dotNet/proxy.ashx');
-           
+
             // lets test some paths
 
             api.layer.predictLayerUrl('c:\dogguts\dash.csv').then(data => {
@@ -47,7 +47,7 @@
                 console.log('local file shape, no hint');
                 console.log(data);
             });
-           
+
             api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_WaterLevels/MapServer/1').then(data => {
                 console.log('feature layer, no hint');
                 console.log(data);
@@ -77,7 +77,7 @@
                 console.log('group layer, hint');
                 console.log(data);
             });
-            
+
             api.layer.predictLayerUrl('http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_crop_spatial_density_barley/MapServer/0').then(data => {
                 console.log('raster layer, no hint');
                 console.log(data);
@@ -87,7 +87,7 @@
                 console.log('raster layer, hint');
                 console.log(data);
             });
-           
+
             api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSandsBasemap/MapServer').then(data => {
                 console.log('tile layer, no hint');
                 console.log(data);
@@ -112,32 +112,32 @@
                 console.log('web file CSV, no hint');
                 console.log(data);
             });
-       
+
             api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/test.csv', api.layer.serviceType.CSV).then(data => {
                 console.log('web file CSV, hint');
                 console.log(data);
             });
-            
+
             api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/happy.json').then(data => {
                 console.log('web file GeoJSON, no hint');
                 console.log(data);
             });
-       
+
             api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/happy.json', api.layer.serviceType.GeoJSON).then(data => {
                 console.log('web file GeoJSON, hint');
                 console.log(data);
             });
-            
+
             api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/ne_10m_ports.zip').then(data => {
                 console.log('web file shape, no hint');
                 console.log(data);
             });
-       
+
             api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/ne_10m_ports.zip', api.layer.serviceType.Shapefile).then(data => {
                 console.log('web file shape, hint');
                 console.log(data);
             });
-        
+
         });
     </script>
 </body>

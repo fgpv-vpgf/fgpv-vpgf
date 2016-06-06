@@ -10,6 +10,11 @@
 const maxW = 32;
 const maxH = 32;
 
+// layer symbology types
+const SIMPLE = 'simple';
+const UNIQUE_VALUE = 'uniqueValue';
+const CLASS_BREAKS = 'classBreaks';
+
 // use single quotes so they will not be escaped (less space in browser)
 const emptySVG = `<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'></svg>`;
 
@@ -36,26 +41,26 @@ function getRendererType(renderer) {
 function createSymbologyConfig(renderer, legend) {
 
     const symb = {
-        type: getRendererType(renderer)
+        type: renderer.type
     };
 
     const legendLookup = labelObj(legend);
 
     switch (symb.type) {
-        case 'SimpleRenderer':
+        case SIMPLE:
             symb.label = renderer.label;
             symb.imageUrl = legendLookup[renderer.label].icon;
 
             break;
 
-        case 'UniqueValueRenderer':
+        case UNIQUE_VALUE:
             if (renderer.defaultLabel) {
                 symb.defaultImageUrl = legendLookup[renderer.defaultLabel];
             }
-            symb.field1 = renderer.attributeField;
-            symb.field2 = renderer.attributeField2;
-            symb.field3 = renderer.attributeField3;
-            symb.valueMaps = renderer.infos.map(uvi => {
+            symb.field1 = renderer.field1;
+            symb.field2 = renderer.field2;
+            symb.field3 = renderer.field3;
+            symb.valueMaps = renderer.uniqueValueInfos.map(uvi => {
                 return {
                     label: uvi.label,
                     value: uvi.value,
@@ -64,16 +69,16 @@ function createSymbologyConfig(renderer, legend) {
             });
 
             break;
-        case 'ClassBreaksRenderer':
+        case CLASS_BREAKS:
             if (renderer.defaultLabel) {
                 symb.defaultImageUrl = legendLookup[renderer.defaultLabel];
             }
-            symb.field = renderer.attributeField;
-            symb.minValue = renderer.infos[0].minValue;
-            symb.rangeMaps = renderer.infos.map(cbi => {
+            symb.field = renderer.field;
+            symb.minValue = renderer.minValue;
+            symb.rangeMaps = renderer.classBreakInfos.map(cbi => {
                 return {
                     label: cbi.label,
-                    maxValue: cbi.maxValue,
+                    maxValue: cbi.classMaxValue,
                     imageUrl: legendLookup[cbi.label].icon
                 };
             });
@@ -105,11 +110,12 @@ function getGraphicIcon(fData, layerConfig, oid) {
     let graphicKey;
 
     // find node in layerregistry.attribs
+    // TODO: refactor into proper blocks
     switch (symbolConfig.type) {
-        case 'SimpleRenderer':
+        case SIMPLE:
             return symbolConfig.imageUrl;
 
-        case 'UniqueValueRenderer':
+        case UNIQUE_VALUE:
             const oidIdx = fData.oidIndex[oid];
 
             // make a key value for the graphic in question, using comma-space delimiter if multiple fields
@@ -142,8 +148,10 @@ function getGraphicIcon(fData, layerConfig, oid) {
 
             return img;
 
-        case 'ClassBreaksRenderer':
-            let gVal = fData.attributes[symbolConfig.field];
+        case CLASS_BREAKS:
+            const oidIdx2 = fData.oidIndex[oid];
+
+            let gVal = fData.features[oidIdx2].attributes[symbolConfig.field];
 
             // find where the value exists in the range
             let lower = symbolConfig.minValue;
@@ -177,7 +185,7 @@ function getGraphicIcon(fData, layerConfig, oid) {
             return img;
 
         default:
-            return symbolConfig.icons['default'].imageUrl;
+            return symbolConfig.defaultImageUrl;
     }
 }
 
@@ -193,6 +201,7 @@ function labelObj(array) {
     array.forEach(o => {
         finalObj[o.name] = o;
     });
+
     return finalObj;
 }
 

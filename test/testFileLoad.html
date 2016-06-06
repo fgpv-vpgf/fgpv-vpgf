@@ -9,12 +9,12 @@
     </style>
 </head>
 <body>
-    <script src="dist/geoapi.min.js"></script>
+    <script src="../dist/geoapi.min.js"></script>
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-            
-            function epsgLookup(code) {     
-                console.log('imma searchin for ' + code);           
+
+            function epsgLookup(code) {
+                console.log('imma searchin for ' + code);
                 return new Promise(resolve => {
                     //bring for the funtime lol switch
                     var defst = null;
@@ -27,8 +27,8 @@
                     resolve(defst);
                 });
             }
-            
-            // TEST GEOJSON LAYER   
+
+            // TEST GEOJSON LAYER
             var happyData = {
                 "type": "FeatureCollection",
                 "features": [
@@ -58,49 +58,49 @@
                     }
                 ]
             }
-            
+
             var opts = {
                 targetWkid: 102100,
                 sourceProjection: 'EPSG:4326', //'+proj=longlat +datum=WGS84 +no_defs',
                 epsgLookup: epsgLookup
             };
             var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'terrain', zoom: 6, center: [-100, 50] });
-            
-            api.layer.makeGeoJsonLayer(happyData, opts).then(function (happyLayer) {               
+
+            api.layer.makeGeoJsonLayer(happyData, opts).then(function (happyLayer) {
                 map.addLayer(happyLayer);
-                
+
                 console.log(happyLayer);
             });
-            
 
-            
-            // TEST CSV LAYER   
+
+
+            // TEST CSV LAYER
             var csvData = "Long,Lat,Prop\n0,0,One\n-100,50,Two\n-50,50,Three\n-75,50,Four\n";
-            
-            opts = {            
+
+            opts = {
                targetWkid: 102100,
                epsgLookup: epsgLookup
             };
-            
+
             var csvPromise = api.layer.makeCsvLayer(csvData, opts);
-            
+
             csvPromise.then(function(csvLayer){
                 map.addLayer(csvLayer);
                 console.log(csvLayer);
-            });         
-            
+            });
+
             var csvPeeker = api.layer.csvPeek(csvData, ',');
             console.log("I like to peek at CSVs");
             console.log(csvPeeker);
-            
-            // TEST SHAPEFILE LAYER   
+
+            // TEST SHAPEFILE LAYER
             //http://www.html5rocks.com/en/tutorials/file/dndfiles/
             function handleShapeFileSelect(fileEvt) {
                 var shapeFile = fileEvt.target.files[0];
                 var reader = new FileReader();
-                    
 
-                reader.onloadend = function (e) { 
+
+                reader.onloadend = function (e) {
                     var shapePromise = api.layer.makeShapeLayer(e.target.result, opts);
                     shapePromise.then(function(shapeLayer){
                         map.addLayer(shapeLayer);
@@ -112,12 +112,12 @@
                     console.log('file reader error');
                     console.log(e.target.error);
                 };
-                    
+
                 reader.readAsArrayBuffer(shapeFile);
             }
-            
+
             document.getElementById('shapeFile').addEventListener('change', handleShapeFileSelect, false);
-            
+
         });
 </script>
 <div style="height:100%; width: 100%;">
