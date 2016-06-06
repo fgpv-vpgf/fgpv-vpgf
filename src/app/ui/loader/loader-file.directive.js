@@ -256,8 +256,8 @@
          */
         function closeLoaderFile() {
             // reset the loader after closing the panel
-            //stepper.reset().start();
-            //stateManager.openPrevious('mainLoaderFile');
+            // stepper.reset().start();
+            // stateManager.openPrevious('mainLoaderFile');
         }
     }
 })();
