@@ -72,41 +72,42 @@
                 const tableNode = angular.element('<table class="display nowrap rv-data-table"></table>');
                 containerNode.append(tableNode);
 
-                // add icons and zoom to button only to the feature layers
-                if (requester.legendEntry.layerType === 'esriFeature' ||
-                    requester.legendEntry.layerType === 'esriDynamicLayerEntry' && requester.legendEntry.url) {
+                // add symbol as the first column
+                // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
+                if (!displayData.rows[0].hasOwnProperty('rvSymbol')) {
+                    displayData.rows.forEach((row, index) => {
+                        const objId = row[displayData.oidField];
+                        const renderer = displayData.renderer;
+                        const legend = requester.legendEntry.symbology;
 
-                    // add symbol as the first column
-                    // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
-                    if (!displayData.rows[0].hasOwnProperty('rvSymbol')) {
-                        displayData.rows.forEach((row, index) => {
-                            const objId = row[displayData.oidField];
-                            const renderer = displayData.renderer;
-                            const legend = requester.legendEntry.symbology;
-
-                            // FIXME: mock fdata object for this particular item
-                            // This will likely change with the new symbology generator
-                            const fData = {
-                                features: {
-                                    [index]: {
-                                        attributes: row
-                                    }
-                                },
-                                oidIndex: {
-                                    [objId]: index
+                        // FIXME: mock fdata object for this particular item
+                        // This will likely change with the new symbology generator
+                        const fData = {
+                            features: {
+                                [index]: {
+                                    attributes: row
                                 }
-                            };
+                            },
+                            oidIndex: {
+                                [objId]: index
+                            }
+                        };
 
-                            const symbol = geoService.retrieveSymbol(objId, fData, renderer, legend);
-                            row.rvSymbol = `<div class="rv-wrapper rv-symbol"><img src="${symbol}" /></div>`;
-                        });
+                        let symbol = geoService.retrieveSymbol(objId, fData, renderer, legend);
+                        if (!symbol) {
+                            // jscs:disable maximumLineLength
+                            // TODO: have geoApi symbology detect and set empty gifs
+                            symbol = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                            // jscs:enable maximumLineLength
+                        }
+                        row.rvSymbol = `<div class="rv-wrapper rv-symbol"><img src="${symbol}" /></div>`;
+                    });
 
-                        displayData.columns.unshift({
-                            data: 'rvSymbol',
-                            title: '',
-                            orderable: false
-                        });
-                    }
+                    displayData.columns.unshift({
+                        data: 'rvSymbol',
+                        title: '',
+                        orderable: false
+                    });
                 }
 
                 // TODO: try to compile an angular compoent and insert that instead maybe with a normal click handler ???
@@ -155,8 +156,7 @@
 
                 self.table.on('click', 'md-icon.rv-zoom-to', event => {
                     const tr = $(event.target).closest('tr');
-                    const layerName = $(event.target).closest('.rv-content-pane')
-                        .find('.md-title').html().substring(10);
+                    const layerName = requester.name;
                     const row = self.table.row(tr);
 
                     // get object id from row data
@@ -187,7 +187,6 @@
                         }
                     };
 
-                    console.log('333333333333', detailsObj.data[0]);
                     const details = {
                         data: [detailsObj]
                     };
