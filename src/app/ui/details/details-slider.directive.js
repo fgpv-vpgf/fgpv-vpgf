@@ -37,7 +37,18 @@
                 paused: true
             });
 
-            const animateOpen = () => tl.paused() ? tl.play() : tl.reversed(false);
+            let forceClose = false;
+
+            const animateOpen = () => {
+                if (tl.paused()) {
+                    tl.play();
+                } else if (!forceClose) {
+                    tl.reversed(false);
+                } else {
+                    forceClose = false;
+                }
+            };
+
             const animateClosed = () => tl.reversed(true);
 
             tl.to(element, RV_SLIDE_DURATION, {
@@ -50,7 +61,6 @@
                 if (!$.contains(element[0], event.relatedTarget)) {
                     animateClosed();
                     stateManager.nextFocus();
-                    event.stopPropagation();
                 }
             });
 
@@ -63,11 +73,13 @@
 
             self.selectItemEvent = (event, item) => {
                 if ((event.type === 'keydown' && [13, 32, 33].indexOf(event.which) !== -1)) {
+                    event.preventDefault();
                     animateClosed();
                     self.selectItem(item);
                     stateManager.nextFocus();
 
                 } else if (event.type === 'mousedown') {
+                    forceClose = true;
                     animateClosed();
                     self.selectItem(item);
                 }

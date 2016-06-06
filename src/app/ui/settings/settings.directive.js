@@ -60,6 +60,8 @@
         self.opacityValue = 0;
         self.toggleQuery = toggleQuery;
 
+        self.closePanel = () => stateManager.closePanel('sideSettings');
+
         // watch for changing display value and store reference to new tocEntry and its opacity value
         $scope.$watch('self.display.data', newValue => {
             if (newValue) {

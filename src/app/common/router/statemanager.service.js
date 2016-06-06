@@ -238,16 +238,6 @@
             });
         }
 
-        function addPanelToHistory(panelName) {
-            const panelIndex = panelHistory.indexOf(panelName);
-            if (panelIndex !== -1) {
-                panelHistory.splice(panelIndex, 1);
-
-        function setFocusElement(element) {
-            if (angular.isElement) {
-                if (element.attr('tabindex') === 'undefined') {
-                    element.attr('tabindex', -1);
-
         /**
          * Given a focusable element, save the element reference for later retrieval.
          * Uses label to uniquely identify elements in the list which prevents duplicate entries
@@ -324,7 +314,8 @@
             // panelName is provided, remove from history (if present)
             if (angular.isString(panelName)) {
                 const historyIndex = panelHistory.indexOf(panelName);
-                panelToClose = historyIndex === -1 ? getItem(panelName) : getItem(panelHistory.splice(historyIndex, 1));
+                panelToClose = historyIndex === -1 ?
+                    getItem(panelName) : getItem(panelHistory.splice(historyIndex, 1)[0]);
 
             // close the most recently opened panel
             } else if (panelHistory.length > 0) {
@@ -335,41 +326,19 @@
                 return;
             }
 
-        function setFocusElement(element) {
-            if (angular.isElement) {
-                if (element.attr('tabindex') === 'undefined') {
-                    element.attr('tabindex', -1);
+            angular.forEach(panelHistory, pName => {
+                let subPanel = getItem(pName);
+                if (subPanel.item.parent === panelToClose.item.parent) {
+                    replaceWithPanel = subPanel;
                 }
-                service._focusable = element;
-                console.debug('Focus set on', service._focusable);
-            }
-        }
+            });
 
-        function getFocusElement() {
-            console.debug('Get focus on', service._focusable ? service._focusable : $rootElement);
-            return service._focusable ? service._focusable : $rootElement;
-            // closing parent panel
-            if (!angular.isDefined(panelToClose.item.parent)) {
-                setActive({ [panelToClose.name]: false });
-
-            // child panel - check if parent is present in history, if so we don't want to close it
+            if (angular.isObject(replaceWithPanel)) {
+                setItemProperty(panelToClose.name, 'active', false, true);
+                setItemProperty(replaceWithPanel.name, 'active', true, true);
+                removePanelFromHistory(panelName);
             } else {
-                angular.forEach(panelHistory, pName => {
-                    if (angular.equals(panelToClose.item.parent, getItem(pName).item.parent)) {
-                        replaceWithPanel = getItem(pName);
-                    }
-                });
-
-                // parent panel was found in history, swap child panels and keep parent open
-                // setItemProperty is used as setActive adds history record for active panels
-                if (angular.isObject(replaceWithPanel)) {
-                    setItemProperty(panelToClose.name, 'active', false, true);
-                    setItemProperty(replaceWithPanel.name, 'active', true, true);
-
-                // close the parent, children will be closed as well by setActive
-                } else {
-                    setActive({ [panelToClose.item.parent]: false });
-                }
+                setActive({ [panelToClose.item.parent]: false });
             }
         }
 
