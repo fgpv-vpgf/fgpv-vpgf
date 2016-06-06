@@ -134,7 +134,8 @@
                     rows,
                     fields: layerData.fields, // keep fields for reference ...
                     oidField: layerData.oidField, // ... keep a reference to id field ...
-                    oidIndex: attributes.oidIndex // ... and keep id mapping array
+                    oidIndex: attributes.oidIndex, // ... and keep id mapping array
+                    renderer: layerData.renderer
                 };
             }
 
