@@ -4,6 +4,13 @@
 
     const RV_DURATION = 0.3;
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
+    const FULL_SCREEN_Z_INDEX = 50;
+    // README: this is a simplest solution to https://github.com/fgpv-vpgf/fgpv-vpgf/issues/671
+    // Angular Material uses z-index of 100 for the drop-menu, setting app's z-index below that will allow for the menu to show up while still blocking the host page
+    // There might be a problem if the host page uses z-indexes larger than 50 or 100, in which case full-screen would not work.
+    // A more complete solution would be to override $z-index- variables defined in Angular Material with higher values and up z-index here as well.
+    // There seems to be some of the z-index- in Angular Material which are not derived from variables (in version 1.0.5);
+    // This should be revisited after upgrading Angular Material or in case additional bug reports (host page having higher z-index for example)
 
     /**
      * @ngdoc service
@@ -66,7 +73,7 @@
                 // make overflow on the root element visible so we can 'pop' the map shell out
                 ref.tl.set($rootElement, {
                     overflow: 'visible',
-                    'z-index': 999
+                    'z-index': FULL_SCREEN_Z_INDEX
                 });
 
                 // pop out shell to make it ready for animation
@@ -76,7 +83,7 @@
                     left: ref.shellNodeBox.left,
                     bottom: window.innerHeight - ref.shellNodeBox.bottom,
                     right: document.body.clientWidth - ref.shellNodeBox.right, // width without scrollbars
-                    'z-index': 999,
+                    'z-index': FULL_SCREEN_Z_INDEX,
                     height: 'auto',
                     width: 'auto',
                     margin: 0
