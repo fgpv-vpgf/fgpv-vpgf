@@ -72,55 +72,50 @@
                 const tableNode = angular.element('<table class="display nowrap rv-data-table"></table>');
                 containerNode.append(tableNode);
 
-                // add icons and zoom to button only to the feature layers
-                // TODO: remove when symbology for dynamic layers is sorted out and zoom to for dynamic layers is sorted out
-                // FIXME: now checking if file-based layer by looking at url since symbology generation doesn't work
-                if (requester.legendEntry.layerType === 'esriFeature' && requester.legendEntry.url) {
+                // add symbol as the first column
+                // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
+                if (!displayData.rows[0].hasOwnProperty('rvSymbol')) {
+                    displayData.rows.forEach((row, index) => {
+                        const objId = row[displayData.oidField];
+                        const renderer = displayData.renderer;
+                        const legend = requester.legendEntry.symbology;
 
-                    // add symbol as the first column
-                    // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
-                    if (!displayData.rows[0].hasOwnProperty('rvSymbol')) {
-                        displayData.rows.forEach((row, index) => {
-                            const objId = row[displayData.oidField];
-                            const renderer = geoService.layers[requester.layerId].layer.renderer;
-                            const legend = requester.legendEntry.symbology;
-
-                            // FIXME: mock fdata object for this particular item
-                            // This will likely change with the new symbology generator
-                            const fData = {
-                                features: {
-                                    [index]: {
-                                        attributes: row
-                                    }
-                                },
-                                oidIndex: {
-                                    [objId]: index
+                        // FIXME: mock fdata object for this particular item
+                        // This will likely change with the new symbology generator
+                        const fData = {
+                            features: {
+                                [index]: {
+                                    attributes: row
                                 }
-                            };
+                            },
+                            oidIndex: {
+                                [objId]: index
+                            }
+                        };
 
-                            const symbol = geoService.retrieveSymbol(objId, fData, renderer, legend);
-                            row.rvSymbol = `<div class="rv-wrapper rv-symbol"><img src="${symbol}" /></div>`;
-                        });
+                        let symbol = geoService.retrieveSymbol(objId, fData, renderer, legend);
+                        if (!symbol) {
+                            // jscs:disable maximumLineLength
+                            // TODO: have geoApi symbology detect and set empty gifs
+                            symbol = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                            // jscs:enable maximumLineLength
+                        }
+                        row.rvSymbol = `<div class="rv-wrapper rv-symbol"><img src="${symbol}" /></div>`;
+                    });
 
-                        displayData.columns.unshift({
-                            data: 'rvSymbol',
-                            title: '',
-                            orderable: false
-                        });
-                    }
-
-                    // TODO: try to compile an angular compoent and insert that instead maybe with a normal click handler ???
-                    // FIXME: turn this into a real button for keyboard accessibility
-                    // get the first column after the symbol column
-                    const interactiveColumn = displayData.columns.find(column =>
-                        column.data !== 'rvSymbol');
-                    addColumnInteractivity(interactiveColumn, [ZOOM_TO_ICON(zoomText), DETAILS_ICON(descriptionsText)]);
-                } else {
-                    // TODO:move interactiveColumn section out of esriFeature if block and remove else block when zoom supports dynamic layers
-                    const interactiveColumn = displayData.columns.find(column =>
-                        column.data !== 'rvSymbol');
-                    addColumnInteractivity(interactiveColumn, [DETAILS_ICON(descriptionsText)]);
+                    displayData.columns.unshift({
+                        data: 'rvSymbol',
+                        title: '',
+                        orderable: false
+                    });
                 }
+
+                // TODO: try to compile an angular compoent and insert that instead maybe with a normal click handler ???
+                // FIXME: turn this into a real button for keyboard accessibility
+                // get the first column after the symbol column
+                const interactiveColumn = displayData.columns.find(column =>
+                    column.data !== 'rvSymbol');
+                addColumnInteractivity(interactiveColumn, [ZOOM_TO_ICON(zoomText), DETAILS_ICON(descriptionsText)]);
 
                 // ~~I hate DataTables~~ Datatables are cool!
                 self.table = tableNode
@@ -161,13 +156,14 @@
 
                 self.table.on('click', 'md-icon.rv-zoom-to', event => {
                     const tr = $(event.target).closest('tr');
+                    const layerName = requester.name;
                     const row = self.table.row(tr);
 
                     // get object id from row data
                     const objId = row.data()[displayData.oidField];
                     const layer = geoService.layers[requester.layerId].layer;
 
-                    geoService.zoomToGraphic(layer, objId);
+                    geoService.zoomToGraphic(layer, layerName, objId);
                 });
 
                 self.table.on('click', 'md-icon.rv-description', event => {
@@ -190,6 +186,7 @@
                             name: requester.name
                         }
                     };
+
                     const details = {
                         data: [detailsObj]
                     };

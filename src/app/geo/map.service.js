@@ -298,9 +298,10 @@
              * Only handles feature layers right now (both on demand and snapshot). zoom to dynamic/wms layers obj won't work
              *
              * @param  {layer} layer is the layer object of graphic to zoom
+             * @param  {String} layerName is the name of the layer to be zoomed to
              * @param  {objId} objId is ID of object that was clicked on datatable to be zoomed to
              */
-            function zoomToGraphic(layer, objId) {
+            function zoomToGraphic(layer, layerName, objId) {
                 const map = service.mapObject;
                 const zoomLevel = gapiService.gapi.symbology.getZoomLevel(map.__tileInfo.lods, layer.maxScale);
 
@@ -321,18 +322,23 @@
                     // layerUrl is the URL that the point to be zoomed to belongs to
                     let layerUrl = `${layer.url}/`;
 
-                    // FIXME: this looks to be related to dynamic layers
-                    /*if (layer.layerInfos) {
-                        layerUrl += featureIndex;
-                    }*/
+                    // find layer index for dynamic layers and pass it as a feature layer
+                    if (layer.layerInfos) {
+                        layer.layerInfos.every(featLayer => {
+                            if (featLayer.name === layerName) {
+                                layerUrl += featLayer.id + '/';
+                                return false; // break loop
+                            }
+                            return true; // keep looping
+                        });
+                    }
 
                     gapiService.gapi.layer.getFeatureInfo(layerUrl, objId)
                         .then(geoInfo => {
-                            if (geoInfo) {
-                                const sr = layer.spatialReference;
-                                const geo = geoInfo.feature.geometry;
-                                const attr = geoInfo.feature.attributes;
-                                zoomWithOffset(geo, attr, sr, zoomLevel);
+                            // if it's a feature layer
+                            if (geoInfo && geoInfo.feature) {
+                                zoomWithOffset(geoInfo.feature.geometry,
+                                    geoInfo.feature.attributes, layer.spatialReference, zoomLevel);
                             }
                         });
                 }
