@@ -126,9 +126,9 @@
   "baseMaps": [
     {
       "id": "baseNrCan",
-      "name": "La Carte de Base du Canada – Transport (CBCT)",
-      "description": "La Carte de Base du Canada – Transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
-      "altText": "altText - La Carte de Base du Canada – Transport (CBCT)",
+      "name": "Transport (CBCT) (avec étiquettes)",
+      "description": "Transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
+      "altText": "altText - Transport (CBCT)",
       "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
       "wkid": 3978,
       "extentId": "EXT_NRCAN_Lambert_3978",
@@ -165,9 +165,9 @@
     },
     {
       "id": "baseCBME_CBCE_HS_RO_3978",
-      "name": "Carte de Base du Canada - Élevation",
+      "name": "Élevation",
       "description": "The Canada Base Map - Elevation(CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
-      "altText": "Carte de Base du Canada - Élevation",
+      "altText": "Élevation",
       "thumbnailUrl": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
       "wkid": 3978,
       "extentId": "EXT_NRCAN_Lambert_3978",
@@ -182,9 +182,9 @@
     },
     {
       "id": "baseCBMT_CBCT_GEOM_3978",
-      "name": "Carte de Base du Canada - Transportation",
-      "description": "fr - Carte de Base du Canada - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
-      "altText": "altText - Canada Base Map&#92;Carte de Base du Canada - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
+      "name": "Transportation",
+      "description": "Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+      "altText": "altText - Transportation: geometry only&#92;géométrie seulement, Lambert conformal conic projection&#92;projection conique conforme de Lambert",
       "thumbnailUrl": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
       "wkid": 3978,
       "extentId": "EXT_NRCAN_Lambert_3978",
