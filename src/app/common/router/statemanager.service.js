@@ -30,14 +30,12 @@
     function stateManager($q, $rootScope, displayManager, initialState, initialDisplay) {
         const service = {
             addState,
-
             setActive,
             setMorph,
-
             openPrevious,
-
             callback,
-
+            setFocusElement,
+            nextFocus,
             state: angular.copy(initialState),
             display: angular.copy(initialDisplay),
 
@@ -49,6 +47,7 @@
         };
 
         const fulfillStore = {}; // keeping references to promise fulfill functions
+        let lastFocusElement; // stores an element for dynamic focus changes
 
         const displayService = displayManager(service); // init displayManager
         angular.extend(service, displayService); // merge displayManager service functions into stateManager
@@ -286,6 +285,21 @@
 
             // close `mainDetails` panel
             return service.setActive(options);
+        }
+
+        /**
+         * Saves a focusable element
+         * @param  {Object} element a focusable element
+         */
+        function setFocusElement(element) {
+            lastFocusElement = element;
+        }
+
+        /**
+         * Changes focus to the last saved focusable element
+         */
+        function nextFocus() {
+            lastFocusElement.focus();
         }
 
         /**

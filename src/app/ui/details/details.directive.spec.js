@@ -28,10 +28,6 @@ describe('rvDetails', () => {
     });
 
     describe('rvDetails', () => {
-        it('should be created successfully', () => {
-            // check that directive element exists
-            expect(directiveElement)
-                .toBeDefined();
-        });
+        // TODO: tests
     });
 });
