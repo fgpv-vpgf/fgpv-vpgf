@@ -13,6 +13,7 @@
             get state () { return this._state; }
             get layerId () { return this.config.id; }
             get _layerPassthroughBindings () { return ['setOpacity', 'setVisibility']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
+            get _layerPassthroughProperties () { return ['visibleAtMapScale', 'visible']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
             /**
              * Generate a bounding box for the layer on the given map.
@@ -95,6 +96,13 @@
                 this.state = Geo.Layer.States.NEW;
                 this._layerPassthroughBindings.forEach(bindingName =>
                     this[bindingName] = (...args) => this._layer[bindingName](...args));
+                this._layerPassthroughProperties.forEach(propName => {
+                    const descriptor = {
+                        enumerable: true,
+                        get: () => this._layer[propName]
+                    };
+                    Object.defineProperty(this, propName, descriptor);
+                });
 
                 gapi().events.wrapEvents(this._layer, {
                     // wrapping the function calls to keep `this` bound correctly
@@ -112,6 +120,8 @@
 
         class AttrRecord extends LayerRecord {
             get attributeBundle () { return this._attributeBundle; }
+            // FIXME clickTolerance is not specific to AttrRecord but rather Feature and Dynamic
+            get clickTolerance () { return this.config.tolerance; }
 
             constructor (initialState) {
                 super(initialState);
@@ -195,8 +205,9 @@
             get _layerPassthroughBindings () {
                 return ['setOpacity', 'setVisibility', 'setVisibleLayers', 'setLayerDrawingOptions'];
             }
-            get supportsDynamicLayers () { return this._layer.supportsDynamicLayers; }
-            get layerInfos () { return this._layer.layerInfos; }
+            get _layerPassthroughProperties () {
+                return ['visibleAtMapScale', 'layerInfos', 'supportsDynamicLayers'];
+            }
             get layerClass () { return gapi().layer.ArcGISDynamicMapServiceLayer; }
         }
 
