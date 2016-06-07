@@ -6,7 +6,7 @@
         <rv-stepper-item step="self.connect.step" form="self.connect.form">
 
             <md-input-container class="md-block">
-                <label>Service layer URL</label>
+                <label translate>import.service.connect.serviceurl</label>
                 <input
                     name="serviceUrl"
                     type="url"
@@ -14,30 +14,39 @@
                     ng-model-options="{ updateOn: 'default blur', debounce: { default: 500, blur: 0 } }"
                     required>
                 <div ng-messages="self.connect.form.serviceUrl.$error">
-                    <div ng-message="url">This is not a valid URL</div>
+                    <div ng-message="url" translate>import.service.connect.invalidurl</div>
                 </div>
             </md-input-container>
         </rv-stepper-item>
 
         <rv-stepper-item step="self.select.step" form="self.select.form">
             <md-input-container class="md-block">
-                <label translate>import.file.select.fileformat</label>
+                <label translate>import.service.select.servicetype</label>
                 <md-select name="serviceType" ng-model="self.layerBlueprint.serviceType" required>
                     <md-option ng-repeat="serviceType in self.serviceTypes" value="{{ serviceType }}">
                         {{ 'import.service.type.' + serviceType | translate }}
                     </md-option>
                 </md-select>
             </md-input-container>
-
         </rv-stepper-item>
 
-        <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.connect.serviceType">
+        <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.layerBlueprint.serviceType">
 
-            <md-input-container class="md-block" ng-switch-when="esriFeature">
-                <label>Primary Field</label>
-                <md-select name="primaryField" ng-model="self.configure.options.primaryField" required>
-                    <md-option ng-repeat="(value, key) in self.configure.layerFields" value="{{ value }}">
-                        {{ key }}
+            <md-input-container class="md-block">
+                <label translate>import.service.configure.layername</label>
+                <input name="layerName" ng-model="self.layerBlueprint.config.name" required>
+                <!-- TODO: decide whether and how to display a hint or error messages -->
+                <!--div ng-messages="self.configure.form.layerName.$error">
+                    <div ng-message="required">This is required!</div>
+                    <div ng-message="md-maxlength">That's too long!</div>
+                </div-->
+            </md-input-container>
+
+            <md-input-container class="md-block" ng-switch-when="featurelayer">
+                <label translate>import.service.configure.primaryfield</label>
+                <md-select name="primaryField" ng-model="self.layerBlueprint.config.primaryField" required>
+                    <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
+                        {{ field.name }}
                     </md-option>
                 </md-select>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
