@@ -314,6 +314,10 @@
                         console.log(`adding ${lr.config.name} to map at ${pos}`);
                         lr.addStateListener(makeFirstLoadHandler(lr));
                         mapObject.addLayer(lr._layer, pos);
+                        // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
+                        if (lr._layer.loaded) {
+                            lr.onLoad();
+                        }
                     });
                 });
             }
@@ -350,47 +354,6 @@
             }
 
             /**
-             * Creates layer records for a given esri layer object and its config; add the layer to the map.
-             * @private
-             * @param  {Object} layer       esri layer object
-             * @param  {Object} layerConfig initial config object
-             */
-            function createLayerRecord(layer, layerConfig) { // jshint ignore:line
-
-                // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-                if (layer.loaded) {
-                    onLoad();
-                }
-
-                function onLoad() {
-                    console.log('## layer load', layer.id);
-
-                    // FIXME look at layer config for flags indicating not to load attributes
-                    // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
-
-                    // make sure the placeholder hasn't been removed
-                    if (!layer.state.removed) {
-                        // handles the asynch loading of attributes
-                        // get the attributes for the layer
-                        // replace placeholder with actual layer
-
-                        // set attribute bundle on the layer record
-                        // TODO: refactor;
-                        /* attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
-                        *  index an optional index indicating at which position the layer was added to the map
-                        * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
-                        * */
-                        // TODO refactor this as it has nothing to do with layer registration;
-                        // will likely change as a result of layer reloading / reordering / properly ordered legend
-
-                        // if esriTile layer projection and map projection is different we can't show the layer. Disable the option.
-
-                        // set scale state
-                    }
-                }
-            }
-
-            /**
              * Removes the layer from the map and from the layer registry; This will not remove the corresponding legend entry.
              * @param {Number} layerId  the id of the layer to be removed
              * TODO: needs more work for removing dynamic layers and its children;
@@ -405,31 +368,6 @@
 
                 mapObject.removeLayer(l._layer);
                 delete service.layers[layerId]; // remove layer from the registry
-            }
-
-            /**
-             * Adds a layer object to the layers registry
-             * @param {object} layer the API layer object
-             * @param {object} initialState a configuration fragment used to generate the layer
-             *
-             */
-            function _registerLayer(layer, initialState) { // jshint ignore:line
-                if (!layer.id) {
-                    console.error('Attempt to register layer without id property');
-                    console.log(layer);
-                    console.log(initialState);
-                }
-
-                if (layers[layer.id]) {
-                    console.error('attempt to register layer already registered.  id: ' + layer.id);
-                    return false;
-                }
-
-                const layerRecord = null;
-
-                service.layers[layer.id] = layerRecord;
-
-                return layerRecord;
             }
 
             function registerLayerRecord(lr) {
