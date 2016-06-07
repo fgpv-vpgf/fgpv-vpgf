@@ -111,7 +111,7 @@
                 </md-input-container>
 
                 <md-input-container class="md-block">
-                    <label translate>import.file.upload.primaryfield</label>
+                    <label translate>import.file.configure.primaryfield</label>
                     <md-select name="primaryField" ng-model="self.layerBlueprint.userOptions.primaryField" required>
                         <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                             {{ field.name }}
@@ -125,7 +125,7 @@
 
                 <div layout="row" ng-switch-when="csv">
                     <md-input-container class="md-block" flex>
-                        <label translate>import.file.upload.latitudefield</label>
+                        <label translate>import.file.configure.latitudefield</label>
                         <md-select name="latitude" ng-model="self.layerBlueprint.userOptions.latfield" required>
                             <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                                 {{ field.name }}
@@ -137,7 +137,7 @@
                         </div-->
                     </md-input-container>
                     <md-input-container class="md-block" flex>
-                        <label translate>import.file.upload.longitudefield</label>
+                        <label translate>import.file.configure.longitudefield</label>
                         <md-select name="longitude" ng-model="self.layerBlueprint.userOptions.lonfield" required>
                             <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                                 {{ field.name }}
