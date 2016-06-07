@@ -201,7 +201,7 @@
 
                 console.log(`Inserting placeholder ${entry.name} ${position}`);
                 const listener = state => {
-                    console.info(`Listener fired ${state} ${layerRecord.layerId}`);
+                    console.info(`Placeholder listener fired ${state} ${layerRecord.layerId}`);
                     if (state === Geo.Layer.States.LOADED) {
                         // swap the placeholder with the real legendEntry
                         const index = service.legend.remove(entry);
