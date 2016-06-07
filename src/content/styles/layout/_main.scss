@@ -10,6 +10,16 @@ md-toast.md-rv-flex-global {
     justify-content: center;
 }
 
+// we use pointers-events to make click event pass through parent div. If it creates problem go with this solution:
+// position toast relatively, set the app container to flexbox, and align toast using justify-content and align-items.
+md-toast {
+    pointer-events: none;
+
+    .md-toast-content {
+        pointer-events: auto;
+    }
+}
+
 rv-panel md-toast.md-rv-flex {
     width: 100%;
     padding: {
@@ -52,7 +62,7 @@ rv-panel[type='filters'] {
     &.minimized {
         @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $height: 100px);
     }
-    
+
     rv-filters-default {
         @include content-plug;
     }
