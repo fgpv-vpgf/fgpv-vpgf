@@ -24,7 +24,7 @@
         .module('app.geo')
         .service('legendEntryFactory', legendEntryFactory);
 
-    function legendEntryFactory($timeout, $translate, gapiService, Geo, layerDefaults) {
+    function legendEntryFactory($timeout, $translate, gapiService, Geo, layerDefaults, $rootScope) {
 
         const service = {
             placeholderEntryItem,
@@ -334,6 +334,17 @@
             add(item, position = this.items.length) { // <- awesome! default is re-evaluated everytime the function is called
                 item.parent = this;
                 this.items.splice(position, 0, item);
+
+                // Propagate item visibility changes up so group visibility is updated
+                $rootScope.$watch(() => item.options.visibility.value, () => {
+                    for (let i = 0; i < this.items.length; i++) {
+                        if (!this.items[i].getVisibility()) {
+                            this.options.visibility.value = false;
+                            return;
+                        }
+                    }
+                    this.options.visibility.value = true;
+                });
 
                 return position;
             },
