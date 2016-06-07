@@ -46,10 +46,7 @@
                 legend: legendEntryFactory.entryGroup(), // this is legend's invisible root group; to be consumed by toc
 
                 addLayer,
-                addPlaceholder,
-                setLayerState,
-                setLayerLoadingFlag,
-                setLayerScaleFlag
+                addPlaceholder
             };
 
             init();
@@ -108,8 +105,8 @@
                 // assign feature counts only to active sublayers
                 state.walkItems(layerEntry => {
                     getServiceFeatureCount(`${state.url}/${layerEntry.featureIdx}`).then(count =>
-                        applyFeatureCount(layer._layer.geometryType, layerEntry, count));
                         // FIXME _layer reference is bad
+                        applyFeatureCount(layer._layer.geometryType, layerEntry, count));
                 });
 
                 return state;
@@ -231,69 +228,6 @@
                 console.log(`Inserting legend entry ${entry.name} ${index}`);
 
                 service.legend.add(entry, index);
-            }
-
-            /**
-             * Sets state of the layer entry: error, default, out-of-scale, etc
-             * @param {Object} entry entry object from the legend
-             * @param {String} state defaults to `default`; state name
-             * @param {Number} delay defaults to 0; delay before setting the state
-             */
-            function setLayerState(entry, state = Geo.Layer.States.DEFAULT, delay = 0) {
-                // same as with map loading indicator, need timeout since it's a non-Angular async call
-                $timeout.cancel(entry._stateTimeout);
-                entry._stateTimeout = $timeout(() => {
-                    entry.state = state;
-                }, delay);
-            }
-
-            /**
-             * Sets `isLoading` flag on the legend entry.
-             * @param {Object} entry entry object from the legend
-             * @param {Boolean} isLoading defaults to true; flag indicating if the layer is updating their content
-             * @param {Number} delay defaults to 0; delay before setting the state
-             */
-            function setLayerLoadingFlag(entry, isLoading = true, delay = 0) {
-                // same as with map loading indicator, need timeout since it's a non-Angular async call
-                $timeout.cancel(entry._loadingTimeout);
-                entry._loadingTimeout = $timeout(() => {
-                    entry.isLoading = isLoading;
-                }, delay);
-            }
-
-            /**
-             * Sets `scale` flags on the legend entry.
-             * @param {Object} legendEntry   a LegendEntry object
-             * @param {Boolean} scaleSet     mapping of featureIdx to booleans reflecting flag state
-             */
-            function setLayerScaleFlag(legendEntry, scaleSet) {
-
-                if (legendEntry.flags) {
-
-                    // currently, non-feature based things have text-ish content put in their featureIdx.  map them to 0
-                    const adjIdx = isNaN(legendEntry.featureIdx) ? '0' : legendEntry.featureIdx;
-
-                    // TODO remove this test once it has passed the test of time
-                    if (typeof scaleSet[adjIdx] === 'undefined') {
-                        console.warn('setLayerScaleFlag - indexes are not lining up');
-                    }
-                    legendEntry.flags.scale.visible = scaleSet[adjIdx];
-
-                } else if (legendEntry.layerEntries) {
-                    // walk through layerEntries and update each one
-                    legendEntry.layerEntries.forEach(ent => {
-                        const slave = legendEntry.slaves[ent.index];
-
-                        if (slave.flags) {
-                            // TODO remove this test once it has passed the test of time
-                            if (typeof scaleSet[slave.featureIdx] === 'undefined') {
-                                console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
-                            }
-                            slave.flags.scale.visible = scaleSet[slave.featureIdx];
-                        }
-                    });
-                }
-
             }
         }
 

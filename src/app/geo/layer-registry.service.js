@@ -126,10 +126,8 @@
              * @param  {String} layerId       layer id of layer to update
              */
             function setScaleDepState(layerId) {
-                const lReg = service.layers;
-                makeScaleSet(lReg[layerId]).then(scaleSet => {
-                    ref.legendService.setLayerScaleFlag(lReg[layerId], scaleSet);
-                });
+                const lr = service.layers[layerId];
+                makeScaleSet(lr).then(scaleSet => lr.legendEntry.setLayerScaleFlag(scaleSet));
             }
 
             /**
@@ -318,6 +316,8 @@
                 });
             }
 
+            // this should be in legend service
+            // it should bind layerRecord.legendEntry after creating the placeholder
             function createPlaceholder(lr) {
                 const sourceIndex = ref.legendService.addPlaceholder(lr);
                 let targetId = service.legend.items[sourceIndex + 1];
@@ -397,7 +397,6 @@
                         }
 
                         // replace placeholder with actual layer
-                        const index = ref.legendService.legend.remove(layer.state);
 
                         // set attribute bundle on the layer record
                         // TODO: refactor;
@@ -406,7 +405,6 @@
                         * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
                         * */
                         layer.attributeBundle = attributesPromise;
-                        ref.legendService.addLayer(layer, index); // generate actual legend entry
 
                         // TODO refactor this as it has nothing to do with layer registration;
                         // will likely change as a result of layer reloading / reordering / properly ordered legend
