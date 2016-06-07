@@ -37,7 +37,7 @@
       "ignore": true
     },
     "angular-dragula": {
-      "main": "dist/angular-dragula.js"
+      "main": "dist/angular-dragula.min.js"
     },
     "datatables.net": {
       "ignore": true
