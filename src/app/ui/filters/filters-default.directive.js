@@ -82,7 +82,7 @@
                     if (!displayData.rows[0].hasOwnProperty('rvSymbol')) {
                         displayData.rows.forEach((row, index) => {
                             const objId = row[displayData.oidField];
-                            const renderer = geoService.layers[requester.layerId].layer.renderer;
+                            const renderer = geoService.layers[requester.layerId]._layer.renderer;
                             const legend = requester.legendEntry.symbology;
 
                             // FIXME: mock fdata object for this particular item
@@ -165,7 +165,8 @@
 
                     // get object id from row data
                     const objId = row.data()[displayData.oidField];
-                    const layer = geoService.layers[requester.layerId].layer;
+                    // FIXME _layer reference
+                    const layer = geoService.layers[requester.layerId]._layer;
 
                     geoService.zoomToGraphic(layer, objId);
                 });
