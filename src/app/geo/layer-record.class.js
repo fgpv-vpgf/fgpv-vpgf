@@ -6,7 +6,6 @@
 
         class LayerRecord {
             get layerClass () { throw new Error('This should be overridden in subclasses'); }
-            get attributeBundle () { return this._attributeBundle; }
             get config () { return this.initialConfig; } // TODO: add a live config reference if needed
             get legendEntry () { return this._legendEntry; } // legend entry class corresponding to those defined in legend entry service
             set legendEntry (value) { this._legendEntry = value; }
@@ -14,28 +13,6 @@
             get state () { return this._state; }
             get layerId () { return this.config.id; }
             get _layerPassthroughBindings () { return ['setOpacity', 'setVisibility']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
-
-            /**
-             * Retrieves attributes from a layer for a specified feature index
-             * @param  {Number} featureIdx feature id on the service endpoint
-             * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
-             */
-            getAttributes (featureIdx) {
-                if (this._formattedAttributes.hasOwnProperty(featureIdx)) {
-                    return this._formattedAttributes[featureIdx];
-                }
-
-                const layerPackage = this._attributeBundle[featureIdx];
-                const attributePromise =
-                    $q.all([
-                        layerPackage.getAttribs(),
-                        layerPackage.layerData
-                    ])
-                    .then(([attributes, layerData]) =>
-                        this.formatAttributes(attributes, layerData)
-                    );
-                return (this._formattedAttributes[featureIdx] = attributePromise);
-            }
 
             /**
              * Generate a bounding box for the layer on the given map.
@@ -84,9 +61,6 @@
             onLoad () {
                 if (this.legendEntry && this.legendEntry.removed) { return; }
                 console.info(`Layer loaded: ${this._layer.id}`);
-
-                // no attributes are set by default, layers with attributes should override
-                this._attributeBundle = $q.resolve(null);
                 this._stateChange(Geo.Layer.States.LOADING);
             }
 
@@ -103,6 +77,54 @@
             onUpdateEnd () {
                 this._stateChange(Geo.Layer.States.LOADED);
             }
+
+
+            makeLayerConfig () {
+                return { id: this.config.id };
+            }
+
+            /**
+             * Create a layer record with the appropriate geoApi layer type.  Layer config
+             * should be fully merged with all layer options defined (i.e. this constructor
+             * will not apply any defaults).
+             * @param  {Object} initialState    layer config values
+             */
+            constructor (initialState) {
+                this.initialConfig = initialState;
+                this._stateListeners = [];
+                this._layer = this.constructLayer(initialState);
+                this.state = Geo.Layer.States.NEW;
+                this._layerPassthroughBindings.forEach(bindingName =>
+                    this[bindingName] = (...args) => this._layer[bindingName](...args));
+
+                gapi().events.wrapEvents(this._layer, {
+                    // wrapping the function calls to keep `this` bound correctly
+                    load: () => this.onLoad(),
+                    error: e => this.onError(e),
+                    'update-start': () => this.onUpdateStart(),
+                    'update-end': () => this.onUpdateEnd()
+                });
+
+                // NOTE layer registry is responsible for adding the layer to the map
+                // this avoids LayerRecord having an explicit dependency on the map object
+            }
+
+        }
+
+        class AttrRecord extends LayerRecord {
+            get attributeBundle () { return this._attributeBundle; }
+
+            constructor (initialState) {
+                super(initialState);
+                this._formattedAttributes = {};
+            }
+
+            onLoad () {
+                this._attributeBundle = gapi().attribs.loadLayerAttribs(this._layer);
+                super.onLoad();
+            }
+
+                // no attributes are set by default, layers with attributes should override
 
             /**
              * Formats raw attributes to the form consumed by the datatable
@@ -150,35 +172,20 @@
                 };
             }
 
-            makeLayerConfig () {
-                return { id: this.config.id };
-            }
-
             /**
-             * Create a layer record with the appropriate geoApi layer type.  Layer config
-             * should be fully merged with all layer options defined (i.e. this constructor
-             * will not apply any defaults).
-             * @param  {Object} initialState    layer config values
+             * Retrieves attributes from a layer for a specified feature index
+             * @param  {Number} featureIdx feature id on the service endpoint
+             * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
              */
-            constructor (initialState) {
-                this.initialConfig = initialState;
-                this._formattedAttributes = {};
-                this._stateListeners = [];
-                this._layer = this.constructLayer(initialState);
-                this.state = Geo.Layer.States.NEW;
-                this._layerPassthroughBindings.forEach(bindingName =>
-                    this[bindingName] = (...args) => this._layer[bindingName](...args));
+            getAttributes (featureIdx) {
+                if (this._formattedAttributes.hasOwnProperty(featureIdx)) {
+                    return this._formattedAttributes[featureIdx];
+                }
 
-                gapi().events.wrapEvents(this._layer, {
-                    // wrapping the function calls to keep `this` bound correctly
-                    load: () => this.onLoad(),
-                    error: e => this.onError(e),
-                    'update-start': () => this.onUpdateStart(),
-                    'update-end': () => this.onUpdateEnd()
-                });
-
-                // NOTE layer registry is responsible for adding the layer to the map
-                // this avoids LayerRecord having an explicit dependency on the map object
+                const layerPackage = this._attributeBundle[featureIdx];
+                const attributePromise = $q.all([layerPackage.getAttribs(), layerPackage.layerData])
+                    .then(([attributes, layerData]) => this.formatAttributes(attributes, layerData) );
+                return (this._formattedAttributes[featureIdx] = attributePromise);
             }
 
         }
@@ -187,7 +194,7 @@
             get layerClass () { return gapi().layer.ArcGISImageServiceLayer; }
         }
 
-        class DynamicRecord extends LayerRecord {
+        class DynamicRecord extends AttrRecord {
             get _layerPassthroughBindings () {
                 return ['setOpacity', 'setVisibility', 'setVisibleLayers', 'setLayerDrawingOptions'];
             }
@@ -216,7 +223,7 @@
             }
         }
 
-        class FeatureRecord extends LayerRecord {
+        class FeatureRecord extends AttrRecord {
             get layerClass () { return gapi().layer.FeatureLayer; }
 
             makeLayerConfig () {
