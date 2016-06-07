@@ -78,7 +78,6 @@
                 this._stateChange(Geo.Layer.States.LOADED);
             }
 
-
             makeLayerConfig () {
                 return { id: this.config.id };
             }
@@ -123,8 +122,6 @@
                 this._attributeBundle = gapi().attribs.loadLayerAttribs(this._layer);
                 super.onLoad();
             }
-
-                // no attributes are set by default, layers with attributes should override
 
             /**
              * Formats raw attributes to the form consumed by the datatable
@@ -184,7 +181,7 @@
 
                 const layerPackage = this._attributeBundle[featureIdx];
                 const attributePromise = $q.all([layerPackage.getAttribs(), layerPackage.layerData])
-                    .then(([attributes, layerData]) => this.formatAttributes(attributes, layerData) );
+                    .then(([attributes, layerData]) => this.formatAttributes(attributes, layerData));
                 return (this._formattedAttributes[featureIdx] = attributePromise);
             }
 
