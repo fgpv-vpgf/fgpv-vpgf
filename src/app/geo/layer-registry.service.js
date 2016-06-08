@@ -36,6 +36,7 @@
                 moveLayer,
                 checkDateType,
                 setBboxState,
+                getLayerMapIndex,
                 _refactorIsLayerInMapStack // temporary function, will likely be removed after refactor
             };
 
@@ -180,6 +181,14 @@
             }
 
             /**
+             * Given a LayerRecord find the position it currently occupies within the map.
+             */
+            function getLayerMapIndex(layerRecord) {
+                const mapStackSwitch = [mapObject.graphicsLayerIds, mapObject.layerIds];
+                return mapStackSwitch[layerRecord.legendEntry.sortGroup].indexOf(layerRecord.layerId);
+            }
+
+            /**
              * Finds a position at which to insert the source layer so it's positioned directly above target layer (if one specified).
              * If the target layer is no specified, the source layer is placed at the bottom of its sort group.
              *
@@ -192,18 +201,11 @@
              * @return {Number}          index at which the source layer should be inserted in the map stack
              */
             function getLayerInsertPosition(sourceId, targetId) {
-                console.log(sourceId);
-                console.log(targetId);
-                console.log(layers);
                 const sourceEntry = service.layers[sourceId].legendEntry;
                 const targetEntry = typeof targetId !== 'undefined' ? service.layers[targetId].legendEntry : null;
+                const mapStackSwitch = [mapObject.graphicsLayerIds, mapObject.layerIds];
 
-                const mapStackSwitch = [
-                    mapObject.graphicsLayerIds,
-                    mapObject.layerIds
-                ];
-
-                const sourceIndex = mapStackSwitch[sourceEntry.sortGroup].indexOf(sourceId);
+                const sourceIndex = getLayerMapIndex(service.layers[sourceId]);
                 let targetIndex;
 
                 // if targetEntry is null, meaning the layer is dropped at the end of the list or
@@ -378,8 +380,9 @@
             function reloadLayer(l) {
                 // FIXME do a proper test when LegendEntry becomes a proper class
                 const lr = l._layerRecord || l;
+                const pos = getLayerMapIndex(lr);
                 mapObject.removeLayer(lr._layer);
-                mapObject.addLayer(lr.constructLayer());
+                mapObject.addLayer(lr.constructLayer(), pos);
             }
 
             function registerLayerRecord(lr) {
