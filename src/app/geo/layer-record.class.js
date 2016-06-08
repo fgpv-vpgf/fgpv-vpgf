@@ -208,7 +208,7 @@
                 return ['setOpacity', 'setVisibility', 'setVisibleLayers', 'setLayerDrawingOptions'];
             }
             get _layerPassthroughProperties () {
-                return ['visibleAtMapScale', 'layerInfos', 'supportsDynamicLayers'];
+                return ['visibleAtMapScale', 'visible', 'layerInfos', 'supportsDynamicLayers'];
             }
             get layerClass () { return gapi().layer.ArcGISDynamicMapServiceLayer; }
         }
