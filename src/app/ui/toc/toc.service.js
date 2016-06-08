@@ -33,7 +33,7 @@
             groupOptions: {
                 visibility: {
                     action: null,
-                    icon: vis => vis ? 'action:visibility' : 'action:visibility_off',
+                    icon: vis => `action:visibility${vis ? '' : '_off'}`,
                     label: 'toc.label.toggleGroupViz',
                     tooltip: 'toc.tooltip.toggleGroupViz'
                 }
@@ -62,16 +62,15 @@
                     action: toggleSettings
                 },
                 visibility: {
-                    icon: vis => vis ? 'action:visibility' : 'action:visibility_off',
-                    label: vis => vis ? 'toc.label.visibility.on' : 'toc.label.visibility.off',
-                    tooltip: vis => vis ? 'toc.tooltip.visibility.on' : 'toc.tooltip.visibility.off',
+                    icon: vis => `action:visibility${vis ? '' : '_off'}`,
+                    label: vis => `toc.label.visibility.${vis ? 'on' : 'off'}`,
+                    tooltip: vis => `toc.tooltip.visibility.${vis ? 'on' : 'off'}`,
                     action: toggleVisiblity
                 },
                 offscale: {
-                    icon: zoom => (zoom === 'zoomin') ? 'action:zoom_in' : 'action:zoom_out',
-                    label: zoom => (zoom === 'zoomin') ? 'toc.label.visibility.zoomIn' : 'toc.label.visibility.zoomOut',
-                    tooltip: zoom => (zoom === 'zoomin') ?
-                        'toc.tooltip.visibility.zoomIn' : 'toc.tooltip.visibility.zoomOut',
+                    icon: zoom => `action:zoom_${zoom ? 'in' : 'out'}`,
+                    label: zoom => `toc.label.visibility.zoom${zoom ? 'In' : 'Out'}`,
+                    tooltip: zoom => `toc.tooltip.visibility.zoom${zoom ? 'In' : 'Out'}`,
                     action: zoomLayerScale
                 },
                 reload: {

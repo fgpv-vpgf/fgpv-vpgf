@@ -265,16 +265,16 @@
                     const adjIdx = isNaN(legendEntry.featureIdx) ? '0' : legendEntry.featureIdx;
 
                     // TODO remove this test once it has passed the test of time
-                    if (typeof scaleSet[adjIdx].value === 'undefined') {
+                    // quite often, it is undefined for example Eco Geo always start at 1. We need to keep this or modify upfront
+                    if (typeof scaleSet[adjIdx] === 'undefined') {
                         console.warn('setLayerScaleFlag - indexes are not lining up');
-                    }
-
-                    // set scale flag properties and offscale options (only for legend entry, only on featureLayer and dynamicLayer for now)
-                    const scale = scaleSet[adjIdx];
-                    legendEntry.flags.scale.visible = scale.value;
-                    legendEntry.flags.scale.direction = scale.direction;
-                    if (legendEntry.options.offscale) {
-                        legendEntry.options.offscale.value = (scale.value) ? scale.direction : '';
+                    } else {
+                        // set scale flag properties and offscale options (only for legend entry, only on featureLayer and dynamicLayer for now)
+                        const scale = scaleSet[adjIdx];
+                        legendEntry.flags.scale.visible = scale.value;
+                        if (legendEntry.options.offscale) {
+                            legendEntry.options.offscale.value = scale.zoomIn;
+                        }
                     }
                 } else if (legendEntry.layerEntries) {
                     // walk through layerEntries and update each one
@@ -290,7 +290,6 @@
                         }
                     });
                 }
-
             }
         }
 
