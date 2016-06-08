@@ -6,24 +6,24 @@
 
     /**
      * @ngdoc directive
-     * @name rvDetailSlider
+     * @name rvLayerListSlider
      * @module app.ui.details
      * @restrict E
      * @description
      *
-     * The `rvDetailSlider` directive handles the in/out sliding of the details panel.
+     * The `rvLayerListSlider` directive handles the in/out sliding of the details panel.
      *
      * The panel slides open when either any point layer is focused or on mouseover. It closes
      * when no point layers have focus, no mouseover, or the user clicked on a point layer.
      */
     angular
         .module('app.ui.details')
-        .directive('rvDetailSlider', rvDetailSlider);
+        .directive('rvLayerListSlider', rvLayerListSlider);
 
-    function rvDetailSlider(stateManager) {
+    function rvLayerListSlider(stateManager) {
         const directive = {
             restrict: 'E',
-            templateUrl: 'app/ui/details/details-slider.html',
+            templateUrl: 'app/ui/details/layer-list-slider.html',
             link
         };
 
@@ -39,7 +39,10 @@
 
             let forceClose = false;
 
-            const animateOpen = () => {
+            /**
+             * Starts the slider animation so layer list is expanded
+             */
+            function animateOpen() {
                 if (tl.paused()) {
                     tl.play();
                 } else if (!forceClose) {
@@ -47,39 +50,57 @@
                 } else {
                     forceClose = false;
                 }
-            };
+            }
 
-            const animateClosed = () => tl.reversed(true);
+            /**
+             * Reverses the slider animation so layer list is contracted
+             */
+            function animateClosed() {
+                tl.reversed(true);
+            }
 
             tl.to(element, RV_SLIDE_DURATION, {
                 width: 280,
                 ease: RV_SWIFT_IN_OUT_EASE,
                 overflowY: 'auto'
-            });
+            })
+
+            // This will explicitly "animate" the overflow property from hidden to auto and not try to figure
+            // out what it was initially on the reverse run.
+            .fromTo(element, 0.01, {
+                    'overflow-y': 'hidden'
+                }, {
+                    'overflow-y': 'auto'
+                }, RV_SLIDE_DURATION / 2);
 
             // focus moving away from directive, hiding
             element.on('focusout', event => {
                 if (!$.contains(element[0], event.relatedTarget)) {
                     animateClosed();
-                    stateManager.nextFocus();
                 }
             });
 
             element.on('focusin', animateOpen);
 
-            self.itemSelectedByKeypress = (evt, item, isLast) => {
-                if (evt.which === 13 || evt.which === 32 || evt.which === 33) {
+            /**
+             * Handle layer selection on enter or space keypress. Sets focus to close button for accessibility
+             * @param  {Object} evt the event object
+             * @param  {Object} item the selected item
+             */
+            self.itemSelectedByKeypress = (evt, item) => {
+                if (evt.which === 13 || evt.which === 32) {
                     evt.preventDefault();
                     animateClosed();
                     self.selectItem(item);
-                    stateManager.nextFocus();
+                    stateManager.previousFocus();
 
-                } else if (isLast && evt.which === 9) {
-                    evt.preventDefault();
-                    stateManager.nextFocus();
                 }
             };
 
+            /**
+             * Handle layer selection on mousedown.
+             * @param  {Object} item the selected item
+             */
             self.itemSelectedByMouse = item => {
                 forceClose = true;
                 animateClosed();
