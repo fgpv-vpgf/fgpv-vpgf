@@ -206,16 +206,16 @@
                 // 0 value for min or max scale means there is no hiding in effect
                 const scaleSet = {
                     value: false,
-                    direction: null
+                    direction: false
                 };
 
                 // check if out of scale and the dirrection to scaleSet
                 if (scale < maxScale && maxScale !== 0) {
                     scaleSet.value = true;
-                    scaleSet.direction = 'zoomout';
+                    scaleSet.direction = false;
                 } else if (scale > minScale && minScale !== 0) {
                     scaleSet.value = true;
-                    scaleSet.direction = 'zoomin';
+                    scaleSet.direction = true;
                 }
 
                 return scaleSet;
@@ -535,25 +535,6 @@
             }
 
             /**
-             * Zoom to visibility scale
-             * @param {Number} layerId  the id of the layer to zoom to scale to
-             * @param {String} direction the zoom to scale direction
-             *
-             */
-            function zoomToScale(layerId, direction) {
-                const l = layers[layerId].layer;
-                const lods = (direction === 'zoomin') ? geoState.lods : [...geoState.lods].reverse();
-
-                lods.some(lod => {
-                    if (direction === 'zoomin' && lod.scale < l.minScale) {
-                        return mapObject.setScale(lod.scale);
-                    } else if (direction === 'zoomout' && lod.scale > l.maxScale) {
-                        return mapObject.setScale(lod.scale);
-                    }
-                });
-            }
-
-            /**
              * Adds a layer object to the layers registry
              * @param {object} layer the API layer object
              * @param {object} initialState a configuration fragment used to generate the layer
@@ -577,6 +558,19 @@
                 service.layers[layer.id] = layerRecord;
 
                 return layerRecord;
+            }
+
+            /**
+             * Zoom to visibility scale
+             * @param {Number} layerId  the id of the layer to zoom to scale to
+             * @param {String} direction the zoom to scale direction
+             *
+             */
+            function zoomToScale(layerId, direction) {
+                const l = layers[layerId].layer;
+                const lods = direction ? geoState.lods : [...geoState.lods].reverse();
+                const lod = lods.find(lod => direction ? lod.scale < l.minScale : lod.scale > l.maxScale);
+                return mapObject.setScale(lod.scale);
             }
 
             /**

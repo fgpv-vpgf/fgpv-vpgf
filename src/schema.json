@@ -215,10 +215,9 @@
                     "default": true
                 },
                 "value": {
-                    "type": "string",
-                    "enum": ["", "zoomin", "zoomout"],
-                    "default": "",
-                    "description": "Specifies the off scale direction. empty: on scale; zoomin: need to zoom in to see the layer; zoomout: need to zoom out to see the layer."
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies the off scale direction. True: need to zoom in to see the layer; False: need to zoom out to see the layer."
                 }
             },
             "description": "Specifies if the layer is off scale or not, this option will replace visibility option when layer is off scale and visibility is true",
@@ -230,6 +229,9 @@
             "properties": {
                 "visibility": {
                     "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "offscale": {
+                    "$ref": "#/definitions/offscaleOptionNode"
                 },
                 "opacity": {
                     "$ref": "#/definitions/opacityOptionNode"

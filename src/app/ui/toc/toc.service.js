@@ -68,10 +68,9 @@
                     action: toggleVisiblity
                 },
                 offscale: {
-                    icon: zoom => (zoom === 'zoomin') ? 'action:zoom_in' : 'action:zoom_out',
-                    label: zoom => (zoom === 'zoomin') ? 'toc.label.visibility.zoomIn' : 'toc.label.visibility.zoomOut',
-                    tooltip: zoom => (zoom === 'zoomin') ?
-                        'toc.tooltip.visibility.zoomIn' : 'toc.tooltip.visibility.zoomOut',
+                    icon: zoom => zoom ? 'action:zoom_in' : 'action:zoom_out',
+                    label: zoom => zoom ? 'toc.label.visibility.zoomIn' : 'toc.label.visibility.zoomOut',
+                    tooltip: zoom => zoom ? 'toc.tooltip.visibility.zoomIn' : 'toc.tooltip.visibility.zoomOut',
                     action: zoomLayerScale
                 },
                 reload: {
