@@ -161,7 +161,8 @@
 
                     // get object id from row data
                     const objId = row.data()[displayData.oidField];
-                    const layer = geoService.layers[requester.layerId].layer;
+                    // FIXME _layer reference
+                    const layer = geoService.layers[requester.layerId]._layer;
 
                     geoService.zoomToGraphic(layer, layerName, objId);
                 });

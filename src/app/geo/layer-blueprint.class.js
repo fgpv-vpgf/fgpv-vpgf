@@ -17,7 +17,7 @@
         .module('app.geo')
         .factory('LayerBlueprint', LayerBlueprintFactory);
 
-    function LayerBlueprintFactory($q, LayerBlueprintUserOptions, gapiService, Geo, layerDefaults) {
+    function LayerBlueprintFactory($q, LayerBlueprintUserOptions, gapiService, Geo, layerDefaults, LayerRecordFactory) {
         let idCounter = 0; // layer counter for generating layer ids
 
         // jscs doesn't like enhanced object notation
@@ -96,31 +96,6 @@
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
-        // generator functions for different layer types
-        // TODO: this is going to move to layer record
-        const layerServiceGenerators = {
-            [Geo.Layer.Types.ESRI_DYNAMIC]: (config, commonConfig) =>
-                new gapiService.gapi.layer.ArcGISDynamicMapServiceLayer(config.url, commonConfig),
-
-            [Geo.Layer.Types.ESRI_FEATURE]: (config, commonConfig) => {
-                commonConfig.mode = config.snapshot ?
-                    gapiService.gapi.layer.FeatureLayer.MODE_SNAPSHOT :
-                    gapiService.gapi.layer.FeatureLayer.MODE_ONDEMAND;
-                return new gapiService.gapi.layer.FeatureLayer(config.url, commonConfig);
-            },
-
-            [Geo.Layer.Types.ESRI_IMAGE]: (config, commonConfig) =>
-                new gapiService.gapi.layer.ArcGISImageServiceLayer(config.url, commonConfig),
-
-            [Geo.Layer.Types.ESRI_TILE]: (config, commonConfig) =>
-                new gapiService.gapi.layer.TileLayer(config.url, commonConfig),
-
-            [Geo.Layer.Types.OGC_WMS]: (config, commonConfig) => {
-                commonConfig.visibleLayers = config.layerEntries.map(le => le.id);
-                return new gapiService.gapi.layer.ogc.WmsLayer(config.url, commonConfig);
-            }
-        };
-
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         class LayerServiceBlueprint extends LayerBlueprint {
@@ -153,20 +128,10 @@
              * Generates a layer from an online service based on the layer type.
              * Takes a layer in the config format and generates an appropriate layer object.
              * @param {Object} layerConfig a configuration fragment for a single layer
-             * @return {Promise} resolving with a layer object matching one of the esri/layers objects based on the layer type
+             * @return {Promise} resolving with a LayerRecord object matching one of the esri/layers objects based on the layer type
              */
             generateLayer() {
-                const commonConfig = {
-                    id: this.config.id
-                };
-
-                // TODO: throw error if layer type is not defined
-
-                if (layerServiceGenerators.hasOwnProperty(this.layerType)) {
-                    return $q.resolve(layerServiceGenerators[this.layerType](this.config, commonConfig));
-                } else {
-                    throw new Error('The layer type is not supported');
-                }
+                return $q.resolve(LayerRecordFactory.makeRecord(this.config));
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression

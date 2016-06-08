@@ -81,7 +81,7 @@
                 // TODO: make nicer
                 return layerRegistry.getLayersByType(Geo.Layer.Types.ESRI_FEATURE)
                     .concat(layerRegistry.getLayersByType(Geo.Layer.Types.ESRI_DYNAMIC))
-                    .filter(l => l.layer.visibleAtMapScale)
+                    .filter(l => l.visibleAtMapScale)
                     .concat(layerRegistry.getLayersByType(Geo.Layer.Types.OGC_WMS))
                     .length;
             }
@@ -139,16 +139,6 @@
                 return cBuff.centerAt(point);
             }
 
-            // attempt to get a tolerance from the layer state, otherwise return a default
-            function getTolerance(layer) {
-                if (layerRegistry.layers[layer.id] && layerRegistry.layers[layer.id].state &&
-                    layerRegistry.layers[layer.id].state.tolerance) {
-                    return layerRegistry.layers[layer.id].state.tolerance;
-                } else {
-                    return 5;
-                }
-            }
-
             /**
             * Run a query on a dynamic layer, return the result as a promise.
             * @param {Object} layerRecord esri layer object
@@ -156,17 +146,17 @@
             * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
             */
             function identifyEsriDynamicLayer(layerRecord, opts) {
-                const { layer, state } = layerRecord;
+                const legendEntry = layerRecord.legendEntry;
 
                 // ignore invisible layers by returning empty object
-                if (!layer.visibleAtMapScale || !layer.visible) {
+                if (!layerRecord.visibleAtMapScale || !layerRecord.visible) {
                     return {};
                 }
 
                 const identifyResults = [];
 
                 // every dynamic layer is a group in toc; walk its items to create an entry in details panel
-                state.walkItems(legendEntry => {
+                legendEntry.walkItems(legendEntry => {
 
                     // ignore invisible sublayers and those where query option is false by returning empty object
                     if (!legendEntry.getVisibility() || !legendEntry.options.query.value) {
@@ -174,14 +164,14 @@
                     }
 
                     const identifyResult =
-                        IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature', state.name);
+                        IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature', legendEntry.name);
 
                     identifyResults[legendEntry.featureIdx] = identifyResult;
                 });
 
-                opts.tolerance = getTolerance(layer);
+                opts.tolerance = layerRecord.clickTolerance;
 
-                const identifyPromise = gapiService.gapi.layer.serverLayerIdentify(layer, opts)
+                const identifyPromise = gapiService.gapi.layer.serverLayerIdentify(layerRecord._layer, opts)
                     .then(clickResults => {
                         console.log('got a click result');
                         console.log(clickResults);
@@ -220,25 +210,25 @@
             * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
             */
             function identifyOgcWmsLayer(layerRecord, opts) {
-                const { layer, state } = layerRecord;
+                const legendEntry = layerRecord.legendEntry;
                 const infoMap = Geo.Layer.Ogc.INFO_FORMAT_MAP;
 
                 // ignore layers with no mime type or invisible layers and those where query option is false by returning empty object
-                if (!infoMap.hasOwnProperty(state.featureInfoMimeType) ||
-                    !layer.visible ||
-                    !state.options.query.value) {
+                if (!infoMap.hasOwnProperty(legendEntry.featureInfoMimeType) ||
+                    !layerRecord.visible ||
+                    !legendEntry.options.query.value) {
                     return {};
                 }
 
                 const identifyResult =
-                    IDENTIFY_RESULT(state.name, state.symbology, infoMap[state.featureInfoMimeType]);
+                    IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, infoMap[legendEntry.featureInfoMimeType]);
 
                 const identifyPromise = gapiService.gapi.layer.ogc
                     .getFeatureInfo(
-                        layer,
+                        layerRecord._layer,
                         opts.clickEvent,
-                        state.layerEntries.map(le => le.id),
-                        state.featureInfoMimeType)
+                        legendEntry.layerEntries.map(le => le.id),
+                        legendEntry.featureInfoMimeType)
                     .then(data => {
                         identifyResult.isLoading = false;
 
@@ -261,31 +251,31 @@
             * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
             */
             function identifyEsriFeatureLayer(layerRecord, opts) {
-                const { layer, state } = layerRecord;
+                const legendEntry = layerRecord.legendEntry;
 
                 // ignore invisible layers and those where identify option is false by returning empty object
-                if (!layer.visibleAtMapScale || !layer.visible || !state.options.query.value) {
+                if (!layerRecord.visibleAtMapScale || !layerRecord.visible || !legendEntry.options.query.value) {
                     return {};
                 }
 
                 const identifyResult =
-                    IDENTIFY_RESULT(state.name, state.symbology, 'EsriFeature');
+                    IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature');
 
                 // run a spatial query
                 const qry = new gapiService.gapi.layer.Query();
                 qry.outFields = ['*']; // this will result in just objectid fields, as that is all we have in feature layers
 
                 // more accurate results without making the buffer if we're dealing with extents
-                if (layer.geometryType === 'esriGeometryPolygon') {
+                if (layerRecord._layer.geometryType === 'esriGeometryPolygon') {
                     qry.geometry = opts.geometry;
                 } else {
-                    qry.geometry = makeClickBuffer(opts.clickEvent.mapPoint, opts.map, getTolerance(layer));
+                    qry.geometry = makeClickBuffer(opts.clickEvent.mapPoint, opts.map, layerRecord.clickTolerance);
                 }
 
                 // no need to check if the layer is registered as this object comes from an array of registered layers
                 const identifyPromise = $q.all([
-                        layerRecord.getAttributes(state.featureIdx),
-                        $q.resolve(layer.queryFeatures(qry))
+                        layerRecord.getAttributes(legendEntry.featureIdx),
+                        $q.resolve(layerRecord._layer.queryFeatures(qry))
                     ])
                     .then(([attributes, queryResult]) => {
                         // transform attributes of query results into {name,data} objects one object per queried feature
@@ -303,7 +293,7 @@
                                 const featAttribs = attributes.rows[attributes.oidIndex[objId]];
 
                                 return {
-                                    name: getFeatureName(featAttribs, state, objId),
+                                    name: getFeatureName(featAttribs, legendEntry, objId),
                                     data: attributesToDetails(featAttribs, attributes.fields)
                                 };
                             });
@@ -363,7 +353,7 @@
                     .getAllQueryableLayerRecords()
                     .forEach(layerRecord => {
                         const { identifyResults, identifyPromise } =
-                            identifyHandlers[layerRecord.initialState.layerType](layerRecord, opts);
+                            identifyHandlers[layerRecord.config.layerType](layerRecord, opts);
 
                         // identify function returns undefined is the layer is cannot be queries because it's not visible or for some other reason
                         if (typeof identifyResults === 'undefined') {
@@ -374,7 +364,7 @@
                         const loadingPromise = identifyPromise.catch(error => {
                             // add common error handling
 
-                            console.warn(`Identify query failed for ${layerRecord.state.name}`);
+                            console.warn(`Identify query failed for ${layerRecord.legendEntry.name}`);
                             console.warn(error);
 
                             identifyResults.forEach(identifyResult => {

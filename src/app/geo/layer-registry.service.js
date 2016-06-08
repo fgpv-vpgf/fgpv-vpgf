@@ -28,7 +28,6 @@
                 legend: null,
                 layers,
                 constructLayers,
-                registerLayer,
                 removeLayer,
                 aliasedFieldName,
                 getLayersByType,
@@ -44,59 +43,6 @@
             };
 
             service.legend = ref.legendService.legend;
-
-            // jscs doesn't like enhanced object notation
-            // jscs:disable requireSpacesInAnonymousFunctionExpression
-            const LAYER_RECORD = {
-                attributeBundle: undefined,
-                _formattedAttributes: undefined,
-
-                layer: undefined,
-                initialState: undefined,
-                state: undefined, // legend entry
-                bbox: undefined, // bounding box layer
-
-                /**
-                 * Retrieves attributes from a layer for a specified feature index
-                 * @param  {Number} featureIdx feature id on the service endpoint
-                 * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
-                 */
-                getAttributes(featureIdx) {
-                    if (this._formattedAttributes.hasOwnProperty(featureIdx)) {
-                        return this._formattedAttributes[featureIdx];
-                    }
-
-                    const layerPackage = this.attributeBundle[featureIdx];
-                    const attributePromise =
-                        $q.all([
-                            layerPackage.getAttribs(),
-                            layerPackage.layerData
-                        ])
-                        .then(([attributes, layerData]) =>
-                            formatAttributes(attributes, layerData)
-                        );
-
-                    return (this._formattedAttributes[featureIdx] = attributePromise);
-                },
-
-                /**
-                 * Initializes layer record.
-                 * @param  {Object} layer           esri layer object
-                 * @param  {Object} initialState    layer config values
-                 * @param  {Object} attributeBundle geoApi attribute bundle
-                 * @return {Object}                 layer record object`
-                 */
-                init(layer, initialState, attributeBundle) {
-                    this.layer = layer;
-                    this.initialState = initialState;
-                    this.attributeBundle = attributeBundle;
-
-                    this._formattedAttributes = {};
-
-                    return this;
-                }
-            };
-            // jscs:enable requireSpacesInAnonymousFunctionExpression
 
             // FIXME: for debug purposes
             // FIXME: remove
@@ -144,23 +90,20 @@
              */
             function getLayersByType(layerType) {
                 return Object.keys(layers).map(key => layers[key])
-                    .filter(layer => layer.state && layer.state.layerType === layerType);
+                    .filter(lr => lr.config.layerType === layerType);
             }
 
             // FIXME  add a check to see if layer has config setting for not supporting a click
             /**
-             * Retrieves all queryable layer records
+             * Retrieves all queryable layer records.
+             * First filters for all queryable layers, then filters for layers which are
+             * in a valid state.
              * @return {Array} array of layer records
              */
             function getAllQueryableLayerRecords() {
                 return Object.keys(layers).map(key => layers[key])
-                    // filter nonqueryable layers
-                    .filter(layerRecord =>
-                        Geo.Layer.QUERYABLE.indexOf(layerRecord.initialState.layerType) !== -1)
-                    // filter out layers in the error state
-                    // FIXME: refactor with the state machine
-                    .filter(layerRecord =>
-                        layerRecord.state.state !== 'rv-error');
+                    .filter(layerRecord => Geo.Layer.QUERYABLE.indexOf(layerRecord.config.layerType) !== -1)
+                    .filter(layerRecord => layerRecord.state !== Geo.Layer.States.ERROR);
             }
 
             /**
@@ -183,10 +126,8 @@
              * @param  {String} layerId       layer id of layer to update
              */
             function setScaleDepState(layerId) {
-                const lReg = service.layers;
-                makeScaleSet(lReg[layerId]).then(scaleSet => {
-                    ref.legendService.setLayerScaleFlag(lReg[layerId], scaleSet);
-                });
+                const lr = service.layers[layerId];
+                makeScaleSet(lr).then(scaleSet => lr.legendEntry.setLayerScaleFlag(scaleSet));
             }
 
             /**
@@ -209,28 +150,28 @@
             /**
              * Generate a mapping of feature indexes to off-scale status for a layer
              * @private
-             * @param  {Object} layerRegItem  layer registry entry for the layer to analyze
+             * @param  {Object} layerRecord   a LayerRecord object
              * @return {Promise}              resolves with mapping of layer indexes to boolean off-scale status
              */
-            function makeScaleSet(layerRegItem) {
+            function makeScaleSet(layerRecord) {
 
                 const currScale = geoState.mapService.mapObject.getScale();
                 const result = {};
                 const promises = []; // list of promises that must resolve before we are ready
 
                 // TODO will likely need to adjust logic to take WMS/OpenFormat layers scale properties
-                if (layerRegItem.attributeBundle && layerRegItem.attributeBundle.indexes) {
+                if (layerRecord.attributeBundle && layerRecord.attributeBundle.indexes) {
                     // attributes were loaded for this layer. iterate through all sublayers in the bundle
-                    layerRegItem.attributeBundle.indexes.forEach(featureIdx => {
+                    layerRecord.attributeBundle.indexes.forEach(featureIdx => {
                         // wait for medatadata to load, then calculate the scale
-                        promises.push(layerRegItem.attributeBundle[featureIdx].layerData.then(layerData => {
+                        promises.push(layerRecord.attributeBundle[featureIdx].layerData.then(layerData => {
                             result[featureIdx] = isOffScale(currScale, layerData.minScale, layerData.maxScale);
                         }));
 
                     });
                 } else {
                     // grab min and max from layer itself, use zero as featureIdx
-                    result['0'] = isOffScale(currScale, layerRegItem.layer.minScale, layerRegItem.layer.maxScale);
+                    result['0'] = isOffScale(currScale, layerRecord._layer.minScale, layerRecord._layer.maxScale);
                 }
 
                 // promise of result that resovles after all promises[] resolve
@@ -247,11 +188,14 @@
              *
              * @param {String} sourceId the id of the layer to be moved
              * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
-            * @return {Number}          index at which the source layer should be inserted in the map stack
-            */
+             * @return {Number}          index at which the source layer should be inserted in the map stack
+             */
             function getLayerInsertPosition(sourceId, targetId) {
-                const sourceEntry = service.layers[sourceId].state;
-                const targetEntry = typeof targetId !== 'undefined' ? service.layers[targetId].state : null;
+                console.log(sourceId);
+                console.log(targetId);
+                console.log(layers);
+                const sourceEntry = service.layers[sourceId].legendEntry;
+                const targetEntry = typeof targetId !== 'undefined' ? service.layers[targetId].legendEntry : null;
 
                 const mapStackSwitch = [
                     mapObject.graphicsLayerIds,
@@ -297,7 +241,7 @@
              * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
              */
             function moveLayer(sourceId, targetId) {
-                const sourceLayer = service.layers[sourceId].layer;
+                const sourceLayer = service.layers[sourceId]._layer;
                 const targetIndex = getLayerInsertPosition(sourceId, targetId);
 
                 _testSyncCheck();
@@ -335,27 +279,24 @@
 
             /**
              * Set the visibility of the bounding box for the specified layer.
+             * FIXME this should move into a method on LegendEntry
              * @param {Object} layerEntry the layer entry used to generate the bounding box
              * @param {Boolean} visible the visibility state of the bounding box,
              * it is permitted to attempt to transition from true->true or false->false
              * these transitions will be ignored by the method
              */
             function setBboxState(layerEntry, visible) {
-                const esriLayer = layers[layerEntry.id].layer;
-                const makeBbox = gapiService.gapi.layer.bbox.makeBoundingBox; // because our names are way too long
+                const layerRecord = layers[layerEntry.id];
                 if (!visible) {
-                    if (layers[layerEntry.id].bbox) {
-                        mapObject.removeLayer(layers[layerEntry.id].bbox);
-                        layers[layerEntry.id].bbox = undefined;
+                    if (layerRecord.bbox) {
+                        layerRecord.destroyBbox(mapObject);
                     }
                     return;
                 }
-                if (visible && layers[layerEntry.id].bbox) {
+                if (layerRecord.bbox) {
                     return;
                 }
-                const box = makeBbox(`bbox_${layerEntry.id}`, esriLayer.fullExtent, mapObject.extent.spatialReference);
-                mapObject.addLayer(box);
-                layers[layerEntry.id].bbox = box;
+                layerRecord.createBbox(mapObject);
             }
 
             /**
@@ -366,140 +307,50 @@
                 layerBlueprints.forEach(layerBlueprint => {
                     // get the layer config from blueprint
                     // TODO: decouple identifyservice from everything
-                    layerBlueprint.generateLayer().then(layer => {
-                        createLayerRecord(layer, layerBlueprint.config);
+                    layerBlueprint.generateLayer().then(lr => {
+                        console.info(lr);
+                        registerLayerRecord(lr);
+                        const pos = createPlaceholder(lr);
+                        console.log(`adding ${lr.config.name} to map at ${pos}`);
+                        lr.addStateListener(makeFirstLoadHandler(lr));
+                        mapObject.addLayer(lr._layer, pos);
+                        // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
+                        if (lr._layer.loaded) {
+                            lr.onLoad();
+                        }
                     });
                 });
             }
 
-            /**
-             * Creates layer records for a given esri layer object and its config; add the layer to the map.
-             * @private
-             * @param  {Object} layer       esri layer object
-             * @param  {Object} layerConfig initial config object
-             */
-            function createLayerRecord(layer, layerConfig) {
-                // create layerRecord only once
-                const layerRecord = registerLayer(layer, layerConfig);
+            // this should be in legend service
+            // it should bind layerRecord.legendEntry after creating the placeholder
+            function createPlaceholder(lr) {
+                const sourceIndex = ref.legendService.addPlaceholder(lr);
+                let targetId = service.legend.items[sourceIndex + 1];
 
-                // add a placeholder and store its index
-                const sourceIndex = ref.legendService.addPlaceholder(layerRecord);
+                // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
+                targetId = typeof targetId === 'undefined' ? targetId : targetId.id.replace('placeholder', '');
+                return getLayerInsertPosition(lr.layerId, targetId);
 
-                // TODO investigate potential issue -- load event finishes prior to this event registration, thus attributes are never loaded
-                gapiService.gapi.events.wrapEvents(layer, {
-                    // TODO: add error event handler to register a failed layer, so the user can reload it
-                    load: onLoad,
-                    error: data => {
-                        console.error('## layer error', layer.id, data);
+            }
 
-                        // TODO: if layer errors on initial loading, switch it to the error state
-                        // since this seems to happen sporadically, maybe don't change the template to errored placeholder on the first error and wait for some time or for the next error or something like that
-
-                        // switch placeholder to error
-                        // ref.legendService.setLayerState(placeholders[layer.id], layerStates.error, 100);
-
-                        // FIXME layers that fail on initial load will never be added to the layers list
-                        ref.legendService.setLayerState(layerRecord.state, Geo.Layer.States.ERROR, 100);
-                        ref.legendService.setLayerLoadingFlag(layerRecord.state, false, 100);
-                    },
-                    'update-start': data => {
-                        console.log('## update-start', layer.id, data);
-
-                        // in case the layer registration was bypassed (e.g. placeholder removed)
-                        if (service.layers[layer.id]) {
-                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, true, 300);
-                        }
-                    },
-                    'update-end': data => {
-                        console.log('## update-end', layer.id, data);
-
-                        // TODO: need to restore layer to normal state if it errored previously
-
-                        // in case the layer registration was bypassed (e.g. placeholder removed)
-                        if (service.layers[layer.id]) {
-                            ref.legendService.setLayerLoadingFlag(service.layers[layer.id].state, false, 100);
-                        } else {
-                            // If the placeholder was removed then remove the layer from the map object
-                            mapObject.removeLayer(mapObject.getLayer(layer.id));
-                        }
-                    }
-                });
-
-                // Make sure the placeholder is still there
-                if (!layerRecord.state.removed) {
-
-                    let targetId = service.legend.items[sourceIndex + 1];
-
-                    // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
-                    targetId = typeof targetId === 'undefined' ? targetId : targetId.id.replace('placeholder', '');
-                    const targetIndex = getLayerInsertPosition(layerRecord.initialState.id, targetId);
-
-                    console.log(`adding ${layerRecord.state.name} to map at ${targetIndex}`);
-
-                    // add layer to the map triggering its loading process
-                    mapObject.addLayer(layer, targetIndex);
-
-                    // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-                    if (layer.loaded) {
-                        onLoad();
-                    }
-                }
-
-                function onLoad() {
-                    console.log('## layer load', layer.id);
-
-                    // FIXME look at layer config for flags indicating not to load attributes
-                    // FIXME if layer type is not an attribute-having type (WMS, Tile, Image, Raster, more?), resolve an empty attribute set instead
-
-                    // make sure the placeholder hasn't been removed
-                    if (!layerRecord.state.removed) {
-                        // handles the asynch loading of attributes
-                        // get the attributes for the layer
-                        let attributesPromise = $q.resolve(null);
-                        if (Geo.Layer.NO_ATTRS.indexOf(layerConfig.layerType) < 0) {
-                            attributesPromise = loadLayerAttributes(layer);
-                        }
-
-                        // replace placeholder with actual layer
-                        const index = ref.legendService.legend.remove(layerRecord.state);
-
-                        // set attribute bundle on the layer record
-                        // TODO: refactor;
-                        /* attributeBundle a promise resolving with the attributes associated with the layer (empty set if no attributes)
-                        *  index an optional index indicating at which position the layer was added to the map
-                        * (if supplied it is the caller's responsibility to make sure the layer is added in the correct location)
-                        * */
-                        layerRecord.attributeBundle = attributesPromise;
-                        ref.legendService.addLayer(layerRecord, index); // generate actual legend entry
-
-                        // TODO refactor this as it has nothing to do with layer registration;
-                        // will likely change as a result of layer reloading / reordering / properly ordered legend
-                        const opts = layerRecord.state.options;
+            function makeFirstLoadHandler(lr) {
+                const listener = state => {
+                    if (state === Geo.Layer.States.LOADED) {
+                        lr.removeStateListener(listener);
+                        const opts = lr.legendEntry.options;
                         if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
-                            setBboxState(layerRecord.state, true);
+                            setBboxState(lr.legendEntry, true);
                         }
-
-                        // if esriTile layer projection and map projection is different we can't show the layer. Disable the option.
                         const wkid = geoState.mapService.mapObject.spatialReference.wkid;
-                        if (layerRecord.state.layerType === 'esriTile' &&
-                            layer.spatialReference.wkid !== wkid) {
+                        if (lr.config.layerType === 'esriTile' && lr._layer.spatialReference.wkid !== wkid) {
                             opts.visibility.enabled = false;
                             opts.visibility.value = false;
                         }
-
-                        // set scale state
-                        setScaleDepState(layer.id);
+                        setScaleDepState(lr.layerId);
                     }
-                }
-            }
-
-            /**
-             * Starts loading attributes for the specified layer.
-             * @param  {Object} layer esri layer object
-             * @return {Promise} a promise resolving with the retrieved attribute data
-             */
-            function loadLayerAttributes(layer) {
-                return gapiService.gapi.attribs.loadLayerAttribs(layer);
+                };
+                return listener;
             }
 
             /**
@@ -515,80 +366,18 @@
                     throw new Error();
                 }
 
-                mapObject.removeLayer(l.layer);
+                mapObject.removeLayer(l._layer);
                 delete service.layers[layerId]; // remove layer from the registry
             }
 
-            /**
-             * Adds a layer object to the layers registry
-             * @param {object} layer the API layer object
-             * @param {object} initialState a configuration fragment used to generate the layer
-             *
-             */
-            function registerLayer(layer, initialState) {
-                if (!layer.id) {
-                    console.error('Attempt to register layer without id property');
-                    console.log(layer);
-                    console.log(initialState);
+            function registerLayerRecord(lr) {
+                if (!lr.layerId) {
+                    throw new Error('Attempt to register layer without id property');
                 }
-
-                if (layers[layer.id]) {
-                    console.error('attempt to register layer already registered.  id: ' + layer.id);
-                    return false;
+                if (layers[lr.layerId]) {
+                    throw new Error(`Attempt to register layer already registered.  id: ${lr.layerId}`);
                 }
-
-                const layerRecord = Object.create(LAYER_RECORD)
-                    .init(layer, initialState);
-
-                service.layers[layer.id] = layerRecord;
-
-                return layerRecord;
-            }
-
-            /**
-             * Formats raw attributes to the form consumed by the datatable
-             * @param  {Object} attributes raw attribute data returned from geoapi
-             * @return {Object} layerData  layer data returned from geoApi
-             * @return {Object}               formatted attribute data { data: Array, columns: Array, fields: Array, oidField: String, oidIndex: Object}
-             */
-            function formatAttributes(attributes, layerData) {
-                // create columns array consumable by datables
-                const fieldNameArray = [];
-                const columns = layerData.fields
-                    .filter(field =>
-                        // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
-                        // filter out fields where there is no corresponding attribute data
-                        attributes.features[0].attributes.hasOwnProperty(field.name))
-                    .map(field => {
-                        // check if date type; append key to fieldNameArray if so
-                        if (field.type === 'esriFieldTypeDate') {
-                            fieldNameArray.push(field.name);
-                        }
-                        return {
-                            data: field.name,
-                            title: field.alias || field.name
-                        };
-                    });
-
-                // extract attributes to an array consumable by datatables
-                const rows = attributes.features.map(feature => feature.attributes);
-
-                // convert each date cell to ISO format
-                fieldNameArray.forEach(fieldName => {
-                    rows.forEach(row => {
-                        const date = new Date(row[fieldName]);
-                        row[fieldName] = date.toISOString().substring(0, 10);
-                    });
-                });
-
-                return {
-                    columns,
-                    rows,
-                    fields: layerData.fields, // keep fields for reference ...
-                    oidField: layerData.oidField, // ... keep a reference to id field ...
-                    oidIndex: attributes.oidIndex, // ... and keep id mapping array
-                    renderer: layerData.renderer
-                };
+                service.layers[lr.layerId] = lr;
             }
 
             /**
