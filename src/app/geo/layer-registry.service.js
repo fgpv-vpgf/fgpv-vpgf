@@ -29,6 +29,7 @@
                 layers,
                 constructLayers,
                 removeLayer,
+                reloadLayer,
                 aliasedFieldName,
                 getLayersByType,
                 getAllQueryableLayerRecords,
@@ -368,6 +369,17 @@
 
                 mapObject.removeLayer(l._layer);
                 delete service.layers[layerId]; // remove layer from the registry
+            }
+
+            /**
+             * Reload a layer.  Can accept LayerRecords or LegendEntries
+             * @param {LayerRecord|LegendEntry} l the layer to be reloaded
+             */
+            function reloadLayer(l) {
+                // FIXME do a proper test when LegendEntry becomes a proper class
+                const lr = l._layerRecord || l;
+                mapObject.removeLayer(lr._layer);
+                mapObject.addLayer(lr.constructLayer());
             }
 
             function registerLayerRecord(lr) {

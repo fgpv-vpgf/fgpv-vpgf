@@ -29,6 +29,7 @@
             epsgLookup,
             assembleMap,
             retrieveSymbol,
+            reloadLayer: l => layerRegistry.reloadLayer(l),
 
             state: null
         };
