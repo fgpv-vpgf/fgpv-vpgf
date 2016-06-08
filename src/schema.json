@@ -229,6 +229,10 @@
                     "$ref": "#/definitions/option",
                     "description": "Refresh control in the layer selector"
                 },
+                "reload": {
+                    "$ref": "#/definitions/option",
+                    "description": "Reload control in the layer selector"
+                },
                 "remove": {
                     "$ref": "#/definitions/option",
                     "description": "Remove control in the layer selector"
@@ -259,6 +263,10 @@
                 "refresh": {
                     "$ref": "#/definitions/option",
                     "description": "Refresh control in the layer selector"
+                },
+                "reload": {
+                    "$ref": "#/definitions/option",
+                    "description": "Reload control in the layer selector"
                 },
                 "remove": {
                     "$ref": "#/definitions/option",
@@ -301,6 +309,10 @@
                     "$ref": "#/definitions/option",
                     "description": "Refresh control in the layer selector"
                 },
+                "reload": {
+                    "$ref": "#/definitions/option",
+                    "description": "Reload control in the layer selector"
+                },
                 "remove": {
                     "$ref": "#/definitions/option",
                     "description": "Remove control in the layer selector"
@@ -338,6 +350,10 @@
                 "refresh": {
                     "$ref": "#/definitions/option",
                     "description": "Refresh control in the layer selector"
+                },
+                "reload": {
+                    "$ref": "#/definitions/option",
+                    "description": "Reload control in the layer selector"
                 },
                 "remove": {
                     "$ref": "#/definitions/option",
