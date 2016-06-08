@@ -71,7 +71,7 @@
                     icon: 'navigation:refresh',
                     label: 'toc.label.reload',
                     tooltip: 'toc.tooltip.reload',
-                    action: () => { console.log('layer reload'); }
+                    action: entry => geoService.reloadLayer(entry)
                 },
                 remove: {
                     icon: 'action:delete',
