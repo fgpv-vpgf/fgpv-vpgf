@@ -35,7 +35,7 @@
             openPrevious,
             callback,
             setFocusElement,
-            nextFocus,
+            previousFocus,
             state: angular.copy(initialState),
             display: angular.copy(initialDisplay),
 
@@ -298,7 +298,7 @@
         /**
          * Changes focus to the last saved focusable element
          */
-        function nextFocus() {
+        function previousFocus() {
             lastFocusElement.focus();
         }
 
