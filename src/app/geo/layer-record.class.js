@@ -37,7 +37,15 @@
             }
 
             constructLayer () {
-                return new this.layerClass(this.config.url, this.makeLayerConfig());
+                this._layer = this.layerClass(this.config.url, this.makeLayerConfig());
+                gapi().events.wrapEvents(this._layer, {
+                    // wrapping the function calls to keep `this` bound correctly
+                    load: () => this.onLoad(),
+                    error: e => this.onError(e),
+                    'update-start': () => this.onUpdateStart(),
+                    'update-end': () => this.onUpdateEnd()
+                });
+                return this._layer;
             }
 
             _stateChange (newState) {
@@ -92,7 +100,7 @@
             constructor (initialState) {
                 this.initialConfig = initialState;
                 this._stateListeners = [];
-                this._layer = this.constructLayer(initialState);
+                this.constructLayer(initialState);
                 this.state = Geo.Layer.States.NEW;
                 this._layerPassthroughBindings.forEach(bindingName =>
                     this[bindingName] = (...args) => this._layer[bindingName](...args));
@@ -102,14 +110,6 @@
                         get: () => this._layer[propName]
                     };
                     Object.defineProperty(this, propName, descriptor);
-                });
-
-                gapi().events.wrapEvents(this._layer, {
-                    // wrapping the function calls to keep `this` bound correctly
-                    load: () => this.onLoad(),
-                    error: e => this.onError(e),
-                    'update-start': () => this.onUpdateStart(),
-                    'update-end': () => this.onUpdateEnd()
                 });
 
                 // NOTE layer registry is responsible for adding the layer to the map
