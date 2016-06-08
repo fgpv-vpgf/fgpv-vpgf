@@ -102,6 +102,14 @@
                 super(epsgLookup, targetWkid);
             }
         }
+
+        // looks like user options class will be subsumed by the config classes
+        // not much here ...
+        class ServiceBlueprintUserOptions extends BlueprintUserOptions {
+            constructor() {
+                super();
+            }
+        }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         const service = {
@@ -111,7 +119,9 @@
                 [Geo.Service.Types.Shapefile]: FileShapefileBlueprintUserOptions
             },
             Service: {
-
+                [Geo.Service.Types.FeatureLayer]: ServiceBlueprintUserOptions,
+                [Geo.Service.Types.DynamicService]: ServiceBlueprintUserOptions,
+                [Geo.Service.Types.WMS]: ServiceBlueprintUserOptions
             }
         };
 

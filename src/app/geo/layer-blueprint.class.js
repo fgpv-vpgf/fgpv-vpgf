@@ -96,6 +96,14 @@
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
+        const serviceTypeToLayerType = {
+            [Geo.Service.Types.FeatureLayer]: Geo.Layer.Types.ESRI_FEATURE,
+            [Geo.Service.Types.DynamicService]: Geo.Layer.Types.ESRI_DYNAMIC,
+            [Geo.Service.Types.TileService]: Geo.Layer.Types.ESRI_TILE,
+            [Geo.Service.Types.ImageService]: Geo.Layer.Types.ESRI_IMAGE,
+            [Geo.Service.Types.WM]: Geo.Layer.Types.OGC_WMS
+        };
+
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         class LayerServiceBlueprint extends LayerBlueprint {
@@ -115,13 +123,117 @@
 
                 super(initialConfig);
 
+                this._serviceInfo = null;
+                this._constructorPromise = $q.resolve();
+
+                // empty blueprint is not valid by default
+                this._validPromise = $q.reject();
+
                 // if layerType is no specified, this is likely a user added layer
                 // call geoApi to predict its type
                 if (this.layerType === null) {
-                    return gapiService.gapi.layer.predictLayerUrl(this.config.url)
-                        .then(fileInfo => fileInfo.serviceType)
-                        .catch(error => console.error('Something happened', error));
+                    this._constructorPromise = this._fetchServiceInfo()
+                        .catch(error => {
+                            console.error('Something happened', error);
+                        });
                 }
+            }
+
+            _fetchServiceInfo() {
+                const hint = this._serviceInfo !== null ? this._serviceInfo.serviceType : undefined;
+                return $q.resolve(gapiService.gapi.layer.predictLayerUrl(this.config.url, hint))
+                    .then(fileInfo => {
+                        console.log(this._serviceInfo);
+
+                        this._serviceInfo = fileInfo;
+                        this.serviceType = this._serviceInfo.serviceType;
+                        this.config.name = this._serviceInfo.name;
+
+                        if (this.serviceType === Geo.Service.Types.DynamicService) {
+                            // TODO: this is temporary to get the relative level of dynamic layer sublayers
+                            // something like this will be needed when an option provided to the user to pick dynamic sublayer which should be added to the map
+                            // right now just add everything
+                            /*this._serviceInfo.layers.forEach(layer => {
+                                const level = calculateLevel(layer, this._serviceInfo);
+                                layer.level = level;
+                                layer.indent = Array.from(Array(level)).map(() => '-').join('');
+                            });*/
+
+                            // TODO: refactor
+                            // this is to convert layerEntries to a proper config format
+                            this.config.layerEntries = this._serviceInfo.layers
+                                .filter(layer => layer.parentLayerId === -1) // pick all sub-top level items
+                                .map(layer => {
+                                    return {
+                                        index: layer.id
+                                    };
+                                });
+                        }
+
+                        function calculateLevel(layer, serviceInfo) {
+                            if (layer.parentLayerId === -1) {
+                                return 0;
+                            } else {
+                                return calculateLevel(serviceInfo.layers[layer.parentLayerId], serviceInfo) + 1;
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        this._serviceInfo = null;
+                        return error;
+                    });
+            }
+
+            get serviceType() {
+                // console.log(this._serviceInfo);
+
+                if (this._serviceInfo !== null) {
+                    return this._serviceInfo.serviceType;
+                } else {
+                    return null;
+                }
+            }
+
+            set serviceType(value) {
+                this._serviceInfo.serviceType = value;
+                this.layerType = serviceTypeToLayerType[this._serviceInfo.serviceType];
+            }
+
+            // TODO: this needs to changed to display an error
+            get valid() {
+                // validate provided service type
+                return this._constructorPromise
+                    .then(() => this._fetchServiceInfo())
+                    .then(() => {
+                        this.layerType = serviceTypeToLayerType[this.serviceType];
+                    })
+                    .catch(error => console.error('Invalid selection' + error));
+            }
+
+            /**
+             * Returns a constructor promise which resolves when service's data is retrieved.
+             * @return {Promise} constructor promise
+             */
+            get ready() {
+                return this._constructorPromise;
+            }
+
+            /**
+             * Returns fields found in the file data.
+             * @return {Array|null} array of fields in the form of [{ name: "Long", type: "esriFieldTypeString"}]
+             */
+            get fields() {
+                // console.log(this._formatedFileData);
+
+                if (this._serviceInfo !== null) {
+                    return this._serviceInfo.fields;
+                } else {
+                    return null;
+                }
+            }
+
+            get serviceInfo() {
+                return this._serviceInfo;
             }
 
             /**
@@ -233,7 +345,7 @@
             }
 
             /**
-             * Returns files found in the file data.
+             * Returns fields found in the file data.
              * @return {Array|null} array of fields in the form of [{ name: "Long", type: "esriFieldTypeString"}]
              */
             get fields() {
