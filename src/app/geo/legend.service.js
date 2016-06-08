@@ -203,10 +203,11 @@
                 const listener = state => {
                     console.info(`Placeholder listener fired ${state} ${layerRecord.layerId}`);
                     if (state === Geo.Layer.States.LOADED) {
+                        layerRecord.removeStateListener(listener);
+                        entry.unbindListeners();
                         // swap the placeholder with the real legendEntry
                         const index = service.legend.remove(entry);
                         addLayer(layerRecord, index);
-                        layerRecord.removeStateListener(listener);
                     }
                 };
                 layerRecord.addStateListener(listener);
