@@ -353,22 +353,21 @@
             }
 
             function makeFirstLoadHandler(lr) {
-                const listener = state => {
-                    if (state === Geo.Layer.States.LOADED) {
-                        lr.removeStateListener(listener);
-                        const opts = lr.legendEntry.options;
-                        if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
-                            setBboxState(lr.legendEntry, true);
-                        }
-                        const wkid = geoState.mapService.mapObject.spatialReference.wkid;
-                        if (lr.config.layerType === 'esriTile' && lr._layer.spatialReference.wkid !== wkid) {
-                            opts.visibility.enabled = false;
-                            opts.visibility.value = false;
-                        }
-                        setScaleDepState(lr.layerId);
+                const firstListener = state => {
+                    if (state !== Geo.Layer.States.LOADED) { return; }
+                    lr.removeStateListener(firstListener);
+                    const opts = lr.legendEntry.options;
+                    if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
+                        setBboxState(lr.legendEntry, true);
                     }
+                    const wkid = geoState.mapService.mapObject.spatialReference.wkid;
+                    if (lr.config.layerType === 'esriTile' && lr._layer.spatialReference.wkid !== wkid) {
+                        opts.visibility.enabled = false;
+                        opts.visibility.value = false;
+                    }
+                    setScaleDepState(lr.layerId);
                 };
-                return listener;
+                return firstListener;
             }
 
             /**

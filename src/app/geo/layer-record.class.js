@@ -50,8 +50,10 @@
 
             _stateChange (newState) {
                 this._state = newState;
-                console.log(newState);
-                this._stateListeners.forEach(l => l(this._state));
+                console.log(`State change for ${this.layerId} to ${newState}`);
+                // if we don't copy the array we could be looping on an array
+                // that is being modified as it is being read
+                this._stateListeners.slice(0).forEach(l => l(this._state));
             }
 
             addStateListener (listenerCallback) {
