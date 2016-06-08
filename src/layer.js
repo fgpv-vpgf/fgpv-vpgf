@@ -165,6 +165,7 @@ function crawlEsriService(srvJson) {
 // - .name : scraped from service, but may be rubbish (depends on service publisher). used as UI suggestion only
 // - .fields : for feature layer service only. list of fields to allow user to pick name field
 // - .geometryTpe : for feature layer service only.  for help in defining the renderer, if required.
+// - .layers : for dynamic layer service only. lists the child layers
 function pokeEsriService(url, esriBundle, hint) {
 
     // reaction functions to different esri services
@@ -195,7 +196,9 @@ function pokeEsriService(url, esriBundle, hint) {
 
     // no treats for mapserver / dynamic (for now)
     srvHandler[serviceType.DynamicService] = srvJson => {
-        return makeLayerInfo(serviceType.DynamicService, 'mapName', srvJson);
+        const info = makeLayerInfo(serviceType.DynamicService, 'mapName', srvJson);
+        info.layers = srvJson.layers;
+        return info;
     };
 
     // no treats for imageserver (for now)
@@ -221,14 +224,14 @@ function pokeEsriService(url, esriBundle, hint) {
 
         defService.then(srvResult => {
             // request didnt fail, indicating it is likely an ArcGIS Server endpoint
+            let resultType = crawlEsriService(srvResult);
 
-            if (hint) {
-                // force the data extraction of the hinted format
-                resolve(srvHandler[hint](srvResult));
-            } else {
-                // inspect the result, and do bad logic to try to determine the service type
-                resolve(srvHandler[crawlEsriService(srvResult)](srvResult));
+            if (hint && resultType !== hint) {
+                // our hint doesn't match the service
+                resultType = serviceType.Unknown;
             }
+            resolve(srvHandler[resultType](srvResult));
+
         }, () => {
             // something went wrong, but that doesnt mean our service is invalid yet
             // it's likely not ESRI.  return Error and let main predictor keep investigating
