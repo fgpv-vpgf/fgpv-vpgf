@@ -9,7 +9,7 @@
     </div>
 </div>
 
-<div class="rv-esri-map" rv-init-map></div>
+<div class="rv-esri-map" rv-init-map tabindex="0"></div>
 
 <rv-mapnav rv-morph="mapnav"></rv-mapnav>
 
@@ -42,3 +42,6 @@
     class="rv-shell-progress-indicator"
     md-mode="indeterminate"
     ng-show="self.geoService.mapObject.isMapLoading"></md-progress-linear>
+
+<!-- Last element that can be focused, used for determining focus is leaving application -->
+<span tabindex="0"></span>

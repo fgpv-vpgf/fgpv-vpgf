@@ -13,6 +13,7 @@ report/
 typings/
 tsd.json
 .vagrant/
+.vscode/
 
 # VIM files
 *~

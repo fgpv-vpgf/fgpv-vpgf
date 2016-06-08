@@ -30,22 +30,14 @@
     function stateManager($q, $rootScope, displayManager, initialState, initialDisplay) {
         const service = {
             addState,
-
             setActive,
             setMorph,
-
-            openPrevious,
-
             callback,
-
             state: angular.copy(initialState),
             display: angular.copy(initialDisplay),
-
-            // temporary place to store layer data;
-            // TODO: move to the initialDisplay constant service
-            _detailsData: {
-                layers: []
-            }
+            closePanel,
+            setNextFocusable,
+            nextFocus
         };
 
         const fulfillStore = {}; // keeping references to promise fulfill functions
@@ -53,6 +45,8 @@
         const displayService = displayManager(service); // init displayManager
         angular.extend(service, displayService); // merge displayManager service functions into stateManager
 
+        const panelHistory = [];
+        const focusList = []; // store list of focusable elements
         return service;
 
         /*********/
@@ -96,10 +90,9 @@
                     one = getItem(oneName);
                 }
 
-                // console.log('Setting state item', one.name, 'to', oneTargetValue);
                 if (one.item.parent) { // item has a parent
-
                     let oneParent = getParent(one.name); // get parent
+
                     if (oneTargetValue) { // item turning on
 
                         if (!oneParent.item.active) { // if parent is off,
@@ -108,7 +101,6 @@
                         } else { // if parent is on,
                             getChildren(oneParent.name)
                                 .forEach(child => {
-                                    // console.log('child - ', child);
                                     if (child.name !== one.name) {
                                         setItemProperty(child.name, 'active', false); // animate siblings off
                                     }
@@ -120,7 +112,6 @@
                         runAfter = () => { // runAfter parent finished its transition
                             getChildren(oneParent.name)
                                 .forEach(child => {
-                                    // console.log('child 1- ', child);
                                     setItemProperty(child.name, 'active', false, true); // immediately turn off all children
                                 });
                         };
@@ -135,7 +126,6 @@
                     } else if (!oneTargetValue) { // turning off
                         runAfter = () => { // runAfter parent finished its transition
                             oneChildren.forEach(child => {
-                                // console.log('child 2- ', child);
                                 setItemProperty(child.name, 'active', false, true); // immediately turn off all children
                             });
                         };
@@ -145,8 +135,6 @@
                 // return promise for easy promise chaining
                 return setItemProperty(one.name, 'active', oneTargetValue)
                     .then(() => {
-
-                        // console.log('Continue with the rest of state items');
                         // run any `runAfter` function if exists
                         // TODO: runAfter should return a promise; return `setActive` when it resolves
                         if (runAfter) {
@@ -238,54 +226,120 @@
                         return;
                     }
 
-                    let history;
-
-                    if (item.parent && value) { // add to history only when a child opens or ...
-                        history = getParent(itemName).item.history;
-                        history.push(itemName);
-                    } else if (!item.parent && !value) { // ... or the parent closes
-                        history = item.history;
-                        history.push(null); // `null` means no item was active in the panel;
-                    }
-
-                    // keep history at 10 items, I don't think we need any more
-                    if (history && history.length > 10) {
-                        history.shift();
+                    if (item.parent) {
+                        if (value) {
+                            addPanelToHistory(itemName);
+                        } else {
+                            removePanelFromHistory();
+                        }
                     }
                 }
-
                 return;
             });
         }
 
         /**
-         * Given a content pane name, closes it and opens a previously opened pane from the history.
-         * @param  {String} currentPaneName name of the content pane
-         * @return {Promise}                returns a promise which is resolved when opening animation completes; or resolves immediately if nothing happens
+         * Given a focusable element, save the element reference for later retrieval.
+         * Uses label to uniquely identify elements in the list which prevents duplicate entries
+         * @param   {Object}    element to set focus on
+         * @param   {String}    label a name for the element to prevent duplicate entries
          */
-        function openPrevious(currentPaneName) {
-            const panel = getParent(currentPaneName);
-            const history = panel.item.history;
+        function setNextFocusable(element, label) {
+            label = angular.isString(label) ? label : 'default';
+            element = $(element);
 
-            // no history; do nothing
-            if (history.length === 0) {
-                return $q.resolve();
+            angular.forEach(focusList, (item, index) => {
+                if (item.label === label) {
+                    focusList.splice(index, 1);
+                }
+            });
+
+            focusList.push({ label, element });
+        }
+
+        /**
+         * Sets the focus to the most recent focusable element
+         * @return  {Object}    html element that received focus
+         */
+        function nextFocus() {
+            let nextFocusElement = null;
+            if (focusList.length > 0) {
+                nextFocusElement = focusList[focusList.length - 1].element;
+                nextFocusElement.data('focusOverride', true);
+                nextFocusElement.focus();
+
             }
+            return nextFocusElement;
+        }
 
-            // TODO: abstract; maybe move to stateManager itself
-            // get second to last history item from history
-            const item = history.splice(-2).shift();
-            const options = {};
+        /**
+         * Adds a panel to history
+         * @param   {String}    panelName panel reference name
+         */
+        function addPanelToHistory(panelName) {
+            const indexInHistory = panelHistory.indexOf(panelName);
+            if (indexInHistory === -1) {
+                panelHistory.push(panelName);
+            }
+        }
 
-            // reopen previous selected pane if it's not null or currentPaneName
-            if (item !== null && item !== currentPaneName) {
-                options[item] = true;
+        /**
+         * Removes a panel from history
+         * @param   {String}    panelName panel reference name
+         */
+        function removePanelFromHistory(panelName) {
+            const pane = getItem(panelName).item;
+            if (angular.isObject(pane)) {
+                const pList = pane.parent ? [panelName] : getChildren(panelName);
+
+                angular.forEach(pList, panel => {
+                    const indexInHistory = panelHistory.indexOf(panel.name);
+                    if (indexInHistory !== -1) {
+                        panelHistory.splice(indexInHistory, 1);
+                    }
+                });
+            }
+        }
+
+        /**
+         * Closes the panel named panelName and removes it from history.
+         * If panelName is not supplied the most recently opened panel is
+         * closed instead
+         * @param   {String}    panelName optional panel name to close
+         */
+        function closePanel(panelName) {
+            let panelToClose;
+            let replaceWithPanel;
+
+            // panelName is provided, remove from history (if present)
+            if (angular.isString(panelName)) {
+                const historyIndex = panelHistory.indexOf(panelName);
+                panelToClose = historyIndex === -1 ?
+                    getItem(panelName) : getItem(panelHistory.splice(historyIndex, 1)[0]);
+
+            // close the most recently opened panel
+            } else if (panelHistory.length > 0) {
+                panelToClose = getItem(panelHistory.pop());
+
+            // history is empty, nothing to close!
             } else {
-                options[currentPaneName] = false;
+                return;
             }
 
-            // close `mainDetails` panel
-            return service.setActive(options);
+            angular.forEach(panelHistory, pName => {
+                let subPanel = getItem(pName);
+                if (subPanel.item.parent === panelToClose.item.parent) {
+                    replaceWithPanel = subPanel;
+                }
+            });
+
+            if (angular.isObject(replaceWithPanel)) {
+                setItemProperty(panelToClose.name, 'active', false, true);
+                setItemProperty(replaceWithPanel.name, 'active', true, true);
+                removePanelFromHistory(panelName);
+            } else {
+                setActive({ [panelToClose.item.parent]: false });
+            }
         }
 
         /**

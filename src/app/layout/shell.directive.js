@@ -29,18 +29,38 @@
 
         return directive;
 
-        function link(scope, el) {
-            storageService.panels.shell = el;
+        function link(scope, element) {
+            storageService.panels.shell = element;
+            let lastFocusedEl = [];
 
-            // close all panels when escape key is pressed
+            if (!window.rvInit) {
+                window.rvInit = true;
+                $(document).on('focusout', event => {
+                    if (event.relatedTarget === null && !$(event.target).data('focusOverride')) {
+                        revertFocus().focus();
+                    } else {
+                        lastFocusedEl.push(event.target);
+                    }
+                });
+            }
+
+            function revertFocus() {
+                if (lastFocusedEl.length > 0) {
+                    let el = lastFocusedEl.pop();
+                    return $(el).is(':visible') ? el : revertFocus();
+                } else {
+                    return $('button:first');
+                }
+            }
+
             $rootElement.bind('keydown', event => {
                 if (event.which === 27) {
                     scope.$apply(() => {
-                        Object.keys(stateManager.state)
-                            .forEach(pName => stateManager.setActive({ [pName]: false }));
+                        stateManager.closePanel();
                     });
                 }
             });
+
         }
     }
 
