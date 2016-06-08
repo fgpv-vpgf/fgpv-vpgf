@@ -237,6 +237,7 @@
             makeLayerConfig () {
                 const cfg = super.makeLayerConfig();
                 cfg.mode = this.config.snapshot ? this.layerClass.MODE_SNAPSHOT : this.layerClass.MODE_ONDEMAND;
+                return cfg;
             }
         }
 
