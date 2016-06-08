@@ -55,6 +55,20 @@
                     </div-->
             </md-input-container>
 
+            <!-- turn off this for now as all dynamic sublayers are added at the moment -->
+            <!--md-input-container class="md-block" ng-switch-when="dynamicservice">
+                <label translate>import.service.configure.layers</label>
+                <md-select name="layer" ng-model="self.layerBlueprint.config.layerEntries" required>
+                    <md-option ng-repeat="layer in self.layerBlueprint.serviceInfo.layers" value="{{ layer.id }}">
+                        {{ layer.indent + ' ' + layer.name }}
+                    </md-option>
+                </md-select>
+                <!-- TODO: decide whether and how to display a hint or error messages -->
+                <!--div class="errors" ng-messages="self.configure.form.primaryField.$error">
+                        <div ng-message="required">Required</div>
+                    </div-->
+            <!--/md-input-container-->
+
             <md-input-container class="md-block" ng-switch-when="ogcWms">
                 <label>Layer Name</label>
                 <md-select name="layerName" ng-model="self.configure.options.layerName" required>

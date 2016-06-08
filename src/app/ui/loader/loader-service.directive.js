@@ -28,10 +28,9 @@
         return directive;
     }
 
-    function Controller($timeout, stateManager, Geo, Stepper, LayerBlueprint) {
+    function Controller($timeout, stateManager, geoService, Geo, Stepper, LayerBlueprint) {
         'ngInject';
         const self = this;
-        const stepper = new Stepper();
 
         self.closeLoaderService = closeLoaderService;
 
@@ -42,11 +41,6 @@
             Geo.Service.Types.ImageService,
             Geo.Service.Types.WMS
         ];
-        /*{
-            esriFeature: 'ESRI Feature Layer',
-            ogcWms: 'OGC Web Map Service',
-            unicorn: 'Unicorn Service Type'
-        };*/
 
         self.fields = {
             one: 'one',
@@ -56,7 +50,7 @@
 
         self.connect = {
             step: {
-                titleValue: 'Connect to a service',
+                titleValue: 'import.service.connect.title',
                 stepNumber: 1,
                 isActive: false,
                 isCompleted: false,
@@ -70,20 +64,20 @@
 
         self.select = {
             step: {
-                titleValue: 'Select Service type',
+                titleValue: 'import.service.select.title',
                 stepNumber: 2,
                 isActive: false,
                 isCompleted: false,
                 onContinue: selectOnContinue,
-                onCancel: selecteOnCancel
+                onCancel: selectOnCancel
             },
             form: null
         };
 
         self.configure = {
             step: {
-                titleValue: 'Configure layer',
-                stepNumber: 2,
+                titleValue: 'import.service.configure.title',
+                stepNumber: 3,
                 isActive: false,
                 isCompleted: false,
                 onContinue: configureOnContinue,
@@ -95,6 +89,7 @@
 
         self.layerBlueprint = null;
 
+        const stepper = new Stepper();
         stepper
             .addSteps(self.connect.step)
             .addSteps(self.select.step)
@@ -110,21 +105,27 @@
                 url: self.connect.serviceUrl
             });
 
-            self.layerBlueprint.then(data => {
-                console.log('connect', data);
-            });
+            console.log(self.layerBlueprint);
+
+            self.layerBlueprint.ready.then(() => stepper.nextStep());
         }
 
         function connectOnCancel() {
+            const connect = self.connect;
 
+            connect.serviceUrl = '';
+            connect.form.serviceUrl.$setPristine();
+            connect.form.serviceUrl.$setUntouched();
+
+            stepper.previousStep();
         }
 
         function selectOnContinue() {
-
+            stepper.nextStep();
         }
 
         function selectOnCancel() {
-
+            stepper.previousStep();
         }
 
         /**
@@ -133,7 +134,8 @@
         function configureOnContinue() {
             // TODO: try to build layer and add it to the map
             // TODO: display error message if something breaks
-            stepper.nextStep();
+            geoService.constructLayers([self.layerBlueprint]);
+            closeLoaderService();
         }
 
         /**
