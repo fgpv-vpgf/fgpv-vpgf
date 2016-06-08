@@ -242,17 +242,6 @@
                 item.parent = this;
                 this.items.splice(position, 0, item);
 
-                // Propagate item visibility changes up so group visibility is updated
-                $rootScope.$watch(() => item.options.visibility.value, () => {
-                    for (let i = 0; i < this.items.length; i++) {
-                        if (!this.items[i].getVisibility()) {
-                            this.options.visibility.value = false;
-                            return;
-                        }
-                    }
-                    this.options.visibility.value = true;
-                });
-
                 return position;
             },
 
@@ -362,6 +351,27 @@
             checkSettings(this.options);
 
             return this;
+        };
+
+        /**
+         * Adds a dynamic item (layer or another group) to a layer group.
+         * @param {Object} item     layer or group item to add
+         * @param {Number} position position to insert the item at; defaults to the last position in the array
+         * @return position of the inserted item
+         */
+        DYNAMIC_ENTRY_GROUP.add = function (item, position) {
+            // Propagate item visibility changes up so group visibility is updated
+            $rootScope.$watch(() => item.options.visibility.value, () => {
+                for (let i = 0; i < this.items.length; i++) {
+                    if (this.items[i].getVisibility()) {
+                        this.options.visibility.value = true;
+                        return;
+                    }
+                }
+                this.options.visibility.value = false;
+            });
+
+            return ENTRY_GROUP.add.call(this, item, position);
         };
 
         /**
