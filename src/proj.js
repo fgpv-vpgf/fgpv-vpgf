@@ -115,6 +115,32 @@ function localProjectExtent(extent, sr) {
     return { x0, y0, x1, y1, sr };
 }
 
+function checkProj(spatialReference) {
+    try {
+        let srcProj;
+
+        // find the source extent (either from wkid or wkt)
+        if (spatialReference.wkid) {
+            srcProj = 'EPSG:' + spatialReference.wkid;
+        } else if (spatialReference.wkt) {
+            srcProj = spatialReference.wkt;
+        } else {
+            throw new Error('No WKT or WKID specified on extent.spatialReference');
+        }
+
+        // find the destination extent
+        let destProj = makeEpsgString(sr);
+
+        if (!proj4.defs(srcProj)) {
+            throw new Error('Source projection not recognized by proj4 library');
+        }
+    } catch {
+        return false;
+    }
+
+    return true;
+}
+
 function projectEsriExtentBuilder(esriBundle) {
     return (extent, sr) => {
         const p = localProjectExtent(extent, sr);
@@ -191,6 +217,7 @@ module.exports = function (esriBundle) {
 
     return {
         addProjection: proj4.defs, // straight passthrough at the moment, maybe add arg checking (two args)?
+        checkProj,
         getProjection: proj4.defs, // straight passthrough at the moment, maybe add arg checking (one arg)?
         esriServerProject: esriServiceBuilder(esriBundle),
         Graphic: esriBundle.Graphic,
