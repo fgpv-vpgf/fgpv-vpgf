@@ -39,26 +39,6 @@
 
             let forceClose = false;
 
-            /**
-             * Starts the slider animation so layer list is expanded
-             */
-            function animateOpen() {
-                if (tl.paused()) {
-                    tl.play();
-                } else if (!forceClose) {
-                    tl.reversed(false);
-                } else {
-                    forceClose = false;
-                }
-            }
-
-            /**
-             * Reverses the slider animation so layer list is contracted
-             */
-            function animateClosed() {
-                tl.reversed(true);
-            }
-
             tl.to(element, RV_SLIDE_DURATION, {
                 width: 280,
                 ease: RV_SWIFT_IN_OUT_EASE,
@@ -113,6 +93,24 @@
                 out: animateClosed,
                 interval: 200
             });
+
+            /**
+             * Starts the slider animation so layer list is expanded
+             */
+            function animateOpen() {
+                if (tl.paused() || !forceClose) {
+                    tl.play();
+                } else {
+                    forceClose = false;
+                }
+            }
+
+            /**
+             * Reverses the slider animation so layer list is contracted
+             */
+            function animateClosed() {
+                tl.reverse();
+            }
         }
     }
 })();
