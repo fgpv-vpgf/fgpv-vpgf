@@ -36,22 +36,28 @@
                 this._bbox = undefined;
             }
 
-            constructLayer () {
-                this._layer = this.layerClass(this.config.url, this.makeLayerConfig());
-                gapi().events.wrapEvents(this._layer, {
+            bindEvents (layer) {
+                gapi().events.wrapEvents(layer, {
                     // wrapping the function calls to keep `this` bound correctly
                     load: () => this.onLoad(),
                     error: e => this.onError(e),
                     'update-start': () => this.onUpdateStart(),
                     'update-end': () => this.onUpdateEnd()
                 });
+            }
+
+            constructLayer () {
+                this._layer = this.layerClass(this.config.url, this.makeLayerConfig());
+                this.bindEvents(this._layer);
                 return this._layer;
             }
 
             _stateChange (newState) {
                 this._state = newState;
-                console.log(newState);
-                this._stateListeners.forEach(l => l(this._state));
+                console.log(`State change for ${this.layerId} to ${newState}`);
+                // if we don't copy the array we could be looping on an array
+                // that is being modified as it is being read
+                this._stateListeners.slice(0).forEach(l => l(this._state));
             }
 
             addStateListener (listenerCallback) {
@@ -95,13 +101,11 @@
              * Create a layer record with the appropriate geoApi layer type.  Layer config
              * should be fully merged with all layer options defined (i.e. this constructor
              * will not apply any defaults).
-             * @param  {Object} initialState    layer config values
+             * @param  {Object} config    layer config values
              */
-            constructor (initialState) {
-                this.initialConfig = initialState;
+            constructor (config, esriLayer) {
+                this.initialConfig = config;
                 this._stateListeners = [];
-                this.constructLayer(initialState);
-                this.state = Geo.Layer.States.NEW;
                 this._layerPassthroughBindings.forEach(bindingName =>
                     this[bindingName] = (...args) => this._layer[bindingName](...args));
                 this._layerPassthroughProperties.forEach(propName => {
@@ -111,6 +115,15 @@
                     };
                     Object.defineProperty(this, propName, descriptor);
                 });
+                if (esriLayer) {
+                    this.constructLayer = () => { throw new Error('Cannot construct pre-made layers'); };
+                    this._layer = esriLayer;
+                    this.bindEvents(this._layer);
+                    this.state = Geo.Layer.States.LOADED;
+                } else {
+                    this.constructLayer(config);
+                    this.state = Geo.Layer.States.NEW;
+                }
 
                 // NOTE layer registry is responsible for adding the layer to the map
                 // this avoids LayerRecord having an explicit dependency on the map object
@@ -123,8 +136,8 @@
             // FIXME clickTolerance is not specific to AttrRecord but rather Feature and Dynamic
             get clickTolerance () { return this.config.tolerance; }
 
-            constructor (initialState) {
-                super(initialState);
+            constructor (config, esriLayer) {
+                super(config, esriLayer);
                 this._formattedAttributes = {};
             }
 
@@ -206,7 +219,7 @@
                 return ['setOpacity', 'setVisibility', 'setVisibleLayers', 'setLayerDrawingOptions'];
             }
             get _layerPassthroughProperties () {
-                return ['visibleAtMapScale', 'layerInfos', 'supportsDynamicLayers'];
+                return ['visibleAtMapScale', 'visible', 'layerInfos', 'supportsDynamicLayers'];
             }
             get layerClass () { return gapi().layer.ArcGISDynamicMapServiceLayer; }
         }
@@ -225,12 +238,6 @@
             }
         }
 
-        class CsvRecord extends LayerRecord {
-            constructLayer () {
-                return gapi().layer.makeCsvLayer;
-            }
-        }
-
         class FeatureRecord extends AttrRecord {
             get layerClass () { return gapi().layer.FeatureLayer; }
 
@@ -241,19 +248,22 @@
             }
         }
 
-        function makeRecord(config) {
+        function makeServiceRecord(config) {
             const types = Geo.Layer.Types;
             const typeToClass = {
                 [types.ESRI_TILE]: TileRecord,
                 [types.ESRI_FEATURE]: FeatureRecord,
                 [types.ESRI_IMAGE]: ImageRecord,
                 [types.ESRI_DYNAMIC]: DynamicRecord,
-                [types.OGC_WMS]: WmsRecord,
-                csv: CsvRecord
+                [types.OGC_WMS]: WmsRecord
             };
             return new typeToClass[config.layerType](config);
         }
 
-        return { makeRecord };
+        function makeFileRecord(config, layer) {
+            return new FeatureRecord(config, layer);
+        }
+
+        return { makeServiceRecord, makeFileRecord };
     }
 })();

@@ -46,7 +46,8 @@
              * the appropriate flags on the LegendEntry object it is bound to.
              */
             obj.bindListeners = () => {
-                obj._layerRecord.addStateListener(state => {
+
+                const listener = state => {
                     const handlers = {
                         [Geo.Layer.States.ERROR]: () => {
                             obj.setLayerState(Geo.Layer.States.ERROR, 100);
@@ -59,7 +60,9 @@
                     if (handlers.hasOwnProperty(state)) {
                         handlers[state]();
                     }
-                });
+                };
+                obj._layerRecord.addStateListener(listener);
+                obj.unbindListeners = () => obj._layerRecord.removeStateListener(listener);
             };
 
             /**
