@@ -26,23 +26,18 @@
 
     // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
-    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay) {
+    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement, $timeout) {
         const service = {
             addState,
             setActive,
             setMorph,
-            openPrevious,
             callback,
             setFocusElement,
             previousFocus,
+            togglePanel,
+            closePanelFromHistory,
             state: angular.copy(initialState),
-            display: angular.copy(initialDisplay),
-
-            // temporary place to store layer data;
-            // TODO: move to the initialDisplay constant service
-            _detailsData: {
-                layers: []
-            }
+            display: angular.copy(initialDisplay)
         };
 
         const fulfillStore = {}; // keeping references to promise fulfill functions
@@ -51,6 +46,7 @@
         const displayService = displayManager(service); // init displayManager
         angular.extend(service, displayService); // merge displayManager service functions into stateManager
 
+        const panelHistory = [];
         return service;
 
         /*********/
@@ -64,7 +60,8 @@
         }
 
         /**
-         * Sets items states. Items may be supplied as an array of strings or ojects of `{ [itemName]: [targetValue] }` where `itemName` is a String; `targetValue`, a boolean. If the targetValue is not supplied, a negation of the current state is used. runAfter changing state of an item, stateManager waits for state directive to resolve items callback runAfter its transition is completed. This can be used to open toc panel and then metadata panel in sequence.
+         * Sets items states. Items may be supplied as an array of strings or ojects of `{ [itemName]: [targetValue] }` where `itemName` is a String; `targetValue`, a boolean.
+         * If the targetValue is not supplied, a negation of the current state is used.
          *
          * ```js
          * // sideMetadata panel will only be activated when state directive resolved mainToc callback runAfter its transition is complete
@@ -79,7 +76,6 @@
          */
         function setActive(...items) {
             if (items.length > 0) {
-                let runAfter;
 
                 let one = items.shift(); // get first item
                 let oneTargetValue;
@@ -94,68 +90,13 @@
                     one = getItem(oneName);
                 }
 
-                // console.log('Setting state item', one.name, 'to', oneTargetValue);
-                if (one.item.parent) { // item has a parent
-
-                    let oneParent = getParent(one.name); // get parent
-                    if (oneTargetValue) { // item turning on
-
-                        if (!oneParent.item.active) { // if parent is off,
-                            setItemProperty(one.name, 'active', true, true); // turn item on without animation
-                            one = oneParent; // and animate parent's opening transition
-                        } else { // if parent is on,
-                            getChildren(oneParent.name)
-                                .forEach(child => {
-                                    // console.log('child - ', child);
-                                    if (child.name !== one.name) {
-                                        setItemProperty(child.name, 'active', false); // animate siblings off
-                                    }
-                                });
-                        }
-
-                    } else { // item turning off
-                        one = oneParent; // animate parent's closing transition
-                        runAfter = () => { // runAfter parent finished its transition
-                            getChildren(oneParent.name)
-                                .forEach(child => {
-                                    // console.log('child 1- ', child);
-                                    setItemProperty(child.name, 'active', false, true); // immediately turn off all children
-                                });
-                        };
-                    }
-
-                } else { // item is a parent
-                    let oneChildren = getChildren(one.name);
-
-                    // when turning a parent item on, turn on first (random) child
-                    if (oneTargetValue && oneChildren.length > 0) { // turning on and with children
-                        setItemProperty(oneChildren[0].name, 'active', true, true); // immediately turn the first (random) child on without transition
-                    } else if (!oneTargetValue) { // turning off
-                        runAfter = () => { // runAfter parent finished its transition
-                            oneChildren.forEach(child => {
-                                // console.log('child 2- ', child);
-                                setItemProperty(child.name, 'active', false, true); // immediately turn off all children
-                            });
-                        };
-                    }
+                if (oneTargetValue) {
+                    return openPanel(one).then(() => setActive(...items));
+                } else {
+                    return closePanel(one).then(() => setActive(...items));
                 }
-
-                // return promise for easy promise chaining
-                return setItemProperty(one.name, 'active', oneTargetValue)
-                    .then(() => {
-
-                        // console.log('Continue with the rest of state items');
-                        // run any `runAfter` function if exists
-                        // TODO: runAfter should return a promise; return `setActive` when it resolves
-                        if (runAfter) {
-                            runAfter();
-                        }
-
-                        // process the rest of the items
-                        return setActive(...items);
-                    });
             } else {
-                return $q.resolve(true); // return a resolved promise for thenability
+                return $q.resolve(true);
             }
         }
 
@@ -183,6 +124,27 @@
             if (fulfillStore[fulfillKey]) {
                 fulfillStore[fulfillKey]();
             }
+        }
+
+        /**
+         * Close the most recently opened panel.
+         *
+         * @return  {Promise}   resolves when a panel has finished its closing animation
+         */
+        function closePanelFromHistory() {
+            return panelHistory.length > 0 ? closePanel(getItem(panelHistory.pop())) : $q.resolve(true);
+        }
+
+        /**
+         * Toggles a child panel open or closed based on the negated active state. Entire panel
+         * including parent is opened or closed. Therefore sibling panels are not swapped
+         * from history.
+         *
+         * @param  {String}   panelName the name of a child panel
+         */
+        function togglePanel(panelName) {
+            const parentPanel = getParent(panelName);
+            return parentPanel.item.active ? closePanel(parentPanel) : openPanel(getItem(panelName));
         }
 
         /* PRIVATE HELPERS */
@@ -235,55 +197,130 @@
                     if (property === 'morph') {
                         return;
                     }
-
-                    let history;
-
-                    if (item.parent && value) { // add to history only when a child opens or ...
-                        history = getParent(itemName).item.history;
-                        history.push(itemName);
-                    } else if (!item.parent && !value) { // ... or the parent closes
-                        history = item.history;
-                        history.push(null); // `null` means no item was active in the panel;
-                    }
-
-                    // keep history at 10 items, I don't think we need any more
-                    if (history && history.length > 10) {
-                        history.shift();
-                    }
                 }
-
                 return;
             });
         }
 
         /**
-         * Given a content pane name, closes it and opens a previously opened pane from the history.
-         * @param  {String} currentPaneName name of the content pane
-         * @return {Promise}                returns a promise which is resolved when opening animation completes; or resolves immediately if nothing happens
+         * Adds or removes a panels name from panelHistory. If the provided panel is active the
+         * default behaviour is to add the panel unless addFlag is set to false. An inactive
+         * panel is removed unless addFlag is true.
+         *
+         * @param   {Object}    panel the panel to be added or removed from panelHistory.
+         * @param   {Boolean}   addFlag optional set to true to add, false to remove
          */
-        function openPrevious(currentPaneName) {
-            const panel = getParent(currentPaneName);
-            const history = panel.item.history;
-
-            // no history; do nothing
-            if (history.length === 0) {
-                return $q.resolve();
+        function modifyHistory(panel, addFlag = panel.item.active) {
+            const indexInHistory = panelHistory.indexOf(panel.name);
+            if (indexInHistory !== -1) {
+                panelHistory.splice(indexInHistory, 1);
             }
 
-            // TODO: abstract; maybe move to stateManager itself
-            // get second to last history item from history
-            const item = history.splice(-2).shift();
-            const options = {};
+            if (addFlag) {
+                panelHistory.push(panel.name);
+            }
+        }
 
-            // reopen previous selected pane if it's not null or currentPaneName
-            if (item !== null && item !== currentPaneName) {
-                options[item] = true;
+        /**
+         * Opens a panel for display.
+         *
+         * If panelToOpen is a parent panel, a random child panel will be opened to avoid a blank panel. This should
+         * be avoided since passing a child panel will also open its parent panel. All other sibling panels are
+         * closed.
+         *
+         * @param  {Object}   panelToOpen the panel object to be opened
+         * @param  {Boolean}  propagate optional allow parent/sibling panels to be modified
+         * @return {Promise}  resolves when panel animation has completed
+         */
+        function openPanel(panelToOpen, propagate = true) {
+            let animationPromise;
+
+            // opening parent panel
+            if (typeof panelToOpen.item.parent === 'undefined') {
+                if (propagate) {
+                    animationPromise = openPanel(getChildren(panelToOpen.name)[0], false)
+                        .then(() => openPanel(panelToOpen, false));
+                } else {
+                    animationPromise = setItemProperty(panelToOpen.name, 'active', true);
+                }
+
+            // opening child panel
             } else {
-                options[currentPaneName] = false;
-            }
+                setItemProperty(panelToOpen.name, 'active', true, true);
 
-            // close `mainDetails` panel
-            return service.setActive(options);
+                // go through history and close all sibling panels. remove any sibling opened after this one
+                // from history
+                for (let i = 0; i < panelHistory.length; i++) {
+                    const panel = getItem(panelHistory[i]);
+                    if (panel.name !== panelToOpen.name && panel.item.parent === panelToOpen.item.parent) {
+                        setItemProperty(panel.name, 'active', false, true);
+                        let indexInHistory = panelHistory.indexOf(panelToOpen.name);
+                        if (indexInHistory !== -1 && i > indexInHistory) {
+                            modifyHistory(panel);
+                        }
+                    }
+                }
+                modifyHistory(panelToOpen);
+                animationPromise = propagate ? openPanel(getParent(panelToOpen.name), false) : $q.resolve(true);
+
+                // set focus to opened panel
+                animationPromise.then(() => setPanelFocus(panelToOpen.name));
+            }
+            return animationPromise;
+        }
+
+        /**
+         * Closes a panel from display.
+         *
+         * If panelToClose is a parent all of its children are closed. Otherwise
+         * attempt to replace child panel with a sibling from history, closing the
+         * parent panel if one cannot be found.
+         *
+         * @param   {Object}    panelToClose the panel object to be opened
+         * @param   {Boolean}   propagate optional allow parent/sibling panels to be modified
+         * @return  {Promise}   resolves when panel animation has completed
+         */
+        function closePanel(panelToClose, propagate = true) {
+            let animationPromise;
+
+            // closing parent panel
+            if (typeof panelToClose.item.parent === 'undefined') {
+                animationPromise = setItemProperty(panelToClose.name, 'active', false)
+                    .then(() => propagate ? getChildren(panelToClose.name)
+                    .forEach(child => closePanel(child, false)) : true);
+
+            // closing child panel
+            } else {
+                if (propagate) {
+                    // replace with sibling from history if exists and keep parent panel open
+                    for (let i = 0; i < panelHistory.length; i++) {
+                        const subPanel = getItem(panelHistory[i]);
+                        if (subPanel.name !== panelToClose.name && subPanel.item.parent === panelToClose.item.parent) {
+                            closePanel(panelToClose, false);
+                            return setItemProperty(subPanel.name, 'active', true, true);
+                        }
+                    }
+                    closePanel(getParent(panelToClose.name), false);
+                }
+                modifyHistory(panelToClose, false);
+                animationPromise = setItemProperty(panelToClose.name, 'active', false, true);
+            }
+            // set focus to last opened panel
+            animationPromise.then(() => setPanelFocus(panelHistory[panelHistory.length - 1]));
+            return animationPromise;
+        }
+
+        /**
+         * Sets focus on the first visible button in panel named panelName
+         * @param  {String} panelName the name of the panel to set focus on
+         */
+        function setPanelFocus(panelName) {
+            $timeout(() => {
+                const firstButton =  $rootElement.find(`[rv-state="${panelName}"] button`).filter(':visible')[0];
+                if (typeof firstButton !== 'undefined') {
+                    firstButton.focus();
+                }
+            }, 10);
         }
 
         /**
