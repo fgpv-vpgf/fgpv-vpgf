@@ -29,6 +29,7 @@
                 layers,
                 constructLayers,
                 removeLayer,
+                zoomToScale,
                 reloadLayer,
                 aliasedFieldName,
                 getLayersByType,
@@ -138,7 +139,7 @@
              * @param  {Integer} scale           scale value to test
              * @param  {Integer} minScale        minimum invalid scale level for zoom out, 0 for none
              * @param  {Integer} maxScale        maximum invalid scale level for zoom in, 0 for none
-             * @return {Boolean}                 true if scale is outside valid bound
+             * @return {Object}                  scaleSet.value = true if scale is outside valid bound
              */
             function isOffScale(scale, minScale, maxScale) {
                 // GIS for dummies.
@@ -146,7 +147,21 @@
                 // minScale means if you zoom out beyond this number, hide the layer
                 // maxScale means if you zoom in past this number, hide the layer
                 // 0 value for min or max scale means there is no hiding in effect
-                return (scale < maxScale && maxScale !== 0) || (scale > minScale && minScale !== 0);
+                const scaleSet = {
+                    value: false,
+                    zoomIn: false
+                };
+
+                // check if out of scale and set zoom direction to scaleSet
+                if (scale < maxScale && maxScale !== 0) {
+                    scaleSet.value = true;
+                    scaleSet.zoomIn = false;
+                } else if (scale > minScale && minScale !== 0) {
+                    scaleSet.value = true;
+                    scaleSet.zoomIn = true;
+                }
+
+                return scaleSet;
             }
 
             /**
@@ -371,6 +386,19 @@
 
                 mapObject.removeLayer(l._layer);
                 delete service.layers[layerId]; // remove layer from the registry
+            }
+
+            /**
+             * Zoom to visibility scale
+             * @param {Number} layerId  the id of the layer to zoom to scale to
+             * @param {Boolean} zoomIn the zoom to scale direction; true need to zoom in; false need to zoom out
+             *
+             */
+            function zoomToScale(layerId, zoomIn) {
+                const l = layers[layerId]._layer;
+                const lods = zoomIn ? geoState.lods : [...geoState.lods].reverse();
+                const lod = lods.find(lod => zoomIn ? lod.scale < l.minScale : lod.scale > l.maxScale);
+                return mapObject.setScale(lod.scale);
             }
 
             /**
