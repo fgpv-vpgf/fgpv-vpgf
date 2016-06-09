@@ -30,6 +30,7 @@
             assembleMap,
             retrieveSymbol,
             reloadLayer: l => layerRegistry.reloadLayer(l),
+            snapshotLayer: l => layerRegistry.snapshotLayer(l),
 
             state: null
         };
