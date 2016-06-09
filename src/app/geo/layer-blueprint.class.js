@@ -131,7 +131,7 @@
              * @return {Promise} resolving with a LayerRecord object matching one of the esri/layers objects based on the layer type
              */
             generateLayer() {
-                return $q.resolve(LayerRecordFactory.makeRecord(this.config));
+                return $q.resolve(LayerRecordFactory.makeServiceRecord(this.config));
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
@@ -289,7 +289,8 @@
 
                 console.log(this.userOptions);
 
-                return layerFileGenerators[this.fileType]();
+                const layerPromise = layerFileGenerators[this.fileType]() ;
+                return layerPromise.then(layer => LayerRecordFactory.makeFileRecord(this.config, layer));
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
