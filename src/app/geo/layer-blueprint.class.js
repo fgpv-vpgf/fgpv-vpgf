@@ -183,6 +183,13 @@
                     });
             }
 
+            _applyDefaults() {
+                super._applyDefaults();
+                if (this.config.options) {
+                    this.config.options.reload.enabled = false;
+                }
+            }
+
             /**
              * Returns file type.
              * @return {String} file type
@@ -289,7 +296,7 @@
 
                 console.log(this.userOptions);
 
-                const layerPromise = layerFileGenerators[this.fileType]() ;
+                const layerPromise = layerFileGenerators[this.fileType]();
                 return layerPromise.then(layer => LayerRecordFactory.makeFileRecord(this.config, layer));
             }
         }
