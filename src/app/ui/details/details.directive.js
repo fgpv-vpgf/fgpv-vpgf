@@ -54,9 +54,7 @@
          * Closes loader pane and switches to the previous pane if any.
          */
         function closeDetails() {
-            stateManager
-                .openPrevious('mainDetails')
-                .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display;
+            stateManager.setActive({ mainDetails: false });
         }
 
         /**
