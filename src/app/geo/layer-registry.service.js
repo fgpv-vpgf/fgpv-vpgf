@@ -334,7 +334,7 @@
                         mapObject.addLayer(lr._layer, pos);
                         // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
                         if (lr._layer.loaded) {
-                            lr.onLoad();
+                            lr.onUpdateEnd();
                         }
                     });
                 });
