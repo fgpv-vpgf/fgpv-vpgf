@@ -48,6 +48,8 @@
             three: 'three'
         };
 
+        // jscs doesn't like enhanced object notation
+        // jscs:disable requireSpacesInAnonymousFunctionExpression
         self.connect = {
             step: {
                 titleValue: 'import.service.connect.title',
@@ -59,8 +61,14 @@
             },
             form: null,
             serviceUrl: null,
-            serviceType: null
+            serviceType: null,
+            serviceResetValidation() {
+
+                // reset broken endpoint error message when user modifies service url
+                toggleErrorMessage(this.form, 'serviceUrl', 'broken', true);
+            }
         };
+        // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         self.select = {
             step: {
@@ -100,14 +108,33 @@
 
         /***/
 
+        /**
+         * Tiny helper function to set/reset error messages on fields
+         * @param  {Object} form      form object
+         * @param  {String} fieldName field name to set the error on
+         * @param  {String} errorName name of the error message
+         * @param  {Boolean} state     =             false; false - show error, true - hide error
+         */
+        function toggleErrorMessage(form, fieldName, errorName, state = false) {
+            form[fieldName].$setValidity(errorName, state);
+        }
+
         function connectOnContinue() {
+            const connect = self.connect;
+
             self.layerBlueprint = new LayerBlueprint.service({
-                url: self.connect.serviceUrl
+                url: connect.serviceUrl
             });
 
             console.log(self.layerBlueprint);
 
-            self.layerBlueprint.ready.then(() => stepper.nextStep());
+            self.layerBlueprint.ready
+                .then(() => stepper.nextStep())
+                .catch(() => {
+                    console.log('self.connect.form.serviceUrl');
+
+                    toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false); // , connect.step);
+                });
         }
 
         function connectOnCancel() {
@@ -116,6 +143,7 @@
             connect.serviceUrl = '';
             connect.form.serviceUrl.$setPristine();
             connect.form.serviceUrl.$setUntouched();
+            connect.serviceResetValidation();
 
             stepper.previousStep();
         }

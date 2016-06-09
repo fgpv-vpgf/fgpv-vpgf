@@ -10,11 +10,13 @@
                 <input
                     name="serviceUrl"
                     type="url"
+                    ng-change="self.connect.serviceResetValidation()"
                     ng-model="self.connect.serviceUrl"
                     ng-model-options="{ updateOn: 'default blur', debounce: { default: 500, blur: 0 } }"
                     required>
                 <div ng-messages="self.connect.form.serviceUrl.$error">
                     <div ng-message="url" translate>import.service.connect.invalidurl</div>
+                    <div ng-message="broken" translate>import.service.connect.broken</div>
                 </div>
             </md-input-container>
         </rv-stepper-item>
