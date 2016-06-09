@@ -43,5 +43,6 @@
         </md-menu-content>
     </md-menu>
 
-    <rv-toc-entry-control option="visibility"></rv-toc-entry-control>
+    <rv-toc-entry-control option="visibility" ng-if="!self.entry.flags.scale.visible || !self.entry.options.visibility.value"></rv-toc-entry-control>
+    <rv-toc-entry-control option="offscale" ng-if="self.entry.flags.scale.visible && self.entry.options.visibility.value"></rv-toc-entry-control>
 </div>

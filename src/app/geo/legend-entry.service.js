@@ -96,11 +96,17 @@
                     const adjIdx = isNaN(obj.featureIdx) ? '0' : obj.featureIdx;
 
                     // TODO remove this test once it has passed the test of time
+                    // quite often, it is undefined for example Eco Geo always start at 1. We need to keep this or modify upfront
                     if (typeof scaleSet[adjIdx] === 'undefined') {
                         console.warn('setLayerScaleFlag - indexes are not lining up');
+                    } else {
+                        // set scale flag properties and offscale options (only for legend entry, only on featureLayer and dynamicLayer for now)
+                        const scale = scaleSet[adjIdx];
+                        obj.flags.scale.visible = scale.value;
+                        if (obj.options.offscale) {
+                            obj.options.offscale.value = scale.zoomIn;
+                        }
                     }
-                    obj.flags.scale.visible = scaleSet[adjIdx];
-
                 } else if (obj.layerEntries) {
                     // walk through layerEntries and update each one
                     obj.layerEntries.forEach(ent => {
@@ -108,10 +114,10 @@
 
                         if (slave.flags) {
                             // TODO remove this test once it has passed the test of time
-                            if (typeof scaleSet[slave.featureIdx] === 'undefined') {
+                            if (typeof scaleSet[slave.featureIdx].value === 'undefined') {
                                 console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
                             }
-                            slave.flags.scale.visible = scaleSet[slave.featureIdx];
+                            slave.flags.scale.visible = scaleSet[slave.featureIdx].value;
                         }
                     });
                 }
