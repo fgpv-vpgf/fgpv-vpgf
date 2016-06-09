@@ -115,30 +115,38 @@ function localProjectExtent(extent, sr) {
     return { x0, y0, x1, y1, sr };
 }
 
+/**
+ * Check whether or not a spatialReference is supported by proj4 library
+ *
+ * @param {Object} spatialReference to be checked to see if it's supported by proj4
+ * @returns {Object} whether or not it is supported by proj4 and if not, a message detailing why.
+ */
 function checkProj(spatialReference) {
-    try {
-        let srcProj;
+    let srcProj;
 
-        // find the source extent (either from wkid or wkt)
-        if (spatialReference.wkid) {
-            srcProj = 'EPSG:' + spatialReference.wkid;
-        } else if (spatialReference.wkt) {
-            srcProj = spatialReference.wkt;
-        } else {
-            throw new Error('No WKT or WKID specified on extent.spatialReference');
-        }
-
-        // find the destination extent
-        let destProj = makeEpsgString(sr);
-
-        if (!proj4.defs(srcProj)) {
-            throw new Error('Source projection not recognized by proj4 library');
-        }
-    } catch {
-        return false;
+    // find the source extent (either from wkid or wkt)
+    if (spatialReference.wkid) {
+        srcProj = 'EPSG:' + spatialReference.wkid;
+    } else if (spatialReference.wkt) {
+        srcProj = spatialReference.wkt;
+    } else {
+        return {
+            foundProj: false,
+            message: 'No WKT or WKID specified on extent.spatialReference'
+        };
     }
 
-    return true;
+    if (!proj4.defs(srcProj)) {
+        return {
+            foundProj: false,
+            message: 'Source projection not recognized by proj4 library'
+        };
+    }
+
+    return {
+        foundProj: true,
+        message: 'Source projection OK.'
+    };
 }
 
 function projectEsriExtentBuilder(esriBundle) {
