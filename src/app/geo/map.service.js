@@ -16,7 +16,7 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, $timeout, gapiService, storageService) {
+    function mapServiceFactory($q, $timeout, gapiService, storageService, errorService, $filter) {
         const settings = { zoomPromise: $q.resolve(), zoomCounter: 0 };
         return mapService;
 
@@ -354,6 +354,7 @@
              * @param  {Integer} zoomLevel is the max level of zoom such that the layer is still visible on the map and not out of scale
              */
             function zoomWithOffset(geo, attr, sr, zoomLevel) {
+
                 const map = service.mapObject;
 
                 const barWidth = storageService.panels.sidePanel.outerWidth();
@@ -372,30 +373,35 @@
                     attributes: attr
                 });
 
-                // reproject graphic to spatialReference of the map
-                const gextent = gapiService.gapi.proj.localProjectExtent(
-                    gapiService.gapi.proj.graphicsUtils.graphicsExtent([newg]),
-                    map.spatialReference);
+                try {
+                    // reproject graphic to spatialReference of the map
+                    const gextent = gapiService.gapi.proj.localProjectExtent(
+                        gapiService.gapi.proj.graphicsUtils.graphicsExtent([newg]),
+                        map.spatialReference);
 
-                // need to make new esri extent to use getCenter function
-                const newExt = gapiService.gapi.mapManager.Extent(gextent.x1, gextent.y1,
-                    gextent.x0, gextent.y0, gextent.sr);
+                    // need to make new esri extent to use getCenter function
+                    const newExt = gapiService.gapi.mapManager.Extent(gextent.x1, gextent.y1,
+                        gextent.x0, gextent.y0, gextent.sr);
 
-                // handles extent
-                if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
-                    const eExt = newExt.expand(4);
-                    const xOffset = (eExt.xmax - eExt.xmin) * ratio * (-1);
-                    const gExt = eExt.offset(xOffset, (eExt.ymax - eExt.ymin) / 4);
-                    map.setExtent(gExt);
-                } else {
-                    // handles points
-                    const pt = newExt.getCenter();
-                    const zoomed = map.setZoom(zoomLevel);
-                    zoomed.then(() => {
-                        const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
-                        const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
-                        map.centerAt(newPt, zoomLevel);
-                    });
+                    // handles extent
+                    if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
+                        const eExt = newExt.expand(4);
+                        const xOffset = (eExt.xmax - eExt.xmin) * ratio * (-1);
+                        const gExt = eExt.offset(xOffset, (eExt.ymax - eExt.ymin) / 4);
+                        map.setExtent(gExt);
+                    } else {
+                        // handles points
+                        const pt = newExt.getCenter();
+                        const zoomed = map.setZoom(zoomLevel);
+                        zoomed.then(() => {
+                            const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
+                            const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
+                            map.centerAt(newPt, zoomLevel);
+                        });
+                    }
+                } catch (err) {
+                    console.warn(err);
+                    errorService.display($filter('translate')('toc.error.customproj'));
                 }
             }
 
