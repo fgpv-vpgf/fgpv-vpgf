@@ -24,7 +24,7 @@
         .module('app.geo')
         .service('legendEntryFactory', legendEntryFactory);
 
-    function legendEntryFactory($timeout, $translate, gapiService, Geo, layerDefaults, $rootScope) {
+    function legendEntryFactory($timeout, $translate, gapiService, Geo, layerDefaults) {
 
         const service = {
             placeholderEntryItem,
@@ -448,27 +448,6 @@
         };
 
         /**
-         * Adds a dynamic item (layer or another group) to a layer group.
-         * @param {Object} item     layer or group item to add
-         * @param {Number} position position to insert the item at; defaults to the last position in the array
-         * @return position of the inserted item
-         */
-        DYNAMIC_ENTRY_GROUP.add = function (item, position) {
-            // Propagate item visibility changes up so group visibility is updated
-            $rootScope.$watch(() => item.options.visibility.value, () => {
-                for (let i = 0; i < this.items.length; i++) {
-                    if (this.items[i].getVisibility()) {
-                        this.options.visibility.value = true;
-                        return;
-                    }
-                }
-                this.options.visibility.value = false;
-            });
-
-            return ENTRY_GROUP.add.call(this, item, position);
-        };
-
-        /**
          * Sets visibility of a simple layer object, one which is represented by a single entry in the legend
          * @param  {Boolean} value visibility value
          * @param  {Boolean} isTrigger flag specifying if the visibility value should be applied to the actual layer; this is used to avoid setting visiblity multiple times for items in a subgroup when propagating
@@ -629,6 +608,7 @@
                 .filter(index => index !== -1); // filter out ones that are not visible
 
             // console.log(this.name + ' set to ' + this.getVisibility() + ' ' + visibleSublayerIds);
+            this.options.visibility.value = visibleSublayerIds.length > 0;
 
             // apply visibility to the dynamic layer itself
             this._layerRecord.setVisibility(this.getVisibility());
