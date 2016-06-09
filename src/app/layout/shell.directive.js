@@ -36,8 +36,7 @@
             $rootElement.bind('keydown', event => {
                 if (event.which === 27) {
                     scope.$apply(() => {
-                        Object.keys(stateManager.state)
-                            .forEach(pName => stateManager.setActive({ [pName]: false }));
+                        stateManager.closePanelFromHistory();
                     });
                 }
             });
