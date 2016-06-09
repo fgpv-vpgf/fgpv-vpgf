@@ -423,8 +423,8 @@
              * @param {LayerRecord|LegendEntry} l the layer to be reloaded
              */
             function snapshotLayer(l) {
-                const cu = cfg => cfg.options.snapshot.value = true;
-                reloadLayer(l, cu);
+                const configUpdate = cfg => cfg.options.snapshot.value = true;
+                reloadLayer(l, configUpdate);
             }
 
             function registerLayerRecord(lr) {
