@@ -195,21 +195,7 @@
          * Closes loader pane and switches to toc.
          */
         function closeLoaderService() {
-            // TODO: abstract; maybe move to stateManager itself
-            const item = stateManager.state.main.history.slice(-2).shift(); // get second to last history item
-            const options = {};
-
-            stepper.reset().start();
-
-            // reopen previous selected pane if it's not null or 'mainLoaderService'
-            if (item !== null && item !== 'mainLoaderService') {
-                options[item] = true;
-            } else {
-                options.mainLoaderService = false;
-            }
-
-            // close `mainDetails` panel
-            stateManager.setActive(options);
+            stateManager.setActive({ mainLoaderService: false });
         }
     }
 })();
