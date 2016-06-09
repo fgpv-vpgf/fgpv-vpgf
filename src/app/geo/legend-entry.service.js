@@ -608,6 +608,7 @@
                 .filter(index => index !== -1); // filter out ones that are not visible
 
             // console.log(this.name + ' set to ' + this.getVisibility() + ' ' + visibleSublayerIds);
+            this.options.visibility.value = visibleSublayerIds.length > 0;
 
             // apply visibility to the dynamic layer itself
             this._layerRecord.setVisibility(this.getVisibility());
