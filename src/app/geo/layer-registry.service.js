@@ -31,6 +31,7 @@
                 removeLayer,
                 zoomToScale,
                 reloadLayer,
+                snapshotLayer,
                 aliasedFieldName,
                 getLayersByType,
                 getAllQueryableLayerRecords,
@@ -403,13 +404,27 @@
             /**
              * Reload a layer.  Can accept LayerRecords or LegendEntries
              * @param {LayerRecord|LegendEntry} l the layer to be reloaded
+             * @param {Function} configUpdate an optional function which will be passed the configuration
+             *                   of the given layer and can make changes before the new layer is loaded
              */
-            function reloadLayer(l) {
+            function reloadLayer(l, configUpdate) {
                 // FIXME do a proper test when LegendEntry becomes a proper class
                 const lr = l._layerRecord || l;
                 const pos = getLayerMapIndex(lr);
                 mapObject.removeLayer(lr._layer);
+                if (configUpdate) {
+                    configUpdate(lr.config);
+                }
                 mapObject.addLayer(lr.constructLayer(), pos);
+            }
+
+            /**
+             * Switch a feature layer to snapshot mode.
+             * @param {LayerRecord|LegendEntry} l the layer to be reloaded
+             */
+            function snapshotLayer(l) {
+                const configUpdate = cfg => cfg.options.snapshot.value = true;
+                reloadLayer(l, configUpdate);
             }
 
             function registerLayerRecord(lr) {

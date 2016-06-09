@@ -41,7 +41,9 @@
                     <div class="rv-toggle-setting">
                         <span translate>settings.label.snapshot</span>
                         <span flex></span>
-                        <md-button class="rv-button-square">{{'settings.label.snapshotEnable' | translate}}</md-button>
+                        <md-button ng-disabled="!self.tocEntry.options.snapshot.enabled" ng-click="self.loadSnapshot(self.tocEntry)" class="rv-button-square">
+                            {{'settings.label.snapshotEnable' | translate}}
+                        </md-button>
                     </div>
                 </div>
                 <div class="rv-setting-option" ng-if="self.tocEntry.options.query">

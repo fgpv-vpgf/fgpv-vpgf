@@ -59,6 +59,7 @@
         self.tocEntry = null;
         self.opacityValue = 0;
         self.toggleQuery = toggleQuery;
+        self.loadSnapshot = loadSnapshot;
 
         // watch for changing display value and store reference to new tocEntry and its opacity value
         $scope.$watch('self.display.data', newValue => {
@@ -101,6 +102,11 @@
                 // set include subgroup to true to cascade to all (group, subgroups and items)
                 tocEntry.walkItems(item => item.options.query.value = value, true);
             }
+        }
+
+        function loadSnapshot(legendEntry) {
+            geoService.snapshotLayer(legendEntry);
+            self.tocEntry.options.snapshot.enabled = false;
         }
 
         activateOpacitySetting();
