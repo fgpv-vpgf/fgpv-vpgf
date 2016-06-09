@@ -140,6 +140,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.service.connect.title,Connect service,[fr] Connect Service
 ,import.service.connect.serviceurl,Service layer URL,[fr] Service layer URL
 ,import.service.connect.invalidurl,This is not a valid URL,[fr] This is not a valid URL
+,import.service.connect.broken,Service does not respond,[fr] Service does not respond
 ,import.service.select.title,Select Service type,[fr] Select Service type
 ,import.service.select.servicetype,Service Type,[fr] Service Type
 ,import.service.type.featurelayer,ESRI Feature Layer,[fr] ESRI Feature Layer

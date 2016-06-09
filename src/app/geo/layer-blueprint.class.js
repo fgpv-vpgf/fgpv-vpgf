@@ -132,10 +132,11 @@
                 // if layerType is no specified, this is likely a user added layer
                 // call geoApi to predict its type
                 if (this.layerType === null) {
-                    this._constructorPromise = this._fetchServiceInfo()
-                        .catch(error => {
-                            console.error('Something happened', error);
-                        });
+                    this._constructorPromise = this._fetchServiceInfo();
+
+                    /*.catch(error => {
+                        console.error('Something happened', error);
+                    });*/
                 }
             }
 
@@ -143,7 +144,11 @@
                 const hint = this._serviceInfo !== null ? this._serviceInfo.serviceType : undefined;
                 return $q.resolve(gapiService.gapi.layer.predictLayerUrl(this.config.url, hint))
                     .then(fileInfo => {
-                        console.log(this._serviceInfo);
+                        console.log(fileInfo);
+
+                        if (fileInfo.serviceType === Geo.Service.Types.Error) {
+                            return $q.reject(fileInfo); // reject promise if the provided url cannot be accessed
+                        }
 
                         this._serviceInfo = fileInfo;
                         this.serviceType = this._serviceInfo.serviceType;
@@ -157,7 +162,15 @@
                                 const level = calculateLevel(layer, this._serviceInfo);
                                 layer.level = level;
                                 layer.indent = Array.from(Array(level)).map(() => '-').join('');
-                            });*/
+                            });
+
+                            function calculateLevel(layer, serviceInfo) {
+                                if (layer.parentLayerId === -1) {
+                                    return 0;
+                                } else {
+                                    return calculateLevel(serviceInfo.layers[layer.parentLayerId], serviceInfo) + 1;
+                                }
+                            }*/
 
                             // TODO: refactor
                             // this is to convert layerEntries to a proper config format
@@ -168,19 +181,13 @@
                                         index: layer.id
                                     };
                                 });
-                        }
-
-                        function calculateLevel(layer, serviceInfo) {
-                            if (layer.parentLayerId === -1) {
-                                return 0;
-                            } else {
-                                return calculateLevel(serviceInfo.layers[layer.parentLayerId], serviceInfo) + 1;
-                            }
+                        } else if (this.serviceType === Geo.Service.Types.WMS) {
+                            console.log('wmsAAA', this._serviceInfo);
                         }
                     })
                     .catch(error => {
                         this._serviceInfo = null;
-                        return error;
+                        return $q.reject(error);
                     });
             }
 
