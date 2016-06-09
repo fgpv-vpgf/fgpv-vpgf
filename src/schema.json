@@ -216,7 +216,7 @@
                 },
                 "value": {
                     "type": "boolean",
-                    "default": true,
+                    "default": false,
                     "description": "Specifies the layer data will be initially retrieved. True: everything is fetched upfront; False: fetched based on map extent."
                 }
             },
