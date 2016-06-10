@@ -115,6 +115,40 @@ function localProjectExtent(extent, sr) {
     return { x0, y0, x1, y1, sr };
 }
 
+/**
+ * Check whether or not a spatialReference is supported by proj4 library
+ *
+ * @param {Object} spatialReference to be checked to see if it's supported by proj4
+ * @returns {Object} whether or not it is supported by proj4 and if not, a message detailing why.
+ */
+function checkProj(spatialReference) {
+    let srcProj;
+
+    // find the source extent (either from wkid or wkt)
+    if (spatialReference.wkid) {
+        srcProj = 'EPSG:' + spatialReference.wkid;
+    } else if (spatialReference.wkt) {
+        srcProj = spatialReference.wkt;
+    } else {
+        return {
+            foundProj: false,
+            message: 'No WKT or WKID specified on extent.spatialReference'
+        };
+    }
+
+    if (!proj4.defs(srcProj)) {
+        return {
+            foundProj: false,
+            message: 'Source projection not recognized by proj4 library'
+        };
+    }
+
+    return {
+        foundProj: true,
+        message: 'Source projection OK.'
+    };
+}
+
 function projectEsriExtentBuilder(esriBundle) {
     return (extent, sr) => {
         const p = localProjectExtent(extent, sr);
@@ -191,6 +225,7 @@ module.exports = function (esriBundle) {
 
     return {
         addProjection: proj4.defs, // straight passthrough at the moment, maybe add arg checking (two args)?
+        checkProj,
         getProjection: proj4.defs, // straight passthrough at the moment, maybe add arg checking (one arg)?
         esriServerProject: esriServiceBuilder(esriBundle),
         Graphic: esriBundle.Graphic,
