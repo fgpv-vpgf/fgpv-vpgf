@@ -60,7 +60,7 @@
         }
 
         function toggleToc() {
-            stateManager.togglePanel('mainToc');
+            stateManager.setActive({ side: false }, 'mainToc');
         }
 
         function toggleToolbox() {
