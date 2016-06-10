@@ -12,7 +12,7 @@ describe('stateManager', () => {
     describe('stateManager', () => {
         // check that controller is created
 
-        xit('should be created successfully', () => {
+        it('should be created successfully', () => {
             let state = stateManager.state;
 
             // check if service is defined
@@ -28,17 +28,8 @@ describe('stateManager', () => {
                 .toBe(false);
         });
 
-        xit('should change child state correctly', done => {
+        it('should change child state correctly', function () {
             let state = stateManager.state;
-
-            // open mainToc; main should open as parent
-            // need to listen on item state changes and resolve locks on the stateManager
-            $rootScope.$watch(() => state.mainToc.active, () =>
-                stateManager.callback('mainToc', 'active'));
-            $rootScope.$watch(() => state.mainToolbox.active, () =>
-                stateManager.callback('mainToolbox', 'active'));
-            $rootScope.$watch(() => state.main.active, () =>
-                stateManager.callback('main', 'active'));
 
             $rootScope.$digest(); // need to kickstart digest cycle to init watches
 
@@ -66,7 +57,7 @@ describe('stateManager', () => {
                     expect(state.main.active)
                         .toBe(true);
                     expect(state.main.activeSkip)
-                        .toBe(false); // main should not do anything, still says animate from before
+                        .toBe(true); // main should not do anything, still says animate from before
 
                     expect(state.mainToc.active)
                         .toBe(false);
@@ -96,8 +87,6 @@ describe('stateManager', () => {
                         .toBe(false);
                     expect(state.mainToolbox.activeSkip)
                         .toBe(true); // mainToolbox is closed immediately after its parent, no animation
-
-                    done();
                 });
 
             $rootScope.$digest(); // why? http://brianmcd.com/2014/03/27/a-tip-for-angular-unit-tests-with-promises.html
@@ -252,47 +241,34 @@ describe('stateManager', () => {
             $rootScope.$digest();
         });
 
-        xit('should keep panel change history', done => {
-            let state = stateManager.state;
+        it('should keep panel change history', function () {
+            let history = stateManager.panelHistory;
 
-            expect(state.main.history.length)
+            expect(history.length)
                 .toBe(0);
-
-            // open mainToc; main should open as parent
-            // need to listen on item state changes and resolve locks on the stateManager
-            $rootScope.$watch(() => state.mainToc.active, () =>
-                stateManager.callback('mainToc', 'active'));
-            $rootScope.$watch(() => state.mainToolbox.active, () =>
-                stateManager.callback('mainToolbox', 'active'));
-            $rootScope.$watch(() => state.main.active, () =>
-                stateManager.callback('main', 'active'));
 
             $rootScope.$digest(); // need to kickstart digest cycle to init watches
 
             stateManager.setActive('mainToc')
                 .then(() => {
-                    expect(state.main.history.length)
+                    expect(history.length)
                         .toBe(1);
-                    expect(state.main.history[0])
+                    expect(history[0])
                         .toBe('mainToc');
 
                     // open toolbox; toc should close
                     return stateManager.setActive('mainToolbox');
                 })
                 .then(() => {
-                    expect(state.main.history.length)
+                    expect(history.length)
                         .toBe(2);
 
                     // close toolbox
                     return stateManager.setActive('mainToolbox');
                 })
                 .then(() => {
-                    expect(state.main.history.length)
-                        .toBe(3);
-                    expect(state.main.history[2])
-                        .toEqual(null);
-
-                    done();
+                    expect(history.length)
+                        .toBe(2);
                 });
 
             $rootScope.$digest();
