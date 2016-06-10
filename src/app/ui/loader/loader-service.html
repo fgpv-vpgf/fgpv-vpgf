@@ -12,7 +12,7 @@
                     type="url"
                     ng-change="self.connect.serviceResetValidation()"
                     ng-model="self.connect.serviceUrl"
-                    ng-model-options="{ updateOn: 'default blur', debounce: { default: 500, blur: 0 } }"
+                    ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
                     required>
                 <div ng-messages="self.connect.form.serviceUrl.$error">
                     <div ng-message="url" translate>import.service.connect.invalidurl</div>
@@ -71,19 +71,20 @@
                     </div-->
             <!--/md-input-container-->
 
-            <md-input-container class="md-block" ng-switch-when="ogcWms">
-                <label>Layer Name</label>
-                <md-select name="layerName" ng-model="self.configure.options.layerName" required>
-                    <md-option ng-repeat="(value, key) in self.configure.layerNames" value="{{ value }}">
-                        {{ key }}
+            <md-input-container class="md-block" ng-switch-when="wms">
+                <label translate>import.service.configure.layers</label>
+                <md-select name="layers" ng-model="self.layerBlueprint.config.layerEntries" required multiple>
+                    <md-option ng-repeat="layer in self.layerBlueprint.serviceInfo.layers" ng-value="{ id: layer.name, name: layer.desc }">
+                        {{ layer.indent + ' ' + layer.desc }}
                     </md-option>
                 </md-select>
+                <div class="rv-hint" translate>import.service.configure.multipleselection</div>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
-                <!--div ng-messages="self.configure.form.layerName.$error">
-                        <div ng-message="required">This is required!</div>
-                        <div ng-message="md-maxlength">That's too long!</div>
-                    </div-->
+                <!--div class="errors" ng-messages="self.configure.form.layers.$error">
+                    <div ng-message="required">Required</div>
+                </div-->
             </md-input-container>
+
 
             <img
                 src="https://d13yacurqjgara.cloudfront.net/users/355650/screenshots/2181500/unicorn_drib_v2.gif"
