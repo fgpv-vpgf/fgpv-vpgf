@@ -133,3 +133,23 @@ describe('spatialReference comparison', () => {
     });
 
 });
+
+describe('Check valid source projection', () => {
+    const sr1_3978 = { wkid: 3978 };
+    const sr2_fake = { wkt: 'HelloThereImFake' };
+    let proj;
+
+    // setup function running before each test
+    beforeEach(() => {
+        proj = projBuilder(fakeEsri);
+    });
+
+    it("should be valid spatial reference", () => {
+        expect(proj.checkProj(sr1_3978).foundProj).toBe(true);
+    });
+
+    it("should not be valid spatial reference", () => {
+        expect(proj.checkProj(sr2_fake).foundProj).toBe(false);
+    });
+
+});
