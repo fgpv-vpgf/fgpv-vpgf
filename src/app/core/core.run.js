@@ -36,9 +36,6 @@
         // $rootScope.$on('$translateLoadingSuccess', data => console.log(data));
         $rootScope.$on('$translateLoadingSuccess', () => console.log(
             '$translateLoadingSuccess ->'));
-
-        // TODO: write language detection routine
-        $translate.use('en-CA');
     }
 
     function apiBlock($translate, $rootElement, $rootScope, globalRegistry, geoService, configService, events,

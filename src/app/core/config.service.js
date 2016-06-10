@@ -96,6 +96,9 @@
                         langs = ['en-CA', 'fr-CA'];
                     }
 
+                    // set the language right away and not wait the initialization to be fullfilled
+                    $translate.use(langs[0]);
+
                     langs.forEach(lang => partials[lang] = []);
 
                     if (svcAttr) {
