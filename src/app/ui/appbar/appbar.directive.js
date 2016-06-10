@@ -56,15 +56,18 @@
         }
 
         function toggleDetails() {
-            stateManager.setActive({ side: false }, 'mainDetails');
+            stateManager.setActive({ side: false });
+            stateManager.togglePanel('mainDetails');
         }
 
         function toggleToc() {
+            stateManager.setActive({ side: false });
             stateManager.togglePanel('mainToc');
         }
 
         function toggleToolbox() {
-            stateManager.setActive({ side: false }, 'mainToolbox');
+            stateManager.setActive({ side: false });
+            stateManager.togglePanel('mainToolbox');
         }
     }
 })();
