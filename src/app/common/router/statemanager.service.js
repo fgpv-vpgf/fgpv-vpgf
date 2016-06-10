@@ -36,6 +36,8 @@
             previousFocus,
             togglePanel,
             closePanelFromHistory,
+            setPanelFocus,
+            panelHistory: [],
             state: angular.copy(initialState),
             display: angular.copy(initialDisplay)
         };
@@ -46,7 +48,6 @@
         const displayService = displayManager(service); // init displayManager
         angular.extend(service, displayService); // merge displayManager service functions into stateManager
 
-        const panelHistory = [];
         return service;
 
         /*********/
@@ -96,7 +97,7 @@
                     return closePanel(one).then(() => setActive(...items));
                 }
             } else {
-                return $q.resolve(true);
+                return $q.resolve();
             }
         }
 
@@ -132,7 +133,7 @@
          * @return  {Promise}   resolves when a panel has finished its closing animation
          */
         function closePanelFromHistory() {
-            return panelHistory.length > 0 ? closePanel(getItem(panelHistory.pop())) : $q.resolve(true);
+            return service.panelHistory.length > 0 ? closePanel(getItem(service.panelHistory.pop())) : $q.resolve();
         }
 
         /**
@@ -211,13 +212,13 @@
          * @param   {Boolean}   addFlag optional set to true to add, false to remove
          */
         function modifyHistory(panel, addFlag = panel.item.active) {
-            const indexInHistory = panelHistory.indexOf(panel.name);
+            const indexInHistory = service.panelHistory.indexOf(panel.name);
             if (indexInHistory !== -1) {
-                panelHistory.splice(indexInHistory, 1);
+                service.panelHistory.splice(indexInHistory, 1);
             }
 
             if (addFlag) {
-                panelHistory.push(panel.name);
+                service.panelHistory.push(panel.name);
             }
         }
 
@@ -250,18 +251,18 @@
 
                 // go through history and close all sibling panels. remove any sibling opened after this one
                 // from history
-                for (let i = 0; i < panelHistory.length; i++) {
-                    const panel = getItem(panelHistory[i]);
+                for (let i = 0; i < service.panelHistory.length; i++) {
+                    const panel = getItem(service.panelHistory[i]);
                     if (panel.name !== panelToOpen.name && panel.item.parent === panelToOpen.item.parent) {
                         setItemProperty(panel.name, 'active', false, true);
-                        let indexInHistory = panelHistory.indexOf(panelToOpen.name);
+                        let indexInHistory = service.panelHistory.indexOf(panelToOpen.name);
                         if (indexInHistory !== -1 && i > indexInHistory) {
                             modifyHistory(panel);
                         }
                     }
                 }
                 modifyHistory(panelToOpen);
-                animationPromise = propagate ? openPanel(getParent(panelToOpen.name), false) : $q.resolve(true);
+                animationPromise = propagate ? openPanel(getParent(panelToOpen.name), false) : $q.resolve();
 
                 // set focus to opened panel
                 animationPromise.then(() => setPanelFocus(panelToOpen.name));
@@ -286,19 +287,21 @@
             // closing parent panel
             if (typeof panelToClose.item.parent === 'undefined') {
                 animationPromise = setItemProperty(panelToClose.name, 'active', false)
-                    .then(() => propagate ? getChildren(panelToClose.name)
-                    .forEach(child => closePanel(child, false)) : true);
+                .then(() => propagate ? getChildren(panelToClose.name).forEach(child => closePanel(child, false))
+                : true);
 
             // closing child panel
             } else {
                 if (propagate) {
                     // replace with sibling from history if exists and keep parent panel open
-                    for (let i = 0; i < panelHistory.length; i++) {
-                        const subPanel = getItem(panelHistory[i]);
-                        if (subPanel.name !== panelToClose.name && subPanel.item.parent === panelToClose.item.parent) {
-                            closePanel(panelToClose, false);
-                            return setItemProperty(subPanel.name, 'active', true, true);
-                        }
+                    const subPanel = service.panelHistory
+                        .map(item => getItem(item))
+                        .find(subPanel => subPanel.name !== panelToClose.name &&
+                            subPanel.item.parent === panelToClose.item.parent);
+
+                    if (subPanel) {
+                        closePanel(panelToClose, false);
+                        return setItemProperty(subPanel.name, 'active', true, true);
                     }
                     closePanel(getParent(panelToClose.name), false);
                 }
@@ -306,7 +309,7 @@
                 animationPromise = setItemProperty(panelToClose.name, 'active', false, true);
             }
             // set focus to last opened panel
-            animationPromise.then(() => setPanelFocus(panelHistory[panelHistory.length - 1]));
+            animationPromise.then(() => setPanelFocus(service.panelHistory[service.panelHistory.length - 1]));
             return animationPromise;
         }
 
