@@ -43,7 +43,8 @@
                 setFullExtent,
                 setSelectedBaseMap,
                 zoomToGraphic,
-                fetchLocation
+                fetchLocation,
+                validateProj
             };
 
             return buildMapObject();
@@ -569,6 +570,10 @@
                     geoState.blankBaseMapId = null;
                 }
 
+            }
+
+            function validateProj(sr) {
+                return gapiService.gapi.proj.checkProj(sr);
             }
 
         }
