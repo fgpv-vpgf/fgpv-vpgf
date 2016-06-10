@@ -122,6 +122,8 @@
         function connectOnContinue() {
             const connect = self.connect;
 
+            // creating new service blueprint with the provided url
+            // since there is no layer type provided, blueprint will try to get service data
             self.layerBlueprint = new LayerBlueprint.service({
                 url: connect.serviceUrl
             });
@@ -160,8 +162,8 @@
          * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
          */
         function configureOnContinue() {
-            // TODO: try to build layer and add it to the map
             // TODO: display error message if something breaks
+            // TODO: close import wizard if build is successful
             geoService.constructLayers([self.layerBlueprint]);
             closeLoaderService();
         }

@@ -154,7 +154,7 @@
                             return {
                                 serviceType: Geo.Service.Types.WMS,
                                 name: this.config.url,
-                                layers: flattenLayers(data.layers)
+                                layers: flattenWmsLayerList(data.layers)
                             };
 
                         } else {
@@ -180,32 +180,16 @@
 
                         // some custom processing of Dynamic layers to let the user option to pick sublayers
                         if (this.serviceType === Geo.Service.Types.DynamicService) {
-                            // TODO: this is temporary to get the relative level of dynamic layer sublayers
-                            // something like this will be needed when an option provided to the user to pick dynamic sublayer which should be added to the map
-                            // right now just add everything
-                            /*this._serviceInfo.layers.forEach(layer => {
-                                const level = calculateLevel(layer, this._serviceInfo);
-                                layer.level = level;
-                                layer.indent = Array.from(Array(level)).map(() => '-').join('');
-                            });
+                            flattenDynamicLayerList(this._serviceInfo.layers);
 
-                            function calculateLevel(layer, serviceInfo) {
-                                if (layer.parentLayerId === -1) {
-                                    return 0;
-                                } else {
-                                    return calculateLevel(serviceInfo.layers[layer.parentLayerId], serviceInfo) + 1;
-                                }
-                            }*/
-
-                            // TODO: refactor
-                            // this is to convert layerEntries to a proper config format
-                            this.config.layerEntries = this._serviceInfo.layers
+                            // this includes all sublayers; converting layerEntries to a proper config format
+                            /*this.config.layerEntries = this._serviceInfo.layers
                                 .filter(layer => layer.parentLayerId === -1) // pick all sub-top level items
                                 .map(layer => {
                                     return {
                                         index: layer.id
                                     };
-                                });
+                                });*/
                         }
                     })
                     .catch(error => {
@@ -215,20 +199,43 @@
 
                 /**
                  * This flattens wms array hierarchy into a flat list to be displayed in a drop down selector
+                 * TODO: this is temporary, possibly, as we want to provide user with an actual tree to select from
                  * @param  {Array} layers array of layer objects
                  * @param  {Number} level  =             0 tells how deep the layer is in the hierarchy
                  * @return {Object}        layer description
                  */
-                function flattenLayers(layers, level = 0) {
+                function flattenWmsLayerList(layers, level = 0) {
                     return [].concat.apply([], layers.map(layer => {
                         layer.indent = Array.from(Array(level)).map(() => '-').join('');
 
                         if (layer.layers.length > 0) {
-                            return [].concat(layer, flattenLayers(layer.layers, ++level));
+                            return [].concat(layer, flattenWmsLayerList(layer.layers, ++level));
                         } else {
                             return layer;
                         }
                     }));
+                }
+
+                /**
+                 * This calculates relative depth of the dynamic layer hierarchy on the provided flat list of layers
+                 * TODO: this is temporary, possibly, as we want to provide user with an actual tree to select from
+                 * @return {Array} layer list
+                 */
+                function flattenDynamicLayerList(layers) {
+                    layers.forEach(layer => {
+                        const level = calculateLevel(layer, layers);
+
+                        layer.level = level;
+                        layer.indent = Array.from(Array(level)).map(() => '-').join('');
+                    });
+
+                    function calculateLevel(layer, layers) {
+                        if (layer.parentLayerId === -1) {
+                            return 0;
+                        } else {
+                            return calculateLevel(layers[layer.parentLayerId], layers) + 1;
+                        }
+                    }
                 }
             }
 
@@ -248,6 +255,7 @@
             }
 
             // TODO: this needs to changed to display an error
+            // Need a way to validate user's service type choice against the endpoint
             get valid() {
                 // validate provided service type
                 return this._constructorPromise
