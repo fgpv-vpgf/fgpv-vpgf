@@ -143,6 +143,15 @@
       "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
     },
     {
+      "id":"land_PubStdZone_detail_proj",
+      "name": "Land Pub Standard Zone Details",
+      "layerType":"esriFeature",
+      "url":"http://ec.gc.ca/arcgis/rest/services/data_donnees/be12386d/MapServer/0",
+      "options": {
+        "opacity": { "value": 0.1 }
+      }
+    },
+    {
       "id":"josm",
       "name": "Joint Canada-Alberta Implementation Plan for Oil Sands Monitoring",
       "layerType":"esriFeature",
