@@ -573,7 +573,7 @@
             }
 
             function validateProj(sr) {
-                return gapiService.gapi.proj.checkProj(sr);
+                return gapiService.gapi.proj.checkProj(sr).foundProj;
             }
 
         }
