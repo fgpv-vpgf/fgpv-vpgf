@@ -32,7 +32,6 @@ md-menu-content {
         &[type='radio'],
         &[type='checkbox'] {
             &.md-indent {
-
                 // indent menu items which are not selected
                 .md-button[aria-checked="false"] {
                     padding-left: rem(1.6) + rem(2.4) + rem(1.6);
@@ -66,13 +65,40 @@ md-menu-content {
                         flex: 1;
                     }
 
-                     .rv-alt-icon {
+                    .rv-alt-icon {
                         margin: {
                             right: rem(0.8);
                             left: rem(0.8);
                         }
                     }
                 }
+            }
+        }
+    }
+}
+// visually highlights selected layer item in the list
+md-select-menu[multiple] {
+    md-option {
+        &:before {
+            position: absolute;
+            content: "";
+            background-color: transparent;
+            width: rem(0.5);
+            left: 0;
+            height: 100%;
+            top: 0;
+            transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+        }
+
+        // selection indicator
+        &[selected="selected"] {
+            color: black;
+
+            // the colour md-buttons get on hover
+            background-color: rgba(158,158,158,0.2);
+
+            &:before {
+                background-color: $accent-color;
             }
         }
     }

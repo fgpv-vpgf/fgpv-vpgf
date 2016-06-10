@@ -8,16 +8,4 @@
     *:after {
         box-sizing: border-box;
     }
-
-    // TODO: move somewhere more appropriate
-    .rv-hint {
-        position: absolute;
-        left: rem(0.2);
-        right: auto;
-        bottom: rem(0.7);
-        font-size: rem(1.2);
-        line-height: rem(1.4);
-        transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
-        color: grey;
-    }
 }

@@ -101,7 +101,7 @@
             [Geo.Service.Types.DynamicService]: Geo.Layer.Types.ESRI_DYNAMIC,
             [Geo.Service.Types.TileService]: Geo.Layer.Types.ESRI_TILE,
             [Geo.Service.Types.ImageService]: Geo.Layer.Types.ESRI_IMAGE,
-            [Geo.Service.Types.WM]: Geo.Layer.Types.OGC_WMS
+            [Geo.Service.Types.WMS]: Geo.Layer.Types.OGC_WMS
         };
 
         // jscs doesn't like enhanced object notation
@@ -142,10 +142,30 @@
 
             _fetchServiceInfo() {
                 const hint = this._serviceInfo !== null ? this._serviceInfo.serviceType : undefined;
-                return $q.resolve(gapiService.gapi.layer.predictLayerUrl(this.config.url, hint))
+
+                // due to #702, wms detection is problematic; here are some workarounds
+                // TODO: refactor when abovementioned issue is resolved
+                return $q.resolve(gapiService.gapi.layer.ogc.parseCapabilities(this.config.url))
+                    .then(data => {
+                        if (data.layers.length > 0) { // if there are layers, it's a wms layer
+                            console.log(`${this.config.url} is a WMS, yak!`);
+
+                            // return an object resembing fileInfo object returned by GeoAPi
+                            return {
+                                serviceType: Geo.Service.Types.WMS,
+                                name: this.config.url,
+                                layers: flattenLayers(data.layers)
+                            };
+
+                        } else {
+                            console.log(`${this.config.url} is not a WMS, running more checks.`);
+                            return gapiService.gapi.layer.predictLayerUrl(this.config.url, hint);
+                        }
+                    })
                     .then(fileInfo => {
                         console.log(fileInfo);
 
+                        // this is not a service URL;
                         if (fileInfo.serviceType === Geo.Service.Types.Error) {
                             return $q.reject(fileInfo); // reject promise if the provided url cannot be accessed
                         }
@@ -154,6 +174,7 @@
                         this.serviceType = this._serviceInfo.serviceType;
                         this.config.name = this._serviceInfo.name;
 
+                        // some custom processing of Dynamic layers to let the user option to pick sublayers
                         if (this.serviceType === Geo.Service.Types.DynamicService) {
                             // TODO: this is temporary to get the relative level of dynamic layer sublayers
                             // something like this will be needed when an option provided to the user to pick dynamic sublayer which should be added to the map
@@ -181,14 +202,23 @@
                                         index: layer.id
                                     };
                                 });
-                        } else if (this.serviceType === Geo.Service.Types.WMS) {
-                            console.log('wmsAAA', this._serviceInfo);
                         }
                     })
                     .catch(error => {
                         this._serviceInfo = null;
                         return $q.reject(error);
                     });
+
+                function flattenLayers(layers, level = 0) {
+                    return [].concat.apply([], layers.map(layer => {
+                        layer.indent = Array.from(Array(level)).map(() => '-').join('');
+                        if (layer.layers.length > 0) {
+                            return [].concat(layer, flattenLayers(layer.layers, ++level));
+                        } else {
+                            return layer;
+                        }
+                    }));
+                }
             }
 
             get serviceType() {

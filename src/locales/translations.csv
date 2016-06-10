@@ -151,6 +151,8 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.service.configure.title,Configure layer,[fr] Configure layer
 ,import.service.configure.layername,Layer Name,[fr] Layer Name
 ,import.service.configure.primaryfield,Primary Field,[fr] Primary Field
+,import.service.configure.layers,Layers,[fr] Layers
+,import.service.configure.multipleselection,You can select several layers,[fr] You can select several layers
 ,stepper.continue,continue,[fr] continue
 ,stepper.cancel,cancel,[fr] cancel
 ,help.navigationControls.header,Navigation Controls,Contrôles de navigation

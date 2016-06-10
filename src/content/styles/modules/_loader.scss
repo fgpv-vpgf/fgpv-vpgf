@@ -17,6 +17,20 @@
                 display: block;
                 text-align: center;
             }
+
+            // simple static hint
+            // TODO: create a module for input controls and move it there
+            .rv-hint {
+                /* Position the hint */
+                position: relative;
+                left: rem(0.2);
+                right: auto;
+                top: rem(0.3);
+                /* Copy styles from ng-messages */
+                font-size: 12px;
+                line-height: 14px;
+                color: $secondary-text-color;
+            }
         }
 
         // TODO: this is horrible; need to organize it better
@@ -25,7 +39,8 @@
                 &-drop {
                     text-align: center;
 
-                    .md-errors-spacer, .md-input {
+                    .md-errors-spacer,
+                    .md-input {
                         display: none;
                     }
                 }
@@ -35,7 +50,6 @@
                     text-align: center;
                 }
             }
-
             // local file select button
             &-select-button {
                 padding: 0 rem(2.4) 0 rem(2.0);
