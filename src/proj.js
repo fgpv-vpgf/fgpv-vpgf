@@ -46,6 +46,36 @@ function localProjectPoint(srcProj, destProj, point) {
 }
 
 /**
+ * Project a single point.
+ * @param {Object|Integer|String} destProj the spatial reference of the result (as ESRI SpatialReference, integer WKID or an EPSG string)
+ * @param {Object} geometry an object conforming to ESRI Geometry object standards containing the coordinates to Reproject
+ * @return {Object} an object conforming to ESRI Geomtery object standards containing the input geometry in the destination projection
+ */
+function localProjectGeometry(destProj, geometry) {
+    // FIXME we seem to be really dependant on wkid. ideally enhance to handle all SR types
+
+    // HACK >:'(
+    // terraformer has this undesired behavior where, if your input geometry is in WKID 102100, it will magically
+    // project all your co-ordinates to lat/long when converting between ESRI and GeoJSON formats.
+    // to stop it from ruining us, we temporarily set the spatial reference to nonsense so it will leave it alone
+    const realWKID = geometry.spatialReference.wkid;
+    geometry.spatialReference.wkid = 8888; // nonsense!
+    const grGeoJ = terraformer.ArcGIS.parse(geometry, { sr: 8888 });
+    geometry.spatialReference.wkid = realWKID;
+
+    // project json
+    projectGeojson(grGeoJ, makeEpsgString(destProj), makeEpsgString(realWKID));
+
+    // back to esri format
+    const grEsri = terraformer.ArcGIS.convert(grGeoJ);
+
+    // doing this because .convert likes to attach a lat/long spatial reference for fun.
+    grEsri.spatialReference = destProj;
+
+    return grEsri;
+}
+
+/**
  * Reproject an EsriExtent object on the client.  Does not require network
  * traffic, but may not handle conversion between projection types as well.
  * Internally it tests 8 points along each edge and takes the max extent
@@ -253,6 +283,7 @@ module.exports = function (esriBundle) {
         isSpatialRefEqual,
         localProjectExtent,
         localProjectPoint,
+        localProjectGeometry,
         projectGeojson,
         Point: esriBundle.Point,
         projectEsriExtent: projectEsriExtentBuilder(esriBundle),

@@ -19,145 +19,118 @@ const CLASS_BREAKS = 'classBreaks';
 const emptySVG = `<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'></svg>`;
 
 /**
-* Determines the type (class) of a renderer object.
+* Will add extra properties to a renderer to support images.
+* New properties .imageUrl and .defaultImageUrl contains image source
+* for app on each renderer item.
 *
-* @param {Object} renderer ESRI API renderer object from a layer
-* @returns {String} name of the class
+* @param {Object} renderer an ESRI renderer object in server JSON form. Param is modified in place
+* @param {Object} legend object for the layer that maps legend label to data url of legend image
 */
-function getRendererType(renderer) {
-    // get renderer class type from prototype object and get rid of unnecessary prefixes with split
-    const classArr = Object.getPrototypeOf(renderer).declaredClass.split('\.');
-    return classArr[2];
-}
+function enhanceRenderer(renderer, legend) {
 
-/**
-* Will generate a symbology config node for a ESRI feature service.
-* Uses the information from the feature layers renderer JSON definition
-*
-* @param {Object} renderer renderer object from feature layer endpoint
-* @param {Object} legend object that maps legend label to data url of legend image
-* @returns {Object} an JSON config object for feature symbology
-*/
-function createSymbologyConfig(renderer, legend) {
+    // TODO note somewhere (user docs) that everything fails if someone publishes a legend with two identical labels
+    // quick lookup object of legend names to data URLs
+    const legendLookup = {};
+    legend.layers[0].legend.forEach(legItem => {
+        legendLookup[legItem.label] = `data:${legItem.contentType}${legItem.base},${legItem.imageData}`;
+    });
 
-    const symb = {
-        type: renderer.type
-    };
-
-    const legendLookup = labelObj(legend);
-
-    switch (symb.type) {
+    switch (renderer.type) {
         case SIMPLE:
-            symb.label = renderer.label;
-            symb.imageUrl = legendLookup[renderer.label].icon;
-
+            renderer.imageUrl = legendLookup[renderer.label];
             break;
 
         case UNIQUE_VALUE:
             if (renderer.defaultLabel) {
-                symb.defaultImageUrl = legendLookup[renderer.defaultLabel];
+                renderer.defaultImageUrl = legendLookup[renderer.defaultLabel];
             }
-            symb.field1 = renderer.field1;
-            symb.field2 = renderer.field2;
-            symb.field3 = renderer.field3;
-            symb.valueMaps = renderer.uniqueValueInfos.map(uvi => {
-                return {
-                    label: uvi.label,
-                    value: uvi.value,
-                    imageUrl: legendLookup[uvi.label].icon
-                };
+
+            renderer.uniqueValueInfos.forEach(uvi => {
+                uvi.imageUrl = legendLookup[uvi.label];
             });
 
             break;
         case CLASS_BREAKS:
             if (renderer.defaultLabel) {
-                symb.defaultImageUrl = legendLookup[renderer.defaultLabel];
+                renderer.defaultImageUrl = legendLookup[renderer.defaultLabel];
             }
-            symb.field = renderer.field;
-            symb.minValue = renderer.minValue;
-            symb.rangeMaps = renderer.classBreakInfos.map(cbi => {
-                return {
-                    label: cbi.label,
-                    maxValue: cbi.classMaxValue,
-                    imageUrl: legendLookup[cbi.label].icon
-                };
+
+            renderer.classBreakInfos.forEach(cbi => {
+                cbi.imageUrl = legendLookup[cbi.label];
             });
 
             break;
         default:
 
             // Renderer we dont support
-            console.log('encountered unsupported renderer type: ' + symb.type);
-
-        // TODO make a stupid basic renderer to prevent things from breaking?
+            console.warn('encountered unsupported renderer type: ' + renderer.type);
     }
-
-    return symb;
 }
 
 /**
-* Given a feature data object return the image URL for that feature/graphic object.
+* Given feature attributes, find the renderer node that would draw it
 *
-* @method getGraphicIcon
-* @param {Object} fData feature data object
-* @param {Object} layerConfig layer config for feature
-* @param {Integer} oid of attribute that needs icon fetching
-* @return {String} imageUrl Url to the features symbology image
+* @method searchRenderer
+* @param {Object} attributes object of feature attribute key value pairs
+* @param {Object} renderer an enhanced renderer (see function enhanceRenderer)
+* @return {Object} an object with useful data about the found  (imageUrl and symbol)
 */
-function getGraphicIcon(fData, layerConfig, oid) {
-    const symbolConfig = layerConfig;
-    let img = '';
-    let graphicKey;
+function searchRenderer(attributes, renderer) {
 
-    // find node in layerregistry.attribs
-    // TODO: refactor into proper blocks
-    switch (symbolConfig.type) {
+    let imageUrl = '';
+    let symbol = {};
+
+    switch (renderer.type) {
         case SIMPLE:
-            return symbolConfig.imageUrl;
+            imageUrl = renderer.imageUrl;
+            symbol = renderer.symbol;
+
+            break;
 
         case UNIQUE_VALUE:
-            const oidIdx = fData.oidIndex[oid];
 
             // make a key value for the graphic in question, using comma-space delimiter if multiple fields
-            graphicKey = fData.features[oidIdx].attributes[symbolConfig.field1];
+            let graphicKey = attributes[renderer.field1];
 
             // all key values are stored as strings.  if the attribute is in a numeric column, we must convert it to a string to ensure the === operator still works.
             if (typeof graphicKey !== 'string') {
                 graphicKey = graphicKey.toString();
             }
 
-            if (symbolConfig.field2) {
-                graphicKey = graphicKey + ', ' + fData.attributes[symbolConfig.field2];
-                if (symbolConfig.field3) {
-                    graphicKey = graphicKey + ', ' + fData.attributes[symbolConfig.field3];
+            if (renderer.field2) {
+                graphicKey = graphicKey + ', ' + attributes[renderer.field2];
+                if (renderer.field3) {
+                    graphicKey = graphicKey + ', ' + attributes[renderer.field3];
                 }
             }
 
             // search the value maps for a matching entry.  if no match found, use the default image
-            symbolConfig.valueMaps.every(maps => {
-                if (maps.value === graphicKey) {
-                    img = maps.imageUrl;
+            renderer.uniqueValueInfos.every(uvi => {
+                if (uvi.value === graphicKey) {
+                    imageUrl = uvi.imageUrl;
+                    symbol = uvi.symbol;
                     return false; // break loop
                 }
                 return true; // keep looping
             });
 
-            if (img === '') {
-                img = symbolConfig.defaultImageUrl;
+            if (imageUrl === '') {
+                imageUrl = renderer.defaultImageUrl;
+                symbol = renderer.defaultSymbol;
             }
 
-            return img;
+            break;
 
         case CLASS_BREAKS:
-            const oidIdx2 = fData.oidIndex[oid];
 
-            let gVal = fData.features[oidIdx2].attributes[symbolConfig.field];
+            let gVal = attributes[renderer.field];
 
             // find where the value exists in the range
-            let lower = symbolConfig.minValue;
+            let lower = renderer.minValue;
 
             if (gVal < lower) {
-                img = symbolConfig.defaultImageUrl;
+                imageUrl = renderer.defaultImageUrl;
+                symbol = renderer.defaultSymbol;
             } else {
 
                 // a trick to prime the first loop iteration
@@ -166,54 +139,72 @@ function getGraphicIcon(fData, layerConfig, oid) {
                 // so we reduce lower by 1 to make the first exclusive test inclusive
                 let upper = lower - 1;
 
-                symbolConfig.rangeMaps.every(rangeMap => {
+                renderer.classBreakInfos.every(cbi => {
                     lower = upper;
-                    upper = rangeMap.maxValue;
+                    upper = cbi.maxValue;
                     if ((gVal > lower) && (gVal <= upper)) {
-                        img = rangeMap.imageUrl;
+                        imageUrl = cbi.imageUrl;
+                        symbol = cbi.symbol;
                         return false; // break loop
                     }
                     return true; // keep looping
                 });
 
-                if (img === '') {
+                if (imageUrl === '') {
                     // no match in defined ranges.
-                    img = symbolConfig.defaultImageUrl;
+                    imageUrl = renderer.defaultImageUrl;
+                    symbol = renderer.defaultSymbol;
                 }
             }
 
-            return img;
+            break;
 
         default:
-            return symbolConfig.defaultImageUrl;
+
+            // TODO set imageUrl to blank image?
+            console.warn(`Unknown renderer type encountered - ${renderer.type}`);
+
     }
+
+    return { imageUrl, symbol };
+
 }
 
 /**
-* Takes array and make a JSON object such that labels are the toplevel keys
+* Given feature attributes, return the image URL for that feature/graphic object.
 *
-* @param {Array} array that needs to be parsed into JSON obj
-* @returns {Object} an JSON config object where labels are toplevel keys
+* @method getGraphicIcon
+* @param {Object} attributes object of feature attribute key value pairs
+* @param {Object} renderer an enhanced renderer (see function enhanceRenderer)
+* @return {String} imageUrl Url to the features symbology image
 */
-function labelObj(array) {
-    const finalObj = {};
+function getGraphicIcon(attributes, renderer) {
+    const renderInfo = searchRenderer(attributes, renderer);
+    return renderInfo.imageUrl;
+}
 
-    array.forEach(o => {
-        finalObj[o.name] = o;
-    });
-
-    return finalObj;
+/**
+* Given feature attributes, return the symbol for that feature/graphic object.
+*
+* @method getGraphicSymbol
+* @param {Object} attributes object of feature attribute key value pairs
+* @param {Object} renderer an enhanced renderer (see function enhanceRenderer)
+* @return {Object} an ESRI Symbol object in server format
+*/
+function getGraphicSymbol(attributes, renderer) {
+    const renderInfo = searchRenderer(attributes, renderer);
+    return renderInfo.symbol;
 }
 
 /**
 * Convert an ESRI colour object to SVG rgb format.
 * @private
-* @param  {Object} c ESRI Colour object
+* @param  {Array} c ESRI Colour array
 * @return {String} colour in SVG format
 */
 function colourToRgb(c) {
     if (c) {
-        return `rgb(${c.r},${c.g},${c.b})`;
+        return `rgb(${c[0]},${c[1]},${c[2]})`;
     } else {
         return 'none';
     }
@@ -222,12 +213,12 @@ function colourToRgb(c) {
 /**
 * Convert an ESRI colour object to SVG opacity format.
 * @private
-* @param  {Object} c ESRI Colour object
+* @param  {Array} c ESRI Colour array
 * @return {String} colour's opacity in SVG format
 */
 function colourToOpacity(c) {
     if (c) {
-        return c.a.toString();
+        return c[3].toString();
     } else {
         return '0';
     }
@@ -287,7 +278,7 @@ function applyFill(symbol, svg) {
     // ------
 
     // the none case will only apply to polygons. point symbols can only be empty fill via opacity
-    const fill = (symbol.type === 'simplefillsymbol' && symbol.style !== 'solid') ? 'none' : colourToRgb(symbol.color);
+    const fill = (symbol.type === 'esriSFS' && symbol.style !== 'esriSFSSolid') ? 'none' : colourToRgb(symbol.color);
 
     svg.addProp('fill', fill);
     svg.addProp('fill-opacity', colourToOpacity(symbol.color));
@@ -301,7 +292,7 @@ function applyFill(symbol, svg) {
 * @param  {Object} svg contains info on our SVG object (see newSVG). object is modified by the function
 */
 function applyLine(lineSymbol, svg) {
-    const stroke = lineSymbol.style === 'none' ? 'none' : colourToRgb(lineSymbol.color);
+    const stroke = lineSymbol.style === 'esriSLSNull' ? 'none' : colourToRgb(lineSymbol.color);
 
     svg.addProp('stroke', stroke);
     svg.addProp('stroke-opacity', colourToOpacity(lineSymbol.color));
@@ -311,18 +302,18 @@ function applyLine(lineSymbol, svg) {
     svg.addProp('stroke-miterlimit', '4');
 
     const dashMap = {
-        solid: 'none',
-        dash: '5.333,4',
-        dashdot: '5.333,4,1.333,4',
-        longdashdotdot: '10.666,4,1.333,4,1.333,4',
-        dot: '1.333,4',
-        longdash: '10.666,4',
-        longdashdot: '10.666,4,1.333,4',
-        shortdash: '5.333,1.333',
-        shortdashdot: '5.333,1.333,1.333,1.333',
-        shortdashdotdot: '5.333,1.333,1.333,1.333,1.333,1.333',
-        shortdot: '1.333,1.333',
-        none: 'none'
+        esriSLSSolid: 'none',
+        esriSLSDash: '5.333,4',
+        esriSLSDashDot: '5.333,4,1.333,4',
+        esriSLSLongDashDotDot: '10.666,4,1.333,4,1.333,4',
+        esriSLSDot: '1.333,4',
+        esriSLSLongDash: '10.666,4',
+        esriSLSLongDashDot: '10.666,4,1.333,4',
+        esriSLSShortDash: '5.333,1.333',
+        esriSLSShortDashDot: '5.333,1.333,1.333,1.333',
+        esriSLSShortDashDotDot: '5.333,1.333,1.333,1.333,1.333,1.333',
+        esriSLSShortDot: '1.333,1.333',
+        esriSLSNull: 'none'
     };
 
     svg.addProp('stroke-dasharray', dashMap[lineSymbol.style]);
@@ -401,23 +392,26 @@ function makeGlyphSVG(symbol) {
     let path;
 
     // get the appropriate drawing path for the symbol
-    if (symbol.style === 'path') {
+    if (symbol.style === 'esriSMSPath') {
         path = symbol.path;
     } else {
         // jscs:disable maximumLineLength
         const c = getGlyphCorners(symbol.size);
         switch (symbol.style) {
-            case 'cross':
+            case 'esriSMSCross':
                 path = `M ${c.upLeft},${c.middle} ${c.loRite},${c.middle} M ${c.middle},${c.loRite} ${c.middle},${c.upLeft}`;
                 break;
-            case 'diamond':
+            case 'esriSMSDiamond':
                 path = `M ${c.upLeft},${c.middle} ${c.middle},${c.loRite} ${c.loRite},${c.middle} ${c.middle},${c.upLeft} Z`;
                 break;
-            case 'square':
+            case 'esriSMSSquare':
                 path = `M ${c.upLeft},${c.upLeft} ${c.upLeft},${c.loRite} ${c.loRite},${c.loRite} ${c.loRite},${c.upLeft} Z`;
                 break;
-            case 'x':
+            case 'esriSMSX':
                 path = `M ${c.upLeft},${c.upLeft} ${c.loRite},${c.loRite} M ${c.upLeft},${c.loRite} ${c.loRite},${c.upLeft}`;
+                break;
+            case 'esriSMSTriangle':
+                path = `M ${c.upLeft},${c.loRite} ${c.middle},${c.upLeft} ${c.loRite},${c.loRite} Z`;
                 break;
         }
 
@@ -437,7 +431,7 @@ function makeGlyphSVG(symbol) {
 function makeMarkerSVG(symbol) {
     let svg;
 
-    if (symbol.style === 'circle') {
+    if (symbol.style === 'esriSMSCircle') {
         svg = makeCircleSVG(symbol);
     } else {
         svg = makeGlyphSVG(symbol);
@@ -499,10 +493,10 @@ function makeSVG(symbol) {
     const foot = '</svg>';
 
     const typeHandler = {
-        simplemarkersymbol: makeMarkerSVG,
-        simplelinesymbol: makeLineSVG,
-        cartographiclinesymbol: makeLineSVG,
-        simplefillsymbol: makePolySVG
+        esriSMS: makeMarkerSVG,
+        esriSLS: makeLineSVG,
+        esriCLS: makeLineSVG,
+        esriSFS: makePolySVG
     };
 
     const svg = typeHandler[symbol.type](symbol);
@@ -515,43 +509,39 @@ function makeSVG(symbol) {
 /**
 * Generate a legend item for an ESRI symbol.
 * @private
-* @param  {Object} symbol an ESRI symbol object
+* @param  {Object} symbol an ESRI symbol object in server format
 * @param  {String} label label of the legend item
 * @return {Object} a legend object populated with the symbol and label
 */
 function symbolToLegend(symbol, label) {
     let imageData = emptySVG;
     let contentType = 'image/svg+xml';
+    let base = '';
 
     try {
         switch (symbol.type) {
-            case 'simplemarkersymbol':
-            case 'simplelinesymbol':
-            case 'simplefillsymbol':
-            case 'cartographiclinesymbol':
+            case 'esriSMS': // simplemarkersymbol
+            case 'esriSLS': // simplelinesymbol
+            case 'esriSFS': // simplefillsymbol
+            case 'esriCLS': // cartographiclinesymbol
 
                 imageData = makeSVG(symbol);
                 break;
 
-            case 'picturemarkersymbol':
-            case 'picturefillsymbol':
+            case 'esriPMS': // picturemarkersymbol
+            case 'esriPFS': // picturefillsymbol
 
-                if (symbol.url.substr(0, 4) !== 'data') {
-                    // FIXME add a more elegant fail, perhaps a default image and output a WARN
-                    //       long-term fix is to add another property to the legend return value, and
-                    //       if set, the UI will just use the image instead of building a data url
-                    // FIXME additional for picturefill, we would want to account for the border.
-                    //       basically the same issue as the non-solid simplefillsymbol, in that
-                    //       svg data urls cannot x-link to other images
-                    throw new Error('picture marker symbol did not have a data url: ' + symbol.url);
-                }
+                // FIXME may be possible that there is no imageData, and it is a linked url that we can't support
+                // FIXME additional for picturefill, we would want to account for the border.
+                //       basically the same issue as the non-solid simplefillsymbol, in that
+                //       svg data urls cannot x-link to other images
 
-                // normal url content should be in format 'data:image/png;base64,iVBORw0KGgo...'
-                imageData = symbol.url.substr(symbol.url.indexOf(',') + 1);
+                imageData = symbol.imageData;
                 contentType = symbol.contentType;
+                base = ';base64';
                 break;
 
-            case 'textsymbol':
+            case 'esriTS': // textsymbol
 
                 // not supporting at the moment
                 // FIXME return a blank or default image (maybe a picture of 'Aa') to stop things from breaking
@@ -561,18 +551,19 @@ function symbolToLegend(symbol, label) {
         console.error('Issue encountered when converting symbol to legend image', e);
         label = 'Error!';
     }
-    return { label, imageData, contentType };
+    return { label, imageData, contentType, base };
 }
 
 /**
 * Generate an array of legend items for an ESRI unique value or class breaks renderer.
 * @private
 * @param  {Object} renderer an ESRI unique value or class breaks renderer
+* @param  {Array} childList array of children items of the renderer
 * @return {Array} a legend object populated with the symbol and label
 */
-function scrapeListRenderer(renderer) {
-    const legend = renderer.infos.map(rendInfo => {
-        return symbolToLegend(rendInfo.symbol, rendInfo.label);
+function scrapeListRenderer(renderer, childList) {
+    const legend = childList.map(child => {
+        return symbolToLegend(child.symbol, child.label);
     });
 
     if (renderer.defaultSymbol) {
@@ -587,7 +578,7 @@ function scrapeListRenderer(renderer) {
 /**
 * Generate a legend object based on an ESRI renderer.
 * @private
-* @param  {Object} renderer an ESRI renderer object
+* @param  {Object} renderer an ESRI renderer object in server JSON form
 * @param  {Integer} index the layer index of this renderer
 * @return {Object} an object matching the form of an ESRI REST API legend
 */
@@ -600,28 +591,29 @@ function rendererToLegend(renderer, index) {
         }]
     };
 
-    // determine renderer type, call something that makes legend array
-    const lType = getRendererType(renderer);
-
-    switch (lType) {
-        case 'SimpleRenderer':
+    switch (renderer.type) {
+        case SIMPLE:
             legend.layers[0].legend.push(symbolToLegend(renderer.symbol, renderer.label));
             break;
 
-        case 'UniqueValueRenderer':
-        case 'ClassBreaksRenderer':
-            legend.layers[0].legend = scrapeListRenderer(renderer);
+        case UNIQUE_VALUE:
+            legend.layers[0].legend = scrapeListRenderer(renderer, renderer.uniqueValueInfos);
+            break;
+
+        case CLASS_BREAKS:
+            legend.layers[0].legend = scrapeListRenderer(renderer, renderer.classBreakInfos);
             break;
 
         default:
 
             // FIXME make a basic blank entry (error msg as label?) to prevent things from breaking
             // Renderer we dont support
-            console.log('encountered unsupported renderer legend type: ' + lType);
+            console.error('encountered unsupported renderer legend type: ' + renderer.type);
     }
     return legend;
 }
 
+// TODO getZoomLevel should probably live in a file not named symbology
 /**
 * Takes the lod list and finds level as close to and above scale limit
 *
@@ -658,9 +650,10 @@ function getZoomLevel(lods, maxScale) {
 
 module.exports = function () {
     return {
-        createSymbologyConfig,
         getGraphicIcon,
+        getGraphicSymbol,
         rendererToLegend,
-        getZoomLevel
+        getZoomLevel,
+        enhanceRenderer
     };
 };

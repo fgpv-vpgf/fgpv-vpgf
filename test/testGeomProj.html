@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>   
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=yes">
+    <title>Test Page - Project Geometry</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.14/js/esri/css/esri.css">
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <script src="../dist/geoapi.min.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            
+            var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'terrain', zoom: 6, center: [-100, 60] });
+            console.log('maaaaap', map);
+
+            // add highlight layer
+            var mahGrafix = api.hilight.makeHilightLayer();
+            map.addLayer(mahGrafix);
+  
+            map.on('load', function () {
+                // dumb hack to get a renderer as the constructor is not exposed via geoapi
+                var mahLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CanadaMercator/MapServer/1', {visible: true});
+            
+                // var mahLayer = new api.layer.FeatureLayer('http://section917.cloudapp.net/arcgis/rest/services/TestData/ClassBreaks/MapServer/0/');
+                // map.addLayer(mahLayer);
+                console.log('mah layer', mahLayer);
+
+                mahLayer.on('load', function () {
+                    var lambertPolyGeom = {
+                        "rings": [
+                            [
+                                [586333.7025000006, 1709129.3999999985], 
+                                [609450.6174999997, 1713905.3099999987], 
+                                [609464.81260000169, 1713908.4849000014], 
+                                [628734.36240000278, 1717889.4349000007], 
+                                [638600.83730000257, 1714606.9499000013], 
+                                [628306.93259999901, 1703016.9048999995], 
+                                [628300.41749999672, 1703010.4800000004], 
+                                [614848.35239999741, 1687865.0450000018], 
+                                [614476.7575000003, 1687447.0201000012], 
+                                [608274.9525000006, 1680464.8249000013], 
+                                [593706.50249999762, 1695778.9298], 
+                                [593645.08250000328, 1695844.6952], 
+                                [593640.24239999801, 1695848.5799000002], 
+                                [587744.00760000199, 1702047.4250000007], 
+                                [586333.7025000006, 1709129.3999999985]
+                            ]
+                        ],
+                        "spatialReference": {
+                            "wkid": 3978,
+                            "latestWkid": 3978
+                        }
+                    };
+
+                    console.log('loads done ');
+                    var projGeometry = api.proj.localProjectGeometry(map.spatialReference, lambertPolyGeom);
+                     console.log('mah proj geom ', projGeometry);
+                    // projGeometry.type = "polygon";
+                    
+                    var projGraphic = api.hilight.geomToGraphic(projGeometry, mahLayer.renderer.symbol.toJson());
+                    
+                    console.log('mah new graphic ', projGraphic);
+                    mahGrafix.addHilight(projGraphic);
+                    
+                    // SANITY TEST
+                    var dumbpoint = new api.proj.Point(-9128197.622689746, 9384019.23223825, map.spatialReference);
+                    mahGrafix.addPin(dumbpoint);
+                    
+                });
+            });
+           
+            map.on('click', function(evt) {  
+                 console.log('CLICK', evt.mapPoint);
+                            
+            });
+            
+            // point fun
+            var mercatorPointGeom = {
+                "x": -12900439.4801,
+                "y": 7736534.5242,
+                "spatialReference": {
+                    "wkid": 3978
+                }
+            };
+
+            var lambSR = new api.proj.SpatialReference(3978);
+
+            var lambertPoint = api.proj.localProjectGeometry(lambSR, mercatorPointGeom);
+
+            console.log('MY LAMBERT POINT', lambertPoint);
+
+            var lambertPoint2 = api.proj.localProjectPoint(mercatorPointGeom.spatialReference, lambSR, [-12900439.4801, 7736534.5242]);
+
+            console.log('MY OTHER LAMBERT POINT', lambertPoint2);
+
+        });
+</script>
+<div>
+    <div id="map"></div>    
+    </div>
+</body>
+</html>

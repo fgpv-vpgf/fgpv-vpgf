@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>   
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=yes">
+    <title>Test Page - Hilite</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.14/js/esri/css/esri.css">
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <script src="../dist/geoapi.min.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            
+
+            
+            var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'terrain', zoom: 6, center: [-100, 60] });
+
+            var mahLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0', {mode: api.layer.FeatureLayer.MODE_SNAPSHOT});
+           
+            // add highlight layer
+            var mahGrafix = api.hilight.makeHilightLayer({
+                hazeOpacity: 200,
+                pinSymbol: {
+                    "type": "esriSMS",
+                    "style": "esriSMSSquare",
+                    "color": [76,115,0,255],
+                    "size": 8,
+                    "angle": 0,
+                    "xoffset": 0,
+                    "yoffset": 0,
+                    "outline": 
+                    {
+                    "color": [152,230,0,255],
+                    "width": 1
+                    }
+                    }
+            });
+            map.addLayer(mahGrafix);
+
+            console.log("glayer", mahGrafix);            
+           
+            // add second so hilight starts underneath
+            map.addLayer(mahLayer);
+                       
+            map.on('click', function(evt) {  
+                 mahGrafix.addPin(evt.mapPoint);
+                            
+            });
+            
+            function findId(oid) {
+                 var dumb;
+                 mahLayer.graphics.forEach(g => {
+                    if (g.attributes.OBJECTID === oid) {
+                         dumb = g;
+                    }
+                });
+                return api.hilight.cloneLayerGraphic(dumb);
+            }
+            
+            mahLayer.on('update-end', function(evt) {           
+                mahGrafix.addHilight(findId(479));
+                
+                setTimeout(() => {
+                    mahGrafix.addHilight(findId(358));
+                }, 5000);
+
+                setTimeout(() => {
+                    mahGrafix.clearHilight();
+                }, 10000);
+
+            });
+
+        });
+</script>
+<div>
+    <div id="map"></div>    
+    </div>
+</body>
+</html>

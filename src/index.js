@@ -2,6 +2,7 @@
 const attribute = require('./attribute.js');
 const basemap = require('./basemap.js');
 const events = require('./events.js');
+const hilight = require('./hilight.js');
 const layer = require('./layer.js');
 const mapManager = require('./mapManager.js');
 const proj = require('./proj.js');
@@ -16,8 +17,9 @@ function initAll(esriBundle) {
     api.proj = proj(esriBundle);
     api.basemap = basemap(esriBundle);
     api.mapManager = mapManager(esriBundle);
-    api.attribs = attribute(esriBundle);
+    api.attribs = attribute(esriBundle, api);
     api.symbology = symbology();
+    api.hilight = hilight(esriBundle);
     api.events = events();
     api.shared = shared(esriBundle);
     api.debug = function () {
@@ -63,6 +65,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/map', 'Map'],
         ['esri/request', 'esriRequest'],
         ['esri/SpatialReference', 'SpatialReference'],
+        ['esri/symbols/jsonUtils', 'symbolJsonUtils'],
         ['esri/tasks/GeometryService', 'GeometryService'],
         ['esri/tasks/IdentifyParameters', 'IdentifyParameters'],
         ['esri/tasks/IdentifyTask', 'IdentifyTask'],
