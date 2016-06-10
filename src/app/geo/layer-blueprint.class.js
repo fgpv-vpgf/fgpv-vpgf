@@ -129,17 +129,17 @@
                 // empty blueprint is not valid by default
                 this._validPromise = $q.reject();
 
-                // if layerType is no specified, this is likely a user added layer
+                // if layerType is no specified, this is a user added layer
                 // call geoApi to predict its type
                 if (this.layerType === null) {
                     this._constructorPromise = this._fetchServiceInfo();
-
-                    /*.catch(error => {
-                        console.error('Something happened', error);
-                    });*/
                 }
             }
 
+            /**
+             * Get service info from the supplied url. Service infor usually include information like service type, name, available fields, etc.
+             * TODO: there is a lot of workarounds since wms layers need special handling, and it's not possible to immediattely detect if the layer is not a service endpoint .
+             */
             _fetchServiceInfo() {
                 const hint = this._serviceInfo !== null ? this._serviceInfo.serviceType : undefined;
 
@@ -166,6 +166,10 @@
                         console.log(fileInfo);
 
                         // this is not a service URL;
+                        // in some cases, if URL is not a service URL, dojo script used to interogate the address
+                        // will throw a page-level error which cannot be caugth; in such cases, it's not clear to the user what has happened;
+                        // timeout error will eventually be raised and this block will trigger
+                        // TODO: as a workaround, block continue button until interogation is complete so users can't click multiple times, causing multiple checks
                         if (fileInfo.serviceType === Geo.Service.Types.Error) {
                             return $q.reject(fileInfo); // reject promise if the provided url cannot be accessed
                         }
@@ -209,9 +213,16 @@
                         return $q.reject(error);
                     });
 
+                /**
+                 * This flattens wms array hierarchy into a flat list to be displayed in a drop down selector
+                 * @param  {Array} layers array of layer objects
+                 * @param  {Number} level  =             0 tells how deep the layer is in the hierarchy
+                 * @return {Object}        layer description
+                 */
                 function flattenLayers(layers, level = 0) {
                     return [].concat.apply([], layers.map(layer => {
                         layer.indent = Array.from(Array(level)).map(() => '-').join('');
+
                         if (layer.layers.length > 0) {
                             return [].concat(layer, flattenLayers(layer.layers, ++level));
                         } else {
