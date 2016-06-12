@@ -2,7 +2,7 @@
     'use strict';
 
     /**
-     * @ngdoc decorator
+     * @ngdoc object
      * @name mdMenuItemDirectiveDecorator
      * @module material.components.menuBar
      * @requires $delegate

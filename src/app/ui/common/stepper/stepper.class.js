@@ -145,7 +145,7 @@
     // jscs:enable requireSpacesInAnonymousFunctionExpression
 
     /**
-     * @ngdoc constant
+     * @ngdoc object
      * @name Stepper
      * @module app.ui.common.stepper
      * @description
