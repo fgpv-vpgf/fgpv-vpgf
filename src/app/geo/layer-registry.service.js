@@ -117,6 +117,7 @@
              * @param  {Object} params event parameters
              */
             function extentChangeHandler(params) {
+                geoState.mapService.clearHilight();
                 if (params.levelChange) {
                     // refresh scale state of all layers
                     Object.keys(service.layers).forEach(layerId => {

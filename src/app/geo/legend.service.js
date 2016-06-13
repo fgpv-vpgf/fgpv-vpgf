@@ -96,6 +96,8 @@
                 const state = legendEntryFactory.dynamicEntryMasterGroup(layer.config, layer, false);
                 layer.legendEntry = state;
 
+                // TODO: consider using the layerRegistry[layer.id].attributeBundle[featureIdx].layerInfo.then.legend instead of web call
+                //       this logic would be inside the loop over all valid slaves (there is one .layerInfo for each leaf layer)
                 const symbologyPromise = getMapServerSymbology(state.url);
 
                 // wait for symbology to load and ...
@@ -137,6 +139,7 @@
 
                 // HACK: to get file based layers working; this will be solved by the layer record ana legend entry hierarchy
                 // TODO: file based layers need to have their symbology generated
+                // TODO: consider using the layerRegistry[layer.id].attributeBundle[featureIdx].layerInfo.then.legend instead of web call
                 if (typeof state.url !== 'undefined') {
                     const symbologyPromise = getMapServerSymbology(state.url);
 
