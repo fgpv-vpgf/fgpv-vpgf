@@ -269,8 +269,16 @@
          */
         function getServiceFeatureCount(layerUrl) {
             /* jscs:disable maximumLineLength */
-            return $http.jsonp(`${layerUrl}/query?where=1=1&returnCountOnly=true&returnGeometry=false&f=json&callback=JSON_CALLBACK`)
+            const featquery = `${layerUrl}/query?where=1=1&returnCountOnly=true&returnGeometry=false&f=json&callback=JSON_CALLBACK`;
+            return $http.jsonp(featquery)
                 .then(result => {
+                    // tier2 promise in case the first one fails (since every second call fails)
+                    if (!result) {
+                        $http.jsonp(featquery)
+                        .then(result2 => {
+                            return result2.data.count;
+                        });
+                    }
                     // console.log(layerUrl, result);
                     return result.data.count;
                 });
