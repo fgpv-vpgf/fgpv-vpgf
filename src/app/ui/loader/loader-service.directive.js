@@ -119,6 +119,10 @@
             form[fieldName].$setValidity(errorName, state);
         }
 
+        /**
+         * Tries to create a service LayerBlueprint from the url provided. If creation is successful, proceeds to the next step.
+         * If creation fails, display a "broken service url" error message. This can happen because the provided url is not a service endpoint or if the service endpoint doesn't respond.
+         */
         function connectOnContinue() {
             const connect = self.connect;
 
