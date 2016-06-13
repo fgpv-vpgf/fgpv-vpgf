@@ -327,7 +327,6 @@
                     // get the layer config from blueprint
                     // TODO: decouple identifyservice from everything
                     layerBlueprint.generateLayer().then(lr => {
-                        console.info(lr);
                         registerLayerRecord(lr);
                         const pos = createPlaceholder(lr);
                         console.log(`adding ${lr.config.name} to map at ${pos}`);
@@ -335,6 +334,7 @@
                         mapObject.addLayer(lr._layer, pos);
                         // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
                         if (lr._layer.loaded) {
+                            lr.onLoad();
                             lr.onUpdateEnd();
                         }
                     });
