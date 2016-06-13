@@ -132,18 +132,14 @@
         }
 
         /**
-         * Retrieves base64 symbology icon for the item in datatable
+         * Retrieves symbology icon for a feature
          *
-         * @param  {Integer} oid       object ID of the item which needs its symbology retrieved
-         * @param  {Object} fData      feature data of the layer object of which the object belongs
-         * @param  {Object} renderer   renderer object for the layer
-         * @param  {Object} legend     legend look up object for the layer
-         * @return {String} base64 string symbology for item in database
+         * @param  {Object} attribs    attributes of the feature we want a symbol for
+         * @param  {Object} renderer   enhanced renderer object for the layer in server format
+         * @return {String} data-url that will render the symbology
          */
-        function retrieveSymbol(oid, fData, renderer, legend) {
-            const sConfig = gapiService.gapi.symbology.createSymbologyConfig(renderer, legend);
-            const icon = gapiService.gapi.symbology.getGraphicIcon(fData, sConfig, oid);
-            return icon;
+        function retrieveSymbol(attribs, renderer) {
+            return gapiService.gapi.symbology.getGraphicIcon(attribs, renderer);
         }
     }
 })();

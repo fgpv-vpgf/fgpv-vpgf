@@ -75,25 +75,9 @@
                 // add symbol as the first column
                 // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
                 if (!displayData.rows[0].hasOwnProperty('rvSymbol')) {
-                    displayData.rows.forEach((row, index) => {
-                        const objId = row[displayData.oidField];
-                        const renderer = displayData.renderer;
-                        const legend = requester.legendEntry.symbology;
+                    displayData.rows.forEach(row => {
 
-                        // FIXME: mock fdata object for this particular item
-                        // This will likely change with the new symbology generator
-                        const fData = {
-                            features: {
-                                [index]: {
-                                    attributes: row
-                                }
-                            },
-                            oidIndex: {
-                                [objId]: index
-                            }
-                        };
-
-                        let symbol = geoService.retrieveSymbol(objId, fData, renderer, legend);
+                        let symbol = geoService.retrieveSymbol(row, displayData.renderer);
                         if (!symbol) {
                             // jscs:disable maximumLineLength
                             // TODO: have geoApi symbology detect and set empty gifs
@@ -162,15 +146,13 @@
 
                 self.table.on('click', 'md-icon.rv-zoom-to', event => {
                     const tr = $(event.target).closest('tr');
-                    const layerName = requester.name;
                     const row = self.table.row(tr);
 
                     // get object id from row data
                     const objId = row.data()[displayData.oidField];
-                    // FIXME _layer reference
-                    const layer = geoService.layers[requester.layerId]._layer;
+                    const layer = geoService.layers[requester.layerId];
 
-                    geoService.zoomToGraphic(layer, layerName, objId);
+                    geoService.zoomToGraphic(layer, requester.legendEntry.featureIdx, objId);
                 });
 
                 self.table.on('click', 'md-icon.rv-description', event => {
@@ -199,6 +181,9 @@
                     };
 
                     stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
+
+                    const layer = geoService.layers[requester.layerId];
+                    geoService.hilightGraphic(layer, requester.legendEntry.featureIdx, objId);
                 });
             }
 
@@ -210,6 +195,10 @@
                     // destroy table with all events
                     self.table.destroy(true); // https://datatables.net/reference/api/destroy()
                     delete self.table; // kill the reference
+
+                    // clear hilight when table closes or new table is opened
+                    // TODO verify this is the proper location for this line
+                    geoService.clearHilight();
                 }
             }
 
