@@ -328,6 +328,8 @@
              * @param {Object} clickEvent an ESRI event object for map click events
              */
             function clickHandlerBuilder(clickEvent) {
+                geoState.mapService.clearHilight();
+
                 if (getVisibleLayers() === 0) {
                     return;
                 }
@@ -348,6 +350,8 @@
                     height: mapObject.height,
                     mapExtent: mapObject.extent,
                 };
+
+                geoState.mapService.dropMapPin(clickEvent.mapPoint);
 
                 layerRegistry
                     .getAllQueryableLayerRecords()

@@ -23,7 +23,7 @@
         function mapService(geoState, config) {
 
             const initProps = ['fullExtent', 'mapExtent', 'lods', 'selectedBaseMapId',
-                'selectedBaseMapExtentSetId', 'selectedBaseMapLodId', 'blankBaseMapId'];
+                'selectedBaseMapExtentSetId', 'selectedBaseMapLodId', 'blankBaseMapId', 'hilight'];
 
             initProps.forEach(prop => {
                 if (angular.isUndefined(geoState[prop])) {
@@ -43,8 +43,11 @@
                 setFullExtent,
                 setSelectedBaseMap,
                 zoomToGraphic,
-                fetchLocation,
                 validateProj
+                hilightGraphic,
+                clearHilight,
+                dropMapPin,
+                fetchLocation
             };
 
             return buildMapObject();
@@ -295,54 +298,145 @@
             }
 
             /**
-             * Fetches a point in a layer given the layerUrl and objId of the object and then zooms to it
-             * Only handles feature layers right now (both on demand and snapshot). zoom to dynamic/wms layers obj won't work
+             * Fetches a graphic from the given layer
+             * Will attempt local copy, will it the server if not available.
              *
-             * @param  {layer} layer is the layer object of graphic to zoom
-             * @param  {String} layerName is the name of the layer to be zoomed to
-             * @param  {objId} objId is ID of object that was clicked on datatable to be zoomed to
+             * @param  {Object} layer the layer record object to search
+             * @param  {Integer} featureIdx the index of the layer (relevant for dynamic sub-layers)
+             * @param  {Integer} objId ID of object being searched for
+             * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .source is where it came from. 'layer' or 'server'. also .layer and .featureIdx for convenience
              */
-            function zoomToGraphic(layer, layerName, objId) {
-                const map = service.mapObject;
-                const zoomLevel = gapiService.gapi.symbology.getZoomLevel(map.__tileInfo.lods, layer.maxScale);
+            function fetchGraphic(layer, featureIdx, objId) {
+
+                // FIXME _layer reference
+                const layerObj = layer._layer;
+                const result = {
+                    graphic: null,
+                    source: null,
+                    layer,
+                    featureIdx
+                };
 
                 // if triggers when layer has no service, or all geometry is on client, in which case we use local geometry instead of pulling from server
                 // snapshot mode is set by the constant MODE_SNAPSHOT that maps to 0 in esri's api for FeatureLayer
-                if (!layer.url || layer.mode === 0) {
-                    const myG = layer.graphics.find(g => {
-                        return g.attributes[layer.objectIdField] === objId;
+                if (layerObj.graphics) {
+                    const myG = layerObj.graphics.find(g => {
+                        return g.attributes[layerObj.objectIdField] === objId;
                     });
-                    const geo = {
-                        x: myG.geometry.x,
-                        y: myG.geometry.y
-                    };
+                    if (myG) {
+                        result.graphic = myG;
+                        result.source = 'layer';
+                        return $q.resolve(result);
+                    }
+                }
 
-                    zoomWithOffset(geo, myG.attributes, myG.geometry.spatialReference, zoomLevel);
-                } else {
+                // were not able to get a local copy of the graphic. to the server
+                // TODO add some error handling. Cases: failed server call. server call is not a feature
+                // TODO add some caching to this. if we get a result, save it somewhere. grab that if requested a 2nd time
 
-                    // layerUrl is the URL that the point to be zoomed to belongs to
-                    let layerUrl = `${layer.url}/`;
+                // layerUrl is the URL that the point to be zoomed to belongs to
+                // TODO if we ever add an "index-free url" property, use that instead and avoid the if
+                let layerUrl = layerObj.url + '/';
+                if (!layerObj.graphics) {
+                    // it is a dynamic layer, so we need to append the feature index to the URL.
+                    layerUrl = layerUrl + featureIdx + '/';
+                }
 
-                    // find layer index for dynamic layers and pass it as a feature layer
-                    if (layer.layerInfos) {
-                        layer.layerInfos.every(featLayer => {
-                            if (featLayer.name === layerName) {
-                                layerUrl += featLayer.id + '/';
-                                return false; // break loop
-                            }
-                            return true; // keep looping
-                        });
+                return gapiService.gapi.layer.getFeatureInfo(layerUrl, objId)
+                    .then(geoInfo => {
+                        // server result omits spatial reference
+                        geoInfo.feature.geometry.spatialReference = layerObj.spatialReference;
+                        result.graphic = geoInfo.feature;
+                        result.source = 'server';
+                        return result;
+                    });
+            }
+
+            /**
+             * Fetches a feature in a layer given the layerUrl and objId of the object and then zooms to it
+             * Only handles feature related layers (feature, dynamic). Will also apply a hilight to the feature
+             *
+             * @param  {Object} layer is the layer record of graphic to zoom
+             * @param  {Integer} featureIdx the index of the layer (relevant for dynamic sub-layers)
+             * @param  {Integer} objId is ID of object to be zoomed to
+             */
+            function zoomToGraphic(layer, featureIdx, objId) {
+                const map = service.mapObject;
+
+                // FIXME _layer reference
+                const zoomLevel = gapiService.gapi.symbology.getZoomLevel(map.__tileInfo.lods, layer._layer.maxScale);
+
+                fetchGraphic(layer, featureIdx, objId).then(gBundle => {
+                    zoomWithOffset(gBundle.graphic.geometry, zoomLevel).then(() => {
+                        applyHilight(gBundle);
+                    });
+                });
+            }
+
+            /**
+             * Fetches a point in a layer given the layerUrl and objId of the object and then hilights to it
+             * Only handles feature related layers (feature, dynamic).
+             *
+             * @param  {Object} layer is the layer record of graphic to zoom
+             * @param  {Integer} featureIdx the index of the layer (relevant for dynamic sub-layers)
+             * @param  {Integer} objId is ID of object to hilight
+             */
+            function hilightGraphic(layer, featureIdx, objId) {
+                fetchGraphic(layer, featureIdx, objId).then(gBundle => {
+                    applyHilight(gBundle);
+                });
+            }
+
+            /**
+             * Clears any hilights, pins, and hazes from the hilight layer
+             *
+             */
+            function clearHilight() {
+                geoState.hilight.clearHilight();
+            }
+
+            /**
+             * Adds a location pin to the hilight layer
+             *
+             * @param  {Object} mapPoint ESRI point defining where to put the pin
+             */
+            function dropMapPin(mapPoint) {
+                geoState.hilight.addPin(mapPoint);
+            }
+
+            /**
+             * Performs the application of a hilight for a graphic
+             *
+             * @ Private
+             * @param  {Object} graphicBundle a graphic bundle for the item to hilight (see function fetchGraphic)
+             */
+            function applyHilight(graphicBundle) {
+
+                if (graphicBundle.source === 'server') {
+                    const mapSR = service.mapObject.spatialReference;
+                    let geom = graphicBundle.graphic.geometry;
+
+                    // check projection
+                    if (!gapiService.gapi.proj.isSpatialRefEqual(geom.spatialReference, mapSR)) {
+                        geom = gapiService.gapi.proj.localProjectGeometry(mapSR, geom);
                     }
 
-                    gapiService.gapi.layer.getFeatureInfo(layerUrl, objId)
-                        .then(geoInfo => {
-                            // if it's a feature layer
-                            if (geoInfo && geoInfo.feature) {
-                                zoomWithOffset(geoInfo.feature.geometry,
-                                    geoInfo.feature.attributes, layer.spatialReference, zoomLevel);
-                            }
-                        });
+                    // determine symbol for this server graphic
+                    const attribs = graphicBundle.layer.attributeBundle;
+                    attribs[graphicBundle.featureIdx].layerData.then(layerData => {
+                        const symb = gapiService.gapi.symbology.getGraphicSymbol(graphicBundle.graphic.attributes,
+                            layerData.renderer);
+
+                        // generate client graphic and hilight it
+                        geoState.hilight.addHilight(gapiService.gapi.hilight.geomToGraphic(geom, symb));
+
+                    });
+
+                } else {
+                    // local graphic. clone and hilight
+                    geoState.hilight.addHilight(gapiService.gapi.hilight.cloneLayerGraphic(graphicBundle.graphic));
                 }
+
             }
 
             /**
@@ -350,11 +444,10 @@
              * to the map's spatialReference, then zooms to the maximum level such that the geometry is still visible
              *
              * @param  {Object} geo is the geometry to be zoomed to
-             * @param  {Object} attr is the attributes of the geometry to be zoomed to
-             * @param  {Object} sr is spatialReference of the incoming geometry
              * @param  {Integer} zoomLevel is the max level of zoom such that the layer is still visible on the map and not out of scale
+             * @returns {Promise} resolves when zoom finishes
              */
-            function zoomWithOffset(geo, attr, sr, zoomLevel) {
+            function zoomWithOffset(geo, zoomLevel) {
                 const map = service.mapObject;
 
                 const barWidth = storageService.panels.sidePanel.outerWidth();
@@ -366,13 +459,12 @@
                 // since the side panel is always 400px; need ratio every time zoom happens
                 const ratio = (barWidth / mapWidth) / 2;
 
-                // make new graphic with proper spatialReference
-                geo.spatialReference = sr;
+                // make new graphic (on the chance it came from server and is just raw geometry)
                 const newg = gapiService.gapi.proj.Graphic({
-                    geometry: geo,
-                    attributes: attr
+                    geometry: geo
                 });
 
+                // TODO only do this if projections are actually different.
                 // reproject graphic to spatialReference of the map
                 const gextent = gapiService.gapi.proj.localProjectExtent(
                     gapiService.gapi.proj.graphicsUtils.graphicsExtent([newg]),
@@ -387,15 +479,15 @@
                     const eExt = newExt.expand(4);
                     const xOffset = (eExt.xmax - eExt.xmin) * ratio * (-1);
                     const gExt = eExt.offset(xOffset, (eExt.ymax - eExt.ymin) / 4);
-                    map.setExtent(gExt);
+                    return map.setExtent(gExt);
                 } else {
                     // handles points
                     const pt = newExt.getCenter();
                     const zoomed = map.setZoom(zoomLevel);
-                    zoomed.then(() => {
+                    return zoomed.then(() => {
                         const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
                         const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
-                        map.centerAt(newPt, zoomLevel);
+                        return map.centerAt(newPt, zoomLevel);
                     });
                 }
             }
@@ -486,6 +578,11 @@
                     if (lFullExtent) {
                         gapiService.gapi.events.wrapEvents(map, {
                             load: () => {
+                                // setup hilight layer
+                                geoState.hilight = gapiService.gapi.hilight.makeHilightLayer({ hazeOpacity: 200 });
+                                map.addLayer(geoState.hilight);
+
+                                // setup full extent
                                 if (lFullExtent) {
                                     // compare map extent and setting.extent spatial-references
                                     // make sure the full extent has the same spatial reference as the map
@@ -505,6 +602,7 @@
                                             map.extent.spatialReference);
                                     }
                                 }
+
                                 setMapLoadingFlag(false);
                                 resolve();
                             },

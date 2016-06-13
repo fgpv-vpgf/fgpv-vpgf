@@ -28,7 +28,7 @@
         return directive;
     }
 
-    function Controller($scope, stateManager, $element) {
+    function Controller($scope, stateManager, geoService, $element) {
         'ngInject';
         const self = this;
 
@@ -57,6 +57,9 @@
             stateManager
                 .openPrevious('mainDetails')
                 .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display;
+
+            geoService.clearHilight();
+
         }
 
         /**

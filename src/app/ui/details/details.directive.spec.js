@@ -5,9 +5,17 @@ describe('rvDetails', () => {
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;
 
+    // fake geo service
+    function mockGeoService($provide) {
+        $provide.factory('geoService', () => {
+            return {};
+        });
+    }
+
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.details', 'app.templates', 'app.common.router', 'pascalprecht.translate');
+        bard.appModule('app.ui.details', 'app.templates', 'app.common.router', 'pascalprecht.translate',
+            mockGeoService);
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
