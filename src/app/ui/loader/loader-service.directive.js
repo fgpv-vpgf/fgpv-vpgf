@@ -119,6 +119,10 @@
             form[fieldName].$setValidity(errorName, state);
         }
 
+        /**
+         * Tries to create a service LayerBlueprint from the url provided. If creation is successful, proceeds to the next step.
+         * If creation fails, display a "broken service url" error message. This can happen because the provided url is not a service endpoint or if the service endpoint doesn't respond.
+         */
         function connectOnContinue() {
             const connect = self.connect;
 
@@ -139,6 +143,9 @@
                 });
         }
 
+        /**
+         * Clears service url field and all error displayed; sets the form into pristine, untouched state (so no default validation errors (like "required" or "not a proper url") will show)
+         */
         function connectOnCancel() {
             const connect = self.connect;
 
@@ -150,10 +157,17 @@
             stepper.previousStep();
         }
 
+        /**
+         * Validates created service Layer Blueprint against selected service type.
+         * TODO: do the validation if at all possible;
+         */
         function selectOnContinue() {
             stepper.nextStep();
         }
 
+        /**
+         * Moves stepped backwards to the connect step where user can enter a new service url.
+         */
         function selectOnCancel() {
             stepper.previousStep();
         }

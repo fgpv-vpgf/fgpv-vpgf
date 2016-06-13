@@ -130,15 +130,15 @@
                 this._validPromise = $q.reject();
 
                 // if layerType is no specified, this is a user added layer
-                // call geoApi to predict its type
+                // call GeoApi to predict its type
                 if (this.layerType === null) {
                     this._constructorPromise = this._fetchServiceInfo();
                 }
             }
 
             /**
-             * Get service info from the supplied url. Service infor usually include information like service type, name, available fields, etc.
-             * TODO: there is a lot of workarounds since wms layers need special handling, and it's not possible to immediattely detect if the layer is not a service endpoint .
+             * Get service info from the supplied url. Service info usually include information like service type, name, available fields, etc.
+             * TODO: there is a lot of workarounds since wms layers need special handling, and it's not possible to immediately detect if the layer is not a service endpoint .
              */
             _fetchServiceInfo() {
                 const hint = this._serviceInfo !== null ? this._serviceInfo.serviceType : undefined;
@@ -150,7 +150,7 @@
                         if (data.layers.length > 0) { // if there are layers, it's a wms layer
                             console.log(`${this.config.url} is a WMS, yak!`);
 
-                            // return an object resembing fileInfo object returned by GeoAPi
+                            // return an object resembling fileInfo object returned by GeoApi
                             return {
                                 serviceType: Geo.Service.Types.WMS,
                                 name: this.config.url,
@@ -167,7 +167,7 @@
 
                         // this is not a service URL;
                         // in some cases, if URL is not a service URL, dojo script used to interogate the address
-                        // will throw a page-level error which cannot be caugth; in such cases, it's not clear to the user what has happened;
+                        // will throw a page-level error which cannot be caught; in such cases, it's not clear to the user what has happened;
                         // timeout error will eventually be raised and this block will trigger
                         // TODO: as a workaround, block continue button until interogation is complete so users can't click multiple times, causing multiple checks
                         if (fileInfo.serviceType === Geo.Service.Types.Error) {
@@ -202,7 +202,7 @@
                  * TODO: this is temporary, possibly, as we want to provide user with an actual tree to select from
                  * @param  {Array} layers array of layer objects
                  * @param  {Number} level  =             0 tells how deep the layer is in the hierarchy
-                 * @return {Object}        layer description
+                 * @return {Array}        layer list
                  */
                 function flattenWmsLayerList(layers, level = 0) {
                     return [].concat.apply([], layers.map(layer => {
