@@ -95,9 +95,7 @@ function hilightBuilder(esriBundle) {
         */
         hgl.addHilight = graphic => {
 
-            if (!Array.isArray(graphic)) {
-                graphic = [graphic];
-            }
+            const graphics = Array.isArray(graphic) ? graphic : [graphic];
 
             if (hgl._hilightGraphics) {
                 // if active hilight graphics, remove them
@@ -115,9 +113,9 @@ function hilightBuilder(esriBundle) {
                 hgl.add(hazeGraphic);
             }
 
-            // add new hilight graphic
-            hgl._hilightGraphics = graphic;
-            graphic.forEach(g => hgl.add(g));
+            // add new hilight graphics
+            hgl._hilightGraphics = graphics;
+            graphics.forEach(g => hgl.add(g));
             moveHilightToTop();
         };
 
