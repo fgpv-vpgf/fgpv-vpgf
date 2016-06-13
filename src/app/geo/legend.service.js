@@ -267,12 +267,18 @@
          * @param  {String} layerUrl layer url
          * @return {Promise}          promise resolving with a feature count
          */
-        function getServiceFeatureCount(layerUrl) {
+        function getServiceFeatureCount(layerUrl, finalTry = false) {
             /* jscs:disable maximumLineLength */
-            return $http.jsonp(`${layerUrl}/query?where=1=1&returnCountOnly=true&returnGeometry=false&f=json&callback=JSON_CALLBACK`)
+            return $http.jsonp(
+                    `${layerUrl}/query?where=1=1&returnCountOnly=true&returnGeometry=false&f=json&callback=JSON_CALLBACK`)
                 .then(result => {
-                    // console.log(layerUrl, result);
-                    return result.data.count;
+                    if (result) {
+                        return result.data.count;
+                    } else if (!finalTry) {
+                        return getServiceFeatureCount(layerUrl, true);
+                    } else {
+                        return 'Could not get number of';
+                    }
                 });
             /* jscs:enable maximumLineLength */
         }
