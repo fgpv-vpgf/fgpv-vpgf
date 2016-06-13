@@ -1,4 +1,3 @@
-/* global XSLTProcessor */
 (() => {
     /**
      * @ngdoc service
@@ -22,31 +21,44 @@
 
         /*
         * Transform XML using XSLT
-        * @param {string} xmlString url of the xml document
-        * @param {string} xslString url of the xsl document
+        * @param {string} xmlString text data of the XML document
+        * @param {string} xslString text data of the XSL document
         * @param {bool} returnFragment True if you want a document fragment returned (doesn't work
         * in IE)}
+        * @param {Array} params a list of paramters to apply to the transform
         * @return {object} transformed document
         */
         function applyXSLT(xmlString, xslString, returnFragment, params) {
-
-            let i = 0;
             let output = null;
 
-            // Chrome/FF/Others
-            const xsltProcessor = new XSLTProcessor();
-            xsltProcessor.importStylesheet(xslString);
-
-            // [patched from ECDMP] Add parameters to xsl document (setParameter = Chrome/FF/Others)
-            if (params) {
-                for (i = 0; i < params.length; i++) {
-                    xsltProcessor.setParameter(null, params[i].key, params[i].value || '');
+            if (window.XSLTProcessor) {
+                const xsltProc = new window.XSLTProcessor();
+                const xmlDoc = $.parseXML(xmlString);
+                const xslDoc = $.parseXML(xslString);
+                xsltProc.importStylesheet(xslDoc);
+                // [patched from ECDMP] Add parameters to xsl document (setParameter = Chrome/FF/Others)
+                if (params) {
+                    params.forEach(p => xsltProc.setParameter(null, p.key, p.value || ''));
                 }
+                output = xsltProc.transformToFragment(xmlDoc, document);
+            } else if (window.hasOwnProperty('ActiveXObject')) {
+                // IE11 (╯°□°）╯︵ ┻━┻
+                const xslt = new window.ActiveXObject('Msxml2.XSLTemplate');
+                const xmlDoc = new window.ActiveXObject('Msxml2.DOMDocument');
+                const xslDoc = new window.ActiveXObject('Msxml2.FreeThreadedDOMDocument');
+                xmlDoc.loadXML(xmlString);
+                xslDoc.loadXML(xslString);
+                xslt.stylesheet = xslDoc;
+                const xsltProc = xslt.createProcessor();
+                xsltProc.input = xmlDoc;
+                if (params) {
+                    params.forEach(p => xsltProc.addParameter(p.key, p.value, ''));
+                }
+                xsltProc.transform();
+                output = xsltProc.output;
             }
-            output = xsltProcessor.transformToFragment(xmlString, document);
 
             return output;
-
         }
 
         /*
@@ -55,20 +67,9 @@
         * @return {promise} promise if file will be loaded
         */
         function loadXMLFilePromise(fileUrl) {
-
-            return $http({
-                method: 'GET',
-                url: fileUrl,
-                responseType: 'xml',
-                transformResponse: data => {
-                    return $.parseXML(data);
-                }
-            }).then(response => {
-                return response.data;
-            }).catch(error => {
-                console.err('xhttp reqest failed. Error: ' + error);
-            });
-
+            return $http.get(fileUrl)
+                        .then(response => response.data)
+                        .catch(error => console.error(`XHR request failed. Error: ${error}`));
         }
 
         /**
