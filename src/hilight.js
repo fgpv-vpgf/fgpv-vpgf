@@ -89,15 +89,19 @@ function hilightBuilder(esriBundle) {
         };
 
         /**
-        * Add a graphic to the highlight layer. Remove any previous graphic.
+        * Add a graphic or array of graphics to the highlight layer. Remove any previous graphics.
         * @method addHilight
-        * @param {Graphic} graphic an ESRI graphic. Should be in map spatialReference, and not bound to a layer
+        * @param {Graphic|Array} graphic an ESRI graphic, or array of ESRI graphics. Should be in map spatialReference, and not bound to a layer
         */
         hgl.addHilight = graphic => {
 
-            if (hgl._hilightGraphic) {
-                // if active hilight graphic, remove it
-                hgl.remove(hgl._hilightGraphic);
+            if (!Array.isArray(graphic)) {
+                graphic = [graphic];
+            }
+
+            if (hgl._hilightGraphics) {
+                // if active hilight graphics, remove them
+                hgl._hilightGraphics.forEach(g => hgl.remove(g));
             } else {
                 // first application of hilight. add haze background by creating a partially opaque layer for
                 // the whole map extent with some buffer. This will go under the highlighted graphic to make it stand out.
@@ -112,8 +116,8 @@ function hilightBuilder(esriBundle) {
             }
 
             // add new hilight graphic
-            hgl._hilightGraphic = graphic;
-            hgl.add(graphic);
+            hgl._hilightGraphics = graphic;
+            graphic.forEach(g => hgl.add(g));
             moveHilightToTop();
         };
 
@@ -123,7 +127,7 @@ function hilightBuilder(esriBundle) {
         */
         hgl.clearHilight = () => {
             // clear tracking vars, wipe the layer
-            hgl._hilightGraphic = null;
+            hgl._hilightGraphics = null;
             hgl.clear();
         };
 
