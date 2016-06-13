@@ -1,5 +1,9 @@
 'use strict';
 
+// TODO hilight layer would be a good candidate for a custom class which internally proxies to ESRI's GraphicsLayer.
+
+const defaultSymbols = require('./defaultHilightSymbols.json');
+
 // contains functions to support the hilight layer.
 
 function cloneBuilder(esriBundle) {
@@ -42,29 +46,14 @@ function hilightBuilder(esriBundle) {
     * @param {Object} options optional settings for the hilight layer
     *                         layerId - id to use for the hilight layer. defaults to rv_hilight
     *                         pinSymbol - esri symbol in server json format to symbolize the click marker. defaults to a red pin
-    *                         hazeOpacity -  how opaque the haze sheet behind the hilight is. 0 to 255, 0 being transparent. defaults to 110
+    *                         hazeOpacity -  how opaque the haze sheet behind the hilight is. 0 to 255, 0 being transparent. defaults to 127
     * @return {Object} an ESRI GraphicsLayer
     */
     return options => {
         // set options
         let id = 'rv_hilight';
-        let hazeOpac = 110;
-        let pinSymbol = {
-            color: [230, 0, 0, 175],
-            size: 12,
-            yoffset: 6,
-            type: 'esriSMS',
-            style: 'esriSMSPath',
-            outline: {
-                color: [0, 0, 0, 255],
-                width: 1,
-                type: 'esriSLS',
-                style: 'esriSLSSolid'
-            },
-            /* jscs:disable maximumLineLength */
-            path: 'M16,3.5c-4.142,0-7.5,3.358-7.5,7.5c0,4.143,7.5,18.121,7.5,18.121S23.5,15.143,23.5,11C23.5,6.858,20.143,3.5,16,3.5z M16,14.584c-1.979,0-3.584-1.604-3.584-3.584S14.021,7.416,16,7.416S19.584,9.021,19.584,11S17.979,14.584,16,14.584z'
-            /* jscs:enable maximumLineLength */
-        };
+        let hazeOpac = 127;
+        let pinSymbol = defaultSymbols.pinSymbol;
 
         if (options) {
             if (options.layerId) {
@@ -110,22 +99,16 @@ function hilightBuilder(esriBundle) {
                 // if active hilight graphic, remove it
                 hgl.remove(hgl._hilightGraphic);
             } else {
-                // first application of hilight. add haze background
+                // first application of hilight. add haze background by creating a partially opaque layer for
+                // the whole map extent with some buffer. This will go under the highlighted graphic to make it stand out.
                 const hazeJson = {
-                    symbol: {
-                        color: [255, 255, 255, hazeOpac],
-                        type: 'esriSFS',
-                        style: 'esriSFSSolid',
-                        outline: {
-                            type: 'esriSLS',
-                            style: 'esriSLSNull'
-                        }
-                    }
+                    symbol: defaultSymbols.hazeSymbol
                 };
-                const haze = new esriBundle.Graphic(hazeJson);
-                haze.setGeometry(hgl._map.extent.expand(1.5)); // expand to avoid edges on quick pan
-                haze.haze = true;  // notifies layer to put this under any hilight graphics
-                hgl.add(haze);
+                hazeJson.symbol.color[3] = hazeOpac;
+                const hazeGraphic = new esriBundle.Graphic(hazeJson);
+                hazeGraphic.setGeometry(hgl._map.extent.expand(1.5)); // expand to avoid edges on quick pan
+                hazeGraphic.haze = true;  // notifies layer to put this under any hilight graphics
+                hgl.add(hazeGraphic);
             }
 
             // add new hilight graphic
@@ -146,14 +129,14 @@ function hilightBuilder(esriBundle) {
 
         hgl.on('graphic-node-add', e => {
             // figure out if graphic needs to be at top or bottom of hilight layer
+            // haze polygon goes to bottom, everything else to top
             const g = e.graphic;
             const dojoShape = g.getShape();
-            if (dojoShape) {
-                if (g.haze) {
-                    dojoShape.moveToBack();
-                } else {
-                    dojoShape.moveToFront();
-                }
+
+            if (g.haze) {
+                dojoShape.moveToBack();
+            } else {
+                dojoShape.moveToFront();
             }
         });
 
