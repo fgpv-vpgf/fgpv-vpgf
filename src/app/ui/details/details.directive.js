@@ -71,6 +71,13 @@
             self.selectedInfo = (item) ? `${item.requester.caption}${item.requester.name}` : null;
 
             self.display.selectedItem = self.selectedItem;
+
+            // add hilights to all things in the layer.
+            // TODO is this the appropriate place for hilighting code?
+            if (item && item.requester && item.requester.featureIdx) {
+                geoService.hilightGraphic(item.requester.layerRec, item.requester.featureIdx,
+                    item.data.map(d => d.oid));
+            }
         }
 
         $scope.$watch('self.display.data', newValue => {
