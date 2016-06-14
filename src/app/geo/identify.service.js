@@ -34,10 +34,12 @@
              * @param  {String} name      layer name of the queried layer
              * @param  {Array} symbology array of layer symbology to be displayed in details panel
              * @param  {String} format    indicates data formating template
+             * @param  {Object} layerRec  layer record for the queried layer
+             * @param  {Integer} featureIdx  optional feature index of queried layer (should be provided for attribute based layers)
              * @param  {String} caption   optional captions to be displayed along with the name
              * @return {Object}           identify result object
              */
-            const IDENTIFY_RESULT = (name, symbology, format, caption) => {
+            const IDENTIFY_RESULT = (name, symbology, format, layerRec, featureIdx, caption) => {
                 return {
                     isLoading: true,
                     requestId: -1,
@@ -45,7 +47,9 @@
                         name,
                         symbology,
                         format,
-                        caption
+                        caption,
+                        layerRec,
+                        featureIdx
                     },
                     data: []
                 };
@@ -164,7 +168,8 @@
                     }
 
                     const identifyResult =
-                        IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature', legendEntry.name);
+                        IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature', layerRecord,
+                            legendEntry.featureIdx, legendEntry.name);
 
                     identifyResults[legendEntry.featureIdx] = identifyResult;
                 });
@@ -184,12 +189,16 @@
                         // we want to make a nice table
                         clickResults.forEach(ele => {
                             // NOTE: the identify service returns aliased field names, so no need to look them up here
-                            const identifyResult = identifyResults[ele.layerId];
-                            identifyResult.data.push({
-                                name: ele.value,
-                                data: attributesToDetails(ele.feature.attributes)
+                            // NOTE: ele.layerId is what we would call featureIdx
+                            layerRecord.attributeBundle[ele.layerId].layerData.then(lData => {
+                                const identifyResult = identifyResults[ele.layerId];
+                                identifyResult.data.push({
+                                    name: ele.value,
+                                    data: attributesToDetails(ele.feature.attributes),
+                                    oid: ele.feature.attributes[lData.oidField]
+                                });
+                                identifyResult.isLoading = false;
                             });
-                            identifyResult.isLoading = false;
                         });
 
                         // set the rest of the entries to loading false
@@ -221,7 +230,8 @@
                 }
 
                 const identifyResult =
-                    IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, infoMap[legendEntry.featureInfoMimeType]);
+                    IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, infoMap[legendEntry.featureInfoMimeType],
+                        layerRecord);
 
                 const identifyPromise = gapiService.gapi.layer.ogc
                     .getFeatureInfo(
@@ -259,7 +269,8 @@
                 }
 
                 const identifyResult =
-                    IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature');
+                    IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature',
+                        layerRecord, legendEntry.featureIdx);
 
                 // run a spatial query
                 const qry = new gapiService.gapi.layer.Query();
@@ -294,7 +305,8 @@
 
                                 return {
                                     name: getFeatureName(featAttribs, legendEntry, objId),
-                                    data: attributesToDetails(featAttribs, attributes.fields)
+                                    data: attributesToDetails(featAttribs, attributes.fields),
+                                    oid: objId
                                 };
                             });
                     });
