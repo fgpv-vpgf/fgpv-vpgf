@@ -379,11 +379,14 @@
              *
              * @param  {Object} layer is the layer record of graphic to zoom
              * @param  {Integer} featureIdx the index of the layer (relevant for dynamic sub-layers)
-             * @param  {Integer} objId is ID of object to hilight
+             * @param  {Integer|Array} objId is ID or array of IDs of object(s) to hilight
              */
             function hilightGraphic(layer, featureIdx, objId) {
-                fetchGraphic(layer, featureIdx, objId).then(gBundle => {
-                    applyHilight(gBundle);
+                const objIds = Array.isArray(objId) ? objId : [objId];
+                const fetchPromises = objIds.map(oid => fetchGraphic(layer, featureIdx, oid));
+
+                $q.all(fetchPromises).then(graphicBundles => {
+                    applyHilight(graphicBundles);
                 });
             }
 
@@ -408,34 +411,43 @@
              * Performs the application of a hilight for a graphic
              *
              * @ Private
-             * @param  {Object} graphicBundle a graphic bundle for the item to hilight (see function fetchGraphic)
+             * @param  {Object|Array} graphicBundle a graphic bundle or array of graphic bundles for the item(s) to hilight (see function fetchGraphic)
              */
             function applyHilight(graphicBundle) {
 
-                if (graphicBundle.source === 'server') {
-                    const mapSR = service.mapObject.spatialReference;
-                    let geom = graphicBundle.graphic.geometry;
+                const bundles = Array.isArray(graphicBundle) ? graphicBundle : [graphicBundle];
 
-                    // check projection
-                    if (!gapiService.gapi.proj.isSpatialRefEqual(geom.spatialReference, mapSR)) {
-                        geom = gapiService.gapi.proj.localProjectGeometry(mapSR, geom);
+                // generate detached graphics to give to the hilight layer.
+                // promises because server layers renderer is inside a promise
+                const hilitePromises = bundles.map(bundle => {
+                    if (bundle.source === 'server') {
+                        const mapSR = service.mapObject.spatialReference;
+                        let geom = bundle.graphic.geometry;
+
+                        // check projection
+                        if (!gapiService.gapi.proj.isSpatialRefEqual(geom.spatialReference, mapSR)) {
+                            geom = gapiService.gapi.proj.localProjectGeometry(mapSR, geom);
+                        }
+
+                        // determine symbol for this server graphic
+                        const attribs = bundle.layer.attributeBundle;
+                        return attribs[bundle.featureIdx].layerData.then(layerData => {
+                            const symb = gapiService.gapi.symbology.getGraphicSymbol(bundle.graphic.attributes,
+                                layerData.renderer);
+
+                            return gapiService.gapi.hilight.geomToGraphic(geom, symb);
+
+                        });
+
+                    } else {
+                        // local graphic. clone and hilight
+                        return $q.resolve(gapiService.gapi.hilight.cloneLayerGraphic(bundle.graphic));
                     }
+                });
 
-                    // determine symbol for this server graphic
-                    const attribs = graphicBundle.layer.attributeBundle;
-                    attribs[graphicBundle.featureIdx].layerData.then(layerData => {
-                        const symb = gapiService.gapi.symbology.getGraphicSymbol(graphicBundle.graphic.attributes,
-                            layerData.renderer);
-
-                        // generate client graphic and hilight it
-                        geoState.hilight.addHilight(gapiService.gapi.hilight.geomToGraphic(geom, symb));
-
-                    });
-
-                } else {
-                    // local graphic. clone and hilight
-                    geoState.hilight.addHilight(gapiService.gapi.hilight.cloneLayerGraphic(graphicBundle.graphic));
-                }
+                $q.all(hilitePromises).then(hilightGraphics => {
+                    geoState.hilight.addHilight(hilightGraphics);
+                });
 
             }
 
@@ -579,7 +591,7 @@
                         gapiService.gapi.events.wrapEvents(map, {
                             load: () => {
                                 // setup hilight layer
-                                geoState.hilight = gapiService.gapi.hilight.makeHilightLayer({ hazeOpacity: 200 });
+                                geoState.hilight = gapiService.gapi.hilight.makeHilightLayer();
                                 map.addLayer(geoState.hilight);
 
                                 // setup full extent
