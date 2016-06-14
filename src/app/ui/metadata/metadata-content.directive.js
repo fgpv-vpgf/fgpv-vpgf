@@ -48,6 +48,7 @@
                         pElem.html($compile(
                             `<rv-truncate max-text-length="${maxTextLength}">${pElem.html()}</rv-truncate>`)(scope));
                     });
+                    el.empty();
                     el.append(metadata);
                 }
             });

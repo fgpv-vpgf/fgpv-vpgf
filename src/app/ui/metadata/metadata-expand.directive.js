@@ -34,7 +34,7 @@
         return directive;
     }
 
-    function Controller(stateManager, $mdDialog) {
+    function Controller(stateManager, $mdDialog, storageService) {
         'ngInject';
         const self = this;
 
@@ -56,7 +56,9 @@
                 clickOutsideToClose: true,
                 escapeToClose: true,
                 controllerAs: 'self',
-                bindToController: true
+                disableParentScroll: false,
+                bindToController: true,
+                parent: storageService.panels.shell
             });
         }
     }
