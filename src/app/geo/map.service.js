@@ -412,7 +412,7 @@
                 const geoPt = gapiService.gapi.proj.localProjectPoint(4326, map.spatialReference.wkid,
                     [parseFloat(location.coords.longitude), parseFloat(location.coords.latitude)]);
                 const zoomPt = gapiService.gapi.proj.Point(geoPt[0], geoPt[1], map.spatialReference);
-                map.centerAndZoom(zoomPt, 8);
+                map.centerAndZoom(zoomPt, map.__tileInfo.lods[map.__tileInfo.lods.length - 3].level);
             }
 
             /**

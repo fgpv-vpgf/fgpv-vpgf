@@ -270,14 +270,14 @@
         function getServiceFeatureCount(layerUrl, finalTry = false) {
             /* jscs:disable maximumLineLength */
             return $http.jsonp(
-                    `${layerUrl}/query?where=1=1&returnCountOnly=true&returnGeometry=false&f=json&callback=JSON_CALLBACK`)
+                `${layerUrl}/query?where=1=1&returnCountOnly=true&returnGeometry=false&f=json&callback=JSON_CALLBACK`)
                 .then(result => {
-                    if (result) {
+                    if (result.data.count) {
                         return result.data.count;
                     } else if (!finalTry) {
                         return getServiceFeatureCount(layerUrl, true);
                     } else {
-                        return 'Could not get number of';
+                        return $translate.instant('toc.error.resource.countfailed');
                     }
                 });
             /* jscs:enable maximumLineLength */
