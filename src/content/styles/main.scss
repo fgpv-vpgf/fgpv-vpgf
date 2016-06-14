@@ -4,8 +4,9 @@
 @import "../../../lib/datatables-scroller/css/scroller.dataTables.scss";
 @import "../../../lib/angular-dragula/dist/dragula";
 
+@import "common/_all.scss";
+
 .fgpv {
-    @import "common/_all.scss";
     @import "base/_all.scss";
     @import "modules/_all.scss";
     @import "other/_all.scss";

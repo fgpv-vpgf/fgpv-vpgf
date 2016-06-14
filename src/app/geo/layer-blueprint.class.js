@@ -96,6 +96,14 @@
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
+        const serviceTypeToLayerType = {
+            [Geo.Service.Types.FeatureLayer]: Geo.Layer.Types.ESRI_FEATURE,
+            [Geo.Service.Types.DynamicService]: Geo.Layer.Types.ESRI_DYNAMIC,
+            [Geo.Service.Types.TileService]: Geo.Layer.Types.ESRI_TILE,
+            [Geo.Service.Types.ImageService]: Geo.Layer.Types.ESRI_IMAGE,
+            [Geo.Service.Types.WMS]: Geo.Layer.Types.OGC_WMS
+        };
+
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         class LayerServiceBlueprint extends LayerBlueprint {
@@ -115,13 +123,173 @@
 
                 super(initialConfig);
 
-                // if layerType is no specified, this is likely a user added layer
-                // call geoApi to predict its type
+                this._serviceInfo = null;
+                this._constructorPromise = $q.resolve();
+
+                // empty blueprint is not valid by default
+                this._validPromise = $q.reject();
+
+                // if layerType is no specified, this is a user added layer
+                // call GeoApi to predict its type
                 if (this.layerType === null) {
-                    return gapiService.gapi.layer.predictLayerUrl(this.config.url)
-                        .then(fileInfo => fileInfo.serviceType)
-                        .catch(error => console.error('Something happened', error));
+                    this._constructorPromise = this._fetchServiceInfo();
                 }
+            }
+
+            /**
+             * Get service info from the supplied url. Service info usually include information like service type, name, available fields, etc.
+             * TODO: there is a lot of workarounds since wms layers need special handling, and it's not possible to immediately detect if the layer is not a service endpoint .
+             */
+            _fetchServiceInfo() {
+                const hint = this._serviceInfo !== null ? this._serviceInfo.serviceType : undefined;
+
+                // due to #702, wms detection is problematic; here are some workarounds
+                // TODO: refactor when abovementioned issue is resolved
+                return $q.resolve(gapiService.gapi.layer.ogc.parseCapabilities(this.config.url))
+                    .then(data => {
+                        if (data.layers.length > 0) { // if there are layers, it's a wms layer
+                            console.log(`${this.config.url} is a WMS, yak!`);
+
+                            // return an object resembling fileInfo object returned by GeoApi
+                            return {
+                                serviceType: Geo.Service.Types.WMS,
+                                name: this.config.url,
+                                layers: flattenWmsLayerList(data.layers)
+                            };
+
+                        } else {
+                            console.log(`${this.config.url} is not a WMS, running more checks.`);
+                            return gapiService.gapi.layer.predictLayerUrl(this.config.url, hint);
+                        }
+                    })
+                    .then(fileInfo => {
+                        console.log(fileInfo);
+
+                        // this is not a service URL;
+                        // in some cases, if URL is not a service URL, dojo script used to interogate the address
+                        // will throw a page-level error which cannot be caught; in such cases, it's not clear to the user what has happened;
+                        // timeout error will eventually be raised and this block will trigger
+                        // TODO: as a workaround, block continue button until interogation is complete so users can't click multiple times, causing multiple checks
+                        if (fileInfo.serviceType === Geo.Service.Types.Error) {
+                            return $q.reject(fileInfo); // reject promise if the provided url cannot be accessed
+                        }
+
+                        this._serviceInfo = fileInfo;
+                        this.serviceType = this._serviceInfo.serviceType;
+                        this.config.name = this._serviceInfo.name;
+
+                        // some custom processing of Dynamic layers to let the user option to pick sublayers
+                        if (this.serviceType === Geo.Service.Types.DynamicService) {
+                            flattenDynamicLayerList(this._serviceInfo.layers);
+
+                            // this includes all sublayers; converting layerEntries to a proper config format
+                            /*this.config.layerEntries = this._serviceInfo.layers
+                                .filter(layer => layer.parentLayerId === -1) // pick all sub-top level items
+                                .map(layer => {
+                                    return {
+                                        index: layer.id
+                                    };
+                                });*/
+                        }
+                    })
+                    .catch(error => {
+                        this._serviceInfo = null;
+                        return $q.reject(error);
+                    });
+
+                /**
+                 * This flattens wms array hierarchy into a flat list to be displayed in a drop down selector
+                 * TODO: this is temporary, possibly, as we want to provide user with an actual tree to select from
+                 * @param  {Array} layers array of layer objects
+                 * @param  {Number} level  =             0 tells how deep the layer is in the hierarchy
+                 * @return {Array}        layer list
+                 */
+                function flattenWmsLayerList(layers, level = 0) {
+                    return [].concat.apply([], layers.map(layer => {
+                        layer.indent = Array.from(Array(level)).map(() => '-').join('');
+
+                        if (layer.layers.length > 0) {
+                            return [].concat(layer, flattenWmsLayerList(layer.layers, ++level));
+                        } else {
+                            return layer;
+                        }
+                    }));
+                }
+
+                /**
+                 * This calculates relative depth of the dynamic layer hierarchy on the provided flat list of layers
+                 * TODO: this is temporary, possibly, as we want to provide user with an actual tree to select from
+                 * @return {Array} layer list
+                 */
+                function flattenDynamicLayerList(layers) {
+                    layers.forEach(layer => {
+                        const level = calculateLevel(layer, layers);
+
+                        layer.level = level;
+                        layer.indent = Array.from(Array(level)).map(() => '-').join('');
+                    });
+
+                    function calculateLevel(layer, layers) {
+                        if (layer.parentLayerId === -1) {
+                            return 0;
+                        } else {
+                            return calculateLevel(layers[layer.parentLayerId], layers) + 1;
+                        }
+                    }
+                }
+            }
+
+            get serviceType() {
+                // console.log(this._serviceInfo);
+
+                if (this._serviceInfo !== null) {
+                    return this._serviceInfo.serviceType;
+                } else {
+                    return null;
+                }
+            }
+
+            set serviceType(value) {
+                this._serviceInfo.serviceType = value;
+                this.layerType = serviceTypeToLayerType[this._serviceInfo.serviceType];
+            }
+
+            // TODO: this needs to changed to display an error
+            // Need a way to validate user's service type choice against the endpoint
+            get valid() {
+                // validate provided service type
+                return this._constructorPromise
+                    .then(() => this._fetchServiceInfo())
+                    .then(() => {
+                        this.layerType = serviceTypeToLayerType[this.serviceType];
+                    })
+                    .catch(error => console.error('Invalid selection' + error));
+            }
+
+            /**
+             * Returns a constructor promise which resolves when service's data is retrieved.
+             * @return {Promise} constructor promise
+             */
+            get ready() {
+                return this._constructorPromise;
+            }
+
+            /**
+             * Returns fields found in the file data.
+             * @return {Array|null} array of fields in the form of [{ name: "Long", type: "esriFieldTypeString"}]
+             */
+            get fields() {
+                // console.log(this._formatedFileData);
+
+                if (this._serviceInfo !== null) {
+                    return this._serviceInfo.fields;
+                } else {
+                    return null;
+                }
+            }
+
+            get serviceInfo() {
+                return this._serviceInfo;
             }
 
             /**
@@ -233,7 +401,7 @@
             }
 
             /**
-             * Returns files found in the file data.
+             * Returns fields found in the file data.
              * @return {Array|null} array of fields in the form of [{ name: "Long", type: "esriFieldTypeString"}]
              */
             get fields() {
