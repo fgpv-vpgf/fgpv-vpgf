@@ -45,7 +45,7 @@
     }
 
     function Controller($rootElement, $mdDialog, version, sideNavigationService, geoService, fullScreenService,
-        helpService, configService) {
+        helpService, configService, $element) {
         'ngInject';
         const self = this;
 
@@ -83,7 +83,7 @@
                         controller: helpService.HelpSummaryController,
                         controllerAs: 'self',
                         templateUrl: 'app/ui/help/help-summary.html',
-                        parent: $rootElement,
+                        parent: $element,
                         disableParentScroll: false,
                         targetEvent: event,
                         clickOutsideToClose: true,

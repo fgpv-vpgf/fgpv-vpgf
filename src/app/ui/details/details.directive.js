@@ -66,6 +66,8 @@
         function selectItem(item) {
             self.selectedItem = item;
             self.selectedInfo = (item) ? `${item.requester.caption}${item.requester.name}` : null;
+
+            self.display.selectedItem = self.selectedItem;
         }
 
         $scope.$watch('self.display.data', newValue => {
@@ -73,9 +75,7 @@
             // if multiple points added to the details panel ...
             if (newValue && newValue.length > 0) {
                 // pick selected item user previously selected one, otherwise pick the first one
-                // do not use selectItem() because we want to update selectedInfo only when user do it
-                const item = (self.selectedInfo) ? getSelectedItem(newValue) : newValue[0];
-                self.selectedItem = item;
+                selectItem(self.selectedInfo ? getSelectedItem(newValue) : newValue[0]);
             } else {
                 self.selectItem(null);
             }
