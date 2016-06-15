@@ -1,1 +1,33 @@
-<h5 class="rv-sub-subhead" ng-click="self.toggleDetails()">{{ self.item.name }}</h5>
+<md-button
+    class="rv-group-body-button rv-button-square"
+    ng-focus="self.renderDetails()"
+    ng-mouseover="self.renderDetails()"
+    ng-click="self.toggleDetails()"></md-button>
+
+<rv-toc-entry-symbology
+    symbology="self.requester.symbology"></rv-toc-entry-symbology>
+
+<span class="rv-group-name">
+    {{ self.item.name }}
+</span>
+
+<div class="rv-group-controls">
+
+    <md-button class="md-icon-button rv-icon-20">
+
+        <md-tooltip md-direction="top">blah</md-tooltip>
+        <!-- the terrible hack below (testing for .call) is due to angular not having typeof available in $Parse
+             https://github.com/angular/angular.js/pull/6886
+        -->
+        <md-icon md-svg-src="action:zoom_in"></md-icon>
+
+    </md-button>
+
+</div>
+
+<div class="rv-icon-24 rv-group-toggle-icon">
+    <md-icon
+        class="md-toggle-icon"
+        ng-class="{ 'rv-toggled' : self.isExpanded }"
+        md-svg-src="hardware:keyboard_arrow_left"></md-icon>
+</div>
