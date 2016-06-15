@@ -66,6 +66,11 @@ $layer-item-height: rem(6.0);
             position: relative;
         }
 
+        &.ng-hide + .rv-shadow {
+            // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
+            background-color: transparent !important;
+        }
+
         .rv-layer-list-divider {
             position: absolute;
             bottom: 0;
@@ -78,8 +83,17 @@ $layer-item-height: rem(6.0);
         @include entry-placeholder;
     }
 
+    // rv-shadow is a thin guideline drawn on the right side of the list when group toggle is hovered over;
+    // it helps to visualize which layers will be affected by the group toggle
     .rv-shadow {
-        @extend %action-list-group-shadow;
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: rem(0.5);
+        opacity: 0.45;
+        background-color: transparent;
+        transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
     }
 
     .rv-root {
@@ -158,6 +172,10 @@ absolutely position a button underneath an item so it acts like a button body fo
         // setting layer list shadow color when hover over layer group toggle
         &:hover {
             @include entry-controls-hover;
+
+            & ~ .rv-shadow {
+                background-color: $primary-color;
+            }
         }
     }
 }

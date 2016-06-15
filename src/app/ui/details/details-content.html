@@ -13,7 +13,7 @@
 
         <ul class="rv-list rv-records-list" ng-if="self.item.data.length !== 0">
             <li ng-repeat="item in self.item.data">
-                <rv-details-record item="item" requester="self.item.requester"></rv-details-record>
+                <rv-details-record ng-class="{ 'rv-selected': item.isSelected }" item="item" requester="self.item.requester"></rv-details-record>
                 <div class="rv-shadow"></div>
             </li>
         </ul>

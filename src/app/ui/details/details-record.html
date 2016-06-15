@@ -14,13 +14,8 @@
 <div class="rv-group-controls">
 
     <md-button class="md-icon-button rv-icon-20">
-
-        <md-tooltip md-direction="top">blah</md-tooltip>
-        <!-- the terrible hack below (testing for .call) is due to angular not having typeof available in $Parse
-             https://github.com/angular/angular.js/pull/6886
-        -->
+        <md-tooltip md-direction="top">{{ 'filter.tooltip.zoom' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:zoom_in"></md-icon>
-
     </md-button>
 
 </div>

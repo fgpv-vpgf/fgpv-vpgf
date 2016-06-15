@@ -3,7 +3,7 @@
 
     const detailsGenerators = {
         EsriFeature: item => {
-            const LIST = listItems => `<ul class="ng-hide rv-details-list rv-toggle-slide" ng-show="self.isExpanded">${listItems}</ul>`;
+            const LIST = listItems => `<ul class="ng-hide rv-details-list rv-toggle-slide" ng-show="self.item.isExpanded">${listItems}</ul>`;
             const LIST_ITEM = (key, value) =>
                 `<li>
                     <div class="rv-details-attrib-key">${key}</div>
@@ -51,6 +51,9 @@
         function link(scope, el, attr, ctrl) {
             const self = scope.self;
 
+            self.item.isExpanded = false;
+            self.item.isSelected = false;
+
             // TODO: fix
             self.requester.symbology = [self.requester.symbology[0]];
 
@@ -77,7 +80,8 @@
         /***/
 
         function toggleDetails() {
-            self.isExpanded = !self.isExpanded;
+            self.item.isExpanded = !self.item.isExpanded;
+            self.item.isSelected = self.item.isExpanded;
         }
     }
 })();
