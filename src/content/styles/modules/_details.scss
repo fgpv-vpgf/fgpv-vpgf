@@ -130,8 +130,7 @@
         }
 
         .rv-details-data {
-            opacity: 1;
-            transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            @include details-data;
         }
 
         &.rv-expanded {
@@ -147,21 +146,6 @@
         &.rv-multiple {
             .rv-details-data {
                 margin-left: rem(4.8);
-            }
-        }
-        // TODO enhance to proper sassyness
-        .rv-details-zebra-list {
-            list-style-type: none;
-            padding: 0;
-            border-bottom: 1px solid $divider-color-light;
-
-            > li {
-                padding: 5px;
-                overflow: auto;
-            }
-
-            > li:nth-child(even) {
-                background-color: #ddd;
             }
         }
 
@@ -182,6 +166,50 @@
 
         .rv-sub-subhead {
             font-size: rem(1.6);
+        }
+    }
+}
+
+$details-padding: rem(0.4);
+$group-item-height: rem(6.0);
+
+@mixin details-data {
+    opacity: 1;
+    transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+    padding: 0;
+
+    .rv-subsection {
+        padding: rem(0.8) 0;
+
+        .rv-subheader {
+            padding: rem(0.8) rem(1.6);
+        }
+    }
+
+    .rv-records-list {
+        @extend %action-list;
+
+        .rv-shadow {
+            @extend %action-list-group-shadow;
+        }
+    }
+
+    .rv-details-list {
+        @extend %zebra-list;
+
+        padding: rem(0.8) rem(1.6);
+        border-bottom: 1px solid $divider-color-light;
+    }
+
+    rv-details-record {
+        @extend %action-list-group;
+
+        height: $group-item-height;
+        padding-right: $details-padding + rem(1.0);
+        padding-left: $details-padding + rem(1.0);
+
+        .rv-toggled.md-toggle-icon {
+            transform: rotate(180deg) !important;
         }
     }
 }
