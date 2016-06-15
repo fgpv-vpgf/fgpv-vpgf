@@ -16,6 +16,7 @@ rv-truncate directive show more,rv-truncate.showMore,Show More,Montrer davantage
 rv-truncate directive show less,rv-truncate.showLess,Hide,Masquer
 Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,Zoom à l'Élément
 Tooltip text for Details,filter.tooltip.description,Details,Détails
+Tooltip text for No Zoom Projection,filter.tooltip.nozoom,Data in custom projection. Cannot zoom to feature.,La donnée utilise une projection personnalisée. Le zoom à l'entité n'est pas supporté.
 Details pane title,details.title,Feature Information,Information sur l'entité
 Details pane aria label for expand button,details.aria.expand,Expand,Agrandir
 Details pane tooltip for expand button,details.tooltip.expand,Expand,Agrandir
