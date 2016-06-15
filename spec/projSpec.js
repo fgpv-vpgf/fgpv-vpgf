@@ -16,6 +16,13 @@ function makeFakeEsriExtent(o) {
     };
 }
 
+function mockEpsgLookup(code) {
+    if (String(code) === '26914') {
+        return Promise.resolve('+proj=utm +zone=14 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+    }
+    return Promise.resolve(null);
+}
+
 const sampleWktExtent = {
     xmin: -2293629.397399999,
     ymin: -685380.4041000009,
@@ -156,7 +163,7 @@ describe('spatialReference comparison', () => {
 
 describe('Check valid source projection', () => {
     const sr1_3978 = { wkid: 3978 };
-    const sr2_fake = { wkt: 'HelloThereImFake' };
+    const sr2_fake = { wkid: 23412 };
     let proj;
 
     // setup function running before each test
@@ -170,6 +177,38 @@ describe('Check valid source projection', () => {
 
     it("should not be valid spatial reference", () => {
         expect(proj.checkProj(sr2_fake).foundProj).toBe(false);
+    });
+
+    it('should allow WKT without validation', () => {
+        expect(proj.checkProj({wkt:'random text'}).foundProj).toBe(true);
+    });
+
+    it('should attempt to lookup unknown references if lookup callback is provided (lookup found case)', (done) => {
+        const res = proj.checkProj({wkid: 26914}, mockEpsgLookup);
+        expect(res.foundProj).toBe(false);
+        res.lookupPromise
+            .then(found => {
+                expect(found).toBe(true);
+                done();
+            })
+            .catch(() => {
+                fail('Promise threw an error');
+                done();
+            });
+    });
+
+    it('should attempt to lookup unknown references if lookup callback is provided (lookup failed case)', (done) => {
+        const res = proj.checkProj({wkid: 1234}, mockEpsgLookup);
+        expect(res.foundProj).toBe(false);
+        res.lookupPromise
+            .then(found => {
+                expect(found).toBe(false);
+                done();
+            })
+            .catch(() => {
+                fail('Promise threw an error');
+                done();
+            });
     });
 
 });
