@@ -16,6 +16,14 @@ function makeFakeEsriExtent(o) {
     };
 }
 
+const sampleWktExtent = {
+    xmin: -2293629.397399999,
+    ymin: -685380.4041000009,
+    xmax: 3298303.1630000025,
+    ymax: 3796096.4499000013,
+    spatialReference: { wkt: 'PROJCS["Lambert_Conformal_Canada_NAD83",GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["Geodetic_Reference_System_of_1980",6378137.0,298.2572221008916]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Lambert_Conformal_Conic"],PARAMETER["false_easting",0.0],PARAMETER["false_northing",0.0],PARAMETER["central_meridian",-95.0],PARAMETER["standard_parallel_1",77.0],PARAMETER["standard_parallel_2",49.0],PARAMETER["latitude_of_origin",49.0],UNIT["Meter",1.0]]' }
+};
+
 // describe declares a test suite
 // takes a suite name and a function, all tests within the suite are declared within the function
 // besides grouping tests together suites can also do a setup / teardown for each test or for the whole suite
@@ -54,6 +62,12 @@ describe('Local projection', () => {
         const res = proj.localProjectPoint(4326, 54004, [-95, 49]);
         expect(res[0]).toBeCloseTo(-10575351.62536099);
         expect(res[1]).toBeCloseTo(6242595.999953201);
+    });
+
+    it('should project an extent with a WKT spatial reference', () => {
+        const res = proj.localProjectExtent(sampleWktExtent, 4326);
+        const expectedRes = {"x0":-172.14169532688865,"y0":34.89804295089334,"x1":-11.276472960723352,"y1":83.27265193258071}; // jshint ignore:line
+        'x0 x1 y0 y1'.split(' ').forEach(x => expect(res[x]).toBeCloseTo(expectedRes[x],5));
     });
 
     it('should reproject from mercator to lambert', () => {
