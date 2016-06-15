@@ -24,6 +24,7 @@
 
     // TODO: refactor
     %shadow-group-list {
+        @extend %base-list;
 
         > li {
             // rv-shadow is a thin guideline drawn on the right side of the list when group toggle is hovered over;
@@ -56,6 +57,8 @@
     }
 
     %action-list {
+        @extend %base-list;
+
         list-style: none;
         padding: 0;
         max-width: 100%;
