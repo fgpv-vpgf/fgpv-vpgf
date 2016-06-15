@@ -97,8 +97,8 @@ function localProjectExtent(extent, sr) {
     // find the destination extent
     let destProj = makeEpsgString(sr);
 
-    if (!proj4.defs(srcProj)) {
-        throw new Error('Source projection not recognized by proj4 library');
+    if (extent.spatialReference.wkid && !proj4.defs(srcProj)) {
+        throw new Error('Source projection WKID not recognized by proj4 library');
     }
     const projConvert = proj4(srcProj, destProj);
     const transformed = interpolatedPoly.map(x => projConvert.forward(x));
