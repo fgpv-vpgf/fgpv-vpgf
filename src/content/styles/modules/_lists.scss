@@ -4,10 +4,60 @@
         margin: 0;
         padding: 0;
         list-style: none;
-
         > li {
             margin: 0;
             padding: 0;
+        }
+    }
+
+    %action-list {
+        list-style: none;
+        padding: 0;
+        max-width: 100%;
+
+        > li {
+            position: relative;
+            overflow: hidden;
+        }
+    }
+
+    %action-list-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+        z-index: 0;
+
+        .rv-group-body-button {
+            text-align: left;
+            position: absolute;
+            padding: 0;
+            margin: 0;
+            top: 0; // anchor the button to its parent container
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1; // this is needed to place the button over the rotating icon as it's creating a new stacking content when transformed
+        }
+
+        .rv-group-name {
+            margin-left: rem(0.8);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: rem(1.6);
+            flex: 1;
+        }
+
+        .rv-group-toggle-icon {
+            padding: rem(0.4);
+
+            .md-toggle-icon {
+                transition: transform $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+                &.rv-toggled {
+                    transform: rotate(90deg);
+                }
+            }
         }
     }
 }
