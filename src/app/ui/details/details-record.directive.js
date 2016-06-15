@@ -3,7 +3,7 @@
 
     const detailsGenerators = {
         EsriFeature: item => {
-            const LIST = listItems => `<ul class="rv-details-zebra-list rv-list rv-toggle-slide" ng-if="self.isExpanded">${listItems}</ul>`;
+            const LIST = listItems => `<ul class="ng-hide rv-details-zebra-list rv-list rv-toggle-slide" ng-show="self.isExpanded">${listItems}</ul>`;
             const LIST_ITEM = (key, value) =>
                 `<li>
                     <div class="rv-details-attrib-key">${key}</div>
@@ -35,7 +35,8 @@
             restrict: 'E',
             templateUrl: 'app/ui/details/details-record.html',
             scope: {
-                item: '=item'
+                item: '=item',
+                requester: '=requester'
             },
             link: link,
             controller: Controller,
@@ -45,38 +46,40 @@
 
         return directive;
 
-        ///////////
+        /***/
 
         function link(scope, el, attr, ctrl) {
             const self = scope.self;
 
-            self.toggleDetails = toggleDetails;
+            // TODO: fix
+            self.requester.symbology = [self.requester.symbology[0]];
+
+            self.renderDetails = renderDetails;
             self.isExpanded = false;
 
             let isCompiled = false;
 
-            function toggleDetails() {
+            function renderDetails() {
                 if (!isCompiled) {
                     const details = $compile(detailsGenerators['EsriFeature'](self.item))(scope);
-                    el.append(details);
+                    el.after(details);
                     isCompiled = true;
-                }
 
-                self.isExpanded = !self.isExpanded;
+                    console.log('rendered', self.item.data[0]);
+                }
             }
         }
     }
 
     function Controller() {
         const self = this;
-        self.expand = false;
 
-        activate();
+        self.toggleDetails = toggleDetails;
 
-        ///////////
+        /***/
 
-        function activate() {
-
+        function toggleDetails() {
+            self.isExpanded = !self.isExpanded;
         }
     }
 })();
