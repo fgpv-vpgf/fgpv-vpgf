@@ -189,6 +189,10 @@ $group-item-height: rem(6.0);
     .rv-records-list {
         @extend %action-list;
 
+        > li:last-child .rv-details-list{
+            border-bottom: none;
+        }
+
         .rv-shadow {
             @extend %action-list-group-shadow;
         }
