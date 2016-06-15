@@ -4,12 +4,21 @@
         <span class="md-caption">{{ self.item.requester.caption }}</span>
     </div>
     <div class="rv-subcontent" ng-class="{ 'rv-hide': self.isHidden }">
+
+
         <!-- Feature Key-Value list presentation  -->
         <!-- TODO: add translations -->
-        <h5 ng-if="self.display.item.data.length === 0">
+        <h5 ng-if="self.item.data.length === 0">
             Nothing found</h5>
 
-        <div ng-if="self.display.item.requester.format === 'EsriFeature'">
+        <ul class="rv-list" ng-if="self.item.data.length !== 0">
+            <li ng-repeat="item in self.item.data">
+                <rv-details-record item="item"></rv-details-record>
+            </li>
+        </ul>
+
+
+        <!--div ng-if="self.item.requester.format === 'EsriFeature'">
             <h5 class="rv-sub-subhead" ng-repeat-start="item in self.item.data">{{ item.name }}</h5>
 
             <ul ng-repeat-end class="rv-details-zebra-list">
@@ -21,11 +30,11 @@
         </div>
 
         <!-- Plain text presentation  -->
-        <div ng-if="self.display.item.requester.format === 'Text'">
+        <!--div ng-if="self.item.requester.format === 'Text'">
             <pre>{{ self.item.data[0] }}</pre>
         </div>
 
         <!-- Raw HTML presentation  -->
-        <div ng-if="self.display.item.requester.format === 'HTML'" ng-bind-html="self.display.item.data[0]"></div>
+        <!--div ng-if="self.item.requester.format === 'HTML'" ng-bind-html="self.item.data[0]"></div-->
     </div>
 </div>
