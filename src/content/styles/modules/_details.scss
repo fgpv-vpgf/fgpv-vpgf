@@ -171,7 +171,7 @@
 }
 
 $details-padding: rem(0.4);
-$group-item-height: rem(6.0);
+$details-record-height: rem(6.0);
 
 @mixin details-data {
     opacity: 1;
@@ -205,18 +205,12 @@ $group-item-height: rem(6.0);
     rv-details-record {
         @extend %action-list-group;
 
-        height: $group-item-height;
+        height: $details-record-height;
         padding-right: $details-padding + rem(1.0);
         padding-left: $details-padding + rem(1.0);
 
         .rv-toggled.md-toggle-icon {
             transform: rotate(180deg) !important;
-        }
-
-        rv-toc-entry-symbology {
-            .rv-symbology-item > img {
-                box-shadow: none;
-            }
         }
 
         // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
