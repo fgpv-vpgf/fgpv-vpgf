@@ -45,7 +45,7 @@ $layer-item-height: rem(6.0);
             transition: transform $swift-ease-in-duration $swift-ease-in-out-timing-function;
 
             &.rv-toggled {
-                transform: rotate(90deg);
+                transform: rotate(180deg);
             }
         }
 
