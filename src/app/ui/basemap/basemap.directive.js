@@ -79,6 +79,7 @@
             self.projections = [];
 
             var wkidArray = [];
+            let useDefaultBasemap = true;
 
             configService.getCurrent().then(config => {
                 // FIXME: in case there is no basemaps; fall back to some default one or something
@@ -117,6 +118,17 @@
                         basemap.name = basemap.name.substring(0, maxLength - 3) + '...';
                     }
 
+                    let selected = false
+
+                    if (config.map && config.map.initialBasemapId) {
+                        if (config.map.initialBasemapId === basemap.id) {
+                            selected = true;
+                            useDefaultBasemap = false;
+
+                            self.selectWkid = basemap.wkid;
+                        }
+                    }
+
                     self.projections[idx].items.push({
                         name: basemap.name,
                         description: basemap.description,
@@ -124,7 +136,7 @@
                         id: basemap.id,
                         url: basemap.layers[0].url,
                         wkid: basemap.wkid,
-                        selected: false,
+                        selected: selected,
                         needMapRefresh: false
                     });
 
@@ -133,9 +145,11 @@
                 // FIXME add appropriate safeguards for no basemaps, if not handled by fixme above.
                 try {
                     // select first basemap so UI displays it
-                    self.projections[0].items[0].selected = true;
+                    if (useDefaultBasemap) {
+                        self.projections[0].items[0].selected = true;
 
-                    self.selectedWkid = self.projections[0].items[0].wkid;
+                        self.selectedWkid = self.projections[0].items[0].wkid;
+                    }
 
                     const projections = self.projections;
 
