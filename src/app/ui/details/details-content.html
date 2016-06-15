@@ -11,12 +11,13 @@
         <h5 ng-if="self.item.data.length === 0">
             Nothing found</h5>
 
-        <ul class="rv-list" ng-if="self.item.data.length !== 0">
+        <ul class="rv-list rv-records-list" ng-if="self.item.data.length !== 0">
             <li ng-repeat="item in self.item.data">
-                <rv-details-record item="item"></rv-details-record>
+                <rv-details-record item="item" requester="self.item.requester"></rv-details-record>
+                <div class="rv-shadow"></div>
             </li>
         </ul>
-
+        <md-divider></md-divider>
 
         <!--div ng-if="self.item.requester.format === 'EsriFeature'">
             <h5 class="rv-sub-subhead" ng-repeat-start="item in self.item.data">{{ item.name }}</h5>

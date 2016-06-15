@@ -3,7 +3,7 @@
 
     const detailsGenerators = {
         EsriFeature: item => {
-            const LIST = listItems => `<ul class="ng-hide rv-details-zebra-list rv-list rv-toggle-slide" ng-show="self.isExpanded">${listItems}</ul>`;
+            const LIST = listItems => `<ul class="ng-hide rv-details-list rv-toggle-slide" ng-show="self.isExpanded">${listItems}</ul>`;
             const LIST_ITEM = (key, value) =>
                 `<li>
                     <div class="rv-details-attrib-key">${key}</div>
@@ -64,8 +64,6 @@
                     const details = $compile(detailsGenerators['EsriFeature'](self.item))(scope);
                     el.after(details);
                     isCompiled = true;
-
-                    console.log('rendered', self.item.data[0]);
                 }
             }
         }
