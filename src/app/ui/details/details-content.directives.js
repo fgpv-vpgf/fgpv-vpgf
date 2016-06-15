@@ -43,6 +43,8 @@
         function link(scope, el) {
             const contentContainer = el.find(CONTENT_CLASS);
 
+            return;
+
             scope.$watchCollection('self.item', item => {
 
                 if (item) {
