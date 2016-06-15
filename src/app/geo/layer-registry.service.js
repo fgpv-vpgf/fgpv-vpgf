@@ -384,6 +384,10 @@
                     throw new Error();
                 }
 
+                if (l.bbox) {
+                    l.destroyBbox(mapObject);
+                }
+
                 mapObject.removeLayer(l._layer);
                 delete service.layers[layerId]; // remove layer from the registry
             }
