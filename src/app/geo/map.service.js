@@ -43,7 +43,8 @@
                 setFullExtent,
                 setSelectedBaseMap,
                 zoomToGraphic,
-                validateProj
+                validateProj,
+                retrieveSymbol,
                 hilightGraphic,
                 clearHilight,
                 dropMapPin,
@@ -529,6 +530,17 @@
                 geolocator.locate(geolocate, err => {
                     console.warn('Geolocation error: ', err);
                 }, 0, { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 });
+            }
+
+            /**
+             * Retrieves symbology icon for a feature
+             *
+             * @param  {Object} attribs    attributes of the feature we want a symbol for
+             * @param  {Object} renderer   enhanced renderer object for the layer in server format
+             * @return {String} data-url that will render the symbology
+             */
+            function retrieveSymbol(attribs, renderer) {
+                return gapiService.gapi.symbology.getGraphicIcon(attribs, renderer);
             }
 
             /**

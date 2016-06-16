@@ -28,7 +28,6 @@
 
             epsgLookup,
             assembleMap,
-            retrieveSymbol,
             reloadLayer: l => layerRegistry.reloadLayer(l),
             snapshotLayer: l => layerRegistry.snapshotLayer(l),
 
@@ -131,15 +130,5 @@
                 });
         }
 
-        /**
-         * Retrieves symbology icon for a feature
-         *
-         * @param  {Object} attribs    attributes of the feature we want a symbol for
-         * @param  {Object} renderer   enhanced renderer object for the layer in server format
-         * @return {String} data-url that will render the symbology
-         */
-        function retrieveSymbol(attribs, renderer) {
-            return gapiService.gapi.symbology.getGraphicIcon(attribs, renderer);
-        }
     }
 })();
