@@ -26,10 +26,12 @@
             /**
              * Creates a new LayerBlueprint.
              * @param  {Object} initialConfig partial config, can be an empty object.
+             * @param  {Function} epsgLookup a function which takes and EPSG code and returns a projection definition (see geoService for the exact signature)
              */
-            constructor(initialConfig) {
+            constructor(initialConfig, epsgLookup) {
                 this.initialConfig = {};
                 this.config = {};
+                this._epsgLookup = epsgLookup;
 
                 if (typeof initialConfig !== 'undefined') {
                     this.initialConfig = initialConfig;
@@ -110,8 +112,9 @@
             /**
              * Creates a new LayerServiceBlueprint.
              * @param  {initialConfig} initialConfig partical config, __must__ contain a service `url`.
+             * @param  {Function} epsgLookup a function which takes and EPSG code and returns a projection definition (see geoService for the exact signature)
              */
-            constructor(initialConfig) {
+            constructor(initialConfig, epsgLookup) {
                 if (typeof initialConfig.url === 'undefined') {
                     // TODO: throw error ?
                     console.error('Service layer needs a url.');
@@ -121,7 +124,7 @@
                     initialConfig.url = initialConfig.url.replace(/\/+$/, '');
                 }
 
-                super(initialConfig);
+                super(initialConfig, epsgLookup);
 
                 this._serviceInfo = null;
                 this._constructorPromise = $q.resolve();
@@ -299,7 +302,7 @@
              * @return {Promise} resolving with a LayerRecord object matching one of the esri/layers objects based on the layer type
              */
             generateLayer() {
-                return $q.resolve(LayerRecordFactory.makeServiceRecord(this.config));
+                return $q.resolve(LayerRecordFactory.makeServiceRecord(this.config, this._epsgLookup));
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression
@@ -309,7 +312,7 @@
         /**
          * Create a LayerFileBlueprint.
          * Retrieves data from the file. The file can be either online or local.
-         * @param  {Function} epsgLookup epsgLookup function
+         * @param  {Function} epsgLookup a function which takes and EPSG code and returns a projection definition (see geoService for the exact signature)
          * @param  {Number} targetWkid wkid of the current map object
          * @param  {String} path      either file name or file url; if it's a file name, need to provide a HTML5 file object
          * @param  {File} file      optional: HTML5 file object
@@ -318,7 +321,7 @@
          */
         class LayerFileBlueprint extends LayerBlueprint {
             constructor(epsgLookup, targetWkid, path, file, progressCallback = angular.noop) { // , extension) {
-                super();
+                super(undefined, epsgLookup);
 
                 // when passing file object, path is its name
                 this._fileName = typeof file !== 'undefined' ? file.name : path;
@@ -326,7 +329,6 @@
                 this._formatedFileData = null;
                 this._fileType = null;
 
-                this._epsgLookup = epsgLookup;
                 this._targetWkid = targetWkid;
 
                 // empty blueprint is not valid by default

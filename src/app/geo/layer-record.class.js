@@ -13,7 +13,7 @@
             get state () { return this._state; }
             get layerId () { return this.config.id; }
             get _layerPassthroughBindings () { return ['setOpacity', 'setVisibility']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
-            get _layerPassthroughProperties () { return ['visibleAtMapScale', 'visible']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
+            get _layerPassthroughProperties () { return ['visibleAtMapScale', 'visible', 'spatialReference']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
             /**
              * Generate a bounding box for the layer on the given map.
@@ -76,7 +76,14 @@
             onLoad () {
                 if (this.legendEntry && this.legendEntry.removed) { return; }
                 console.info(`Layer loaded: ${this._layer.id}`);
-                this._stateChange(Geo.Layer.States.LOADING);
+                let lookupPromise = Promise.resolve();
+                if (this._epsgLookup) {
+                    const check = gapi().proj.checkProj(this.spatialReference, this._epsgLookup);
+                    if (check.lookupPromise) {
+                        lookupPromise = check.lookupPromise;
+                    }
+                }
+                lookupPromise.then(() => this._stateChange(Geo.Layer.States.LOADING));
             }
 
             onError (e) {
@@ -101,11 +108,14 @@
              * Create a layer record with the appropriate geoApi layer type.  Layer config
              * should be fully merged with all layer options defined (i.e. this constructor
              * will not apply any defaults).
-             * @param  {Object} config    layer config values
+             * @param {Object} config layer config values
+             * @param {Object} esriLayer an optional pre-constructed layer
+             * @param {Function} epsgLookup an optional lookup function for EPSG codes (see geoService for signature)
              */
-            constructor (config, esriLayer) {
+            constructor (config, esriLayer, epsgLookup) {
                 this.initialConfig = config;
                 this._stateListeners = [];
+                this._epsgLookup = epsgLookup;
                 this._layerPassthroughBindings.forEach(bindingName =>
                     this[bindingName] = (...args) => this._layer[bindingName](...args));
                 this._layerPassthroughProperties.forEach(propName => {
@@ -136,8 +146,8 @@
             // FIXME clickTolerance is not specific to AttrRecord but rather Feature and Dynamic
             get clickTolerance () { return this.config.tolerance; }
 
-            constructor (config, esriLayer) {
-                super(config, esriLayer);
+            constructor (config, esriLayer, epsgLookup) {
+                super(config, esriLayer, epsgLookup);
                 this._formattedAttributes = {};
             }
 
@@ -219,7 +229,7 @@
                 return ['setOpacity', 'setVisibility', 'setVisibleLayers', 'setLayerDrawingOptions'];
             }
             get _layerPassthroughProperties () {
-                return ['visibleAtMapScale', 'visible', 'layerInfos', 'supportsDynamicLayers'];
+                return ['visibleAtMapScale', 'visible', 'spatialReference', 'layerInfos', 'supportsDynamicLayers'];
             }
             get layerClass () { return gapi().layer.ArcGISDynamicMapServiceLayer; }
         }
@@ -249,7 +259,7 @@
             }
         }
 
-        function makeServiceRecord(config) {
+        function makeServiceRecord(config, epsgLookup) {
             const types = Geo.Layer.Types;
             const typeToClass = {
                 [types.ESRI_TILE]: TileRecord,
@@ -258,7 +268,7 @@
                 [types.ESRI_DYNAMIC]: DynamicRecord,
                 [types.OGC_WMS]: WmsRecord
             };
-            return new typeToClass[config.layerType](config);
+            return new typeToClass[config.layerType](config, undefined, epsgLookup);
         }
 
         function makeFileRecord(config, layer) {
