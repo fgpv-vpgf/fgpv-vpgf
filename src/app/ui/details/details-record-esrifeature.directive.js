@@ -41,9 +41,6 @@
             self.item.isExpanded = false;
             self.item.isSelected = false;
 
-            // TODO: temporary take the first symbology item to display in the identify record header
-            self.requester.symbology = [self.requester.symbology[0]];
-
             self.renderDetails = renderDetails;
             self.isExpanded = false;
 
