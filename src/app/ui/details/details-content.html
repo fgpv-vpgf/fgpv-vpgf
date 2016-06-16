@@ -11,7 +11,7 @@
         <!-- Feature Key-Value list presentation  -->
         <ul class="rv-records-list" ng-switch-when="EsriFeature">
             <li ng-repeat="item in self.item.data">
-                <rv-details-record ng-class="{ 'rv-selected': item.isSelected }" item="item" requester="self.item.requester"></rv-details-record>
+                <rv-details-record-esrifeature ng-class="{ 'rv-selected': item.isSelected }" item="item" requester="self.item.requester"></rv-details-record-esrifeature>
                 <div class="rv-shadow"></div>
             </li>
         </ul>
@@ -20,7 +20,7 @@
         <pre ng-switch-when="Text">{{ self.item.data[0] }}</pre>
 
         <!-- Raw HTML presentation  -->
-        <rv-details-html ng-switch-when="HTML" data="self.item.data[0]"></rv-details-html>
+        <rv-details-record-html ng-switch-when="HTML" data="self.item.data[0]"></rv-details-record-html>
 
         <md-divider></md-divider>
     </div>
