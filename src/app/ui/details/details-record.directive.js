@@ -1,21 +1,6 @@
 (() => {
     'use strict';
 
-    const detailsGenerators = {
-        EsriFeature: item => {
-            const LIST = listItems => `<ul class="ng-hide rv-details-list rv-toggle-slide" ng-show="self.item.isExpanded">${listItems}</ul>`;
-            const LIST_ITEM = (key, value) =>
-                `<li>
-                    <div class="rv-details-attrib-key">${key}</div>
-                    <div class="rv-details-attrib-value">${value}</div>
-                </li>`;
-
-            return LIST(
-                item.data.map(row => LIST_ITEM(row.key, row.value)).join('')
-            );
-        }
-    };
-
     /**
      * @ngdoc directive
      * @name rvDetailsRecord
@@ -64,7 +49,23 @@
 
             function renderDetails() {
                 if (!isCompiled) {
-                    const details = $compile(detailsGenerators['EsriFeature'](self.item))(scope);
+                    const LIST = listItems =>
+                        `<ul class="ng-hide rv-details-list rv-toggle-slide"
+                            ng-show="self.item.isExpanded">
+                            ${listItems}
+                        </ul>`;
+
+                    const LIST_ITEM = (key, value) =>
+                        `<li>
+                            <div class="rv-details-attrib-key">${key}</div>
+                            <div class="rv-details-attrib-value">${value}</div>
+                        </li>`;
+
+                    const detailsHhtml = LIST(
+                        self.item.data.map(row => LIST_ITEM(row.key, row.value)).join('')
+                    );
+
+                    const details = $compile(detailsHhtml)(scope);
                     el.after(details);
                     isCompiled = true;
                 }
@@ -76,12 +77,17 @@
         const self = this;
 
         self.toggleDetails = toggleDetails;
+        self.zoomToFeature = zoomToFeature;
 
         /***/
 
         function toggleDetails() {
             self.item.isExpanded = !self.item.isExpanded;
             self.item.isSelected = self.item.isExpanded;
+        }
+
+        function zoomToFeature() {
+            throw new Error('Zoom, zoom!');
         }
     }
 })();

@@ -13,7 +13,7 @@
 
 <div class="rv-group-controls">
 
-    <md-button class="md-icon-button rv-icon-20">
+    <md-button class="md-icon-button rv-icon-20" ng-click="self.zoomToFeature()">
         <md-tooltip md-direction="top">{{ 'filter.tooltip.zoom' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:zoom_in"></md-icon>
     </md-button>
@@ -23,6 +23,6 @@
 <div class="rv-icon-24 rv-group-toggle-icon">
     <md-icon
         class="md-toggle-icon"
-        ng-class="{ 'rv-toggled' : self.isExpanded }"
+        ng-class="{ 'rv-toggled' : self.item.isExpanded }"
         md-svg-src="hardware:keyboard_arrow_down"></md-icon>
 </div>
