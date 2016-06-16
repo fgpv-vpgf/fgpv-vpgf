@@ -34,7 +34,7 @@
 
         /***/
 
-        function link(scope, el, attr, ctrl) {
+        function link(scope, el) {
             el.append(scope.self.data);
         }
     }

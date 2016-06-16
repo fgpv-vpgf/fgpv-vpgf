@@ -35,7 +35,7 @@
 
         /***/
 
-        function link(scope, el, attr, ctrl) {
+        function link(scope, el) {
             const self = scope.self;
 
             self.item.isExpanded = false;
@@ -67,7 +67,11 @@
                         </li>`;
 
                     const detailsHhtml = LIST(
-                        self.item.data.map(row => LIST_ITEM(row.key, row.value)).join('')
+                        self.item.data.map(row =>
+                            // skip over the symbol column
+                            // TODO: see #689
+                            row.key !== 'rvSymbol' ? LIST_ITEM(row.key, row.value) : '')
+                        .join('')
                     );
 
                     const details = $compile(detailsHhtml)(scope); // compile with the local scope to set proper bindings

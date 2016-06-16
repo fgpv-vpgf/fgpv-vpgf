@@ -6,7 +6,7 @@
     <div class="rv-subcontent rv-{{self.item.requester.format}}" ng-class="{ 'rv-hide': self.isHidden }" ng-switch on="self.item.requester.format">
 
         <!-- TODO: add translations -->
-        <p class="rv-nothing" ng-if="self.item.data.length === 0">Nothing found</p>
+        <p class="rv-nothing" ng-if="self.item.data.length === 0" translate>details.label.noresult</p>
 
         <!-- Feature Key-Value list presentation  -->
         <ul class="rv-records-list" ng-switch-when="EsriFeature">
