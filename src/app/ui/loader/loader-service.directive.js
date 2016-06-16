@@ -130,7 +130,7 @@
             // since there is no layer type provided, blueprint will try to get service data
             self.layerBlueprint = new LayerBlueprint.service({
                 url: connect.serviceUrl
-            });
+            }, geoService.epsgLookup);
 
             console.log(self.layerBlueprint);
 

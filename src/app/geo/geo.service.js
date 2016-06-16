@@ -111,7 +111,7 @@
                     angular.extend(service, lr);
 
                     const layerBlueprints = config.layers.map(layerConfig =>
-                        new LayerBlueprint.service(layerConfig));
+                        new LayerBlueprint.service(layerConfig, epsgLookup));
                     service.constructLayers(layerBlueprints);
 
                     return identifyService(state);
