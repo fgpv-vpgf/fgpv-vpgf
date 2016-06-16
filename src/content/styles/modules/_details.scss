@@ -212,7 +212,7 @@ $details-record-height: rem(6.0);
             border-bottom: 1px solid $divider-color-light;
         }
 
-        rv-details-record {
+        rv-details-record-esrifeature {
             @extend %action-list-group;
 
             height: $details-record-height;
