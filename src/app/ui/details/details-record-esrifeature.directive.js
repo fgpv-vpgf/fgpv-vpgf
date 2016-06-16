@@ -3,22 +3,24 @@
 
     /**
      * @ngdoc directive
-     * @name rvDetailsRecord
+     * @name rvDetailsRecordEsrifeature
      * @module app.ui.details
      * @restrict E
      * @description
      *
-     * The `rvDetailsRecord` directive description.
+     * The `rvDetailsRecordEsrifeature` directive renders a single identify result from an esri feature (and dynamic) layers.
+     * This directive is used to delay rendering of identify results. Sometimes there are hundreds of them and users are unlikely to look at most of them. The details record sections are collapsed and nothing beyond the title is added to the dom.
+     * Identify results is rendered when the collapsed section header is hovered over or receives focus. This removes the slight delay when compiled html is inseted into the template on section expand.
      *
      */
     angular
         .module('app.ui.details')
-        .directive('rvDetailsRecord', rvDetailsRecord);
+        .directive('rvDetailsRecordEsrifeature', rvDetailsRecordEsrifeature);
 
-    function rvDetailsRecord($compile) {
+    function rvDetailsRecordEsrifeature($compile) {
         const directive = {
             restrict: 'E',
-            templateUrl: 'app/ui/details/details-record.html',
+            templateUrl: 'app/ui/details/details-record-esrifeature.html',
             scope: {
                 item: '=item',
                 requester: '=requester'
@@ -39,7 +41,7 @@
             self.item.isExpanded = false;
             self.item.isSelected = false;
 
-            // TODO: fix
+            // TODO: temporary take the first symbology item to display in the identify record header
             self.requester.symbology = [self.requester.symbology[0]];
 
             self.renderDetails = renderDetails;
@@ -47,6 +49,9 @@
 
             let isCompiled = false;
 
+            /**
+             * Render details as plain html and insert them into the template. Runs only once.
+             */
             function renderDetails() {
                 if (!isCompiled) {
                     const LIST = listItems =>
@@ -65,7 +70,7 @@
                         self.item.data.map(row => LIST_ITEM(row.key, row.value)).join('')
                     );
 
-                    const details = $compile(detailsHhtml)(scope);
+                    const details = $compile(detailsHhtml)(scope); // compile with the local scope to set proper bindings
                     el.after(details);
                     isCompiled = true;
                 }
@@ -81,11 +86,18 @@
 
         /***/
 
+        /**
+         * Expand/collapse identify record section.
+         */
         function toggleDetails() {
             self.item.isExpanded = !self.item.isExpanded;
             self.item.isSelected = self.item.isExpanded;
         }
 
+        /**
+         * Zoom to identify result's feature
+         * TODO: implement
+         */
         function zoomToFeature() {
             throw new Error('Zoom, zoom!');
         }
