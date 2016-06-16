@@ -68,6 +68,7 @@
     "karma-phantomjs-launcher": "^0.2.0",
     "karma-sinon": "^1.0.4",
     "karma-spec-reporter": "0.0.23",
+    "lazypipe": "^1.0.1",
     "lodash": "^3.10.1",
     "main-bower-files": "^2.9.0",
     "merge-stream": "^1.0.0",
