@@ -195,7 +195,11 @@
                                 identifyResult.data.push({
                                     name: ele.value,
                                     data: attributesToDetails(ele.feature.attributes),
-                                    oid: ele.feature.attributes[lData.oidField]
+                                    oid: ele.feature.attributes[lData.oidField],
+                                    symbology: [{
+                                        icon: geoState.mapService.retrieveSymbol(ele.feature.attributes,
+                                            lData.renderer)
+                                    }]
                                 });
                                 identifyResult.isLoading = false;
                             });
@@ -286,9 +290,10 @@
                 // no need to check if the layer is registered as this object comes from an array of registered layers
                 const identifyPromise = $q.all([
                         layerRecord.getAttributes(legendEntry.featureIdx),
-                        $q.resolve(layerRecord._layer.queryFeatures(qry))
+                        $q.resolve(layerRecord._layer.queryFeatures(qry)),
+                        layerRecord.attributeBundle[legendEntry.featureIdx].layerData
                     ])
-                    .then(([attributes, queryResult]) => {
+                    .then(([attributes, queryResult, layerData]) => {
                         // transform attributes of query results into {name,data} objects one object per queried feature
                         //
                         // each feature will have its attributes converted into a table
@@ -302,11 +307,13 @@
 
                                 // use object id find location of our feature in the feature array, and grab its attributes
                                 const featAttribs = attributes.rows[attributes.oidIndex[objId]];
-
                                 return {
                                     name: getFeatureName(featAttribs, legendEntry, objId),
                                     data: attributesToDetails(featAttribs, attributes.fields),
-                                    oid: objId
+                                    oid: objId,
+                                    symbology: [
+                                        { icon: geoState.mapService.retrieveSymbol(featAttribs, layerData.renderer) }
+                                    ]
                                 };
                             });
                     });
