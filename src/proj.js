@@ -119,9 +119,16 @@ function localProjectExtent(extent, sr) {
  * Check whether or not a spatialReference is supported by proj4 library
  *
  * @param {Object} spatialReference to be checked to see if it's supported by proj4
- * @returns {Object} whether or not it is supported by proj4 and if not, a message detailing why.
+ * @param {Function} epsgLookup an optional lookup function for EPSG codes which are not loaded
+ * in the proj4 definitions, the function should take a numeric EPSG code and return a Promise
+ * resolving with a proj4 style definition string
+ * @returns {Object} with the structure {
+ *  foundProj: (bool) indicates if the projection was found,
+ *  message: (string) provides a reason why the projection was not found,
+ *  lookupPromise: (Promise) an optional promise resolving with true or false if a lookup function was provided and had to be invoked
+ * }
  */
-function checkProj(spatialReference) {
+function checkProj(spatialReference, epsgLookup) {
     let srcProj;
 
     // find the source extent (either from wkid or wkt)
@@ -136,10 +143,23 @@ function checkProj(spatialReference) {
         };
     }
 
-    if (!proj4.defs(srcProj)) {
+    if (spatialReference.wkid && !proj4.defs(srcProj)) {
+        if (epsgLookup) {
+            return {
+                foundProj: false,
+                message: 'Attempting to lookup WKID',
+                lookupPromise: epsgLookup(spatialReference.wkid).then(def => {
+                    if (def === null) {
+                        return false;
+                    }
+                    proj4.defs(srcProj, def);
+                    return true;
+                })
+            };
+        }
         return {
             foundProj: false,
-            message: 'Source projection not recognized by proj4 library'
+            message: 'Source projection in WKID and not recognized by proj4 library'
         };
     }
 
