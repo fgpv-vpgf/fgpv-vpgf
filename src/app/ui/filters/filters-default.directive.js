@@ -163,6 +163,7 @@
                     const objId = row.data()[displayData.oidField];
 
                     // rather than re-calculating the image, hack-extract it from the symbol tag
+                    // TODO: create a render function for the rvSymbol column to avoid hack-extracting the symbol from data
                     const imgArr = row.data().rvSymbol.split('"');
                     const img = imgArr[imgArr.indexOf('><img src=') + 1];
 
