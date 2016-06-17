@@ -25,7 +25,11 @@ function projectGeojson(geojson, outputSpatialReference, inputSpatialReference) 
  */
 function makeEpsgString(proj) {
     if (typeof proj === 'object') {
-        return 'EPSG:' + proj.wkid;
+        if (proj.wkid) {
+            return 'EPSG:' + proj.wkid;
+        } else if (proj.wkt) {
+            return proj.wkt;
+        }
     } else if (typeof proj === 'number') {
         return 'EPSG:' + proj;
     } else if (typeof proj === 'string') {
