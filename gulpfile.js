@@ -238,6 +238,19 @@ gulp.task('jsrollup', 'Roll up all js into one file',
             .pipe($.if(args.prod, $.uglify()))
             .pipe($.plumber.stop());
 
+        // global registry goes after the lib package
+        // app-seed `must` be the last item
+
+        // merge all js streams to avoid writing individual files to disk
+        return merge(jslib, jscache, jsapp, seed) // merge doesn't guarantee file order :(
+            .pipe($.order(config.jsOrder))
+            .pipe($.concat(config.jsCoreFile))
+            .pipe(gulp.dest(config.build));
+    });
+
+gulp.task('jsinjector', 'Copy fixed assets to the build directory',
+    function () {
+
         // we don't run babel on the polyfills as it tries to restrict their access to global/window scope
         const polyfills = gulp.src(config.jsPolyfills)
             .pipe($.plumber({ errorHandler: injectError }))
@@ -246,21 +259,13 @@ gulp.task('jsrollup', 'Roll up all js into one file',
             .pipe($.plumber.stop())
             .pipe($.concat(config.jsPolyfillsFile));
 
-        // global registry goes after the lib package
-        // app-seed `must` be the last item
-
-        // merge all js streams to avoid writing individual files to disk
-        return merge(jslib, jscache, jsapp, seed, polyfills) // merge doesn't guarantee file order :(
-            .pipe($.order(config.jsOrder))
-            .pipe($.concat(config.jsCoreFile))
-            .pipe(gulp.dest(config.build));
-    });
-
-gulp.task('jsinjector', 'Copy fixed assets to the build directory',
-    function () {
-        return gulp.src(config.jsInjectorFile)
+        const injector = gulp.src(config.jsInjectorFile)
             .pipe($.babel())
-            .pipe($.if(args.prod, $.uglify()))
+            .pipe($.if(args.prod, $.uglify()));
+
+        return merge(polyfills, injector) // merge doesn't guarantee file order :(
+            .pipe($.order(config.injectorOrder))
+            .pipe($.concat(config.jsInjectorDest))
             .pipe(gulp.dest(config.build));
     });
 
