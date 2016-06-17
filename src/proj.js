@@ -62,13 +62,13 @@ function localProjectGeometry(destProj, geometry) {
     // terraformer has this undesired behavior where, if your input geometry is in WKID 102100, it will magically
     // project all your co-ordinates to lat/long when converting between ESRI and GeoJSON formats.
     // to stop it from ruining us, we temporarily set the spatial reference to nonsense so it will leave it alone
-    const realWKID = geometry.spatialReference.wkid;
-    geometry.spatialReference.wkid = 8888; // nonsense!
+    const realSR = geometry.spatialReference;
+    geometry.spatialReference = { wkid: 8888 }; // nonsense!
     const grGeoJ = terraformer.ArcGIS.parse(geometry, { sr: 8888 });
-    geometry.spatialReference.wkid = realWKID;
+    geometry.spatialReference = realSR;
 
     // project json
-    projectGeojson(grGeoJ, makeEpsgString(destProj), makeEpsgString(realWKID));
+    projectGeojson(grGeoJ, makeEpsgString(destProj), makeEpsgString(realSR));
 
     // back to esri format
     const grEsri = terraformer.ArcGIS.convert(grGeoJ);
