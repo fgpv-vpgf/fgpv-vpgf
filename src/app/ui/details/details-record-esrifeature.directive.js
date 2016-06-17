@@ -17,7 +17,7 @@
         .module('app.ui.details')
         .directive('rvDetailsRecordEsrifeature', rvDetailsRecordEsrifeature);
 
-    function rvDetailsRecordEsrifeature($compile) {
+    function rvDetailsRecordEsrifeature($compile, geoService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/details/details-record-esrifeature.html',
@@ -43,6 +43,10 @@
 
             self.renderDetails = renderDetails;
             self.isExpanded = false;
+
+            self.triggerZoom = () => {
+                geoService.zoomToGraphic(self.requester.layerRec, self.requester.featureIdx, self.item.oid);
+            };
 
             let isCompiled = false;
 
@@ -100,7 +104,7 @@
          * TODO: implement
          */
         function zoomToFeature() {
-            throw new Error('Zoom, zoom!');
+            self.triggerZoom();
         }
     }
 })();
