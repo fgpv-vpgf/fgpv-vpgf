@@ -87,6 +87,7 @@
     "start": "http-server -a localhost -p 6001 -c-1",
     "test": "gulp test",
     "doc": "./node_modules/.bin/jsdoc -p -r -d docbuild -u docs/content src",
+    "servedoc": "./node_modules/.bin/http-server -p 6003 ./docbuild",
     "test-single-run": "karma start karma.conf.js --single-run",
     "update-webdriver": "webdriver-manager update",
     "preprotractor": "npm run update-webdriver",
