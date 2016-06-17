@@ -1,0 +1,10 @@
+{
+    "getting_started": {
+        "title": "Getting Started",
+        "children": ["randomSubpage"]
+    },
+    "gulp-i18n-csv": {
+        "title": "Translation Plugin"
+    }
+
+}
