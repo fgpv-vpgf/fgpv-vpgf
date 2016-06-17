@@ -30,6 +30,7 @@
     "gulp-git": "^1.6.0",
     "gulp-gzip": "^1.2.0",
     "gulp-help": "^1.6.1",
+    "gulp-header": "1.8.2",
     "gulp-i18n-csv": "^1.0.3",
     "gulp-if": "^1.2.5",
     "gulp-inject": "^1.3.1",
