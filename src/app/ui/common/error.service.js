@@ -5,7 +5,6 @@
      * @ngdoc service
      * @name errorService
      * @module app.ui.common
-     * @requires
      * @description
      *
      * The `errorService` factory handles the display of error toasts
