@@ -5,6 +5,7 @@ lib/
 bower_components/
 dist/
 build/
+docbuild/
 tmp/
 .tmp/
 report/
