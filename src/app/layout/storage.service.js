@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name storageService
-     * @module app.layout
+     * @module storageService
+     * @memberof app.layout
      *
      * @description
      * The 'storageService' service stores information about the the layout, like width/height of the panels.
@@ -15,8 +14,14 @@
 
     function storageService() {
         const service = {
+            /**
+             * Panels
+             */
             panels: {},
-            panes: {} // registry for content pane nodes
+            /**
+             * Registry for content pane nodes
+             */
+            panes: {}
         };
 
         return service;
