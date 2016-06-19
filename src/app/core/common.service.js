@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name common
-     * @module app.core
+     * @memberof app.core
+     * @module common
      * @requires $timeout
      * @description
      *

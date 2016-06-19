@@ -3,8 +3,7 @@
     'use strict';
 
     /**
-     * @ngdoc module
-     * @name app.core
+     * @namespace app.core
      * @description
      *
      * The `app.core` module pull in all the commonly used dependencies.

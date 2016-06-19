@@ -1,19 +1,19 @@
 (() => {
 
+    angular
+        .module('app.core')
+        .config(configBlock);
+
     /**
-     * @ngdoc function
-     * @name configBlock
-     * @module app.core
+     * @memberof app.core
+     * @function configBlock
+     * @private
      * @description
      *
      * The `configBlock` does three things right now:
      * - configure translation provider by prepping static loader (and optionally setting preferred language if we know what it is),
      * - configure theme colours for angular material
      */
-    angular
-        .module('app.core')
-        .config(configBlock);
-
     function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider) {
 
         configureTranslations();
@@ -22,6 +22,9 @@
 
         /**
          * Configure angular translation provider. Set locale files location and file name pattern.
+         * @inner
+         * @memberof app.core
+         * @function
          */
         function configureTranslations() {
             $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
@@ -35,6 +38,9 @@
 
         /**
          * Set theme colours from material desing colour palette.
+         * @inner
+         * @memberof app.core
+         * @function
          */
         function configureTheme() {
             $mdThemingProvider.theme('default')
@@ -44,6 +50,9 @@
 
         /**
          * Adds svg iconsets to the md icon provider.
+         * @inner
+         * @memberof app.core
+         * @function
          */
         function configureIconsets() {
             // default icon set is needed because some of Angular Material directives have hardcoded svg icon names;

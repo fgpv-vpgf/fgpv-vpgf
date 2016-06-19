@@ -2,17 +2,17 @@
     'use strict';
 
     /**
-     * @ngdoc service
      * @name configDefaults
-     * @module app.core
+     * @constant
+     * @memberof app.core
      * @description
      *
      * The `configDefaults` constant service provides default config values.
      */
     /**
-     * @ngdoc service
      * @name templateRegistry
-     * @module app.core
+     * @constant
+     * @memberof app.core
      * @description
      *
      * The `templateRegistry` constant service provides template URLs.

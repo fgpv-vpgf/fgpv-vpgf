@@ -47,6 +47,8 @@
     /**
      * Compares two versions of a script, prints warnings to the console if the versions are not the same
      *
+     * @private
+     * @function versionCheck
      * @param  {String} ourVersion      our version of the script
      * @param  {String} theirVersion    their version of the script
      * @param  {String} scriptName      the name of the script

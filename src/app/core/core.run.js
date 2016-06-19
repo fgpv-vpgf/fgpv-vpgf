@@ -1,19 +1,19 @@
 (() => {
     'use strict';
 
-    /**
-     * @ngdoc function
-     * @name runBlock
-     * @module app.core
-     * @description
-     *
-     * The `runBlock` triggers config and locale file loading, sets language of the app.
-     */
     angular
         .module('app.core')
         .run(apiBlock)
         .run(runBlock);
 
+    /**
+     * @function runBlock
+     * @private
+     * @memberof app.core
+     * @description
+     *
+     * The `runBlock` triggers config and locale file loading, sets language of the app.
+     */
     function runBlock($rootScope, $translate, $q, events, configService, gapiService) {
         const promises = [
             configService.initialize(),
@@ -32,12 +32,21 @@
                 console.error(reason);
             });
 
-        // to prevent FOUC need to load translation files with config initialization if we know the language
+        // to prevent FOUC (flash of unstyled content) need to load translation
+        // files with config initialization if we know the language
         // $rootScope.$on('$translateLoadingSuccess', data => console.log(data));
         $rootScope.$on('$translateLoadingSuccess', () => console.log(
             '$translateLoadingSuccess ->'));
     }
 
+    /**
+     * @function
+     * @private
+     * @memberof app.core
+     * @description
+     *
+     * `apiBlock` sets up language and RCS calls for the global API
+     */
     function apiBlock($translate, $rootElement, $rootScope, globalRegistry, geoService, configService, events,
         LayerBlueprint) {
         const service = {
@@ -56,6 +65,9 @@
         /**
          * Sets the translation language and reloads the map
          *
+         * @memberof app.core
+         * @function
+         * @inner
          * @param {String}  lang    the language to switch to
          */
         function setLanguage(lang) {
@@ -66,6 +78,9 @@
         /**
          * Load RCS layers after the map has been instantiated
          *
+         * @memberof app.core
+         * @function
+         * @inner
          * @param {Array}  keys  array of RCS keys (String) to be added
          */
         function loadRcsLayers(keys) {

@@ -1,3 +1,9 @@
+/**
+ * @function app.core.seed
+ * @inner
+ * @desc `seed` is an implicit function which runs on application startup to
+ * initialize all marked DOM nodes to map instances
+ */
 angular.element(document)
     .ready(() => {
         'use strict';

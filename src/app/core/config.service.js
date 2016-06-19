@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name configService
-     * @module app.core
+     * @module configService
+     * @memberof app.core
      * @requires $q
      * @requires $rootElement
      * @requires $timeout
@@ -61,6 +60,7 @@
 
         /**
          * Initializes `configService` by fetching and parsing `config` object.
+         * @function initialize
          */
         function initialize() {
             if (initializePromise) {
@@ -156,6 +156,7 @@
 
         /**
          * Config initialization block for file-based configs
+         * @function fileInit
          * @param {string}  configAttr  the file path tied to the config attribute
          * @param {array}   langs       array of languages which have configs
          */
@@ -171,6 +172,7 @@
 
         /**
          * Returns the currently language.
+         * @function currentLang
          * @return {String} the current language string
          */
         function currentLang() {
@@ -179,6 +181,7 @@
 
         /**
          * Returns the currently used config. Language is determined by asking $translate.
+         * @function getCurrent
          * @return {Promise}     The config promise object tied to the current language resolving with that config
          */
         function getCurrent() {
@@ -187,6 +190,8 @@
 
         /**
          * Modifies a config by merging in separate config chunks.
+         * @function mergeConfigParts
+         * @private
          * @param {object} targetConfig  the config object to merge things into. Object will be modified
          * @param {array}   configParts  array of config chunks to merge
          */
@@ -206,6 +211,8 @@
 
         /**
          * Config initialization block for rcs retrieved config snippets
+         * @function rcsInit
+         * @private
          * @param {string}  svcAttr     the server path tied to the config attribute
          * @param {string}  keysAttr    list of keys marking which layers to retrieve
          * @param {array}   langs       array of languages which have configs
@@ -232,6 +239,7 @@
 
         /**
          * Add RCS config layers to configuration after startup has finished
+         * @function rcsAddKeys
          * @param {Array}  keys    list of keys marking which layers to retrieve
          * @return {Promise} promise of full config nodes for newly added layers
          */
@@ -278,6 +286,7 @@
 
         /**
          * Retrieve a set of config snippets from RCS
+         * @function rcsLoad
          * @param {string}  svcPath     the server path of RCS
          * @param {array}  keys    array of keys marking which layers to retrieve
          * @param {array}   langs       array of languages which have configs
@@ -326,6 +335,7 @@
 
         /**
          * Checks if the service is ready to use.
+         * @function ready
          * @param  {Promise|Array} nextPromises optional promises to be resolved before returning
          * @return {Promise}              promise to be resolved on config service initialization
          */

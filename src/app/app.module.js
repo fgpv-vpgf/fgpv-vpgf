@@ -2,8 +2,7 @@
     'use strict';
 
     /**
-     * @ngdoc module
-     * @name app
+     * @namespace app
      * @description
      * The root module ties other modules together providing a very straightforward way to add or remove modules from the application.
      *
