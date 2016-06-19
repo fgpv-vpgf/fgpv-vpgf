@@ -66,6 +66,7 @@
 
     // this is populated with default schema snippets during build;
     const LAYER_CONFIG_DEFAULTS = '_LAYER_CONFIG_DEFAULTS_';
+    GEO.Metadata = { XSLT_LANGUAGE_NEUTRAL: '_XML_BLOB_' };
 
     /**
      * @ngdoc service
