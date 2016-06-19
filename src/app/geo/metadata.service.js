@@ -1,8 +1,7 @@
 (() => {
     /**
-     * @ngdoc service
-     * @name metadataService
-     * @module app.geo
+     * @module metadataService
+     * @memberof app.geo
      *
      * @description
      * Generates handlers for feature identification on all layer types.
@@ -11,15 +10,15 @@
         .module('app.geo')
         .factory('metadataService', metadataService);
 
-    function metadataService($q, $http) {
+    function metadataService($q, $http, Geo, configService) {
 
         const service = {
-            transformXML
+            transformXml
         };
 
         return service;
 
-        /*
+        /**
         * Transform XML using XSLT
         * @param {string} xmlString text data of the XML document
         * @param {string} xslString text data of the XSL document
@@ -31,6 +30,8 @@
         function applyXSLT(xmlString, xslString, returnFragment, params) {
             let output = null;
 
+            console.info(xmlString);
+            console.info(xslString);
             if (window.XSLTProcessor) {
                 const xsltProc = new window.XSLTProcessor();
                 const xmlDoc = $.parseXML(xmlString);
@@ -61,34 +62,32 @@
             return output;
         }
 
-        /*
+        /**
         * Load file
-        * @param {string} filename url to the file
-        * @return {promise} promise if file will be loaded
+        * @param {String} url URL to the file
+        * @return {Promise} promise resolving with the text data of the file
         */
-        function loadXMLFilePromise(fileUrl) {
-            return $http.get(fileUrl)
+        function loadXmlFile(url) {
+            return $http.get(url)
                         .then(response => response.data)
                         .catch(error => console.error(`XHR request failed. Error: ${error}`));
         }
 
         /**
-        * Applies supplied xslt to supplied xml. IE always returns a String; others may return a documentFragment or a jObject.
+        * Applies an XSLT to XML, XML is provided but the XSLT is stored in a string constant.
         *
-        * @method transformXML
+        * @method transformXml
         * @static
         * @param {String} xmlUrl Location of the xml file
-        * @param {String} xslUrl Location of the xslt file
-        * @param {Boolean} returnFragment True if you want a document fragment returned (doesn't work in IE)}
+        * @param {Boolean} returnFragment True if you want a document fragment returned (doesn't work in IE)
+        * @param {Array} params an array which never seems to be set and is never used
+        * @return {Promise} a promise resolving with formatted HTML text
         */
-        function transformXML(xmlUrl, xslUrl, returnFragment, params) {
+        function transformXml(xmlUrl, returnFragment, params) {
 
-            console.log('transformXML');
-
-            const loadPromises = [loadXMLFilePromise(xmlUrl), loadXMLFilePromise(xslUrl)];
-
-            return $q.all(loadPromises)
-                .then(([xmlData, xslData]) => applyXSLT(xmlData, xslData, returnFragment, params))
+            console.log(`transformXML ${configService.currentLang()}`);
+            return loadXmlFile(xmlUrl)
+                .then(xmlData => applyXSLT(xmlData, Geo.Metadata.XSLT_LANGUAGE_NEUTRAL, returnFragment, params))
                 .catch(err => console.error('Error: ' + err));
 
         }
