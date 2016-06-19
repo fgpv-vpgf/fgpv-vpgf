@@ -96,6 +96,7 @@ module.exports = function () {
         watchjs: src + '**/*.js',
         watchhtml: src + '**/*.html',
         watchconfig: src + '*.json',
+        xslt: src + 'content/metadata/xstyle_default_en-CA.xsl',
 
         plato: {
             js: app + '**/*.js'
