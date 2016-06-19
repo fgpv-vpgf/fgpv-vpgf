@@ -14,7 +14,7 @@
      * - configure translation provider by prepping static loader (and optionally setting preferred language if we know what it is),
      * - configure theme colours for angular material
      */
-    function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider) {
+    function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider, translations) {
 
         configureTranslations();
         configureTheme();
@@ -28,10 +28,7 @@
          */
         function configureTranslations() {
             $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
-            $translateProvider.useStaticFilesLoader({
-                prefix: './locales/',
-                suffix: '/translation.json'
-            });
+            Object.keys(translations).forEach(locale => $translateProvider.translations(locale, translations[locale]));
 
             // $translateProvider.preferredLanguage('en-CA');
         }
@@ -62,8 +59,7 @@
                 .iconSet('action', 'content/images/iconsets/action-icons.svg', 24)
                 .iconSet('alert', 'content/images/iconsets/alert-icons.svg', 24)
                 .iconSet('av', 'content/images/iconsets/av-icons.svg', 24)
-                .iconSet('communication',
-                    'content/images/iconsets/communication-icons.svg', 24)
+                .iconSet('communication', 'content/images/iconsets/communication-icons.svg', 24)
                 .iconSet('community', 'content/images/iconsets/mdi-icons.svg', 24)
                 .iconSet('content', 'content/images/iconsets/content-icons.svg', 24)
                 .iconSet('device', 'content/images/iconsets/device-icons.svg', 24)
@@ -73,10 +69,8 @@
                 .iconSet('icons', 'content/images/iconsets/icons-icons.svg', 24)
                 .iconSet('image', 'content/images/iconsets/image-icons.svg', 24)
                 .iconSet('maps', 'content/images/iconsets/maps-icons.svg', 24)
-                .iconSet('navigation', 'content/images/iconsets/navigation-icons.svg',
-                    24)
-                .iconSet('notification',
-                    'content/images/iconsets/notification-icons.svg', 24)
+                .iconSet('navigation', 'content/images/iconsets/navigation-icons.svg', 24)
+                .iconSet('notification', 'content/images/iconsets/notification-icons.svg', 24)
                 .iconSet('social', 'content/images/iconsets/social-icons.svg', 24)
                 .iconSet('toggle', 'content/images/iconsets/toggle-icons.svg', 24);
         }
