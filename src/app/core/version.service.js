@@ -2,9 +2,9 @@
     'use strict';
 
     /**
-     * @ngdoc service
      * @name version
-     * @module app.core
+     * @memberof app.core
+     * @constant
      * @description
      *
      * The 'version' constant service provides current version numbers and the timestap.
