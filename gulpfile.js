@@ -16,6 +16,7 @@ const dateFormat = require('dateformat');
 const through = require('through2');
 const merge = require('merge-stream');
 const lazypipe = require('lazypipe');
+const fs = require('fs');
 
 const jsDefaults = require('json-schema-defaults');
 const jsRefParser = require('json-schema-ref-parser');
@@ -131,6 +132,13 @@ function injectVersion(contents) {
     return contents;
 }
 
+function injectRandomFile(replaceToken, fileName) {
+    var f = fs.readFileSync(fileName, 'utf8').toString().replace(/\r|\n/gm, '').replace(/'/g, '\\\'');
+    return function (contents) {
+        return contents.replace(replaceToken, f);
+    };
+}
+
 // inject error css file into the index page if babel parser errors
 function injectError(error) {
     var injector = '';
@@ -193,6 +201,7 @@ function jsbuild() {
         // inject config defaults generated from the config schema
         .pipe(configDefaultsFilter)
         .pipe($.insert.transform(injectConfigDefaults))
+        .pipe($.insert.transform(injectRandomFile('_XSLT_BLOB_', config.xslt)))
         .pipe(configDefaultsFilter.restore)
 
         // TODO: fix this: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/293
