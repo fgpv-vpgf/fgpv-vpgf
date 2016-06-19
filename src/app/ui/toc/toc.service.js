@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name tocService
-     * @module app.ui.toc
+     * @module tocService
+     * @memberof app.ui
      *
      * @description
      * The `tocService` service provides bindable layer data to the `TocController`'s template.
@@ -17,7 +16,7 @@
         .factory('tocService', tocService);
 
     function tocService($q, $rootScope, $mdToast, layoutService, stateManager,
-        geoService, metadataService, errorService, $filter, configService) {
+                        geoService, metadataService, errorService, $filter) {
 
         const service = {
             // method called by the options and flags set on the layer item
@@ -300,7 +299,6 @@
 
         /**
          * Opens metadata panel with data from the provided layer object.
-         * // FIXME: generates some garbage text instead of proper metadata
          * @param  {Object} entry layer object whose data should be displayed.
          */
         function toggleMetadata(entry) {
@@ -316,36 +314,25 @@
             const layer = entry.master ? entry.master : entry;
 
             // construct a temp promise which resolves when data is generated or retrieved;
-            const dataPromise = $q((fulfill, reject) => {
+            const dataPromise = $q(fulfill => {
                 // check if metadata is cached
                 if (layer.cache.metadata) {
                     fulfill(layer.cache.metadata);
                 } else {
-
-                    const xmlUrl = layer.metadataUrl;
-
-                    // TODO: xsl should come from service constant? or is this layer specific
-                    // following is a test xsl from RAMP, should be updated for FGPV
-                    const xslUrl = `content/metadata/xstyle_default_${configService.currentLang()}.xsl`;
-
-                    // transform xml
-                    metadataService.transformXML(xmlUrl, xslUrl).then(mdata => {
-
+                    metadataService.transformXml(layer.metadataUrl).then(mdata => {
                         // result is wrapped in an array due to previous setup
                         // TODO: chagee the following when changing associated directive service
                         layer.cache.metadata = mdata;
                         fulfill(layer.cache.metadata);
-                    }).catch(reject);
+                    });
                 }
             });
 
-            stateManager
-                .setActive(panelToClose)
-                .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester)
-                        .catch(() => {
-                            errorService.display($filter('translate')('toc.error.resource.loadfailed'),
-                                layoutService.panes.metadata);
-                        }));
+            stateManager.setActive(panelToClose)
+                .then(() => stateManager
+                        .toggleDisplayPanel('sideMetadata', dataPromise, requester)
+                        .catch(() => errorService.display($filter('translate')('toc.error.resource.loadfailed'),
+                                                          layoutService.panes.metadata)));
         }
 
         /**
