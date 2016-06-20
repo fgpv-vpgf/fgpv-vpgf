@@ -124,10 +124,6 @@
             this._proxy('getBookmark');
         },
 
-        parseBookmark(bookmark) {
-            this._proxy('parseBookmark', bookmark);
-        },
-
         centerAndZoom(x, y, spatialRef, zoom) {
             this._proxy('centerAndZoom', x, y, spatialRef, zoom);
         },

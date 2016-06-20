@@ -63,6 +63,8 @@
 
             bookmark = decodeURI(bookmark);
 
+            console.log(bookmark);
+
             const info = bookmark.match(pattern);
 
             const basemap = decode64(info[1]);
@@ -71,8 +73,10 @@
             const x = decode64(info[2]);
             const y = decode64(info[3]);
             const zoom = decode64(info[4]);
-            const thisBasemap = config.baseMaps.find(bm => bm.id === basemap);
-            window.RV.getMap($rootElement.attr('id')).centerAndZoom(x, y, thisBasemap.wkid, zoom);
+            const spatialReference = {
+                wkid: config.baseMaps.find(bm => bm.id === basemap).wkid
+            };
+            window.RV.getMap($rootElement.attr('id')).centerAndZoom(x, y, spatialReference, zoom);
 
             const layers = info[5].split(',');
             const bmLayers = {};
