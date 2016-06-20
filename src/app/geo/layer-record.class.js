@@ -118,8 +118,7 @@
                 const result = { options: {} };
 
                 props.forEach((prop, index) => {
-                    result.options[prop] = {};
-                    result.options[prop].value = lookup[prop](info[index]);
+                    result.options[prop] = { value: lookup[prop](info[index]) };
                 });
                 return result;
             }

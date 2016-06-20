@@ -43,30 +43,41 @@
 
         /********************/
 
+        /**
+         * Uses the bookmark to modify the config if needed
+         *
+         * @param {Object}   config     Config object for the viewer
+         * @returns {Object}            The config modified by the bookmark, if no bookmark just returns the config
+         */
         function bookmarkCallback(config) {
-        const bookmarkAttr = $rootElement.attr('rv-restore-bookmark');
+            const bookmarkAttr = $rootElement.attr('rv-restore-bookmark');
 
-        if (bookmarkAttr) {
-            const namespaces = bookmarkAttr.split('.');
-            let context = window;
-            namespaces.forEach(scope => {
-                try {
-                    context = context[scope];
-                } catch (e) {
-                    // No need for an error, this just means we use the bookmarkAttr as a bookmark string
-                }
-            });
-            if (typeof context === 'function') {
-                context().then(bookmark => {
-                    return bookmarkService.parseBookmark(bookmark, config);
+            if (bookmarkAttr) {
+                // Tests to see if the Attr is a function
+                const namespaces = bookmarkAttr.split('.');
+                let context = window;
+                namespaces.forEach(scope => {
+                    try {
+                        context = context[scope];
+                    } catch (e) {
+                        // No need for an error, this just means we use the bookmarkAttr as a bookmark string
+                    }
                 });
+                if (typeof context === 'function') {
+                    context().then(bookmark => {
+                        if (bookmark) {
+                            return bookmarkService.parseBookmark(bookmark, config);
+                        } else {
+                            return config;
+                        }
+                    });
+                } else {
+                    return bookmarkService.parseBookmark(bookmarkAttr, config);
+                }
             } else {
-                return bookmarkService.parseBookmark(bookmarkAttr, config);
+                return config;
             }
-        } else {
-            return config;
         }
-    }
     }
 
     /**
@@ -128,10 +139,23 @@
 
         }
 
+        /**
+         * Retrieves a bookmark for the current state
+         *
+         * @returns {String}    The bookmark containing the state of the viewer
+         */
         function getBookmark() {
             return bookmarkService.getBookmark();
         }
 
+        /**
+         * Updates the extent of the map.
+         *
+         * @param {Array}  x                    The x coord to center on
+         * @param {Number} y                    The y coord to center on
+         * @param {Object} spatialReference     The spatial Reference for the coordinates
+         * @param {Number} zoom                 The level to zoom to
+         */
         function centerAndZoom(x, y, spatialReference, zoom) {
             const zoomPoint = gapiService.gapi.proj.Point(x, y, spatialReference);
 

@@ -5,7 +5,7 @@
      * @name bookmarkService
      * @module app.core
      *
-     * @description
+     * @description bookmarkService handles creation and parsing of bookmarks.
      *
      */
     angular
@@ -44,8 +44,7 @@
                 return encode64(layer._layerRecord.makeLayerBookmark());
             });
 
-            const bookmark =  basemap + ',' + extent.x + ',' + extent.y + ',' + extent.zoom +
-                ',' + layerBookmarks.toString();
+            const bookmark = `${basemap},${extent.x},${extent.y},${extent.zoom},${layerBookmarks.toString()}`;
             console.log(bookmark);
             return bookmark;
 
@@ -67,12 +66,13 @@
 
             const info = bookmark.match(pattern);
 
-            const basemap = decode64(info[1]);
+            // pull out non-layer info
+            const [basemap, x, y, zoom] = [1, 2, 3, 4].map(i => decode64(info[i]));
+
+            // mark initial basemap
             config.map.initialBasemapId = basemap;
 
-            const x = decode64(info[2]);
-            const y = decode64(info[3]);
-            const zoom = decode64(info[4]);
+            // apply extent
             const spatialReference = {
                 wkid: config.baseMaps.find(bm => bm.id === basemap).wkid
             };
@@ -81,6 +81,7 @@
             const layers = info[5].split(',');
             const bmLayers = {};
 
+            // Loop through bookmark layers and create config snippets
             layers.forEach(layer => {
                 layer = decode64(layer);
                 const layerType = parseInt(layer.substring(0, 2));
@@ -92,14 +93,13 @@
 
             let configLayers = config.layers;
 
+            // Loop through config layers and apply bookmark info
             configLayers.slice().forEach(layer => {
-                // get id
                 const id = layer.id;
                 const bookmarkLayer = bmLayers[id];
                 if (bookmarkLayer) {
-
+                    // apply bookmark layer info to config
                     angular.merge(config.layers[config.layers.indexOf(layer)], bookmarkLayer);
-                    console.log(config.layers[config.layers.indexOf(layer)]);
 
                     delete bmLayers[id];
                 } else {
@@ -108,6 +108,7 @@
                 }
             });
 
+            // Loops through remaining bookmark layers and tries to pull them from rcs
             configService.rcsAddKeys(Object.keys(bmLayers).map(id => id.split('.')[1]))
                 .then(rcsConfigs => {
                     rcsConfigs.forEach(rcsConfig => {
