@@ -254,6 +254,9 @@
         class ImageRecord extends LayerRecord {
             get layerClass () { return gapi().layer.ArcGISImageServiceLayer; }
 
+            /**
+             * @see layerRecord.makeLayerBookmark
+             */
             makeLayerBookmark () {
                 const opacity = padOpacity(this._legendEntry.getOpacity());
                 const viz = this._legendEntry.getVisibility() ? '1' : '0';
@@ -290,6 +293,9 @@
             }
             get layerClass () { return gapi().layer.ArcGISDynamicMapServiceLayer; }
 
+            /**
+             * @see layerRecord.makeLayerBookmark
+             */
             makeLayerBookmark () {
                 const opacity = padOpacity(this._legendEntry.getOpacity());
                 const viz = this._legendEntry.getVisibility() ? '1' : '0';
@@ -321,6 +327,9 @@
         class TileRecord extends LayerRecord {
             get layerClass () { return gapi().layer.TileLayer; }
 
+            /**
+             * @see layerRecord.makeLayerBookmark
+             */
             makeLayerBookmark () {
                 const opacity = padOpacity(this._legendEntry.getOpacity());
                 const viz = this._legendEntry.getVisibility() ? '1' : '0';
@@ -356,6 +365,9 @@
                 return cfg;
             }
 
+            /**
+             * @see layerRecord.makeLayerBookmark
+             */
             makeLayerBookmark () {
                 const opacity = this._legendEntry.getOpacity() * 100;
                 const viz = this._legendEntry.getVisibility() ? '1' : '0';
@@ -394,6 +406,9 @@
                 return cfg;
             }
 
+            /**
+             * @see layerRecord.makeLayerBookmark
+             */
             makeLayerBookmark () {
                 const opacity = padOpacity(this._legendEntry.getOpacity());
                 const viz = this._legendEntry.getVisibility() ? '1' : '0';
