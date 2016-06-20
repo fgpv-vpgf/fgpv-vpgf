@@ -14,9 +14,12 @@
      *
      * The `runBlock` triggers config and locale file loading, sets language of the app.
      */
-    function runBlock($rootScope, $translate, $q, events, configService, gapiService) {
+    function runBlock($rootScope, $rootElement, $translate, $q, events, configService, gapiService,
+            bookmarkService) {
+
         const promises = [
-            configService.initialize(),
+            configService.initialize()
+                .then(config => bookmarkCallback(config)),
             gapiService.isReady
         ];
 
@@ -37,6 +40,33 @@
         // $rootScope.$on('$translateLoadingSuccess', data => console.log(data));
         $rootScope.$on('$translateLoadingSuccess', () => console.log(
             '$translateLoadingSuccess ->'));
+
+        /********************/
+
+        function bookmarkCallback(config) {
+        const bookmarkAttr = $rootElement.attr('rv-restore-bookmark');
+
+        if (bookmarkAttr) {
+            const namespaces = bookmarkAttr.split('.');
+            let context = window;
+            namespaces.forEach(scope => {
+                try {
+                    context = context[scope];
+                } catch (e) {
+                    // No need for an error, this just means we use the bookmarkAttr as a bookmark string
+                }
+            });
+            if (typeof context === 'function') {
+                context.then(bookmark => {
+                    return bookmarkService.parseBookmark(bookmark, config);
+                });
+            } else {
+                return bookmarkService.parseBookmark(bookmarkAttr, config);
+            }
+        } else {
+            return config;
+        }
+    }
     }
 
     /**
@@ -48,10 +78,13 @@
      * `apiBlock` sets up language and RCS calls for the global API
      */
     function apiBlock($translate, $rootElement, $rootScope, globalRegistry, geoService, configService, events,
-        LayerBlueprint) {
+        LayerBlueprint, bookmarkService, gapiService) {
         const service = {
             setLanguage,
-            loadRcsLayers
+            loadRcsLayers,
+            getBookmark,
+            parseBookmark,
+            centerAndZoom
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
@@ -94,6 +127,19 @@
                     geoService.constructLayers(layerBlueprints);
                 });
 
+        }
+
+        function getBookmark() {
+            return bookmarkService.getBookmark();
+        }
+
+        function parseBookmark(bookmark) {
+            bookmarkService.parseBookmark(bookmark);
+        }
+
+        function centerAndZoom(x, y, spatialReference, zoom) {
+            const zoomPoint = gapiService.gapi.proj.Point(x, y, spatialReference);
+            geoService.mapPromise.promise.then(geoService.mapObject.centerAndZoom(zoomPoint, zoom));
         }
     }
 })();

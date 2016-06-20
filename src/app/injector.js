@@ -122,6 +122,18 @@
             this._proxy('setLanguage', lang);
         },
 
+        getBookmark() {
+            this._proxy('getBookmark');
+        },
+
+        parseBookmark(bookmark) {
+            this._proxy('parseBookmark', bookmark);
+        },
+
+        centerAndZoom(x, y, spatialRef, zoom) {
+            this._proxy('centerAndZoom', x, y, spatialRef, zoom);
+        },
+
         _init() {
             this._appInstance = new Promise((resolve) =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness
