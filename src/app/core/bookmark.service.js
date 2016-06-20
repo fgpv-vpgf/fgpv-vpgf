@@ -24,6 +24,11 @@
 
         /************************/
 
+        /**
+         * Creates a bookmark containing the current state of the viewer
+         *
+         * @returns {String}    The bookmark containing basemap, extent, layers and their options
+         */
         function getBookmark() {
             const basemap = encode64(geoService.mapManager.BasemapControl.basemapGallery.getSelected().id);
 
@@ -51,6 +56,13 @@
 
         }
 
+        /**
+         * Reads and applies the options specified by bookmark to config
+         *
+         * @param {String} bookmark     A bookmark created by getBookmark
+         * @param {Object} config       The config object to modify
+         * @returns {Object}            The config with changes from the bookmark
+         */
         function parseBookmark(bookmark, config) {
             const pattern = /^([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
             const layerPatterns = [
@@ -124,10 +136,22 @@
             }
         }
 
+        /**
+         * Encodes the string using base64 and replaces '/' and '+'
+         *
+         * @param {String} string   The string to encode
+         * @returns {String}        The encoded string
+         */
         function encode64(string) {
             return btoa(string).replace(/=/g, '').replace(/\//g, '_').replace(/\+/g, '-');
         }
 
+        /**
+         * Decodes a string that was encoded using {@link encode64}
+         *
+         * @param {String} string   The string to decode
+         * @returns {String}        The decoded string
+         */
         function decode64(string) {
             return atob(string.replace(/_/g, '/').replace(/-/g, '+'));
         }
