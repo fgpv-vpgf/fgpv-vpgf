@@ -17,13 +17,13 @@ function projectGeojson(geojson, outputSpatialReference, inputSpatialReference) 
 }
 
 /**
- * Convert a projection to an EPSG string.  If it is an ESRI SpatialReference or an integer it will be converted.
+ * Convert a projection to an string that is compatible with proj4.  If it is an ESRI SpatialReference or an integer it will be converted.
  * @param {Object|Integer|String} proj an ESRI SpatialReference, integer or string.  Strings will be unchanged and unchecked,
  * ints and SpatialReference objects will be converted.
  * @return {String} A string in the form EPSG:####
  * @private
  */
-function makeEpsgString(proj) {
+function normalizeProj(proj) {
     if (typeof proj === 'object') {
         if (proj.wkid) {
             return 'EPSG:' + proj.wkid;
@@ -46,7 +46,7 @@ function makeEpsgString(proj) {
  * @return {Array|Object} a 2d array or object containing the projected point
  */
 function localProjectPoint(srcProj, destProj, point) {
-    return proj4(makeEpsgString(srcProj), makeEpsgString(destProj), point);
+    return proj4(normalizeProj(srcProj), normalizeProj(destProj), point);
 }
 
 /**
@@ -68,7 +68,7 @@ function localProjectGeometry(destProj, geometry) {
     geometry.spatialReference = realSR;
 
     // project json
-    projectGeojson(grGeoJ, makeEpsgString(destProj), makeEpsgString(realSR));
+    projectGeojson(grGeoJ, normalizeProj(destProj), normalizeProj(realSR));
 
     // back to esri format
     const grEsri = terraformer.ArcGIS.convert(grGeoJ);
@@ -129,7 +129,7 @@ function localProjectExtent(extent, sr) {
     }
 
     // find the destination extent
-    let destProj = makeEpsgString(sr);
+    let destProj = normalizeProj(sr);
 
     if (extent.spatialReference.wkid && !proj4.defs(srcProj)) {
         throw new Error('Source projection WKID not recognized by proj4 library');
@@ -150,7 +150,7 @@ function localProjectExtent(extent, sr) {
 }
 
 /**
- * Check whether or not a spatialReference is supported by proj4 library
+ * Check whether or not a spatialReference is supported by proj4 library.
  *
  * @param {Object} spatialReference to be checked to see if it's supported by proj4
  * @param {Function} epsgLookup an optional lookup function for EPSG codes which are not loaded
@@ -244,7 +244,7 @@ function esriServiceBuilder(esriBundle) {
 }
 
 /**
-* Checks if two spatial reference objects are equivalent.  Handles both wkid and wkt definitions
+* Checks if two spatial reference objects are equivalent.  Handles both wkid and wkt definitions.
 *
 * @method isSpatialRefEqual
 * @static
