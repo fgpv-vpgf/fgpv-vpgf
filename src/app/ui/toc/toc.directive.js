@@ -39,6 +39,9 @@
             // register toc node with layoutService so it can be targeted
             layoutService.panes.toc = el;
 
+            el.on('focusin', onFocusIn);
+            el.on('focusout', onFocusOut);
+
             self.dragulaOptions = {
                 accepts: (el, target, source, sibling) => {
                     // el and sibling are raw dom nodes, need to use `angular.element` to get jquery wrappers
@@ -116,6 +119,19 @@
 
                 // console.log('Drag complete', evt, el, target, source, sibling);
             });
+
+            function onFocusIn() {
+                el.addClass('show-all');
+            }
+
+            function onFocusOut() {
+                // detect if no child has focus. Wait 10 ms since focusout fires before focusin
+                $timeout(() => {
+                    if (el.find(':focus').length === 0) {
+                        el.removeClass('show-all');
+                    }
+                }, 10);
+            }
         }
     }
 

@@ -25,6 +25,10 @@ $layer-item-height: rem(6.0);
             z-index: 10;
         }
     }
+
+    .show-all {
+        @include entry-controls-hover;
+    }
 }
 
 @mixin layer-list {
