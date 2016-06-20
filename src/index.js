@@ -19,7 +19,7 @@ function initAll(esriBundle) {
     api.mapManager = mapManager(esriBundle);
     api.attribs = attribute(esriBundle, api);
     api.symbology = symbology();
-    api.hilight = hilight(esriBundle);
+    api.hilight = hilight(esriBundle, api);
     api.events = events();
     api.shared = shared(esriBundle);
     api.debug = function () {

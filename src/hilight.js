@@ -39,6 +39,43 @@ function graphicBuilder(esriBundle) {
     };
 }
 
+function getGraphicsBuilder(esriBundle, geoApi) {
+    // TODO once document sites are up and running, figure out a way to hyperlink the graphicBundles parameter to the class documentation page in the viewer site
+    /**
+    * Generating a graphic from server geometry.
+    * @method getUnboundGraphics
+    * @param {Array} graphicBundles set of graphic bundles with properties .graphic, .source, .layer, .featureIdx.
+    * @param {Object} spatialReference the projection the unbound graphics should be in
+    * @return {Array} a set of promises that resolve with an unbound graphic, one for each graphic bundle provided
+    */
+    return (graphicBundles, spatialReference) => {
+
+        // generate detached graphics to give to the hilight layer.
+        // promises because server layers renderer is inside a promise
+        return graphicBundles.map(bundle => {
+            if (bundle.source === 'server') {
+                let geom = bundle.graphic.geometry;
+
+                // check projection
+                if (!geoApi.proj.isSpatialRefEqual(geom.spatialReference, spatialReference)) {
+                    geom = geoApi.proj.localProjectGeometry(spatialReference, geom);
+                }
+
+                // determine symbol for this server graphic
+                const attribs = bundle.layer.attributeBundle;
+                return attribs[bundle.featureIdx].layerData.then(layerData => {
+                    const symb = geoApi.symbology.getGraphicSymbol(bundle.graphic.attributes, layerData.renderer);
+                    return geoApi.hilight.geomToGraphic(geom, symb);
+                });
+
+            } else {
+                // local graphic. clone and hilight
+                return Promise.resolve(geoApi.hilight.cloneLayerGraphic(bundle.graphic));
+            }
+        });
+    };
+}
+
 function hilightBuilder(esriBundle) {
     /**
     * Generate a graphic layer to handle feature hilighting.
@@ -146,8 +183,9 @@ function hilightBuilder(esriBundle) {
     };
 }
 
-module.exports = (esriBundle) => ({
+module.exports = (esriBundle, geoApi) => ({
     makeHilightLayer: hilightBuilder(esriBundle),
     geomToGraphic: graphicBuilder(esriBundle),
-    cloneLayerGraphic: cloneBuilder(esriBundle)
+    cloneLayerGraphic: cloneBuilder(esriBundle),
+    getUnboundGraphics: getGraphicsBuilder(esriBundle, geoApi)
 });
