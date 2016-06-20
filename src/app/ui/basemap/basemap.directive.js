@@ -118,14 +118,14 @@
                         basemap.name = basemap.name.substring(0, maxLength - 3) + '...';
                     }
 
-                    let selected = false
+                    let selected = false;
 
                     if (config.map && config.map.initialBasemapId) {
                         if (config.map.initialBasemapId === basemap.id) {
                             selected = true;
                             useDefaultBasemap = false;
 
-                            self.selectWkid = basemap.wkid;
+                            self.selectedWkid = basemap.wkid;
                         }
                     }
 
