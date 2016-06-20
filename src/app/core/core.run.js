@@ -57,7 +57,7 @@
                 }
             });
             if (typeof context === 'function') {
-                context.then(bookmark => {
+                context().then(bookmark => {
                     return bookmarkService.parseBookmark(bookmark, config);
                 });
             } else {
@@ -83,12 +83,11 @@
             setLanguage,
             loadRcsLayers,
             getBookmark,
-            parseBookmark,
             centerAndZoom
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
-        $rootScope.$on(events.rvReady, () => {
+        $rootScope.$on(events.rvApiReady, () => {
             globalRegistry.getMap($rootElement.attr('id'))._registerMap(service);
             console.log($rootElement.attr('id') + ' registered');
         });
@@ -133,13 +132,12 @@
             return bookmarkService.getBookmark();
         }
 
-        function parseBookmark(bookmark) {
-            bookmarkService.parseBookmark(bookmark);
-        }
-
         function centerAndZoom(x, y, spatialReference, zoom) {
             const zoomPoint = gapiService.gapi.proj.Point(x, y, spatialReference);
-            geoService.mapPromise.promise.then(geoService.mapObject.centerAndZoom(zoomPoint, zoom));
+
+            // separate zoom and center calls, calling centerAndZoom sets the map to an extent made up of NaN
+            geoService.mapObject.setZoom(zoom);
+            geoService.mapObject.centerAt(zoomPoint);
         }
     }
 })();
