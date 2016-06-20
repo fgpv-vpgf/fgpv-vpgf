@@ -104,8 +104,20 @@
                 return { id: this.config.id };
             }
 
+            /**
+             * Creates a bookmark snippet for the layer
+             *
+             * @returns {String}    bookmark snippet containing info and state for the layer
+             */
             makeLayerBookmark () { throw new Error('This should be overridden in subclasses'); }
 
+            /**
+             * Creates a config snippet (containing options) given a list of properties and values.
+             *
+             * @param {Array} props     The property names
+             * @param {Array} info      The values for the properties
+             * @returns {Object}        config snippet for the layer
+             */
             static parseData (props, info) {
                 const lookup = {
                     opacity: value => parseInt(value) / 100,
@@ -251,6 +263,12 @@
                 return bookmark;
             }
 
+            /**
+             * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
+             *
+             * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @returns {Object}            config snippet for the layer
+             */
             static parseData (dataString) {
                 // ( opacity )( viz )( boundingBox )
                 const format = /^(\d{3})(\d{1})(\d{1})$/;
@@ -282,6 +300,12 @@
                 return bookmark;
             }
 
+            /**
+             * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
+             *
+             * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @returns {Object}            config snippet for the layer
+             */
             static parseData (dataString) {
                 // ( opacity )( viz )( boundingBox )( query )
                 const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
@@ -306,6 +330,12 @@
                 return bookmark;
             }
 
+            /**
+             * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
+             *
+             * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @returns {Object}            config snippet for the layer
+             */
             static parseData (dataString) {
                 // ( opacity )( viz )( boundingBox )
                 const format = /^(\d{3})(\d{1})(\d{1})$/;
@@ -336,6 +366,12 @@
                 return bookmark;
             }
 
+            /**
+             * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
+             *
+             * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @returns {Object}            config snippet for the layer
+             */
             static parseData (dataString) {
                 // ( opacity )( viz )( boundingBox )( query )
                 const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
@@ -369,6 +405,12 @@
                 return bookmark;
             }
 
+            /**
+             * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
+             *
+             * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @returns {Object}            config snippet for the layer
+             */
             static parseData (dataString) {
                 // ( opacity )( viz )( boundingBox )( snapshot )( query )
                 const format = /^(\d{3})(\d{1})(\d{1})(\d{1})(\d{1})$/;
@@ -397,6 +439,14 @@
             return new FeatureRecord(config, layer);
         }
 
+        /**
+         * Creates a config snippet for the layer described by dataString.
+         * Maps to the correct layerRecord class using layerType.
+         *
+         * @param {String} dataString   a partial layer bookmark (everything after the id)
+         * @param {Number} layerType    Layer type taken from the layer bookmark
+         * @returns {Object}            config snippet for the layer
+         */
         function parseLayerData(dataString, layerType) {
             const classes = [
                 FeatureRecord,
