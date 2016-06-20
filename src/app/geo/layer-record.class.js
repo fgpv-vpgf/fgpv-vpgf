@@ -239,7 +239,9 @@
              * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
              */
             getAttributes (featureIdx) {
-                if (this._formattedAttributes.hasOwnProperty(featureIdx)) {
+                const formAtt = this._formattedAttributes;
+
+                if (formAtt.hasOwnProperty(featureIdx) && formAtt[0].$$state.status === 1) {
                     return this._formattedAttributes[featureIdx];
                 }
 
