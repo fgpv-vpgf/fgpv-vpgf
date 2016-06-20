@@ -27,6 +27,7 @@
                 ogcWms: identifyOgcWmsLayer
             };
 
+            // TODO convert this object into an ES6 class
             // jscs doesn't like enhanced object notation
             // jscs:disable requireSpacesInAnonymousFunctionExpression
             /**
@@ -322,9 +323,9 @@
             }
 
             /**
-             * Modifies identify promises to always resolve, never reject
-             * any errors caught will be added to the details data object
-             * resolutions of these promises are for turning off loading indicator
+             * Modifies identify promises to always resolve, never reject.
+             * Any errors caught will be added to the details data object.
+             * Resolutions of these promises are for turning off loading indicator.
              *
              * @param  {Promise} promise [description]
              * @return {Promise}                 promise that doesn't reject

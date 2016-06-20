@@ -56,7 +56,7 @@
             /***/
 
             /**
-             * Builds an actual esri map object
+             * Builds an actual esri map object.
              * @return {Object} returns `service` object
              */
             function buildMapObject() {
@@ -136,7 +136,7 @@
             }
 
             /*
-             * Retrieve full extent from extentSets
+             * Retrieve full extent from extentSets.
              * @private
              */
             function getFullExtFromExtentSets(extentSets) {
@@ -169,7 +169,7 @@
             }
 
             /*
-             * Retrieve level of details array from config for current basemap
+             * Retrieve level of details array from config for current basemap.
              * @private
              */
             function getLod(lodSets) {
@@ -228,7 +228,7 @@
             }
 
             /*
-            * Check to see if given base map id has same wkid value as previously selected base map
+            * Check to see if given base map id has same wkid value as previously selected base map.
             * @param {id} base map id
             * @return {bool} true if current base map has the same wkid as the previous one
             */
@@ -261,7 +261,7 @@
             }
 
             /**
-             * Sets zoom level of the map to the specified level
+             * Sets zoom level of the map to the specified level.
              * @param {number} value a zoom level number
              */
             function setZoom(value) {
@@ -269,7 +269,7 @@
             }
 
             /**
-             * Changes the zoom level by the specified value relative to the current level; can be negative
+             * Changes the zoom level by the specified value relative to the current level; can be negative.
              * To avoid multiple chained zoom animations when rapidly pressing the zoom in/out icons, we
              * update the zoom level only when the one before it resolves with the net zoom change.
              *
@@ -287,7 +287,7 @@
             }
 
             /**
-             * Set the map to full extent
+             * Set the map to full extent.
              */
             function setFullExtent() {
                 const map = service.mapObject;
@@ -299,17 +299,18 @@
             }
 
             /**
-             * Fetches a graphic from the given layer
-             * Will attempt local copy, will it the server if not available.
+             * Fetches a graphic from the given layer.
+             * Will attempt local copy, will hit the server if not available.
              *
              * @param  {Object} layer the layer record object to search
              * @param  {Integer} featureIdx the index of the layer (relevant for dynamic sub-layers)
              * @param  {Integer} objId ID of object being searched for
-             * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .source is where it came from. 'layer' or 'server'. also .layer and .featureIdx for convenience
+             * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .source is where it came from - 'layer' or 'server'; also .layer and .featureIdx for convenience
              */
             function fetchGraphic(layer, featureIdx, objId) {
 
                 // FIXME _layer reference
+                // TODO make result object structure an ES6 class
                 const layerObj = layer._layer;
                 const result = {
                     graphic: null,
@@ -354,8 +355,8 @@
             }
 
             /**
-             * Fetches a feature in a layer given the layerUrl and objId of the object and then zooms to it
-             * Only handles feature related layers (feature, dynamic). Will also apply a hilight to the feature
+             * Fetches a feature in a layer given the layerUrl and objId of the object and then zooms to it.
+             * Only handles feature related layers (feature, dynamic). Will also apply a hilight to the feature.
              *
              * @param  {Object} layer is the layer record of graphic to zoom
              * @param  {Integer} featureIdx the index of the layer (relevant for dynamic sub-layers)
@@ -375,7 +376,7 @@
             }
 
             /**
-             * Fetches a point in a layer given the layerUrl and objId of the object and then hilights to it
+             * Fetches a point in a layer given the layerUrl and objId of the object and then hilights to it.
              * Only handles feature related layers (feature, dynamic).
              *
              * @param  {Object} layer is the layer record of graphic to zoom
@@ -392,7 +393,7 @@
             }
 
             /**
-             * Clears any hilights, pins, and hazes from the hilight layer
+             * Clears any hilights, pins, and hazes from the hilight layer.
              *
              */
             function clearHilight() {
@@ -400,7 +401,7 @@
             }
 
             /**
-             * Adds a location pin to the hilight layer
+             * Adds a location pin to the hilight layer.
              *
              * @param  {Object} mapPoint ESRI point defining where to put the pin
              */
@@ -409,52 +410,28 @@
             }
 
             /**
-             * Performs the application of a hilight for a graphic
+             * Performs the application of a hilight for a graphic.
              *
-             * @ Private
-             * @param  {Object|Array} graphicBundle a graphic bundle or array of graphic bundles for the item(s) to hilight (see function fetchGraphic)
+             * @private
+             * @param  {Object|Array} graphicBundle a graphic bundle or array of graphic bundles for the item(s) to hilight
+             * @see fetchGraphic
              */
             function applyHilight(graphicBundle) {
 
                 const bundles = Array.isArray(graphicBundle) ? graphicBundle : [graphicBundle];
 
                 // generate detached graphics to give to the hilight layer.
-                // promises because server layers renderer is inside a promise
-                const hilitePromises = bundles.map(bundle => {
-                    if (bundle.source === 'server') {
-                        const mapSR = service.mapObject.spatialReference;
-                        let geom = bundle.graphic.geometry;
-
-                        // check projection
-                        if (!gapiService.gapi.proj.isSpatialRefEqual(geom.spatialReference, mapSR)) {
-                            geom = gapiService.gapi.proj.localProjectGeometry(mapSR, geom);
-                        }
-
-                        // determine symbol for this server graphic
-                        const attribs = bundle.layer.attributeBundle;
-                        return attribs[bundle.featureIdx].layerData.then(layerData => {
-                            const symb = gapiService.gapi.symbology.getGraphicSymbol(bundle.graphic.attributes,
-                                layerData.renderer);
-
-                            return gapiService.gapi.hilight.geomToGraphic(geom, symb);
-
-                        });
-
-                    } else {
-                        // local graphic. clone and hilight
-                        return $q.resolve(gapiService.gapi.hilight.cloneLayerGraphic(bundle.graphic));
-                    }
-                });
+                const hilitePromises = gapiService.gapi.hilight.getUnboundGraphics(bundles,
+                    service.mapObject.spatialReference);
 
                 $q.all(hilitePromises).then(hilightGraphics => {
                     geoState.hilight.addHilight(hilightGraphics);
                 });
-
             }
 
             /**
              * Given a geometry, attributes, spatialReference and zoomlevel, reprojects geometry from its spatialReference
-             * to the map's spatialReference, then zooms to the maximum level such that the geometry is still visible
+             * to the map's spatialReference, then zooms to the maximum level such that the geometry is still visible.
              *
              * @param  {Object} geo is the geometry to be zoomed to
              * @param  {Integer} zoomLevel is the max level of zoom such that the layer is still visible on the map and not out of scale
@@ -523,7 +500,7 @@
 
             /**
             * Fetches current location using browser HTML5 location. If refused,
-            * falls back to fetch location by IP address then zooms to the location
+            * falls back to fetch location by IP address then zooms to the location.
             * @private
             */
             function fetchLocation() {
@@ -533,7 +510,7 @@
             }
 
             /**
-             * Retrieves symbology icon for a feature
+             * Retrieves symbology icon for a feature.
              *
              * @param  {Object} attribs    attributes of the feature we want a symbol for
              * @param  {Object} renderer   enhanced renderer object for the layer in server format
@@ -544,7 +521,7 @@
             }
 
             /**
-            * Sets the current selected map id and extent set id, creates the fullExtent
+            * Sets the current selected map id and extent set id, creates the fullExtent.
             * @param {String} id of base map
             */
             function setSelectedBaseMap(id) {
@@ -585,8 +562,8 @@
             }
 
             /**
-            * Ready a trigger on the map load event
-            * Also initialize map full extent
+            * Ready a trigger on the map load event.
+            * Also initialize map full extent.
             * @private
             */
             function prepMapLoad() {
@@ -646,7 +623,7 @@
             }
 
             /**
-             * Get basemap config from basemap id
+             * Get basemap config from basemap id.
              * @private
              * @param {String} id base Map id
              * @return {Object} base map json object
@@ -668,7 +645,7 @@
             }
 
             /**
-             * Hide base map
+             * Hide base map.
              * @param {Boolean} hide flag indicates if basemap should be visible
              */
             function hideBaseMap(hide) {
