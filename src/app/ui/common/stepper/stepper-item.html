@@ -37,16 +37,19 @@
                     {{ 'stepper.cancel' | translate }}
                 </md-button>
 
+
                 <md-button
                     class="rv-button-square rv-stepper-item-footer-continue md-raised md-primary"
-                    ng-disabled="!(self.stepForm.$valid && (self.isContinueEnabled || self.step.isContinueEnabled))"
+                    ng-disabled="!(self.stepForm.$valid && (self.isContinueEnabled || self.step.isContinueEnabled) && !self.step.isThinking)"
                     ng-if="self.onContinue || self.step.onContinue"
                     ng-click="(self.onContinue || self.step.onContinue)()">
                     {{ 'stepper.continue' | translate }}
+                    <md-progress-linear class="rv-toc-progress-indicator" md-mode="indeterminate" ng-show="self.step.isThinking"></md-progress-linear>
                 </md-button>
 
             </div>
 
+            {{ self.isThinking }}
         </form>
     </div>
 
