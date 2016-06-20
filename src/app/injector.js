@@ -106,10 +106,10 @@
     // appeasing this rule makes the code fail disallowSpaceAfterObjectKeys
     /* jscs:disable requireSpacesInAnonymousFunctionExpression */
     const mapProxy = {
-        _appInstance: null,
+        _appPromise: null,
 
         _proxy(action, ...args) {
-            this._appInstance.then(appInstance =>
+            return this._appPromise.then(appInstance =>
                 appInstance[action](...args)
             );
         },
@@ -123,7 +123,7 @@
         },
 
         getBookmark() {
-            this._proxy('getBookmark');
+            return this._proxy('getBookmark');
         },
 
         centerAndZoom(x, y, spatialRef, zoom) {
@@ -131,7 +131,7 @@
         },
 
         _init() {
-            this._appInstance = new Promise((resolve) =>
+            this._appPromise = new Promise((resolve) =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness
                 this._registerMap = appInstance =>
                     // resolve with the actual instance of the map;
