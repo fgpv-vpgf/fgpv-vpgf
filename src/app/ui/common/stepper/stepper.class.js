@@ -78,17 +78,18 @@
              * @return {Object}            itself for chaining
              */
             nextStep(continuePromise = $q.resolve()) {
-                return this.moveToStep(this.currentStep._index + 1, continuePromise);
+                return this.moveToStep(Math.min(this.steps.length - 1, this.currentStep._index + 1), continuePromise);
             }
 
 
             /**
-             * Moves to the previous step.
+             * Moves to the previous step resetting the current step.
              * @param  {Promise} [optional] continuePromise the move will happen only after this promise resolves
              * @return {Object}            itself for chaining
              */
             previousStep(continuePromise = $q.resolve()) {
-                return this.moveToStep(this.currentStep._index - 1, continuePromise);
+                this._reset(this.currentStep); // reset the current step when attempting to move backward
+                return this.moveToStep(Math.max(0, this.currentStep._index - 1), continuePromise);
             }
 
             /**
@@ -96,8 +97,8 @@
              * @return {Object}            itself for chaining
              */
             cancelMove() {
-                if (angular.isFunction(this.currentStep._resolveCancelPromise)) {
-                    this.currentStep._resolveCancelPromise('cancelPromise');
+                if (angular.isFunction(this._resolveCancelPromise)) {
+                    this._resolveCancelPromise('cancelPromise');
                 }
 
                 return this;
@@ -110,43 +111,55 @@
              * @return {Object}            itself for chaining
              */
             moveToStep(stepNumber, continuePromise = $q.resolve()) {
-                this.start()._think();
+                this.start().cancelMove();
+                // start stepper if not started; cancel any pedning moves as there is no use case for chaining them
 
                 const currentStepNumber = this.currentStep._index;
                 const currentStep = this.currentStep;
+
+                if (stepNumber > this.steps.length - 1 || stepNumber < 0) {
+                    console.error(`Step number is out of bounds: ${stepNumber}`);
+                    return this;
+                }
 
                 if (stepNumber === currentStepNumber) {
                     return this;
                 }
 
+                this._think(); // set "thinking" mode to block `continue` button from further clicks
+
                 // create a cancel promise for the move can be canceled by calling `cancelMove` on the stepper instance
                 // technically, it's a deferred
                 const cancelPromise = $q(resolve =>
-                    this.currentStep._resolveCancelPromise = resolve);
+                    this._resolveCancelPromise = resolve);
 
                 // TODO: switch to $q.race when we update to Angular 1.5+
                 // wraps regular promise in $q since Promise doesn't have `finally`
                 $q.when(Promise.race([continuePromise, cancelPromise]).then(value => {
                     if (value !== 'cancelPromise') {
 
+                        // TODO: it's possible to click the `cancel/continue` button at the moment when the transition to a differnt step starts and this will yo-yo stepper in place
+                        // one solution would be to disable `cancel/continue` buttons when transition starts
                         if (stepNumber > currentStepNumber) { // move forward
                             for (let i = currentStepNumber; i < stepNumber; i++) {
                                 // console.log(i);
                                 const step = this.steps[i];
-                                this._configureStep(step, true, false, false);
+                                this._configureStep(step, true, false);
                             }
                         } else { // move backward
                             for (let i = currentStepNumber; i > stepNumber; i--) {
                                 // console.log(i);
                                 const step = this.steps[i];
-                                this._configureStep(step, false, false);
+                                this._reset(step) // reset intermediate steps when going backward
+                                    ._configureStep(step, false, false);
                             }
                         }
 
                         this.currentStep = this.steps[stepNumber];
-                        this._configureStep(this.currentStep, false, true, false);
+                        this._configureStep(this.currentStep, false, true);
                     }
-                })).finally(() => this._think(currentStep, false)); // in any outcome, restore `continue` button to default state
+                })).finally(() =>
+                    this._think(currentStep, false)); // in any outcome, restore `continue` button to default state
 
                 return this;
             }
@@ -168,17 +181,11 @@
              * @param  {Object}  step        step object
              * @param  {Boolean} isCompleted sets step's `isCompleted` flag
              * @param  {Boolean} isActive    sets step's `isActive` flag
-             * @param  {Boolean} isClean     =             true if `true`, calls `reset` function on the step
              * @return {Object}            itself for chaining
              */
-            _configureStep(step, isCompleted, isActive, isClean = true) {
+            _configureStep(step, isCompleted, isActive) {
                 step.isCompleted = isCompleted;
                 step.isActive = isActive;
-
-                // call `reset` function reseting form on the step
-                if (isClean) {
-                    this._reset(step);
-                }
 
                 return this;
             }

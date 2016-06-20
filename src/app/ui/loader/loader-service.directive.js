@@ -42,14 +42,7 @@
             Geo.Service.Types.WMS
         ];
 
-        self.fields = {
-            one: 'one',
-            two: 'two',
-            three: 'three'
-        };
-
-        // jscs doesn't like enhanced object notation
-        // jscs:disable requireSpacesInAnonymousFunctionExpression
+        // TODO: turn into a proper class
         self.connect = {
             step: {
                 titleValue: 'import.service.connect.title',
@@ -57,18 +50,13 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: connectOnContinue,
-                onCancel: connectOnCancel
+                onCancel: () => onCancel(self.connect.step),
+                reset: connectReset
             },
             form: null,
             serviceUrl: null,
-            serviceType: null,
-            serviceResetValidation() {
-
-                // reset broken endpoint error message when user modifies service url
-                toggleErrorMessage(this.form, 'serviceUrl', 'broken', true);
-            }
+            serviceResetValidation: serviceResetValidation
         };
-        // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         self.select = {
             step: {
@@ -77,9 +65,10 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: selectOnContinue,
-                onCancel: selectOnCancel
+                onCancel: () => onCancel(self.select.step)
             },
-            form: null
+            form: null,
+            serviceType: null
         };
 
         self.configure = {
@@ -89,10 +78,11 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: configureOnContinue,
-                onCancel: configureOnCancel
+                onCancel: () => onCancel(self.configure.step),
+                reset: configureReset
             },
             form: null,
-            options: {}
+            defaultOptions: {}
         };
 
         self.layerBlueprint = null;
@@ -120,6 +110,17 @@
         }
 
         /**
+         * Cancels any stepper movements if the step is processing data; resets input and moves to the previous step if not.
+         */
+        function onCancel(step) {
+            if (step.isThinking) {
+                stepper.cancelMove();
+            } else {
+                stepper.previousStep(); // going to the previous step will auto-reset the current one (even if there is no previous step to go to)
+            }
+        }
+
+        /**
          * Tries to create a service LayerBlueprint from the url provided. If creation is successful, proceeds to the next step.
          * If creation fails, display a "broken service url" error message. This can happen because the provided url is not a service endpoint or if the service endpoint doesn't respond.
          */
@@ -132,29 +133,35 @@
                 url: connect.serviceUrl
             }, geoService.epsgLookup);
 
-            console.log(self.layerBlueprint);
+            self.layerBlueprint.ready.catch(() => {
+                console.log('self.connect.form.serviceUrl');
 
-            self.layerBlueprint.ready
-                .then(() => stepper.nextStep())
-                .catch(() => {
-                    console.log('self.connect.form.serviceUrl');
+                toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false); // , connect.step);
+            });
 
-                    toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false); // , connect.step);
-                });
+            stepper.nextStep(self.layerBlueprint.ready);
         }
 
         /**
          * Clears service url field and all error displayed; sets the form into pristine, untouched state (so no default validation errors (like "required" or "not a proper url") will show)
          */
-        function connectOnCancel() {
+        function connectReset() {
             const connect = self.connect;
 
             connect.serviceUrl = '';
-            connect.form.serviceUrl.$setPristine();
-            connect.form.serviceUrl.$setUntouched();
-            connect.serviceResetValidation();
+            connect.form.$setPristine();
+            connect.form.$setUntouched();
 
-            stepper.previousStep();
+            // TODO: generalize resetting custom form validation
+            connect.serviceResetValidation();
+        }
+
+        /**
+         * Resets service URL field validation.
+         */
+        function serviceResetValidation() {
+            // reset broken endpoint error message when user modifies service url
+            toggleErrorMessage(self.connect.form, 'serviceUrl', 'broken', true);
         }
 
         /**
@@ -162,14 +169,9 @@
          * TODO: do the validation if at all possible;
          */
         function selectOnContinue() {
-            stepper.nextStep();
-        }
+            self.configure.defaultOptions = angular.copy(self.layerBlueprint.config);
 
-        /**
-         * Moves stepped backwards to the connect step where user can enter a new service url.
-         */
-        function selectOnCancel() {
-            stepper.previousStep();
+            stepper.nextStep();
         }
 
         /**
@@ -182,13 +184,12 @@
             closeLoaderService();
         }
 
-        /**
-         * Cancels the layer configuration step and rolls back to file type selection.
-         */
-        function configureOnCancel() {
-            self.configure.options = {}; // reset layer options
+        function configureReset() {
+           const configure = self.configure;
 
-            stepper.previousStep();
+           configure.form.$setPristine();
+           configure.form.$setUntouched();
+           self.layerBlueprint.config = self.configure.defaultOptions;
         }
 
         /**
