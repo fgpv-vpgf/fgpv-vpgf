@@ -17,7 +17,7 @@
                 class="rv-loader-file-upload"
                 step="self.upload.step"
                 form="self.upload.form"
-                summary-value="{{ self.upload.file && self.upload.step.isCompleted ? self.upload.file.name : 'import.file.upload.summary' }}">
+                summary-value="{{ self.upload.step.isCompleted ? self.upload.file.name || self.upload.fileUrl : 'import.file.upload.summary' }}">
 
                 <md-input-container class="md-block rv-loader-file-upload-drop" flex>
 
