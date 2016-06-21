@@ -46,6 +46,7 @@
             reset() {
                 this.steps.forEach(step => {
                     this._configureStep(step, false, false);
+                    this._reset(step);
                 });
 
                 this.currentStep = null;
@@ -80,7 +81,6 @@
             nextStep(continuePromise = $q.resolve()) {
                 return this.moveToStep(Math.min(this.steps.length - 1, this.currentStep._index + 1), continuePromise);
             }
-
 
             /**
              * Moves to the previous step resetting the current step.
