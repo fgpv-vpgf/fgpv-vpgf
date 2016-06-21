@@ -17,7 +17,8 @@
 
         const service = {
             getBookmark,
-            parseBookmark
+            parseBookmark,
+            updateConfig
         };
 
         return service;
@@ -134,6 +135,12 @@
                         });
                     });
             }
+        }
+
+        function updateConfig() {
+            configService.getCurrent(config => {
+                parseBookmark(getBookmark(), config);
+            });
         }
 
         /**

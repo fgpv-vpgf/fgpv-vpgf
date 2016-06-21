@@ -34,7 +34,7 @@
         }
     }
 
-    function Controller(configService, geoService) {
+    function Controller(configService, geoService, reloadService) {
         'ngInject';
         const self = this;
         self.select = select;
@@ -221,8 +221,7 @@
                 geoService.selectBasemap(basemap.id);
             } else {
                 console.log('-- reload map --');
-                geoService.setSelectedBaseMap(basemap.id);
-                geoService.assembleMap();
+                reloadService.loadNewProjection(basemap.id);
             }
 
         }
