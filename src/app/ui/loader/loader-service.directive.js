@@ -55,7 +55,7 @@
             },
             form: null,
             serviceUrl: null,
-            serviceResetValidation: serviceResetValidation
+            serviceResetValidation
         };
 
         self.select = {
@@ -143,7 +143,7 @@
         }
 
         /**
-         * Clears service url field and all error displayed; sets the form into pristine, untouched state (so no default validation errors (like "required" or "not a proper url") will show)
+         * Clears service url field and all error displayed; sets the form to pristine, untouched state (so no default validation errors (like "required" or "not a proper url") will show)
          */
         function connectReset() {
             const connect = self.connect;
@@ -185,6 +185,9 @@
             closeLoaderService();
         }
 
+        /**
+         * Restores default configuration options (layer name, etc.) and resets the form to pristine state to hide default error messages.
+         */
         function configureReset() {
             const configure = self.configure;
 
