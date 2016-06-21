@@ -137,7 +137,7 @@
         }
 
         /**
-         * Encodes the string using base64 and replaces '/' and '+'
+         * Encodes the string using base64 and replaces '/' and '+'. This is a URL safe encoding; https://tools.ietf.org/html/rfc4648#page-7
          *
          * @param {String} string   The string to encode
          * @returns {String}        The encoded string
@@ -147,7 +147,7 @@
         }
 
         /**
-         * Decodes a string that was encoded using {@link encode64}
+         * Decodes a string that was encoded using {@link encode64}. URL safe; https://tools.ietf.org/html/rfc4648#page-7
          *
          * @param {String} string   The string to decode
          * @returns {String}        The decoded string
