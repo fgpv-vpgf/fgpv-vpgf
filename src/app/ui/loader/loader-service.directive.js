@@ -65,8 +65,10 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: selectOnContinue,
-                onCancel: () => onCancel(self.select.step)
+                onCancel: () => onCancel(self.select.step),
+                reset: selectReset
             },
+            selectResetValidation,
             form: null,
             serviceType: null
         };
@@ -169,12 +171,33 @@
          * TODO: do the validation if at all possible;
          */
         function selectOnContinue() {
+            const validationPromise = self.layerBlueprint.validate();
+
             // TODO: move reseting options to defaults into blueprint; this can be done upon successful validation
             self.configure.defaultOptions = angular.copy(self.layerBlueprint.config);
+            stepper.nextStep(validationPromise);
 
-            stepper.nextStep(self.layerBlueprint.validate());
+            // console.log('User selected', self.layerBlueprint.fileType);
+            validationPromise.catch(error => {
+                console.error('Service type is wrong', error);
+                toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
+            });
         }
 
+        function selectReset() {
+            const select = self.select;
+
+            select.form.$setPristine();
+            select.form.$setUntouched();
+
+            // TODO: generalize resetting custom form validation
+            select.selectResetValidation();
+        }
+
+        function selectResetValidation() {
+            // reset wrong service type error message
+            toggleErrorMessage(self.select.form, 'serviceType', 'wrong', true);
+        }
         /**
          * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
          */
