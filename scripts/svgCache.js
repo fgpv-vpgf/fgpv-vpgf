@@ -31,7 +31,7 @@ function buildCache(callback) {
                 if (isDefault) {
                     console.log(`    .defaultIconSet('app/${prefix}.svg')`);
                 } else {
-                    console.log(`    .iconSet('${prefix}','app/${prefix}.svg')`);
+                    console.log(`    .iconSet('${prefix}', 'app/${prefix}.svg')`);
                 }
             });
         promises.push(filePromise);
