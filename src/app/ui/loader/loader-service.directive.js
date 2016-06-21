@@ -55,7 +55,7 @@
             },
             form: null,
             serviceUrl: null,
-            serviceResetValidation
+            serviceUrlResetValidation
         };
 
         self.select = {
@@ -68,7 +68,7 @@
                 onCancel: () => onCancel(self.select.step),
                 reset: selectReset
             },
-            selectResetValidation,
+            serviceTypeResetValidation,
             form: null,
             serviceType: null
         };
@@ -155,13 +155,13 @@
             connect.form.$setUntouched();
 
             // TODO: generalize resetting custom form validation
-            connect.serviceResetValidation();
+            connect.serviceUrlResetValidation();
         }
 
         /**
          * Resets service URL field validation.
          */
-        function serviceResetValidation() {
+        function serviceUrlResetValidation() {
             // reset broken endpoint error message when user modifies service url
             toggleErrorMessage(self.connect.form, 'serviceUrl', 'broken', true);
         }
@@ -191,10 +191,10 @@
             select.form.$setUntouched();
 
             // TODO: generalize resetting custom form validation
-            select.selectResetValidation();
+            select.serviceTypeResetValidation();
         }
 
-        function selectResetValidation() {
+        function serviceTypeResetValidation() {
             // reset wrong service type error message
             toggleErrorMessage(self.select.form, 'serviceType', 'wrong', true);
         }

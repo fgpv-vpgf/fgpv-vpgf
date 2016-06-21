@@ -10,8 +10,6 @@
     <div
         class="rv-loader-file"
         flow-init="{ singleFile: true }">
-        <!-- add `, permanentErrors: [200, 201, 202, 404, 415, 500, 501], successStatuses: []`
-         to flow-init to simulate error during upload  -->
 
         <div class="rv-file-drop-blur">
 
@@ -32,7 +30,7 @@
                                 flow-btn
                                 flow-progress="console.log()"
                                 flow-attrs="{ accept: '.csv,.zip,.json' }"
-                                ng-click="self.upload.step.onCancel()">
+                                ng-click="self.upload.step.reset()">
                                 <md-icon md-svg-src="file:file_upload"></md-icon>
                                 {{ "import.file.upload.choose" | translate }}
                             </md-button>
@@ -59,7 +57,7 @@
                     <input
                         name="fileUrl"
                         type="url"
-                        ng-focus="self.upload.fileReset()"
+                        ng-focus="self.upload.fileReset(); self.upload.fileUrlResetValidation()"
                         ng-model="self.upload.fileUrl"
                         ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
                         required>
@@ -67,6 +65,7 @@
                     <!-- TODO: decide whether and how to display a hint or error messages -->
                     <div ng-messages="self.upload.form.fileUrl.$error">
                         <div ng-message="url" translate>import.file.upload.invalid</div>
+                        <div ng-message="upload-error" translate>import.file.upload.noaccess</div>
                     </div>
                 </md-input-container>
 
