@@ -137,7 +137,6 @@
          * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
          */
         function uploadFilesSubmitted(files) { // , event, flow) {
-            // TODO: if current step is not the first and user drag-drops file, go back to second step
             // console.log('submitted', files, event, flow);
             if (files.length > 0) {
                 const file = files[0];
@@ -159,7 +158,8 @@
             );
 
             // add some delay before going to the next step
-            stepper.nextStep($timeout(() => self.layerBlueprint.ready, 300));
+            // explicitly move to step 1 (select); if the current step is not 0 (upload), drag-dropping a file may advance farther than needed when using just `stepper.nextStep()`
+            stepper.moveToStep(1, $timeout(() => self.layerBlueprint.ready, 300));
 
             self.layerBlueprint.ready.catch(error => {
                 // TODO: show a meaningful error about why upload failed.
