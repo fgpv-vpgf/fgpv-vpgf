@@ -180,11 +180,13 @@ function libbuild() {
  * @return {Stream}
  */
 function templatecache() {
-    return gulp
+    const htmlTemplates = gulp
         .src(config.htmltemplates)
         .pipe($.if(args.verbose, $.bytediff.start()))
         .pipe($.minifyHtml({ empty: true }))
-        .pipe($.if(args.verbose, $.bytediff.stop(bytediffFormatter)))
+        .pipe($.if(args.verbose, $.bytediff.stop(bytediffFormatter)));
+    const svgTemplates = gulp.src(config.svgSources);
+    return merge(htmlTemplates, svgTemplates)
         .pipe($.angularTemplatecache(
             config.templateCache.file,
             config.templateCache.options
@@ -244,6 +246,10 @@ gulp.task('assetcopy', 'Copy fixed assets to the build directory',
         return gulp.src(config.staticAssets, { base: config.src })
             .pipe(gulp.dest(config.build));
     });
+
+gulp.task('makesvgcache', 'Rebuild the SVG cache', (cb) => {
+    require('./scripts/svgCache.js').buildCache(cb);
+});
 
 gulp.task('translate', 'Split translation csv into internationalized files',
     function () {
