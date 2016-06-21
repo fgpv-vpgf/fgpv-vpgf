@@ -105,6 +105,37 @@
             }
 
             /**
+             * Creates a bookmark snippet for the layer
+             *
+             * @returns {String}    bookmark snippet containing info and state for the layer
+             */
+            makeLayerBookmark () { throw new Error('This should be overridden in subclasses'); }
+
+            /**
+             * Creates a config snippet (containing options) given a list of properties and values.
+             *
+             * @param {Array} props     The property names
+             * @param {Array} info      The values for the properties
+             * @returns {Object}        config snippet for the layer
+             */
+            static parseData (props, info) {
+                const lookup = {
+                    opacity: value => parseInt(value) / 100,
+                    visibility: value => value === '1',
+                    boundingBox: value => value === '1',
+                    snapshot: value => value === '1',
+                    query: value => value === '1'
+                };
+
+                const result = { options: {} };
+
+                props.forEach((prop, index) => {
+                    result.options[prop] = { value: lookup[prop](info[index]) };
+                });
+                return result;
+            }
+
+            /**
              * Create a layer record with the appropriate geoApi layer type.  Layer config
              * should be fully merged with all layer options defined (i.e. this constructor
              * will not apply any defaults).
@@ -222,6 +253,35 @@
 
         class ImageRecord extends LayerRecord {
             get layerClass () { return gapi().layer.ArcGISImageServiceLayer; }
+
+            /**
+             * @see layerRecord.makeLayerBookmark
+             */
+            makeLayerBookmark () {
+                const opacity = padOpacity(this._legendEntry.getOpacity());
+                const viz = this._legendEntry.getVisibility() ? '1' : '0';
+                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
+
+                const bookmark = '04' + this.config.id + opacity + viz + bb;
+                return bookmark;
+            }
+
+            /**
+             * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
+             *
+             * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @returns {Object}            config snippet for the layer
+             */
+            static parseData (dataString) {
+                // ( opacity )( viz )( boundingBox )
+                const format = /^(\d{3})(\d{1})(\d{1})$/;
+
+                const info = dataString.match(format);
+
+                if (info) {
+                    return super.parseData([, 'opacity', 'visibility', 'boundingBox'], info); // jshint ignore:line
+                }
+            }
         }
 
         class DynamicRecord extends AttrRecord {
@@ -232,10 +292,68 @@
                 return ['visibleAtMapScale', 'visible', 'spatialReference', 'layerInfos', 'supportsDynamicLayers'];
             }
             get layerClass () { return gapi().layer.ArcGISDynamicMapServiceLayer; }
+
+            /**
+             * @see layerRecord.makeLayerBookmark
+             */
+            makeLayerBookmark () {
+                const opacity = padOpacity(this._legendEntry.getOpacity());
+                const viz = this._legendEntry.getVisibility() ? '1' : '0';
+                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
+                const query = this._legendEntry.options.query.value ? '1' : '0';
+
+                const bookmark = '03' + this.config.id + opacity + viz + bb + query;
+                return bookmark;
+            }
+
+            /**
+             * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
+             *
+             * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @returns {Object}            config snippet for the layer
+             */
+            static parseData (dataString) {
+                // ( opacity )( viz )( boundingBox )( query )
+                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
+
+                const info = dataString.match(format);
+
+                if (info) {
+                    return super.parseData([, 'opacity', 'visibility', 'boundingBox', 'query'], info); // jshint ignore:line
+                }
+            }
         }
 
         class TileRecord extends LayerRecord {
             get layerClass () { return gapi().layer.TileLayer; }
+
+            /**
+             * @see layerRecord.makeLayerBookmark
+             */
+            makeLayerBookmark () {
+                const opacity = padOpacity(this._legendEntry.getOpacity());
+                const viz = this._legendEntry.getVisibility() ? '1' : '0';
+                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
+
+                const bookmark = '02' + this.config.id + opacity + viz + bb;
+                return bookmark;
+            }
+
+            /**
+             * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
+             *
+             * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @returns {Object}            config snippet for the layer
+             */
+            static parseData (dataString) {
+                // ( opacity )( viz )( boundingBox )
+                const format = /^(\d{3})(\d{1})(\d{1})$/;
+                const info = dataString.match(format);
+
+                if (info) {
+                    return super.parseData([, 'opacity', 'visibility', 'boundingBox'], info); // jshint ignore:line
+                }
+            }
         }
 
         class WmsRecord extends LayerRecord {
@@ -245,6 +363,36 @@
                 const cfg = super.makeLayerConfig();
                 cfg.visibleLayers = this.config.layerEntries.map(le => le.id);
                 return cfg;
+            }
+
+            /**
+             * @see layerRecord.makeLayerBookmark
+             */
+            makeLayerBookmark () {
+                const opacity = this._legendEntry.getOpacity() * 100;
+                const viz = this._legendEntry.getVisibility() ? '1' : '0';
+                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
+                const query = this._legendEntry.options.query.value ? '1' : '0';
+
+                const bookmark = '01' + this.config.id + opacity + viz + bb + query;
+                return bookmark;
+            }
+
+            /**
+             * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
+             *
+             * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @returns {Object}            config snippet for the layer
+             */
+            static parseData (dataString) {
+                // ( opacity )( viz )( boundingBox )( query )
+                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
+
+                const info = dataString.match(format);
+
+                if (info) {
+                    return super.parseData([, 'opacity', 'visibility', 'boundingBox', 'query'], info); // jshint ignore:line
+                }
             }
         }
 
@@ -256,6 +404,37 @@
                 cfg.mode = this.config.options.snapshot.value ? this.layerClass.MODE_SNAPSHOT
                                                               : this.layerClass.MODE_ONDEMAND;
                 return cfg;
+            }
+
+            /**
+             * @see layerRecord.makeLayerBookmark
+             */
+            makeLayerBookmark () {
+                const opacity = padOpacity(this._legendEntry.getOpacity());
+                const viz = this._legendEntry.getVisibility() ? '1' : '0';
+                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
+                const snap = this._legendEntry.options.snapshot.value ? '1' : '0';
+                const query = this._legendEntry.options.query.value ? '1' : '0';
+
+                const bookmark = '00' + this.config.id + opacity + viz + bb + snap + query;
+                return bookmark;
+            }
+
+            /**
+             * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
+             *
+             * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @returns {Object}            config snippet for the layer
+             */
+            static parseData (dataString) {
+                // ( opacity )( viz )( boundingBox )( snapshot )( query )
+                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})(\d{1})$/;
+
+                const info = dataString.match(format);
+
+                if (info) {
+                    return super.parseData([, 'opacity', 'visibility', 'boundingBox', 'snapshot', 'query'], info); // jshint ignore:line
+                }
             }
         }
 
@@ -275,6 +454,31 @@
             return new FeatureRecord(config, layer);
         }
 
-        return { makeServiceRecord, makeFileRecord };
+        /**
+         * Creates a config snippet for the layer described by dataString.
+         * Maps to the correct layerRecord class using layerType.
+         *
+         * @param {String} dataString   a partial layer bookmark (everything after the id)
+         * @param {Number} layerType    Layer type taken from the layer bookmark
+         * @returns {Object}            config snippet for the layer
+         */
+        function parseLayerData(dataString, layerType) {
+            const classes = [
+                FeatureRecord,
+                WmsRecord,
+                TileRecord,
+                DynamicRecord,
+                ImageRecord
+            ];
+
+            return classes[layerType].parseData(dataString);
+        }
+
+        function padOpacity(value) {
+            value = String(value * 100);
+            return ('000' + value).substring(value.length);
+        }
+
+        return { makeServiceRecord, makeFileRecord, parseLayerData };
     }
 })();

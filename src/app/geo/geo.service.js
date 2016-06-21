@@ -15,8 +15,8 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService($http, $q, gapiService, mapService, layerRegistry, configService, identifyService,
-        LayerBlueprint) {
+    function geoService($http, $q, $rootScope, events, gapiService, mapService, layerRegistry, configService,
+        identifyService, LayerBlueprint) {
 
         // TODO update how the layerOrder works with the UI
         // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -121,6 +121,7 @@
 
                     service.state = state; // store geo state
                     service.isMapReady = true;
+                    $rootScope.$broadcast(events.rvApiReady);
 
                     return service;
                 })

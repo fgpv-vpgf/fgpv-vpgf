@@ -675,6 +675,10 @@
                 "components": {
                     "type": "object",
                     "$ref": "#/definitions/mapComponentsNode"
+                },
+                "initialBasemapId": {
+                    "type": "string",
+                    "description": "Initial basemap to load. If not supplied viewer will select any basemap."
                 }
             },
             "required": ["lods"]

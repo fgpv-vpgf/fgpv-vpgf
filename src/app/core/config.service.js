@@ -73,7 +73,6 @@
                 const langAttr = $rootElement.attr('rv-langs');
                 const svcAttr = $rootElement.attr('rv-service-endpoint');
                 const keysAttr = $rootElement.attr('rv-keys');
-                let configJson;
                 let langs;
 
                 // This function can only be called once.
@@ -107,9 +106,7 @@
                     }
 
                     // start loading every config file
-                    if (!configJson) {
-                        fileInit(configAttr, langs);
-                    }
+                    fileInit(configAttr, langs);
 
                     langs.forEach(lang => {
                         service.data[lang] = $q.all(partials[lang])
@@ -140,9 +137,8 @@
                     // FIXME: replace with getCurrent().then / service.data[Default language] if we have a way to check
                     service.data[langs[0]]
                         .then(() => {
-                            $translate.use(langs[0]);
                             isInitialized = true;
-                            fulfill();
+                            fulfill(service.data[langs[0]]);
                         })
                         .catch(error => {
                             reject(error);

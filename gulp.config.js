@@ -41,12 +41,15 @@ module.exports = function () {
             '!' + app + '**/*.spec.js'
         ],
         jsOrder: [
-            'polyfills.js',
             'lib.js',
             'global-registry.js',
             'app.js',
             'templates.js',
             'app-seed.js'
+        ],
+        injectorOrder: [
+            'polyfills.js',
+            'injector.js'
         ],
 
         jsPolyfills: src + 'polyfill/*.js',
@@ -73,6 +76,7 @@ module.exports = function () {
         jsGlobalRegistry: app + 'global-registry.js', // create global registry; loads gapi, etc.
 
         jsInjectorFile: app + 'injector.js',
+        jsInjectorDest: 'injector.js',
         jsInjectorFilePath: build + 'injector.js',
 
         jsCoreFile: 'core.js',
