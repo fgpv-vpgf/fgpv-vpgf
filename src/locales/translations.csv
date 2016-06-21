@@ -127,8 +127,11 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.file.upload.drop,Drop the file to upload,[fr] Drop the file to upload
 ,import.file.upload.or,or,[fr] or
 ,import.file.upload.fileurl,File URL,[fr] File URL
+,import.file.upload.invalid,This is not a valid URL,[fr] This is not a valid URL
+,import.file.upload.noaccess,Can't access file,[fr] Can't access file
 ,import.file.select.title,Select file format,[fr] Select file format
 ,import.file.select.fileformat,File Format,[fr] File Format
+,import.file.select.wrong,Incorrect file format,[fr] Incorrect file format
 ,import.file.configure.title,Configure layer,[fr] Configure layer
 ,import.file.configure.layername,Layer Name,[fr] Layer Name
 ,import.file.configure.primaryfield,Primary Field,[fr] Primary Field

@@ -7,8 +7,6 @@
     class="rv-file-drop"
     ng-class="{'rv-file-drop-active': self.dropActive}">
 
-    <!-- TODO: add translate filters -->
-
     <div
         class="rv-loader-file"
         flow-init="{ singleFile: true }">
@@ -50,7 +48,7 @@
                     <!-- this field is needed to attach the error messages; is't hidden -->
                     <input name="fileSelect" ng-model="self.upload.fileSelect">
                     <div ng-messages="self.upload.form.fileSelect.$error" ng-if="self.upload.form.fileSelect.$invalid">
-                        <div ng-message="upload-error">Can't access file.</div>
+                        <div ng-message="upload-error" translate>import.file.upload.noaccess</div>
                     </div>
                 </md-input-container>
 
@@ -68,7 +66,7 @@
 
                     <!-- TODO: decide whether and how to display a hint or error messages -->
                     <div ng-messages="self.upload.form.fileUrl.$error">
-                        <div ng-message="url">This is not a valid URL</div>
+                        <div ng-message="url" translate>import.file.upload.invalid</div>
                     </div>
                 </md-input-container>
 
@@ -81,11 +79,14 @@
 
                 <md-input-container class="md-block">
                     <label translate>import.file.select.fileformat</label>
-                    <md-select name="dataType" ng-model="self.layerBlueprint.fileType" required>
+                    <md-select name="dataType" ng-model="self.layerBlueprint.fileType" md-on-open="self.select.selectResetValidation()" required>
                         <md-option ng-repeat="fileType in self.fileTypes" value="{{ fileType }}">
                             {{ 'import.file.type.' + fileType | translate }}
                         </md-option>
                     </md-select>
+                    <div ng-messages="self.select.form.dataType.$error">
+                        <div ng-message="wrong" translate>import.file.select.wrong</div>
+                    </div>
 
                     <!-- TODO: decide whether and how to display a hint or error messages; can use md-on-close="self.select.form.dataType.$setDirty()" -->
                     <!--div
