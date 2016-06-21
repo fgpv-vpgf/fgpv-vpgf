@@ -251,7 +251,7 @@
 
             /**
              * Returns service type of the service layer blueprint. If type is `Unknown`, returns null for template bindings
-             * @return {String} service type
+             * @return {String|null} service type
              */
             get serviceType() {
                 if (Geo.Service.Types.Unknown === this._serviceType) {
