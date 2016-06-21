@@ -169,9 +169,10 @@
          * TODO: do the validation if at all possible;
          */
         function selectOnContinue() {
+            // TODO: move reseting options to defaults into blueprint; this can be done upon successful validation
             self.configure.defaultOptions = angular.copy(self.layerBlueprint.config);
 
-            stepper.nextStep();
+            stepper.nextStep(self.layerBlueprint.validate());
         }
 
         /**
