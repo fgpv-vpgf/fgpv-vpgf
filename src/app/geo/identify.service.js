@@ -124,10 +124,11 @@
             * @returns {String} the name of the feature
             */
             function getFeatureName(attribs, layerRec, objId) {
-                // FIXME : display field is not yet defined in the config schema.  in particular, we need to account
-                //        for different name fields in child-layers of dynamic layers.
-                //        may be easier to just store the display field from the server when we download attributes,
-                //        though this would not allow us to override the server-defined field in the config.
+                // FIXME : name field is not yet defined in the config schema.
+                //         we also need to determine if we will support name fields
+                //         on child layers of Dynamic services. This would be relevant
+                //         if we implement maptips, or need to override the name field
+                //         in the details pane.
 
                 let nameField = '';
 
