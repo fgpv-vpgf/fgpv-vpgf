@@ -233,7 +233,7 @@
 
             this.bindListeners();
 
-            // since the main purpose of these placholders is to indicate that layers are loading (or failed to load),
+            // since the main purpose of these placeholders is to indicate that layers are loading (or failed to load),
             // we set `isLoading` flag to `true` right away
             this.setLayerLoadingFlag(true);
 

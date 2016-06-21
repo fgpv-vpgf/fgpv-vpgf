@@ -234,6 +234,9 @@
             upload.form.fileUrl.$setUntouched();
         }
 
+        /**
+         * Validates created file Layer Blueprint against selected file type. Shows a generic error message if validation fails.
+         */
         function selectOnContinue() {
             const validationPromise = self.layerBlueprint.validate();
 
@@ -247,6 +250,9 @@
             });
         }
 
+        /**
+         * Sets the form to pristine, untouched state (so no default validation errors (like "required") will show)
+         */
         function selectReset() {
             const select = self.select;
 
@@ -257,6 +263,9 @@
             select.selectResetValidation();
         }
 
+        /**
+         * Resets file type validation error messages.
+         */
         function selectResetValidation() {
             // reset wrong file type error message
             toggleErrorMessage(self.select.form, 'dataType', 'wrong', true);

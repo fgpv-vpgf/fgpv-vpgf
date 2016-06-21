@@ -191,7 +191,7 @@
             }
 
             /**
-             * Calls `reset` functio on the step object if one is present
+             * Calls `reset` function on the step object if one is present
              * @return {Object}            itself for chaining
              */
             _reset(step) {
