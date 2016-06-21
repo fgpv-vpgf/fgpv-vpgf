@@ -185,11 +185,11 @@
         }
 
         function configureReset() {
-           const configure = self.configure;
+            const configure = self.configure;
 
-           configure.form.$setPristine();
-           configure.form.$setUntouched();
-           self.layerBlueprint.config = self.configure.defaultOptions;
+            configure.form.$setPristine();
+            configure.form.$setUntouched();
+            self.layerBlueprint.config = self.configure.defaultOptions;
         }
 
         /**
