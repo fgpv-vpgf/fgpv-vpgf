@@ -91,6 +91,8 @@ module.exports = function () {
             src + 'config*.json'
         ],
 
+        svgCache: `${src}content/svgCache`,
+
         schema: src + 'schema.json',
 
         vetjs: [src + '**/*.js', '*.js', 'e2e-test/**/*.js', 'test/**/*.js', 'docs/app/js/app.js',
@@ -153,6 +155,13 @@ module.exports = function () {
     };
 
     config.karma = getKarmaOptions();
+
+    // jscs:disable maximumLineLength
+    config.iconCache = [
+        { file: 'content/images/iconsets/action-icons.svg', prefix: 'action', icons: 'search home history description delete settings info visibility visibility_off zoom_in zoom_out check_circle open_in_new print shopping_cart opacity'.split(' ') }
+    ];
+    // jscs:enable maximumLineLength
+    config.svgSources = config.svgCache + '/*.svg';
 
     function getKarmaOptions() {
         var options = {
