@@ -137,7 +137,7 @@
         }
 
         /**
-         * Encodes the string using base64 and replaces '/' and '+'
+         * Encodes the string using base64 and replaces '/' and '+'. This is a URL safe encoding.
          *
          * @param {String} string   The string to encode
          * @returns {String}        The encoded string
