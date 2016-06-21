@@ -20,15 +20,10 @@
             remove
         };
 
-        let toastMsg;
-
         return service;
 
-        function remove() {
-            if (toastMsg) {
-                $mdToast.hide(toastMsg);
-                toastMsg = null;
-            }
+        function remove(toastMsg) {
+            $mdToast.hide(toastMsg);
         }
 
         /**
@@ -48,8 +43,7 @@
             if (typeof parentElem !== 'undefined') {
                 opts.parent = parentElem;
             }
-            toastMsg = $mdToast.show($mdToast.simple(opts));
-            return toastMsg;
+            return $mdToast.show($mdToast.simple(opts));
         }
     }
 })();
