@@ -28,7 +28,7 @@
         return directive;
     }
 
-    function Controller($scope, stateManager, $element) {
+    function Controller($scope, stateManager, geoService, $element) {
         'ngInject';
         const self = this;
 
@@ -57,6 +57,9 @@
             stateManager
                 .openPrevious('mainDetails')
                 .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display;
+
+            geoService.clearHilight();
+
         }
 
         /**
@@ -68,6 +71,13 @@
             self.selectedInfo = (item) ? `${item.requester.caption}${item.requester.name}` : null;
 
             self.display.selectedItem = self.selectedItem;
+
+            // add hilights to all things in the layer.
+            // TODO is this the appropriate place for hilighting code?
+            if (item && item.requester && item.requester.featureIdx) {
+                geoService.hilightGraphic(item.requester.layerRec, item.requester.featureIdx,
+                    item.data.map(d => d.oid));
+            }
         }
 
         $scope.$watch('self.display.data', newValue => {

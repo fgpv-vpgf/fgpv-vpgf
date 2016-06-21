@@ -3,29 +3,24 @@
         <h4 class="md-subhead">{{ self.item.requester.name }}</h4>
         <span class="md-caption">{{ self.item.requester.caption }}</span>
     </div>
-    <div class="rv-subcontent" ng-class="{ 'rv-hide': self.isHidden }">
+    <div class="rv-subcontent rv-{{self.item.requester.format}}" ng-class="{ 'rv-hide': self.isHidden }" ng-switch on="self.item.requester.format">
+
+        <p class="rv-nothing" ng-if="self.item.data.length === 0" translate>details.label.noresult</p>
+
         <!-- Feature Key-Value list presentation  -->
-        <!-- TODO: add translations -->
-        <h5 ng-if="self.display.item.data.length === 0">
-            Nothing found</h5>
-
-        <div ng-if="self.display.item.requester.format === 'EsriFeature'">
-            <h5 class="rv-sub-subhead" ng-repeat-start="item in self.item.data">{{ item.name }}</h5>
-
-            <ul ng-repeat-end class="rv-details-zebra-list">
-                <li ng-repeat="keyval in item.data">
-                    <div class="rv-details-attrib-key">{{ keyval.key }}</div>
-                    <div class="rv-details-attrib-value">{{ keyval.value }}</div>
-                </li>
-            </ul>
-        </div>
+        <ul class="rv-records-list" ng-switch-when="EsriFeature">
+            <li ng-repeat="item in self.item.data">
+                <rv-details-record-esrifeature ng-class="{ 'rv-selected': item.isSelected }" item="item" requester="self.item.requester"></rv-details-record-esrifeature>
+                <div class="rv-shadow"></div>
+            </li>
+        </ul>
 
         <!-- Plain text presentation  -->
-        <div ng-if="self.display.item.requester.format === 'Text'">
-            <pre>{{ self.item.data[0] }}</pre>
-        </div>
+        <pre ng-switch-when="Text">{{ self.item.data[0] }}</pre>
 
         <!-- Raw HTML presentation  -->
-        <div ng-if="self.display.item.requester.format === 'HTML'" ng-bind-html="self.display.item.data[0]"></div>
+        <rv-details-record-html ng-switch-when="HTML" data="self.item.data[0]"></rv-details-record-html>
+
+        <md-divider></md-divider>
     </div>
 </div>

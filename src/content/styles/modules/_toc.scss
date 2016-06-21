@@ -1,6 +1,6 @@
 $toc-padding: rem(0.4);
 
-$group-item-height: rem(4);
+$group-item-height: rem(4.0);
 $layer-item-height: rem(6.0);
 
 @mixin toc {
@@ -38,25 +38,21 @@ $layer-item-height: rem(6.0);
     }
 
     .rv-layer-list {
-        list-style: none;
-        padding: 0;
-        max-width: 100%;
+        @extend %action-list;
 
-        > li {
-            position: relative;
-            overflow: hidden;
-        }
         // rotate the icon on the toggle button on open
         .md-toggle-icon {
             transition: transform $swift-ease-in-duration $swift-ease-in-out-timing-function;
 
             &.rv-toggled {
-                transform: rotate(90deg);
+                transform: rotate(180deg);
             }
         }
+
         // need to hide overflow during open/close animations so the layer list content displays properly
         &.ng-animate {
             overflow: hidden;
+
             // prevent toggle icon from animationg during list animation
             .md-toggle-icon {
                 transition: none;
@@ -86,6 +82,7 @@ $layer-item-height: rem(6.0);
         @include layer-item;
         @include entry-placeholder;
     }
+
     // rv-shadow is a thin guideline drawn on the right side of the list when group toggle is hovered over;
     // it helps to visualize which layers will be affected by the group toggle
     .rv-shadow {
@@ -164,14 +161,12 @@ absolutely position a button underneath an item so it acts like a button body fo
 
     .rv-toc-group-entry {
 
+        @extend %action-list-group;
+
         @include entry-controls;
         @include selected-layer-entry;
 
         height: $group-item-height;
-        position: relative;
-        display: flex;
-        align-items: center;
-        z-index: 0;
         padding-right: $toc-padding;
 
         // setting layer list shadow color when hover over layer group toggle
@@ -181,31 +176,6 @@ absolutely position a button underneath an item so it acts like a button body fo
             & ~ .rv-shadow {
                 background-color: $primary-color;
             }
-        }
-
-        .rv-layer-group-body-button {
-            text-align: left;
-            position: absolute;
-            padding: 0;
-            margin: 0;
-            top: 0; // anchor the button to its parent container
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1; // this is needed to place the button over the rotating icon as it's creating a new stacking content when transformed
-        }
-
-        .rv-layer-group-toggle-icon {
-            padding: rem(0.4);
-        }
-
-        .rv-layer-group-toggle-name {
-            margin-left: rem(0.8);
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            font-size: rem(1.6);
-            flex: 1;
         }
     }
 }

@@ -62,32 +62,32 @@
             }
 
             /**
-             * Parses a dynamic layer object and creates a legend item (with nested groups and symbology)
+             * Parses a dynamic layer object and creates a legend item (with nested groups and symbology).
              * For a dynamic layer, there are two visibility functions:
              *     - `setVisibility`: https://developers.arcgis.com/javascript/jsapi/arcgisdynamicmapservicelayer-amd.html#setvisibility
-             *      sets visibility of the whole layer; if this is set to false, using `setVisibleLayers` will not change anything
+             *      sets visibility of the whole layer; if this is set to false, using `setVisibleLayers` will not change anything.
              *
              *  - `setVisibleLayers`: https://developers.arcgis.com/javascript/jsapi/arcgisdynamicmapservicelayer-amd.html#setvisiblelayers
              *      sets visibility of sublayers;
              *
              * A tocEntry for a dynamic layer contains subgroups and leaf nodes, each one with a visibility toggle.
              *  - User clicks on leaf's visibility toggle:
-             *      toggle visibility of the leaf's layer item;
-             *      notify the root group of this dynamic layer;
-             *      walk root's children to find out which leaves are visible, omitting any subgroups
-             *      call `setVisibleLayers` on the layer object to change the visibility of the layer
+             *      toggle visibility of the leaf's layer item.
+             *      notify the root group of this dynamic layer.
+             *      walk root's children to find out which leaves are visible, omitting any subgroups.
+             *      call `setVisibleLayers` on the layer object to change the visibility of the layer.
              *
              *  - User clicks on subgroup's visibility toggle:
-             *      toggle visibility of the subgroup item;
-             *      toggle all its children (prevent children from notifying the root when they are toggled)
-             *      notify the root group of this dynamic layer;
-             *      walk root's children to find out which leaves are visible, omitting any subgroups
-             *      call `setVisibleLayers` on the layer object to change the visibility of the layer
+             *      toggle visibility of the subgroup item.
+             *      toggle all its children (prevent children from notifying the root when they are toggled).
+             *      notify the root group of this dynamic layer.
+             *      walk root's children to find out which leaves are visible, omitting any subgroups.
+             *      call `setVisibleLayers` on the layer object to change the visibility of the layer.
              *
              *  - User clicks on root's visibility toggle:
-             *      toggle all its children (prevent children from notifying the root when they are toggled)
-             *      walk root's children to find out which leaves are visible, omitting any subgroups
-             *      call `setVisibleLayers` on the layer object to change the visibility of the layer
+             *      toggle all its children (prevent children from notifying the root when they are toggled).
+             *      walk root's children to find out which leaves are visible, omitting any subgroups.
+             *      call `setVisibleLayers` on the layer object to change the visibility of the layer.
              *
              * @param  {Object} layer layer object from `layerRegistry`
              * @return {Object}       legend item
@@ -96,6 +96,8 @@
                 const state = legendEntryFactory.dynamicEntryMasterGroup(layer.config, layer, false);
                 layer.legendEntry = state;
 
+                // TODO: consider using the layerRegistry[layer.id].attributeBundle[featureIdx].layerInfo.then.legend instead of web call
+                //       this logic would be inside the loop over all valid slaves (there is one .layerInfo for each leaf layer)
                 const symbologyPromise = getMapServerSymbology(state.url);
 
                 // wait for symbology to load and ...
@@ -113,8 +115,8 @@
             }
 
             /**
-             * Parses a tile layer object and creates a legend item (with nested groups and symbology)
-             * Uses the same logic as dynamic layers to generate symbology hierarchy
+             * Parses a tile layer object and creates a legend item (with nested groups and symbology).
+             * Uses the same logic as dynamic layers to generate symbology hierarchy.
              * @param  {Object} layer layer object from `layerRegistry`
              * @return {Object}       legend item
              */
@@ -126,7 +128,7 @@
             }
 
             /**
-             * Parses feature layer object and create a legend entry with symbology
+             * Parses feature layer object and create a legend entry with symbology.
              * @param  {Object} layer layer object from `layerRegistry`
              * @return {Object}       legend item
              */
@@ -137,6 +139,7 @@
 
                 // HACK: to get file based layers working; this will be solved by the layer record ana legend entry hierarchy
                 // TODO: file based layers need to have their symbology generated
+                // TODO: consider using the layerRegistry[layer.id].attributeBundle[featureIdx].layerInfo.then.legend instead of web call
                 if (typeof state.url !== 'undefined') {
                     const symbologyPromise = getMapServerSymbology(state.url);
 
@@ -153,7 +156,7 @@
             }
 
             /**
-             * Parses esri image layer object and create a legend entry with symbology
+             * Parses esri image layer object and create a legend entry with symbology.
              * @param  {Object} layer layer object from `layerRegistry`
              * @return {Object}       legend item
              */
@@ -166,7 +169,7 @@
             }
 
             /**
-             * Parses WMS layer object and create a legend entry with symbology
+             * Parses WMS layer object and create a legend entry with symbology.
              * @param  {Object} layer layer object from `layerRegistry`
              * @return {Object}       legend item
              */
@@ -186,7 +189,7 @@
             }
 
             /**
-             * Add a placeholder for the provided layer
+             * Add a placeholder for the provided layer.
              *
              * @param {Object} layerRecord object from `layerRegistry` `layers` object
              */
@@ -216,9 +219,9 @@
             }
 
             /**
-             * Add a provided layer to the appropriate group;
+             * Add a provided layer to the appropriate group.
              *
-             * TODO: hide groups with no layers;
+             * TODO: hide groups with no layers.
              * @param {Object} layer object from `layerRegistry` `layers` object
              * @param {Number} index position to insert layer into the legend
              */
@@ -238,9 +241,9 @@
         }
 
         /**
-         * TODO: Work in progress... Works fine for feature layers only right now; everything else gest a generic icon;
-         * TODO: move to geoapi as it's stateless and very specific
-         * Scrapes feaure and dynamic layers for their symbology;
+         * TODO: Work in progress... Works fine for feature layers only right now; everything else gest a generic icon.
+         * TODO: move to geoapi as it's stateless and very specific.
+         * Scrapes feaure and dynamic layers for their symbology.
          *
          * @param  {String} layerUrl service url
          * @returns {Array} array of legend items
@@ -297,7 +300,7 @@
         }
 
         /**
-         * Applies retrieved symbology to the layer item's state
+         * Applies retrieved symbology to the layer item's state.
          * @param  {Object} state     layer item
          * @param  {Object} layerData data from the legend endpoint
          */

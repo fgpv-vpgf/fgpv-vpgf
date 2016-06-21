@@ -27,6 +27,7 @@
                 ogcWms: identifyOgcWmsLayer
             };
 
+            // TODO convert this object into an ES6 class
             // jscs doesn't like enhanced object notation
             // jscs:disable requireSpacesInAnonymousFunctionExpression
             /**
@@ -34,10 +35,12 @@
              * @param  {String} name      layer name of the queried layer
              * @param  {Array} symbology array of layer symbology to be displayed in details panel
              * @param  {String} format    indicates data formating template
+             * @param  {Object} layerRec  layer record for the queried layer
+             * @param  {Integer} featureIdx  optional feature index of queried layer (should be provided for attribute based layers)
              * @param  {String} caption   optional captions to be displayed along with the name
              * @return {Object}           identify result object
              */
-            const IDENTIFY_RESULT = (name, symbology, format, caption) => {
+            const IDENTIFY_RESULT = (name, symbology, format, layerRec, featureIdx, caption) => {
                 return {
                     isLoading: true,
                     requestId: -1,
@@ -45,7 +48,9 @@
                         name,
                         symbology,
                         format,
-                        caption
+                        caption,
+                        layerRec,
+                        featureIdx
                     },
                     data: []
                 };
@@ -164,7 +169,8 @@
                     }
 
                     const identifyResult =
-                        IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature', legendEntry.name);
+                        IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature', layerRecord,
+                            legendEntry.featureIdx, legendEntry.name);
 
                     identifyResults[legendEntry.featureIdx] = identifyResult;
                 });
@@ -184,12 +190,20 @@
                         // we want to make a nice table
                         clickResults.forEach(ele => {
                             // NOTE: the identify service returns aliased field names, so no need to look them up here
-                            const identifyResult = identifyResults[ele.layerId];
-                            identifyResult.data.push({
-                                name: ele.value,
-                                data: attributesToDetails(ele.feature.attributes)
+                            // NOTE: ele.layerId is what we would call featureIdx
+                            layerRecord.attributeBundle[ele.layerId].layerData.then(lData => {
+                                const identifyResult = identifyResults[ele.layerId];
+                                identifyResult.data.push({
+                                    name: ele.value,
+                                    data: attributesToDetails(ele.feature.attributes),
+                                    oid: ele.feature.attributes[lData.oidField],
+                                    symbology: [{
+                                        icon: geoState.mapService.retrieveSymbol(ele.feature.attributes,
+                                            lData.renderer)
+                                    }]
+                                });
+                                identifyResult.isLoading = false;
                             });
-                            identifyResult.isLoading = false;
                         });
 
                         // set the rest of the entries to loading false
@@ -221,7 +235,8 @@
                 }
 
                 const identifyResult =
-                    IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, infoMap[legendEntry.featureInfoMimeType]);
+                    IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, infoMap[legendEntry.featureInfoMimeType],
+                        layerRecord);
 
                 const identifyPromise = gapiService.gapi.layer.ogc
                     .getFeatureInfo(
@@ -259,7 +274,8 @@
                 }
 
                 const identifyResult =
-                    IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature');
+                    IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature',
+                        layerRecord, legendEntry.featureIdx);
 
                 // run a spatial query
                 const qry = new gapiService.gapi.layer.Query();
@@ -275,9 +291,10 @@
                 // no need to check if the layer is registered as this object comes from an array of registered layers
                 const identifyPromise = $q.all([
                         layerRecord.getAttributes(legendEntry.featureIdx),
-                        $q.resolve(layerRecord._layer.queryFeatures(qry))
+                        $q.resolve(layerRecord._layer.queryFeatures(qry)),
+                        layerRecord.attributeBundle[legendEntry.featureIdx].layerData
                     ])
-                    .then(([attributes, queryResult]) => {
+                    .then(([attributes, queryResult, layerData]) => {
                         // transform attributes of query results into {name,data} objects one object per queried feature
                         //
                         // each feature will have its attributes converted into a table
@@ -291,10 +308,13 @@
 
                                 // use object id find location of our feature in the feature array, and grab its attributes
                                 const featAttribs = attributes.rows[attributes.oidIndex[objId]];
-
                                 return {
                                     name: getFeatureName(featAttribs, legendEntry, objId),
-                                    data: attributesToDetails(featAttribs, attributes.fields)
+                                    data: attributesToDetails(featAttribs, attributes.fields),
+                                    oid: objId,
+                                    symbology: [
+                                        { icon: geoState.mapService.retrieveSymbol(featAttribs, layerData.renderer) }
+                                    ]
                                 };
                             });
                     });
@@ -303,9 +323,9 @@
             }
 
             /**
-             * Modifies identify promises to always resolve, never reject
-             * any errors caught will be added to the details data object
-             * resolutions of these promises are for turning off loading indicator
+             * Modifies identify promises to always resolve, never reject.
+             * Any errors caught will be added to the details data object.
+             * Resolutions of these promises are for turning off loading indicator.
              *
              * @param  {Promise} promise [description]
              * @return {Promise}                 promise that doesn't reject
@@ -328,6 +348,8 @@
              * @param {Object} clickEvent an ESRI event object for map click events
              */
             function clickHandlerBuilder(clickEvent) {
+                geoState.mapService.clearHilight();
+
                 if (getVisibleLayers() === 0) {
                     return;
                 }
@@ -348,6 +370,8 @@
                     height: mapObject.height,
                     mapExtent: mapObject.extent,
                 };
+
+                geoState.mapService.dropMapPin(clickEvent.mapPoint);
 
                 layerRegistry
                     .getAllQueryableLayerRecords()

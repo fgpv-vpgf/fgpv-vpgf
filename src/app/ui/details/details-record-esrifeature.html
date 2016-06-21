@@ -1,0 +1,28 @@
+<md-button
+    class="rv-group-body-button rv-button-square"
+    ng-focus="self.renderDetails()"
+    ng-mouseover="self.renderDetails()"
+    ng-click="self.toggleDetails()"></md-button>
+
+<rv-toc-entry-symbology
+    symbology="self.item.symbology"></rv-toc-entry-symbology>
+
+<span class="rv-group-name">
+    {{ self.item.name }}
+</span>
+
+<div class="rv-group-controls">
+
+    <md-button class="md-icon-button rv-icon-20" ng-click="self.zoomToFeature()">
+        <md-tooltip md-direction="top">{{ 'filter.tooltip.zoom' | translate }}</md-tooltip>
+        <md-icon md-svg-src="action:zoom_in"></md-icon>
+    </md-button>
+
+</div>
+
+<div class="rv-icon-24 rv-group-toggle-icon">
+    <md-icon
+        class="md-toggle-icon"
+        ng-class="{ 'rv-toggled' : self.item.isExpanded }"
+        md-svg-src="hardware:keyboard_arrow_down"></md-icon>
+</div>

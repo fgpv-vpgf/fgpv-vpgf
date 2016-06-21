@@ -130,8 +130,7 @@
         }
 
         .rv-details-data {
-            opacity: 1;
-            transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            @include details-data;
         }
 
         &.rv-expanded {
@@ -147,21 +146,6 @@
         &.rv-multiple {
             .rv-details-data {
                 margin-left: rem(4.8);
-            }
-        }
-        // TODO enhance to proper sassyness
-        .rv-details-zebra-list {
-            list-style-type: none;
-            padding: 0;
-            border-bottom: 1px solid $divider-color-light;
-
-            > li {
-                padding: 5px;
-                overflow: auto;
-            }
-
-            > li:nth-child(even) {
-                background-color: #ddd;
             }
         }
 
@@ -183,5 +167,85 @@
         .rv-sub-subhead {
             font-size: rem(1.6);
         }
+    }
+}
+
+$details-padding: rem(0.4);
+$details-record-height: rem(6.0);
+
+@mixin details-data {
+    opacity: 1;
+    transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+    padding: 0;
+
+    .rv-subsection {
+        padding: rem(0.8) 0;
+
+        .rv-subheader {
+            padding: rem(0.8) rem(1.6);
+        }
+    }
+
+    .rv-subcontent {
+        @include EsriFeature;
+        @include Text;
+        @include HTML;
+        @include nothing;
+    }
+}
+
+@mixin EsriFeature {
+    &.rv-EsriFeature {
+        .rv-records-list {
+            @extend %action-list;
+            @extend %shadow-group-list;
+
+            > li:last-child .rv-details-list{
+                border-bottom: none;
+            }
+        }
+
+        .rv-details-list {
+            @extend %zebra-list;
+
+            padding: rem(0.8) rem(1.6);
+            border-bottom: 1px solid $divider-color-light;
+        }
+
+        rv-details-record-esrifeature {
+            @extend %action-list-group;
+
+            height: $details-record-height;
+            padding-right: $details-padding + rem(1.0);
+            padding-left: $details-padding + rem(1.0);
+
+            .rv-toggled.md-toggle-icon {
+                transform: rotate(180deg) !important;
+            }
+
+            // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
+            &:hover ~ .rv-details-list:not(.ng-hide) ~ .rv-shadow {
+                background-color: $primary-color;
+            }
+        }
+    }
+}
+
+@mixin Text {
+    pre {
+        white-space: pre-wrap;
+        font-family: inherit;
+        padding: rem(0.8) rem(1.6);
+        margin: 0;
+    }
+}
+
+@mixin HTML {
+
+}
+
+@mixin nothing {
+    .rv-nothing {
+        padding: rem(0.8) rem(1.6);
     }
 }

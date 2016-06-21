@@ -90,7 +90,7 @@
             }
 
             /**
-             * Retrieves all  layer records of the specified type
+             * Retrieves all layer records of the specified type.
              * @return {Array} array of  layer records
              */
             function getLayersByType(layerType) {
@@ -117,6 +117,7 @@
              * @param  {Object} params event parameters
              */
             function extentChangeHandler(params) {
+                geoState.mapService.clearHilight();
                 if (params.levelChange) {
                     // refresh scale state of all layers
                     Object.keys(service.layers).forEach(layerId => {
@@ -126,7 +127,7 @@
             }
 
             /**
-             * Update scale status of a layer
+             * Update scale status of a layer.
              * @private
              * @param  {String} layerId       layer id of layer to update
              */
@@ -136,7 +137,7 @@
             }
 
             /**
-             * Determines if a scale is outside the given bounds
+             * Determines if a scale is outside the given bounds.
              * @private
              * @param  {Integer} scale           scale value to test
              * @param  {Integer} minScale        minimum invalid scale level for zoom out, 0 for none
@@ -167,7 +168,7 @@
             }
 
             /**
-             * Generate a mapping of feature indexes to off-scale status for a layer
+             * Generate a mapping of feature indexes to off-scale status for a layer.
              * @private
              * @param  {Object} layerRecord   a LayerRecord object
              * @return {Promise}              resolves with mapping of layer indexes to boolean off-scale status
@@ -210,8 +211,8 @@
              * If the target layer is no specified, the source layer is placed at the bottom of its sort group.
              *
              * NOTE the ESRI map stack does not reflect the legend and is arranged in reverse order
-             * for ESRI low index = low drawing order; legend: low index = high drawing order
-             * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details
+             * for ESRI low index = low drawing order; legend: low index = high drawing order.
+             * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details.
              *
              * @param {String} sourceId the id of the layer to be moved
              * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
@@ -253,9 +254,9 @@
              * Move a source layer within the map on top (visually) of the target layer.
              *
              * NOTE this does not modify the legend, movement within the legend should be handled separately, ideally
-             * calling this function immediately before or after the legend is updated
+             * calling this function immediately before or after the legend is updated.
              *
-             * IMPORTANT NOTE: targetId __must__ be the id of the layer which is actually in the map stack; this can't be a placholder which is not added to the map object
+             * IMPORTANT NOTE: targetId __must__ be the id of the layer which is actually in the map stack; this can't be a placholder which is not added to the map object.
              *
              * @param {String} sourceId the id of the layer to be moved
              * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
@@ -394,7 +395,7 @@
             }
 
             /**
-             * Zoom to visibility scale
+             * Zoom to visibility scale.
              * @param {Number} layerId  the id of the layer to zoom to scale to
              * @param {Boolean} zoomIn the zoom to scale direction; true need to zoom in; false need to zoom out
              *
@@ -407,7 +408,7 @@
             }
 
             /**
-             * Reload a layer.  Can accept LayerRecords or LegendEntries
+             * Reload a layer.  Can accept LayerRecords or LegendEntries.
              * @param {LayerRecord|LegendEntry} l the layer to be reloaded
              * @param {Function} configUpdate an optional function which will be passed the configuration
              *                   of the given layer and can make changes before the new layer is loaded
@@ -463,7 +464,7 @@
             }
 
             /**
-             * Check to see if the attribute in question is an esriFieldTypeDate type
+             * Check to see if the attribute in question is an esriFieldTypeDate type.
              * @param {String} attribName the attribute name we want to check if it's a date or not
              * @param {Array} fields array of field definitions. the attribute should belong to the provided set of fields
              * @return {Boolean} returns true or false based on the attribField type being esriFieldTypeDate
