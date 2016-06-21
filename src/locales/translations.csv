@@ -157,13 +157,13 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,stepper.continue,continue,[fr] continue
 ,stepper.cancel,cancel,[fr] cancel
 ,help.navigationControls.header,Navigation Controls,Contrôles de navigation
-,help.navigationControls.info,"Navigation controls are used for changing the viewing extent of the map; the datagrid updates accordingly to what's viewable in the current extent.<br>
+,help.navigationControls.info,"Navigation controls are used for changing the viewing extent of the map.<br>
 <br>
 Usage:<br>
 Click and drag to move the map in a particular direction.<br>
 <br>
 * Zoom In/Out: Click 'Zoom In/Out' to change the map extent<br>
-* Canada: Click 'Canada' to view map at its full extent","Les contrôles de navigation servent à modifier la taille de l’affichage de la carte; la grille de données sera actualisée et ajustée selon le contenu visible dans l’affichage en cours.<br>
+* Canada: Click 'Canada' to view map at its full extent","Les contrôles de navigation servent à modifier la taille de l’affichage de la carte.<br>
 <br>
 Utilisation :<br>
 Cliquez et faites glisser pour déplacer la carte dans une direction particulière.<br>
@@ -224,10 +224,11 @@ Utilisation:<br>
 ,help.legend.header,Legend,Legend
 ,help.legend.info,"The Legend dropdown serves as a map legend and lists the layers available to display in the map. Feature layers also display in the data table panel. There are three types of layers that can reside in the Legend dropdown:<br>
 - Feature layers represent data that can be interacted with on the map, and viewed in the data table panel.<br>
-- Static layers provide additional geographical context against the basemap. They are not interactive and do not show in the data table panel.<br>
+- Dynamic layers represent interactive data on the map that cannot be cached, but have to be fetched from the server each time the map is changed. They can be a collection of feature layers and can be viewed in the data table panel.<br>
+- Image Service layers displays imagery and other types of raster data provided by an ArcGIS Server Image Service. They are not interactive and do not show in the data table panel.<br>
+- Tile layers displays map content from an ArcGIS Server Map service that has been cached (tiled). A cached map service contains pre-generated map tiles. They are not interactive and do not show in the data table panel.<br>
 - WMS layers provide an overlay of data from a Web Map Service. They can support a click interaction on the map, but do not show in the data table panel.","Le menu déroulant 'Légende' sert de légende pour la carte et répertorie les couches disponibles pour afficher sur la carte. Les couches d'entités s'affichent également dans le panneau 'Tableau de données'. Il existe trois types de couches qui peuvent être affichées dans le menu déroulant 'Légende' : <br>
 - Les couches d'entités représentent des données avec lesquelles la carte peut interagir et qui peuvent être affichées dans le panneau 'Tableau de données'.<br>
-- Les couches statiques ajoutent un contexte géographique supplémentaire au fond de carte. Elles ne sont pas interactives et ne sont pas affichées dans le panneau 'Tableau de données'.<br>
 - Les couches SCW fournissent une superposition de données fournies d'un service de carte Web. Ces données sont interactives sur la carte, mais ne peuvent apparaître dans le panneau 'Tableau de données'."
 ,help.layerVisibility.header,Layer Visibility,Visibilité de la couche
 ,help.layerVisibility.info,"* Hide/Show: Select the ""eye"" icon next to a dataset or group name to toggle the layer display on or off on the map.",* Masquer/Afficher : Sélectionnez l’icône en forme d’œil près du nom de l’ensemble de données pour masquer ou afficher la couche sur la carte.
@@ -235,6 +236,8 @@ Utilisation:<br>
 ,help.layerLegends.info,"Each layer has some symbology associated with it. For simple feature layers a single icon will be present next to the layer name. For complex feature layers (i.e. those with multiple symbols used per layer) the icon will show as a stack and maybe toggled on and off. When toggled on a section will expand beneath the layer name and show the full symbology for the layer. WMS layers may optionally have a graphical legend defined, if one is present it will be displayed in the same drop down manner.","Une certaine symbologie est associée à chaque couche. Pour des couches d'entités (feature layer) simples, une seule icône sera présente à côté du nom de la couche. Pour les couches de d'entités complexes (c.-à-d. celles où de multiples symboles sont utilisés par couche) l’icône apparaîtra comme une pile qui peut être activée ou désactivée. Lorsqu'activée, une section s'étendra sous la couche et affichera la symbologie correspondante. Les couches SCW peuvent optionnellement possèder une légende graphique qui sera, de la même manière, affichée sous la couche associée."
 ,help.handlingLayerErrors.header,Handling Layer Errors,Traitement des erreurs de couche
 ,help.handlingLayerErrors.info,"If a layer fails to load correctly it will be identified by an error notice. Instead of the standard layer actions you can select to either reload the layer (this is particularly helpful if there is a temporary network connectivity issue) or remove the layer. If a layer is removed it will be taken out of the layer selector completely and if it is added back via ""Undo"" or ""Add Dataset"" it will lose any previous customizations.","Si la couche ne se charge pas correctement, un avis d’erreur s'affichera. Au lieu des mesures standards liées à la couche, on peut choisir de recharger la couche (ce qui est particulièrement utile en cas de problème temporaire de connexion au réseau) ou de retirer la couche. Si une couche est retirée, elle sera retirée de la légende via « Annuler ». Si elle est rajoutée via « Ajouter une couche » elle perdra toutes les personnalisations précédentes."
+,help.geolocation.header,Geolocation,[FR] Géolocalisation
+,help.geolocation.info,"Click to zoom to the current geographical location of the user.","[FR] Click to zoom to the current geographical location of the user."
 ,help.layerSettings.header,Layer Settings,Paramètres de couches
 ,help.layerSettings.info,"Hover over a layer name and click the ""three dots"" icon link to access additional options for the layer.<br>
 <br>
@@ -285,9 +288,9 @@ Préciser les caractéristiques du jeu de données. - Selon le type du jeu de do
 - Les jeux de données dont la source est un fichier peuvent être caractérisés par les éléments suivants : le nom du jeu de données, qui sera affiché dans le sélecteur de couche (Layer Selector); un attribut primaire (Primary Attribute), qui agit de la même manière que le service de fonctionnalité (Feature Service); une couleur de symbole (Symbol colour), qui détermine la couleur des points, des lignes, des polygones sur la carte.<br>
 En cliquant sur le bouton « Ajouter jeu de données » (Add Dataset), on peut insérer la couche dans la carte.<br>"
 ,help.dataTable.header,Data Table Panel,Panneau Tableau de données
-,help.dataTable.info,"The Data Table Panel lists detailed information about all the selected features and that/or are in the current map extent.<br>
+,help.dataTable.info,"The Data Table Panel lists detailed information about all the selected features in the map.<br>
 You can view, sort, print, and save the data and zoom the map to a specific entry listed in the data table.<br>
-You can also minimize, maximize, or split the panel view.<br>","Le panneau 'Tableau de données' répertorie des informations détaillées sur toutes les entités sélectionnées et/ou qui sont dans l'étendue de la carte actuelle.<br>
+You can also minimize, maximize, or split the panel view.<br>","Le panneau 'Tableau de données' répertorie des informations détaillées sur toutes les entités de la carte.<br>
 Vous pouvez afficher, trier, imprimer, enregistrer les données et zoomer la carte à une entrée spécifique figurant dans le tableau de données. <br>
 Vous pouvez également réduire, agrandir, ou diviser la vue du panneau.<br>"
 ,help.informationPanel.header,Information Panel (Point),Panneau d’information (Point)
@@ -298,11 +301,9 @@ Utilisation:<br>
 Sélectionnez une entité interactive directement sur la carte. Le panneau d’information (Point) affichera les renseignements relatifs à l’entité sélectionnée. Un clic sur le « X » située dans le coin supérieur droit du panneau masquera l’affichage du celui-ci.<br>"
 ,help.accessibility.header,Accessibility,Accessibilité
 ,help.accessibility.info,"This page is WCAG 2.0 AA compliant.<br>
-Keyboard Accessibility - Keyboard functionality is provided as an alternative for users who are unable to use a mouse. Use the Tab key to navigate forward to links and controls on the page. Press Shift+Tab to go back one step. Use the Enter or Spacebar keys to activate links and controls.<br>
-Navigation Controls - Zoom Slider: With the Zoom Slider highlighted, use the Up arrow key to zoom in and the Down arrow key to zoom out.
+Keyboard Accessibility - Keyboard functionality is provided as an alternative for users who are unable to use a mouse. Use the Tab key to navigate forward to links and controls on the page. Press Shift+Tab to go back one step. Use the Enter or Spacebar keys to activate links and controls.
 ","Cette page respecte les règles pour l’accessibilité des contenus Web WCAG 2.0 AA.<br>
-Accessibilité au clavier - La fonctionnalité du clavier est offerte en tant qu’alternative pour les utilisateurs qui sont incapables d’utiliser une souris. Utilisez la touche de tabulation pour naviguer vers les liens et les contrôles sur la page. Appuyez simultanément sur les touches Majuscule+Tabulation pour revenir un pas en arrière. Utilisez la touche Entrée ou la barre d’espace pour activer les liens et les contrôles.<br>
-Contrôles de navigation - Curseur de zoom : Avec le curseur de zoom sélectionné, utilisez la touche flèche orientée vers le haut pour effectuer un zoom avant; utilisez la touche flèche orientée vers le bas pour effectuer un zoom arrière."
+Accessibilité au clavier - La fonctionnalité du clavier est offerte en tant qu’alternative pour les utilisateurs qui sont incapables d’utiliser une souris. Utilisez la touche de tabulation pour naviguer vers les liens et les contrôles sur la page. Appuyez simultanément sur les touches Majuscule+Tabulation pour revenir un pas en arrière. Utilisez la touche Entrée ou la barre d’espace pour activer les liens et les contrôles."
 ,help.loadTimes.header,Load Times / Unanticipated Behaviour,Durée du chargement / Comportement imprévu
 ,help.loadTimes.info,"Load times may vary based on network location and bandwidth availability, and unanticipated behaviour may occur if any map interactions occur before data is fully loaded. Please allow the webpage to load completely before triggering any map functions. <br>
 Note: If the scrolling loading line indicator appears at the bottom of the map or in the legend, or the data table panel displays a loading message, please allow the loading indicator to disappear before triggering any function on the map.","La durée des chargements peut varier selon l’emplacement réseau et la disponibilité de la bande passante. Un comportement imprévu peut survenir lorsque des interactions avec la carte ont lieu avant la conclusion du chargement des données. Veuillez permettre le chargement complet de la page Web avant d’activer d’autres fonctions sur la carte.<br>
