@@ -273,10 +273,6 @@
         /**
          * Closes a panel from display.
          *
-         * If panelToClose is a parent all of its children are closed. Otherwise
-         * attempt to replace child panel with a sibling from history, closing the
-         * parent panel if one cannot be found.
-         *
          * @param   {Object}    panelToClose the panel object to be opened
          * @param   {Boolean}   propagate optional allow parent/sibling panels to be modified
          * @return  {Promise}   resolves when panel animation has completed
@@ -295,17 +291,7 @@
             // closing child panel
             } else {
                 if (propagate) {
-                    // replace with sibling from history if exists and keep parent panel open
-                    const subPanel = service.panelHistory
-                        .map(item => getItem(item))
-                        .find(subPanel => subPanel.name !== panelToClose.name &&
-                            subPanel.item.parent === panelToClose.item.parent);
-
-                    if (subPanel) {
-                        closePanel(panelToClose, false);
-                        return setItemProperty(subPanel.name, 'active', true, true);
-                    }
-                    closePanel(getParent(panelToClose.name), false);
+                    closePanel(getParent(panelToClose.name));
                 }
                 modifyHistory(panelToClose, false);
                 animationPromise = setItemProperty(panelToClose.name, 'active', false, true);
