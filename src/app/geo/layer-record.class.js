@@ -241,7 +241,7 @@
             getAttributes (featureIdx) {
                 const formAtt = this._formattedAttributes;
 
-                if (formAtt.hasOwnProperty(featureIdx) && formAtt[0].$$state.status === 1) {
+                if (formAtt.hasOwnProperty(featureIdx) && formAtt[featureIdx].$$state.status === 1) {
                     return this._formattedAttributes[featureIdx];
                 }
 
