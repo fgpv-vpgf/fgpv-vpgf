@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvShell
-     * @module app.layout
+     * @module rvShell
+     * @memberof app.layout
      * @restrict E
      * @description
      *

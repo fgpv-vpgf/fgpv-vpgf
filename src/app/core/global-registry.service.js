@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
      * @name globalRegistry
-     * @module app.core
+     * @memberof app.core
      * @description
      *
      * The `globalRegistry` constant wraps around RV global registry for a single point of reference. Use this to access `RV` global.

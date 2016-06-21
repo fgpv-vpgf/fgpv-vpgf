@@ -5,7 +5,6 @@
      * @ngdoc service
      * @name stateManager
      * @module app.common
-     * @requires
      * @description
      *
      * The `stateManager` factory is a service controlling states (true/false) of panels and their content.

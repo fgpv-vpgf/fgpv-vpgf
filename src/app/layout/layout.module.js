@@ -2,8 +2,9 @@
     'use strict';
 
     /**
-     * @ngdoc module
-     * @name app.layout
+     * @namespace app.layout
+     * @requires app.core
+     * @requires app.geo
      *
      * @description
      *
