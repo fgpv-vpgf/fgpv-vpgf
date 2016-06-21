@@ -17,15 +17,19 @@ function projectGeojson(geojson, outputSpatialReference, inputSpatialReference) 
 }
 
 /**
- * Convert a projection to an EPSG string.  If it is an ESRI SpatialReference or an integer it will be converted.
+ * Convert a projection to an string that is compatible with proj4.  If it is an ESRI SpatialReference or an integer it will be converted.
  * @param {Object|Integer|String} proj an ESRI SpatialReference, integer or string.  Strings will be unchanged and unchecked,
  * ints and SpatialReference objects will be converted.
  * @return {String} A string in the form EPSG:####
  * @private
  */
-function makeEpsgString(proj) {
+function normalizeProj(proj) {
     if (typeof proj === 'object') {
-        return 'EPSG:' + proj.wkid;
+        if (proj.wkid) {
+            return 'EPSG:' + proj.wkid;
+        } else if (proj.wkt) {
+            return proj.wkt;
+        }
     } else if (typeof proj === 'number') {
         return 'EPSG:' + proj;
     } else if (typeof proj === 'string') {
@@ -42,7 +46,37 @@ function makeEpsgString(proj) {
  * @return {Array|Object} a 2d array or object containing the projected point
  */
 function localProjectPoint(srcProj, destProj, point) {
-    return proj4(makeEpsgString(srcProj), makeEpsgString(destProj), point);
+    return proj4(normalizeProj(srcProj), normalizeProj(destProj), point);
+}
+
+/**
+ * Project a single point.
+ * @param {Object|Integer|String} destProj the spatial reference of the result (as ESRI SpatialReference, integer WKID or an EPSG string)
+ * @param {Object} geometry an object conforming to ESRI Geometry object standards containing the coordinates to Reproject
+ * @return {Object} an object conforming to ESRI Geomtery object standards containing the input geometry in the destination projection
+ */
+function localProjectGeometry(destProj, geometry) {
+    // FIXME we seem to be really dependant on wkid. ideally enhance to handle all SR types
+
+    // HACK >:'(
+    // terraformer has this undesired behavior where, if your input geometry is in WKID 102100, it will magically
+    // project all your co-ordinates to lat/long when converting between ESRI and GeoJSON formats.
+    // to stop it from ruining us, we temporarily set the spatial reference to nonsense so it will leave it alone
+    const realSR = geometry.spatialReference;
+    geometry.spatialReference = { wkid: 8888 }; // nonsense!
+    const grGeoJ = terraformer.ArcGIS.parse(geometry, { sr: 8888 });
+    geometry.spatialReference = realSR;
+
+    // project json
+    projectGeojson(grGeoJ, normalizeProj(destProj), normalizeProj(realSR));
+
+    // back to esri format
+    const grEsri = terraformer.ArcGIS.convert(grGeoJ);
+
+    // doing this because .convert likes to attach a lat/long spatial reference for fun.
+    grEsri.spatialReference = destProj;
+
+    return grEsri;
 }
 
 /**
@@ -95,7 +129,7 @@ function localProjectExtent(extent, sr) {
     }
 
     // find the destination extent
-    let destProj = makeEpsgString(sr);
+    let destProj = normalizeProj(sr);
 
     if (extent.spatialReference.wkid && !proj4.defs(srcProj)) {
         throw new Error('Source projection WKID not recognized by proj4 library');
@@ -116,7 +150,7 @@ function localProjectExtent(extent, sr) {
 }
 
 /**
- * Check whether or not a spatialReference is supported by proj4 library
+ * Check whether or not a spatialReference is supported by proj4 library.
  *
  * @param {Object} spatialReference to be checked to see if it's supported by proj4
  * @param {Function} epsgLookup an optional lookup function for EPSG codes which are not loaded
@@ -210,7 +244,7 @@ function esriServiceBuilder(esriBundle) {
 }
 
 /**
-* Checks if two spatial reference objects are equivalent.  Handles both wkid and wkt definitions
+* Checks if two spatial reference objects are equivalent.  Handles both wkid and wkt definitions.
 *
 * @method isSpatialRefEqual
 * @static
@@ -253,6 +287,7 @@ module.exports = function (esriBundle) {
         isSpatialRefEqual,
         localProjectExtent,
         localProjectPoint,
+        localProjectGeometry,
         projectGeojson,
         Point: esriBundle.Point,
         projectEsriExtent: projectEsriExtentBuilder(esriBundle),

@@ -15,14 +15,6 @@
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         var layer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CommonGIS_AuxMerc/MapServer/1');
 
-        var legend = [
-        {
-          'name' : '',
-          'url' : 'FCBA65AE',
-          'icon' : 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7/',
-          'contentType' : 'image/png'
-        }
-      ];
         layer.on('load', function(evt) {
             console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE LOADED', layer.renderer);
             console.log(layer);
@@ -32,15 +24,15 @@
             console.log('GGGGGGGGGGGGGGGGGG fData', fData);
 
             var oid = 7;
-            console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFF', fData[0]);
+            console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFF', fData[1]);
             fData[1].layerData.then(lData => {
-                console.log('IIIIIIIIIIIIIIII renderer', lData.renderer, legend);
-                var lconfig = api.symbology.createSymbologyConfig(lData.renderer, legend);
+                console.log('IIIIIIIIIIIIIIII renderer', lData.renderer);
+                
                 fData[1].getAttribs().then(gData => {
-                    console.log('HHHHHHHHHHHHHHHHH', lconfig, gData);
-                    var icon = api.symbology.getGraphicIcon(gData, lconfig, oid);
+                    console.log('HHHHHHHHHHHHHHHHH', gData);
+                    var icon = api.symbology.getGraphicIcon(gData.features[gData.oidIndex[oid]].attributes, lData.renderer);
                     var myimg = document.getElementById('mine');
-                    myimg.src = 'data:image/png;base64,' + icon;
+                    myimg.src = icon;
                     console.log(icon);
                 });
             });

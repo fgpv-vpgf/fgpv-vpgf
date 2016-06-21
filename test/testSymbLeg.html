@@ -14,6 +14,7 @@
     <div id='bucket3' />
     <div id='bucket4' />
     <div id='bucket5' />
+    <div id='bucket6' />
     <p id='mess' />
     <script src='../dist/geoapi.min.js'></script>
     <script>
@@ -50,7 +51,7 @@
 
             layer1.on('load', function(evt) {
 
-                var legend1 = api.symbology.rendererToLegend(layer1.renderer , 0);
+                var legend1 = api.symbology.rendererToLegend(layer1.renderer.toJson() , 0);
                 console.log('legend1', legend1);
 
                 legend1.layers[0].legend.forEach(legItem => {
@@ -64,8 +65,7 @@
             var layer2 = new api.layer.FeatureLayer('http://ec.gc.ca/arcgis/rest/services/data/73865ed2-5063-4df8-803a-8e4204307758/MapServer/0');
 
             layer2.on('load', function(evt) {
-
-                var legend2 = api.symbology.rendererToLegend(layer2.renderer , 0);
+                var legend2 = api.symbology.rendererToLegend(layer2.renderer.toJson() , 0);
                 console.log('legend2', legend2);
 
                 legend2.layers[0].legend.forEach(legItem => {
@@ -79,7 +79,7 @@
 
             layer3.on('load', function(evt) {
 
-                var legend3 = api.symbology.rendererToLegend(layer3.renderer , 0);
+                var legend3 = api.symbology.rendererToLegend(layer3.renderer.toJson() , 0);
                 console.log('legend3', legend3);
 
                 legend3.layers[0].legend.forEach(legItem => {
@@ -93,7 +93,7 @@
 
             layer4.on('load', function(evt) {
 
-                var legend4 = api.symbology.rendererToLegend(layer4.renderer , 0);
+                var legend4 = api.symbology.rendererToLegend(layer4.renderer.toJson() , 0);
                 console.log('legend4', legend4);
 
                 legend4.layers[0].legend.forEach(legItem => {
@@ -108,7 +108,7 @@
 
             layer5.on('load', function(evt) {
 
-                var legend5 = api.symbology.rendererToLegend(layer5.renderer , 0);
+                var legend5 = api.symbology.rendererToLegend(layer5.renderer.toJson() , 0);
                 console.log('legend5', legend5);
 
                 legend5.layers[0].legend.forEach(legItem => {
@@ -116,6 +116,32 @@
                 })
 
             });
+
+            // triangle test
+            var renderer = {
+                type: 'simple',
+                label: 'i am a triangle',
+                symbol: {
+                    color: [200,0,0,200],
+                    outline: {
+                        color: [0,0,200,255],
+                        style: 'esriSLSSolid',
+                        type: 'esriSLS',
+                        width: 1
+                    },
+                    size: 14,
+                    style: 'esriSMSTriangle',
+                    type: 'esriSMS'
+                }
+            };
+
+            var legend6 = api.symbology.rendererToLegend(renderer, 0);
+                console.log('legend5', legend6);
+
+                legend6.layers[0].legend.forEach(legItem => {
+                    addImg('bucket6', legItem);
+                })
+
 
         });
     </script>

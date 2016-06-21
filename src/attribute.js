@@ -275,7 +275,7 @@ function loadDataBatch(maxId, maxBatch, layerUrl, idField, attribs, callerDef, e
 * @param  {Object} esriBundle bundle of API classes
 * @return {Object} attributes in a packaged format for asynch access
 */
-function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
+function loadFeatureAttribs(layerUrl, attribs, esriBundle, geoApi) {
 
     const layerPackage = newLayerPackage(getLayerIndex(layerUrl), esriBundle);
 
@@ -321,6 +321,9 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle) {
                     layerData.geometryType = serviceResult.geometryType;
                     layerData.minScale = serviceResult.minScale;
                     layerData.maxScale = serviceResult.maxScale;
+                    layerData.legend = geoApi.symbology.rendererToLegend(layerData.renderer);
+
+                    geoApi.symbology.enhanceRenderer(layerData.renderer, layerData.legend);
 
                     // temporarily store things for delayed attributes
                     layerData.load = {
@@ -378,7 +381,7 @@ function pluckOptions(featureIdx, options = {}) {
 * @param  {Object} esriBundle bundle of API classes
 * @return {Object} attributes in layer bundle format (see newLayerBundle)
 */
-function processFeatureLayer(layer, options, esriBundle) {
+function processFeatureLayer(layer, options, esriBundle, geoApi) {
 
     // logic is in separate function to passify the cyclomatic complexity check.
     // TODO we may want to support the option of a layer that points to a server based JSON file containing attributes
@@ -392,7 +395,7 @@ function processFeatureLayer(layer, options, esriBundle) {
         // check for skip flag
         if (!opts.skip) {
             // call loadFeatureAttribs with options if present
-            result.registerData(loadFeatureAttribs(layer.url, opts.attribs, esriBundle));
+            result.registerData(loadFeatureAttribs(layer.url, opts.attribs, esriBundle, geoApi));
         }
     } else {
         // feature layer was loaded from a file.
@@ -406,14 +409,19 @@ function processFeatureLayer(layer, options, esriBundle) {
             return { attributes: elem.attributes };
         })));
 
+        const renderer = layer.renderer.toJson();
+        const legend = geoApi.symbology.rendererToLegend(renderer);
+        geoApi.symbology.enhanceRenderer(renderer, legend);
+
         // TODO revisit the geometry type. ideally, fix our GeoJSON to Feature to populate the property
         layerPackage.layerData = Promise.resolve({
             oidField: layer.objectIdField,
             fields: layer.fields,
-            renderer: layer.renderer,
             geometryType: layer.geometryType || JSON.parse(layer._json).layerDefinition.drawingInfo.geometryType,
             minScale: layer.minScale,
-            maxScale: layer.maxScale
+            maxScale: layer.maxScale,
+            renderer,
+            legend
         });
 
         result.registerData(layerPackage);
@@ -431,7 +439,7 @@ function processFeatureLayer(layer, options, esriBundle) {
 * @param  {Object} esriBundle bundle of API classes
 * @return {Object} attributes in layer bundle format (see newLayerBundle)
 */
-function processDynamicLayer(layer, options, esriBundle) {
+function processDynamicLayer(layer, options, esriBundle, geoApi) {
 
     // logic is in separate function to passify the cyclomatic complexity check.
     // TODO we may want to support the option of a layer that points to a server based JSON file containing attributes
@@ -481,7 +489,8 @@ function processDynamicLayer(layer, options, esriBundle) {
 
             if (!opts.skip) {
                 // load the features, store promise in array
-                result.registerData(loadFeatureAttribs(layer.url + '/' + idx.toString(), opts.attribs, esriBundle));
+                result.registerData(loadFeatureAttribs(layer.url + '/' + idx.toString(),
+                    opts.attribs, esriBundle, geoApi));
             }
 
             // advance the loop
@@ -493,7 +502,7 @@ function processDynamicLayer(layer, options, esriBundle) {
     return result;
 }
 
-function loadLayerAttribsBuilder(esriBundle) {
+function loadLayerAttribsBuilder(esriBundle, geoApi) {
 
     /**
     * Fetch attributes from a server-based Layer
@@ -523,11 +532,11 @@ function loadLayerAttribsBuilder(esriBundle) {
         switch (lType) {
             case 'FeatureLayer':
 
-                return processFeatureLayer(layer, options, esriBundle);
+                return processFeatureLayer(layer, options, esriBundle, geoApi);
 
             case 'ArcGISDynamicMapServiceLayer':
 
-                return processDynamicLayer(layer, options, esriBundle);
+                return processDynamicLayer(layer, options, esriBundle, geoApi);
 
             // case 'WmsLayer':
             // case 'ArcGISTiledMapServiceLayer':
@@ -539,8 +548,8 @@ function loadLayerAttribsBuilder(esriBundle) {
 
 //  Attribute Loader related functions
 // TODO consider re-writing all the asynch stuff with the ECMA-7 style of asynch keywords
-module.exports = esriBundle => {
+module.exports = (esriBundle, geoApi) => {
     return {
-        loadLayerAttribs: loadLayerAttribsBuilder(esriBundle)
+        loadLayerAttribs: loadLayerAttribsBuilder(esriBundle, geoApi)
     };
 };
