@@ -16,6 +16,7 @@ const Server = require('karma').Server;
 const dateFormat = require('dateformat');
 const through = require('through2');
 const merge = require('merge-stream');
+const lazypipe = require('lazypipe');
 
 const jsDefaults = require('json-schema-defaults');
 const jsRefParser = require('json-schema-ref-parser');
@@ -36,6 +37,7 @@ require('gulp-help')(gulp);
 /**
  * vet the code and create coverage report
  *  -- verbose: verbose
+ *  -- guts: skip style checks
  * @return {Stream}
  */
 gulp.task('vet', 'Checks code against style guidelines', function () {
@@ -44,11 +46,14 @@ gulp.task('vet', 'Checks code against style guidelines', function () {
     return gulp
         .src(config.vetjs)
         .pipe($.if(args.verbose, $.print()))
-        .pipe($.jshint())
-        .pipe($.jscs())
-        .pipe($.jscsStylish.combineWithHintResults())
-        .pipe($.jshint.reporter('jshint-stylish', { verbose: true }))
-        .pipe($.jshint.reporter('fail'));
+        .pipe($.if(!args.guts,
+            lazypipe()
+            .pipe($.jshint)
+            .pipe($.jscs)
+            .pipe($.jscsStylish.combineWithHintResults)
+            .pipe($.jshint.reporter, 'jshint-stylish', { verbose: true })
+            .pipe($.jshint.reporter, 'fail')()
+        ));
 });
 
 gulp.task('validate', 'Validate all config files against the config schema', function () {
