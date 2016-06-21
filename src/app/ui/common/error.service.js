@@ -16,10 +16,20 @@
 
     function errorService($mdToast) {
         const service = {
-            display
+            display,
+            remove
         };
 
+        let toastMsg;
+
         return service;
+
+        function remove() {
+            if (toastMsg) {
+                $mdToast.hide(toastMsg);
+                toastMsg = null;
+            }
+        }
 
         /**
          * Renders a toast message containing the supplied errorMsg
@@ -38,7 +48,8 @@
             if (typeof parentElem !== 'undefined') {
                 opts.parent = parentElem;
             }
-            return $mdToast.show($mdToast.simple(opts));
+            toastMsg = $mdToast.show($mdToast.simple(opts));
+            return toastMsg;
         }
     }
 })();
