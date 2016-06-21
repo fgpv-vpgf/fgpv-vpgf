@@ -287,8 +287,10 @@
             // closing parent panel
             if (typeof panelToClose.item.parent === 'undefined') {
                 animationPromise = setItemProperty(panelToClose.name, 'active', false)
-                .then(() => propagate ? getChildren(panelToClose.name).forEach(child => closePanel(child, false))
-                : true);
+                    .then(() =>
+                        propagate ? getChildren(panelToClose.name).forEach(child => closePanel(child, false))
+                                  : true
+                    );
 
             // closing child panel
             } else {
