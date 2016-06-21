@@ -86,7 +86,7 @@
                         try {
                             langs = angular.fromJson(langAttr);
                         } catch (e) {
-                            console.log('Could not parse langs, defaulting to en-CA and fr-CA');
+                            console.warn('Could not parse langs, defaulting to en-CA and fr-CA');
 
                             // TODO: better way to handle when no languages are specified?
                             langs = ['en-CA', 'fr-CA'];

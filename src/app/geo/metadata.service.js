@@ -10,7 +10,7 @@
         .module('app.geo')
         .factory('metadataService', metadataService);
 
-    function metadataService($q, $http, Geo, configService) {
+    function metadataService($q, $http, $translate, Geo, configService) {
 
         const service = {
             transformXml
@@ -30,8 +30,6 @@
         function applyXSLT(xmlString, xslString, returnFragment, params) {
             let output = null;
 
-            console.info(xmlString);
-            console.info(xslString);
             if (window.XSLTProcessor) {
                 const xsltProc = new window.XSLTProcessor();
                 const xmlDoc = $.parseXML(xmlString);
@@ -86,8 +84,11 @@
         function transformXml(xmlUrl, returnFragment, params) {
 
             console.log(`transformXML ${configService.currentLang()}`);
+            const xsltString = Geo.Metadata.XSLT_LANGUAGE_NEUTRAL.replace(/\{\{([\w\.]+)\}\}/g, (match, tag) =>
+                $translate.instant(tag)
+            );
             return loadXmlFile(xmlUrl)
-                .then(xmlData => applyXSLT(xmlData, Geo.Metadata.XSLT_LANGUAGE_NEUTRAL, returnFragment, params))
+                .then(xmlData => applyXSLT(xmlData, xsltString, returnFragment, params))
                 .catch(err => console.error('Error: ' + err));
 
         }
