@@ -73,7 +73,7 @@
                 onCancel: () => onCancel(self.select.step),
                 reset: selectReset
             },
-            selectResetValidation: selectResetValidation,
+            selectResetValidation,
             form: null
         };
 

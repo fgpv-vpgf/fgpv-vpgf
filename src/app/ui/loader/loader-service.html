@@ -24,11 +24,14 @@
         <rv-stepper-item step="self.select.step" form="self.select.form">
             <md-input-container class="md-block">
                 <label translate>import.service.select.servicetype</label>
-                <md-select name="serviceType" ng-model="self.layerBlueprint.serviceType" required>
+                <md-select name="serviceType" ng-model="self.layerBlueprint.serviceType" md-on-open="self.select.selectResetValidation()" required>
                     <md-option ng-repeat="serviceType in self.serviceTypes" value="{{ serviceType }}">
                         {{ 'import.service.type.' + serviceType | translate }}
                     </md-option>
                 </md-select>
+                <div ng-messages="self.select.form.serviceType.$error">
+                    <div ng-message="wrong" translate>import.service.select.wrong</div>
+                </div>
             </md-input-container>
         </rv-stepper-item>
 
