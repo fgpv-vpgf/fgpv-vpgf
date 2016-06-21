@@ -57,9 +57,13 @@
             fileData: null,
             fileUrl: null,
             filesSubmitted: uploadFilesSubmitted,
-            fileError: uploadFileError,
-            fileReset: uploadFileReset,
-            fileUrlReset: uploadFileUrlReset,
+
+            fileReset,
+            fileResetValidation,
+
+            fileUrlReset,
+            fileUrlResetValidation,
+
             progress: 0
         };
 
@@ -127,7 +131,12 @@
          * In cases where user provides a file link, tries to load the file and then advanced to the next step.
          */
         function uploadOnContinue() {
-            onLayerBlueprintReady(self.upload.fileUrl);
+            onLayerBlueprintReady(self.upload.fileUrl)
+                .catch(error => {
+                    // TODO: show a meaningful error about why upload failed.
+                    console.error('Something awful happen', error);
+                    toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
+                });
         }
 
         /**
@@ -142,7 +151,12 @@
                 const file = files[0];
                 self.upload.file = file; // store the first file from the array;
 
-                onLayerBlueprintReady(file.name, file.file);
+                onLayerBlueprintReady(file.name, file.file)
+                    .catch(error => {
+                        // TODO: show a meaningful error about why upload failed.
+                        console.error('Something awful happen', error);
+                        toggleErrorMessage(self.upload.form, 'fileSelect', 'upload-error', false);
+                    });
             }
         }
 
@@ -150,6 +164,7 @@
          * Waits until the layerBlueprint is create and ready (the data has been read) and moves to the next step.
          * @param  {String} name file name or url
          * @param  {Object} file optional: html5 file object
+         * @return {Promise} layerBlueprint ready promise
          */
         function onLayerBlueprintReady(name, file) {
             self.layerBlueprint = new LayerBlueprint.file(
@@ -161,10 +176,7 @@
             // explicitly move to step 1 (select); if the current step is not 0 (upload), drag-dropping a file may advance farther than needed when using just `stepper.nextStep()`
             stepper.moveToStep(1, $timeout(() => self.layerBlueprint.ready, 300));
 
-            self.layerBlueprint.ready.catch(error => {
-                // TODO: show a meaningful error about why upload failed.
-                console.error('Something awful happen', error);
-            });
+            return self.layerBlueprint.ready;
 
             /**
              * Updates file load progress status.
@@ -186,31 +198,17 @@
         }
 
         /**
-         * Displays an error message if a file fails to upload
-         * @param  {Object} file    flow file object
-         * @param  {String} message error message
-         * @param  {Object} flow    flow object https://github.com/flowjs/ng-flow
-         */
-        function uploadFileError() { // file, message, flow) {
-            // console.log('error', file, flow);
-            const upload = self.upload;
-            console.log('upload form', upload.form);
-
-            toggleErrorMessage(upload.form, 'fileSelect', 'upload-error', false);
-        }
-
-        /**
          * Clears both file selector and url field.
          */
         function uploadReset() {
-            uploadFileReset();
-            uploadFileUrlReset();
+            fileReset();
+            fileUrlReset();
         }
 
         /**
-         * Reset the file upload form removing custom messages.
+         * Reset the file upload form removing selected file and custom error messages.
          */
-        function uploadFileReset() {
+        function fileReset() {
             const upload = self.upload;
 
             if (upload.file) { // if there is a file in the queue
@@ -219,19 +217,35 @@
                 upload.progress = 0; // reset progress bar to 0; otherwise, it will try to animate from 100 to 0 next time progress event happens
             }
 
+            fileResetValidation();
+        }
+
+        /**
+         * Resets validation on the file selector only.
+         */
+        function fileResetValidation() {
             // arguments as follows: name of the error, state of the error, a controller object which will be stored against the error; when removing the same error, need to provide the same controller object
-            toggleErrorMessage(upload.form, 'fileSelect', 'upload-error', true); // remove errors from the form
+            toggleErrorMessage(self.upload.form, 'fileSelect', 'upload-error', true); // remove errors from the form
         }
 
         /**
          * Resets the file url field and removes errors in the file upload step.
          */
-        function uploadFileUrlReset() {
+        function fileUrlReset() {
             const upload = self.upload;
 
             upload.fileUrl = '';
             upload.form.fileUrl.$setPristine();
             upload.form.fileUrl.$setUntouched();
+
+            fileUrlResetValidation();
+        }
+
+        /**
+         * Resets validation on the fileUrl field only.
+         */
+        function fileUrlResetValidation() {
+            toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', true);
         }
 
         /**

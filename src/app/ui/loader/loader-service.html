@@ -11,7 +11,7 @@
                 <input
                     name="serviceUrl"
                     type="url"
-                    ng-change="self.connect.serviceResetValidation()"
+                    ng-change="self.connect.serviceUrlResetValidation()"
                     ng-model="self.connect.serviceUrl"
                     ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
                     required>
@@ -26,7 +26,7 @@
             summary-value="{{ self.select.step.isCompleted ? 'import.service.type.' + self.layerBlueprint.serviceType : '' }}">
             <md-input-container class="md-block">
                 <label translate>import.service.select.servicetype</label>
-                <md-select name="serviceType" ng-model="self.layerBlueprint.serviceType" md-on-open="self.select.selectResetValidation()" required>
+                <md-select name="serviceType" ng-model="self.layerBlueprint.serviceType" md-on-open="self.select.serviceTypeResetValidation()" required>
                     <md-option ng-repeat="serviceType in self.serviceTypes" value="{{ serviceType }}">
                         {{ 'import.service.type.' + serviceType | translate }}
                     </md-option>
