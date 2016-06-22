@@ -242,7 +242,7 @@
                 const formAtt = this._formattedAttributes;
 
                 if (formAtt.hasOwnProperty(featureIdx) && formAtt[featureIdx].$$state.status === 1) {
-                    return this._formattedAttributes[featureIdx];
+                    return formAtt[featureIdx];
                 }
 
                 const layerPackage = this._attributeBundle[featureIdx];
