@@ -29,9 +29,10 @@
          * @param {String} basemapId     The id of the basemap to switch to
          */
         function loadNewProjection(basemapId) {
-            bookmarkService.updateConfig();
-            geoService.setSelectedBaseMap(basemapId);
-            geoService.assembleMap();
+            bookmarkService.updateConfig().then(() => {
+                geoService.setSelectedBaseMap(basemapId);
+                geoService.assembleMap();
+            });
         }
 
         /**
@@ -43,10 +44,10 @@
         function loadNewLang(lang) {
             const bookmark = bookmarkService.getBookmark();
             $translate.use(lang);
-            configService.getCurrent(config => {
+            configService.getCurrent().then(config => {
                 bookmarkService.parseBookmark(bookmark, config);
+                geoService.assembleMap();
             });
-            geoService.assembleMap();
         }
     }
 })();
