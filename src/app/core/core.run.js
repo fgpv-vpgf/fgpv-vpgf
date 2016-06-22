@@ -133,7 +133,7 @@
                 .then(newLayerConfigs => {
                     // call layer register in geo module on those nodes
                     const layerBlueprints = newLayerConfigs.map(layerConfig =>
-                        new LayerBlueprint.service(layerConfig));
+                        new LayerBlueprint.service(layerConfig, geoService.epsgLookup));
                     geoService.constructLayers(layerBlueprints);
                 });
 
