@@ -17,7 +17,8 @@
 
         const service = {
             getBookmark,
-            parseBookmark
+            parseBookmark,
+            updateConfig
         };
 
         return service;
@@ -134,6 +135,17 @@
                         });
                     });
             }
+        }
+
+        /**
+         * Gets the current state and applies it to the config.
+         *
+         * @returns {Promise}   A promise which can be chained onto to wait for the config to be updated.
+         */
+        function updateConfig() {
+            return configService.getCurrent().then(config => {
+                parseBookmark(getBookmark(), config);
+            });
         }
 
         /**
