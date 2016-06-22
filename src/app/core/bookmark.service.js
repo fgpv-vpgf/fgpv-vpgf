@@ -137,6 +137,10 @@
             }
         }
 
+        /**
+         * Gets the current state and applies it to the config.
+         *
+         */
         function updateConfig() {
             configService.getCurrent(config => {
                 parseBookmark(getBookmark(), config);
