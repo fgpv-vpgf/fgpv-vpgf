@@ -39,11 +39,13 @@
             setPanelFocus,
             panelHistory: [],
             state: angular.copy(initialState),
-            display: angular.copy(initialDisplay)
+            display: angular.copy(initialDisplay),
+            onCloseCallback
         };
 
         const fulfillStore = {}; // keeping references to promise fulfill functions
         let lastFocusElement; // stores an element for dynamic focus changes
+        const closeCallback = {};
 
         const displayService = displayManager(service); // init displayManager
         angular.extend(service, displayService); // merge displayManager service functions into stateManager
@@ -204,6 +206,30 @@
         }
 
         /**
+         * Registers a custom callback function to be run when the specified panel
+         * is closed.
+         *
+         * @param   {String}    panelName the name of the panel to register the closing callback
+         * @param   {Function}  callback the callback function to run when the panel closes
+         */
+        function onCloseCallback(panelName, callback) {
+            if (typeof panelName === 'string' && typeof callback === 'function') {
+                closeCallback[panelName] = callback;
+            }
+        }
+
+        /**
+         * Executes the closing callback registered to panelName if it exists.
+         *
+         * @param   {String}    panelName the name of the panel to run closing callback
+         */
+        function runCloseCallback(panelName) {
+            if (panelName in closeCallback) {
+                closeCallback[panelName]();
+            }
+        }
+
+        /**
          * Adds or removes a panels name from panelHistory. If the provided panel is active the
          * default behaviour is to add the panel unless addFlag is set to false. An inactive
          * panel is removed unless addFlag is true.
@@ -297,7 +323,11 @@
                 animationPromise = setItemProperty(panelToClose.name, 'active', false, true);
             }
             // set focus to last opened panel
-            animationPromise.then(() => setPanelFocus(service.panelHistory[service.panelHistory.length - 1]));
+            animationPromise.then(() => {
+                setPanelFocus(service.panelHistory[service.panelHistory.length - 1]);
+                runCloseCallback(panelToClose.name);
+            });
+
             return animationPromise;
         }
 

@@ -38,6 +38,8 @@
 
         self.getSectionNode = () => $element.find('.rv-details');
 
+        stateManager.onCloseCallback('mainDetails', () => stateManager.clearDisplayPanel('mainDetails'));
+
         /**
         * Set the selected item from the array of items if previously set.
         * @private
