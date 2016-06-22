@@ -114,16 +114,32 @@
                     });
             }
 
-            // extract the feature name from a feature as best we can.
-            // takes feature attribute set, layer state, and object id
-            function getFeatureName(attribs, state, objId) {
-                // FIXME : display field is not yet defined in the config schema.  in particular, we need to account
-                //        for different name fields in child-layers of dynamic layers.
-                //        may be easier to just store the display field from the server when we download attributes,
-                //        though this would not allow us to override the server-defined field in the config.
-                if (state.displayField) {
-                    // until schema & approach is finalized, this will never run
-                    return attribs[state.displayField];
+            /**
+            * Extract the feature name from a feature as best we can.
+            * Support for dynamic layers is limited at the moment.
+            *
+            * @param {Object} attribs the dictionary of attributes for the feature
+            * @param {Object} layerRec the record in the layer registry that the feature belongs to
+            * @param {Integer} objId the object id of the attribute
+            * @returns {String} the name of the feature
+            */
+            function getFeatureName(attribs, layerRec, objId) {
+                // FIXME : name field is not yet defined in the config schema.
+                //         we also need to determine if we will support name fields
+                //         on child layers of Dynamic services. This would be relevant
+                //         if we implement maptips, or need to override the name field
+                //         in the details pane.
+
+                let nameField = '';
+
+                if (layerRec.legendEntry && layerRec.legendEntry.nameField) {
+                    nameField = layerRec.legendEntry.nameField;
+                } else if (layerRec._layer && layerRec._layer.displayField) {
+                    nameField = layerRec._layer.displayField;
+                }
+
+                if (nameField) {
+                    return attribs[nameField];
                 } else {
                     // FIXME wire in "feature" to translation service
                     return 'Feature ' + objId;
@@ -309,7 +325,7 @@
                                 // use object id find location of our feature in the feature array, and grab its attributes
                                 const featAttribs = attributes.rows[attributes.oidIndex[objId]];
                                 return {
-                                    name: getFeatureName(featAttribs, legendEntry, objId),
+                                    name: getFeatureName(featAttribs, layerRecord, objId),
                                     data: attributesToDetails(featAttribs, attributes.fields),
                                     oid: objId,
                                     symbology: [

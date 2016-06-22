@@ -158,6 +158,7 @@
                 self.table.on('click', 'md-icon.rv-description', event => {
                     const tr = $(event.target).closest('tr');
                     const row = self.table.row(tr);
+                    const layerRec = geoService.layers[requester.layerId];
 
                     // get object id from row data
                     const objId = row.data()[displayData.oidField];
@@ -173,7 +174,7 @@
                         isLoading: false,
                         data: [
                             {
-                                name: geoService.getFeatureName(row.data(), {}, objId),
+                                name: geoService.getFeatureName(row.data(), layerRec, objId),
                                 data: geoService.attributesToDetails(row.data(), displayData.fields),
                                 oid: objId,
                                 symbology: [
@@ -186,7 +187,7 @@
                             format: 'EsriFeature',
                             name: requester.name,
                             featureIdx: requester.legendEntry.featureIdx,
-                            layerRec: geoService.layers[requester.layerId]
+                            layerRec
                         }
                     };
 
