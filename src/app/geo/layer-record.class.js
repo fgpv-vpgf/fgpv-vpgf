@@ -241,13 +241,17 @@
             getAttributes (featureIdx) {
                 const formAtt = this._formattedAttributes;
 
-                if (formAtt.hasOwnProperty(featureIdx) && formAtt[featureIdx].$$state.status === 1) {
-                    return this._formattedAttributes[featureIdx];
+                if (formAtt.hasOwnProperty(featureIdx)) {
+                    return formAtt[featureIdx];
                 }
 
                 const layerPackage = this._attributeBundle[featureIdx];
                 const attributePromise = $q.all([layerPackage.getAttribs(), layerPackage.layerData])
-                    .then(([attributes, layerData]) => this.formatAttributes(attributes, layerData));
+                    .then(([attributes, layerData]) => this.formatAttributes(attributes, layerData))
+                    .catch(() => {
+                        delete this._formattedAttributes[featureIdx]; // delete cached promise when the geoApi `getAttribs` call fails, so it will be requested again next time `getAttributes` is called;
+                        throw new Error('Attrib loading failed');
+                    });
                 return (this._formattedAttributes[featureIdx] = attributePromise);
             }
 

@@ -299,7 +299,7 @@
                     return stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0);
                 })
                 .catch(() => {
-                    errorService.display($translate.instant('toc.error.resource.loadfailed'),
+                    errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
                         layoutService.panes.filter);
                 });
         }

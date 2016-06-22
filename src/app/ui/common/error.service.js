@@ -22,6 +22,10 @@
 
         return service;
 
+        /**
+        * Hides a toast object
+        * @param {Object} toastMsg is a promise object returned by the display function
+        */
         function remove(toastMsg) {
             $mdToast.hide(toastMsg);
         }
