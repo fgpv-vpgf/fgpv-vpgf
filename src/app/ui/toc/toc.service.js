@@ -277,7 +277,7 @@
             };
 
             const layerRecord = geoService.layers[requester.layerId];
-            const dataPromise = layerRecord.getAttributes(entry.featureIdx)
+            let dataPromise = layerRecord.getAttributes(entry.featureIdx)
                 .then(attributes => {
                     return {
                         data: attributes,
@@ -299,7 +299,7 @@
                     return stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0);
                 })
                 .catch(() => {
-                    errorService.display($translate.instant('toc.error.resource.loadfailed'),
+                    errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
                         layoutService.panes.filter);
                 });
         }
