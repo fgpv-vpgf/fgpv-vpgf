@@ -38,6 +38,8 @@
 
         self.getSectionNode = () => $element.find('.rv-details');
 
+        stateManager.onCloseCallback('mainDetails', () => stateManager.clearDisplayPanel('mainDetails'));
+
         /**
         * Set the selected item from the array of items if previously set.
         * @private
@@ -54,12 +56,8 @@
          * Closes loader pane and switches to the previous pane if any.
          */
         function closeDetails() {
-            stateManager
-                .openPrevious('mainDetails')
-                .then(() => stateManager.clearDisplayPanel('mainDetails')); // clear `details` display;
-
             geoService.clearHilight();
-
+            stateManager.setActive({ mainDetails: false });
         }
 
         /**

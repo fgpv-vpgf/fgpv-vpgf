@@ -54,6 +54,7 @@
 
         function setMode(mode) {
             stateManager.setMorph('filters', mode);
+            stateManager.setPanelFocus('filters');
         }
 
         /**
