@@ -382,7 +382,7 @@
                     .then(result => {
                         // create user options object based on the layer type
                         const options = new LayerBlueprintUserOptions.File[this.fileType]
-                            (this._epsgLookup, this._targetWkid);
+                            (this._epsgLookup, this._targetWkid, result.smartDefaults);
                         options.layerName = this._fileName;
 
                         this._userOptions = options;

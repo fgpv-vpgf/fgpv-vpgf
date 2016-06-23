@@ -67,11 +67,12 @@
         }
 
         class FileCsvBlueprintUserOptions extends FileBlueprintUserOptions {
-            constructor(epsgLookup, targetWkid) {
+            constructor(epsgLookup, targetWkid, smartDefaults) {
                 super(epsgLookup, targetWkid);
 
-                this._latfield = '';
-                this._lonfield = '';
+                this._latfield = smartDefaults.lat;
+                this._lonfield = smartDefaults.long;
+                this._primaryField = smartDefaults.primary;
             }
 
             get latfield() {
