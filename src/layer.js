@@ -164,7 +164,7 @@ function crawlEsriService(srvJson) {
 // otherwise, we were successful, and the information object will have other properties depending on the service type
 // - .name : scraped from service, but may be rubbish (depends on service publisher). used as UI suggestion only
 // - .fields : for feature layer service only. list of fields to allow user to pick name field
-// - .geometryTpe : for feature layer service only.  for help in defining the renderer, if required.
+// - .geometryType : for feature layer service only.  for help in defining the renderer, if required.
 // - .layers : for dynamic layer service only. lists the child layers
 function pokeEsriService(url, esriBundle, hint) {
 
@@ -497,35 +497,38 @@ function validateFile(type, data) {
     fileHandler[serviceType.CSV] = data => {
         return new Promise((resolve, reject) => {
 
-            // convert from arraybuffer to string to parsed csv. store string format for later
-            const res = {
-                formattedData: arrayBufferToString(data)
-            };
-
-            const fileArr = csvPeek(res.formattedData, ',');
+            const formattedData = arrayBufferToString(data); // convert from arraybuffer to string to parsed csv. store string format for later
+            const rows = csvPeek(formattedData, ','); // FIXME: this assumes delimiter is a `,`; need validation
 
             // validations
-            if (fileArr.length === 0) {
+            if (rows.length === 0) {
                 // fail, no rows
                 reject(new Error('File has no rows'));
             } else {
                 // field count of first row.
-                const fc = fileArr[0].length;
+                const fc = rows[0].length;
                 if (fc < 2) {
                     // fail not enough columns
                     reject(new Error('File has less than two columns'));
                 } else {
                     // check field counts of each row
-                    if (fileArr.every(rowArr => rowArr.length === fc)) {
-                        // make field list esri-ish for consistancy
-                        res.fields = fileArr[0].map(field => ({
-                            name: field,
-                            type: 'esriFieldTypeString'
-                        }));
-                        res.geometryType = 'esriGeometryPoint'; // always point for CSV
+                    if (rows.every(rowArr => rowArr.length === fc)) {
+
+                        const res = {
+                            formattedData,
+                            smartDefaults: guessCSVfields(rows), // calculate smart defaults
+
+                            // make field list esri-ish for consistancy
+                            fields: rows[0].map(field => ({
+                                name: field,
+                                type: 'esriFieldTypeString'
+                            })),
+                            geometryType: 'esriGeometryPoint' // always point for CSV
+                        };
+
                         resolve(res);
                     } else {
-                        reject(new Error('File has no rows'));
+                        reject(new Error('File has inconsistent column counts'));
                     }
                 }
             }
@@ -553,6 +556,55 @@ function validateFile(type, data) {
 
     // trigger off the appropriate handler, return promise
     return fileHandler[type](data);
+}
+
+/**
+ * From provided CSV data, guesses which columns are long and lat. If guessing is no successful, returns null for one or both fields.
+ *
+ * @method guessLatLong
+ * @private
+ * @param  {Array} rows csv data
+ * @return {Object}      an object with lat and long string properties indicating corresponding field names
+ */
+function guessCSVfields(rows) {
+    // magic regexes
+    const latValueRegex = new RegExp(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/i); // filters by field value
+    const longValueRegex = new RegExp(/^[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/i);
+    const latNameRegex = new RegExp(/^.*(y|la).*$/i); // filters by field name
+    const longNameRegex = new RegExp(/^.*(x|lo).*$/i);
+
+    const latCandidates = findCandidates(rows, latValueRegex, latNameRegex); // filter out all columns that are not lat based on row values
+    const longCandidates = findCandidates(rows, longValueRegex, longNameRegex); // filter out all columns that are not long based on row values
+
+    // console.log(latCandidates);
+    // console.log(longCandidates);
+
+    // pick the first lat guess or null
+    const lat = latCandidates[0] || null;
+
+    // pick the first long guess or null
+    const long = longCandidates.find(field => field !== lat) || null;
+
+    // for primary field, pick the first on that is not lat or long field or null
+    const primary = rows[0].find(field => field !== lat && field !== long) || null;
+
+    return {
+        lat,
+        long,
+        primary
+    };
+
+    function findCandidates(rows, valueRegex, nameRegex) {
+        const fields = rows[0]; // first row must be headers
+
+        const candidates =
+            fields.filter((field, index) =>
+                rows.every((row, rowIndex) =>
+                    rowIndex === 0 || valueRegex.test(row[index]))) // skip first row as its just headers
+            .filter(field => nameRegex.test(field));
+
+        return candidates;
+    }
 }
 
 function serverLayerIdentifyBuilder(esriBundle) {
