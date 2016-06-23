@@ -107,12 +107,20 @@
 
         /**
          * Tiny helper function to set/reset error messages on fields
+         * * TODO: need to abstract - loader-service has the same function
          * @param  {Object} form      form object
          * @param  {String} fieldName field name to set the error on
          * @param  {String} errorName name of the error message
          * @param  {Boolean} state     =             false; false - show error, true - hide error
          */
         function toggleErrorMessage(form, fieldName, errorName, state = false) {
+            // when showing errors, dirty and touch the fields
+            // this is needed when a preselected field causes validation to fail; since user hasn't interacted with the field, it's untouched and pristine and error messages are not shown for untouched fields;
+            if (!state) {
+                form[fieldName].$setDirty();
+                form[fieldName].$setTouched();
+            }
+
             form[fieldName].$setValidity(errorName, state);
         }
 
