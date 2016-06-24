@@ -441,17 +441,16 @@ function predictLayerUrlBuilder(esriBundle) {
 function arrayBufferToString(buffer) {
     // handles UTF8 encoding
     return new TextDecoder('utf-8').decode(new Uint8Array(buffer));
-
 }
 
 /**
-* Performs validation on GeoJson object. Returns validation object.
+* Performs validation on GeoJson object. Returns a promise resolving with the validation object.
 * Worker function for validateFile, see that file for return value specs
 *
 * @method validateGeoJson
 * @private
 * @param {Object} geoJson feature collection in geojson form
-* @returns {Object} information on the geoJson object
+* @returns {Promise} promise resolving with information on the geoJson object
 */
 function validateGeoJson(geoJson) {
     // GeoJSON geometry type to ESRI geometry type
@@ -463,18 +462,19 @@ function validateGeoJson(geoJson) {
         Polygon: 'esriGeometryPolygon',
         MultiPolygon: 'esriGeometryPolygon'
     };
-    const res = {};
+    const res = {
+        fields: extractFields(geoJson),
+        geometryType: geomMap[geoJson.features[0].geometry.type],
+        formattedData: geoJson
+    };
 
-    res.fields = extractFields(geoJson);
-    res.geometryType = geomMap[geoJson.features[0].geometry.type];
     if (!res.geometryType) {
-        throw new Error('Unexpected geometry type in GeoJSON');
+        return Promise.reject(new Error('Unexpected geometry type in GeoJSON'));
     }
-    res.formattedData = geoJson;
 
     // TODO optional check: iterate through every feature, ensure geometry type and properties are all identical
 
-    return res;
+    return Promise.resolve(res);
 }
 
 /**
@@ -483,8 +483,8 @@ function validateGeoJson(geoJson) {
 *
 * @method validateCSV
 * @private
-* @param {Object} csv data as string
-* @returns {Promise} information on the csv data
+* @param {Object} data csv data as string
+* @returns {Promise} promise resolving with information on the csv data
 */
 function validateCSV(data) {
 
@@ -543,27 +543,18 @@ function validateCSV(data) {
 */
 function validateFile(type, data) {
 
-    const fileHandler = {}; // maps handlers for different file types
+    const fileHandler = { // maps handlers for different file types
+        [serviceType.CSV]: data => validateCSV(data),
 
-    fileHandler[serviceType.CSV] = data => validateCSV(data);
-
-    fileHandler[serviceType.GeoJSON] = data => {
-        return new Promise(resolve => {
-            // convert from arraybuffer to string to json
+        [serviceType.GeoJSON]: data => {
             const geoJson = JSON.parse(arrayBufferToString(data));
-            resolve(validateGeoJson(geoJson));
-        });
-    };
+            return validateGeoJson(geoJson);
+        },
 
-    fileHandler[serviceType.Shapefile] = data => {
-        return new Promise((resolve, reject) => {
-            // convert from arraybuffer (containing zipped shapefile) to json (using shp library)
-            shp(data).then(geoJson => {
-                resolve(validateGeoJson(geoJson));
-            }).catch(err => {
-                reject(err);
-            });
-        });
+        // convert from arraybuffer (containing zipped shapefile) to json (using shp library)
+        [serviceType.Shapefile]: data =>
+            shp(data).then(geoJson =>
+                validateGeoJson(geoJson))
     };
 
     // trigger off the appropriate handler, return promise
