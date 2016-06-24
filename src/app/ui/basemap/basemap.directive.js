@@ -78,70 +78,12 @@
 
             self.projections = [];
 
-            var wkidArray = [];
             let useDefaultBasemap = true;
 
             $rootScope.$on(events.rvReady, () => {
                 configService.getCurrent().then(config => {
-                    // FIXME: in case there is no basemaps; fall back to some default one or something
-                    var basemaps = config.baseMaps || [];
 
-                    basemaps.forEach(basemap => {
-
-                        // make new projection if not exists
-                        var wkid = basemap.wkid;
-                        var idx;
-
-                        if (wkidArray.indexOf(wkid) !== -1) {
-                            console.log('in if wkidArray');
-                            idx = wkidArray.indexOf(wkid);
-                        } else {
-
-                            // TODO: decision needed on how we handle different type of projection,
-                            // adding all of them here, or it won't be an issue if we predefine all
-                            // in config.
-                            self.projections.push({
-                                wkid: wkid,
-                                name: (wkid === 3978) ? 'Lambert' :
-                                    (wkid === 102100) ? 'Mercator' : 'Other',
-                                items: []
-                            });
-
-                            wkidArray.push(wkid);
-
-                            idx = wkidArray.indexOf(wkid);
-                        }
-
-                        // FIXME: move to config?
-                        const maxLength = 35;
-
-                        if (basemap.name.length > maxLength) {
-                            basemap.name = basemap.name.substring(0, maxLength - 3) + '...';
-                        }
-
-                        let selected = false;
-
-                        if (config.map && config.map.initialBasemapId) {
-                            if (config.map.initialBasemapId === basemap.id) {
-                                selected = true;
-                                useDefaultBasemap = false;
-
-                                self.selectedWkid = basemap.wkid;
-                            }
-                        }
-
-                        self.projections[idx].items.push({
-                            name: basemap.name,
-                            description: basemap.description,
-                            type: basemap.type,
-                            id: basemap.id,
-                            url: basemap.layers[0].url,
-                            wkid: basemap.wkid,
-                            selected: selected,
-                            needMapRefresh: false
-                        });
-
-                    });
+                    [self.projections, useDefaultBasemap] = createLists(config);
 
                     // FIXME add appropriate safeguards for no basemaps, if not handled by fixme above.
                     try {
@@ -183,7 +125,7 @@
                         });
                     });
 
-                    console.log(basemaps);
+                    // console.log(basemaps);
                 });
             });
 
@@ -226,6 +168,79 @@
                 reloadService.loadNewProjection(basemap.id);
             }
 
+        }
+
+        /**
+         * Create the lists of basemaps from the config.
+         *
+         * @param {Object} config   Config containing basemaps for the viewer
+         * @returns {Array}         Returns the lists and the "useDefaultBasemap" flag as an array in that order
+         */
+        function createLists(config) {
+            // FIXME: in case there is no basemaps; fall back to some default one or something
+            const basemaps = config.baseMaps || [];
+            const projections = [];
+            let wkidArray = [];
+            let useDefaultBasemap = true;
+
+            basemaps.forEach(basemap => {
+
+                // make new projection if not exists
+                var wkid = basemap.wkid;
+                var idx;
+
+                if (wkidArray.indexOf(wkid) !== -1) {
+                    console.log('in if wkidArray');
+                    idx = wkidArray.indexOf(wkid);
+                } else {
+
+                    // TODO: decision needed on how we handle different type of projection,
+                    // adding all of them here, or it won't be an issue if we predefine all
+                    // in config.
+                    projections.push({
+                        wkid: wkid,
+                        name: (wkid === 3978) ? 'Lambert' :
+                            (wkid === 102100) ? 'Mercator' : 'Other',
+                        items: []
+                    });
+
+                    wkidArray.push(wkid);
+
+                    idx = wkidArray.indexOf(wkid);
+                }
+
+                // FIXME: move to config?
+                const maxLength = 35;
+
+                if (basemap.name.length > maxLength) {
+                    basemap.name = basemap.name.substring(0, maxLength - 3) + '...';
+                }
+
+                let selected = false;
+
+                if (config.map && config.map.initialBasemapId) {
+                    if (config.map.initialBasemapId === basemap.id) {
+                        selected = true;
+                        useDefaultBasemap = false;
+
+                        self.selectedWkid = basemap.wkid;
+                    }
+                }
+
+                projections[idx].items.push({
+                    name: basemap.name,
+                    description: basemap.description,
+                    type: basemap.type,
+                    id: basemap.id,
+                    url: basemap.layers[0].url,
+                    wkid: basemap.wkid,
+                    selected: selected,
+                    needMapRefresh: false
+                });
+
+            });
+
+            return [projections, useDefaultBasemap];
         }
     }
 })();
