@@ -142,11 +142,13 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.file.type.geojson,GeoJSON,[fr] GeoJSON
 ,import.service.title,Import Service,[fr] Import Service
 ,import.service.connect.title,Connect service,[fr] Connect Service
+,import.service.connect.summary,"ESRI Feature, Dynamic, Tile, Image or OGC WMS endpoint","[fr] ESRI Feature, Dynamic, Tile, Image or OGC WMS endpoint"
 ,import.service.connect.serviceurl,Service layer URL,[fr] Service layer URL
 ,import.service.connect.invalidurl,This is not a valid URL,[fr] This is not a valid URL
 ,import.service.connect.broken,Service does not respond,[fr] Service does not respond
 ,import.service.select.title,Select Service type,[fr] Select Service type
 ,import.service.select.servicetype,Service Type,[fr] Service Type
+,import.service.select.wrong,Incorrect service type,[fr] Incorrect service type
 ,import.service.type.featurelayer,ESRI Feature Layer,[fr] ESRI Feature Layer
 ,import.service.type.dynamicservice,ESRI Dynamic Layer,[fr] ESRI Dynamic Layer
 ,import.service.type.imageservice,ESRI Image Layer,[fr] ESRI Image Layer

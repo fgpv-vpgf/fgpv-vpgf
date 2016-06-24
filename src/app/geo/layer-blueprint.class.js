@@ -138,6 +138,7 @@
 
                 super(initialConfig, epsgLookup);
 
+                this._serviceType = null;
                 this._serviceInfo = null;
 
                 // if layerType is no specified, this is a user added layer; otherwise blueprint creation is deemed completed
@@ -248,20 +249,22 @@
                 }
             }
 
+            /**
+             * Returns service type of the service layer blueprint. If type is `Unknown`, returns null for template bindings
+             * @return {String|null} service type
+             */
             get serviceType() {
-                // console.log(this._serviceInfo);
-
-                if (this._serviceInfo !== null) {
-                    return this._serviceInfo.serviceType;
-                } else {
+                if (Geo.Service.Types.Unknown === this._serviceType) {
                     return null;
                 }
+                return this._serviceType;
             }
 
-            set serviceType(value) {
-                this._serviceInfo.serviceType = value;
-                this.layerType = serviceTypeToLayerType[this._serviceInfo.serviceType];
-            }
+            /**
+             * Sets service type
+             * @param  {String} value service type
+             */
+            set serviceType(value) { this._serviceType = value; }
 
             /**
              * Returns fields found in the file data.
@@ -283,22 +286,21 @@
 
             /**
              * Validates service blueprint against selected service type.
-             * // TODO: this needs to changed to display an error
              *
              * @return {Promise} a promise resolving if the validation is successful
              */
             validate() {
-                // FIXME: no validation is performed on the user-selected service type
-                // Need a way to validate user's service type choice against the endpoint
-                return $q.resolve();
-
-                // validate provided service type and set the appropriate layer type
-                /* return this._constructorPromise
-                    .then(() => this._fetchServiceInfo())
-                    .then(() => {
-                        this.layerType = serviceTypeToLayerType[this.serviceType];
-                    })
-                    .catch(error => console.error('Invalid selection' + error));*/
+                // our prediction routine is infallible, so if the user disagrees, too bad :D
+                // NOTE: in cases where we can't predict the service type (geoapi returns Unknown), we also cannot validate the service except if we make a layer and add it to the map and see if it loads or not
+                return $q((resolve, reject) => {
+                    if (this._serviceInfo.serviceType === this.serviceType ||
+                        this._serviceInfo.serviceType === Geo.Service.Types.Unknown) {
+                        this.layerType = serviceTypeToLayerType[this._serviceInfo.serviceType];
+                        resolve();
+                    } else {
+                        reject();
+                    }
+                });
             }
 
             /**

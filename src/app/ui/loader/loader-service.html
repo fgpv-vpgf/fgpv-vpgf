@@ -3,14 +3,15 @@
     <div class="rv-loader-service">
         <rv-stepper-item
             step="self.connect.step"
-            form="self.connect.form">
+            form="self.connect.form"
+            summary-value="{{ self.connect.step.isCompleted ? self.connect.serviceUrl : '' }}">
 
             <md-input-container class="md-block">
                 <label translate>import.service.connect.serviceurl</label>
                 <input
                     name="serviceUrl"
                     type="url"
-                    ng-change="self.connect.serviceResetValidation()"
+                    ng-change="self.connect.serviceUrlResetValidation()"
                     ng-model="self.connect.serviceUrl"
                     ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
                     required>
@@ -21,14 +22,18 @@
             </md-input-container>
         </rv-stepper-item>
 
-        <rv-stepper-item step="self.select.step" form="self.select.form">
+        <rv-stepper-item step="self.select.step" form="self.select.form"
+            summary-value="{{ self.select.step.isCompleted ? 'import.service.type.' + self.layerBlueprint.serviceType : '' }}">
             <md-input-container class="md-block">
                 <label translate>import.service.select.servicetype</label>
-                <md-select name="serviceType" ng-model="self.layerBlueprint.serviceType" required>
+                <md-select name="serviceType" ng-model="self.layerBlueprint.serviceType" md-on-open="self.select.serviceTypeResetValidation()" required>
                     <md-option ng-repeat="serviceType in self.serviceTypes" value="{{ serviceType }}">
                         {{ 'import.service.type.' + serviceType | translate }}
                     </md-option>
                 </md-select>
+                <div ng-messages="self.select.form.serviceType.$error">
+                    <div ng-message="wrong" translate>import.service.select.wrong</div>
+                </div>
             </md-input-container>
         </rv-stepper-item>
 
