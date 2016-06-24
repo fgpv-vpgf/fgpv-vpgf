@@ -89,6 +89,8 @@ Table of Content reload label,toc.label.reload,Reload,Recharger
 Table of Content reload tootlip,toc.tooltip.reload,Reload,Recharger
 Table of Content remove label,toc.label.remove,Remove,Retirer
 Table of Content remove tootlip,toc.tooltip.remove,Remove,Retirer
+Table of Content remove state label,toc.label.state.remove,Layer removed,Couche retirée
+Table of Content remove action label,toc.label.action.remove,undo,annuler
 Table of Content filters label,toc.label.filters,,
 Table of Content filters tootlip,toc.tooltip.filters,,
 Table of Content feature layer flag label,toc.label.flag.feature,ESRI Feature Layer ({{count}} {{type}}),Couche d'entités d'ESRI ({{count}} {{type}})
@@ -115,10 +117,14 @@ Table of Content error state label,toc.label.state.error,Error,Erreur
 Table of Content error state tootlip,toc.tooltip.state.error,Error,Erreur
 Table of Content loading state label,toc.label.state.loading,Updating,Mise à jour
 Table of Content loading state tootlip,toc.tooltip.state.loading,Updating,Mise à jour
+Table of Content templates placeholder loading label,toc.tmp.label.state.loading,Loading layer...,Chargement de la couche...
+Table of Content templates placeholder loading error label,toc.tmp.label.error.loading,Can't load layer,Impossible de charger la couche
 Geometry types,geometry.type.generic, feature|features, entité|entités
 Geometry types,geometry.type.esriGeometryPoint, point|points, point|points
 Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, polygone|polygones
 Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
+,config.service.rcs.error,"Layers could not be retrieved from the server, refresh to try again","Échec du SCR (RCS), démarrage de l'application avec un fichier de configuration"
+,config.service.rcs.action,DISMISS,ANNULER
 ,import.title,Import Layers,[fr] Import Layres
 ,import.file.title,Import File,[fr] Import File
 ,import.file.upload.title,Upload data,[fr] Upload data
