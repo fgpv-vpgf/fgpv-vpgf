@@ -190,8 +190,8 @@
 
             // create notification toast
             const undoToast = $mdToast.simple()
-                .textContent('Layer removed') // TODO: translate
-                .action('undo') // TODO: translate
+                .textContent($filter('translate')('toc.label.state.remove'))
+                .action($filter('translate')('toc.label.action.remove'))
                 .highlightAction(true)
                 .parent(layoutService.panes.toc)
                 .position('bottom rv-flex');
