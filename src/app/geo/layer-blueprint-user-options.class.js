@@ -19,10 +19,11 @@
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         class BlueprintUserOptions {
-            constructor() {
+            constructor(smartDefaults) {
                 this._layerName = '';
-                this._primaryField = '';
                 this._layerId = '';
+
+                this._primaryField = smartDefaults.primary;
             }
 
             get layerName() {
@@ -50,8 +51,8 @@
         }
 
         class FileBlueprintUserOptions extends BlueprintUserOptions {
-            constructor(epsgLookup, targetWkid) {
-                super();
+            constructor(epsgLookup, targetWkid, smartDefaults) {
+                super(smartDefaults);
 
                 this._epsgLookup = epsgLookup;
                 this._targetWkid = targetWkid;
@@ -68,11 +69,10 @@
 
         class FileCsvBlueprintUserOptions extends FileBlueprintUserOptions {
             constructor(epsgLookup, targetWkid, smartDefaults) {
-                super(epsgLookup, targetWkid);
+                super(epsgLookup, targetWkid, smartDefaults);
 
                 this._latfield = smartDefaults.lat;
                 this._lonfield = smartDefaults.long;
-                this._primaryField = smartDefaults.primary;
             }
 
             get latfield() {
@@ -93,14 +93,14 @@
         }
 
         class FileGeoJsonBlueprintUserOptions extends FileBlueprintUserOptions {
-            constructor(epsgLookup, targetWkid) {
-                super(epsgLookup, targetWkid);
+            constructor(epsgLookup, targetWkid, smartDefaults) {
+                super(epsgLookup, targetWkid, smartDefaults);
             }
         }
 
         class FileShapefileBlueprintUserOptions extends FileBlueprintUserOptions {
-            constructor(epsgLookup, targetWkid) {
-                super(epsgLookup, targetWkid);
+            constructor(epsgLookup, targetWkid, smartDefaults) {
+                super(epsgLookup, targetWkid, smartDefaults);
             }
         }
 
