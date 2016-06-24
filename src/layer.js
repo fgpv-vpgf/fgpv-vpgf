@@ -462,10 +462,17 @@ function validateGeoJson(geoJson) {
         Polygon: 'esriGeometryPolygon',
         MultiPolygon: 'esriGeometryPolygon'
     };
+
+    const fields = extractFields(geoJson);
+
     const res = {
-        fields: extractFields(geoJson),
+        fields: fields,
         geometryType: geomMap[geoJson.features[0].geometry.type],
-        formattedData: geoJson
+        formattedData: geoJson,
+        smartDefaults: {
+            // TODO: try to find a name field if possible
+            primary: fields[0].name // pick the first field as primary and return its name for ui binding
+        }
     };
 
     if (!res.geometryType) {
