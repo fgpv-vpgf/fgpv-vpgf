@@ -478,6 +478,57 @@ function validateGeoJson(geoJson) {
 }
 
 /**
+* Performs validation on csv data. Returns a promise resolving with the validation object.
+* Worker function for validateFile, see that file for return value specs
+*
+* @method validateCSV
+* @private
+* @param {Object} csv data as string
+* @returns {Promise} information on the csv data
+*/
+function validateCSV(data) {
+
+    const formattedData = arrayBufferToString(data); // convert from arraybuffer to string to parsed csv. store string format for later
+    const rows = csvPeek(formattedData, ','); // FIXME: this assumes delimiter is a `,`; need validation
+    let errorMesage; // error message if any to return
+
+    // validations
+    if (rows.length === 0) {
+        // fail, no rows
+        errorMesage = 'File has no rows';
+    } else {
+        // field count of first row.
+        const fc = rows[0].length;
+        if (fc < 2) {
+            // fail not enough columns
+            errorMesage = 'File has less than two columns';
+        } else {
+            // check field counts of each row
+            if (rows.every(rowArr => rowArr.length === fc)) {
+
+                const res = {
+                    formattedData,
+                    smartDefaults: guessCSVfields(rows), // calculate smart defaults
+
+                    // make field list esri-ish for consistancy
+                    fields: rows[0].map(field => ({
+                        name: field,
+                        type: 'esriFieldTypeString'
+                    })),
+                    geometryType: 'esriGeometryPoint' // always point for CSV
+                };
+
+                return Promise.resolve(res);
+            } else {
+                errorMesage = 'File has inconsistent column counts';
+            }
+        }
+    }
+
+    return Promise.reject(new Error(errorMesage));
+}
+
+/**
 * Validates file content.  Does some basic checking for errors. Attempts to get field list, and
 * if possible, provide the file in a more useful format. Promise rejection indicates failed validation
 *
@@ -494,46 +545,7 @@ function validateFile(type, data) {
 
     const fileHandler = {}; // maps handlers for different file types
 
-    fileHandler[serviceType.CSV] = data => {
-        return new Promise((resolve, reject) => {
-
-            const formattedData = arrayBufferToString(data); // convert from arraybuffer to string to parsed csv. store string format for later
-            const rows = csvPeek(formattedData, ','); // FIXME: this assumes delimiter is a `,`; need validation
-
-            // validations
-            if (rows.length === 0) {
-                // fail, no rows
-                reject(new Error('File has no rows'));
-            } else {
-                // field count of first row.
-                const fc = rows[0].length;
-                if (fc < 2) {
-                    // fail not enough columns
-                    reject(new Error('File has less than two columns'));
-                } else {
-                    // check field counts of each row
-                    if (rows.every(rowArr => rowArr.length === fc)) {
-
-                        const res = {
-                            formattedData,
-                            smartDefaults: guessCSVfields(rows), // calculate smart defaults
-
-                            // make field list esri-ish for consistancy
-                            fields: rows[0].map(field => ({
-                                name: field,
-                                type: 'esriFieldTypeString'
-                            })),
-                            geometryType: 'esriGeometryPoint' // always point for CSV
-                        };
-
-                        resolve(res);
-                    } else {
-                        reject(new Error('File has inconsistent column counts'));
-                    }
-                }
-            }
-        });
-    };
+    fileHandler[serviceType.CSV] = data => validateCSV(data);
 
     fileHandler[serviceType.GeoJSON] = data => {
         return new Promise(resolve => {
