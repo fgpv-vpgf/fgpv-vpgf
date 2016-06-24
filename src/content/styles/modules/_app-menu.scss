@@ -36,17 +36,17 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                padding: 0 0 16px;
                 margin: 0 auto;
                 border-bottom-color: $primary-color-light;
                 background: linear-gradient(#CFD8DC, #FFFFFF);
-                
+
                 > img {
-                    height: 150px;
-                    width: auto;
                     display: block;
                     transform-origin: 50% 0;
                     transform: scale(1);
+                    margin-top: 30px;
+                    max-width: 90%;
+                    max-height: 90%;
                 }
             }
 
@@ -54,10 +54,6 @@
                 position:absolute;
                 top:0;
                 right:0;
-            }
-
-            > .minimize-button {
-                margin: 10px;
             }
 
             .app-logotype {
