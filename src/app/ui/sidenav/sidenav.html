@@ -1,8 +1,4 @@
 <md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2" md-component-id="left">
-    <md-button class="md-icon-button black rv-button-32 minimize-button" ng-click="self.minimize()">
-        <md-icon md-svg-src="community:chevron-double-left"></md-icon>
-    </md-button>
-
     <header class="nav-header">
         <a class="app-logo" href="#">
             <img ng-src="{{self.markerImageSrc}}" alt="">
@@ -10,12 +6,13 @@
         </a>
     </header>
 
+    <md-button class="md-icon-button black rv-button-32 minimize-button" ng-click="self.minimize()">
+        <md-icon md-svg-src="community:chevron-double-left"></md-icon>
+    </md-button>
+
     <md-content role="navigation">
         <ul class="app-menu">
             <li class="app-menu-item" ng-repeat="section in self.menu">
-                <h2 class="menu-heading md-subhead" ng-if="section.type === 'heading'">
-                    {{section.name}}
-                </h2>
                 <rv-menu-link ng-if="section.type === 'link'" section="section"></rv-menu-link>
 
                 <ul class="app-menu app-menu-sublist" ng-if="section.children">
