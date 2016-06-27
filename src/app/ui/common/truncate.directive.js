@@ -24,7 +24,7 @@
      *
      * @return {object} directive body
      */
-    function rvTruncate($compile, $filter) {
+    function rvTruncate($compile, $translate) {
         const directive = {
             restrict: 'E',
             scope: {
@@ -51,9 +51,9 @@
 
                     if (correctedLength > maxTextLength) {
                         shortText +=
-                            `... <br><a href="#" ng-click="show()">${$filter('translate')('rv-truncate.showMore')}</a>`;
+                            `... <br><a href="#" ng-click="show()">${$translate.instant('rv-truncate.showMore')}</a>`;
                         longText +=
-                            ` <br><a href="#" ng-click="hide()">${$filter('translate')('rv-truncate.showLess')}</a>`;
+                            ` <br><a href="#" ng-click="hide()">${$translate.instant('rv-truncate.showLess')}</a>`;
                     }
 
                     const changeTxt = txt => {
