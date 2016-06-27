@@ -14,7 +14,7 @@ Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,Ouvrir menu de na
 Appbar aria label for tools icon,appbar.aria.tools,Tools,Outils
 rv-truncate directive show more,rv-truncate.showMore,Show More,Montrer davantage
 rv-truncate directive show less,rv-truncate.showLess,Hide,Masquer
-Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,Zoom à l'Élément
+Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,Zoom à l'élément
 Tooltip text for Details,filter.tooltip.description,Details,Détails
 Tooltip text for No Zoom Projection,filter.tooltip.nozoom,Data in custom projection. Cannot zoom to feature.,La donnée utilise une projection personnalisée. Le zoom à l'entité n'est pas supporté.
 Details pane title,details.title,Feature Information,Information sur l'entité
@@ -23,7 +23,7 @@ Details pane tooltip for expand button,details.tooltip.expand,Expand,Agrandir
 Details pane label for no result,details.label.noresult,Nothing found,Aucun résultat
 Content pane aria label for close button,contentPane.aria.close,Close,Fermer
 Content pane tooltip for close button,contentPane.tooltip.close,Close,Fermer
-Filter pane title prefix,filter.title,Features: ,Entités :
+Filter pane title prefix,filter.title,Features: ,"Entités : "
 Filter pane aria label for menu icon,filter.aria.menu,Open data panel menu,Ouvrir le menu du panneau de données
 Filter pane menu label for Minimize,filter.menu.minimize,Minimize,Réduire
 Filter pane menu label for Split View,filter.menu.splitView,Split View,Diviser la vue
@@ -62,8 +62,8 @@ Settings snapshot mode label,settings.label.snapshot,Snapshot mode,Mode copie in
 Settings snapshot mode enable label,settings.label.snapshotEnable,Enable,Activer
 Settings query mode label,settings.label.query,Allow query,Permettre les requêtes
 Settings query mode aria,settings.aria.query,Allow query,Permettre les requêtes
-Side Navigation main title,sidenav.title,FGP R2 Viewer,FGP R2 Viewer
-Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,Ouvrir le menu du panneau de données
+Side Navigation main title,sidenav.title,FGP R2 Viewer,Visualiseur PGF R2
+Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,Menu du panneau des données ouvertes
 Table of Content show symbology label,toc.layer.label.symbologyShow,Show symbology,Afficher symbologie
 Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide symbology,Masquer symbologie
 Table of Content main title,toc.title,Layer Selector,Sélecteur de couche
@@ -73,14 +73,14 @@ Table of Content extra menu items label,toc.label.extraMenu,Extra,Extra
 Table of Content extra menu items tootlip,toc.tooltip.extraMenu,Extra,Extra
 Table of Content metadata label,toc.label.metadata,Metadata,Métadonnées
 Table of Content metadata tootlip,toc.tooltip.metadata,Metadata,Métadonnées
-Table of Content query label,toc.label.query,Toggle query,Toggle query
-Table of Content query tootlip,toc.tooltip.query,Toggle query,Toggle query
+Table of Content query label,toc.label.query,Toggle query,Basculer la requête
+Table of Content query tootlip,toc.tooltip.query,Toggle query,Basculer la requête
 Table of Content settings label,toc.label.settings,Settings,Paramètres
 Table of Content settings tootlip,toc.tooltip.settings,Settings,Paramètres
-Table of Content visibilty off label,toc.label.visibility.off,Show layer,Afficher couche
-Table of Content visibilty off tootlip,toc.tooltip.visibility.off,Show layer,Afficher couche
-Table of Content visibilty on label,toc.label.visibility.on,Hide layer,Masquer couche
-Table of Content visibilty on tootlip,toc.tooltip.visibility.on,Hide layer,Masquer couche
+Table of Content visibilty off label,toc.label.visibility.off,Show layer,Afficher la couche
+Table of Content visibilty off tootlip,toc.tooltip.visibility.off,Show layer,Afficher la couche
+Table of Content visibilty on label,toc.label.visibility.on,Hide layer,Masquer la couche
+Table of Content visibilty on tootlip,toc.tooltip.visibility.on,Hide layer,Masquer la couche
 Table of Content visibilty zoom in label,toc.label.visibility.zoomIn,Zoom In to Details,Zoom avant
 Table of Content visibilty zoom in tootlip,toc.tooltip.visibility.zoomIn,Zoom In to Details,Zoom avant
 Table of Content visibilty zoom out label,toc.label.visibility.zoomOut,Zoom Out to Details,Zoom arrière
@@ -119,48 +119,46 @@ Geometry types,geometry.type.generic, feature|features, entité|entités
 Geometry types,geometry.type.esriGeometryPoint, point|points, point|points
 Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, polygone|polygones
 Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
-,import.title,Import Layers,[fr] Import Layres
-,import.file.title,Import File,[fr] Import File
-,import.file.upload.title,Upload data,[fr] Upload data
-,import.file.upload.summary,"GeoJSON, CSV, or Shapefile","[fr] GeoJSON, CSV, or Shapefile"
-,import.file.upload.choose,choose a file,[fr] choose a file
-,import.file.upload.drop,Drop the file to upload,[fr] Drop the file to upload
-,import.file.upload.or,or,[fr] or
-,import.file.upload.fileurl,File URL,[fr] File URL
-,import.file.upload.invalid,This is not a valid URL,[fr] This is not a valid URL
-,import.file.upload.noaccess,Can't access file,[fr] Can't access file
-,import.file.select.title,Select file format,[fr] Select file format
-,import.file.select.fileformat,File Format,[fr] File Format
-,import.file.select.wrong,Incorrect file format,[fr] Incorrect file format
-,import.file.configure.title,Configure layer,[fr] Configure layer
-,import.file.configure.layername,Layer Name,[fr] Layer Name
-,import.file.configure.primaryfield,Primary Field,[fr] Primary Field
-,import.file.configure.latitudefield,Latitude Field,[fr] Latitude Field
-,import.file.configure.longitudefield,Longitude Field,[fr] Longitude Field
-,import.file.type.csv, CSV,[fr] CSV
-,import.file.type.shapefile,Shapefile,[fr] Shapefile
-,import.file.type.geojson,GeoJSON,[fr] GeoJSON
-,import.service.title,Import Service,[fr] Import Service
-,import.service.connect.title,Connect service,[fr] Connect Service
-,import.service.connect.summary,"ESRI Feature, Dynamic, Tile, Image or OGC WMS endpoint","[fr] ESRI Feature, Dynamic, Tile, Image or OGC WMS endpoint"
-,import.service.connect.serviceurl,Service layer URL,[fr] Service layer URL
-,import.service.connect.invalidurl,This is not a valid URL,[fr] This is not a valid URL
-,import.service.connect.broken,Service does not respond,[fr] Service does not respond
-,import.service.select.title,Select Service type,[fr] Select Service type
-,import.service.select.servicetype,Service Type,[fr] Service Type
-,import.service.select.wrong,Incorrect service type,[fr] Incorrect service type
-,import.service.type.featurelayer,ESRI Feature Layer,[fr] ESRI Feature Layer
-,import.service.type.dynamicservice,ESRI Dynamic Layer,[fr] ESRI Dynamic Layer
-,import.service.type.imageservice,ESRI Image Layer,[fr] ESRI Image Layer
-,import.service.type.tileservice,ESRI Tile Layer,[fr] ESRI Tile Layer
-,import.service.type.wms,OGC Web Map Service,[fr] OGC Web Map Service
-,import.service.configure.title,Configure layer,[fr] Configure layer
-,import.service.configure.layername,Layer Name,[fr] Layer Name
-,import.service.configure.primaryfield,Primary Field,[fr] Primary Field
-,import.service.configure.layers,Layers,[fr] Layers
-,import.service.configure.multipleselection,You can select several layers,[fr] You can select several layers
-,stepper.continue,continue,[fr] continue
-,stepper.cancel,cancel,[fr] cancel
+,import.title,Import Layers,Importer des couches
+,import.file.title,Import File,Importer un fichier
+,import.file.upload.title,Upload data,Charger des données
+,import.file.upload.summary,"GeoJSON, CSV, or Shapefile","GeoJSON, CSV ou Shapefile"
+,import.file.upload.choose,choose a file,Choisir un fichier
+,import.file.upload.drop,Drop the file to upload,Déposer le fichier à téléverser
+,import.file.upload.or,or,ou
+,import.file.upload.fileurl,File URL,Adresse URL du fichier
+,import.file.upload.invalid,This is not a valid URL,Cette adresse URL n'est pas valide
+,import.file.upload.noaccess,Can't access file,Impossible d'accéder au fichier
+,import.file.select.title,Select file format,Sélectionner le format du fichier
+,import.file.select.fileformat,File Format,Format du fichier
+,import.file.select.wrong,Incorrect file format,Format de fichier incorrecte
+,import.file.configure.title,Configure layer,Configurer la couche
+,import.file.configure.layername,Layer Name,Nom de la couche
+,import.file.configure.primaryfield,Primary Field,Champ clé
+,import.file.configure.latitudefield,Latitude Field,Champ latitude
+,import.file.configure.longitudefield,Longitude Field,Champ longitude
+,import.file.type.csv,CSV,CSV
+,import.file.type.shapefile,Shapefile,Shapefile
+,import.file.type.geojson,GeoJSON,GeoJSON
+,import.service.title,Import Service,Importer un service
+,import.service.connect.title,Connect service,Connecter le service
+,import.service.connect.serviceurl,Service layer URL,Adresse URL du service
+,import.service.connect.invalidurl,This is not a valid URL,Cette adresse URL n'est pas valide
+,import.service.connect.broken,Service does not respond,Le service ne répond pas
+,import.service.select.title,Select Service type,Sélectionner le type de service
+,import.service.select.servicetype,Service Type,Type de service
+,import.service.type.featurelayer,ESRI Feature Layer,Couche d'entités d'ESRI
+,import.service.type.dynamicservice,ESRI Dynamic Layer,Couche dynamique d'ESRI
+,import.service.type.imageservice,ESRI Image Layer,Couche d'images d'ESRI
+,import.service.type.tileservice,ESRI Tile Layer,Couche de tuiles d'ESRI
+,import.service.type.wms,OGC Web Map Service,Couche WMS de l'OGC
+,import.service.configure.title,Configure layer,Configurer la couche
+,import.service.configure.layername,Layer Name,Nom de la couche
+,import.service.configure.primaryfield,Primary Field,Champ clé
+,import.service.configure.layers,Layers,Couches
+,import.service.configure.multipleselection,You can select several layers,Vous pouvez sélectionner plusieurs couches
+,stepper.continue,Continue,Continuer
+,stepper.cancel,Cancel,Annuler
 ,help.navigationControls.header,Navigation Controls,Contrôles de navigation
 ,help.navigationControls.info,"Navigation controls are used for changing the viewing extent of the map.<br>
 <br>
@@ -234,6 +232,9 @@ Utilisation:<br>
 - Tile layers displays map content from an ArcGIS Server Map service that has been cached (tiled). A cached map service contains pre-generated map tiles. They are not interactive and do not show in the data table panel.<br>
 - WMS layers provide an overlay of data from a Web Map Service. They can support a click interaction on the map, but do not show in the data table panel.","Le menu déroulant 'Légende' sert de légende pour la carte et répertorie les couches disponibles pour afficher sur la carte. Les couches d'entités s'affichent également dans le panneau 'Tableau de données'. Il existe trois types de couches qui peuvent être affichées dans le menu déroulant 'Légende' : <br>
 - Les couches d'entités représentent des données avec lesquelles la carte peut interagir et qui peuvent être affichées dans le panneau 'Tableau de données'.<br>
+- Les couches dynamiques représentent des données interactives sur la carte qui ne peuvent être entreposées dans la mémoire cache. Celles-ci sont récupérées du serveur à chaque mise à jour de la carte. Elles peuvent représenter une collection de couches d'entités visualisables dans le panneau 'Tableau de données'.<br>
+- Les couches d'images permettent d'afficher de l'imagerie ainsi que divers types de données au format matriciel disponibles à travers un service d'imagerie d'ESRI. Elles ne sont pas interactives et leurs données ne peuvent être visualisées à l'aide du panneau 'Tableau de données'.<br>
+- Les couches de tuiles affichent du contenu cartographique, prédécoupé en tuiles, provenant d'un service de carte Web d'ESRI. Elles ne sont pas interactives et leurs données ne peuvent être visualisées à l'aide du panneau 'Tableau de données'.<br>
 - Les couches SCW fournissent une superposition de données fournies d'un service de carte Web. Ces données sont interactives sur la carte, mais ne peuvent apparaître dans le panneau 'Tableau de données'."
 ,help.layerVisibility.header,Layer Visibility,Visibilité de la couche
 ,help.layerVisibility.info,"* Hide/Show: Select the ""eye"" icon next to a dataset or group name to toggle the layer display on or off on the map.",* Masquer/Afficher : Sélectionnez l’icône en forme d’œil près du nom de l’ensemble de données pour masquer ou afficher la couche sur la carte.
@@ -241,8 +242,8 @@ Utilisation:<br>
 ,help.layerLegends.info,"Each layer has some symbology associated with it. For simple feature layers a single icon will be present next to the layer name. For complex feature layers (i.e. those with multiple symbols used per layer) the icon will show as a stack and maybe toggled on and off. When toggled on a section will expand beneath the layer name and show the full symbology for the layer. WMS layers may optionally have a graphical legend defined, if one is present it will be displayed in the same drop down manner.","Une certaine symbologie est associée à chaque couche. Pour des couches d'entités (feature layer) simples, une seule icône sera présente à côté du nom de la couche. Pour les couches de d'entités complexes (c.-à-d. celles où de multiples symboles sont utilisés par couche) l’icône apparaîtra comme une pile qui peut être activée ou désactivée. Lorsqu'activée, une section s'étendra sous la couche et affichera la symbologie correspondante. Les couches SCW peuvent optionnellement possèder une légende graphique qui sera, de la même manière, affichée sous la couche associée."
 ,help.handlingLayerErrors.header,Handling Layer Errors,Traitement des erreurs de couche
 ,help.handlingLayerErrors.info,"If a layer fails to load correctly it will be identified by an error notice. Instead of the standard layer actions you can select to either reload the layer (this is particularly helpful if there is a temporary network connectivity issue) or remove the layer. If a layer is removed it will be taken out of the layer selector completely and if it is added back via ""Undo"" or ""Add Dataset"" it will lose any previous customizations.","Si la couche ne se charge pas correctement, un avis d’erreur s'affichera. Au lieu des mesures standards liées à la couche, on peut choisir de recharger la couche (ce qui est particulièrement utile en cas de problème temporaire de connexion au réseau) ou de retirer la couche. Si une couche est retirée, elle sera retirée de la légende via « Annuler ». Si elle est rajoutée via « Ajouter une couche » elle perdra toutes les personnalisations précédentes."
-,help.geolocation.header,Geolocation,[FR] Géolocalisation
-,help.geolocation.info,"Click to zoom to the current geographical location of the user.","[FR] Click to zoom to the current geographical location of the user."
+,help.geolocation.header,Geolocation,Géolocalisation
+,help.geolocation.info,"Click to zoom to the current geographical location of the user.","Cliquez pour zoomer à la position actuelle de l'utilisateur."
 ,help.layerSettings.header,Layer Settings,Paramètres de couches
 ,help.layerSettings.info,"Hover over a layer name and click the ""three dots"" icon link to access additional options for the layer.<br>
 <br>
