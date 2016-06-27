@@ -123,8 +123,8 @@
                                 // TODO: possibly retry rcsLoad?
                                 console.warn('RCS failed, starting app with file-only config.');
                                 const toast = $mdToast.simple()
-                                    .textContent($translate.instant('config.service.rcs.error', lang))
-                                    .action($translate.instant('config.service.rcs.action', lang))
+                                    .textContent($translate.instant('config.service.rcs.error'))
+                                    .action($translate.instant('config.service.rcs.action'))
                                     .highlightAction(true)
                                     .hideDelay(0)
                                     .position('bottom rv-flex-global');
