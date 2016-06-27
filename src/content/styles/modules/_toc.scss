@@ -26,7 +26,7 @@ $layer-item-height: rem(6.0);
         }
     }
 
-    .show-all {
+    &.keyboard {
         @include entry-controls-hover;
     }
 }
