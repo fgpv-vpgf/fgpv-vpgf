@@ -32,6 +32,20 @@
                     }
                 );
 
+                //test standard attribute loading of a feature layer
+                var nugget12 = api.attribs.loadLayerAttribs(mahLayer);
+ 
+                console.log('feature layer result - normal case - top ', nugget12);
+ 
+                nugget12["0"].getAttribs().then(
+                    function (attribD) {
+                        console.log('feature layer result - normal case - attrib data', attribD);
+                    },
+                    function (iAmError) {
+                        console.log('I AM ATTRIB ERROR', iAmError);
+                    }
+                );
+ 
                 //test filtered attribute loading of a feature layer
                 var nugget2 = api.attribs.loadLayerAttribs(mahLayer, {"0": {"attribs":"latitude,siteEventType_en,siteID"}});
 
