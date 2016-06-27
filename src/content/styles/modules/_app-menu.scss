@@ -10,6 +10,7 @@
                 flex-direction: column;
                 display: flex;
                 flex: 1;
+                padding: rem(0.8) 0;
             }
 
             .rv-version {
@@ -40,18 +41,24 @@
                 border-bottom-color: $primary-color-light;
                 background: linear-gradient(#CFD8DC, #FFFFFF);
 
-                > img {
-                    display: block;
-                    transform-origin: 50% 0;
-                    transform: scale(1);
-                    margin-top: 30px;
-                    max-width: 90%;
-                    max-height: 90%;
+                img {
+                    max-width: 100%;
+                    max-height: 100%;
+                }
+
+                div {
+                    width: rem(15);
+                    height: rem(15);
+                    margin-top: rem(3);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                 }
             }
 
             .minimize-button {
                 position:absolute;
+                margin: 10px;
                 top:0;
                 right:0;
             }
