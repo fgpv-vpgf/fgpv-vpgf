@@ -497,18 +497,18 @@ function validateCSV(data) {
 
     const formattedData = arrayBufferToString(data); // convert from arraybuffer to string to parsed csv. store string format for later
     const rows = csvPeek(formattedData, ','); // FIXME: this assumes delimiter is a `,`; need validation
-    let errorMesage; // error message if any to return
+    let errorMessage; // error message if any to return
 
     // validations
     if (rows.length === 0) {
         // fail, no rows
-        errorMesage = 'File has no rows';
+        errorMessage = 'File has no rows';
     } else {
         // field count of first row.
         const fc = rows[0].length;
         if (fc < 2) {
             // fail not enough columns
-            errorMesage = 'File has less than two columns';
+            errorMessage = 'File has less than two columns';
         } else {
             // check field counts of each row
             if (rows.every(rowArr => rowArr.length === fc)) {
@@ -527,12 +527,12 @@ function validateCSV(data) {
 
                 return Promise.resolve(res);
             } else {
-                errorMesage = 'File has inconsistent column counts';
+                errorMessage = 'File has inconsistent column counts';
             }
         }
     }
 
-    return Promise.reject(new Error(errorMesage));
+    return Promise.reject(new Error(errorMessage));
 }
 
 /**
@@ -571,15 +571,17 @@ function validateFile(type, data) {
 /**
  * From provided CSV data, guesses which columns are long and lat. If guessing is no successful, returns null for one or both fields.
  *
- * @method guessLatLong
+ * @method guessCSVfields
  * @private
  * @param  {Array} rows csv data
  * @return {Object}      an object with lat and long string properties indicating corresponding field names
  */
 function guessCSVfields(rows) {
     // magic regexes
-    const latValueRegex = new RegExp(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/i); // filters by field value
-    const longValueRegex = new RegExp(/^[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/i);
+    // TODO: in case of performance issues with running regexes on large csv files, limit to, say, the first hundred rows
+    // TODO: explain regexes
+    const latValueRegex = new RegExp(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/); // filters by field value
+    const longValueRegex = new RegExp(/^[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/);
     const latNameRegex = new RegExp(/^.*(y|la).*$/i); // filters by field name
     const longNameRegex = new RegExp(/^.*(x|lo).*$/i);
 
