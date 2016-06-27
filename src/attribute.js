@@ -149,7 +149,7 @@ function newLayerPackage(featureIdx, esriBundle) {
                 }, error => {
                     console.warn('error getting attribute data for ' + layerData.load.layerUrl);
 
-                    // return the error as part of the promise
+                    delete layerPackage._attribData;
                     reject(error);
                 });
             });
