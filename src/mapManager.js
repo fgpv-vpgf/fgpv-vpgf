@@ -32,6 +32,10 @@ module.exports = function (esriBundle) {
         mapDefault
     };
 
+    let basemapCtrl;
+    let scalebarCtrl;
+    let overviewMapCtrl;
+
     /**
      * @ngdoc method
      * @name setupMap
@@ -57,12 +61,8 @@ module.exports = function (esriBundle) {
      */
     function setupMap(map, settings) {
 
-        let basemapCtrl;
-        let scalebarCtrl;
-        let overviewMapCtrl;
-
         // check to see if property exists in settings
-        if ('basemaps' in settings) {
+        if (settings.basemaps) {
 
             // need to pass esriBundle to basemap module in order to use it
             // the alternative is to pass geoApi reference after creation, and then use the geoApi to
@@ -77,7 +77,7 @@ module.exports = function (esriBundle) {
         }
 
         // TODO: add code to setup scalebar
-        if ('scalebar' in settings) {
+        if (settings.scalebar) {
 
             scalebarCtrl = new mapManager.Scalebar({
                 map: map,
@@ -94,8 +94,11 @@ module.exports = function (esriBundle) {
         // TODO: add code to setup north arrow
 
         // Setup overview map
-        if ('overviewMap' in settings && 'enabled' in settings.overviewMap &&
-            settings.overviewMap.enabled === true) {
+        if (settings.overviewMap && settings.overviewMap.enabled) {
+            if (overviewMapCtrl) {
+                overviewMapCtrl.destroy();
+                overviewMapCtrl = null;
+            }
 
             overviewMapCtrl = mapManager.OverviewMap({
                 map: map,
