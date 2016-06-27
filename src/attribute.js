@@ -149,6 +149,7 @@ function newLayerPackage(featureIdx, esriBundle) {
                 }, error => {
                     console.warn('error getting attribute data for ' + layerData.load.layerUrl);
 
+                    // attrib data deleted so the first check for attribData doesn't return a rejected promise
                     delete layerPackage._attribData;
                     reject(error);
                 });
