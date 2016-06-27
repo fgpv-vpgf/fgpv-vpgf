@@ -9,30 +9,109 @@
         height: rem(3.2);
         width: rem(3.2);
         position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        //display: flex;
+        //align-items: center;
+        //justify-content: center;
         z-index: 0; // set up new stacking context
         @include symbology-item;
 
         .rv-symbology-trigger {
             // button which opens symbology section
-            //transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            // transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
             opacity: 0;
             margin: 0;
         }
 
-        .rv-symbology-item {
+        &.esriTile .rv-symbology-item,
+        &.esriImage .rv-symbology-item,
+        &.esriDynamicLayerEntry .rv-symbology-item,
+        &.esriFeature .rv-symbology-item {
+            position: absolute;
+            left: 0;
+            top: 0;
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            width: rem(3.2);
+            height: rem(3.2);
+            overflow: visible;
+
+            > img {
+                flex-shrink: 0;
+                width: rem(3.2);
+                height: rem(3.2);
+                box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+            }
+
+            .rv-symbology-label-container {
+                // display: none;
+
+                width: 100%;
+                flex: 1;
+
+                span {
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    display: none;
+                    opacity: 0;
+                    font-size: 14px;
+                    padding: rem(0.4) rem(1.6);
+                }
+            }
+
+            // hide symbology name in collapsed state
+            /*.rv-symbology-item-name {
+                opacity: 0;
+                display: none;
+                width: 300px;
+            }*/
+        }
+
+        &.ogcWms .rv-symbology-item {
             position: absolute;
             left: 0;
             top: 0;
 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background-color: #fff;
+            width: rem(3.2);
+            height: rem(3.2);
+            overflow: hidden;
+
+            box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+
+            > img {
+                flex-shrink: 0;
+                width: rem(3.2);
+                height: rem(3.2);
+            }
+
+            .rv-symbology-label-container {
+                // display: none;
+
+                width: 100%;
+                background-color: rgba(0, 0, 0, 0.68);
+                color: #fff;
+                flex: 1;
+
+                span {
+                    display: block;
+                    opacity: 0;
+                    font-size: 14px;
+                    padding: rem(0.4) rem(1.6);
+                }
+            }
+
             // hide symbology name in collapsed state
-            .rv-symbology-item-name {
+            /*.rv-symbology-item-name {
                 opacity: 0;
                 display: none;
                 width: 300px;
-            }
+            }*/
         }
 
         &.rv-compound {
@@ -42,6 +121,9 @@
             }
 
             .rv-symbology-item {
+                width: rem(3.2) - 2px;
+                height: rem(3.2) - 2px;
+
                 // this block will move items 4 and up underneath the stack
                 top: 1px;
                 left: 1px;
@@ -79,8 +161,8 @@
         position: relative;
         //width: rem(3.2); // need to specify width, otherwise it's squashed
         //height: 100%;
-        display: flex;
-        align-items: center;
+        //display: flex;
+        //align-items: center;
 
         .rv-symbology-item-name {
             margin-left: 8px;
