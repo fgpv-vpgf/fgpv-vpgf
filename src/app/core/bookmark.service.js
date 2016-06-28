@@ -12,8 +12,8 @@
         .module('app.core')
         .factory('bookmarkService', bookmarkService);
 
-    function bookmarkService($rootElement, legendService, geoService, LayerBlueprint, LayerRecordFactory,
-            configService) {
+    function bookmarkService($rootElement, $q, legendService, geoService, LayerBlueprint,
+            LayerRecordFactory, configService) {
 
         const service = {
             getBookmark,
@@ -61,10 +61,11 @@
          * Reads and applies the options specified by bookmark to config
          *
          * @param {String} bookmark     A bookmark created by getBookmark
-         * @param {Object} config       The config object to modify
+         * @param {Object} origConfig   The config object to modify
          * @returns {Object}            The config with changes from the bookmark
          */
-        function parseBookmark(bookmark, config) {
+        function parseBookmark(bookmark, origConfig) {
+            const config = angular.copy(origConfig);
             const pattern = /^([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
             const layerPatterns = [
                 /^(.+?)(\d{7})$/, // feature
@@ -124,17 +125,29 @@
                     }
                 });
 
-                // Loops through remaining bookmark layers and tries to pull them from rcs
-                configService.rcsAddKeys(Object.keys(bmLayers).map(id => id.split('.')[1]))
-                    .then(rcsConfigs => {
-                        rcsConfigs.forEach(rcsConfig => {
-                            angular.merge(rcsConfig, bmLayers[rcsConfig.id]);
-
-                            const blueprint = new LayerBlueprint.service(rcsConfig);
-                            console.log(blueprint);
-                        });
-                    });
+                configService.setCurrent(addRcsConfigs(bmLayers, config));
+            } else {
+                configService.setCurrent($q.resolve(config));
             }
+        }
+
+        function addRcsConfigs(rcsBookmarks, config) {
+            if (Object.keys(rcsBookmarks).length > 0) {
+                return configService.rcsAddKeys(Object.keys(rcsBookmarks).map(id => id.split('.')[1]))
+                    .then(rcsConfigs => {
+                        const configSnippets = [];
+                        rcsConfigs.forEach(rcsConfig => {
+                            angular.merge(rcsConfig, rcsBookmarks[rcsConfig.id]);
+                            configSnippets.push(rcsConfig);
+                        });
+                        config.layers = config.layers.concat(configSnippets);
+
+                        return config;
+                    })
+                    .catch(() => config);
+            }
+
+            return $q.resolve(config);
         }
 
         /**
