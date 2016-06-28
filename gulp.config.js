@@ -98,11 +98,11 @@ module.exports = function () {
         vetjs: [src + '**/*.js', '*.js', 'e2e-test/**/*.js', 'test/**/*.js', 'docs/app/js/app.js',
             'docs/config/**/*.js', '!docs/config/templates/*.js', '!docs/config/tag-defs/*.js'],
 
-        watchsass: src + 'content/styles/**/*.scss',
-        watchjs: src + '**/*.js',
-        watchhtml: src + '**/*.html',
-        watchconfig: src + '*.json',
-        xslt: src + 'content/metadata/xstyle_default_i18n.xsl',
+        watchsass: `${src}content/styles/**/*.scss`,
+        watchjs: `${src}**/*.js`,
+        watchhtml: `${src}**/*.html`,
+        watchconfig: `${src}*.json`,
+        xslt: `${src}content/metadata/xstyle_default_i18n.xsl`,
 
         plato: {
             js: app + '**/*.js'
