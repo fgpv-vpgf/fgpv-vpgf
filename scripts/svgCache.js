@@ -11,7 +11,10 @@ function pullIcons(xmlJunk, icons) {
             if (err) {
                 reject(err);
             }
-            resolve(icons.map(icon => xpath.find(jsonXml, `//g[@id='${icon}']`)[0]));
+            // tried xpath.find(jsonXml, `//g[@id='${icon}']`)[0] which doesn't seem to match
+            // entries from community icon set, if possible try to find a more robust querying
+            // method
+            resolve(icons.map(icon => jsonXml.svg.defs[0].g.find(g => g['$'].id === icon) ));
         });
     });
     return res;
@@ -33,6 +36,10 @@ function buildCache(callback) {
                 } else {
                     console.log(`    .iconSet('${prefix}', 'app/${prefix}.svg')`);
                 }
+            })
+            .catch(e => {
+                console.error(`Error processing ${file}`);
+                console.error(e);
             });
         promises.push(filePromise);
     });
