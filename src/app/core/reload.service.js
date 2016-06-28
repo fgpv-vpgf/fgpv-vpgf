@@ -12,11 +12,14 @@
         .module('app.core')
         .factory('reloadService', reloadService);
 
-    function reloadService($translate, bookmarkService, geoService, configService) {
+    function reloadService($translate, $rootScope, events, bookmarkService, geoService, configService) {
         const service = {
             loadNewProjection,
-            loadNewLang
+            loadNewLang,
+            loadWithBookmark
         };
+
+        let bookmarkBlocking = true;
 
         return service;
 
@@ -44,10 +47,23 @@
         function loadNewLang(lang) {
             const bookmark = bookmarkService.getBookmark();
             $translate.use(lang);
-            configService.getCurrent().then(config => {
+            configService.getOriginal().then(config => {
                 bookmarkService.parseBookmark(bookmark, config);
                 geoService.assembleMap();
             });
+        }
+
+        function loadWithBookmark(bookmark, initial) {
+            if (!initial || bookmarkBlocking) {
+                configService.getOriginal().then(config => {
+                    bookmarkService.parseBookmark(bookmark, config);
+
+                    if (bookmarkBlocking) {
+                        $rootScope.$broadcast(events.rvBookmarkInit);
+                        bookmarkBlocking = false;
+                    }
+                });
+            }
         }
     }
 })();
