@@ -274,6 +274,7 @@
                     tlshift.to(symbologyItem.image, RV_DURATION / 3 * 2, {
                         width: itemWidth,
                         height: itemHeight,
+                        padding: 0, // removes padding from expanded wms legend images making them clearer; TODO: revisit when all symbology is svg items
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, RV_DURATION / 3);
 
