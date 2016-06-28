@@ -251,7 +251,7 @@
 
                     // calculate symbology item's dimensions based on max width
                     const itemWidth = Math.min(maxItemWidth, imageWidth);
-                    const itemHeight = itemWidth / imageWidth * imageHeight;
+                    const itemHeight = imageWidth !== 0 ? itemWidth / imageWidth * imageHeight : 0; // in cases when image urls are broken its size is 0
 
                     // animate symbology container's size
                     // note that animate starts at `RV_DURATION / 3 * 2` giving the items time to move down from the stack
@@ -273,7 +273,7 @@
                     // animate image width to the calculated width
                     tlshift.to(symbologyItem.image, RV_DURATION / 3 * 2, {
                         width: itemWidth,
-                        height: 'auto',
+                        height: itemHeight,
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, RV_DURATION / 3);
 
