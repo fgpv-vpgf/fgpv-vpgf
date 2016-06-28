@@ -60,6 +60,7 @@
                 .iconSet('action', 'app/action.svg')
                 .iconSet('alert', 'app/alert.svg')
                 .iconSet('communication', 'app/communication.svg')
+                .iconSet('community', 'app/community.svg')
                 .iconSet('content', 'app/content.svg')
                 .iconSet('editor', 'app/editor.svg')
                 .iconSet('file', 'app/file.svg')
