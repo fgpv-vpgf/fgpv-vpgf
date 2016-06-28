@@ -26,6 +26,7 @@
         .constant('events', {
             rvReady: 'rvReady',
             rvApiReady: 'rvApiReady',
+            rvBookmarkInit: 'rvBookmarkInit',
 
             rvDataPrint: 'rvDataPrint', // these data events should be removed after switching to angular 1.5 or 2 or React
             rvDataExportCSV: 'rvDataExportCSV'
