@@ -55,10 +55,6 @@ $icon-shadow: $whiteframe-shadow-1dp;
                 background-color: rgba(0, 0, 0, 0.68);
                 color: #fff;
             }
-
-            img {
-                padding: 0;
-            }
         }
 
         &.rv-compound .rv-symbology-item {
@@ -99,6 +95,11 @@ $icon-shadow: $whiteframe-shadow-1dp;
             opacity: 0;
             font-size: 14px;
             padding: rem(0.4) rem(1.6);
+
+            // hide empty labels so their padding doesn't take up space on the page
+            &:empty {
+                display: none !important;
+            }
         }
     }
 }
