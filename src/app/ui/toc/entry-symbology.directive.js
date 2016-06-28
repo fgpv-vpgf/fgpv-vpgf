@@ -141,7 +141,7 @@
                             ...symbologyItems.map(symbologyItem =>
                                 Math.max(
                                     symbologyItem.image[0].naturalWidth,
-                                    getTextWidth(canvas, symbologyItem.label.text(), 'normal 12pt Roboto') + 32 // account for padding
+                                    getTextWidth(canvas, symbologyItem.label.text(), 'normal 14pt Roboto') + 32 // account for padding
                                 ))),
                         containerWidth
                     );
@@ -279,6 +279,7 @@
 
                     // set width to auto to keep the label centered during animation
                     tlshift.set(symbologyItem.label, {
+                        display: 'block',
                         width: 'auto'
                     }, 0);
 
@@ -302,7 +303,7 @@
                 function iconLegendItem(tlshift, symbologyItem, totalHeight, isLast) {
                     const symbologyListItemMargin = 8;
 
-                    const itemHeight = 32; // icon size is fixed
+                    const itemSize = 32; // icon size is fixed
 
                     // expand symbology container width and align it to the left (first and last items are fanned out)
                     tlshift.to(symbologyItem.container, RV_DURATION / 3 * 2, {
@@ -324,6 +325,13 @@
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, 0);
 
+                    // animate image width to the calculated width
+                    tlshift.to(symbologyItem.image, RV_DURATION / 3 * 2, {
+                        width: itemSize,
+                        height: itemSize,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, RV_DURATION / 3);
+
                     // set label to `block` so it is properly positioned
                     tlshift.set(symbologyItem.label, {
                         display: 'block'
@@ -335,7 +343,7 @@
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, RV_DURATION / 3);
 
-                    return itemHeight + (isLast ? 0 : symbologyListItemMargin);
+                    return itemSize + (isLast ? 0 : symbologyListItemMargin);
                 }
 
                 /**
