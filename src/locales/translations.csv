@@ -17,6 +17,22 @@ rv-truncate directive show less,rv-truncate.showLess,Hide,Masquer
 Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,Zoom à l'élément
 Tooltip text for Details,filter.tooltip.description,Details,Détails
 Tooltip text for No Zoom Projection,filter.tooltip.nozoom,Data in custom projection. Cannot zoom to feature.,La donnée utilise une projection personnalisée. Le zoom à l'entité n'est pas supporté.
+DataTable text for Processing,filter.default.label.processing,Processing...,Traitement en cours...
+DataTable text for Search,filter.default.label.search,Search: ,"Rechercher : "
+DataTable text for Lenght Menu,filter.default.label.lenght.menu,Show _MENU_ entries,Afficher _MENU_ éléments
+DataTable text for Info,filter.default.label.info,Showing _START_ to _END_ of _TOTAL_ entries,Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments
+DataTable text for Empty,filter.default.label.zero,Showing 0 to 0 of 0 entries,Affichage de l'élément 0 à 0 sur 0 élément
+DataTable text for Filtered,filter.default.label.filtered,(filtered from _MAX_ total entries),(filtrés de _MAX_ éléments au total)
+DataTable text for Postfix,filter.default.label.postfix,'',''
+DataTable text for Loading Records,filter.default.label.loadrec,Loading...,Chargement en cours...
+DataTable text for Zero records,filter.default.label.zerorecords,No matching records found,Aucun élément à afficher
+DataTable text for Empty table,filter.default.label.emptytable,No data available in table,Aucune donnée disponible dans le tableau
+DataTable text for First,filter.default.label.first,First,Premier
+DataTable text for Previous,filter.default.label.previous,Previous,Précédent
+DataTable text for Next,filter.default.label.next,Next,Suivant
+DataTable text for Last,filter.default.label.last,Last,Dernier
+DataTable text for Sort Ascending,filter.default.aria.sortasc,: activate to sort column ascending,: activer pour trier la colonne par ordre croissant
+DataTable text for Sort Descending,filter.default.aria.sortdsc,: activate to sort column descending,: activer pour trier la colonne par ordre décroissant
 Details pane title,details.title,Feature Information,Information sur l'entité
 Details pane aria label for expand button,details.aria.expand,Expand,Agrandir
 Details pane tooltip for expand button,details.tooltip.expand,Expand,Agrandir

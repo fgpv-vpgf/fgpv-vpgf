@@ -143,7 +143,30 @@
                                 extend: 'csvHtml5',
                                 title: self.display.requester.name
                             },
-                        ]
+                        ],
+                        // language managment
+                        oLanguage: {
+                            sProcessing: $translate.instant('filter.default.label.processing'),
+                            sSearch: $translate.instant('filter.default.label.search'),
+                            sLengthMenu: $translate.instant('filter.default.label.lenght.menu'),
+                            sInfo: $translate.instant('filter.default.label.info'),
+                            sInfoEmpty: $translate.instant('filter.default.label.zero'),
+                            sInfoFiltered: $translate.instant('filter.default.label.filtered'),
+                            sInfoPostFix: $translate.instant('filter.default.label.postfix'),
+                            sLoadingRecords: $translate.instant('filter.default.label.loadrec'),
+                            sZeroRecords: $translate.instant('filter.default.label.zerorecords'),
+                            sEmptyTable: $translate.instant('filter.default.label.emptytable'),
+                            oPaginate: {
+                                sFirst: $translate.instant('filter.default.label.first'),
+                                sPrevious: $translate.instant('filter.default.label.previous'),
+                                sNext: $translate.instant('filter.default.label.next'),
+                                sLast: $translate.instant('filter.default.label.last')
+                            },
+                            oAria: {
+                                sSortAscending:  $translate.instant('filter.default.aria.sortasc'),
+                                sSortDescending: $translate.instant('filter.default.aria.sortdsc')
+                            }
+                        }
                     });
 
                 self.table.on('click', 'md-icon.rv-zoom-to', event => {
