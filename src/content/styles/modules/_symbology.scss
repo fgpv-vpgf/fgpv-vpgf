@@ -55,6 +55,10 @@ $icon-shadow: $whiteframe-shadow-1dp;
                 background-color: rgba(0, 0, 0, 0.68);
                 color: #fff;
             }
+
+            img {
+                padding: 0;
+            }
         }
 
         &.rv-compound .rv-symbology-item {
