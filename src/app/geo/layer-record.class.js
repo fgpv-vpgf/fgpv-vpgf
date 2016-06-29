@@ -369,7 +369,7 @@
              * @see layerRecord.makeLayerBookmark
              */
             makeLayerBookmark () {
-                const opacity = this._legendEntry.getOpacity() * 100;
+                const opacity = padOpacity(this._legendEntry.getOpacity());
                 const viz = this._legendEntry.getVisibility() ? '1' : '0';
                 const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
                 const query = this._legendEntry.options.query.value ? '1' : '0';

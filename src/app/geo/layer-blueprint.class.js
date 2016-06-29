@@ -81,12 +81,24 @@
             }
 
             /**
+             * Returns a constructor promise which resolves when file or service data is loaded and read in.
+             * @return {Promise} constructor promise
+             */
+            get ready() { return this._constructorPromise; }
+
+            /**
              * Returns user layer options class instance or a plain object if type is not yet set.
              * @return {Object} user options
              */
-            get userOptions() {
-                return this._userOptions;
-            }
+            get userOptions() { return this._userOptions; }
+
+            /**
+             * Returns fields found in the blueprint.
+             * @return {Array|null} array of fields in the form of [{ name: "Long", type: "esriFieldTypeString"}]
+             */
+            get fields() { throw new Error(`Access fields on a subclass instead.`); }
+
+            validate() { throw new Error(`Call validate on a subclass instead.`); }
 
             /**
              * Generates a layer object. This is a stub function to be fully implemented by subcalasses.
@@ -126,17 +138,12 @@
 
                 super(initialConfig, epsgLookup);
 
+                this._serviceType = null;
                 this._serviceInfo = null;
-                this._constructorPromise = $q.resolve();
 
-                // empty blueprint is not valid by default
-                this._validPromise = $q.reject();
-
-                // if layerType is no specified, this is a user added layer
+                // if layerType is no specified, this is a user added layer; otherwise blueprint creation is deemed completed
                 // call GeoApi to predict its type
-                if (this.layerType === null) {
-                    this._constructorPromise = this._fetchServiceInfo();
-                }
+                this._constructorPromise = this.layerType !== null ? $q.resolve() : this._fetchServiceInfo();
             }
 
             /**
@@ -209,7 +216,7 @@
                  */
                 function flattenWmsLayerList(layers, level = 0) {
                     return [].concat.apply([], layers.map(layer => {
-                        layer.indent = Array.from(Array(level)).map(() => '-').join('');
+                        layer.indent = Array.from(Array(level)).join('-');
 
                         if (layer.layers.length > 0) {
                             return [].concat(layer, flattenWmsLayerList(layer.layers, ++level));
@@ -229,7 +236,7 @@
                         const level = calculateLevel(layer, layers);
 
                         layer.level = level;
-                        layer.indent = Array.from(Array(level)).map(() => '-').join('');
+                        layer.indent = Array.from(Array(level)).join('-');
                     });
 
                     function calculateLevel(layer, layers) {
@@ -242,40 +249,22 @@
                 }
             }
 
+            /**
+             * Returns service type of the service layer blueprint. If type is `Unknown`, returns null for template bindings
+             * @return {String|null} service type
+             */
             get serviceType() {
-                // console.log(this._serviceInfo);
-
-                if (this._serviceInfo !== null) {
-                    return this._serviceInfo.serviceType;
-                } else {
+                if (Geo.Service.Types.Unknown === this._serviceType) {
                     return null;
                 }
-            }
-
-            set serviceType(value) {
-                this._serviceInfo.serviceType = value;
-                this.layerType = serviceTypeToLayerType[this._serviceInfo.serviceType];
-            }
-
-            // TODO: this needs to changed to display an error
-            // Need a way to validate user's service type choice against the endpoint
-            get valid() {
-                // validate provided service type
-                return this._constructorPromise
-                    .then(() => this._fetchServiceInfo())
-                    .then(() => {
-                        this.layerType = serviceTypeToLayerType[this.serviceType];
-                    })
-                    .catch(error => console.error('Invalid selection' + error));
+                return this._serviceType;
             }
 
             /**
-             * Returns a constructor promise which resolves when service's data is retrieved.
-             * @return {Promise} constructor promise
+             * Sets service type
+             * @param  {String} value service type
              */
-            get ready() {
-                return this._constructorPromise;
-            }
+            set serviceType(value) { this._serviceType = value; }
 
             /**
              * Returns fields found in the file data.
@@ -293,6 +282,25 @@
 
             get serviceInfo() {
                 return this._serviceInfo;
+            }
+
+            /**
+             * Validates service blueprint against selected service type.
+             *
+             * @return {Promise} a promise resolving if the validation is successful
+             */
+            validate() {
+                // our prediction routine is infallible, so if the user disagrees, too bad :D
+                // NOTE: in cases where we can't predict the service type (geoapi returns Unknown), we also cannot validate the service except if we make a layer and add it to the map and see if it loads or not
+                return $q((resolve, reject) => {
+                    if (this._serviceInfo.serviceType === this.serviceType ||
+                        this._serviceInfo.serviceType === Geo.Service.Types.Unknown) {
+                        this.layerType = serviceTypeToLayerType[this._serviceInfo.serviceType];
+                        resolve();
+                    } else {
+                        reject();
+                    }
+                });
             }
 
             /**
@@ -331,9 +339,6 @@
 
                 this._targetWkid = targetWkid;
 
-                // empty blueprint is not valid by default
-                this._validPromise = $q.reject();
-
                 this._constructorPromise = gapiService.gapi.layer.predictLayerUrl(path)
                     .then(fileInfo => {
                         // fileData is returned only if path is a url; if it's just a file name, only serviceType is returned                            this.fileData = fileInfo.fileData;
@@ -344,66 +349,49 @@
                             // if there is file object, read it and store the data
                             return this._readFileData(file, progressCallback)
                                 .then(fileData => this._fileData = fileData);
+
                         } else if (typeof fileInfo.fileData !== 'undefined') {
                             this._fileData = fileInfo.fileData;
                             return undefined;
+
                         } else {
                             throw new Error('Cannot retrieve file data');
                         }
                     });
             }
 
-            _applyDefaults() {
-                super._applyDefaults();
-                if (this.config.options) {
-                    this.config.options.reload.enabled = false;
-                }
-            }
-
             /**
-             * Returns file type.
+             * Returns the file type.
              * @return {String} file type
              */
-            get fileType() {
-                return this._fileType;
-            }
+            get fileType() { return this._fileType; }
 
             /**
-             * Sets file type. Setting file type triggers file validation.
+             * Sets file type. Setting file type does not triggers file validation.
              * @param  {String} value file type
              */
-            set fileType(value) {
-                this._fileType = value;
+            set fileType(value) { this._fileType = value; }
 
-                // create user options object based on the layer type
-                const options = new LayerBlueprintUserOptions.File[this.fileType]
-                    (this._epsgLookup, this._targetWkid);
-                options.layerName = this._fileName;
-
-                this._validPromise = this._constructorPromise
+            /**
+             * Validates file blueprint against selected file type.
+             * @return {Promise} promise resolving if validation successful
+             */
+            validate() {
+                return this._constructorPromise
                     .then(() => gapiService.gapi.layer.validateFile(this.fileType, this._fileData))
                     .then(result => {
+                        // create user options object based on the layer type
+                        const options = new LayerBlueprintUserOptions.File[this.fileType]
+                            (this._epsgLookup, this._targetWkid, result.smartDefaults);
+                        options.layerName = this._fileName;
+
                         this._userOptions = options;
                         this._formatedFileData = result;
-                    })
-                    .catch(error => console.error(error));
-            }
-
-            // TODO: this needs to changed to display an error
-            get valid() {
-                return this._validPromise;
+                    });
             }
 
             /**
-             * Returns a constructor promise which resolves when file's data is loaded and read in.
-             * @return {Promise} constructor promise
-             */
-            get ready() {
-                return this._constructorPromise;
-            }
-
-            /**
-             * Returns fields found in the file data.
+             * Returns fields found in the file data. This is used in template bindings.
              * @return {Array|null} array of fields in the form of [{ name: "Long", type: "esriFieldTypeString"}]
              */
             get fields() {
@@ -414,31 +402,6 @@
                 } else {
                     return null;
                 }
-            }
-
-            /**
-             * Reads HTML5 File object data.
-             * @private
-             * @param  {File} file [description]
-             * @return {Promise}      promise resolving with file's data
-             */
-            _readFileData(file, progressCallback) {
-                const dataPromise = $q((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onerror = () => {
-                        console.error('Failed to read a file');
-                        reject('Failed to read a file');
-                    };
-                    reader.onload = () => {
-                        console.log('Fully loaded');
-                        resolve(reader.result); // ???
-                    };
-                    reader.onprogress = event => progressCallback(event);
-
-                    reader.readAsArrayBuffer(file);
-                });
-
-                return dataPromise;
             }
 
             /**
@@ -468,6 +431,41 @@
 
                 const layerPromise = layerFileGenerators[this.fileType]();
                 return layerPromise.then(layer => LayerRecordFactory.makeFileRecord(this.config, layer));
+            }
+
+            _applyDefaults() {
+                super._applyDefaults();
+
+                // disable reloading for file-based layers
+                // TODO: move this option when configs are typed
+                if (this.config.options) {
+                    this.config.options.reload.enabled = false;
+                }
+            }
+
+            /**
+             * Reads HTML5 File object data.
+             * @private
+             * @param  {File} file [description]
+             * @return {Promise}      promise resolving with file's data
+             */
+            _readFileData(file, progressCallback) {
+                const dataPromise = $q((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onerror = () => {
+                        console.error('Failed to read a file');
+                        reject('Failed to read a file');
+                    };
+                    reader.onload = () => {
+                        console.log('Fully loaded');
+                        resolve(reader.result); // ???
+                    };
+                    reader.onprogress = event => progressCallback(event);
+
+                    reader.readAsArrayBuffer(file);
+                });
+
+                return dataPromise;
             }
         }
         // jscs:enable requireSpacesInAnonymousFunctionExpression

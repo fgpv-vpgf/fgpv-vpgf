@@ -16,6 +16,7 @@ const dateFormat = require('dateformat');
 const through = require('through2');
 const merge = require('merge-stream');
 const lazypipe = require('lazypipe');
+const fs = require('fs');
 
 const jsDefaults = require('json-schema-defaults');
 const jsRefParser = require('json-schema-ref-parser');
@@ -131,6 +132,25 @@ function injectVersion(contents) {
     return contents;
 }
 
+function injectRandomFile(replaceToken, fileName) {
+    var f = fs.readFileSync(fileName, 'utf8').toString().replace(/\r|\n/gm, '').replace(/'/g, '\\\'');
+    return function (contents) {
+        return contents.replace(replaceToken, f);
+    };
+}
+
+function injectTranslations(contents) {
+    const translations = fs.readdirSync(`${config.build}/locales`)
+                           .filter(f => fs.statSync(`${config.build}/locales/${f}`).isDirectory())
+                           .map(name => ({
+                               name,
+                               data: fs.readFileSync(`${config.build}/locales/${name}/translation.json`)
+                           }))
+                           .map(({ name, data }) => `'${name}': ${data}`)
+                           .join(',\n');
+    return contents.replace('AUTOFILLED_TRANSLATIONS = {}', `AUTOFILLED_TRANSLATIONS = {\n${translations}\n}`);
+}
+
 // inject error css file into the index page if babel parser errors
 function injectError(error) {
     var injector = '';
@@ -160,11 +180,13 @@ function libbuild() {
  * @return {Stream}
  */
 function templatecache() {
-    return gulp
+    const htmlTemplates = gulp
         .src(config.htmltemplates)
         .pipe($.if(args.verbose, $.bytediff.start()))
         .pipe($.minifyHtml({ empty: true }))
-        .pipe($.if(args.verbose, $.bytediff.stop(bytediffFormatter)))
+        .pipe($.if(args.verbose, $.bytediff.stop(bytediffFormatter)));
+    const svgTemplates = gulp.src(config.svgSources);
+    return merge(htmlTemplates, svgTemplates)
         .pipe($.angularTemplatecache(
             config.templateCache.file,
             config.templateCache.options
@@ -181,6 +203,7 @@ function jsbuild() {
 
     const versionFilter = $.filter('**/version.*.js', { restore: true });
     const configDefaultsFilter  = $.filter('**/geo/geo.constant.service.js', { restore: true });
+    const constantServiceFilter  = $.filter('**/core/constant.service.js', { restore: true });
 
     return gulp
         .src(config.js)
@@ -190,10 +213,16 @@ function jsbuild() {
         .pipe($.insert.transform(injectVersion))
         .pipe(versionFilter.restore)
 
-        // inject config defaults generated from the config schema
+        // inject config defaults generated from the config schema and XSLT static content
         .pipe(configDefaultsFilter)
         .pipe($.insert.transform(injectConfigDefaults))
+        .pipe($.insert.transform(injectRandomFile('_XSLT_BLOB_', config.xslt)))
         .pipe(configDefaultsFilter.restore)
+
+        // inject translations into core constants file
+        .pipe(constantServiceFilter)
+        .pipe($.insert.transform(injectTranslations))
+        .pipe(constantServiceFilter.restore)
 
         // TODO: fix this: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/293
         // .pipe($.sourcemaps.init())
@@ -218,6 +247,10 @@ gulp.task('assetcopy', 'Copy fixed assets to the build directory',
             .pipe(gulp.dest(config.build));
     });
 
+gulp.task('makesvgcache', 'Rebuild the SVG cache', (cb) => {
+    require('./scripts/svgCache.js').buildCache(cb);
+});
+
 gulp.task('translate', 'Split translation csv into internationalized files',
     function () {
         return gulp.src(config.src + 'locales/translations.csv')
@@ -226,7 +259,7 @@ gulp.task('translate', 'Split translation csv into internationalized files',
     });
 
 gulp.task('jsrollup', 'Roll up all js into one file',
-    ['jsinjector', 'validate', 'version', 'configdefaults'],
+    ['jsinjector', 'validate', 'version', 'configdefaults', 'translate'],
     function () {
 
         const jslib = libbuild();
@@ -270,7 +303,7 @@ gulp.task('jsinjector', 'Copy fixed assets to the build directory',
     });
 
 gulp.task('inject', 'Adds configured dependencies to the HTML page',
-    ['sass', 'jsrollup', 'assetcopy', 'translate'],
+    ['sass', 'jsrollup', 'assetcopy'],
     function () {
         var index = config.index;
         var js = config.js;

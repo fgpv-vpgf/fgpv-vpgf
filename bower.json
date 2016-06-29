@@ -14,7 +14,7 @@
     "jquery": "^2.1.4",
     "angular": "~1.4.11",
     "angular-animate": "~1.4.11",
-    "angular-dragula": "~1.2.6",
+    "angular-dragula": "1.2.7",
     "angular-sanitize": "~1.4.11",
     "angular-aria": "~1.4.11",
     "angular-material": "1.0.4",
@@ -23,7 +23,7 @@
     "gsap": "^1.18.0",
     "bezier-easing": "^1.0.0",
     "dotjem-angular-tree": "~0.2.1",
-    "geoapi": "http://fgpv.cloudapp.net/demo/gapi/geoapi-0.13.0-16.tgz",
+    "geoapi": "http://fgpv.cloudapp.net/demo/gapi/geoapi-0.13.0-18.tgz",
     "datatables.net": "~1.10.10",
     "datatables.net-dt": "~1.10.10",
     "datatables-scroller": "~1.4.0",
@@ -38,7 +38,7 @@
       "ignore": true
     },
     "angular-dragula": {
-      "main": "dist/angular-dragula.min.js"
+      "main": "dist/angular-dragula.js"
     },
     "datatables.net": {
       "ignore": true

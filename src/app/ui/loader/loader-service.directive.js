@@ -42,14 +42,7 @@
             Geo.Service.Types.WMS
         ];
 
-        self.fields = {
-            one: 'one',
-            two: 'two',
-            three: 'three'
-        };
-
-        // jscs doesn't like enhanced object notation
-        // jscs:disable requireSpacesInAnonymousFunctionExpression
+        // TODO: turn into a proper class
         self.connect = {
             step: {
                 titleValue: 'import.service.connect.title',
@@ -57,18 +50,13 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: connectOnContinue,
-                onCancel: connectOnCancel
+                onCancel: () => onCancel(self.connect.step),
+                reset: connectReset
             },
             form: null,
             serviceUrl: null,
-            serviceType: null,
-            serviceResetValidation() {
-
-                // reset broken endpoint error message when user modifies service url
-                toggleErrorMessage(this.form, 'serviceUrl', 'broken', true);
-            }
+            serviceUrlResetValidation
         };
-        // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         self.select = {
             step: {
@@ -77,9 +65,12 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: selectOnContinue,
-                onCancel: selectOnCancel
+                onCancel: () => onCancel(self.select.step),
+                reset: selectReset
             },
-            form: null
+            serviceTypeResetValidation,
+            form: null,
+            serviceType: null
         };
 
         self.configure = {
@@ -89,10 +80,11 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: configureOnContinue,
-                onCancel: configureOnCancel
+                onCancel: () => onCancel(self.configure.step),
+                reset: configureReset
             },
             form: null,
-            options: {}
+            defaultOptions: {}
         };
 
         self.layerBlueprint = null;
@@ -110,13 +102,32 @@
 
         /**
          * Tiny helper function to set/reset error messages on fields
+         * TODO: need to abstract - loader-file has the same function
          * @param  {Object} form      form object
          * @param  {String} fieldName field name to set the error on
          * @param  {String} errorName name of the error message
          * @param  {Boolean} state     =             false; false - show error, true - hide error
          */
         function toggleErrorMessage(form, fieldName, errorName, state = false) {
+            // when showing errors, dirty and touch the fields
+            // this is needed when a preselected field causes validation to fail; since user hasn't interacted with the field, it's untouched and pristine and error messages are not shown for untouched fields;
+            if (!state) {
+                form[fieldName].$setDirty();
+                form[fieldName].$setTouched();
+            }
+
             form[fieldName].$setValidity(errorName, state);
+        }
+
+        /**
+         * Cancels any stepper movements if the step is processing data; resets input and moves to the previous step if not.
+         */
+        function onCancel(step) {
+            if (step.isThinking) {
+                stepper.cancelMove();
+            } else {
+                stepper.previousStep(); // going to the previous step will auto-reset the current one (even if there is no previous step to go to)
+            }
         }
 
         /**
@@ -132,29 +143,35 @@
                 url: connect.serviceUrl
             }, geoService.epsgLookup);
 
-            console.log(self.layerBlueprint);
+            self.layerBlueprint.ready.catch(() => {
+                console.log('self.connect.form.serviceUrl');
 
-            self.layerBlueprint.ready
-                .then(() => stepper.nextStep())
-                .catch(() => {
-                    console.log('self.connect.form.serviceUrl');
+                toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false); // , connect.step);
+            });
 
-                    toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false); // , connect.step);
-                });
+            stepper.nextStep(self.layerBlueprint.ready);
         }
 
         /**
-         * Clears service url field and all error displayed; sets the form into pristine, untouched state (so no default validation errors (like "required" or "not a proper url") will show)
+         * Clears service url field and all error displayed; sets the form to pristine, untouched state (so no default validation errors (like "required" or "not a proper url") will show)
          */
-        function connectOnCancel() {
+        function connectReset() {
             const connect = self.connect;
 
             connect.serviceUrl = '';
-            connect.form.serviceUrl.$setPristine();
-            connect.form.serviceUrl.$setUntouched();
-            connect.serviceResetValidation();
+            connect.form.$setPristine();
+            connect.form.$setUntouched();
 
-            stepper.previousStep();
+            // TODO: generalize resetting custom form validation
+            connect.serviceUrlResetValidation();
+        }
+
+        /**
+         * Resets service URL field validation.
+         */
+        function serviceUrlResetValidation() {
+            // reset broken endpoint error message when user modifies service url
+            toggleErrorMessage(self.connect.form, 'serviceUrl', 'broken', true);
         }
 
         /**
@@ -162,16 +179,33 @@
          * TODO: do the validation if at all possible;
          */
         function selectOnContinue() {
-            stepper.nextStep();
+            const validationPromise = self.layerBlueprint.validate();
+
+            // TODO: move reseting options to defaults into blueprint; this can be done upon successful validation
+            self.configure.defaultOptions = angular.copy(self.layerBlueprint.config);
+            stepper.nextStep(validationPromise);
+
+            // console.log('User selected', self.layerBlueprint.fileType);
+            validationPromise.catch(error => {
+                console.error('Service type is wrong', error);
+                toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
+            });
         }
 
-        /**
-         * Moves stepped backwards to the connect step where user can enter a new service url.
-         */
-        function selectOnCancel() {
-            stepper.previousStep();
+        function selectReset() {
+            const select = self.select;
+
+            select.form.$setPristine();
+            select.form.$setUntouched();
+
+            // TODO: generalize resetting custom form validation
+            select.serviceTypeResetValidation();
         }
 
+        function serviceTypeResetValidation() {
+            // reset wrong service type error message
+            toggleErrorMessage(self.select.form, 'serviceType', 'wrong', true);
+        }
         /**
          * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
          */
@@ -183,12 +217,14 @@
         }
 
         /**
-         * Cancels the layer configuration step and rolls back to file type selection.
+         * Restores default configuration options (layer name, etc.) and resets the form to pristine state to hide default error messages.
          */
-        function configureOnCancel() {
-            self.configure.options = {}; // reset layer options
+        function configureReset() {
+            const configure = self.configure;
 
-            stepper.previousStep();
+            configure.form.$setPristine();
+            configure.form.$setUntouched();
+            self.layerBlueprint.config = self.configure.defaultOptions;
         }
 
         /**

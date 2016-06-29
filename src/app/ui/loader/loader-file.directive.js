@@ -49,16 +49,21 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: uploadOnContinue,
-                onCancel: uploadOnCancel
+                onCancel: () => onCancel(self.upload.step),
+                reset: uploadReset
             },
             form: null,
             file: null,
             fileData: null,
             fileUrl: null,
             filesSubmitted: uploadFilesSubmitted,
-            fileError: uploadFileError,
-            fileReset: uploadFileReset,
-            fileUrlReset: uploadFileUrlReset,
+
+            fileReset,
+            fileResetValidation,
+
+            fileUrlReset,
+            fileUrlResetValidation,
+
             progress: 0
         };
 
@@ -69,8 +74,10 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: selectOnContinue,
-                onCancel: selectOnCancel
+                onCancel: () => onCancel(self.select.step),
+                reset: selectReset
             },
+            selectResetValidation,
             form: null
         };
 
@@ -81,11 +88,10 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: configureOnContinue,
-                onCancel: configureOnCancel
+                onCancel: () => onCancel(self.configure.step)
             },
             fields: null,
-            form: null,
-            options: {}
+            form: null
         };
 
         self.layerBlueprint = null;
@@ -100,61 +106,45 @@
         /***/
 
         /**
-         * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
+         * Tiny helper function to set/reset error messages on fields
+         * * TODO: need to abstract - loader-service has the same function
+         * @param  {Object} form      form object
+         * @param  {String} fieldName field name to set the error on
+         * @param  {String} errorName name of the error message
+         * @param  {Boolean} state     =             false; false - show error, true - hide error
          */
-        function configureOnContinue() {
-            // TODO: display error message if something breaks
+        function toggleErrorMessage(form, fieldName, errorName, state = false) {
+            // when showing errors, dirty and touch the fields
+            // this is needed when a preselected field causes validation to fail; since user hasn't interacted with the field, it's untouched and pristine and error messages are not shown for untouched fields;
+            if (!state) {
+                form[fieldName].$setDirty();
+                form[fieldName].$setTouched();
+            }
 
-            geoService.constructLayers([self.layerBlueprint]);
-            closeLoaderFile();
+            form[fieldName].$setValidity(errorName, state);
         }
 
         /**
-         * Cancels the layer configuration step and rolls back to file type selection.
+         * Cancels any stepper movements if the step is processing data; resets input and moves to the previous step if not.
          */
-        function configureOnCancel() {
-            // TODO: reset layer options on cancel
-
-            stepper.previousStep();
-        }
-
-        function selectOnContinue() {
-            // console.log('User selected', self.layerBlueprint.fileType);
-            // TODO: validate file when user selects a differnt type and show an error message; also disable "continue" button
-
-            self.layerBlueprint.valid
-                .then(() => {
-                    stepper.nextStep();
-                })
-                .catch(error => {
-                    console.error('File type is wrong', error);
-                    // TODO: display error message that the file doesn not validate
-                });
-        }
-
-        /**
-         * Cancels the file type selection and rolls back to file upload.
-         */
-        function selectOnCancel() {
-            // console.log('selectOnCancel');
-            //
-            stepper.previousStep();
-            self.upload.fileReset(); // reset the upload form
+        function onCancel(step) {
+            if (step.isThinking) {
+                stepper.cancelMove();
+            } else {
+                stepper.previousStep(); // going to the previous step will auto-reset the current one (even if there is no previous step to go to)
+            }
         }
 
         /**
          * In cases where user provides a file link, tries to load the file and then advanced to the next step.
          */
         function uploadOnContinue() {
-            onLayerBlueprintReady(self.upload.fileUrl);
-        }
-
-        /**
-         * Clears both file selector and url field.
-         */
-        function uploadOnCancel() {
-            uploadFileReset();
-            uploadFileUrlReset();
+            onLayerBlueprintReady(self.upload.fileUrl)
+                .catch(error => {
+                    // TODO: show a meaningful error about why upload failed.
+                    console.error('Something awful happen', error);
+                    toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
+                });
         }
 
         /**
@@ -164,13 +154,17 @@
          * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
          */
         function uploadFilesSubmitted(files) { // , event, flow) {
-            // TODO: if current step is not the first and user drag-drops file, go back to second step
             // console.log('submitted', files, event, flow);
             if (files.length > 0) {
                 const file = files[0];
                 self.upload.file = file; // store the first file from the array;
 
-                $timeout(() => onLayerBlueprintReady(file.name, file.file), 300);
+                onLayerBlueprintReady(file.name, file.file)
+                    .catch(error => {
+                        // TODO: show a meaningful error about why upload failed.
+                        console.error('Something awful happen', error);
+                        toggleErrorMessage(self.upload.form, 'fileSelect', 'upload-error', false);
+                    });
             }
         }
 
@@ -178,19 +172,19 @@
          * Waits until the layerBlueprint is create and ready (the data has been read) and moves to the next step.
          * @param  {String} name file name or url
          * @param  {Object} file optional: html5 file object
+         * @return {Promise} layerBlueprint ready promise
          */
         function onLayerBlueprintReady(name, file) {
             self.layerBlueprint = new LayerBlueprint.file(
                 geoService.epsgLookup, geoService.mapObject.spatialReference.wkid,
-                name, file, updateProgress);
-            self.layerBlueprint.ready
-                .then(() => {
-                    $timeout(() => stepper.nextStep(), 300); // add some delay before going to the next step
-                })
-                .catch(error => {
-                    // TODO: show a meaningful error about why upload failed.
-                    console.error('Something awful happen', error);
-                });
+                name, file, updateProgress
+            );
+
+            // add some delay before going to the next step
+            // explicitly move to step 1 (select); if the current step is not 0 (upload), drag-dropping a file may advance farther than needed when using just `stepper.nextStep()`
+            stepper.moveToStep(1, $timeout(() => self.layerBlueprint.ready, 300));
+
+            return self.layerBlueprint.ready;
 
             /**
              * Updates file load progress status.
@@ -212,22 +206,17 @@
         }
 
         /**
-         * Displays an error message if a file fails to upload
-         * @param  {Object} file    flow file object
-         * @param  {String} message error message
-         * @param  {Object} flow    flow object https://github.com/flowjs/ng-flow
+         * Clears both file selector and url field.
          */
-        function uploadFileError() { // file, message, flow) {
-            // console.log('error', file, flow);
-            const upload = self.upload;
-            console.log('upload form', upload.form);
-            upload.form.fileSelect.$setValidity('upload-error', false, upload.step);
+        function uploadReset() {
+            fileReset();
+            fileUrlReset();
         }
 
         /**
-         * Reset the file upload form removing custom messages.
+         * Reset the file upload form removing selected file and custom error messages.
          */
-        function uploadFileReset() {
+        function fileReset() {
             const upload = self.upload;
 
             if (upload.file) { // if there is a file in the queue
@@ -236,19 +225,82 @@
                 upload.progress = 0; // reset progress bar to 0; otherwise, it will try to animate from 100 to 0 next time progress event happens
             }
 
+            fileResetValidation();
+        }
+
+        /**
+         * Resets validation on the file selector only.
+         */
+        function fileResetValidation() {
             // arguments as follows: name of the error, state of the error, a controller object which will be stored against the error; when removing the same error, need to provide the same controller object
-            upload.form.fileSelect.$setValidity('upload-error', true, upload.step); // remove errors from the form
+            toggleErrorMessage(self.upload.form, 'fileSelect', 'upload-error', true); // remove errors from the form
         }
 
         /**
          * Resets the file url field and removes errors in the file upload step.
          */
-        function uploadFileUrlReset() {
+        function fileUrlReset() {
             const upload = self.upload;
 
             upload.fileUrl = '';
             upload.form.fileUrl.$setPristine();
             upload.form.fileUrl.$setUntouched();
+
+            fileUrlResetValidation();
+        }
+
+        /**
+         * Resets validation on the fileUrl field only.
+         */
+        function fileUrlResetValidation() {
+            toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', true);
+        }
+
+        /**
+         * Validates created file Layer Blueprint against selected file type. Shows a generic error message if validation fails.
+         */
+        function selectOnContinue() {
+            const validationPromise = self.layerBlueprint.validate();
+
+            stepper.nextStep(validationPromise);
+
+            // console.log('User selected', self.layerBlueprint.fileType);
+            validationPromise.catch(error => {
+                console.error('File type is wrong', error);
+                toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
+                // TODO: display a meaningful error message why the file doesn't validate (malformed csv, zip with pictures of cats, etc.)
+            });
+        }
+
+        /**
+         * Sets the form to pristine, untouched state (so no default validation errors (like "required") will show)
+         */
+        function selectReset() {
+            const select = self.select;
+
+            select.form.$setPristine();
+            select.form.$setUntouched();
+
+            // TODO: generalize resetting custom form validation
+            select.selectResetValidation();
+        }
+
+        /**
+         * Resets file type validation error messages.
+         */
+        function selectResetValidation() {
+            // reset wrong file type error message
+            toggleErrorMessage(self.select.form, 'dataType', 'wrong', true);
+        }
+
+        /**
+         * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
+         */
+        function configureOnContinue() {
+            // TODO: display error message if something breaks
+
+            geoService.constructLayers([self.layerBlueprint]);
+            closeLoaderFile();
         }
 
         /**

@@ -26,7 +26,7 @@
      * `is-cancel-enabled` a boolean flag indicating if the `cancel` button is enabled; doesn't make sense if `on-continue` is omitted
      * `step` a shortcut for all other properties which can be supplied in an object; first, a explicit binding takes precedence over anything supplied in the `step` property
      * `step-form` is an object reference to which stepper item's form will be bound, so it can be access from the parent directive
-     *
+     * `is-thinking` disables the `continue` button to prevent multiple continue triggers and shows a progress indicator; used when processing data from the step before moving to the next;
      * Usage example:
      * ```html
      * <stepper-item
@@ -53,15 +53,18 @@
             templateUrl: 'app/ui/common/stepper/stepper-item.html',
             scope: {
                 step: '=?',
+
                 titleValue: '@?',
                 summaryValue: '@?',
                 stepNumber: '@?',
+
                 isActive: '=?',
                 isCompleted: '=?',
                 onContinue: '&?',
                 onCancel: '&?',
                 isContinueEnabled: '=?',
                 isCancelEnabled: '=?',
+
                 stepForm: '=?form'
             },
             transclude: true,
@@ -105,7 +108,7 @@
 
         self.onCancelBefore = onCancelBefore;
 
-        /*********/
+        /***/
 
         /**
          * Called when the `Cancel` button is clicked; this resets the inner form to its default state, hiding all the standard error messages, executes extrenal callback after.

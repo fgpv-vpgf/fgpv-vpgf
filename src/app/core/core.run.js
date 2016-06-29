@@ -88,8 +88,9 @@
      *
      * `apiBlock` sets up language and RCS calls for the global API
      */
-    function apiBlock($translate, $rootElement, $rootScope, globalRegistry, geoService, configService, events,
-        LayerBlueprint, bookmarkService, gapiService) {
+    function apiBlock($rootElement, $rootScope, globalRegistry, geoService, configService, events,
+        LayerBlueprint, bookmarkService, gapiService, reloadService) {
+
         const service = {
             setLanguage,
             loadRcsLayers,
@@ -114,8 +115,7 @@
          * @param {String}  lang    the language to switch to
          */
         function setLanguage(lang) {
-            $translate.use(lang);
-            geoService.assembleMap();
+            reloadService.loadNewLang(lang);
         }
 
         /**
@@ -133,7 +133,7 @@
                 .then(newLayerConfigs => {
                     // call layer register in geo module on those nodes
                     const layerBlueprints = newLayerConfigs.map(layerConfig =>
-                        new LayerBlueprint.service(layerConfig));
+                        new LayerBlueprint.service(layerConfig, geoService.epsgLookup));
                     geoService.constructLayers(layerBlueprints);
                 });
 
