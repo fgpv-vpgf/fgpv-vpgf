@@ -176,6 +176,10 @@ function pokeEsriService(url, esriBundle, hint) {
         const info = makeLayerInfo(serviceType.FeatureLayer, 'name', srvJson);
         info.fields = srvJson.fields;
         info.geometryType = srvJson.geometryType;
+        info.smartDefaults = {
+            // TODO: try to find a name field if possible
+            primary: info.fields[0].name // pick the first field as primary and return its name for ui binding
+        };
         return info;
     };
 
