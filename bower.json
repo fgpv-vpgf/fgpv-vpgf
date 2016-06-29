@@ -1,7 +1,7 @@
 {
   "name": "r2v2",
   "description": "FGP R2 Viewer",
-  "version": "0.18.0-3",
+  "version": "0.18.0-4",
   "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf",
   "license": "MIT",
   "private": true,
@@ -23,7 +23,7 @@
     "gsap": "^1.18.0",
     "bezier-easing": "^1.0.0",
     "dotjem-angular-tree": "~0.2.1",
-    "geoapi": "http://fgpv.cloudapp.net/demo/gapi/geoapi-0.13.0-18.tgz",
+    "geoapi": "http://fgpv.cloudapp.net/demo/gapi/geoapi-0.13.0-21.tgz",
     "datatables.net": "~1.10.10",
     "datatables.net-dt": "~1.10.10",
     "datatables-scroller": "~1.4.0",
