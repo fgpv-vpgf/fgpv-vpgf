@@ -7,5 +7,8 @@
 [![Issue Stats](http://www.issuestats.com/github/fgpv-vpgf/geoApi/badge/issue?style=flat-square)](http://www.issuestats.com/github/fgpv-vpgf/geoApi)<br />
 [![PR Stats](http://www.issuestats.com/github/fgpv-vpgf/geoApi/badge/pr?style=flat-square)](http://www.issuestats.com/github/fgpv-vpgf/geoApi)
 
+[![Code Climate](https://codeclimate.com/github/fgpv-vpgf/geoApi/badges/gpa.svg)](https://codeclimate.com/github/fgpv-vpgf/geoApi)<br />
+[![Issue Count](https://codeclimate.com/github/fgpv-vpgf/geoApi/badges/issue_count.svg)](https://codeclimate.com/github/fgpv-vpgf/geoApi)
+
 [![Dependency Status](https://david-dm.org/fgpv-vpgf/geoApi.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/geoApi)<br />
 [![devDependency Status](https://david-dm.org/fgpv-vpgf/geoApi/dev-status.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/geoApi#info=devDependencies)
