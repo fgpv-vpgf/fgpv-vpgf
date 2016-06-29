@@ -15,8 +15,8 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
-    function tocService($q, $rootScope, $mdToast, layoutService, stateManager,
-                        geoService, metadataService, errorService, $filter) {
+    function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateManager,
+                        geoService, metadataService, errorService) {
 
         const service = {
             // method called by the options and flags set on the layer item
@@ -190,8 +190,8 @@
 
             // create notification toast
             const undoToast = $mdToast.simple()
-                .textContent('Layer removed') // TODO: translate
-                .action('undo') // TODO: translate
+                .textContent($translate.instant('toc.label.state.remove'))
+                .action($translate.instant('toc.label.action.remove'))
                 .highlightAction(true)
                 .parent(layoutService.panes.toc)
                 .position('bottom rv-flex');
@@ -292,7 +292,7 @@
                 })
                 .then(() => stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0))
                 .catch(() => {
-                    errorService.display($filter('translate')('toc.error.resource.loadfailed'),
+                    errorService.display($translate.instant('toc.error.resource.loadfailed'),
                         layoutService.panes.filter);
                 });
         }
@@ -328,11 +328,13 @@
                 }
             });
 
-            stateManager.setActive(panelToClose)
-                .then(() => stateManager
-                        .toggleDisplayPanel('sideMetadata', dataPromise, requester)
-                        .catch(() => errorService.display($filter('translate')('toc.error.resource.loadfailed'),
-                                                          layoutService.panes.metadata)));
+            stateManager
+                .setActive(panelToClose)
+                .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester))
+                .catch(() => {
+                    errorService.display($translate.instant('toc.error.resource.loadfailed'),
+                            layoutService.panes.metadata);
+                });
         }
 
         /**
