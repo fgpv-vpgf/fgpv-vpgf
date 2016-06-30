@@ -133,6 +133,32 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
     <!--[if gte IE 9 | !IE ]><!-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
     <script src="//fgpv.cloudapp.net/demo/wet4.0.20/wet-boew/js/wet-boew.min.js"></script>
+
+    <!-- support config file change via 'config' URL parameter. -->
+    <script>
+        // credit: http://stackoverflow.com/a/21903119
+        function getUrlParameter(sParam) {
+            var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : sParameterName[1];
+                }
+            }
+        }
+
+        var testConfig = getUrlParameter('config');
+        if (testConfig) {
+            document.getElementById("fgpmap").setAttribute("rv-config", testConfig);
+        }
+    </script>
+
+
     <!--<![endif]-->
     <!--[if lt IE 9]>
 <script src="//fgpv.cloudapp.net/demo/wet4.0.20/wet-boew/js/ie8-wet-boew2.min.js"></script>
@@ -202,7 +228,6 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
                 document.getElementById("bookmarkDisplay").value = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
             });
         }
-
     </script>
 </body>
 
