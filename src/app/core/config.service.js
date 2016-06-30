@@ -37,7 +37,7 @@
         .module('app.core')
         .factory('configService', configService);
 
-    function configService($q, $rootElement, $timeout, $http, $translate, $mdToast) {
+    function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, $location) {
         let initializePromise;
         let isInitialized = false;
 
@@ -107,6 +107,10 @@
 
                     // start loading every config file
                     fileInit(configAttr, langs);
+
+                    if ($location.search().config) {
+                        fileInit($location.search().config, langs);
+                    }
 
                     langs.forEach(lang => {
                         service.data[lang] = $q.all(partials[lang])
