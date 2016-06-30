@@ -1,4 +1,4 @@
-From 25764ccd922c1dd372bc2499eb413efe35374ab4 Mon Sep 17 00:00:00 2001
+﻿From 25764ccd922c1dd372bc2499eb413efe35374ab4 Mon Sep 17 00:00:00 2001
 From: Aleksuei Riabtsev <aleksuei.riabtsev@ec.gc.ca>
 Date: Thu, 23 Jun 2016 14:03:51 -0400
 Subject: [PATCH 1/1] fix(ui): delay drag start

@@ -4,7 +4,7 @@
     'use strict';
 
     const RV_SYMBOLOGY_ITEM_CLASS = '.rv-symbology-item';
-    const RV_SYMBOLOGY_ITEM_NAME_CLASS = '.rv-symbology-item-name';
+    const RV_SYMBOLOGY_ITEM_NAME_CLASS = '.rv-symbology-label';
     const RV_SYMBOLOGY_ITEM_TRIGGER = '.rv-symbology-trigger';
 
     const RV_DURATION = 0.3;
@@ -28,13 +28,14 @@
         .module('app.ui.toc')
         .directive('rvTocEntrySymbology', rvLayerItemSymbology);
 
-    function rvLayerItemSymbology($q) {
+    function rvLayerItemSymbology($q, Geo) {
         const directive = {
             require: '^?rvTocEntry', // need access to layerItem to get its element reference
             restrict: 'E',
             templateUrl: 'app/ui/toc/templates/entry-symbology.html',
             scope: {
-                symbology: '='
+                symbology: '=',
+                type: '=?'
             },
             link: link,
             controller: () => {},
@@ -64,10 +65,8 @@
 
             // store reference to symbology nodes
             // the following are normal arrays of jQuery items, NOT jQuery pseudo-arrays
-            let items; // symbology items (icon and name)
-            let icons; // just the icon from the item
-            let names; // just then name
-            let trigger; // expand trigger
+            let symbologyItems;
+            let trigger; // expand trigger node
 
             function toggleSymbology() {
                 // when invoked for the first time, find elements and construct a timeline
@@ -108,22 +107,54 @@
             // find and store references to relevant nodes
             function initializeTimelines() {
 
+                // TODO: container width will depend on app mode: desktop or mobile; need a way to determine this
+                const containerWidth = 350;
+                let maxItemWidth;
+
                 if (initializePromise) {
                     return initializePromise;
                 }
 
                 initializePromise = $q(fulfill => {
 
-                    items = element.find(RV_SYMBOLOGY_ITEM_CLASS)
+                    const canvas = document.createElement('canvas');
+
+                    // find all symbology items and their parts
+                    symbologyItems = element.find(RV_SYMBOLOGY_ITEM_CLASS)
                         .toArray()
-                        .map(item => $(item));
-                    icons = items.map(item => $(item)
-                        .find('> img'));
-                    names = element.find(RV_SYMBOLOGY_ITEM_NAME_CLASS)
-                        .toArray()
-                        .map(name => $(name));
+                        .map(domNode => {
+                            domNode = angular.element(domNode);
+
+                            return {
+                                container: domNode,
+                                image: domNode.find('img'),
+                                label: domNode.find(RV_SYMBOLOGY_ITEM_NAME_CLASS),
+                            };
+                        });
 
                     trigger = element.find(RV_SYMBOLOGY_ITEM_TRIGGER);
+
+                    // calculate maximum width of a symbology item based on image, label size and the main panel width
+                    // symbology item cannot be wider than the panel
+                    maxItemWidth = Math.min(
+                        Math.max(
+                            ...symbologyItems.map(symbologyItem =>
+                                Math.max(
+                                    symbologyItem.image[0].naturalWidth,
+
+                                    // TODO: need to use current font size
+                                    // need to account for letter spacing (use 10 for now)
+                                    // 32 accounts for paddding, need to get that from styles as well
+                                    getTextWidth(canvas, symbologyItem.label.text(), 'normal 14px Roboto') + 32 + 10
+                                ))),
+                        containerWidth
+                    );
+
+                    // set label width to maximum which was calculated
+                    symbologyItems.forEach(symbologyItem =>
+                        symbologyItem.label.css('width', maxItemWidth));
+
+                    console.log('maxItemWidth', maxItemWidth);
 
                     makeShiftTimeline();
                     makeWiggleTimeline();
@@ -137,49 +168,37 @@
                     tlshift = new TimelineLite({
                         paused: true,
                         onReverseComplete: () =>
-                            $q.resolve().then(() => self.expanded = false)
+                            $q.resolve()
+                            .then(() => self.expanded = false)
                     });
 
                     // in pixels
-                    const symbologyListTopOffset = 48;
-                    const symbologyListTopMargin = 8;
-                    const symbologyListLabelOffset = ctrl.itemNameOnTop ? 28 : 8; // more space needed for item names positioned above symbols
-                    let totalHeight = 0;
+                    const symbologyListTopOffset = 48; // offset to cover the height of the legend entry nod
+                    const symbologyListMargin = 16; // gap between the legend endtry and the symbology stack
 
-                    items.reverse().forEach(img => {
+                    // keep track of the total height of symbology stack so far
+                    let totalHeight = symbologyListTopOffset + symbologyListMargin;
 
-                        const imageElem = img[0].firstChild;
-                        const imageHeight = Math.max(32, imageElem.naturalHeight); // do not allow images less than 32px
-                        const imageWidth = Math.max(32, imageElem.naturalWidth);
+                    // future-proofing - in case we need different behaviours for other legend types
+                    const legendItemTLgenerator = {
+                        [Geo.Layer.Types.OGC_WMS]: imageLegendItem,
+                        [Geo.Layer.Types.ESRI_TILE]: iconLegendItem,
+                        [Geo.Layer.Types.ESRI_IMAGE]: iconLegendItem,
+                        [Geo.Layer.Types.ESRI_FEATURE]: iconLegendItem,
+                        [Geo.Layer.Types.ESRI_DYNAMIC]: iconLegendItem,
+                        esriDynamicLayerEntry: iconLegendItem
+                    };
 
-                        tlshift.to(imageElem, RV_DURATION, {
-                            width: imageWidth,
-                            height: imageHeight,
-                        }, 0);
+                    // loop over symbologyItems, generate timeline for each one, increase total height
+                    symbologyItems.reverse().forEach((symbologyItem, index) =>
+                        totalHeight += legendItemTLgenerator[self.type](tlshift, symbologyItem, totalHeight,
+                            index === symbologyItems.length - 1));
 
-                        tlshift.to(img, RV_DURATION, {
-                            top: (symbologyListTopOffset + symbologyListTopMargin + totalHeight),
-                            autoAlpha: 1,
-                            height: imageHeight + symbologyListLabelOffset,
-                            left: 0,
-                            ease: RV_SWIFT_IN_OUT_EASE
-                        }, 0);
-
-                        totalHeight += imageHeight + symbologyListLabelOffset;
-                    });
-
-                    // make symbology names visible
-                    names.forEach(name =>
-                        tlshift.to(name, RV_DURATION - 0.1, {
-                            opacity: 1,
-                            display: 'block',
-                            ease: RV_SWIFT_IN_OUT_EASE
-                        }, 0.1)
-                    );
+                    totalHeight += symbologyListMargin; // add margin at the bottom of the list
 
                     // expand layer item container (ctrl.element) to accomodate symbology list
                     tlshift.to(ctrl.element, RV_DURATION, {
-                        marginBottom: totalHeight + symbologyListLabelOffset,
+                        marginBottom: totalHeight - symbologyListTopOffset,
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, 0);
 
@@ -199,21 +218,153 @@
                     const displacement = 4;
 
                     // if there is just one icon, don't do on-hover animation
-                    if (icons.length > 1) {
+                    if (symbologyItems.length > 1) {
                         // wiggle the first icon in the stack
-                        tlwiggle.to(icons[0], RV_DURATION, {
-                            x: `+=${displacement}px`,
-                            y: `+=${displacement}px`,
-                            ease: RV_SWIFT_IN_OUT_EASE
-                        }, 0);
-
-                        // wiggle the last icon in the stack
-                        tlwiggle.to(icons.slice(-1).pop(), RV_DURATION, {
+                        tlwiggle.to(symbologyItems[0].container, RV_DURATION, {
                             x: `-=${displacement}px`,
                             y: `-=${displacement}px`,
                             ease: RV_SWIFT_IN_OUT_EASE
                         }, 0);
+
+                        // wiggle the last icon in the stack
+                        tlwiggle.to(symbologyItems.slice(-1)
+                            .pop()
+                            .container, RV_DURATION, {
+                                x: `+=${displacement}px`,
+                                y: `+=${displacement}px`,
+                                ease: RV_SWIFT_IN_OUT_EASE
+                            }, 0);
                     }
+                }
+
+                /**
+                 * Creates timeline for a supplied image-based symbologyItem (for wms legends for example)
+                 * @param  {Object}  tlshift       timeline object
+                 * @param  {Object}  symbologyItem symbology object with references to its parts
+                 * @param  {Number}  totalHeight   height of the legend stack so far
+                 * @param  {Boolean} isLast        flag indicating this is the last item in the stack
+                 * @return {Number}                height of this symbology item plus its bottom margin is applicable
+                 */
+                function imageLegendItem(tlshift, symbologyItem, totalHeight, isLast) {
+                    const symbologyListItemMargin = 16;
+
+                    const imageWidth = symbologyItem.image[0].naturalWidth;
+                    const imageHeight = symbologyItem.image[0].naturalHeight;
+
+                    const labelHeight = symbologyItem.label.outerHeight();
+
+                    // calculate symbology item's dimensions based on max width
+                    const itemWidth = Math.min(maxItemWidth, imageWidth);
+                    const itemHeight = imageWidth !== 0 ? itemWidth / imageWidth * imageHeight : 0; // in cases when image urls are broken its size is 0
+
+                    // animate symbology container's size
+                    // note that animate starts at `RV_DURATION / 3 * 2` giving the items time to move down from the stack
+                    // so they don't overlay legend entry
+                    tlshift.to(symbologyItem.container, RV_DURATION / 3 * 2, {
+                        width: maxItemWidth,
+                        height: itemHeight + labelHeight,
+                        left: 0,
+                        autoAlpha: 1,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, RV_DURATION / 3);
+
+                    // move item down
+                    tlshift.to(symbologyItem.container, RV_DURATION, {
+                        top: totalHeight,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, 0);
+
+                    // animate image width to the calculated width
+                    tlshift.to(symbologyItem.image, RV_DURATION / 3 * 2, {
+                        width: itemWidth,
+                        height: itemHeight,
+                        padding: 0, // removes padding from expanded wms legend images making them clearer; TODO: revisit when all symbology is svg items
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, RV_DURATION / 3);
+
+                    // set width to auto to keep the label centered during animation
+                    tlshift.set(symbologyItem.label, {
+                        display: 'block',
+                        width: 'auto'
+                    }, 0);
+
+                    // animate symbology label into view
+                    tlshift.to(symbologyItem.label, RV_DURATION / 3, {
+                        opacity: 1,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, RV_DURATION / 3 * 2);
+
+                    return itemHeight + labelHeight + (isLast ? 0 : symbologyListItemMargin);
+                }
+
+                /**
+                 * Creates timeline for a supplied icon-based symbologyItem (for feature and dynamic legends for example)
+                 * @param  {Object}  tlshift       timeline object
+                 * @param  {Object}  symbologyItem symbology object with references to its parts
+                 * @param  {Number}  totalHeight   height of the legend stack so far
+                 * @param  {Boolean} isLast        flag indicating this is the last item in the stack
+                 * @return {Number}                height of this symbology item plus its bottom margin is applicable
+                 */
+                function iconLegendItem(tlshift, symbologyItem, totalHeight, isLast) {
+                    const symbologyListItemMargin = 8;
+
+                    const itemSize = 32; // icon size is fixed
+
+                    // expand symbology container width and align it to the left (first and last items are fanned out)
+                    tlshift.to(symbologyItem.container, RV_DURATION / 3 * 2, {
+                        width: containerWidth,
+                        left: 0,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, RV_DURATION / 3);
+
+                    // shift the symbology item down to the bottom of the stack using the total height
+                    tlshift.to(symbologyItem.container, RV_DURATION, {
+                        top: totalHeight,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, 0);
+
+                    // by default, items 3 to n-1 are hidden (their shadows stack otherwise)
+                    // animate them back into view
+                    tlshift.to(symbologyItem.container, RV_DURATION / 3, {
+                        autoAlpha: 1,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, 0);
+
+                    // animate image width to the calculated width
+                    tlshift.to(symbologyItem.image, RV_DURATION / 3 * 2, {
+                        width: itemSize,
+                        height: itemSize,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, RV_DURATION / 3);
+
+                    // set label to `block` so it is properly positioned
+                    tlshift.set(symbologyItem.label, {
+                        display: 'block'
+                    }, RV_DURATION / 3);
+
+                    // animate symbology label into view
+                    tlshift.to(symbologyItem.label, RV_DURATION / 3 * 2, {
+                        opacity: 1,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, RV_DURATION / 3);
+
+                    return itemSize + (isLast ? 0 : symbologyListItemMargin);
+                }
+
+                /**
+                 * Returns width of the supplied text string.
+                 * @param  {Object} canvas cached canvas node
+                 * @param  {String} text   string of text to measure
+                 * @param  {String} font   text font and size https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font
+                 * @return {Number}        width of the text
+                 */
+                function getTextWidth(canvas, text, font) {
+                    const context = canvas.getContext('2d');
+                    context.font = font;
+
+                    // measure text width on the canvas: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText
+                    const metrics = context.measureText(text);
+                    return metrics.width;
                 }
             }
         }
