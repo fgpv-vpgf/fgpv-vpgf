@@ -295,7 +295,14 @@
                 return $q((resolve, reject) => {
                     if (this._serviceInfo.serviceType === this.serviceType ||
                         this._serviceInfo.serviceType === Geo.Service.Types.Unknown) {
-                        this.layerType = serviceTypeToLayerType[this._serviceInfo.serviceType];
+
+                        this.layerType = serviceTypeToLayerType[this.serviceType];
+
+                        // for feature layers, apply primaryField smart default
+                        // TODO: revisit when config objects are typed classes
+                        if (this.serviceType === Geo.Service.Types.FeatureLayer && this._serviceInfo.smartDefaults) {
+                            this.config.primaryField = this._serviceInfo.smartDefaults.primary;
+                        }
                         resolve();
                     } else {
                         reject();
@@ -345,6 +352,11 @@
                         this.layerType = 'esriFeature';
                         this.fileType = fileInfo.serviceType;
 
+                        // error type means the file cannot be accessed
+                        if (this.fileType === Geo.Service.Types.Error) {
+                            throw new Error('Cannot retrieve file data');
+                        }
+
                         if (typeof file !== 'undefined') {
                             // if there is file object, read it and store the data
                             return this._readFileData(file, progressCallback)
@@ -361,10 +373,15 @@
             }
 
             /**
-             * Returns the file type.
-             * @return {String} file type
+             * Returns the file type. If type is `Unknown`, returns null for template bindings
+             * @return {String|null} file type
              */
-            get fileType() { return this._fileType; }
+            get fileType() {
+                if (Geo.Service.Types.Unknown === this._fileType) {
+                    return null;
+                }
+                return this._fileType;
+            }
 
             /**
              * Sets file type. Setting file type does not triggers file validation.
