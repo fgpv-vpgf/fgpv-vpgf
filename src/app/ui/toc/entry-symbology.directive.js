@@ -134,14 +134,18 @@
 
                     trigger = element.find(RV_SYMBOLOGY_ITEM_TRIGGER);
 
-                    // calculate maximum with of a symbology item based on image, label size and the main panel width
+                    // calculate maximum width of a symbology item based on image, label size and the main panel width
                     // symbology item cannot be wider than the panel
                     maxItemWidth = Math.min(
                         Math.max(
                             ...symbologyItems.map(symbologyItem =>
                                 Math.max(
                                     symbologyItem.image[0].naturalWidth,
-                                    getTextWidth(canvas, symbologyItem.label.text(), 'normal 14pt Roboto') + 32 // account for padding
+
+                                    // TODO: need to use current font size
+                                    // need to account for letter spacing (use 10 for now)
+                                    // 32 accounts for paddding, need to get that from styles as well
+                                    getTextWidth(canvas, symbologyItem.label.text(), 'normal 14px Roboto') + 32 + 10
                                 ))),
                         containerWidth
                     );
@@ -190,7 +194,7 @@
                         totalHeight += legendItemTLgenerator[self.type](tlshift, symbologyItem, totalHeight,
                             index === symbologyItems.length - 1));
 
-                    totalHeight += symbologyListMargin; // add marging at the bottom of the list
+                    totalHeight += symbologyListMargin; // add margin at the bottom of the list
 
                     // expand layer item container (ctrl.element) to accomodate symbology list
                     tlshift.to(ctrl.element, RV_DURATION, {
@@ -239,7 +243,7 @@
                  * @param  {Object}  symbologyItem symbology object with references to its parts
                  * @param  {Number}  totalHeight   height of the legend stack so far
                  * @param  {Boolean} isLast        flag indicating this is the last item in the stack
-                 * @return {Nimber}                height of this symbology item plus its bottom margin is applicable
+                 * @return {Number}                height of this symbology item plus its bottom margin is applicable
                  */
                 function imageLegendItem(tlshift, symbologyItem, totalHeight, isLast) {
                     const symbologyListItemMargin = 16;
@@ -299,7 +303,7 @@
                  * @param  {Object}  symbologyItem symbology object with references to its parts
                  * @param  {Number}  totalHeight   height of the legend stack so far
                  * @param  {Boolean} isLast        flag indicating this is the last item in the stack
-                 * @return {Nimber}                height of this symbology item plus its bottom margin is applicable
+                 * @return {Number}                height of this symbology item plus its bottom margin is applicable
                  */
                 function iconLegendItem(tlshift, symbologyItem, totalHeight, isLast) {
                     const symbologyListItemMargin = 8;
@@ -351,12 +355,14 @@
                  * Returns width of the supplied text string.
                  * @param  {Object} canvas cached canvas node
                  * @param  {String} text   string of text to measure
-                 * @param  {String} font   text font and size
+                 * @param  {String} font   text font and size https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font
                  * @return {Number}        width of the text
                  */
                 function getTextWidth(canvas, text, font) {
                     const context = canvas.getContext('2d');
                     context.font = font;
+
+                    // measure text width on the canvas: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText
                     const metrics = context.measureText(text);
                     return metrics.width;
                 }
