@@ -309,7 +309,7 @@
         function closeLoaderFile() {
             // reset the loader after closing the panel
             stepper.reset().start();
-            stateManager.setActive({ mainLoaderFile: false });
+            stateManager.setActive('mainToc');
         }
     }
 })();
