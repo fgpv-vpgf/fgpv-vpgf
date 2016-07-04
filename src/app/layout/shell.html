@@ -9,9 +9,7 @@
     </div>
 </div>
 
-<div class="rv-esri-map" rv-init-map></div>
-
-<rv-mapnav rv-morph="mapnav"></rv-mapnav>
+<div class="rv-esri-map" rv-init-map tabindex="0"></div>
 
 <!--
     Each plug has a permanent position on the page defined through CSS; plugs themselves don't move or change size (with a small exception when the plug needs to change size to accomodate content's shadow). Plug's child is a panel (panelPlug - mainPanel), which does animate on enter and leave events. Panels take all availables space in their plug.
@@ -32,6 +30,7 @@
 <!-- rv-morph animates transitions between values stored in state -->
 <rv-panel type="filters" rv-state="filters" rv-morph="filters" class="rv-plug-slide-down-grand"></rv-panel>
 
+<rv-mapnav rv-morph="mapnav"></rv-mapnav>
 <rv-panel type="other" rv-state="other" class="rv-plug-slide-left"></rv-panel>
 
 <!--div ng-class="{ active: self.active }" ui-view="detailsPlug"></div-->

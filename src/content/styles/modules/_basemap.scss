@@ -4,6 +4,10 @@
     ul.rv-basemap-list {
         > li {
             margin-bottom: rem(2.2);
+
+            & button:focus {
+                outline: 2px solid #4d90fe;
+            }
         }
     }
 
@@ -58,11 +62,11 @@
                 position: relative;
                 background-color: rgba(0,0,0,0.68);
                 color: rgb(255,255,255);
+                text-align: left;
                 top: 24px;
                 z-index: 1;
                 text-transform: none;
                 padding: rem(0.5) rem(1);
-                text-align: left; 
                 display: none;
                 font-size: 12px;
                 overflow: hidden;

@@ -32,10 +32,16 @@
             storageService.panels.shell = el;
 
             // close all panels when escape key is pressed
-            $rootElement.bind('keydown', event => {
+            $rootElement.on('keydown', event => {
                 if (event.which === 27) {
                     scope.$apply(() => {
                         stateManager.closePanelFromHistory();
+                    });
+                } else if ([9, 13, 37, 38, 39, 40, 187, 189].find(x => x === event.which)) {
+                    $rootElement.addClass('keyboard');
+                    $rootElement.on('mousemove', () => {
+                        $rootElement.removeClass('keyboard');
+                        $rootElement.off('mousemove');
                     });
                 }
             });
