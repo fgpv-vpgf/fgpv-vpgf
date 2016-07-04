@@ -147,7 +147,7 @@
 }
 
 @mixin overview {
-    $pathPrefix: "content/images/overview/";
+    $beautifulIconSet: "data:image/png;base64,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";
 
     .esriOverviewMap {
         position: absolute;
@@ -212,11 +212,11 @@
     }
 
     .esriOverviewMap .ovwMaximize {
-        background: url($pathPrefix + "overview.png") 0 -130px;
+        background: url($beautifulIconSet) 0 -130px;
     }
 
     .esriOverviewMap .ovwRestore {
-        background: url($pathPrefix + "overview.png") 0 -104px;
+        background: url($beautifulIconSet) 0 -104px;
     }
 
     .esriOverviewMap.ovwTL {
@@ -269,25 +269,25 @@
 
     .esriOverviewMap.ovwTL .ovwShow,
     .esriOverviewMap.ovwBR .ovwHide {
-        background: url($pathPrefix + "overview.png") 0 -26px;
+        background: url($beautifulIconSet) 0 -26px;
         margin: 10px;
     }
 
     .esriOverviewMap.ovwTR .ovwShow,
     .esriOverviewMap.ovwBL .ovwHide {
-        background: url($pathPrefix + "overview.png") 0 0;
+        background: url($beautifulIconSet) 0 0;
         margin: 10px;
     }
 
     .esriOverviewMap.ovwBL .ovwShow,
     .esriOverviewMap.ovwTR .ovwHide {
-        background: url($pathPrefix + "overview.png") 0 -78px;
+        background: url($beautifulIconSet) 0 -78px;
         margin: 10px;
     }
 
     .esriOverviewMap.ovwBR .ovwShow,
     .esriOverviewMap.ovwTL .ovwHide {
-        background: url($pathPrefix + "overview.png") 0 -52px;
+        background: url($beautifulIconSet) 0 -52px;
         margin: 10px;
     }
     /*.esriOverviewMap.ovwTL .ovwHide { background-image: url(../images/collapse-top-left.png); }
