@@ -110,7 +110,7 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
 
             .pipe($.if(args.prod, $.cssnano()))
 
-            .pipe(gulp.dest(config.build))
+            .pipe(gulp.dest(config.libBuild))
 
             .pipe($.connect.reload());
     });
@@ -140,11 +140,11 @@ function injectRandomFile(replaceToken, fileName) {
 }
 
 function injectTranslations(contents) {
-    const translations = fs.readdirSync(`${config.build}/locales`)
-                           .filter(f => fs.statSync(`${config.build}/locales/${f}`).isDirectory())
+    const translations = fs.readdirSync(`${config.sampleBuild}/locales`)
+                           .filter(f => fs.statSync(`${config.sampleBuild}/locales/${f}`).isDirectory())
                            .map(name => ({
                                name,
-                               data: fs.readFileSync(`${config.build}/locales/${name}/translation.json`)
+                               data: fs.readFileSync(`${config.sampleBuild}/locales/${name}/translation.json`)
                            }))
                            .map(({ name, data }) => `'${name}': ${data}`)
                            .join(',\n');
@@ -162,7 +162,7 @@ function injectError(error) {
     return gulp
         .src(config.build + '/index*.html')
         .pipe($.replace(/<!-- inject:error -->([\s\S]*?)<!-- endinject -->/gi, '<!-- inject:error -->' + injector + '<!-- endinject -->'))
-        .pipe(gulp.dest(config.build));
+        .pipe(gulp.dest(config.sampleBuild));
 }
 
 /**
@@ -245,7 +245,7 @@ function jsbuild() {
 // all assets needed by the library should be inlined if possible
 gulp.task('assetcopy', 'Copy assets to the samples directory', () =>
     gulp.src(config.staticAssets, { base: config.src })
-        .pipe(gulp.dest(config.build))
+        .pipe(gulp.dest(config.sampleBuild))
 );
 
 gulp.task('makesvgcache', 'Rebuild the SVG cache', (cb) => {
@@ -256,7 +256,7 @@ gulp.task('translate', 'Split translation csv into internationalized files',
     function () {
         return gulp.src(config.src + 'locales/translations.csv')
             .pipe($.i18nCsv())
-            .pipe(gulp.dest(config.build));
+            .pipe(gulp.dest(config.sampleBuild));
     });
 
 gulp.task('jsrollup', 'Roll up all js into one file',
@@ -279,7 +279,7 @@ gulp.task('jsrollup', 'Roll up all js into one file',
         return merge(jslib, jscache, jsapp, seed) // merge doesn't guarantee file order :(
             .pipe($.order(config.jsOrder))
             .pipe($.concat(config.jsCoreFile))
-            .pipe(gulp.dest(config.build));
+            .pipe(gulp.dest(config.libBuild));
     });
 
 gulp.task('jsinjector', 'Copy fixed assets to the build directory',
@@ -300,7 +300,7 @@ gulp.task('jsinjector', 'Copy fixed assets to the build directory',
         return merge(polyfills, injector) // merge doesn't guarantee file order :(
             .pipe($.order(config.injectorOrder))
             .pipe($.concat(config.jsInjectorDest))
-            .pipe(gulp.dest(config.build));
+            .pipe(gulp.dest(config.libBuild));
     });
 
 gulp.task('inject', 'Adds configured dependencies to the HTML page',
@@ -316,23 +316,17 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
             js.push('!' + config.app + 'app-seed.js'); // remove app-seed from injectables
         }
 
-        function injectOpts(name) {
-            var res = { ignorePath: '../build/', relative: true };
-            if (name) {
-                res.name = 'inject:' + name;
-            }
-            return res;
-        }
+        const injectOpts = { ignorePath: '../build', addPrefix: '..', relative: true };
 
         return gulp
             .src(index)
-            .pipe($.inject(gulp.src(config.jsInjectorFilePath), injectOpts()))
-            .pipe(gulp.dest(config.build));
+            .pipe($.inject(gulp.src(config.jsInjectorFilePath), injectOpts))
+            .pipe(gulp.dest(config.sampleBuild));
     });
 
 gulp.task('tgz', 'Generate tarball for distribution', ['inject'], function () {
     return gulp
-        .src(['build/**'])
+        .src([config.libBuild + '/**'])
         .pipe($.tar('fgpv-' + pkg.version + '.tgz'))
         .pipe($.gzip({ append: false }))
         .pipe(gulp.dest('dist'));
@@ -340,7 +334,7 @@ gulp.task('tgz', 'Generate tarball for distribution', ['inject'], function () {
 
 gulp.task('zip', 'Generate zip for distribution', ['inject'], function () {
     return gulp
-        .src(['build/**'])
+        .src([config.libBuild + '/**'])
         .pipe($.zip('fgpv-' + pkg.version + '.zip'))
         .pipe(gulp.dest('dist'));
 });
@@ -434,7 +428,7 @@ gulp.task('changelog', 'Generate a changelog based on commit history', function 
 function serve(isDev) {
     $.connect.server({
         root: config.root,
-        livereload: true,
+        livereload: false,
         port: config.defaultPort,
 
         // fallback option doesn't seem to work well with index page reload
