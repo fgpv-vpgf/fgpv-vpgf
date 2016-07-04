@@ -231,7 +231,7 @@
          * Closes loader pane and switches to toc.
          */
         function closeLoaderService() {
-            stateManager.setActive({ mainLoaderService: false });
+            stateManager.setActive('mainToc');
         }
     }
 })();
