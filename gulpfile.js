@@ -325,7 +325,7 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
             .src(index)
             .pipe($.inject(gulp.src(config.jsInjectorFilePath), injectOpts))
             .pipe(gulp.dest(config.sampleBuild));
-    },{
+    }, {
         aliases: ['build']
     });
 
