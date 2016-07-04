@@ -23,7 +23,8 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     fi
 
     echo "Destintation: $DESTDIR"
-    ssh "$SSHSRV" mkdir -p "$DESTDIR"
+    ssh "$SSHSRV" mkdir -p "$DESTDIR/dist"
     rsync -av --delete "build/" "$SSHSRV:$DESTDIR"
+    rsync -av "dist/" "$SSHSRV:$DESTDIR/dist"
 
 fi
