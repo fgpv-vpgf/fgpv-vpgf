@@ -8,7 +8,8 @@ const glob = require('glob');
 const del = require('del');
 const pkg = require('./package.json');
 const $ = require('gulp-load-plugins')({ lazy: true });
-const args = require('yargs').argv;
+const yargs = require('yargs');
+const args = yargs.argv;
 const bowerFiles = require('main-bower-files');
 const config = require('./gulp.config')();
 const Server = require('karma').Server;
@@ -22,6 +23,8 @@ const jsDefaults = require('json-schema-defaults');
 const jsRefParser = require('json-schema-ref-parser');
 
 require('gulp-help')(gulp);
+
+const PROD_MODE = yargs.argv._[0] === 'dist' || args.prod;
 
 /**
  * yargs variables can be passed in to alter the behavior, when present.
@@ -108,7 +111,7 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
             .pipe($.sass().on('error', $.sass.logError))
             .pipe($.autoprefixer('last 2 version', '> 5%'))
 
-            .pipe($.if(args.prod, $.cssnano()))
+            .pipe($.if(PROD_MODE, $.cssnano()))
 
             .pipe(gulp.dest(config.libBuild))
 
@@ -172,7 +175,7 @@ function injectError(error) {
 function libbuild() {
     return gulp.src(bowerFiles())
         .pipe($.concat(config.jsLibFile))
-        .pipe($.if(args.prod, $.uglify()));
+        .pipe($.if(PROD_MODE, $.uglify()));
 }
 
 /**
@@ -191,7 +194,7 @@ function templatecache() {
             config.templateCache.file,
             config.templateCache.options
             ))
-        .pipe($.if(args.prod, $.uglify()));
+        .pipe($.if(PROD_MODE, $.uglify()));
 }
 
 /**
@@ -238,7 +241,7 @@ function jsbuild() {
         .pipe($.concat(config.jsSingleFile))
 
         // if prod, uglify; if not, write sourcemaps inline because it will be merged with other libraries and it's not possible to use external files in that case
-        .pipe($.if(args.prod, $.uglify())); // , $.sourcemaps.write()));
+        .pipe($.if(PROD_MODE, $.uglify())); // , $.sourcemaps.write()));
 }
 
 // NOTE assetcopy should only be used for samples for development
@@ -269,7 +272,7 @@ gulp.task('jsrollup', 'Roll up all js into one file',
         const seed = gulp.src([config.jsGlobalRegistry, config.jsAppSeed])
             .pipe($.plumber({ errorHandler: injectError }))
             .pipe($.babel())
-            .pipe($.if(args.prod, $.uglify()))
+            .pipe($.if(PROD_MODE, $.uglify()))
             .pipe($.plumber.stop());
 
         // global registry goes after the lib package
@@ -289,13 +292,13 @@ gulp.task('jsinjector', 'Copy fixed assets to the build directory',
         const polyfills = gulp.src(config.jsPolyfills)
             .pipe($.plumber({ errorHandler: injectError }))
             // .pipe($.babel())
-            .pipe($.if(args.prod, $.uglify()))
+            .pipe($.if(PROD_MODE, $.uglify()))
             .pipe($.plumber.stop())
             .pipe($.concat(config.jsPolyfillsFile));
 
         const injector = gulp.src(config.jsInjectorFile)
             .pipe($.babel())
-            .pipe($.if(args.prod, $.uglify()));
+            .pipe($.if(PROD_MODE, $.uglify()));
 
         return merge(polyfills, injector) // merge doesn't guarantee file order :(
             .pipe($.order(config.injectorOrder))
@@ -322,6 +325,8 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
             .src(index)
             .pipe($.inject(gulp.src(config.jsInjectorFilePath), injectOpts))
             .pipe(gulp.dest(config.sampleBuild));
+    },{
+        aliases: ['build']
     });
 
 gulp.task('tgz', 'Generate tarball for distribution', ['inject'], function () {
