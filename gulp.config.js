@@ -84,12 +84,7 @@ module.exports = function () {
         specHelpers: [src + 'test/*.js'], // bind-polyfill,
         specs: [app + '**/*.spec.js'],
 
-        staticAssets: [
-            src + 'content/images/**',
-            src + 'content/metadata/**',
-            src + 'content/fake_data.json',
-            src + 'config*.json'
-        ],
+        staticAssets: [src + 'config*.json'],
 
         svgCache: `${src}content/svgCache`,
 
