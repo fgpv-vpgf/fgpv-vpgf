@@ -51,6 +51,6 @@ addons:
     - g++-4.8
 after_success:
 - gulp clean
-- gulp inject
+- gulp dist
 - source devdeploy.sh
 - source docdeploy.sh
