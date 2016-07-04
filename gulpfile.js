@@ -241,11 +241,12 @@ function jsbuild() {
         .pipe($.if(args.prod, $.uglify())); // , $.sourcemaps.write()));
 }
 
-gulp.task('assetcopy', 'Copy fixed assets to the build directory',
-    function () {
-        return gulp.src(config.staticAssets, { base: config.src })
-            .pipe(gulp.dest(config.build));
-    });
+// NOTE assetcopy should only be used for samples for development
+// all assets needed by the library should be inlined if possible
+gulp.task('assetcopy', 'Copy assets to the samples directory', () =>
+    gulp.src(config.staticAssets, { base: config.src })
+        .pipe(gulp.dest(config.build))
+);
 
 gulp.task('makesvgcache', 'Rebuild the SVG cache', (cb) => {
     require('./scripts/svgCache.js').buildCache(cb);
