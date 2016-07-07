@@ -16,10 +16,19 @@
 
     function errorService($mdToast) {
         const service = {
-            display
+            display,
+            remove
         };
 
         return service;
+
+        /**
+        * Hides a toast object
+        * @param {Object} toastMsg is a promise object returned by the display function
+        */
+        function remove(toastMsg) {
+            $mdToast.hide(toastMsg);
+        }
 
         /**
          * Renders a toast message containing the supplied errorMsg

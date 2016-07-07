@@ -168,6 +168,8 @@
 
         const selectedLayerLog = {};
 
+        let errorToast;
+
         // set state change watches on metadata, settings and filters panel
         watchPanelState('sideMetadata', 'metadata');
         watchPanelState('sideSettings', 'settings');
@@ -290,9 +292,14 @@
                 .setActive({
                     side: false
                 })
-                .then(() => stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0))
+                .then(() => {
+                    if (errorToast) {
+                        errorService.remove();
+                    }
+                    return stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0);
+                })
                 .catch(() => {
-                    errorService.display($translate.instant('toc.error.resource.loadfailed'),
+                    errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
                         layoutService.panes.filter);
                 });
         }
