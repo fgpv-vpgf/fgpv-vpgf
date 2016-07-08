@@ -404,6 +404,17 @@
                 const l = layers[layerId]._layer;
                 const lods = zoomIn ? geoState.lods : [...geoState.lods].reverse();
                 const lod = lods.find(lod => zoomIn ? lod.scale < l.minScale : lod.scale > l.maxScale);
+
+                // if zoom in is needed; must find center of layer's full extent and perform center&zoom
+                if (zoomIn) {
+                    // need to reproject in case full extent in a different sr than basemap
+                    const gextent = gapiService.gapi.proj.localProjectExtent(l.fullExtent,
+                        mapObject.spatialReference);
+                    const reprojExt = gapiService.gapi.mapManager.Extent(gextent.x1, gextent.y1,
+                        gextent.x0, gextent.y0, gextent.sr);
+
+                    return mapObject.centerAndZoom(reprojExt.getCenter(), lod.level);
+                }
                 return mapObject.setScale(lod.scale);
             }
 
