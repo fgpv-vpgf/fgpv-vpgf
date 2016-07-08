@@ -433,7 +433,7 @@ gulp.task('changelog', 'Generate a changelog based on commit history', function 
 function serve(isDev) {
     $.connect.server({
         root: config.root,
-        livereload: false,
+        livereload: true,
         port: config.defaultPort,
 
         // fallback option doesn't seem to work well with index page reload
