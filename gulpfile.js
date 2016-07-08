@@ -8,7 +8,8 @@ const glob = require('glob');
 const del = require('del');
 const pkg = require('./package.json');
 const $ = require('gulp-load-plugins')({ lazy: true });
-const args = require('yargs').argv;
+const yargs = require('yargs');
+const args = yargs.argv;
 const bowerFiles = require('main-bower-files');
 const config = require('./gulp.config')();
 const Server = require('karma').Server;
@@ -22,6 +23,8 @@ const jsDefaults = require('json-schema-defaults');
 const jsRefParser = require('json-schema-ref-parser');
 
 require('gulp-help')(gulp);
+
+const PROD_MODE = yargs.argv._[0] === 'dist' || args.prod;
 
 /**
  * yargs variables can be passed in to alter the behavior, when present.
@@ -108,9 +111,9 @@ gulp.task('sass', 'Generate CSS from SASS', ['clean-sass'],
             .pipe($.sass().on('error', $.sass.logError))
             .pipe($.autoprefixer('last 2 version', '> 5%'))
 
-            .pipe($.if(args.prod, $.cssnano()))
+            .pipe($.if(PROD_MODE, $.cssnano()))
 
-            .pipe(gulp.dest(config.build))
+            .pipe(gulp.dest(config.libBuild))
 
             .pipe($.connect.reload());
     });
@@ -140,11 +143,11 @@ function injectRandomFile(replaceToken, fileName) {
 }
 
 function injectTranslations(contents) {
-    const translations = fs.readdirSync(`${config.build}/locales`)
-                           .filter(f => fs.statSync(`${config.build}/locales/${f}`).isDirectory())
+    const translations = fs.readdirSync(`${config.sampleBuild}/locales`)
+                           .filter(f => fs.statSync(`${config.sampleBuild}/locales/${f}`).isDirectory())
                            .map(name => ({
                                name,
-                               data: fs.readFileSync(`${config.build}/locales/${name}/translation.json`)
+                               data: fs.readFileSync(`${config.sampleBuild}/locales/${name}/translation.json`)
                            }))
                            .map(({ name, data }) => `'${name}': ${data}`)
                            .join(',\n');
@@ -162,7 +165,7 @@ function injectError(error) {
     return gulp
         .src(config.build + '/index*.html')
         .pipe($.replace(/<!-- inject:error -->([\s\S]*?)<!-- endinject -->/gi, '<!-- inject:error -->' + injector + '<!-- endinject -->'))
-        .pipe(gulp.dest(config.build));
+        .pipe(gulp.dest(config.sampleBuild));
 }
 
 /**
@@ -172,7 +175,7 @@ function injectError(error) {
 function libbuild() {
     return gulp.src(bowerFiles())
         .pipe($.concat(config.jsLibFile))
-        .pipe($.if(args.prod, $.uglify()));
+        .pipe($.if(PROD_MODE, $.uglify()));
 }
 
 /**
@@ -191,7 +194,7 @@ function templatecache() {
             config.templateCache.file,
             config.templateCache.options
             ))
-        .pipe($.if(args.prod, $.uglify()));
+        .pipe($.if(PROD_MODE, $.uglify()));
 }
 
 /**
@@ -238,14 +241,15 @@ function jsbuild() {
         .pipe($.concat(config.jsSingleFile))
 
         // if prod, uglify; if not, write sourcemaps inline because it will be merged with other libraries and it's not possible to use external files in that case
-        .pipe($.if(args.prod, $.uglify())); // , $.sourcemaps.write()));
+        .pipe($.if(PROD_MODE, $.uglify())); // , $.sourcemaps.write()));
 }
 
-gulp.task('assetcopy', 'Copy fixed assets to the build directory',
-    function () {
-        return gulp.src(config.staticAssets, { base: config.src })
-            .pipe(gulp.dest(config.build));
-    });
+// NOTE assetcopy should only be used for samples for development
+// all assets needed by the library should be inlined if possible
+gulp.task('assetcopy', 'Copy assets to the samples directory', () =>
+    gulp.src(config.staticAssets, { base: config.src })
+        .pipe(gulp.dest(config.sampleBuild))
+);
 
 gulp.task('makesvgcache', 'Rebuild the SVG cache', (cb) => {
     require('./scripts/svgCache.js').buildCache(cb);
@@ -255,7 +259,7 @@ gulp.task('translate', 'Split translation csv into internationalized files',
     function () {
         return gulp.src(config.src + 'locales/translations.csv')
             .pipe($.i18nCsv())
-            .pipe(gulp.dest(config.build));
+            .pipe(gulp.dest(config.sampleBuild));
     });
 
 gulp.task('jsrollup', 'Roll up all js into one file',
@@ -268,7 +272,7 @@ gulp.task('jsrollup', 'Roll up all js into one file',
         const seed = gulp.src([config.jsGlobalRegistry, config.jsAppSeed])
             .pipe($.plumber({ errorHandler: injectError }))
             .pipe($.babel())
-            .pipe($.if(args.prod, $.uglify()))
+            .pipe($.if(PROD_MODE, $.uglify()))
             .pipe($.plumber.stop());
 
         // global registry goes after the lib package
@@ -278,7 +282,7 @@ gulp.task('jsrollup', 'Roll up all js into one file',
         return merge(jslib, jscache, jsapp, seed) // merge doesn't guarantee file order :(
             .pipe($.order(config.jsOrder))
             .pipe($.concat(config.jsCoreFile))
-            .pipe(gulp.dest(config.build));
+            .pipe(gulp.dest(config.libBuild));
     });
 
 gulp.task('jsinjector', 'Copy fixed assets to the build directory',
@@ -288,18 +292,18 @@ gulp.task('jsinjector', 'Copy fixed assets to the build directory',
         const polyfills = gulp.src(config.jsPolyfills)
             .pipe($.plumber({ errorHandler: injectError }))
             // .pipe($.babel())
-            .pipe($.if(args.prod, $.uglify()))
+            .pipe($.if(PROD_MODE, $.uglify()))
             .pipe($.plumber.stop())
             .pipe($.concat(config.jsPolyfillsFile));
 
         const injector = gulp.src(config.jsInjectorFile)
             .pipe($.babel())
-            .pipe($.if(args.prod, $.uglify()));
+            .pipe($.if(PROD_MODE, $.uglify()));
 
         return merge(polyfills, injector) // merge doesn't guarantee file order :(
             .pipe($.order(config.injectorOrder))
             .pipe($.concat(config.jsInjectorDest))
-            .pipe(gulp.dest(config.build));
+            .pipe(gulp.dest(config.libBuild));
     });
 
 gulp.task('inject', 'Adds configured dependencies to the HTML page',
@@ -315,23 +319,19 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
             js.push('!' + config.app + 'app-seed.js'); // remove app-seed from injectables
         }
 
-        function injectOpts(name) {
-            var res = { ignorePath: '../build/', relative: true };
-            if (name) {
-                res.name = 'inject:' + name;
-            }
-            return res;
-        }
+        const injectOpts = { ignorePath: '../build', addPrefix: '..', relative: true };
 
         return gulp
             .src(index)
-            .pipe($.inject(gulp.src(config.jsInjectorFilePath), injectOpts()))
-            .pipe(gulp.dest(config.build));
+            .pipe($.inject(gulp.src(config.jsInjectorFilePath), injectOpts))
+            .pipe(gulp.dest(config.sampleBuild));
+    }, {
+        aliases: ['build']
     });
 
 gulp.task('tgz', 'Generate tarball for distribution', ['inject'], function () {
     return gulp
-        .src(['build/**'])
+        .src([config.libBuild + '/**'])
         .pipe($.tar('fgpv-' + pkg.version + '.tgz'))
         .pipe($.gzip({ append: false }))
         .pipe(gulp.dest('dist'));
@@ -339,7 +339,7 @@ gulp.task('tgz', 'Generate tarball for distribution', ['inject'], function () {
 
 gulp.task('zip', 'Generate zip for distribution', ['inject'], function () {
     return gulp
-        .src(['build/**'])
+        .src([config.libBuild + '/**'])
         .pipe($.zip('fgpv-' + pkg.version + '.zip'))
         .pipe(gulp.dest('dist'));
 });

@@ -15,6 +15,8 @@ module.exports = function () {
     var root = path.resolve('./');
     var src = './src/'; // source files
     var build = './build/'; // build target, suitable for usage as a dev server
+    var libBuild = build + 'lib/';
+    var sampleBuild = build + 'samples/';
     var dist = './dist/'; // contains packaged builds (ex: tgz and zip)
     var app = src + 'app/';
     var tmp = '.tmp/';
@@ -49,7 +51,7 @@ module.exports = function () {
         ],
         injectorOrder: [
             'polyfills.js',
-            'injector.js'
+            'bootstrap.js'
         ],
 
         jsPolyfills: src + 'polyfill/*.js',
@@ -75,21 +77,16 @@ module.exports = function () {
         jsAppSeed: app + 'app-seed.js', // initializes viewer instances
         jsGlobalRegistry: app + 'global-registry.js', // create global registry; loads gapi, etc.
 
-        jsInjectorFile: app + 'injector.js',
-        jsInjectorDest: 'injector.js',
-        jsInjectorFilePath: build + 'injector.js',
+        jsInjectorFile: app + 'bootstrap.js',
+        jsInjectorDest: 'bootstrap.js',
+        jsInjectorFilePath: libBuild + 'bootstrap.js',
 
         jsCoreFile: 'core.js',
 
         specHelpers: [src + 'test/*.js'], // bind-polyfill,
         specs: [app + '**/*.spec.js'],
 
-        staticAssets: [
-            src + 'content/images/**',
-            src + 'content/metadata/**',
-            src + 'content/fake_data.json',
-            src + 'config*.json'
-        ],
+        staticAssets: [src + 'config*.json'],
 
         svgCache: `${src}content/svgCache`,
 
@@ -120,13 +117,14 @@ module.exports = function () {
             }
         },
 
-        app: app,
-        src: src,
-        build: build,
-        dist: dist,
-        root: root,
-        tmp: tmp,
-        report: report,
+        app,
+        src,
+        libBuild,
+        sampleBuild,
+        dist,
+        root,
+        tmp,
+        report,
         libdir: bowerdir,
 
         // alljs: [
