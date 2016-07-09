@@ -2,8 +2,7 @@
     'use strict';
 
     /**
-     * @ngdoc module
-     * @name app.ui
+     * @namespace app.ui
      * @description
      *
      * The `app.ui` module pull in all the inidividual ui modules.
