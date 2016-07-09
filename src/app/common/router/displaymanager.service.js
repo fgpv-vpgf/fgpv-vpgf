@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name displayManager
-     * @module app.common.router
+     * @module displayManager
+     * @memberof app.common
      * @requires dependencies
      * @description
      *
@@ -34,6 +33,7 @@
 
         /**
          * Toggles the specified panel with following logic:
+         * ```
          * The requested panel can be open or closed;
          *     open:
          *         the content already in the panel can belong to a different layer
@@ -43,6 +43,7 @@
          *                 -> dehighlight the the old layer; highlight the new one
          *     closed:
          *         -> open panel
+         * ```
          *
          * If the panel is not closing, a loading indicator will be triggered (immediately or after a delay).
          *
@@ -59,6 +60,7 @@
          * to true this could be better represented as a Promise object (but we do have a few edge cases where this may
          * not hold).
          *
+         * @function toggleDisplayPanel
          * @param  {String} panelName        panel to open; `statemanager.constant.service` `initialState` for valid panel names; any panel with a `display` property is a valid target;
          * @param  {Object} dataPromise      data object or a promise returning a data object; both can be plain data object or containers `{data: data, isLoaded: <boolean|promise> }`, where isLoaded can be a promise;
          * @param  {Object} requester        an optional object requesting display change; must have `id` attribute if you want the panel to toggle off on the same requester; requester object can be used to immediately pass content to the panel - for example passing layer name to the filters panel to be displayed in the panel header while the datatable is being constructed;
@@ -126,6 +128,7 @@
         /**
          * Sets displayed data for a specific content like layer metadata in the metadata panel. It checks against the provided requestId, if the id matches, the data is set and the loading indidcator is turned off.
          *
+         * @function setDisplay
          * @param {String} panelName     name of the panel where to update displayed content
          * @param {Number} requestId     request id to check if it's the latest request
          * @param {Object} data          data to be displayed
@@ -173,6 +176,7 @@
 
         /**
          * Clears data from the specified display.
+         * @function clearDisplayPanel
          * @param  {String} panelName the name of the panel whose display should be cleared
          */
         function clearDisplayPanel(panelName) {
