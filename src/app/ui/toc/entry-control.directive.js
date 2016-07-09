@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvTocEntryControl
-     * @module ap
+     * @module rvTocEntryControl
+     * @memberof app.ui
      * @restrict E
      * @description
      *
