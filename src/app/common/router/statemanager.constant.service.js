@@ -30,17 +30,15 @@
     };
 
     /**
-     * @ngdoc service
-     * @name initialState
-     * @module app.common.router
+     * @member initialState
+     * @memberof app.common
      * @description
      *
      * The `initialState` constant service provides default stateManager state values.
      */
     /**
-     * @ngdoc service
-     * @name initialDisplay
-     * @module app.common.router
+     * @member initialDisplay
+     * @memberof app.common
      * @description
      *
      * The `initialDisplay` constant service provides default stateManager display value.

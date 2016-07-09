@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name stateManager
-     * @module app.common
+     * @module stateManager
+     * @memberof app.common
      * @description
      *
      * The `stateManager` factory is a service controlling states (true/false) of panels and their content.
@@ -56,6 +55,7 @@
 
         /**
          * Adds new items to the state collection with overrride;
+         * @function addState
          * @param {Array} items an array of state items
          */
         function addState(items) {
@@ -74,6 +74,7 @@
          * stateManager.setActive({ mainToc: true }, { sideMetadata: true });
          * ```
          *
+         * @function setActive
          * @param {Array} items state items to toggle
          * @return {Promise} returns a promise which is resolved when animation completes; if the child is supplies as the element to be manipulated and its transition is immediate, the return promise is resovled when its parent animation is complete;
          */
@@ -105,6 +106,7 @@
 
         /**
          * Changes the morph value of the item to the value specified
+         * @function setMorph
          * @param  {String} itemName       name of the item to change
          * @param  {String} value      value to change the morph to
          * @return {Object}            the stateManager service to use for chaining
@@ -117,6 +119,7 @@
 
         /**
          * Resolves promise on the item waiting for its transition to complete.
+         * @function callback
          * @param  {String} itemName name of the state to resolve
          */
         function callback(itemName, property) {
@@ -132,6 +135,7 @@
         /**
          * Close the most recently opened panel.
          *
+         * @function closePanelFromHistory
          * @return  {Promise}   resolves when a panel has finished its closing animation
          */
         function closePanelFromHistory() {
@@ -143,6 +147,7 @@
          * including parent is opened or closed. Therefore sibling panels are not swapped
          * from history.
          *
+         * @function togglePanel
          * @param  {String}   panelName the name of a child panel
          */
         function togglePanel(panelName) {
@@ -154,6 +159,8 @@
 
         /**
          * Sets specified item to the provided value; waits for transition to complete
+         * @private
+         * @function setItemProperty
          * @param {String} itemName  object name to modify
          * @param {String} property  property name to modify
          * @param {Boolean} value  target state value
@@ -209,6 +216,8 @@
          * Registers a custom callback function to be run when the specified panel
          * is closed.
          *
+         * @private
+         * @function onCloseCallback
          * @param   {String}    panelName the name of the panel to register the closing callback
          * @param   {Function}  callback the callback function to run when the panel closes
          */
@@ -221,6 +230,8 @@
         /**
          * Executes the closing callback registered to panelName if it exists.
          *
+         * @private
+         * @function runCloseCallback
          * @param   {String}    panelName the name of the panel to run closing callback
          */
         function runCloseCallback(panelName) {
@@ -234,6 +245,8 @@
          * default behaviour is to add the panel unless addFlag is set to false. An inactive
          * panel is removed unless addFlag is true.
          *
+         * @private
+         * @function modifyHistory
          * @param   {Object}    panel the panel to be added or removed from panelHistory.
          * @param   {Boolean}   addFlag optional set to true to add, false to remove
          */
@@ -255,6 +268,8 @@
          * be avoided since passing a child panel will also open its parent panel. All other sibling panels are
          * closed.
          *
+         * @private
+         * @function openPanel
          * @param  {Object}   panelToOpen the panel object to be opened
          * @param  {Boolean}  propagate optional allow parent/sibling panels to be modified
          * @return {Promise}  resolves when panel animation has completed
@@ -299,6 +314,8 @@
         /**
          * Closes a panel from display.
          *
+         * @private
+         * @function closePanel
          * @param   {Object}    panelToClose the panel object to be opened
          * @param   {Boolean}   propagate optional allow parent/sibling panels to be modified
          * @return  {Promise}   resolves when panel animation has completed
@@ -333,6 +350,8 @@
 
         /**
          * Sets focus on the first visible button in panel named panelName
+         * @private
+         * @function setPanelFocus
          * @param  {String} panelName the name of the panel to set focus on
          */
         function setPanelFocus(panelName) {
@@ -346,6 +365,8 @@
 
         /**
          * Saves a focusable element
+         * @private
+         * @function setFocusElement
          * @param  {Object} element a focusable element
          */
         function setFocusElement(element) {
@@ -354,6 +375,8 @@
 
         /**
          * Changes focus to the last saved focusable element
+         * @private
+         * @function previousFocus
          */
         function previousFocus() {
             lastFocusElement.focus();
@@ -361,6 +384,8 @@
 
         /**
          * Returns item object from itemName specified
+         * @private
+         * @function getItem
          * @param  {String} itemName name of the item
          * @return {Object}          state object and its name
          */
@@ -373,6 +398,8 @@
 
         /**
          * Returns a parent of the itemName specified
+         * @private
+         * @function getParent
          * @param  {String} itemName name of the state object whose parent will be returned
          * @return {Object}          state object and its name
          */
@@ -388,6 +415,8 @@
 
         /**
          * Returns array of children of the itemName specified
+         * @private
+         * @function getChildren
          * @param  {String} parentName itemName whose children will be returned
          * @return {Object}            an array of state objects and their names
          */
