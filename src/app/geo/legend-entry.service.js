@@ -11,13 +11,13 @@
     // jscs:enable maximumLineLength
 
     /**
-     * @ngdoc service
-     * @name legendEntryFactory
-     * @module app.geo
+     * @module legendEntryFactory
+     * @memberof app.geo
      * @requires layerDefaults
      * @description
      *
      * The `legendEntryFactory` factory creates legend entries to be added to the toc.
+     * TODO this module is due for refactoring, it's docs should be updated at that time
      *
      */
     angular

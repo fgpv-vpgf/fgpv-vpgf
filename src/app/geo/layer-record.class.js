@@ -1,9 +1,19 @@
 (() => {
+/**
+ * LayerRecordFactory is a lightweight wrapper around the LayerRecord class hierarchy.
+ * It exposes various builder functions to create LayerRecord classes.
+ * FIXME this can move into geoapi
+ * @module LayerRecordFactory
+ * @memberof app.geo
+ */
     angular.module('app.geo').factory('LayerRecordFactory', LayerRecordFactory);
 
     function LayerRecordFactory(Geo, gapiService, $q) {
         const gapi = () => gapiService.gapi;
 
+        /**
+         * @class LayerRecord
+         */
         class LayerRecord {
             get layerClass () { throw new Error('This should be overridden in subclasses'); }
             get config () { return this.initialConfig; } // TODO: add a live config reference if needed
@@ -172,6 +182,9 @@
 
         }
 
+        /**
+         * @class AttrRecord
+         */
         class AttrRecord extends LayerRecord {
             get attributeBundle () { return this._attributeBundle; }
             // FIXME clickTolerance is not specific to AttrRecord but rather Feature and Dynamic
@@ -257,6 +270,9 @@
 
         }
 
+        /**
+         * @class ImageRecord
+         */
         class ImageRecord extends LayerRecord {
             get layerClass () { return gapi().layer.ArcGISImageServiceLayer; }
 
@@ -290,6 +306,9 @@
             }
         }
 
+        /**
+         * @class DynamicRecord
+         */
         class DynamicRecord extends AttrRecord {
             get _layerPassthroughBindings () {
                 return ['setOpacity', 'setVisibility', 'setVisibleLayers', 'setLayerDrawingOptions'];
@@ -330,6 +349,9 @@
             }
         }
 
+        /**
+         * @class TileRecord
+         */
         class TileRecord extends LayerRecord {
             get layerClass () { return gapi().layer.TileLayer; }
 
@@ -362,6 +384,9 @@
             }
         }
 
+        /**
+         * @class WmsRecord
+         */
         class WmsRecord extends LayerRecord {
             get layerClass () { return gapi().layer.ogc.WmsLayer; }
 
@@ -402,6 +427,9 @@
             }
         }
 
+        /**
+         * @class FeatureRecord
+         */
         class FeatureRecord extends AttrRecord {
             get layerClass () { return gapi().layer.FeatureLayer; }
 
@@ -444,6 +472,13 @@
             }
         }
 
+        /**
+         * Create a LayerRecord based on a config fragment
+         * @function makeServiceRecord
+         * @param {Object} config A configuration fragment for the layer to be created
+         * @param {Function} epsgLookup An optional lookup function for unknown projections
+         * @return {LayerRecord} A LayerRecord object of the appropriate type
+         */
         function makeServiceRecord(config, epsgLookup) {
             const types = Geo.Layer.Types;
             const typeToClass = {
@@ -456,6 +491,13 @@
             return new typeToClass[config.layerType](config, undefined, epsgLookup);
         }
 
+        /**
+         * Create a LayerRecord from an existing layer (used for file based layers).
+         * @function makeFileRecord
+         * @param {Object} config A configuration fragment for the layer to be created
+         * @param {Object} layer An ESRI layer object which has already been setup
+         * @return {FeatureRecord} A FeatureRecord (currently all files use FeatureLayers internally)
+         */
         function makeFileRecord(config, layer) {
             return new FeatureRecord(config, layer);
         }
@@ -464,6 +506,7 @@
          * Creates a config snippet for the layer described by dataString.
          * Maps to the correct layerRecord class using layerType.
          *
+         * @function parseLayerData
          * @param {String} dataString   a partial layer bookmark (everything after the id)
          * @param {Number} layerType    Layer type taken from the layer bookmark
          * @returns {Object}            config snippet for the layer
