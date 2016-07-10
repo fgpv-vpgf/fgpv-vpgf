@@ -248,7 +248,8 @@
 
         self.display = stateManager.display.filters;
 
-        self.tableObjLang = tableObjLang;
+        self. setDToLang =  setDToLang;
+        self.getDToLang = getDToLang;
         self.draw = draw;
 
         let isFullyOpen = false; // flag inicating that filters panel fully opened
@@ -280,11 +281,11 @@
                     // console.log('Filters fullyOpen', isFullyOpen, self.display.isLoading);
                     // console.log('Filters: table data udpated', newValue);
                     if (isFullyOpen) {
-                        self.createTable(self.tableObjLang());
+                        self.createTable(self.getDToLang());
                     } else {
                         // we have to deferr table creating until after the panel fully opens, we if try to create the table while the animation is in progress, it freezes as all calculations that Datatables is doing blocks ui;
                         // this means when the panel first opens, it will take 300ms longer to display any table then upon subsequent table creation when the panel is already open and the user just switches between layers;
-                        deferredAction = () => self.createTable(self.tableObjLang());
+                        deferredAction = () => self.createTable(self.getDToLang());
                     }
                 } else {
                     // destory table is data is set to null
@@ -310,15 +311,23 @@
             $rootScope.$on('$translateChangeSuccess', () => {
                 if (self.table) {
                     // to manage language switch on DataTable
-                    self.table.context[0].oLanguage = self.tableObjLang();
+                    self.setDToLang();
                     // catch translation done signal
-                    self.draw('default');
+                    self.table.draw();
                 }
             });
         }
 
-        // return table language object to be translated
-        function tableObjLang() {
+        // set language for table
+        function setDToLang() {
+            const newLang = self.getDToLang();
+            let oLang = self.table.context[0].oLanguage;
+
+            oLang = Object.assign(oLang, newLang);
+        }
+
+        // return translated table language object
+        function getDToLang() {
             let oLang = {
                 sProcessing: $translate.instant('filter.default.label.processing'),
                 sSearch: $translate.instant('filter.default.label.search'),
@@ -344,7 +353,7 @@
             return oLang;
         }
 
-        // re draw the table using scroller extension
+        // redraw the table using scroller extension
         function draw(value) {
             if (self.table) {
                 console.log('Filters: drawing table');
