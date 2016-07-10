@@ -5,9 +5,8 @@
     // jscs:enable maximumLineLength
 
     /**
-     * @ngdoc directive
-     * @name rvFiltersDefault
-     * @module app.ui.filters
+     * @module rvFiltersDefault
+     * @memberof app.ui
      * @description
      *
      * The `rvFiltersDefault` directive is a filters and datatable panel component.
@@ -20,6 +19,7 @@
     /**
      * `rvFiltersDefault` directive displays the datatable with layer data.
      *
+     * @function rvFiltersDefault
      * @return {object} directive body
      */
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService) {
@@ -37,6 +37,7 @@
 
         /**
          * Add a `createTable` to self. The table, after creation, is assigned to `self.table`.
+         * @function link
          * @param  {Object} scope directive scope
          * @param  {Object} el    node element
          */
@@ -51,6 +52,7 @@
 
             /**
              * Creates a new datatables instance (destroying existing if any). It pulls the data from the stateManager display store.
+             * @function createTable
              */
             function createTable() {
                 let zoomText = $translate.instant('filter.tooltip.zoom');
@@ -204,6 +206,7 @@
 
             /**
              * Destroys the table and its node if it exists.
+             * @function destroyTable
              */
             function destroyTable() {
                 if (self.table) {
@@ -220,6 +223,7 @@
             // TODO: add details button
             /**
              * Adds zoom and details buttons to the column provided.
+             * @function addColumnInteractivity
              * @param {Object} column from the formatted attributes bundle
              */
             function addColumnInteractivity(column, icons) {
@@ -235,6 +239,7 @@
     /**
      * Controller watches for panel morph changes and redraws the table after the change is complete;
      * it also watches for dispaly data changes and re-creates the table when it does change.
+     * @function Controller
      */
     function Controller($scope, $timeout, tocService, stateManager, events) {
         'ngInject';
@@ -330,6 +335,7 @@
 
         /**
          * Triggers a button on the table with the specified index
+         * @function triggerTableButton
          * @param  {Number|String} index button selector: https://datatables.net/reference/api/button()
          */
         function triggerTableButton(index) {

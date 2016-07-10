@@ -5,9 +5,8 @@
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
     /**
-     * @ngdoc directive
-     * @name rvLayerListSlider
-     * @module app.ui.details
+     * @module rvLayerListSlider
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -73,6 +72,7 @@
 
             /**
              * Handle layer selection on enter or space keypress. Sets focus to close button for accessibility
+             * @function itemSelectedByKeypress
              * @param  {Object} evt the event object
              * @param  {Object} item the selected item
              */
@@ -88,6 +88,7 @@
 
             /**
              * Handle layer selection on mousedown.
+             * @function itemSelectedByMouse
              * @param  {Object} item the selected item
              */
             self.itemSelectedByMouse = item => {
@@ -105,6 +106,7 @@
 
             /**
              * Starts the slider animation so layer list is expanded
+             * @function animateOpen
              */
             function animateOpen() {
                 if (tl.paused() || !forceClose) {
@@ -116,6 +118,7 @@
 
             /**
              * Reverses the slider animation so layer list is contracted
+             * @function animateClosed
              */
             function animateClosed() {
                 tl.reverse();

@@ -1,9 +1,8 @@
 (() => {
 
     /**
-     * @ngdoc directive
-     * @name rvMapnavButton
-     * @module app.ui.mapnav
+     * @module rvMapnavButton
+     * @memberof app.ui
      * @description
      *
      * The `rvMapnavButton` directive is a map navigation component button.
@@ -16,6 +15,7 @@
     /**
      * `rvMapnavButton` directive body.
      *
+     * @function rvMapnavButton
      * @return {object} directive body
      */
     function rvMapnavButton(mapNavigationService) {

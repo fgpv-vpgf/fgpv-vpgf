@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvStepperItem
-     * @module app.ui.common.stepper
+     * @module rvStepperItem
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -112,6 +111,7 @@
 
         /**
          * Called when the `Cancel` button is clicked; this resets the inner form to its default state, hiding all the standard error messages, executes extrenal callback after.
+         * @function onCancelBefore
          */
         function onCancelBefore() {
             // reset the form on cancel

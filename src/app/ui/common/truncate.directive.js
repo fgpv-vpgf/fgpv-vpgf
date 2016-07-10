@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvTruncate
-     * @module app.ui.common
+     * @module rvTruncate
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -22,6 +21,7 @@
     /**
      * `rvTruncate` directive body.
      *
+     * @function rvTruncate
      * @return {object} directive body
      */
     function rvTruncate($compile, $translate) {

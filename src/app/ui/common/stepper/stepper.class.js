@@ -3,8 +3,8 @@
 
     /**
      * @ngdoc object
-     * @name Stepper
-     * @module app.ui.common.stepper
+     * @module StepperFactory
+     * @memberof app.ui
      * @description
      *
      * The `Stepper` class provides a common interface to move between a number of steps forming a stepper [Material Design Stepper](https://www.google.com/design/spec/components/steppers.html#steppers-specs).
@@ -19,6 +19,9 @@
     function StepperFactory($q) {
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
+        /**
+         * @class Stepper
+         */
         class Stepper {
             constructor() {
                 this.steps = [];
@@ -166,6 +169,7 @@
 
             /**
              * Puts the current step into the "thinking" mode - the `continue` button is disabled and a progress bar is shown. Stepper feedback should only be used if there is a long latency between steps.
+             * @private
              * @param  {Object}  step        step object
              * @param  {Boolean} value =             true indicates if the feedback is displayed
              * @return {Object}            itself for chaining
@@ -178,6 +182,7 @@
 
             /**
              * Helper function to set flags on a step object.
+             * @private
              * @param  {Object}  step        step object
              * @param  {Boolean} isCompleted sets step's `isCompleted` flag
              * @param  {Boolean} isActive    sets step's `isActive` flag
@@ -192,6 +197,7 @@
 
             /**
              * Calls `reset` function on the step object if one is present
+             * @private
              * @return {Object}            itself for chaining
              */
             _reset(step) {
