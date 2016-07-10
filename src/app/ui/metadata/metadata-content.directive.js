@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvMetadataContent
-     * @module app.ui.metadata
+     * @module rvMetadataContent
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -18,6 +17,7 @@
     /**
      * `rvMetadataContent` directive body.
      *
+     * @function rvMetadataContent
      * @return {object} directive body
      */
     function rvMetadataContent($compile) {
@@ -35,10 +35,8 @@
         return directive;
 
         function link(scope, el, attr) {
-            /***
-             * Append document fragment 'metadata' from stateManager. Shorten long runs of text
-             * with rv-truncate directive.
-             */
+            // Append document fragment 'metadata' from stateManager. Shorten long runs of text
+            // with rv-truncate directive.
             const maxTextLength = attr.maxTextLength > 0 ? attr.maxTextLength : 0;
             scope.$watch('self.display.data', metadata => {
                 if (metadata) {

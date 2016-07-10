@@ -13,9 +13,8 @@
     // This should be revisited after upgrading Angular Material or in case additional bug reports (host page having higher z-index for example)
 
     /**
-     * @ngdoc service
-     * @name fullscreen
-     * @module app.ui.common
+     * @module fullScreenService
+     * @memberof app.ui
      * @requires $rootElement, $timeout, storageService, gapiService, geoService
      * @description
      *
@@ -48,6 +47,7 @@
 
         /**
          * Toggles the full-screen state by running animation which expands the shell node to take over the entire page at the same time animating the map container node to the map centered in the expanding container; reverse animation works similarly.
+         * @function toggle
          */
         function toggle() {
             // pause and kill currently running animation
@@ -147,6 +147,8 @@
         /**
          * Cleans up after the full-screen animation completes.
          * Removes leftover properties from the map container node and re-centers the map.
+         * @private
+         * @function onComplete
          */
         function onComplete() {
             const mapManager = gapiService.gapi.mapManager;

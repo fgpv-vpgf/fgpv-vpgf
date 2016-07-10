@@ -13,9 +13,8 @@
     let counter = 1; // simple id for animation sequences
 
     /**
-     * @ngdoc service
-     * @name rvPlugSlide
-     * @module app.ui.common
+     * @module rvPlugSlide
+     * @memberof app.ui
      * @description
      *
      * The `rvPlugSlide` is an animation. It animates enter and leave events on view plugs by applying transitions to plugs' panels. It will not work with just any node.
@@ -52,6 +51,7 @@
     /**
      * Animates plug's panel.
      *
+     * @function animationBuilder
      * @param  {String}  type        type of animation (fade, slide, etc.)
      * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
      * @param  {Bool}    grand       type of shift (see top comment)
@@ -73,6 +73,7 @@
     /**
     * Creates Fade animations
     *
+    * @function  makeFadeAnim
     * @param  {Object}   $rootElement
     * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
     * @param  {Bool}     reverse     whether to reverse the animation direction
@@ -112,6 +113,7 @@
     /**
     * Creates Slide animations
     *
+    * @function makeSlideAnim
     * @param  {Object}   $rootElement
     * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
     * @param  {Bool}     reverse     whether to reverse the animation direction
@@ -149,6 +151,7 @@
     /**
     * Retrieves the panel size of an element, based on animation direction
     *
+    * @function getPanelSize
     * @param  {Object}  element     plug node
     * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
     * @return {Number}  size        size of relevant dimension
@@ -164,6 +167,7 @@
     /**
     * Calculates the delta needed for a grand animation
     *
+    * @function deltaHelper
     * @param  {Object}  $rootElement
     * @param  {Object}  element      plug node
     * @param  {Number}  direction    direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
@@ -189,6 +193,7 @@
     /**
     * Calculates the amount to translate the panel
     *
+    * @function calculateShift
     * @param  {Object}  $rootElement
     * @param  {Object}  element     plug node
     * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
@@ -228,6 +233,7 @@
     /**
     * Deletes the element's current animation sequence and calls angulars callback
     *
+    * @function cleanup
     * @param  {Object}   element    plug node
     * @param  {Function} callback   callback from angular
     */
@@ -241,6 +247,7 @@
     /**
      * Makes call to animation from 'ng-show' and 'ng-hide' work the same as enter/leave
      *
+     * @function ngShowHideWrapper
      * @param  {boolean}    addClass    a flag indicating whether the `ng-hide` class was added or removed
      * @return {function}               bootstrapped open or close function
      */
@@ -261,6 +268,7 @@
     /**
     * Handles building the animation tween
     *
+    * @function buildTween
     * @param  {Object}   element    plug node
     * @param  {Function} callback   callback from angular
     * @param  {Number}   duration   length of animation in seconds

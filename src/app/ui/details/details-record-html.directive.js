@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvDetailsRecordHtml
-     * @module app.ui.details
+     * @module rvDetailsRecordHtml
+     * @memberof app.ui
      * @restrict E
      * @description
      *

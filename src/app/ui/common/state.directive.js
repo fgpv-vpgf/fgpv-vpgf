@@ -1,6 +1,7 @@
 (() => {
     'use strict';
 
+    // FIXME add top level docs
     angular.module('app.ui.common')
         .directive('rvState', rvState);
 

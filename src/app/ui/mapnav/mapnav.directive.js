@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvMapnav
-     * @module app.ui.mapnav
+     * @module rvMapnav
+     * @memberof app.ui
      * @restrict E
      * @description
      *

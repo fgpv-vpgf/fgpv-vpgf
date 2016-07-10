@@ -2,8 +2,8 @@
 
     /**
      * @ngdoc service
-     * @name sideNavigationService
-     * @module app.ui.sidenav
+     * @module sideNavigationService
+     * @memberof app.ui
      *
      * @description
      * The `sideNavigationService` service provides access and controls the side navigation menu.
@@ -37,6 +37,7 @@
 
         /**
          * Opens side navigation panel.
+         * @function open
          */
         function open() {
             $mdSidenav('left')
@@ -48,6 +49,7 @@
 
         /**
          * Closes side navigation panel.
+         * @function close
          */
         function close() {
             $mdSidenav('left')
@@ -61,6 +63,7 @@
         /**
          * Toggles side navigation panel.
          *
+         * @function toggle
          * @param  {object} argument [description]
          */
         function toggle(argument) {

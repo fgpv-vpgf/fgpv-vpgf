@@ -3,8 +3,7 @@
 
     /**
      * @ngdoc directive
-     * @name rvToolbox
-     * @module app.ui.toolbox
+     * @module app.ui.rvToolbox
      * @restrict E
      * @description
      *

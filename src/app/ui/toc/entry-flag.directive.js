@@ -3,8 +3,8 @@
 
     /**
      * @ngdoc directive
-     * @name rvTocEntryFlag
-     * @module app.ui.toc
+     * @module rvTocEntryFlag
+     * @memberof app.ui
      * @restrict E
      * @description
      *

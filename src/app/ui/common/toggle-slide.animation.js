@@ -7,9 +7,8 @@
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
     /**
-     * @ngdoc service
-     * @name rvToggleSlide
-     * @module app.ui.common
+     * @module rvToggleSlide
+     * @memberof app.ui
      * @description
      *
      * The `rvToggleSlide` is an animation. It animates `enter` and `leave` events for `ng-if`; `addClass` and `removeClass`, for `ng-if` and `ng-show` directives on any node by `sliding` it up or down, animating its height, when its added or removed from the dom.
@@ -41,6 +40,7 @@
 
         /**
          * Animates `leave` event by `sliding` the element down, animating its height from 0 to full.
+         * @function toggleOpen
          * @param  {object}   element  node
          * @param  {callback} callback
          */
@@ -68,6 +68,7 @@
 
         /**
          * Animates `leave` event by `sliding` the element up, animating its height from full to 0.
+         * @function toggleClose
          * @param  {object}   element  node
          * @param  {callback} callback
          */
@@ -89,6 +90,7 @@
         /**
          * When using `ng-show` or `ng-hide`, animation is triggered on `addClass`, `removeClass`, and `setClass`. See more here: https://docs.angularjs.org/api/ng/service/$animate#addClass
          *
+         * @function ngShowHideBootstrap
          * @param  {boolean} addClass a flag indicating whether the `ng-hide` class was added or removed
          * @return {function}        bootstrapped open or close function
          */
@@ -108,6 +110,7 @@
 
         /**
          * Returns the height of the target element.
+         * @function getTargetHeight
          * @param  {object} element node
          */
         function getTargetHeight(element) {

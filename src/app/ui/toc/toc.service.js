@@ -180,6 +180,7 @@
         /**
          * Simple function to remove layers.
          * Hides the layer data and removes the node from the layer selector; removes the layer from
+         * @function removeLayer
          * @param  {Object} entry layerItem object from the `legendService`
          */
         function removeLayer(entry) {
@@ -229,6 +230,7 @@
         /**
         * Zoom to layer visibility scale and set layer visible
         * @private
+        * @function zoomLayerScale
         * @param {Object} entry layer object to zoom to scale to.
         */
         function zoomLayerScale(entry) {
@@ -247,6 +249,7 @@
 
         /**
          * Opens settings panel with settings from the provided layer object.
+         * @function toggleSettings
          * @param  {Object} entry layer object whose settings should be opened.
          */
         function toggleSettings(entry) {
@@ -266,6 +269,7 @@
 
         /**
          * Opens filters panel with data from the provided layer object.
+         * @function toggleLayerFiltersPanel
          * @param  {Object} entry layer object whose data should be displayed.
          */
         function toggleLayerFiltersPanel(entry) {
@@ -306,6 +310,7 @@
 
         /**
          * Opens metadata panel with data from the provided layer object.
+         * @function toggleMetadata
          * @param  {Object} entry layer object whose data should be displayed.
          */
         function toggleMetadata(entry) {
@@ -347,6 +352,7 @@
         /**
          * Sets a watch on StateManager for layer data panels. When the requester is changed, calls setTocEntrySelectedState to dehighlight layer options and checks the state of the layer item itself (selected / not selected).
          *
+         * @function watchPanelState
          * @param  {String} panelName    name of the panel to watch as specified in the stateManager
          * @param  {String} displayName type of the display data (layer toggle name: 'settings', 'metadata', 'filters')
          */
@@ -377,6 +383,7 @@
 
         /**
          * Sets selected state of the toc entry with the specified id to the specified value
+         * @function setTocEntrySelectedState
          * @param {Stromg} id    toc entry id; it can be different from a layer id (sublayers of a dynamic layer will have generated ids)
          * @param {Boolean} value defaults to true;
          */

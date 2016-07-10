@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvToc
-     * @module app.ui.toc
+     * @module rvToc
+     * @memberof app.ui
      * @restrict E
      * @description
      *

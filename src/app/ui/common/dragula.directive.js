@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvDragula
-     * @module app.ui.common
+     * @module rvDragula
+     * @memberof app.ui
      * @restrict A
      * @description
      *

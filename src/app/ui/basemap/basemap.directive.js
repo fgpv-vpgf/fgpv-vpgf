@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvBasemap
-     * @module app.ui.basemap
+     * @module rvBasemap
+     * @memberof app.ui.basemap
      * @restrict E
      * @description
      *
@@ -141,6 +140,7 @@
 
         /**
          * Set the basemap as selected
+         * @function select
          * @param  {object} basemap basemap object
          */
         function select(basemap) {
@@ -173,6 +173,7 @@
         /**
          * Create the lists of basemaps from the config.
          *
+         * @function createLists
          * @param {Object} config   Config containing basemaps for the viewer
          * @returns {Array}         Returns the lists and the "useDefaultBasemap" flag as an array in that order
          */

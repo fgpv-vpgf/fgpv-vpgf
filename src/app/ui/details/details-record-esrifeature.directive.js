@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvDetailsRecordEsrifeature
-     * @module app.ui.details
+     * @module rvDetailsRecordEsrifeature
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -52,6 +51,7 @@
 
             /**
              * Render details as plain html and insert them into the template. Runs only once.
+             * @function renderDetails
              */
             function renderDetails() {
                 if (!isCompiled) {
@@ -93,6 +93,7 @@
 
         /**
          * Expand/collapse identify record section.
+         * @function toggleDetails
          */
         function toggleDetails() {
             self.item.isExpanded = !self.item.isExpanded;
@@ -102,6 +103,7 @@
         /**
          * Zoom to identify result's feature
          * TODO: implement
+         * @function zoomToFeature
          */
         function zoomToFeature() {
             self.triggerZoom();

@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvAppbar
-     * @module app.ui.appbar
+     * @module rvAppbar
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -18,6 +17,7 @@
     /**
      * `rvAppbar` directive body.
      *
+     * @function rvAppbar
      * @return {object} directive body
      */
     function rvAppbar(storageService) {

@@ -1,9 +1,8 @@
 (() => {
     'use strict';
     /**
-     * @ngdoc directive
-     * @name rvDetails
-     * @module app.ui.details
+     * @module rvDetails
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -43,6 +42,7 @@
         /**
         * Set the selected item from the array of items if previously set.
         * @private
+        * @function  getSelectedItem
         * @param {Object} items data objects array
         * @return {Object}      selected item in details panel
         */
@@ -54,6 +54,7 @@
 
         /**
          * Closes loader pane and switches to the previous pane if any.
+         * @function closeDetails
          */
         function closeDetails() {
             geoService.clearHilight();
@@ -62,6 +63,7 @@
 
         /**
          * Changes the layer whose data is displayed.
+         * @function selectItem
          * @param  {Object} item data object
          */
         function selectItem(item) {

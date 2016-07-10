@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvHelpOverlay
-     * @module app.ui.help
+     * @module rvHelpOverlay
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -46,6 +45,7 @@
             * Updates the canvas; clears, fills with translucent grey and then draws
             * whatever help sections are needed.
             *
+            * @function draw
             */
             function draw() {
                 helpService.clearDrawn();
@@ -77,12 +77,12 @@
 
             /**
             * Performs checks to see whether the object described with (key, coords) is valid to draw.
-            * An object is valid to draw iff - it doesn't share a key with an already drawn object
-            *                                   (we only want one of each help section)
-            *                                - it doesn't overlap with an already drawn object
-            *                                   (we don't want overlapping help sections)
-            *                                - it's width and height are non-zero
+            * An object is valid to draw iff
+            * - it doesn't share a key with an already drawn object (we only want one of each help section)
+            * - it doesn't overlap with an already drawn object (we don't want overlapping help sections)
+            * - it's width and height are non-zero
             *
+            * @function shouldBeDrawn
             * @param {String} key       the attribute key for the object being checked
             * @param {Object} coords    the coordinates for the object being checked
             * @return {Boolean}         returns true iff the object is valid to draw
@@ -109,6 +109,7 @@
             /**
             * Checks if two rectangles overlap
             *
+            * @function overlap
             * @param {Object} first     the x, y, height and width of the first rectangle
             * @param {Object} second    the x, y, height and width of the second rectangle
             * @return {Boolean}         returns true iff the two rectangles overlap

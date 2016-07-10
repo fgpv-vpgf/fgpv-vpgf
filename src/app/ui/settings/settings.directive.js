@@ -13,9 +13,8 @@
     };
 
     /**
-     * @ngdoc directive
-     * @name rvSettings
-     * @module app.ui.settings
+     * @module rvSettings
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -29,6 +28,7 @@
     /**
      * `rvSettings` directive body.
      *
+     * @function rvSettings
      * @return {object} directive body
      */
     function rvSettings() {
@@ -90,6 +90,7 @@
         * Toggle the query value option. This option is use to let the layer appears in
         * the identify window.
         * @private
+        * @function toggleQuery
         * @param {Object} tocEntry entry in the table of content.
         * @param {Boolean} value enable query value.
         */

@@ -6,9 +6,8 @@
     const FOOTER_CLASS = '.rv-footer';
     const SPACER_CLASS = '.rv-spacer';
     /**
-     * @ngdoc directive
-     * @name rvContentPane
-     * @module app.ui.panels
+     * @module rvContentPane
+     * @memberof app.ui
      * @description
      *
      * The `rvContentPane` directive is a panel inner container holding the panel's content.
@@ -46,6 +45,7 @@
     /**
      * `rvContentPane` directive body.
      *
+     * @function rvContentPane
      * @return {object} directive body
      */
     function rvContentPane($compile) {
@@ -75,6 +75,7 @@
 
         /**
          * Sets defaults; binds the `closePanel` method from the panel plug controller; compiles footer and extra header controls.
+         * @function link
          */
         function link(scope, element, attr, ctrl) {
             const self = scope.self;
@@ -118,6 +119,7 @@
             /**
             * Add controls to panel header
             * @private
+            * @function addHeaderControl
             * @param {Object} element panel header to add control to
             * @param {String} headerClass class use to find the element where to add the controls
             */

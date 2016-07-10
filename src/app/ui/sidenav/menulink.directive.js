@@ -3,8 +3,8 @@
 
     /**
      * @ngdoc directive
-     * @name rvMenuLink
-     * @module app.ui.sidenav
+     * @module rvMenuLink
+     * @memberof app.ui
      * @description
      *
      * The `rvMenuLink` directive is a wrapper around a button to provide some extra functionality (highlight currently selected item for example).

@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvLoaderMenu
-     * @module app.ui.loader
+     * @module rvLoaderMenu
+     * @memberof app.ui
      * @restrict E
      * @description
      *

@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name mapNavigationService
-     * @module app.ui.mapnav
+     * @module mapNavigationService
+     * @memberof app.ui
      *
      * @description
      * The `mapNavigationService` service provides access to map navgiation compoent's actions like `zoom`, `geolocation`, `full extent` and `history extent`.
@@ -17,6 +16,8 @@
     /**
      * `mapNavigationService` exposes zoom and pan methods as well as controls available in the map navigation component.
      *
+     * @function mapNavigationService
+     * @private
      * @return {object} service object
      */
     function mapNavigationService(stateManager, geoService, $rootScope) {

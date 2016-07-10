@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvMetadataPanel
-     * @module app.ui.metadata
+     * @module rvMetadataPanel
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -18,6 +17,7 @@
     /**
      * `rvMetadataPanel` directive body.
      *
+     * @function rvMetadataPanel
      * @return {object} directive body
      */
     function rvMetadataPanel(layoutService) {

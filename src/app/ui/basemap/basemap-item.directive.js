@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvBasemapItem
-     * @module app.ui.basemap
+     * @module rvBasemapItem
+     * @memberof app.ui
      * @restrict E
      * @description
      *
