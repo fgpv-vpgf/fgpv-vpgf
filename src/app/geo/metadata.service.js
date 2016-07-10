@@ -4,7 +4,7 @@
      * @memberof app.geo
      *
      * @description
-     * Generates handlers for feature identification on all layer types.
+     * Parses metadata in the format exposed by the data catalogue (TODO link to the spec if available).
      */
     angular
         .module('app.geo')
@@ -20,6 +20,7 @@
 
         /**
         * Transform XML using XSLT
+        * @function applyXSLT
         * @param {string} xmlString text data of the XML document
         * @param {string} xslString text data of the XSL document
         * @param {bool} returnFragment True if you want a document fragment returned (doesn't work
@@ -61,7 +62,8 @@
         }
 
         /**
-        * Load file
+        * Loads a file via XHR.  Nothing XML specific.
+        * @function loadXmlFile
         * @param {String} url URL to the file
         * @return {Promise} promise resolving with the text data of the file
         */

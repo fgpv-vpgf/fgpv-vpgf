@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name gapi
-     * @module app.geo
+     * @module gapiService
+     * @memberof app.geo
      * @requires $q
      * @description
      *
@@ -29,6 +28,8 @@
 
         /**
          * Sets `isReady` promise which is resolved when gapi loads
+         * @function init
+         * @private
          */
         function init() {
             // wait for `gapiPromise` from the global registry to resolve

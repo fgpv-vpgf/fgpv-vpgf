@@ -69,9 +69,8 @@
     GEO.Metadata = { XSLT_LANGUAGE_NEUTRAL: '_XSLT_BLOB_' };
 
     /**
-     * @ngdoc service
-     * @name Geo
-     * @module app.geo
+     * @module Geo
+     * @memberof app.geo
      * @description
      *
      * The `Geo` constant service is a container for all app.geo related constants.

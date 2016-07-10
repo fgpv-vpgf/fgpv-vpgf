@@ -3,9 +3,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name mapService
-     * @module app.geo
+     * @module mapService
+     * @memberof app.geo
      * @requires $q
      * @description
      *
@@ -33,7 +32,15 @@
 
             // this `service` object will be exposed through `geoService`
             const service = {
+                /**
+                 * A reference to the main map object.  FIXME possible refactor
+                 * @member mapObject
+                 */
                 mapObject: null,
+                /**
+                 * A reference to the geoApi mapManager instance.  FIXME possible refactor
+                 * @member mapObject
+                 */
                 mapManager: null, // Object
 
                 baseMapHasSameSP,
@@ -57,6 +64,8 @@
 
             /**
              * Builds an actual esri map object.
+             * @function buildMapObject
+             * @private
              * @return {Object} returns `service` object
              */
             function buildMapObject() {
@@ -135,8 +144,9 @@
                 return onMapLoad.then(() => service);
             }
 
-            /*
+            /**
              * Retrieve full extent from extentSets.
+             * @function getFullExtFromExtentSets
              * @private
              */
             function getFullExtFromExtentSets(extentSets) {
@@ -168,8 +178,9 @@
                 }
             }
 
-            /*
+            /**
              * Retrieve level of details array from config for current basemap.
+             * @function getLod
              * @private
              */
             function getLod(lodSets) {
@@ -191,6 +202,7 @@
 
             /**
              * Switch basemap based on the uid provided.
+             * @function selectBasemap
              * @param {string} id identifier for a specific basemap layerbower
              */
             function selectBasemap(id) {
@@ -227,11 +239,12 @@
                 }
             }
 
-            /*
-            * Check to see if given base map id has same wkid value as previously selected base map.
-            * @param {id} base map id
-            * @return {bool} true if current base map has the same wkid as the previous one
-            */
+            /**
+             * Check to see if given base map id has same wkid value as previously selected base map.
+             * @function baseMapHasSameSP
+             * @param {id} base map id
+             * @return {bool} true if current base map has the same wkid as the previous one
+             */
             function baseMapHasSameSP(id) {
 
                 const blankBaseMapIdPattern = 'blank_basemap_';
@@ -262,6 +275,7 @@
 
             /**
              * Sets zoom level of the map to the specified level.
+             * @function setZoom
              * @param {number} value a zoom level number
              */
             function setZoom(value) {
@@ -273,6 +287,7 @@
              * To avoid multiple chained zoom animations when rapidly pressing the zoom in/out icons, we
              * update the zoom level only when the one before it resolves with the net zoom change.
              *
+             * @function shiftZoom
              * @param  {number} byValue a number of zoom levels to shift by
              */
             function shiftZoom(byValue) {
@@ -288,6 +303,7 @@
 
             /**
              * Set the map to full extent.
+             * @function setFullExtent
              */
             function setFullExtent() {
                 const map = service.mapObject;
@@ -302,6 +318,7 @@
              * Fetches a graphic from the given layer.
              * Will attempt local copy, will hit the server if not available.
              *
+             * @function fetchGraphic
              * @param  {Object} layer the layer record object to search
              * @param  {Integer} featureIdx the index of the layer (relevant for dynamic sub-layers)
              * @param  {Integer} objId ID of object being searched for
@@ -358,6 +375,7 @@
              * Fetches a feature in a layer given the layerUrl and objId of the object and then zooms to it.
              * Only handles feature related layers (feature, dynamic). Will also apply a hilight to the feature.
              *
+             * @function zoomToGraphic
              * @param  {Object} layer is the layer record of graphic to zoom
              * @param  {Integer} featureIdx the index of the layer (relevant for dynamic sub-layers)
              * @param  {Integer} objId is ID of object to be zoomed to
@@ -379,6 +397,7 @@
              * Fetches a point in a layer given the layerUrl and objId of the object and then hilights to it.
              * Only handles feature related layers (feature, dynamic).
              *
+             * @function hilightGraphic
              * @param  {Object} layer is the layer record of graphic to zoom
              * @param  {Integer} featureIdx the index of the layer (relevant for dynamic sub-layers)
              * @param  {Integer|Array} objId is ID or array of IDs of object(s) to hilight
@@ -394,7 +413,7 @@
 
             /**
              * Clears any hilights, pins, and hazes from the hilight layer.
-             *
+             * @function clearHilight
              */
             function clearHilight() {
                 geoState.hilight.clearHilight();
@@ -403,6 +422,7 @@
             /**
              * Adds a location pin to the hilight layer.
              *
+             * @function dropMapPin
              * @param  {Object} mapPoint ESRI point defining where to put the pin
              */
             function dropMapPin(mapPoint) {
@@ -412,6 +432,7 @@
             /**
              * Performs the application of a hilight for a graphic.
              *
+             * @function applyHilight
              * @private
              * @param  {Object|Array} graphicBundle a graphic bundle or array of graphic bundles for the item(s) to hilight
              * @see fetchGraphic
@@ -433,6 +454,7 @@
              * Given a geometry, attributes, spatialReference and zoomlevel, reprojects geometry from its spatialReference
              * to the map's spatialReference, then zooms to the maximum level such that the geometry is still visible.
              *
+             * @function zoomWithOffset
              * @param  {Object} geo is the geometry to be zoomed to
              * @param  {Integer} zoomLevel is the max level of zoom such that the layer is still visible on the map and not out of scale
              * @returns {Promise} resolves when zoom finishes
@@ -486,6 +508,7 @@
             * Takes a location object in lat/long, converts to current map spatialReference using
             * reprojection method in geoApi, and zooms to the point.
             *
+            * @function geolocate
             * @param {Object} location is a location object, containing geometries in lat/long
             */
             function geolocate(location) {
@@ -502,6 +525,7 @@
             * Fetches current location using browser HTML5 location. If refused,
             * falls back to fetch location by IP address then zooms to the location.
             * @private
+            * @function fetchLocation
             */
             function fetchLocation() {
                 geolocator.locate(geolocate, err => {
@@ -512,6 +536,7 @@
             /**
              * Retrieves symbology icon for a feature.
              *
+             * @function retrieveSymbol
              * @param  {Object} attribs    attributes of the feature we want a symbol for
              * @param  {Object} renderer   enhanced renderer object for the layer in server format
              * @return {String} data-url that will render the symbology
@@ -522,6 +547,7 @@
 
             /**
             * Sets the current selected map id and extent set id, creates the fullExtent.
+            * @function setSelectedBaseMap
             * @param {String} id of base map
             */
             function setSelectedBaseMap(id) {
@@ -564,6 +590,7 @@
             /**
             * Ready a trigger on the map load event.
             * Also initialize map full extent.
+            * @function prepMapLoad
             * @private
             */
             function prepMapLoad() {
@@ -624,6 +651,7 @@
 
             /**
              * Get basemap config from basemap id.
+             * @function getBaseMapConfig
              * @private
              * @param {String} id base Map id
              * @return {Object} base map json object
@@ -634,6 +662,7 @@
 
             /**
              * Sets `isMapLoading` flag indicating map layers are updating.
+             * @function setMapLoadingFlag
              * @param {Boolean} isLoading defaults to true; flag indicating if one or more layers begins updating their content
              * @param {Number}  delay     defaults to 0; delay before setting `isMapLoading` state; useful to avoid setting indicator for a small amounts of time
              * @private
@@ -646,6 +675,7 @@
 
             /**
              * Hide base map.
+             * @function hideBaseMap
              * @param {Boolean} hide flag indicates if basemap should be visible
              */
             function hideBaseMap(hide) {
@@ -671,6 +701,7 @@
 
             }
 
+            // FIXME add doc
             function validateProj(sr) {
                 return gapiService.gapi.proj.checkProj(sr).foundProj;
             }

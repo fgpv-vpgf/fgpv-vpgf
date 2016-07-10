@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name LayerBlueprintUserOptions
-     * @module app.geo
+     * @module LayerBlueprintUserOptions
+     * @memberof app.geo
      * @requires dependencies
      * @description
      *
