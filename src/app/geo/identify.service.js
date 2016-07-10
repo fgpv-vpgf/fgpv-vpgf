@@ -1,8 +1,7 @@
 (() => {
     /**
-     * @ngdoc service
-     * @name identifyService
-     * @module app.geo
+     * @module identifyService
+     * @memberof app.geo
      *
      * @description
      * Generates handlers for feature identification on all layer types.
@@ -32,6 +31,8 @@
             // jscs:disable requireSpacesInAnonymousFunctionExpression
             /**
              * Create an identify result object.
+             * FIXME make this a proper class
+             * @constructor IDENTIFY_RESULT
              * @param  {String} name      layer name of the queried layer
              * @param  {Array} symbology array of layer symbology to be displayed in details panel
              * @param  {String} format    indicates data formating template
@@ -63,6 +64,8 @@
 
             /**
              * Initializes identify service. This needs to be called everytime the map is created.
+             * @function init
+             * @private
              */
             function init() {
                 gapiService.gapi.events.wrapEvents(
@@ -91,10 +94,14 @@
                     .length;
             }
 
-            // takes an attribute set (key-value mapping) and converts it to a format
-            // suitable for the details pane.
-            // the fields param is optional field information containing alias data
-            // TODO make this extensible / modifiable / configurable to allow different details looks for different data
+            /**
+             * takes an attribute set (key-value mapping) and converts it to a format
+             * suitable for the details pane.
+             * the fields param is optional field information containing alias data
+             * TODO make this extensible / modifiable / configurable to allow different details looks for different data
+             * FIXME add docs
+             * @function attributesToDetails
+             */
             function attributesToDetails(attribs, fields) {
                 // simple array of text mapping for demonstration purposes. fancy grid formatting later?
                 return Object.keys(attribs)
@@ -118,6 +125,7 @@
             * Extract the feature name from a feature as best we can.
             * Support for dynamic layers is limited at the moment.
             *
+            * @function getFeatureName
             * @param {Object} attribs the dictionary of attributes for the feature
             * @param {Object} layerRec the record in the layer registry that the feature belongs to
             * @param {Integer} objId the object id of the attribute
@@ -149,6 +157,7 @@
             // will make an extent around a point, that is appropriate for the current map scale.
             // makes it easier for point clicks to instersect
             // the tolerance is distance in pixels from mouse point that qualifies as a hit
+            // FIXME convert to jsdoc
             function makeClickBuffer(point, map, tolerance = 5) {
                 // take pixel tolerance, convert to map units at current scale. x2 to turn radius into diameter
                 const buffSize = 2 * tolerance * map.extent.getWidth() / map.width;
@@ -162,6 +171,7 @@
 
             /**
             * Run a query on a dynamic layer, return the result as a promise.
+            * @function identifyEsriDynamicLayer
             * @param {Object} layerRecord esri layer object
             * @param {Object} opts additional argumets like map object, clickEvent, etc.
             * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
@@ -235,6 +245,7 @@
 
             /**
             * Run a getFeatureInfo on a WMS layer, return the result as a promise.  Fills the panelData array on resolution.
+            * @function identifyOgcWmsLayer
             * @param {Object} layerRecord esri layer object
             * @param {Object} opts additional argumets like map object, clickEvent, etc.
             * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
@@ -277,6 +288,7 @@
 
             /**
             * Run a query on a feature layer, return the result as a promise.  Fills the panelData array on resolution.
+            * @function identifyEsriFeatureLayer
             * @param {Object} layerRecord esri layer object
             * @param {Object} opts additional argumets like map object, clickEvent, etc.
             * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
@@ -343,6 +355,7 @@
              * Any errors caught will be added to the details data object.
              * Resolutions of these promises are for turning off loading indicator.
              *
+             * @function makeInfalliblePromise
              * @param  {Promise} promise [description]
              * @return {Promise}                 promise that doesn't reject
              */
@@ -360,7 +373,7 @@
              * Handles global map clicks.  Currently configured to walk through all registered dynamic
              * layers and trigger service side identify queries, and perform client side spatial queries
              * on registered feature layers.
-             * @name clickHandler
+             * @function clickHandlerBuilder
              * @param {Object} clickEvent an ESRI event object for map click events
              */
             function clickHandlerBuilder(clickEvent) {

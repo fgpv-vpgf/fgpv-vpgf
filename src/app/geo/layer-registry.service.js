@@ -3,9 +3,12 @@
 
     /**
      * @ngdoc service
-     * @name layerRegistry
-     * @module app.geo
-     * @requires gapiService, mapService, layerTypes, configDefaults
+     * @module layerRegistry
+     * @memberof app.geo
+     * @requires gapiService
+     * @requires mapService
+     * @requires layerTypes
+     * @requires configDefaults
      * @description
      *
      * The `layerRegistry` factory tracks active layers and constructs legend, provide all layer-related functionality like registering, removing, changing visibility, changing opacity, etc.
@@ -21,12 +24,22 @@
 
         function layerRegistry(geoState, mapObject, config) {
 
-            const layers = {}; // collection of LAYER_RECORD objects
+            const layers = {};
 
             // this `service` object will be exposed through `geoService`
             const service = {
+                /**
+                 * Reference to the map legend
+                 * @member legend
+                 */
                 legend: null,
+                /**
+                 * Collection of LayerRecord objects.  Maps `LayerRecord.id` -> `LayerRecord`.
+                 * @see LayerRecord
+                 * @member layers
+                 */
                 layers,
+
                 constructLayers,
                 removeLayer,
                 zoomToScale,
@@ -76,6 +89,8 @@
             /**
              * Checks whether the supplied layer id is in the map stack;
              * This should be not needed after state machine refactor;
+             * @function _refactorIsLayerInMapStack
+             * @private
              * @param  {Number}  layerId   layer id
              * @param  {Number}  sortGroup layer sort group
              * @return {Boolean}           indicates if the layer is in the map stack
@@ -91,6 +106,8 @@
 
             /**
              * Retrieves all layer records of the specified type.
+             * @function getLayersByType
+             * @param {String} layerType the type of layer to be filtered
              * @return {Array} array of  layer records
              */
             function getLayersByType(layerType) {
@@ -103,6 +120,7 @@
              * Retrieves all queryable layer records.
              * First filters for all queryable layers, then filters for layers which are
              * in a valid state.
+             * @function getAllQueryableLayerRecords
              * @return {Array} array of layer records
              */
             function getAllQueryableLayerRecords() {
@@ -113,6 +131,7 @@
 
             /**
              * Handler for map extent change.
+             * @function extentChangeHandler
              * @private
              * @param  {Object} params event parameters
              */
@@ -128,6 +147,7 @@
 
             /**
              * Update scale status of a layer.
+             * @function setScaleDepState
              * @private
              * @param  {String} layerId       layer id of layer to update
              */
@@ -138,6 +158,7 @@
 
             /**
              * Determines if a scale is outside the given bounds.
+             * @function isOffScale
              * @private
              * @param  {Integer} scale           scale value to test
              * @param  {Integer} minScale        minimum invalid scale level for zoom out, 0 for none
@@ -169,6 +190,7 @@
 
             /**
              * Generate a mapping of feature indexes to off-scale status for a layer.
+             * @function makeScaleSet
              * @private
              * @param  {Object} layerRecord   a LayerRecord object
              * @return {Promise}              resolves with mapping of layer indexes to boolean off-scale status
@@ -200,6 +222,9 @@
 
             /**
              * Given a LayerRecord find the position it currently occupies within the map.
+             * @function getLayerMapIndex
+             * @param {LayerRecord} layerRecord
+             * @return {Number} An integer specifying the position of the layer within the appropriate ESRI map stack
              */
             function getLayerMapIndex(layerRecord) {
                 const mapStackSwitch = [mapObject.graphicsLayerIds, mapObject.layerIds];
@@ -214,6 +239,7 @@
              * for ESRI low index = low drawing order; legend: low index = high drawing order.
              * See design notes in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/514 for more details.
              *
+             * @function getLayerInsertPosition
              * @param {String} sourceId the id of the layer to be moved
              * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
              * @return {Number}          index at which the source layer should be inserted in the map stack
@@ -258,6 +284,7 @@
              *
              * IMPORTANT NOTE: targetId __must__ be the id of the layer which is actually in the map stack; this can't be a placholder which is not added to the map object.
              *
+             * @function moveLayer
              * @param {String} sourceId the id of the layer to be moved
              * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
              */
@@ -273,6 +300,8 @@
 
             /**
              * This is temporary function to make sure the mapstack and legend is in sync;
+             * @function _testSyncCheck
+             * @private
              */
             function _testSyncCheck() {
                 // remove all layer id from the map stacks which are not present in the legend
@@ -301,6 +330,7 @@
             /**
              * Set the visibility of the bounding box for the specified layer.
              * FIXME this should move into a method on LegendEntry
+             * @function setBboxState
              * @param {Object} layerEntry the layer entry used to generate the bounding box
              * @param {Boolean} visible the visibility state of the bounding box,
              * it is permitted to attempt to transition from true->true or false->false
@@ -322,6 +352,7 @@
 
             /**
              * Creates esri layer object for a set of layer config objects, triggers attribute loading on layer load event and adds it to the legend afterwards.
+             * @function constructLayers
              * @param  {Array} layerBlueprints array of layer configuration objects
              */
             function constructLayers(layerBlueprints) {
@@ -355,6 +386,7 @@
 
             }
 
+            // FIXME add docs
             function makeFirstLoadHandler(lr) {
                 const firstListener = state => {
                     if (state !== Geo.Layer.States.LOADED) { return; }
@@ -375,6 +407,7 @@
 
             /**
              * Removes the layer from the map and from the layer registry; This will not remove the corresponding legend entry.
+             * @function removeLayer
              * @param {Number} layerId  the id of the layer to be removed
              * TODO: needs more work for removing dynamic layers and its children;
              */
@@ -396,6 +429,7 @@
 
             /**
              * Zoom to visibility scale.
+             * @function zoomToScale
              * @param {Number} layerId  the id of the layer to zoom to scale to
              * @param {Boolean} zoomIn the zoom to scale direction; true need to zoom in; false need to zoom out
              *
@@ -428,6 +462,7 @@
 
             /**
              * Reload a layer.  Can accept LayerRecords or LegendEntries.
+             * @function reloadLayer
              * @param {LayerRecord|LegendEntry} l the layer to be reloaded
              * @param {Function} configUpdate an optional function which will be passed the configuration
              *                   of the given layer and can make changes before the new layer is loaded
@@ -445,6 +480,7 @@
 
             /**
              * Switch a feature layer to snapshot mode.
+             * @function snapshotLayer
              * @param {LayerRecord|LegendEntry} l the layer to be reloaded
              */
             function snapshotLayer(l) {
@@ -452,6 +488,12 @@
                 reloadLayer(l, configUpdate);
             }
 
+            /**
+             * Register a LayerRecord object within this service.  Is added the `layers` object internally.
+             * Layer IDs must be unique.
+             * @function registerLayerRecord
+             * @param {LayerRecord} lr
+             */
             function registerLayerRecord(lr) {
                 if (!lr.layerId) {
                     throw new Error('Attempt to register layer without id property');
@@ -464,6 +506,7 @@
 
             /**
              * Get the best user-friendly name of a field. Uses alias if alias is defined, else uses the system attribute name.
+             * @function aliasedFieldName
              * @param {String} attribName the attribute name we want a nice name for
              * @param {Object} fields array of field definitions. the attribute should belong to the provided set of fields
              */
@@ -484,6 +527,8 @@
 
             /**
              * Check to see if the attribute in question is an esriFieldTypeDate type.
+             * FIXME refactor and move to geoapi
+             * @function checkDateType
              * @param {String} attribName the attribute name we want to check if it's a date or not
              * @param {Array} fields array of field definitions. the attribute should belong to the provided set of fields
              * @return {Boolean} returns true or false based on the attribField type being esriFieldTypeDate

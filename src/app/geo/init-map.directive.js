@@ -2,10 +2,9 @@
     'use strict';
 
     /**
-     * @ngdoc directive
      * @restrict A
-     * @name rvInitMap
-     * @module app.geo
+     * @module rvInitMap
+     * @memberof app.geo
      * @description
      *
      * The `rvInitMap` directive creates an ESRI Map object on the DOM node it is attached to.  It is a string attribute which
