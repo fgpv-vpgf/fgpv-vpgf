@@ -33,6 +33,7 @@ DataTable text for Next,filter.default.label.next,Next,Suivant
 DataTable text for Last,filter.default.label.last,Last,Dernier
 DataTable text for Sort Ascending,filter.default.aria.sortasc,: activate to sort column ascending,: activer pour trier la colonne par ordre croissant
 DataTable text for Sort Descending,filter.default.aria.sortdsc,: activate to sort column descending,: activer pour trier la colonne par ordre décroissant
+DataTable text for thousand delimeter,filter.default.thousands.delim,","," "
 Details pane title,details.title,Feature Information,Information sur l'entité
 Details pane aria label for expand button,details.aria.expand,Expand,Agrandir
 Details pane tooltip for expand button,details.tooltip.expand,Expand,Agrandir
@@ -50,6 +51,8 @@ Filter pane menu label for Print,filter.menu.print,Print,Imprimer
 Filter pane menu label for Export,filter.menu.export,Export,Exporter
 Basemap title,basemap.title,Maps,Cartes
 Basemap refresh required,basemap.refresh.req,Map refresh required,Actualiser la carte
+Basemap blank title,basemap.blank.title,blank map,carte vide
+Basemap blank description,basemap.blank.desc,Remove base map,Retirer la carte de fond
 Map Navigation slider only text,nav.sliderOnly,slider only,Curseur seulement
 Map Navigation slider text,nav.slider,slider,Curseur
 Map Navigation zoom in label,nav.label.zoomIn,Zoom in,Zoom avant
@@ -79,6 +82,9 @@ Settings snapshot mode enable label,settings.label.snapshotEnable,Enable,Activer
 Settings query mode label,settings.label.query,Allow query,Permettre les requêtes
 Settings query mode aria,settings.aria.query,Allow query,Permettre les requêtes
 Side Navigation main title,sidenav.title,FGP R2 Viewer,Visualiseur PGF R2
+Side Navigation full screen,sidenav.label.fullscreen,FULL SCREEN,PLEIN ÉCRAN
+Side Navigation share,sidenav.label.share,SHARE,PARTAGER
+Side Navigation help,sidenav.label.help,HELP,AIDE
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,Menu du panneau des données ouvertes
 Table of Content show symbology label,toc.layer.label.symbologyShow,Show symbology,Afficher symbologie
 Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide symbology,Masquer symbologie
