@@ -34,7 +34,7 @@
         }
     }
 
-    function Controller($rootScope, events, configService, geoService, reloadService) {
+    function Controller($rootScope, $translate, events, configService, geoService, reloadService) {
         'ngInject';
         const self = this;
         self.select = select;
@@ -115,8 +115,8 @@
 
                         // add blank map
                         projection.items.push({
-                            name: 'blank map',
-                            description: 'Remove base map',
+                            name: $translate.instant('basemap.blank.title'),
+                            description: $translate.instant('basemap.blank.desc'),
                             type: 'blank',
                             id: 'blank_basemap_' + wkid,
                             url: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7/',
