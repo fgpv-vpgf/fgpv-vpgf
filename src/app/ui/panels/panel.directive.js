@@ -2,8 +2,8 @@
 
     /**
      * @ngdoc directive
-     * @name rvFiltersPanel
-     * @module app.ui.panels
+     * @module rvFiltersPanel
+     * @memberof app.ui
      * @description
      *
      * The `rvPanel` directive is reused by all the core panels of the viewer; main, side and filters.
@@ -18,6 +18,7 @@
     /**
      * `rvPanel` directive body.
      *
+     * @function rvPanel
      * @return {object} directive body
      */
     function rvPanel() {
@@ -39,6 +40,7 @@
 
     /**
      * Skeleton controller function.
+     * @function Controller
      */
     function Controller($attrs, stateManager) {
         'ngInject';
@@ -48,6 +50,7 @@
 
         /**
          * Temporary function to close the panel.
+         * @function closePanel
          * FIXME: this should be handled in the shatehelper
          */
         function closePanel() {

@@ -5,9 +5,8 @@
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
     /**
-     * @ngdoc directive
-     * @name rvMorph
-     * @module app.ui.common
+     * @module rvMorph
+     * @memberof app.ui
      * @restrict A
      * @description
      *
@@ -35,6 +34,8 @@
     /**
      * `rvMorph` directive body.
      *
+     * @private
+     * @function rvMorph
      * @return {object} directive body
      */
     function rvMorph(stateManager) {
@@ -49,6 +50,7 @@
          * Directive's link function. Sets up a watch on the `ng-morph` attribute and triggers the animation on attribute change.
          * Initial setting and nulling of the attribute causes immediate change with no animation.
          *
+         * @function linkFunc
          * @param  {Object} scope directive's scope
          * @param  {Object} el    element reference
          * @param  {Object} attr  element's attributes

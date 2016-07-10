@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvMetadataExpand
-     * @module app.ui.metadata
+     * @module rvMetadataExpand
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -19,6 +18,7 @@
     /**
      * `rvMetadataExpand` directive body.
      *
+     * @function  rvMetadataExpand
      * @return {object} directive body
      */
     function rvMetadataExpand() {

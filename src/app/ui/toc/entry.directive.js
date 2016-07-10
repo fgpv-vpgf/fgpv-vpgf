@@ -3,8 +3,8 @@
 
     /**
      * @ngdoc directive
-     * @name rvTocEntry
-     * @module app.ui.toc
+     * @module rvTocEntry
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -40,6 +40,8 @@
 
         /**
          * Link function binds `toggleGroup` function from the `TocController` to directive's self.
+         * @private
+         * @function link
          * @param  {object} scope directive's scope
          */
         function link(scope, element) {

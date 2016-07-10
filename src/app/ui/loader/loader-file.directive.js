@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rv-loader-file
-     * @module app.ui.loader
+     * @module rvLoaderFile
+     * @memberof app.ui
      * @restrict A
      * @description
      *
@@ -108,6 +107,7 @@
         /**
          * Tiny helper function to set/reset error messages on fields
          * * TODO: need to abstract - loader-service has the same function
+         * @function toggleErrorMessage
          * @param  {Object} form      form object
          * @param  {String} fieldName field name to set the error on
          * @param  {String} errorName name of the error message
@@ -126,6 +126,8 @@
 
         /**
          * Cancels any stepper movements if the step is processing data; resets input and moves to the previous step if not.
+         * @function onCancel
+         * @param {Object} step FIXME add docs
          */
         function onCancel(step) {
             if (step.isThinking) {
@@ -137,6 +139,7 @@
 
         /**
          * In cases where user provides a file link, tries to load the file and then advanced to the next step.
+         * @function uploadOnContinue
          */
         function uploadOnContinue() {
             onLayerBlueprintReady(self.upload.fileUrl)
@@ -149,6 +152,8 @@
 
         /**
          * Starts file upload.
+         * FIXME this describes more args than it takes
+         * @function uploadFilesSubmitted
          * @param  {Array} files uploaded array of files
          * @param  {Object} event submitted event
          * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
@@ -170,6 +175,7 @@
 
         /**
          * Waits until the layerBlueprint is create and ready (the data has been read) and moves to the next step.
+         * @function onLayerBlueprintReady
          * @param  {String} name file name or url
          * @param  {Object} file optional: html5 file object
          * @return {Promise} layerBlueprint ready promise
@@ -188,6 +194,7 @@
 
             /**
              * Updates file load progress status.
+             * @function  updateProgress
              * @param  {Object} event ProgressEvent object
              */
             function updateProgress(event) {
@@ -207,6 +214,7 @@
 
         /**
          * Clears both file selector and url field.
+         * @function uploadReset
          */
         function uploadReset() {
             fileReset();
@@ -215,6 +223,7 @@
 
         /**
          * Reset the file upload form removing selected file and custom error messages.
+         * @function fileReset
          */
         function fileReset() {
             const upload = self.upload;
@@ -230,6 +239,7 @@
 
         /**
          * Resets validation on the file selector only.
+         * @function fileResetValidation
          */
         function fileResetValidation() {
             // arguments as follows: name of the error, state of the error, a controller object which will be stored against the error; when removing the same error, need to provide the same controller object
@@ -238,6 +248,7 @@
 
         /**
          * Resets the file url field and removes errors in the file upload step.
+         * @function fileUrlReset
          */
         function fileUrlReset() {
             const upload = self.upload;
@@ -251,6 +262,7 @@
 
         /**
          * Resets validation on the fileUrl field only.
+         * @function fileUrlResetValidation
          */
         function fileUrlResetValidation() {
             toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', true);
@@ -258,6 +270,7 @@
 
         /**
          * Validates created file Layer Blueprint against selected file type. Shows a generic error message if validation fails.
+         * @function selectOnContinue
          */
         function selectOnContinue() {
             const validationPromise = self.layerBlueprint.validate();
@@ -274,6 +287,7 @@
 
         /**
          * Sets the form to pristine, untouched state (so no default validation errors (like "required") will show)
+         * @function selectReset
          */
         function selectReset() {
             const select = self.select;
@@ -287,6 +301,7 @@
 
         /**
          * Resets file type validation error messages.
+         * @function selectResetValidation
          */
         function selectResetValidation() {
             // reset wrong file type error message
@@ -295,6 +310,7 @@
 
         /**
          * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
+         * @function configureOnContinue
          */
         function configureOnContinue() {
             // TODO: display error message if something breaks
@@ -305,6 +321,7 @@
 
         /**
          * Closes loader pane and switches to the previous pane if any.
+         * @function closeLoaderFile
          */
         function closeLoaderFile() {
             // reset the loader after closing the panel

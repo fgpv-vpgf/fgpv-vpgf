@@ -18,9 +18,8 @@
     })();
 
     /**
-     * @ngdoc directive
-     * @name rvDetectScrollbar
-     * @module app.ui.common
+     * @module rvDetectScrollbar
+     * @memberof app.ui
      * @restrict A
      * @description
      *

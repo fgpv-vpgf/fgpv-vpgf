@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvFiltersDefaultMenu
-     * @module app.ui.filters
+     * @module rvFiltersDefaultMenu
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -59,6 +58,7 @@
 
         /**
          * Emits a data print event.
+         * @function dataPrint
          * TODO: eschew events; needed here since it's very hard to communicate with main filters directive; angular 1.5 should solve it using directives with multiple transclusions
          */
         function dataPrint() {
@@ -67,6 +67,7 @@
 
         /**
          * Emits a data expor csv event.
+         * @function dataExportCSV
          * TODO: eschew events; needed here since it's very hard to communicate with main filters directive; angular 1.5 should solve it using directives with multiple transclusions
          */
         function dataExportCSV() {
