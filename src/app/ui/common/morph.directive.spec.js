@@ -55,7 +55,7 @@ describe('rvMorph', () => {
                 expect(directiveElement.hasClass('half'))
                     .toBe(true);
                 done();
-            }, 50);
+            }, 100);
         });
     });
 });
