@@ -15,6 +15,7 @@ if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" ] && [ -n "$TRAVIS_TAG" ]; the
     bash ./scripts/make_doc_index.sh ghdocs/fgpv-vpgf/ > ghdocs/fgpv-vpgf/index.html
     cd ghdocs
     git add fgpv-vpgf/$TRAVIS_TAG
+    git add fgpv-vpgf/index.html
     git config user.email "glitch.chatbot@gmail.com"
     git config user.name "Glitch Bot"
     git commit -m "Docs for fgpv@$TRAVIS_TAG"
