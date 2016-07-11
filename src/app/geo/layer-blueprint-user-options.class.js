@@ -56,7 +56,7 @@
 
                 this._epsgLookup = epsgLookup;
                 this._targetWkid = targetWkid;
-                this._color = (new RColor()).get(true, 0.4, 0.8); // generate a nice random color to use with imported file-based layers
+                this._colour = (new RColor()).get(true, 0.4, 0.8); // generate a nice random colour to use with imported file-based layers
             }
 
             get epsgLookup() {
@@ -67,12 +67,12 @@
                 return this._targetWkid;
             }
 
-            get color() {
-                return this._color;
+            get colour() {
+                return this._colour;
             }
 
-            set color(hex) {
-                this._color = hex;
+            set colour(hex) {
+                this._colour = hex;
             }
         }
 
