@@ -25,6 +25,7 @@
         'pascalprecht.translate',
         'dotjem.angular.tree',
         'flow',
+        'minicolors',
         angularDragula(angular)
     ]);
 })();
