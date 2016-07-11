@@ -761,6 +761,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
     *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
     *     definition or null if not found
     *   - layerId: a string to use as the layerId
+    *   - colour: a hex string to define the symbol colour. e.g. '#33DD6A'
     *
     * @method makeGeoJsonLayer
     * @param {Object} geoJson An object following the GeoJSON specification, should be a FeatureCollection with
@@ -857,8 +858,9 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
             // ＼(｀O´)／ manually setting SR because it will come out as 4326
             layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
 
-            // TODO : revisit if we actually need this anymore
-            // layer.renderer._RampRendererType = featureTypeToRenderer[geoJson.features[0].geometry.type];
+            if (opts.colour) {
+                layer.renderer.symbol.color = new esriBundle.Color(opts.colour);
+            }
 
             resolve(layer);
         });
@@ -884,6 +886,7 @@ function makeCsvLayerBuilder(esriBundle, geoApi) {
     *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
     *     definition or null if not found
     *   - layerId: a string to use as the layerId
+    *   - colour: a hex string to define the symbol colour. e.g. '#33DD6A'
     * @param {string} csvData the CSV data to be processed
     * @param {object} opts options to be set for the parser
     * @returns {Promise} a promise resolving with a {FeatureLayer}
@@ -962,6 +965,7 @@ function makeShapeLayerBuilder(esriBundle, geoApi) {
     *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
     *     definition or null if not found
     *   - layerId: a string to use as the layerId
+    *   - colour: a hex string to define the symbol colour. e.g. '#33DD6A'
     * @param {ArrayBuffer} shapeData an ArrayBuffer of the Shapefile in zip format
     * @param {object} opts options to be set for the parser
     * @returns {Promise} a promise resolving with a {FeatureLayer}

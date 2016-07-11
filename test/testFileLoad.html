@@ -62,7 +62,8 @@
             var opts = {
                 targetWkid: 102100,
                 sourceProjection: 'EPSG:4326', //'+proj=longlat +datum=WGS84 +no_defs',
-                epsgLookup: epsgLookup
+                epsgLookup: epsgLookup,
+                colour: '#ff3300'
             };
             var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'terrain', zoom: 6, center: [-100, 50] });
 
