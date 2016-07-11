@@ -32,6 +32,7 @@
     "datatables-buttons": "~1.1.2",
     "geolocator": "~1.2.9",
     "jquery-hoverintent": "~1.8.1",
+    "RandomColor": "https://github.com/sterlingwes/RandomColor.git",
     "angular-minicolors": "^0.0.9"
   },
   "overrides": {
@@ -40,6 +41,9 @@
     },
     "jquery-minicolors": {
       "main": "jquery.minicolors.js"
+    },
+    "RandomColor": {
+      "main": "rcolor.js"
     },
     "angular-dragula": {
       "main": "dist/angular-dragula.js"
