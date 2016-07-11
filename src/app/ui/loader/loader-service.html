@@ -51,7 +51,7 @@
 
             <md-input-container class="md-block" ng-switch-when="featurelayer">
                 <label translate>import.service.configure.primaryfield</label>
-                <md-select name="primaryField" ng-model="self.layerBlueprint.config.primaryField" required>
+                <md-select name="primaryField" ng-model="self.layerBlueprint.config.nameField" required>
                     <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                         {{ field.name }}
                     </md-option>
