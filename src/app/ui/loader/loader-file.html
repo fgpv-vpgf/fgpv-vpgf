@@ -148,6 +148,19 @@
                             <div ng-message="required">Required</div>
                         </div-->
                     </md-input-container>
+
+                </div>
+
+                <div layout="row">
+                    <md-input-container class="md-block" flex>
+                        <label translate>import.file.configure.colorfield</label>
+                        <input minicolors="self.configure.colorPickerSettings" name="layerName" ng-model="self.layerBlueprint.userOptions.color" required>
+                        <!-- TODO: decide whether and how to display a hint or error messages -->
+                        <!--div ng-messages="self.configure.form.layerName.$error">
+                            <div ng-message="required">This is required!</div>
+                            <div ng-message="md-maxlength">That's too long!</div>
+                        </div-->
+                    </md-input-container>
                 </div>
 
             </rv-stepper-item>
