@@ -33,7 +33,7 @@ DataTable text for Next,filter.default.label.next,Next,Suivant
 DataTable text for Last,filter.default.label.last,Last,Dernier
 DataTable text for Sort Ascending,filter.default.aria.sortasc,: activate to sort column ascending,: activer pour trier la colonne par ordre croissant
 DataTable text for Sort Descending,filter.default.aria.sortdsc,: activate to sort column descending,: activer pour trier la colonne par ordre décroissant
-DataTable text for thousand delimeter,filter.default.thousands.delim,","," "
+DataTable text for thousands delimeter,filter.default.thousands.delim,","," "
 Details pane title,details.title,Feature Information,Information sur l'entité
 Details pane aria label for expand button,details.aria.expand,Expand,Agrandir
 Details pane tooltip for expand button,details.tooltip.expand,Expand,Agrandir
@@ -345,10 +345,10 @@ Note: If the scrolling loading line indicator appears at the bottom of the map o
 Remarque: Si l'indicateur de chargement de ligne de défilement apparaît au bas de la carte ou dans la légende, ou lorsque la grille de données affiche un message de chargement en cours, attendez que l’indicateur de chargement disparaisse avant d’activer d’autres fonctions sur la carte."
 Error message when resource fails to load,toc.error.resource.loadfailed,There was an error retrieving this resource - try again later,Une erreur s'est produite lors du chargement de cette ressource - réessayez plus tard
 Error message when feature count cannot be retrieved,toc.error.resource.countfailed,Could not get number of,Impossible d'obtenir nombre de
-,metadata.xslt.Abstract,Abstract,Abstrait
+,metadata.xslt.Abstract,Abstract,Résumé
 ,metadata.xslt.Scope,Scope,Portée
-,metadata.xslt.hereBeScope,here be scope,Ici être portée
-,metadata.xslt.timePeriod,Time Period,Période de temps
+,metadata.xslt.hereBeScope,here be scope,Ici être la portée
+,metadata.xslt.timePeriod,Time Period,Période
 ,metadata.xslt.supplementalData,Supplemental Data,Données Supplémentaires
 ,metadata.xslt.contactInfo,Contact Information,Coordonnées
 ,metadata.xslt.resourceProvider,Resource Provider,Fournisseur de la ressource
@@ -363,8 +363,8 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 ,metadata.xslt.publisher,Publisher,Éditeur
 ,metadata.xslt.author,Author,Auteur
 ,metadata.xslt.collaborator,Collaborator,Collaborateur
-,metadata.xslt.editor,Editor,Editeur
+,metadata.xslt.editor,Editor,Éditeur
 ,metadata.xslt.mediator,Mediator,Médiateur
 ,metadata.xslt.rightsHolder,Rights Holder,Titulaire des droits
-,metadata.xslt.cataloguePage,Data Catalogue Page,Données Page Catalogue
+,metadata.xslt.cataloguePage,Data Catalogue Page,Page des données du catalogue
 ,metadata.xslt.metadata,Metadata,Métadonnées
