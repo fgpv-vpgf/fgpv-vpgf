@@ -31,11 +31,15 @@
     "ng-flow": "~2.7.1",
     "datatables-buttons": "~1.1.2",
     "geolocator": "~1.2.9",
-    "jquery-hoverintent": "~1.8.1"
+    "jquery-hoverintent": "~1.8.1",
+    "angular-minicolors": "^0.0.9"
   },
   "overrides": {
     "jquery": {
       "ignore": true
+    },
+    "jquery-minicolors": {
+      "main": "jquery.minicolors.js"
     },
     "angular-dragula": {
       "main": "dist/angular-dragula.js"
