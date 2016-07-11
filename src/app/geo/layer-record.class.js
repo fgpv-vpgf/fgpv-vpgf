@@ -1,11 +1,11 @@
 (() => {
-/**
- * LayerRecordFactory is a lightweight wrapper around the LayerRecord class hierarchy.
- * It exposes various builder functions to create LayerRecord classes.
- * FIXME this can move into geoapi
- * @module LayerRecordFactory
- * @memberof app.geo
- */
+    /**
+     * LayerRecordFactory is a lightweight wrapper around the LayerRecord class hierarchy.
+     * It exposes various builder functions to create LayerRecord classes.
+     * FIXME this can move into geoapi
+     * @module LayerRecordFactory
+     * @memberof app.geo
+     */
     angular.module('app.geo').factory('LayerRecordFactory', LayerRecordFactory);
 
     function LayerRecordFactory(Geo, gapiService, $q) {
@@ -477,7 +477,7 @@
          * @function makeServiceRecord
          * @param {Object} config A configuration fragment for the layer to be created
          * @param {Function} epsgLookup An optional lookup function for unknown projections
-         * @return {LayerRecord} A LayerRecord object of the appropriate type
+         * @return {Object} A LayerRecord object of the appropriate type
          */
         function makeServiceRecord(config, epsgLookup) {
             const types = Geo.Layer.Types;
