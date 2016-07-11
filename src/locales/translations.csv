@@ -141,6 +141,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.file.configure.primaryfield,Primary Field,Champ clé
 ,import.file.configure.latitudefield,Latitude Field,Champ latitude
 ,import.file.configure.longitudefield,Longitude Field,Champ longitude
+,import.file.configure.colourfield,Colour,[fr] Colour
 ,import.file.type.csv,CSV,CSV
 ,import.file.type.shapefile,Shapefile,Shapefile
 ,import.file.type.geojson,GeoJSON,GeoJSON

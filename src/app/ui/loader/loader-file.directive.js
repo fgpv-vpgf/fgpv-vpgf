@@ -90,7 +90,7 @@
                 onContinue: configureOnContinue,
                 onCancel: () => onCancel(self.configure.step)
             },
-            colorPickerSettings: {
+            colourPickerSettings: {
                 theme: 'bootstrap',
                 position: 'top right'
             },
