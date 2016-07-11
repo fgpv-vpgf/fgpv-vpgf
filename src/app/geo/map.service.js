@@ -242,7 +242,7 @@
             /**
              * Check to see if given base map id has same wkid value as previously selected base map.
              * @function baseMapHasSameSP
-             * @param {id} base map id
+             * @param {String} id base map id
              * @return {bool} true if current base map has the same wkid as the previous one
              */
             function baseMapHasSameSP(id) {
