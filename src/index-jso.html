@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>title</title>
+
+    <style>
+        .fgpv {
+            height: 100%;
+        }
+
+        /* Edge hack, seems like body is at z-index 0 and sits on top of the map which is at z-index: -1 */
+        body { background: transparent; }
+    </style>
+</head>
+
+<body>
+
+    <div class="fgpv" rv-config="config.${lang}.json" rv-langs='["en-CA", "fr-CA"]'
+         rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'
+         rv-restore-bookmark="bookmark"/>
+
+    <script>
+    var RV = { dojoURL: 'http://fgpv.cloudapp.net/demo/esrijso/dojo/dojo.js' };
+    var dojoConfig = {
+        baseUrl: 'http://fgpv.cloudapp.net/demo/esrijso/',
+        packages: [
+          { "name": "dojo", "location": 'http://fgpv.cloudapp.net/demo/esrijso/dojo' },
+          {"name": "dojox", "location": 'http://fgpv.cloudapp.net/demo/esrijso/dojox' },
+          {"name": "esri", "location": 'http://fgpv.cloudapp.net/demo/esrijso/esri' }
+        ]     
+    };
+    </script>
+    <!-- inject:js -->
+    <!-- endinject -->
+
+    <script>
+
+        // https://css-tricks.com/snippets/javascript/get-url-variables/
+        function getQueryVariable(variable)
+        {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i=0;i<vars.length;i++) {
+                    var pair = vars[i].split("=");
+                    if(pair[0] == variable){return pair[1];}
+            }
+            return(false);
+        }
+
+        function bookmark(){
+            return new Promise(function (resolve) {
+                var thing = getQueryVariable("rv");
+                console.log(thing);
+                resolve(thing);
+            });
+        }
+    </script>
+</body>
+
+</html>
