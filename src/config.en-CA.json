@@ -121,6 +121,13 @@
       "url":"http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2"
     },
     {
+      "id":"scaleDepDynamic",
+      "name":"Air SO2 Scale Dep",
+      "layerType":"esriDynamic",
+      "layerEntries": [{"index": 1}, {"index": 2}, {"index": 3}, {"index": 4}],
+      "url":"http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer"
+    },
+    {
       "id":"stb_eos",
       "name": "STB EOS 2014 CI ON 30m v2",
       "layerType":"esriTile",
