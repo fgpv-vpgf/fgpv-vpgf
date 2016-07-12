@@ -165,6 +165,7 @@
          * @param {String} property  property name to modify
          * @param {Boolean} value  target state value
          * @param {Boolean} skip skips animation, defaults to false
+         * @return {Promise} resolving when transition (if any) ends
          */
         function setItemProperty(itemName, property, value, skip = false) {
             const item = service.state[itemName];
@@ -327,7 +328,8 @@
             if (typeof panelToClose.item.parent === 'undefined') {
                 animationPromise = setItemProperty(panelToClose.name, 'active', false)
                     .then(() =>
-                        propagate ? getChildren(panelToClose.name).forEach(child => closePanel(child, false))
+                        // wait for all child transition promises to resolve
+                        propagate ? $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false)))
                                   : true
                     );
 
