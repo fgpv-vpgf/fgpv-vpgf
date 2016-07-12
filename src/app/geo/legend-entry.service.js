@@ -93,8 +93,7 @@
              */
             obj.setLayerScaleFlag = (scaleSet) => {
 
-                if (obj.flags) {
-
+                if (obj.layerType !== Geo.Layer.Types.ESRI_DYNAMIC) {
                     // currently, non-feature based things have text-ish content put in their featureIdx.  map them to 0
                     const adjIdx = isNaN(obj.featureIdx) ? '0' : obj.featureIdx;
 
@@ -110,7 +109,7 @@
                             obj.options.offscale.value = scale.zoomIn;
                         }
                     }
-                } else if (obj.layerEntries) {
+                } else {
                     // walk through layerEntries and update each one
                     obj.layerEntries.forEach(ent => {
                         const slave = obj.slaves[ent.index];
