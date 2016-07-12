@@ -47,7 +47,7 @@
         const displayService = displayManager(service); // init displayManager
 
         let lastFocusElement; // stores an element for dynamic focus changes
-        let cbLock = ''; // callback lock prevents infinite loops
+        let cbLock = []; // callback lock prevents infinite loops
         angular.extend(service, displayService); // merge displayManager service functions into stateManager
 
         return service;
@@ -146,7 +146,7 @@
         /**
          * Closes fromPanel and opens toPanel so that the parent panel remains unchanged.
          *
-         * Generally you should only use this function to swap sibbling panels.
+         * Generally you should only use this function to swap sibling panels.
          *
          * @function togglePanel
          * @param  {String}   fromPanel the name of a child panel
@@ -227,11 +227,11 @@
          * @param   {Function}  callback the callback function to run when the panel closes
          */
         function setCloseCallback(panelName, callback) {
-            if (typeof panelName === 'string' && typeof callback === 'function') {
+            if (cbLock.indexOf(panelName) === -1) {
                 closeCallback[panelName] = () => {
-                    cbLock = panelName;
+                    cbLock.push(panelName);
                     callback();
-                    cbLock = '';
+                    cbLock.splice(cbLock.indexOf(panelName), 1);
                 };
             }
         }
@@ -247,7 +247,7 @@
         function runCloseCallback(panelName) {
             // cbLock prevents infinite loops since it prevents a panel callback
             // from triggering its own callback
-            if (cbLock !== panelName && panelName in closeCallback) {
+            if (cbLock.indexOf(panelName) === -1 && panelName in closeCallback) {
                 closeCallback[panelName]();
                 return true;
             }
