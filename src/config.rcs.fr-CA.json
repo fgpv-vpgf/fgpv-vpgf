@@ -1,5 +1,5 @@
 {
-  "version": "-1",
+  "version": "1.0",
   "logoUrl": "content/images/pgf.svg",
   "services": {
     "proxyUrl": "http://cp.zz9.ca/index"
