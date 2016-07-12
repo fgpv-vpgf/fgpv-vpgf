@@ -23,7 +23,8 @@
             templateUrl: 'app/ui/details/details-record-esrifeature.html',
             scope: {
                 item: '=item',
-                requester: '=requester'
+                requester: '=requester',
+                numitems: '@'
             },
             link: link,
             controller: Controller,
@@ -40,6 +41,7 @@
 
             self.item.isExpanded = false;
             self.item.isSelected = false;
+            self.numitems = parseInt(self.numitems);
 
             self.renderDetails = renderDetails;
             self.isExpanded = false;
@@ -49,6 +51,12 @@
             };
 
             let isCompiled = false;
+
+            // expand solo record
+            if (self.numitems === 1) {
+                self.renderDetails();
+                self.toggleDetails(true);
+            }
 
             /**
              * Render details as plain html and insert them into the template. Runs only once.
@@ -92,11 +100,13 @@
         /***/
 
         /**
-         * Expand/collapse identify record section.
+         * Expand/collapse identify record section. Disable functionality for solo records.
          */
-        function toggleDetails() {
-            self.item.isExpanded = !self.item.isExpanded;
-            self.item.isSelected = self.item.isExpanded;
+        function toggleDetails(force = false) {
+            if (force || self.numitems > 1) {
+                self.item.isExpanded = !self.item.isExpanded;
+                self.item.isSelected = self.item.isExpanded;
+            }
         }
 
         /**
