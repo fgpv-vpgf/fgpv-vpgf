@@ -118,7 +118,7 @@
       "id":"scaleDep",
       "name":"Air Ozone Scale Dep",
       "layerType":"esriFeature",
-      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_Ozone/MapServer/2"
+      "url":"http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2"
     },
     {
       "id":"stb_eos",
