@@ -11,9 +11,8 @@
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
     /**
-     * @ngdoc directive
-     * @name rvLayerItemSymbology
-     * @module app.ui.toc
+     * @module rvLayerItemSymbology
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -239,6 +238,7 @@
 
                 /**
                  * Creates timeline for a supplied image-based symbologyItem (for wms legends for example)
+                 * @function imageLegendItem
                  * @param  {Object}  tlshift       timeline object
                  * @param  {Object}  symbologyItem symbology object with references to its parts
                  * @param  {Number}  totalHeight   height of the legend stack so far
@@ -299,6 +299,7 @@
 
                 /**
                  * Creates timeline for a supplied icon-based symbologyItem (for feature and dynamic legends for example)
+                 * @function iconLegendItem
                  * @param  {Object}  tlshift       timeline object
                  * @param  {Object}  symbologyItem symbology object with references to its parts
                  * @param  {Number}  totalHeight   height of the legend stack so far
@@ -353,6 +354,7 @@
 
                 /**
                  * Returns width of the supplied text string.
+                 * @function getTextWidth
                  * @param  {Object} canvas cached canvas node
                  * @param  {String} text   string of text to measure
                  * @param  {String} font   text font and size https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font

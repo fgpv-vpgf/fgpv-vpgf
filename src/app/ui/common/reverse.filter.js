@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc filter
-     * @name rvReverse
-     * @module app.common
+     * @module rvReverse
+     * @memberof app.ui
      * @restrict E
      * @description
      *

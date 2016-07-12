@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rv-loader-service
-     * @module app.ui.loader
+     * @module rvLoaderService
+     * @module app.ui
      * @restrict A
      * @description
      *
@@ -103,6 +102,7 @@
         /**
          * Tiny helper function to set/reset error messages on fields
          * TODO: need to abstract - loader-file has the same function
+         * @function toggleErrorMessage
          * @param  {Object} form      form object
          * @param  {String} fieldName field name to set the error on
          * @param  {String} errorName name of the error message
@@ -121,6 +121,8 @@
 
         /**
          * Cancels any stepper movements if the step is processing data; resets input and moves to the previous step if not.
+         * @function onCancel
+         * @param {Object} step FIXME add some docs
          */
         function onCancel(step) {
             if (step.isThinking) {
@@ -133,6 +135,7 @@
         /**
          * Tries to create a service LayerBlueprint from the url provided. If creation is successful, proceeds to the next step.
          * If creation fails, display a "broken service url" error message. This can happen because the provided url is not a service endpoint or if the service endpoint doesn't respond.
+         * @function connectOnContinue
          */
         function connectOnContinue() {
             const connect = self.connect;
@@ -154,6 +157,7 @@
 
         /**
          * Clears service url field and all error displayed; sets the form to pristine, untouched state (so no default validation errors (like "required" or "not a proper url") will show)
+         * @function connectReset
          */
         function connectReset() {
             const connect = self.connect;
@@ -168,6 +172,7 @@
 
         /**
          * Resets service URL field validation.
+         * @function serviceUrlResetValidation
          */
         function serviceUrlResetValidation() {
             // reset broken endpoint error message when user modifies service url
@@ -177,6 +182,7 @@
         /**
          * Validates created service Layer Blueprint against selected service type.
          * TODO: do the validation if at all possible;
+         * @function selectOnContinue
          */
         function selectOnContinue() {
             const validationPromise = self.layerBlueprint.validate();
@@ -192,6 +198,7 @@
             });
         }
 
+        // FIXME add docs
         function selectReset() {
             const select = self.select;
 
@@ -202,12 +209,14 @@
             select.serviceTypeResetValidation();
         }
 
+        // FIXME add docs
         function serviceTypeResetValidation() {
             // reset wrong service type error message
             toggleErrorMessage(self.select.form, 'serviceType', 'wrong', true);
         }
         /**
          * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
+         * @function configureOnContinue
          */
         function configureOnContinue() {
             // TODO: display error message if something breaks
@@ -218,6 +227,7 @@
 
         /**
          * Restores default configuration options (layer name, etc.) and resets the form to pristine state to hide default error messages.
+         * @function configureReset
          */
         function configureReset() {
             const configure = self.configure;
@@ -229,6 +239,7 @@
 
         /**
          * Closes loader pane and switches to toc.
+         * @function closeLoaderService
          */
         function closeLoaderService() {
             stateManager.setActive('mainToc');

@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc object
-     * @name mdMenuItemDirectiveDecorator
-     * @module material.components.menuBar
+     * @module mdMenuItemDirectiveDecorator
+     * @memberof material.components.menuBar
      * @requires $delegate
      * @description
      *
@@ -31,6 +30,7 @@
 
         /**
          * Decorates the original menuItem compile functions.
+         * @function decorateCompile
          * @param  {Function} originalCompile original compile function
          * @return {Function}                 enhances link function returned by the decorated compile function which moves the icon node inside the button node.
          */

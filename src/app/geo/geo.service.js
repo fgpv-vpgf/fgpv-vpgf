@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name geoService
-     * @module app.geo
+     * @module geoService
+     * @memberof app.geo
      * @requires $http, $q, gapiService, mapService, layerRegistry, configService, identifyService
      *
      * @description
@@ -38,6 +37,7 @@
 
         /**
          * Lookup a proj4 style projection definition for a given ESPG code.
+         * @function epsgLookup
          * @param {string|number} code the EPSG code as a string or number
          * @return {Promise} a Promise resolving to proj4 style definition or null if the definition could not be found
          */
@@ -80,6 +80,7 @@
          * geoService.assembleMap();
          * ```
          *
+         * @function assembleMap
          * @param  {Object} mapNode    dom node to build the map on; need to be specified only the first time the map is created;
          * @return {Promise} resolving when all the map building is done
          */

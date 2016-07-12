@@ -11,7 +11,7 @@
     "canonical-path": "0.0.2",
     "dateformat": "^1.0.12",
     "del": "^1.2.0",
-    "docdash": "^0.4.0",
+    "docdash": "https://github.com/alyec/docdash#master",
     "glob": "^5.0.14",
     "gulp": "^3.9.0",
     "gulp-add-src": "^0.2.0",

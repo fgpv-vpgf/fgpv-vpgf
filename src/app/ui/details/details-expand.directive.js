@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc directive
-     * @name rvDetailsExpand
-     * @module app.ui.details
+     * @module rvDetailsExpand
+     * @memberof app.ui
      * @restrict E
      * @description
      *
@@ -19,6 +18,7 @@
     /**
      * `rvDetailsExpand` directive body.
      *
+     * @function rvDetailsExpand
      * @return {object} directive body
      */
     function rvDetailsExpand() {

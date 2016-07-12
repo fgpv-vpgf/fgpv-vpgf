@@ -53,4 +53,4 @@ after_success:
 - gulp clean
 - gulp dist
 - source devdeploy.sh
-- source docdeploy.sh
+- source ./scripts/docdeploy.sh

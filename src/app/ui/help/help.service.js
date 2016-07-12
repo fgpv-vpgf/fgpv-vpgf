@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name helpService
-     * @module app.ui.help
+     * @module helpService
+     * @memberof app.ui
      * @description
      *
      * The `helpService` service provides stores for help items
@@ -36,6 +35,7 @@
         /**
         * Adds an object to the service's registry.
         *
+        * @function register
         * @param {Object} object    the object to be added
         */
         function register(object) {
@@ -45,6 +45,7 @@
         /**
         * Removes an object from the service's registry.
         *
+        * @function unregister
         * @param {Object} object    the object to be removed
         */
         function unregister(object) {
@@ -57,6 +58,7 @@
         /**
         * Adds an object to the service's cache of already drawn help sections.
         *
+        * @function setDrawn
         * @param {Object} object    the object to be added
         */
         function setDrawn(object) {
@@ -66,11 +68,13 @@
         /**
         * Clears the service's cache of already drawn help sections.
         *
+        * @function clearDrawn
         */
         function clearDrawn() {
             drawnCache.length = 0;
         }
 
+        // FIXME add docs
         function HelpSummaryController() {
             const self = this;
             self.closeHelpSummary = () => $mdDialog.hide();

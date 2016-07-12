@@ -2,9 +2,8 @@
     'use strict';
 
     /**
-     * @ngdoc service
-     * @name LayerBlueprint
-     * @module app.geo
+     * @module LayerBlueprintFactory
+     * @memberof app.geo
      * @requires dependencies
      * @description
      *
