@@ -1,6 +1,9 @@
 /* global bard, stateManager, $rootScope */
 
 describe('stateManager', () => {
+
+    const mainPanelNames = ['main', 'mainToc', 'mainToolbox', 'mainDetails', 'mainLoaderFile', 'mainLoaderService'];
+
     beforeEach(() => {
 
         bard.appModule('app.common.router');
@@ -101,8 +104,9 @@ describe('stateManager', () => {
 
             // open main; should auto-open one of the children
             // need to listen on item state changes and resolve locks on the stateManager
-            $rootScope.$watch(() => state.main.active, () =>
-                stateManager.callback('main', 'active'));
+            mainPanelNames.forEach(panelName =>
+                $rootScope.$watch(() => state[panelName].active, () =>
+                    stateManager.callback(panelName, 'active')));
 
             $rootScope.$digest();
 
