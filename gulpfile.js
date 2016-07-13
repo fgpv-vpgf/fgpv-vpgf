@@ -277,7 +277,7 @@ gulp.task('jsrollup', 'Roll up all js into one file',
             // can't use lazy pipe with uglify
             .pipe($.if(PROD_MODE, $.sourcemaps.init()))
             .pipe($.if(PROD_MODE, $.uglify()))
-            .pipe($.if(PROD_MODE, $.sourcemaps.write('/maps')))
+            .pipe($.if(PROD_MODE, $.sourcemaps.write('./maps')))
             .pipe(gulp.dest(config.libBuild));
     });
 
@@ -300,7 +300,7 @@ gulp.task('jsinjector', 'Copy fixed assets to the build directory',
             // can't use lazy pipe with uglify
             .pipe($.if(PROD_MODE, $.sourcemaps.init()))
             .pipe($.if(PROD_MODE, $.uglify()))
-            .pipe($.if(PROD_MODE, $.sourcemaps.write('/maps')))
+            .pipe($.if(PROD_MODE, $.sourcemaps.write('./maps')))
             .pipe(gulp.dest(config.libBuild));
     });
 
