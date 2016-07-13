@@ -101,6 +101,9 @@
                     return closePanel(one).then(() => setActive(...items));
                 }
             } else {
+                // try to set focus only after transition chain is complete; otherwise #815 happens
+                // TODO: revisit how we handle focus manipulations
+                setPanelFocus(service.panelHistory[service.panelHistory.length - 1]);
                 return $q.resolve();
             }
         }
@@ -140,7 +143,7 @@
          * @return  {Promise}   resolves when a panel has finished its closing animation
          */
         function closePanelFromHistory() {
-            return service.panelHistory.length > 0 ? closePanel(getItem(service.panelHistory.pop())) : $q.resolve();
+            return service.panelHistory.length > 0 ? setActive({ [service.panelHistory.pop()]: false }) : $q.resolve();
         }
 
         /**
@@ -149,15 +152,12 @@
          * Generally you should only use this function to swap sibling panels.
          *
          * @function togglePanel
-         * @param  {String}   fromPanel the name of a child panel
-         * @param  {String}   toPanel the name of a child panel
+         * @param  {String}   fromPanelName the name of a child panel
+         * @param  {String}   toPanelName the name of a child panel
          */
-        function togglePanel(fromPanel, toPanel) {
-            fromPanel = getItem(fromPanel);
-            toPanel = getItem(toPanel);
-
-            closePanel(fromPanel, false);
-            openPanel(toPanel, false);
+        function togglePanel(fromPanelName, toPanelName) {
+            return setActive({ [fromPanelName]: false })
+                .then(() => setActive({ [toPanelName]: true }));
         }
 
         /* PRIVATE HELPERS */
@@ -319,9 +319,6 @@
                 }
                 modifyHistory(panelToOpen);
                 animationPromise = propagate ? openPanel(getParent(panelToOpen.name), false) : $q.resolve();
-
-                // set focus to opened panel
-                animationPromise.then(() => setPanelFocus(panelToOpen.name));
             }
             return animationPromise;
         }
@@ -359,10 +356,6 @@
                 modifyHistory(panelToClose, false);
                 animationPromise = setItemProperty(panelToClose.name, 'active', false, true);
             }
-            // set focus to last opened panel
-            animationPromise.then(() => {
-                setPanelFocus(service.panelHistory[service.panelHistory.length - 1]);
-            });
 
             return animationPromise;
         }
