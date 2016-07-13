@@ -100,6 +100,9 @@
                     return closePanel(one).then(() => setActive(...items));
                 }
             } else {
+                // try to set focus only after transition chain is complete; otherwise #815 happens
+                // TODO: revisit how we handle focus manipulations
+                setPanelFocus(service.panelHistory[service.panelHistory.length - 1]);
                 return $q.resolve();
             }
         }
@@ -139,7 +142,7 @@
          * @return  {Promise}   resolves when a panel has finished its closing animation
          */
         function closePanelFromHistory() {
-            return service.panelHistory.length > 0 ? closePanel(getItem(service.panelHistory.pop())) : $q.resolve();
+            return service.panelHistory.length > 0 ? setActive({ [service.panelHistory.pop()]: false }) : $q.resolve();
         }
 
         /**
@@ -151,8 +154,7 @@
          * @param  {String}   panelName the name of a child panel
          */
         function togglePanel(panelName) {
-            const parentPanel = getParent(panelName);
-            return parentPanel.item.active ? closePanel(parentPanel) : openPanel(getItem(panelName));
+            return setActive({ [panelName]: getItem(panelName).item.active });
         }
 
         /* PRIVATE HELPERS */
@@ -305,9 +307,6 @@
                 }
                 modifyHistory(panelToOpen);
                 animationPromise = propagate ? openPanel(getParent(panelToOpen.name), false) : $q.resolve();
-
-                // set focus to opened panel
-                animationPromise.then(() => setPanelFocus(panelToOpen.name));
             }
             return animationPromise;
         }
@@ -341,11 +340,9 @@
                 modifyHistory(panelToClose, false);
                 animationPromise = setItemProperty(panelToClose.name, 'active', false, true);
             }
-            // set focus to last opened panel
-            animationPromise.then(() => {
-                setPanelFocus(service.panelHistory[service.panelHistory.length - 1]);
-                runCloseCallback(panelToClose.name);
-            });
+
+            animationPromise.then(() =>
+                runCloseCallback(panelToClose.name));
 
             return animationPromise;
         }
