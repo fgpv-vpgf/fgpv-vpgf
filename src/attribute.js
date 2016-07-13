@@ -272,11 +272,12 @@ function loadDataBatch(maxId, maxBatch, layerUrl, idField, attribs, callerDef, e
 /**
 * fetch attributes from an ESRI ArcGIS Server Feature Layer Service endpoint
 * @param {String} layerUrl an arcgis feature layer service endpoint
+* @param {Integer} featureIdx index of where the endpoint is. used for legend output
 * @param {String} attribs a comma separated list of attributes to download. '*' will download all
 * @param  {Object} esriBundle bundle of API classes
 * @return {Object} attributes in a packaged format for asynch access
 */
-function loadFeatureAttribs(layerUrl, attribs, esriBundle, geoApi) {
+function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
 
     const layerPackage = newLayerPackage(getLayerIndex(layerUrl), esriBundle);
 
@@ -322,7 +323,7 @@ function loadFeatureAttribs(layerUrl, attribs, esriBundle, geoApi) {
                     layerData.geometryType = serviceResult.geometryType;
                     layerData.minScale = serviceResult.minScale;
                     layerData.maxScale = serviceResult.maxScale;
-                    layerData.legend = geoApi.symbology.rendererToLegend(layerData.renderer);
+                    layerData.legend = geoApi.symbology.rendererToLegend(layerData.renderer, featureIdx);
 
                     geoApi.symbology.enhanceRenderer(layerData.renderer, layerData.legend);
 
@@ -396,7 +397,7 @@ function processFeatureLayer(layer, options, esriBundle, geoApi) {
         // check for skip flag
         if (!opts.skip) {
             // call loadFeatureAttribs with options if present
-            result.registerData(loadFeatureAttribs(layer.url, opts.attribs, esriBundle, geoApi));
+            result.registerData(loadFeatureAttribs(layer.url, idx, opts.attribs, esriBundle, geoApi));
         }
     } else {
         // feature layer was loaded from a file.
@@ -411,7 +412,7 @@ function processFeatureLayer(layer, options, esriBundle, geoApi) {
         })));
 
         const renderer = layer.renderer.toJson();
-        const legend = geoApi.symbology.rendererToLegend(renderer);
+        const legend = geoApi.symbology.rendererToLegend(renderer, 0);
         geoApi.symbology.enhanceRenderer(renderer, legend);
 
         // TODO revisit the geometry type. ideally, fix our GeoJSON to Feature to populate the property
@@ -490,7 +491,7 @@ function processDynamicLayer(layer, options, esriBundle, geoApi) {
 
             if (!opts.skip) {
                 // load the features, store promise in array
-                result.registerData(loadFeatureAttribs(layer.url + '/' + idx.toString(),
+                result.registerData(loadFeatureAttribs(layer.url + '/' + idx.toString(), idx,
                     opts.attribs, esriBundle, geoApi));
             }
 
