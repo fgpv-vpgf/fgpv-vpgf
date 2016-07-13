@@ -23,7 +23,7 @@
     "gsap": "^1.18.0",
     "bezier-easing": "^1.0.0",
     "dotjem-angular-tree": "~0.2.1",
-    "geoapi": "http://fgpv.cloudapp.net/demo/gapi/geoapi-0.13.0-22.tgz",
+    "geoapi": "http://fgpv.cloudapp.net/demo/gapi/geoapi-0.13.0-23.tgz",
     "datatables.net": "~1.10.10",
     "datatables.net-dt": "~1.10.10",
     "datatables-scroller": "~1.4.0",
@@ -31,11 +31,19 @@
     "ng-flow": "~2.7.1",
     "datatables-buttons": "~1.1.2",
     "geolocator": "~1.2.9",
-    "jquery-hoverintent": "~1.8.1"
+    "jquery-hoverintent": "~1.8.1",
+    "RandomColor": "https://github.com/sterlingwes/RandomColor.git",
+    "angular-minicolors": "^0.0.9"
   },
   "overrides": {
     "jquery": {
       "ignore": true
+    },
+    "jquery-minicolors": {
+      "main": "jquery.minicolors.js"
+    },
+    "RandomColor": {
+      "main": "rcolor.js"
     },
     "angular-dragula": {
       "main": "dist/angular-dragula.js"
