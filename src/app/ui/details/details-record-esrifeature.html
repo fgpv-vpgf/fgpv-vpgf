@@ -1,4 +1,5 @@
 <md-button
+    ng-if="::!self.solorecord"
     class="rv-group-body-button rv-button-square"
     ng-focus="self.renderDetails()"
     ng-mouseover="self.renderDetails()"
@@ -20,7 +21,7 @@
 
 </div>
 
-<div class="rv-icon-24 rv-group-toggle-icon">
+<div ng-if="::!self.solorecord" class="rv-icon-24 rv-group-toggle-icon">
     <md-icon
         class="md-toggle-icon"
         ng-class="{ 'rv-toggled' : self.item.isExpanded }"
