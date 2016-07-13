@@ -297,10 +297,10 @@
 
                         this.layerType = serviceTypeToLayerType[this.serviceType];
 
-                        // for feature layers, apply primaryField smart default
+                        // for feature layers, apply nameField smart default
                         // TODO: revisit when config objects are typed classes
                         if (this.serviceType === Geo.Service.Types.FeatureLayer && this._serviceInfo.smartDefaults) {
-                            this.config.primaryField = this._serviceInfo.smartDefaults.primary;
+                            this.config.nameField = this._serviceInfo.smartDefaults.primary;
                         }
                         resolve();
                     } else {
@@ -442,6 +442,7 @@
 
                 // apply user selected layer name to the config so it appears in the legend entry
                 this.config.name = this.userOptions.layerName;
+                this.config.nameField = this.userOptions.primaryField;
 
                 console.log(this.userOptions);
 

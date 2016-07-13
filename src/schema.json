@@ -519,6 +519,7 @@
             "properties": {
                 "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriFeature" ] },
@@ -640,7 +641,7 @@
     },
 
     "properties": {
-        "version": { "type": "string", "enum": [ "-1" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
+        "version": { "type": "string", "enum": [ "1.0" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
         "language": { "type": "string", "enum": [ "en", "fr", "es" ], "description": "ISO 639-1 code indicating the language of strings in the schema file" },
         "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
         "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },

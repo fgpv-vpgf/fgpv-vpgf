@@ -132,8 +132,7 @@
             * @returns {String} the name of the feature
             */
             function getFeatureName(attribs, layerRec, objId) {
-                // FIXME : name field is not yet defined in the config schema.
-                //         we also need to determine if we will support name fields
+                // TODO :  we also need to determine if we will support name fields
                 //         on child layers of Dynamic services. This would be relevant
                 //         if we implement maptips, or need to override the name field
                 //         in the details pane.
