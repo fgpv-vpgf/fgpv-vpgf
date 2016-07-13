@@ -37,7 +37,7 @@
 
         self.getSectionNode = () => $element.find('.rv-details');
 
-        stateManager.onCloseCallback('mainDetails', () => stateManager.clearDisplayPanel('mainDetails'));
+        stateManager.setCloseCallback('mainDetails', closeDetails);
 
         /**
         * Set the selected item from the array of items if previously set.
@@ -57,8 +57,14 @@
          * @function closeDetails
          */
         function closeDetails() {
+            stateManager.clearDisplayPanel('mainDetails');
             geoService.clearHilight();
-            stateManager.setActive({ mainDetails: false });
+
+            if (stateManager.panelHistory.find(x => x === 'mainToc')) {
+                stateManager.togglePanel('mainDetails', 'mainToc');
+            } else {
+                stateManager.setActive({ mainDetails: false });
+            }
         }
 
         /**

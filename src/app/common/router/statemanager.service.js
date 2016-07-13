@@ -39,14 +39,15 @@
             panelHistory: [],
             state: angular.copy(initialState),
             display: angular.copy(initialDisplay),
-            onCloseCallback
+            setCloseCallback
         };
 
         const fulfillStore = {}; // keeping references to promise fulfill functions
-        let lastFocusElement; // stores an element for dynamic focus changes
         const closeCallback = {};
-
         const displayService = displayManager(service); // init displayManager
+
+        let lastFocusElement; // stores an element for dynamic focus changes
+        let cbLock = []; // callback lock prevents infinite loops
         angular.extend(service, displayService); // merge displayManager service functions into stateManager
 
         return service;
@@ -143,16 +144,20 @@
         }
 
         /**
-         * Toggles a child panel open or closed based on the negated active state. Entire panel
-         * including parent is opened or closed. Therefore sibling panels are not swapped
-         * from history.
+         * Closes fromPanel and opens toPanel so that the parent panel remains unchanged.
+         *
+         * Generally you should only use this function to swap sibling panels.
          *
          * @function togglePanel
-         * @param  {String}   panelName the name of a child panel
+         * @param  {String}   fromPanel the name of a child panel
+         * @param  {String}   toPanel the name of a child panel
          */
-        function togglePanel(panelName) {
-            const parentPanel = getParent(panelName);
-            return parentPanel.item.active ? closePanel(parentPanel) : openPanel(getItem(panelName));
+        function togglePanel(fromPanel, toPanel) {
+            fromPanel = getItem(fromPanel);
+            toPanel = getItem(toPanel);
+
+            closePanel(fromPanel, false);
+            openPanel(toPanel, false);
         }
 
         /* PRIVATE HELPERS */
@@ -221,9 +226,13 @@
          * @param   {String}    panelName the name of the panel to register the closing callback
          * @param   {Function}  callback the callback function to run when the panel closes
          */
-        function onCloseCallback(panelName, callback) {
-            if (typeof panelName === 'string' && typeof callback === 'function') {
-                closeCallback[panelName] = callback;
+        function setCloseCallback(panelName, callback) {
+            if (cbLock.indexOf(panelName) === -1) {
+                closeCallback[panelName] = () => {
+                    cbLock.push(panelName);
+                    callback();
+                    cbLock.splice(cbLock.indexOf(panelName), 1);
+                };
             }
         }
 
@@ -233,11 +242,16 @@
          * @private
          * @function runCloseCallback
          * @param   {String}    panelName the name of the panel to run closing callback
+         * @return {Boolean}    returns true if a callback function was used
          */
         function runCloseCallback(panelName) {
-            if (panelName in closeCallback) {
+            // cbLock prevents infinite loops since it prevents a panel callback
+            // from triggering its own callback
+            if (cbLock.indexOf(panelName) === -1 && panelName in closeCallback) {
                 closeCallback[panelName]();
+                return true;
             }
+            return false;
         }
 
         /**
@@ -323,6 +337,10 @@
         function closePanel(panelToClose, propagate = true) {
             let animationPromise;
 
+            if (runCloseCallback(panelToClose.name)) {
+                return $q.resolve();
+            }
+
             // closing parent panel
             if (typeof panelToClose.item.parent === 'undefined') {
                 animationPromise = setItemProperty(panelToClose.name, 'active', false)
@@ -334,7 +352,7 @@
             // closing child panel
             } else {
                 if (propagate) {
-                    closePanel(getParent(panelToClose.name));
+                    closePanel(getParent(panelToClose.name), false);
                 }
                 modifyHistory(panelToClose, false);
                 animationPromise = setItemProperty(panelToClose.name, 'active', false, true);
@@ -342,7 +360,6 @@
             // set focus to last opened panel
             animationPromise.then(() => {
                 setPanelFocus(service.panelHistory[service.panelHistory.length - 1]);
-                runCloseCallback(panelToClose.name);
             });
 
             return animationPromise;
