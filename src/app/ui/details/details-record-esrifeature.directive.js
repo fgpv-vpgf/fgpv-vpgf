@@ -37,17 +37,18 @@
         function link(scope, el) {
             const self = scope.self;
 
-            self.item.isExpanded = false;
-            self.item.isSelected = false;
-
+            let isCompiled = false;
+            self.item.isExpanded = !!self.item.isExpanded;
+            self.item.isSelected = self.item.isExpanded;
             self.renderDetails = renderDetails;
-            self.isExpanded = false;
 
             self.triggerZoom = () => {
                 geoService.zoomToGraphic(self.requester.layerRec, self.requester.featureIdx, self.item.oid);
             };
 
-            let isCompiled = false;
+            if (self.item.isExpanded) {
+                self.renderDetails();
+            }
 
             /**
              * Render details as plain html and insert them into the template. Runs only once.
