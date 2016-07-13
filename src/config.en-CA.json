@@ -159,13 +159,10 @@
       }
     },
     {
-      "id":"josm",
-      "name": "Joint Canada-Alberta Implementation Plan for Oil Sands Monitoring",
+      "id":"powerplant100mw",
+      "name": "Power Plants, 100 MW or more",
       "layerType":"esriFeature",
-      "url":"http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSands/MapServer/0",
-      "options": {
-        "boundingBox": { "value": true }
-      }
+      "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/NorthAmerica/energy_infrastructure_of_north_america_en/MapServer/7"
     },
     {
       "id":"geomet_temp",
