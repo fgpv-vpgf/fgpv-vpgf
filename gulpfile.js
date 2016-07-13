@@ -174,8 +174,7 @@ function injectError(error) {
  */
 function libbuild() {
     return gulp.src(bowerFiles())
-        .pipe($.concat(config.jsLibFile))
-        .pipe($.if(PROD_MODE, $.uglify()));
+        .pipe($.concat(config.jsLibFile));
 }
 
 /**
@@ -193,8 +192,7 @@ function templatecache() {
         .pipe($.angularTemplatecache(
             config.templateCache.file,
             config.templateCache.options
-            ))
-        .pipe($.if(PROD_MODE, $.uglify()));
+            ));
 }
 
 /**
@@ -227,8 +225,6 @@ function jsbuild() {
         .pipe($.insert.transform(injectTranslations))
         .pipe(constantServiceFilter.restore)
 
-        // TODO: fix this: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/293
-        // .pipe($.sourcemaps.init())
         .pipe($.plumber({ errorHandler: injectError }))
         .pipe($.babel())
         .pipe($.plumber.stop())
@@ -238,10 +234,7 @@ function jsbuild() {
             single_quotes: true
         }))
         .pipe($.angularFilesort())
-        .pipe($.concat(config.jsSingleFile))
-
-        // if prod, uglify; if not, write sourcemaps inline because it will be merged with other libraries and it's not possible to use external files in that case
-        .pipe($.if(PROD_MODE, $.uglify())); // , $.sourcemaps.write()));
+        .pipe($.concat(config.jsSingleFile));
 }
 
 // NOTE assetcopy should only be used for samples for development
@@ -272,7 +265,6 @@ gulp.task('jsrollup', 'Roll up all js into one file',
         const seed = gulp.src([config.jsGlobalRegistry, config.jsAppSeed])
             .pipe($.plumber({ errorHandler: injectError }))
             .pipe($.babel())
-            .pipe($.if(PROD_MODE, $.uglify()))
             .pipe($.plumber.stop());
 
         // global registry goes after the lib package
@@ -282,6 +274,10 @@ gulp.task('jsrollup', 'Roll up all js into one file',
         return merge(jslib, jscache, jsapp, seed) // merge doesn't guarantee file order :(
             .pipe($.order(config.jsOrder))
             .pipe($.concat(config.jsCoreFile))
+            // can't use lazy pipe with uglify
+            .pipe($.if(PROD_MODE, $.sourcemaps.init()))
+            .pipe($.if(PROD_MODE, $.uglify()))
+            .pipe($.if(PROD_MODE, $.sourcemaps.write('/maps')))
             .pipe(gulp.dest(config.libBuild));
     });
 
@@ -292,17 +288,19 @@ gulp.task('jsinjector', 'Copy fixed assets to the build directory',
         const polyfills = gulp.src(config.jsPolyfills)
             .pipe($.plumber({ errorHandler: injectError }))
             // .pipe($.babel())
-            .pipe($.if(PROD_MODE, $.uglify()))
             .pipe($.plumber.stop())
             .pipe($.concat(config.jsPolyfillsFile));
 
         const injector = gulp.src(config.jsInjectorFile)
-            .pipe($.babel())
-            .pipe($.if(PROD_MODE, $.uglify()));
+            .pipe($.babel());
 
         return merge(polyfills, injector) // merge doesn't guarantee file order :(
             .pipe($.order(config.injectorOrder))
             .pipe($.concat(config.jsInjectorDest))
+            // can't use lazy pipe with uglify
+            .pipe($.if(PROD_MODE, $.sourcemaps.init()))
+            .pipe($.if(PROD_MODE, $.uglify()))
+            .pipe($.if(PROD_MODE, $.sourcemaps.write('/maps')))
             .pipe(gulp.dest(config.libBuild));
     });
 
