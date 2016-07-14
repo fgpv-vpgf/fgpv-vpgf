@@ -101,6 +101,9 @@
                     return closePanel(one).then(() => setActive(...items));
                 }
             } else {
+                // try to set focus only after transition chain is complete; otherwise #815 happens
+                // TODO: revisit how we handle focus manipulations
+                setPanelFocus(service.panelHistory[service.panelHistory.length - 1]);
                 return $q.resolve();
             }
         }
@@ -140,24 +143,30 @@
          * @return  {Promise}   resolves when a panel has finished its closing animation
          */
         function closePanelFromHistory() {
-            return service.panelHistory.length > 0 ? closePanel(getItem(service.panelHistory.pop())) : $q.resolve();
+            const promise = service.panelHistory.length > 0 ? closePanel(getItem(service.panelHistory.pop()))
+                                                            : $q.resolve();
+            // set focus after the panel is closed
+            promise.then(() => setPanelFocus(service.panelHistory[service.panelHistory.length - 1]));
+
+            return promise;
         }
 
         /**
          * Closes fromPanel and opens toPanel so that the parent panel remains unchanged.
-         *
          * Generally you should only use this function to swap sibling panels.
          *
          * @function togglePanel
-         * @param  {String}   fromPanel the name of a child panel
-         * @param  {String}   toPanel the name of a child panel
+         * @param  {String}   fromPanelName the name of a child panel
+         * @param  {String}   toPanelName the name of a child panel
          */
-        function togglePanel(fromPanel, toPanel) {
-            fromPanel = getItem(fromPanel);
-            toPanel = getItem(toPanel);
+        function togglePanel(fromPanelName, toPanelName) {
+            const fromPanel = getItem(fromPanelName);
+            const toPanel = getItem(toPanelName);
 
-            closePanel(fromPanel, false);
-            openPanel(toPanel, false);
+            return closePanel(fromPanel, false)
+                .then(() => openPanel(toPanel, false))
+                // set focus after the child pane swap
+                .then(() => setPanelFocus(toPanelName));
         }
 
         /* PRIVATE HELPERS */
@@ -170,6 +179,7 @@
          * @param {String} property  property name to modify
          * @param {Boolean} value  target state value
          * @param {Boolean} skip skips animation, defaults to false
+         * @return {Promise} resolving when transition (if any) ends
          */
         function setItemProperty(itemName, property, value, skip = false) {
             const item = service.state[itemName];
@@ -318,9 +328,6 @@
                 }
                 modifyHistory(panelToOpen);
                 animationPromise = propagate ? openPanel(getParent(panelToOpen.name), false) : $q.resolve();
-
-                // set focus to opened panel
-                animationPromise.then(() => setPanelFocus(panelToOpen.name));
             }
             return animationPromise;
         }
@@ -345,7 +352,8 @@
             if (typeof panelToClose.item.parent === 'undefined') {
                 animationPromise = setItemProperty(panelToClose.name, 'active', false)
                     .then(() =>
-                        propagate ? getChildren(panelToClose.name).forEach(child => closePanel(child, false))
+                        // wait for all child transition promises to resolve
+                        propagate ? $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false)))
                                   : true
                     );
 
@@ -357,10 +365,6 @@
                 modifyHistory(panelToClose, false);
                 animationPromise = setItemProperty(panelToClose.name, 'active', false, true);
             }
-            // set focus to last opened panel
-            animationPromise.then(() => {
-                setPanelFocus(service.panelHistory[service.panelHistory.length - 1]);
-            });
 
             return animationPromise;
         }
