@@ -155,6 +155,18 @@
                     // FIXME _layer call is bad
                     getServiceFeatureCount(`${state.url}/${state.featureIdx}`).then(count =>
                         applyFeatureCount(layer._layer.geometryType, state, count));
+                } else {
+                    applyFeatureCount(layer._layer.geometryType, state, layer._layer.graphics.length);
+
+                    // TODO if we implement the above TODO about using symbology bundle, can likely merge parts of the if/else
+                    // FIXME _attributeBundle call is probably bad
+                    layer._attributeBundle[state.featureIdx].layerData.then(ld => {
+                        // NOTE we could cheat and not search for layerId = featureIdx, as file based is always 0
+                        // however, doing the search gives us protection if we ever support multi-child files
+                        applySymbology(state, ld.legend.layers.find(layer =>
+                            layer.layerId === parseInt(state.featureIdx)));
+                    });
+
                 }
 
                 return state;
