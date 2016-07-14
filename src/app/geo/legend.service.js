@@ -146,7 +146,10 @@
                     const symbologyPromise = getMapServerSymbology(state.url);
 
                     symbologyPromise.then(data =>
-                        applySymbology(state, data.layers[state.featureIdx]));
+                        // fixes issue #869 by finding layer object using layerId instead of picking state.featureIdx'th item from the array
+                        // TODO: switch to getting symbology from the attribute bundle
+                        applySymbology(state, data.layers.find(layer =>
+                            layer.layerId === parseInt(state.featureIdx))));
 
                     // assign feature count
                     // FIXME _layer call is bad
