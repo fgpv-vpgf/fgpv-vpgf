@@ -16,10 +16,9 @@
         const service = {
             loadNewProjection,
             loadNewLang,
-            loadWithBookmark
+            loadWithBookmark,
+            bookmarkBlocking: false
         };
-
-        let bookmarkBlocking = true;
 
         return service;
 
@@ -32,9 +31,18 @@
          * @param {String} basemapId     The id of the basemap to switch to
          */
         function loadNewProjection(basemapId) {
-            bookmarkService.updateConfig().then(() => {
-                geoService.setSelectedBaseMap(basemapId);
-                geoService.assembleMap();
+            $rootScope.$broadcast(events.rvApiHalt);
+            let bookmark = bookmarkService.getBookmark();
+
+            // get original config and add bookmark to it
+            configService.getOriginal().then(config => {
+                bookmarkService.parseBookmark(bookmark, config);
+
+                // get current config to modify
+                configService.getCurrent().then(currentConfig => {
+                    currentConfig.map.initialBasemapId = basemapId;
+                    geoService.assembleMap();
+                });
             });
         }
 
@@ -45,6 +53,7 @@
          * @param {String} lang      The code of the language to switch to
          */
         function loadNewLang(lang) {
+            $rootScope.$broadcast(events.rvApiHalt);
             const bookmark = bookmarkService.getBookmark();
             $translate.use(lang);
             configService.getOriginal().then(config => {
@@ -53,14 +62,28 @@
             });
         }
 
+        /**
+         * Applies 'bookmark' to the config and then broadcasts the bookmarkReady event or reloads the map
+         *
+         * @param {String} bookmark     The bookmark containing the desired state of the viewer
+         * @param {Bool} initial        Whether this call was meant to initialize the viewer
+         */
         function loadWithBookmark(bookmark, initial) {
-            if (!initial || bookmarkBlocking) {
+            // only let the call through if its first and the initial call, or its not the initial call
+            if (!initial || service.bookmarkBlocking) {
+                $rootScope.$broadcast(events.rvApiHalt);
+
+                // modify the original config
                 configService.getOriginal().then(config => {
                     bookmarkService.parseBookmark(bookmark, config);
 
-                    if (bookmarkBlocking) {
+                    if (service.bookmarkBlocking) {
+                        // broadcast startup event
                         $rootScope.$broadcast(events.rvBookmarkInit);
-                        bookmarkBlocking = false;
+                        service.bookmarkBlocking = false;
+                    } else {
+                        // loading a bookmark after initialization, reload the map
+                        geoService.assembleMap();
                     }
                 });
             }
