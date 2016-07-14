@@ -122,6 +122,28 @@
             }
 
             /**
+             * Convert an attribute set so that any keys using aliases are converted to proper fields
+             * @function unAliasAttribs
+             * @param  {Object} attribs      attribute key-value mapping, potentially with aliases as keys
+             * @param  {Object} fields       fields definition array for layer
+             * @return {Object}              attribute key-value mapping with fields as keys
+             */
+            function unAliasAttribs(attribs, fields) {
+                const newA = {};
+                fields.forEach(field => {
+                    // attempt to extract on name. if not found, attempt to extract on alias
+                    let val = attribs[field.name];
+                    if (!val) {
+                        val = attribs[field.alias];
+                    }
+
+                    // dump value into the result
+                    newA[field.name] = val;
+                });
+                return newA;
+            }
+
+            /**
             * Extract the feature name from a feature as best we can.
             * Support for dynamic layers is limited at the moment.
             *
@@ -214,7 +236,8 @@
                         // placeholder for now until we figure out how to signal the panel that
                         // we want to make a nice table
                         clickResults.forEach(ele => {
-                            // NOTE: the identify service returns aliased field names, so no need to look them up here
+                            // NOTE: the identify service returns aliased field names, so no need to look them up here.
+                            //       however, this means we need to un-alias the data when using the symbol lookup.
                             // NOTE: ele.layerId is what we would call featureIdx
                             layerRecord.attributeBundle[ele.layerId].layerData.then(lData => {
                                 const identifyResult = identifyResults[ele.layerId];
@@ -223,8 +246,8 @@
                                     data: attributesToDetails(ele.feature.attributes),
                                     oid: ele.feature.attributes[lData.oidField],
                                     symbology: [{
-                                        icon: geoState.mapService.retrieveSymbol(ele.feature.attributes,
-                                            lData.renderer)
+                                        icon: geoState.mapService.retrieveSymbol(
+                                            unAliasAttribs(ele.feature.attributes, lData.fields), lData.renderer)
                                     }]
                                 });
                                 identifyResult.isLoading = false;
