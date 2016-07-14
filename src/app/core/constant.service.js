@@ -25,6 +25,7 @@
         .module('app.core')
         .constant('events', {
             rvReady: 'rvReady',
+            rvApiHalt: 'rvApiHalt',
             rvApiReady: 'rvApiReady',
             rvBookmarkInit: 'rvBookmarkInit',
 
