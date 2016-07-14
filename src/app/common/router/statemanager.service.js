@@ -143,12 +143,16 @@
          * @return  {Promise}   resolves when a panel has finished its closing animation
          */
         function closePanelFromHistory() {
-            return service.panelHistory.length > 0 ? setActive({ [service.panelHistory.pop()]: false }) : $q.resolve();
+            const promise = service.panelHistory.length > 0 ? closePanel(getItem(service.panelHistory.pop()))
+                                                            : $q.resolve();
+            // set focus after the panel is closed
+            promise.then(() => setPanelFocus(service.panelHistory[service.panelHistory.length - 1]));
+
+            return promise;
         }
 
         /**
          * Closes fromPanel and opens toPanel so that the parent panel remains unchanged.
-         *
          * Generally you should only use this function to swap sibling panels.
          *
          * @function togglePanel
@@ -156,8 +160,13 @@
          * @param  {String}   toPanelName the name of a child panel
          */
         function togglePanel(fromPanelName, toPanelName) {
-            return setActive({ [fromPanelName]: false })
-                .then(() => setActive({ [toPanelName]: true }));
+            const fromPanel = getItem(fromPanelName);
+            const toPanel = getItem(toPanelName);
+
+            return closePanel(fromPanel, false)
+                .then(() => openPanel(toPanel, false))
+                // set focus after the child pane swap
+                .then(() => setPanelFocus(toPanelName));
         }
 
         /* PRIVATE HELPERS */
