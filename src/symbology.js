@@ -275,31 +275,36 @@ function applyFill(symbol, svg) {
 * @param  {Object} svg contains info on our SVG object (see newSVG). object is modified by the function
 */
 function applyLine(lineSymbol, svg) {
-    const stroke = lineSymbol.style === 'esriSLSNull' ? 'none' : colourToRgb(lineSymbol.color);
+    if (lineSymbol) {
+        const stroke = lineSymbol.style === 'esriSLSNull' ? 'none' : colourToRgb(lineSymbol.color);
 
-    svg.addProp('stroke', stroke);
-    svg.addProp('stroke-opacity', colourToOpacity(lineSymbol.color));
-    svg.addProp('stroke-width', lineSymbol.width.toString());
-    svg.addProp('stroke-linecap', 'butt'); // huh huh
-    svg.addProp('stroke-linejoin', 'miter');
-    svg.addProp('stroke-miterlimit', '4');
+        svg.addProp('stroke', stroke);
+        svg.addProp('stroke-opacity', colourToOpacity(lineSymbol.color));
+        svg.addProp('stroke-width', lineSymbol.width.toString());
+        svg.addProp('stroke-linecap', 'butt'); // huh huh
+        svg.addProp('stroke-linejoin', 'miter');
+        svg.addProp('stroke-miterlimit', '4');
 
-    const dashMap = {
-        esriSLSSolid: 'none',
-        esriSLSDash: '5.333,4',
-        esriSLSDashDot: '5.333,4,1.333,4',
-        esriSLSLongDashDotDot: '10.666,4,1.333,4,1.333,4',
-        esriSLSDot: '1.333,4',
-        esriSLSLongDash: '10.666,4',
-        esriSLSLongDashDot: '10.666,4,1.333,4',
-        esriSLSShortDash: '5.333,1.333',
-        esriSLSShortDashDot: '5.333,1.333,1.333,1.333',
-        esriSLSShortDashDotDot: '5.333,1.333,1.333,1.333,1.333,1.333',
-        esriSLSShortDot: '1.333,1.333',
-        esriSLSNull: 'none'
-    };
+        const dashMap = {
+            esriSLSSolid: 'none',
+            esriSLSDash: '5.333,4',
+            esriSLSDashDot: '5.333,4,1.333,4',
+            esriSLSLongDashDotDot: '10.666,4,1.333,4,1.333,4',
+            esriSLSDot: '1.333,4',
+            esriSLSLongDash: '10.666,4',
+            esriSLSLongDashDot: '10.666,4,1.333,4',
+            esriSLSShortDash: '5.333,1.333',
+            esriSLSShortDashDot: '5.333,1.333,1.333,1.333',
+            esriSLSShortDashDotDot: '5.333,1.333,1.333,1.333,1.333,1.333',
+            esriSLSShortDot: '1.333,1.333',
+            esriSLSNull: 'none'
+        };
 
-    svg.addProp('stroke-dasharray', dashMap[lineSymbol.style]);
+        svg.addProp('stroke-dasharray', dashMap[lineSymbol.style]);
+    } else {
+        // odd case where a symbol is missing an outline, so an undefined gets passed in
+        svg.addProp('stroke', 'none');
+    }
 
 }
 

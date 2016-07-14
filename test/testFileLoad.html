@@ -71,6 +71,12 @@
                 map.addLayer(happyLayer);
 
                 console.log(happyLayer);
+
+                var attbundle = api.attribs.loadLayerAttribs(happyLayer);
+                attbundle["0"].layerData.then(ld => {
+                    console.log('happy layer data', ld);
+                });
+
             });
 
 
@@ -88,6 +94,11 @@
             csvPromise.then(function(csvLayer){
                 map.addLayer(csvLayer);
                 console.log(csvLayer);
+
+                var attbundle2 = api.attribs.loadLayerAttribs(csvLayer);
+                attbundle2["0"].layerData.then(ld => {
+                    console.log('csv layer data', ld);
+                });
             });
 
             var csvPeeker = api.layer.csvPeek(csvData, ',');
