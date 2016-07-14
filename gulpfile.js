@@ -485,7 +485,6 @@ gulp.task('reloadconfig', 'Repackaging app...', ['validate', 'assetcopy'], funct
  * Start the tests using karma.
  * @param  {boolean} singleRun - True means run once and end (CI), or keep running (dev)
  * @param  {Function} done - Callback to fire when karma is done
- * @return {undefined}
  */
 function startTests(singleRun, done) {
     var excludeFiles = [];
@@ -507,20 +506,17 @@ function startTests(singleRun, done) {
         .pipe(gulp.dest(config.tmp))
         .on('end', () => {
             // wait for templates before starting tests
-            karma = new Server(karmaConfig, karmaCompleted);
+            karma = new Server(karmaConfig);
+            karma.on('run_complete', (browsers, results) => {
+                if (karmaConfig.singleRun) {
+                    log('Karma completed');
+                    done(results.error ? 'There are test failures' + results : null);
+                } else {
+                    log('Karma run completed');
+                }
+            });
             karma.start();
         });
-
-    /**************/
-
-    function karmaCompleted(karmaResult) {
-        log('Karma completed');
-        if (karmaResult === 1) {
-            done('karma: tests failed with code ' + karmaResult);
-        } else {
-            done();
-        }
-    }
 }
 
 /**
