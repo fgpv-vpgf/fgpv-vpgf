@@ -50,6 +50,7 @@
             preLoadApiBlock();
 
             if (waitAttr !== undefined) {
+                reloadService.bookmarkBlocking = true;
                 $rootScope.$on(events.rvBookmarkInit, () => {
                     $rootScope.$broadcast(events.rvReady);
                 });
@@ -58,6 +59,10 @@
             }
         }
 
+        /**
+         * Allows API calls to be exposed before map creation
+         *
+         */
         function preLoadApiBlock() {
             const preMapService = {
                 initialBookmark,
@@ -97,6 +102,10 @@
         $rootScope.$on(events.rvApiReady, () => {
             globalRegistry.getMap($rootElement.attr('id'))._registerMap(service);
             console.log($rootElement.attr('id') + ' registered');
+        });
+
+        $rootScope.$on(events.rvApiHalt, () => {
+            globalRegistry.getMap($rootElement.attr('id'))._deregisterMap();
         });
 
         /**********************/
@@ -161,7 +170,10 @@
          * @param {Number} zoom                 The level to zoom to
          */
         function centerAndZoom(x, y, spatialReference, zoom) {
-            const zoomPoint = gapiService.gapi.proj.Point(x, y, spatialReference);
+            const coords = gapiService.gapi.proj.localProjectPoint(
+                                spatialReference, geoService.mapObject.spatialReference, { x: x, y: y }
+                    );
+            const zoomPoint = gapiService.gapi.proj.Point(coords.x, coords.y, geoService.mapObject.spatialReference);
 
             // separate zoom and center calls, calling centerAndZoom sets the map to an extent made up of NaN
             geoService.mapObject.setZoom(zoom);

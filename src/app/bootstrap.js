@@ -163,6 +163,10 @@
             );
 
             return this;
+        },
+
+        _deregisterMap() {
+            this._init();
         }
     };
     /* jshint:enable requireSpacesInAnonymousFunctionExpression */
