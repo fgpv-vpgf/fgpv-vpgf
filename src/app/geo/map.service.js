@@ -83,9 +83,7 @@
                 }
 
                 // set selected base map id
-                if (!geoState.selectedBaseMapId) {
-                    setSelectedBaseMap(config.map.initialBasemapId || config.baseMaps[0].id, config);
-                }
+                setSelectedBaseMap(config.map.initialBasemapId || config.baseMaps[0].id, config);
 
                 // FIXME remove the hardcoded settings when we have code which does this properly
                 mapObject = gapiService.gapi.mapManager.Map(geoState.mapNode, {
