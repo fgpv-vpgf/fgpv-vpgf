@@ -84,7 +84,8 @@
         "src/uncompressed/TimelineLite.js",
         "src/uncompressed/TweenLite.js",
         "src/uncompressed/plugins/CSSPlugin.js",
-        "src/uncompressed/plugins/EaselPlugin.js"
+        "src/uncompressed/plugins/EaselPlugin.js",
+        "src/uncompressed/plugins/ScrollToPlugin.js"
       ]
     },
     "bezier-easing": {

@@ -1,3 +1,4 @@
+/* global TweenLite */
 (() => {
     'use strict';
 
@@ -66,25 +67,55 @@
                 }
             };
 
+            // set an empty animation object in the event a method is called prior
+            // to a scroll animation being created
+            let scrollAnimation = { pause: () => {}, isActive: () => false };
+
             // on drag start, add data attribute to the list indicating which sort group the dragged layer can be accepted into
             // this will highlight invalid drop target
-            scope.$on('toc-bag.drag', (evt, el, source) => {
-                const sortGroup = el.scope().item.sortGroup;
+            scope.$on('toc-bag.drag', (evt, elem, source) => {
+                const sortGroup = elem.scope().item.sortGroup;
                 source.attr('data-sort-group', sortGroup);
+
+                // handle autoscroll when dragging layers
+                let scrollElem = source.closest('md-content');
+                el.on('mousemove', event => {
+                    // Animation time is proportionate to the actual pixel distance to be scolled
+                    // times 3 - where 3 is the maximum animation time in seconds
+                    let scrollSpeed = (scrollElem.scrollTop() /
+                        (scrollElem[0].scrollHeight - scrollElem.height())) * 3;
+
+                    // scrolling upwards
+                    if (scrollElem.offset().top > event.pageY) {
+                        scrollAnimation = !scrollAnimation.isActive() ?
+                            TweenLite.to(scrollElem, scrollSpeed, { scrollTo: { y: 0 } }) :
+                            scrollAnimation;
+
+                    // scrolling downwards
+                    } else if (scrollElem.height() - event.pageY <= 0) {
+                        scrollAnimation = !scrollAnimation.isActive() ?
+                            TweenLite.to(scrollElem, 3 - scrollSpeed, { scrollTo:
+                                { y: scrollElem[0].scrollHeight - scrollElem.height() } }) : scrollAnimation;
+
+                    // stop scrolling
+                    } else {
+                        scrollAnimation.pause();
+                    }
+                });
 
                 // console.log('Drag start', evt, el, source);
             });
 
             // on drop, remove data attribute from the list restoring normal appearance
             // call geoService to reorder layers
-            scope.$on('toc-bag.drop', (evt, el, target, source, sibling) => { // , sibling) => {
+            scope.$on('toc-bag.drop', (evt, elem, target, source, sibling) => { // , sibling) => {
                 source.removeAttr('data-sort-group');
 
                 // hack
                 // when dropped at the end of the list, sibling, instead of being null as per docs, is the mirror node, argh...
                 // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
 
-                const elementLayerId = el.scope().item.id.replace('placeholder', '');
+                const elementLayerId = elem.scope().item.id.replace('placeholder', '');
 
                 let dropLayerId;
 
@@ -101,19 +132,20 @@
                     dropLayerId = typeof dropLayerId === 'undefined' ?
                         undefined : dropLayerId.id.replace('placeholder', '');
                 }
-
-                // console.log(elementLayerId, dropLayerId);
-
                 geoService.moveLayer(elementLayerId, dropLayerId);
 
-                // console.log('Drag complete', evt, el, target, source, sibling);
+                // stop and remove autoscroll
+                el.off('mousemove');
+                scrollAnimation.pause();
             });
 
             // on cancle, remove data attribute from the list restoring normal appearance
-            scope.$on('toc-bag.cancel', (evt, el, target, source) => { // , sibling) => {
+            scope.$on('toc-bag.cancel', (evt, elem, target, source) => { // , sibling) => {
                 source.removeAttr('data-sort-group');
 
-                // console.log('Drag complete', evt, el, target, source, sibling);
+                // stop and remove autoscroll
+                el.off('mousemove');
+                scrollAnimation.pause();
             });
         }
     }
