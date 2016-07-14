@@ -215,7 +215,7 @@
                  */
                 function flattenWmsLayerList(layers, level = 0) {
                     return [].concat.apply([], layers.map(layer => {
-                        layer.indent = Array.from(Array(level)).join('-');
+                        layer.indent = Array.from(Array(level)).fill('-').join('');
 
                         if (layer.layers.length > 0) {
                             return [].concat(layer, flattenWmsLayerList(layer.layers, ++level));
@@ -235,7 +235,7 @@
                         const level = calculateLevel(layer, layers);
 
                         layer.level = level;
-                        layer.indent = Array.from(Array(level)).join('-');
+                        layer.indent = Array.from(Array(level)).fill('-').join('');
                     });
 
                     function calculateLevel(layer, layers) {
