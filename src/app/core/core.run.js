@@ -43,6 +43,8 @@
         /**
          * Waits on bookmark to modify the config if needed
          *
+         * @function readyDelay
+         * @private
          */
         function readyDelay() {
             const waitAttr = $rootElement.attr('rv-wait');
@@ -62,6 +64,8 @@
         /**
          * Allows API calls to be exposed before map creation
          *
+         * @function preLoadApiBlock
+         * @private
          */
         function preLoadApiBlock() {
             const preMapService = {
@@ -146,6 +150,7 @@
         /**
          * Retrieves a bookmark for the current state
          *
+         * @function getBookmark
          * @returns {String}    The bookmark containing the state of the viewer
          */
         function getBookmark() {
@@ -155,6 +160,7 @@
         /**
          * Updates the map using bookmark. If initial is set, will only be used if its the first call to be received.
          *
+         * @function useBookmark
          * @param {String} bookmark     The bookmark containing the desired state of the viewer
          */
         function useBookmark(bookmark) {
@@ -164,6 +170,7 @@
         /**
          * Updates the extent of the map.
          *
+         * @function centerAndZoom
          * @param {Array}  x                    The x coord to center on
          * @param {Number} y                    The y coord to center on
          * @param {Object} spatialReference     The spatial Reference for the coordinates
