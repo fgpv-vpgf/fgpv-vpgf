@@ -193,6 +193,7 @@
         /**
          * Stores configPromise to be returned using getCurrent.
          *
+         * @function setCurrent
          * @param {Promise} configPromise   A promise resolving with a config (usually modified by a bookmark)
          */
         function setCurrent(configPromise) {

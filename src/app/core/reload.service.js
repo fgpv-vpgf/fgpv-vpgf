@@ -28,11 +28,12 @@
          * Maintains state over projection switch. Updates the config to the current state,
          * sets the new basemap, and then reloads the map.
          *
+         * @function loadNewProjection
          * @param {String} basemapId     The id of the basemap to switch to
          */
         function loadNewProjection(basemapId) {
             $rootScope.$broadcast(events.rvApiHalt);
-            let bookmark = bookmarkService.getBookmark();
+            const bookmark = bookmarkService.getBookmark();
 
             // get original config and add bookmark to it
             configService.getOriginal().then(config => {
@@ -50,6 +51,7 @@
          * Maintains state over language switch. Gets the current state, switches to the new lang and its config,
          * and then reloads the map.
          *
+         * @function loadNewLang
          * @param {String} lang      The code of the language to switch to
          */
         function loadNewLang(lang) {
@@ -65,11 +67,12 @@
         /**
          * Applies 'bookmark' to the config and then broadcasts the bookmarkReady event or reloads the map
          *
+         * @function loadWithBookmark
          * @param {String} bookmark     The bookmark containing the desired state of the viewer
          * @param {Bool} initial        Whether this call was meant to initialize the viewer
          */
         function loadWithBookmark(bookmark, initial) {
-            // only let the call through if its first and the initial call, or its not the initial call
+            // only let the call through if it's first and the initial call, or it's not the initial call
             if (!initial || service.bookmarkBlocking) {
                 $rootScope.$broadcast(events.rvApiHalt);
 

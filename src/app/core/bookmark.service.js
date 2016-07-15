@@ -17,8 +17,7 @@
 
         const service = {
             getBookmark,
-            parseBookmark,
-            updateConfig
+            parseBookmark
         };
 
         return service;
@@ -28,6 +27,7 @@
         /**
          * Creates a bookmark containing the current state of the viewer
          *
+         * @function getBookmark
          * @returns {String}    The bookmark containing basemap, extent, layers and their options
          */
         function getBookmark() {
@@ -60,6 +60,7 @@
         /**
          * Reads and applies the options specified by bookmark to config
          *
+         * @function parseBookmark
          * @param {String} bookmark     A bookmark created by getBookmark
          * @param {Object} origConfig   The config object to modify
          * @returns {Object}            The config with changes from the bookmark
@@ -131,15 +132,20 @@
             }
         }
 
+        /**
+         * Adds RCS layers to a config, used to modify a bookmark config before first use
+         *
+         * @function addRcsConfigs
+         * @private
+         * @param {Object} rcsBookmarks     Config snippets for rcs layers created from a bookmark
+         * @param {Object} config           The config to add the final rcs layers to
+         * @returns {Promise}               A promise that resolves with the modified config
+         */
         function addRcsConfigs(rcsBookmarks, config) {
             if (Object.keys(rcsBookmarks).length > 0) {
                 return configService.rcsAddKeys(Object.keys(rcsBookmarks).map(id => id.split('.')[1]))
                     .then(rcsConfigs => {
-                        const configSnippets = [];
-                        rcsConfigs.forEach(rcsConfig => {
-                            angular.merge(rcsConfig, rcsBookmarks[rcsConfig.id]);
-                            configSnippets.push(rcsConfig);
-                        });
+                        const configSnippets = rcsConfigs.map(cfg => angular.merge(cfg, rcsBookmarks[cfg.id]));
                         config.layers = config.layers.concat(configSnippets);
 
                         return config;
@@ -151,19 +157,10 @@
         }
 
         /**
-         * Gets the current state and applies it to the config.
-         *
-         * @returns {Promise}   A promise which can be chained onto to wait for the config to be updated.
-         */
-        function updateConfig() {
-            return configService.getCurrent().then(config => {
-                parseBookmark(getBookmark(), config);
-            });
-        }
-
-        /**
          * Encodes the string using base64 and replaces '/' and '+'. This is a URL safe encoding; https://tools.ietf.org/html/rfc4648#page-7
          *
+         * @function encode64
+         * @private
          * @param {String} string   The string to encode
          * @returns {String}        The encoded string
          */
@@ -174,6 +171,8 @@
         /**
          * Decodes a string that was encoded using {@link encode64}. URL safe; https://tools.ietf.org/html/rfc4648#page-7
          *
+         * @function decode64
+         * @private
          * @param {String} string   The string to decode
          * @returns {String}        The decoded string
          */
