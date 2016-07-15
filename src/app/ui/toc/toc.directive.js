@@ -85,7 +85,7 @@
                         (scrollElem[0].scrollHeight - scrollElem.height())) * 3;
 
                     // scrolling upwards
-                    if (scrollElem.offset().top > event.pageY) {
+                    if (scrollElem.offset().top + dragElement.height() > event.pageY) {
                         if (!scrollAnimation.isActive()) {
                             scrollAnimation = TweenLite.to(scrollElem, scrollSpeed, { scrollTo: { y: 0 } });
                         }
