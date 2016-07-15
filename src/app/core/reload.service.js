@@ -72,8 +72,11 @@
          * @param {Bool} initial        Whether this call was meant to initialize the viewer
          */
         function loadWithBookmark(bookmark, initial) {
-            // only let the call through if it's first and the initial call, or it's not the initial call
-            if (!initial || service.bookmarkBlocking) {
+            if (!bookmark) {
+                $rootScope.$broadcast(events.rvBookmarkInit);
+                service.bookmarkBlocking = false;
+            } else if (!initial || service.bookmarkBlocking) {
+                // only let the call through if it's first and the initial call, or it's not the initial call
                 $rootScope.$broadcast(events.rvApiHalt);
 
                 // modify the original config
