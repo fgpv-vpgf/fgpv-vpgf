@@ -126,7 +126,7 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
             <button onclick="getBookmark()">Get Link</button>
             <input type="text" id="bookmarkDisplay" style="width:100%;"></input>
         </div>
-        <div id="fgpmap" class="fgpv" rv-config="config.rcs.fr-CA.json" rv-langs='["fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-restore-bookmark="bookmark"></div>
+        <div id="fgpmap" class="fgpv" rv-config="config.rcs.fr-CA.json" rv-langs='["fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-wait></div>
     </main>
     <footer role="contentinfo" id="wb-info" class="visible-sm visible-md visible-lg wb-navcurr">
     </footer>
@@ -213,13 +213,9 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
             RV.getMap('fgpmap').loadRcsLayers(keysArr);
         }
 
-        function bookmark(){
-            return new Promise(function (resolve) {
-                var bookmark = queryStr.rv;
-                console.log(bookmark);
-                resolve(bookmark);
-            });
-        }
+        var bookmark = queryStr.rv;
+        console.log(bookmark);
+        RV.getMap('fgpmap').initialBookmark(bookmark);
 
         function getBookmark(){
             RV.getMap('fgpmap').getBookmark().then(function (bookmark) {

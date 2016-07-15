@@ -107,9 +107,16 @@
     /* jscs:disable requireSpacesInAnonymousFunctionExpression */
     const mapProxy = {
         _appPromise: null,
+        _initAppPromise: null,
 
         _proxy(action, ...args) {
             return this._appPromise.then(appInstance =>
+                appInstance[action](...args)
+            );
+        },
+
+        _initProxy(action, ...args) {
+            return this._initAppPromise.then(appInstance =>
                 appInstance[action](...args)
             );
         },
@@ -126,6 +133,14 @@
             return this._proxy('getBookmark');
         },
 
+        useBookmark(bookmark) {
+            this._proxy('useBookmark', bookmark);
+        },
+
+        initialBookmark(bookmark) {
+            this._initProxy('initialBookmark', bookmark);
+        },
+
         centerAndZoom(x, y, spatialRef, zoom) {
             this._proxy('centerAndZoom', x, y, spatialRef, zoom);
         },
@@ -139,7 +154,19 @@
                     resolve(appInstance)
             );
 
+            this._initAppPromise = new Promise((resolve) =>
+                // store a callback function in the proxy object itself for map instances to call upon readiness
+                this._registerPreLoadApi = appInstance =>
+                    // resolve with the actual instance of the map;
+                    // after this point, all queued calls to `loadRcsLayers`, `setLanguage`, etc. will trigger
+                    resolve(appInstance)
+            );
+
             return this;
+        },
+
+        _deregisterMap() {
+            this._init();
         }
     };
     /* jshint:enable requireSpacesInAnonymousFunctionExpression */

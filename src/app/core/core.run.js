@@ -14,21 +14,18 @@
      *
      * The `runBlock` triggers config and locale file loading, sets language of the app.
      */
-    function runBlock($rootScope, $rootElement, $translate, $q, events, configService, gapiService,
-            bookmarkService) {
+    function runBlock($rootScope, $rootElement, $translate, $q, globalRegistry, reloadService, events, configService,
+            gapiService) {
 
         const promises = [
-            configService.initialize()
-                .then(config => bookmarkCallback(config)),
+            configService.initialize(),
             gapiService.isReady
         ];
 
         // wait on the config and geoapi
         $q.all(promises)
             .then(() => {
-                // initialize other services, if any
-                console.log('Config initialized');
-                $rootScope.$broadcast(events.rvReady);
+                readyDelay();
             })
             .catch(reason => {
                 console.error('Everything broke');
@@ -44,39 +41,45 @@
         /********************/
 
         /**
-         * Uses the bookmark to modify the config if needed
+         * Waits on bookmark to modify the config if needed
          *
-         * @param {Object}   config     Config object for the viewer
-         * @returns {Object}            The config modified by the bookmark, if no bookmark just returns the config
+         * @function readyDelay
+         * @private
          */
-        function bookmarkCallback(config) {
-            const bookmarkAttr = $rootElement.attr('rv-restore-bookmark');
+        function readyDelay() {
+            const waitAttr = $rootElement.attr('rv-wait');
 
-            if (bookmarkAttr) {
-                // Tests to see if the Attr is a function
-                const namespaces = bookmarkAttr.split('.');
-                let context = window;
-                namespaces.forEach(scope => {
-                    try {
-                        context = context[scope];
-                    } catch (e) {
-                        // No need for an error, this just means we use the bookmarkAttr as a bookmark string
-                    }
+            preLoadApiBlock();
+
+            if (waitAttr !== undefined) {
+                reloadService.bookmarkBlocking = true;
+                $rootScope.$on(events.rvBookmarkInit, () => {
+                    $rootScope.$broadcast(events.rvReady);
                 });
-                if (typeof context === 'function') {
-                    context().then(bookmark => {
-                        if (bookmark) {
-                            return bookmarkService.parseBookmark(bookmark, config);
-                        } else {
-                            return config;
-                        }
-                    });
-                } else {
-                    return bookmarkService.parseBookmark(bookmarkAttr, config);
-                }
             } else {
-                return config;
+                $rootScope.$broadcast(events.rvReady);
             }
+        }
+
+        /**
+         * Allows API calls to be exposed before map creation
+         *
+         * @function preLoadApiBlock
+         * @private
+         */
+        function preLoadApiBlock() {
+            const preMapService = {
+                initialBookmark,
+            };
+
+            globalRegistry.getMap($rootElement.attr('id'))._registerPreLoadApi(preMapService);
+
+            /******************/
+
+            function initialBookmark(bookmark) {
+                reloadService.loadWithBookmark(bookmark, true);
+            }
+
         }
     }
 
@@ -95,13 +98,18 @@
             setLanguage,
             loadRcsLayers,
             getBookmark,
-            centerAndZoom
+            centerAndZoom,
+            useBookmark
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
         $rootScope.$on(events.rvApiReady, () => {
             globalRegistry.getMap($rootElement.attr('id'))._registerMap(service);
             console.log($rootElement.attr('id') + ' registered');
+        });
+
+        $rootScope.$on(events.rvApiHalt, () => {
+            globalRegistry.getMap($rootElement.attr('id'))._deregisterMap();
         });
 
         /**********************/
@@ -142,6 +150,7 @@
         /**
          * Retrieves a bookmark for the current state
          *
+         * @function getBookmark
          * @returns {String}    The bookmark containing the state of the viewer
          */
         function getBookmark() {
@@ -149,15 +158,29 @@
         }
 
         /**
+         * Updates the map using bookmark. If initial is set, will only be used if its the first call to be received.
+         *
+         * @function useBookmark
+         * @param {String} bookmark     The bookmark containing the desired state of the viewer
+         */
+        function useBookmark(bookmark) {
+            reloadService.loadWithBookmark(bookmark, false);
+        }
+
+        /**
          * Updates the extent of the map.
          *
+         * @function centerAndZoom
          * @param {Array}  x                    The x coord to center on
          * @param {Number} y                    The y coord to center on
          * @param {Object} spatialReference     The spatial Reference for the coordinates
          * @param {Number} zoom                 The level to zoom to
          */
         function centerAndZoom(x, y, spatialReference, zoom) {
-            const zoomPoint = gapiService.gapi.proj.Point(x, y, spatialReference);
+            const coords = gapiService.gapi.proj.localProjectPoint(
+                                spatialReference, geoService.mapObject.spatialReference, { x: x, y: y }
+                    );
+            const zoomPoint = gapiService.gapi.proj.Point(coords.x, coords.y, geoService.mapObject.spatialReference);
 
             // separate zoom and center calls, calling centerAndZoom sets the map to an extent made up of NaN
             geoService.mapObject.setZoom(zoom);

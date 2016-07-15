@@ -42,14 +42,18 @@
         let isInitialized = false;
 
         const service = {
-            data: {},
-            getCurrent,
             currentLang,
+            getCurrent,
+            getOriginal,
             initialize,
             ready,
             rcsAddKeys,
-            rcsUrl: ''
+            rcsUrl: '',
+            setCurrent
         };
+
+        const originalConfigs = {};
+        let bookmarkConfig;
 
         const partials = {}; // partial config promises, one array per language entry
         const configFile = {};
@@ -109,7 +113,7 @@
                     fileInit(configAttr, langs);
 
                     langs.forEach(lang => {
-                        service.data[lang] = $q.all(partials[lang])
+                        originalConfigs[lang] = $q.all(partials[lang])
                             .then(configParts => {
                                 // generate a blank config, merge in all the stuff we have loaded
                                 // the merged config is our promise result for all to use
@@ -134,11 +138,11 @@
                     });
 
                     // initialize the app once the default language's config is loaded
-                    // FIXME: replace with getCurrent().then / service.data[Default language] if we have a way to check
-                    service.data[langs[0]]
+                    // FIXME: replace with getCurrent().then / originalConfigs[Default language] if we have a way to check
+                    originalConfigs[langs[0]]
                         .then(() => {
                             isInitialized = true;
-                            fulfill(service.data[langs[0]]);
+                            fulfill(originalConfigs[langs[0]]);
                         })
                         .catch(error => {
                             reject(error);
@@ -167,7 +171,7 @@
         }
 
         /**
-         * Returns the currently language.
+         * Returns the current language.
          * @function currentLang
          * @return {String} the current language string
          */
@@ -176,12 +180,34 @@
         }
 
         /**
-         * Returns the currently used config. Language is determined by asking $translate.
+         * Returns the currently used config. If a bookmark-modified config is stored it is returned,
+         * otherwise the original config for the language is returned.
+         *
          * @function getCurrent
-         * @return {Promise}     The config promise object tied to the current language resolving with that config
+         * @return {Promise}     The config promise object as described above
          */
         function getCurrent() {
-            return service.data[currentLang()];
+            return bookmarkConfig || originalConfigs[currentLang()];
+        }
+
+        /**
+         * Stores configPromise to be returned using getCurrent.
+         *
+         * @function setCurrent
+         * @param {Promise} configPromise   A promise resolving with a config (usually modified by a bookmark)
+         */
+        function setCurrent(configPromise) {
+            bookmarkConfig = configPromise;
+        }
+
+        /**
+         * Returns the original config for the current language.
+         *
+         * @function getOriginal
+         * @return {Promise}    The config promise resolving with the lang's original config
+         */
+        function getOriginal() {
+            return originalConfigs[currentLang()];
         }
 
         /**
@@ -242,7 +268,7 @@
         function rcsAddKeys(keys) {
 
             // strip languages out of data object.
-            const langs =  Object.keys(service.data);
+            const langs =  Object.keys(originalConfigs);
 
             // get array of promises containing RCS bundles per language
             const rcsDataSet = rcsLoad(service.rcsUrl, keys, langs);
@@ -259,7 +285,7 @@
                             newIds = rcsConfig.layers.map(layer => layer.id);
                         }
 
-                        service.data[lang].then(fullConfig => {
+                        originalConfigs[lang].then(fullConfig => {
                             // call the merge into config, passing result and targeting innards of config service (all languages)
                             // make rcs value an array, as it will be a singleton with all things mooshed into .layers
                             mergeConfigParts(fullConfig, [rcsConfig]);
