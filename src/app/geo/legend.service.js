@@ -94,16 +94,14 @@
                 const state = legendEntryFactory.dynamicEntryMasterGroup(layer.config, layer, false);
                 layer.legendEntry = state;
 
-                // TODO: consider using the layerRegistry[layer.id].attributeBundle[featureIdx].layerInfo.then.legend instead of web call
-                //       this logic would be inside the loop over all valid slaves (there is one .layerInfo for each leaf layer)
-                const symbologyPromise = getMapServerSymbology(state.url);
-
-                // wait for symbology to load and ...
-                symbologyPromise.then(data =>  // ... and apply them to existing child items
-                        data.layers.forEach(layer => applySymbology(state.slaves[layer.layerId], layer)));
-
-                // assign feature counts only to active sublayers
+                // assign feature counts and symbols only to active sublayers
                 state.walkItems(layerEntry => {
+                    // get the legend from the attrib bundle, use it to derive the symbol
+                    layer._attributeBundle[layerEntry.featureIdx.toString()].layerData.then(ld => {
+                        // since a geoApi generated legend only has one element, we can omit the search
+                        applySymbology(layerEntry, ld.legend.layers[0]);
+                    });
+
                     getServiceFeatureCount(`${state.url}/${layerEntry.featureIdx}`).then(count =>
                         // FIXME _layer reference is bad
                         applyFeatureCount(layer._layer.geometryType, layerEntry, count));
