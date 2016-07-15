@@ -109,8 +109,8 @@ Table of Content data table flag label,toc.label.flag.data.table,Layer has viewa
 Table of Content data table flag tootlip,toc.tooltip.flag.data.table,Layer has viewable data,Données disponibles pour la visualisation associées à cette couche
 Table of Content data filter flag label,toc.label.flag.data.filter,Layer data is filtered,Couche de données filtrée
 Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer data is filtered,Couche de données filtrée
-Table of Content query flag label,toc.label.flag.query,query is turned off,Requête désactivée
-Table of Content query flag tootlip,toc.tooltip.flag.query,query is turned off,Requête désactivée
+Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,Couche sera exclue de la carte - cliquez sur les résultats
+Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,Couche sera exclue de la carte - cliquez sur les résultats
 Table of Content user flag label,toc.label.flag.user,Toggle user,Basculer utilisateur
 Table of Content user flag tootlip,toc.tooltip.flag.user,Toggle user,Basculer utilisateur
 Table of Content error state label,toc.label.state.error,Error,Erreur

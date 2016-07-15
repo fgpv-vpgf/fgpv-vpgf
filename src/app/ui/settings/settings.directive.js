@@ -101,7 +101,13 @@
 
             if (tocEntry.type === 'group') {
                 // set include subgroup to true to cascade to all (group, subgroups and items)
-                tocEntry.walkItems(item => item.options.query.value = value, true);
+                tocEntry.walkItems(item => {
+                    item.options.query.value = value;
+                    item.flags.query.visible = !value;
+                }, true);
+            } else {
+                tocEntry.options.query.value = value;
+                tocEntry.flags.query.visible = !value;
             }
         }
 
