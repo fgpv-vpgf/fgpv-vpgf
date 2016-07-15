@@ -98,7 +98,7 @@
                 state.walkItems(layerEntry => {
                     // get the legend from the attrib bundle, use it to derive the symbol
                     layer._attributeBundle[layerEntry.featureIdx.toString()].layerData.then(ld => {
-                        // since a geoApi generated legend only has one element, we can omit the search
+                        // since a geoApi generated legend only has one element, we can omit searching layers[] for a match
                         applySymbology(layerEntry, ld.legend.layers[0]);
                     });
 
@@ -137,35 +137,21 @@
                 const state = legendEntryFactory.singleEntryItem(layer.config, layer);
                 layer.legendEntry = state;
 
-                // HACK: to get file based layers working; this will be solved by the layer record ana legend entry hierarchy
-                // TODO: file based layers need to have their symbology generated
-                // TODO: consider using the layerRegistry[layer.id].attributeBundle[featureIdx].layerInfo.then.legend instead of web call
                 if (typeof state.url !== 'undefined') {
-                    const symbologyPromise = getMapServerSymbology(state.url);
-
-                    symbologyPromise.then(data =>
-                        // fixes issue #869 by finding layer object using layerId instead of picking state.featureIdx'th item from the array
-                        // TODO: switch to getting symbology from the attribute bundle
-                        applySymbology(state, data.layers.find(layer =>
-                            layer.layerId === parseInt(state.featureIdx))));
-
                     // assign feature count
                     // FIXME _layer call is bad
                     getServiceFeatureCount(`${state.url}/${state.featureIdx}`).then(count =>
                         applyFeatureCount(layer._layer.geometryType, state, count));
                 } else {
                     applyFeatureCount(layer._layer.geometryType, state, layer._layer.graphics.length);
-
-                    // TODO if we implement the above TODO about using symbology bundle, can likely merge parts of the if/else
-                    // FIXME _attributeBundle call is probably bad
-                    layer._attributeBundle[state.featureIdx].layerData.then(ld => {
-                        // NOTE we could cheat and not search for layerId = featureIdx, as file based is always 0
-                        // however, doing the search gives us protection if we ever support multi-child files
-                        applySymbology(state, ld.legend.layers.find(layer =>
-                            layer.layerId === parseInt(state.featureIdx)));
-                    });
-
                 }
+
+                // FIXME _attributeBundle call is probably bad
+                // get the legend from the attrib bundle, use it to derive the symbol
+                layer._attributeBundle[state.featureIdx].layerData.then(ld => {
+                    // since a geoApi generated legend only has one element, we can omit searching layers[] for a match
+                    applySymbology(state, ld.legend.layers[0]);
+                });
 
                 return state;
             }
@@ -261,7 +247,7 @@
 
         }
 
-        /**
+        /*
          * TODO: Work in progress... Works fine for feature layers only right now; everything else gest a generic icon.
          * TODO: move to geoapi as it's stateless and very specific.
          * Scrapes feaure and dynamic layers for their symbology.
@@ -269,7 +255,7 @@
          * @function getMapServerSymbology
          * @param  {String} layerUrl service url
          * @returns {Array} array of legend items
-         */
+         *
         function getMapServerSymbology(layerUrl) {
             return $http.jsonp(`${layerUrl}/legend?f=json&callback=JSON_CALLBACK`)
                 .then(result => {
@@ -285,6 +271,7 @@
                     console.error(error);
                 });
         }
+        */
 
         /**
          * Get feature count from a layer.
