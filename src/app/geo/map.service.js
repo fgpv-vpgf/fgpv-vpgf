@@ -130,6 +130,10 @@
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
                 service.mapManager.BasemapControl.setBasemap(geoState.selectedBaseMapId);
 
+                if (config.map.initialBasemapId && config.map.initialBasemapId.startsWith('blank_basemap_')) {
+                    hideBaseMap(true);
+                }
+
                 // FIXME temp link for debugging
                 window.FGPV = {
                     layers: service.layers
@@ -571,7 +575,7 @@
                     });
 
                     geoState.blankBaseMapId = selectedBaseMap.id;
-                    hideBaseMap(true);
+                    geoState.selectedBaseMapId = selectedBaseMap.id;
                 }
 
                 // get selected base map extent set id, so we can store teh map extent
