@@ -37,8 +37,12 @@
                 align-items: center;
 
                 .md-button {
-                    background: radial-gradient(ellipse at center, rgba(255,255,255,1) 30%,rgba(255,255,255,0.32) 100%)
+                    background: radial-gradient(ellipse at center, rgba(255,255,255,1) 30%,rgba(255,255,255,0.32) 100%);
                 }
+            }
+
+            .md-ripple-container{
+                overflow: hidden;
             }
         }
 
