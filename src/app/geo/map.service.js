@@ -30,6 +30,8 @@
                 }
             });
 
+            const blankBaseMapIdPattern = 'blank_basemap_';
+
             // this `service` object will be exposed through `geoService`
             const service = {
                 /**
@@ -129,6 +131,10 @@
 
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
                 service.mapManager.BasemapControl.setBasemap(geoState.selectedBaseMapId);
+
+                if (config.map.initialBasemapId && config.map.initialBasemapId.startsWith(blankBaseMapIdPattern)) {
+                    hideBaseMap(true);
+                }
 
                 // FIXME temp link for debugging
                 window.FGPV = {
@@ -549,8 +555,6 @@
             * @param {String} id of base map
             */
             function setSelectedBaseMap(id) {
-                const blankBaseMapIdPattern = 'blank_basemap_';
-
                 geoState.selectedBaseMapId = id;
 
                 let selectedBaseMap;
@@ -571,7 +575,7 @@
                     });
 
                     geoState.blankBaseMapId = selectedBaseMap.id;
-                    hideBaseMap(true);
+                    geoState.selectedBaseMapId = selectedBaseMap.id;
                 }
 
                 // get selected base map extent set id, so we can store teh map extent
