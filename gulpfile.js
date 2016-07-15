@@ -89,7 +89,7 @@ gulp.task('plato', 'Generate visualizer report', function (done) {
  */
 gulp.task('clean', 'Delete all build and report files', ['clean-sass'],
     function (done) {
-        var delconfig = [].concat(config.build, config.report);
+        var delconfig = [].concat(config.libBuild, config.sampleBuild, config.report);
         log('Cleaning: ' + $.util.colors.blue(delconfig));
         del(delconfig, done);
     });
@@ -399,7 +399,7 @@ gulp.task('serve:dev', 'Build the application and start a local development serv
  * @return {Stream}
  */
 gulp.task('test', 'Run style checks and unit tests',
-    ['vet'],
+    ['vet', 'validate'],
     function (done) {
         startTests(true, done);
     });
@@ -410,7 +410,7 @@ gulp.task('test', 'Run style checks and unit tests',
  * Watch for file changes and re-run tests on each change
  */
 gulp.task('test:auto', 'Run unit tests and keep watching for changes',
-    ['vet'],
+    ['vet', 'validate'],
     function (done) {
         startTests(false, done);
     });
