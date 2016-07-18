@@ -78,6 +78,12 @@
                     tooltip: 'toc.tooltip.reload',
                     action: entry => geoService.reloadLayer(entry)
                 },
+                boundaryZoom: {
+                    icon: `action:zoom_in`,
+                    label: 'toc.label.boundaryZoom',
+                    tooltip: 'toc.tooltip.boundaryZoom',
+                    action: zoomToBoundary
+                },
                 remove: {
                     icon: 'action:delete',
                     label: 'toc.label.remove',
@@ -239,6 +245,10 @@
 
             // set the layer visible
             toggleVisiblity(entry, true);
+        }
+
+        function zoomToBoundary(layer) {
+            geoService.zoomToBoundary(layer.id);
         }
 
         // temp function to open layer groups
