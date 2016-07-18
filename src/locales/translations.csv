@@ -141,8 +141,8 @@ Table of Content loading state label,toc.label.state.loading,Updating,Mise à jo
 Table of Content loading state tootlip,toc.tooltip.state.loading,Updating,Mise à jour
 Table of Content templates placeholder loading label,toc.tmp.label.state.loading,Loading layer...,Chargement de la couche...
 Table of Content templates placeholder loading error label,toc.tmp.label.error.loading,Can't load layer,Impossible de charger la couche
-Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,[FR] Zoom to Layer boundaryZoom
-Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,[FR] Zoom to Layer boundaryZoom
+Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
+Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
 Geometry types,geometry.type.generic, feature|features, entité|entités
 Geometry types,geometry.type.esriGeometryPoint, point|points, point|points
 Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, polygone|polygones
