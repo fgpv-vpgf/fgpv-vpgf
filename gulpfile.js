@@ -240,7 +240,7 @@ function jsbuild() {
 // NOTE assetcopy should only be used for samples for development
 // all assets needed by the library should be inlined if possible
 gulp.task('assetcopy', 'Copy assets to the samples directory', () =>
-    gulp.src(config.staticAssets, { base: config.src })
+    gulp.src(config.staticAssets, { base: config.src + 'samples/' })
         .pipe(gulp.dest(config.sampleBuild))
 );
 
