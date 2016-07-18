@@ -42,7 +42,7 @@
                 background: linear-gradient(#CFD8DC, #FFFFFF);
 
                 img {
-                    flex-shrink: 0;
+                    flex-shrink: 0; // IE11 fix, see https://github.com/philipwalton/flexbugs#6-the-default-flex-value-has-changed
                     max-width: 100%;
                     max-height: 100%;
                 }
