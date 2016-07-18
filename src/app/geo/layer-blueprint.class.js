@@ -130,8 +130,8 @@
                     // TODO: throw error ?
                     console.error('Service layer needs a url.');
                     return;
-                } else {
-                    // `replace` strips trailing slashes
+                } else if (initialConfig.layerType === Geo.Layer.Types.FeatureLayer) {
+                    // `replace` strips trailing slashes. Assists in plucking index off url.
                     initialConfig.url = initialConfig.url.replace(/\/+$/, '');
                 }
 
