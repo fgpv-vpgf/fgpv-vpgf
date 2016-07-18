@@ -236,6 +236,10 @@
                 "opacity": {
                     "$ref": "#/definitions/opacityOptionNode"
                 },
+                "boundaryZoom": {
+                    "$ref": "#/definitions/option",
+                    "description": "Zoom to layer boundary in the layer selector"
+                },
                 "metadata": {
                     "$ref": "#/definitions/option",
                     "description": "Metadata toggle in the layer selector"
@@ -273,6 +277,10 @@
                 },
                 "opacity": {
                     "$ref": "#/definitions/opacityOptionNode"
+                },
+                "boundaryZoom": {
+                    "$ref": "#/definitions/option",
+                    "description": "Zoom to layer boundary in the layer selector"
                 },
                 "metadata": {
                     "$ref": "#/definitions/option",
@@ -322,6 +330,10 @@
                 "opacity": {
                     "$ref": "#/definitions/opacityOptionNode"
                 },
+                "boundaryZoom": {
+                    "$ref": "#/definitions/option",
+                    "description": "Zoom to layer boundary in the layer selector"
+                },
                 "metadata": {
                     "$ref": "#/definitions/option",
                     "description": "Metadata toggle in the layer selector"
@@ -366,6 +378,10 @@
                 },
                 "opacity": {
                     "$ref": "#/definitions/opacityOptionNode"
+                },
+                "boundaryZoom": {
+                    "$ref": "#/definitions/option",
+                    "description": "Zoom to layer boundary in the layer selector"
                 },
                 "metadata": {
                     "$ref": "#/definitions/option",
