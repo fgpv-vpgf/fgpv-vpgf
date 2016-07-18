@@ -58,8 +58,7 @@
         self.minimize = sideNavigationService.close;
 
         configService.getCurrent().then(data => {
-            self.markerImageSrc = data.logoUrl ||
-                                  'data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E';
+            self.markerImageSrc = data.logoUrl;
         });
 
         self.menu = [{

@@ -2,7 +2,7 @@
     <header class="nav-header">
         <a class="app-logo" href="#">
             <div>
-                <img ng-src="{{self.markerImageSrc}}" alt="">
+                <img ng-src="{{self.markerImageSrc || 'data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E'}}" alt="">
             </div>
             <h1 translate class="app-logotype md-heading">sidenav.title</h1>
         </a>
