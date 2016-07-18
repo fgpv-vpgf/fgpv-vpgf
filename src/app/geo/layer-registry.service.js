@@ -461,7 +461,13 @@
                 }
             }
 
+            /**
+            * Zoom to layer boundary of the layer specified by layerId
+            * @function zoomToBoundary
+            * @param {String} layerId ID of layer entry in the legend
+            */
             function zoomToBoundary(layerId) {
+                // FIXME: proxy _layer reference
                 const l = layers[layerId]._layer;
 
                 const gextent = gapiService.gapi.proj.localProjectExtent(l.fullExtent,

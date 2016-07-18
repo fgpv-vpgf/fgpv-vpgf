@@ -247,6 +247,11 @@
             toggleVisiblity(entry, true);
         }
 
+        /**
+        * Zoom to bounding box of a layer (wrapper function to the same function in layerRegistry)
+        * @function zoomToBoundary
+        * @param {Object} layer entry in the legend
+        */
         function zoomToBoundary(layer) {
             geoService.zoomToBoundary(layer.id);
         }
