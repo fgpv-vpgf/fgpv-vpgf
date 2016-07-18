@@ -43,6 +43,7 @@
                 constructLayers,
                 removeLayer,
                 zoomToScale,
+                zoomToBoundary,
                 reloadLayer,
                 snapshotLayer,
                 aliasedFieldName,
@@ -458,6 +459,17 @@
                 } else {
                     return mapObject.setScale(lod.scale);
                 }
+            }
+
+            function zoomToBoundary(layerId) {
+                const l = layers[layerId]._layer;
+
+                const gextent = gapiService.gapi.proj.localProjectExtent(l.fullExtent,
+                    mapObject.spatialReference);
+                const reprojLayerFullExt = gapiService.gapi.mapManager.Extent(gextent.x0, gextent.y0,
+                    gextent.x1, gextent.y1, gextent.sr);
+
+                return mapObject.setExtent(reprojLayerFullExt);
             }
 
             /**
