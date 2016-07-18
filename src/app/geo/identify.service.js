@@ -237,17 +237,18 @@
                         // we want to make a nice table
                         clickResults.forEach(ele => {
                             // NOTE: the identify service returns aliased field names, so no need to look them up here.
-                            //       however, this means we need to un-alias the data when using the symbol lookup.
+                            //       however, this means we need to un-alias the data when doing field lookups.
                             // NOTE: ele.layerId is what we would call featureIdx
                             layerRecord.attributeBundle[ele.layerId].layerData.then(lData => {
+                                const unAliasAtt = unAliasAttribs(ele.feature.attributes, lData.fields);
                                 const identifyResult = identifyResults[ele.layerId];
+
                                 identifyResult.data.push({
                                     name: ele.value,
                                     data: attributesToDetails(ele.feature.attributes),
-                                    oid: ele.feature.attributes[lData.oidField],
+                                    oid: unAliasAtt[lData.oidField],
                                     symbology: [{
-                                        icon: geoState.mapService.retrieveSymbol(
-                                            unAliasAttribs(ele.feature.attributes, lData.fields), lData.renderer)
+                                        icon: geoState.mapService.retrieveSymbol(unAliasAtt, lData.renderer)
                                     }]
                                 });
                                 identifyResult.isLoading = false;

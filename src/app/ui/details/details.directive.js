@@ -79,8 +79,9 @@
             self.display.selectedItem = self.selectedItem;
 
             // add hilights to all things in the layer.
+            // featureIdx can be 0, so no falsy checks allowed
             // TODO is this the appropriate place for hilighting code?
-            if (item && item.requester && item.requester.featureIdx) {
+            if (item && item.requester && typeof item.requester.featureIdx !== 'undefined') {
                 geoService.hilightGraphic(item.requester.layerRec, item.requester.featureIdx,
                     item.data.map(d => d.oid));
             }
