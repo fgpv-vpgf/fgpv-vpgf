@@ -190,6 +190,7 @@
                 name, file, updateProgress
             );
 
+            // TODO: refactor this
             self.layerBlueprint.initialConfig = { flags: { user: { visible: true } } };
 
             // add some delay before going to the next step
