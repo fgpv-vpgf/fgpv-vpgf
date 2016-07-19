@@ -84,7 +84,7 @@
     "yargs": "^3.15.0"
   },
   "scripts": {
-    "postinstall": "rm -r -f lib/angular-dragula && bower install && git apply fix-ui-delay-drag-start.patch",
+    "postinstall": "rm -r -f lib/angular-dragula && bower install --allow-root && git apply fix-ui-delay-drag-start.patch",
     "start": "http-server -a localhost -p 6001 -c-1",
     "test": "gulp test",
     "doc": "./node_modules/.bin/jsdoc -p -r -c .jsdoc.json -t node_modules/docdash -R README.md -d ./docbuild -u ./docs ./src/app",
