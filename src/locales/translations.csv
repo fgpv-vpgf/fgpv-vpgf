@@ -133,8 +133,8 @@ Table of Content data filter flag label,toc.label.flag.data.filter,Layer data is
 Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer data is filtered,Couche de données filtrée
 Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,Couche sera exclue de la carte - cliquez sur les résultats
 Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,Couche sera exclue de la carte - cliquez sur les résultats
-Table of Content user flag label,toc.label.flag.user,Toggle user,Basculer utilisateur
-Table of Content user flag tootlip,toc.tooltip.flag.user,Toggle user,Basculer utilisateur
+Table of Content user flag label,toc.label.flag.user,Layer added by user,Couche ajoutée par l'utilisateur
+Table of Content user flag tootlip,toc.tooltip.flag.user,Layer added by user,Couche ajoutée par l'utilisateur
 Table of Content error state label,toc.label.state.error,Error,Erreur
 Table of Content error state tootlip,toc.tooltip.state.error,Error,Erreur
 Table of Content loading state label,toc.label.state.loading,Updating,Mise à jour
