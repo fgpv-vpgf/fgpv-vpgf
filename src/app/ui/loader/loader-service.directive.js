@@ -146,6 +146,8 @@
                 url: connect.serviceUrl
             }, geoService.epsgLookup);
 
+            self.layerBlueprint.initialConfig = { flags: { user: { visible: true } } };
+
             self.layerBlueprint.ready.catch(() => {
                 console.log('self.connect.form.serviceUrl');
 

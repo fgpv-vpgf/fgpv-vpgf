@@ -190,6 +190,8 @@
                 name, file, updateProgress
             );
 
+            self.layerBlueprint.initialConfig = { flags: { user: { visible: true } } };
+
             // add some delay before going to the next step
             // explicitly move to step 1 (select); if the current step is not 0 (upload), drag-dropping a file may advance farther than needed when using just `stepper.nextStep()`
             stepper.moveToStep(1, $timeout(() => self.layerBlueprint.ready, 300));
