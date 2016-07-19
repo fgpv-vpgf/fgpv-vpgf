@@ -1,6 +1,6 @@
 {
   "name": "geoApi",
-  "version": "0.13.0-24",
+  "version": "1.0.0-rc1",
   "description": "",
   "main": "dist/geoapi.js",
   "dependencies": {},
@@ -48,10 +48,10 @@
     "type": "git",
     "url": "https://github.com/fgpv-vpgf/geoApi.git"
   },
-  "author": "",
+  "author": "Government of Canada",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/fgpv-vpgf/geoApi/issues"
   },
-  "homepage": "https://github.com/fgpv-vpgf/geoApi"
+  "homepage": "https://fgpv-vpgf.github.io/geoApi"
 }
