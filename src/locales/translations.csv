@@ -17,6 +17,23 @@ rv-truncate directive show less,rv-truncate.showLess,Hide,Masquer
 Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,Zoom à l'élément
 Tooltip text for Details,filter.tooltip.description,Details,Détails
 Tooltip text for No Zoom Projection,filter.tooltip.nozoom,Data in custom projection. Cannot zoom to feature.,La donnée utilise une projection personnalisée. Le zoom à l'entité n'est pas supporté.
+DataTable text for Processing,filter.default.label.processing,Processing...,Traitement en cours...
+DataTable text for Search,filter.default.label.search,Search: ,"Rechercher : "
+DataTable text for Lenght Menu,filter.default.label.lenght.menu,Show _MENU_ entries,Afficher _MENU_ éléments
+DataTable text for Info,filter.default.label.info,Showing _START_ to _END_ of _TOTAL_ entries,Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments
+DataTable text for Empty,filter.default.label.zero,Showing 0 to 0 of 0 entries,Affichage de l'élément 0 à 0 sur 0 élément
+DataTable text for Filtered,filter.default.label.filtered,(filtered from _MAX_ total entries),(filtrés de _MAX_ éléments au total)
+DataTable text for Postfix,filter.default.label.postfix,'',''
+DataTable text for Loading Records,filter.default.label.loadrec,Loading...,Chargement en cours...
+DataTable text for Zero records,filter.default.label.zerorecords,No matching records found,Aucun élément à afficher
+DataTable text for Empty table,filter.default.label.emptytable,No data available in table,Aucune donnée disponible dans le tableau
+DataTable text for First,filter.default.label.first,First,Premier
+DataTable text for Previous,filter.default.label.previous,Previous,Précédent
+DataTable text for Next,filter.default.label.next,Next,Suivant
+DataTable text for Last,filter.default.label.last,Last,Dernier
+DataTable text for Sort Ascending,filter.default.aria.sortasc,: activate to sort column ascending,: activer pour trier la colonne par ordre croissant
+DataTable text for Sort Descending,filter.default.aria.sortdsc,: activate to sort column descending,: activer pour trier la colonne par ordre décroissant
+DataTable text for thousands delimeter,filter.default.thousands.delim,","," "
 Details pane title,details.title,Feature Information,Information sur l'entité
 Details pane aria label for expand button,details.aria.expand,Expand,Agrandir
 Details pane tooltip for expand button,details.tooltip.expand,Expand,Agrandir
@@ -34,6 +51,8 @@ Filter pane menu label for Print,filter.menu.print,Print,Imprimer
 Filter pane menu label for Export,filter.menu.export,Export,Exporter
 Basemap title,basemap.title,Maps,Cartes
 Basemap refresh required,basemap.refresh.req,Map refresh required,Actualiser la carte
+Basemap blank title,basemap.blank.title,blank map,carte vide
+Basemap blank description,basemap.blank.desc,Remove base map,Retirer la carte de fond
 Map Navigation slider only text,nav.sliderOnly,slider only,Curseur seulement
 Map Navigation slider text,nav.slider,slider,Curseur
 Map Navigation zoom in label,nav.label.zoomIn,Zoom in,Zoom avant
@@ -63,6 +82,9 @@ Settings snapshot mode enable label,settings.label.snapshotEnable,Enable,Activer
 Settings query mode label,settings.label.query,Allow query,Permettre les requêtes
 Settings query mode aria,settings.aria.query,Allow query,Permettre les requêtes
 Side Navigation main title,sidenav.title,FGP R2 Viewer,Visualiseur PGF R2
+Side Navigation full screen,sidenav.label.fullscreen,FULL SCREEN,PLEIN ÉCRAN
+Side Navigation share,sidenav.label.share,SHARE,PARTAGER
+Side Navigation help,sidenav.label.help,HELP,AIDE
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,Menu du panneau des données ouvertes
 Table of Content show symbology label,toc.layer.label.symbologyShow,Show symbology,Afficher symbologie
 Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide symbology,Masquer symbologie
@@ -323,10 +345,10 @@ Note: If the scrolling loading line indicator appears at the bottom of the map o
 Remarque: Si l'indicateur de chargement de ligne de défilement apparaît au bas de la carte ou dans la légende, ou lorsque la grille de données affiche un message de chargement en cours, attendez que l’indicateur de chargement disparaisse avant d’activer d’autres fonctions sur la carte."
 Error message when resource fails to load,toc.error.resource.loadfailed,There was an error retrieving this resource - try again later,Une erreur s'est produite lors du chargement de cette ressource - réessayez plus tard
 Error message when feature count cannot be retrieved,toc.error.resource.countfailed,Could not get number of,Impossible d'obtenir nombre de
-,metadata.xslt.Abstract,Abstract,Abstrait
+,metadata.xslt.Abstract,Abstract,Résumé
 ,metadata.xslt.Scope,Scope,Portée
-,metadata.xslt.hereBeScope,here be scope,Ici être portée
-,metadata.xslt.timePeriod,Time Period,Période de temps
+,metadata.xslt.hereBeScope,here be scope,Ici être la portée
+,metadata.xslt.timePeriod,Time Period,Période
 ,metadata.xslt.supplementalData,Supplemental Data,Données Supplémentaires
 ,metadata.xslt.contactInfo,Contact Information,Coordonnées
 ,metadata.xslt.resourceProvider,Resource Provider,Fournisseur de la ressource
@@ -341,8 +363,8 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 ,metadata.xslt.publisher,Publisher,Éditeur
 ,metadata.xslt.author,Author,Auteur
 ,metadata.xslt.collaborator,Collaborator,Collaborateur
-,metadata.xslt.editor,Editor,Editeur
+,metadata.xslt.editor,Editor,Éditeur
 ,metadata.xslt.mediator,Mediator,Médiateur
 ,metadata.xslt.rightsHolder,Rights Holder,Titulaire des droits
-,metadata.xslt.cataloguePage,Data Catalogue Page,Données Page Catalogue
+,metadata.xslt.cataloguePage,Data Catalogue Page,Page des données du catalogue
 ,metadata.xslt.metadata,Metadata,Métadonnées

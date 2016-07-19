@@ -48,8 +48,8 @@
         }
     }
 
-    function Controller($rootElement, $mdDialog, version, sideNavigationService, geoService, fullScreenService,
-        helpService, configService, storageService) {
+    function Controller($rootElement, $mdDialog, $translate, version, sideNavigationService, geoService,
+        fullScreenService, helpService, configService, storageService) {
         'ngInject';
         const self = this;
 
@@ -65,20 +65,20 @@
                 name: 'Options',
                 type: 'heading',
                 children: [{
-                        name: 'Full Screen',
+                        name: $translate.instant('sidenav.label.fullscreen'),
                         type: 'link',
                         action: () => {
                             sideNavigationService.close();
                             fullScreenService.toggle();
                         }
                     }, {
-                        name: 'Share',
+                        name: $translate.instant('sidenav.label.share'),
                         type: 'link'
                     }
                 ]
             },
             {
-                name: 'Help',
+                name: $translate.instant('sidenav.label.help'),
                 type: 'link',
                 action: event => {
                     sideNavigationService.close();

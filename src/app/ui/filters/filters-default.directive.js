@@ -54,7 +54,7 @@
              * Creates a new datatables instance (destroying existing if any). It pulls the data from the stateManager display store.
              * @function createTable
              */
-            function createTable() {
+            function createTable(oLang) {
                 let zoomText = $translate.instant('filter.tooltip.zoom');
                 const descriptionsText = $translate.instant('filter.tooltip.description');
 
@@ -143,7 +143,8 @@
                                 extend: 'csvHtml5',
                                 title: self.display.requester.name
                             },
-                        ]
+                        ],
+                        oLanguage: oLang
                     });
 
                 self.table.on('click', 'md-icon.rv-zoom-to', event => {
@@ -241,12 +242,14 @@
      * it also watches for dispaly data changes and re-creates the table when it does change.
      * @function Controller
      */
-    function Controller($scope, $timeout, tocService, stateManager, events) {
+    function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events) {
         'ngInject';
         const self = this;
 
         self.display = stateManager.display.filters;
 
+        self. setDToLang =  setDToLang;
+        self.getDToLang = getDToLang;
         self.draw = draw;
 
         let isFullyOpen = false; // flag inicating that filters panel fully opened
@@ -278,11 +281,11 @@
                     // console.log('Filters fullyOpen', isFullyOpen, self.display.isLoading);
                     // console.log('Filters: table data udpated', newValue);
                     if (isFullyOpen) {
-                        self.createTable();
+                        self.createTable(self.getDToLang());
                     } else {
                         // we have to deferr table creating until after the panel fully opens, we if try to create the table while the animation is in progress, it freezes as all calculations that Datatables is doing blocks ui;
                         // this means when the panel first opens, it will take 300ms longer to display any table then upon subsequent table creation when the panel is already open and the user just switches between layers;
-                        deferredAction = () => self.createTable();
+                        deferredAction = () => self.createTable(self.getDToLang());
                     }
                 } else {
                     // destory table is data is set to null
@@ -303,9 +306,54 @@
 
                 triggerTableButton(1);
             });
+
+            // load language object on language switch
+            $rootScope.$on('$translateChangeSuccess', () => {
+                if (self.table) {
+                    // to manage language switch on DataTable
+                    self.setDToLang();
+                    // catch translation done signal
+                    self.table.draw();
+                }
+            });
         }
 
-        // re draw the table using scroller extension
+        // set language for table
+        function setDToLang() {
+            const newLang = self.getDToLang();
+            let oLang = self.table.context[0].oLanguage;
+
+            oLang = Object.assign(oLang, newLang);
+        }
+
+        // return translated table language object
+        function getDToLang() {
+            let oLang = {
+                sProcessing: $translate.instant('filter.default.label.processing'),
+                sSearch: $translate.instant('filter.default.label.search'),
+                sLengthMenu: $translate.instant('filter.default.label.lenght.menu'),
+                sInfo: $translate.instant('filter.default.label.info'),
+                sInfoEmpty: $translate.instant('filter.default.label.zero'),
+                sInfoFiltered: $translate.instant('filter.default.label.filtered'),
+                sInfoPostFix: $translate.instant('filter.default.label.postfix'),
+                sLoadingRecords: $translate.instant('filter.default.label.loadrec'),
+                sZeroRecords: $translate.instant('filter.default.label.zerorecords'),
+                sEmptyTable: $translate.instant('filter.default.label.emptytable'),
+                oPaginate: {
+                    sFirst: $translate.instant('filter.default.label.first'),
+                    sPrevious: $translate.instant('filter.default.label.previous'),
+                    sNext: $translate.instant('filter.default.label.next'),
+                    sLast: $translate.instant('filter.default.label.last')
+                },
+                oAria: {
+                    sSortAscending:  $translate.instant('filter.default.aria.sortasc'),
+                    sSortDescending: $translate.instant('filter.default.aria.sortdsc')
+                }
+            };
+            return oLang;
+        }
+
+        // redraw the table using scroller extension
         function draw(value) {
             if (self.table) {
                 console.log('Filters: drawing table');
