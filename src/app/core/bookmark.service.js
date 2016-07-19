@@ -43,15 +43,17 @@
                 zoom: encode64(geoService.mapObject.getZoom())
             };
 
-            // loop through layers in registry
-            const layers = geoService.legend.items;
-            const layerBookmarks = layers.map(layer => {
-                // if not user added
-                return encode64(layer._layerRecord.makeLayerBookmark());
+            // loop through layers in legend
+            const legend = geoService.legend.items.filter(legendEntry => {
+                return !legendEntry._layerRecord.config.flags.user.visible;
+            });
+            const layerBookmarks = legend.map(legendEntry => {
+                // FIXME: remove moving through _layerRecord
+                return encode64(legendEntry._layerRecord.makeLayerBookmark());
             });
 
             const bookmark = `${basemap},${extent.x},${extent.y},${extent.zoom}` +
-                (layers.length > 0 ? `,${layerBookmarks.toString()}` : '');
+                (layerBookmarks.length > 0 ? `,${layerBookmarks.toString()}` : '');
             console.log(bookmark);
             return bookmark;
 
