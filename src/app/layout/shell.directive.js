@@ -15,7 +15,7 @@
         .module('app.layout')
         .directive('rvShell', rvShell);
 
-    function rvShell(storageService, stateManager, $rootElement) {
+    function rvShell(storageService, stateManager, $rootElement, focusService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/layout/shell.html',
@@ -45,6 +45,8 @@
                     });
                 }
             });
+
+            focusService.init();
         }
     }
 
