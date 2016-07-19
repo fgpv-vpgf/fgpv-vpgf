@@ -77,10 +77,14 @@ function parseCapabilitiesBuilder(esriBundle) {
      * @return {Promise} a promise resolving with a metadata object (as specified above)
      */
     return (wmsEndpoint) => {
-        const reqPromise = Promise.resolve(new esriBundle.esriRequest({
-            url: wmsEndpoint + '?service=WMS&version=1.3&request=GetCapabilities',
-            handleAs: 'xml'
-        }).promise);
+        const reqPromise = new Promise(resolve => {
+            getCapabilities()
+                .then(data => resolve(data)) // if successful, pass straight back
+                .catch(() => { // if errors, try again; see fgpv-vpgf/fgpv-vpgf#908 issue
+                    console.error('Get capabilities failed; trying the second time;');
+                    resolve(getCapabilities());
+                });
+        });
 
         // there might already be a way to do this in the parsing API
         // I don't know XML parsing well enough (and I don't want to)
@@ -109,6 +113,13 @@ function parseCapabilitiesBuilder(esriBundle) {
                     layers: getLayers(layer)
                 };
             });
+        }
+
+        function getCapabilities() {
+            return Promise.resolve(new esriBundle.esriRequest({
+                url: wmsEndpoint + '?service=WMS&version=1.3&request=GetCapabilities',
+                handleAs: 'xml'
+            }).promise);
         }
 
         return reqPromise.then(data => ({
