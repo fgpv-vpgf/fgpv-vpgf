@@ -1,5 +1,5 @@
 <md-button ng-click="self.section.action($event)">
-    {{self.section.name}}
+    {{ self.section.name | translate }}
     <span class="md-visually-hidden" ng-if="self.isSelected()">
         current page
     </span>

@@ -248,9 +248,9 @@
 
         self.display = stateManager.display.filters;
 
-        self. setDToLang =  setDToLang;
-        self.getDToLang = getDToLang;
         self.draw = draw;
+
+        const languageObjects = {};
 
         let isFullyOpen = false; // flag inicating that filters panel fully opened
         let deferredAction = null; // deferred function to create a table
@@ -281,11 +281,11 @@
                     // console.log('Filters fullyOpen', isFullyOpen, self.display.isLoading);
                     // console.log('Filters: table data udpated', newValue);
                     if (isFullyOpen) {
-                        self.createTable(self.getDToLang());
+                        self.createTable(getDToLang());
                     } else {
                         // we have to deferr table creating until after the panel fully opens, we if try to create the table while the animation is in progress, it freezes as all calculations that Datatables is doing blocks ui;
                         // this means when the panel first opens, it will take 300ms longer to display any table then upon subsequent table creation when the panel is already open and the user just switches between layers;
-                        deferredAction = () => self.createTable(self.getDToLang());
+                        deferredAction = () => self.createTable(getDToLang());
                     }
                 } else {
                     // destory table is data is set to null
@@ -311,46 +311,75 @@
             $rootScope.$on('$translateChangeSuccess', () => {
                 if (self.table) {
                     // to manage language switch on DataTable
-                    self.setDToLang();
+                    setDToLang();
                     // catch translation done signal
                     self.table.draw();
                 }
             });
-        }
 
-        // set language for table
-        function setDToLang() {
-            const newLang = self.getDToLang();
-            let oLang = self.table.context[0].oLanguage;
+            /**
+             * Set language for table
+             *
+             * @function setDToLang
+             * @private
+             */
+            function setDToLang() {
 
-            oLang = Object.assign(oLang, newLang);
-        }
+                const newLang = getDToLang();
+                let oLang = self.table.context[0].oLanguage;
 
-        // return translated table language object
-        function getDToLang() {
-            let oLang = {
-                sProcessing: $translate.instant('filter.default.label.processing'),
-                sSearch: $translate.instant('filter.default.label.search'),
-                sLengthMenu: $translate.instant('filter.default.label.lenght.menu'),
-                sInfo: $translate.instant('filter.default.label.info'),
-                sInfoEmpty: $translate.instant('filter.default.label.zero'),
-                sInfoFiltered: $translate.instant('filter.default.label.filtered'),
-                sInfoPostFix: $translate.instant('filter.default.label.postfix'),
-                sLoadingRecords: $translate.instant('filter.default.label.loadrec'),
-                sZeroRecords: $translate.instant('filter.default.label.zerorecords'),
-                sEmptyTable: $translate.instant('filter.default.label.emptytable'),
-                oPaginate: {
-                    sFirst: $translate.instant('filter.default.label.first'),
-                    sPrevious: $translate.instant('filter.default.label.previous'),
-                    sNext: $translate.instant('filter.default.label.next'),
-                    sLast: $translate.instant('filter.default.label.last')
-                },
-                oAria: {
-                    sSortAscending:  $translate.instant('filter.default.aria.sortasc'),
-                    sSortDescending: $translate.instant('filter.default.aria.sortdsc')
+                angular.merge(oLang, newLang);
+
+                return oLang;
+            }
+
+            /**
+             * Return translated table language object
+             *
+             * @function getDToLang
+             * @private
+             * @returns {Object}    Object containing all translated strings for the datatable
+             */
+            function getDToLang() {
+                const lang = $translate.proposedLanguage() || $translate.use();
+                if (languageObjects[lang]) {
+                    return languageObjects[lang];
                 }
-            };
-            return oLang;
+
+                const oLangSrc = {
+                    sProcessing: 'processing',
+                    sSearch: 'search',
+                    sLengthMenu: 'length.menu',
+                    sInfo: 'info',
+                    sInfoEmpty: 'zero',
+                    sInfoFiltered: 'filtered',
+                    sInfoPostFix: 'postfix',
+                    sLoadingRecords: 'loadrec',
+                    sZeroRecords: 'zerorecords',
+                    sEmptyTable: 'emptytable'
+                };
+                const oPaginateSrc = {
+                    sFirst: 'first',
+                    sPrevious: 'previous',
+                    sNext: 'next',
+                    sLast: 'last'
+                };
+                const oAriaSrc = {
+                    sSortAscending: 'sortasc',
+                    sSortDescending: 'sortdsc'
+                };
+                const oLang = { oPaginate: {}, oAria: {} };
+                Object.keys(oLangSrc).forEach(key =>
+                    oLang[key] = $translate.instant(`filter.default.label.${oLangSrc[key]}`));
+                Object.keys(oPaginateSrc).forEach(key =>
+                    oLang.oPaginate[key] = $translate.instant(`filter.default.label.${oPaginateSrc[key]}`));
+                Object.keys(oAriaSrc).forEach(key =>
+                    oLang.oAria[key] = $translate.instant(`filter.default.aria.${oAriaSrc[key]}`));
+
+                languageObjects[lang] = oLang;
+
+                return languageObjects[lang];
+            }
         }
 
         // redraw the table using scroller extension
