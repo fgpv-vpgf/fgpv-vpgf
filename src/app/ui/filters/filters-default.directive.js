@@ -52,7 +52,9 @@
 
             /**
              * Creates a new datatables instance (destroying existing if any). It pulls the data from the stateManager display store.
+             *
              * @function createTable
+             * @param {Object} oLang    Translation object for the table
              */
             function createTable(oLang) {
                 let zoomText = $translate.instant('filter.tooltip.zoom');
