@@ -4,9 +4,17 @@ describe('stateManager', () => {
 
     const mainPanelNames = ['main', 'mainToc', 'mainToolbox', 'mainDetails', 'mainLoaderFile', 'mainLoaderService'];
 
+    function mockFocusService($provide) {
+        $provide.factory('focusService', () => {
+            return {
+                createLink: () => {}
+            };
+        });
+    }
+
     beforeEach(() => {
 
-        bard.appModule('app.common.router');
+        bard.appModule('app.common.router', mockFocusService);
 
         // inject services
         bard.inject('stateManager', '$rootScope');

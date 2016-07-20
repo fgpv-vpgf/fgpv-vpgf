@@ -25,17 +25,15 @@
 
     // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
-    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement, $timeout) {
+    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay,
+        $rootElement, $timeout, focusService) {
         const service = {
             addState,
             setActive,
             setMorph,
             callback,
-            setFocusElement,
-            previousFocus,
             togglePanel,
             closePanelFromHistory,
-            setPanelFocus,
             panelHistory: [],
             state: angular.copy(initialState),
             display: angular.copy(initialDisplay),
@@ -46,7 +44,6 @@
         const closeCallback = {};
         const displayService = displayManager(service); // init displayManager
 
-        let lastFocusElement; // stores an element for dynamic focus changes
         let cbLock = []; // callback lock prevents infinite loops
         angular.extend(service, displayService); // merge displayManager service functions into stateManager
 
@@ -101,9 +98,6 @@
                     return closePanel(one).then(() => setActive(...items));
                 }
             } else {
-                // try to set focus only after transition chain is complete; otherwise #815 happens
-                // TODO: revisit how we handle focus manipulations
-                setPanelFocus(service.panelHistory[service.panelHistory.length - 1]);
                 return $q.resolve();
             }
         }
@@ -145,8 +139,6 @@
         function closePanelFromHistory() {
             const promise = service.panelHistory.length > 0 ? closePanel(getItem(service.panelHistory.pop()))
                                                             : $q.resolve();
-            // set focus after the panel is closed
-            promise.then(() => setPanelFocus(service.panelHistory[service.panelHistory.length - 1]));
 
             return promise;
         }
@@ -164,9 +156,7 @@
             const toPanel = getItem(toPanelName);
 
             return closePanel(fromPanel, false)
-                .then(() => openPanel(toPanel, false))
-                // set focus after the child pane swap
-                .then(() => setPanelFocus(toPanelName));
+                .then(() => openPanel(toPanel, false));
         }
 
         /* PRIVATE HELPERS */
@@ -328,7 +318,16 @@
                 }
                 modifyHistory(panelToOpen);
                 animationPromise = propagate ? openPanel(getParent(panelToOpen.name), false) : $q.resolve();
+
+                animationPromise.then(() => {
+                    let panelFocusables = $rootElement.find(`[rv-state="${panelToOpen.name}"]`)
+                    .find('button, a, input, [tabindex]')
+                    .filter(':visible');
+
+                    focusService.createLink(panelFocusables.first());
+                });
             }
+
             return animationPromise;
         }
 
@@ -367,40 +366,6 @@
             }
 
             return animationPromise;
-        }
-
-        /**
-         * Sets focus on the first visible button in panel named panelName
-         * @private
-         * @function setPanelFocus
-         * @param  {String} panelName the name of the panel to set focus on
-         */
-        function setPanelFocus(panelName) {
-            $timeout(() => {
-                const firstButton =  $rootElement.find(`[rv-state="${panelName}"] button`).filter(':visible')[0];
-                if (typeof firstButton !== 'undefined') {
-                    firstButton.focus();
-                }
-            }, 10);
-        }
-
-        /**
-         * Saves a focusable element
-         * @private
-         * @function setFocusElement
-         * @param  {Object} element a focusable element
-         */
-        function setFocusElement(element) {
-            lastFocusElement = element;
-        }
-
-        /**
-         * Changes focus to the last saved focusable element
-         * @private
-         * @function previousFocus
-         */
-        function previousFocus() {
-            lastFocusElement.focus();
         }
 
         /**
