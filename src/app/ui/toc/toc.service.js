@@ -78,6 +78,12 @@
                     tooltip: 'toc.tooltip.reload',
                     action: entry => geoService.reloadLayer(entry)
                 },
+                boundaryZoom: {
+                    icon: `action:zoom_in`,
+                    label: 'toc.label.boundaryZoom',
+                    tooltip: 'toc.tooltip.boundaryZoom',
+                    action: zoomToBoundary
+                },
                 remove: {
                     icon: 'action:delete',
                     label: 'toc.label.remove',
@@ -239,6 +245,15 @@
 
             // set the layer visible
             toggleVisiblity(entry, true);
+        }
+
+        /**
+        * Zoom to bounding box of a layer (wrapper function to the same function in layerRegistry)
+        * @function zoomToBoundary
+        * @param {Object} legendEntry layer entry in the legend
+        */
+        function zoomToBoundary(legendEntry) {
+            geoService.zoomToBoundary(legendEntry.id);
         }
 
         // temp function to open layer groups

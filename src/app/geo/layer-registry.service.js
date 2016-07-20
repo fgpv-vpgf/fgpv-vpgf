@@ -43,6 +43,7 @@
                 constructLayers,
                 removeLayer,
                 zoomToScale,
+                zoomToBoundary,
                 reloadLayer,
                 snapshotLayer,
                 aliasedFieldName,
@@ -458,6 +459,33 @@
                 } else {
                     return mapObject.setScale(lod.scale);
                 }
+            }
+
+            /**
+            * Zoom to layer boundary of the layer specified by layerId
+            * @function zoomToBoundary
+            * @param {String} layerId ID of layer entry in the legend
+            */
+            function zoomToBoundary(layerId) {
+                // FIXME: proxy _layer reference
+                const l = layers[layerId]._layer;
+
+                let gextent;
+
+                // some user added layers have the fullExtent field, but the properties in it are undefined. Check to see if the fullExtent properties are present
+                if (!l.fullExtent.xmin) {
+                    gextent = gapiService.gapi.proj.localProjectExtent(
+                        gapiService.gapi.proj.graphicsUtils.graphicsExtent(l.graphics),
+                        mapObject.spatialReference);
+                } else {
+                    gextent = gapiService.gapi.proj.localProjectExtent(l.fullExtent,
+                        mapObject.spatialReference);
+                }
+
+                const reprojLayerFullExt = gapiService.gapi.mapManager.Extent(gextent.x0, gextent.y0,
+                    gextent.x1, gextent.y1, gextent.sr);
+
+                return mapObject.setExtent(reprojLayerFullExt);
             }
 
             /**
