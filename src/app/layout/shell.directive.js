@@ -71,10 +71,10 @@
                             sideNavigationService.close();
                             fullScreenService.toggle();
                         }
-                    }, {
+                    }/*, {
                         name: $translate.instant('sidenav.label.share'),
                         type: 'link'
-                    }
+                    }*/
                 ]
             },
             {
