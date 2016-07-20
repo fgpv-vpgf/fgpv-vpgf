@@ -245,6 +245,8 @@
          * @function closeLoaderService
          */
         function closeLoaderService() {
+            // reset the loader after closing the panel
+            stepper.reset().start();
             stateManager.setActive('mainToc');
         }
     }
