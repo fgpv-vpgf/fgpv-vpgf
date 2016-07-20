@@ -10,7 +10,7 @@
     <style>
         main div.fgpv {
             height: 700px;
-            margin: -15px;
+            margin: 10px -15px -15px -15px;
         }
     </style>
 
@@ -56,7 +56,7 @@
                     <form action="#" method="post" name="cse-search-box" role="search" class="form-inline">
                         <div class="form-group">
                             <label for="wb-srch-q" class="wb-inv">Search website</label>
-                            <input id="wb-srch-q" list="wb-srch-q-ac" class="wb-srch-q form-control" name="q" type="search" value="" size="27" maxlength="150" placeholder="Search GCTools" style="height: 22px;">
+                            <input id="wb-srch-q" list="wb-srch-q-ac" class="wb-srch-q form-control" name="q" type="search" value="" size="27" maxlength="150" placeholder="Search GCTools" style="height: 36px;">
                             <datalist id="wb-srch-q-ac">
                                 <!--[if lte IE 9]><select><![endif]-->
                                 <!--[if lte IE 9]></select><![endif]-->
@@ -97,7 +97,11 @@
           <div id="fgpSignIn" class="row">
             <div class="panel panel-default">
                 <div class="panel-body clearfix">
-                    <div class="fgpv" rv-langs='["fr-CA"]' rv-config='config.fr-CA.json'></div>
+                    <div style="display:flex;">
+                        <button onclick="getBookmark()">Obtenir le lien</button>
+                        <input type="text" id="bookmarkDisplay" style="width:100%;"></input>
+                    </div>
+                    <div id="fgpmap" class="fgpv" rv-langs='["fr-CA"]' rv-config='config.fr-CA.json'></div>
                 </div>
             </div>
           </div>
@@ -148,8 +152,59 @@
     <script src="http://wet-boew.github.io/v4.0-ci/wet-boew/js/wet-boew.min.js"></script>
     <script src="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/js/theme.min.js"></script>
 
+    <script>
+        // credit: http://stackoverflow.com/a/21903119
+        function getUrlParameter(sParam) {
+            var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : sParameterName[1];
+                }
+            }
+        }
+
+        var testConfig = getUrlParameter('config');
+        if (testConfig) {
+            document.getElementById("fgpmap").setAttribute("rv-config", testConfig);
+        }
+    </script>
+
     <!-- inject:js -->
     <!-- endinject -->
+
+    <script>
+        function queryStringToJSON(q) {
+            var pairs = q.search.slice(1).split('&');
+            var result = {};
+            pairs.forEach(function(pair) {
+                pair = pair.split('=');
+                result[pair[0]] = decodeURIComponent(pair[1] || '');
+            });
+            return JSON.parse(JSON.stringify(result));
+        }
+        // grab & process the url
+        var queryStr = queryStringToJSON(document.location);
+        var keys = queryStr.keys;
+        if (keys) {
+            // turn keys into an array, pass them to the map
+            var keysArr = keys.split(',');
+            RV.getMap('fgpmap').loadRcsLayers(keysArr);
+        }
+        var bookmark = queryStr.rv;
+        console.log(bookmark);
+        RV.getMap('fgpmap').initialBookmark(bookmark);
+        function getBookmark(){
+            RV.getMap('fgpmap').getBookmark().then(function (bookmark) {
+                document.getElementById("bookmarkDisplay").value = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
+            });
+        }
+    </script>
 
 </body>
 </html>

@@ -14,9 +14,10 @@ module.exports = function () {
 
     var root = path.resolve('./');
     var src = './src/'; // source files
-    var build = './build/samples/'; // build target, suitable for usage as a dev server
-    var libBuild = build + 'lib/';
-    var sampleBuild = build;
+    var srcSamples = src + 'samples/';
+    var build = './build/'; // build target, suitable for usage as a dev server
+    var libBuild = build + 'samples/' + 'lib/';
+    var sampleBuild = build + 'samples/';
     var dist = './dist/'; // contains packaged builds (ex: tgz and zip)
     var app = src + 'app/';
     var tmp = '.tmp/';
@@ -29,13 +30,13 @@ module.exports = function () {
     var config = {
 
         index: [
-            src + 'samples/index-many.html',
-            src + 'samples/index-one.html',
-            src + 'samples/index-wet.html',
-            src + 'samples/index-fgp-en.html',
-            src + 'samples/index-fgp-fr.html'
+            srcSamples + 'index-many.html',
+            srcSamples + 'index-one.html',
+            srcSamples + 'index-wet.html',
+            srcSamples + 'index-fgp-en.html',
+            srcSamples + 'index-fgp-fr.html'
         ],
-        indexProtractor: src + 'samples/index-protractor.html',
+        indexProtractor: srcSamples + 'index-protractor.html',
 
         js: [
             app + '*/**/*.js',
