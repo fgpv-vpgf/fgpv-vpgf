@@ -20,14 +20,8 @@
     <script>
         function addImg( hostDivId, legenditem ) {
             // add a check for base64 data    myimg.src = "data:image/png;base64," + icon;
-            var comma;
-            if (legenditem.contentType === 'image/svg+xml') {
-              comma = ",";
-            } else {
-              comma = ";base64,"
-            }
 
-            var dataurl = 'data:' + legenditem.contentType + comma + legenditem.imageData;
+            var dataurl = 'data:' + legenditem.contentType + legenditem.base + ',' + legenditem.imageData;
             var mydiv = document.getElementById(hostDivId);
             var myimg = new Image(32, 32);
             myimg.border = "1px";
@@ -47,7 +41,7 @@
             // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
 
             // unique value picture markers
-            var layer1 = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0');
+            var layer1 = new api.layer.FeatureLayer('http://ec.gc.ca/arcgis/rest/services/JOSM/Oilsands/MapServer/0');
 
             layer1.on('load', function(evt) {
 
@@ -75,7 +69,7 @@
             });
 
             // simple fill
-            var layer3 = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/2');
+            var layer3 = new api.layer.FeatureLayer('http://ec.gc.ca/arcgis/rest/services/JOSM/Oilsands/MapServer/2');
 
             layer3.on('load', function(evt) {
 
@@ -89,7 +83,7 @@
             });
 
             // unique value lines
-            var layer4 = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSandsBasemap/MapServer/32');
+            var layer4 = new api.layer.FeatureLayer('http://ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer/32');
 
             layer4.on('load', function(evt) {
 
@@ -136,7 +130,7 @@
             };
 
             var legend6 = api.symbology.rendererToLegend(renderer, 0);
-                console.log('legend5', legend6);
+                console.log('legend6', legend6);
 
                 legend6.layers[0].legend.forEach(legItem => {
                     addImg('bucket6', legItem);
