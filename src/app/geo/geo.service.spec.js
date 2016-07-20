@@ -52,10 +52,18 @@ describe('geo', () => {
         $provide.constant('events', $q => () => $q.resolve());
     }
 
+    function mockFocusService($provide) {
+        $provide.factory('focusService', () => {
+            return {
+                createLink: () => {}
+            };
+        });
+    }
+
     beforeEach(() => {
 
         bard.appModule('app.geo', 'app.common.router', mockStorageService, mockGapiService,
-            mockConfigService, mockTranslateService, mockEvents);
+            mockConfigService, mockTranslateService, mockEvents, mockFocusService);
 
         // inject services
         bard.inject('geoService', 'gapiService', '$rootScope', 'configService',

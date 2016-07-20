@@ -27,7 +27,7 @@
         return directive;
     }
 
-    function Controller($scope, stateManager, geoService, $element) {
+    function Controller($scope, stateManager, geoService, $element, focusService) {
         'ngInject';
         const self = this;
 
@@ -88,7 +88,7 @@
         }
 
         $scope.$watch('self.display.data', newValue => {
-            stateManager.setFocusElement($element.find('.rv-content-pane button[aria-label="Close"]'));
+            focusService.setFocusElement($element.find('.rv-content-pane button[aria-label="Close"]'));
             // if multiple points added to the details panel ...
             if (newValue && newValue.length > 0) {
                 // pick selected item user previously selected one, otherwise pick the first one
