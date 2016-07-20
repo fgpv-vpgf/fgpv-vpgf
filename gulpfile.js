@@ -317,7 +317,7 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
             js.push('!' + config.app + 'app-seed.js'); // remove app-seed from injectables
         }
 
-        const injectOpts = { ignorePath: '../build', addPrefix: '..', relative: true };
+        const injectOpts = { ignorePath: '../build', relative: false };
 
         return gulp
             .src(index)
