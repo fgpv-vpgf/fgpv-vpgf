@@ -499,9 +499,10 @@ function makeSVG(symbol) {
 * @private
 * @param  {Object} symbol an ESRI symbol object in server format
 * @param  {String} label label of the legend item
+* @param  {Object} window reference to the browser window
 * @return {Object} a legend object populated with the symbol and label
 */
-function symbolToLegend(symbol, label) {
+function symbolToLegend(symbol, label, window) {
     let imageData = emptySVG;
     let contentType = 'image/svg+xml';
     let base = '';
@@ -513,7 +514,9 @@ function symbolToLegend(symbol, label) {
             case 'esriSFS': // simplefillsymbol
             case 'esriCLS': // cartographiclinesymbol
 
-                imageData = makeSVG(symbol);
+                // IE11 will not render a plain SVG string. we need to encode it
+                imageData = window.btoa(makeSVG(symbol));
+                base = ';base64';
                 break;
 
             case 'esriPMS': // picturemarkersymbol
@@ -547,58 +550,61 @@ function symbolToLegend(symbol, label) {
 * @private
 * @param  {Object} renderer an ESRI unique value or class breaks renderer
 * @param  {Array} childList array of children items of the renderer
+* @param  {Object} window reference to the browser window
 * @return {Array} a legend object populated with the symbol and label
 */
-function scrapeListRenderer(renderer, childList) {
+function scrapeListRenderer(renderer, childList, window) {
     const legend = childList.map(child => {
-        return symbolToLegend(child.symbol, child.label);
+        return symbolToLegend(child.symbol, child.label, window);
     });
 
     if (renderer.defaultSymbol) {
         // class breaks dont have default label
         // TODO perhaps put in a default of "Other", would need to be in proper language
-        legend.push(symbolToLegend(renderer.defaultSymbol, renderer.defaultLabel || ''));
+        legend.push(symbolToLegend(renderer.defaultSymbol, renderer.defaultLabel || '', window));
     }
 
     return legend;
 }
 
-/**
-* Generate a legend object based on an ESRI renderer.
-* @private
-* @param  {Object} renderer an ESRI renderer object in server JSON form
-* @param  {Integer} index the layer index of this renderer
-* @return {Object} an object matching the form of an ESRI REST API legend
-*/
-function rendererToLegend(renderer, index) {
-    // make basic shell object with .layers array
-    const legend = {
-        layers: [{
-            layerId: index,
-            legend: []
-        }]
+function buildRendererToLegend(window) {
+    /**
+    * Generate a legend object based on an ESRI renderer.
+    * @private
+    * @param  {Object} renderer an ESRI renderer object in server JSON form
+    * @param  {Integer} index the layer index of this renderer
+    * @return {Object} an object matching the form of an ESRI REST API legend
+    */
+    return (renderer, index) => {
+        // make basic shell object with .layers array
+        const legend = {
+            layers: [{
+                layerId: index,
+                legend: []
+            }]
+        };
+
+        switch (renderer.type) {
+            case SIMPLE:
+                legend.layers[0].legend.push(symbolToLegend(renderer.symbol, renderer.label, window));
+                break;
+
+            case UNIQUE_VALUE:
+                legend.layers[0].legend = scrapeListRenderer(renderer, renderer.uniqueValueInfos, window);
+                break;
+
+            case CLASS_BREAKS:
+                legend.layers[0].legend = scrapeListRenderer(renderer, renderer.classBreakInfos, window);
+                break;
+
+            default:
+
+                // FIXME make a basic blank entry (error msg as label?) to prevent things from breaking
+                // Renderer we dont support
+                console.error('encountered unsupported renderer legend type: ' + renderer.type);
+        }
+        return legend;
     };
-
-    switch (renderer.type) {
-        case SIMPLE:
-            legend.layers[0].legend.push(symbolToLegend(renderer.symbol, renderer.label));
-            break;
-
-        case UNIQUE_VALUE:
-            legend.layers[0].legend = scrapeListRenderer(renderer, renderer.uniqueValueInfos);
-            break;
-
-        case CLASS_BREAKS:
-            legend.layers[0].legend = scrapeListRenderer(renderer, renderer.classBreakInfos);
-            break;
-
-        default:
-
-            // FIXME make a basic blank entry (error msg as label?) to prevent things from breaking
-            // Renderer we dont support
-            console.error('encountered unsupported renderer legend type: ' + renderer.type);
-    }
-    return legend;
 }
 
 // TODO getZoomLevel should probably live in a file not named symbology
@@ -636,11 +642,11 @@ function getZoomLevel(lods, maxScale) {
     return currentLod;
 }
 
-module.exports = function () {
+module.exports = function (window) {
     return {
         getGraphicIcon,
         getGraphicSymbol,
-        rendererToLegend,
+        rendererToLegend: buildRendererToLegend(window),
         getZoomLevel,
         enhanceRenderer
     };

@@ -9,7 +9,7 @@ const proj = require('./proj.js');
 const shared = require('./shared.js');
 const symbology = require('./symbology.js');
 
-function initAll(esriBundle) {
+function initAll(esriBundle, window) {
     let debug = false;
     const api = {};
 
@@ -18,7 +18,7 @@ function initAll(esriBundle) {
     api.basemap = basemap(esriBundle);
     api.mapManager = mapManager(esriBundle);
     api.attribs = attribute(esriBundle, api);
-    api.symbology = symbology();
+    api.symbology = symbology(window);
     api.hilight = hilight(esriBundle, api);
     api.events = events();
     api.shared = shared(esriBundle);
@@ -117,5 +117,5 @@ module.exports = function (esriLoaderUrl, window) {
         oHead.appendChild(oScript);
         oScript.src = esriLoaderUrl; // '//ec.cloudapp.net/~aly/esri/dojo/dojo.js';
         console.log('made a promise');
-    }).then(makeDojoRequests).then(initAll);
+    }).then(makeDojoRequests).then(esriBundle => initAll(esriBundle, window));
 };
