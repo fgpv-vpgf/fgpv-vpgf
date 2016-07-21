@@ -54,7 +54,8 @@
             // expand solo record
             if (self.solorecord) {
                 self.renderDetails();
-                self.toggleDetails();
+                self.item.isExpanded = true;
+                self.item.isSelected = true;
             }
 
             /**
