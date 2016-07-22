@@ -14,8 +14,9 @@ module.exports = function () {
 
     var root = path.resolve('./');
     var src = './src/'; // source files
+    var srcSamples = src + 'samples/';
     var build = './build/'; // build target, suitable for usage as a dev server
-    var libBuild = build + 'lib/';
+    var libBuild = build + 'samples/' + 'lib/';
     var sampleBuild = build + 'samples/';
     var dist = './dist/'; // contains packaged builds (ex: tgz and zip)
     var app = src + 'app/';
@@ -29,13 +30,13 @@ module.exports = function () {
     var config = {
 
         index: [
-            src + 'index-many.html',
-            src + 'index-one.html',
-            src + 'index-wet.html',
-            src + 'index-fgp-en.html',
-            src + 'index-fgp-fr.html'
+            srcSamples + 'index-many.html',
+            srcSamples + 'index-one.html',
+            srcSamples + 'index-wet.html',
+            srcSamples + 'index-fgp-en.html',
+            srcSamples + 'index-fgp-fr.html'
         ],
-        indexProtractor: src + 'index-protractor.html',
+        indexProtractor: srcSamples + 'index-protractor.html',
 
         js: [
             app + '*/**/*.js',
@@ -86,7 +87,7 @@ module.exports = function () {
         specHelpers: [src + 'test/*.js'], // bind-polyfill,
         specs: [app + '**/*.spec.js'],
 
-        staticAssets: [src + 'config*.json'],
+        staticAssets: [src + 'samples/config*.json'],
 
         svgCache: `${src}content/svgCache`,
 

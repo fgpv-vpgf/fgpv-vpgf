@@ -240,7 +240,7 @@ function jsbuild() {
 // NOTE assetcopy should only be used for samples for development
 // all assets needed by the library should be inlined if possible
 gulp.task('assetcopy', 'Copy assets to the samples directory', () =>
-    gulp.src(config.staticAssets, { base: config.src })
+    gulp.src(config.staticAssets, { base: config.src + 'samples/' })
         .pipe(gulp.dest(config.sampleBuild))
 );
 
@@ -317,7 +317,7 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
             js.push('!' + config.app + 'app-seed.js'); // remove app-seed from injectables
         }
 
-        const injectOpts = { ignorePath: '../build', addPrefix: '..', relative: true };
+        const injectOpts = { ignorePath: '../build', relative: true };
 
         return gulp
             .src(index)

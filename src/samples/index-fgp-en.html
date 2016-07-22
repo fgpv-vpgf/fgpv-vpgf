@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+    <link href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/favicon.ico" rel="icon" type="image/x-icon">
+    <link rel="stylesheet" href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/css/theme.min.css">
+
+    <style>
+        main div.fgpv {
+            height: 700px;
+            margin: 10px -15px -15px -15px;
+        }
+    </style>
+</head>
+
+<body vocab="http://schema.org/" typeof="WebPage">
+
+    <ul id="wb-tphp">
+        <li class="wb-slc">
+            <a class="wb-sl" href="#wb-cont">Skip to main content</a>
+        </li>
+        <li class="wb-slc visible-sm visible-md visible-lg">
+            <a class="wb-sl" href="#wb-info">Skip to "About this site"</a>
+        </li>
+    </ul>
+
+    <header role="banner">
+        <div id="wb-bnr" class="container">
+            <section id="wb-lng" class="visible-md visible-lg text-right">
+                <h2 class="wb-inv">Language selection</h2>
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="list-inline margin-bottom-none">
+                            <li><a lang="fr" href="index-fgp-fr.html">Français</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <div class="row">
+                <div class="brand col-xs-8 col-sm-9 col-md-6">
+                    <a href="http://www.canada.ca/en/index.html">
+                        <object type="image/svg+xml" tabindex="-1" data="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/sig-blk-en.svg"></object><span class="wb-inv"> Government of Canada</span></a>
+                </div>
+                <section class="wb-mb-links col-xs-4 col-sm-3 visible-sm visible-xs" id="wb-glb-mn">
+                    <h2>Search and menus</h2>
+                    <ul class="list-inline text-right chvrn">
+                        <li><a href="#mb-pnl" title="Search and menus" aria-controls="mb-pnl" class="overlay-lnk" role="button"><span class="glyphicon glyphicon-search"><span class="glyphicon glyphicon-th-list"><span class="wb-inv">Search and menus</span></span></span></a></li>
+                    </ul>
+                    <div id="mb-pnl"></div>
+                </section>
+                <section id="wb-srch" class="col-xs-6 text-right visible-md visible-lg">
+                    <h2>Search</h2>
+                    <form action="#" method="post" name="cse-search-box" role="search" class="form-inline">
+                        <div class="form-group">
+                            <label for="wb-srch-q" class="wb-inv">Search website</label>
+                            <input id="wb-srch-q" list="wb-srch-q-ac" class="wb-srch-q form-control" name="q" type="search" value="" size="27" maxlength="150" placeholder="Search GCTools" style="height: 36px;">
+                            <datalist id="wb-srch-q-ac">
+                                <!--[if lte IE 9]><select><![endif]-->
+                                <!--[if lte IE 9]></select><![endif]-->
+                            </datalist>
+                        </div>
+                        <div class="form-group submit">
+                            <button type="submit" id="wb-srch-sub" class="btn btn-primary btn-small" name="wb-srch-sub"><span class="glyphicon-search glyphicon"></span><span class="wb-inv">Search</span></button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+        <nav role="navigation" id="wb-sm" data-ajax-replace="http://wet-boew.github.io/themes-dist/GCWeb/ajax/sitemenu-en.html" data-trgt="mb-pnl" class="wb-menu visible-md visible-lg" typeof="SiteNavigationElement">
+            <div class="container nvbar">
+                <h2>Topics menu</h2>
+                <div class="row">
+                    <ul class="list-inline menu">
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <nav role="navigation" id="wb-bc" property="breadcrumb">
+            <h2>You are here:</h2>
+            <div class="container">
+                <div class="row">
+                    <ol class="breadcrumb">
+                      <li><a href="fgp-intranet.html">Home</a></li>
+                      <li>Federal Geospatial Platform Visualiser</li>
+                    </ol>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" property="mainContentOfPage" class="container">
+        <section>
+          <h1 property="name" id="wb-cont" class="fgp-h1-top">Federal Geospatial Platform Visualiser</h1>
+          <div id="fgpSignIn" class="row">
+            <div class="panel panel-default">
+                <div class="panel-body clearfix">
+                    <div style="display:flex;">
+                        <button onclick="getBookmark()">Get Link</button>
+                        <input type="text" id="bookmarkDisplay" style="width:100%;"></input>
+                    </div>
+                    <div id="fgpmap" class="fgpv" rv-config='config.en-CA.json'></div>
+                </div>
+            </div>
+          </div>
+        </section>
+    </main>
+
+    <footer role="contentinfo" id="wb-info">
+        <nav role="navigation" class="container wb-navcurr">
+            <h2 class="wb-inv">About government</h2>
+            <ul class="list-unstyled colcount-sm-2 colcount-md-3">
+                <li><a href="https://www.canada.ca/en/contact.html">Contact us</a></li>
+                <li><a href="https://www.canada.ca/en/government/dept.html">Departments and agencies</a></li>
+                <li><a href="https://www.canada.ca/en/government/publicservice.html">Public service and military</a></li>
+                <li><a href="http://news.gc.ca/">News</a></li>
+                <li><a href="https://www.canada.ca/en/government/system/laws.html">Treaties, laws and regulations</a></li>
+                <li><a href="https://www.canada.ca/en/transparency/reporting.html">Government-wide reporting</a></li>
+                <li><a href="http://pm.gc.ca/eng">Prime Minister</a></li>
+                <li><a href="https://www.canada.ca/en/government/system.html">How government works</a></li>
+                <li><a href="http://open.canada.ca/en/">Open government</a></li>
+            </ul>
+        </nav>
+        <div class="brand">
+            <div class="container">
+                <div class="row">
+                    <nav class="col-md-10 ftr-urlt-lnk">
+                        <h2 class="wb-inv">About this site</h2>
+                        <ul>
+                            <li><a href="https://www1.canada.ca/en/contact/feedback.html">Feedback</a></li>
+                            <li><a href="https://www.canada.ca/en/social.html">Social media</a></li>
+                            <li><a href="https://www.canada.ca/en/mobile.html">Mobile applications</a></li>
+                            <li><a href="http://www1.canada.ca/en/newsite.html">About Canada.ca</a></li>
+                            <li><a href="https://www.canada.ca/en/transparency/terms.html">Terms and conditions</a></li>
+                            <li><a href="https://www.canada.ca/en/transparency/privacy.html">Privacy</a></li>
+                        </ul>
+                    </nav>
+
+                    <div class="col-xs-6 visible-sm visible-xs tofpg">
+                        <a href="#wb-cont">Top of Page <span class="glyphicon glyphicon-chevron-up"></span></a>
+                    </div>
+
+                    <div class="col-xs-6 col-md-2 text-right">
+                        <object type="image/svg+xml" tabindex="-1" role="img" data="http://wet-boew.github.io/themes-dist/GCWeb/assets/wmms-blk.svg" aria-label="Symbol of the Government of Canada"></object>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+    <script src="http://wet-boew.github.io/v4.0-ci/wet-boew/js/wet-boew.min.js"></script>
+    <script src="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/js/theme.min.js"></script>
+
+    <script>
+        // credit: http://stackoverflow.com/a/21903119
+        function getUrlParameter(sParam) {
+            var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : sParameterName[1];
+                }
+            }
+        }
+
+        var testConfig = getUrlParameter('config');
+        if (testConfig) {
+            document.getElementById("fgpmap").setAttribute("rv-config", testConfig);
+        }
+    </script>
+
+    <!-- inject:js -->
+    <!-- endinject -->
+
+    <script>
+        function queryStringToJSON(q) {
+            var pairs = q.search.slice(1).split('&');
+            var result = {};
+            pairs.forEach(function(pair) {
+                pair = pair.split('=');
+                result[pair[0]] = decodeURIComponent(pair[1] || '');
+            });
+            return JSON.parse(JSON.stringify(result));
+        }
+        // grab & process the url
+        var queryStr = queryStringToJSON(document.location);
+        var keys = queryStr.keys;
+        if (keys) {
+            // turn keys into an array, pass them to the map
+            var keysArr = keys.split(',');
+            RV.getMap('fgpmap').loadRcsLayers(keysArr);
+        }
+        var bookmark = queryStr.rv;
+        console.log(bookmark);
+        RV.getMap('fgpmap').initialBookmark(bookmark);
+        function getBookmark(){
+            RV.getMap('fgpmap').getBookmark().then(function (bookmark) {
+                document.getElementById("bookmarkDisplay").value = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
+            });
+        }
+    </script>
+
+</body>
+</html>
