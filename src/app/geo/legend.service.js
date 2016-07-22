@@ -98,13 +98,24 @@
                 state.walkItems(layerEntry => {
                     // get the legend from the attrib bundle, use it to derive the symbol
                     layer._attributeBundle[layerEntry.featureIdx.toString()].layerData.then(ld => {
-                        // since a geoApi generated legend only has one element, we can omit searching layers[] for a match
-                        applySymbology(layerEntry, ld.legend.layers[0]);
-                    });
 
-                    getServiceFeatureCount(`${state.url}/${layerEntry.featureIdx}`).then(count =>
-                        // FIXME _layer reference is bad
-                        applyFeatureCount(layer._layer.geometryType, layerEntry, count));
+                        if (ld.supportsFeatures) {
+                            // since a geoApi generated legend only has one element, we can omit searching layers[] for a match
+                            applySymbology(layerEntry, ld.legend.layers[0]);
+
+                            getServiceFeatureCount(`${state.url}/${layerEntry.featureIdx}`).then(count =>
+                                // FIXME _layer reference is bad
+                                applyFeatureCount(layer._layer.geometryType, layerEntry, count));
+                        } else {
+                            // no features.  show "0 features"
+                            applyFeatureCount('generic', layerEntry, 0);
+
+                            // this will remove the click handler from the legend entry
+                            // TODO suggested to make a new state for legend items that makes them
+                            // non-interactable until everything in them has loaded
+                            delete layerEntry.options.data;
+                        }
+                    });
                 });
 
                 return state;
@@ -304,7 +315,7 @@
             state.features.count = count;
 
             $translate(Geo.Layer.Esri.GEOMETRY_TYPES[geometryType]).then(type =>
-                state.features.type = type.split('|')[state.features.count > 1 ? 1 : 0]);
+                state.features.type = type.split('|')[state.features.count === 1 ? 0 : 1]);
         }
 
         /**
