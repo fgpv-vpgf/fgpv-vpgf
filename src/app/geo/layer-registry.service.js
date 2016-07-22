@@ -429,17 +429,40 @@
             }
 
             /**
-             * Zoom to visibility scale.
+             * Figure out visibility scale and zoom to it.
              * @function zoomToScale
-             * @param {Number} layerId  the id of the layer to zoom to scale to
+             * @param {Number} layer to zoom to scale to
              * @param {Boolean} zoomIn the zoom to scale direction; true need to zoom in; false need to zoom out
              *
              */
-            function zoomToScale(layerId, zoomIn) {
-                const l = layers[layerId]._layer;
+            function zoomToScale(layer, zoomIn) {
+                // dynamic layer children don't have the _layerRecord property; set l to parent layer if that's the case
+                const l = layer._layerRecord ? layers[layer.id]._layer : layers[layer.parent.id]._layer;
                 const lods = zoomIn ? geoState.lods : [...geoState.lods].reverse();
-                const lod = lods.find(lod => zoomIn ? lod.scale < l.minScale : lod.scale > l.maxScale);
 
+                // if dynamic layer, must get min/max scale differently (ie. in a promise)
+                if (!layer._layerRecord) {
+                    layer.parent._layerRecord._attributeBundle[layer.featureIdx].layerData.then(layerData => {
+                        const lod = lods.find(currentLod => zoomIn ? currentLod.scale < layerData.minScale
+                            : currentLod.scale > layerData.maxScale);
+
+                        // wait for promise to resolve before setting map to proper scale
+                        setMapScale(l, lod, zoomIn);
+                    });
+                } else {
+                    const lod = lods.find(currentLod => zoomIn ? currentLod.scale < l.minScale :
+                        currentLod.scale > l.maxScale);
+                    setMapScale(l, lod, zoomIn);
+                }
+            }
+
+            /**
+            * Set map scale depending on zooming in or zooming out of layer visibility scale
+            * @param {Object} l layer to zoom to scale to for feature layers; parent layer for dynamic layers
+            * @param {Object} lod scale object the map will be set to
+            * @param {Boolean} zoomIn the zoom to scale direction; true need to zoom in; false need to zoom out
+            */
+            function setMapScale(l, lod, zoomIn) {
                 // if zoom in is needed; must find center of layer's full extent and perform center&zoom
                 if (zoomIn) {
                     // need to reproject in case full extent in a different sr than basemap
