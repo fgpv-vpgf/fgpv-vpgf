@@ -241,7 +241,7 @@
         */
         function zoomLayerScale(entry) {
             // zoom to layer visibility scale
-            geoService.zoomToScale(entry.id, entry.options.offscale.value);
+            geoService.zoomToScale(entry, entry.options.offscale.value);
 
             // set the layer visible
             toggleVisiblity(entry, true);
