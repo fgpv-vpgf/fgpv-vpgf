@@ -296,8 +296,15 @@ function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
         defService.then(serviceResult => {
             if (serviceResult && (typeof serviceResult.error === 'undefined')) {
 
-                if (serviceResult.type === 'Feature Layer') {
+                // properties for all endpoints
+                layerData.layerType = serviceResult.type;
+                layerData.geometryType = serviceResult.geometryType;
+                layerData.minScale = serviceResult.minScale;
+                layerData.maxScale = serviceResult.maxScale;
+                layerData.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
 
+                if (serviceResult.type === 'Feature Layer') {
+                    layerData.supportsFeatures = true;
                     layerData.fields = serviceResult.fields;
 
                     // find object id field
@@ -318,13 +325,9 @@ function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
                         }
                     }
 
-                    // add renderer, geometry type, min & max scale
+                    // add renderer and legend
                     layerData.renderer = serviceResult.drawingInfo.renderer;
-                    layerData.geometryType = serviceResult.geometryType;
-                    layerData.minScale = serviceResult.minScale;
-                    layerData.maxScale = serviceResult.maxScale;
                     layerData.legend = geoApi.symbology.rendererToLegend(layerData.renderer, featureIdx);
-
                     geoApi.symbology.enhanceRenderer(layerData.renderer, layerData.legend);
 
                     // temporarily store things for delayed attributes
@@ -333,17 +336,10 @@ function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
                         layerUrl,
                         attribs
                     };
-
-                    // return the layer data promise result
-                    resolve(layerData);
-
-                } else {
-                    // we are interrogating a non-feature layer (such as a Raster Layer)
-                    // return an empty object
-                    // (should not be error, as dynamic crawler can come across non feature layers)
-                    // TODO revist incase we want a differnt return value in this case.
-                    reject({});
                 }
+
+                // return the layer data promise result
+                resolve(layerData);
             } else {
                 // case where error happened but service request was successful
                 console.warn('Service metadata load error');

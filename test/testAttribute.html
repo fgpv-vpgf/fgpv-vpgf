@@ -14,7 +14,7 @@
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
 
 
-            var mahLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0/', {id:'test1'});
+            var mahLayer = new api.layer.FeatureLayer('http://ec.gc.ca/arcgis/rest/services/JOSM/Oilsands/MapServer/0', {id:'test1'});
 
             mahLayer.on('load', function(evt) {  //update-end
 
@@ -24,20 +24,6 @@
                 console.log('feature layer result - normal case - top ', nugget1);
 
                 nugget1["0"].getAttribs().then(
-                    function (attribD) {
-                        console.log('feature layer result - normal case - attrib data', attribD);
-                    },
-                    function (iAmError) {
-                        console.log('I AM ATTRIB ERROR', iAmError);
-                    }
-                );
-
-                //test standard attribute loading of a feature layer
-                var nugget12 = api.attribs.loadLayerAttribs(mahLayer);
- 
-                console.log('feature layer result - normal case - top ', nugget12);
- 
-                nugget12["0"].getAttribs().then(
                     function (attribD) {
                         console.log('feature layer result - normal case - attrib data', attribD);
                     },
@@ -68,7 +54,7 @@
 
 			});
 
-            var mahBigLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_AirEmissions_NOx/MapServer/0', {id:'gerth'});
+            var mahBigLayer = new api.layer.FeatureLayer('http://ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_NOx/MapServer/0', {id:'gerth'});
 
             mahBigLayer.on('load', function(evt) {
 
@@ -88,7 +74,7 @@
 
             });
 
-            var mahNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_OzonePeak/MapServer', {id:'mapjection'});
+            var mahNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_OzonePeak/MapServer', {id:'mapjection'});
 
             mahNestedLayer.on('load', function(evt) {
 
@@ -128,6 +114,7 @@
 
             });
 
+            /* TODO find another fancy layer, this one has been nuked
            var mahFancyNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/E2MS_Atlantic_region_data/MapServer/', {id:'pants'});
 
             mahFancyNestedLayer.on('load', function(evt) {
@@ -155,6 +142,18 @@
                         console.log('I AM ATTRIB ERROR', iAmError);
                     }
                 );
+
+            });
+            */
+
+           var mahRasterLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_crop_spatial_density_barley/MapServer', {id:'barls'});
+
+            mahRasterLayer.on('load', function(evt) {
+
+                //test with a raster layer
+                var nugget8= api.attribs.loadLayerAttribs(mahRasterLayer);
+
+                console.log('dynamic layer result - raster guts - top', nugget8);
 
             });
 
