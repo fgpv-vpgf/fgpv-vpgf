@@ -693,9 +693,9 @@
                 // basemapLayers.setVisibleLayers(visibleLayerIds);
 
                 // hide basemap by change visibility
-                for (let basemapLayer of basemapLayers) {
+                Object.entries(basemapLayers).forEach(([index, basemapLayer]) => {
                     basemapLayer.opacity = (hide === true) ? 0.0 : 1.0;
-                }
+                });
 
                 if (!hide) {
                     geoState.blankBaseMapId = null;
