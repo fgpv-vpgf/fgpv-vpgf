@@ -162,7 +162,7 @@ module.exports = function () {
         { file: 'content/images/iconsets/communication-icons.svg', prefix: 'communication', icons: 'location_on'.split(' ') },
         { file: 'content/images/iconsets/mdi-icons.svg', prefix: 'community', icons: 'filter chevron-double-left emoticon-sad emoticon-happy vector-square table-large map-marker-off'.split(' ') },
         { file: 'content/images/iconsets/content-icons.svg', prefix: 'content', icons: 'create add remove'.split(' ') },
-        { file: 'content/images/iconsets/editor-icons.svg', prefix: 'editor', icons: 'insert_drive_file'.split(' ') },
+        { file: 'content/images/iconsets/editor-icons.svg', prefix: 'editor', icons: 'insert_drive_file drag_handle'.split(' ') },
         { file: 'content/images/iconsets/file-icons.svg', prefix: 'file', icons: 'file_upload cloud'.split(' ') },
         { file: 'content/images/iconsets/hardware-icons.svg', prefix: 'hardware', icons: 'keyboard_arrow_right keyboard_arrow_down'.split(' ') },
         { file: 'content/images/iconsets/image-icons.svg', prefix: 'image', icons: 'tune photo'.split(' ') },
