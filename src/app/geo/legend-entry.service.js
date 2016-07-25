@@ -120,6 +120,7 @@
                                 console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
                             }
                             slave.flags.scale.visible = scaleSet[slave.featureIdx].value;
+                            slave.options.offscale.value = scaleSet[slave.featureIdx].zoomIn;
                         }
                     });
                 }

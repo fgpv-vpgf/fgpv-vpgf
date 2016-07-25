@@ -446,6 +446,9 @@
                 "visibility": {
                     "$ref": "#/definitions/visibilityOptionNode"
                 },
+                "offscale": {
+                    "$ref": "#/definitions/offscaleOptionNode"
+                },
                 "opacity": {
                     "$ref": "#/definitions/opacityOptionNode"
                 },
