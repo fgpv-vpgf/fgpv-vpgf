@@ -38,8 +38,11 @@
             // register toc node with layoutService so it can be targeted
             layoutService.panes.toc = directiveElement;
 
+            // TODO convert this object into an ES6 class
+            // jscs doesn't like enhanced object notation
+            // jscs:disable requireSpacesInAnonymousFunctionExpression
             self.dragulaOptions = {
-                accepts: (dragElement, target, source, sibling) => {
+                accepts(dragElement, target, source, sibling) {
                     // el and sibling are raw dom nodes, need to use `angular.element` to get jquery wrappers
                     [dragElement, sibling] = [angular.element(dragElement), angular.element(sibling)];
 
@@ -63,8 +66,44 @@
 
                     // accept drop
                     return true;
+                },
+                rvDragStart(evt, dragElement, source) {
+                    const sortGroup = dragElement.scope().item.sortGroup;
+                    source.attr('data-sort-group', sortGroup);
+                },
+
+                rvDragDrop(evt, dragElement, target, source, sibling) {
+                    source.removeAttr('data-sort-group');
+
+                    // hack
+                    // when dropped at the end of the list, sibling, instead of being null as per docs, is the mirror node, argh...
+                    // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
+
+                    const elementLayerId = dragElement.scope().item.id.replace('placeholder', '');
+
+                    let dropLayerId;
+
+                    if (sibling.hasClass('gu-mirror')) {
+                        dropLayerId = undefined;
+                    } else {
+                        const siblingIndex = geoService.legend.items.indexOf(sibling.scope().item);
+
+                        // go down the legend and find the first layer which is
+                        // an actual layer in the map stack the element layer is be rebased on top
+                        dropLayerId = geoService.legend.items.find((item, index) =>
+                            index >= siblingIndex && geoService._refactorIsLayerInMapStack(item.id, item.sortGroup));
+
+                        dropLayerId = typeof dropLayerId === 'undefined' ?
+                            undefined : dropLayerId.id.replace('placeholder', '');
+                    }
+                    geoService.moveLayer(elementLayerId, dropLayerId);
+                },
+
+                rvDragCancel(evt, elem, target, source) {
+                    source.removeAttr('data-sort-group');
                 }
             };
+            // jscs:enable requireSpacesInAnonymousFunctionExpression
 
             // set an empty animation object in the event a method is called prior
             // to a scroll animation being created
@@ -73,8 +112,7 @@
             // on drag start, add data attribute to the list indicating which sort group the dragged layer can be accepted into
             // this will highlight invalid drop target
             scope.$on('toc-bag.drag', (evt, dragElement, source) => {
-                const sortGroup = dragElement.scope().item.sortGroup;
-                source.attr('data-sort-group', sortGroup);
+                self.dragulaOptions.rvDragStart(evt, dragElement, source);
 
                 // handle autoscroll when dragging layers
                 const scrollElem = source.closest('md-content');
@@ -108,40 +146,17 @@
 
             // on drop, remove data attribute from the list restoring normal appearance
             // call geoService to reorder layers
-            scope.$on('toc-bag.drop', (evt, dragElement, target, source, sibling) => { // , sibling) => {
-                source.removeAttr('data-sort-group');
-
-                // hack
-                // when dropped at the end of the list, sibling, instead of being null as per docs, is the mirror node, argh...
-                // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
-
-                const elementLayerId = dragElement.scope().item.id.replace('placeholder', '');
-
-                let dropLayerId;
-
-                if (sibling.hasClass('gu-mirror')) {
-                    dropLayerId = undefined;
-                } else {
-                    const siblingIndex = geoService.legend.items.indexOf(sibling.scope().item);
-
-                    // go down the legend and find the first layer which is
-                    // an actual layer in the map stack the element layer is be rebased on top
-                    dropLayerId = geoService.legend.items.find((item, index) =>
-                        index >= siblingIndex && geoService._refactorIsLayerInMapStack(item.id, item.sortGroup));
-
-                    dropLayerId = typeof dropLayerId === 'undefined' ?
-                        undefined : dropLayerId.id.replace('placeholder', '');
-                }
-                geoService.moveLayer(elementLayerId, dropLayerId);
+            scope.$on('toc-bag.drop', (evt, dragElement, target, source, sibling) => {
+                self.dragulaOptions.rvDragDrop(evt, dragElement, target, source, sibling);
 
                 // stop and remove autoscroll
                 directiveElement.off('mousemove');
                 scrollAnimation.pause();
             });
 
-            // on cancle, remove data attribute from the list restoring normal appearance
+            // on cancel, remove data attribute from the list restoring normal appearance
             scope.$on('toc-bag.cancel', (evt, elem, target, source) => { // , sibling) => {
-                source.removeAttr('data-sort-group');
+                self.dragulaOptions.rvDragCancel(evt, elem, target, source);
 
                 // stop and remove autoscroll
                 directiveElement.off('mousemove');
