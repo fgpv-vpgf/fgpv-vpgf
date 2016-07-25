@@ -68,17 +68,21 @@
              * @private
              */
             function init() {
+                const clickHandler = clickHandlerBuilder;
                 gapiService.gapi.events.wrapEvents(
                     mapObject,
                     {
-                        click: clickHandlerBuilder
+                        click: clickHandler
                     }
                 );
 
-                return {
+                geoState.identifyService =  {
                     getFeatureName,
-                    attributesToDetails
+                    attributesToDetails,
+                    clickHandler
                 };
+
+                return geoState.identifyService;
             }
 
             /******/
