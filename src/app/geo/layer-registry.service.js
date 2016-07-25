@@ -442,17 +442,17 @@
 
                 // if dynamic layer, must get min/max scale differently (ie. in a promise)
                 if (!layer._layerRecord) {
-                    layer.parent._layerRecord._attributeBundle[layer.featureIdx].layerData.then(layerData => {
+                    return layer.parent._layerRecord._attributeBundle[layer.featureIdx].layerData.then(layerData => {
                         const lod = lods.find(currentLod => zoomIn ? currentLod.scale < layerData.minScale
                             : currentLod.scale > layerData.maxScale);
 
                         // wait for promise to resolve before setting map to proper scale
-                        setMapScale(l, lod, zoomIn);
+                        return setMapScale(l, lod, zoomIn);
                     });
                 } else {
                     const lod = lods.find(currentLod => zoomIn ? currentLod.scale < l.minScale :
                         currentLod.scale > l.maxScale);
-                    setMapScale(l, lod, zoomIn);
+                    return setMapScale(l, lod, zoomIn);
                 }
             }
 
@@ -472,7 +472,7 @@
                         gextent.x1, gextent.y1, gextent.sr);
 
                     // check if current map extent already in layer extent
-                    mapObject.setScale(lod.scale).then(() => {
+                    return mapObject.setScale(lod.scale).then(() => {
                         // if map extent not in layer extent, zoom to center of layer extent
                         // don't need to return Deferred otherwise because setScale already resolved here
                         if (!reprojLayerFullExt.intersects(mapObject.extent)) {
