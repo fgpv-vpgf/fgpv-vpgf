@@ -19,6 +19,12 @@
             api.layer.ogc.parseCapabilities('http://geo.weather.gc.ca/geomet/')
                 .then(function(x) {console.log(x)});
 
+            var layler = new api.layer.ogc.WmsLayer('http://geo.weather.gc.ca/geomet/', {visibleLayers: ['RDPS.ETA_TT']});
+
+            layler.on('load', function() {
+                console.log('legend search output', api.layer.ogc.getLegendUrls(layler, ['RDPS.ETA_TT']));
+            });
+
         });
     </script>
 </body>

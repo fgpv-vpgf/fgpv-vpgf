@@ -131,6 +131,24 @@ function parseCapabilitiesBuilder(esriBundle) {
 }
 
 /**
+ * Recursively crawl a wms layer info structure. Store any legends in the provided map object.
+ *
+ * @private
+ * @param {Array} layerInfos array of ESRI WMSLayerInfo objects
+ * @param {Map} urlMap a Map of sublayer names to legend urls
+ */
+function crawlLayerInfos(layerInfos, urlMap) {
+    layerInfos.forEach(li => {
+        if (li.name) {
+            urlMap.set(li.name, li.legendURL);
+        }
+        if (li.subLayers.length > 0) {
+            crawlLayerInfos(li.subLayers, urlMap);
+        }
+    });
+}
+
+/**
  * Finds the appropriate legend URLs for WMS layers.
  *
  * @param {WMSLayer} wmsLayer an ESRI WMSLayer object to be queried
@@ -139,7 +157,7 @@ function parseCapabilitiesBuilder(esriBundle) {
  */
 function getLegendUrls(wmsLayer, layerList) {
     const liMap = new Map(); // use Map in case someone clever uses a WMS layer name that matches an Object's default properties
-    wmsLayer.layerInfos.forEach(li => liMap.set(li.name, li.legendURL));
+    crawlLayerInfos(wmsLayer.layerInfos, liMap);
     return layerList.map(l => liMap.get(l));
 }
 
