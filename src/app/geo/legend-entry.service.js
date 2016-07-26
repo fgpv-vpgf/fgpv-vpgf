@@ -228,6 +228,9 @@
                 },
                 remove: {
                     enabled: true
+                },
+                reorder: {
+                    enabled: true
                 }
             });
 
