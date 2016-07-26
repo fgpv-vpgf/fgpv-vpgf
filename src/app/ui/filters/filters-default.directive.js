@@ -156,8 +156,9 @@
                     // get object id from row data
                     const objId = row.data()[displayData.oidField];
                     const layer = geoService.layers[requester.layerId];
+                    const zoomLayer = requester.legendEntry;
 
-                    geoService.zoomToGraphic(layer, requester.legendEntry.featureIdx, objId);
+                    geoService.zoomToGraphic(layer, zoomLayer, requester.legendEntry.featureIdx, objId);
                 });
 
                 self.table.on('click', 'md-icon.rv-description', event => {
