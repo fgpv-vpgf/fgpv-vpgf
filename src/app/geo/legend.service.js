@@ -248,7 +248,7 @@
                 const entry = layerTypeGenerators[layerType](layer);
 
                 // TODO: move somewhere more appropriate
-                // make top level legend entries draggable
+                // make top level legend entries reorderable via keyboard
                 entry.options.reorder = {
                     enabled: true
                 };
