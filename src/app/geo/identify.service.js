@@ -228,6 +228,7 @@
                     .then(clickResults => {
                         console.log('got a click result');
                         console.log(clickResults);
+                        const hitIndexes = []; // sublayers that we got results for
 
                         // transform attributes of click results into {name,data} objects
                         // one object per identified feature
@@ -239,25 +240,35 @@
                             // NOTE: the identify service returns aliased field names, so no need to look them up here.
                             //       however, this means we need to un-alias the data when doing field lookups.
                             // NOTE: ele.layerId is what we would call featureIdx
+                            hitIndexes.push(ele.layerId);
+
+                            // get metadata about this sublayer
                             layerRecord.attributeBundle[ele.layerId].layerData.then(lData => {
-                                const unAliasAtt = unAliasAttribs(ele.feature.attributes, lData.fields);
                                 const identifyResult = identifyResults[ele.layerId];
 
-                                identifyResult.data.push({
-                                    name: ele.value,
-                                    data: attributesToDetails(ele.feature.attributes),
-                                    oid: unAliasAtt[lData.oidField],
-                                    symbology: [{
-                                        icon: geoState.mapService.retrieveSymbol(unAliasAtt, lData.renderer)
-                                    }]
-                                });
+                                if (lData.supportsFeatures) {
+                                    const unAliasAtt = unAliasAttribs(ele.feature.attributes, lData.fields);
+
+                                    identifyResult.data.push({
+                                        name: ele.value,
+                                        data: attributesToDetails(ele.feature.attributes),
+                                        oid: unAliasAtt[lData.oidField],
+                                        symbology: [{
+                                            icon: geoState.mapService.retrieveSymbol(unAliasAtt, lData.renderer)
+                                        }]
+                                    });
+                                }
                                 identifyResult.isLoading = false;
                             });
                         });
 
                         // set the rest of the entries to loading false
-                        identifyResults.forEach(identifyResult =>
-                                identifyResult.isLoading = false);
+                        identifyResults.forEach(identifyResult => {
+                            if (hitIndexes.indexOf(identifyResult.requester.featureIdx) === -1) {
+                                identifyResult.isLoading = false;
+                            }
+                        });
+
                     });
 
                 return {
