@@ -7,13 +7,6 @@
     <!-- TODO: add aria attribues on the button to provide context on what it does; also mute the actual layer name below, so a screen reader wouldn't pronounce it twice-->
 </md-button>
 
-<!-- TODO: fix drag handle tempalte -->
-<md-button rv-drag-handle
-    class="md-icon-button rv-button-40 rv-toc-entry-drag"
-    ng-click="self.keyboardDrag(self)">
-    <md-icon md-svg-src="editor:drag_handle"></md-icon>
-</md-button>
-
 <rv-toc-entry-symbology type="self.entry.layerType" symbology="self.entry.symbology"></rv-toc-entry-symbology>
 
 <div class="rv-layer-item-content">
@@ -53,4 +46,5 @@
 
     <rv-toc-entry-control option="visibility" ng-if="!self.entry.flags.scale.visible || !self.entry.options.visibility.value"></rv-toc-entry-control>
     <rv-toc-entry-control option="offscale" ng-if="self.entry.flags.scale.visible && self.entry.options.visibility.value"></rv-toc-entry-control>
+    <rv-toc-entry-control class="rv-keyboard-only" rv-drag-handle option="reorder"></rv-toc-entry-control>
 </div>

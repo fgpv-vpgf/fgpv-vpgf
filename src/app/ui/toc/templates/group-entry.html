@@ -3,13 +3,6 @@
     ng-click="self.defaultAction(self.entry)"
     rv-help="group-toggle"></md-button>
 
-<!-- TODO: fix drag handle tempalte -->
-<md-button rv-drag-handle
-    class="md-icon-button rv-button-40 rv-toc-entry-drag"
-    ng-click="self.keyboardDrag(self)">
-    <md-icon md-svg-src="editor:drag_handle"></md-icon>
-</md-button>
-
 <div class="rv-icon-24 rv-group-toggle-icon">
     <md-icon
         class="md-toggle-icon"
@@ -41,5 +34,6 @@
     </md-menu>
 
     <rv-toc-entry-control option="visibility"></rv-toc-entry-control>
+    <rv-toc-entry-control class="rv-keyboard-only" rv-drag-handle option="reorder"></rv-toc-entry-control>
 
 </div>

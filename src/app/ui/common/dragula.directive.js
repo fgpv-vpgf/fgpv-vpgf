@@ -118,7 +118,7 @@
 
                 const keySwitch = {
                     [keyNames.ENTER]: startOrStop,
-                    [keyNames.SPACE]: startOrStop,
+                    [keyNames.SPACEBAR]: startOrStop,
                     [keyNames.DOWN_ARROW]: moveDown,
                     [keyNames.UP_ARROW]: moveUp,
                     [keyNames.ESCAPE]: escapeStop,
