@@ -94,6 +94,11 @@
                     icon: '',
                     label: 'toc.label.filters',
                     tooltip: 'toc.tooltip.filters'
+                },
+                reorder: {
+                    icon: 'editor:drag_handle',
+                    label: 'Reorder',
+                    tooltip: 'Reorder'
                 }
             },
             flags: {
