@@ -128,12 +128,6 @@
                 const keyHandler = keySwitch[event.keyCode] || angular.noop;
                 keyHandler();
 
-                // kill events when in dragging mode
-                if (isDragging) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-
                 return;
 
                 function startOrStop() {
@@ -166,6 +160,8 @@
                     } else {
                         setFocusToDragHandle(dragElement.next());
                     }
+
+                    killEvent(event);
                 }
 
                 function moveUp() {
@@ -182,14 +178,15 @@
                     } else {
                         setFocusToDragHandle(dragElement.prev());
                     }
+
+                    killEvent(event);
                 }
 
                 function escapeStop() {
                     // otherwise things like pressing ESC will close the panel instead of cancelling draggign mode
                     if (isDragging) {
                         dropElement(event, target);
-                        event.preventDefault();
-                        event.stopPropagation();
+                        killEvent(event);
                     }
                 }
 
@@ -199,6 +196,15 @@
                         dropElement(event, target);
                     }
                 }
+            }
+
+            /**
+             * Kills default and event propagation.
+             * @param  {object} event event object
+             */
+            function killEvent(event) {
+                event.preventDefault();
+                event.stopPropagation();
             }
 
             /**
