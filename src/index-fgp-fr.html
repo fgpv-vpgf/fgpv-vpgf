@@ -1,140 +1,448 @@
 <!DOCTYPE html>
-<!--[if lt IE 9]><html class="no-js lt-ie9" lang="fr" dir="ltr"><![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js" lang="fr" dir="ltr">
-<!--<![endif]-->
-
+<html class="no-js" lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
-    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
-wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
-    <title>PGF</title>
+    <title>FGP Viewer</title>
     <meta content="width=device-width,initial-scale=1" name="viewport">
-    <!-- Meta data -->
-    <meta name="description" content="Page d'accueil de la Plateforme Géospatiale Fédérale">
-    <meta name="dcterms.title" content="Page d'accueil - Plateforme Géospatiale Fédérale">
-    <meta name="dcterms.creator" content="Ressources naturelles Canada">
-    <meta name="dcterms.issued" title="W3CDTF" content="2015-08-06">
-    <meta name="dcterms.modified" title="W3CDTF" content="2015-08-06">
-    <meta name="dcterms.subject" title="scheme" content="">
-    <meta name="dcterms.language" title="ISO639-2" content="fra">
-    <!-- Meta data-->
-    <!--[if gte IE 9 | !IE ]><!-->
-    <link href="//fgpv.cloudapp.net/demo/wet/theme-gc-intranet/assets/favicon.ico" rel="icon" type="image/x-icon">
-    <link rel="stylesheet" href="//fgpv.cloudapp.net/demo/wet/theme-gc-intranet/css/theme.min.css">
-    <!--<![endif]-->
-    <!--[if lt IE 9]>
-<link href="//fgpv.cloudapp.net/demo/wet/theme-gc-intranet/assets/favicon.ico" rel="shortcut icon" />
-<link rel="stylesheet" href="//fgpv.cloudapp.net/demo/wet/theme-gc-intranet/css/ie8-theme.min.css" />
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="//fgpv.cloudapp.net/demo/wet4.0.20/wet-boew/js/ie8-wet-boew.min.js"></script>
-<![endif]-->
-    <link rel="stylesheet" href="//fgpv.cloudapp.net/demo/fgp/fgp.css">
-    <noscript>
-        <link rel="stylesheet" href="//fgpv.cloudapp.net/demo/wet4.0.20/wet-boew/css/noscript.min.css" />
-    </noscript>
+    <link href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/favicon.ico" rel="icon" type="image/x-icon">
+    <link rel="stylesheet" href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/css/theme.min.css">
+
     <style>
-        .fgpv {
+        main div.fgpv {
             height: 700px;
-            border: 1px solid black;
-            margin: 50px;
-            position: relative;
+            margin: 10px -15px -15px -15px;
+        }
+
+        a {
+            color: #0D520D;
+            text-decoration: underline!important;
+        }
+        a:visited {
+            color: #0D520D;
+        }
+        .gc-nttvs a h3:hover {
+            color: #0000FF!important;
+            text-decoration: underline!important;
+        }
+        .alert-info, .label-info, .label-info[href]:active, .label-info[href]:focus, .label-info[href]:hover, details.alert.alert-info, details.alert[open].alert-info {
+            background: #DCF7DB;
+            border-color: #0D520D;
+        }
+        .alert-info>:first-child:before {
+            color: #0D520D;
+            content: "\e086";
+        }
+        #app-brand {
+            background-color: #1C761C;
+            color: #fff;
+            min-height: 45px;
+            /* padding-top: 5px; */
+        }
+        .app-name {
+            font-size: 1.6em;
+            padding-top: 5px;
+            padding-left: 20px;
+            background-color: #0D520D;
+            min-height: 45px;
+            max-width: 165px;
+            margin-left: -15px;
+        }
+        .app-name:before {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 165px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-top: 22.5px solid transparent;
+            border-bottom: 22.5px solid transparent;
+            border-left: 20px solid #0D520D;
+            clear: both;
+        }
+
+        .btn-primary, .btn-primary {
+        background-color: #0D520D!important;
+        color: #fff!important;
+        }
+        .btn-primary:hover, .btn-primary:focus {
+        background-color: #ccc!important;
+        color: #000!important;
+        }
+        .btn-primary-inv, .btn-primary-inv {
+        background-color: #ccc!important;
+        color: #000!important;
+        }
+        .btn-primary-inv:hover, .btn-primary-inv:focus {
+        background-color: #0D520D!important;
+        color: #fff!important;
+        }
+
+        .fgp-h1-top {
+            margin-top: 0px!important;
+        }
+        .fgp-h2-padding {
+            padding: 0px 10px 0px 10px!important;
+        }
+        .fgp-imageDiv {
+            box-shadow: 1px 1px 10px #999!important;
+            margin: 2px!important;
+            max-height: 250px!important;
+            cursor: pointer!important;
+            display:inline-block!important;
+            *display:inline!important;
+            *zoom:1!important;
+            vertical-align:top!important;
+        }
+        .fgp-imgDiv {
+            width:250px!important;
+            max-width:250px!important;
+            max-height: 250px!important;
+        }
+        .fgp-imgMaps {
+            width: 100%!important;
+            height: 100%!important;
+            border: solid #DDD!important;
+        }
+        .fgp-imgRefs {
+            box-shadow: 10px 10px 5px #888888;
+            border: solid 1px black;
+        }
+        .fgp-imgRefsMaxWidth {
+            max-width: 95%;
+        }
+        .fgp-infoDiv {
+            box-shadow: 10px 10px 5px #888888;
+            border: solid 3px darkgreen;
+            border-radius: 25px;
+            background-color: #BDEFBD;
+            padding: 15px;
+        }
+        .fgp-infoDiv-blue {
+            box-shadow: inset 2px 2px 2px #888, 10px 10px 5px #888;
+            border: solid 3px #29527D;
+            border-radius: 25px;
+            background-color: #FFFFFF;
+            padding: 15px;
+        }
+        .fgp-infoDiv-green {
+            box-shadow: inset 2px 2px 2px #888, 10px 10px 5px #888;
+            border: solid 3px #0D520D;
+            border-radius: 25px;
+            background-color: #FFFFFF;
+            padding: 15px;
+        }
+        .fgp-infoDiv-purple {
+            box-shadow: inset 2px 2px 2px #888, 10px 10px 5px #888;
+            border: solid 3px #7030A0;
+            border-radius: 25px;
+            background-color: #FFFFFF;
+            padding: 15px;
+        }
+        .fgp-main-content {
+            border-left: 0px!important;
+            border-right: 0px!important;
+        }
+        .fgp-map-container {
+            bottom: 0px!important;
+        }
+        .fgp-map-gal-container {
+            width:358px;
+            height: 358px;
+        }
+        .fgp-map-gal-container img {
+            width:358px;
+            height: 358px;
+        }
+        .fgp-map-gal-titles {
+            height: 50px!important;
+            text-align: center;
+            background-color: #EEEEEE;
+            padding: 0px 15px 15px 0;
+            width:358px;
+        }
+        .fgp-map-img {
+            width: 225px!important;
+            height: 225px!important;
+        }
+        #fgp-overflow{
+            border:1px solid #000;
+            height:440px;
+            width:100%;
+            overflow-x:scroll;
+            overflow-y:hidden;
+        }
+        #fgp-overflow .fgp-map-container{width:3000px;}
+        #fgp-overflow .fgp-map-container div{
+            float:left;
+            width:265px;
+            height:205px;
+            float:left;
+            padding-left:10px;
+            padding-right:20px;
+        }
+        #fgpSignIn {
+        padding-left: 15px;
+        padding-right: 15px;
+        }
+        .fgp-proj-desc {
+            font-size:10px!important;
+        }
+        .fgp-proj-name {
+            font-size:12px!important;
+        }
+        .fgp-proj-title {
+            background-color: #D4D4D4;
+            color: black;
+            width:99.6%;
+            padding-top:5px;
+            padding-bottom:5px;
+        }
+        .fgp-proj-type {
+            font-size:14px!important;
+        }
+        .fgp-scrolls {
+            overflow-x: scroll!important;
+            overflow-y: hidden!important;
+            width: 2250px!important;
+            white-space:nowrap!important;
+        }
+        .fgp-splash-container {
+            border-left: 0px!important;
+            border-right: 0px!important;
+            background-image: url("sp-pe-bg.jpg");
+            background-repeat: no-repeat;
+        }
+        .fgp-sttl {
+            font-size: 1.1em!important;
+            text-shadow: 1px 1px 1px #333!important;
+            color: #fff!important;
+            margin-top: 5px!important;
+            margin-bottom: 5px!important;
+        }
+        .fgp-summary-nobrd {
+            border:none!important;
+        }
+        .fgp-wrapper {
+            background:#EFEFEF!important;
+            box-shadow: 1px 1px 10px #999!important;
+            margin: auto!important;
+            text-align: center!important;
+            position: relative!important;
+            -webkit-border-radius: 5px!important;
+            -moz-border-radius: 5px!important;
+            border-radius: 5px!important;
+            margin-bottom: 20px !important;
+            padding-top: 5px!important;
+        }
+
+        h1 {
+        color: #0D520D!important;
+        border-bottom: 1px solid #0D520D;
+        }
+        h2 {
+        color: #0D520D!important;
+        }
+        h3 {
+        color: #0D520D!important;
+        }
+        h4 {
+        color: #0D520D!important;
+        }
+        h5 {
+        color: #0D520D!important;
+        }
+        .splash #bg {
+            background: url(images/splash_bg_3.gif) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            position: fixed;
+            left: 0;
+            top: 0;
+            min-width: 100%;
+            min-height: 100%;
+        }
+
+        #wb-info .brand {
+            border-top: 4px solid #0D520D;
+        }
+        .wb-tabs.carousel-s2 {
+                font-size: 0.7em!important;
+        }
+        .wb-tabs.carousel-s2 [role=tablist]>li.nxt a,
+        .wb-tabs.carousel-s2 [role=tablist]>li.plypause a,
+        .wb-tabs.carousel-s2 [role=tablist]>li.prv a {
+            color: #0D520D!important;
+        }
+        .wb-tabs.carousel-s2 [role=tablist]>li.prv a:hover .glyphicon,
+        .wb-tabs.carousel-s2 [role=tablist]>li.nxt a:hover .glyphicon,
+        .wb-tabs.carousel-s2 [role=tablist]>li.plypause a:hover,
+        .wb-tabs.carousel-s2 [role=tablist]>li.prv a:focus .glyphicon,
+        .wb-tabs.carousel-s2 [role=tablist]>li.nxt a:focus .glyphicon,
+        .wb-tabs.carousel-s2 [role=tablist]>li.plypause a:focus {
+            background-color: #0D520D!important;
+            color: white!important;
+        }
+        #wb-srch button, .srchbox button {
+            background-color: #0D520D;
+            border-color: #0D520D;
+        }
+        #wb-srch button:hover, .srchbox button {
+            background-color: #ccc;
+            border-color: #000;
+            border: solid 1px black;
+        }
+        .wb-tabs.carousel-s2 [role=tablist]>li.prv a:hover .glyphicon,
+        .wb-tabs.carousel-s2 [role=tablist]>li.nxt a:hover .glyphicon,
+        .wb-tabs.carousel-s2 [role=tablist]>li.plypause a:hover,
+        .wb-tabs.carousel-s2 [role=tablist]>li.prv a:focus .glyphicon,
+        .wb-tabs.carousel-s2 [role=tablist]>li.nxt a:focus .glyphicon,
+        .wb-tabs.carousel-s2 [role=tablist]>li.plypause a:focus {
+            background-color: #2572B4;
+            color: white;
         }
     </style>
+
 </head>
 
 <body vocab="http://schema.org/" typeof="WebPage">
+
     <ul id="wb-tphp">
         <li class="wb-slc">
-            <a class="wb-sl" href="#wb-cont">Passer au contenu principal</a>
+            <a class="wb-sl" href="#wb-cont">Skip to main content</a>
         </li>
         <li class="wb-slc visible-sm visible-md visible-lg">
-            <a class="wb-sl" href="#wb-info">Passer à «&#160;À propos de ce site&#160;»</a>
+            <a class="wb-sl" href="#wb-info">Skip to "About this site"</a>
         </li>
     </ul>
+
     <header role="banner">
-        <div id="wb-bnr">
-            <div id="wb-bar">
-                <div class="container">
-                    <div class="row">
-                        <object id="gcwu-sig" type="image/svg+xml" tabindex="-1" role="img" data="//fgpv.cloudapp.net/demo/wet/theme-gc-intranet/assets/sig-blk-fr.svg" aria-label="Gouvernement du Canada"></object>
-                        <section id="wb-lng">
-                            <h2>Sélection de la langue</h2>
-                            <ul class="list-inline">
-                                <li><a lang="en" href="index-fgp-en.html">English</a>
-                                </li>
-                            </ul>
-                        </section>
-                        <section class="wb-mb-links col-xs-12 visible-sm visible-xs" id="wb-glb-mn">
-                            <h2>Recherche et menus</h2>
-                            <ul class="pnl-btn list-inline text-right">
-                                <li>
-                                    <a href="#mb-pnl" title="Menus" aria-controls="mb-pnl" class="overlay-lnk btn btn-sm btn-default" role="button">
-                                        <span class="glyphicon glyphicon-th-list">
-                                            <span class="wb-inv">Menus</span>
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <div id="mb-pnl"></div>
-                        </section>
-                    </div>
-                </div>
-            </div>
-            <div class="container">
+        <div id="wb-bnr" class="container">
+            <section id="wb-lng" class="visible-md visible-lg text-right">
+                <h2 class="wb-inv">Language selection</h2>
                 <div class="row">
-                    <div id="wb-sttl" class="col-md-12">
-						<h1 class="fgp-sttl">
-							<a href="/fr/pgf-intranet.html"><img src="//fgpv.cloudapp.net/demo/fgp/images/pgf_light.png" alt="Mot-symbole de la PGF" class="mrgn-rght-lg"/>Plateforme géospatiale fédérale</a>
-						</h1>
-                        <object id="wmms" type="image/svg+xml" tabindex="-1" role="img" data="//fgpv.cloudapp.net/demo/wet/theme-gc-intranet/assets/wmms-intra.svg" aria-label="Symbole du gouvernement du Canada"></object>
+                    <div class="col-md-12">
+                        <ul class="list-inline margin-bottom-none">
+                            <li><a lang="fr" href="index-fgp-en.html">English</a></li>
+                        </ul>
                     </div>
-                    <!--
-                    <section id="wb-srch" class="visible-md visible-lg">
-                        <h2>Recherche</h2>
-                        <form action="https://google.ca/search" method="get" role="search" class="form-inline">
-                            <div class="form-group">
-                                <label for="wb-srch-q">Recherchez le site Web</label>
-                                <input id="wb-srch-q" class="form-control" name="q" type="search" value="" size="27" maxlength="150">
-                                <input type="hidden" name="q" value="site:wet-boew.github.io OR site:github.com/wet-boew/">
-                            </div>
-                            <button type="submit" id="wb-srch-sub" class="btn btn-default">Recherche</button>
-                        </form>
-                    </section>
-                    -->
                 </div>
+            </section>
+            <div class="row">
+                <div class="brand col-xs-8 col-sm-9 col-md-6">
+                    <a href="http://www.canada.ca/en/index.html">
+                        <object type="image/svg+xml" tabindex="-1" data="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/sig-blk-en.svg"></object><span class="wb-inv"> Government of Canada</span></a>
+                </div>
+                <section class="wb-mb-links col-xs-4 col-sm-3 visible-sm visible-xs" id="wb-glb-mn">
+                    <h2>Search and menus</h2>
+                    <ul class="list-inline text-right chvrn">
+                        <li><a href="#mb-pnl" title="Search and menus" aria-controls="mb-pnl" class="overlay-lnk" role="button"><span class="glyphicon glyphicon-search"><span class="glyphicon glyphicon-th-list"><span class="wb-inv">Search and menus</span></span></span></a></li>
+                    </ul>
+                    <div id="mb-pnl"></div>
+                </section>
+                <section id="wb-srch" class="col-xs-6 text-right visible-md visible-lg">
+                    <h2>Search</h2>
+                    <form action="#" method="post" name="cse-search-box" role="search" class="form-inline">
+                        <div class="form-group">
+                            <label for="wb-srch-q" class="wb-inv">Search website</label>
+                            <input id="wb-srch-q" list="wb-srch-q-ac" class="wb-srch-q form-control" name="q" type="search" value="" size="27" maxlength="150" placeholder="Search GCTools" style="height: 22px;">
+                            <datalist id="wb-srch-q-ac">
+                                <!--[if lte IE 9]><select><![endif]-->
+                                <!--[if lte IE 9]></select><![endif]-->
+                            </datalist>
+                        </div>
+                        <div class="form-group submit">
+                            <button type="submit" id="wb-srch-sub" class="btn btn-primary btn-small" name="wb-srch-sub"><span class="glyphicon-search glyphicon"></span><span class="wb-inv">Search</span></button>
+                        </div>
+                    </form>
+                </section>
             </div>
         </div>
-        <nav role="navigation" id="wb-sm" data-ajax-replace="//fgpv.cloudapp.net/demo/wet4.0.20/ajax/sitemenu-fr.html" data-trgt="mb-pnl" class="wb-menu visible-md visible-lg" typeof="SiteNavigationElement">
+        <nav role="navigation" id="wb-sm" data-ajax-replace="http://wet-boew.github.io/themes-dist/GCWeb/ajax/sitemenu-fr.html" data-trgt="mb-pnl" class="wb-menu visible-md visible-lg" typeof="SiteNavigationElement">
+            <div class="container nvbar">
+                <h2>Topics menu</h2>
+                <div class="row">
+                    <ul class="list-inline menu">
+                    </ul>
+                </div>
+            </div>
         </nav>
         <nav role="navigation" id="wb-bc" property="breadcrumb">
-            <h2>Vous êtes ici :</h2>
+            <h2>You are here:</h2>
             <div class="container">
                 <div class="row">
                     <ol class="breadcrumb">
-                        <li>
-                            <a href="/fr/pgf-intranet.html">Accueil</a>
-                        </li>
-                        <li>Content page</li>
+                      <li><a href="fgp-intranet.html">Home</a></li>
+                      <li>Visualisateur pour la Plateforme géospatiale fédérale</li>
                     </ol>
                 </div>
             </div>
         </nav>
     </header>
-    <main id="wb-cont" role="main" property="mainContentOfPage" class="container">
-        <div style="display:flex;">
-            <button onclick="getBookmark()">Get Link</button>
-            <input type="text" id="bookmarkDisplay" style="width:100%;"></input>
-        </div>
-        <div id="fgpmap" class="fgpv" rv-config="config.rcs.fr-CA.json" rv-langs='["fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-wait></div>
-    </main>
-    <footer role="contentinfo" id="wb-info" class="visible-sm visible-md visible-lg wb-navcurr">
-    </footer>
-    <!--[if gte IE 9 | !IE ]><!-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
-    <script src="//fgpv.cloudapp.net/demo/wet4.0.20/wet-boew/js/wet-boew.min.js"></script>
 
-    <!-- support config file change via 'config' URL parameter. -->
+    <main role="main" property="mainContentOfPage" class="container">
+        <section>
+          <h1 property="name" id="wb-cont" class="fgp-h1-top">Visualisateur pour la Plateforme géospatiale fédérale</h1>
+          <div id="fgpSignIn" class="row">
+            <div class="panel panel-default">
+                <div class="panel-body clearfix">
+                    <div style="display:flex;">
+                        <button onclick="getBookmark()">Obtenir le lien</button>
+                        <input type="text" id="bookmarkDisplay" style="width:100%;"></input>
+                    </div>
+                    <div id="fgpmap" class="fgpv" rv-config="config.rcs.fr-CA.json" rv-langs='["fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-wait></div>
+                </div>
+            </div>
+          </div>
+        </section>
+    </main>
+
+    <footer role="contentinfo" id="wb-info">
+        <nav role="navigation" class="container wb-navcurr">
+        <h2 class="wb-inv">Au sujet du gouvernement</h2>
+        <ul class="list-unstyled colcount-sm-2 colcount-md-3">
+        <li><a href="https://www.canada.ca/fr/contact.html">Contactez-nous</a></li>
+        <li><a href="https://www.canada.ca/fr/gouvernement/min.html">Ministères et organismes</a></li>
+        <li><a href="https://www.canada.ca/fr/gouvernement/fonctionpublique.html">Fonction publique et force militaire</a></li>
+        <li><a href="http://nouvelles.gc.ca/">Nouvelles</a></li>
+        <li><a href="https://www.canada.ca/fr/gouvernement/systeme/lois.html">Traités, lois et règlements</a></li>
+        <li><a href="https://www.canada.ca/fr/transparence/rapports.html">Rapports à l'échelle du gouvernement</a></li>
+        <li><a href="http://pm.gc.ca/fra">Premier ministre</a></li>
+        <li><a href="https://www.canada.ca/fr/gouvernement/systeme.html">Comment le gouvernement fonctionne</a></li>
+        <li><a href="http://ouvert.canada.ca/">Gouvernement ouvert</a></li>
+        </ul>
+        </nav>
+        <div class="brand">
+        <div class="container">
+        <div class="row">
+        <nav class="col-md-10 ftr-urlt-lnk">
+        <h2 class="wb-inv">À propos du site</h2>
+        <ul>
+        <li><a href="https://www1.canada.ca/fr/contact/retroaction.html">Rétroaction</a></li>
+        <li><a href="https://www.canada.ca/fr/sociaux.html">Médias sociaux</a></li>
+        <li><a href="https://www.canada.ca/fr/mobile.html">Applications mobiles</a></li>
+        <li><a href="http://www1.canada.ca/fr/nouveausite.html">À propos de Canada.ca</a></li>
+        <li><a href="https://www.canada.ca/fr/transparence/avis.html">Avis</a></li>
+        <li><a href="https://www.canada.ca/fr/transparence/confidentialite.html">Confidentialité</a></li>
+        </ul>
+        </nav>
+        <div class="col-xs-6 visible-sm visible-xs tofpg">
+        <a href="#wb-cont">Haut de la page <span class="glyphicon glyphicon-chevron-up"></span></a>
+        </div>
+        <div class="col-xs-6 col-md-2 text-right">
+        <object type="image/svg+xml" tabindex="-1" role="img" data="./GCWeb/assets/wmms-blk.svg" aria-label="Symbole du gouvernement du Canada"></object>
+        </div>
+        </div>
+        </div>
+        </div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+    <script src="http://wet-boew.github.io/v4.0-ci/wet-boew/js/wet-boew.min.js"></script>
+    <script src="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/js/theme.min.js"></script>
+
     <script>
         // credit: http://stackoverflow.com/a/21903119
         function getUrlParameter(sParam) {
@@ -157,36 +465,6 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
             document.getElementById("fgpmap").setAttribute("rv-config", testConfig);
         }
     </script>
-    <!--<![endif]-->
-    <!--[if lt IE 9]>
-<script src="//fgpv.cloudapp.net/demo/wet4.0.20/wet-boew/js/ie8-wet-boew2.min.js"></script>
-
-<![endif]-->
-    <script src="//fgpv.cloudapp.net/demo/wet/theme-gc-intranet/js/theme.min.js"></script>
-    <script src="//fgpv.cloudapp.net/demo/fgp/javascript/fgp.js"></script>
-    <script type="text/javascript">
-        $('#wb-info').load( "fgpFooter.html" );
-    </script>
-    <script>
-        $( document ).ready(function() {
-            // See if the user logged in GeoNetwork
-            fgpGetLoggedInUser();
-        });
-    </script>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
-
-      //If we are on PROD run the script, if not, do not
-      var cururl = window.location.hostname;
-      if ((cururl === 'gcgeo.gc.ca') || (cururl === 'www.gcgeo.gc.ca')) {
-          ga('create', 'UA-66832240-1', 'auto');
-          ga("set", "anonymizeIp", true);
-          ga('send', 'pageview');
-      }
-    </script>
 
     <!-- inject:js -->
     <!-- endinject -->
@@ -194,16 +472,13 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
     <script>
         function queryStringToJSON(q) {
             var pairs = q.search.slice(1).split('&');
-
             var result = {};
             pairs.forEach(function(pair) {
                 pair = pair.split('=');
                 result[pair[0]] = decodeURIComponent(pair[1] || '');
             });
-
             return JSON.parse(JSON.stringify(result));
         }
-
         // grab & process the url
         var queryStr = queryStringToJSON(document.location);
         var keys = queryStr.keys;
@@ -212,17 +487,15 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
             var keysArr = keys.split(',');
             RV.getMap('fgpmap').loadRcsLayers(keysArr);
         }
-
         var bookmark = queryStr.rv;
         console.log(bookmark);
         RV.getMap('fgpmap').initialBookmark(bookmark);
-
         function getBookmark(){
             RV.getMap('fgpmap').getBookmark().then(function (bookmark) {
                 document.getElementById("bookmarkDisplay").value = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
             });
         }
     </script>
-</body>
 
+</body>
 </html>
