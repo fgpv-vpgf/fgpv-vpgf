@@ -381,17 +381,13 @@
              *
              * @function zoomToGraphic
              * @param  {Object} layer is the layer record of graphic to zoom
+             * @param {Object} zoomLayer zoom object in format used by layerRegistry's zoomToScale
              * @param  {Integer} featureIdx the index of the layer (relevant for dynamic sub-layers)
              * @param  {Integer} objId is ID of object to be zoomed to
              */
-            function zoomToGraphic(layer, featureIdx, objId) {
-                const map = service.mapObject;
-
-                // FIXME _layer reference
-                const zoomLevel = gapiService.gapi.symbology.getZoomLevel(map.__tileInfo.lods, layer._layer.maxScale);
-
+            function zoomToGraphic(layer, zoomLayer, featureIdx, objId) {
                 fetchGraphic(layer, featureIdx, objId).then(gBundle => {
-                    zoomWithOffset(gBundle.graphic.geometry, zoomLevel).then(() => {
+                    zoomWithOffset(gBundle.graphic.geometry, layer, zoomLayer).then(() => {
                         applyHilight(gBundle);
                     });
                 });
@@ -460,10 +456,11 @@
              *
              * @function zoomWithOffset
              * @param  {Object} geo is the geometry to be zoomed to
-             * @param  {Integer} zoomLevel is the max level of zoom such that the layer is still visible on the map and not out of scale
+             * @param {Object} layer is layer object to get zoom level from
+             * @param {Object} zoomLayer zoom object in format used by layerRegistry's zoomToScale
              * @returns {Promise} resolves when zoom finishes
              */
-            function zoomWithOffset(geo, zoomLevel) {
+            function zoomWithOffset(geo, layer, zoomLayer) {
                 const map = service.mapObject;
 
                 const barWidth = storageService.panels.sidePanel.outerWidth();
@@ -499,11 +496,11 @@
                 } else {
                     // handles points
                     const pt = newExt.getCenter();
-                    const zoomed = map.setZoom(zoomLevel);
+                    const zoomed = geoState.layerRegistry.zoomToScale(zoomLayer, zoomLayer.options.offscale.value);
                     return zoomed.then(() => {
                         const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
                         const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
-                        return map.centerAt(newPt, zoomLevel);
+                        return map.centerAt(newPt);
                     });
                 }
             }
