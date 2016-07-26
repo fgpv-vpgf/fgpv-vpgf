@@ -380,7 +380,7 @@
              * Only handles feature related layers (feature, dynamic). Will also apply a hilight to the feature.
              *
              * @function zoomToGraphic
-             * @param  {Object} layer is the layer record of graphic to zoom
+             * @param  {Object} layer is the esri layer object of the graphic that will be zoomed to
              * @param {Object} zoomLayer zoom object in format used by layerRegistry's zoomToScale
              * @param  {Integer} featureIdx the index of the layer (relevant for dynamic sub-layers)
              * @param  {Integer} objId is ID of object to be zoomed to
@@ -456,7 +456,7 @@
              *
              * @function zoomWithOffset
              * @param  {Object} geo is the geometry to be zoomed to
-             * @param {Object} layer is layer object to get zoom level from
+             * @param  {Object} layer is the esri layer object of the graphic that will be zoomed to
              * @param {Object} zoomLayer zoom object in format used by layerRegistry's zoomToScale
              * @returns {Promise} resolves when zoom finishes
              */
