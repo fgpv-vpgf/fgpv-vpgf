@@ -76,7 +76,7 @@
             let dropIndex; // end index position
             let targetBelowElement; // element just below the drop position
 
-            const dragHandleSelector = '[rv-drag-handle]';
+            const dragHandleSelector = '[rv-drag-handle] > button';
 
             // on focusout from the draghandle, drop element and stop dragging if not actively reordering
             el.on('focusout', dragHandleSelector, focusOutHandler);
