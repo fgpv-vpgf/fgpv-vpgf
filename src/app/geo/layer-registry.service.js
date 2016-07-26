@@ -318,7 +318,7 @@
                 // compare the order of layer ids in both arrays - they should match
                 fullMapStack.forEach((layerId, index) => {
                     if (fullLegendStack[index] !== layerId) {
-                        console.error('Map stack is out of ~~whack~~ sync!');
+                        console.error(`Map stack is out of ~~whack~~ sync! ${fullLegendStack[index]} !== ${layerId}`);
                         console.warn('fullMapStack', fullMapStack);
                         console.warn('fullLegendStack', fullLegendStack);
                         return;
