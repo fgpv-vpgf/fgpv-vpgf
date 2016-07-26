@@ -17,6 +17,8 @@
      * <rv-toc-entry-control option="metadata" type="menu-item"></rv-toc-entry-control>
      * ```
      *
+     * If the `persist` attribute is set, the directive will be displayed empty if the corresponding control object is undefined.
+     *
      */
     angular
         .module('app.ui.toc')
@@ -57,8 +59,13 @@
 
             // if the control is undefined, selfdestruct
             if (typeof self.control === 'undefined') {
-                el.remove();
-                scope.$destroy();
+                if (typeof attr.persist === 'undefined') {
+                    el.remove();
+                    scope.$destroy();
+                } else {
+                    el.find('md-icon').remove();
+                }
+
                 return;
             }
 

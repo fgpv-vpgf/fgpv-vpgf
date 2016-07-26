@@ -97,8 +97,8 @@
                 },
                 reorder: {
                     icon: 'editor:drag_handle',
-                    label: 'Reorder',
-                    tooltip: 'Reorder'
+                    label: 'toc.tooltip.reorder',
+                    tooltip: 'toc.tooltip.reorder'
                 }
             },
             flags: {
