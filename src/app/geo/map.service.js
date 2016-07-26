@@ -456,11 +456,7 @@
              *
              * @function zoomWithOffset
              * @param  {Object} geo is the geometry to be zoomed to
-<<<<<<< HEAD
              * @param  {Object} layer is the esri layer object of the graphic that will be zoomed to
-=======
-             * @param {Object} layer is layer object to get zoom level from
->>>>>>> fix(geo): add zoom support for dynamic children
              * @param {Object} zoomLayer zoom object in format used by layerRegistry's zoomToScale
              * @returns {Promise} resolves when zoom finishes
              */
