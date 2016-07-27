@@ -1,9 +1,3 @@
-@include keyboard {
-    .keyboard-only {
-        display: none;
-    }
-};
-
 rv-appbar {
     left: $viewport-gutter;
     top: $viewport-gutter;
