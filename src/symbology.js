@@ -121,7 +121,7 @@ function searchRenderer(attributes, renderer) {
 
         case CLASS_BREAKS:
 
-            const gVal = attributes[renderer.field];
+            const gVal = parseFloat(attributes[renderer.field]);
             const lower = renderer.minValue;
 
             imageUrl = renderer.defaultImageUrl;
@@ -131,11 +131,12 @@ function searchRenderer(attributes, renderer) {
             if (gVal < lower) { break; }
 
             // array of minimum values of the ranges in the renderer
-            let minSplits = renderer.classBreakInfos.map(cbi => cbi.maxValue);
+            let minSplits = renderer.classBreakInfos.map(cbi => cbi.classMaxValue);
             minSplits.splice(0, 0, lower - 1); // put lower-1 at the start of the array and shift all other entries by 1
 
             // attempt to find the range our gVal belongs in
-            const cbi = renderer.classBreakInfos.find((cbi, index) => gVal > minSplits[index] && gVal <= cbi.maxValue);
+            const cbi = renderer.classBreakInfos.find((cbi, index) => gVal > minSplits[index] &&
+                gVal <= cbi.classMaxValue);
             if (!cbi) { break; } // outside of range on the high end
             imageUrl = cbi.imageUrl;
             symbol = cbi.symbol;
