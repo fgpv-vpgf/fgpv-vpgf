@@ -70,7 +70,7 @@
 
     "disallowQuotedKeysInObjects": true,
     "disallowSpaceAfterObjectKeys": true,
-    "disallowSpaceBeforeComma": true,
+    "disallowSpaceBeforeComma": {"allExcept": ["sparseArrays"]},
     "disallowSpaceBeforePostfixUnaryOperators": true,
     "disallowSpaceBeforeSemicolon": true,
     "disallowSpacesInCallExpression": true,
