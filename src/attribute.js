@@ -133,12 +133,19 @@ function newLayerPackage(featureIdx, esriBundle) {
             //       property will have been created.
             layerPackage.layerData.then(layerData => {
                 // FIXME switch to native Promise
-                //       refactor the loadDataBatch to take less parameters at the same time
                 const defFinished = new esriBundle.Deferred();
+                const params = {
+                    maxId: -1,
+                    batchSize: -1,
+                    layerUrl: layerData.load.layerUrl,
+                    oidField: layerData.oidField,
+                    attribs: layerData.load.attribs,
+                    supportsLimit: layerData.load.supportsLimit,
+                    esriBundle
+                };
 
                 // begin the loading process
-                loadDataBatch(-1, layerData.load.initBatchSize, layerData.load.layerUrl, layerData.oidField,
-                        layerData.load.attribs, defFinished, esriBundle);
+                loadDataBatch(params, defFinished);
 
                 // after all data has been loaded
                 defFinished.promise.then(features => {
@@ -199,27 +206,29 @@ function getLayerIndex(layerUrl) {
 }
 
 /**
-* Recursive function to load a full set of attributes, regardless of the maximum output size of the service
-* Passes result back on the provided Deferred object
+* Recursive function to load a full set of attributes, regardless of the maximum output size of the service.
+* Passes result back on the provided Deferred object.
 *
 * @private
-* @param  {Integer} maxId largest object id that has already been downloaded
-* @param  {Integer} maxBatch maximum number of results the service will return. if -1, means currently unknown
-* @param  {String} layerUrl URL to feature layer endpoint
-* @param  {String} idField name of attribute containing the object id for the layer
-* @param  {String} attribs a comma separated list of attributes to download. '*' will download all
+* @param  {Object} opts options object that consists of these properties
+*         - maxId: integer, largest object id that has already been downloaded.
+*         - supportsLimit: boolean, indicates if server result will notify us if our request surpassed the record limit.
+*         - batchSize: integer, maximum number of results the service will return. if -1, means currently unknown. only required if supportsLimit is false.
+*         - layerUrl: string, URL to feature layer endpoint.
+*         - oidField: string, name of attribute containing the object id for the layer.
+*         - attribs: string, a comma separated list of attributes to download. '*' will download all.
+*         - esriBundle: object, standard set of ESRI API objects.
 * @param  {Object} callerDef deferred object that resolves when current data has been downloaded
-* @param  {Object} esriBundle bundle of API classes
 */
-function loadDataBatch(maxId, maxBatch, layerUrl, idField, attribs, callerDef, esriBundle) {
+function loadDataBatch(opts, callerDef) {
     //  fetch attributes from feature layer. where specifies records with id's higher than stuff already
     //  downloaded. no geometry.
     // FIXME replace esriRequest with a library that handles proxies better
-    const defData = esriBundle.esriRequest({
-        url: layerUrl + '/query',
+    const defData = opts.esriBundle.esriRequest({
+        url: opts.layerUrl + '/query',
         content: {
-            where: idField + '>' + maxId,
-            outFields: attribs,
+            where: opts.oidField + '>' + opts.maxId,
+            outFields: opts.attribs,
             returnGeometry: 'false',
             f: 'json',
         },
@@ -231,28 +240,36 @@ function loadDataBatch(maxId, maxBatch, layerUrl, idField, attribs, callerDef, e
         if (dataResult.features) {
             const len = dataResult.features.length;
             if (len > 0) {
-                if (maxBatch === -1) {
-                    // this is our first batch and our server is 10.0.  set the max batch size to this batch size
-                    maxBatch = len;
+                // figure out if we hit the end of the data. different logic for newer vs older servers.
+                let moreData;
+                if (opts.supportsLimit) {
+                    moreData = dataResult.exceededTransferLimit;
+                } else {
+                    if (opts.batchSize === -1) {
+                        // this is our first batch. set the max batch size to this batch size
+                        opts.batchSize = len;
+                    }
+                    moreData = (len >= opts.batchSize);
                 }
 
-                if (len < maxBatch) {
-                    // this batch is less than the max.  this is last batch.  no need to query again.
-                    callerDef.resolve(dataResult.features);
-                } else {
+                if (moreData) {
                     // stash the result and call the service again for the next batch of data.
                     // max id becomes last object id in the current batch
-                    const thisDef = new esriBundle.Deferred();
-                    loadDataBatch(dataResult.features[len - 1].attributes[idField], maxBatch,
-                        layerUrl, idField, attribs, thisDef, esriBundle);
+                    const thisDef = new opts.esriBundle.Deferred();
+                    opts.maxId = dataResult.features[len - 1].attributes[opts.oidField];
+                    loadDataBatch(opts, thisDef);
 
                     thisDef.then(dataArray => {
+                        // chain the next result to our current result, then pass back to caller
                         callerDef.resolve(dataResult.features.concat(dataArray));
                     },
 
                     error => {
                         callerDef.reject(error);
                     });
+                } else {
+                    // done thanks
+                    callerDef.resolve(dataResult.features);
                 }
             } else {
                 // no more data.  we are done
@@ -332,7 +349,9 @@ function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
 
                     // temporarily store things for delayed attributes
                     layerData.load = {
-                        initBatchSize: serviceResult.maxRecordCount || -1, // 10.0 server will not supply a max record value
+                        // version number is only provided on 10.0 SP1 servers and up.
+                        // servers 10.1 and higher support the query limit flag
+                        supportsLimit: (serviceResult.currentVersion || 1) >= 10.1,
                         layerUrl,
                         attribs
                     };
