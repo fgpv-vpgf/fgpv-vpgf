@@ -101,7 +101,6 @@
 @mixin icon-ripple-shape($size) {
     width: $icon-button-width; // it's rem(4.0) now
     height: $icon-button-height; // it's rem(4.0) now
-    overflow: visible;
     left: - ($icon-button-width - $size) / 2; // shift ripple so it's still centered over the icon
     top: - ($icon-button-height - $size) / 2;
 }
