@@ -177,6 +177,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.service.connect.broken,Service does not respond,Le service ne répond pas
 ,import.service.select.title,Select Service type,Sélectionner le type de service
 ,import.service.select.servicetype,Service Type,Type de service
+,import.service.select.wrong,Service can not be imported using this type,Service ne peut pas être importé en utilisant ce type
 ,import.service.type.featurelayer,ESRI Feature Layer,Couche d'entités d'ESRI
 ,import.service.type.dynamicservice,ESRI Dynamic Layer,Couche dynamique d'ESRI
 ,import.service.type.imageservice,ESRI Image Layer,Couche d'images d'ESRI
