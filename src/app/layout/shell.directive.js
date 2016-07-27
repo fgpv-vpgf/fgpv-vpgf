@@ -38,9 +38,9 @@
                         stateManager.closePanelFromHistory();
                     });
                 } else if ([9, 13, 37, 38, 39, 40, 187, 189].find(x => x === event.which)) {
-                    $rootElement.addClass('keyboard');
+                    $rootElement.addClass('rv-keyboard');
                     $rootElement.on('mousemove', () => {
-                        $rootElement.removeClass('keyboard');
+                        $rootElement.removeClass('rv-keyboard');
                         $rootElement.off('mousemove');
                     });
                 }

@@ -22,3 +22,11 @@ $map-nav-button-width: 32px;
 $map-nav-button-height: 32px;
 
 $fade-in-out-duration: 130ms;
+
+$keyboard-only: '.rv-keyboard-only';
+
+@mixin keyboard {
+    @at-root.rv-keyboard#{&} {
+        @content;
+    }
+}

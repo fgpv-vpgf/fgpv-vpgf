@@ -247,6 +247,12 @@
                 const layerType = layer.config.layerType;
                 const entry = layerTypeGenerators[layerType](layer);
 
+                // TODO: move somewhere more appropriate
+                // make top level legend entries reorderable via keyboard
+                entry.options.reorder = {
+                    enabled: true
+                };
+
                 console.log(`Inserting legend entry ${entry.name} ${index}`);
 
                 service.legend.add(entry, index);
