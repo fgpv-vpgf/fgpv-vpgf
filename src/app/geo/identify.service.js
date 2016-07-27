@@ -205,7 +205,7 @@
                 const legendEntry = layerRecord.legendEntry;
 
                 // ignore invisible layers by returning empty object
-                if (!layerRecord.visibleAtMapScale || !layerRecord.visible) {
+                if (!layerRecord.visibleAtMapScale || !layerRecord.visible || legendEntry.isLoading) {
                     return {};
                 }
 
@@ -295,7 +295,8 @@
                 // ignore layers with no mime type or invisible layers and those where query option is false by returning empty object
                 if (!infoMap.hasOwnProperty(legendEntry.featureInfoMimeType) ||
                     !layerRecord.visible ||
-                    !legendEntry.options.query.value) {
+                    !legendEntry.options.query.value ||
+                    legendEntry.isLoading) {
                     return {};
                 }
 
@@ -335,7 +336,8 @@
                 const legendEntry = layerRecord.legendEntry;
 
                 // ignore invisible layers and those where identify option is false by returning empty object
-                if (!layerRecord.visibleAtMapScale || !layerRecord.visible || !legendEntry.options.query.value) {
+                if (!layerRecord.visibleAtMapScale || !layerRecord.visible ||
+                    !legendEntry.options.query.value || legendEntry.isLoading) {
                     return {};
                 }
 
