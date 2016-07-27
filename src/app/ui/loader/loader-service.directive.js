@@ -237,7 +237,11 @@
 
             configure.form.$setPristine();
             configure.form.$setUntouched();
-            self.layerBlueprint.config = self.configure.defaultOptions;
+
+            // if reset called before the first step is complete, layerBlueprint will not exist yet
+            if (self.layerBlueprint) {
+                self.layerBlueprint.config = self.configure.defaultOptions;
+            }
         }
 
         /**
