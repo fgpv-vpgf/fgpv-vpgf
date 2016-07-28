@@ -93,7 +93,7 @@
                         lookupPromise = check.lookupPromise;
                     }
                 }
-                lookupPromise.then(() => this._stateChange(Geo.Layer.States.LOADING));
+                lookupPromise.then(() => this._stateChange(Geo.Layer.States.LOADED));
             }
 
             onError (e) {
@@ -173,7 +173,7 @@
                     this.state = Geo.Layer.States.LOADED;
                 } else {
                     this.constructLayer(config);
-                    this.state = Geo.Layer.States.NEW;
+                    this.state = Geo.Layer.States.LOADING;
                 }
 
                 // NOTE layer registry is responsible for adding the layer to the map
