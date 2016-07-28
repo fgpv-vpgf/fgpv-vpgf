@@ -44,7 +44,8 @@
             self.renderDetails = renderDetails;
 
             self.triggerZoom = () => {
-                geoService.zoomToGraphic(self.requester.layerRec, self.requester.featureIdx, self.item.oid);
+                geoService.zoomToGraphic(self.requester.layerRec, self.requester.layerRec.legendEntry,
+                    self.requester.featureIdx, self.item.oid);
             };
 
             if (self.item.isExpanded) {
