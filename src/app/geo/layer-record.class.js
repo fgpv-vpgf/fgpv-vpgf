@@ -93,7 +93,7 @@
                         lookupPromise = check.lookupPromise;
                     }
                 }
-                lookupPromise.then(() => this._stateChange(Geo.Layer.States.LOADING));
+                lookupPromise.then(() => this._stateChange(Geo.Layer.States.LOADED));
             }
 
             onError (e) {
@@ -111,7 +111,11 @@
             }
 
             makeLayerConfig () {
-                return { id: this.config.id };
+                return {
+                    id: this.config.id,
+                    opacity: this.config.options.opacity.value,
+                    visible: this.config.options.visibility.value
+                };
             }
 
             /**
@@ -173,7 +177,7 @@
                     this.state = Geo.Layer.States.LOADED;
                 } else {
                     this.constructLayer(config);
-                    this.state = Geo.Layer.States.NEW;
+                    this.state = Geo.Layer.States.LOADING;
                 }
 
                 // NOTE layer registry is responsible for adding the layer to the map
