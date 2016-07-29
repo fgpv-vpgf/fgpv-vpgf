@@ -54,7 +54,7 @@
                 }
 
                 .rv-basemap-footer {
-                    top: 0px;
+                    top: 0;
                 }
             }
 
@@ -76,7 +76,7 @@
 
                 &:hover {
                     .rv-basemap-footer {
-                        top: 0px;
+                        top: 0;
                     }
                 }
             }
@@ -86,21 +86,21 @@
                 flex-direction: row;
                 align-items: center;
                 height: rem(2.4);
-                color: #fff;
                 overflow: hidden;
                 position: absolute;
                 left: 0;
                 right: 0;
                 bottom: 0;
-                padding-left: rem(1.0);
+                padding-left: rem(1);
                 background-color: rgba(0, 0, 0, 0.85);
                 text-transform: none;
                 font-weight: normal;
 
-                .rv-basemap-name {
-                    text-transform: capitalize;
+                %text {
+                    color: #fff;
                 }
 
+                .rv-basemap-name,
                 .rv-basemap-type {
                     text-transform: capitalize;
                 }
