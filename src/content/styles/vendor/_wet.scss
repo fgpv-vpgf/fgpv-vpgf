@@ -5,4 +5,12 @@
         padding: 0;
         margin: 0;
     }
+
+    // wet sets some properties on all the label; need to negate them
+    label {
+        font-weight: normal;
+        display: inherit;
+        max-width: inherit;
+        margin-bottom: 0;
+    }
 }

@@ -28,6 +28,11 @@ md-menu-content {
     // a bit of hack on top of the md-menu-item
     // the original uses absolute positioning inside a menubar menu, since we are not using menubar, it breaks;
     // so we have to add some stuff
+
+    // since menus are rendered outside of the viewer's container, need to explicitly apply font and colour to them 
+    color: $primary-text-color;
+    font-family: $font-family;
+
     md-menu-item {
         &[type='radio'],
         &[type='checkbox'] {
@@ -76,6 +81,7 @@ md-menu-content {
         }
     }
 }
+
 // visually highlights selected layer item in the list
 md-select-menu[multiple] {
     md-option {
