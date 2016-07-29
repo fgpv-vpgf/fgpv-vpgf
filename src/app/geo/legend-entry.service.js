@@ -54,7 +54,7 @@
                             obj.setLayerLoadingFlag(false, 100);
                         },
                         [Geo.Layer.States.REFRESH]: () => obj.setLayerLoadingFlag(true, 300),
-                        [Geo.Layer.States.LOADED]: () => obj.setLayerLoadingFlag(false, 100),
+                        [Geo.Layer.States.LOADED]: () => obj.setLayerLoadingFlag(false, 100)
                     };
 
                     if (handlers.hasOwnProperty(state)) {
@@ -441,7 +441,7 @@
                 eventsMixin(this);
 
                 return this;
-            },
+            }
         };
 
         // jscs:enable requireSpacesInAnonymousFunctionExpression

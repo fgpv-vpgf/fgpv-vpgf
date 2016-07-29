@@ -434,7 +434,7 @@
                     [Geo.Service.Types.GeoJSON]:  () =>
                         gapiService.gapi.layer.makeGeoJsonLayer(this._formatedFileData.formattedData, this.userOptions),
                     [Geo.Service.Types.Shapefile]:  () =>
-                        gapiService.gapi.layer.makeShapeLayer(this._fileData, this.userOptions),
+                        gapiService.gapi.layer.makeShapeLayer(this._fileData, this.userOptions)
                 };
 
                 // set layer id to the config id; this is needed when using file layer generator function
