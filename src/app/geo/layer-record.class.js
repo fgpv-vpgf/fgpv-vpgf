@@ -111,7 +111,11 @@
             }
 
             makeLayerConfig () {
-                return { id: this.config.id };
+                return {
+                    id: this.config.id,
+                    opacity: this.config.options.opacity.value,
+                    visible: this.config.options.visibility.value
+                };
             }
 
             /**
