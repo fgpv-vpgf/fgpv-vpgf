@@ -53,7 +53,7 @@
                 <label translate>import.service.configure.primaryfield</label>
                 <md-select name="primaryField" ng-model="self.layerBlueprint.config.nameField" required>
                     <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
-                        {{ field.name }}
+                        {{ field.alias || field.name }}
                     </md-option>
                 </md-select>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
