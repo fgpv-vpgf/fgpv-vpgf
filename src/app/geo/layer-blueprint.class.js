@@ -426,13 +426,16 @@
              */
             generateLayer() {
                 // TODO: throw error if layer type is not defined
+                // clone data because the makeSomethingLayer functions mangle the config data
+                const _clonedFormatedFileData = angular.merge({}, this._formatedFileData);
 
                 // generator functions for different file types
                 const layerFileGenerators = {
                     [Geo.Service.Types.CSV]: () =>
-                        gapiService.gapi.layer.makeCsvLayer(this._formatedFileData.formattedData, this.userOptions),
+                        gapiService.gapi.layer.makeCsvLayer(_clonedFormatedFileData.formattedData, this.userOptions),
                     [Geo.Service.Types.GeoJSON]:  () =>
-                        gapiService.gapi.layer.makeGeoJsonLayer(this._formatedFileData.formattedData, this.userOptions),
+                        gapiService.gapi.layer.makeGeoJsonLayer(_clonedFormatedFileData.formattedData,
+                            this.userOptions),
                     [Geo.Service.Types.Shapefile]:  () =>
                         gapiService.gapi.layer.makeShapeLayer(this._fileData, this.userOptions)
                 };
@@ -447,7 +450,10 @@
                 console.log(this.userOptions);
 
                 const layerPromise = layerFileGenerators[this.fileType]();
-                return layerPromise.then(layer => LayerRecordFactory.makeFileRecord(this.config, layer));
+
+                // do angular merge here too so as to not mangle config data
+                return layerPromise.then(layer => LayerRecordFactory.makeFileRecord(angular.merge({},
+                    this.config), layer));
             }
 
             _applyDefaults() {
