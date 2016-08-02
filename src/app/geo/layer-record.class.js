@@ -100,7 +100,6 @@
                 console.warn(`Layer error: ${e}`);
                 console.warn(e);
                 this._stateChange(Geo.Layer.States.ERROR);
-                throw new Error(`Layer error: ${e}`);
             }
 
             onUpdateStart () {

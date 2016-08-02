@@ -87,8 +87,10 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: configureOnContinue,
-                onCancel: () => onCancel(self.configure.step)
+                onCancel: () => onCancel(self.configure.step),
+                reset: configureReset
             },
+            configureResetValidation,
             colourPickerSettings: {
                 theme: 'bootstrap',
                 position: 'top right'
@@ -316,14 +318,43 @@
         }
 
         /**
+         * Sets the form to pristine, untouched state (so no default validation errors (like "required") will show)
+         * @function selectReset
+         */
+        function configureReset() {
+            const configure = self.configure;
+
+            configure.form.$setPristine();
+            configure.form.$setUntouched();
+
+            // TODO: generalize resetting custom form validation
+            configure.configureResetValidation();
+        }
+
+        /**
+         * Resets file type validation error messages.
+         * @function selectResetValidation
+         */
+        function configureResetValidation() {
+            // reset wrong file type error message
+            self.configure.form.$setValidity('invalid', true);
+            // toggleErrorMessage(self.select.form, 'dataType', 'wrong', true);
+        }
+
+        /**
          * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
          * @function configureOnContinue
          */
         function configureOnContinue() {
-            // TODO: display error message if something breaks
-
-            geoService.constructLayers([self.layerBlueprint]);
-            closeLoaderFile();
+            self.layerBlueprint.generateLayer()
+                .then(() => {
+                    geoService.constructLayers([self.layerBlueprint]);
+                    closeLoaderFile();
+                })
+                .catch(error => {
+                    console.warn('File is Invalid ', error);
+                    self.configure.form.$setValidity('invalid', false);
+                });
         }
 
         /**
