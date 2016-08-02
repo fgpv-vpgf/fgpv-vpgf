@@ -31,6 +31,15 @@
                 line-height: 14px;
                 color: $secondary-text-color;
             }
+
+            .rv-form-error > div {
+                font-size: 12px;
+                line-height: 14px;
+                overflow: hidden;
+                margin-top: 0;
+                padding-top: 5px;
+                color: rgb(221,44,0); /*color needs to be tied to theme*/
+            }
         }
 
         // TODO: this is horrible; need to organize it better
