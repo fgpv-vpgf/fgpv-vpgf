@@ -10,12 +10,14 @@ h4, h5, h6 {
     @extend %headings !optional;
 }
 
-%headings, %text {
+%headings {
     font-family: $font-family;
     color: $primary-text-color;
 }
 
 & {
+    color: $primary-text-color;
+    font-family: $font-family;
     background-color: #FFFFFF;
 }
 
