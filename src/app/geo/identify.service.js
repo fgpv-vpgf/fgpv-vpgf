@@ -210,15 +210,18 @@
                 }
 
                 const identifyResults = [];
+                opts.layerIds = [];
 
                 // every dynamic layer is a group in toc; walk its items to create an entry in details panel
                 legendEntry.walkItems(legendEntry => {
 
-                    // ignore invisible sublayers and those where query option is false by returning empty object
-                    if (!legendEntry.getVisibility() || !legendEntry.options.query.value) {
+                    // ignore invisible sublayers, offscale sublayers, and those where query option is false by returning empty object
+                    if (!legendEntry.getVisibility() || !legendEntry.options.query.value ||
+                        legendEntry.flags.scale.visible) {
                         return;
                     }
 
+                    opts.layerIds.push(legendEntry.featureIdx); // tell server to query this layer
                     const identifyResult =
                         IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature', layerRecord,
                             legendEntry.featureIdx, legendEntry.name);
