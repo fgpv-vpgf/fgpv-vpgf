@@ -320,7 +320,7 @@
                 animationPromise = propagate ? openPanel(getParent(panelToOpen.name), false) : $q.resolve();
 
                 animationPromise.then(() => {
-                    let panelFocusables = $rootElement.find(`[rv-state="${panelToOpen.name}"]`)
+                    const panelFocusables = $rootElement.find(`[rv-state="${panelToOpen.name}"]`)
                     .find('button, a, input, [tabindex]')
                     .filter(':visible');
 
