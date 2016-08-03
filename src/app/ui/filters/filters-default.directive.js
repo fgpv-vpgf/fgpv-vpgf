@@ -1,5 +1,6 @@
 (() => {
     // button blueprints to be added to the table rows
+    // `self` property is named so intentionally, as it will be passed on a scope to the ROW_BUTTON_TEMPLATE
     const ROW_BUTTONS = {
         details: {
             name: 'rv-details-marker',
@@ -196,6 +197,8 @@
 
                 /**
                  * Table initialization callback. This will hide the loading indicator.
+                 * @function onTableInit
+                 * @private
                  */
                 function onTableInit() {
                     // turn off loading indicator after the table initialized or the forced delay whichever takes longer; cancel loading timeout as well
@@ -208,6 +211,8 @@
 
                 /**
                  * Table draw callback. This will replace row placeholder button with real angular directives.
+                 * @function onTableDraw
+                 * @private
                  */
                 function onTableDraw() {
                     console.log('rows are drawn');
@@ -230,6 +235,8 @@
 
                 /**
                  * Row zoom click handler. Will zoom to the feature clicked.
+                 * @function onZoomClick
+                 * @private
                  * @param  {Number} rowNumber number of the row clicked
                  */
                 function onZoomClick(rowNumber) {
@@ -245,6 +252,8 @@
 
                 /**
                  * Row details click handler. Will display details for the feature clicked.
+                 * @function onDetailsClick
+                 * @private
                  * @param  {Number} rowNumber number of the row clicked
                  */
                 function onDetailsClick(rowNumber) {
@@ -300,6 +309,10 @@
                 function addColumnInteractivity(column, buttons) {
                     // use render function to augment button to displayed data when the table is rendered
 
+                    // we have to do some horrible string manipulations because Datatables required the `render` function to return a string
+                    // it's not possble to return a compiled directive from the `render` function since directives compile directly into dom nodes
+                    // first, button placeholder nodes are rendered as part of the cell data
+                    // then, on `draw.dt`, these placeholders are replaced with proper compiled button directives
                     column.render = (data, type, row, meta) => {
                         const buttonPlaceholdersTemplate = Object.values(buttons).map(button =>
                             `<${button.name} row="${meta.row}"></${button.name}>`)
