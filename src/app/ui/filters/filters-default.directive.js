@@ -1,7 +1,45 @@
 (() => {
+    // button blueprints to be added to the table rows
+    const ROW_BUTTONS = {
+        details: {
+            name: 'rv-details-marker',
+            scope: null,
+            self: {
+                isFunction: angular.isFunction,
+                icon: 'action:description',
+                label: 'filter.tooltip.description',
+                tooltip: 'filter.tooltip.description',
+                action: angular.noop,
+                enabled: true
+            }
+        },
+        zoom: {
+            name: 'rv-zoom-marker',
+            scope: null,
+            self: {
+                isFunction: angular.isFunction,
+                icon: 'action:zoom_in',
+                label: zoom => `filter.tooltip.${zoom ? 'zoom' : 'nozoom'}`,
+                tooltip: zoom => `filter.tooltip.${zoom ? 'zoom' : 'nozoom'}`,
+                action: angular.noop,
+                enabled: true
+            }
+        }
+    };
+
     // jscs:disable maximumLineLength
-    const ZOOM_TO_ICON = (tooltip, disabled) => `<md-icon class="${disabled ? 'disabled' : 'rv-icon'} rv-zoom-to" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g id="zoom_in"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-4h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></g></svg><md-tooltip role="tooltip"><div class="md-content md-show"><span>${tooltip}</span></div></md-tooltip></md-icon>`;
-    const DETAILS_ICON = tooltip => `<md-icon class="rv-icon rv-description" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g id="description"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"></path></g></svg><md-tooltip role="tooltip"><div class="md-content md-show"><span>${tooltip}</span></div></md-tooltip></md-icon>`;
+    // actual button template
+    const ROW_BUTTON_TEMPLATE = row =>
+        `<md-button
+            aria-label="{{ self.isFunction(self.label) ? self.label(self.enabled) : self.label | translate }}"
+            class="md-icon-button rv-icon-16 rv-button-24"
+            ng-click="self.action(${row})"
+            ng-disabled="!self.enabled">
+
+            <md-tooltip ng-if="self.tooltip" md-direction="top">{{ self.isFunction(self.tooltip) ? self.tooltip(self.enabled) : self.tooltip | translate }}</md-tooltip>
+            <md-icon md-svg-src="{{ self.isFunction(self.icon) ? self.icon(self.enabled) : self.icon }}"></md-icon>
+
+        </md-button>`;
     // jscs:enable maximumLineLength
 
     /**
@@ -57,8 +95,12 @@
              * @param {Object} oLang    Translation object for the table
              */
             function createTable(oLang) {
-                let zoomText = $translate.instant('filter.tooltip.zoom');
-                const descriptionsText = $translate.instant('filter.tooltip.description');
+                const callbacks = {
+                    onTableDraw,
+                    onTableInit,
+                    onZoomClick,
+                    onDetailsClick
+                };
 
                 // TODO: move hardcoded stuff in consts
                 containerNode = containerNode || el.find('.rv-filters-data-container');
@@ -98,29 +140,32 @@
                     });
                 }
 
-                const disabled = !geoService.validateProj(geoService.layers[requester.layerId]._layer.spatialReference);
-                if (disabled) {
-                    zoomText = $translate.instant('filter.tooltip.nozoom');
-                }
+                // disabled zoom row button if projection is not valid
+                const isZoomEnabled = geoService.validateProj(
+                    geoService.layers[requester.layerId]._layer.spatialReference);
+                ROW_BUTTONS.zoom.self.enabled = isZoomEnabled;
 
-                // TODO: try to compile an angular compoent and insert that instead maybe with a normal click handler ???
-                // FIXME: turn this into a real button for keyboard accessibility
+                // assign callbacks to row buttons
+                ROW_BUTTONS.details.self.action = onDetailsClick;
+                ROW_BUTTONS.zoom.self.action = onZoomClick;
+
+                // make new common scopes for row buttons
+                Object.values(ROW_BUTTONS).forEach(button => {
+                    const buttonScope = scope.$new(true);
+                    buttonScope.self = button.self;
+
+                    button.scope = buttonScope;
+                });
+
                 // get the first column after the symbol column
                 const interactiveColumn = displayData.columns.find(column =>
                     column.data !== 'rvSymbol');
-                addColumnInteractivity(interactiveColumn, [ZOOM_TO_ICON(zoomText, disabled),
-                    DETAILS_ICON(descriptionsText)]);
+                addColumnInteractivity(interactiveColumn, ROW_BUTTONS);
 
                 // ~~I hate DataTables~~ Datatables are cool!
                 self.table = tableNode
-                    .on('init.dt', () => {
-                        // turn off loading indicator after the table initialized or the forced delay whichever takes longer; cancel loading timeout as well
-                        forcedDelay.then(() => {
-                            // TODO: these ought to be moved to a helper function in displayManager
-                            stateManager.display.filters.isLoading = false;
-                            $timeout.cancel(stateManager.display.filters.loadingTimeout);
-                        });
-                    })
+                    .on('init.dt', callbacks.onTableInit)
+                    .on('draw.dt', callbacks.onTableDraw)
                     .DataTable({
                         dom: 'rti',
                         columns: displayData.columns,
@@ -144,34 +189,74 @@
                             {
                                 extend: 'csvHtml5',
                                 title: self.display.requester.name
-                            },
+                            }
                         ],
                         oLanguage: oLang
                     });
 
-                self.table.on('click', 'md-icon.rv-zoom-to', event => {
-                    const tr = $(event.target).closest('tr');
-                    const row = self.table.row(tr);
+                /**
+                 * Table initialization callback. This will hide the loading indicator.
+                 */
+                function onTableInit() {
+                    // turn off loading indicator after the table initialized or the forced delay whichever takes longer; cancel loading timeout as well
+                    forcedDelay.then(() => {
+                        // TODO: these ought to be moved to a helper function in displayManager
+                        stateManager.display.filters.isLoading = false;
+                        $timeout.cancel(stateManager.display.filters.loadingTimeout);
+                    });
+                }
+
+                /**
+                 * Table draw callback. This will replace row placeholder button with real angular directives.
+                 */
+                function onTableDraw() {
+                    console.log('rows are drawn');
+
+                    // find all the button placeholders
+                    Object.values(ROW_BUTTONS).forEach(button => {
+
+                        // and replace when with properly compiled directives
+                        tableNode.find(button.name).each((index, item) => {
+                            item = angular.element(item);
+                            const row = item.attr('row'); // get the row number of the button
+
+                            const template = ROW_BUTTON_TEMPLATE(row);
+                            const rowButtonDirective =  $compile(template)(button.scope);
+
+                            item.replaceWith(rowButtonDirective);
+                        });
+                    });
+                }
+
+                /**
+                 * Row zoom click handler. Will zoom to the feature clicked.
+                 * @param  {Number} rowNumber number of the row clicked
+                 */
+                function onZoomClick(rowNumber) {
+                    const data = self.table.row(rowNumber).data();
 
                     // get object id from row data
-                    const objId = row.data()[displayData.oidField];
+                    const objId = data[displayData.oidField];
                     const layer = geoService.layers[requester.layerId];
                     const zoomLayer = requester.legendEntry;
 
                     geoService.zoomToGraphic(layer, zoomLayer, requester.legendEntry.featureIdx, objId);
-                });
+                }
 
-                self.table.on('click', 'md-icon.rv-description', event => {
-                    const tr = $(event.target).closest('tr');
-                    const row = self.table.row(tr);
+                /**
+                 * Row details click handler. Will display details for the feature clicked.
+                 * @param  {Number} rowNumber number of the row clicked
+                 */
+                function onDetailsClick(rowNumber) {
+                    const data = self.table.row(rowNumber).data();
                     const layerRec = geoService.layers[requester.layerId];
 
                     // get object id from row data
-                    const objId = row.data()[displayData.oidField];
+                    const objId = data[displayData.oidField];
 
                     // rather than re-calculating the image, hack-extract it from the symbol tag
                     // TODO: create a render function for the rvSymbol column to avoid hack-extracting the symbol from data
-                    const imgArr = row.data().rvSymbol.split('"');
+                    const imgArr = data.rvSymbol.split('"');
                     const img = imgArr[imgArr.indexOf('><img src=') + 1];
 
                     // faking an object that looks like it was generated by the identify module
@@ -180,8 +265,8 @@
                         isLoading: false,
                         data: [
                             {
-                                name: geoService.getFeatureName(row.data(), layerRec, objId),
-                                data: geoService.attributesToDetails(row.data(), displayData.fields),
+                                name: geoService.getFeatureName(data, layerRec, objId),
+                                data: geoService.attributesToDetails(data, displayData.fields),
                                 oid: objId,
                                 symbology: [
                                     { icon: img }
@@ -205,7 +290,26 @@
 
                     const layer = geoService.layers[requester.layerId];
                     geoService.hilightGraphic(layer, requester.legendEntry.featureIdx, objId);
-                });
+                }
+
+                /**
+                 * Adds zoom and details buttons to the column provided.
+                 * @function addColumnInteractivity
+                 * @param {Object} column from the formatted attributes bundle
+                 */
+                function addColumnInteractivity(column, buttons) {
+                    // use render function to augment button to displayed data when the table is rendered
+
+                    column.render = (data, type, row, meta) => {
+                        const buttonPlaceholdersTemplate = Object.values(buttons).map(button =>
+                            `<${button.name} row="${meta.row}"></${button.name}>`)
+                            .join('');
+
+                        return `<div class="rv-wrapper"><span class="rv-data">${data}</span>
+                            ${buttonPlaceholdersTemplate}
+                        </div>`;
+                    };
+                }
             }
 
             /**
@@ -222,20 +326,6 @@
                     // TODO verify this is the proper location for this line
                     geoService.clearHilight();
                 }
-            }
-
-            // TODO: add details button
-            /**
-             * Adds zoom and details buttons to the column provided.
-             * @function addColumnInteractivity
-             * @param {Object} column from the formatted attributes bundle
-             */
-            function addColumnInteractivity(column, icons) {
-                // use render function to augment button to displayed data when the table is rendered
-                column.render = data => {
-                    return `<div class="rv-wrapper rv-icon-16"><span class="rv-data">${data}</span>
-                        ${icons.join('')}</div>`;
-                };
             }
         }
     }
