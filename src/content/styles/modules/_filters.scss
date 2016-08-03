@@ -35,42 +35,28 @@
                         background: lighten($divider-color, 20%);
 
                         tbody {
-                            .rv-wrapper {
-                                display: flex;
-                                align-items: center;
-
-                                &.rv-symbol {
-                                    justify-content: center;
-                                    img {
-                                        display: block;
-                                    }
-                                }
-                            }
 
                             .rv-data {
                                 // flex: flex-grow flex-shrink flex-basis; IE sets flex-basis as 0px which collapses the span instead of 0% as Chrome does;
                                 flex: 1 1 auto;
                             }
 
-                            // FIXME: should be removed when using real button in datatables
-                            .rv-icon {
-                                cursor: pointer;
-                                margin: 0 0 0 rem(0.6);
-                            }
+                            .rv-wrapper {
+                                display: flex;
+                                align-items: center;
 
-                            .rv-zoom-to, .rv-description {
+                                button {
+                                    margin-left: rem(0.3);
+                                    margin-right: rem(0.3);
 
-                                md-tooltip {
-                                    display: none;
+                                    &:first-of-type {
+                                        margin-left: rem(3.6);
+                                    }
+
+                                    &:last-of-type {
+                                        margin-right: 0;
+                                    }
                                 }
-
-                                &:hover md-tooltip {
-                                    display: block;
-                                }
-                            }
-
-                            .disabled {
-                                color: rgba(0, 0, 0, 0.26);
                             }
                         }
                     }
