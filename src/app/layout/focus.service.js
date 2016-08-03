@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
 
     /**
@@ -6,6 +7,18 @@
      *
      * @description
      * `focusService` manages element focus support across the application.
+     *
+     * Currently, when focus enters the viewer, the user is prompted to either:
+     *  - Press the enter key to activate focus management. Focus will not be permitted
+     *    to leave the viewer in most cases, and tabbing through the view is circular; the
+     *    last focusable element points to the first focusable element. The user has the
+     *    option to press shift and enter keys simultaniously to release focus management.
+     *
+     *  - Press the tab key. Focus will be sent to the first focusable element that is not
+     *    a part of the viewer.
+     *
+     * If any mouse movement is detected on the viewer, focus management is disabled and cannot
+     * be reactivated until the page is reloaded.
      */
     angular
         .module('app.layout')
@@ -13,28 +26,23 @@
 
     function focusService($rootElement, $rootScope, $mdDialog, storageService) {
         // last known element with focus that is a descendent of $rootElement
-
-        let firstFocusable;
-        let lastFocusable;
-
         let linkedList = [];
         let focusHistory = [];
-        let restoreFromHistory = [];
         // prevents infinite looping when setting focus from within focusin/focusout listeners
         let lockFocus = false;
         // tracks focus directional movement
         let isForward = true;
         let lastFocusElement;
-
         let dlg = $mdDialog;
         let focusStatus;
 
-        $(document).on('mousemove', event => {
-            $(document).off('mousemove');
+        setStatus('NOT_ACTIVE');
+
+        // mouse movement detected, disable focus management
+        $rootElement.on('mousemove', () => {
+            $rootElement.off('mousemove');
             setStatus('RESET');
         });
-
-        setStatus('NOT_ACTIVE');
 
         const service = {
             createLink,
@@ -45,14 +53,24 @@
 
         return service;
 
+        /**
+         * Sets or removes focus event listeners based on the passed status
+         * with the four possible statuses being:
+         *      - RESET: remove all listeners
+         *      - NOT_ACTIVE: focus is elsewhere on the page, only monitor
+         *                    when focus enters the viewer
+         *      - WAITING: focus has entered viewer, waiting for user to press
+         *                 enter key or tab past the viewer
+         *      - ACTIVE: viewer has full control of focus
+         *
+         * @function setStatus
+         * @param {String}  status  the focus status to switch to
+         */
         function setStatus(status) {
             focusStatus = status;
             switch (focusStatus) {
 
                 case 'RESET':
-                    $(document).off('focusout', _activeDocFocusoutCB);
-                    $(window).off('blur', undoRestore);
-                    $(window).off('focus', restore);
                     $rootElement.off('keydown', _waitingKeydownCB);
                     $rootElement.off('focusout', _activeRootFocusoutCB);
                     $rootElement.off('focusin', _inactiveFocusinCB);
@@ -69,71 +87,60 @@
                     break;
 
                 case 'ACTIVE':
-                    $(window).on('blur', undoRestore);
-                    $(window).on('focus', restore);
-                    $(document).on('focusout', _activeDocFocusoutCB);
                     $rootElement.on('focusout', _activeRootFocusoutCB);
                     $rootElement.on('focusin', _activeRootFocusinCB);
                     break;
             }
         }
 
+        /**
+         * Displays a dialog prompting the user to press the enter or tab key.
+         * @function confirmFocus
+         */
         function confirmFocus() {
             setStatus('WAITING');
             dlg.show({
-                controller: () => {
-                    const self = this;
-                },
-                locals: {
-                    display: 5
-                },
                 template: `<div style="padding: 20px;">
-                            <h3 style="margin:0;">Hit Spacebar to lock focus on the map</h3>
-                            <h3 style="margin:0;">Or, hit tab again to skip</h3>
-                            <h3 style="margin:0;">To exit map, hit shift Q</h3>
+                            <h3 class="md-title" style="text-align: center;margin:0;margin-bottom:15px;">
+                                Press <md-button class="md-raised">Enter</md-button> to activate
+                            </h3>
+                            <span class="md-subhead">Focus will be kept on the viewer while active. Press
+                            <md-button class="md-subhead md-raised">Shift</md-button> +
+                            <md-button class="md-subhead md-raised">Enter</md-button> at any time to exit.</span><br>
+                            Alternatively, press the <md-button class="md-subhead md-raised">Tab</md-button> key again
+                            to skip the viewer.
                             </div>`,
                 clickOutsideToClose: false,
                 escapeToClose: false,
-                controllerAs: 'self',
                 disableParentScroll: false,
-                bindToController: true,
                 parent: storageService.panels.shell,
                 focusOnOpen: false
             });
         }
 
-        // credit: http://stackoverflow.com/questions/8901854/jquery-find-the-next-inputtext-element-after-a-known-element
+        /**
+         * Provides the next focusable element after the viewer.
+         *
+         * @return Object   jQuery element object of first focusable element after viewer
+         * @function getNextExternalFocusable
+         * credit: http://stackoverflow.com/questions/8901854/jquery-find-the-next-inputtext-element-after-a-known-element
+         */
         function getNextExternalFocusable() {
-
-            firstFocusable = $rootElement.find('button:visible, [tabindex]:visible').first();
-            lastFocusable = $rootElement.find('button:visible, [tabindex]:visible').last();
-
-            //assume you know where you are starting from
-            var $startElement = lastFocusable;
-
-            //get all text inputs
+            // assume you know where you are starting from
+            var $startElement = $rootElement.find('button:visible, [tabindex]:visible').last();
+            // get all text inputs
             var $inputs = $('button:visible, a:visible, [tabindex]:visible');
-
-            //search inputs for one that comes after starting element
+            // search inputs for one that comes after starting element
             for (var i = 0; i < $inputs.length; i++) {
                 if (isAfter($inputs[i], $startElement)) {
                     var nextInput = $inputs[i];
                     return $(nextInput);
                 }
             }
-
-            //is element before or after
+            // is element before or after
             function isAfter(elA, elB) {
                 return ($('*').index($(elA).last()) > $('*').index($(elB).first()));
             }
-        }
-
-        function restore(reset = true) {
-            _restore(focusHistory, restoreFromHistory, reset);
-        }
-
-        function undoRestore() {
-            _restore(restoreFromHistory, focusHistory, false);
         }
 
         /**
@@ -141,23 +148,20 @@
          *      - is a descendant of $rootElement
          *      - is focusable
          *
-         * @function _restore
+         * @function restore
          */
-        function _restore(fromList, toList, reset) {
-            toList = reset ? [] : toList;
-            if (fromList.length > 0) {
-                let focusElem = fromList.pop();
-                toList.unshift(focusElem);
-
+        function restore() {
+            if (focusHistory.length > 0) {
+                let focusElem = focusHistory.pop();
                 lockFocus = true;
                 focusElem.focus();
 
                 // detect if the focus has changed; focus is unchanged if the target
                 // element is not focusable
                 if (!focusElem.is(':focus')) {
-                    _restore(fromList, toList, false); // continue moving back through history until focus is changed
+                    restore(); // continue moving back through history until focus is changed
                 } else {
-                    focusHistory.push(focusElem) // focus change successful; this is our new actively focused elemment
+                    focusHistory.push(focusElem); // focus change successful; this is our new actively focused elemment
                 }
             }
         }
@@ -222,27 +226,21 @@
             $rootScope.$applyAsync(() => lastFocusElement.focus());
         }
 
-
-
         // -------------------------------------------------------------------
         // ---------- EVENT LISTENER LOGIC FUNCTIONS BELOW -------------------
         // -------------------------------------------------------------------
-
-        function _activeDocFocusoutCB(event) {
-            if (RV.lastFocusManager === $rootElement.attr('id') && event.relatedTarget === null) {
-                restore();
-            }
-        }
-
         function _activeRootFocusoutCB(event) {
-            // so we don't bubble up to our document focusout watcher
-            // event.stopPropagation();
-
+            let firstFocusable = $rootElement.find('button:visible, [tabindex]:visible').first();
+            let lastFocusable = $rootElement.find('button:visible, [tabindex]:visible').last();
             // this is used to determine which viewer (if there is more than one) should take
             // control of focus if it is going to be assigned to body by the browser
             RV.lastFocusManager = $rootElement.attr('id');
 
-            if (event.relatedTarget === null) {
+            // detect if focus is moving to a null target, which indicates focus was lost due to
+            // a hidden or destroyed element (unless we are on the first or last focusable element)
+            if (event.relatedTarget === null &&
+                event.target !== firstFocusable[0] &&
+                event.target !== lastFocusable[0]) {
                 restore(false);
 
             } else if (event.target === firstFocusable[0] && !isForward) {
@@ -252,8 +250,6 @@
                 firstFocusable.focus();
             }
         }
-
-
 
         function _activeRootFocusinCB(event) {
             if (!lockFocus) {
@@ -287,17 +283,11 @@
             lockFocus = false;
         }
 
-
         function _inactiveFocusinCB(event) {
             return !$.contains($rootElement[0], event.relatedTarget) ? confirmFocus() : null;
         }
 
         function _waitingKeydownCB(event) {
-
-
-            firstFocusable = $rootElement.find('button:visible, [tabindex]:visible').first();
-            lastFocusable = $rootElement.find('button:visible, [tabindex]:visible').last();
-
             const setInactive = () => {
                 event.preventDefault();
                 setStatus('RESET');
