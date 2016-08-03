@@ -48,7 +48,8 @@
                             }
 
                             .rv-data {
-                                flex: 1;
+                                // flex: flex-grow flex-shrink flex-basis; IE sets flex-basis as 0px which collapses the span instead of 0% as Chrome does;
+                                flex: 1 1 auto;
                             }
 
                             // FIXME: should be removed when using real button in datatables
