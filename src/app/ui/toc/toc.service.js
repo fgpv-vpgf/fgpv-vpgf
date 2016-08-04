@@ -132,7 +132,7 @@
                     }
                 },
                 scale: {
-                    icon: 'action:info',
+                    icon: 'maps:layers_clear',
                     label: 'toc.label.flag.scale',
                     tooltip: 'toc.tooltip.flag.scale'
                 },
