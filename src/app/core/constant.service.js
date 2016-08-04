@@ -32,5 +32,9 @@
             rvDataPrint: 'rvDataPrint', // these data events should be removed after switching to angular 1.5 or 2 or React
             rvDataExportCSV: 'rvDataExportCSV'
         })
-        .constant('translations', AUTOFILLED_TRANSLATIONS);
+        .constant('translations', AUTOFILLED_TRANSLATIONS)
+        .value('appInfo', {
+            id: null
+            // something else ?
+        });
 })();

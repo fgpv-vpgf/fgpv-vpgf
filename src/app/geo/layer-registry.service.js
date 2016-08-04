@@ -62,16 +62,6 @@
 
             service.legend = ref.legendService.legend;
 
-            // for debug purposes
-            // FIXME: add a debug flag which controls if these should be bound
-            window.RV.debug = {};
-            window.RV.debug.layers = service.layers;
-            window.RV.debug.legend = service.legend;
-            window.RV.debug.graphicsLayerIds = mapObject.graphicsLayerIds;
-            window.RV.debug.layerIds = mapObject.layerIds;
-            window.RV.debug.geoState = geoState;
-            window.RV.debug.gapi = gapiService.gapi;
-
             // set event handler for extent changes
             gapiService.gapi.events.wrapEvents(
                 geoState.mapService.mapObject,
