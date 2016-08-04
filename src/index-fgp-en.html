@@ -14,8 +14,8 @@
         }
 
         a {
-            color: #0D520D;
-            text-decoration: underline;
+            color: #0d520d;
+            text-decoration: underline!important;
         }
         a:visited {
             color: #0D520D;
@@ -79,7 +79,7 @@
         }
 
         .fgp-h1-top {
-            margin-top: 0px;
+            margin-top: 10px;
         }
         .fgp-h2-padding {
             padding: 0px 10px 0px 10px;
@@ -303,6 +303,36 @@
             background-color: #2572B4;
             color: white;
         }
+        .tool-link {
+            padding: 11px 0 0 30px;
+        }
+        .pull-right {
+            float: right!important;
+        }
+        #app-brand a {
+            text-decoration: none;
+            color: #fff;
+        }
+        .tool-link-icon {
+            width: 25px;
+            margin: 0 5px 3px 0;
+        }
+        img {
+            vertical-align: middle;
+        }
+        img {
+            border: 0;
+        }
+        .bold-gc {
+            font-weight: 800;
+        }
+        #wb-sm {
+            background: #606060;
+        }
+        #wb-sm .menu>li a:hover, #wb-sm .menu>li a:focus {
+            background: #484848!important;
+            text-shadow: none;
+        }
     </style>
 </head>
 
@@ -357,6 +387,33 @@
                         </div>
                     </form>
                 </section>
+            </div>
+        </div>
+        <div id="app-brand" class="wb-init wb-data-ajax-replace-inited">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="app-name">
+                            <a href="http://132.156.21.102/en/fgp-intranet.html">
+                            <span><span class="bold-gc">GC</span>geo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="pull-right tool-link">
+                            <a href="http://intranet.canada.ca/">
+                            <img class="tool-link-icon" alt="GCintranet" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAmCAYAAACoPemuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZ1JREFUeNrMmIFxwyAMAI3PA9ANPAIb1N0g3SQblA1y2SAjdAPbEyQjeANnAypSOUdd0sNCNNKdzuRidG8kIUFVCRVFmeSc28HjFbQDNQ9eu4AOoKNS6rPYFwBMC3oAnd12mXFuyw1liUAxQMsBZEDPjl/O5NVDqNmVE2/b/AeUf78vBodBPhNco3G+3uj+OcmtxJhqVza6rR+Wkn2bJWJHE8xYThcusl/Z2hOToY2BHTKzzKILbY6NXyXJE8NDP7lEXqF8vfhBHdQ+LaB2a2T5BsOCLEVuLA3+6BgMTks3geOeaKe7x1gs5RPl3ceFb3EgNq7hPpYBVoEt1WSukgl6L1ZpllJClI9gHG6Q2YlUFwpgkw0WxoYkqSuhUpcK3gy5hGCDILAhBBsFgY13MDz3SUiC63IGDYP/JADsFMvKI+OqTZTVQoafYLCEU/jHE8COyMB6GNlF2nS+wwih9zcJ9npKr68eHXixbdEpe05C3dR/xNUbuDB9gxd5RbByq6xLFdHXUMwXd3bLKpW86hywUyh71ZkIzHY2/RJgAGgraQvkEBT7AAAAAElFTkSuQmCC" /><span class="bold-gc">GC</span>intranet</a>
+                        </div>
+                        <div class="pull-right tool-link">
+                            <a href="http://www.gcpedia.gc.ca/wiki/?setlang=en">
+                            <img class="tool-link-icon" alt="GCpedia" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAmCAYAAACoPemuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAhRJREFUeNrUWItRwzAMTXodwBvQEcIEDRt0hGwAG2AmyAiFCdoNEiZIN0iYIN3AyIdchLHxpzEY3ely18rOy/OzLLkoMrUyZpAQYgePLXgNXlnCTuA9+GtZlsdkXwBgNuAt+CzCbcaxm6VB8UhAJoB8CUAV+CCWtyGaPQQ1i3Qm565yA+UEV5pEDo8BnOFPE/jLlaq4AW8s/53Bb2HnTi62dE11C2i1dmlOH7PWd58tL8nJMW+F2ARMPHvESelwiOW2PGXSVUdSRqh1nowpvV126opguye6+gtjVId0KZuASeTyvDliHiPASXL4BRiefSFsNalYk1jk2aoY2wZOkIoxheUCLHS3NQm1VlPxV0U+Vn3LY5ks5ceuBLHFpIgmNW2rXEvrNWzNM7CWTC+Y/VkOjB2x1lfZfIMVRNTpP3icdz5n5UDm/FKZkPNy55hvoIz1nt8g457A7ywsMHwpw/9PWtdUkI6p/+Edn+2YizGM60jNfrDE16RX6AzvkOPk0TNaxu/05ZxdnQ2WRmrZH7S40dBZCVXKwHOvPhSBmTqv2aSz1rezwVgdGNfmGhEMI4xxWncRsMrakEJRZ6+x9J0jLpN6ObNstNayjLO1pQuoUg+oJeV73z4B9Wcyfk3q8LV9ILAhpn27xk5aWqmj27dcGt7/dUWg7dS8LlWyvoZa+OKOh7CU8qqzx12Z9qrzt+1dgAEAtrx39EWRYuQAAAAASUVORK5CYII%3D" /><span class="bold-gc">GC</span>pedia</a>
+                        </div>
+                        <div class="pull-right tool-link">
+                            <a href="https://gcconnex.gc.ca/">
+                                <img alt="GCconnex" class="tool-link-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAmCAYAAACoPemuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAoNJREFUeNrMWItRwzAMbTgG6AZkA8IEhA0YwWzQbpANMoLZoDABZQKXCdJOkG4QVE6+E4psy2nCoTtdco4jP+tnWavVP6Viyk/DMDzD4xG4Bq4C0w7Ae+DPoijeFtsBgCmBW+B+yKce/y3nBtVEAFngGniDXONYCGAzB6AK2EU0YXAeBWJxzET+c5O1h6BiZmvJ3F9ExtuEeau5QQ10x/C+I+M75pfDLOBQWApUK2zEU8W+tQpwpQaYS/gGX5g6u4++KtNXnSb6QmSpVgVNcaroXCFIODVTTEhBGZxnEhtp6FwFONmkEV9wAaF9wn94MrYKd2kkYH3CJCawy1qQVQfkmYQL9KOzL2ZCRaR2qE2L78kIjJj0WWPGUuG0uWQTOa5NpQiH39bD/LROrXuD2KTsu8dnvUCxUrM1KFUUmESnCOhrqWJrjOjWqzVQ6F3oFfgIfA98iar1RDBnlPVFNHWIZXvJhz5wnKYIg2O7CT61i8hzoepkJZyH3jlp6HfK8zSWoEfyJHAhH9tCjX4m6l8J79sME24DMn7eca2RvBtm6yNMpJHyLr3jnKMC1BR5BwrM/3wUUsYZmYe2CtgEeXvpSAraXfA/p/UvlNcl5HWjI4kd4iXedkK0UZTMv461hDxD5PXcx3y+upBVmKjNcH7NXMswBAtFe+VFRX3hYGV5qSmtO3KBrVkVWiorDstKa0PkbZjfNdHeBTpsrB/xAuF98E4d6F/89C18PkSN2ZhcmPswx/XNaq5cSs2KJixCfgSPD8WB7Ts6J5KkL//eJTpBNPs/eQvMeRu/hvJbBMwUbgFQ05sqGW2oXC1d34aauXHX5GhpyVbnHgNi2VbnX9O3AAMAKWdBIdpEO1sAAAAASUVORK5CYII%3D" /><span class="bold-gc">GC</span>connex</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <nav role="navigation" id="wb-sm" data-ajax-replace="http://wet-boew.github.io/themes-dist/GCWeb/ajax/sitemenu-en.html" data-trgt="mb-pnl" class="wb-menu visible-md visible-lg" typeof="SiteNavigationElement">
