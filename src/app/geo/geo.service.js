@@ -4,7 +4,7 @@
     /**
      * @module geoService
      * @memberof app.geo
-     * @requires $http, $q, gapiService, mapService, layerRegistry, configService, identifyService
+     * @requires $http, $q, mapService, layerRegistry, configService, identifyService
      *
      * @description
      * `geoService` wraps all calls to geoapi and also tracks the state of anything map related
@@ -14,7 +14,7 @@
         .module('app.geo')
         .factory('geoService', geoService);
 
-    function geoService($http, $q, $rootScope, events, gapiService, mapService, layerRegistry, configService,
+    function geoService($http, $q, $rootScope, events, mapService, layerRegistry, configService,
         identifyService, LayerBlueprint) {
 
         // TODO update how the layerOrder works with the UI
