@@ -3,6 +3,7 @@
 
     angular
         .module('app.core')
+        .run(debugBlock)
         .run(apiBlock)
         .run(runBlock);
 
@@ -14,7 +15,7 @@
      *
      * The `runBlock` triggers config and locale file loading, sets language of the app.
      */
-    function runBlock($rootScope, $rootElement, $translate, $q, globalRegistry, reloadService, events, configService,
+    function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, events, configService,
             gapiService) {
 
         const promises = [
@@ -69,7 +70,7 @@
          */
         function preLoadApiBlock() {
             const preMapService = {
-                initialBookmark,
+                initialBookmark
             };
 
             globalRegistry.getMap($rootElement.attr('id'))._registerPreLoadApi(preMapService);
@@ -84,7 +85,7 @@
     }
 
     /**
-     * @function
+     * @function apiBlock
      * @private
      * @memberof app.core
      * @description
@@ -186,5 +187,23 @@
             geoService.mapObject.setZoom(zoom);
             geoService.mapObject.centerAt(zoomPoint);
         }
+    }
+
+    /**
+     * @function debugBlock
+     * @private
+     * @memberof app.core
+     * @description
+     *
+     * Exposes inner services for debugging purposes
+     */
+    function debugBlock($rootElement, appInfo, geoService) {
+        // store app id in a value
+        appInfo.id = $rootElement.attr('id');
+
+        // expose guts for debug purposes
+        angular.extend(window.RV.debug[appInfo.id], {
+            geoService
+        });
     }
 })();
