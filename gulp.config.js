@@ -32,6 +32,7 @@ module.exports = function () {
             src + 'index-many.html',
             src + 'index-one.html',
             src + 'index-wet.html',
+            src + 'index-jso.html',
             src + 'index-fgp-en.html',
             src + 'index-fgp-fr.html'
         ],
@@ -54,8 +55,11 @@ module.exports = function () {
             'bootstrap.js'
         ],
 
-        jsPolyfills: src + 'polyfill/*.js',
+        jsPolyfills: src + 'polyfill/es7-*.js',
         jsPolyfillsFile: 'polyfills.js',
+
+        jsIePolyfills: src + 'polyfill/ie-*.js',
+        jsIePolyfillsFile: 'ie-polyfills.js',
 
         // please rename if there are better shorter names
         jsSingleFile: 'app.js',

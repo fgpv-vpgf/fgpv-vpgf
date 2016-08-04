@@ -287,21 +287,30 @@ gulp.task('jsinjector', 'Copy fixed assets to the build directory',
         // we don't run babel on the polyfills as it tries to restrict their access to global/window scope
         const polyfills = gulp.src(config.jsPolyfills)
             .pipe($.plumber({ errorHandler: injectError }))
-            // .pipe($.babel())
             .pipe($.plumber.stop())
             .pipe($.concat(config.jsPolyfillsFile));
 
-        const injector = gulp.src(config.jsInjectorFile)
-            .pipe($.babel());
+        const iePolyfills = gulp.src(config.jsIePolyfills)
+            .pipe($.plumber({ errorHandler: injectError }))
+            .pipe($.plumber.stop())
+            .pipe($.concat(config.jsIePolyfillsFile));
 
-        return merge(polyfills, injector) // merge doesn't guarantee file order :(
+        // NOTE it is currently reasonable to load ES7 polyfills with injector as
+        // the only one we have is Object.entries and it is very small
+        // if it gets bigger we should split it into a separate file
+        const injector = merge(gulp.src(config.jsInjectorFile).pipe($.babel()), polyfills)
             .pipe($.order(config.injectorOrder))
-            .pipe($.concat(config.jsInjectorDest))
-            // can't use lazy pipe with uglify
-            .pipe($.if(PROD_MODE, $.sourcemaps.init()))
-            .pipe($.if(PROD_MODE, $.uglify()))
-            .pipe($.if(PROD_MODE, $.sourcemaps.write('./maps')))
-            .pipe(gulp.dest(config.libBuild));
+            .pipe($.concat(config.jsInjectorDest));
+
+        const streams = [iePolyfills, injector].map(stream => {
+            return stream
+                .pipe($.if(PROD_MODE, $.sourcemaps.init()))
+                .pipe($.if(PROD_MODE, $.uglify()))
+                .pipe($.if(PROD_MODE, $.sourcemaps.write('./maps')))
+                .pipe(gulp.dest(config.libBuild));
+        });
+
+        return merge(...streams);
     });
 
 gulp.task('inject', 'Adds configured dependencies to the HTML page',
@@ -318,6 +327,9 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
         }
 
         const injectOpts = { ignorePath: '../build', addPrefix: '..', relative: true };
+        // NOTE injecting script tags for IE is too annoying at the moment,
+        // if there is a better option we can add this back but for now '../lib/ie-polyfills.js' is hardcoded
+        // const iePolyOpts = { ignorePath: '../build', addPrefix: '..', relative: true, name: 'ie', removeTags: true };
 
         return gulp
             .src(index)
