@@ -94,14 +94,17 @@
 
     // check if the global RV registry object already exists
     if (typeof window.RV === 'undefined') {
-        window.RV = {};
+        window.RV = {
+            getMap,
+            debug: {},
+            _nodes: null
+        };
     }
 
     const RV = window.RV; // just a reference
 
     // registry of map proxies
     const mapRegistry = [];
-    RV.getMap = getMap;
 
     // appeasing this rule makes the code fail disallowSpaceAfterObjectKeys
     /* jscs:disable requireSpacesInAnonymousFunctionExpression */
@@ -146,7 +149,7 @@
         },
 
         _init() {
-            this._appPromise = new Promise((resolve) =>
+            this._appPromise = new Promise(resolve =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness
                 this._registerMap = appInstance =>
                     // resolve with the actual instance of the map;
@@ -154,7 +157,7 @@
                     resolve(appInstance)
             );
 
-            this._initAppPromise = new Promise((resolve) =>
+            this._initAppPromise = new Promise(resolve =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness
                 this._registerPreLoadApi = appInstance =>
                     // resolve with the actual instance of the map;
@@ -186,6 +189,9 @@
             node.setAttribute('id', 'rv-app-' + counter++);
         }
 
+        // create debug object for each app instance
+        RV.debug[node.getAttribute('id')] = {};
+
         mapRegistry[node.getAttribute('id')] = Object.create(mapProxy)._init(node);
     });
 
@@ -197,3 +203,66 @@
         return mapRegistry[id];
     }
 })();
+
+(function() {
+    'use strict';
+
+    const RV = window.RV; // just a reference
+    RV.debug._trackFocus = trackFocusBuilder();
+
+    /**
+     * Builds a focus tracking debug option.
+     * @function trackFocusBuilder
+     * @private
+     * @return function  enables/disabled focus/blur event tracking on the page; this function accepts a boolean - `true` enables tracking; `false`, disables it
+     */
+    function trackFocusBuilder() {
+        let lastActiveElement = document.activeElement;
+
+        let isActive = false;
+
+        return () => {
+            isActive = !isActive;
+            if (isActive) {
+                console.debug('trackFocus is enabled.');
+                attachEvents();
+            } else {
+                console.debug('trackFocus is disabled.');
+                dettachEvents();
+            }
+        };
+
+        /***/
+
+        function detectBlur(event) {
+            // Do logic related to blur using document.activeElement;
+            // You can do change detection too using lastActiveElement as a history
+            console.debug('[trackFocus]: blur', document.activeElement, event, isSameActiveElement());
+        }
+
+        function isSameActiveElement() {
+            let currentActiveElement = document.activeElement;
+            if (lastActiveElement !== currentActiveElement) {
+                lastActiveElement = currentActiveElement;
+                return false;
+            }
+
+            return true;
+        }
+
+        function detectFocus(event) {
+            // Add logic to detect focus and to see if it has changed or not from the lastActiveElement.
+            console.debug('[trackFocus]: focus', document.activeElement, event, isSameActiveElement());
+        }
+
+        function attachEvents() {
+            window.addEventListener('focus', detectFocus, true);
+            window.addEventListener('blur', detectBlur, true);
+        }
+
+        function dettachEvents() {
+            window.removeEventListener('focus', detectFocus, true);
+            window.removeEventListener('blur', detectBlur, true);
+        }
+    }
+}());
