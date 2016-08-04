@@ -103,10 +103,10 @@ Table of Content visibilty off label,toc.label.visibility.off,Show layer,Affiche
 Table of Content visibilty off tootlip,toc.tooltip.visibility.off,Show layer,Afficher la couche
 Table of Content visibilty on label,toc.label.visibility.on,Hide layer,Masquer la couche
 Table of Content visibilty on tootlip,toc.tooltip.visibility.on,Hide layer,Masquer la couche
-Table of Content visibilty zoom in label,toc.label.visibility.zoomIn,Zoom In to Details,Zoom avant
-Table of Content visibilty zoom in tootlip,toc.tooltip.visibility.zoomIn,Zoom In to Details,Zoom avant
-Table of Content visibilty zoom out label,toc.label.visibility.zoomOut,Zoom Out to Details,Zoom arrière
-Table of Content visibilty zoom out tootlip,toc.tooltip.visibility.zoomOut,Zoom Out to Details,Zoom arrière
+Table of Content visibilty zoom in label,toc.label.visibility.zoomIn,Zoom in to details,Zoom avant
+Table of Content visibilty zoom in tootlip,toc.tooltip.visibility.zoomIn,Zoom in to details,Zoom avant
+Table of Content visibilty zoom out label,toc.label.visibility.zoomOut,Zoom out to details,Zoom arrière
+Table of Content visibilty zoom out tootlip,toc.tooltip.visibility.zoomOut,Zoom out to details,Zoom arrière
 Table of Content reload label,toc.label.reload,Reload,Recharger
 Table of Content reload tootlip,toc.tooltip.reload,Reload,Recharger
 Table of Content remove label,toc.label.remove,Remove,Retirer
@@ -126,7 +126,7 @@ Table of Content tile layer flag tootlip,toc.tooltip.flag.tile,ESRI Tile Layer,C
 Table of Content image layer flag label,toc.label.flag.image,ESRI Image Layer,Couche d'images d'ESRI
 Table of Content image layer flag tootlip,toc.tooltip.flag.image,ESRI Image Layer,Couche d'images d'ESRI
 Table of Content scale flag label,toc.label.flag.scale,Toggle scale,Basculer l'échelle
-Table of Content scale flag tootlip,toc.tooltip.flag.scale,Layer Out Of Scale,Couche hors de portée
+Table of Content scale flag tootlip,toc.tooltip.flag.scale,Layer out of scale,Couche hors de portée
 Table of Content data table flag label,toc.label.flag.data.table,Layer has viewable data,Données disponibles pour la visualisation associées à cette couche
 Table of Content data table flag tootlip,toc.tooltip.flag.data.table,Layer has viewable data,Données disponibles pour la visualisation associées à cette couche
 Table of Content data filter flag label,toc.label.flag.data.filter,Layer data is filtered,Couche de données filtrée
