@@ -94,14 +94,16 @@
 
     // check if the global RV registry object already exists
     if (typeof window.RV === 'undefined') {
-        window.RV = {
-            getMap,
-            debug: {},
-            _nodes: null
-        };
+        window.RV = {};
     }
 
     const RV = window.RV; // just a reference
+
+    // set these outside of the initial creation in case the page defines RV for setting
+    // properties like dojoURL
+    RV.getMap = getMap;
+    RV.debug = {};
+    RV._nodes = null;
 
     // registry of map proxies
     const mapRegistry = [];
@@ -185,14 +187,18 @@
 
     nodes.forEach(node => {
 
-        if (!node.getAttribute('id')) {
-            node.setAttribute('id', 'rv-app-' + counter++);
+        let appId = node.getAttribute('id');
+
+        if (!appId) {
+            appId = 'rv-app-' + counter++;
+            node.setAttribute('id', appId);
         }
 
+        console.info('setting debug on', appId, node);
         // create debug object for each app instance
-        RV.debug[node.getAttribute('id')] = {};
+        RV.debug[appId] = {};
 
-        mapRegistry[node.getAttribute('id')] = Object.create(mapProxy)._init(node);
+        mapRegistry[appId] = Object.create(mapProxy)._init(node);
     });
 
     /***/
