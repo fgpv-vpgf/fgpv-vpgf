@@ -189,6 +189,15 @@
 
                         // some custom processing of Dynamic layers to let the user option to pick sublayers
                         if (this.serviceType === Geo.Service.Types.DynamicService) {
+                            const lastIndex = this.config.url.substring(this.config.url.lastIndexOf('/') + 1);
+                            if (!isNaN(lastIndex)) {
+                                const indexList = [parseInt(lastIndex)].concat(
+                                    this._serviceInfo.layers[lastIndex].subLayerIds);
+
+                                this._serviceInfo.selectedIdx = indexList;
+                                this.config.url = this.config.url.substring(0, this.config.url.lastIndexOf('/'));
+                            }
+
                             flattenDynamicLayerList(this._serviceInfo.layers);
 
                             // this includes all sublayers; converting layerEntries to a proper config format
