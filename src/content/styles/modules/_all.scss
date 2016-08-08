@@ -26,6 +26,7 @@
 @import "_progress-indicator.scss";
 @import "_shell.scss";
 @import "_metadata.scss";
+@import "_md-icon.scss";
 
 @include core;
 @include loading;
@@ -51,3 +52,4 @@
 @include progress-indicator;
 @include shell;
 @include metadata;
+@include md-icon;
