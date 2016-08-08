@@ -17,7 +17,7 @@
     "angular-dragula": "1.2.7",
     "angular-sanitize": "~1.4.11",
     "angular-aria": "~1.4.11",
-    "angular-material": "1.0.4",
+    "angular-material": "1.1.0-rc.5",
     "angular-translate": "^2.7.2",
     "angular-translate-loader-static-files": "^2.7.2",
     "gsap": "^1.18.0",
