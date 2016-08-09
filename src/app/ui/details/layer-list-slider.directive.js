@@ -19,7 +19,7 @@
         .module('app.ui.details')
         .directive('rvLayerListSlider', rvLayerListSlider);
 
-    function rvLayerListSlider(stateManager) {
+    function rvLayerListSlider(focusService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/details/layer-list-slider.html',
@@ -81,8 +81,7 @@
                     evt.preventDefault();
                     animateClosed();
                     self.selectItem(item);
-                    stateManager.previousFocus();
-
+                    focusService.previousFocus();
                 }
             };
 

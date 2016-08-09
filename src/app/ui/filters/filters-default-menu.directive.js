@@ -34,7 +34,7 @@
         }
     }
 
-    function Controller($scope, stateManager, events) {
+    function Controller($scope, stateManager, events, focusService) {
         'ngInject';
         const self = this;
 
@@ -53,7 +53,7 @@
 
         function setMode(mode) {
             stateManager.setMorph('filters', mode);
-            stateManager.setPanelFocus('filters');
+            focusService.setPanelFocus('filters');
         }
 
         /**

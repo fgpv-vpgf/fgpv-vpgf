@@ -29,6 +29,10 @@ rv-panel md-toast.md-rv-flex {
     };
 }
 
+div.md-button {
+    margin-bottom: -10px;
+}
+
 rv-panel[type='filters'] {
     &.default {
         @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: 50%);
