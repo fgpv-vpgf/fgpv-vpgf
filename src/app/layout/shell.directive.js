@@ -15,7 +15,7 @@
         .module('app.layout')
         .directive('rvShell', rvShell);
 
-    function rvShell(storageService, stateManager, $rootElement) {
+    function rvShell(storageService, stateManager, $rootElement, events, $rootScope) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/layout/shell.html',
@@ -30,6 +30,11 @@
 
         function link(scope, el) {
             storageService.panels.shell = el;
+
+            // fix for IE 11 where focus can move to esri generated svg elements
+            $rootScope.$on(events.rvApiReady, () => {
+                $rootElement.find('.rv-esri-map svg').attr('focusable', false);
+            });
 
             // close all panels when escape key is pressed
             $rootElement.on('keydown', event => {
