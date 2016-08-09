@@ -532,6 +532,7 @@
         return function (sSrc, fOnload) {
             var oScript = document.createElement("script");
             oScript.type = "text\/javascript";
+            oScript.async = false;
             oScript.onerror = loadError;
             if (fOnload) { oScript.onload = fOnload; }
             oHead.appendChild(oScript);
