@@ -326,6 +326,7 @@ function predictLayerUrlBuilder(esriBundle) {
     * - name: best attempt at guessing the name of the service (string). only present for ESRI service URLs
     * - fields: array of field definitions for the layer. conforms to ESRI's REST field standard. only present for feature layer and image service URLs.
     * - geometryType: describes the geometry of the layer (string). conforms to ESRI's REST geometry type enum values. only present for feature layer URLs.
+    * - groupIdx: property only available if a group layer is queried. it is the layer index of the group layer in the list under its parent dynamic layer
     *
     * @method predictLayerUrl
     * @param {String} url a url to something that is hopefully a map service
@@ -421,7 +422,19 @@ function predictLayerUrlBuilder(esriBundle) {
                                 resolve(infoEsri);
                             } else {
                                 // it was a esri service. rejoice.
-                                resolve(infoEsri);
+
+                                // shortlived rejoice because grouped layers lul
+                                if (infoEsri.serviceType === serviceType.GroupLayer) {
+                                    const lastSlash = url.lastIndexOf('/');
+                                    const layerIdx = parseInt(url.substring(lastSlash + 1));
+                                    url = url.substring(0, lastSlash);
+                                    pokeEsriService(url, esriBundle).then(infoDynamic => {
+                                        infoDynamic.groupIdx = layerIdx;
+                                        resolve(infoDynamic);
+                                    });
+                                } else {
+                                    resolve(infoEsri);
+                                }
                             }
                         });
                     } else {
