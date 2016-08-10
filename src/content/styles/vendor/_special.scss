@@ -20,8 +20,16 @@
     top: - rem(999);
 }
 
+rv-metadata-expand {
+    height: 24px;
+}
+
 md-sidenav {
     display: flex;
+}
+
+md-content.md-default-theme, md-content {
+    background-color: rgb(255,255,255);
 }
 
 md-menu-content {
@@ -29,17 +37,22 @@ md-menu-content {
     // the original uses absolute positioning inside a menubar menu, since we are not using menubar, it breaks;
     // so we have to add some stuff
 
-    // since menus are rendered outside of the viewer's container, need to explicitly apply font and colour to them 
+    // since menus are rendered outside of the viewer's container, need to explicitly apply font and colour to them
     color: $primary-text-color;
     font-family: $font-family;
 
     md-menu-item {
+
+        .md-button {
+            padding: 0 32px 0 16px !important;
+        }
+
         &[type='radio'],
         &[type='checkbox'] {
             &.md-indent {
                 // indent menu items which are not selected
                 .md-button[aria-checked="false"] {
-                    padding-left: rem(1.6) + rem(2.4) + rem(1.6);
+                    padding-left: rem(1.6) + rem(2.4) + rem(1.6) !important;
                 }
             }
         }

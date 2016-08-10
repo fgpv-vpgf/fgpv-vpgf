@@ -1,59 +1,61 @@
-<md-menu md-position-mode="target-right target">
+<md-menu-bar>
+    <md-menu md-position-mode="target-right target">
 
-    <md-button
-        translate
-        translate-attr-aria-label="filter.aria.menu"
-        class="md-icon-button black rv-button-24"
-        ng-click="$mdOpenMenu($event)">
-        <md-icon md-svg-src="navigation:more_vert"></md-icon>
-    </md-button>
+        <md-button
+            translate
+            translate-attr-aria-label="filter.aria.menu"
+            class="md-icon-button black rv-button-24"
+            ng-click="$mdOpenMenu($event)">
+            <md-icon md-svg-src="navigation:more_vert"></md-icon>
+        </md-button>
 
-    <md-menu-content class="rv-menu rv-dense" width="5">
-        <!--md-menu-item type="radio" ng-model="self.filtersMode" value="minimized" ng-click="self.setMode(self.filtersMode)">
-            {{ 'filter.menu.minimize' | translate }}
-        </md-menu-item-->
+        <md-menu-content>
+            <!--md-menu-item type="radio" ng-model="self.filtersMode" value="minimized" ng-click="self.setMode(self.filtersMode)">
+                {{ 'filter.menu.minimize' | translate }}
+            </md-menu-item-->
 
-        <md-menu-item type="radio" ng-model="self.filtersMode" value="default" ng-click="self.setMode(self.filtersMode)">
-            {{ 'filter.menu.splitView' | translate }}
-        </md-menu-item>
+            <md-menu-item type="radio" ng-model="self.filtersMode" value="default" ng-click="self.setMode(self.filtersMode)">
+                {{ 'filter.menu.splitView' | translate }}
+            </md-menu-item>
 
-        <md-menu-item type="radio" ng-model="self.filtersMode" value="full" ng-click="self.setMode(self.filtersMode)">
-            {{ 'filter.menu.maximize' | translate }}
-        </md-menu-item>
+            <md-menu-item type="radio" ng-model="self.filtersMode" value="full" ng-click="self.setMode(self.filtersMode)">
+                {{ 'filter.menu.maximize' | translate }}
+            </md-menu-item>
 
-        <!-- commented out due to no functionality... This contained Search, Filters, Print and Export. Re-enable if/when theyre needed
-        <md-menu-divider></md-menu-divider>
+            <!-- commented out due to no functionality... This contained Search, Filters, Print and Export. Re-enable if/when theyre needed
+            <md-menu-divider></md-menu-divider>
 
-        <md-menu-item>
-            <md-button ng-click="self.toggleNotifications()" md-prevent-menu-close="md-prevent-menu-close">
-                <md-icon md-svg-icon="action:search"></md-icon>
-                {{'filter.menu.enableSearch' | translate}}
-            </md-button>
-        </md-menu-item>
+            <md-menu-item>
+                <md-button ng-click="self.toggleNotifications()" md-prevent-menu-close="md-prevent-menu-close">
+                    <md-icon md-svg-icon="action:search"></md-icon>
+                    {{'filter.menu.enableSearch' | translate}}
+                </md-button>
+            </md-menu-item>
 
-        <md-menu-item>
-            <md-button ng-click="self.toggleNotifications()" md-prevent-menu-close="md-prevent-menu-close">
-                <md-icon md-svg-icon="community:filter"></md-icon>
-                {{'filter.menu.enableFilters' | translate}}
-            </md-button>
-        </md-menu-item>
-        -->
+            <md-menu-item>
+                <md-button ng-click="self.toggleNotifications()" md-prevent-menu-close="md-prevent-menu-close">
+                    <md-icon md-svg-icon="community:filter"></md-icon>
+                    {{'filter.menu.enableFilters' | translate}}
+                </md-button>
+            </md-menu-item>
+            -->
 
-        <md-menu-divider></md-menu-divider>
+            <md-menu-divider></md-menu-divider>
 
-        <md-menu-item>
-            <md-button ng-click="self.dataPrint()">
-                <md-icon md-svg-icon="action:print"></md-icon>
-                {{ 'filter.menu.print' | translate }}
-            </md-button>
-        </md-menu-item>
+            <md-menu-item>
+                <md-button ng-click="self.dataPrint()">
+                    <md-icon md-svg-icon="action:print"></md-icon>
+                    {{ 'filter.menu.print' | translate }}
+                </md-button>
+            </md-menu-item>
 
-        <md-menu-item>
-            <md-button ng-click="self.dataExportCSV()">
-                <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
-                {{ 'filter.menu.export' | translate }}
-            </md-button>
-        </md-menu-item>
+            <md-menu-item>
+                <md-button ng-click="self.dataExportCSV()">
+                    <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
+                    {{ 'filter.menu.export' | translate }}
+                </md-button>
+            </md-menu-item>
 
-    </md-menu-content>
-</md-menu>
+        </md-menu-content>
+    </md-menu>
+</md-menu-bar>
