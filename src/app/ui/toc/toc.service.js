@@ -236,6 +236,13 @@
         function toggleVisiblity(tocEntry, value) {
             console.log('Toggle visiblity of layer: ' + tocEntry.name);
             tocEntry.setVisibility(value);
+
+            // hide bounding box only when visibility is hidden
+            // TODO: move to the LayerRecord class when LayerRecord is moved into geoapi
+            if (!tocEntry.options.visibility.value) {
+                stateManager.display.settings.data.options.boundingBox.value = false;
+                geoService.setBboxState(tocEntry, false);
+            }
         }
 
         /**
