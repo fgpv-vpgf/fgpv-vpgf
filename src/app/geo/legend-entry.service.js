@@ -112,15 +112,17 @@
                 } else {
                     // walk through layerEntries and update each one
                     obj.layerEntries.forEach(ent => {
-                        const slave = obj.slaves[ent.index];
+                        if (obj.slaves) {
+                            const slave = obj.slaves[ent.index];
 
-                        if (slave.flags) {
-                            // TODO remove this test once it has passed the test of time
-                            if (typeof scaleSet[slave.featureIdx].value === 'undefined') {
-                                console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
+                            if (slave.flags) {
+                                // TODO remove this test once it has passed the test of time
+                                if (typeof scaleSet[slave.featureIdx].value === 'undefined') {
+                                    console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
+                                }
+                                slave.flags.scale.visible = scaleSet[slave.featureIdx].value;
+                                slave.options.offscale.value = scaleSet[slave.featureIdx].zoomIn;
                             }
-                            slave.flags.scale.visible = scaleSet[slave.featureIdx].value;
-                            slave.options.offscale.value = scaleSet[slave.featureIdx].zoomIn;
                         }
                     });
                 }
