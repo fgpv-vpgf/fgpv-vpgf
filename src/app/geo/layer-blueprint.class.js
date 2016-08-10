@@ -189,6 +189,11 @@
 
                         // some custom processing of Dynamic layers to let the user option to pick sublayers
                         if (this.serviceType === Geo.Service.Types.DynamicService) {
+                            // change the group layer url to its parent dynamic layer one so data can be fetched properly
+                            if (this._serviceInfo.groupIdx !== undefined) {
+                                this.config.url = this.config.url.substring(0, this.config.url.lastIndexOf('/'));
+                            }
+
                             flattenDynamicLayerList(this._serviceInfo.layers);
 
                             // this includes all sublayers; converting layerEntries to a proper config format
