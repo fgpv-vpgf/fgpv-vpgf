@@ -132,7 +132,7 @@
         const ENTRY_ITEM = {
             _layerRecord: null,
             type: 'layer',
-            name: 'dogguts',
+            name: null,
             id: 0,
             options: null,
             flags: null,
