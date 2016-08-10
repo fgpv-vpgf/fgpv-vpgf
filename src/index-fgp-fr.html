@@ -497,8 +497,6 @@
     </footer>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
-    <script src="http://wet-boew.github.io/v4.0-ci/wet-boew/js/wet-boew.min.js"></script>
-    <script src="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/js/theme.min.js"></script>
 
     <script>
         // credit: http://stackoverflow.com/a/21903119
@@ -524,22 +522,6 @@
     </script>
 
     <script>
-    const importScript = (function (oHead) {
-        'use strict';
-
-        function loadError(oError) {
-            throw new URIError("The script " + oError.target.src + " is not accessible.");
-        }
-
-        return function (sSrc, fOnload) {
-            var oScript = document.createElement("script");
-            oScript.type = "text\/javascript";
-            oScript.onerror = loadError;
-            if (fOnload) { oScript.onload = fOnload; }
-            oHead.appendChild(oScript);
-            oScript.src = sSrc;
-        };
-    })(document.head || document.getElementsByTagName("head")[0]);
     const needIePolyfills = [
         'Promise' in window,
         'TextDecoder' in window,
@@ -550,7 +532,7 @@
         'endsWith' in String.prototype
     ].some(function(x) { return !x; });
     if (needIePolyfills) {
-        importScript('../lib/ie-polyfills.js');
+        document.write('<script src="../lib/ie-polyfills.js"><\/script>');
     }
     </script>
 
@@ -584,6 +566,8 @@
             });
         }
     </script>
+    <script src="http://wet-boew.github.io/v4.0-ci/wet-boew/js/wet-boew.min.js"></script>
+    <script src="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/js/theme.min.js"></script>
 
 </body>
 </html>

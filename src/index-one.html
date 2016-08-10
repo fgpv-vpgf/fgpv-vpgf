@@ -22,22 +22,6 @@
          rv-restore-bookmark="bookmark"/>
 
     <script>
-    const importScript = (function (oHead) {
-        'use strict';
-
-        function loadError(oError) {
-            throw new URIError("The script " + oError.target.src + " is not accessible.");
-        }
-
-        return function (sSrc, fOnload) {
-            var oScript = document.createElement("script");
-            oScript.type = "text\/javascript";
-            oScript.onerror = loadError;
-            if (fOnload) { oScript.onload = fOnload; }
-            oHead.appendChild(oScript);
-            oScript.src = sSrc;
-        };
-    })(document.head || document.getElementsByTagName("head")[0]);
     const needIePolyfills = [
         'Promise' in window,
         'TextDecoder' in window,
@@ -48,7 +32,7 @@
         'endsWith' in String.prototype
     ].some(function(x) { return !x; });
     if (needIePolyfills) {
-        importScript('../lib/ie-polyfills.js');
+        document.write('<script src="../lib/ie-polyfills.js"><\/script>');
     }
     </script>
 
