@@ -30,7 +30,6 @@
     "datatables-select": "~1.1.2",
     "ng-flow": "~2.7.1",
     "datatables-buttons": "~1.1.2",
-    "geolocator": "~1.2.9",
     "jquery-hoverintent": "~1.8.1",
     "RandomColor": "https://github.com/sterlingwes/RandomColor.git",
     "angular-minicolors": "^0.0.9"

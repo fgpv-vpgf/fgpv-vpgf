@@ -1,4 +1,3 @@
-/*global geolocator*/
 (() => {
     'use strict';
 
@@ -57,7 +56,7 @@
                 hilightGraphic,
                 clearHilight,
                 dropMapPin,
-                fetchLocation
+                geolocate
             };
 
             return buildMapObject();
@@ -517,21 +516,9 @@
 
                 // get reprojected point and zoom to it
                 const geoPt = gapiService.gapi.proj.localProjectPoint(4326, map.spatialReference.wkid,
-                    [parseFloat(location.coords.longitude), parseFloat(location.coords.latitude)]);
+                    [parseFloat(location.longitude), parseFloat(location.latitude)]);
                 const zoomPt = gapiService.gapi.proj.Point(geoPt[0], geoPt[1], map.spatialReference);
                 map.centerAndZoom(zoomPt, map.__tileInfo.lods[map.__tileInfo.lods.length - 3].level);
-            }
-
-            /**
-            * Fetches current location using browser HTML5 location. If refused,
-            * falls back to fetch location by IP address then zooms to the location.
-            * @private
-            * @function fetchLocation
-            */
-            function fetchLocation() {
-                geolocator.locate(geolocate, err => {
-                    console.warn('Geolocation error: ', err);
-                }, 0, { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 });
             }
 
             /**
