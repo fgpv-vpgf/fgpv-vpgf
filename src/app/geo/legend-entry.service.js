@@ -112,6 +112,7 @@
                 } else {
                     // walk through layerEntries and update each one
                     obj.layerEntries.forEach(ent => {
+                        // check for obj.slaves to prevent error
                         if (obj.slaves) {
                             const slave = obj.slaves[ent.index];
 
