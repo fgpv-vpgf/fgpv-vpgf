@@ -185,16 +185,10 @@
             // FIXME convert to jsdoc
             function makeClickBuffer(point, map, tolerance = 5) {
                 // take pixel tolerance, convert to map units at current scale. x2 to turn radius into diameter
-                let buffSize = 2 * tolerance * map.extent.getWidth() / map.width;
-
-                if (map.spatialReference.wkid !== 3978) {
-                    buffSize = buffSize * 7;
-                }
-
-                console.log('4444444444444444444444', map);
+                const buffSize = 2 * tolerance * map.extent.getWidth() / map.width;
 
                 // Build tolerance envelope of correct size
-                const cBuff = new gapiService.gapi.mapManager.Extent(1, 1, buffSize, buffSize, point.spatialReference);
+                const cBuff = new gapiService.gapi.mapManager.Extent(0, 0, buffSize, buffSize, point.spatialReference);
 
                 // move the envelope so it is centered around the point
                 return cBuff.centerAt(point);
