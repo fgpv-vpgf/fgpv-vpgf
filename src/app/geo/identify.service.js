@@ -185,13 +185,13 @@
             // FIXME convert to jsdoc
             function makeClickBuffer(point, map, tolerance = 5) {
                 // take pixel tolerance, convert to map units at current scale. x2 to turn radius into diameter
-                let buffSize = 2 * tolerance * map.extent.getWidth() / map.width;
+                // need to increase buffer size when zoom level is lower, so multiply by zoomLevel / 4; (map.getLevel() / 4 * 2) = map.getLevel() / 2
+                let buffSize = tolerance * map.getLevel() * map.extent.getWidth() / map.width;
 
+                // for some reason mercator needs a larger buffer size and 8 seems to be the best from trial and error
                 if (map.spatialReference.wkid !== 3978) {
-                    buffSize = buffSize * 7;
+                    buffSize = buffSize * 8;
                 }
-
-                console.log('4444444444444444444444', map);
 
                 // Build tolerance envelope of correct size
                 const cBuff = new gapiService.gapi.mapManager.Extent(1, 1, buffSize, buffSize, point.spatialReference);
