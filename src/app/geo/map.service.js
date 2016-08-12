@@ -518,7 +518,11 @@
                 const geoPt = gapiService.gapi.proj.localProjectPoint(4326, map.spatialReference.wkid,
                     [parseFloat(location.longitude), parseFloat(location.latitude)]);
                 const zoomPt = gapiService.gapi.proj.Point(geoPt[0], geoPt[1], map.spatialReference);
-                map.centerAndZoom(zoomPt, map.__tileInfo.lods[map.__tileInfo.lods.length - 3].level);
+
+                // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
+                const diffs = map.__tileInfo.lods.map(lod => Math.abs(lod.scale - 50000));
+                const lodIdx = diffs.indexOf(Math.min(...diffs));
+                map.centerAndZoom(zoomPt, Math.max(map.__tileInfo.lods[lodIdx].level, 0));
             }
 
             /**
