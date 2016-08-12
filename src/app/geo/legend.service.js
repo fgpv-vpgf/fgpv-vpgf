@@ -222,7 +222,7 @@
                 console.log(`Inserting placeholder ${entry.name} ${position}`);
                 const listener = state => {
                     console.info(`Placeholder listener fired ${state} ${layerRecord.layerId}`);
-                    if (state === Geo.Layer.States.LOADED) {
+                    if (!entry.removed && state === Geo.Layer.States.LOADED) {
                         layerRecord.removeStateListener(listener);
                         entry.unbindListeners();
                         // swap the placeholder with the real legendEntry
