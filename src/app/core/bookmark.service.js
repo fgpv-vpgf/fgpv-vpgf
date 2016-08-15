@@ -13,7 +13,7 @@
         .factory('bookmarkService', bookmarkService);
 
     function bookmarkService($rootElement, $q, legendService, geoService, LayerBlueprint,
-            LayerRecordFactory, configService) {
+            LayerRecordFactory, configService, basemapService) {
 
         const service = {
             getBookmark,
@@ -31,7 +31,7 @@
          * @returns {String}    The bookmark containing basemap, extent, layers and their options
          */
         function getBookmark() {
-            const basemap = encode64(geoService.mapManager.BasemapControl.basemapGallery.getSelected().id);
+            const basemap = encode64(basemapService.getSelected().id);
 
             const mapExtent = geoService.mapObject.extent.getCenter();
 
