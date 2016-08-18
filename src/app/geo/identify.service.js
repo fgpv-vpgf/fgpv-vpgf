@@ -188,7 +188,7 @@
                 const buffSize = 2 * tolerance * map.extent.getWidth() / map.width;
 
                 // Build tolerance envelope of correct size
-                const cBuff = new gapiService.gapi.mapManager.Extent(1, 1, buffSize, buffSize, point.spatialReference);
+                const cBuff = new gapiService.gapi.mapManager.Extent(0, 0, buffSize, buffSize, point.spatialReference);
 
                 // move the envelope so it is centered around the point
                 return cBuff.centerAt(point);
