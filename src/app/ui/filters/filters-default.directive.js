@@ -122,6 +122,7 @@
                 // add symbol as the first column
                 // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
                 if (!displayData.rows[0].hasOwnProperty('rvSymbol')) {
+                    //geoService.mapObject.extent = xmin, xmax, ymin, ymax
                     displayData.rows.forEach(row => {
 
                         let symbol = geoService.retrieveSymbol(row, displayData.renderer);
@@ -167,6 +168,25 @@
                 const interactiveColumn = displayData.columns.find(column =>
                     column.data !== 'rvSymbol');
                 addColumnInteractivity(interactiveColumn, ROW_BUTTONS);
+
+                var queryTask = new esri.tasks.QueryTask(stateManager.display.filters.requester.legendEntry.url + '/0');
+                var query = new esri.tasks.Query();
+                // query.where = "STATE_NAME = 'Washington'";
+                query.outSpatialReference = {wkid:102100};
+                query.returnGeometry = false;
+                query.outFields = ["OBJECTID"];
+                query.geometry = geoService.mapObject.extent;
+                query.spatialRelationship = "esriSpatialRelIntersects";
+                queryTask.execute(query, addPointsToMap);
+
+                function addPointsToMap(featureSet) {
+                    // console.debug(featureSet);
+                }
+
+                $.fn.dataTable.ext.search.push((oSettings, aData, iDataIndex) => {
+                    console.debug(oSettings);
+                    return false;
+                });
 
                 // ~~I hate DataTables~~ Datatables are cool!
                 self.table = tableNode
