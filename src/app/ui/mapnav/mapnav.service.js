@@ -20,7 +20,7 @@
      * @private
      * @return {object} service object
      */
-    function mapNavigationService(stateManager, geoService, $rootScope) {
+    function mapNavigationService(stateManager, geoService, $rootScope, locateService) {
 
         // open or close basemap selector when panel activity detected
         $rootScope.$on('stateChangeStart', (evt, name, prop, value) => {
@@ -66,7 +66,7 @@
                 label: 'nav.label.geoLocation',
                 icon: 'maps:my_location',
                 tooltip: 'nav.tooltip.geoLocation',
-                action: () => geoService.fetchLocation()
+                action: locateService.find
             },
             marquee: {
                 label: 'nav.label.search',
