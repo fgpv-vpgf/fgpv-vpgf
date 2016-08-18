@@ -427,12 +427,19 @@
              */
             function zoomToScale(layer, zoomIn) {
                 // dynamic layer children don't have the _layerRecord property; set l to parent layer if that's the case
-                const l = layer._layerRecord ? layers[layer.id]._layer : layers[layer.parent.id]._layer;
+                let topLayer = layer;
                 const lods = zoomIn ? geoState.lods : [...geoState.lods].reverse();
+
+                // loop until you find the proper layerRecord in the case of super nested layers
+                while (!topLayer._layerRecord) {
+                    topLayer = topLayer.parent;
+                }
+
+                const l = layers[topLayer.id]._layer;
 
                 // if dynamic layer, must get min/max scale differently (ie. in a promise)
                 if (!layer._layerRecord) {
-                    return layer.parent._layerRecord._attributeBundle[layer.featureIdx].layerData.then(layerData => {
+                    return topLayer._layerRecord._attributeBundle[layer.featureIdx].layerData.then(layerData => {
                         const lod = lods.find(currentLod => zoomIn ? currentLod.scale < layerData.minScale
                             : currentLod.scale > layerData.maxScale);
 
