@@ -4,7 +4,6 @@
     /**
      * @ngdoc module
      * @name app.common
-     * @requires
      * @description
      *
      * The `app.common` description.
