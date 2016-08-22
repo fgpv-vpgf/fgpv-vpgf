@@ -560,6 +560,7 @@
                     // if layerEntry id is incorrect, ignore it
                     if (slave) {
                         slave.setVisibility(slave.getVisibility(), false); // set visibility on the item which will propagate down if it has any items of its own
+                        slave.flags.user = this.flags.user;
                         this.add(slave); // add layer entry to the master group
                     }
                 });
