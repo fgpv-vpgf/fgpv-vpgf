@@ -93,7 +93,7 @@
 
                 selected: () => stateManager.state.mapnav.morph !== 'default',
                 action: () => {
-                    stateManager.setActive({ filters: false }, 'otherBasemap');
+                    stateManager.setActive({ filters: false }, 'other');
                 }
             }
         };
