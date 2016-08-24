@@ -34,7 +34,8 @@ module.exports = function () {
             src + 'index-wet.html',
             src + 'index-jso.html',
             src + 'index-fgp-en.html',
-            src + 'index-fgp-fr.html'
+            src + 'index-fgp-fr.html',
+            src + 'bookmark-decode.html'
         ],
         indexProtractor: src + 'index-protractor.html',
 
