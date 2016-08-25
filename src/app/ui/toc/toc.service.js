@@ -206,7 +206,6 @@
             const undoToast = $mdToast.simple()
                 .textContent($translate.instant('toc.label.state.remove'))
                 .action($translate.instant('toc.label.action.remove'))
-                .highlightAction(true)
                 .parent(layoutService.panes.toc)
                 .position('bottom rv-flex');
 
