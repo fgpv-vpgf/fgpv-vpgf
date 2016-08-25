@@ -182,6 +182,17 @@
             }
 
             /**
+             * Retrieve default extent from extentSets.
+             * @function getDefaultExtFromExtentSets
+             * @private
+             */
+            function getDefaultExtFromExtentSets(extentSets) {
+                // TODO: Need to handle cases where an extentset not defined
+                return extentSets.find(extentSet => extentSet.id === geoState.selectedBaseMapExtentSetId)
+                    .default;
+            }
+
+            /**
              * Retrieve level of details array from config for current basemap.
              * @function getLod
              * @private
@@ -570,8 +581,8 @@
                 geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
                 geoState.selectedBaseMapLodId = selectedBaseMap.lodId;
 
-                const fullExtentJson = getFullExtFromExtentSets(config.map.extentSets);
-                geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(fullExtentJson);
+                const defaultExtentJson = getDefaultExtFromExtentSets(config.map.extentSets);
+                geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(defaultExtentJson);
 
                 geoState.lods = getLod(config.map.lods);
 
