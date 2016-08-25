@@ -58,6 +58,7 @@ md-menu-content {
         max-height: rem(40);
         // hide divider if it's the first or the last item in the menu
         md-menu-divider {
+
             &:first-child,
             &:last-child {
                 display: none;
@@ -66,6 +67,10 @@ md-menu-content {
     }
 
     &.rv-dense {
+
+        md-menu-divider {
+            margin: rem(0.4) 0 !important;
+        }
 
         padding: rem(0.8) 0 !important;
 

@@ -4,9 +4,7 @@
         ng-class="{ selected: self.control.selected }"
         ng-disabled="!self.control.enabled"
         aria-label="{{ self.template.label[self.control.value] || self.template.label | translate }}">
-        <div class="rv-button-flex">
-            <md-icon md-svg-icon="{{ self.template.icon[self.control.value] || self.template.icon }}"></md-icon>
-            {{ self.template.label[self.control.value] || self.template.label | translate }}
-        </div>
+        <md-icon md-svg-icon="{{ self.template.icon[self.control.value] || self.template.icon }}"></md-icon>
+        {{ self.template.label[self.control.value] || self.template.label | translate }}
     </md-button>
 </md-menu-item>
