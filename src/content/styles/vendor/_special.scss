@@ -20,16 +20,12 @@
     top: - rem(999);
 }
 
-rv-metadata-expand {
-    height: 24px;
-}
-
 md-sidenav {
     display: flex;
 }
 
-md-content.md-default-theme, md-content {
-    background-color: rgb(255,255,255);
+md-menu-bar {
+    padding: 0;
 }
 
 md-menu-content {
@@ -43,13 +39,13 @@ md-menu-content {
 
     md-menu-item {
 
-        .md-button {
-            padding: 0 32px 0 16px !important;
-        }
-
         &[type='radio'],
         &[type='checkbox'] {
             &.md-indent {
+                .md-button[aria-checked="true"] {
+                    padding-left: rem(1.6) !important;
+                }
+
                 // indent menu items which are not selected
                 .md-button[aria-checked="false"] {
                     padding-left: rem(1.6) + rem(2.4) + rem(1.6) !important;
@@ -70,11 +66,16 @@ md-menu-content {
     }
 
     &.rv-dense {
+
+        padding: rem(0.8) 0 !important;
+
         md-menu-item {
             min-height: rem(3.6);
             height: rem(3.6);
 
             > .md-button {
+                height: 100% !important;
+
                 .rv-button-flex {
                     width: 100%;
                     display: flex;
