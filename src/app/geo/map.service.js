@@ -14,7 +14,7 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, $timeout, gapiService, storageService) {
+    function mapServiceFactory($q, $timeout, gapiService, storageService, $rootElement, $compile, $rootScope) {
         const settings = { zoomPromise: $q.resolve(), zoomCounter: 0 };
         return mapService;
 
@@ -130,6 +130,11 @@
 
                 service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
                 service.mapManager.BasemapControl.setBasemap(geoState.selectedBaseMapId);
+
+                service.mapManager.BasemapControl.basemapGallery.on('selection-change', () => {
+                    $rootElement.find('div.ovwContainer').append('<rv-overview-toggle></rv-overview-toggle>');
+                    $compile($rootElement.find('rv-overview-toggle')[0])($rootScope);
+                });
 
                 if (config.map.initialBasemapId && config.map.initialBasemapId.startsWith(blankBaseMapIdPattern)) {
                     hideBaseMap(true);

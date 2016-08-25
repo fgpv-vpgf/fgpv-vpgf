@@ -16,7 +16,7 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
-    function rvInitMap(geoService, events, storageService, mapService, gapiService, $rootElement, $interval, $compile) {
+    function rvInitMap(geoService, events, storageService, mapService, gapiService, $rootElement, $interval) {
         // key codes that are currently active
         let keyMap = [];
         // interval which runs animation logic
@@ -48,9 +48,6 @@
                     el.on('keydown', keyDownDetected);
                     el.on('keyup', keyUpDetected);
 
-                    // Inject into the DOM before compiling so that the directive has access to siblings/parents/etc
-                    el.find('div.ovwContainer').after('<div rv-overview-toggle></div>');
-                    $compile(el.find('div[rv-overview-toggle]')[0])(scope);
                 }
             });
         }
