@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RAMP Viewer Bookmark Decoder</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+</head>
+<body>
+
+<div class="container-fluid">
+    <!-- Input field for the bookmark -->
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label>Encoded Bookmark (paste it in the box!)</label>
+            <input class="form-control" type="text" id="encodebook" value="" />
+            <button class="btn btn-default" id='dtenhance'>Enhance</button>
+        </div>
+
+    </div>
+
+    <div class="row"><div class="form-group col-md-12">
+    </div></div>
+
+    <!-- Outputs -->    
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label>Version</label>
+            <input class="form-control" type="text" id="version" value="" />
+        </div>
+        <div class="form-group col-md-4">
+            <label>Scale</label>
+            <input class="form-control" type="text" id="scale" value="" />
+        </div>
+        <div class="form-group col-md-4">
+            <label>Basemap</label>
+            <input class="form-control" type="text" id="basemap" value="" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label>Map X</label>
+            <input class="form-control" type="text" id="x" value="" />
+        </div>
+        <div class="form-group col-md-4">
+            <label>Map Y</label>
+            <input class="form-control" type="text" id="y" value="" />
+        </div>
+        <div class="form-group col-md-4">
+            <label>Extra Box for Future Vars</label>
+            <input class="form-control" type="text" id="blank" value="" />
+        </div>
+    </div>
+
+
+    <div class="row"><div class="form-group col-md-12">
+        <label>Layers</label>
+        <textarea id="layers" rows=10 class="form-control"></textarea>
+    </div></div>
+
+    <div class="row"><div id="log" class="form-group col-md-12">
+    </div></div>
+
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+<script>
+    
+    // decode from the customized base64 format
+    function decode64(string) {
+        return atob(string.replace(/_/g, '/').replace(/-/g, '+'));
+    }
+
+    // takes an array of properties, plus the property settings in bookmark encoding. 
+    // returns a human readable string of the properties
+    function dataToText (props, info) {
+        var lookup = {
+            opacity: value => parseInt(value) / 100,
+            visibility: value => value === '1',
+            boundingBox: value => value === '1',
+            snapshot: value => value === '1',
+            query: value => value === '1'
+        };
+
+        var result = '';
+
+        props.forEach((prop, index) => {
+            result += (prop + ': ' + lookup[prop](info[index]) + ', ' );
+        });
+        return result;
+    }
+
+    $(document).ready(function () {
+
+        $('#dtenhance').click( function() {
+            // enhance the bookmark into human readable form
+
+            var bookmark = $('#encodebook').val();
+
+            // if full URL is supplied, only take the rv param
+            var keyStart = bookmark.indexOf('rv=');
+            if (keyStart > -1) {
+                var nextAnd = bookmark.indexOf('&', keyStart + 3);
+                if (nextAnd === -1) {
+                    // no more url params after the bookmark, so set it up to read to the end of the string
+                    nextAnd = bookmark.length;
+                }
+                bookmark = bookmark.substring(keyStart + 3, nextAnd);
+            } 
+
+            // TODO update when version gets added to bookmark
+
+            var pattern = /^([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
+            // things for specific layers:[ layer type name, regex to strip data from id, regex to parse data, property names in data ]
+            var layerSpec = [
+                ['Feature', /^(.+?)(\d{7})$/, /^(\d{3})(\d{1})(\d{1})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox', 'snapshot', 'query']],
+                ['Wms', /^(.+?)(\d{6})$/, /^(\d{3})(\d{1})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox', 'query']],
+                ['Tile', /^(.+?)(\d{5})$/, /^(\d{3})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox']],
+                ['Dynamic', /^(.+?)(\d{6})$/, /^(\d{3})(\d{1})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox', 'query']],
+                ['Image', /^(.+?)(\d{5})$/, /^(\d{3})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox']]
+            ];
+           
+            var info = bookmark.match(pattern);
+            var decoded = [1, 2, 3, 4].map(i => decode64(info[i]));
+
+            $('#scale').val( decoded[3] );
+            $('#basemap').val( decoded[0] );
+            $('#x').val( decoded[1] );
+            $('#y').val( decoded[2] );
+
+            if (info[5]) {
+                var layers = info[5].split(',');
+                var texty = '';
+                
+                // Generate text for all layers
+                layers.forEach(layer => {
+                    layer = decode64(layer);
+
+                    // strip out integer that defines the layer type
+                    var layerType = parseInt(layer.substring(0, 2));
+                    // split the remaining data into layer id and layer data
+                    var layerGuts = layer.substring(2).match(layerSpec[layerType][1]);
+                    var layerId = layerGuts[1];
+                    // parse the data into discrete parts, specific to the layer type
+                    var layerData = layerGuts[2].match(layerSpec[layerType][2]);
+                    
+                    // show the raw data, and then a human friendly version of it
+                    texty += (layer + ' -- ' + layerSpec[layerType][0] + ' Layer, id: ' + layerId + ', ' + 
+                            dataToText(layerSpec[layerType][3], layerData) + '\n');
+
+                });
+                $('#layers').val( texty );
+            }
+
+        });
+       
+    });
+</script>
+
+</body>
+</html>
