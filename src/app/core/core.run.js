@@ -16,7 +16,7 @@
      * The `runBlock` triggers config and locale file loading, sets language of the app.
      */
     function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, events, configService,
-            gapiService) {
+            gapiService, appInfo) {
 
         const promises = [
             configService.initialize(),
@@ -70,15 +70,57 @@
          */
         function preLoadApiBlock() {
             const preMapService = {
-                initialBookmark
+                initialBookmark,
+                restoreSession,
+                start
             };
 
-            globalRegistry.getMap($rootElement.attr('id'))._registerPreLoadApi(preMapService);
+            globalRegistry.getMap(appInfo.id)._registerPreLoadApi(preMapService);
 
             /******************/
 
+            /**
+             * Loads using a bookmark
+             *
+             * @function initialBookmark
+             * @param {String} bookmark      bookmark containing viewer state
+             */
             function initialBookmark(bookmark) {
+                const storage = sessionStorage.getItem(appInfo.id);
+                if (storage) {
+                    sessionStorage.removeItem(appInfo.id);
+                }
+
                 reloadService.loadWithBookmark(bookmark, true);
+            }
+
+            /**
+             * Loads using a bookmark from sessionStorage (if found) and a keyList
+             *
+             * @function restoreSession
+             * @param {Array} keys      list of keys to load with
+             */
+            function restoreSession(keys) {
+                const bookmark = sessionStorage.getItem(appInfo.id);
+
+                if (bookmark) {
+                    reloadService.loadWithExtraKeys(bookmark, keys);
+                    sessionStorage.removeItem(appInfo.id);
+                } else {
+                    globalRegistry.getMap(appInfo.id).loadRcsLayers(keys);
+                    start();
+                }
+            }
+
+            /**
+             * Bypasses the rv-wait block
+             *
+             * @function start
+             */
+            function start() {
+                console.log('Bypassing rv-wait');
+                reloadService.bookmarkBlocking = false;
+                $rootScope.$broadcast(events.rvBookmarkInit);
             }
 
         }
@@ -92,25 +134,26 @@
      *
      * `apiBlock` sets up language and RCS calls for the global API
      */
-    function apiBlock($rootElement, $rootScope, globalRegistry, geoService, configService, events,
-        LayerBlueprint, bookmarkService, gapiService, reloadService) {
+    function apiBlock($rootScope, globalRegistry, geoService, configService, events,
+        LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo) {
 
         const service = {
             setLanguage,
             loadRcsLayers,
             getBookmark,
             centerAndZoom,
-            useBookmark
+            useBookmark,
+            backToCart
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
         $rootScope.$on(events.rvApiReady, () => {
-            globalRegistry.getMap($rootElement.attr('id'))._registerMap(service);
-            console.log($rootElement.attr('id') + ' registered');
+            globalRegistry.getMap(appInfo.id)._registerMap(service);
+            console.log(appInfo.id + ' registered');
         });
 
         $rootScope.$on(events.rvApiHalt, () => {
-            globalRegistry.getMap($rootElement.attr('id'))._deregisterMap();
+            globalRegistry.getMap(appInfo.id)._deregisterMap();
         });
 
         /**********************/
@@ -141,11 +184,30 @@
             configService.rcsAddKeys(keys)
                 .then(newLayerConfigs => {
                     // call layer register in geo module on those nodes
-                    const layerBlueprints = newLayerConfigs.map(layerConfig =>
-                        new LayerBlueprint.service(layerConfig, geoService.epsgLookup));
+                    const layerBlueprints = newLayerConfigs.map(layerConfig => {
+                        layerConfig.origin = 'rcs';
+                        return new LayerBlueprint.service(layerConfig, geoService.epsgLookup);
+                    });
                     geoService.constructLayers(layerBlueprints);
                 });
 
+        }
+
+        /**
+         * Stores the viewer state in sessionStorage and returns a list of rcs keys to pass to the mapCart.
+         *
+         * @returns {array}     List of RCS keys
+         */
+        function backToCart() {
+            // get bookmark, throw bookmark into session storage
+            const bm = bookmarkService.getBookmark();
+
+            sessionStorage.setItem(appInfo.id, bm);
+
+            // get list of layers, find layers with rcs creation
+            // return array with layer keys
+            const layerKeys = geoService.getRcsLayerIDs();
+            return layerKeys;
         }
 
         /**

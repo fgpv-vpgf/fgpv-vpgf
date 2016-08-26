@@ -150,6 +150,14 @@
             this._proxy('centerAndZoom', x, y, spatialRef, zoom);
         },
 
+        backToCart() {
+            return this._proxy('backToCart');
+        },
+
+        restoreSession(keysArray) {
+            this._initProxy('restoreSession', keysArray);
+        },
+
         _init() {
             this._appPromise = new Promise(resolve =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness

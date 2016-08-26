@@ -17,6 +17,7 @@
             loadNewProjection,
             loadNewLang,
             loadWithBookmark,
+            loadWithExtraKeys,
             bookmarkBlocking: false
         };
 
@@ -76,7 +77,6 @@
                 $rootScope.$broadcast(events.rvBookmarkInit);
                 service.bookmarkBlocking = false;
             } else if (!initial || service.bookmarkBlocking) {
-                // only let the call through if it's first and the initial call, or it's not the initial call
                 $rootScope.$broadcast(events.rvApiHalt);
 
                 // modify the original config
@@ -93,6 +93,20 @@
                     }
                 });
             }
+        }
+
+        function loadWithExtraKeys(bookmark, keys) {
+            if (service.bookmarkBlocking) {
+                $rootScope.$broadcast(events.rvApiHalt);
+                configService.getOriginal().then(config => {
+                    bookmarkService.parseBookmark(bookmark, config, keys);
+
+                    // broadcast startup event
+                    $rootScope.$broadcast(events.rvBookmarkInit);
+                    service.bookmarkBlocking = false;
+                });
+            }
+
         }
     }
 })();
