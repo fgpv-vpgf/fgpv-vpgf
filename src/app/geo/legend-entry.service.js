@@ -183,18 +183,17 @@
                 this.flags = angular.merge({}, defaults.flags);
                 this.cache = {};
                 this.features = {
-                    count: '...counting'
+                    count: $translate.instant('geometry.counting'),
+                    type: Geo.Layer.Esri.GEOMETRY_TYPES.generic,
+                    // sets default geometry type which is 'feature'
+                    // to avoid pulling in angular translate interpolation message format plugin for now,
+                    // store both plural and singular strings as the same transltion separated by a |
+                    typeName: $translate.instant(Geo.Layer.Esri.GEOMETRY_TYPES.generic).split('|')[1]
                 };
 
                 // find appropriate sort group based on the initial layer type
                 this.sortGroup = Geo.Layer.SORT_GROUPS.findIndex(sortGroup =>
                     sortGroup.indexOf(initialState.layerType) !== -1);
-
-                // sets default geometry type which is 'feature'
-                // to avoid pulling in angular translate interpolation message format plugin for now,
-                // store both plural and singular strings as the same transltion separated by a |
-                $translate(Geo.Layer.Esri.GEOMETRY_TYPES.generic).then(type =>
-                    this.features.type = type.split('|')[1]);
 
                 angular.merge(this, initialState);
 
