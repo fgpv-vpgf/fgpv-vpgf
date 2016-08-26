@@ -105,6 +105,7 @@
 
                             getServiceFeatureCount(`${state.url}/${layerEntry.featureIdx}`).then(count =>
                                 // FIXME _layer reference is bad
+                                // FIXME geometryType is undefined for dynamic layer children right now
                                 applyFeatureCount(layer._layer.geometryType, layerEntry, count));
                         } else {
                             // no features.  show "0 features"
@@ -319,10 +320,16 @@
          * @param  {Number} count  number of features in the layer
          */
         function applyFeatureCount(geometryType, state, count) {
-            state.features.count = count;
+            if (typeof geometryType === 'undefined') {
+                geometryType = 'generic';
+            }
 
-            $translate(Geo.Layer.Esri.GEOMETRY_TYPES[geometryType]).then(type =>
-                state.features.type = type.split('|')[state.features.count === 1 ? 0 : 1]);
+            state.features = {
+                count: count,
+                type: geometryType,
+                typeName: $translate.instant(Geo.Layer.Esri.GEOMETRY_TYPES[geometryType])
+                    .split('|')[state.features.count === 1 ? 0 : 1]
+            };
         }
 
         /**

@@ -115,10 +115,10 @@ Table of Content remove state label,toc.label.state.remove,Layer removed,Couche 
 Table of Content remove action label,toc.label.action.remove,undo,annuler
 Table of Content filters label,toc.label.filters,,
 Table of Content filters tootlip,toc.tooltip.filters,,
-Table of Content feature layer flag label,toc.label.flag.feature,ESRI Feature Layer ({{count}} {{type}}),Couche d'entités d'ESRI ({{count}} {{type}})
-Table of Content feature layer flag tootlip,toc.tooltip.flag.feature,ESRI Feature Layer ({{count}} {{type}}),Couche d'entités d'ESRI ({{count}} {{type}})
-Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic Layer ({{count}} {{type}}),Couche dynamique d'ESRI ({{count}} {{type}})
-Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer ({{count}} {{type}}),Couche dynamique d'ESRI ({{count}} {{type}})
+Table of Content feature layer flag label,toc.label.flag.feature,ESRI Feature Layer ({{count}} {{typeName}}),Couche d'entités d'ESRI ({{count}} {{typeName}})
+Table of Content feature layer flag tootlip,toc.tooltip.flag.feature,ESRI Feature Layer ({{count}} {{typeName}}),Couche d'entités d'ESRI ({{count}} {{typeName}})
+Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic Layer ({{count}} {{typeName}}),Couche dynamique d'ESRI ({{count}} {{typeName}})
+Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer ({{count}} {{typeName}}),Couche dynamique d'ESRI ({{count}} {{typeName}})
 Table of Content wms layer flag label,toc.label.flag.wms,OGC WMS Layer,Couche WMS de l'OGC
 Table of Content wms layer flag tootlip,toc.tooltip.flag.wms,OGC WMS Layer,Couche WMS de l'OGC
 Table of Content tile layer flag label,toc.label.flag.tile,ESRI Tile Layer,Couche de tuiles d'ESRI
@@ -144,6 +144,7 @@ Table of Content templates placeholder loading error label,toc.tmp.label.error.l
 Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
 Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
 Table of Content keyboard reoder tooltip,toc.tooltip.reorder,Reorder,Réorganiser
+While counting geometry,geometry.counting, ...counting, ...compte
 Geometry types,geometry.type.generic, feature|features, entité|entités
 Geometry types,geometry.type.esriGeometryPoint, point|points, point|points
 Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, polygone|polygones
