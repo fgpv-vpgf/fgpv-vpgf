@@ -44,7 +44,7 @@
                 zoom: encode64(geoService.mapObject.getZoom())
             };
 
-            // loop through layers in legend
+            // loop through layers in legend, remove user added layers
             const legend = geoService.legend.items.filter(legendEntry => {
                 return !legendEntry._layerRecord.config.flags.user.visible;
             });
@@ -66,18 +66,12 @@
          * @function parseBookmark
          * @param {String} bookmark     A bookmark created by getBookmark
          * @param {Object} origConfig   The config object to modify
+         * @param {Array} newKeyList    Optional modified RCS key list
          * @returns {Object}            The config with changes from the bookmark
          */
-        function parseBookmark(bookmark, origConfig) {
+        function parseBookmark(bookmark, origConfig, newKeyList) {
             const config = angular.copy(origConfig);
             const pattern = /^([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
-            const layerPatterns = [
-                /^(.+?)(\d{7})$/, // feature
-                /^(.+?)(\d{6})$/, // wms
-                /^(.+?)(\d{5})$/, // tile
-                /^(.+?)(\d{6})$/, // dynamic
-                /^(.+?)(\d{5})$/ // image
-            ];
 
             bookmark = decodeURI(bookmark);
 
@@ -97,42 +91,103 @@
             };
             window.RV.getMap($rootElement.attr('id')).centerAndZoom(x, y, spatialReference, zoom);
 
+            let bookmarkLayers = {};
+
             // Make sure there are layers before trying to loop through them
             if (info[5]) {
                 const layers = info[5].split(',');
-                const bmLayers = {};
 
-                // Loop through bookmark layers and create config snippets
-                layers.forEach(layer => {
-                    layer = decode64(layer);
-                    const layerType = parseInt(layer.substring(0, 2));
-                    const [, layerId, layerData] = layer.substring(2).match(layerPatterns[layerType]);
+                // create partial layer configs from layer bookmarks
+                bookmarkLayers = parseLayers(layers);
 
-                    bmLayers[layerId] = LayerRecordFactory.parseLayerData(layerData, layerType);
+                // modify main config using layer configs
+                filterConfigLayers(bookmarkLayers, config);
+            }
 
-                });
-
-                let configLayers = config.layers;
-
-                // Loop through config layers and apply bookmark info
-                configLayers.slice().forEach(layer => {
-                    const id = layer.id;
-                    const bookmarkLayer = bmLayers[id];
-                    if (bookmarkLayer) {
-                        // apply bookmark layer info to config
-                        angular.merge(config.layers[config.layers.indexOf(layer)], bookmarkLayer);
-
-                        delete bmLayers[id];
-                    } else {
-                        // layer was removed in bookmarked state, remove it from config object
-                        delete config.layers[config.layers.indexOf(layer)];
-                    }
-                });
-
-                configService.setCurrent(addRcsConfigs(bmLayers, config));
+            if (newKeyList) {
+                // set the new current config, RCS layers will be loaded on first getCurrent() call
+                modifyRcsKeyList(bookmarkLayers, newKeyList);
+                configService.setCurrent(addRcsConfigs(bookmarkLayers, config));
             } else {
                 configService.setCurrent($q.resolve(config));
             }
+        }
+
+        /**
+         * Turns layer bookmarks into partial layer configs
+         *
+         * @function parseLayers
+         * @param {Array} layerDataStrings      Array of layer bookmarks
+         * @returns {Object}                    Partial configs created from each layer bookmark
+         */
+        function parseLayers(layerDataStrings) {
+            const layerPatterns = [
+                /^(.+?)(\d{7})$/, // feature
+                /^(.+?)(\d{6})$/, // wms
+                /^(.+?)(\d{5})$/, // tile
+                /^(.+?)(\d{6})$/, // dynamic
+                /^(.+?)(\d{5})$/ // image
+            ];
+
+            const layerObjs = {};
+            // Loop through bookmark layers and create config snippets
+            layerDataStrings.forEach(layer => {
+                layer = decode64(layer);
+                const layerType = parseInt(layer.substring(0, 2));
+                const [, layerId, layerData] = layer.substring(2).match(layerPatterns[layerType]);
+
+                layerObjs[layerId] = LayerRecordFactory.parseLayerData(layerData, layerType);
+            });
+
+            return layerObjs;
+        }
+
+        /**
+         * Updates layers in the config, merging the layerObj if they are in the bookmark & deleting the ones not present. *Modifies both params*
+         *
+         * @function filterConfigLayers
+         * @param {Object} layerObjs    Object containing partial layer configs
+         * @param {Object} config       The config object to modify
+         */
+        function filterConfigLayers(layerObjs, config) {
+            let configLayers = config.layers;
+
+            // Loop through config layers and apply bookmark info
+            configLayers.slice().forEach(layer => {
+                const id = layer.id;
+                const bookmarkLayer = layerObjs[id];
+                if (bookmarkLayer) {
+                    // apply bookmark layer info to config
+                    angular.merge(config.layers[config.layers.indexOf(layer)], bookmarkLayer);
+
+                    delete layerObjs[id];
+                } else {
+                    // layer was removed in bookmarked state, remove it from config object
+                    delete config.layers[config.layers.indexOf(layer)];
+                }
+            });
+        }
+
+        /**
+         * Updates layers in 'layerObjs' so that it matches 'keys'. *Modifies both params*
+         *
+         * @function modifyRcsKeyList
+         * @param {Object} layerObjs    Object containing partial layer configs
+         * @param {Array} keys          List containing all wanted rcs keys
+         */
+        function modifyRcsKeyList(layerObjs, keys) {
+            Object.keys(layerObjs).forEach(id => {
+                const plainID = id.split('.')[1];
+                if (keys.indexOf(plainID) > -1) {
+                    delete keys[keys.indexOf(plainID)];
+                } else {
+                    delete layerObjs[id];
+                }
+            });
+
+            keys.forEach(id => {
+                layerObjs[id] = {};
+            });
         }
 
         /**
@@ -146,9 +201,10 @@
          */
         function addRcsConfigs(rcsBookmarks, config) {
             if (Object.keys(rcsBookmarks).length > 0) {
-                return configService.rcsAddKeys(Object.keys(rcsBookmarks).map(id => id.split('.')[1]))
+                return configService.rcsAddKeys(Object.keys(rcsBookmarks).map(id => (id.split('.')[1] || id)))
                     .then(rcsConfigs => {
-                        const configSnippets = rcsConfigs.map(cfg => angular.merge(cfg, rcsBookmarks[cfg.id]));
+                        const configSnippets = rcsConfigs.map(cfg =>
+                                angular.merge(cfg, rcsBookmarks[cfg.id], { origin: 'rcs' }));
                         config.layers = config.layers.concat(configSnippets);
 
                         return config;
