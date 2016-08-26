@@ -717,9 +717,10 @@ function assignIds(geoJson) {
     }
 
     // for every feature, if it does not have an id property, add it.
+    // 0 is not a valid object id
     geoJson.features.forEach(function (val, idx) {
         if (typeof val.id === 'undefined') {
-            val.id = idx;
+            val.id = idx + 1;
         }
     });
 }
