@@ -375,12 +375,13 @@
                         identifyResult.data = queryResult.features.map(
                             feat => {
                                 // grab the object id of the feature we clicked on.
-                                const objId = feat.attributes[attributes.oidField].toString();
+                                const objId = feat.attributes[attributes.oidField];
+                                const objIdStr = objId.toString();
 
                                 // use object id find location of our feature in the feature array, and grab its attributes
-                                const featAttribs = attributes.rows[attributes.oidIndex[objId]];
+                                const featAttribs = attributes.rows[attributes.oidIndex[objIdStr]];
                                 return {
-                                    name: getFeatureName(featAttribs, layerRecord, objId),
+                                    name: getFeatureName(featAttribs, layerRecord, objIdStr),
                                     data: attributesToDetails(featAttribs, attributes.fields),
                                     oid: objId,
                                     symbology: [
