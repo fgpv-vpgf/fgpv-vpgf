@@ -16,7 +16,7 @@
      * The `runBlock` triggers config and locale file loading, sets language of the app.
      */
     function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, events, configService,
-            gapiService) {
+            gapiService, appInfo) {
 
         const promises = [
             configService.initialize(),
@@ -75,7 +75,7 @@
                 start
             };
 
-            globalRegistry.getMap($rootElement.attr('id'))._registerPreLoadApi(preMapService);
+            globalRegistry.getMap(appInfo.id)._registerPreLoadApi(preMapService);
 
             /******************/
 
@@ -86,10 +86,9 @@
              * @param {String} bookmark      bookmark containing viewer state
              */
             function initialBookmark(bookmark) {
-                const id = $rootElement.attr('id');
-                const storage = sessionStorage.getItem(id);
+                const storage = sessionStorage.getItem(appInfo.id);
                 if (storage) {
-                    sessionStorage.removeItem(id);
+                    sessionStorage.removeItem(appInfo.id);
                 }
 
                 reloadService.loadWithBookmark(bookmark, true);
@@ -102,14 +101,13 @@
              * @param {Array} keys      list of keys to load with
              */
             function restoreSession(keys) {
-                const id = $rootElement.attr('id');
-                const bookmark = sessionStorage.getItem(id);
+                const bookmark = sessionStorage.getItem(appInfo.id);
 
                 if (bookmark) {
                     reloadService.loadWithExtraKeys(bookmark, keys);
-                    sessionStorage.removeItem(id);
+                    sessionStorage.removeItem(appInfo.id);
                 } else {
-                    window.RV.getMap(id).loadRcsLayers(keys);
+                    globalRegistry.getMap(appInfo.id).loadRcsLayers(keys);
                     start();
                 }
             }
@@ -136,8 +134,8 @@
      *
      * `apiBlock` sets up language and RCS calls for the global API
      */
-    function apiBlock($rootElement, $rootScope, globalRegistry, geoService, configService, events,
-        LayerBlueprint, bookmarkService, gapiService, reloadService) {
+    function apiBlock($rootScope, globalRegistry, geoService, configService, events,
+        LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo) {
 
         const service = {
             setLanguage,
@@ -150,12 +148,12 @@
 
         // Attaches a promise to the appRegistry which resolves with apiService
         $rootScope.$on(events.rvApiReady, () => {
-            globalRegistry.getMap($rootElement.attr('id'))._registerMap(service);
-            console.log($rootElement.attr('id') + ' registered');
+            globalRegistry.getMap(appInfo.id)._registerMap(service);
+            console.log(appInfo.id + ' registered');
         });
 
         $rootScope.$on(events.rvApiHalt, () => {
-            globalRegistry.getMap($rootElement.attr('id'))._deregisterMap();
+            globalRegistry.getMap(appInfo.id)._deregisterMap();
         });
 
         /**********************/
@@ -203,9 +201,8 @@
         function backToCart() {
             // get bookmark, throw bookmark into session storage
             const bm = bookmarkService.getBookmark();
-            const id = $rootElement.attr('id');
 
-            sessionStorage.setItem(id, bm);
+            sessionStorage.setItem(appInfo.id, bm);
 
             // get list of layers, find layers with rcs creation
             // return array with layer keys

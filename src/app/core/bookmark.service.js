@@ -81,6 +81,7 @@
 
             // pull out non-layer info
             const [basemap, x, y, zoom] = [1, 2, 3, 4].map(i => decode64(info[i]));
+            const layers = info[5];
 
             // mark initial basemap
             config.map.initialBasemapId = basemap;
@@ -94,11 +95,11 @@
             let bookmarkLayers = {};
 
             // Make sure there are layers before trying to loop through them
-            if (info[5]) {
-                const layers = info[5].split(',');
+            if (layers) {
+                const layerData = layers.split(',');
 
                 // create partial layer configs from layer bookmarks
-                bookmarkLayers = parseLayers(layers);
+                bookmarkLayers = parseLayers(layerData);
 
                 // modify main config using layer configs
                 filterConfigLayers(bookmarkLayers, config);
@@ -176,15 +177,21 @@
          * @param {Array} keys          List containing all wanted rcs keys
          */
         function modifyRcsKeyList(layerObjs, keys) {
+            // Loop through keys in layerObjs
             Object.keys(layerObjs).forEach(id => {
+                // strip rcs. and .en/.fr from the layer id
                 const plainID = id.split('.')[1];
                 if (keys.indexOf(plainID) > -1) {
+                    // id is in both layerObjs and keys, safe to remove from keyList
                     delete keys[keys.indexOf(plainID)];
                 } else {
+                    // id isn't in keys, remove from layerObjs (assumed to be removed from cart)
                     delete layerObjs[id];
                 }
             });
 
+            // for each of the remaining keys in the new list
+            // add them to layerObjs to be loaded
             keys.forEach(id => {
                 layerObjs[id] = {};
             });

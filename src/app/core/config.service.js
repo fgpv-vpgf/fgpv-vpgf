@@ -343,7 +343,7 @@
                         resp.data.forEach(layerEntry => {
                             // if the key is wrong rcs will return null
                             if (layerEntry) {
-                                let layer = layerEntry.layers[0];
+                                const layer = layerEntry.layers[0];
                                 layer.origin = 'rcs';
                                 result.layers.push(layer);
                             }
