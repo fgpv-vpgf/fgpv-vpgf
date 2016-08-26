@@ -76,7 +76,6 @@
             if (!bookmark) {
                 $rootScope.$broadcast(events.rvBookmarkInit);
                 service.bookmarkBlocking = false;
-                return;
             } else if (!initial || service.bookmarkBlocking) {
                 $rootScope.$broadcast(events.rvApiHalt);
 
