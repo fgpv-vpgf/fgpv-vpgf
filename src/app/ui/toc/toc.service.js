@@ -104,7 +104,13 @@
             flags: {
                 type: {
                     icon: {
-                        esriFeature: 'community:vector-square',
+                        esriFeature: type => {
+                            return {
+                                esriGeometryPoint: 'community:vector-point',
+                                esriGeometryPolygon: 'community:vector-polygon',
+                                esriGeometryPolyline: 'community:vector-polyline'
+                            }[type];
+                        },
                         esriDynamic: 'action:settings',
                         esriDynamicLayerEntry: 'image:photo',
                         ogcWms: 'image:photo',
