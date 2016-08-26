@@ -48,6 +48,7 @@
                 snapshotLayer,
                 aliasedFieldName,
                 getLayersByType,
+                getRcsLayerIDs,
                 getAllQueryableLayerRecords,
                 moveLayer,
                 checkDateType,
@@ -104,6 +105,18 @@
             function getLayersByType(layerType) {
                 return Object.keys(layers).map(key => layers[key])
                     .filter(lr => lr.config.layerType === layerType);
+            }
+
+            /**
+             * Returns an array of ids for rcs added layers
+             *
+             * @function getRcsLayerIDs
+             * @returns {Array}     list of rcs layers' ids
+             */
+            function getRcsLayerIDs() {
+                return Object.keys(layers).filter(
+                    id => (layers[id].origin || layers[id].initialConfig.origin) === 'rcs')
+                        .map(id => id.split('.')[1]);
             }
 
             // FIXME  add a check to see if layer has config setting for not supporting a click
