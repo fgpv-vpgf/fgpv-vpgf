@@ -111,20 +111,13 @@
                     }
                 } else {
                     // walk through layerEntries and update each one
-                    obj.layerEntries.forEach(ent => {
-                        // check for obj.slaves to prevent error
-                        if (obj.slaves) {
-                            const slave = obj.slaves[ent.index];
-
-                            if (slave.flags) {
-                                // TODO remove this test once it has passed the test of time
-                                if (typeof scaleSet[slave.featureIdx].value === 'undefined') {
-                                    console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
-                                }
-                                slave.flags.scale.visible = scaleSet[slave.featureIdx].value;
-                                slave.options.offscale.value = scaleSet[slave.featureIdx].zoomIn;
-                            }
+                    obj.walkItems(slave => {
+                        if (typeof scaleSet[slave.featureIdx].value === 'undefined') {
+                            console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
                         }
+
+                        slave.flags.scale.visible = scaleSet[slave.featureIdx].value;
+                        slave.options.offscale.value = scaleSet[slave.featureIdx].zoomIn;
                     });
                 }
             };
@@ -557,12 +550,10 @@
                 // We assume the inclusion is properly formatted (ex: [1, 2] will result in sublayer 2 being included twice - once under root and once more time under 1).
                 this.layerEntries.forEach(({ index }) => {
                     const slave = this.slaves[index];
+
                     // if layerEntry id is incorrect, ignore it
                     if (slave) {
                         slave.setVisibility(slave.getVisibility(), false); // set visibility on the item which will propagate down if it has any items of its own
-
-                        // user flags set here because case specific to dynamic layer children
-                        slave.flags.user = this.flags.user;
                         this.add(slave); // add layer entry to the master group
                     }
                 });
@@ -570,6 +561,9 @@
                 // add all tile sublayers to the toc entry
                 this.slaves.forEach(slave => this.add(slave));
             }
+
+            // user flags set here because case specific to dynamic layer children
+            this.walkItems(slave => slave.flags.user = this.flags.user);
 
             // set initial visibility of the sublayers;
             // this cannot be set in `layerRegistry` because legend entry for dynamic layer didn't exist yet;
