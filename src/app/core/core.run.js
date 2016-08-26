@@ -70,15 +70,59 @@
          */
         function preLoadApiBlock() {
             const preMapService = {
-                initialBookmark
+                initialBookmark,
+                restoreSession,
+                start
             };
 
             globalRegistry.getMap($rootElement.attr('id'))._registerPreLoadApi(preMapService);
 
             /******************/
 
+            /**
+             * Loads using a bookmark
+             *
+             * @function initialBookmark
+             * @param {String} bookmark      bookmark containing viewer state
+             */
             function initialBookmark(bookmark) {
+                const id = $rootElement.attr('id');
+                const storage = sessionStorage.getItem(id);
+                if (storage) {
+                    sessionStorage.removeItem(id);
+                }
+
                 reloadService.loadWithBookmark(bookmark, true);
+            }
+
+            /**
+             * Loads using a bookmark from sessionStorage (if found) and a keyList
+             *
+             * @function restoreSession
+             * @param {Array} keys      list of keys to load with
+             */
+            function restoreSession(keys) {
+                const id = $rootElement.attr('id');
+                const bookmark = sessionStorage.getItem(id);
+
+                if (bookmark) {
+                    reloadService.loadWithExtraKeys(bookmark, keys);
+                    sessionStorage.removeItem(id);
+                } else {
+                    window.RV.getMap(id).loadRcsLayers(keys);
+                    start();
+                }
+            }
+
+            /**
+             * Bypasses the rv-wait block
+             *
+             * @function start
+             */
+            function start() {
+                console.log('Bypassing rv-wait');
+                reloadService.bookmarkBlocking = false;
+                $rootScope.$broadcast(events.rvBookmarkInit);
             }
 
         }
@@ -100,7 +144,8 @@
             loadRcsLayers,
             getBookmark,
             centerAndZoom,
-            useBookmark
+            useBookmark,
+            backToCart
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
@@ -141,11 +186,31 @@
             configService.rcsAddKeys(keys)
                 .then(newLayerConfigs => {
                     // call layer register in geo module on those nodes
-                    const layerBlueprints = newLayerConfigs.map(layerConfig =>
-                        new LayerBlueprint.service(layerConfig, geoService.epsgLookup));
+                    const layerBlueprints = newLayerConfigs.map(layerConfig => {
+                        layerConfig.origin = 'rcs';
+                        return new LayerBlueprint.service(layerConfig, geoService.epsgLookup);
+                    });
                     geoService.constructLayers(layerBlueprints);
                 });
 
+        }
+
+        /**
+         * Stores the viewer state in sessionStorage and returns a list of rcs keys to pass to the mapCart.
+         *
+         * @returns {array}     List of RCS keys
+         */
+        function backToCart() {
+            // get bookmark, throw bookmark into session storage
+            const bm = bookmarkService.getBookmark();
+            const id = $rootElement.attr('id');
+
+            sessionStorage.setItem(id, bm);
+
+            // get list of layers, find layers with rcs creation
+            // return array with layer keys
+            const layerKeys = geoService.getRcsLayerIDs();
+            return layerKeys;
         }
 
         /**
