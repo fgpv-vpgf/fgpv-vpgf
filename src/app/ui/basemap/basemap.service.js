@@ -19,7 +19,7 @@
         .module('app.geo')
         .factory('basemapService', basemapService);
 
-    function basemapService($rootScope, events, configService, $translate, geoService, $injector) {
+    function basemapService($rootScope, events, configService, $translate, $injector) {
 
         let bmSelected; // the current selected basemap
         let initialBasemapId;
@@ -71,11 +71,11 @@
             bmSelected = basemap;
             bmSelected.selected = true;
 
-            if (geoService.baseMapHasSameSP(basemap.id)) {
-                geoService.selectBasemap(basemap.id);
+            if ($injector.get('geoService').baseMapHasSameSP(basemap.id)) { // avoid circular dependency
+                $injector.get('geoService').selectBasemap(basemap.id); // avoid circular dependency
             } else {
                 // avoiding circular dependency on bookmarkService
-                $injector.get('reloadService').loadNewProjection(basemap.id);
+                $injector.get('reloadService').loadNewProjection(basemap.id); // avoid circular dependency
             }
         }
 

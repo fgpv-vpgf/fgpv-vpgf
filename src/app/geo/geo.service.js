@@ -15,7 +15,7 @@
         .factory('geoService', geoService);
 
     function geoService($http, $q, $rootScope, events, mapService, layerRegistry, configService,
-        identifyService, LayerBlueprint) {
+        identifyService, LayerBlueprint, basemapService) {
 
         // TODO update how the layerOrder works with the UI
         // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -92,6 +92,12 @@
             };
 
             let config; // reference to the current config
+
+            // config or language may have changed and the map is reloading,
+            // update basemaps with new config
+            if (typeof mapNode === 'undefined') {
+                basemapService.reload();
+            }
 
             return configService.getCurrent()
                 .then(cf => {
