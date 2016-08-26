@@ -9,6 +9,6 @@
         {{ self.template.tooltip[self.control.value] || self.template.tooltip | translate:self.data }}
     </md-tooltip>
 
-    <md-icon md-svg-src="{{ self.template.icon[self.control.value] || self.template.icon }}"></md-icon>
+    <md-icon md-svg-src="{{ self.isFunction(self.template.icon[self.control.value]) ? self.template.icon[self.control.value](self.data.type) : self.template.icon[self.control.value] || self.template.icon }}"></md-icon>
 
 </div>

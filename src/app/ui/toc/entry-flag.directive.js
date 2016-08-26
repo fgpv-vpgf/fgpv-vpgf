@@ -47,6 +47,7 @@
             // getting toggle object from the layer item controller directly using toggle's name
             self.control = ctrl.entry.flags[self.name];
             self.template = tocService.presets.flags[self.name];
+            self.isFunction = angular.isFunction;
         }
     }
 })();
