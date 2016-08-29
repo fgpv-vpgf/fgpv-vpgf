@@ -133,12 +133,11 @@ rv-panel[type='other'] {
 
     .rv-panel {
         //background-color: rgba(0,0,0,0.68);
-        background-color: rgba(255,255,255,.68);
+        background-color: rgba(#fff,.68);
         //color: white;
-
-        md-content {
-            background-color: #fff;
-            //color: white;
-        }
     }
+}
+
+md-content {
+    background-color: #fff;
 }
