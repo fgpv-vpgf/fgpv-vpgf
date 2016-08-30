@@ -36,13 +36,15 @@
 
             const mapExtent = geoService.mapObject.extent.getCenter();
 
-            // get zoom level
+            // get scale level
             // get center coords
             const extent = {
                 x: encode64(mapExtent.x),
                 y: encode64(mapExtent.y),
-                zoom: encode64(geoService.mapObject.getZoom())
+                scale: encode64(geoService.mapObject.getScale())
             };
+
+            console.log('ENCODING BOOKMARK - SCALE IS ', extent.scale);
 
             // loop through layers in legend, remove user added layers
             const legend = geoService.legend.items.filter(legendEntry => {
@@ -53,7 +55,7 @@
                 return encode64(legendEntry._layerRecord.makeLayerBookmark());
             });
 
-            const bookmark = `${basemap},${extent.x},${extent.y},${extent.zoom}` +
+            const bookmark = `${basemap},${extent.x},${extent.y},${extent.scale}` +
                 (layerBookmarks.length > 0 ? `,${layerBookmarks.toString()}` : '');
             console.log(bookmark);
             return bookmark;
@@ -67,9 +69,10 @@
          * @param {String} bookmark     A bookmark created by getBookmark
          * @param {Object} origConfig   The config object to modify
          * @param {Array} newKeyList    Optional modified RCS key list
+         * @param {String} newBaseMap   Optional new basemap id we are switching to
          * @returns {Object}            The config with changes from the bookmark
          */
-        function parseBookmark(bookmark, origConfig, newKeyList) {
+        function parseBookmark(bookmark, origConfig, newKeyList, newBaseMap) {
             const config = angular.copy(origConfig);
             const pattern = /^([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
 
@@ -80,17 +83,30 @@
             const info = bookmark.match(pattern);
 
             // pull out non-layer info
-            const [basemap, x, y, zoom] = [1, 2, 3, 4].map(i => decode64(info[i]));
+            const [basemap, x, y, scale] = [1, 2, 3, 4].map(i => decode64(info[i]));
             const layers = info[5];
 
             // mark initial basemap
             config.map.initialBasemapId = basemap;
 
             // apply extent
+            const origBasemapConfig = config.baseMaps.find(bm => bm.id === basemap);
             const spatialReference = {
-                wkid: config.baseMaps.find(bm => bm.id === basemap).wkid
+                wkid: origBasemapConfig.wkid
             };
-            window.RV.getMap($rootElement.attr('id')).centerAndZoom(x, y, spatialReference, zoom);
+
+            // determine the zoom level. use bookmark basemap unless we are doing a projection switch
+            let lodId = origBasemapConfig.lodId;
+            if (newBaseMap) {
+                lodId = config.baseMaps.find(bm => bm.id === newBaseMap).lodId;
+            }
+
+            // find the LOD set in the config file, then find the level of the LOD closest to the scale
+            const configLodSet = config.map.lods.find(lodset => lodset.id === lodId);
+            const zoomLod = geoService.findClosestLOD(configLodSet.lods, scale);
+            console.log('DECODING BOOKMARK - SCALE AND LOD AND LODID ', scale, zoomLod, lodId);
+
+            window.RV.getMap($rootElement.attr('id')).centerAndZoom(x, y, spatialReference, zoomLod.level);
 
             let bookmarkLayers = {};
 
