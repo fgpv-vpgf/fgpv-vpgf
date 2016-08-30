@@ -30,12 +30,12 @@
 
     // jscs:disable maximumLineLength
     // actual button template
-    const ROW_BUTTON_TEMPLATE = row =>
+    const ROW_BUTTON_TEMPLATE = (row, disabled) =>
         `<md-button
             aria-label="{{ self.isFunction(self.label) ? self.label(self.enabled) : self.label | translate }}"
             class="md-icon-button rv-icon-16 rv-button-24"
             ng-click="self.action(${row})"
-            ng-disabled="!self.enabled">
+            ng-disabled="${disabled}">
 
             <md-tooltip ng-if="self.tooltip" md-direction="top">{{ self.isFunction(self.tooltip) ? self.tooltip(self.enabled) : self.tooltip | translate }}</md-tooltip>
             <md-icon md-svg-src="{{ self.isFunction(self.icon) ? self.icon(self.enabled) : self.icon }}"></md-icon>
@@ -155,6 +155,11 @@
                     const buttonScope = scope.$new(true);
                     buttonScope.self = button.self;
 
+                    if (button.name === 'rv-zoom-marker') {
+                        // disabled zoom button if layer is not visible
+                        buttonScope.self.visibility = requester.legendEntry.options.visibility;
+                    }
+
                     button.scope = buttonScope;
                 });
 
@@ -220,12 +225,16 @@
                     // find all the button placeholders
                     Object.values(ROW_BUTTONS).forEach(button => {
 
+                        // set the disabled argument value
+                        button.disabledArg = (button.name === 'rv-zoom-marker') ?
+                            '!self.enabled || !self.visibility.value' : '';
+
                         // and replace when with properly compiled directives
                         tableNode.find(button.name).each((index, item) => {
                             item = angular.element(item);
                             const row = item.attr('row'); // get the row number of the button
 
-                            const template = ROW_BUTTON_TEMPLATE(row);
+                            const template = ROW_BUTTON_TEMPLATE(row, button.disabledArg);
                             const rowButtonDirective =  $compile(template)(button.scope);
 
                             item.replaceWith(rowButtonDirective);
