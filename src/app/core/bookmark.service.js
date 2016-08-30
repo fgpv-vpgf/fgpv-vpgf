@@ -106,12 +106,11 @@
             }
 
             if (newKeyList) {
-                // set the new current config, RCS layers will be loaded on first getCurrent() call
                 modifyRcsKeyList(bookmarkLayers, newKeyList);
-                configService.setCurrent(addRcsConfigs(bookmarkLayers, config));
-            } else {
-                configService.setCurrent($q.resolve(config));
             }
+
+            // set the new current config, RCS layers will be loaded on first getCurrent() call
+            configService.setCurrent(addRcsConfigs(bookmarkLayers, config));
         }
 
         /**
