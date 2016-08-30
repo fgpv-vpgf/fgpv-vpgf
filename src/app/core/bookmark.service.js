@@ -157,6 +157,13 @@
                 const id = layer.id;
                 const bookmarkLayer = layerObjs[id];
                 if (bookmarkLayer) {
+                    // set visibility to null instead of false to distinguish a layer
+                    // actually set to false in the config or set to false in a bookmark.
+                    // If null, sublayer visibility will be forced off
+                    if (!bookmarkLayer.options.visibility.value) {
+                        bookmarkLayer.options.visibility.value = null;
+                    }
+
                     // apply bookmark layer info to config
                     angular.merge(config.layers[config.layers.indexOf(layer)], bookmarkLayer);
 
