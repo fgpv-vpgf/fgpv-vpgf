@@ -38,7 +38,7 @@
         return directive;
     }
 
-    function Controller(layoutService, stateManager) {
+    function Controller(layoutService, stateManager, debounceService) {
         'ngInject';
         const self = this;
 
@@ -48,6 +48,7 @@
         self.toggleDetails = toggleDetails;
         self.toggleToc = toggleToc;
         self.toggleToolbox = toggleToolbox;
+        self.debounceToggleToc = debounceToggleToc;
 
         activate();
 
@@ -60,6 +61,10 @@
         }
 
         function toggleToc() {
+            debounceService(debounceToggleToc, 175);
+        }
+
+        function debounceToggleToc() {
             stateManager.setActive({ side: false }, 'mainToc');
         }
 
