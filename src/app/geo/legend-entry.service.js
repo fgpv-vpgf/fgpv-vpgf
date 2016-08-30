@@ -615,23 +615,29 @@
          * Applies current visibility values of the sublayers of a dynamic layer.
          */
         DYNAMIC_ENTRY_MASTER_GROUP._setVisibility = function () {
-            // get an array of visible sublayers (e.g. [1,4,6])
-            const visibleSublayerIds =
+
+            // visibility is null iff it was set to false in a bookmark, so we force sublayers to hidden
+            // as their visibility state is not captured in a bookmark
+            if (this.options.visibility.value === null) {
+                this.options.visibility.value = false;
                 this.walkItems(item => {
-                    // get sublayer index from the slaves array
+                    item.setVisibility(false, false); // don't propagate
+                    this._layerRecord.setVisibility(this.getVisibility());
+                });
+
+            // visibility is either true or false
+            } else {
+                // get an array of visible sublayers (e.g. [1,4,6])
+                const visibleSublayerIds = this.walkItems(item => {
                     const index = this.slaves.indexOf(item);
                     return item.getVisibility() ? index : -1;
-                })
-                .filter(index => index !== -1); // filter out ones that are not visible
+                }).filter(index => index !== -1); // filter out ones that are not visible
 
-            // console.log(this.name + ' set to ' + this.getVisibility() + ' ' + visibleSublayerIds);
-            this.options.visibility.value = visibleSublayerIds.length > 0;
+                this.options.visibility.value = visibleSublayerIds.length > 0; // visible if there exists a visible sublayer
+                this._layerRecord.setVisibleLayers(visibleSublayerIds); // finally, apply visibility values to the sublayers
+            }
 
-            // apply visibility to the dynamic layer itself
-            this._layerRecord.setVisibility(this.getVisibility());
-
-            // finally, apply visibility values to the sublayers
-            this._layerRecord.setVisibleLayers(visibleSublayerIds);
+            this._layerRecord.setVisibility(this.getVisibility()); // apply visibility to the dynamic layer itself
         };
 
         /**

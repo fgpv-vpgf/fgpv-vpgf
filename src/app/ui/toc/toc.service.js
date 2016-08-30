@@ -244,7 +244,7 @@
 
             // hide bounding box only when visibility is hidden
             // TODO: move to the LayerRecord class when LayerRecord is moved into geoapi
-            if (!tocEntry.options.visibility.value) {
+            if (tocEntry.options.boundingBox && !tocEntry.options.visibility.value) {
                 tocEntry.options.boundingBox.value = false;
                 geoService.setBboxState(tocEntry, false);
             }
