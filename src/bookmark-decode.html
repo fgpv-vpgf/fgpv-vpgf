@@ -111,7 +111,7 @@
 
             // TODO update when version gets added to bookmark
 
-            var pattern = /^([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
+            var pattern = /^([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
             // things for specific layers:[ layer type name, regex to strip data from id, regex to parse data, property names in data ]
             var layerSpec = [
                 ['Feature', /^(.+?)(\d{7})$/, /^(\d{3})(\d{1})(\d{1})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox', 'snapshot', 'query']],
@@ -122,15 +122,17 @@
             ];
            
             var info = bookmark.match(pattern);
-            var decoded = [1, 2, 3, 4].map(i => decode64(info[i]));
+            var version = info[1];
+            var decoded = [2, 3, 4, 5].map(i => decode64(info[i]));
 
+            $('#version').val( version );
             $('#scale').val( decoded[3] );
             $('#basemap').val( decoded[0] );
             $('#x').val( decoded[1] );
             $('#y').val( decoded[2] );
 
-            if (info[5]) {
-                var layers = info[5].split(',');
+            if (info[6]) {
+                var layers = info[6].split(',');
                 var texty = '';
                 
                 // Generate text for all layers
