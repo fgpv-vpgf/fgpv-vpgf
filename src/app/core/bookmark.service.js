@@ -44,8 +44,6 @@
                 scale: encode64(geoService.mapObject.getScale())
             };
 
-            console.log('ENCODING BOOKMARK - SCALE IS ', extent.scale);
-
             // loop through layers in legend, remove user added layers
             const legend = geoService.legend.items.filter(legendEntry => {
                 return !legendEntry._layerRecord.config.flags.user.visible;
@@ -55,7 +53,8 @@
                 return encode64(legendEntry._layerRecord.makeLayerBookmark());
             });
 
-            const bookmark = `${basemap},${extent.x},${extent.y},${extent.scale}` +
+            // `A` is the version. update this accordingly whenever the structure of the bookmark chages
+            const bookmark = `A,${basemap},${extent.x},${extent.y},${extent.scale}` +
                 (layerBookmarks.length > 0 ? `,${layerBookmarks.toString()}` : '');
             console.log(bookmark);
             return bookmark;
@@ -74,7 +73,7 @@
          */
         function parseBookmark(bookmark, origConfig, newKeyList, newBaseMap) {
             const config = angular.copy(origConfig);
-            const pattern = /^([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
+            const pattern = /^([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
 
             bookmark = decodeURI(bookmark);
 
@@ -83,8 +82,15 @@
             const info = bookmark.match(pattern);
 
             // pull out non-layer info
-            const [basemap, x, y, scale] = [1, 2, 3, 4].map(i => decode64(info[i]));
-            const layers = info[5];
+            // TODO currently we have 1 version, `A`, so the code is not changing.
+            //      when we get to version `B`, we will need to restructure how this
+            //      decoder is structured so that it can accommodate different versions
+            //      ideas include objects that map versions to regexes, or making decoder
+            //      objects (with subclasses & stuff) for each version.
+            //      version var currently commented out as it is not used
+            // const version = info[1];
+            const [basemap, x, y, scale] = [2, 3, 4, 5].map(i => decode64(info[i]));
+            const layers = info[6];
 
             // mark initial basemap
             config.map.initialBasemapId = basemap;
@@ -104,7 +110,6 @@
             // find the LOD set in the config file, then find the level of the LOD closest to the scale
             const configLodSet = config.map.lods.find(lodset => lodset.id === lodId);
             const zoomLod = geoService.findClosestLOD(configLodSet.lods, scale);
-            console.log('DECODING BOOKMARK - SCALE AND LOD AND LODID ', scale, zoomLod, lodId);
 
             window.RV.getMap($rootElement.attr('id')).centerAndZoom(x, y, spatialReference, zoomLod.level);
 
