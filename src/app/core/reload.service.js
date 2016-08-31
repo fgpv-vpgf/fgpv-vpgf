@@ -39,12 +39,7 @@
             // get original config and add bookmark to it
             configService.getOriginal().then(config => {
                 bookmarkService.parseBookmark(bookmark, config, undefined, basemapId);
-
-                // get current config to modify
-                configService.getCurrent().then(currentConfig => {
-                    currentConfig.map.initialBasemapId = basemapId;
-                    geoService.assembleMap();
-                });
+                geoService.assembleMap();
             });
         }
 

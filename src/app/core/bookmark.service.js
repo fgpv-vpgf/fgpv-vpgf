@@ -36,7 +36,7 @@
 
             const mapExtent = geoService.mapObject.extent.getCenter();
 
-            // get scale level
+            // get zoom scale
             // get center coords
             const extent = {
                 x: encode64(mapExtent.x),
@@ -84,7 +84,7 @@
             // pull out non-layer info
             // TODO currently we have 1 version, `A`, so the code is not changing.
             //      when we get to version `B`, we will need to restructure how this
-            //      decoder is structured so that it can accommodate different versions
+            //      decoder works so that it can accommodate different versions.
             //      ideas include objects that map versions to regexes, or making decoder
             //      objects (with subclasses & stuff) for each version.
             //      version var currently commented out as it is not used
@@ -93,7 +93,7 @@
             const layers = info[6];
 
             // mark initial basemap
-            config.map.initialBasemapId = basemap;
+            config.map.initialBasemapId = newBaseMap || basemap;
 
             // apply extent
             const origBasemapConfig = config.baseMaps.find(bm => bm.id === basemap);
@@ -108,8 +108,16 @@
             }
 
             // find the LOD set in the config file, then find the level of the LOD closest to the scale
+            // TODO the last two lines of this section (the ones that use Math) represent duplicated logic
+            //      that can be found in map.service --> findClosestLOD().
+            //      ideally we would call that function here; however, in the case where we are reading a
+            //      bookmark from the URL, the map service has not started yet, so the function has not
+            //      been defined.  moving it to geo.service doesnt work, because map.service is not aware
+            //      of geo.service.  at some point, we should find an appropriate spot to move findClosestLOD()
+            //      to so that it can be accessed in both map.service and bookmark.service.
             const configLodSet = config.map.lods.find(lodset => lodset.id === lodId);
-            const zoomLod = geoService.findClosestLOD(configLodSet.lods, scale);
+            const diffs = configLodSet.lods.map(lod => Math.abs(lod.scale - scale));
+            const zoomLod = configLodSet.lods[diffs.indexOf(Math.min(...diffs))];
 
             window.RV.getMap($rootElement.attr('id')).centerAndZoom(x, y, spatialReference, zoomLod.level);
 
