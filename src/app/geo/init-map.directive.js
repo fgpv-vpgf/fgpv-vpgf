@@ -47,6 +47,7 @@
 
                     el.on('keydown', keyDownDetected);
                     el.on('keyup', keyUpDetected);
+
                 }
             });
         }
