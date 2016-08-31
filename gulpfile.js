@@ -10,6 +10,7 @@ const pkg = require('./package.json');
 const $ = require('gulp-load-plugins')({ lazy: true });
 const yargs = require('yargs');
 const args = yargs.argv;
+const runSequence = require('run-sequence');
 const bowerFiles = require('main-bower-files');
 const config = require('./gulp.config')();
 const Server = require('karma').Server;
@@ -24,7 +25,7 @@ const jsRefParser = require('json-schema-ref-parser');
 
 require('gulp-help')(gulp);
 
-const PROD_MODE = yargs.argv._[0] === 'dist' || args.prod;
+let PROD_MODE = args.prod;
 
 /**
  * yargs variables can be passed in to alter the behavior, when present.
@@ -192,7 +193,7 @@ function templatecache() {
         .pipe($.angularTemplatecache(
             config.templateCache.file,
             config.templateCache.options
-            ));
+        ));
 }
 
 /**
@@ -339,22 +340,39 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
         aliases: ['build']
     });
 
-gulp.task('tgz', 'Generate tarball for distribution', ['inject'], function () {
-    return gulp
-        .src([config.libBuild + '/**'])
-        .pipe($.tar('fgpv-' + pkg.version + '.tgz'))
-        .pipe($.gzip({ append: false }))
-        .pipe(gulp.dest('dist'));
-});
+gulp.task('samples', 'Generate sample archives for distribution', ['inject'], () =>
+    merge(
+        gulp
+            .src([config.build + '/**'])
+            .pipe($.tar('fgpv-' + pkg.version + '-samples.tgz'))
+            .pipe($.gzip({ append: false }))
+            .pipe(gulp.dest('dist')),
+        gulp
+            .src([config.build + '/**'])
+            .pipe($.zip('fgpv-' + pkg.version + '-samples.zip'))
+            .pipe(gulp.dest('dist')))
+);
 
-gulp.task('zip', 'Generate zip for distribution', ['inject'], function () {
-    return gulp
-        .src([config.libBuild + '/**'])
-        .pipe($.zip('fgpv-' + pkg.version + '.zip'))
-        .pipe(gulp.dest('dist'));
-});
+gulp.task('packages', 'Generate package archives for distribution', ['inject'], () =>
+    merge(
+        gulp
+            .src([config.libBuild + '/**'])
+            .pipe($.tar('fgpv-' + pkg.version + '.tgz'))
+            .pipe($.gzip({ append: false }))
+            .pipe(gulp.dest('dist')),
+        gulp
+            .src([config.libBuild + '/**'])
+            .pipe($.zip('fgpv-' + pkg.version + '.zip'))
+            .pipe(gulp.dest('dist')))
+);
 
-gulp.task('dist', 'Generate tgz and zip files for distribution', ['zip', 'tgz']);
+gulp.task('prod', 'Sets production mode', () => PROD_MODE = true);
+
+gulp.task('dist', 'Generate tgz and zip files for distribution', done => {
+    // generate samples without minifications
+    // then generate a minified production package for distribution
+    runSequence('clean', 'samples', 'clean', 'prod', 'packages', done);
+});
 
 /**
  * Serves the app.
@@ -444,7 +462,7 @@ function serve(isDev) {
     $.connect.server({
         root: config.root,
         livereload: true,
-        port: config.defaultPort,
+        port: config.defaultPort
 
         // fallback option doesn't seem to work well with index page reload
         // fallback: isDev ? config.src + 'index.html' : config.build + 'index.html'
