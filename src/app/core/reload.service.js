@@ -38,13 +38,8 @@
 
             // get original config and add bookmark to it
             configService.getOriginal().then(config => {
-                bookmarkService.parseBookmark(bookmark, config);
-
-                // get current config to modify
-                configService.getCurrent().then(currentConfig => {
-                    currentConfig.map.initialBasemapId = basemapId;
-                    geoService.assembleMap();
-                });
+                bookmarkService.parseBookmark(bookmark, config, undefined, basemapId);
+                geoService.assembleMap();
             });
         }
 
