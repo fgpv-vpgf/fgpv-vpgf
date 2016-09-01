@@ -124,6 +124,7 @@ module.exports = function () {
 
         app,
         src,
+        build,
         libBuild,
         sampleBuild,
         dist,
