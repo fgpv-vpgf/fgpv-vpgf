@@ -441,6 +441,7 @@
                 const cfg = super.makeLayerConfig();
                 cfg.mode = this.config.options.snapshot.value ? this.layerClass.MODE_SNAPSHOT
                                                               : this.layerClass.MODE_ONDEMAND;
+                this.config.options.snapshot.enabled = !this.config.options.snapshot.value;
                 return cfg;
             }
 
