@@ -165,6 +165,11 @@
                     icon: 'social:person',
                     label: 'toc.label.flag.user',
                     tooltip: 'toc.tooltip.flag.user'
+                },
+                filterExtent: {
+                    icon: 'community:filter',
+                    label: 'toc.label.flag.filterExtent',
+                    tooltip: 'toc.tooltip.flag.filterExtent'
                 }
             },
             state: {
