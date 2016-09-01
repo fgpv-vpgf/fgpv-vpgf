@@ -52,10 +52,11 @@
 
             preLoadApiBlock();
 
-            if (waitAttr !== undefined) {
+            if (typeof waitAttr !== 'undefined') {
                 reloadService.bookmarkBlocking = true;
-                $rootScope.$on(events.rvBookmarkInit, () => {
+                const deRegister = $rootScope.$on(events.rvBookmarkInit, () => {
                     $rootScope.$broadcast(events.rvReady);
+                    deRegister(); // de-register `rvBookmarkInit` listener to prevent broadcasting `rvReady` in the future
                 });
             } else {
                 $rootScope.$broadcast(events.rvReady);
