@@ -42,18 +42,21 @@
         self.filtersMode = stateManager.state.filters.morph;
         self.dataPrint = dataPrint;
         self.dataExportCSV = dataExportCSV;
+        self.setFilter = setFilter;
 
-        activate();
-
-        /*********/
-
-        function activate() {
-
-        }
+        $scope.$watch(() => stateManager.display.filters.requester, req => {
+            if (req && req.legendEntry) {
+                self.filtersExtent = req.legendEntry.flags.filterExtent.visible;
+            }
+        });
 
         function setMode(mode) {
             stateManager.setMorph('filters', mode);
             focusService.setPanelFocus('filters');
+        }
+
+        function setFilter(state) {
+            stateManager.display.filters.requester.legendEntry.flags.filterExtent.visible = state;
         }
 
         /**

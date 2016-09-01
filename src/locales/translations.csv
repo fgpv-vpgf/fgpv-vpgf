@@ -50,6 +50,7 @@ Filter pane menu label for Enable Search,filter.menu.enableSearch,Enable Search,
 Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable Filters,Activer les filtres
 Filter pane menu label for Print,filter.menu.print,Print,Imprimer
 Filter pane menu label for Export,filter.menu.export,Export,Exporter
+Filter pane menu label for Filter by Extent,filter.menu.extent,Filter by Extent,Filtrer par étendue
 Basemap title,basemap.title,Maps,Cartes
 Basemap refresh required,basemap.refresh.req,Map refresh required,Actualiser la carte
 Basemap blank title,basemap.blank.title,blank map,carte vide
@@ -135,7 +136,9 @@ Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer dat
 Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,Couche sera exclue de la carte - cliquez sur les résultats
 Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,Couche sera exclue de la carte - cliquez sur les résultats
 Table of Content user flag label,toc.label.flag.user,Layer added by user,Couche ajoutée par l'utilisateur
+Table of Content filter by extent flag label,toc.label.flag.filterExtent,Map data is filtered by your current extent,Les données des cartes est filtré par votre étendue actuelle
 Table of Content user flag tootlip,toc.tooltip.flag.user,Layer added by user,Couche ajoutée par l'utilisateur
+Table of Content filter by extent flag tootlip,toc.tooltip.flag.filterExtent,Map data is filtered by your current extent,Les données des cartes est filtré par votre étendue actuelle
 Table of Content error state label,toc.label.state.error,Error,Erreur
 Table of Content error state tootlip,toc.tooltip.state.error,Error,Erreur
 Table of Content loading state label,toc.label.state.loading,Updating,Mise à jour
