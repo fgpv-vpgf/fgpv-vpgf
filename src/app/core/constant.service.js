@@ -24,7 +24,7 @@
     angular
         .module('app.core')
         .constant('events', {
-            rvReady: 'rvReady', // Fired when map should be created the first time
+            rvReady: 'rvReady', // Fired when map should be created the first time; should not be broadcasted more then once
             rvApiHalt: 'rvApiHalt', // Fired when API should be put back into 'queue' mode
             rvApiReady: 'rvApiReady', // Fired when API should let calls through
             rvBookmarkInit: 'rvBookmarkInit', // Fired after the bookmark has modified the config
