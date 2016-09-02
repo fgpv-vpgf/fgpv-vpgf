@@ -6,6 +6,7 @@ const hilight = require('./hilight.js');
 const layer = require('./layer.js');
 const mapManager = require('./mapManager.js');
 const proj = require('./proj.js');
+const query = require('./query.js');
 const shared = require('./shared.js');
 const symbology = require('./symbology.js');
 
@@ -21,6 +22,7 @@ function initAll(esriBundle, window) {
     api.symbology = symbology(window);
     api.hilight = hilight(esriBundle, api);
     api.events = events();
+    api.query = query(esriBundle);
     api.shared = shared(esriBundle);
     api.debug = function () {
         if (arguments.length === 1) {
@@ -71,7 +73,8 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/tasks/IdentifyParameters', 'IdentifyParameters'],
         ['esri/tasks/IdentifyTask', 'IdentifyTask'],
         ['esri/tasks/ProjectParameters', 'ProjectParameters'],
-        ['esri/tasks/query', 'Query']
+        ['esri/tasks/query', 'Query'],
+        ['esri/tasks/QueryTask', 'QueryTask']
     ];
 
     function makeDojoRequests() {
