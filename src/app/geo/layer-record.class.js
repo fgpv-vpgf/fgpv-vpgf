@@ -133,9 +133,13 @@
              * @returns {Object}        config snippet for the layer
              */
             static parseData (props, info) {
+                // set visibility to null instead of false to distinguish a layer
+                // actually set to false in the config or set to false in a bookmark.
+                // If null, sublayer visibility will be forced off (since we dont track
+                // sublayer state in bookmarks)
                 const lookup = {
                     opacity: value => parseInt(value) / 100,
-                    visibility: value => value === '1',
+                    visibility: value => value === '1' ? true : null,
                     boundingBox: value => value === '1',
                     snapshot: value => value === '1',
                     query: value => value === '1'
@@ -441,6 +445,7 @@
                 const cfg = super.makeLayerConfig();
                 cfg.mode = this.config.options.snapshot.value ? this.layerClass.MODE_SNAPSHOT
                                                               : this.layerClass.MODE_ONDEMAND;
+                this.config.options.snapshot.enabled = !this.config.options.snapshot.value;
                 return cfg;
             }
 

@@ -114,6 +114,7 @@
         function loadSnapshot(legendEntry) {
             geoService.snapshotLayer(legendEntry);
             self.tocEntry.options.snapshot.enabled = false;
+            self.tocEntry.options.snapshot.value = true;
         }
 
         activateOpacitySetting();
