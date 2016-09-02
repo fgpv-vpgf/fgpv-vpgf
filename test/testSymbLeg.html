@@ -5,16 +5,31 @@
     <title>Test Page</title>
     <style>
         .layerTile { position: absolute; }
+        
+        .bucket {
+            margin: 25px 15px;
+        }
+
+        .symbology-container {
+            display: flex;
+            align-items: center;
+            margin: 5px;
+        }
+
+        .symbology-container img {
+            margin: 0 10px 0 0;
+        }
     </style>
 </head>
 <body>
     <div id='map' style='height:10%; width: 10%;'></div>
-    <div id='bucket1' />
-    <div id='bucket2' />
-    <div id='bucket3' />
-    <div id='bucket4' />
-    <div id='bucket5' />
-    <div id='bucket6' />
+    <div id='bucket1' class="bucket"></div>
+    <div id='bucket2' class="bucket"></div>
+    <div id='bucket3' class="bucket"></div>
+    <div id='bucket4' class="bucket"></div>
+    <div id='bucket5' class="bucket"></div>
+    <div id='bucket6' class="bucket"></div>
+    <div id='bucket7' class="bucket"></div>
     <p id='mess' />
     <script src='../dist/geoapi.min.js'></script>
     <script>
@@ -29,11 +44,15 @@
             myimg.vspace = 20;
             myimg.src = dataurl;
 
-            mydiv.appendChild(myimg);
-
             myspan = document.createElement('span');
             myspan.innerHTML = legenditem.label;
-            mydiv.appendChild(myspan);
+            
+            var container = document.createElement('div');
+            container.setAttribute('class', 'symbology-container')
+            container.appendChild(myimg);            
+            container.appendChild(myspan);
+
+            mydiv.appendChild(container);
             // maybe add some text?
         }
 
@@ -107,6 +126,21 @@
 
                 legend5.layers[0].legend.forEach(legItem => {
                     addImg('bucket5', legItem);
+                })
+
+            });
+
+            // coloured circles
+            var layer7 = new api.layer.FeatureLayer('http://ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_NOx/MapServer/0');
+
+
+            layer7.on('load', function(evt) {
+
+                var legend7 = api.symbology.rendererToLegend(layer7.renderer.toJson() , 0);
+                console.log('legend7', legend7);
+
+                legend7.layers[0].legend.forEach(legItem => {
+                    addImg('bucket7', legItem);
                 })
 
             });
