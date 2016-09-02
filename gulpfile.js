@@ -2,6 +2,8 @@
 'use strict';
 var gulp = require('gulp');
 var del = require('del');
+var yargs = require('yargs');
+var args = yargs.argv;
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
@@ -12,11 +14,20 @@ var Dgeni = require('dgeni');
 
 require('gulp-help')(gulp);
 
+/**
+ * --prod: generate source maps and uglify code
+ * --guts: skip style checks
+ */
+
 gulp.task('clean', 'Remove dist folder', function (done) {
     del('dist', done);
 });
 
-gulp.task('check', 'Checks code against style guidelines', function () {
+gulp.task('check', 'Checks code against style guidelines', function (done) {
+    if (args.guts) {
+        return done();
+    }
+
     return gulp
         .src(['src/**/*.js', '*.js'])
         .pipe($.jshint())
@@ -49,14 +60,14 @@ gulp.task('build', 'Transpile and concatenate the code', function () {
         .pipe(source('gapi.js'))
         .pipe(buffer())
         .pipe($.derequire())
-        .pipe($.sourcemaps.init())
+        .pipe($.if(args.prod, $.sourcemaps.init()))
         .pipe($.babel())
         .pipe($.concat('geoapi.js'))
         /* .pipe(gulp.dest('dist/v' + pkg.version)) */
         .pipe(gulp.dest('dist'))
         .pipe($.rename('geoapi.min.js'))
-        .pipe($.uglify())
-        .pipe($.sourcemaps.write('.'))
+        .pipe($.if(args.prod, $.uglify()))
+        .pipe($.if(args.prod, $.sourcemaps.write('.')))
         .pipe(gulp.dest('dist'));
 });
 
