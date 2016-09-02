@@ -340,7 +340,13 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
         aliases: ['build']
     });
 
-gulp.task('samples', 'Generate sample archives for distribution', ['inject'], () =>
+gulp.task('remove-apikey', 'Remove internal Google API key from config', ['inject'], () => {
+    gulp.src([config.sampleBuild + 'config*.json'])
+        .pipe($.replace(/\s*"googleAPIKey": \S+/, '\n'))
+        .pipe(gulp.dest(config.sampleBuild));
+});
+
+gulp.task('samples', 'Generate sample archives for distribution', ['remove-apikey'], () =>
     merge(
         gulp
             .src([config.build + '/**'])

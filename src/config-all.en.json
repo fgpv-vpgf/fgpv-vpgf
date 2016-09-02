@@ -1,5 +1,6 @@
 {
   "version": "1.0",
+  "googleAPIKey": "AIzaSyD_FwYU_mT1xhTdUoiHBRjwToWUe--KVVU",
   "services": {
     "proxyUrl": "http://cp.zz9.ca/index"
   },
