@@ -557,10 +557,12 @@
             // turn keys into an array, pass them to the map
             var keysArr = keys.split(',');
             RV.getMap('fgpmap').restoreSession(keysArr);
+        } else {
+            var bookmark = queryStr.rv;
+            console.log(bookmark);
+            RV.getMap('fgpmap').initialBookmark(bookmark);
         }
-        var bookmark = queryStr.rv;
-        console.log(bookmark);
-        RV.getMap('fgpmap').initialBookmark(bookmark);
+
         function getBookmark(){
             RV.getMap('fgpmap').getBookmark().then(function (bookmark) {
                 document.getElementById("bookmarkDisplay").value = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
