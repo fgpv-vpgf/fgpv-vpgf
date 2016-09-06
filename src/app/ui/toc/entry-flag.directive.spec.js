@@ -39,6 +39,14 @@ describe('rvLayerItemFlag', () => {
         $provide.service('configService', () => {});
     }
 
+    function mockDebounceService($provide) {
+        $provide.factory('debounceService', () => {
+            return {
+                registerDebounce: () => {}
+            };
+        });
+    }
+
     function mockErrorService($provide) {
         $provide.service('errorService', () => {});
     }
@@ -55,7 +63,7 @@ describe('rvLayerItemFlag', () => {
         // mock the module with bardjs; include templates modules
         bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo',
             'pascalprecht.translate', mockConfigService, mockLayoutService, mockGeoService,
-            mockToast, mockErrorService, mockFocusService);
+            mockToast, mockErrorService, mockFocusService, mockDebounceService);
 
         // inject angular services
         bard.inject('$compile', '$rootScope');

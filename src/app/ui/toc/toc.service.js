@@ -16,7 +16,7 @@
         .factory('tocService', tocService);
 
     function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateManager,
-                        geoService, metadataService, errorService) {
+                        geoService, metadataService, errorService, debounceService) {
 
         const service = {
             // method called by the options and flags set on the layer item
@@ -187,6 +187,9 @@
 
         let errorToast;
 
+        // debounce toggle filter function
+        const debToggleFilter = debounceService.registerDebounce(debToggleLayerFiltersPanel);
+
         // set state change watches on metadata, settings and filters panel
         watchPanelState('sideMetadata', 'metadata');
         watchPanelState('sideSettings', 'settings');
@@ -300,11 +303,12 @@
         }
 
         /**
-         * Opens filters panel with data from the provided layer object.
+         * Opens filters panel with data from the provided layer object (debounce).
          * @function toggleLayerFiltersPanel
          * @param  {Object} entry layer object whose data should be displayed.
+         * @private
          */
-        function toggleLayerFiltersPanel(entry) {
+        function debToggleLayerFiltersPanel(entry) {
             const requester = {
                 id: entry.id,
                 name: entry.name,
@@ -338,6 +342,15 @@
                     errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
                         layoutService.panes.filter);
                 });
+        }
+
+        /**
+         * Opens filters panel with data from the provided layer object.
+         * @function toggleLayerFiltersPanel
+         * @param  {Object} entry layer object whose data should be displayed.
+         */
+        function toggleLayerFiltersPanel(entry) {
+            debToggleFilter(entry);
         }
 
         /**
