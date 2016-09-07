@@ -24,7 +24,6 @@
 
         const service = {
             isMapReady: false, // flag indicating that the map is ready
-
             epsgLookup,
             assembleMap,
             reloadLayer: l => layerRegistry.reloadLayer(l),

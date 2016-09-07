@@ -34,29 +34,20 @@
         }
     }
 
-    function Controller($scope, stateManager, events, focusService) {
+    function Controller($scope, stateManager, events, focusService, filterService) {
         'ngInject';
         const self = this;
 
         self.setMode = setMode;
         self.filtersMode = stateManager.state.filters.morph;
+        self.applyFilter = filterService.setActive;
+        self.filter = filterService.filter;
         self.dataPrint = dataPrint;
         self.dataExportCSV = dataExportCSV;
-        self.setFilter = setFilter;
-
-        $scope.$watch(() => stateManager.display.filters.requester, req => {
-            if (req && req.legendEntry) {
-                self.filtersExtent = req.legendEntry.flags.filterExtent.visible;
-            }
-        });
 
         function setMode(mode) {
             stateManager.setMorph('filters', mode);
             focusService.setPanelFocus('filters');
-        }
-
-        function setFilter(state) {
-            stateManager.display.filters.requester.legendEntry.flags.filterExtent.visible = state;
         }
 
         /**

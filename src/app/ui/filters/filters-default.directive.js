@@ -61,8 +61,7 @@
      * @function rvFiltersDefault
      * @return {object} directive body
      */
-    function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService,
-        filterService) {
+    function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService) {
 
         const directive = {
             restrict: 'E',
@@ -109,14 +108,8 @@
                 containerNode = containerNode || el.find('.rv-filters-data-container');
                 self.destroyTable();
 
-                const filteredState = filterService.getState();
-                const requester = filteredState.requester;
-                const displayData = filteredState.data;
-
-                // filtering by extent can yield 0 rows, stop here
-                if (displayData.rows.length === 0) {
-                    return;
-                }
+                const requester = stateManager.display.filters.requester;
+                const displayData = stateManager.display.filters.data;
 
                 // forced delay of a 100 to prevent the loading indicator from flickering if the table is created too fast; it's annoying; it means that switching tables takes at least 100ms no matter how small the table is; in majority of cases it should take more than 100ms to get data and create a table anyway;
                 const forcedDelay = $q(fulfill =>
@@ -140,12 +133,6 @@
                             // jscs:enable maximumLineLength
                         }
                         row.rvSymbol = `<div class="rv-wrapper rv-symbol"><img src="${symbol}" /></div>`;
-                    });
-
-                    displayData.columns.unshift({
-                        data: 'rvSymbol',
-                        title: '',
-                        orderable: false
                     });
                 }
 
@@ -390,7 +377,7 @@
                     if (property === 'active') {
                         isFullyOpen = value;
 
-                        if (value && typeof deferredAction === 'function') { // if fully opened and table creation was deferred, call it
+                        if (value && deferredAction) { // if fully opened and table creation was deferred, call it
                             deferredAction();
                             deferredAction = null;
                         }
@@ -398,18 +385,30 @@
                 }
             });
 
-            // watch filterService rowData on timestamp changes to recreate the table
-            $scope.$watch(() => filterService.rowData.changed, (val, prev) => {
-                if (val !== prev) { // ignore first time this watch is fired
-                    // we have to deferr table creating until after the panel fully opens, we if try to create the table while the animation is in progress, it freezes as all calculations that Datatables is doing blocks ui;
-                    // this means when the panel first opens, it will take 300ms longer to display any table then upon subsequent table creation when the panel is already open and the user just switches between layers;
-                    deferredAction = isFullyOpen ?
-                        self.createTable(getDToLang()) :
-                        () => self.createTable(getDToLang());
+            // watch filterService onCreate to make a new table
+            $scope.$watch(() => filterService.filterTimeStamps.onCreated, val => {
+                if (val !== null) {
+                    if (isFullyOpen) {
+                        self.createTable(getDToLang());
+                    } else {
+                        // we have to deferr table creating until after the panel fully opens, we if try to create the table while the animation is in progress, it freezes as all calculations that Datatables is doing blocks ui;
+                        // this means when the panel first opens, it will take 300ms longer to display any table then upon subsequent table creation when the panel is already open and the user just switches between layers;
+                        deferredAction = () => self.createTable(getDToLang());
+                    }
                 }
             });
 
-            $scope.$watch(() => filterService.rowData.deleted, self.destroyTable);
+            $scope.$watch(() => filterService.filterTimeStamps.onDeleted, val => {
+                if (val !== null) {
+                    self.destroyTable();
+                }
+            });
+
+            $scope.$watch(() => filterService.filterTimeStamps.onChanged, val => {
+                if (val !== null) {
+                    self.table.draw();
+                }
+            });
 
             // wait for print event and print the table
             $scope.$on(events.rvDataPrint, () => {
