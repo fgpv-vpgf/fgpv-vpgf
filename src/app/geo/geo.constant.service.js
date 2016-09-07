@@ -96,7 +96,7 @@
                 scale: {
                     visible: false
                 },
-                filterExtent: {
+                filter: {
                     visible: false
                 }
             };

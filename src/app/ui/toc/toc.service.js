@@ -166,10 +166,10 @@
                     label: 'toc.label.flag.user',
                     tooltip: 'toc.tooltip.flag.user'
                 },
-                filterExtent: {
+                filter: {
                     icon: 'community:filter',
-                    label: 'toc.label.flag.filterExtent',
-                    tooltip: 'toc.tooltip.flag.filterExtent'
+                    label: 'toc.label.flag.filter',
+                    tooltip: 'toc.tooltip.flag.filter'
                 }
             },
             state: {

@@ -141,8 +141,6 @@
              */
             function extentChangeHandler(params) {
                 geoState.mapService.clearHilight();
-                console.debug(params);
-                console.debug(service.layers);
                 if (params.levelChange) {
                     // refresh scale state of all layers
                     Object.keys(service.layers).forEach(layerId => {
