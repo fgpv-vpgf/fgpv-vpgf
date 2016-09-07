@@ -22,9 +22,11 @@
         // Add a function to update the layer order. This function will raise a change event so other interested
         // pieces of code can react to the change in the order
 
+        const onMapReadyPromise = $q.defer();
+
         const service = {
             isMapReady: false, // flag indicating that the map is ready
-
+            onMapReady: onMapReadyPromise.promise,
             epsgLookup,
             assembleMap,
             reloadLayer: l => layerRegistry.reloadLayer(l),
@@ -122,6 +124,7 @@
 
                     service.state = state; // store geo state
                     service.isMapReady = true;
+                    onMapReadyPromise.resolve();
                     $rootScope.$broadcast(events.rvApiReady);
 
                     return service;

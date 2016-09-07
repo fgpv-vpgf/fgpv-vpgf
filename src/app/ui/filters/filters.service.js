@@ -1,4 +1,3 @@
-/* global esri */
 (() => {
     'use strict';
 
@@ -7,141 +6,219 @@
      * @memberof app.ui
      * @description
      *
-     * The `filterService` is responsible for providing a list of selectable basemaps, and tracking
-     * the currently selected basemap.
+     * The `filterService` is responsible for filtering DataTable results by the users current
+     * extent (if enabled).
      *
      */
     angular
         .module('app.ui.filters')
         .factory('filterService', filterService);
 
-    function filterService(stateManager, geoService, $rootScope, $q) {
-        // state object with filtering applied
-        let finalState;
-        // tracks state of filter panel for internal optimization
-        let _isActive = false;
-        // provides timestamps when row data has been recently updated/deleted
-        const rowData = {
-            changed: Date.now(),
-            deleted: Date.now()
+    function filterService(stateManager, geoService, $rootScope, $q, gapiService) {
+
+        // timestamps can be watched for key changes to filter data
+        const filterTimeStamps = {
+            onCreated: null,
+            onChanged: null,
+            onDeleted: null
+        };
+
+        // a list of valid oidField values after filtering is complete
+        let _validOIDs = [];
+
+        // the numerical index of DataTables corresponding row oidField for the range filter
+        let _oidColNum;
+
+        const service = {
+            setActive,
+            filterTimeStamps,
+            filter: {
+                isActive: false
+            }
         };
 
         _init();
 
-        return {
-            rowData,
-            getState
-        };
+        return service;
 
         /**
-         * Returns the filters state object after filtering has been applied
+         * Enables/Disables filtering by extent.
          *
-         * @function getState
-         * @returns {Object}    the filters state object with filtering applied
+         * @function setActive
+         * @param   {Boolean}   value   true if extent filtering is enabled, false otherwise
          */
-        function getState() {
-            return finalState;
+        function setActive(value) {
+            if (filterTimeStamps.onCreated !== null) { // ignore if no DataTable is active
+                service.filter.isActive = value;
+                stateManager.display.filters.requester.legendEntry.flags.filter.visible = service.filter.isActive;
+
+                _filteredState().then(() => {
+                    filterTimeStamps.onChanged = Date.now();
+                });
+            }
         }
 
         /**
-         * Initialize various watchers which trigger filtering
+         * Initialize watchers and DataTable range filter
          *
          * @function _init
          * @private
          */
         function _init() {
-            // triggers when layer selection is changing
+            // add a DataTable filter which only accepts rows with oidField values in the _validOIDs list
+            $.fn.dataTable.ext.search.push((settings, data) => _validOIDs.indexOf(parseInt(data[_oidColNum])) !== -1);
+
+            // call _onExtentChange function when the extent has changed
+            geoService.onMapReady.then(() =>
+                gapiService.gapi.events.wrapEvents(geoService.mapObject, { 'extent-change': () => _onExtentChange() }));
+
+            // DataTable is either being created or destroyed
             $rootScope.$watch(() => stateManager.display.filters.data, (val, prevVal) => {
-                // layer data is being opened
+                // triggered on DataTable panel close or switching from one layer to another
+                if ((val === null && prevVal && prevVal.rows) || (val && val.rows && prevVal && prevVal.rows)) {
+                    _onDestroy();
+                }
+                // triggered on DataTable panel open
                 if (val && val.rows) {
-                    _isActive = true;
-                    _filteredState();
-                // layer data is being removed (panel closing or changing layers)
-                } else if (prevVal && prevVal.data !== null) {
-                    _isActive = false;
-                    rowData.deleted = Date.now();
-                }
-            });
-
-            // triggers when map extent is changing
-            $rootScope.$watch(() => geoService.mapObject && geoService.mapObject.extent,
-            (currentExtent, prevExtent) => {
-                if (typeof prevExtent === 'object' && _isActive) { // only track when panel is active
-                    _filteredState();
-                }
-            });
-
-            // triggers when layer filter flag is toggled
-            $rootScope.$watch(() =>
-                stateManager.display.filters.requester &&
-                stateManager.display.filters.requester.legendEntry.flags.filterExtent.visible,
-
-            (isVisible, priorVisibility) => {
-                if (typeof priorVisibility === 'boolean' && _isActive) { // only track when panel is active
-                    _filteredState();
+                    _onCreate();
                 }
             });
         }
 
         /**
-         * Determines and applies row filtering. Once resolved, the 'finalState' variable contains the
-         * filtered state.
+         * Called when filter panel data is being added.
          *
-         * Currently, if the layer has its 'filterExtent' flag to visible we request an extent filter (see below),
-         * otherwise we simply resolve with the unmodified state.
+         * @function _onCreate
+         * @private
+         */
+        function _onCreate() {
+            // add a column for symbols
+            stateManager.display.filters.data.columns.unshift({
+                data: 'rvSymbol',
+                title: '',
+                orderable: false
+            });
+
+            // recompute _oidColNum for data table filter since it may not be first index
+            _oidColNum = stateManager.display.filters.data.columns.findIndex(col =>
+                    col.data === stateManager.display.filters.data.oidField);
+
+            service.filter.isActive = stateManager.display.filters.requester.legendEntry.flags.filter.visible;
+
+            _filteredState().then(() => {
+                filterTimeStamps.onCreated = Date.now();
+            });
+        }
+
+        /**
+         * Called when filter panel data is being removed or swapped.
+         *
+         * @function _onDestroy
+         * @private
+         */
+        function _onDestroy() {
+            filterTimeStamps.onDeleted = Date.now();
+            filterTimeStamps.onCreated = null;
+            filterTimeStamps.onChanged = null;
+        }
+
+        /**
+         * Called on map extent changes. Locates updating layer and waits for updating to complete before
+         * running filtering.
+         *
+         * @function _onExtentChange
+         * @private
+         * @param   {Object}    le  the active legendEntry item in the DataTable
+         */
+        function _onExtentChange(le = stateManager.display.filters.requester.legendEntry) {
+            if (!service.filter.isActive) { // no DataTable is active - ignore
+                return;
+            }
+
+            // if _layerRecord is undefined attempt to get parents
+            if (typeof le._layerRecord === 'undefined') {
+                return le.parent ? _onExtentChange(le.parent) : null;
+            }
+
+            // wait until layer has finished updating before filtering
+            const updateWatcher = $rootScope.$watch(() => le._layerRecord._layer.updating, updating => {
+                if (!updating) {
+                    _filteredState().then(() => {
+                        filterTimeStamps.onChanged = Date.now();
+                    });
+                    updateWatcher(); // remove watcher
+                }
+            });
+        }
+
+        /**
+         * Determines the type of filters to apply and sets _validOIDs.
          *
          * @function _filteredState
          * @private
-         * @returns {Promise}    resolves as undefined when all filtering is complete
+         * @return  {Promise}   resolves to undefined when the filtering is complete
          */
         function _filteredState() {
-            const aPromise = $q(resolve => {
-                if (stateManager.display.filters.requester &&
-                    stateManager.display.filters.requester.legendEntry.flags.filterExtent.visible) {
-                    _queryMapserver(resolve);
+            return $q(resolve => {
+                if (service.filter.isActive) {
+                    _queryMapserver().then(oids => {
+                        _validOIDs = oids;
+                        resolve();
+                    });
                 } else {
-                    resolve(stateManager.display.filters);
+                    // convert existing rows into a _validOIDs list (no filtering applied)
+                    _validOIDs = stateManager.display.filters.data.rows.map(
+                        row => parseInt(row[stateManager.display.filters.data.oidField])
+                    );
+                    resolve();
                 }
             });
-
-            aPromise.then(state => {
-                finalState = state;
-                rowData.changed = Date.now();
-            });
-
-            return aPromise;
         }
 
         /**
          * Performs an ESRI query for all features with a spatial intersection with the current extent.
-         * Resolves with a state copy which contains only the rows found in the query.
          *
          * @function _queryMapserver
          * @private
-         * @param   {Function}  resolver    a function which resolves a promise
+         * @param   {Number}    lastOID the oidField value of the last query when exceededTransferLimit is reached
+         * @return  {Promise}   resolves to a list of valid oid's
          */
-        function _queryMapserver(resolver) {
+        function _queryMapserver(lastOID = 0) {
             const state = stateManager.display.filters;
-            const filteredState = angular.copy(state); // so original state is preserved
 
-            // create and set the esri query parameters
-            const queryTask = new esri.tasks.QueryTask(_queryURL(state.requester.legendEntry));
-            const query = new esri.tasks.Query();
-            query.outSpatialReference = { wkid:102100 };
-            query.returnGeometry = false;
-            query.outFields = [state.data.oidField];
-            query.geometry = geoService.mapObject.extent;
-            query.spatialRelationship = 'esriSpatialRelIntersects';
+            const queryOpts = {
+                geometry: geoService.mapObject.extent,
+                outFields: [state.data.oidField]
+            };
 
-            // issue the map server request with a callback function when complete
-            queryTask.execute(query, featureSet => {
-                // create an array of OID's returned by the query
-                const validOIDs = featureSet.features.map(feat => feat.attributes[state.data.oidField]);
-                // only state rows with an OID in validOIDs is kept
-                filteredState.data.rows = state.data.rows.filter(row =>
-                    validOIDs.indexOf(row[state.data.oidField]) !== -1);
-                // filtering complete, resolve with the filtered state copy
-                resolver(filteredState);
+            // query the layer itself instead of making a mapserver request
+            if (state.requester.legendEntry.layerType === 'esriFeature') {
+                queryOpts.featureLayer = state.requester.legendEntry._layerRecord._layer;
+
+            } else {
+                queryOpts.url = _queryURL(state.requester.legendEntry);
+            }
+
+            // only include oidField values after previous mapserver query resulted in a exceededTransferLimit exception
+            if (lastOID > 0) {
+                queryOpts.where = `${state.data.oidField} > ${lastOID}`;
+            }
+
+            return gapiService.gapi.query.queryGeometry(queryOpts).then(featureSet => {
+                // save an array of OID's returned by the query
+                const validOIDs = featureSet.features.map(feat => parseInt(feat.attributes[state.data.oidField]));
+                // transfer limit exceeded - call query again until all data is retrieved
+                if (featureSet.exceededTransferLimit) {
+                    // get the last oidField value to use as a starting point for another query
+                    // TODO: Using the assumption that oidField values are sorted. If this turns out to be not the case,
+                    // see the available ESRI methods orderByFields or start (would need to expose in geoAPI first)
+                    const lastOID = featureSet.features[featureSet.features.length - 1].attributes[state.data.oidField];
+                    return _queryMapserver(lastOID).then(oIDs => {
+                        return validOIDs.concat(oIDs); // merge recursive list with own results
+                    });
+                } else { // either query did not trigger a exceededTransferLimit exception, or this marks the end of the result set
+                    return validOIDs;
+                }
             });
         }
 
