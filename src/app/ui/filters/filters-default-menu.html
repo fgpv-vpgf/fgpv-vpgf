@@ -41,7 +41,7 @@
             -->
 
             <md-menu-divider></md-menu-divider>
-                <md-menu-item type="checkbox" ng-model="self.filtersExtent" ng-click="self.setFilter(self.filtersExtent)">
+                <md-menu-item type="checkbox" ng-model="self.filter.isActive" ng-click="self.applyFilter(self.filter.isActive)">
                     {{ 'filter.menu.extent' | translate }}
                 </md-menu-item>
             <md-menu-divider></md-menu-divider>
