@@ -51,10 +51,10 @@ Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable Filte
 Filter pane menu label for Print,filter.menu.print,Print,Imprimer
 Filter pane menu label for Export,filter.menu.export,Export,Exporter
 Filter pane menu label for Filter by Extent,filter.menu.extent,Filter by Extent,Filtrer par étendue
-Basemap title,basemap.title,Maps,Cartes
 Basemap refresh required,basemap.refresh.req,Map refresh required,Actualiser la carte
-Basemap blank title,basemap.blank.title,blank map,carte vide
+Basemap blank title,basemap.blank.title,blank map,Carte vide
 Basemap blank description,basemap.blank.desc,Remove base map,Retirer la carte de fond
+Basemap projection title,basemap.projection.title,{{name}} Maps,Cartes {{name}}
 Map Navigation slider only text,nav.sliderOnly,slider only,Curseur seulement
 Map Navigation slider text,nav.slider,slider,Curseur
 Map Navigation zoom in label,nav.label.zoomIn,Zoom in,Zoom avant

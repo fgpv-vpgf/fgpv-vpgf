@@ -30,6 +30,7 @@
     function Controller(basemapService) {
         'ngInject';
         const self = this;
+
         basemapService.setOnChangeCallback((projs, selectedBM) => {
             self.projections = projs;
             self.selectedWkid = selectedBM.wkid;

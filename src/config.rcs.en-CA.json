@@ -117,74 +117,74 @@
   "layers": [
   ],
   "baseMaps": [
-    {
-      "id": "baseNrCan",
-      "name": "Transportation (with labels)",
-      "description": "Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
-      "altText": "altText - Transportation (CBMT)",
-      "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
-      "wkid": 3978,
-      "extentId": "EXT_NRCAN_Lambert_3978",
-      "lodId": "LOD_NRCAN_Lambert_3978",
-      "layers": [
-        {
-          "id": "CBMT",
-          "layerType": "esriFeature",
-          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
-        }
-      ]
-    },
-    {
-      "id": "baseSimple",
-      "name": "Simple",
-      "description": "Simple",
-      "altText": "altText - Simple",
-      "thumbnailUrl": "assets/images/basemap/baseSimple.jpg",
-      "wkid": 3978,
-      "extentId": "EXT_NRCAN_Lambert_3978",
-      "lodId": "LOD_NRCAN_Lambert_3978",
-      "layers": [
-        {
-          "id": "SMR",
-          "layerType": "esriFeature",
-          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
-        }
-      ]
-    },
-    {
-      "id": "baseCBME_CBCE_HS_RO_3978",
-      "name": "Elevation",
-      "description": "Elevation(CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
-      "altText": "altText - Elevation",
-      "thumbnailUrl": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
-      "wkid": 3978,
-      "extentId": "EXT_NRCAN_Lambert_3978",
-      "lodId": "LOD_NRCAN_Lambert_3978",
-      "layers": [
-        {
-          "id": "CBME_CBCE_HS_RO_3978",
-          "layerType": "esriFeature",
-          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
-        }
-      ]
-    },
-    {
-      "id": "baseCBMT_CBCT_GEOM_3978",
-      "name": "Transportation",
-      "description": " Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
-      "altText": "altText - Transportation",
-      "thumbnailUrl": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
-      "wkid": 3978,
-      "extentId": "EXT_NRCAN_Lambert_3978",
-      "lodId": "LOD_NRCAN_Lambert_3978",
-      "layers": [
-        {
-          "id": "CBMT_CBCT_GEOM_3978",
-          "layerType": "esriFeature",
-          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
-        }
-      ]
-    },
+      {
+        "id": "baseNrCan",
+        "name": "Canada Base Map - Transportation (CBMT) with labels",
+        "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+        "altText": "altText - The Canada Base Map - Transportation (CBMT)",
+        "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
+        "wkid": 3978,
+        "extentId": "EXT_NRCAN_Lambert_3978",
+        "lodId": "LOD_NRCAN_Lambert_3978",
+        "layers": [
+          {
+            "id": "CBMT",
+            "layerType": "esriFeature",
+            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+          }
+        ]
+      },
+      {
+        "id": "baseSimple",
+        "name": "Canada Base Map - Simple",
+        "description": "Canada Base Map - Simple",
+        "altText": "altText - Canada base map - Simple",
+        "thumbnailUrl": "assets/images/basemap/baseSimple.jpg",
+        "wkid": 3978,
+        "extentId": "EXT_NRCAN_Lambert_3978",
+        "lodId": "LOD_NRCAN_Lambert_3978",
+        "layers": [
+          {
+            "id": "SMR",
+            "layerType": "esriFeature",
+            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+          }
+        ]
+      },
+      {
+        "id": "baseCBME_CBCE_HS_RO_3978",
+        "name": "Canada Base Map - Elevation (CBME)",
+        "description": "The Canada Base Map - Elevation (CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
+        "altText": "altText - Canada Base Map - Elevation (CBME)",
+        "thumbnailUrl": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
+        "wkid": 3978,
+        "extentId": "EXT_NRCAN_Lambert_3978",
+        "lodId": "LOD_NRCAN_Lambert_3978",
+        "layers": [
+          {
+            "id": "CBME_CBCE_HS_RO_3978",
+            "layerType": "esriFeature",
+            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
+          }
+        ]
+      },
+      {
+        "id": "baseCBMT_CBCT_GEOM_3978",
+        "name": "Canada Base Map - Transportation (CBMT)",
+        "description": " The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+        "altText": "altText - Canada Base Map - Transportation (CBMT)",
+        "thumbnailUrl": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
+        "wkid": 3978,
+        "extentId": "EXT_NRCAN_Lambert_3978",
+        "lodId": "LOD_NRCAN_Lambert_3978",
+        "layers": [
+          {
+            "id": "CBMT_CBCT_GEOM_3978",
+            "layerType": "esriFeature",
+            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
+          }
+        ]
+      },
     {
       "id": "baseEsriWorld",
       "name": "World Imagery",
@@ -205,7 +205,7 @@
     {
       "id": "baseEsriPhysical",
       "name": "World Physical Map",
-      "description": " This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States. ",
+      "description": "This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States.",
       "altText": "altText - World Physical Map",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
@@ -222,7 +222,7 @@
     {
       "id": "baseEsriRelief",
       "name": "World Shaded Relief",
-      "description": "This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map. ",
+      "description": "This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map.",
       "altText": "altText - World Shaded Relief",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
