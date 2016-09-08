@@ -217,6 +217,9 @@
 
             entry.removed = true;
 
+            // if filters is open, close it at the same time we remove the layer
+            stateManager.setActive({ filtersFulldata: false });
+
             $mdToast.show(undoToast)
                 .then(response => {
                     if (response === 'ok') { // promise resolves with 'ok' when user clicks 'undo'
