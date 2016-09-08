@@ -27,9 +27,13 @@
         return directive;
     }
 
-    function Controller(basemapService) {
+    function Controller(basemapService, configService) {
         'ngInject';
         const self = this;
+
+        // in French we need to reverse the title (title projection) instead of (projection title)
+        self.currentLang = configService.currentLang();
+
         basemapService.setOnChangeCallback((projs, selectedBM) => {
             self.projections = projs;
             self.selectedWkid = selectedBM.wkid;

@@ -230,7 +230,7 @@
   "baseMaps": [
     {
       "id": "baseNrCan",
-      "name": "Canada Base Map - Transportation",
+      "name": "Canada Base Map - Transportation (CBMT)",
       "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
       "altText": "altText - The Canada Base Map - Transportation (CBMT)",
       "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
@@ -264,9 +264,9 @@
     },
     {
       "id": "baseCBME_CBCE_HS_RO_3978",
-      "name": "Canada Base Map - Elevation",
-      "description": "The Canada Base Map - Elevation(CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
-      "altText": "altText - Canada Base Map - Elevation",
+      "name": "Canada Base Map - Elevation (CBME)",
+      "description": "The Canada Base Map - Elevation (CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
+      "altText": "altText - Canada Base Map - Elevation (CBME)",
       "thumbnailUrl": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
       "wkid": 3978,
       "extentId": "EXT_NRCAN_Lambert_3978",
@@ -281,9 +281,9 @@
     },
     {
       "id": "baseCBMT_CBCT_GEOM_3978",
-      "name": "Canada Base Map - Transportation",
+      "name": "Canada Base Map - Transportation (CBMT)",
       "description": " The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
-      "altText": "altText - Canada Base Map - Transportation",
+      "altText": "altText - Canada Base Map - Transportation (CBMT)",
       "thumbnailUrl": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
       "wkid": 3978,
       "extentId": "EXT_NRCAN_Lambert_3978",
@@ -316,7 +316,7 @@
     {
       "id": "baseEsriPhysical",
       "name": "World Physical Map",
-      "description": " This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States. ",
+      "description": "This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States.",
       "altText": "altText - World Physical Map",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
@@ -333,7 +333,7 @@
     {
       "id": "baseEsriRelief",
       "name": "World Shaded Relief",
-      "description": "This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map. ",
+      "description": "This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map.",
       "altText": "altText - World Shaded Relief",
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,

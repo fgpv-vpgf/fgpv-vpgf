@@ -53,7 +53,7 @@
             projections.length = 0;
             configService.getCurrent().then(conf => {
                 initialBasemapId = conf.map ? conf.map.initialBasemapId : null;
-                _addBaseMaps(conf.baseMaps);
+                _addBaseMaps(conf.baseMaps, configService);
             });
         }
 
@@ -93,10 +93,10 @@
          * @private
          * @param {Array} basemapList   A list of basemap objects
          */
-        function _addBaseMaps(basemapList) {
+        function _addBaseMaps(basemapList, configService) {
 
             basemapList.forEach(bm => {
-                const basemap = _normalizeBasemap(bm);
+                const basemap = _normalizeBasemap(bm, configService);
                 const projName = wkidNames(basemap.wkid);
                 let projection = projections.find(proj => proj.name === projName);
                 // make first basemap selected by default
@@ -125,7 +125,8 @@
                 id: 'blank_basemap_' + p.basemaps[0].wkid,
                 url: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7/',
                 wkid: p.basemaps[0].wkid,
-                selected: false
+                selected: false,
+                currentLang: configService.currentLang() // no capitalize in French
             }));
 
             bmSelected.selected = true;
@@ -140,7 +141,7 @@
      * @private
      * @returns {Object}    the basemap object
      */
-    function _normalizeBasemap(basemap) {
+    function _normalizeBasemap(basemap, configService) {
         return {
             name: basemap.name,
             description: basemap.description,
@@ -148,7 +149,8 @@
             id: basemap.id,
             url: basemap.layers[0].url,
             wkid: basemap.wkid,
-            selected: false
+            selected: false,
+            currentLang: configService.currentLang() // no capitalize in French
         };
     }
 })();
