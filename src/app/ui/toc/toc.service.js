@@ -220,11 +220,23 @@
 
             entry.removed = true;
 
+            // if filters is open, close it at the same time we remove the layer
+            const smRequest = stateManager.display.filters.requester;
+            const isFilterOpen = (smRequest !== null && smRequest.id === entry.id) ? true : false;
+            if (isFilterOpen) {
+                stateManager.setActive({ filtersFulldata: false });
+            }
+
             $mdToast.show(undoToast)
                 .then(response => {
                     if (response === 'ok') { // promise resolves with 'ok' when user clicks 'undo'
                         // restore layer visibility on undo; and add it back to layer selector
                         entryParent.add(entry, entryPosition);
+
+                        // restore filters if it was open
+                        if (isFilterOpen) {
+                            toggleLayerFiltersPanel(entry);
+                        }
 
                         // restore original visibility, so if he removed and restored already invisible layer,
                         // it is restored also invisible
