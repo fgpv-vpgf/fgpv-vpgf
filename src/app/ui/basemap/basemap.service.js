@@ -125,7 +125,8 @@
                 id: 'blank_basemap_' + p.basemaps[0].wkid,
                 url: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7/',
                 wkid: p.basemaps[0].wkid,
-                selected: false
+                selected: false,
+                currentLang: configService.currentLang() // no capitalize in French
             }));
 
             bmSelected.selected = true;
