@@ -13,7 +13,7 @@
         .factory('bookmarkService', bookmarkService);
 
     function bookmarkService($rootElement, $q, legendService, geoService, LayerBlueprint,
-            LayerRecordFactory, configService) {
+            LayerRecordFactory, configService, gapiService) {
 
         const service = {
             getBookmark,
@@ -103,8 +103,10 @@
 
             // determine the zoom level. use bookmark basemap unless we are doing a projection switch
             let lodId = origBasemapConfig.lodId;
+            let newBasemapConfig;
             if (newBaseMap) {
-                lodId = config.baseMaps.find(bm => bm.id === newBaseMap).lodId;
+                newBasemapConfig = config.baseMaps.find(bm => bm.id === newBaseMap);
+                lodId = newBasemapConfig.lodId;
             }
 
             // find the LOD set in the config file, then find the level of the LOD closest to the scale
@@ -119,7 +121,60 @@
             const diffs = configLodSet.lods.map(lod => Math.abs(lod.scale - scale));
             const zoomLod = configLodSet.lods[diffs.indexOf(Math.min(...diffs))];
 
-            window.RV.getMap($rootElement.attr('id')).centerAndZoom(x, y, spatialReference, zoomLod.level);
+            // TODO this is not great.
+            // During a basemap schema switch, we found what appears to be a race condition on the map extent.
+            // When the map is rebuilt, it is intialized with the standard starting extent as defined in the config.
+            // Normally the map is then repositioned to the view it was at prior to the extent change.
+            // Sometimes the reposition commands are executed by the map prior to the initial extent set,
+            // and we end up with the map zooming back out to Canada view.
+            // The instruction to position the initial extent is internal to the API and there does not appear to be a
+            // way to check if it has executed prior to issuing the repostion commands.
+            // A quick-patch solution was to set a temporary global object when changing projections; the object stores
+            // information on where the map should be heading to. On the next extent change event, we check if the
+            // zoom level matches the information in our temporary object.  If it doesn't, we have hit the race
+            // condition, and we issue the repostion command again.
+            // The major problem with this is the map will yo-yo from good-position --> canada --> good-position.
+            // You end up in the correct view, but it looks like the map is having a brief freakout.
+            // The below solution solves this; rather than using centerAndZoom() we instead construct a new
+            // initial extent and the map loads up at that position.  Ideally, all bookmark restoration would
+            // use this approach.  Unfortunately, to calculate the starting extent we need the size of the map
+            // in pixels. In the case where we load a bookmark from the URL, the map has not been created yet
+            // and thus no size is available.  In this situation we revert back to the proxied centerAndZoom().
+            // Future enhancement: if we can find a way to get the map size (looking at the DOM?), then
+            // all bookmark restores should use the extent approach rather than centerAndZoom()
+
+            if (newBaseMap) {
+                // avoid extent race condition. build a new default extent instead of using centerAndZoom()
+
+                // project bookmark point to our new spatial reference
+                const coords = gapiService.gapi.proj.localProjectPoint(
+                        spatialReference, newBasemapConfig.wkid, { x: x, y: y });
+                const zoomPoint = gapiService.gapi.proj.Point(coords.x, coords.y,
+                    { wkid: newBasemapConfig.wkid });
+
+                // using resolution of our target level of detail, and the size of the map in pixels,
+                // calculate a rough extent of where our map should initialize.
+                const xOffset = geoService.mapObject.width * zoomLod.resolution / 2;
+                const yOffset = geoService.mapObject.height * zoomLod.resolution / 2;
+                const zoomExtent = {
+                    xmin: zoomPoint.x - xOffset,
+                    xmax: zoomPoint.x + xOffset,
+                    ymin: zoomPoint.y - yOffset,
+                    ymax: zoomPoint.y + yOffset,
+                    spatialReference: zoomPoint.spatialReference
+                };
+
+                // update the config file default extent.  if we don't have a full extent defined,
+                // copy the original default to the full.  otherwise our zoom-to-canada button
+                // will start zooming to our new initial extent.
+                const configExtSet = config.map.extentSets.find(extset => extset.id === newBasemapConfig.extentId);
+                if (!configExtSet.full) {
+                    configExtSet.full = configExtSet.default;
+                }
+                configExtSet.default = zoomExtent;
+            } else {
+                window.RV.getMap($rootElement.attr('id')).centerAndZoom(x, y, spatialReference, zoomLod.level);
+            }
 
             let bookmarkLayers = {};
 
