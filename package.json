@@ -3,7 +3,8 @@
   "version": "1.0.4-1",
   "description": "",
   "main": "dist/geoapi.js",
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "babelify": "~6.3.0",
     "brfs": "~1.4.3",
