@@ -41,12 +41,13 @@
     <div id='bucket8' class="bucket"></div>
     <div id='megabucket' class="bucket"></div>
     <p id='mess' />
+    <script src='../dist/ie-polyfills.js'></script>
     <script src='../dist/geoapi.js'></script>
     <script>
         function addImg( hostDivId, legenditemPromise ) {
             // add a check for base64 data    myimg.src = "data:image/png;base64," + icon;
 
-            legenditemPromise.then(legenditem => {
+            legenditemPromise.then(function(legenditem) {
                 var mydiv = document.getElementById(hostDivId);
 
                 /*var dataurl = 'data:' + legenditem.contentType + legenditem.base + ',' + legenditem.imageData;
@@ -87,7 +88,7 @@
                     var megalegend = api.symbology.rendererToLegend(layer.renderer.toJson() , 0);
                     // console.log('megalegend', megalegend);
 
-                    megalegend.layers[0].legend.forEach(legItem => {
+                    megalegend.layers[0].legend.forEach(function(legItem) {
                         addImg('megabucket', legItem);
                     })
 
@@ -102,7 +103,7 @@
                 var legend1 = api.symbology.rendererToLegend(layer1.renderer.toJson() , 0);
                 // console.log('legend1', legend1);
 
-                legend1.layers[0].legend.forEach(legItem => {
+                legend1.layers[0].legend.forEach(function(legItem) {
                     addImg('bucket1', legItem);
                 })
 
@@ -116,7 +117,7 @@
                 var legend2 = api.symbology.rendererToLegend(layer2.renderer.toJson() , 0);
                 // console.log('legend2', legend2);
 
-                legend2.layers[0].legend.forEach(legItem => {
+                legend2.layers[0].legend.forEach(function(legItem) {
                     addImg('bucket2', legItem);
                 })
 
@@ -128,7 +129,7 @@
                 var legend2 = api.symbology.rendererToLegend(layer2.renderer.toJson() , 0);
                 // console.log('legend2', legend2);
 
-                legend2.layers[0].legend.forEach(legItem => {
+                legend2.layers[0].legend.forEach(function(legItem) {
                     addImg('bucket2', legItem);
                 })
 
@@ -142,7 +143,7 @@
                 var legend3 = api.symbology.rendererToLegend(layer3.renderer.toJson() , 0);
                 // console.log('legend3', legend3);
 
-                legend3.layers[0].legend.forEach(legItem => {
+                legend3.layers[0].legend.forEach(function(legItem) {
                     addImg('bucket3', legItem);
                 })
 
@@ -156,7 +157,7 @@
                 var legend4 = api.symbology.rendererToLegend(layer4.renderer.toJson() , 0);
                 // console.log('legend4', legend4);
 
-                legend4.layers[0].legend.forEach(legItem => {
+                legend4.layers[0].legend.forEach(function(legItem) {
                     addImg('bucket4', legItem);
                 })
 
@@ -171,7 +172,7 @@
                 var legend5 = api.symbology.rendererToLegend(layer5.renderer.toJson() , 0);
                 // console.log('legend5', legend5);
 
-                legend5.layers[0].legend.forEach(legItem => {
+                legend5.layers[0].legend.forEach(function(legItem) {
                     addImg('bucket5', legItem);
                 })
 
@@ -185,7 +186,7 @@
                 var legend7 = api.symbology.rendererToLegend(layer7.renderer.toJson() , 0);
                 // console.log('legend7', legend7);
 
-                legend7.layers[0].legend.forEach(legItem => {
+                legend7.layers[0].legend.forEach(function(legItem) {
                     addImg('bucket7', legItem);
                 })
 
@@ -199,7 +200,7 @@
                 var legend8 = api.symbology.rendererToLegend(layer8.renderer.toJson() , 0);
                 // console.log('legend8', legend8);
 
-                legend8.layers[0].legend.forEach(legItem => {
+                legend8.layers[0].legend.forEach(function(legItem) {
                     addImg('bucket8', legItem);
                 })
 
@@ -645,11 +646,11 @@
                 }
             ];
 
-            testRenderers.forEach(renderer => {
+            testRenderers.forEach(function(renderer) {
                 var legend6 = api.symbology.rendererToLegend(renderer, 0);
                 // console.log('legend6', legend6);
 
-                legend6.layers[0].legend.forEach(legItem => {
+                legend6.layers[0].legend.forEach(function(legItem) {
                     addImg('bucket6', legItem);
                 })
             });

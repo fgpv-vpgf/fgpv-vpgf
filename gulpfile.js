@@ -61,7 +61,7 @@ gulp.task('build', 'Transpile and concatenate the code', function () {
         .pipe(buffer())
         .pipe($.derequire())
         .pipe($.if(args.prod, $.sourcemaps.init()))
-        .pipe($.babel())
+        /* .pipe($.babel()) */
         .pipe($.concat('geoapi.js'))
         /* .pipe(gulp.dest('dist/v' + pkg.version)) */
         .pipe(gulp.dest('dist'))
