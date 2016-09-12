@@ -189,6 +189,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.service.type.imageservice,ESRI Image Layer,Couche d'images d'ESRI
 ,import.service.type.tileservice,ESRI Tile Layer,Couche de tuiles d'ESRI
 ,import.service.type.wms,OGC Web Map Service,Couche WMS de l'OGC
+,import.service.type.rasterlayer,Raster Layer,Couche Raster
 ,import.service.configure.title,Configure layer,Configurer la couche
 ,import.service.configure.layername,Layer Name,Nom de la couche
 ,import.service.configure.primaryfield,Primary Field,Champ clé

@@ -38,7 +38,8 @@
             Geo.Service.Types.DynamicService,
             Geo.Service.Types.TileService,
             Geo.Service.Types.ImageService,
-            Geo.Service.Types.WMS
+            Geo.Service.Types.WMS,
+            Geo.Service.Types.RasterLayer
         ];
 
         // TODO: turn into a proper class
