@@ -34,22 +34,16 @@
         }
     }
 
-    function Controller($scope, stateManager, events, focusService) {
+    function Controller($scope, stateManager, events, focusService, filterService) {
         'ngInject';
         const self = this;
 
         self.setMode = setMode;
         self.filtersMode = stateManager.state.filters.morph;
+        self.applyFilter = filterService.setActive;
+        self.filter = filterService.filter;
         self.dataPrint = dataPrint;
         self.dataExportCSV = dataExportCSV;
-
-        activate();
-
-        /*********/
-
-        function activate() {
-
-        }
 
         function setMode(mode) {
             stateManager.setMorph('filters', mode);

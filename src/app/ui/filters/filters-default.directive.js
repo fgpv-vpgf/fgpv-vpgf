@@ -62,6 +62,7 @@
      * @return {object} directive body
      */
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService) {
+
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default.html',
@@ -132,12 +133,6 @@
                             // jscs:enable maximumLineLength
                         }
                         row.rvSymbol = `<div class="rv-wrapper rv-symbol"><img src="${symbol}" /></div>`;
-                    });
-
-                    displayData.columns.unshift({
-                        data: 'rvSymbol',
-                        title: '',
-                        orderable: false
                     });
                 }
 
@@ -357,7 +352,7 @@
      * it also watches for dispaly data changes and re-creates the table when it does change.
      * @function Controller
      */
-    function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events) {
+    function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events, filterService) {
         'ngInject';
         const self = this;
 
@@ -383,18 +378,16 @@
                         isFullyOpen = value;
 
                         if (value && deferredAction) { // if fully opened and table creation was deferred, call it
-                            deferredAction.call();
+                            deferredAction();
                             deferredAction = null;
                         }
                     }
                 }
             });
 
-            // watch filters data for changes; recreate table when data changes
-            $scope.$watch('self.display.data', newValue => {
-                if (newValue && newValue.rows) {
-                    // console.log('Filters fullyOpen', isFullyOpen, self.display.isLoading);
-                    // console.log('Filters: table data udpated', newValue);
+            // watch filterService onCreate to make a new table
+            $scope.$watch(() => filterService.filterTimeStamps.onCreated, val => {
+                if (val !== null) {
                     if (isFullyOpen) {
                         self.createTable(getDToLang());
                     } else {
@@ -402,9 +395,18 @@
                         // this means when the panel first opens, it will take 300ms longer to display any table then upon subsequent table creation when the panel is already open and the user just switches between layers;
                         deferredAction = () => self.createTable(getDToLang());
                     }
-                } else {
-                    // destory table is data is set to null
+                }
+            });
+
+            $scope.$watch(() => filterService.filterTimeStamps.onDeleted, val => {
+                if (val !== null) {
                     self.destroyTable();
+                }
+            });
+
+            $scope.$watch(() => filterService.filterTimeStamps.onChanged, val => {
+                if (val !== null) {
+                    self.table.draw();
                 }
             });
 

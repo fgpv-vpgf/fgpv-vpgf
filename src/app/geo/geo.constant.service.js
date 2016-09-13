@@ -95,6 +95,9 @@
                 },
                 scale: {
                     visible: false
+                },
+                filter: {
+                    visible: false
                 }
             };
 
