@@ -57,7 +57,8 @@
                 clearHilight,
                 dropMapPin,
                 geolocate,
-                findClosestLOD
+                findClosestLOD,
+                getFullExtent
             };
 
             return buildMapObject();
@@ -332,6 +333,14 @@
                 } else {
                     console.warn('GeoService: fullExtent value is not set.');
                 }
+            }
+
+            /**
+             * Get the maps full extent.
+             * @function getFullExtent
+             */
+            function getFullExtent() {
+                return geoState.fullExtent;
             }
 
             /**
