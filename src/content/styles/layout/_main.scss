@@ -18,6 +18,10 @@ md-toast {
     .md-toast-content {
         pointer-events: auto;
     }
+
+    .md-toast-content span {
+        flex-basis: auto;
+    }
 }
 
 rv-panel md-toast.md-rv-flex {
