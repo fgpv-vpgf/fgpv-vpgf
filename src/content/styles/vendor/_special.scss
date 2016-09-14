@@ -139,3 +139,24 @@ md-select-menu {
         }
     }
 }
+
+.rv-full-screen {
+    visibility: hidden;
+
+    // aria-hidden="false" will be read even though visibility set to hidden; need to completely hide it
+    [aria-hidden="false"] {
+        display: none;
+    }
+
+    // all angular material components rendered outside of the viewer should be visible
+    > [class*="md-"],
+    .fgpv {
+        visibility: visible;
+
+        // no need to hide item inside the viewer
+        &[aria-hidden="false"],
+        [aria-hidden="false"] {
+            display: inherit;
+        }
+    }
+}

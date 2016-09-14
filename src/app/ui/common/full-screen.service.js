@@ -34,6 +34,8 @@
             isExpanded: false,
             tl: undefined,
 
+            body: angular.element('body'),
+
             mapContainerNode: undefined,
             shellNode: undefined,
             shellNodeBox: undefined,
@@ -105,6 +107,9 @@
                     ease: RV_SWIFT_IN_OUT_EASE
                 }, 0);
 
+                // rv-full-screen class will hide all the host page content except the full-screened viewer
+                ref.tl.set(ref.body, { className: '+=rv-full-screen' });
+
                 ref.isExpanded = !ref.isExpanded;
                 ref.tl.play();
             } else {
@@ -112,6 +117,9 @@
                     paused: true,
                     onComplete
                 });
+
+                // need to restore host page content to visibility
+                ref.tl.set(ref.body, { className: '-=rv-full-screen' });
 
                 // animate map layer container in the oppositve directive to counteract collapse of the shell
                 ref.tl.to(ref.mapContainerNode, RV_DURATION, {
