@@ -1,6 +1,12 @@
 // this overrides vendor classes of node created outside the main viewer container
 // this is why it's special :)
 
+// to avoid IE11 vertical scrollbar to overlapp content in full screen mode
+// reference: https://github.com/twbs/bootstrap/issues/18543
+html, body {
+    -ms-overflow-style: scrollbar;
+}
+
 .rv-hide {
     visibility: hidden !important;
     opacity: 0 !important;
