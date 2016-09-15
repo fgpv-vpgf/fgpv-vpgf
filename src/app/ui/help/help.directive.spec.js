@@ -4,13 +4,27 @@ describe('rvHelp', () => {
     let scope;
     let directiveElement;
 
+    function mockTranslate($provide) {
+        $provide.service('$translate', () => {
+            return {
+                use: () => {}
+            };
+        });
+    }
+
+    function mockTranslates($provide) {
+        $provide.service('translations', () => {
+            return {};
+        });
+    }
+
     function mockDialog($provide) {
         $provide.service('$mdDialog', () => {});
     }
 
     beforeEach(() => {
         // mock the module with bardjs
-        bard.appModule('app.ui.common', 'app.ui.help', mockDialog);
+        bard.appModule('app.ui.common', 'app.ui.help', mockTranslate, mockTranslates, mockDialog);
 
         // inject angular services
         bard.inject('$compile', '$rootScope', 'helpService');
