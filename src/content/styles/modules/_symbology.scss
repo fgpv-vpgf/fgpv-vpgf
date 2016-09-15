@@ -35,7 +35,7 @@ $icon-shadow: $whiteframe-shadow-1dp;
                 overflow: visible;
                 box-shadow: none;
 
-                > img {
+                > .rv-symbology-graphic {
                     box-shadow: $icon-shadow;
                 }
 
@@ -77,12 +77,17 @@ $icon-shadow: $whiteframe-shadow-1dp;
     overflow: hidden;
     box-shadow: $icon-shadow;
 
-    img {
+    .rv-symbology-graphic {
         flex-shrink: 0;
-        padding: 1px;
         background-color: white;
         width: 100%;
         height: 100%;
+
+        svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
     }
 
     .rv-symbology-label-container {

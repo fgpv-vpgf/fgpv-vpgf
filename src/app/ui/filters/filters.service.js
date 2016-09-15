@@ -102,7 +102,8 @@
             stateManager.display.filters.data.columns.unshift({
                 data: 'rvSymbol',
                 title: '',
-                orderable: false
+                orderable: false,
+                render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`
             });
 
             // recompute oidColNum for data table filter since it may not be first index

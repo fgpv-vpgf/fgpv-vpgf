@@ -261,7 +261,7 @@
                                         data: attributesToDetails(ele.feature.attributes),
                                         oid: unAliasAtt[lData.oidField],
                                         symbology: [{
-                                            icon: geoState.mapService.retrieveSymbol(unAliasAtt, lData.renderer)
+                                            svgcode: geoState.mapService.retrieveSymbol(unAliasAtt, lData.renderer)
                                         }]
                                     });
                                 }
