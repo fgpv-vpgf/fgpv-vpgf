@@ -1,3 +1,4 @@
+/* global RColor */
 (() => {
     'use strict';
 
@@ -193,7 +194,7 @@
                 gapiService.gapi.symbology.generatePlaceholderSymbology(this.name, colour).then(symbologyItem => {
                     // do not override symbology if already set by something else
                     if (!this.symbology) {
-                        this.symbology = [ symbologyItem ];
+                        this.symbology = [symbologyItem];
                     }
                 });
 

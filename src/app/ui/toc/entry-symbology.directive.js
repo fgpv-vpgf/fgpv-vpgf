@@ -126,8 +126,8 @@
 
                             return {
                                 container: domNode,
-                                image: domNode.find('img'),
-                                label: domNode.find(RV_SYMBOLOGY_ITEM_NAME_CLASS),
+                                image: domNode.find('rv-svg'),
+                                label: domNode.find(RV_SYMBOLOGY_ITEM_NAME_CLASS)
                             };
                         });
 
@@ -139,7 +139,7 @@
                         Math.max(
                             ...symbologyItems.map(symbologyItem =>
                                 Math.max(
-                                    symbologyItem.image[0].naturalWidth,
+                                    symbologyItem.image.find('svg')[0].viewBox.baseVal.width,
 
                                     // TODO: need to use current font size
                                     // need to account for letter spacing (use 10 for now)
@@ -248,8 +248,8 @@
                 function imageLegendItem(tlshift, symbologyItem, totalHeight, isLast) {
                     const symbologyListItemMargin = 16;
 
-                    const imageWidth = symbologyItem.image[0].naturalWidth;
-                    const imageHeight = symbologyItem.image[0].naturalHeight;
+                    const imageWidth = symbologyItem.image.find('svg')[0].viewBox.baseVal.width;
+                    const imageHeight = symbologyItem.image.find('svg')[0].viewBox.baseVal.height;
 
                     const labelHeight = symbologyItem.label.outerHeight();
 
