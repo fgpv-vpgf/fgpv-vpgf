@@ -378,4 +378,5 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 ,metadata.xslt.mediator,Mediator,Médiateur
 ,metadata.xslt.rightsHolder,Rights Holder,Titulaire des droits
 ,metadata.xslt.cataloguePage,Data Catalogue Page,Page des données du catalogue
+,metadata.xslt.metadataPage,Raw Metadata,Raw Métadonnées
 ,metadata.xslt.metadata,Metadata,Métadonnées
