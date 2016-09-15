@@ -238,10 +238,13 @@
             }
 
             if (typeof extent === 'object') { // convert to lat/lng geoName readable string
-                // TODO: this only works for mercator projections - find a way to include lambert/others as well
-                extent = gapiService.gapi.proj.Point.xyToLngLat(extent.xmin, extent.ymin).concat(
-                    gapiService.gapi.proj.Point.xyToLngLat(extent.xmax, extent.ymax)
-                ).join(',');
+                const minCoords = gapiService.gapi.proj.localProjectPoint(
+                    geoService.mapObject.spatialReference, 'EPSG:4326', { x: extent.xmin, y: extent.ymin });
+
+                const maxCoords = gapiService.gapi.proj.localProjectPoint(
+                    geoService.mapObject.spatialReference, 'EPSG:4326', { x: extent.xmax, y: extent.ymax });
+
+                extent = [minCoords.x, minCoords.y, maxCoords.x, maxCoords.y].join(',');
             }
 
             setQueryParam('bbox', extent);
