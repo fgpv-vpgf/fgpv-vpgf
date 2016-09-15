@@ -13,7 +13,7 @@
         .factory('bookmarkService', bookmarkService);
 
     function bookmarkService($rootElement, $q, legendService, geoService, LayerBlueprint,
-            LayerRecordFactory, configService) {
+            LayerRecordFactory, configService, gapiService) {
 
         const service = {
             getBookmark,
@@ -97,14 +97,22 @@
 
             // apply extent
             const origBasemapConfig = config.baseMaps.find(bm => bm.id === basemap);
-            const spatialReference = {
+            const bmSpatialReference = {
+                wkid: origBasemapConfig.wkid
+            };
+            const mapSpatialReference = {
                 wkid: origBasemapConfig.wkid
             };
 
             // determine the zoom level. use bookmark basemap unless we are doing a projection switch
             let lodId = origBasemapConfig.lodId;
+            let extentId = origBasemapConfig.extentId;
+
             if (newBaseMap) {
-                lodId = config.baseMaps.find(bm => bm.id === newBaseMap).lodId;
+                const newBasemapConfig = config.baseMaps.find(bm => bm.id === newBaseMap);
+                lodId = newBasemapConfig.lodId;
+                extentId = newBasemapConfig.extentId;
+                mapSpatialReference.wkid = newBasemapConfig.wkid;
             }
 
             // find the LOD set in the config file, then find the level of the LOD closest to the scale
@@ -118,8 +126,37 @@
             const configLodSet = config.map.lods.find(lodset => lodset.id === lodId);
             const diffs = configLodSet.lods.map(lod => Math.abs(lod.scale - scale));
             const zoomLod = configLodSet.lods[diffs.indexOf(Math.min(...diffs))];
+            const domNode = $rootElement.find('rv-shell')[0];
 
-            window.RV.getMap($rootElement.attr('id')).centerAndZoom(x, y, spatialReference, zoomLod.level);
+            // Note: we used to use a centerAndZoom() call to position the map to the basemap co-ords.
+            //       it was causing a race condition during a projection change, so we now calculate
+            //       the new initial extent and set it prior to map creation.
+
+            // project bookmark point to our new spatial reference
+            const coords = gapiService.gapi.proj.localProjectPoint(
+                    bmSpatialReference, mapSpatialReference, { x: x, y: y });
+            const zoomPoint = gapiService.gapi.proj.Point(coords.x, coords.y, mapSpatialReference);
+
+            // using resolution of our target level of detail, and the size of the map in pixels,
+            // calculate a rough extent of where our map should initialize.
+            const xOffset = domNode.offsetWidth * zoomLod.resolution / 2;
+            const yOffset = domNode.offsetHeight * zoomLod.resolution / 2;
+            const zoomExtent = {
+                xmin: zoomPoint.x - xOffset,
+                xmax: zoomPoint.x + xOffset,
+                ymin: zoomPoint.y - yOffset,
+                ymax: zoomPoint.y + yOffset,
+                spatialReference: zoomPoint.spatialReference
+            };
+
+            // update the config file default extent.  if we don't have a full extent defined,
+            // copy the original default to the full.  otherwise our zoom-to-canada button
+            // will start zooming to our new initial extent.
+            const configExtSet = config.map.extentSets.find(extset => extset.id === extentId);
+            if (!configExtSet.full) {
+                configExtSet.full = configExtSet.default;
+            }
+            configExtSet.default = zoomExtent;
 
             let bookmarkLayers = {};
 
