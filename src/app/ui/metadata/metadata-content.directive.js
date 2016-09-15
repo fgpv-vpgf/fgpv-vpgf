@@ -48,8 +48,17 @@
                         pElem.html($compile(
                             `<rv-truncate max-text-length="${maxTextLength}">${pElem.html()}</rv-truncate>`)(scope));
                     });
-                    metadata.append(
-                        `<p><a href="${self.display.requester.url}" target="_blank">Raw metadata</a> (xml)</p>`);
+
+                    // jscs:disable maximumLineLength
+                    if (self.display.requester.catalogueUrl) {
+                        metadata.append(`<p><a href="${self.display.requester.catalogueUrl}" target="_blank">Catalogue</a></p>`);
+                    }
+
+                    if (self.display.requester.metadataUrl) {
+                        metadata.append(`<p><a href="${self.display.requester.metadataUrl}" target="_blank">Raw metadata</a> (xml)</p>`);
+                    }
+                    // jscs:enable maximumLineLength
+
                     el.empty();
                     el.append(metadata);
                 }

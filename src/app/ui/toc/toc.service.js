@@ -376,6 +376,12 @@
          * @param  {Object} entry layer object whose data should be displayed.
          */
         function toggleMetadata(entry) {
+
+            const requester = {
+                id: entry.id,
+                name: entry.name,
+            };
+
             const panelToClose = {
                 filters: false
             };
@@ -383,11 +389,13 @@
             // if a sublayer of a group, select its root
             const layer = entry.master ? entry.master : entry;
 
-            const requester = {
-                id: entry.id,
-                name: entry.name,
-                url: layer.metadataUrl
-            };
+            if (layer.metadataUrl) {
+                requester.metadataUrl = layer.metadataUrl;
+            }
+
+            if (layer.catalogueUrl) {
+                requester.catalogueUrl = layer.catalogueUrl;
+            }
 
             // construct a temp promise which resolves when data is generated or retrieved;
             const dataPromise = $q(fulfill => {
