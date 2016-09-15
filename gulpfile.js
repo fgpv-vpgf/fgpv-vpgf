@@ -152,6 +152,9 @@ function injectTranslations(contents) {
                            }))
                            .map(({ name, data }) => `'${name}': ${data}`)
                            .join(',\n');
+
+    // remove translation files since they've been inlined
+    del(`${config.sampleBuild}/locales`);
     return contents.replace('AUTOFILLED_TRANSLATIONS = {}', `AUTOFILLED_TRANSLATIONS = {\n${translations}\n}`);
 }
 
