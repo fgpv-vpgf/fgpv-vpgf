@@ -12,6 +12,12 @@ const SIMPLE = 'simple';
 const UNIQUE_VALUE = 'uniqueValue';
 const CLASS_BREAKS = 'classBreaks';
 
+const CONTAINER_SIZE = 32; // size of the symbology item container
+const CONTENT_SIZE = 24; // size of the symbology graphic
+const CONTENT_IMAGE_SIZE = 28; // size of the symbology graphic if it's an image (images tend to already have a white boarder around them)
+const CONTAINER_CENTER = CONTAINER_SIZE / 2;
+const CONTENT_PADDING = (CONTAINER_SIZE - CONTENT_SIZE) / 2;
+
 /**
 * Will add extra properties to a renderer to support images.
 * New properties .svgcode and .defaultsvgcode contains image source
@@ -182,6 +188,79 @@ function getGraphicSymbol(attributes, renderer) {
 }
 
 /**
+ * Generates svg symbology for WMS layers.
+ * @function generateWMSSymbology
+ * @param {String} name label for the symbology item (it's not used right now, but is required to be consistent with other symbology generating functions)
+ * @param {String} imageUri url or dataUrl of the legend image
+ * @return {Promise} a promise resolving with symbology svg code and its label
+ */
+function generateWMSSymbology(name, imageUri) {
+    const draw = svgjs(window.document.createElement('div'))
+        .size(CONTAINER_SIZE, CONTAINER_SIZE)
+        .viewbox(0, 0, 0, 0);
+
+    const symbologyItem = {
+        name,
+        svgcode: null
+    };
+
+    if (imageUri) {
+        const symbologyPromise = new Promise(resolve => {
+            draw.image(imageUri)
+                .loaded(loader => {
+                    draw.viewbox(0, 0, loader.width, loader.height);
+                    symbologyItem.svgcode = draw.svg();
+                    resolve(symbologyItem);
+                })
+                .error(err => {
+                    // can't load legend image for some reason; return empty svg container
+                    symbologyItem.svgcode = draw.svg();
+                    resolve(symbologyItem);
+                    console.error(err);
+                });
+        });
+
+        return symbologyPromise;
+    } else {
+        symbologyItem.svgcode = draw.svg();
+        return Promise.resolve(symbologyItem);
+    }
+}
+
+/**
+ * Generates a placeholder symbology graphic. Returns a promise for consistency
+ * @function generatePlaceholderSymbology
+ * @private
+ * @param  {String} name label symbology label
+ * @param  {String} colour colour to use in the graphic
+ * @return {Promise}       promise resolving with symbology svg code and its label
+ */
+function generatePlaceholderSymbology(name, colour = '#000') {
+    const draw = svgjs(window.document.createElement('div'))
+        .size(CONTAINER_SIZE, CONTAINER_SIZE)
+        .viewbox(0, 0, CONTAINER_SIZE, CONTAINER_SIZE);
+
+    draw.rect(CONTENT_IMAGE_SIZE, CONTENT_IMAGE_SIZE)
+        .center(CONTAINER_CENTER, CONTAINER_CENTER)
+        .fill(colour);
+
+    draw
+        .text(name[0].toUpperCase()) // take the first letter
+        .size(23)
+        .fill('#fff')
+        .attr({
+            'font-weight': 'bold',
+            'font-family': 'Roboto'
+        })
+        .center(CONTAINER_CENTER, CONTAINER_CENTER);
+
+    return Promise.resolve({
+        name,
+        svgcode: draw.svg()
+    });
+}
+
+/**
 * Generate a legend item for an ESRI symbol.
 * @private
 * @param  {Object} symbol an ESRI symbol object in server format
@@ -190,20 +269,14 @@ function getGraphicSymbol(attributes, renderer) {
 * @return {Object} a legend object populated with the symbol and label
 */
 function symbolToLegend(symbol, label, window) {
-    const containerSize = 32; // size of the symbology item container
-    const contentSize = 24; // size of the symbology graphic
-    const contentImageSize = 28; // size of the symbology graphic if it's an image (images tend to already have a white boarder around them)
-    const containerCenter = containerSize / 2;
-    const contentPadding = (containerSize - contentSize) / 2;
-
     // create a temporary svg element and add it to the page; if not added, the element's bounding box cannot be calculated correctly
     const container = window.document.createElement('div');
     container.setAttribute('style', 'opacity:0;position:fixed;left:100%;top:100%;overflow:hidden');
     window.document.body.appendChild(container);
 
     const draw = svgjs(container)
-        .size(containerSize, containerSize)
-        .viewbox(0, 0, containerSize, containerSize);
+        .size(CONTAINER_SIZE, CONTAINER_SIZE)
+        .viewbox(0, 0, CONTAINER_SIZE, CONTAINER_SIZE);
 
     // functions to draw esri simple marker symbols
     // jscs doesn't like enhanced object notation
@@ -344,10 +417,10 @@ function symbolToLegend(symbol, label, window) {
                     opacity: symbolColour.opacity
                 })
                 .stroke(outlineStroke)
-                .center(containerCenter, containerCenter)
+                .center(CONTAINER_CENTER, CONTAINER_CENTER)
                 .rotate(symbol.angle || 0);
 
-            fitInto(marker, contentSize);
+            fitInto(marker, CONTENT_SIZE);
         },
         esriSLS() { // ESRI Simple Line Symbol
             const lineColour = parseEsriColour(symbol.color);
@@ -359,7 +432,9 @@ function symbolToLegend(symbol, label, window) {
                     dasharray: ESRI_DASH_MAPS[symbol.style]
                 });
 
-            draw.line(contentPadding, contentPadding, containerSize - contentPadding, containerSize - contentPadding)
+            const min = CONTENT_PADDING;
+            const max = CONTAINER_SIZE - CONTENT_PADDING;
+            draw.line(min, min, max, max)
                 .stroke(lineStroke);
         },
         esriCLS() {  // ESRI Fancy Line Symbol
@@ -382,8 +457,8 @@ function symbolToLegend(symbol, label, window) {
                 dasharray: ESRI_DASH_MAPS[symbol.outline.style]
             });
 
-            draw.rect(contentSize, contentSize)
-                .center(containerCenter, containerCenter)
+            draw.rect(CONTENT_SIZE, CONTENT_SIZE)
+                .center(CONTAINER_CENTER, CONTAINER_CENTER)
                 .fill(symbolFill)
                 .stroke(outlineStroke);
         },
@@ -411,8 +486,8 @@ function symbolToLegend(symbol, label, window) {
                 dasharray: ESRI_DASH_MAPS[symbol.outline.style]
             });
 
-            draw.rect(contentSize, contentSize)
-                .center(containerCenter, containerCenter)
+            draw.rect(CONTENT_SIZE, CONTENT_SIZE)
+                .center(CONTAINER_CENTER, CONTAINER_CENTER)
                 .fill(symbolFill)
                 .stroke(outlineStroke);
         },
@@ -425,11 +500,11 @@ function symbolToLegend(symbol, label, window) {
             const picturePromise = new Promise(resolve => {
                 const image = draw.image(imageUri).loaded(() => {
                     image
-                        .center(containerCenter, containerCenter)
+                        .center(CONTAINER_CENTER, CONTAINER_CENTER)
                         .rotate(symbol.angle || 0);
 
                     // scale image to fit into the symbology item container
-                    fitInto(image, contentImageSize);
+                    fitInto(image, CONTENT_IMAGE_SIZE);
 
                     resolve();
                 });
@@ -466,14 +541,14 @@ function symbolToLegend(symbol, label, window) {
     /**
      * Fits svg element in the size specified
      * @param {Ojbect} element svg element to fit
-     * @param {Number} containerSize width/height of a container to fit the element into
+     * @param {Number} CONTAINER_SIZE width/height of a container to fit the element into
      */
-    function fitInto(element, containerSize) {
+    function fitInto(element, CONTAINER_SIZE) {
         // const elementRbox = element.rbox();
         // const elementRbox = element.screenBBox();
 
         const elementRbox = element.node.getBoundingClientRect(); // marker.rbox(); //rbox doesn't work properly in Chrome for some reason
-        const scale = containerSize / Math.max(elementRbox.width, elementRbox.height);
+        const scale = CONTAINER_SIZE / Math.max(elementRbox.width, elementRbox.height);
         if (scale < 1) {
             element.scale(scale);
         }
@@ -602,6 +677,8 @@ module.exports = window => {
         getGraphicIcon,
         getGraphicSymbol,
         rendererToLegend: buildRendererToLegend(window),
+        generatePlaceholderSymbology,
+        generateWMSSymbology,
         getZoomLevel,
         enhanceRenderer
     };
