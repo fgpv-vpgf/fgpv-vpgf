@@ -87,7 +87,8 @@ function enhanceRenderer(renderer, legend) {
 */
 function searchRenderer(attributes, renderer) {
 
-    let svgcode = '';
+    // make an empty svg graphic as a default, in case nothing is found
+    let svgcode = svgjs(document.createElement('div')).svg();
     let symbol = {};
 
     switch (renderer.type) {
