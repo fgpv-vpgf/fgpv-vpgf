@@ -112,6 +112,7 @@
         const serviceTypeToLayerType = {
             [Geo.Service.Types.FeatureLayer]: Geo.Layer.Types.ESRI_FEATURE,
             [Geo.Service.Types.DynamicService]: Geo.Layer.Types.ESRI_DYNAMIC,
+            [Geo.Service.Types.RasterLayer]: Geo.Layer.Types.ESRI_DYNAMIC,
             [Geo.Service.Types.TileService]: Geo.Layer.Types.ESRI_TILE,
             [Geo.Service.Types.ImageService]: Geo.Layer.Types.ESRI_IMAGE,
             [Geo.Service.Types.WMS]: Geo.Layer.Types.OGC_WMS
@@ -168,7 +169,30 @@
 
                         } else {
                             console.log(`${this.config.url} is not a WMS, running more checks.`);
-                            return gapiService.gapi.layer.predictLayerUrl(this.config.url, hint);
+                            const prediction = gapiService.gapi.layer.predictLayerUrl(this.config.url, hint);
+
+                            // if a raster layer is predicted we switch it to a dynamic service with the raster layer pre-selected
+                            return prediction.then(info => {
+                                // we may require another call to predictLayerUrl so return a promise
+                                return $q(resolve => {
+                                    if (info.serviceType === Geo.Service.Types.RasterLayer) {
+                                        const layerID = this.config.url.split('/').pop(); // get layer ID
+                                        // remove the layer id so we get a dynamic service instead
+                                        this.config.url = this.config.url.substring(0,
+                                            this.config.url.lastIndexOf('/'));
+                                        // auto select the raster layer from the URL
+                                        this.config.layerEntries = [{ index: layerID }];
+                                        // get a dynamic service prediction (with the raster layer as one of its layers)
+                                        gapiService.gapi.layer.predictLayerUrl(this.config.url, hint).then(data => {
+                                            info.layers = data.layers;
+                                            resolve(info);
+                                        });
+                                    } else {
+                                        resolve(info);
+                                    }
+                                });
+
+                            });
                         }
                     })
                     .then(fileInfo => {
