@@ -35,6 +35,8 @@
         return directive;
 
         function link(scope, el, attr) {
+            const self = scope.self;
+
             // Append document fragment 'metadata' from stateManager. Shorten long runs of text
             // with rv-truncate directive.
             const maxTextLength = attr.maxTextLength > 0 ? attr.maxTextLength : 0;
@@ -46,6 +48,8 @@
                         pElem.html($compile(
                             `<rv-truncate max-text-length="${maxTextLength}">${pElem.html()}</rv-truncate>`)(scope));
                     });
+                    metadata.append(
+                        `<p><a href="${self.display.requester.url}" target="_blank">Raw metadata</a> (xml)</p>`);
                     el.empty();
                     el.append(metadata);
                 }
