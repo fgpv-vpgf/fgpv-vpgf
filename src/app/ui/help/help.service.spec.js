@@ -5,9 +5,23 @@ describe('helpService', () => {
         $provide.service('$mdDialog', () => {});
     }
 
+    function mockTranslate($provide) {
+        $provide.service('$translate', () => {
+            return {
+                use: () => {}
+            };
+        });
+    }
+
+    function mockTranslates($provide) {
+        $provide.service('translations', () => {
+            return {};
+        });
+    }
+
     beforeEach(() => {
 
-        bard.appModule('app.ui.help', mockDialog);
+        bard.appModule('app.ui.help', mockDialog, mockTranslate, mockTranslates);
 
         // inject services
         bard.inject('helpService');

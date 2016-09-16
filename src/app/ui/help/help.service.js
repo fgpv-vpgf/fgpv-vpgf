@@ -13,7 +13,7 @@
         .module('app.ui.help')
         .service('helpService', helpService);
 
-    function helpService($mdDialog, $http) {
+    function helpService($mdDialog, $translate, translations) {
         // all help sections (populated when elements tagged with rv-help are created)
         const registry = [];
 
@@ -79,9 +79,7 @@
             const self = this;
             self.closeHelpSummary = () => $mdDialog.hide();
 
-            $http.get(`locales/en-CA/translation.json`).then(data => {
-                self.sections = Object.keys(data.data.help);
-            });
+            self.sections = Object.keys(translations[$translate.use()].help);
 
             console.log(self);
         }
