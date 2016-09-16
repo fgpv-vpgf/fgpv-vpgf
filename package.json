@@ -1,9 +1,10 @@
 {
   "name": "geoApi",
-  "version": "1.0.4-1",
+  "version": "1.0.4-2",
   "description": "",
   "main": "dist/geoapi.js",
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "babelify": "~6.3.0",
     "brfs": "~1.4.3",
@@ -20,6 +21,7 @@
     "gulp-derequire": "~2.1.0",
     "gulp-gzip": "^1.2.0",
     "gulp-help": "^1.6.1",
+    "gulp-if": "^2.0.1",
     "gulp-jasmine": "^2.1.0",
     "gulp-jscs": "^3.0.1",
     "gulp-jscs-stylish": "^1.2.0",
@@ -33,13 +35,16 @@
     "jshint-stylish": "^2.0.1",
     "lodash": "^3.10.1",
     "proj4": "^2.3.12",
+    "run-sequence": "^1.2.2",
     "shpjs": "https://github.com/calvinmetcalf/shapefile-js.git#v3.3.1",
+    "svg.js": "^2.3.4",
     "terraformer": "~1.0.4",
     "terraformer-arcgis-parser": "~1.0.4",
-    "terraformer-proj4js": "https://github.com/RAMP-PCAR/terraformer-proj4js.git#v0.2.1",
+    "terraformer-proj4js": "https://github.com/RAMP-PCAR/terraformer-proj4js.git#v0.2.2",
     "text-encoding": "0.6.0",
     "vinyl-buffer": "~1.0.0",
-    "vinyl-source-stream": "~1.1.0"
+    "vinyl-source-stream": "~1.1.0",
+    "yargs": "^5.0.0"
   },
   "scripts": {
     "test": "gulp test"

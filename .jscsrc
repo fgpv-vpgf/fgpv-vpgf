@@ -55,9 +55,6 @@
     "disallowSpacesInFunctionDeclaration": {
         "beforeOpeningRoundBrace": true
     },
-    "requireSpacesInFunctionExpression": {
-        "beforeOpeningRoundBrace": true
-    },
     "requireSpacesInAnonymousFunctionExpression": {
         "beforeOpeningRoundBrace": true
     },
