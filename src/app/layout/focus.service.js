@@ -32,6 +32,7 @@
         let firstFocusable; // first focusable element in the viewer
         let lastFocusable; // last focusable element in the viewer
         let keyLastPressed; // boolean if a key rather than mouse was pressed/clicked
+        let status; // current status of the focus manager
 
         const focusSelector = `a[href], area[href], input:not([disabled]), select:not([disabled]),
             textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex], [contenteditable]`;
@@ -73,10 +74,21 @@
             createLink,
             setPanelFocus,
             setFocusElement,
-            previousFocus
+            previousFocus,
+            isWaiting
         };
 
         return service;
+
+        /**
+         * Determines if the focus manager is in a waiting state.
+         *
+         * @function isWaiting
+         * @return {Boolean}    true iff focus manager is in a waiting state
+         */
+        function isWaiting() {
+            return status === 'WAITING';
+        }
 
         /**
          * Creates a link between the actively focused element and the provided targetElement. Focus then moves
@@ -141,9 +153,11 @@
          *      - ACTIVE: viewer has full control of focus
          * @private
          * @function setStatus
-         * @param {String}  status  the focus status to switch to
+         * @param {String}  s  the focus status to switch to
          */
-        function setStatus(status) {
+        function setStatus(s) {
+            status = s;
+
             // remove all listeners before setting new ones
             $rootElement
                 .off('keydown', waitingKeydown)
@@ -154,7 +168,7 @@
                 .off('keydown', activeDocumentKeydown)
                 .off('focusout', activeDocumentFocusout);
 
-            switch (status) {
+            switch (s) {
                 case 'NOT_ACTIVE':
                     RV.lastFocusManager = undefined;
                     $rootElement.on('focusin', inactiveFocusin);
