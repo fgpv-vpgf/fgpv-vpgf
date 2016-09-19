@@ -376,10 +376,12 @@
          * @param  {Object} entry layer object whose data should be displayed.
          */
         function toggleMetadata(entry) {
+
             const requester = {
                 id: entry.id,
                 name: entry.name
             };
+
             const panelToClose = {
                 filters: false
             };
@@ -397,6 +399,15 @@
                         // result is wrapped in an array due to previous setup
                         // TODO: chagee the following when changing associated directive service
                         layer.cache.metadata = mdata;
+
+                        if (layer.metadataUrl) {
+                            layer.cache.metadata.metadataUrl = layer.metadataUrl;
+                        }
+
+                        if (layer.catalogueUrl) {
+                            layer.cache.metadata.catalogueUrl = layer.catalogueUrl;
+                        }
+
                         fulfill(layer.cache.metadata);
                     });
                 }
