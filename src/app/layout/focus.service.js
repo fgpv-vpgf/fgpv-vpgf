@@ -31,7 +31,7 @@
         let lastFocusElement;
         let firstFocusable; // first focusable element in the viewer
         let lastFocusable; // last focusable element in the viewer
-        let keyLastPressed; // boolean if a key rather than mouse was pressed/clicked
+        let isFullPage;
 
         const focusSelector = `a[href], area[href], input:not([disabled]), select:not([disabled]),
             textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex], [contenteditable]`;
@@ -39,33 +39,30 @@
         const dlg = $mdDialog;
 
         // detect if there has been a mousedown, if so disable focus management until re-activated
-        $(document).on('mousedown', () => {
-            keyLastPressed = false;
-            dlg.hide();
+        $(document).on('mousedown', event => {
+            dlg.hide(); // always hide the dialog
 
-            // TODO: workaround for full-screen detection - replace with resolution of issue #834
-            if (findNextFocusable().length > 0 || findPrevFocusable().length > 0) {
+            // clicking inside the map disables focus manager until focus leaves the viewer
+            if ($.contains($rootElement[0], event.target)) {
+                setStatus('ACTIVE');
+            } else if (!isFullPage) {
                 setStatus('NOT_ACTIVE');
             } else {
                 setStatus(); // disable completely when in full-screen
             }
         });
 
-        $(document).on('keydown', () => {
-            keyLastPressed = true;
-        });
-
         $rootScope.$on(events.rvReady, () => {
             firstFocusable = $rootElement.find('button:visible, [tabindex]:visible').first();
             lastFocusable = $rootElement.find('button:visible, [tabindex]:visible').last();
 
-            // default to not active state if there exists focusable elements around the viewer
             // TODO: workaround for full-screen detection - replace with resolution of issue #834
-            if (findNextFocusable().length > 0 || findPrevFocusable().length > 0) {
-                setStatus('NOT_ACTIVE');
-            // otherwise page contains stand-alone viewer, set to active state immediately.
-            } else {
+            isFullPage = $rootElement.attr('rv-fullpage-app') === 'true';
+
+            if (isFullPage) {
                 setStatus('ACTIVE');
+            } else {
+                setStatus('NOT_ACTIVE');
             }
         });
 
@@ -144,6 +141,7 @@
          * @param {String}  status  the focus status to switch to
          */
         function setStatus(status) {
+            // TODO: add check so we don't change statuses with same status; active -> active
             // remove all listeners before setting new ones
             $rootElement
                 .off('keydown', waitingKeydown)
@@ -391,8 +389,7 @@
          * @function inactiveFocusin
          */
         function inactiveFocusin(event) {
-            if (typeof RV.lastFocusManager !== 'undefined' || !keyLastPressed ||
-                $.contains($rootElement[0], event.relatedTarget)) {
+            if (typeof RV.lastFocusManager !== 'undefined' || $.contains($rootElement[0], event.relatedTarget)) {
                 return;
             }
             // handle case where focus starts on last element of viewer, reset to first

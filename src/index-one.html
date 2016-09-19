@@ -16,10 +16,10 @@
 </head>
 
 <body>
-
+    <!-- TODO: remove rv-fullpage-app with resolution of issue #834 (when there is a config property)-->
     <div class="fgpv" rv-config="config.${lang}.json" rv-langs='["en-CA", "fr-CA"]'
          rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'
-         rv-restore-bookmark="bookmark"/>
+         rv-restore-bookmark="bookmark" rv-fullpage-app="true" />
 
     <script>
     const needIePolyfills = [
