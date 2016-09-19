@@ -336,6 +336,33 @@
             const layerRecord = geoService.layers[requester.layerId];
             const dataPromise = layerRecord.getAttributes(entry.featureIdx)
                 .then(attributes => {
+                    const rvSymbolColumnName = 'rvSymbol';
+
+                    // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
+                    // ideally, this should go into the `formatAttributes` function in layer-record.class, but we are trying to keep as loosely bound as possible to be moved later to geoApi and this uses geoService.retrieveSymbol
+                    // add symbol as the first column
+                    // check if the symbol column already exists
+                    if (!attributes.columns.find(({ data }) => data === rvSymbolColumnName)) {
+                        attributes.rows.forEach(row => {
+
+                            let symbol = geoService.retrieveSymbol(row, attributes.renderer);
+                            if (!symbol) {
+                                // jscs:disable maximumLineLength
+                                // TODO: have geoApi symbology detect and set empty gifs
+                                symbol = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                                // jscs:enable maximumLineLength
+                            }
+                            row.rvSymbol = `<div class="rv-wrapper rv-symbol"><img src="${symbol}" /></div>`;
+                        });
+
+                        // add a column for symbols
+                        attributes.columns.unshift({
+                            data: rvSymbolColumnName,
+                            title: '',
+                            orderable: false
+                        });
+                    }
+
                     return {
                         data: attributes,
                         isLoaded: false
