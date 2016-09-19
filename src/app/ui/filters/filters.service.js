@@ -98,13 +98,6 @@
          * @private
          */
         function onCreate() {
-            // add a column for symbols
-            stateManager.display.filters.data.columns.unshift({
-                data: 'rvSymbol',
-                title: '',
-                orderable: false
-            });
-
             // recompute oidColNum for data table filter since it may not be first index
             oidColNum = stateManager.display.filters.data.columns.findIndex(col =>
                     col.data === stateManager.display.filters.data.oidField);

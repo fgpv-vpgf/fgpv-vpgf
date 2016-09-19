@@ -120,22 +120,6 @@
                 const tableNode = angular.element('<table class="display nowrap rv-data-table"></table>');
                 containerNode.append(tableNode);
 
-                // add symbol as the first column
-                // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
-                if (!displayData.rows[0].hasOwnProperty('rvSymbol')) {
-                    displayData.rows.forEach(row => {
-
-                        let symbol = geoService.retrieveSymbol(row, displayData.renderer);
-                        if (!symbol) {
-                            // jscs:disable maximumLineLength
-                            // TODO: have geoApi symbology detect and set empty gifs
-                            symbol = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-                            // jscs:enable maximumLineLength
-                        }
-                        row.rvSymbol = `<div class="rv-wrapper rv-symbol"><img src="${symbol}" /></div>`;
-                    });
-                }
-
                 // disabled zoom row button if projection is not valid
                 const isZoomEnabled = geoService.validateProj(
                     geoService.layers[requester.layerId]._layer.spatialReference);
