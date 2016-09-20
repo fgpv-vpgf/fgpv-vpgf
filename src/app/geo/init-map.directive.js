@@ -16,7 +16,9 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
-    function rvInitMap(geoService, events, storageService, mapService, gapiService, $rootElement, $interval) {
+    function rvInitMap(geoService, events, storageService, mapService, gapiService, $rootElement, $interval,
+        focusService) {
+
         // key codes that are currently active
         let keyMap = [];
         // interval which runs animation logic
@@ -101,7 +103,7 @@
          * @param {Object} event     the keydown/keyup browser event
          */
         function animate(event) {
-            /*jshint maxcomplexity:13 */
+            /*jshint maxcomplexity:14 */
             stopAnimate();
             if (keyMap.length === 0) {
                 return;
@@ -124,9 +126,13 @@
                 switch (keyMap[i]) {
                     // enter key is pressed - trigger identify
                     case 13:
-                        event.mapPoint = mapPntCntr;
-                        event.screenPoint = mapScrnCntr;
-                        geoService.state.identifyService.clickHandler(event);
+                        // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
+                        // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
+                        if (focusService.statuses.WAITING !== focusService.status()) {
+                            event.mapPoint = mapPntCntr;
+                            event.screenPoint = mapScrnCntr;
+                            geoService.state.identifyService.clickHandler(event);
+                        }
                         break;
                     // shift key pressed - pan distance increased
                     case 16:

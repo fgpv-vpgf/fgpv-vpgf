@@ -32,7 +32,14 @@
         let firstFocusable; // first focusable element in the viewer
         let lastFocusable; // last focusable element in the viewer
         let keyLastPressed; // boolean if a key rather than mouse was pressed/clicked
+        let currentStatus; // current status of the focus manager
 
+        const statuses = {
+            NONE: undefined,
+            INACTIVE: 'NOT_ACTIVE',
+            WAITING: 'WAITING',
+            ACTIVE: 'ACTIVE'
+        };
         const focusSelector = `a[href], area[href], input:not([disabled]), select:not([disabled]),
             textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex], [contenteditable]`;
         const focusHistory = [];
@@ -73,10 +80,22 @@
             createLink,
             setPanelFocus,
             setFocusElement,
-            previousFocus
+            previousFocus,
+            status,
+            statuses
         };
 
         return service;
+
+        /**
+         * Method for external focus manager status queries
+         *
+         * @function status
+         * @return {STRING}    the current status of the focus manager
+         */
+        function status() {
+            return currentStatus;
+        }
 
         /**
          * Creates a link between the actively focused element and the provided targetElement. Focus then moves
@@ -141,9 +160,11 @@
          *      - ACTIVE: viewer has full control of focus
          * @private
          * @function setStatus
-         * @param {String}  status  the focus status to switch to
+         * @param {String}  s  the focus status to switch to
          */
-        function setStatus(status) {
+        function setStatus(s) {
+            currentStatus = s;
+
             // remove all listeners before setting new ones
             $rootElement
                 .off('keydown', waitingKeydown)
@@ -154,7 +175,7 @@
                 .off('keydown', activeDocumentKeydown)
                 .off('focusout', activeDocumentFocusout);
 
-            switch (status) {
+            switch (s) {
                 case 'NOT_ACTIVE':
                     RV.lastFocusManager = undefined;
                     $rootElement.on('focusin', inactiveFocusin);
