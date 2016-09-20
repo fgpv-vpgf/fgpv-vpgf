@@ -16,10 +16,15 @@
 </head>
 
 <body>
-
     <div class="fgpv" rv-config="config.${lang}.json" rv-langs='["en-CA", "fr-CA"]'
          rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'
-         rv-restore-bookmark="bookmark"/>
+         rv-restore-bookmark="bookmark">
+         <noscript>
+            <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
+
+            <p>Cette carte interactive nécessite JavaScript. Pour voir ce contenu, s'il vous plaît, activer JavaScript dans votre navigateur ou télécharger un navigateur qui le prend en charge.</p>
+        </noscript>
+    </div>
 
     <script>
     const needIePolyfills = [
