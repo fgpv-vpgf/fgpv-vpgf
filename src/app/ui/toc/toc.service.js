@@ -343,23 +343,17 @@
                     // add symbol as the first column
                     // check if the symbol column already exists
                     if (!attributes.columns.find(({ data }) => data === rvSymbolColumnName)) {
-                        attributes.rows.forEach(row => {
 
-                            let symbol = geoService.retrieveSymbol(row, attributes.renderer);
-                            if (!symbol) {
-                                // jscs:disable maximumLineLength
-                                // TODO: have geoApi symbology detect and set empty gifs
-                                symbol = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-                                // jscs:enable maximumLineLength
-                            }
-                            row.rvSymbol = `<div class="rv-wrapper rv-symbol"><img src="${symbol}" /></div>`;
-                        });
+                        attributes.rows.forEach(row =>
+                            row.rvSymbol = geoService.retrieveSymbol(row, attributes.renderer)
+                        );
 
                         // add a column for symbols
                         attributes.columns.unshift({
                             data: rvSymbolColumnName,
                             title: '',
-                            orderable: false
+                            orderable: false,
+                            render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`
                         });
                     }
 
