@@ -25,11 +25,18 @@
             </li>
         </ul>
 
+        <md-divider></md-divider>
+
+        <md-content role="language">
+            <span class="rv-language md-ink-rippled">{{ 'sidenav.label.language' | translate }}</span>
+            <rv-language></rv-language>
+        </md-content>
+
         <span flex></span>
-        <p class='md-caption rv-version'>
-            <span class='rv-version-number'>{{ self.version.major }}.{{ self.version.minor }}.{{ self.version.patch }}
-                <span class='rv-version-hash'>[{{ self.version.hash }}]</span></span>
-            <span class='rv-version-timestamp'>{{ self.version.timestamp }}</span>
+        <p class="md-caption rv-version">
+            <span class="rv-version-number">{{ self.version.major }}.{{ self.version.minor }}.{{ self.version.patch }}
+                <span class="rv-version-hash">[{{ self.version.hash }}]</span></span>
+            <span class="rv-version-timestamp">{{ self.version.timestamp }}</span>
         </p>
 
     </md-content>
