@@ -44,10 +44,9 @@
                 scale: encode64(geoService.mapObject.getScale())
             };
 
-            // loop through layers in legend, remove user added layers
-            const legend = geoService.legend.items.filter(legendEntry => {
-                return !legendEntry._layerRecord.config.flags.user.visible;
-            });
+            // loop through layers in legend, remove user added layers and "removed" layer which are in the "undo" time fram
+            const legend = geoService.legend.items.filter(legendEntry =>
+                !legendEntry.flags.user.visible && !legendEntry.removed);
             const layerBookmarks = legend.map(legendEntry => {
                 // FIXME: remove moving through _layerRecord
                 return encode64(legendEntry._layerRecord.makeLayerBookmark());
