@@ -132,6 +132,7 @@
             features: null,
             sortGroup: -1,
             symbology: null,
+            removed: false, // a flag indicating that this legend entry is removed from the legend but is in the "undo" time frame;
 
             /**
              * Sets or toggles visibility of the layer legend entry
@@ -321,6 +322,7 @@
             items: null,
             cache: null, // to cache stuff like retrieved metadata info
             sortGroup: -1,
+            removed: false, // a flag indicating that this legend entry is removed from the legend but is in the "undo" time frame;
 
             // TODO: add hook to set group options
             options: {
