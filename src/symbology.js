@@ -334,6 +334,13 @@ function symbolToLegend(symbol, label, window) {
         miterlimit: 4
     };
 
+    // this is a null outline in case a supplied symbol doesn't have one
+    const DEFAULT_OUTLINE = {
+        color: [0, 0, 0, 0],
+        width: 0,
+        style: ESRI_DASH_MAPS.esriSLSNull
+    };
+
     // 5x5 px patter with coloured diagonal lines
     const esriSFSFills = {
         esriSFSSolid: symbolColour => {
@@ -403,6 +410,7 @@ function symbolToLegend(symbol, label, window) {
         esriSMS() { // ESRI Simple Marker Symbol
             const symbolColour = parseEsriColour(symbol.color);
 
+            symbol.outline = symbol.outline || DEFAULT_OUTLINE;
             const outlineColour = parseEsriColour(symbol.outline.color);
             const outlineStroke = makeStroke({
                 color: outlineColour.colour,
@@ -449,6 +457,7 @@ function symbolToLegend(symbol, label, window) {
             });
             const symbolFill = esriSFSFills[symbol.style](symbolColour, symbolStroke);
 
+            symbol.outline = symbol.outline || DEFAULT_OUTLINE;
             const outlineColour = parseEsriColour(symbol.outline.color);
             const outlineStroke = makeStroke({
                 color: outlineColour.colour,
@@ -479,6 +488,7 @@ function symbolToLegend(symbol, label, window) {
             const symbolFill = draw.pattern(imageWidth, imageHeight, add =>
                 add.image(imageUri, imageWidth, imageHeight));
 
+            symbol.outline = symbol.outline || DEFAULT_OUTLINE;
             const outlineColour = parseEsriColour(symbol.outline.color);
             const outlineStroke = makeStroke({
                 color: outlineColour.colour,
