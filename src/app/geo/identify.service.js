@@ -385,7 +385,7 @@
                                     data: attributesToDetails(featAttribs, attributes.fields),
                                     oid: objId,
                                     symbology: [
-                                        { icon: geoState.mapService.retrieveSymbol(featAttribs, layerData.renderer) }
+                                        { svgcode: geoState.mapService.retrieveSymbol(featAttribs, layerData.renderer) }
                                     ]
                                 };
                             });
