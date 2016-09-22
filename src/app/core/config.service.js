@@ -101,7 +101,7 @@
                         langs = ['en-CA', 'fr-CA'];
                     }
 
-                    // set avialable languages
+                    // set available languages
                     languages = langs;
 
                     // set the language right away and not wait the initialization to be fullfilled

@@ -13,10 +13,20 @@
                 padding: rem(0.8) 0;
             }
 
+            [role="language"] {
+                margin-top: rem(0.8);
+            }
+
             .rv-language {
                 padding: 0 6px;
                 margin: 6px 8px;
             }
+
+            .rv-language-icon {
+                margin-left: rem(0.8);
+                vertical-align: middle;
+            }
+
             .rv-version {
                 text-align: center;
 
