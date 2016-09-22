@@ -49,13 +49,10 @@
         $(document).on('mousedown', event => {
             dlg.hide(); // always hide the dialog
 
-            // clicking inside the map disables focus manager until focus leaves the viewer
+            // disable if clicking on the viewer until mouse support is implemented
+            // TODO: this is temporary until epic #1213 is implemented to support simultaneous mouse/keyboard support
             if ($.contains($rootElement[0], event.target)) {
-                setStatus('ACTIVE');
-            } else if (!isFullPage) {
-                setStatus('NOT_ACTIVE');
-            } else {
-                setStatus(); // disable completely when in full-screen
+                setStatus();
             }
         });
 
