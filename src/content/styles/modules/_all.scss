@@ -28,6 +28,7 @@
 @import "_metadata.scss";
 @import "_md-icon.scss";
 @import "_export.scss";
+@import "_side-nav.scss";
 
 @include core;
 @include loading;
@@ -55,3 +56,4 @@
 @include metadata;
 @include md-icon;
 @include export;
+@include side-nav;

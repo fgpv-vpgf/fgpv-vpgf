@@ -91,6 +91,10 @@ Side Navigation main title,sidenav.title,FGP R2 Viewer,Visualiseur PGF R2
 Side Navigation full screen,sidenav.label.fullscreen,FULL SCREEN,PLEIN ÉCRAN
 Side Navigation share,sidenav.label.share,SHARE,PARTAGER
 Side Navigation export,sidenav.label.export,export,export
+Bookmark share link,sidenav.label.sharelink,Share Link,Lien de partage
+Bookmark short link,sidenav.label.shortlink,Short Link,Lien court
+Bookmark link copied feedback,sidenav.label.copysuccess,Link copied to clipboard,Lien copié dans le presse-papiers
+Bookmark link click to copy hint,sidenav.label.clicktocopy,Click to copy,Cliquez pour copier
 Side Navigation help,sidenav.label.help,HELP,AIDE
 Side Navigation language,sidenav.label.language,Language,Langage
 Table of Content Unnamed service,toc.layer.unnamed,Unnamed Service #{{count}},Service sans nom #{{count}}
