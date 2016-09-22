@@ -1,0 +1,24 @@
+<md-dialog aria-label="{{'sidenav.label.sharelink' | translate}}">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{'sidenav.label.sharelink' | translate}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button rv-button-24" ng-click="self.close()">
+          <md-icon md-svg-src="navigation:close"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content class="md-dialog-content" layout="column" layout-align="center end">
+        <md-switch class="md-primary" ng-if="self.googleAPIUrl" dir="rtl" md-no-ink aria-label="{{'sidenav.label.shortlink' | translate}}" ng-model="self.isShortLink" ng-change="self.switchChanged(self.isShortLink)">
+            <span>{{'sidenav.label.shortlink' | translate}}</span>
+        </md-switch>
+
+            <md-input-container class="md-block" flex-gt-xs>
+                <input ng-click="self.bookmarkClicked($event)" ng-model="self.url">
+                <div class="hint" ng-if="self.linkCopied">{{'sidenav.label.copysuccess' | translate}}</div>
+          </md-input-container>
+    </md-dialog-content>
+
+</md-dialog>

@@ -1,0 +1,20 @@
+@mixin side-nav {
+    md-dialog {
+        md-switch {
+            margin: 0;
+
+            span {
+                padding-right: 10px;
+            }
+        }
+
+        md-input-container {
+            width: 300px;
+            margin-bottom:0;
+
+            input {
+                font-size: 1.2em;
+            }
+        }
+    }
+}
