@@ -47,7 +47,9 @@
 
         // detect if there has been a mousedown, if so disable focus management until re-activated
         $(document).on('mousedown', event => {
-            dlg.hide(); // always hide the dialog
+            if (currentStatus === statuses.WAITING) {
+                dlg.hide();
+            }
 
             // disable if clicking on the viewer until mouse support is implemented
             // TODO: this is temporary until epic #1213 is implemented to support simultaneous mouse/keyboard support
