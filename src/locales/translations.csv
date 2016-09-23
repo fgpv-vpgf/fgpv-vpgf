@@ -88,6 +88,7 @@ Side Navigation main title,sidenav.title,FGP R2 Viewer,Visualiseur PGF R2
 Side Navigation full screen,sidenav.label.fullscreen,FULL SCREEN,PLEIN ÉCRAN
 Side Navigation share,sidenav.label.share,SHARE,PARTAGER
 Side Navigation help,sidenav.label.help,HELP,AIDE
+Side Navigation language,sidenav.label.language,Language,Langage
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,Menu du panneau des données ouvertes
 Table of Content show symbology label,toc.layer.label.symbologyShow,Show symbology,Afficher symbologie
 Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide symbology,Masquer symbologie

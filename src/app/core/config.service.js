@@ -49,7 +49,8 @@
             ready,
             rcsAddKeys,
             rcsUrl: '',
-            setCurrent
+            setCurrent,
+            getLanguages
         };
 
         const originalConfigs = {};
@@ -57,6 +58,7 @@
 
         const partials = {}; // partial config promises, one array per language entry
         const configFile = {};
+        let languages;
 
         return service;
 
@@ -98,6 +100,9 @@
                     } else {
                         langs = ['en-CA', 'fr-CA'];
                     }
+
+                    // set available languages
+                    languages = langs;
 
                     // set the language right away and not wait the initialization to be fullfilled
                     $translate.use(langs[0]);
@@ -208,6 +213,16 @@
          */
         function getOriginal() {
             return originalConfigs[currentLang()];
+        }
+
+        /**
+         * Returns the array of available languages.
+         *
+         * @function getLanguages
+         * @return {array}    The available languages
+         */
+        function getLanguages() {
+            return languages;
         }
 
         /**
