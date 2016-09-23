@@ -55,7 +55,7 @@
                     params.forEach(p => xsltProc.addParameter(p.key, p.value, ''));
                 }
                 xsltProc.transform();
-                output = xsltProc.output;
+                output = document.createRange().createContextualFragment(xsltProc.output);
             }
 
             return output;
