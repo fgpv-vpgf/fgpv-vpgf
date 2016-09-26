@@ -29,6 +29,7 @@
             top: 0;
             bottom: 0;
             transition: top $swift-ease-in-duration $swift-ease-in-out-timing-function, bottom $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            text-align: inherit;
 
             .rv-wkid {
                 display: flex;
@@ -63,14 +64,14 @@
                 background-color: rgba(0,0,0,0.68);
                 color: rgb(255,255,255);
                 text-align: left;
-                top: 24px;
+                top: 15px;
                 z-index: 1;
                 text-transform: none;
                 padding: rem(0.5) rem(1);
                 display: none;
                 font-size: 12px;
                 overflow: hidden;
-                height: 78px;
+                height: 85px;
                 white-space: normal;
                 line-height: 14px;
 
@@ -102,6 +103,13 @@
 
                 .rv-basemap-check {
                     color: white;
+                    flex-shrink: 0;
+                }
+
+                > span {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    margin-right: rem(1);
                 }
             }
         }
