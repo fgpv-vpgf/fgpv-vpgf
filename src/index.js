@@ -5,6 +5,7 @@ const events = require('./events.js');
 const hilight = require('./hilight.js');
 const layer = require('./layer.js');
 const mapManager = require('./mapManager.js');
+const mapPrint = require('./mapPrint.js');
 const proj = require('./proj.js');
 const query = require('./query.js');
 const shared = require('./shared.js');
@@ -18,6 +19,7 @@ function initAll(esriBundle, window) {
     api.proj = proj(esriBundle);
     api.basemap = basemap(esriBundle);
     api.mapManager = mapManager(esriBundle);
+    api.mapPrint = mapPrint(esriBundle, api);
     api.attribs = attribute(esriBundle, api);
     api.symbology = symbology(window);
     api.hilight = hilight(esriBundle, api);
@@ -28,6 +30,8 @@ function initAll(esriBundle, window) {
         if (arguments.length === 1) {
             debug = arguments[0] === true;
         }
+
+        return debug;
     };
     api.esriBundle = function () {
         if (debug) {
@@ -74,7 +78,10 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/tasks/IdentifyTask', 'IdentifyTask'],
         ['esri/tasks/ProjectParameters', 'ProjectParameters'],
         ['esri/tasks/query', 'Query'],
-        ['esri/tasks/QueryTask', 'QueryTask']
+        ['esri/tasks/QueryTask', 'QueryTask'],
+        ['esri/tasks/PrintParameters', 'PrintParameters'],
+        ['esri/tasks/PrintTask', 'PrintTask'],
+        ['esri/tasks/PrintTemplate', 'PrintTemplate']
     ];
 
     function makeDojoRequests() {

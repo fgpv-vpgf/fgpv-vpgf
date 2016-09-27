@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Print Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+        .map { position: relative; overflow: hidden; }
+    </style>
+</head>
+<body>
+    <div style="height: 750px; width: 1500px; margin: auto;">
+        <div id="map1" style="height: 750px; width: 1500px; margin: auto;"></div>
+    </div>
+    <canvas id="result-canvas-1" width="1000" height="600" src="" style="display: block; border: 1px solid red;"></canvas>
+    <div style="height: 500px; width: 500px; margin: auto;">
+        <div id="map2" style="height: 500px; width: 500px; margin: auto;"></div>
+    </div>
+    <canvas id="result-canvas-2" width="500" height="500" src="" style="display: block; border: 1px solid red;"></canvas>
+    <script src="../dist/geoapi.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(api => {
+
+            // set debug
+            api.debug(true);
+
+            // create map
+            var map1 = api.mapManager.Map(document.getElementById('map1'), { basemap: 'topo', zoom: 5, center: [-70, 47] });
+            var map2 = api.mapManager.Map(document.getElementById('map2'), { basemap: 'topo', zoom: 4, center: [-70, 47] });
+
+            // FGP map with no basemap because port to arcgis server is not open yet.
+            // extent for fgp layer
+            // var bounds = new api.esriBundle().Extent({
+            //     "xmin":-64.65784158313426,
+            //     "ymin":45.58862878646309,
+            //     "xmax":-61.64782341075895,
+            //     "ymax":47.52194085370019,
+            //     "spatialReference":{"wkid":4140}
+            // });
+            // var map = api.mapManager.Map(document.getElementById('map'), { extent: bounds });
+
+            // add large CSV (PUT RIGHT URL)
+            addCSVLayer(api, map1, 'http://localhost/~neo/geoApi/test/largeMapPrint.csv', true);
+            // addCSVLayer(api, map2, 'http://localhost/~neo/geoApi/test/largeMapPrint.csv', true);
+
+            // add JSON
+            addJSONLayer(api, map1, true);
+            addJSONLayer(api, map2, true);
+
+            // geoLayer (0)
+            var geoLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://geoappext.nrcan.gc.ca/arcgis/rest/services/FGP/federal_electoral_districts_boundaries_2015_fr/MapServer');
+            map1.addLayer(geoLayer);
+
+            // geoFeatLayer large (1)
+            var geoFeatLayer = new api.layer.FeatureLayer('http://geoappext.nrcan.gc.ca/arcgis/rest/services/FGP/community_well_being_index_2011_en/MapServer/1');
+            // map1.addLayer(geoFeatLayer);
+
+            // geoFeatLayer small (0)
+            var geoFeatLayerSmall1 = new api.layer.FeatureLayer('http://geoappext.nrcan.gc.ca/arcgis/rest/services/FGP/national_parks_boundaries_en/MapServer/0');
+            var geoFeatLayerSmall2 = new api.layer.FeatureLayer('http://geoappext.nrcan.gc.ca/arcgis/rest/services/FGP/canadian_airports_with_air_navigation_services_en/MapServer/0');
+            map1.addLayer(geoFeatLayerSmall1);
+            map2.addLayer(geoFeatLayerSmall2);
+
+            // fgp layer (3)
+            var fgpLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://webservices-staging.maps.canada.ca/arcgis/rest/services/NRCAN/PEI_RRN/MapServer');
+            // map1.addLayer(fgpLayer);
+
+            // print task url for geoappext and fgp geometry server
+            var geo = 'http://geoappext.nrcan.gc.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task';
+            var fgp = 'http://webservices-staging.maps.canada.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task';
+
+            map1.on('click', () => {
+                // rename svg holder and map id to mimic fgpv-vpgf
+                document.getElementById('map1_layers').getElementsByTagName('svg')[0].id = 'esri.Map_0_gc';
+                map1.id = 'esri.Map_0';
+
+                console.log('start print process map 1!');
+
+                const options = {
+                    url: geo,
+                    format: 'png32',
+                }
+                api.mapPrint.print(map1,
+                                    options).then(canvas => {
+                    if (canvas.complete) {
+                        let canvasResult = document.getElementById('result-canvas-1');
+                        canvasResult.getContext('2d').drawImage(canvas.canvas, 0, 0,
+                            map1.width, map1.height, 0, 0, canvasResult.width, canvasResult.height);
+
+                        console.log('canvas created map 1!');
+                    } else {
+                        console.log(`canvas not created map 1! ${canvas.error}`);
+                    }
+                });
+            });
+
+            map2.on('click', () => {
+                // rename svg holder and map id to mimic fgpv-vpgf
+                document.getElementById('map2_layers').getElementsByTagName('svg')[0].id = 'esri.Map_1_gc';
+                map2.id = 'esri.Map_1';
+
+                console.log('start print process map 2!');
+
+                const options = {
+                    url: geo,
+                    format: 'png32',
+                }
+                api.mapPrint.print(map2,
+                                    options).then(canvas => {
+                    if (canvas.complete) {
+                        let canvasResult = document.getElementById('result-canvas-2');
+                        canvasResult.getContext('2d').drawImage(canvas.canvas, 0, 0,
+                            map2.width, map2.height, 0, 0, canvasResult.width, canvasResult.height);
+
+                        console.log('canvas created map 2!');
+                    } else {
+                        console.log(`canvas not created map 2! ${canvas.error}`);
+                    }
+                });
+            });
+        });
+
+        function addCSVLayer(api, map, path, vis) {
+            api.layer.predictLayerUrl(path, api.layer.serviceType.CSV).then(data => {
+                api.layer.validateFile(api.layer.serviceType.CSV, data.fileData).then(vData => {
+                    var opts = {
+                       targetWkid: 102100,
+                       epsgLookup: epsgLookup,
+                       latfield: 'Y',
+                       lonfield: 'X',
+                       delimiter: ','
+                    };
+
+                    // vData.formattedData = "X,Y,Prop\n0,0,One\n-100,50,Two\n-50,50,Three\n-75,50,Four\n";
+                    var csvPromise = api.layer.makeCsvLayer(vData.formattedData, opts);
+                    csvPromise.then(function(csvLayer){
+                        map.addLayer(csvLayer);
+                        csvLayer.setVisibility(vis);
+                    });
+                });
+            });
+        }
+
+        function addJSONLayer(api, map, vis) {
+            var happyData = {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {"name": "Happy Mouth"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates":[[[-64.8125,49.67255514839676],[-63.82373046875,48.499452103967734],[-60.9892578125,48.317408112618686],[-56.44091796875,48.190967765585604],[-54.33154296875,49.04139389812637],[-54.02392578125,47.96535590991311],[-55.60595703125,46.748945343432936],[-57.869140625,46.3416461723746],[-61.296875,46.66194284607008],[-64.021484375,47.05227025601607],[-65.2080078125,47.76707407366792],[-64.8125,49.67255514839676]]]
+                        }
+                    }
+                ]
+            }
+
+            var opts = {
+                targetWkid: 102100,
+                sourceProjection: 'EPSG:4326', //'+proj=longlat +datum=WGS84 +no_defs',
+                epsgLookup: epsgLookup,
+                colour: '#ff3300',
+                opacity: 0.2
+            };
+
+            // user added layer (JSON)
+            api.layer.makeGeoJsonLayer(happyData, opts).then(function (happyLayer) {
+                map.addLayer(happyLayer);
+                happyLayer.setVisibility(vis);
+            });
+        }
+
+        function epsgLookup(code) {
+            console.log('imma searchin for ' + code);
+            return new Promise(resolve => {
+                //bring for the funtime lol switch
+                var defst = null;
+                switch (code) {
+                    case 'EPSG:102100':
+                        console.log('I FOUND A MAPJECTION');
+                        defst = '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs';
+                        break;
+                }
+                resolve(defst);
+            });
+        }
+</script>
+</body>
+</html>
