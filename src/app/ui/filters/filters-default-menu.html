@@ -41,22 +41,22 @@
             -->
 
             <md-menu-divider></md-menu-divider>
-                <md-menu-item type="checkbox" ng-model="self.filter.isActive" ng-click="self.applyFilter(self.filter.isActive)">
+                <md-menu-item type="checkbox" ng-model="self.filter.isActive" ng-click="self.applyFilter(self.filter.isActive)" rv-right-icon="community:filter">
                     {{ 'filter.menu.extent' | translate }}
                 </md-menu-item>
             <md-menu-divider></md-menu-divider>
 
-            <md-menu-item>
+            <md-menu-item rv-right-icon="true">
                 <md-button ng-click="self.dataPrint()">
-                    <md-icon md-svg-icon="action:print"></md-icon>
                     {{ 'filter.menu.print' | translate }}
+                    <md-icon md-svg-icon="action:print"></md-icon>
                 </md-button>
             </md-menu-item>
 
-            <md-menu-item>
+            <md-menu-item rv-right-icon="true">
                 <md-button ng-click="self.dataExportCSV()">
-                    <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
                     {{ 'filter.menu.export' | translate }}
+                    <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
                 </md-button>
             </md-menu-item>
 
