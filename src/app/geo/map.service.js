@@ -314,9 +314,13 @@
                 settings.zoomCounter += byValue;
                 settings.zoomPromise.then(() => {
                     if (settings.zoomCounter !== 0) {
-                        let zoomValue = service.mapObject.getZoom() + settings.zoomCounter;
+                        const zoomValue = service.mapObject.getZoom() + settings.zoomCounter;
+                        const zoomPromise = service.mapObject.setZoom(zoomValue);
                         settings.zoomCounter = 0;
-                        settings.zoomPromise = service.mapObject.setZoom(zoomValue);
+                        // undefined signals we've zoomed in/out as far as we can
+                        if (typeof zoomPromise !== 'undefined') {
+                            settings.zoomPromise = zoomPromise;
+                        }
                     }
                 });
             }
