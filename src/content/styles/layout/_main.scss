@@ -24,13 +24,18 @@ md-toast {
     }
 }
 
-rv-panel md-toast.md-rv-flex {
-    width: 100%;
-    padding: {
-        left: 0;
-        right: 0;
-        bottom: 0;
-    };
+rv-panel {
+    opacity: 1;
+    transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+    md-toast.md-rv-flex {
+        width: 100%;
+        padding: {
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+    }
 }
 
 div.md-button {
