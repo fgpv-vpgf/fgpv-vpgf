@@ -32,7 +32,7 @@
 <!-- rv-morph animates transitions between values stored in state -->
 <rv-panel type="filters" rv-state="filters" rv-morph="filters" class="rv-plug-slide-down-grand"></rv-panel>
 
-<rv-panel type="other" rv-state="other" class="rv-plug-slide-left"></rv-panel>
+<ng-include src="'app/ui/basemap/basemap.html'" class="rv-basemap"></ng-include>
 
 <!--div ng-class="{ active: self.active }" ui-view="detailsPlug"></div-->
 
@@ -42,3 +42,7 @@
     class="rv-shell-progress-indicator"
     md-mode="indeterminate"
     ng-show="self.geoService.mapObject.isMapLoading"></md-progress-linear>
+
+<!-- TODO: remove with focus manager refactor, here since last focusable element is basemap panel toggle, which needs to
+tab to the basemap panel, but currently focus is moved to start of view -->
+<div tabindex="0"></div>

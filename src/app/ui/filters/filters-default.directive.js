@@ -352,9 +352,9 @@
             $scope.$on('stateChangeComplete', (event, name, property, value) => { // , skip) => {
                 if (name === 'filters') {
                     console.log('Filters: ', event, name, property, value); // , skip);
-                    self.draw(value);
 
                     if (property === 'active') {
+                        self.draw(value);
                         isFullyOpen = value;
 
                         if (value && deferredAction) { // if fully opened and table creation was deferred, call it
