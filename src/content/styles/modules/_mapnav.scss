@@ -10,7 +10,8 @@
         right: $viewport-gutter;
 
         &.basemap {
-            right: 300px + $viewport-gutter;
+            right: 255px + $viewport-gutter;
+            z-index: 60;
         }
 
         .rv-button-group {

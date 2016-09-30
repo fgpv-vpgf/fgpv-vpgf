@@ -1,25 +1,27 @@
-<rv-content-pane>
+<md-sidenav rv-basemap class="site-sidenav md-sidenav-right md-whiteframe-z2" md-component-id="right">
+    <rv-content-pane>
 
-    <div class="rv-subsection" ng-repeat="projection in self.projections">
+        <div class="rv-subsection" ng-repeat="projection in self.projections">
 
-        <div class="rv-subheader">
-            <h3 class="md-title" >{{ 'basemap.projection.title' | translate:projection }}</h3>
-            <div class="rv-icon-16" ng-show="self.selectedWkid != projection.wkid">
-                <md-icon md-svg-src="action:info" class="rv-basemap-warning"></md-icon>
-                <span class="md-catpion" >{{ 'basemap.refresh.req' | translate }}</span>
+            <div class="rv-subheader">
+                <h3 class="md-title" >{{ 'basemap.projection.title' | translate:projection }}</h3>
+                <div class="rv-icon-16" ng-show="self.selectedWkid != projection.wkid">
+                    <md-icon md-svg-src="action:info" class="rv-basemap-warning"></md-icon>
+                    <span class="md-catpion" >{{ 'basemap.refresh.req' | translate }}</span>
+                </div>
             </div>
+
+            <div class="rv-subcontent">
+
+                <ul class="rv-list rv-basemap-list">
+                    <li class="rv-basemap-list-item" ng-repeat="basemap in projection.basemaps">
+                        <rv-basemap-item basemap="basemap" select="self.select(basemap)"></rv-basemap-item>
+                    </li>
+                </ul>
+
+            </div>
+
         </div>
 
-        <div class="rv-subcontent">
-
-            <ul class="rv-list rv-basemap-list">
-                <li class="rv-basemap-list-item" ng-repeat="basemap in projection.basemaps">
-                    <rv-basemap-item basemap="basemap" select="self.select(basemap)"></rv-basemap-item>
-                </li>
-            </ul>
-
-        </div>
-
-    </div>
-
-</rv-content-pane>
+    </rv-content-pane>
+</md-sidenav>

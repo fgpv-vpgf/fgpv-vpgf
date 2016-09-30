@@ -14,11 +14,10 @@
         .module('app.ui.basemap')
         .directive('rvBasemap', rvBasemap);
 
-    function rvBasemap() {
+    function rvBasemap(basemapService) {
         const directive = {
-            restrict: 'E',
-            templateUrl: 'app/ui/basemap/basemap.html',
-            scope: {},
+            restrict: 'A',
+            link: basemapService.init, // init the basemapService
             controller: Controller,
             controllerAs: 'self',
             bindToController: true

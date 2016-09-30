@@ -60,10 +60,14 @@ describe('geo', () => {
         });
     }
 
+    function mockMdSidenav($provide) {
+        $provide.constant('$mdSidenav', $q => () => $q.resolve());
+    }
+
     beforeEach(() => {
 
         bard.appModule('app.geo', 'app.common.router', mockStorageService, mockGapiService,
-            mockConfigService, mockTranslateService, mockEvents, mockFocusService);
+            mockConfigService, mockTranslateService, mockEvents, mockFocusService, mockMdSidenav);
 
         // inject services
         bard.inject('geoService', 'gapiService', '$rootScope', 'configService',
