@@ -1,28 +1,4 @@
 (() => {
-    // TODO: Move this into config along with the other geosearch config options - see issue #1164
-    const URLS = {
-        GEONAMES: {
-            'en-CA': 'http://geogratis.gc.ca/services/geoname/en/geonames.json',
-            'fr-CA': 'http://geogratis.gc.ca/services/geoname/fr/geonames.json'
-        },
-        GEOLOCATION: {
-            'en-CA': 'http://geogratis.gc.ca/services/geolocation/en/locate?q=',
-            'fr-CA': 'http://geogratis.gc.ca/services/geolocation/fr/locate?q='
-        },
-        GEOSUGGEST: {
-            'en-CA': 'http://geogratis.gc.ca/services/geolocation/en/suggest?q=',
-            'fr-CA': 'http://geogratis.gc.ca/services/geolocation/fr/suggest?q='
-        },
-        PROVINCES: {
-            'en-CA': 'http://geogratis.gc.ca/services/geoname/en/codes/province.json',
-            'fr-CA': 'http://geogratis.gc.ca/services/geoname/fr/codes/province.json'
-        },
-        TYPES: {
-            'en-CA': 'http://geogratis.gc.ca/services/geoname/en/codes/concise.json',
-            'fr-CA': 'http://geogratis.gc.ca/services/geoname/fr/codes/concise.json'
-        }
-    };
-
     /**
      * @module geoSearch
      * @memberof app.geo
@@ -39,6 +15,10 @@
         let typeList; // list of types fulfilled by getTypes
         let manualExtent; // extent object if manual extent filtering is required
         let bbox; // string ('visible' or 'canada') or extent object which will be converted into a proper extent lat/lng string
+        let enabled; // boolean indicating search is not disabled by config
+        let serviceUrls;
+        let disableSearchByType;
+
         const queryParams = {}; // geoName $http get parameters
 
         const service = {
@@ -48,10 +28,38 @@
             setProvince,
             setExtent,
             getProvinces,
-            getTypes
+            getTypes,
+            isEnabled
         };
 
+        configService.getCurrent().then(config => {
+            if (typeof config.search === 'undefined') {
+                enabled = false;
+            } else {
+                enabled = true;
+                serviceUrls = config.search.serviceUrls;
+                disableSearchByType = config.search.disableByType;
+            }
+        });
+
         return service;
+
+        /**
+         * Determines if search functionality is enabled/disabled by the config. If no type parameter is passed,
+         * the status of the entire search feature is return, otherwise the status of query type is returned (i.e
+         * if NTS or FSA searches are enabled in the config)
+         *
+         * @function isEnabled
+         * @param   {String}    type   optional query type flag (NTS, FSA, LAT/LNG)
+         */
+        function isEnabled(type) {
+            if (typeof type === 'undefined') {
+                return enabled;
+
+            } else {
+                return !disableSearchByType || disableSearchByType[type] === true;
+            }
+        }
 
         /**
          * Include results within a set kilometer radius. Passing a value of undefined clears the radius.
@@ -111,7 +119,7 @@
                 if (typeof provinceList !== 'undefined') {
                     resolve(provinceList);
                 } else {
-                    $http.get(URLS.PROVINCES[configService.currentLang()]).then(result => {
+                    $http.get(serviceUrls.provinces).then(result => {
                         provinceList = result.data.definitions.map(def => ({
                             code: def.code,
                             abbr: def.term,
@@ -139,7 +147,7 @@
                 if (typeof typeList !== 'undefined') {
                     resolve(typeList);
                 } else {
-                    $http.get(URLS.TYPES[configService.currentLang()]).then(result => {
+                    $http.get(serviceUrls.types).then(result => {
                         typeList = result.data.definitions.map(def => ({
                             code: def.code,
                             name: def.term
@@ -185,11 +193,11 @@
             delete queryParams.q;
 
             // Send this off immediately to save time if we need it later (no geoName result)
-            const geoSuggestion = $http.get(URLS.GEOSUGGEST[configService.currentLang()] + q);
+            const geoSuggestion = $http.get(serviceUrls.geoSuggest + q);
 
             // wait for pre-query to finish before making geoNames request
             const results = preQuery(q).then(() => {
-                return $http.get(URLS.GEONAMES[configService.currentLang()], { params: queryParams }).then(result => {
+                return $http.get(serviceUrls.geoNames, { params: queryParams }).then(result => {
                     // these should have been called already, just in case they haven't
                     return $q.all([getProvinces(), getTypes()]).then(() => {
                         return postQuery(result.data.items.map(item => ({
@@ -256,14 +264,14 @@
                 const latlngReg = /^-?\d{1,3}\.\d+,-?\d{1,3}\.\d+$/;
 
                 // FSA or NTS - use geoService to find point information (in lat/lng)
-                if (fsaReg.test(q) || ntsReg.test(q)) {
-                    $http.get(URLS.GEOLOCATION[configService.currentLang()] + q).then(results => {
+                if ((fsaReg.test(q) && isEnabled('FSA')) || (ntsReg.test(q) && isEnabled('NTS'))) {
+                    $http.get(serviceUrls.geoLocation + q).then(results => {
                         setLatLng(...results.data[0].geometry.coordinates.reverse());
                         resolve();
                     }, reject);
 
                 // LAT/LNG inputted as query, split lat/lng string into individual components
-                } else if (latlngReg.test(q)) {
+                } else if (latlngReg.test(q) && isEnabled('LAT/LNG')) {
                     setLatLng(...q.split(','));
                     resolve();
 
