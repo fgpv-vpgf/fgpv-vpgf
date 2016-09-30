@@ -23,7 +23,7 @@
         @if $from != null {
             @include active-panel-plug-transition($left: $left, $right: $right, $bottom: $bottom, $top: $top, $width: $width, $height: $height, $from: $from);
         }
-    
+
 }
 
 // during transtion, container plug expands to accomodate panel's shadow; otherwise, it will be cropped

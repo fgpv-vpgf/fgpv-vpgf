@@ -2,8 +2,8 @@
 @mixin sidenav {
     md-sidenav {
         &.site-sidenav {
-            max-width: 256px;
-            min-width: 256px;
+            max-width: 300px;
+            min-width: 300px;
             flex-direction: column;
 
             > md-content {

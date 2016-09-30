@@ -1,6 +1,13 @@
 @mixin basemap {
     $list-item-gap: rem(1.6);
 
+    .rv-basemap {
+        md-backdrop.md-sidenav-backdrop {
+            opacity: 0;
+            transition: inherit;
+        }
+    }
+
     ul.rv-basemap-list {
         > li {
             margin-bottom: rem(2.2);
