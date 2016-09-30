@@ -19,20 +19,64 @@
         .module('app.geo')
         .factory('basemapService', basemapService);
 
-    function basemapService($rootScope, events, configService, $translate, $injector) {
+    function basemapService($rootScope, events, configService, $translate, $injector, $mdSidenav, $q) {
 
         let bmSelected; // the current selected basemap
         let initialBasemapId;
+        let closePromise = $q.defer();
+
         const onChangeCallback = [];
         const projections = [];
         const service = {
             select,
             getSelected,
             reload,
-            setOnChangeCallback
+            setOnChangeCallback,
+            open,
+            close,
+            toggle,
+            isOpen,
+            onClose: () => closePromise // returns promise that resolves when panel has closed (by any means)
         };
 
         return service;
+
+        /**
+         * Opens basemap panel.
+         * @function open
+         * @return  {Promise}   resolves to undefined when panel animation is complete
+         */
+        function open() {
+            closePromise = $q($mdSidenav('right').onClose);
+            return $mdSidenav('right').open();
+        }
+
+        /**
+         * Closes basemap panel.
+         * @function close
+         * @return  {Promise}   resolves to undefined when panel animation is complete
+         */
+        function close() {
+            return $mdSidenav('right').close();
+        }
+
+        /**
+         * Toggles basemap panel open/close.
+         * @function toggle
+         * @return  {Promise}   resolves to undefined when panel animation is complete
+         */
+        function toggle() {
+            return isOpen() ? close() : open();
+        }
+
+        /**
+         * Determines if the basemap panel is currently open/opening or closed/closing
+         * @function toggle
+         * @return  {Boolean}   true iff open/opening, false otherwise
+         */
+        function isOpen() {
+            return $mdSidenav('right').isOpen();
+        }
 
         /**
          * Sets a callback function that is called whenever basemaps changes.
@@ -67,6 +111,7 @@
             bmSelected.selected = false; // set current basemap to unselected
             bmSelected = basemap;
             bmSelected.selected = true;
+            close();
 
             if ($injector.get('geoService').baseMapHasSameSP(basemap.id)) { // avoid circular dependency
                 $injector.get('geoService').selectBasemap(basemap.id); // avoid circular dependency

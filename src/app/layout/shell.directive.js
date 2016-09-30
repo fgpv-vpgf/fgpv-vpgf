@@ -38,7 +38,9 @@
 
             // close all panels when escape key is pressed
             $rootElement.on('keydown', event => {
-                if (event.which === 27) {
+                // detect if any side panels are open, if so ignore escape key (side panel has own listener and will continue to close)
+                const mdSidePanelOpen = $('md-sidenav').toArray().find(el => !$(el).hasClass('md-closed'));
+                if (event.which === 27 && !mdSidePanelOpen) {
                     scope.$apply(() => {
                         stateManager.closePanelFromHistory();
                     });

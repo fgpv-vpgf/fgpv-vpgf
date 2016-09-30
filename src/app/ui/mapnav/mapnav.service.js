@@ -20,15 +20,7 @@
      * @private
      * @return {object} service object
      */
-    function mapNavigationService(stateManager, geoService, $rootScope, locateService) {
-
-        // open or close basemap selector when panel activity detected
-        $rootScope.$on('stateChangeStart', (evt, name, prop, value) => {
-            if (name === 'other' && prop === 'active') {
-                stateManager.setMorph('mapnav', value ? 'basemap' : 'default');
-            }
-        });
-
+    function mapNavigationService(stateManager, geoService, $rootScope, locateService, basemapService) {
         const service = {
             // FIXME: this config snippet should obvisouly come from config service
             config: {
@@ -93,7 +85,17 @@
 
                 selected: () => stateManager.state.mapnav.morph !== 'default',
                 action: () => {
-                    stateManager.setActive({ filters: false }, 'other');
+
+                    basemapService.toggle();
+
+                    const morph = (type = 'default') => ['main', 'side', 'filters']
+                        .forEach(name => stateManager.setMorph(name, type));
+
+                    if (basemapService.isOpen()) {
+                        morph('basemap');
+
+                        basemapService.onClose().then(morph);
+                    }
                 }
             }
         };
