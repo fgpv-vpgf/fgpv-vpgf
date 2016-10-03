@@ -2,8 +2,13 @@
 Things like mixin declarations, functions, and variables. */
 
 // import all common files
-
+@import "_include-media.scss";
 @import "_palette.scss";
+
+$breakpoints: (small: 480px, medium: 840px);
+$sm-only: "<=small";
+$md-only: ">small", "<=medium";
+$lg-only: ">medium";
 
 $font-family: Roboto, 'Helvetica Neue', sans-serif !default;
 $font-size:   rem(1.0);
