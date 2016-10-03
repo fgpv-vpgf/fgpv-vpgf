@@ -45,6 +45,18 @@ md-menu-content {
 
     md-menu-item {
 
+        &[rv-right-icon] .md-button {
+            padding-right: rem(1.6) !important;
+
+            md-icon:last-of-type {
+                margin-right: 0;
+            }
+        }
+
+        &[rv-right-icon="true"] .md-button {
+            padding-left: rem(1.6) + rem(4);
+        }
+
         &[type='radio'],
         &[type='checkbox'] {
             &.md-indent {

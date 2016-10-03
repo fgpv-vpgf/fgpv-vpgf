@@ -19,7 +19,7 @@
         .module('material.components.menuBar')
         .decorator('mdMenuItemDirective', mdMenuItemDirectiveDecorator);
 
-    function mdMenuItemDirectiveDecorator($delegate) {
+    function mdMenuItemDirectiveDecorator($delegate, $compile) {
         'ngInject';
 
         const mdMenuItemDirective = $delegate[0]; // get the vanilla directive
@@ -46,11 +46,23 @@
                     // move the icon inside the button node
                     const icon = el.find('md-icon');
                     const button = el.find('.md-button');
+
+                    // specify icon for checkbox and radio in rv-right-icon - done here since angular material actively removes icons to place its own checkmark icon
+                    if ((attrs.type === 'checkbox' || attrs.type === 'radio') && attrs.rvRightIcon) {
+                        button.append($compile(
+                            `<md-icon md-svg-icon="${attrs.rvRightIcon}"></md-icon>`
+                        )(scope));
+                    }
+
                     if (icon.length > 0 && button.length > 0) {
+                        // append empty icon to non checkbox/radio items so that they have a common alignment
+                        if (attrs.rvRightIcon && attrs.type !== 'checkbox' && attrs.type !== 'radio') {
+                            button.append(icon);
+                        } else {
+                            button.prepend(icon);
+                        }
                         // wrap the button content in div, so we can set flex on that div as Firefox doesn't support display: flex on button nodes yet: https://bugzilla.mozilla.org/show_bug.cgi?id=984869#c24
-                        button
-                            .prepend(icon)
-                            .wrapInner(`<div class='rv-button-flex'></div>`);
+                        button.wrapInner(`<div class='rv-button-flex'></div>`);
                     }
                 };
             };
