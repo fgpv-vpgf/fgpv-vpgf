@@ -153,6 +153,10 @@
         position: absolute;
         z-index: 99;
 
+        @include media($rv-sm) {
+            display: none;
+        }
+
         &.rv-minimized .ovwHighlight {
             display: none !important;
         }
