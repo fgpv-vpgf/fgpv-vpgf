@@ -159,7 +159,7 @@ describe('rvContentPane2', () => {
             expect(fakeController.closePanel)
                 .toHaveBeenCalled();
 
-            // there should be four children in the header: title, close button, spacer and extra header md-button
+            // there should be four children in the header: title, spacer, close button, and extra header md-button
             expect(directiveElement.find('.rv-header')
                     .children()
                     .length)

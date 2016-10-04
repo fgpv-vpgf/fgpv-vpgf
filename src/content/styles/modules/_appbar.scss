@@ -6,10 +6,13 @@
         height: $toolbar-height;
         z-index: auto;
         background: white;
-        width: $toolbar-width;
         align-items: center;
         padding: rem(0.4);
         display: flex;
+
+        @include media($rv-gt-sm) {
+            width: $toolbar-width;
+        }
 
         .rv-appbar-title {
             flex: 1;
