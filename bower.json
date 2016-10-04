@@ -33,13 +33,17 @@
     "jquery-hoverintent": "~1.8.1",
     "RandomColor": "https://github.com/sterlingwes/RandomColor.git",
     "angular-minicolors": "^0.0.9",
-    "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git"
+    "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git",
+    "include-media": "^1.4.8"
   },
   "overrides": {
     "svg.textflow.js": {
        "main": "svg.textflow.js"
     },
     "jquery": {
+      "ignore": true
+    },
+    "include-media": {
       "ignore": true
     },
     "jquery-minicolors": {

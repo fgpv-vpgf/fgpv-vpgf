@@ -173,7 +173,7 @@ module.exports = function () {
         { file: 'content/images/iconsets/hardware-icons.svg', prefix: 'hardware', icons: 'keyboard_arrow_right keyboard_arrow_down'.split(' ') },
         { file: 'content/images/iconsets/image-icons.svg', prefix: 'image', icons: 'tune photo'.split(' ') },
         { file: 'content/images/iconsets/maps-icons.svg', prefix: 'maps', icons: 'place layers my_location map layers_clear'.split(' ') },
-        { file: 'content/images/iconsets/navigation-icons.svg', prefix: 'navigation', icons: 'menu check more_vert close more_horiz refresh'.split(' ') },
+        { file: 'content/images/iconsets/navigation-icons.svg', prefix: 'navigation', icons: 'menu check more_vert close more_horiz refresh arrow_back'.split(' ') },
         { file: 'content/images/iconsets/social-icons.svg', prefix: 'social', icons: 'person'.split(' ') }
     ];
     // jscs:enable maximumLineLength

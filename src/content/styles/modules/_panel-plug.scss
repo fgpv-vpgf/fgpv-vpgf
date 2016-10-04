@@ -21,9 +21,16 @@
         }
 
         @if $from != null {
-            @include active-panel-plug-transition($left: $left, $right: $right, $bottom: $bottom, $top: $top, $width: $width, $height: $height, $from: $from);
-        }
+            @include media($rv-sm...) {
+                &.ng-animate {
+                    overflow: hidden; // crops the panel only during animation
+                }
+            }
 
+            @include media($rv-gt-sm) {
+                @include active-panel-plug-transition($left: $left, $right: $right, $bottom: $bottom, $top: $top, $width: $width, $height: $height, $from: $from);
+            }
+        }
 }
 
 // during transtion, container plug expands to accomodate panel's shadow; otherwise, it will be cropped
@@ -58,7 +65,7 @@
         $top: if($top != auto, $top - $topBuffer, $top);
         $bottom: if($bottom != auto, $bottom - $bottomBuffer, $bottom);
 
-        @if $width != auto {
+        @if $width != auto and $width != 100% {
             $width: $width + $leftBuffer + $rightBuffer;
         }
 
