@@ -6,6 +6,11 @@
             min-width: 256px;
             flex-direction: column;
 
+            @include media($sm-only) {
+                max-width: 100%;
+                min-width: 100%;
+            }
+
             > md-content {
                 flex-direction: column;
                 display: flex;

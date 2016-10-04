@@ -159,11 +159,11 @@ describe('rvContentPane2', () => {
             expect(fakeController.closePanel)
                 .toHaveBeenCalled();
 
-            // there should be four children in the header: title, close button, spacer and extra header md-button
+            // there should be five children in the header: back button, title, spacer, close button, and extra header md-button
             expect(directiveElement.find('.rv-header')
                     .children()
                     .length)
-                .toBe(4);
+                .toBe(5);
         });
     });
 });

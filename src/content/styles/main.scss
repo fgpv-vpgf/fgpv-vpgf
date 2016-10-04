@@ -16,4 +16,18 @@
     @import "_shame.scss";
 }
 
+@include media($sm-only) {
+    .sm-hide {
+        display: none !important;
+    }
+}
+
+.sm-show {
+    display: none !important;
+
+    @include media($sm-only) {
+        display: block !important;
+    }
+}
+
 @import "vendor/_special.scss";
