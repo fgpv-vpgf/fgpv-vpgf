@@ -57,8 +57,8 @@
             const hiddenNode = angular.element('<div>').css('visibility', 'hidden');
             $rootElement.append(hiddenNode);
 
-            var legend = SVG(hiddenNode[0]).size(availableWidth, 100);
-            var legendSection = legend.group();
+            const legend = SVG(hiddenNode[0]).size(availableWidth, 100);
+            const legendSection = legend.group();
 
             let sectionCount = Math.floor((availableWidth) / prefferedSectionWidth);
             const sectionWidth =
@@ -67,9 +67,8 @@
                 sectionCount;
 
             legendSection.clear();
-            let legi = makeLegend(legendSection, legendData, sectionWidth);
-
-            let sectionHeight = findOptimumSectionHeight(legi, sectionCount);
+            const legi = makeLegend(legendSection, legendData, sectionWidth);
+            const sectionHeight = findOptimumSectionHeight(legi, sectionCount);
 
             wraplegend(legi, sectionHeight, sectionWidth, sectionCount);
 
@@ -103,8 +102,8 @@
             while (repeat) {
                 // console.log('@@', iteration);
 
-                let counter = 1;
-                let deltaHeight = 0;
+                let counter = 1; // section count
+                let deltaHeight = 0; // height adjustment when wrapping an item at the lower section boundary
                 const tempWrapItems = [];
 
                 if (sectionCount === 1) {

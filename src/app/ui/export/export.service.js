@@ -25,6 +25,11 @@
 
         /***/
 
+        /**
+         * Opens the export dialog.
+         * @function open
+         * @param {Object} event original click event
+         */
         function open(event) {
             $mdDialog.show({
                 controller: ExportController,
@@ -44,6 +49,10 @@
             });
         }
 
+        /**
+         * Closes the export dialog.
+         * @function close
+         */
         function close() {
             $mdDialog.hide();
         }
@@ -60,6 +69,10 @@
 
             /***/
 
+            /**
+             * Generates a legend graphic if it's absent and toggle its visibility in the dialog.
+             * @function inlcudeLegend
+             */
             function includeLegend() {
                 if (!self.legendGraphic && self.isLegendIncluded) {
                     self.legendGraphic = exportLegendService.generate(storageService.panels.shell.width(), 350).node;
