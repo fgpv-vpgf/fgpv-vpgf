@@ -1,9 +1,15 @@
 rv-appbar {
-    left: $viewport-gutter;
-    top: $viewport-gutter;
     position: absolute;
-
     transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+    @include media($rv-gt-sm) {
+        left: $viewport-gutter;
+        top: $viewport-gutter;
+    }
+
+    @include media($rv-sm) {
+        width: 100%;
+    }
 }
 
 md-toast.md-rv-flex-global {
@@ -45,31 +51,41 @@ div.md-button {
 }
 
 rv-panel[type='filters'] {
-    &.default {
-        @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: 50%);
-    }
 
-    &.full {
-        @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: $viewport-gutter);
-    }
-
-    &.attached {
-        @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $width: 300px, $bottom: $viewport-gutter);
-
-        &:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 1px;
-            border-left: 1px solid $divider-color;
+    @include media($rv-sm) {
+        &.default, &.full, &.attached {
+            @include active-panel-plug($left: 0, $top: 0, $right: 0, $bottom: 0, $width: 100%, $from: right);
             z-index: 1;
         }
+    }
 
-        &.ng-animate {
+    @include media($rv-gt-sm) {
+        &.default {
+            @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: 50%);
+        }
+
+        &.full {
+            @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: $viewport-gutter);
+        }
+
+        &.attached {
+            @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $width: 300px, $bottom: $viewport-gutter);
+
             &:before {
-                bottom: 10px;
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 1px;
+                border-left: 1px solid $divider-color;
+                z-index: 1;
+            }
+
+            &.ng-animate {
+                &:before {
+                    bottom: 10px;
+                }
             }
         }
     }
@@ -84,7 +100,15 @@ rv-panel[type='filters'] {
 }
 
 rv-panel[type='main'] {
-    @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $toolbar-width, $from: top);
+
+    @include media($rv-gt-sm) {
+        @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $toolbar-width, $from: top);
+    }
+
+    @include media($rv-sm) {
+        @include active-panel-plug($left: 0, $top: $toolbar-height, $bottom: 0, $width: 100%, $from: top);
+        z-index: 1;
+    }
 
     &:before {
         content: "";
@@ -93,8 +117,11 @@ rv-panel[type='main'] {
         left: 0;
         right: 0;
         height: 1px;
-        border-top: 1px solid $divider-color;
         z-index: 1;
+
+        @include media($rv-gt-sm...) {
+            border-top: 1px solid $divider-color;
+        }
     }
 
     &.ng-animate {
@@ -112,8 +139,14 @@ rv-panel[type='main'] {
 
 rv-panel[type='side'] {
 
-    //@include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
-    @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
+    @include media($rv-gt-sm) {
+        @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
+    }
+
+    @include media($rv-sm) {
+        @include active-panel-plug($left: 0, $top: 0, $bottom: 0, $width: 100%, $from: right);
+        z-index: 1;
+    }
 
     &:before {
         content: "";
@@ -122,8 +155,11 @@ rv-panel[type='side'] {
         left: 0;
         bottom: 0;
         width: 1px;
-        border-left: 1px solid $divider-color;
         z-index: 1;
+
+        @include media($rv-gt-sm) {
+            border-left: 1px solid $divider-color;
+        }
     }
 
     &.ng-animate {

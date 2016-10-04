@@ -291,6 +291,12 @@
         function openPanel(panelToOpen, propagate = true) {
             let animationPromise;
 
+            // TODO: mobile layout hack to be removed when details panel is
+            // moved into its own parent panel
+            if (panelToOpen.name === 'mainDetails') {
+                $('rv-panel[type="main"]').css('z-index', 2);
+            }
+
             // opening parent panel
             if (typeof panelToOpen.item.parent === 'undefined') {
                 if (propagate) {
@@ -342,6 +348,12 @@
          */
         function closePanel(panelToClose, propagate = true) {
             let animationPromise;
+
+            // TODO: mobile layout hack to be removed when details panel is
+            // moved into its own parent panel
+            if (panelToClose.name === 'mainDetails') {
+                $('rv-panel[type="main"]').css('z-index', 1);
+            }
 
             if (runCloseCallback(panelToClose.name)) {
                 return $q.resolve();
