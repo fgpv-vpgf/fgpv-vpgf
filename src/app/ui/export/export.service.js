@@ -4,7 +4,7 @@
     /**
      * @ngdoc service
      * @name exportService
-     * @module app.ui.export
+     * @module app.ui
      * @requires dependencies
      * @description
      *
@@ -12,7 +12,7 @@
      *
      */
     angular
-        .module('app.ui.export')
+        .module('app.ui')
         .service('exportService', exportService);
 
     function exportService($mdDialog, $rootElement, storageService) {

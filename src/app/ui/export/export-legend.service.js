@@ -20,7 +20,7 @@
     /**
      * @ngdoc service
      * @name exportLegendService
-     * @module app.ui.export
+     * @module app.ui
      * @requires dependencies
      * @description
      *
@@ -28,7 +28,7 @@
      *
      */
     angular
-        .module('app.ui.export')
+        .module('app.ui')
         .service('exportLegendService', exportLegendService);
 
     function exportLegendService($rootElement, geoService) {
