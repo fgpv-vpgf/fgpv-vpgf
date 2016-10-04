@@ -71,6 +71,7 @@
 
             /**
              * Generates a legend graphic if it's absent and toggle its visibility in the dialog.
+             * @private
              * @function inlcudeLegend
              */
             function includeLegend() {
