@@ -1,19 +1,29 @@
 <div class="rv-content-pane layout-padding">
 
     <div class="rv-header" ng-show="self.titleValue && !self.floatingHeader" ng-switch on="self.titleStyle">
+        <md-button
+            translate
+            translate-attr-aria-label="contentPane.aria.close"
+            class="md-icon-button black rv-button-24 sm-show"
+            ng-click="self.closePanel()"
+            ng-if="self.closePanel">
+            <md-tooltip>{{'contentPane.tooltip.close' | translate}}</md-tooltip>
+            <md-icon md-svg-src="navigation:arrow_back"></md-icon>
+        </md-button>
+
         <!-- display an appropriate header based on `headline` value -->
         <!-- hide header if no title text provided -->
         <h2 class="md-headline" ng-switch-when="headline">{{ self.titleValue }}</h2>
         <h3 class="md-title" ng-switch-when="title">{{ self.titleValue }}</h3>
         <h4 class="md-subhead" ng-switch-when="subhead">{{ self.titleValue }}</h4>
 
-        <span flex class="rv-spacer"></span>
+        <span flex class="rv-spacer sm-hide"></span>
 
         <!-- show close button if there is a closePanel function -->
         <md-button
             translate
             translate-attr-aria-label="contentPane.aria.close"
-            class="md-icon-button black rv-button-24"
+            class="md-icon-button black rv-button-24 sm-hide"
             ng-click="self.closePanel()"
             ng-if="self.closePanel">
             <md-tooltip>{{'contentPane.tooltip.close' | translate}}</md-tooltip>

@@ -21,6 +21,11 @@
                 right: rem(0.6);
                 left: rem(1.6);
             }
+
+            @include media($rv-sm) {
+                padding-left: rem(0.6);
+            }
+
             @include pane-title;
 
             &-float {
