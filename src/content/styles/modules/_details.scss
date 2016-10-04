@@ -1,6 +1,21 @@
 @mixin details {
     $slide-out-width: rem(28);
 
+    rv-details {
+        @include media($rv-sm...) {
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3;
+
+            .rv-header-float {
+                margin-left: 47px;
+            }
+        }
+    }
+
     .rv-details-summary {
         height: 80%;
         width: 70%;
@@ -82,7 +97,10 @@
             bottom: - rem(0.8);
             border-right: solid 1px $divider-color-light;
             overflow: hidden;
-            padding: rem(0.8) 0;
+
+            @include media($rv-gt-sm...) {
+                padding: rem(0.8) 0;
+            }
 
             &-item {
                 width: 100%;
@@ -183,6 +201,11 @@ $details-record-height: rem(6.0);
 
         .rv-subheader {
             padding: rem(0.8) rem(1.6);
+
+            @include media($rv-sm) {
+                padding-left: 50px;
+                padding-top: 0;
+            }
         }
     }
 

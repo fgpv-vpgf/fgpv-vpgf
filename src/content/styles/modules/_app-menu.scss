@@ -6,6 +6,10 @@
             min-width: 300px;
             flex-direction: column;
 
+            @include media($rv-sm...) {
+                width: 80%;
+            }
+
             > md-content {
                 flex-direction: column;
                 display: flex;
