@@ -53,8 +53,8 @@
         }
     }
 
-    function Controller($rootElement, $mdDialog, $translate, version, sideNavigationService, geoService,
-        fullScreenService, helpService, configService, storageService) {
+    function Controller($mdDialog, $translate, version, sideNavigationService, geoService,
+        fullScreenService, helpService, configService, storageService, exportService) {
         'ngInject';
         const self = this;
 
@@ -75,6 +75,14 @@
                         action: () => {
                             sideNavigationService.close();
                             fullScreenService.toggle();
+                        }
+                    },
+                    {
+                        name: $translate.instant('sidenav.label.export'),
+                        type: 'link',
+                        action: () => {
+                            sideNavigationService.close();
+                            exportService.open();
                         }
                     }/*, {
                         name: $translate.instant('sidenav.label.share'),

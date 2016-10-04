@@ -1,0 +1,42 @@
+<md-dialog class="rv-export">
+    <form ng-cloak>
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <md-progress-linear
+                    class="rv-export-progress-indicator"
+                    md-mode="indeterminate"></md-progress-linear>
+
+                <!--rv-export-map></rv-export-map-->
+                <img
+                    class="rv-export-map"
+                    alt="Lush mango tree"
+                    src="http://placehold.it/1920x974">
+
+                <rv-svg ng-if="self.isLegendIncluded"
+                        class="rv-export-legend"
+                        src="self.legendGraphic"></rv-svg>
+
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+             <md-switch translate-attr-aria-label="export.includelegend" class="md-primary rv-switch"
+                        ng-model="self.isLegendIncluded"
+                        ng-change="self.includeLegend()">
+                {{ 'export.includelegend' | translate }}
+            </md-switch>
+            <span flex></span>
+
+            <md-button
+                class="rv-button-square"
+                ng-click="self.close()">
+                {{ 'export.cancel' | translate }}
+            </md-button>
+
+            <md-button
+                class="rv-button-square md-raised md-primary">
+                {{ 'export.continue' | translate }}
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

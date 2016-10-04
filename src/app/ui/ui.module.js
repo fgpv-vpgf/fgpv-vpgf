@@ -23,6 +23,7 @@
             'app.ui.settings',
             'app.ui.help',
             'app.ui.language',
-            'app.ui.loader'
+            'app.ui.loader',
+            'app.ui.export'
         ]);
 })();
