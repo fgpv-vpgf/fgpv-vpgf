@@ -32,9 +32,13 @@
     "datatables-buttons": "~1.1.2",
     "jquery-hoverintent": "~1.8.1",
     "RandomColor": "https://github.com/sterlingwes/RandomColor.git",
-    "angular-minicolors": "^0.0.9"
+    "angular-minicolors": "^0.0.9",
+    "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git"
   },
   "overrides": {
+    "svg.textflow.js": {
+       "main": "svg.textflow.js"
+    },
     "jquery": {
       "ignore": true
     },
