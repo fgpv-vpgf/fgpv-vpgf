@@ -1,0 +1,22 @@
+@import "../../../../lib/include-media/dist/_include-media.scss";
+
+$breakpoints: (small: 480px, medium: 840px);
+
+$rv-sm: "<=small";
+$rv-md: ">small", "<=medium";
+$rv-lg: ">medium";
+$rv-gt-sm: ">small";
+
+@include media($rv-sm) {
+    .sm-hide {
+        display: none !important;
+    }
+}
+
+.sm-show {
+    display: none !important;
+
+    @include media($rv-sm) {
+        display: block !important;
+    }
+}

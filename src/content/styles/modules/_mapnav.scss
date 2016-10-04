@@ -9,6 +9,15 @@
         bottom: 100px;
         right: $viewport-gutter;
 
+        @include media($rv-sm) {
+            bottom: 5px;
+            right: 5px;
+        }
+
+        &.basemap {
+            right: 300px + $viewport-gutter;
+        }
+
         .rv-button-group {
             background-color: rgba(255, 255, 255, $opacity-from);
             transition: background-color $fade-in-out-duration ease-in;
