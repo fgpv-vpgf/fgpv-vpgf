@@ -17,6 +17,10 @@
             margin-left: 0;
             flex: 1;
         }
+
+        > .md-container {
+            margin-left: rem(1.6);
+        }
     }
 }
 

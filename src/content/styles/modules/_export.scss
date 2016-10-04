@@ -1,0 +1,40 @@
+@mixin export {
+    .rv-export {
+
+        align-self: flex-start; // stick the dialog to the top edge of the viewer container
+        margin-top: $viewport-gutter;
+        border-radius: 0;
+        max-height: calc(100% - #{$viewport-gutter});
+
+        md-dialog-actions {
+            order: 1;
+            padding: 0 rem(1.6);
+            flex: 1 0 0%;
+            border-bottom: 1px solid $divider-color-light;
+        }
+
+        md-dialog-content {
+            order: 2;
+        }
+
+        .rv-export-map {
+            display: block;
+            width: 100%;
+        }
+
+        .rv-export-legend {
+            display: block;
+
+            svg {
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        .rv-export-progress-indicator {
+            bottom: 0;
+            height: 2px;
+            overflow: hidden;
+        }
+    }
+}
