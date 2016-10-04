@@ -12,5 +12,12 @@
         height: 80%;
         width: 70%;
         border-radius: 0;
+
+        @include media($rv-sm) {
+            height: 100%;
+            width: 100%;
+            max-width: 100%;
+            max-height: 100%;
+        }
     }
 }

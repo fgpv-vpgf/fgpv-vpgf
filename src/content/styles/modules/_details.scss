@@ -1,6 +1,21 @@
 @mixin details {
     $slide-out-width: rem(28);
 
+    rv-details {
+        @include media($rv-sm...) {
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3;
+
+            .rv-header-float {
+                margin-left: 47px;
+            }
+        }
+    }
+
     .rv-details-summary {
         height: 80%;
         width: 70%;
