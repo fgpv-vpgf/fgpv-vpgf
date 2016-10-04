@@ -87,6 +87,7 @@ Settings query mode aria,settings.aria.query,Allow query,Permettre les requêtes
 Side Navigation main title,sidenav.title,FGP R2 Viewer,Visualiseur PGF R2
 Side Navigation full screen,sidenav.label.fullscreen,FULL SCREEN,PLEIN ÉCRAN
 Side Navigation share,sidenav.label.share,SHARE,PARTAGER
+Side Navigation export,sidenav.label.export,export,export
 Side Navigation help,sidenav.label.help,HELP,AIDE
 Side Navigation language,sidenav.label.language,Language,Langage
 Table of Content Unnamed service,toc.layer.unnamed,Unnamed Service #{{count}},Service sans nom #{{count}}
@@ -156,6 +157,9 @@ Geometry types,geometry.type.generic, feature|features, entité|entités
 Geometry types,geometry.type.esriGeometryPoint, point|points, point|points
 Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, polygone|polygones
 Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
+,export.cancel,Cancel,Annuler
+,export.continue,Continue,Continuer
+,export.includelegend,Include legend,Inclure la légende
 ,import.title,Import Layers,Importer des couches
 ,import.file.title,Import File,Importer un fichier
 ,import.file.upload.title,Upload data,Charger des données
