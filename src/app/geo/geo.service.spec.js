@@ -63,7 +63,7 @@ describe('geo', () => {
 
         // inject services
         bard.inject('geoService', 'gapiService', '$rootScope', 'configService',
-            '$httpBackend');
+            '$httpBackend', '$injector');
     });
 
     describe('geoService', () => {

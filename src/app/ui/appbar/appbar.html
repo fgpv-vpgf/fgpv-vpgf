@@ -12,13 +12,14 @@
     <!-- TODO: find a better way to conditionally show all these icons and names -->
 
     <div class="rv-appbar-title">
+        <!-- ng-show="!self.stateManager.state.mainGeosearch.active"> -->
         <h2 class="md-headline" translate ng-if="self.stateManager.state.mainToc.active">appbar.tooltip.layers</h2>
         <h2 class="md-headline" translate ng-if="self.stateManager.state.mainLoaderFile.active">import.file.title</h2>
         <h2 class="md-headline" translate ng-if="self.stateManager.state.mainLoaderService.active">Import Service</h2>
         <h2 class="md-headline" translate ng-if="self.stateManager.state.mainDetails.active">appbar.tooltip.pointInfo</h2>
     </div>
 
-    <!-- TODO: need a better way to determine when to include layer loader menu -->
+    <rv-geosearch></rv-geosearch>
 
     <md-button
         translate
@@ -29,8 +30,13 @@
         <md-tooltip>{{ 'nav.tooltip.basemap' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:map"></md-icon>
     </md-button>
+    <span
+        class="rv-appbar-divider"
+        ng-show="!self.stateManager.state.mainGeosearch.active">
+    </span>
 
-    <span class="rv-appbar-divider"></span>
+    <!-- TODO: need a better way to determine when to include layer loader menu -->
+    <rv-loader-menu ng-if="self.stateManager.state.mainToc.active || self.stateManager.state.mainLoaderFile.active || self.stateManager.state.mainLoaderService.active"></rv-loader-menu>
 
     <md-button
         translate
@@ -39,8 +45,8 @@
         rv-help="details-button"
         ng-class="{ selected: self.stateManager.state.mainDetails.active }"
         ng-click="self.toggleDetails()"
-        ng-show="self.stateManager.display.details.requestId">
-        <md-tooltip>{{ 'appbar.tooltip.pointInfo' | translate }}</md-tooltip>
+        ng-show="self.stateManager.display.details.requestId && !self.stateManager.state.mainGeosearch.active">
+        <md-tooltip>{{'appbar.tooltip.pointInfo' | translate}}</md-tooltip>
         <md-icon md-svg-src="maps:place"></md-icon>
     </md-button>
 
@@ -50,8 +56,9 @@
         class="md-icon-button primary"
         rv-help="toc-button"
         ng-class="{ selected: self.stateManager.state.mainToc.active }"
+        ng-show="!self.stateManager.state.mainGeosearch.active"
         ng-click="self.toggleToc()">
-        <md-tooltip>{{ 'appbar.tooltip.layers' | translate }}</md-tooltip>
+        <md-tooltip>{{'appbar.tooltip.layers' | translate}}</md-tooltip>
         <md-icon md-svg-src="maps:layers"></md-icon>
     </md-button>
 
@@ -66,4 +73,9 @@
         <md-tooltip>{{'appbar.tooltip.tools' | translate}}</md-tooltip>
         <md-icon md-svg-src="content:create"></md-icon>
     </md-button-->
+</div>
+
+<div class="main-appbar rv-whiteframe-z2"
+    ng-show="self.stateManager.state.mainGeosearch.active">
+    <rv-geosearch-filters></rv-geosearch-filters>
 </div>
