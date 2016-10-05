@@ -59,6 +59,7 @@
             mainToc: STATE_OBJECT_DEFAULTS('main'),
             mainToolbox: STATE_OBJECT_DEFAULTS('main'),
             mainDetails: STATE_OBJECT_DEFAULTS('main', 'details'),
+            mainGeosearch: STATE_OBJECT_DEFAULTS('main', 'geosearch'),
             mainLoaderFile: STATE_OBJECT_DEFAULTS('main'),
             mainLoaderService: STATE_OBJECT_DEFAULTS('main'),
             side: STATE_OBJECT_DEFAULTS(),
