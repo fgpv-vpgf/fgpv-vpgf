@@ -1,0 +1,44 @@
+<div class="rv-geosearch">
+    <md-input-container
+        md-no-float=""
+        class="rv-geosearch-input md-block"
+        ng-show="self.stateManager.state.mainGeosearch.active">
+        <input ng-model="self.geosearchService.searchText.value"
+            placeholder="{{ 'geosearch.text.placeholder' | translate }}"
+            ng-change="self.geosearchService.queryGeosearch()">
+        <md-button
+            ng-show="self.geosearchService.searchText.value.length > 2"
+            class="rv-geosearch-clear"
+            ng-click="self.geosearchService.clearSearch()">
+            <md-icon md-svg-src="navigation:close"></md-icon>
+        </md-button>
+    </md-input-container>
+
+    <md-button
+        translate
+        translate-attr-aria-label="appbar.aria.geosearch"
+        class="md-icon-button primary"
+        rv-help="geosearch-button"
+        ng-class="{ selected: self.stateManager.state.mainGeosearch.active }"
+        ng-click="self.geosearchService.toggleGeosearch()">
+        <md-tooltip>{{ 'appbar.tooltip.geosearch' | translate }}</md-tooltip>
+        <md-icon md-svg-src="action:search"></md-icon>
+    </md-button>
+
+    <span
+        class="rv-appbar-divider"
+        ng-show="self.stateManager.state.mainGeosearch.active">
+    </span>
+
+    <md-button
+        translate
+        translate-attr-aria-label="appbar.aria.geosearchclose"
+        class="md-icon-button primary"
+        rv-help="geosearch-close-button"
+        ng-class="{ selected: self.stateManager.state.mainGeosearch.active }"
+        ng-click="self.geosearchService.toggleGeosearch()"
+        ng-show="self.stateManager.state.mainGeosearch.active">
+        <md-tooltip>{{'appbar.aria.geosearchclose' | translate}}</md-tooltip>
+        <md-icon md-svg-src="navigation:close"></md-icon>
+    </md-button>
+</div>

@@ -1,0 +1,23 @@
+<md-input-container>
+    <label translate>geosearch.label.province</label>
+        <md-select
+            ng-model="self.selectedProvince"
+            ng-change="self.geosearchService.setProvince(self.selectedProvince)">
+            <md-option><em>{{ 'geosearch.label.province' | translate }}</em></md-option>
+            <md-option ng-repeat="province in self.filters.provinces" value="{{ province }}">{{ province }}</md-option>
+        </md-select>
+</md-input-container>
+<md-input-container>
+    <label translate>geosearch.label.type</label>
+        <md-select
+            ng-model="self.selectedType"
+            ng-change="self.geosearchService.setType(self.selectedType)">
+            <md-option><em>{{ 'geosearch.label.type' | translate }}</em></md-option>
+            <md-option ng-repeat="type in self.filters.types" value="{{ type }}">{{ type }}</md-option>
+        </md-select>
+</md-input-container>
+<md-switch translate-attr-aria-label="geosearch.aria.extent" class="md-primary rv-switch"
+    ng-model="self.extent"
+    ng-change="self.setExtent(self.extent)">
+    {{ 'geosearch.label.extent' | translate }}
+</md-switch>
