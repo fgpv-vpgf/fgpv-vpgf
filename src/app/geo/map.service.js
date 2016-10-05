@@ -53,6 +53,7 @@
                 setSelectedBaseMap,
                 zoomToGraphic,
                 validateProj,
+                validateExtent,
                 retrieveSymbol,
                 hilightGraphic,
                 clearHilight,
@@ -841,6 +842,16 @@
                 return gapiService.gapi.proj.checkProj(sr).foundProj;
             }
 
+            /**
+             * Check if visible extent is contain in full extent
+             *
+             * @function validateExtent
+             * @param {Number} factor optional; factor to expand the full extent
+             * @return   {Boolean}   True if the visible extent is contain in full extent - false if not contain
+             */
+            function validateExtent(factor = 1) {
+                return getFullExtent().expand(factor).contains(service.mapObject.extent);
+            }
         }
     }
 })();
