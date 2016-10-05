@@ -30,6 +30,7 @@
 @import "_export.scss";
 @import "_side-nav.scss";
 @import "_tooltip.scss";
+@import "_geosearch.scss";
 
 @include core;
 @include loading;
@@ -37,6 +38,7 @@
 @include lists;
 @include sidenav;
 @include appbar;
+@include geolegappbar;
 @include content-pane;
 @include mapnav;
 @include esri-map;
