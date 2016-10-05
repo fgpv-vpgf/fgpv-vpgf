@@ -64,14 +64,23 @@ describe('geo', () => {
         $provide.constant('$mdSidenav', $q => () => $q.resolve());
     }
 
+    function mockDebounceService($provide) {
+        $provide.factory('debounceService', () => {
+            return {
+                registerDebounce: () => {}
+            };
+        });
+    }
+
     beforeEach(() => {
 
         bard.appModule('app.geo', 'app.common.router', mockStorageService, mockGapiService,
-            mockConfigService, mockTranslateService, mockEvents, mockFocusService, mockMdSidenav);
+            mockConfigService, mockTranslateService, mockEvents, mockFocusService, mockMdSidenav,
+            mockDebounceService);
 
         // inject services
         bard.inject('geoService', 'gapiService', '$rootScope', 'configService',
-            '$httpBackend');
+            '$httpBackend', '$injector');
     });
 
     describe('geoService', () => {
