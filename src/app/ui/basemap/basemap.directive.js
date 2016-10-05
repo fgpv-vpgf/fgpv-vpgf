@@ -16,9 +16,7 @@
 
     function rvBasemap() {
         const directive = {
-            restrict: 'E',
-            templateUrl: 'app/ui/basemap/basemap.html',
-            scope: {},
+            restrict: 'A',
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
