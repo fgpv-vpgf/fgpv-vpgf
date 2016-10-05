@@ -1,0 +1,28 @@
+<md-input-container>
+    <label translate>geosearch.label.province</label>
+        <md-select
+            ng-model="self.selectedProvince"
+            ng-change="self.geosearchService.setProvince(self.selectedProvince)"
+            md-on-open="self.geosearchService.getProvinces()">
+            <md-option><em>{{ 'geosearch.label.province' | translate }}</em></md-option>
+            <md-option ng-repeat="province in self.filters.provinces | orderBy" value="{{ province }}">{{ province }}</md-option>
+        </md-select>
+</md-input-container>
+<md-input-container>
+    <label translate>geosearch.label.type</label>
+        <md-select
+            ng-model="self.selectedType"
+            ng-change="self.geosearchService.setType(self.selectedType)"
+            md-on-open="self.geosearchService.getTypes()">
+            <md-option><em>{{ 'geosearch.label.type' | translate }}</em></md-option>
+            <md-option ng-repeat="type in self.filters.types | orderBy" value="{{ type }}">{{ type }}</md-option>
+        </md-select>
+</md-input-container>
+<md-input-container>
+    <md-checkbox translate-attr-aria-label="geosearch.aria.extent" class="md-primary"
+        ng-model="self.filters.extent.value"
+        ng-disabled="self.filters.extent.outside"
+        ng-change="self.geosearchService.setExtent(self.filters.extent.value)">
+        {{ 'geosearch.label.extent' | translate }}
+    </md-checkbox>
+</md-input-container>
