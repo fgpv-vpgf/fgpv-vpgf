@@ -1,0 +1,38 @@
+<rv-content-pane>
+    <ul class="rv-list">
+        <li
+            ng-repeat="item in self.items"
+            class="rv-geosearch-list-item">
+
+            <md-button
+                class="rv-geosearch-button"
+                ng-click="self.geosearchService.zoomSearchExtent(item)">
+                <span class="rv-geosearch-main">
+                    <div class="rv-geosearch-name"> {{ item.name }}</div>
+                    <div class="rv-geosearch-location"> {{ item.location }}</div>
+                </span>
+                <span class="rv-geosearch-type">
+                    <div>{{ item.type }}</div>
+                </span>
+            </md-button>
+        </li>
+    </ul>
+</rv-content-pane>
+
+<div class="geoleg-appbar rv-whiteframe-z2">
+    <div class="rv-geoleg-title">
+        <h2 class="md-headline" translate>appbar.tooltip.layers</h2>
+    </div>
+
+    <md-button
+        translate
+        translate-attr-aria-label="appbar.aria.layers"
+        class="md-icon-button primary"
+        rv-help="toc-button"
+        ng-class="{ selected: self.stateManager.state.mainToc.active }"
+        ng-click="self.geosearchService.toggleToc()"
+        ng-show="!self.stateManager.state.geosearch.active">
+        <md-tooltip>{{ 'appbar.tooltip.layers' | translate }}</md-tooltip>
+        <md-icon md-svg-src="maps:layers"></md-icon>
+    </md-button>
+</div>
