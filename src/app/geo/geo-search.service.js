@@ -29,7 +29,8 @@
             setExtent,
             getProvinces,
             getTypes,
-            isEnabled
+            isEnabled,
+            zoomSearchExtent
         };
 
         configService.getCurrent().then(config => {
@@ -203,7 +204,8 @@
                         latitude: parseFloat(item.latitude),
                         longitude: parseFloat(item.longitude)
                     },
-                    bbox: item.bbox
+                    bbox: item.bbox,
+                    position: item.position.coordinates
                 }))))
                 .then(res => res.length === 0 ?
                         $http.get(serviceUrls.geoSuggest + q)
@@ -229,19 +231,17 @@
             let extent = bbox;
             if (extent === 'visible') { // get the viewers current extent
                 extent = geoService.mapObject.extent;
-
             } else if (extent === 'canada') { // get the full extent of Canada
                 extent = geoService.getFullExtent();
             }
 
             if (typeof extent === 'object') { // convert to lat/lng geoName readable string
-                const minCoords = gapiService.gapi.proj.localProjectPoint(
-                    geoService.mapObject.spatialReference, 'EPSG:4326', { x: extent.xmin, y: extent.ymin });
+                // use the extent to reproject because it use a densify object that keep
+                // proportion and in the end good values for min and max. If we use points
+                // the results are bad, especially in LCC
+                const projExtent = gapiService.gapi.proj.localProjectExtent(extent, { wkid: 4326 });
 
-                const maxCoords = gapiService.gapi.proj.localProjectPoint(
-                    geoService.mapObject.spatialReference, 'EPSG:4326', { x: extent.xmax, y: extent.ymax });
-
-                extent = [minCoords.x, minCoords.y, maxCoords.x, maxCoords.y].join(',');
+                extent = [projExtent.x0, projExtent.y0, projExtent.x1, projExtent.y1].join(',');
             }
 
             setQueryParam('bbox', extent);
@@ -290,6 +290,41 @@
             }
 
             return results;
+        }
+
+        /**
+         * Zoom to the search extent bbox and show map pin at location
+         *
+         * @function zoomSearchExtent
+         * @param   {Array}    bbox     4 coordinnates for the bbox
+         * @param   {Array}    position       2 coordinnates for the position
+         */
+        function zoomSearchExtent(bbox, position) {
+            const mapObject = geoService.mapObject;
+            const mapSR = mapObject.spatialReference;
+            const gapi = gapiService.gapi;
+
+            // set extent from bbox
+            const latlongExtent = gapi.mapManager.Extent(...bbox, { wkid: 4326 });
+
+            // reproject extent
+            const projExtent = gapi.proj.localProjectExtent(
+                latlongExtent, mapSR);
+
+            // set extent from reprojected values
+            const zoomExtent = gapi.mapManager.Extent(projExtent.x0, projExtent.y0,
+                projExtent.x1, projExtent.y1, projExtent.sr);
+
+            // zoom to location (expand the bbox to include all the area)
+            mapObject.setExtent(zoomExtent.expand(1.5)).then(() => {
+                // get reprojected point and create point
+                const geoPt = gapi.proj.localProjectPoint(4326, mapSR.wkid,
+                    [parseFloat(position[0]), parseFloat(position[1])]);
+                const projPt = gapi.proj.Point(geoPt[0], geoPt[1], mapSR);
+
+                // show pin on the map
+                geoService.dropMapPin(projPt);
+            });
         }
 
         /**
