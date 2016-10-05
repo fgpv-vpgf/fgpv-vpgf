@@ -2,7 +2,8 @@
 
 describe('stateManager', () => {
 
-    const mainPanelNames = ['main', 'mainToc', 'mainToolbox', 'mainDetails', 'mainLoaderFile', 'mainLoaderService'];
+    const mainPanelNames = ['main', 'mainToc', 'mainToolbox', 'mainDetails',
+        'mainGeosearch', 'mainLoaderFile', 'mainLoaderService'];
 
     function mockFocusService($provide) {
         $provide.factory('focusService', () => {

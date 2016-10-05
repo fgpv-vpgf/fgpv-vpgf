@@ -14,7 +14,8 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, $timeout, gapiService, storageService, $rootElement, $compile, $rootScope) {
+    function mapServiceFactory($q, $timeout, gapiService, storageService, $rootElement, $compile,
+        $rootScope, debounceService, $injector) {
         const settings = { zoomPromise: $q.resolve(), zoomCounter: 0 };
         return mapService;
 
@@ -58,7 +59,8 @@
                 dropMapPin,
                 geolocate,
                 findClosestLOD,
-                getFullExtent
+                getFullExtent,
+                setExtentEvent
             };
 
             return buildMapObject();
@@ -739,6 +741,19 @@
                 return gapiService.gapi.proj.checkProj(sr).foundProj;
             }
 
+            function setExtentEvent(func) {
+                // TODO: from geoAPI return the event so we can remove it from the viewer
+                // call onExtentChange function when the extent has changed
+                const stopGeoServiceWatcher = $rootScope.$watch(() => $injector.get('geoService').isMapReady,
+                    (isReady) => {
+                        if (isReady) {
+                            gapiService.gapi.events.wrapEvents(service.mapObject, {
+                                'extent-change': debounceService.registerDebounce(func, 300, false)
+                            });
+                            stopGeoServiceWatcher();
+                        }
+                    });
+            }
         }
     }
 })();
