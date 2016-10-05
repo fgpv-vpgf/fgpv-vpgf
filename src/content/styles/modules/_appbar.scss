@@ -1,33 +1,40 @@
 // Primary mixin
+%appbar-title {
+    flex: 1;
+    overflow: hidden;
+
+    h2 {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        margin: {
+            top: auto;
+            bottom: auto;
+        }
+    }
+}
+
+%appbar {
+    box-sizing: border-box;
+    height: $toolbar-height;
+    z-index: auto;
+    background: white;
+    align-items: center;
+    padding: rem(0.4);
+    display: flex;
+
+    @include media($rv-gt-sm) {
+        width: $toolbar-width;
+    }
+}
 
 @mixin appbar {
     .main-appbar {
-        box-sizing: border-box;
-        height: $toolbar-height;
-        z-index: auto;
-        background: white;
-        align-items: center;
-        padding: rem(0.4);
-        display: flex;
-
-        @include media($rv-gt-sm) {
-            width: $toolbar-width;
-        }
+        @extend %appbar;
 
         .rv-appbar-title {
-            flex: 1;
-            overflow: hidden;
-
-            h2 {
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-
-                margin: {
-                    top: auto;
-                    bottom: auto;
-                }
-            }
+            @extend %appbar-title;
         }
 
         .rv-appbar-divider {

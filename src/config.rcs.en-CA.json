@@ -7,6 +7,15 @@
     "proxyUrl": "http://cp.zz9.ca/index",
     "exportMapUrl": "http://webservices-staging.maps.canada.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
   },
+  "search": {
+    "serviceUrls": {
+        "geoNames": "http://geogratis.gc.ca/services/geoname/en/geonames.json",
+        "geoLocation": "http://geogratis.gc.ca/services/geolocation/en/locate?q=",
+        "geoSuggest": "http://geogratis.gc.ca/services/geolocation/en/suggest?q=",
+        "provinces": "http://geogratis.gc.ca/services/geoname/en/codes/province.json",
+        "types": "http://geogratis.gc.ca/services/geoname/en/codes/concise.json"
+    }
+  },
   "map": {
     "components": {
       "geoSearch": {
