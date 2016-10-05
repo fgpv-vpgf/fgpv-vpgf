@@ -366,10 +366,13 @@
                     name: null
                 };
 
+                // file-based layers don't have symbology labels, default to ''
+                // TODO: move label defaulting to geoApi
+
                 // legend items are promises
                 item.then(data => {
                     symbologyItem.svgcode = data.svgcode;
-                    symbologyItem.name = data.label;
+                    symbologyItem.name = data.label || '';
                 });
 
                 return symbologyItem;
