@@ -419,27 +419,34 @@
          * @param {Object} legendEntry legend entry
          */
         function extractLegendTree(legendEntry) {
-            return legendEntry.items.map(item => {
+            return legendEntry.items
+                // filter out placeholders, invisible and "removed" legend entries which are in the "undo" time frame which are not proper
 
-                if (item.type === 'group') {
-                    return {
-                        name: item.name,
-                        items: extractLegendTree(item)
-                    };
+                .filter(item =>
+                    item.options.visibility.value &&
+                    !item.removed &&
+                    item.type !== 'placeholder')
 
-                } else if (item.type === 'layer') {
-                    return {
-                        name: item.name,
-                        items: item.symbology.map(({ name, svgcode }) => {
-                            return {
-                                name,
-                                svgcode,
-                                type: item.layerType
-                            };
-                        })
-                    };
-                }
-            });
+                .map(item => {
+                    if (item.type === 'group') {
+                        return {
+                            name: item.name,
+                            items: extractLegendTree(item)
+                        };
+
+                    } else if (item.type === 'layer') {
+                        return {
+                            name: item.name,
+                            items: item.symbology.map(({ name, svgcode }) => {
+                                return {
+                                    name,
+                                    svgcode,
+                                    type: item.layerType
+                                };
+                            })
+                        };
+                    }
+                });
         }
     }
 })();

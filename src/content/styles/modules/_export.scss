@@ -4,7 +4,7 @@
         align-self: flex-start; // stick the dialog to the top edge of the viewer container
         margin-top: $viewport-gutter;
         border-radius: 0;
-        max-height: calc(100% - #{$viewport-gutter});
+        max-height: calc(100% - #{$viewport-gutter} * 2);
 
         md-dialog-actions {
             order: 1;
