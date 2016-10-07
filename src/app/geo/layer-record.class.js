@@ -130,16 +130,25 @@
              *
              * @param {Array} props     The property names
              * @param {Array} info      The values for the properties
+             * @param {String} version  Version of the bookmark data
              * @returns {Object}        config snippet for the layer
              */
-            static parseData (props, info) {
-                // set visibility to null instead of false to distinguish a layer
-                // actually set to false in the config or set to false in a bookmark.
-                // If null, sublayer visibility will be forced off (since we dont track
-                // sublayer state in bookmarks)
+            static parseData (props, info, version) {
+
                 const lookup = {
-                    opacity: value => parseInt(value) / 100,
-                    visibility: value => value === '1' ? true : null,
+                    opacity: value => {
+                        if (version !== 'A' && value === '99') {
+                            value = 100;
+                        }
+                        return parseInt(value) / 100;
+                    },
+                    visibility: value => {
+                        if (version === 'A') {
+                            return value === '1' ? true : null;
+                        } else {
+                            return value === '1';
+                        }
+                    },
                     boundingBox: value => value === '1',
                     snapshot: value => value === '1',
                     query: value => value === '1'
@@ -300,13 +309,20 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @param {String} version      version of the bookmark
              * @returns {Object}            config snippet for the layer
              */
-            static parseData (dataString) {
-                // ( opacity )( viz )( boundingBox )
-                const format = /^(\d{3})(\d{1})(\d{1})$/;
+            static parseData (dataString, version) {
 
-                const info = dataString.match(format);
+                // ( opacity )( viz )( boundingBox )( query )
+                // vA uses 3-char opacity
+
+                const format = {
+                    A: /^(\d{3})(\d{1})(\d{1})$/,
+                    B: /^(\d{2})(\d{1})(\d{1})$/
+                };
+
+                const info = dataString.match(format[version]);
 
                 if (info) {
                     return super.parseData([, 'opacity', 'visibility', 'boundingBox'], info); // jshint ignore:line
@@ -330,12 +346,42 @@
              * @see layerRecord.makeLayerBookmark
              */
             makeLayerBookmark () {
-                const opacity = padOpacity(this._legendEntry.getOpacity());
-                const viz = this._legendEntry.getVisibility() ? '1' : '0';
-                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
-                const query = this._legendEntry.options.query.value ? '1' : '0';
+                const leg = this._legendEntry;
+                const opacity = padOpacity(leg.getOpacity());
+                const viz = leg.getVisibility() ? '1' : '0';
+                const bb = leg.options.boundingBox.value ? '1' : '0';
+                const query = leg.options.query.value ? '1' : '0';
 
-                const bookmark = '03' + this.config.id + opacity + viz + bb + query;
+                const makeChildSetting = legItem => {
+                    const opC = legItem.options.opacity ? padOpacity(legItem.getOpacity()) : '99';
+                    const vizC = legItem.getVisibility() ? '1' : '0';
+                    const qC = legItem.options.query.value ? '1' : '0';
+                    const idx = legItem.featureIdx;
+                    return opC + vizC + qC + idx;
+                };
+
+                // grab stuff on children.  we can't use walkItems because it returns a flat list.
+                // we need to preserve heirarchy here.
+                // loop over top-level children of the layer. these are the ones that have
+                // entries defined in .layerEntries in the config.
+                // these get serialized, and delimited by a ;
+                const childSettings = leg.items.map(item => {
+                    // store the top first (important!)
+                    const topLevelSetting = [makeChildSetting(item)];
+
+                    // tack on any children, which would have been auto-generated
+                    // we can use walkItems here, as we have the parent.
+                    if (item.type === 'group') {
+                        topLevelSetting.splice(1, 0, ...item.walkItems(subItem => {
+                            return makeChildSetting(subItem);
+                        }));
+                    }
+
+                    // mash this cluster (all belong to the topLevel parent) into a string,
+                    // with child entries delimeted using a `
+                    return topLevelSetting.join('`');
+                }).join(';');
+                const bookmark = '03' + this.config.id + ';' + childSettings + opacity + viz + bb + query;
                 return bookmark;
             }
 
@@ -343,16 +389,63 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @param {String} version      version of the bookmark
              * @returns {Object}            config snippet for the layer
              */
-            static parseData (dataString) {
-                // ( opacity )( viz )( boundingBox )( query )
-                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
+            static parseData (dataString, version) {
+                // vA: ( opacity )( viz )( boundingBox )( query )
+                // vB: ( sublayer info )( opacity )( viz )( boundingBox )( query )
+                const format = {
+                    A: /^(\d{3})(\d{1})(\d{1})(\d{1})$/,
+                    B: /^(.+?)(\d{2})(\d{1})(\d{1})(\d{1})$/
+                };
 
-                const info = dataString.match(format);
+                const info = dataString.match(format[version]);
 
                 if (info) {
-                    return super.parseData([, 'opacity', 'visibility', 'boundingBox', 'query'], info); // jshint ignore:line
+
+                    const snippet = {};
+
+                    if (version !== 'A') {
+                        // process info for child layers
+                        // ( opacity ) ( viz ) ( query ) ( sublayer index )
+                        const cFormat = /^(\d{2})(\d{1})(\d{1})(.+?)$/;
+                        const childData = info[1].substr(1); // drop leading ;
+                        info.splice(1, 1); // remove child info from array, normalizing it with version A
+
+                        const makeEntryNode = bmData => {
+                            // we make use of super.parseData, but need to pull the data up out of the
+                            // .options subobject in this case.
+                            const cInfo = bmData.match(cFormat);
+                            const result = super.parseData([, 'opacity', 'visibility', 'query'], cInfo, version); // jshint ignore:line
+                            result.options.index = cInfo[4];
+                            return result.options;
+                        };
+
+                        // splitting on ; gives us chunks of data for each top-level index in the layer.
+                        // i.e. each chunk defines an object that goes in .layerEntries
+                        snippet.layerEntries = childData.split(';').map(cData => {
+                            // for a single top level index, we can also have auto-generated child settings along with it.
+                            // these values are separated by ` chars. The first one is always the parent.
+                            const subChildData = cData.split('`');
+
+                            // make parent entry, then remove it from source array
+                            const lEntry = makeEntryNode(subChildData[0]);
+                            subChildData.splice(0, 1);
+
+                            // if any child data remains, add it to the children property of the parent.
+                            if (subChildData.length > 0) {
+                                lEntry.children = subChildData.map(scd => makeEntryNode(scd));
+                            }
+
+                            return lEntry;
+                        });
+                    }
+
+                    // merge child config data with top level config data
+                    const topDat = super.parseData([, 'opacity', 'visibility', 'boundingBox', 'query'], info, version); // jshint ignore:line
+                    angular.merge(snippet, topDat);
+                    return snippet;
                 }
             }
         }
@@ -379,12 +472,19 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @param {String} version      version of the bookmark
              * @returns {Object}            config snippet for the layer
              */
-            static parseData (dataString) {
+            static parseData (dataString, version) {
                 // ( opacity )( viz )( boundingBox )
-                const format = /^(\d{3})(\d{1})(\d{1})$/;
-                const info = dataString.match(format);
+                // vA uses 3-char opacity
+
+                const format = {
+                    A: /^(\d{3})(\d{1})(\d{1})$/,
+                    B: /^(\d{2})(\d{1})(\d{1})$/
+                };
+
+                const info = dataString.match(format[version]);
 
                 if (info) {
                     return super.parseData([, 'opacity', 'visibility', 'boundingBox'], info); // jshint ignore:line
@@ -421,13 +521,19 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @param {String} version      version of the bookmark
              * @returns {Object}            config snippet for the layer
              */
-            static parseData (dataString) {
+            static parseData (dataString, version) {
                 // ( opacity )( viz )( boundingBox )( query )
-                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
+                // vA uses 3-char opacity
 
-                const info = dataString.match(format);
+                const format = {
+                    A: /^(\d{3})(\d{1})(\d{1})(\d{1})$/,
+                    B: /^(\d{2})(\d{1})(\d{1})(\d{1})$/
+                };
+
+                const info = dataString.match(format[version]);
 
                 if (info) {
                     return super.parseData([, 'opacity', 'visibility', 'boundingBox', 'query'], info); // jshint ignore:line
@@ -467,13 +573,19 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
+             * @param {String} version      version of the bookmark
              * @returns {Object}            config snippet for the layer
              */
-            static parseData (dataString) {
+            static parseData (dataString, version) {
                 // ( opacity )( viz )( boundingBox )( snapshot )( query )
-                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})(\d{1})$/;
+                // vA uses 3-char opacity
 
-                const info = dataString.match(format);
+                const format = {
+                    A: /^(\d{3})(\d{1})(\d{1})(\d{1})(\d{1})$/,
+                    B: /^(\d{2})(\d{1})(\d{1})(\d{1})(\d{1})$/
+                };
+
+                const info = dataString.match(format[version]);
 
                 if (info) {
                     return super.parseData([, 'opacity', 'visibility', 'boundingBox', 'snapshot', 'query'], info); // jshint ignore:line
@@ -518,9 +630,10 @@
          * @function parseLayerData
          * @param {String} dataString   a partial layer bookmark (everything after the id)
          * @param {Number} layerType    Layer type taken from the layer bookmark
+         * @param {String} version      Version of the bookmark format
          * @returns {Object}            config snippet for the layer
          */
-        function parseLayerData(dataString, layerType) {
+        function parseLayerData(dataString, layerType, version) {
             const classes = [
                 FeatureRecord,
                 WmsRecord,
@@ -529,12 +642,18 @@
                 ImageRecord
             ];
 
-            return classes[layerType].parseData(dataString);
+            return classes[layerType].parseData(dataString, version);
         }
 
         function padOpacity(value) {
-            value = String(value * 100);
-            return ('000' + value).substring(value.length);
+            // sometimes we get weird decimal numbers coming in, like 0.5599999999999 instead of 0.56
+            value = String(Math.round(value * 100));
+
+            // save a char, yo
+            if (value === '100') {
+                value = '99';
+            }
+            return ('00' + value).substring(value.length);
         }
 
         return { makeServiceRecord, makeFileRecord, parseLayerData };
