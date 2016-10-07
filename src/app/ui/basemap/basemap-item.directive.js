@@ -43,12 +43,10 @@
 
         return directive;
 
-        /*********/
+        /***/
 
         function link(scope, el) { // scope, el, attr, ctrl) {
             const self = scope.self;
-
-            // console.log(scope);
 
             self.toggleDescription = toggleDescription;
             self.isDescriptionVisible = false;
@@ -70,7 +68,7 @@
                 if (!tlToggle) {
                     const fullHeight = Math.max(
                         footer.outerHeight(true) + descNode.outerHeight(true),
-                        el.outerHeight(true));
+                        el[0].getBoundingClientRect().height); // jQuery.height() returns rounded pixels, using boundingBox instead
 
                     tlToggle = new TimelineLite();
                     tlToggle
