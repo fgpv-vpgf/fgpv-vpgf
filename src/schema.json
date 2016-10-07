@@ -444,13 +444,13 @@
                 "index": { "type": "number", "description": "The index of the layer in the map service." },
                 "visibility": {
                     "$ref": "#/definitions/visibilityOptionNode"
-                },                
+                },
                 "opacity": {
                     "$ref": "#/definitions/opacityOptionNode"
-                },               
+                },
                 "query": {
                     "$ref": "#/definitions/queryOptionNode"
-                }                
+                }
             },
             "required": ["index"],
             "additionalProperties": false
