@@ -56,6 +56,9 @@ Basemap refresh required,basemap.refresh.req,Map refresh required,Actualiser la 
 Basemap blank title,basemap.blank.title,blank map,Carte vide
 Basemap blank description,basemap.blank.desc,Remove base map,Retirer la carte de fond
 Basemap projection title,basemap.projection.title,{{name}} Maps,Cartes {{name}}
+,basemap.select,Select basemap,Sélectionnez le fond de carte
+,basemap.showdescription,Show basemap description,Voir la carte de base description
+,basemap.hidedescription,Hide basemap description,Masquer la description de la carte de base
 Map Navigation slider only text,nav.sliderOnly,slider only,Curseur seulement
 Map Navigation slider text,nav.slider,slider,Curseur
 Map Navigation zoom in label,nav.label.zoomIn,Zoom in,Zoom avant
