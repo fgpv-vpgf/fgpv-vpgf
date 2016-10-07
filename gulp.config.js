@@ -163,10 +163,10 @@ module.exports = function () {
     // jscs:disable maximumLineLength
     config.iconCache = [
         { file: 'content/images/iconsets/default-icons.svg', prefix: 'default', icons: 'check'.split(' '), isDefault: true },
-        { file: 'content/images/iconsets/action-icons.svg', prefix: 'action', icons: 'search home history description delete settings info visibility visibility_off zoom_in zoom_out check_circle open_in_new print shopping_cart opacity'.split(' ') },
+        { file: 'content/images/iconsets/action-icons.svg', prefix: 'action', icons: 'search home history description delete settings info_outline info visibility visibility_off zoom_in zoom_out check_circle open_in_new print shopping_cart opacity'.split(' ') },
         { file: 'content/images/iconsets/alert-icons.svg', prefix: 'alert', icons: 'error'.split(' ') },
         { file: 'content/images/iconsets/communication-icons.svg', prefix: 'communication', icons: 'location_on'.split(' ') },
-        { file: 'content/images/iconsets/mdi-icons.svg', prefix: 'community', icons: 'filter chevron-double-left emoticon-sad emoticon-happy vector-square table-large map-marker-off apple-keyboard-control vector-point vector-polygon vector-polyline'.split(' ') },
+        { file: 'content/images/iconsets/mdi-icons.svg', prefix: 'community', icons: 'filter chevron-double-left chevron-double-right emoticon-sad emoticon-happy vector-square table-large map-marker-off apple-keyboard-control vector-point vector-polygon vector-polyline'.split(' ') },
         { file: 'content/images/iconsets/content-icons.svg', prefix: 'content', icons: 'create add remove'.split(' ') },
         { file: 'content/images/iconsets/editor-icons.svg', prefix: 'editor', icons: 'insert_drive_file drag_handle'.split(' ') },
         { file: 'content/images/iconsets/file-icons.svg', prefix: 'file', icons: 'file_upload cloud'.split(' ') },
