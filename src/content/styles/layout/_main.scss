@@ -2,6 +2,8 @@ rv-appbar {
     left: $viewport-gutter;
     top: $viewport-gutter;
     position: absolute;
+
+    transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
 }
 
 md-toast.md-rv-flex-global {

@@ -1,19 +1,126 @@
 @mixin basemap {
     $list-item-gap: rem(1.6);
 
+    .rv-basemap-selector {
+        .rv-minimize-button {
+            right: 0;
+            top: 17px; // TODO: don't like this, need a better way to align the panel toggle
+            position: absolute;
+        }
+    }
+
+    // need this to manager lower opacity values on a backdrop
     .rv-basemap {
-        md-backdrop.md-sidenav-backdrop {
-            opacity: 0;
-            transition: inherit;
+        md-backdrop {
+            opacity: 0.18;
+
+            &.ng-enter {
+                opacity: 0;
+            }
+            &.ng-enter.ng-enter-active {
+                opacity: .18;
+            }
+            &.ng-leave {
+                opacity: .18;
+            }
+            &.ng-leave.ng-leave-active {
+                opacity: 0;
+            }
         }
     }
 
     ul.rv-basemap-list {
         > li {
-            margin-bottom: rem(2.2);
+            margin-bottom: rem(1.6);
+        }
+    }
 
-            & button:focus {
-                outline: 2px solid #4d90fe;
+    .rv-body-button:focus {
+        border: 2px solid #4d90fe;
+    }
+
+    rv-basemap-item {
+        position: relative;
+        display: block;
+        overflow: hidden;
+
+        // this is a neat trick to keep the ratio of the box constant https://css-tricks.com/snippets/sass/maintain-aspect-ratio-mixin/
+        &:before {
+            content: "";
+            display: block;
+            padding-top: 100% / (3 / 2);
+        }
+    }
+
+    .rv-wkid {
+        position: absolute;
+        top: 0;
+
+        > div {
+            display: flex;
+        }
+
+        @include wkid(102100, -55px, -220px);
+        @include wkid(3978, -60px, -60px);
+    }
+
+    .rv-basemap-description {
+        position: absolute;
+        top: -100%;
+        padding: rem(1.6);
+        color: black;
+        line-height: 20px;
+        opacity: 0;
+    }
+
+    .rv-basemap-footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+
+        background: rgba(0, 0, 0, 0.68);
+        color: white;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: rem(4.8);
+        padding: rem(1.6) rem(0.8) rem(1.6) rem(1.6);
+        display: flex;
+        align-items: center;
+
+        &.rv-double {
+            height: rem(6.8);
+        }
+
+        .rv-basemap-name {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin-right: rem(0.8);
+
+            > span {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+
+                // in case we want to style the first line a little bit larger
+                /*&:first-child {
+                    font-size: 16px;
+                    line-height: 24px;
+                }
+                &:nth-child(2) {
+                    font-size: 14px;
+                    line-height: 20px;
+                }*/
+            }
+        }
+
+        > .md-button {
+            flex-shrink: 0;
+            margin: 0;
+            z-index: 3; // to poke over the primary action button
+
+            md-icon {
+                color: white;
             }
         }
     }
@@ -22,103 +129,28 @@
         color: $primary-color;
     }
 
-    .rv-basemap-item {
-        height: rem(6.4);
-        width: 100%;
-        position: relative;
+    .rv-basemap-check {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 3;
 
-        .rv-basemap-button {
-            padding: 0;
-            margin: 0;
-            display: block;
-            width: 100%;
+        md-icon {
+            top: 2px;
+            right: 2px;
+            position: relative;
+            color: $primary-color-dark;
+        }
+
+        &::before {
+            content: "";
             position: absolute;
+            width: 0px;
+            height: 0px;
+            border-top: 50px solid rgba(250, 250, 250, 1);
+            border-left: 50px solid transparent;
+            right: 0;
             top: 0;
-            bottom: 0;
-            transition: top $swift-ease-in-duration $swift-ease-in-out-timing-function, bottom $swift-ease-in-duration $swift-ease-in-out-timing-function;
-            text-align: inherit;
-
-            .rv-wkid {
-                display: flex;
-                position: absolute;
-                transition: margin-top $swift-ease-in-duration $swift-ease-in-out-timing-function;
-
-                @include wkid(102100, -110px, -40px);
-                @include wkid(3978, -60px, -60px);
-            }
-
-            &:hover {
-                // expand basemap preview button on hover
-                top: -$list-item-gap;
-                bottom: -$list-item-gap;
-
-                .rv-wkid {
-                    // shift image up to keep it fixed relative to the screen
-                    margin-top: $list-item-gap;
-                }
-
-                .basemap-desc {
-                    display: block;
-                }
-
-                .rv-basemap-footer {
-                    top: 0;
-                }
-            }
-
-            .basemap-desc {
-                position: relative;
-                background-color: rgba(0,0,0,0.68);
-                color: rgb(255,255,255);
-                text-align: left;
-                top: 15px;
-                z-index: 1;
-                text-transform: none;
-                padding: rem(0.5) rem(1);
-                display: none;
-                font-size: 12px;
-                overflow: hidden;
-                height: 85px;
-                white-space: normal;
-                line-height: 14px;
-
-                &:hover {
-                    .rv-basemap-footer {
-                        top: 0;
-                    }
-                }
-            }
-
-            .rv-basemap-footer {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                height: rem(2.4);
-                overflow: hidden;
-                position: absolute;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                padding-left: rem(1);
-                background-color: rgba(0, 0, 0, 0.85);
-                text-transform: none;
-                font-weight: normal;
-
-                %text {
-                    color: #fff;
-                }
-
-                .rv-basemap-check {
-                    color: white;
-                    flex-shrink: 0;
-                }
-
-                > span {
-                    text-overflow: ellipsis;
-                    overflow: hidden;
-                    margin-right: rem(1);
-                }
-            }
         }
     }
 }
@@ -126,6 +158,7 @@
 // position basemap sample image for a specific wkid
 @mixin wkid($wkid, $top, $left) {
     &.rv-#{$wkid} {
+        display: flex;
         top: $top;
         left: $left;
     }
