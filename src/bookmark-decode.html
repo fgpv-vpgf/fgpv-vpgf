@@ -225,7 +225,7 @@
                 var layerId = layerGuts[1];
                 // parse the data into discrete parts, specific to the layer type
                 var layerData = layerGuts[2].match(layerSpec[layerType][2]);
-                
+
                 // rip off child data if we are dynamic
                 if (layerType === 3) {
 
@@ -264,7 +264,7 @@
                 layerList.add(opt);
 
             });
-           
+
         }
     }
 
@@ -287,7 +287,7 @@
             } 
 
             var version = bookmark.match(/^([^,]+)/)[0];
-             
+
             switch (version) {
                 case 'A':
                     decodeVerA(bookmark);
@@ -298,7 +298,7 @@
             }
 
         });
-       
+
         $('#cmdRaw').click( function() {
             // enhance the bookmark into human readable form
 
@@ -322,9 +322,9 @@
                     return decode64(nugget);
                 }
             }).join(',');
-           
+
             $('#rawout').val( rawOut );
-            
+
         });
 
         $('#layers').click( function(e) {
