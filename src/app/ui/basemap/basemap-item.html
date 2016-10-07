@@ -1,26 +1,51 @@
-<div class="rv-basemap-item">
-    <md-button class="rv-button-square rv-basemap-button" ng-click="self.select()"
-        ng-switch="self.basemap.wkid">
-        <!--img alt="" ng-src="http://lorempixel.com/400/200/nature/?{{self.basemap.id}}"/-->
+<div ng-switch="self.basemap.wkid" class="rv-wkid rv-{{self.basemap.wkid}}">
 
-        <div class="rv-wkid rv-3978" ng-switch-when="3978">
-            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/268"/>
-            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/269"/>
-        </div>
+    <div ng-switch-when="3978">
+        <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/268"/>
+        <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/269"/>
+    </div>
 
-        <div class="rv-wkid rv-102100" ng-switch-when="102100">
-            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/74"/>
-            <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/75"/>
-        </div>
+    <div ng-switch-when="102100">
+        <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/74"/>
+        <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/75"/>
+    </div>
+</div>
 
-        <div class="rv-basemap-footer">
-            <span>
-                <span class="md-body-2">{{ self.basemap.name }}</span>
-                <!-- ,<span class="rv-basemap-type md-caption">{{ self.basemap.type }}</span> -->
-            </span>
-            <span flex></span>
-            <md-icon class="rv-basemap-check" md-svg-src="navigation:check" ng-if="self.basemap.selected"></md-icon>
-        </div>
-        <div class="basemap-desc">{{ self.basemap.description }}</div>
+<div class="rv-basemap-description" id="{{ ::$root.uid($id) }}-basemap-desc">{{ self.basemap.description }}</div>
+
+<span flex></span>
+
+<div class="rv-basemap-footer" ng-class="{ 'rv-double': self.basemap.type}">
+    <div class="rv-basemap-name" >
+        <span class="md-body-2">{{ self.basemap.name }}</span>
+        <span class="md-body-2" ng-if="self.basemap.type">{{ self.basemap.type }}</span>
+    </div>
+
+    <span flex></span>
+
+    <md-button
+        translate
+        translate-attr-aria-label="basemap.{{ self.isDescriptionVisible ? 'hide' : 'show' }}description"
+        class="md-icon-button rv-button-32 rv-icon-20"
+        ng-class="{ selected: self.isDescriptionVisible }"
+        ng-click="self.toggleDescription()">
+
+        <!-- I don't like tooltips here... -->
+        <!--md-tooltip md-direction="top">I'm no tooltip.</md-tooltip-->
+
+        <md-icon md-svg-src="action:info{{ self.isDescriptionVisible ? '' : '_outline' }}"></md-icon>
+
     </md-button>
 </div>
+
+<div class="rv-basemap-check" ng-if="self.basemap.selected">
+    <md-icon md-svg-src="navigation:check" ></md-icon>
+</div>
+
+<md-button
+    translate
+    translate-attr-aria-label='basemap.select'
+    aria-describedby="{{ ::$root.uid($id) }}-basemap-desc"
+    class="rv-body-button rv-button-square"
+    ng-click="self.select()">
+</md-button>

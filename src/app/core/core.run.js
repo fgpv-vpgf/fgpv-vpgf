@@ -129,7 +129,7 @@
         }
 
         /**
-         * A helper funtion to create ids for template elements inside directives.
+         * A helper function to create ids for template elements inside directives.
          * Should be called with a scope id and an optional suffix if several different ids needed inside a single directive (each scope has a different id).
          * Adding `{{ ::$root.uid($id) }}` inside a template will return a `{appid}-{scopeid}` string. If this used several times inside a single template, the same id is returned, so you don't have to store it to reuse. Don't forget a one-time binding.
          * @function uid

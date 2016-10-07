@@ -1,5 +1,13 @@
+/* global TimelineLite, Ease, BezierEasing */
 (() => {
     'use strict';
+
+    const RV_DURATION = 0.3;
+    const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
+
+    const BASEMAP_FOOTER = '.rv-basemap-footer';
+    const BASEMAP_DESCRIPTION = '.rv-basemap-description';
+    const BASEMAP_WKID_IMAGE = '.rv-wkid';
 
     /**
      * @module rvBasemapItem
@@ -28,7 +36,7 @@
                 select: '&'
             },
             link: link,
-            controller: Controller,
+            controller: () => {},
             controllerAs: 'self',
             bindToController: true
         };
@@ -37,20 +45,57 @@
 
         /*********/
 
-        function link() { // scope, el, attr, ctrl) {
+        function link(scope, el) { // scope, el, attr, ctrl) {
+            const self = scope.self;
 
+            // console.log(scope);
+
+            self.toggleDescription = toggleDescription;
+            self.isDescriptionVisible = false;
+
+            const descNode = el.find(BASEMAP_DESCRIPTION);
+            const footer = el.find(BASEMAP_FOOTER);
+            const wkidImage = el.find(BASEMAP_WKID_IMAGE);
+            let tlToggle;
+
+            /***/
+
+            /**
+             * Create animation timeline for toggle basemap description the first time the toggle is clicked and plays/reverses the animation on subsequent clicks.
+             *
+             * @function toggleDescription
+             * @private
+             */
+            function toggleDescription() {
+                if (!tlToggle) {
+                    const fullHeight = Math.max(
+                        footer.outerHeight(true) + descNode.outerHeight(true),
+                        el.outerHeight(true));
+
+                    tlToggle = new TimelineLite();
+                    tlToggle
+                        .to(el, RV_DURATION / 3 * 2, {
+                            height: fullHeight,
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        }, 0)
+                        .to(wkidImage, RV_DURATION / 3 * 2, {
+                            opacity: 0.16,
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        }, 0)
+                        .set(descNode, {
+                            top: 0
+                        }, 0)
+                        .to(descNode, RV_DURATION / 3 * 2, {
+                            opacity: 1,
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        }, RV_DURATION / 3)
+                        .reverse();
+                }
+
+                // reversed reversed ? ... it works though.
+                tlToggle.reversed(!tlToggle.reversed());
+                self.isDescriptionVisible = !tlToggle.reversed();
+            }
         }
-    }
-
-    function Controller() {
-
-        activate();
-
-        /*********/
-
-        function activate() {
-
-        }
-
     }
 })();
