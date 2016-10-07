@@ -29,6 +29,8 @@
         'ngInject';
         const self = this;
 
+        self.minimize = basemapService.close;
+
         basemapService.setOnChangeCallback((projs, selectedBM) => {
             self.projections = projs;
             self.selectedWkid = selectedBM.wkid;

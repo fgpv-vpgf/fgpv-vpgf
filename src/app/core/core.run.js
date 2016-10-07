@@ -39,6 +39,8 @@
         $rootScope.$on('$translateLoadingSuccess', () => console.log(
             '$translateLoadingSuccess ->'));
 
+        $rootScope.uid = uid;
+
         /********************/
 
         /**
@@ -124,6 +126,20 @@
                 $rootScope.$broadcast(events.rvBookmarkInit);
             }
 
+        }
+
+        /**
+         * A helper function to create ids for template elements inside directives.
+         * Should be called with a scope id and an optional suffix if several different ids needed inside a single directive (each scope has a different id).
+         * Adding `{{ ::$root.uid($id) }}` inside a template will return a `{appid}-{scopeid}` string. If this used several times inside a single template, the same id is returned, so you don't have to store it to reuse. Don't forget a one-time binding.
+         * @function uid
+         * @private
+         * @param {String|Number} id
+         * @return {String|Number} suffix [optional]
+         */
+        function uid(id, suffix) {
+            suffix = suffix ? `-${suffix}` : '';
+            return `${appInfo.id}-id-${id}${suffix}`;
         }
     }
 

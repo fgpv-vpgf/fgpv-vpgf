@@ -1,5 +1,9 @@
-<md-sidenav rv-basemap class="site-sidenav md-sidenav-right md-whiteframe-z2" md-component-id="right">
+<md-sidenav rv-basemap class="rv-basemap-selector md-sidenav-right md-whiteframe-z2" md-component-id="right">
     <rv-content-pane>
+
+        <md-button class="md-icon-button black rv-button-32 rv-minimize-button" ng-click="self.minimize()">
+            <md-icon md-svg-src="community:chevron-double-right"></md-icon>
+        </md-button>
 
         <div class="rv-subsection" ng-repeat="projection in self.projections">
 
