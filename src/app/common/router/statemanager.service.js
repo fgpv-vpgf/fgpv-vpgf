@@ -294,7 +294,7 @@
             // TODO: mobile layout hack to be removed when details panel is
             // moved into its own parent panel
             if (panelToOpen.name === 'mainDetails') {
-                $('rv-panel[type="main"]').css('z-index', 2);
+                $('rv-panel[type="main"]').css('z-index', 4);
             }
 
             // opening parent panel

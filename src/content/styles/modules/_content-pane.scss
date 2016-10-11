@@ -23,6 +23,8 @@
             }
 
             @include media($rv-sm...) {
+                padding-left: 50px;
+
                 .rv-close {
                     position: absolute;
                     left: 5px;
@@ -39,22 +41,13 @@
                 z-index: 1;
                 border: none;
                 padding: rem(0.4) 0;
-
+                right: 0;
                 //left: 1px;
                 /*background: linear-gradient(to bottom, rgba(255,255,255,1) 30%,rgba(255,255,255,0.62) 60%, rgba(255,255,255,0) 100%);*/
                 align-items: center;
 
-                @include media($rv-gt-sm) {
-                    right: 0;
-                }
-
                 .md-button {
                     background: radial-gradient(ellipse at center, rgba(255,255,255,1) 30%,rgba(255,255,255,0.32) 100%);
-
-                    @include media($rv-sm) {
-                        height: 35px;
-                        top: -2px;
-                    }
                 }
             }
         }
