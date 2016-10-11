@@ -224,7 +224,7 @@
                     opts.layerIds.push(legendEntry.featureIdx); // tell server to query this layer
                     const identifyResult =
                         IDENTIFY_RESULT(legendEntry.name, legendEntry.symbology, 'EsriFeature', layerRecord,
-                            legendEntry.featureIdx, legendEntry.name);
+                            legendEntry.featureIdx, legendEntry.master.name); // provide name of the master group as caption
 
                     identifyResults[legendEntry.featureIdx] = identifyResult;
                 });
