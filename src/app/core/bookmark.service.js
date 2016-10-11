@@ -67,103 +67,6 @@
         }
 
         /**
-         * Derives an initial extent using information from the bookmark
-         * and the config file
-         *
-         * @function deriveBookmarkExtent
-         * @private
-         * @param {Object} config       Config object of the map application
-         * @param {Object} b            Object that holds bookmark decoding variables.
-         * @returns {Object}            An extent where the map should initialize
-         */
-        function deriveBookmarkExtent(config, b) {
-            // find the LOD set for the basemap in the config file,
-            // then find the LOD closest to the scale provided by the bookmark.
-            const configLodSet = config.map.lods.find(lodset => lodset.id === b.lodId);
-            const zoomLod = gapiService.gapi.mapManager.findClosestLOD(configLodSet.lods, b.scale);
-
-            // Note: we used to use a centerAndZoom() call to position the map to the basemap co-ords.
-            //       it was causing a race condition during a projection change, so we now calculate
-            //       the new initial extent and set it prior to map creation.
-
-            // project bookmark point to the map's spatial reference
-            const coords = gapiService.gapi.proj.localProjectPoint(b.bookmarkSR, b.mapSR, { x: b.x, y: b.y });
-            const zoomPoint = gapiService.gapi.proj.Point(coords.x, coords.y, b.mapSR);
-
-            // using resolution of our target level of detail, and the size of the map in pixels,
-            // calculate a rough extent of where our map should initialize.
-            const domNode = $rootElement.find('rv-shell')[0];
-            const xOffset = domNode.offsetWidth * zoomLod.resolution / 2;
-            const yOffset = domNode.offsetHeight * zoomLod.resolution / 2;
-            return {
-                xmin: zoomPoint.x - xOffset,
-                xmax: zoomPoint.x + xOffset,
-                ymin: zoomPoint.y - yOffset,
-                ymax: zoomPoint.y + yOffset,
-                spatialReference: zoomPoint.spatialReference
-            };
-        }
-
-        /**
-         * Extracts and decodes the top level parts of the bookmark.
-         * Updates the b object with data from the bookmark
-         *
-         * @function decodeMainBookmark
-         * @private
-         * @param {String} bookmark     A bookmark created by getBookmark
-         * @param {Object} b            Object that holds bookmark decoding variables. Parameter is modified by function.
-         */
-        function decodeMainBookmark(bookmark, b) {
-            const pattern = /^([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
-            const info = bookmark.match(pattern);
-
-            // pull out non-layer info
-            const chunks = [2, 3, 4, 5].map(i => decode64(info[i]));
-            b.basemap = chunks[0];
-            b.x = chunks[1];
-            b.y = chunks[2];
-            b.scale = chunks[3];
-
-            // also store any layer info
-            b.layers = info[6];
-
-            if (b.version !== bmVer.A) {
-                b.blankBaseMap = b.basemap.substr(b.basemap.length - 1, 1) === '1';
-                b.basemap = b.basemap.substring(0, b.basemap.length - 1);
-            }
-        }
-
-        /**
-         * Does special logic to handle the case where we are using a bookmark
-         * to change basemap schema.
-         * Updates the b object
-         *
-         * @function processSchemaChangeBookmark
-         * @private
-         * @param {Object} config       Config object of the map application.
-         * @param {String} newBaseMap   Basemap id that we are changing to
-         * @param {Object} b            Object that holds bookmark decoding variables. Parameter is modified by function.
-         */
-        function processSchemaChangeBookmark(config, newBaseMap, b) {
-            let newBasemapConfig;
-            if (newBaseMap.indexOf(blankPrefix) === 0) {
-                // we are changing schemas, but are initializing with the blank basemap.
-                // need to find the first valid basemap in the new collection
-                // and steal it's settings for extents and lods.
-                // blank basemap codes start with the prefix and end with the WKID
-                const newWkid = parseInt(newBaseMap.substr(blankPrefix.length));
-                newBasemapConfig = config.baseMaps.find(bm => bm.wkid === newWkid);
-            } else {
-                // just grab the config for the given basemap id
-                newBasemapConfig = config.baseMaps.find(bm => bm.id === newBaseMap);
-            }
-
-            b.lodId = newBasemapConfig.lodId;
-            b.extentId = newBasemapConfig.extentId;
-            b.mapSR.wkid = newBasemapConfig.wkid;
-        }
-
-        /**
          * Reads and applies the options specified by bookmark to config
          *
          * @function parseBookmark
@@ -177,24 +80,54 @@
             // this methods uses a lot of sub-methods because of the following rules
             // RULE #1 single method can't have more than 40 commands
             // RULE #2 obey all rules
-            const b = {}; // used to pass things around to other functions
 
             const config = angular.copy(origConfig);
 
-            bookmark = decodeURI(bookmark);
+            const dBookmark = decodeURI(bookmark);
 
-            console.log(bookmark);
+            console.log(dBookmark);
 
-            b.version = bookmark.match(/^([^,]+)/)[0];
-            b.blankBaseMap = false;
+            const version = dBookmark.match(/^([^,]+)/)[0];
+            let blankBaseMap = false;
+            let basemap;
+            let x;
+            let y;
+            let scale;
+            let layers;
 
-            decodeMainBookmark(bookmark, b);
+            /**
+             * Extracts and decodes the top level parts of the bookmark.
+             *
+             * @function decodeMainBookmark
+             * @private
+             */
+            function decodeMainBookmark() {
+                const pattern = /^([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
+                const info = dBookmark.match(pattern);
+
+                // pull out non-layer info
+                const chunks = [2, 3, 4, 5].map(i => decode64(info[i]));
+                basemap = chunks[0];
+                x = chunks[1];
+                y = chunks[2];
+                scale = chunks[3];
+
+                // also store any layer info
+                layers = info[6];
+
+                if (version !== bmVer.A) {
+                    blankBaseMap = basemap.substr(basemap.length - 1, 1) === '1';
+                    basemap = basemap.substring(0, basemap.length - 1);
+                }
+            }
+
+            decodeMainBookmark();
 
             // mark initial basemap
-            config.map.initialBasemapId = newBaseMap || b.basemap;
+            config.map.initialBasemapId = newBaseMap || basemap;
 
-            const origBasemapConfig = config.baseMaps.find(bm => bm.id === b.basemap);
-            if (b.blankBaseMap && !newBaseMap) {
+            const origBasemapConfig = config.baseMaps.find(bm => bm.id === basemap);
+            if (blankBaseMap && !newBaseMap) {
                 // we are not doing a schema change, and the basemap on the bookmark has the blank
                 // flag set. Override the initial setting to be the blank key for the correct
                 // projection.
@@ -203,27 +136,89 @@
             }
 
             // apply extent
-            b.bookmarkSR = {
+            const bookmarkSR = {
                 wkid: origBasemapConfig.wkid
             };
-            b.mapSR = {
+            const mapSR = {
                 wkid: origBasemapConfig.wkid
             };
 
             // determine the zoom level. use bookmark basemap unless we are doing a projection switch
-            b.lodId = origBasemapConfig.lodId;
-            b.extentId = origBasemapConfig.extentId;
+            let lodId = origBasemapConfig.lodId;
+            let extentId = origBasemapConfig.extentId;
 
-            if (newBaseMap) {
-                processSchemaChangeBookmark(config, newBaseMap, b);
+            /**
+             * Does special logic to handle the case where we are using a bookmark
+             * to change basemap schema.
+             *
+             * @function processSchemaChangeBookmark
+             * @private
+             */
+            function processSchemaChangeBookmark() {
+                let newBasemapConfig;
+                if (newBaseMap.indexOf(blankPrefix) === 0) {
+                    // we are changing schemas, but are initializing with the blank basemap.
+                    // need to find the first valid basemap in the new collection
+                    // and steal it's settings for extents and lods.
+                    // blank basemap codes start with the prefix and end with the WKID
+                    const newWkid = parseInt(newBaseMap.substr(blankPrefix.length));
+                    newBasemapConfig = config.baseMaps.find(bm => bm.wkid === newWkid);
+                } else {
+                    // just grab the config for the given basemap id
+                    newBasemapConfig = config.baseMaps.find(bm => bm.id === newBaseMap);
+                }
+
+                lodId = newBasemapConfig.lodId;
+                extentId = newBasemapConfig.extentId;
+                mapSR.wkid = newBasemapConfig.wkid;
             }
 
-            const zoomExtent = deriveBookmarkExtent(config, b);
+            if (newBaseMap) {
+                processSchemaChangeBookmark();
+            }
+
+            /**
+             * Derives an initial extent using information from the bookmark
+             * and the config file
+             *
+             * @function deriveBookmarkExtent
+             * @private
+             * @returns {Object}            An extent where the map should initialize
+             */
+            function deriveBookmarkExtent() {
+                // find the LOD set for the basemap in the config file,
+                // then find the LOD closest to the scale provided by the bookmark.
+                const configLodSet = config.map.lods.find(lodset => lodset.id === lodId);
+                const zoomLod = gapiService.gapi.mapManager.findClosestLOD(configLodSet.lods, scale);
+
+                // Note: we used to use a centerAndZoom() call to position the map to the basemap co-ords.
+                //       it was causing a race condition during a projection change, so we now calculate
+                //       the new initial extent and set it prior to map creation.
+
+                // project bookmark point to the map's spatial reference
+                const coords = gapiService.gapi.proj.localProjectPoint(bookmarkSR, mapSR, { x: x, y: y });
+                const zoomPoint = gapiService.gapi.proj.Point(coords.x, coords.y, mapSR);
+
+                // using resolution of our target level of detail, and the size of the map in pixels,
+                // calculate a rough extent of where our map should initialize.
+                const domNode = $rootElement.find('rv-shell')[0];
+                const xOffset = domNode.offsetWidth * zoomLod.resolution / 2;
+                const yOffset = domNode.offsetHeight * zoomLod.resolution / 2;
+                return {
+                    xmin: zoomPoint.x - xOffset,
+                    xmax: zoomPoint.x + xOffset,
+                    ymin: zoomPoint.y - yOffset,
+                    ymax: zoomPoint.y + yOffset,
+                    spatialReference: zoomPoint.spatialReference
+                };
+            }
+
+            const zoomExtent = deriveBookmarkExtent();
 
             // update the config file default extent.  if we don't have a full extent defined,
             // copy the original default to the full.  otherwise our zoom-to-canada button
             // will start zooming to our new initial extent.
-            const configExtSet = config.map.extentSets.find(extset => extset.id === b.extentId);
+            const configExtSet = config.map.extentSets.find(extset => extset.id === extentId);
             if (!configExtSet.full) {
                 configExtSet.full = configExtSet.default;
             }
@@ -232,11 +227,11 @@
             let bookmarkLayers = {};
 
             // Make sure there are layers before trying to loop through them
-            if (b.layers) {
-                const layerData = b.layers.split(',');
+            if (layers) {
+                const layerData = layers.split(',');
 
                 // create partial layer configs from layer bookmarks
-                bookmarkLayers = parseLayers(layerData, b.version);
+                bookmarkLayers = parseLayers(layerData, version);
 
                 // modify main config using layer configs
                 filterConfigLayers(bookmarkLayers, config);
