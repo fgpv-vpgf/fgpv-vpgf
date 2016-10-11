@@ -517,7 +517,7 @@
                 if (layerEntry.children) {
                     layerEntry.children.forEach(childEntry => {
                         // TODO add check for bad configs? we should never be overwriting anything in
-                        //      layerEntriesOptions. not sure who should be responsibile for quality.
+                        //      layerEntriesOptions. not sure who should be responsible for quality.
                         layerEntriesOptions[childEntry.index] = childEntry;
                     });
                 }

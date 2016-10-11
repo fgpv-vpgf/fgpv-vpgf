@@ -130,7 +130,7 @@
              *
              * @param {Array} props     The property names
              * @param {Array} info      The values for the properties
-             * @param {String} version  Version of the bookmark data
+             * @param {String} version  Version of the bookmark data. See core/constant.service for valid versions
              * @returns {Object}        config snippet for the layer
              */
             static parseData (props, info, version) {
@@ -309,7 +309,7 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
-             * @param {String} version      version of the bookmark
+             * @param {String} version      version of the bookmark. See core/constant.service for valid versions
              * @returns {Object}            config snippet for the layer
              */
             static parseData (dataString, version) {
@@ -361,7 +361,7 @@
                 };
 
                 // grab stuff on children.  we can't use walkItems because it returns a flat list.
-                // we need to preserve heirarchy here.
+                // we need to preserve hierarchy here.
                 // loop over top-level children of the layer. these are the ones that have
                 // entries defined in .layerEntries in the config.
                 // these get serialized, and delimited by a ;
@@ -389,7 +389,7 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
-             * @param {String} version      version of the bookmark
+             * @param {String} version      version of the bookmark. See core/constant.service for valid versions
              * @returns {Object}            config snippet for the layer
              */
             static parseData (dataString, version) {
@@ -472,7 +472,7 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
-             * @param {String} version      version of the bookmark
+             * @param {String} version      version of the bookmark. See core/constant.service for valid versions
              * @returns {Object}            config snippet for the layer
              */
             static parseData (dataString, version) {
@@ -521,7 +521,7 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
-             * @param {String} version      version of the bookmark
+             * @param {String} version      version of the bookmark. See core/constant.service for valid versions
              * @returns {Object}            config snippet for the layer
              */
             static parseData (dataString, version) {
@@ -573,7 +573,7 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
-             * @param {String} version      version of the bookmark
+             * @param {String} version      version of the bookmark. See core/constant.service for valid versions
              * @returns {Object}            config snippet for the layer
              */
             static parseData (dataString, version) {
@@ -630,7 +630,7 @@
          * @function parseLayerData
          * @param {String} dataString   a partial layer bookmark (everything after the id)
          * @param {Number} layerType    Layer type taken from the layer bookmark
-         * @param {String} version      Version of the bookmark format
+         * @param {String} version      Version of the bookmark format. See core/constant.service for valid versions
          * @returns {Object}            config snippet for the layer
          */
         function parseLayerData(dataString, layerType, version) {
@@ -645,6 +645,15 @@
             return classes[layerType].parseData(dataString, version);
         }
 
+        /**
+         * Converts an opacity number to a fixed-length character representation.
+         * Values are mapped from range 0 - 1  to 0 - 99, 99 representing 100 to save space.
+         * Single digits are zero-padded (i.e. 2 -> 02).
+         *
+         * @function padOpacity
+         * @param {Number} value        Opacity value of a layer. A Decimal between 0 and 1
+         * @returns {String}            Two digit string representation of value, mapped to between 0 and 99, 99 representing 100. Single digits are zero-padded.
+         */
         function padOpacity(value) {
             // sometimes we get weird decimal numbers coming in, like 0.5599999999999 instead of 0.56
             value = String(Math.round(value * 100));
