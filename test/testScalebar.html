@@ -12,7 +12,7 @@
 <body class="claro">
     <div id="basemapG" style="height:100px; width:100px;" ></div>
     <div id="map" style="height:100%; width: 100%; margin: 0; overflow:hidden;"></div>
-    <script src="../dist/geoapi.min.js"></script>
+    <script src="../dist/geoapi.js"></script>
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
