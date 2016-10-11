@@ -34,27 +34,10 @@
         return directive;
     }
 
-    function Controller(stateManager, $mdDialog, storageService) {
+    function Controller(detailService) {
         'ngInject';
         const self = this;
 
-        self.expandPanel = expandPanel;
-
-        function expandPanel() {
-            $mdDialog.show({
-                controller: () => {},
-                parent: storageService.panels.shell,
-                locals: {
-                    item: stateManager.display.details.selectedItem,
-                    cancel: $mdDialog.cancel
-                },
-                templateUrl: 'app/ui/details/details-modal.html',
-                clickOutsideToClose: true,
-                disableParentScroll: false,
-                escapeToClose: true,
-                controllerAs: 'self',
-                bindToController: true
-            });
-        }
+        self.expandPanel = detailService.expandPanel;
     }
 })();

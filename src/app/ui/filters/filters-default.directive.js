@@ -2,6 +2,7 @@
     // button blueprints to be added to the table rows
     // `self` property is named so intentionally, as it will be passed on a scope to the ROW_BUTTON_TEMPLATE
     const ROW_BUTTONS = {
+        // hide this for small layouts, use smallDetails instead
         details: {
             name: 'rv-details-marker',
             scope: null,
@@ -11,7 +12,22 @@
                 label: 'filter.tooltip.description',
                 tooltip: 'filter.tooltip.description',
                 action: angular.noop,
-                enabled: true
+                enabled: true,
+                class: 'sm-hide'
+            }
+        },
+        // for small layouts - opens detail panel as a dialog
+        smallDetails: {
+            name: 'rv-details-sm-marker',
+            scope: null,
+            self: {
+                isFunction: angular.isFunction,
+                icon: 'action:description',
+                label: 'filter.tooltip.description',
+                tooltip: 'filter.tooltip.description',
+                action: angular.noop,
+                enabled: true,
+                class: 'sm-show'
             }
         },
         zoom: {
@@ -33,7 +49,7 @@
     const ROW_BUTTON_TEMPLATE = (row, disabled) =>
         `<md-button
             aria-label="{{ self.isFunction(self.label) ? self.label(self.enabled) : self.label | translate }}"
-            class="md-icon-button rv-icon-16 rv-button-24"
+            ng-class="[self.class, 'md-icon-button', 'rv-icon-16', 'rv-button-24']"
             ng-click="self.action(${row})"
             ng-disabled="${disabled}">
 
@@ -61,7 +77,8 @@
      * @function rvFiltersDefault
      * @return {object} directive body
      */
-    function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService) {
+    function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
+        layoutService, detailService) {
 
         const directive = {
             restrict: 'E',
@@ -128,6 +145,7 @@
                 // assign callbacks to row buttons
                 ROW_BUTTONS.details.self.action = onDetailsClick;
                 ROW_BUTTONS.zoom.self.action = onZoomClick;
+                ROW_BUTTONS.smallDetails.self.action = row => onDetailsClick(row, true);
 
                 // make new common scopes for row buttons
                 Object.values(ROW_BUTTONS).forEach(button => {
@@ -244,7 +262,7 @@
                  * @private
                  * @param  {Number} rowNumber number of the row clicked
                  */
-                function onDetailsClick(rowNumber) {
+                function onDetailsClick(rowNumber, useDialog = false) {
                     const data = self.table.row(rowNumber).data();
                     const layerRec = geoService.layers[requester.layerId];
 
@@ -279,7 +297,12 @@
                         data: [detailsObj]
                     };
 
-                    stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
+                    if (useDialog) {
+                        stateManager.display.details.selectedItem = detailsObj;
+                        detailService.expandPanel(false);
+                    } else {
+                        stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
+                    }
 
                     const layer = geoService.layers[requester.layerId];
                     geoService.hilightGraphic(layer, requester.legendEntry.featureIdx, objId);
