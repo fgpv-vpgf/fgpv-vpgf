@@ -55,7 +55,7 @@ rv-panel[type='filters'] {
     @include media($rv-sm) {
         &.default, &.full, &.attached {
             @include active-panel-plug($left: 0, $top: 0, $right: 0, $bottom: 0, $width: 100%, $from: right);
-            z-index: 1;
+            z-index: 3;
         }
     }
 
@@ -106,7 +106,7 @@ rv-panel[type='main'] {
     }
 
     @include media($rv-sm) {
-        @include active-panel-plug($left: 0, $top: $toolbar-height, $bottom: 0, $width: 100%, $from: top);
+        @include active-panel-plug($left: 0, $top: $toolbar-height + 1, $bottom: 0, $width: 100%, $from: top);
         z-index: 1;
     }
 
@@ -118,10 +118,7 @@ rv-panel[type='main'] {
         right: 0;
         height: 1px;
         z-index: 1;
-
-        @include media($rv-gt-sm...) {
-            border-top: 1px solid $divider-color;
-        }
+        border-top: 1px solid $divider-color;
     }
 
     &.ng-animate {
@@ -145,7 +142,7 @@ rv-panel[type='side'] {
 
     @include media($rv-sm) {
         @include active-panel-plug($left: 0, $top: 0, $bottom: 0, $width: 100%, $from: right);
-        z-index: 1;
+        z-index: 2;
     }
 
     &:before {

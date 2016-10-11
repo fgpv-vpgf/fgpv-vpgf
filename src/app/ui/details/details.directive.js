@@ -88,6 +88,16 @@
         }
 
         $scope.$watch('self.display.data', newValue => {
+
+            // required for mobile layout to distinguish single vs multi detail results
+            if (newValue && newValue.length > 1) {
+                $('rv-appbar').css('z-index', 5);
+                $element.removeClass('rv-single');
+            } else {
+                $('rv-appbar').css('z-index', 2);
+                $element.addClass('rv-single');
+            }
+
             focusService.setFocusElement($element.find('.rv-content-pane button[aria-label="Close"]'));
             // if multiple points added to the details panel ...
             if (newValue && newValue.length > 0) {
