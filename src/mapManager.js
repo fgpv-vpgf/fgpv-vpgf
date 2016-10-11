@@ -29,7 +29,8 @@ module.exports = function (esriBundle) {
         getExtentFromJson,
         setupMap,
         setProxy,
-        mapDefault
+        mapDefault,
+        findClosestLOD
     };
 
     let basemapCtrl;
@@ -180,6 +181,22 @@ module.exports = function (esriBundle) {
         return esriBundle.Extent({ xmin: extentJson.xmin, ymin: extentJson.ymin,
             xmax: extentJson.xmax, ymax: extentJson.ymax,
             spatialReference: { wkid: extentJson.spatialReference.wkid } });
+    }
+
+    /**
+     * @ngdoc method
+     * @name findClosestLOD
+     * @memberof mapManager
+     * Finds the level of detail closest to the provided scale.
+     *
+     * @param  {Array} lods     list of levels of detail objects
+     * @param  {Number} scale   scale value to search for in the levels of detail
+     * @return {Object} the level of detail object closest to the scale
+     */
+    function findClosestLOD(lods, scale) {
+        const diffs = lods.map(lod => Math.abs(lod.scale - scale));
+        const lodIdx = diffs.indexOf(Math.min(...diffs));
+        return lods[lodIdx];
     }
 
     return mapManager;
