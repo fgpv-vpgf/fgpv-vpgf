@@ -32,6 +32,10 @@
             rvDataPrint: 'rvDataPrint', // these data events should be removed after switching to angular 1.5 or 2 or React
             rvDataExportCSV: 'rvDataExportCSV'
         })
+        .constant('bmVer', { // Bookmark versions https://github.com/fgpv-vpgf/fgpv-vpgf/wiki/Bookmark-Formats
+            A: 'A',
+            B: 'B'
+        })
         .constant('translations', AUTOFILLED_TRANSLATIONS)
         .value('appInfo', {
             id: null
