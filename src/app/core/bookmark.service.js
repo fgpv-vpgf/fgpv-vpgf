@@ -13,19 +13,13 @@
         .factory('bookmarkService', bookmarkService);
 
     function bookmarkService($rootElement, $q, legendService, geoService, LayerBlueprint,
-            LayerRecordFactory, configService, gapiService) {
-
-        const vers = {
-            A: 'A',
-            B: 'B'
-        };
+            LayerRecordFactory, configService, gapiService, bmVer) {
 
         const blankPrefix = 'blank_basemap_';
 
         const service = {
             getBookmark,
-            parseBookmark,
-            vers
+            parseBookmark
         };
 
         return service;
@@ -64,8 +58,8 @@
                 return encode64(legendEntry._layerRecord.makeLayerBookmark());
             });
 
-            // vers.? is the version. update this accordingly whenever the structure of the bookmark changes
-            const bookmark = `${vers.B},${basemap},${extent.x},${extent.y},${extent.scale}` +
+            // bmVer.? is the version. update this accordingly whenever the structure of the bookmark changes
+            const bookmark = `${bmVer.B},${basemap},${extent.x},${extent.y},${extent.scale}` +
                 (layerBookmarks.length > 0 ? `,${layerBookmarks.toString()}` : '');
             console.log(bookmark);
             return bookmark;
@@ -85,16 +79,8 @@
         function deriveBookmarkExtent(config, b) {
             // find the LOD set for the basemap in the config file,
             // then find the LOD closest to the scale provided by the bookmark.
-            // TODO the two lines of this function that use the Math object represent duplicated logic
-            //      that can be found in map.service --> findClosestLOD().
-            //      ideally we would call that function here; however, in the case where we are reading a
-            //      bookmark from the URL, the map service has not started yet, so the function has not
-            //      been defined.  moving it to geo.service doesnt work, because map.service is not aware
-            //      of geo.service.  at some point, we should find an appropriate spot to move findClosestLOD()
-            //      to so that it can be accessed in both map.service and bookmark.service.
             const configLodSet = config.map.lods.find(lodset => lodset.id === b.lodId);
-            const diffs = configLodSet.lods.map(lod => Math.abs(lod.scale - b.scale));
-            const zoomLod = configLodSet.lods[diffs.indexOf(Math.min(...diffs))];
+            const zoomLod = gapiService.gapi.mapManager.findClosestLOD(configLodSet.lods, b.scale);
 
             // Note: we used to use a centerAndZoom() call to position the map to the basemap co-ords.
             //       it was causing a race condition during a projection change, so we now calculate
@@ -120,7 +106,7 @@
 
         /**
          * Extracts and decodes the top level parts of the bookmark.
-         * Updates the vars object with data from the bookmark
+         * Updates the b object with data from the bookmark
          *
          * @function decodeMainBookmark
          * @private
@@ -141,7 +127,7 @@
             // also store any layer info
             b.layers = info[6];
 
-            if (b.version !== vers.A) {
+            if (b.version !== bmVer.A) {
                 b.blankBaseMap = b.basemap.substr(b.basemap.length - 1, 1) === '1';
                 b.basemap = b.basemap.substring(0, b.basemap.length - 1);
             }
@@ -150,7 +136,7 @@
         /**
          * Does special logic to handle the case where we are using a bookmark
          * to change basemap schema.
-         * Updates the vars object
+         * Updates the b object
          *
          * @function processSchemaChangeBookmark
          * @private
@@ -275,7 +261,7 @@
         function parseLayers(layerDataStrings, version) {
             const layerPatterns = {};
 
-            layerPatterns[vers.A] = [
+            layerPatterns[bmVer.A] = [
                 /^(.+?)(\d{7})$/, // feature
                 /^(.+?)(\d{6})$/, // wms
                 /^(.+?)(\d{5})$/, // tile
@@ -283,7 +269,7 @@
                 /^(.+?)(\d{5})$/ // image
             ];
 
-            layerPatterns[vers.B] = [
+            layerPatterns[bmVer.B] = [
                 /^(.+?)(\d{6})$/, // feature
                 /^(.+?)(\d{5})$/, // wms
                 /^(.+?)(\d{4})$/, // tile
