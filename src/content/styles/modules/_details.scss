@@ -1,17 +1,40 @@
 @mixin details {
     $slide-out-width: rem(28);
 
+    .rv-show-single {
+        display: none !important;
+    }
+
     rv-details {
         @include media($rv-sm...) {
             position: fixed;
             left: 0;
-            top: 0;
+            top: 48px;
             right: 0;
             bottom: 0;
             z-index: 3;
+        }
 
-            .rv-header-float {
-                margin-left: 47px;
+        @include media($rv-sm...) {
+            &.rv-single {
+                top: 0;
+
+                .rv-header-float {
+                    right: initial;
+                }
+
+                .rv-subheader {
+                    padding-left: 48px !important;
+                    padding-top: 5px !important;
+                }
+
+                .rv-show-single {
+                    display: block !important;
+                }
+
+                .rv-hide-single {
+                    display: none !important;
+                }
             }
         }
     }
@@ -201,11 +224,6 @@ $details-record-height: rem(6.0);
 
         .rv-subheader {
             padding: rem(0.8) rem(1.6);
-
-            @include media($rv-sm) {
-                padding-left: 50px;
-                padding-top: 0;
-            }
         }
     }
 

@@ -118,10 +118,7 @@ rv-panel[type='main'] {
         right: 0;
         height: 1px;
         z-index: 1;
-
-        @include media($rv-gt-sm...) {
-            border-top: 1px solid $divider-color;
-        }
+        border-top: 1px solid $divider-color;
     }
 
     &.ng-animate {
