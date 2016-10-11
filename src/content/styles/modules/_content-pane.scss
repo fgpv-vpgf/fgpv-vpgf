@@ -23,6 +23,8 @@
             }
 
             @include media($rv-sm...) {
+                padding-left: 50px;
+
                 .rv-close {
                     position: absolute;
                     left: 5px;
