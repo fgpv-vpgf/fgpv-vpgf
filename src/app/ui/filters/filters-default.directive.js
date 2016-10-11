@@ -61,7 +61,8 @@
      * @function rvFiltersDefault
      * @return {object} directive body
      */
-    function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService) {
+    function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
+        layoutService, detailService) {
 
         const directive = {
             restrict: 'E',
@@ -126,7 +127,17 @@
                 ROW_BUTTONS.zoom.self.enabled = isZoomEnabled;
 
                 // assign callbacks to row buttons
-                ROW_BUTTONS.details.self.action = onDetailsClick;
+                ROW_BUTTONS.details.self.action = row => {
+                    switch (layoutService.currentLayout()) {
+                        case 'small':
+                            onDetailsClick(row, true);
+                            break;
+
+                        default:
+                            onDetailsClick(row);
+                    }
+                };
+
                 ROW_BUTTONS.zoom.self.action = onZoomClick;
 
                 // make new common scopes for row buttons
@@ -244,7 +255,7 @@
                  * @private
                  * @param  {Number} rowNumber number of the row clicked
                  */
-                function onDetailsClick(rowNumber) {
+                function onDetailsClick(rowNumber, useDialog = false) {
                     const data = self.table.row(rowNumber).data();
                     const layerRec = geoService.layers[requester.layerId];
 
@@ -279,7 +290,12 @@
                         data: [detailsObj]
                     };
 
-                    stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
+                    if (useDialog) {
+                        stateManager.display.details.selectedItem = detailsObj;
+                        detailService.expandPanel(false);
+                    } else {
+                        stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
+                    }
 
                     const layer = geoService.layers[requester.layerId];
                     geoService.hilightGraphic(layer, requester.legendEntry.featureIdx, objId);

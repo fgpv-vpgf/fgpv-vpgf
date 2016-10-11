@@ -11,8 +11,10 @@
         .module('app.layout')
         .factory('layoutService', layoutService);
 
-    function layoutService(sideNavigationService, mapNavigationService) {
+    function layoutService(sideNavigationService, mapNavigationService, $rootElement) {
+
         const service = {
+            currentLayout,
             /**
              * Exposes sideNavigationSerivce
              * @member sidenav
@@ -31,6 +33,21 @@
         };
 
         return service;
+
+        /**
+        * Determines the current layout type as either small, medium, or large depending on the width of the $rootElement
+        * @function  currentLayout
+        * @return  {String} either 'small', 'medium', or 'large'
+        */
+        function currentLayout() {
+            if ($rootElement.width() <= 480) {
+                return 'small';
+            } else if ($rootElement.width() <= 840) {
+                return 'medium';
+            } else {
+                return 'large';
+            }
+        }
 
     }
 })();
