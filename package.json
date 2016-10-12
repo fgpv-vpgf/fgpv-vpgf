@@ -10,6 +10,7 @@
     "brfs": "~1.4.3",
     "browserify": "~11.2.0",
     "canonical-path": "0.0.2",
+    "canvg-origin": "^1.0.0",
     "csv2geojson": "https://github.com/mapbox/csv2geojson.git#v4.0.0",
     "del": "^2.0.2",
     "dgeni": "^0.4.1",
