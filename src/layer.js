@@ -855,10 +855,11 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
             // console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
             geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
             const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
+            const geometryType = layerDefinition.drawingInfo.geometryType;
 
             const fs = {
                 features: esriJson,
-                geometryType: layerDefinition.drawingInfo.geometryType
+                geometryType
             };
             const layer = new esriBundle.FeatureLayer(
                 {
@@ -875,6 +876,9 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
             if (opts.colour) {
                 layer.renderer.symbol.color = new esriBundle.Color(opts.colour);
             }
+
+            // initializing layer using JSON does not set this property. do it manually.
+            layer.geometryType = geometryType;
 
             resolve(layer);
         });
