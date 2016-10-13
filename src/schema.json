@@ -664,7 +664,7 @@
     },
 
     "properties": {
-        "version": { "type": "string", "enum": [ "1.1.0" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
+        "version": { "type": "string", "enum": [ "1.2","1.1.0","1.0" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
         "language": { "type": "string", "enum": [ "en", "fr", "es" ], "description": "ISO 639-1 code indicating the language of strings in the schema file" },
         "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
         "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
@@ -680,6 +680,35 @@
                 "coordInfo": { "type": "object", "additionalProperties": true, "description": "FIXME" },
                 "print": { "type": "object", "additionalProperties": true, "description": "FIXME" }
             }
+        },
+
+        "search": {
+            "type": "object",
+            "description": "Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls",
+            "properties": {
+                "disabledSearches": {
+                    "type": "array",
+                    "items": { "type": "string", "enum": [ "NTS", "FSA", "LAT/LNG" ] },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "Disable specific types of searches including NTS, FSA, or LAT/LNG"
+                },
+                "serviceUrls": {
+                    "type": "object",
+                    "description": "Service endpoint urls",
+                    "properties": {
+                        "geoNames": { "type": "string", "description": "Endpoint url for geoNames service" },
+                        "geoLocation": { "type": "string", "description": "Endpoint url for geoLocation service" },
+                        "geoSuggest": { "type": "string", "description": "Endpoint url for geoSuggest service" },
+                        "provinces": { "type": "string", "description": "Endpoint url for provinces service" },
+                        "types": { "type": "string", "description": "Endpoint url for types service" }
+                    },
+                    "additionalProperties": false,
+                    "required": ["geoNames", "geoLocation", "geoSuggest", "provinces", "types"]
+                }
+            },
+            "additionalProperties": false,
+            "required": ["serviceUrls"]
         },
 
         "map": {

@@ -1,8 +1,17 @@
 {
-  "version": "1.1.0",
+  "version": "1.2",
   "googleAPIKey": "AIzaSyD_FwYU_mT1xhTdUoiHBRjwToWUe--KVVU",
   "services": {
     "proxyUrl": "http://cp.zz9.ca/index"
+  },
+"search": {
+    "serviceUrls": {
+        "geoNames": "http://geogratis.gc.ca/services/geoname/en/geonames.json",
+        "geoLocation": "http://geogratis.gc.ca/services/geolocation/en/locate?q=",
+        "geoSuggest": "http://geogratis.gc.ca/services/geolocation/en/suggest?q=",
+        "provinces": "http://geogratis.gc.ca/services/geoname/en/codes/province.json",
+        "types": "http://geogratis.gc.ca/services/geoname/en/codes/concise.json"
+    }
   },
   "map": {
     "components": {
