@@ -877,6 +877,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
                 layer.renderer.symbol.color = new esriBundle.Color(opts.colour);
             }
 
+            // initializing layer using JSON does not set this property. do it manually.
             layer.geometryType = geometryType;
 
             resolve(layer);
