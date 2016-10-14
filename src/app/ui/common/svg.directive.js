@@ -11,7 +11,7 @@
      * @description
      *
      * The `rvSvg` directive renders supplied svg code to the page.
-     * -- src  svg code to render directly to the page
+     * -- src  svg code or svg node to render directly to the page
      * -- once {default: true} if set, works as one-time binding (svg will not be updated if the corresponding value changes)
      *
      * This can be used to include all sort of things: strings, jQuery nodes, (potentially) DOM nodes, etc.

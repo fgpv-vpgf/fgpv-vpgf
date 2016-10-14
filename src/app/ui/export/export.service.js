@@ -33,10 +33,6 @@
         function open(event) {
             $mdDialog.show({
                 controller: ExportController,
-                /*locals: {
-                    width: storageService.panels.shell.width(),
-                    height: storageService.panels.shell.height()
-                },*/
                 controllerAs: 'self',
                 bindToController: true,
                 templateUrl: 'app/ui/export/export.html',
@@ -57,15 +53,40 @@
             $mdDialog.hide();
         }
 
-        function ExportController($rootElement, storageService, exportLegendService) {
+        function ExportController($rootElement, $q, storageService, exportLegendService, geoService, gapiService) {
             'ngInject';
             const self = this;
+
+            const shellNode = storageService.panels.shell;
+            const [mapWidth, mapHeight] = [shellNode.width(), shellNode.height()];
+
+            // we need a dummy canvas graphic to stretch the export dialog to the proper size before we get any of the print images
+            self.dummyGraphic = document.createElement('canvas');
+            self.dummyGraphic.width = mapWidth;
+            self.dummyGraphic.height = mapHeight;
+
+            self.isGenerationComplete = false;
 
             self.isLegendIncluded = false;
             self.includeLegend = includeLegend;
             self.lengendGraphic = null;
 
             self.close = service.close;
+
+            const { serverPromise, localPromise } = gapiService.gapi.mapPrint.print(geoService.mapObject, {
+                url: 'http://geoappext.nrcan.gc.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task',
+                format: 'png32'
+            });
+
+            $q.resolve(serverPromise).then(canvas =>
+                self.serviceGraphic = canvas);
+
+            $q.resolve(localPromise).then(canvas =>
+                self.localGraphic = canvas);
+
+            $q.all([serverPromise, localPromise]).then(result => {
+                self.isGenerationComplete = true;
+            });
 
             /***/
 
@@ -76,7 +97,7 @@
              */
             function includeLegend() {
                 if (!self.legendGraphic && self.isLegendIncluded) {
-                    self.legendGraphic = exportLegendService.generate(storageService.panels.shell.width(), 350).node;
+                    self.legendGraphic = exportLegendService.generate(mapWidth, 350).node;
                 }
             }
         }
