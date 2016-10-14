@@ -1,6 +1,6 @@
 {
   "name": "geoApi",
-  "version": "1.0.6",
+  "version": "1.0.7-1",
   "description": "",
   "main": "dist/geoapi.js",
   "dependencies": {

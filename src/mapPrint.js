@@ -11,7 +11,6 @@ const canvg = require('canvg-origin');
   *
   * This module exports an object with the following functions
   * - `printMap`
-  * - `exportMap`
   */
 
 /**
