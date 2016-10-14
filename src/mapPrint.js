@@ -61,43 +61,42 @@ function generateServerImage(esriBundle, geoApi, map, options) {
     printParams.map = map;
     printParams.template = printTemplate;
 
-    return new Promise((resolve, reject) => {
+    // need to hide svg layers since we can generate an image for them locally
+    const svgLayers = hideLayers(map);
+
+    const printPromise = new Promise((resolve, reject) => {
         // can be use to debug print task. Gives parameters to call directly the print task from it's interface
         // http://resources.arcgis.com/en/help/rest/apiref/exportwebmap_spec.html
         // http://snipplr.com/view/72400/sample-json-representation-of-an-esri-web-map-for-export-web-map-task
         // const mapJSON = printTask._getPrintDefinition(map, printParams);
         // console.log(JSON.stringify(mapJSON));
 
-        // need to hide large user added layer to avoid CORS error (check typeof layer type)
-        // user added layer are undefined and Feature Layer are string
-        const userLayers = hideLayers(map, 'string');
-
         // TODO: catch esriJobFailed. it does not trigger the complete or the error event. Need a way to catch it!
         // execute the print task
-        printTask.execute(printParams, (response) => {
-            resolve(response);
-        },
-            (error) => {
-                reject(error);
-            }
+        printTask.execute(printParams,
+            response =>
+                resolve(convertImageToCanvas(response.url)),
+            error =>
+                reject(error)
         );
-
-        // show user added previously visible for canvg to create canvas
-        showLayers(userLayers);
     });
+
+    // show user added previously visible for canvg to create canvas
+    showLayers(svgLayers);
+
+    return printPromise;
 }
 
 /**
-* Set user added layer visibility to false to avoid CORS error
+* Set svg-based layer visibility to false to avoid CORS error
 *
 * @param {Object} map esri map object
-* @param {String} type layer to check
 * @return {Array} layer array of layers where visibility is true
 */
-function hideLayers(map, type) {
+function hideLayers(map) {
     return map.graphicsLayerIds
         .map(layerId => map.getLayer(layerId))
-        .filter(layer => layer.visible && typeof layer.type !== type)
+        .filter(layer => layer.visible)
         .map(layer => {
             layer.setVisibility(false);
             return layer;
@@ -121,51 +120,50 @@ function showLayers(layers) {
 *                           resolve with a canvas element with user added layer on it
 */
 function generateLocalCanvas(map) {
-    // create a canvas out of file layers
-    const serializer = new XMLSerializer();
+    // convert svg to text (use map id to select the svg container)
+    const svgtext = document.getElementById(`esri\.Map_${map.id.split('_')[1]}_gc`).outerHTML;
+    const localCanvas = document.createElement('canvas'); // create canvas element
 
-    // need to hide service based feature layer to remove them from svg
-    const featLayers = hideLayers(map, 'undefined');
-
-    // convert svg text to canvas and stuff it into mapExportImgLocal canvas dom node
-    return new Promise((resolve) => {
-        // wait 500ms for user added to show after print task is launched
-        setTimeout(() => {
-            // convert svg to text (use map id to select the svg container)
-            const svgtext = serializer
-                .serializeToString(document.getElementById(`esri\.Map_${map.id.split('_')[1]}_gc`));
-
-            // show feature layer previously visible
-            showLayers(featLayers);
-
-            // create canvas element
-            const mapExportImgLocal = document.createElement('canvas');
-
-            // parse the svg
-            canvg(mapExportImgLocal, svgtext, {
-                renderCallback: () => {
-                    resolve(mapExportImgLocal);
-                }
-            });
-        }, 500);
+    const generationPromise = new Promise(resolve => {
+        // parse the svg
+        // convert svg text to canvas and stuff it into localCanvas canvas dom node
+        canvg(localCanvas, svgtext, {
+            renderCallback: () =>
+                resolve(localCanvas)
+        });
     });
 
+    return generationPromise;
 }
 
 /**
 * Convert an image to a canvas element
 *
-* @param {Image} image the image to convert (result from the esri print task)
-* @return {Canvas} canvas the new canvas element
+* @param {String} url image url to convert (result from the esri print task)
+* @return {Promise} convertion promise resolving into a canvas of the image
 */
-function convertImageToCanvas(image) {
-    // convert image to canvas
+function convertImageToCanvas(url) {
     const canvas = document.createElement('canvas');
-    canvas.width = image.width;
-    canvas.height = image.height;
-    canvas.getContext('2d').drawImage(image, 0, 0);
+    const image = document.createElement('img'); // create image node
 
-    return canvas;
+    const convertionPromise = new Promise((resolve, reject) => {
+        image.addEventListener('load', () => {
+
+            canvas.width = image.width;
+            canvas.height = image.height;
+            canvas.getContext('2d').drawImage(image, 0, 0); // draw image onto a canvas
+
+            // return canvas
+            resolve(canvas);
+        });
+        image.addEventListener('error', error =>
+            reject(error));
+    });
+
+    // set image source to the one generated from the print task
+    image.src = url;
+
+    return convertionPromise;
 }
 
 /**
@@ -174,49 +172,17 @@ function convertImageToCanvas(image) {
 *
 * @param {Object} esriBundle bundle of API classes
 * @param {Object} geoApi geoApi to determine if we are in debug mode
-* @return {Object} the result and status of the print call
-*                   - complete [bool]: true if the call was successful, false otherwise
-*                   - canvas [HTMLCanvasElement]: the canvas of the composite image (only set if complete is true)
-*                   - error[String]: the error details / exception object (only set if complete is false)
+* @return {Object} with two promises - local and server canvas; each promise resolves with a corresponding canvas
 */
 function printMap(esriBundle, geoApi) {
 
     return (map, options) => {
 
-        return new Promise((resolve) => {
-
-            // generate image with server layer from esri print task
-            const promiseServer = generateServerImage(esriBundle, geoApi, map, options);
-
-            // generate canvas with visible user added layer
-            const promiseLocal = generateLocalCanvas(map);
-
-            // when all promises are resolved
-            Promise.all([promiseServer, promiseLocal]).then((result) => {
-                // create img element for print task image
-                const mapExportImg = document.createElement('img');
-
-                mapExportImg.addEventListener('load', () => {
-
-                    // convert image to canvas for saving
-                    let canvas = convertImageToCanvas(mapExportImg);
-
-                    // smash local and print service canvases
-                    const tc = canvas.getContext('2d');
-                    tc.drawImage(result[1], 0, 0);
-
-                    canvas = tc.canvas;
-
-                    // return canvas
-                    resolve({ complete: true, canvas });
-                });
-
-                // set image source to the one generated from the print task
-                mapExportImg.src = result[0].url;
-            }).catch((error) => {
-                resolve({ complete: false, error });
-            });
-        });
+        // generate image with server layer from esri print task
+        return {
+            localPromise: generateLocalCanvas(map),
+            serverPromise: generateServerImage(esriBundle, geoApi, map, options)
+        };
     };
 }
 

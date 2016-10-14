@@ -105,7 +105,29 @@
                     url: geo,
                     format: 'png32',
                 }
-                api.mapPrint.print(map2,
+
+                let resultCanvas = document.getElementById('result-canvas-2');
+
+                const printTask = api.mapPrint.print(map2, options);
+                printTask.localPromise.then(canvas => {
+                    document.getElementsByTagName('body')[0].appendChild(canvas);
+                    resultCanvas
+                        .getContext('2d')
+                        .drawImage(canvas, 0, 0);
+                });
+                printTask.serverPromise.then(canvas => {
+                    document.getElementsByTagName('body')[0].appendChild(canvas);
+                    resultCanvas
+                        .getContext('2d')
+                        .drawImage(canvas, 0, 0);
+                });
+
+                Promise.all([printTask.localPromise, printTask.serverPromise]).then(result => {
+                    console.log('canvas created map 2!');
+
+                }).catch(error => console.log('canvas not created map 2!', error));
+
+                /*api.mapPrint.print(map2,
                                     options).then(canvas => {
                     if (canvas.complete) {
                         let canvasResult = document.getElementById('result-canvas-2');
@@ -116,7 +138,7 @@
                     } else {
                         console.log(`canvas not created map 2! ${canvas.error}`);
                     }
-                });
+                });*/
             });
         });
 
