@@ -1,22 +1,36 @@
 /* globals -$ */
 'use strict';
-var gulp = require('gulp');
-var del = require('del');
-var browserify = require('browserify');
-var buffer = require('vinyl-buffer');
-var source = require('vinyl-source-stream');
-var babelify = require('babelify');
-var pkg = require('./package.json');
-var $ = require('gulp-load-plugins')({ lazy: true });
-var Dgeni = require('dgeni');
+const gulp = require('gulp');
+const del = require('del');
+const yargs = require('yargs');
+const args = yargs.argv;
+const runSequence = require('run-sequence');
+const browserify = require('browserify');
+const buffer = require('vinyl-buffer');
+const source = require('vinyl-source-stream');
+const babelify = require('babelify');
+const pkg = require('./package.json');
+const $ = require('gulp-load-plugins')({ lazy: true });
+const Dgeni = require('dgeni');
 
 require('gulp-help')(gulp);
 
-gulp.task('clean', 'Remove dist folder', function (done) {
-    del('dist', done);
+let PROD_MODE = args.prod;
+
+/**
+ * --prod: generate source maps and uglify code; this is turned on when running 'gulp dist'
+ * --guts: skip style checks
+ */
+
+gulp.task('clean', 'Remove dist folder', function () {
+    del.sync('dist');
 });
 
-gulp.task('check', 'Checks code against style guidelines', function () {
+gulp.task('check', 'Checks code against style guidelines', function (done) {
+    if (args.guts) {
+        return done();
+    }
+
     return gulp
         .src(['src/**/*.js', '*.js'])
         .pipe($.jshint())
@@ -41,24 +55,31 @@ gulp.task('zip', 'Generate zip for distribution', ['build'], function () {
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('dist', 'Generate tgz and zip files for distribution', ['zip', 'tgz']);
+// gulp.task('dist', 'Generate tgz and zip files for distribution', ['zip', 'tgz']);
 
-gulp.task('build', 'Transpile and concatenate the code', function () {
+gulp.task('dist', 'Generate tgz and zip files for distribution', done => {
+    // turn on --prod flag to enable minification
+    runSequence('prod', 'check', ['zip', 'tgz'], done);
+});
+
+gulp.task('build', 'Transpile and concatenate the code', ['clean'], function () {
     var b = browserify({ entries: 'src/index.js', standalone: 'geoapi' }).transform(babelify);
     return b.bundle()
         .pipe(source('gapi.js'))
         .pipe(buffer())
         .pipe($.derequire())
-        .pipe($.sourcemaps.init())
-        .pipe($.babel())
+        .pipe($.if(PROD_MODE, $.sourcemaps.init()))
+        /* .pipe($.babel()) */
         .pipe($.concat('geoapi.js'))
         /* .pipe(gulp.dest('dist/v' + pkg.version)) */
         .pipe(gulp.dest('dist'))
-        .pipe($.rename('geoapi.min.js'))
-        .pipe($.uglify())
-        .pipe($.sourcemaps.write('.'))
-        .pipe(gulp.dest('dist'));
+        .pipe($.if(PROD_MODE, $.rename('geoapi.min.js'))) // do not create a minified file unless --prod is provided
+        .pipe($.if(PROD_MODE, $.uglify()))
+        .pipe($.if(PROD_MODE, $.sourcemaps.write('.')))
+        .pipe($.if(PROD_MODE, gulp.dest('dist')));
 });
+
+gulp.task('prod', 'Sets production mode', () => PROD_MODE = true);
 
 gulp.task('test', 'Run unit tests in jasmine', ['check', 'build'], function () {
     return gulp

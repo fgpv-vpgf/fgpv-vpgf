@@ -10,10 +10,10 @@
 <body>
     <div id='map' style='height:90%; width: 100%;'></div>
     <p id='mess' />
-    <script src='../dist/geoapi.min.js'></script>
+    <script src='../dist/geoapi.js'></script>
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-            var layer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_Air_Ozone/MapServer/2');
+            var layer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2');
 
             layer.on('load', function(evt) {
                 const lods =
@@ -42,6 +42,9 @@
                 console.log('fffffffffffffffff', layer.maxScale);
                 var zoomLv = api.symbology.getZoomLevel(lods, layer.maxScale);
                 console.log(zoomLv);
+
+                var myLevel = api.mapManager.findClosestLOD(lods, 300000);
+                console.log('THIS IS MY SEARCHED LOD', myLevel);
             });
         });
     </script>
