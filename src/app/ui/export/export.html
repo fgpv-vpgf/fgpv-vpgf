@@ -4,13 +4,20 @@
             <div class="md-dialog-content">
                 <md-progress-linear
                     class="rv-export-progress-indicator"
+                    ng-hide="self.isGenerationComplete"
                     md-mode="indeterminate"></md-progress-linear>
 
-                <!--rv-export-map></rv-export-map-->
-                <img
-                    class="rv-export-map"
-                    alt="Lush mango tree"
-                    src="http://placehold.it/1920x974">
+                <div class="rv-export-map" ng-class="{ 'rv-export-complete': self.isGenerationComplete }">
+                    <rv-svg class="rv-export-dummy"
+                            src="self.dummyGraphic"></rv-svg>
+
+                    <rv-svg class="rv-export-server"
+                            src="self.serviceGraphic"></rv-svg>
+
+                    <rv-svg class="rv-export-local"
+                            src="self.localGraphic"></rv-svg>
+
+                </div>
 
                 <rv-svg ng-if="self.isLegendIncluded"
                         class="rv-export-legend"

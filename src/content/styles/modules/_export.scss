@@ -15,11 +15,48 @@
 
         md-dialog-content {
             order: 2;
+            position: relative;
         }
 
         .rv-export-map {
             display: block;
             width: 100%;
+            position: relative;
+            filter: blur(5px);
+            transition: filter $swift-ease-in-duration * 2 $swift-ease-in-out-timing-function;
+
+            > canvas {
+                width: 100% !important;
+                height: auto !important;
+                display: block;
+            }
+
+            &.rv-export-complete {
+                filter: none;
+            }
+        }
+
+        .rv-export-dummy {
+            display: block;
+
+            > canvas {
+                width: 100% !important;
+                height: auto !important;
+                display: block;
+            }
+        }
+
+        .rv-export-server,
+        .rv-export-local {
+            display: block;
+            position: absolute;
+            top: 0;
+
+            > canvas {
+                width: 100% !important;
+                height: auto !important;
+                display: block;
+            }
         }
 
         .rv-export-legend {
@@ -28,13 +65,15 @@
             svg {
                 width: 100%;
                 height: auto;
+                display: block;
             }
         }
 
         .rv-export-progress-indicator {
-            bottom: 0;
+            top: 0;
             height: 2px;
             overflow: hidden;
+            position: absolute;
         }
     }
 }
