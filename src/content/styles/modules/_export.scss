@@ -16,6 +16,7 @@
         md-dialog-content {
             order: 2;
             position: relative;
+            overflow-x: hidden;
         }
 
         .rv-export-map {
@@ -62,18 +63,38 @@
         .rv-export-legend {
             display: block;
 
-            svg {
-                width: 100%;
-                height: auto;
+            canvas {
+                width: 100% !important;
+                height: auto !important;
                 display: block;
             }
         }
 
         .rv-export-progress-indicator {
             top: 0;
+            left: 0;
+            right: 0;
             height: 2px;
             overflow: hidden;
             position: absolute;
+        }
+
+        .rv-export-title {
+            position: absolute;
+            top: rem(4.8);
+            display: flex;
+            justify-content: center;
+            right: rem(4.8);
+            left: rem(4.8);
+
+            md-input-container {
+                background: rgba(255, 255, 255, 0.86);
+                padding: rem(1.6);
+
+                .md-errors-spacer {
+                    display: none;
+                }
+            }
         }
     }
 }
