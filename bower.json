@@ -34,11 +34,12 @@
     "RandomColor": "https://github.com/sterlingwes/RandomColor.git",
     "angular-minicolors": "^0.0.9",
     "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git",
-    "include-media": "^1.4.8"
+    "include-media": "^1.4.8",
+    "file-saver": "^1.3.3"
   },
   "overrides": {
     "svg.textflow.js": {
-       "main": "svg.textflow.js"
+      "main": "svg.textflow.js"
     },
     "jquery": {
       "ignore": true

@@ -7,7 +7,7 @@
                     ng-hide="self.isGenerationComplete"
                     md-mode="indeterminate"></md-progress-linear>
 
-                <div class="rv-export-map" ng-class="{ 'rv-export-complete': self.isGenerationComplete }">
+                 <div class="rv-export-map" ng-class="{ 'rv-export-complete': self.isGenerationComplete }">
                     <rv-svg class="rv-export-dummy"
                             src="self.dummyGraphic"></rv-svg>
 
@@ -22,6 +22,12 @@
                 <rv-svg ng-if="self.isLegendIncluded"
                         class="rv-export-legend"
                         src="self.legendGraphic"></rv-svg>
+
+                <div class="rv-export-title">
+                    <md-input-container md-no-float class="md-headline">
+                        <input placeholder="Title" ng-model="user.title">
+                    </md-input-container>
+                </div>
 
             </div>
         </md-dialog-content>
@@ -41,7 +47,9 @@
             </md-button>
 
             <md-button
-                class="rv-button-square md-raised md-primary">
+                class="rv-button-square md-raised md-primary"
+                ng-click="self.saveImage()"
+                ng-disabled="!self.isGenerationComplete">
                 {{ 'export.continue' | translate }}
             </md-button>
         </md-dialog-actions>
