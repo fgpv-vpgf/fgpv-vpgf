@@ -19,6 +19,21 @@ describe('Legend', () => {
         });
         
     });
+    
+    describe('makeLegend', () => {
+        it('should work for more layers than sections (4,2,2)', () => {
+            const res = legend.makeLegend([4,2,2].map(n => ({height: n})), 2);
+            const expected = [false, true, false];
+            expected.forEach((x,i) => expect(res[i].splitBefore).toBe(x));
+        });
+
+        it('should work for more layers than sections (4,2,2,4)', () => {
+            const res = legend.makeLegend([4,2,2,4].map(n => ({height: n})), 3);
+            const expected = [false, true, false, true];
+            expected.forEach((x,i) => expect(res[i].splitBefore).toBe(x));
+        });
+        
+    });
 
 
 });
