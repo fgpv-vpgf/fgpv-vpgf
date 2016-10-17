@@ -289,12 +289,16 @@
          * @return {Promise}  resolves when panel animation has completed
          */
         function openPanel(panelToOpen, propagate = true) {
+            /*jshint maxcomplexity:10 */
             let animationPromise;
 
             // TODO: mobile layout hack to be removed when details panel is
             // moved into its own parent panel
             if (panelToOpen.name === 'mainDetails') {
                 $('rv-panel[type="main"]').css('z-index', 4);
+            // prevent main panel from overlapping details panel in small/medium layouts
+            } else if (panelToOpen.name === 'filters') {
+                $('rv-panel[type="main"]').css('z-index', 2);
             }
 
             // opening parent panel

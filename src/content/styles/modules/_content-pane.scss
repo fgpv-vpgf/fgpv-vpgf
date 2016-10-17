@@ -22,7 +22,7 @@
                 left: rem(1.6);
             }
 
-            @include media($rv-sm...) {
+            @include media($rv-lt-lg) {
                 padding-left: 50px;
 
                 .rv-close {
