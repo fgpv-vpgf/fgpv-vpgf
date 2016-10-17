@@ -1,4 +1,7 @@
 'use strict';
+
+// ugly way to add rgbcolor to global scope so it can be used by canvg inside the viewer; this is done because canvg uses UMD loader and has rgbcolor as internal dependency; there is no elegant way around it; another approach would be to clone canvg and change its loader;
+window.RGBColor = require('rgbcolor');
 const canvg = require('canvg-origin');
 
 /**
