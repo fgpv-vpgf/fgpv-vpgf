@@ -28,6 +28,35 @@ function allComb(M, N) {
     return C[M][N];
 }
 
+function packLayersIntoSections(layers, sections) {
+    const potentialSplits = layers.length - 1;
+    const requiredSplits = sections - 1;
+
+    const permutations = allComb(potentialSplits, requiredSplits);
+    let bestHeight = Number.MAX_VALUE;
+    let bestPerm = null;
+    const heights = Array(sections);
+
+    permutations.forEach(perm => {
+        heights.fill(0);
+        let curSec = 0;
+        layers.forEach((l, i) => {
+            heights[curSec] += l.height;
+            if (perm[i]) {
+                ++curSec;
+            }
+        });
+        const h = Math.max(...heights);
+        if (h <= bestHeight) {
+            bestHeight = h;
+            bestPerm = perm;
+        }
+    });
+    layers[0].splitBefore = false;
+    bestPerm.forEach((split, i) => layers[i + 1].splitBefore = split);
+    return layers;
+}
+
 function makeLegend(layerList, sectionsAvailable) {
     if (layerList.length > TOO_MANY_LAYERS) {
         return { layerList, sectionsUsed: 1 };
@@ -35,8 +64,9 @@ function makeLegend(layerList, sectionsAvailable) {
     if (layerList.length <= sectionsAvailable) {
         // return allocateLayersToSections(layerList);
         return { layerList, sectionsUsed: 1 };
+    } else {
+        return packLayersIntoSections(layerList, sectionsAvailable);
     }
-
 }
 
 module.exports = () => ({ makeLegend, allComb });
