@@ -27,6 +27,18 @@
             height: 100%;
             min-height: 100%;
         }
+
+        @include media($rv-md...) {
+            top: $viewport-gutter - 2;
+            bottom: $viewport-gutter - 2;
+            left: $viewport-gutter - 2;
+            right: $viewport-gutter - 2;
+            width: initial;
+            max-width: none;
+            height: initial;
+            max-height: none;
+            position: absolute;
+        }
     }
 
     .rv-details {

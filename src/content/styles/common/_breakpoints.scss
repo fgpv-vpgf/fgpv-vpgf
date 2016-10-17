@@ -6,17 +6,18 @@ $rv-sm: "<=small";
 $rv-md: ">small", "<=medium";
 $rv-lg: ">medium";
 $rv-gt-sm: ">small";
+$rv-lt-lg: "<=medium";
 
-@include media($rv-sm) {
-    .sm-hide {
+@mixin show-element($class, $query) {
+    .#{$class} {
         display: none !important;
+
+        @include media($query...) {
+            display: block !important;
+        }
     }
 }
 
-.sm-show {
-    display: none !important;
-
-    @include media($rv-sm) {
-        display: block !important;
-    }
-}
+@include show-element("rv-gt-sm", $rv-gt-sm);
+@include show-element("rv-lt-lg", $rv-lt-lg);
+@include show-element("rv-lg", $rv-lg);

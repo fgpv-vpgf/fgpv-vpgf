@@ -14,6 +14,10 @@
             right: 5px;
         }
 
+        @include media($rv-md...) {
+            bottom: $viewport-gutter;
+        }
+
         &.basemap {
             right: 300px + $viewport-gutter;
         }

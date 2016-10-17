@@ -64,7 +64,14 @@ rv-panel[type='filters'] {
         }
     }
 
-    @include media($rv-gt-sm) {
+    @include media($rv-md...) {
+        &.default, &.full, &.attached {
+            @include active-panel-plug($left: $viewport-gutter - 2, $top: $viewport-gutter - 2, $right: $viewport-gutter - 2, $bottom: $viewport-gutter - 2, $from: right);
+            z-index: 3;
+        }
+    }
+
+    @include media($rv-lg) {
         &.default {
             @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: 50%);
         }
@@ -141,13 +148,18 @@ rv-panel[type='main'] {
 
 rv-panel[type='side'] {
 
-    @include media($rv-gt-sm) {
-        @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
-    }
-
     @include media($rv-sm) {
         @include active-panel-plug($left: 0, $top: 0, $bottom: 0, $width: 100%, $from: right);
         z-index: 2;
+    }
+
+    @include media($rv-md...) {
+        @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: $toolbar-width, $from: left);
+        z-index: 2;
+    }
+
+    @include media($rv-lg) {
+        @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
     }
 
     &:before {
