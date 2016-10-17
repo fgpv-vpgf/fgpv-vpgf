@@ -127,6 +127,7 @@ function generateLocalCanvas(map) {
         // parse the svg
         // convert svg text to canvas and stuff it into localCanvas canvas dom node
         canvg(localCanvas, svgtext, {
+            useCORS: true,
             renderCallback: () =>
                 resolve(localCanvas)
         });
@@ -139,13 +140,14 @@ function generateLocalCanvas(map) {
 * Convert an image to a canvas element
 *
 * @param {String} url image url to convert (result from the esri print task)
-* @return {Promise} convertion promise resolving into a canvas of the image
+* @return {Promise} conversion promise resolving into a canvas of the image
 */
 function convertImageToCanvas(url) {
     const canvas = document.createElement('canvas');
     const image = document.createElement('img'); // create image node
+    image.crossOrigin = 'Anonymous'; // configure the CORS request
 
-    const convertionPromise = new Promise((resolve, reject) => {
+    const conversionPromise = new Promise((resolve, reject) => {
         image.addEventListener('load', () => {
 
             canvas.width = image.width;
@@ -162,7 +164,7 @@ function convertImageToCanvas(url) {
     // set image source to the one generated from the print task
     image.src = url;
 
-    return convertionPromise;
+    return conversionPromise;
 }
 
 /**
@@ -171,7 +173,7 @@ function convertImageToCanvas(url) {
 *
 * @param {Object} esriBundle bundle of API classes
 * @param {Object} geoApi geoApi to determine if we are in debug mode
-* @return {Object} with two promises - local and server canvas; each promise resolves with a corresponding canvas
+* @return {Object} with two promises - local and server canvas; each promise resolves with a corresponding canvas; each promise can error separately if the canvas cannot be generated returning whatever error message was supplied; it's responsibility of the caller to handle errors appropriately
 */
 function printMap(esriBundle, geoApi) {
 
