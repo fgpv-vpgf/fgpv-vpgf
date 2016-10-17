@@ -35,6 +35,10 @@
             pointer-events: auto;
         }
 
+        @include media($rv-md...) {
+            bottom: $viewport-gutter;
+        }
+
         &.basemap {
             right: 300px + $viewport-gutter;
         }
