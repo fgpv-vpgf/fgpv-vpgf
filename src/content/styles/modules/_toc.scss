@@ -22,7 +22,10 @@ $layer-item-height: rem(6.0);
             left: 0;
             height: 2px;
             overflow: hidden;
-            z-index: 10;
+
+            @include media($rv-lg) {
+                z-index: 10;
+            }
         }
     }
 
