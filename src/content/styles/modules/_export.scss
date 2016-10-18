@@ -81,7 +81,7 @@
 
         .rv-export-title {
             position: absolute;
-            top: rem(4.8);
+            top: rem(3.2);
             display: flex;
             justify-content: center;
             right: rem(4.8);
@@ -90,6 +90,10 @@
             md-input-container {
                 background: rgba(255, 255, 255, 0.86);
                 padding: rem(1.6);
+
+                > input {
+                    text-align: center;
+                }
 
                 .md-errors-spacer {
                     display: none;

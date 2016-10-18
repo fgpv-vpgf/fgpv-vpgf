@@ -1,6 +1,8 @@
-/* global saveAs */
+/* global saveAs, SVG */
 (() => {
     'use strict';
+
+    const EXPORT_IMAGE_GUTTER = 20; // padding around the export image
 
     /**
      * @ngdoc service
@@ -54,7 +56,7 @@
             $mdDialog.hide();
         }
 
-        function ExportController($rootElement, $q, configService, storageService, exportLegendService, geoService, gapiService) {
+        function ExportController($rootElement, $q, $filter, configService, appInfo, storageService, exportLegendService, geoService, gapiService) {
             'ngInject';
             const self = this;
 
@@ -62,7 +64,7 @@
             const [mapWidth, mapHeight] = [shellNode.width(), shellNode.height()];
 
             // we need a dummy canvas graphic to stretch the export dialog to the proper size before we get any of the print images
-            self.dummyGraphic = document.createElement('canvas');
+            self.dummyGraphic = createCanvas();
             self.dummyGraphic.width = mapWidth;
             self.dummyGraphic.height = mapHeight;
 
@@ -83,15 +85,17 @@
                     format: 'png32'
                 });
 
+                // store graphic with service layers so it is bound to the ui
                 $q.resolve(serverPromise).then(canvas =>
                     self.serviceGraphic = canvas);
 
+                // store grapchi with local layers so it is bound to the ui
                 $q.resolve(localPromise).then(canvas =>
                     self.localGraphic = canvas);
 
-                $q.all([serverPromise, localPromise]).then(result => {
-                    self.isGenerationComplete = true;
-                });
+                // when both graphics are ready, allow the user to save the image
+                $q.all([serverPromise, localPromise]).then(result =>
+                    self.isGenerationComplete = true);
             });
 
             /***/
@@ -106,40 +110,125 @@
                     exportLegendService.generate(mapWidth, 350)
                         .then(graphic =>
                             self.legendGraphic = graphic);
-                    // self.legendGraphic = exportLegendService.generate(mapWidth, 350).node;
                 }
             }
 
+            /**
+             * Creates a canvas DOM node;
+             * @function createCanvas
+             * @private
+             * @return {Object} canvas DOM node
+             */
+            function createCanvas() {
+                return document.createElement('canvas');
+            }
+
             function saveImage() {
-                const gutter = 20;
+                const timestampString = $filter('date')(new Date(), 'yyyy-MM-dd hh:mm:ss');
+                const canvas = createCanvas(); // this will hold the resultant image
 
-                const canvas = document.createElement('canvas')
-                canvas.width = self.dummyGraphic.width + gutter * 2;
-                canvas.height = self.dummyGraphic.height + gutter * 2;
+                // this is a promise since converting svg to canvas is an async call
+                // mapOffset > 0 only when a title is provided by a user
+                drawMapShell().then(({ shellGraphic, mapOffset, legendOffset }) => {
 
-                const context = canvas.getContext('2d');
-                fillCanvas();
+                    canvas.width = shellGraphic.width;
+                    canvas.height = shellGraphic.height;
 
-                if (self.isLegendIncluded) {
-                    canvas.height = canvas.height + self.legendGraphic.height;
-
-                    fillCanvas();
-                    context.drawImage(self.legendGraphic, gutter, self.dummyGraphic.height + gutter);
-                }
-
-                context.drawImage(self.serviceGraphic, gutter, gutter);
-                context.drawImage(self.localGraphic, gutter, gutter);
-
-                // context.drawImage(self.legendGraphic, 0, mapHeight);
-                // draw to canvas...
-                // canvas = context.canvas;
-                canvas.toBlob(blob => {
-                    saveAs(blob, Math.random() + "pretty image.png");
-                });
-
-                function fillCanvas() {
+                    // set background to white
+                    const context = canvas.getContext('2d');
                     context.fillStyle = '#fff';
                     context.fillRect(0, 0, canvas.width, canvas.height);
+
+                    // draw parts of the export image on the canvas
+                    context.drawImage(self.serviceGraphic, EXPORT_IMAGE_GUTTER, mapOffset);
+                    context.drawImage(self.localGraphic, EXPORT_IMAGE_GUTTER, mapOffset);
+                    context.drawImage(self.legendGraphic || createCanvas(), EXPORT_IMAGE_GUTTER, legendOffset);
+                    context.drawImage(shellGraphic, 0, 0);
+
+                    // file name is either the title provided by the user or app id + timestamp
+                    const fileName = `${self.exportTitle || `${appInfo.id} - ${timestampString}`}.png`
+                    canvas.toBlob(blob => {
+                        saveAs(blob, fileName);
+                    });
+                });
+
+                /**
+                 * Draws the shell of the export image.
+                 * The shell includes title, notrh arrow, scale bar, timestamp, etc.
+                 * NOTE: only title and timestamp are implemented
+                 * @private
+                 * @function drawMapShell
+                 * @return {Promise} promise resolving with a shell graphic
+                 */
+                function drawMapShell() {
+                    let mapOffset = EXPORT_IMAGE_GUTTER;
+
+                    const shellGraphic = createCanvas();
+
+                    // export image height depends on presence of title and legend
+                    let shellHeight = mapHeight + EXPORT_IMAGE_GUTTER * 2 +
+                        (self.isLegendIncluded ? self.legendGraphic.height : 0);
+                    const shellWidth = mapWidth + EXPORT_IMAGE_GUTTER * 2;
+
+                    // create an svg node to draw a shell on
+                    const shellSvg = SVG(document.createElement('div'))
+                        .size(shellWidth, shellHeight);
+
+                    if (self.exportTitle) {
+                        const titlePadding = 16;
+
+                        // NOTE: title is rendedred as a single line at the moment, overflow will be cropped
+                        const title = shellSvg.text(self.exportTitle)
+                            .attr({
+                                'font-family': 'Roboto',
+                                'font-weight': 'normal',
+                                'font-size': 32,
+                                anchor: 'start'
+                            })
+                            .leading(1);
+
+                        const titleHeight = title.bbox().height;
+                        mapOffset = titleHeight + EXPORT_IMAGE_GUTTER * 2;
+
+                        // position title about the map image
+                        title
+                            .cx(shellWidth / 2)
+                            .dy((EXPORT_IMAGE_GUTTER + mapOffset - titleHeight) / 2 - 4);
+
+                        // increase the resultant image height by the height of the title (+ white space)
+                        shellHeight += mapOffset;
+                        shellSvg.height(shellHeight);
+                    }
+
+                    // create a timestamp
+                    const timestamp = shellSvg
+                        .text(timestampString)
+                        .leading(1);
+
+                    // position the timestamp at the bottom of the export image
+                    timestamp
+                        .cx(shellWidth / 2)
+                        .dy(shellHeight - (EXPORT_IMAGE_GUTTER + timestamp.bbox().height) / 2 - 4);
+
+                    shellGraphic.height = shellHeight;
+                    shellGraphic.width = shellWidth;
+
+                    const legendOffset = mapHeight + mapOffset;
+
+                    const drawShellPromise = $q(resolve => {
+                        canvg(shellGraphic, shellSvg.node.outerHTML, {
+                            ignoreAnimation: true,
+                            ignoreMouse: true,
+                            renderCallback: () =>
+                                resolve({
+                                    shellGraphic,
+                                    mapOffset,
+                                    legendOffset
+                                })
+                        });
+                    });
+
+                    return drawShellPromise;
                 }
             }
         }

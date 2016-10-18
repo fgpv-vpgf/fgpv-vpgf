@@ -167,6 +167,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.cancel,Cancel,Annuler
 ,export.continue,Continue,Continuer
 ,export.includelegend,Include legend,Inclure la légende
+,export.title,Title,Titre
 ,import.title,Import Layers,Importer des couches
 ,import.file.title,Import File,Importer un fichier
 ,import.file.upload.title,Upload data,Charger des données
