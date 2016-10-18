@@ -1,4 +1,4 @@
-/* global SVG */
+/* global SVG, canvg */
 (() => {
     'use strict';
 

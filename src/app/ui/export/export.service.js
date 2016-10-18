@@ -1,4 +1,4 @@
-/* global saveAs, SVG */
+/* global saveAs, SVG, canvg */
 (() => {
     'use strict';
 
@@ -56,7 +56,8 @@
             $mdDialog.hide();
         }
 
-        function ExportController($rootElement, $q, $filter, configService, appInfo, storageService, exportLegendService, geoService, gapiService) {
+        function ExportController($rootElement, $q, $filter, configService, appInfo, storageService,
+            exportLegendService, geoService, gapiService) {
             'ngInject';
             const self = this;
 
@@ -94,7 +95,7 @@
                     self.localGraphic = canvas);
 
                 // when both graphics are ready, allow the user to save the image
-                $q.all([serverPromise, localPromise]).then(result =>
+                $q.all([serverPromise, localPromise]).then(() =>
                     self.isGenerationComplete = true);
             });
 
@@ -146,7 +147,7 @@
                     context.drawImage(shellGraphic, 0, 0);
 
                     // file name is either the title provided by the user or app id + timestamp
-                    const fileName = `${self.exportTitle || `${appInfo.id} - ${timestampString}`}.png`
+                    const fileName = `${self.exportTitle || `${appInfo.id} - ${timestampString}`}.png`;
                     canvas.toBlob(blob => {
                         saveAs(blob, fileName);
                     });
@@ -175,8 +176,6 @@
                         .size(shellWidth, shellHeight);
 
                     if (self.exportTitle) {
-                        const titlePadding = 16;
-
                         // NOTE: title is rendedred as a single line at the moment, overflow will be cropped
                         const title = shellSvg.text(self.exportTitle)
                             .attr({
