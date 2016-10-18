@@ -23,7 +23,7 @@
     "gsap": "^1.18.0",
     "bezier-easing": "^1.0.0",
     "dotjem-angular-tree": "~0.2.1",
-    "geoapi": "https://github.com/fgpv-vpgf/geoApi/releases/download/v1.0.5/geoapi-1.0.5.tgz",
+    "geoapi": "https://github.com/fgpv-vpgf/geoApi/releases/download/v1.0.5/geoapi-1.0.7-1.tgz",
     "datatables.net": "~1.10.10",
     "datatables.net-dt": "~1.10.10",
     "datatables-scroller": "~1.4.0",
