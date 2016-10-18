@@ -28,6 +28,12 @@ function allComb(M, N) {
     return C[M][N];
 }
 
+function assignLayerSplits(layers, splitPoints) {
+    layers[0].splitBefore = false;
+    splitPoints.forEach((split, i) => layers[i + 1].splitBefore = split);
+    return layers;
+}
+
 function packLayersIntoSections(layers, sections) {
     const potentialSplits = layers.length - 1;
     const requiredSplits = sections - 1;
@@ -52,9 +58,61 @@ function packLayersIntoSections(layers, sections) {
             bestPerm = perm;
         }
     });
-    layers[0].splitBefore = false;
-    bestPerm.forEach((split, i) => layers[i + 1].splitBefore = split);
-    return layers;
+    return assignLayerSplits(layers, bestPerm);
+}
+
+function splitLayer(layer, chunkSize) {
+    let runningHeight = 0;
+
+    function traverse(items) {
+        items.forEach(item => {
+            if (runningHeight >= chunkSize) {
+                item.splitBefore = true;
+                runningHeight = 0;
+            }
+
+            // FIXME this doesn't calculate gutters correctly
+            runningHeight += item.type === 'group' ? item.headerHeight : item.height;
+            if (item.type === 'group') {
+                traverse(item.items);
+            }
+        });
+    }
+
+    traverse(layer.items);
+    return layer;
+}
+
+function allocateLayersToSections(layers, sectionsAvailable) {
+    assignLayerSplits(layers, Array(layers.length - 1).fill(true));
+    const bestSectionUsage = {}; // maps number of sections used to best height achieved
+    bestSectionUsage[layers.length] = {
+        height: Math.max(...layers.map(l => l.height)),
+        segments: Array(layers.length)
+    };
+    bestSectionUsage[layers.length].segments.fill(1);
+
+    let curSectionsUsed = layers.length;
+    while (curSectionsUsed < sectionsAvailable) {
+        const oldSegments = bestSectionUsage[curSectionsUsed].segments;
+        const normalizedLayers = oldSegments.map((seg, i) => layers[i].height / seg);
+        const worstLayerIndex = normalizedLayers.indexOf(Math.max(...normalizedLayers));
+        const newSegments = oldSegments.map((seg, i) => i === worstLayerIndex ? seg + 1 : seg);
+        ++curSectionsUsed;
+        bestSectionUsage[curSectionsUsed] = {
+            height: Math.max(...newSegments.map((seg, i) => layers[i].height / seg)),
+            segments: newSegments
+        };
+    }
+    while (curSectionsUsed > layers.length) {
+        if (bestSectionUsage[curSectionsUsed].height < 0.9 * bestSectionUsage[curSectionsUsed - 1].height) {
+            break;
+        }
+        --curSectionsUsed;
+    }
+
+    console.log(curSectionsUsed, bestSectionUsage);
+
 }
 
 function makeLegend(layerList, sectionsAvailable) {
@@ -62,11 +120,10 @@ function makeLegend(layerList, sectionsAvailable) {
         return { layerList, sectionsUsed: 1 };
     }
     if (layerList.length <= sectionsAvailable) {
-        // return allocateLayersToSections(layerList);
-        return { layerList, sectionsUsed: 1 };
+        return allocateLayersToSections(layerList, sectionsAvailable);
     } else {
         return packLayersIntoSections(layerList, sectionsAvailable);
     }
 }
 
-module.exports = () => ({ makeLegend, allComb });
+module.exports = () => ({ makeLegend, allComb, splitLayer });
