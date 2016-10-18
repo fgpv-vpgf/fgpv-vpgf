@@ -14,6 +14,8 @@ const canvg = require('canvg-origin');
   *
   * This module exports an object with the following functions
   * - `printMap`
+  *
+  * NOTE: unit tests might be difficult to implement as DOM is required...
   */
 
 /**
@@ -126,14 +128,22 @@ function generateLocalCanvas(map) {
     const svgtext = document.getElementById(`esri\.Map_${map.id.split('_')[1]}_gc`).outerHTML;
     const localCanvas = document.createElement('canvas'); // create canvas element
 
-    const generationPromise = new Promise(resolve => {
+    const generationPromise = new Promise((resolve, reject) => {
         // parse the svg
         // convert svg text to canvas and stuff it into localCanvas canvas dom node
-        canvg(localCanvas, svgtext, {
-            useCORS: true,
-            renderCallback: () =>
-                resolve(localCanvas)
-        });
+
+        // wrapping in try/catch since canvg has NO error handling; not sure what errors this can catch though
+        try {
+            canvg(localCanvas, svgtext, {
+                useCORS: true,
+                ignoreAnimation: true,
+                ignoreMouse: true,
+                renderCallback: () =>
+                    resolve(localCanvas)
+            });
+        } catch (error) {
+            reject(error);
+        }
     });
 
     return generationPromise;
