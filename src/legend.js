@@ -28,12 +28,31 @@ function allComb(M, N) {
     return C[M][N];
 }
 
+/**
+ * Convenience function for assigning the `splitBefore` property on layers at specified points.
+ * NOTE: this function modifies data in place
+ * @function
+ * @private
+ * @param {Array} layers a list of layers to be updated (modified in place)
+ * @param {Array} splitPoints an array of boolean values indicating if the layer list should be split at that point (must be layers.length-1 in size)
+ * @return layers the same array as passed in
+ */
 function assignLayerSplits(layers, splitPoints) {
     layers[0].splitBefore = false;
     splitPoints.forEach((split, i) => layers[i + 1].splitBefore = split);
     return layers;
 }
 
+/**
+ * Groups multiple layers into each section while attempting to minimize the legend height.
+ * NOTE: don't call this with too many layers as it tests all possible groupings and can be
+ * computationally expensive (< 15 layers should be fine)
+ * @function
+ * @private
+ * @param {Array} layers a list of layers to be updated (modified in place)
+ * @param {int} sections the number of sections to use
+ * @return the same layers array as passed in
+ */
 function packLayersIntoSections(layers, sections) {
     const potentialSplits = layers.length - 1;
     const requiredSplits = sections - 1;
@@ -61,6 +80,14 @@ function packLayersIntoSections(layers, sections) {
     return assignLayerSplits(layers, bestPerm);
 }
 
+/**
+ * Split a layer into parts of a given size.
+ * @function
+ * @private
+ * @param {Object} layer a layer object to be split into parts of `chunkSize` height
+ * @param {int} chunkSize the target size of each section
+ * @return a reference to the layer passed in
+ */
 function splitLayer(layer, chunkSize) {
     let runningHeight = 0;
 
@@ -83,6 +110,13 @@ function splitLayer(layer, chunkSize) {
     return layer;
 }
 
+/**
+ * @function
+ * @private
+ * @param {Array} layers a list of layers to be updated (modified in place)
+ * @param {int} sectionsAvailable the maximum number of sections to use
+ * @return the same layers array as passed in
+ */
 function allocateLayersToSections(layers, sectionsAvailable) {
     assignLayerSplits(layers, Array(layers.length - 1).fill(true));
     const bestSectionUsage = {}; // maps number of sections used to best height achieved
@@ -115,6 +149,13 @@ function allocateLayersToSections(layers, sectionsAvailable) {
 
 }
 
+/**
+ * Generate the structure for a legend given a set of layers.
+ * @function
+ * @param {Array} layerList a list of layers to be updated (modified in place)
+ * @param {int} sectionsAvailable the maximum number of sections to use
+ * @return an object in the form `{ layerList, sectionsUsed }` (layerList is modified in place)
+ */
 function makeLegend(layerList, sectionsAvailable) {
     if (layerList.length > TOO_MANY_LAYERS) {
         return { layerList, sectionsUsed: 1 };
