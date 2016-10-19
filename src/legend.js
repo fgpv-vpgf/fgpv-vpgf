@@ -81,15 +81,19 @@ function packLayersIntoSections(layers, sections) {
 }
 
 /**
- * Split a layer into parts of a given size.
+ * Split a layer into N parts of roughly equal size.
  * @function
  * @private
- * @param {Object} layer a layer object to be split into parts of `chunkSize` height
- * @param {int} chunkSize the target size of each section
+ * @param {Object} layer a layer object to be split into `splitCount` parts
+ * @param {int} splitCount the number of pieces which the layer should be broken into
  * @return a reference to the layer passed in
  */
-function splitLayer(layer, chunkSize) {
+function splitLayer(layer, splitCount) {
     let runningHeight = 0;
+    const chunkSize = layer.height / splitCount;
+    if (splitCount === 1) {
+        return layer;
+    }
 
     function traverse(items) {
         items.forEach(item => {
@@ -144,9 +148,9 @@ function allocateLayersToSections(layers, sectionsAvailable) {
         }
         --curSectionsUsed;
     }
-
-    console.log(curSectionsUsed, bestSectionUsage);
-
+    console.log(bestSectionUsage[curSectionsUsed]);
+    layers.forEach((l, i) => splitLayer(l, bestSectionUsage[curSectionsUsed].segments[i]));
+    return layers;
 }
 
 /**
