@@ -167,7 +167,11 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.close,Close,Fermer
 ,export.save,Save,Sauver
 ,export.includelegend,Include legend,Inclure la légende
-,export.title,Title,Titre
+,export.title,Enter Title,Titre
+,export.error.timeout,"Connection timed out. Stopping export task.","Connexion a expiré. Tâche d’exportation arrêt."
+,export.error.tainted,"Ops, browser security prevents us from saving the export image for you.","OPS, sécurité du navigateur nous empêche d’enregistrer l’image de l’exportation pour vous."
+,export.error.somethingelseiswrong,"Ouch. Something went wrong. We cannot save the export image for you.","Aïe. Quelque chose n’allait pas. Nous ne pouvons pas enregistrer l’image de l’exportation pour vous."
+,export.retry,Retry,Réessayez
 ,import.title,Import Layers,Importer des couches
 ,import.file.title,Import File,Importer un fichier
 ,import.file.upload.title,Upload data,Charger des données

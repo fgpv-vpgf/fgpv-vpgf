@@ -1,10 +1,10 @@
 <md-dialog class="rv-export">
     <form ng-cloak>
         <md-dialog-content>
-            <div class="md-dialog-content">
+            <div class="md-dialog-content" ng-class="{ 'rv-error': self.isError }">
                 <md-progress-linear
                     class="rv-export-progress-indicator"
-                    ng-hide="self.isGenerationComplete"
+                    ng-hide="self.isGenerationComplete || self.isError"
                     md-mode="indeterminate"></md-progress-linear>
 
                  <div class="rv-export-map" ng-class="{ 'rv-export-complete': self.isGenerationComplete }">
@@ -24,7 +24,7 @@
                         src="self.legendGraphic"></rv-svg>
 
                 <div class="rv-export-title">
-                    <md-input-container md-no-float class="md-headline">
+                    <md-input-container md-no-float class="md-headline" ng-disabled="self.isError">
                         <input placeholder="{{ 'export.title' | translate }}" ng-model="self.exportTitle">
                     </md-input-container>
                 </div>
@@ -49,7 +49,7 @@
             <md-button
                 class="rv-button-square md-raised md-primary"
                 ng-click="self.saveImage()"
-                ng-disabled="!self.isGenerationComplete">
+                ng-disabled="!self.isGenerationComplete || self.isError">
                 {{ 'export.save' | translate }}
             </md-button>
         </md-dialog-actions>
