@@ -2,12 +2,7 @@
     <form ng-cloak>
         <md-dialog-content>
             <div class="md-dialog-content" ng-class="{ 'rv-error': self.isError }">
-                <md-progress-linear
-                    class="rv-export-progress-indicator"
-                    ng-hide="self.isGenerationComplete || self.isError"
-                    md-mode="indeterminate"></md-progress-linear>
-
-                 <div class="rv-export-map" ng-class="{ 'rv-export-complete': self.isGenerationComplete }">
+                <div class="rv-export-map" ng-class="{ 'rv-export-complete': self.isGenerationComplete }">
                     <rv-svg class="rv-export-dummy"
                             src="self.dummyGraphic"></rv-svg>
 
@@ -33,9 +28,15 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
+             <md-progress-linear
+                    class="rv-export-progress-indicator"
+                    ng-hide="self.isGenerationComplete || self.isError"
+                    md-mode="indeterminate"></md-progress-linear>
+
              <md-switch translate-attr-aria-label="export.includelegend" class="md-primary rv-switch"
                         ng-model="self.isLegendIncluded"
-                        ng-change="self.includeLegend()">
+                        ng-change="self.includeLegend()"
+                        ng-disabled="self.isError">
                 {{ 'export.includelegend' | translate }}
             </md-switch>
             <span flex></span>
