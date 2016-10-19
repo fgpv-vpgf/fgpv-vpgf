@@ -404,7 +404,10 @@
 
                 if (info) {
 
-                    const snippet = {};
+                    const snippet = {
+                        layerEntries: [],
+                        childOptions: []
+                    };
 
                     if (version !== 'A') {
                         // process info for child layers
@@ -424,7 +427,7 @@
 
                         // splitting on ; gives us chunks of data for each top-level index in the layer.
                         // i.e. each chunk defines an object that goes in .layerEntries
-                        snippet.layerEntries = childData.split(';').map(cData => {
+                        childData.split(';').forEach(cData => {
                             // for a single top level index, we can also have auto-generated child settings along with it.
                             // these values are separated by ` chars. The first one is always the parent.
                             const subChildData = cData.split('`');
@@ -435,10 +438,10 @@
 
                             // if any child data remains, add it to the children property of the parent.
                             if (subChildData.length > 0) {
-                                lEntry.children = subChildData.map(scd => makeEntryNode(scd));
+                                snippet.childOptions.push(...subChildData.map(scd => makeEntryNode(scd)));
                             }
 
-                            return lEntry;
+                            snippet.layerEntires.push(lEntry);
                         });
                     }
 
