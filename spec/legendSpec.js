@@ -2,6 +2,7 @@
 'use strict';
 const data = require('./legendData.json');
 const legend = require('../src/legend.js')();
+const sampleLayer = { height: 110, type: 'layer', items: [{type:'group', items:[{type:'item', height:20}, {type:'item', height:40}], headerHeight: 10},{type:'item', height:20},{type:'item', height:20}] };
 
 describe('Legend', () => {
     
@@ -20,17 +21,40 @@ describe('Legend', () => {
         
     });
     
+    describe('splitLayer', () => {
+        it('should work for a simple split case', () => {
+            const testdata = JSON.parse(JSON.stringify(sampleLayer));
+            legend.splitLayer(testdata, 2);
+            expect(testdata.items[1].splitBefore).toBe(true);
+            expect(testdata.items[2].splitBefore).toBe(undefined);
+        });
+
+        it('should work for another simple split case', () => {
+            const testdata = JSON.parse(JSON.stringify(sampleLayer));
+            legend.splitLayer(testdata, 4);
+            expect(testdata.items[0].items[1].splitBefore).toBe(true);
+        });
+    });
+    
     describe('makeLegend', () => {
-        it('should work for more layers than sections (4,2,2)', () => {
+        it('should work for more layers than sections (4,2,2), 2', () => {
             const res = legend.makeLegend([4,2,2].map(n => ({height: n})), 2);
             const expected = [false, true, false];
             expected.forEach((x,i) => expect(res[i].splitBefore).toBe(x));
         });
 
-        it('should work for more layers than sections (4,2,2,4)', () => {
+        it('should work for more layers than sections (4,2,2,4), 3', () => {
             const res = legend.makeLegend([4,2,2,4].map(n => ({height: n})), 3);
             const expected = [false, true, false, true];
             expected.forEach((x,i) => expect(res[i].splitBefore).toBe(x));
+        });
+
+        it('should work for more sections than layers', () => {
+            const testdata = JSON.parse(JSON.stringify(data));
+            legend.makeLegend(testdata, 4);
+            expect(testdata[1].splitBefore).toBe(true);
+            expect(testdata[2].splitBefore).toBe(true);
+            expect(testdata[1].items[1].splitBefore).toBe(true);
         });
         
     });
