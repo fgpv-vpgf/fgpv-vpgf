@@ -45,7 +45,7 @@
          * @function generate
          * @param {Number} availableWidth width of the legend graphic, should match width of the exported map image
          * @param {Number} prefferedSectionWidth width of the individual legend sections inside the legend graphic
-         * @return {Promise} promise with resovles with a canvas containing the legend
+         * @return {Promise} promise with resolves with a canvas containing the legend
          */
         function generate(availableWidth = 1500, prefferedSectionWidth = 500) {
 

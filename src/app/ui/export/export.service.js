@@ -244,7 +244,10 @@
                  * NOTE: only title and timestamp are implemented
                  * @private
                  * @function drawMapShell
-                 * @return {Promise} promise resolving with a shell graphic
+                 * @return {Promise} promise resolving with an object containing:
+                 * - shellGraphic;
+                 * - mapOffset: the distance the map image should be offset from the top of the canvas to accommodate the title (if any)
+                 * - legendOffset: the distance the legend graphic should be offset from the top of the canvas to to accommodate the map image and the title (if any)
                  */
                 function drawMapShell() {
                     let mapOffset = EXPORT_IMAGE_GUTTER;
