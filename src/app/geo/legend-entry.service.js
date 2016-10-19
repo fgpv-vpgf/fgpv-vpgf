@@ -509,18 +509,14 @@
             console.info(this);
             this.bindListeners();
 
-            // morph layerEntries array into an object where keys are indexes of sublayers:
+            // morph layerEntries array and childOptions into an object where keys are indexes of sublayers:
             // { 1: {index: 1, ...}, 4: { index: 4, ...} }
+            // TODO should we implement a data integrity check? The same index should never exist in both
+            //      layerEntries and childOptions
             const layerEntriesOptions = {};
-            this.layerEntries.forEach(layerEntry => {
+            const configEntries = this.layerEntries.concat(this.childOptions);
+            configEntries.forEach(layerEntry => {
                 layerEntriesOptions[layerEntry.index] = layerEntry;
-                if (layerEntry.children) {
-                    layerEntry.children.forEach(childEntry => {
-                        // TODO add check for bad configs? we should never be overwriting anything in
-                        //      layerEntriesOptions. not sure who should be responsible for quality.
-                        layerEntriesOptions[childEntry.index] = childEntry;
-                    });
-                }
             });
 
             // we need to mark entries that have explicit settings from the config file.

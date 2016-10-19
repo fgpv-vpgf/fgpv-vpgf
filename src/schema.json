@@ -487,11 +487,6 @@
                     "$ref": "#/definitions/option",
                     "description": "Enables data panel"
                 },
-                "children": {
-                    "type": "array",
-                    "items": { "$ref": "#/definitions/dynamicChildOptionNode" },
-                    "minItems": 0
-                },
                 "outfields": { "type": "string", "default": "*", "description": "A comma separated list of attribute names that should be requested on query." }
             },
             "required": ["index"],
@@ -607,6 +602,12 @@
                     "type": "array",
                     "items": { "$ref": "#/definitions/dynamicLayerEntryNode" },
                     "minItems": 1
+                },
+                "childOptions": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/dynamicChildOptionNode" },
+                    "minItems": 0,
+                    "description": "Settings for child layers not defined in layerEntries. I.e. sub layers that are not at the root level of the legend"
                 },
                 "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
