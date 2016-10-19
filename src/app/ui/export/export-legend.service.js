@@ -1,4 +1,4 @@
-/* global SVG */
+/* global SVG, canvg */
 (() => {
     'use strict';
 
@@ -31,7 +31,7 @@
         .module('app.ui')
         .service('exportLegendService', exportLegendService);
 
-    function exportLegendService($rootElement, geoService) {
+    function exportLegendService($q, $rootElement, geoService) {
         const service = {
             generate
         };
@@ -45,7 +45,7 @@
          * @function generate
          * @param {Number} availableWidth width of the legend graphic, should match width of the exported map image
          * @param {Number} prefferedSectionWidth width of the individual legend sections inside the legend graphic
-         * @return {Node} jQuery node with svg object
+         * @return {Promise} promise with resolves with a canvas containing the legend
          */
         function generate(availableWidth = 1500, prefferedSectionWidth = 500) {
 
@@ -73,14 +73,26 @@
 
             wraplegend(svgLegend, sectionHeight, sectionWidth, sectionCount);
 
+            const totalLegendHeight = sectionHeight + LEGEND_MARGIN.t + LEGEND_MARGIN.b;
+
             // set the height of the legend based on the height of its sections
             legend
-                .height(sectionHeight + LEGEND_MARGIN.t + LEGEND_MARGIN.b)
-                .viewbox(0, 0, availableWidth, sectionHeight + LEGEND_MARGIN.t + LEGEND_MARGIN.b);
+                .height(totalLegendHeight)
+                .viewbox(0, 0, availableWidth, totalLegendHeight);
 
             hiddenNode.remove();
 
-            return legend;
+            const localCanvas = document.createElement('canvas'); // create canvas element
+            const generationPromise = $q(resolve => {
+                canvg(localCanvas, legend.node.outerHTML, {
+                    ignoreAnimation: true,
+                    ignoreMouse: true,
+                    renderCallback: () =>
+                        resolve(localCanvas)
+                });
+            });
+
+            return generationPromise;
         }
 
         /**

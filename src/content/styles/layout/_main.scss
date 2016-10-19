@@ -12,16 +12,21 @@ rv-appbar {
     }
 }
 
-md-toast.md-rv-flex-global {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-}
-
 // we use pointers-events to make click event pass through parent div. If it creates problem go with this solution:
 // position toast relatively, set the app container to flexbox, and align toast using justify-content and align-items.
 md-toast {
+    &.md-rv-flex-global {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+
     pointer-events: none;
+
+    .md-toast-text {
+        padding-top: rem(1.4);
+        padding-bottom: rem(1.4);
+    }
 
     .md-toast-content {
         pointer-events: auto;
