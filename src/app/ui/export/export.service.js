@@ -3,7 +3,7 @@
     'use strict';
 
     const EXPORT_IMAGE_GUTTER = 20; // padding around the export image
-    const RETRY_LIMIT = 1;
+    const RETRY_LIMIT = 3;
     const EXPORT_CLASS = '.rv-export';
 
     /**
@@ -66,7 +66,6 @@
          */
         function close() {
             $mdDialog.hide();
-            $mdToast.hide();
         }
 
         function ExportController($translate, $mdToast, $q, $filter, configService, appInfo,
@@ -162,7 +161,7 @@
                     hideDelay
                 };
 
-                return $mdToast.show($mdToast.simple(options))
+                return $mdToast.show($mdToast.simple(options));
             }
 
             /**
@@ -188,6 +187,12 @@
                 return document.createElement('canvas');
             }
 
+            /**
+             * Generates the final canvas from created pieces and saves it as a file.
+             * It creates a shell graphic with map title (if any), and the timestamp (north arrow and scalebar will be included in the future) and applies server and local export images on top of it, adding legend graphic at the bottom (if any).
+             * @function saveImage
+             * @private
+             */
             function saveImage() {
                 const timestampString = $filter('date')(new Date(), 'yyyy-MM-dd hh:mm:ss');
                 const canvas = createCanvas(); // this will hold the resultant image
