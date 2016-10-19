@@ -3,6 +3,8 @@
     'use strict';
 
     const EXPORT_IMAGE_GUTTER = 20; // padding around the export image
+    const RETRY_LIMIT = 1;
+    const EXPORT_CLASS = '.rv-export';
 
     /**
      * @ngdoc service
@@ -11,14 +13,16 @@
      * @requires dependencies
      * @description
      *
-     * The `exportService` service description.
-     *
+     * The `exportService` service description opens the export dialog and generates the export image.
+     * Provides two functions:
+     *  - open: opens the export dialog and start a new print task
+     *  - close: closes the export dialog
      */
     angular
         .module('app.ui')
         .service('exportService', exportService);
 
-    function exportService($mdDialog, $rootElement, storageService) {
+    function exportService($mdDialog, $mdToast, storageService) {
         const service = {
             open,
             close
@@ -34,17 +38,25 @@
          * @param {Object} event original click event
          */
         function open(event) {
+            const shellNode = storageService.panels.shell;
+
             $mdDialog.show({
+                locals: {
+                    shellNode
+                },
                 controller: ExportController,
                 controllerAs: 'self',
                 bindToController: true,
                 templateUrl: 'app/ui/export/export.html',
-                parent: storageService.panels.shell,
+                parent: shellNode,
                 targetEvent: event,
                 hasBackdrop: true,
                 disableParentScroll: false,
                 clickOutsideToClose: true,
-                fullscreen: true
+                fullscreen: true,
+                onRemoving: $mdToast.hide,
+                onShowing: (scope, element) =>
+                    scope.element = element.find(EXPORT_CLASS) // store dialog DOM node for reference
             });
         }
 
@@ -54,20 +66,24 @@
          */
         function close() {
             $mdDialog.hide();
+            $mdToast.hide();
         }
 
-        function ExportController($rootElement, $q, $filter, configService, appInfo, storageService,
+        function ExportController($translate, $mdToast, $q, $filter, configService, appInfo,
             exportLegendService, geoService, gapiService) {
             'ngInject';
             const self = this;
 
-            const shellNode = storageService.panels.shell;
-            const [mapWidth, mapHeight] = [shellNode.width(), shellNode.height()];
+            let attempt = 0;
+
+            const [mapWidth, mapHeight] = [self.shellNode.width(), self.shellNode.height()];
 
             // we need a dummy canvas graphic to stretch the export dialog to the proper size before we get any of the print images
             self.dummyGraphic = createCanvas();
             self.dummyGraphic.width = mapWidth;
             self.dummyGraphic.height = mapHeight;
+
+            self.isError = false;
 
             self.isGenerationComplete = false;
 
@@ -79,10 +95,15 @@
             self.includeLegend = includeLegend;
             self.close = service.close;
 
-            // start the print task
-            configService.getCurrent().then(config => {
+            configService.getCurrent().then(config =>
+                startPrintTask(config.services.exportMapUrl));
+
+            /***/
+
+            function startPrintTask(exportMapUrl) {
+                // start the print task
                 const { serverPromise, localPromise } = gapiService.gapi.mapPrint.print(geoService.mapObject, {
-                    url: config.services.exportMapUrl,
+                    url: exportMapUrl,
                     format: 'png32'
                 });
 
@@ -95,11 +116,54 @@
                     self.localGraphic = canvas);
 
                 // when both graphics are ready, allow the user to save the image
-                $q.all([serverPromise, localPromise]).then(() =>
-                    self.isGenerationComplete = true);
-            });
+                $q.all([serverPromise, localPromise])
+                    .then(() =>
+                        self.isGenerationComplete = true)
+                    .catch(error => {
+                        console.error(`Print task failed on try ${attempt++}`);
+                        console.error(error);
 
-            /***/
+                        // print task with many layers will likely fail due to esri's proxy/cors issue https://github.com/fgpv-vpgf/fgpv-vpgf/issues/702
+                        // submitting it a second time usually works; if not, submit a third time
+                        if (attempt <= RETRY_LIMIT) {
+                            console.log(`Trying print task again`);
+                            startPrintTask(exportMapUrl);
+                        } else {
+                            // show error; likely service timeout
+                            self.isError = true;
+                            showToast('error.timeout', { action: 'retry' })
+                                .then(response => {
+                                    if (response === 'ok') { // promise resolves with 'ok' when user clicks 'retry'
+                                        attempt = 0;
+                                        self.isError = false;
+                                        console.log(`Trying print task again`);
+                                        startPrintTask(exportMapUrl);
+                                    }
+                                });
+                        }
+                    });
+            }
+
+            /**
+             * Show a notification toast.
+             * I think I'm being clever with default values here.
+             * @function showToast
+             * @private
+             * @param {String} textContent translation key of the string to display in the toast
+             * @param {Object} [optional] action word to be displayed on the toast; toast delay before hiding
+             * @return {Promise} promise resolves when the user clicks the toast button or the timer runs out
+             */
+            function showToast(textContent, { action = 'close', hideDelay = 0 } = {}) {
+                const options = {
+                    parent: self.scope.element || self.shellNode,
+                    position: 'bottom rv-flex-global',
+                    textContent: $translate.instant(`export.${textContent}`),
+                    action: $translate.instant(`export.${action}`),
+                    hideDelay
+                };
+
+                return $mdToast.show($mdToast.simple(options))
+            }
 
             /**
              * Generates a legend graphic if it's absent and toggle its visibility in the dialog.
@@ -148,9 +212,25 @@
 
                     // file name is either the title provided by the user or app id + timestamp
                     const fileName = `${self.exportTitle || `${appInfo.id} - ${timestampString}`}.png`;
-                    canvas.toBlob(blob => {
-                        saveAs(blob, fileName);
-                    });
+
+                    try {
+                        canvas.toBlob(blob => {
+                            saveAs(blob, fileName);
+                        });
+                    } catch (error) {
+                        // show error; nothing works
+                        self.isError = true;
+
+                        // this one is likely a tainted canvas issue
+                        if (error.name === 'SecurityError') {
+                            // TODO: seems browsers allow to right-click a canvas on the page and save it manually; we can output the final canvas on the page and instruct user how to save it manually
+                            showToast('error.tainted');
+                        } else {
+                            // something else happened
+                            showToast('error.somethingelseiswrong');
+                        }
+
+                    }
                 });
 
                 /**

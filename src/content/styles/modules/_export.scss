@@ -17,13 +17,22 @@
             order: 2;
             position: relative;
             overflow-x: hidden;
+
+            .md-dialog-content {
+                transition: filter, opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+                &.rv-error {
+                    filter: grayscale(100%);
+                    opacity: 0.5;
+                }
+            }
         }
 
         .rv-export-map {
             display: block;
             width: 100%;
             position: relative;
-            filter: blur(5px);
+            filter: blur(rem(0.5));
             transition: filter $swift-ease-in-duration * 2 $swift-ease-in-out-timing-function;
 
             > canvas {
