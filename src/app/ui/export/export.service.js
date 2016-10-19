@@ -106,6 +106,7 @@
                     format: 'png32'
                 });
 
+                // NOTE: geoApi returns Promise object, but it resolves outside of the Angular digest cycle and we need to trigger one on `then` to update the bindings. The easiest way here is to use `$q.resolve`, but `$timeout` or `$applyAsync` would also work.
                 // store graphic with service layers so it is bound to the ui
                 $q.resolve(serverPromise).then(canvas =>
                     self.serviceGraphic = canvas);
@@ -244,7 +245,10 @@
                  * NOTE: only title and timestamp are implemented
                  * @private
                  * @function drawMapShell
-                 * @return {Promise} promise resolving with a shell graphic
+                 * @return {Promise} promise resolving with an object containing:
+                 * - shellGraphic;
+                 * - mapOffset: the distance the map image should be offset from the top of the canvas to accommodate the title (if any)
+                 * - legendOffset: the distance the legend graphic should be offset from the top of the canvas to to accommodate the map image and the title (if any)
                  */
                 function drawMapShell() {
                     let mapOffset = EXPORT_IMAGE_GUTTER;
