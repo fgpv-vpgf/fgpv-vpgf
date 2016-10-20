@@ -525,7 +525,8 @@
                 } else {
                     // handles points
                     const pt = newExt.getCenter();
-                    const zoomed = geoState.layerRegistry.zoomToScale(zoomLayer, zoomLayer.options.offscale.value);
+                    const zoomed = geoState.layerRegistry.zoomToScale(
+                        zoomLayer, zoomLayer.options.offscale.value, true);
                     return zoomed.then(() => {
                         const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
                         const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
