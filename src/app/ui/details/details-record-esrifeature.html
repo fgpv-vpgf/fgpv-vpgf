@@ -15,7 +15,7 @@
 <div class="rv-group-controls">
 
     <md-button class="md-icon-button rv-icon-20" ng-click="self.zoomToFeature()"
-        ng-disabled="!(self.requester.layerRec.visible)">
+        ng-disabled="!self.requester.layerRec.visible || !self.directLegendEntry.options.visibility.value">
         <md-tooltip md-direction="top">{{ 'filter.tooltip.zoom' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:zoom_in"></md-icon>
     </md-button>
