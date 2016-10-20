@@ -85,6 +85,29 @@
                 geoService.hilightGraphic(item.requester.layerRec, item.requester.featureIdx,
                     item.data.map(d => d.oid));
             }
+
+            // get legend entry from the requester to watch modification on visiiblity for sublayer
+            if (item !== null) {
+                const legendEntry = item.requester.layerRec.legendEntry;
+
+                // if only one item, set the value directly
+                if (legendEntry.items === undefined) {
+                    self.selectedItem.requester.visible = legendEntry.options.visibility.value;
+                } else {
+                    // walk the legend entry to find the item related to the requester
+                    legendEntry.walkItems((legendEntry) => {
+                        if (legendEntry.featureIdx === item.requester.featureIdx &&
+                            legendEntry.name === item.requester.name) {
+                            // watch for a visibility change. We need to do this because requester does not have this value. It is only
+                            // there for first level (layerRec). For sub layer, we need to find the right info by walking the legend entry
+                            // and apply a watch (fgpv-vpgf#1171)
+                            $scope.$watch(() => legendEntry.options.visibility.value, (value) => {
+                                self.selectedItem.requester.visible = value;
+                            });
+                        }
+                    });
+                }
+            }
         }
 
         $scope.$watch('self.display.data', newValue => {
