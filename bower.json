@@ -11,33 +11,37 @@
     "bardjs": "0.1.4"
   },
   "dependencies": {
-    "jquery": "^2.1.4",
     "angular": "1.4.12",
     "angular-animate": "1.4.12",
-    "angular-dragula": "1.2.7",
-    "angular-sanitize": "1.4.12",
     "angular-aria": "1.4.12",
+    "angular-dragula": "1.2.7",
     "angular-material": "1.1.0",
+    "angular-minicolors": "^0.0.9",
+    "angular-sanitize": "1.4.12",
     "angular-translate": "^2.7.2",
     "angular-translate-loader-static-files": "^2.7.2",
-    "gsap": "^1.18.0",
     "bezier-easing": "^1.0.0",
-    "dotjem-angular-tree": "~0.2.1",
-    "geoapi": "http://fgpv.cloudapp.net/demo/gapi/geoapi-1.0.7-1.tgz",
-    "datatables.net": "~1.10.10",
-    "datatables.net-dt": "~1.10.10",
+    "canvas-toBlob.js": "https://github.com/eligrey/canvas-toBlob.js.git",
+    "datatables-buttons": "~1.1.2",
     "datatables-scroller": "~1.4.0",
     "datatables-select": "~1.1.2",
-    "ng-flow": "~2.7.1",
-    "datatables-buttons": "~1.1.2",
-    "jquery-hoverintent": "~1.8.1",
-    "RandomColor": "https://github.com/sterlingwes/RandomColor.git",
-    "angular-minicolors": "^0.0.9",
-    "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git",
+    "datatables.net": "~1.10.10",
+    "datatables.net-dt": "~1.10.10",
+    "dotjem-angular-tree": "~0.2.1",
+    "file-saver": "^1.3.3",
+    "geoapi": "http://fgpv.cloudapp.net/demo/gapi/geoapi-1.0.7-1.tgz",
+    "gsap": "^1.18.0",
     "include-media": "^1.4.8",
-    "file-saver": "^1.3.3"
+    "jquery": "^2.1.4",
+    "jquery-hoverintent": "~1.8.1",
+    "ng-flow": "~2.7.1",
+    "RandomColor": "https://github.com/sterlingwes/RandomColor.git",
+    "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git"
   },
   "overrides": {
+    "canvas-toBlob.js":{
+      "main": "canvas-toBlob.js"
+    },
     "svg.textflow.js": {
       "main": "svg.textflow.js"
     },
