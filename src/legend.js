@@ -1,5 +1,5 @@
 'use strict';
-const TOO_MANY_LAYERS = 12;
+const TOO_MANY_LAYERS = 15;
 
 /**
  * Generate all permutations of length M, with exactly N `true` values.
@@ -77,7 +77,8 @@ function packLayersIntoSections(layers, sections) {
             bestPerm = perm;
         }
     });
-    return assignLayerSplits(layers, bestPerm);
+    assignLayerSplits(layers, bestPerm);
+    return { layers, sectionsUsed: sections };
 }
 
 /**
@@ -149,9 +150,8 @@ function allocateLayersToSections(layers, sectionsAvailable, mapHeight) {
         }
         --curSectionsUsed;
     }
-    console.log(bestSectionUsage[curSectionsUsed]);
     layers.forEach((l, i) => splitLayer(l, bestSectionUsage[curSectionsUsed].segments[i]));
-    return layers;
+    return { layers, sectionsUsed: curSectionsUsed };
 }
 
 /**
@@ -160,11 +160,14 @@ function allocateLayersToSections(layers, sectionsAvailable, mapHeight) {
  * @param {Array} layerList a list of layers to be updated (modified in place)
  * @param {int} sectionsAvailable the maximum number of sections to use
  * @param {int} mapHeight the rendered height of the map image
- * @return an object in the form `{ layerList, sectionsUsed }` (layerList is modified in place)
+ * @return an object in the form `{ layers, sectionsUsed }` (layerList is modified in place)
  */
 function makeLegend(layerList, sectionsAvailable, mapHeight) {
     if (layerList.length > TOO_MANY_LAYERS) {
-        return { layerList, sectionsUsed: 1 };
+        const layersPerSection = Math.ceil(layerList.length / sectionsAvailable);
+        const splitPoints = Array(layerList.length - 1).fill(0).map((v, i) => (i + 1) % layersPerSection === 0); // I don't know why the useless fill is necessary
+        assignLayerSplits(layerList, splitPoints);
+        return { layers: layerList, sectionsUsed: sectionsAvailable };
     }
     if (layerList.length <= sectionsAvailable) {
         return allocateLayersToSections(layerList, sectionsAvailable, mapHeight);
