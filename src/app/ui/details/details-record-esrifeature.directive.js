@@ -99,6 +99,16 @@
         self.toggleDetails = toggleDetails;
         self.zoomToFeature = zoomToFeature;
 
+        // check if items exist. it does not exist on single legend item
+        if (self.requester.layerRec.legendEntry.items) {
+            // get legend entry from the requester to watch modification on visiblity for sublayer
+            self.directLegendEntry = self.requester.layerRec.legendEntry.items.find(le =>
+                le.featureIdx === self.requester.featureIdx);
+        } else {
+            // get legend entry from layer record
+            self.directLegendEntry = self.requester.layerRec.legendEntry;
+        }
+
         /**
          * Expand/collapse identify record section.
          * @function toggleDetails

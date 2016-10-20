@@ -450,9 +450,15 @@
              * @function zoomToScale
              * @param {Number} layer to zoom to scale to
              * @param {Boolean} zoomIn the zoom to scale direction; true need to zoom in; false need to zoom out
-             *
+             * @param {Boolean} zoomGraphic an optional value when zoomToScale is use to zoom to a graphic element;
+             *                                  true used to zoom to a graphic element; false not used to zoom to a graphic element
              */
-            function zoomToScale(layer, zoomIn) {
+            function zoomToScale(layer, zoomIn, zoomGraphic = false) {
+                // if the function is used to zoom to a graphic element and the layer is out of scale we always want
+                // the layer to zoom to the maximum scale allowed for the layer. In this case, zoomIn must be
+                // always false
+                zoomIn = (zoomGraphic) ? false : zoomIn;
+
                 // dynamic layer children don't have the _layerRecord property; set l to parent layer if that's the case
                 let topLayer = layer;
                 const lods = zoomIn ? geoState.lods : [...geoState.lods].reverse();
