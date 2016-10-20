@@ -119,9 +119,10 @@ function splitLayer(layer, splitCount) {
  * @private
  * @param {Array} layers a list of layers to be updated (modified in place)
  * @param {int} sectionsAvailable the maximum number of sections to use
+ * @param {int} mapHeight the rendered height of the map image
  * @return the same layers array as passed in
  */
-function allocateLayersToSections(layers, sectionsAvailable) {
+function allocateLayersToSections(layers, sectionsAvailable, mapHeight) {
     assignLayerSplits(layers, Array(layers.length - 1).fill(true));
     const bestSectionUsage = {}; // maps number of sections used to best height achieved
     bestSectionUsage[layers.length] = {
@@ -131,7 +132,7 @@ function allocateLayersToSections(layers, sectionsAvailable) {
     bestSectionUsage[layers.length].segments.fill(1);
 
     let curSectionsUsed = layers.length;
-    while (curSectionsUsed < sectionsAvailable) {
+    while (curSectionsUsed < sectionsAvailable && bestSectionUsage[curSectionsUsed].height > mapHeight * 2) {
         const oldSegments = bestSectionUsage[curSectionsUsed].segments;
         const normalizedLayers = oldSegments.map((seg, i) => layers[i].height / seg);
         const worstLayerIndex = normalizedLayers.indexOf(Math.max(...normalizedLayers));
@@ -158,14 +159,15 @@ function allocateLayersToSections(layers, sectionsAvailable) {
  * @function
  * @param {Array} layerList a list of layers to be updated (modified in place)
  * @param {int} sectionsAvailable the maximum number of sections to use
+ * @param {int} mapHeight the rendered height of the map image
  * @return an object in the form `{ layerList, sectionsUsed }` (layerList is modified in place)
  */
-function makeLegend(layerList, sectionsAvailable) {
+function makeLegend(layerList, sectionsAvailable, mapHeight) {
     if (layerList.length > TOO_MANY_LAYERS) {
         return { layerList, sectionsUsed: 1 };
     }
     if (layerList.length <= sectionsAvailable) {
-        return allocateLayersToSections(layerList, sectionsAvailable);
+        return allocateLayersToSections(layerList, sectionsAvailable, mapHeight);
     } else {
         return packLayersIntoSections(layerList, sectionsAvailable);
     }
