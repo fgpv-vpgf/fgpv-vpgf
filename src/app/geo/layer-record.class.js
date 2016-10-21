@@ -120,27 +120,20 @@
 
             /**
              * Creates a config snippet (containing options) given a list of properties and values.
+             * Only used for bookmark version A
              *
              * @param {Array} props     The property names
              * @param {Array} info      The values for the properties
-             * @param {String} version  Version of the bookmark data. See core/constant.service for valid versions
              * @returns {Object}        config snippet for the layer
              */
-            static parseData (props, info, version) {
+            static parseData (props, info) {
 
                 const lookup = {
                     opacity: value => {
-                        if (version !== 'A' && value === '99') {
-                            value = 100;
-                        }
                         return parseInt(value) / 100;
                     },
                     visibility: value => {
-                        if (version === 'A') {
-                            return value === '1' ? true : null;
-                        } else {
-                            return value === '1';
-                        }
+                        return value === '1' ? true : null;
                     },
                     boundingBox: value => value === '1',
                     snapshot: value => value === '1',
@@ -290,20 +283,15 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
-             * @param {String} version      version of the bookmark. See core/constant.service for valid versions
              * @returns {Object}            config snippet for the layer
              */
-            static parseData (dataString, version) {
-
+            static parseData (dataString) {
+                // Only used for bookmark version A
                 // ( opacity )( viz )( boundingBox )( query )
-                // vA uses 3-char opacity
 
-                const format = {
-                    A: /^(\d{3})(\d{1})(\d{1})$/,
-                    B: /^(\d{2})(\d{1})(\d{1})$/
-                };
+                const format = /^(\d{3})(\d{1})(\d{1})$/;
 
-                const info = dataString.match(format[version]);
+                const info = dataString.match(format);
 
                 if (info) {
                     return super.parseData([, 'opacity', 'visibility', 'boundingBox'], info); // jshint ignore:line
@@ -327,66 +315,17 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
-             * @param {String} version      version of the bookmark. See core/constant.service for valid versions
              * @returns {Object}            config snippet for the layer
              */
-            static parseData (dataString, version) {
-                // vA: ( opacity )( viz )( boundingBox )( query )
-                // vB: ( sublayer info )( opacity )( viz )( boundingBox )( query )
-                const format = {
-                    A: /^(\d{3})(\d{1})(\d{1})(\d{1})$/,
-                    B: /^(.+?)(\d{2})(\d{1})(\d{1})(\d{1})$/
-                };
+            static parseData (dataString) {
+                // Only used for bookmark version A
+                // ( opacity )( viz )( boundingBox )( query )
 
-                const info = dataString.match(format[version]);
+                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
+                const info = dataString.match(format);
 
                 if (info) {
-
-                    const snippet = {
-                        layerEntries: [],
-                        childOptions: []
-                    };
-
-                    if (version !== 'A') {
-                        // process info for child layers
-                        // ( opacity ) ( viz ) ( query ) ( sublayer index )
-                        const cFormat = /^(\d{2})(\d{1})(\d{1})(.+?)$/;
-                        const childData = info[1].substr(1); // drop leading ;
-                        info.splice(1, 1); // remove child info from array, normalizing it with version A
-
-                        const makeEntryNode = bmData => {
-                            // we make use of super.parseData, but need to pull the data up out of the
-                            // .options subobject in this case.
-                            const cInfo = bmData.match(cFormat);
-                            const result = super.parseData([, 'opacity', 'visibility', 'query'], cInfo, version); // jshint ignore:line
-                            result.options.index = cInfo[4];
-                            return result.options;
-                        };
-
-                        // splitting on ; gives us chunks of data for each top-level index in the layer.
-                        // i.e. each chunk defines an object that goes in .layerEntries
-                        childData.split(';').forEach(cData => {
-                            // for a single top level index, we can also have auto-generated child settings along with it.
-                            // these values are separated by ` chars. The first one is always the parent.
-                            const subChildData = cData.split('`');
-
-                            // make parent entry, then remove it from source array
-                            const lEntry = makeEntryNode(subChildData[0]);
-                            subChildData.splice(0, 1);
-
-                            // if any child data remains, add it to the children property of the parent.
-                            if (subChildData.length > 0) {
-                                snippet.childOptions.push(...subChildData.map(scd => makeEntryNode(scd)));
-                            }
-
-                            snippet.layerEntires.push(lEntry);
-                        });
-                    }
-
-                    // merge child config data with top level config data
-                    const topDat = super.parseData([, 'opacity', 'visibility', 'boundingBox', 'query'], info, version); // jshint ignore:line
-                    angular.merge(snippet, topDat);
-                    return snippet;
+                    return super.parseData([, 'opacity', 'visibility', 'boundingBox', 'query'], info); // jshint ignore:line
                 }
             }
         }
@@ -401,19 +340,14 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
-             * @param {String} version      version of the bookmark. See core/constant.service for valid versions
              * @returns {Object}            config snippet for the layer
              */
-            static parseData (dataString, version) {
+            static parseData (dataString) {
+                // Only used for bookmark version A
                 // ( opacity )( viz )( boundingBox )
-                // vA uses 3-char opacity
 
-                const format = {
-                    A: /^(\d{3})(\d{1})(\d{1})$/,
-                    B: /^(\d{2})(\d{1})(\d{1})$/
-                };
-
-                const info = dataString.match(format[version]);
+                const format = /^(\d{3})(\d{1})(\d{1})$/;
+                const info = dataString.match(format);
 
                 if (info) {
                     return super.parseData([, 'opacity', 'visibility', 'boundingBox'], info); // jshint ignore:line
@@ -437,19 +371,14 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
-             * @param {String} version      version of the bookmark. See core/constant.service for valid versions
              * @returns {Object}            config snippet for the layer
              */
-            static parseData (dataString, version) {
+            static parseData (dataString) {
+                // Only used for bookmark version A
                 // ( opacity )( viz )( boundingBox )( query )
-                // vA uses 3-char opacity
 
-                const format = {
-                    A: /^(\d{3})(\d{1})(\d{1})(\d{1})$/,
-                    B: /^(\d{2})(\d{1})(\d{1})(\d{1})$/
-                };
-
-                const info = dataString.match(format[version]);
+                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
+                const info = dataString.match(format);
 
                 if (info) {
                     return super.parseData([, 'opacity', 'visibility', 'boundingBox', 'query'], info); // jshint ignore:line
@@ -475,19 +404,14 @@
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
-             * @param {String} version      version of the bookmark. See core/constant.service for valid versions
              * @returns {Object}            config snippet for the layer
              */
-            static parseData (dataString, version) {
+            static parseData (dataString) {
+                // Only used for bookmark version A
                 // ( opacity )( viz )( boundingBox )( snapshot )( query )
-                // vA uses 3-char opacity
 
-                const format = {
-                    A: /^(\d{3})(\d{1})(\d{1})(\d{1})(\d{1})$/,
-                    B: /^(\d{2})(\d{1})(\d{1})(\d{1})(\d{1})$/
-                };
-
-                const info = dataString.match(format[version]);
+                const format =  /^(\d{3})(\d{1})(\d{1})(\d{1})(\d{1})$/;
+                const info = dataString.match(format);
 
                 if (info) {
                     return super.parseData([, 'opacity', 'visibility', 'boundingBox', 'snapshot', 'query'], info); // jshint ignore:line
@@ -532,10 +456,9 @@
          * @function parseLayerData
          * @param {String} dataString   a partial layer bookmark (everything after the id)
          * @param {Number} layerType    Layer type taken from the layer bookmark
-         * @param {String} version      Version of the bookmark format. See core/constant.service for valid versions
          * @returns {Object}            config snippet for the layer
          */
-        function parseLayerData(dataString, layerType, version) {
+        function parseLayerData(dataString, layerType) {
             const classes = [
                 FeatureRecord,
                 WmsRecord,
@@ -544,7 +467,7 @@
                 ImageRecord
             ];
 
-            return classes[layerType].parseData(dataString, version);
+            return classes[layerType].parseData(dataString);
         }
 
         return { makeServiceRecord, makeFileRecord, parseLayerData };
