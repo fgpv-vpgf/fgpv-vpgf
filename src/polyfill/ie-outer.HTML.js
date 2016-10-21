@@ -13,7 +13,8 @@
         for (var i = 0; i < element.attributes.length; i++) {
             var attribute = element.attributes[i];
             var name = attribute.name || attribute.nodeName;
-            var value = (attribute.value || attribute.nodeValue).replace(/&/g, '&amp;')
+            var value = (attribute.value || attribute.nodeValue)
+                .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
@@ -30,7 +31,12 @@
                 if (child.nodeType === 1) {
                     result += serializeSvgContent(child);
                 } else if (child.nodeType === 3) {
-                    result += child.nodeValue;
+                    result += child.nodeValue
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&apos;');
                 }
             }
             result += '</' + element.nodeName + '>';
