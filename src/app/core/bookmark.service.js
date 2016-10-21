@@ -66,25 +66,6 @@
         }
 
         /**
-         * Converts an string in binary to a string in hexadecimal
-         * Length of binary input should be a multiple of 4
-         *
-         * @function binaryToHex
-         * @private
-         * @param {String} value        A string of binary characters
-         * @returns {String}            Input value encoded as a string of hexadecimal characters.
-         */
-        function binaryToHex(value) {
-            // haha nope. parseInt(value, 2) will try to cram an enormous number into a decimal float
-            // return parseInt(value, 2).toString(16);
-
-            const fourBits = value.match(/.{1,4}/g);
-            return fourBits.map(b4 => {
-                return parseInt(b4, 2).toString(16);
-            }).join('');
-        }
-
-        /**
          * Converts an integer to a fixed-length character representation in binary.
          * The number will be zero-padded on the left to the specified size. E.g. encodeInteger(1, 3) = '001'
          *
@@ -112,6 +93,53 @@
         }
 
         /**
+         * Converts 1 or 0 character to a boolean.
+         *
+         * @function decodeBoolean
+         * @private
+         * @param {Boolean} value        A boolean value
+         * @returns {String}             One digit string representation the boolean, in binary. 1 or 0
+         */
+        function decodeBoolean(value) {
+            // very complex
+            return value === '1';
+        }
+
+        /**
+         * Converts an string in binary to a string in hexadecimal
+         * Length of binary input should be a multiple of 4
+         *
+         * @function binaryToHex
+         * @private
+         * @param {String} value        A string of binary characters
+         * @returns {String}            Input value encoded as a string of hexadecimal characters.
+         */
+        function binaryToHex(value) {
+            // haha nope. parseInt(value, 2) will try to cram an enormous number into a decimal float
+            // return parseInt(value, 2).toString(16);
+
+            const fourBits = value.match(/.{1,4}/g);
+            return fourBits.map(b4 => {
+                return parseInt(b4, 2).toString(16);
+            }).join('');
+        }
+
+        /**
+         * Converts an string in hexadecimal to a string in binary
+         *
+         * @function hexToBinary
+         * @private
+         * @param {String} value        A string of hexadecimal characters
+         * @returns {String}            Input value encoded as a string of hexadecimal characters.
+         */
+        function hexToBinary(value) {
+            const hexes = value.match(/./g); // split into single chars
+            return hexes.map(h => {
+                return encodeInteger(parseInt(h, 16), 4); // 4-digit padded binary
+            }).join('');
+        }
+
+        /**
          * Converts an opacity number to a fixed-length character representation in binary.
          * Values are multiplied by 100, and mapped from range 0 - 1  to 0000000 - 1100100 (0 - 100 in decimal).
          * We always pad to seven binary digits.
@@ -125,6 +153,19 @@
             // sometimes we get weird decimal numbers coming in, like 0.5599999999999 instead of 0.56
             // so use the rounding function
             return encodeInteger(Math.round(value * 100), 7);
+        }
+
+        /**
+         * Converts an binary encoding of opacity to an actual opacity number
+         * Values are mapped from range 0000000 - 1100100 (0 - 100 in decimal) to 0 - 1.
+         *
+         * @function decodeOpacity
+         * @private
+         * @param {String} value        Opacity value of a layer. A binary string between 0000000 and 1100100
+         * @returns {Number}            Converted value in the range of 0 to 1
+         */
+        function decodeOpacity(value) {
+            return parseInt(value, 2) / 100;
         }
 
         /**
@@ -428,6 +469,96 @@
         }
 
         /**
+         * Injects a list of options into a target object. Follows the config-file format
+         * of defining options.
+         *
+         * @function optionInjector
+         * @private
+         * @param {Object} target      Object to have options injected into. Param is modified.
+         * @param {Array} propList     List of property names (strings) to add as options
+         * @param {Object} settings    Object containing the option values. Property names must match option names
+         */
+        function optionInjector(target, propList, settings) {
+            propList.forEach(prop => {
+                target[prop] = { value: settings[prop] };
+            });
+        }
+
+        /**
+         * Converts a layer settings block (in hex text encoding) into a nice
+         * object with all values decoded
+         *
+         * @function extractLayerSettings
+         * @private
+         * @param {String} layerSettingsHex     Layer settings encoded in hex string
+         * @returns {Object}                    Layer settings decoded in an object
+         */
+        function extractLayerSettings(layerSettingsHex) {
+            const [, opac, vis, bb, snap, query, childCount] =
+                        hexToBinary(layerSettingsHex).match(/^(.{7})(.)(.)(.)(.)(.{9})/);
+
+            // Note that property names here must match how they are spelled in the config options
+            return {
+                opacity: decodeOpacity(opac),
+                visibility: decodeBoolean(vis),
+                boundingBox: decodeBoolean(bb),
+                snapshot: decodeBoolean(snap),
+                query: decodeBoolean(query),
+                childCount: parseInt(childCount, 2)
+            };
+        }
+
+        /**
+         * Converts a child layer settings block (in hex text encoding) into a nice
+         * object with all values decoded
+         *
+         * @function extractChildSettings
+         * @private
+         * @param {String} childSettingsHex     Child layer settings encoded in hex string
+         * @returns {Object}                    Child layer settings decoded in an object
+         */
+        function extractChildSettings(childSettingsHex) {
+            const [, opac, vis, query, root, idx] =
+                        hexToBinary(childSettingsHex).match(/^(.{7})(.)(.)(.)(.{12})/);
+
+            // Note that property names here must match how they are spelled in the config options
+            return {
+                opacity: decodeOpacity(opac),
+                visibility: decodeBoolean(vis),
+                query: decodeBoolean(query),
+                index: parseInt(idx, 2),
+                root: decodeBoolean(root)
+            };
+        }
+
+        /**
+         * Generates a layer config snippet with options initialzed
+         * based on the layer type and contents of the bookmark settings
+         *
+         * @function makeLayerConfig
+         * @private
+         * @param {String} layerCode      Code specifying the type of the layer
+         * @param {Object} layerSettings  Decoded layer settings in an object
+         * @returns {Object}              Config snippet for layer, with options defined
+         */
+        function makeLayerConfig(layerCode, layerSettings) {
+
+            const codeToProps = {
+                0: ['opacity', 'visibility', 'boundingBox', 'snapshot', 'query'], // feature
+                1: ['opacity', 'visibility', 'boundingBox', 'query'], // wms
+                2: ['opacity', 'visibility', 'boundingBox'], // tile
+                3: ['opacity', 'visibility', 'boundingBox', 'query'], // dynamic
+                4: ['opacity', 'visibility', 'boundingBox'] // image
+            };
+
+            const layerProps = codeToProps[layerCode];
+            const result = { options: {} };
+            optionInjector(result.options, layerProps, layerSettings);
+
+            return result;
+        }
+
+        /**
          * Turns layer bookmarks into partial layer configs
          *
          * @function parseLayers
@@ -436,33 +567,87 @@
          * @returns {Object}                    Partial configs created from each layer bookmark
          */
         function parseLayers(layerDataStrings, version) {
-            const layerPatterns = {};
-
-            layerPatterns[bmVer.A] = [
-                /^(.+?)(\d{7})$/, // feature
-                /^(.+?)(\d{6})$/, // wms
-                /^(.+?)(\d{5})$/, // tile
-                /^(.+?)(\d{6})$/, // dynamic
-                /^(.+?)(\d{5})$/ // image
-            ];
-
-            layerPatterns[bmVer.B] = [
-                /^(.+?)(\d{6})$/, // feature
-                /^(.+?)(\d{5})$/, // wms
-                /^(.+?)(\d{4})$/, // tile
-                /^(.+?)([;].*\d{5})$/, // dynamic
-                /^(.+?)(\d{4})$/ // image
-            ];
-
             const layerObjs = {};
-            // Loop through bookmark layers and create config snippets
-            layerDataStrings.forEach(layer => {
-                layer = decode64(layer);
-                const layerType = parseInt(layer.substring(0, 2));
-                const [, layerId, layerData] = layer.substring(2).match(layerPatterns[version][layerType]);
 
-                layerObjs[layerId] = LayerRecordFactory.parseLayerData(layerData, layerType, version);
-            });
+            // due to the large divergance between version A and B,
+            // and plans to secretly drop support for version A at some point,
+            // will just have two separate code blocks.
+            // fancier integration / code sharing can be considered after the
+            // state snapshot refactor, which will likely change the whole situation.
+
+            if (version === bmVer.A) {
+                const layerPatterns = [
+                    /^(.+?)(\d{7})$/, // feature
+                    /^(.+?)(\d{6})$/, // wms
+                    /^(.+?)(\d{5})$/, // tile
+                    /^(.+?)(\d{6})$/, // dynamic
+                    /^(.+?)(\d{5})$/ // image
+                ];
+
+                // Loop through bookmark layers and create config snippets
+                layerDataStrings.forEach(layer => {
+                    layer = decode64(layer);
+                    const layerType = parseInt(layer.substring(0, 2));
+                    const [, layerId, layerData] = layer.substring(2).match(layerPatterns[layerType]);
+
+                    layerObjs[layerId] = LayerRecordFactory.parseLayerData(layerData, layerType);
+                });
+
+            } else {
+                // assume version B, get fancier after refactors
+
+                layerDataStrings.forEach(layer => {
+                    layer = decode64(layer);
+
+                    // take first 6 characters, which are layer code (1) & layer settings (5)
+                    // /^(.)(.{5})/
+                    const [, layerCode, layerSettingsHex] = layer.match(/^(.)(.{5})/);
+
+                    // decode layer settings
+                    const layerSettings = extractLayerSettings(layerSettingsHex);
+
+                    // get layer id from remaining data
+                    const layerId = layer.substring(6 + (layerSettings.childCount * 6));
+
+                    const snippet = makeLayerConfig(layerCode, layerSettings);
+
+                    if (layerSettings.childCount > 0) {
+                        // TODO currently we only have dynamic layers allowed to have childs
+                        //      so this code adds dynamic-specific properties to the config snippet.
+                        //      If we ever support WMS children, it may have different properties
+                        //      and this part of the code will need to be adjusted.
+
+                        snippet.layerEntries = [];
+                        snippet.childOptions = [];
+
+                        // get entire swath of child data
+                        const childrenInfo = layer.substr(6, layerSettings.childCount * 6);
+
+                        // split into individual childs (6 chars) and process
+                        const childItems = childrenInfo.match(/.{6}/g);
+                        childItems.forEach(child => {
+                            // decode from hex into settings
+                            const childSettings = extractChildSettings(child);
+
+                            // build a config snippet for the child
+                            const childSnippet = {
+                                index: childSettings.index
+                            };
+                            optionInjector(childSnippet, ['opacity', 'visibility', 'query'], childSettings);
+
+                            // add child snippet to appropriate array in layer snippet
+                            if (childSettings.root) {
+                                snippet.layerEntries.push(childSnippet);
+                            } else {
+                                snippet.childOptions.push(childSnippet);
+                            }
+                        });
+                    }
+
+                    layerObjs[layerId] = snippet;
+                });
+
+            }
 
             return layerObjs;
         }
