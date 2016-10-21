@@ -7,6 +7,18 @@
      * Reference on script loading: http://www.html5rocks.com/en/tutorials/speed/script-loading/
      */
 
+    // check if the global RV registry object already exists and store a reference
+    const RV = window.RV = typeof window.RV === 'undefined' ? {} : window.RV;
+
+    // set these outside of the initial creation in case the page defines RV for setting
+    // properties like dojoURL
+    Object.assign(RV, {
+        getMap,
+        debug: {},
+        _nodes: null,
+        _deferredPolyfills: RV._deferredPolyfills || [] // holds callback for any polyfills or patching that needs to be done after the core.js is loaded
+    });
+
     // versions of scripts to inject
     const versions = {
         jQuery: '2.2.1',
@@ -44,32 +56,6 @@
 
     const scriptsArr = [];
 
-    /**
-     * Compares two versions of a script, prints warnings to the console if the versions are not the same
-     *
-     * @private
-     * @function versionCheck
-     * @param  {String} ourVersion      our version of the script
-     * @param  {String} theirVersion    their version of the script
-     * @param  {String} scriptName      the name of the script
-     */
-    function versionCheck(ourVersion, theirVersion, scriptName) {
-        ourVersion = ourVersion.split('.');
-        const versionDiff = theirVersion.split('.')
-            // compare the two versions
-            .map((x, index) => parseInt(x) - ourVersion[index])
-            // find first non-equal part
-            .find(x => x !== 0);
-
-        if (typeof versionDiff === 'undefined') {
-            // the versions were equal
-            return;
-        }
-        const fillText = versionDiff > 0 ? 'more recent' : 'older';
-        console.warn(`The current ${scriptName} version is ${fillText} than expected for the viewer; ` +
-                        `expected: ${versions.jQuery}`);
-    }
-
     // append proper srcs to scriptsArray
     if (!window.jQuery) {
         // TODO: should we use a local file here instead?
@@ -82,28 +68,11 @@
         versionCheck(versions.dataTables, $.fn.dataTable.version, 'dataTable');
     }
 
-    scriptsArr.push(`${repo}/core.js`);
+    scriptsArr.forEach(src => loadScript(src));
 
-    scriptsArr.forEach(src => {
-        const currScript = d.createElement('script');
-        currScript.src = src;
-        currScript.async = false;
-        currScript.type = 'text/javascript';
-        bodyNode.appendChild(currScript);
-    });
-
-    // check if the global RV registry object already exists
-    if (typeof window.RV === 'undefined') {
-        window.RV = {};
-    }
-
-    const RV = window.RV; // just a reference
-
-    // set these outside of the initial creation in case the page defines RV for setting
-    // properties like dojoURL
-    RV.getMap = getMap;
-    RV.debug = {};
-    RV._nodes = null;
+    // load core.js last and execute any deferred polyfills/patches
+    loadScript(`${repo}/core.js`, () =>
+        RV._deferredPolyfills.forEach(dp => dp()));
 
     // registry of map proxies
     const mapRegistry = [];
@@ -215,6 +184,55 @@
     // in reality it returns a map proxy queueing calls to the map until it's ready
     function getMap(id) {
         return mapRegistry[id];
+    }
+
+    /**
+     * Load a script and execute an optional callback
+     * @function
+     * @private
+     * @param {String} src url of the script to load
+     * @param {Function} loadCallback [optional] a callback to execute on script load
+     * @return {Object} script tag
+     */
+    function loadScript(src, loadCallback) {
+        const currScript = d.createElement('script');
+        currScript.src = src;
+        currScript.async = false;
+        currScript.type = 'text/javascript';
+
+        if (typeof loadCallback === 'function') {
+            currScript.addEventListener('load', loadCallback);
+        }
+
+        bodyNode.appendChild(currScript);
+
+        return currScript;
+    }
+
+    /**
+     * Compares two versions of a script, prints warnings to the console if the versions are not the same
+     *
+     * @private
+     * @function versionCheck
+     * @param  {String} ourVersion      our version of the script
+     * @param  {String} theirVersion    their version of the script
+     * @param  {String} scriptName      the name of the script
+     */
+    function versionCheck(ourVersion, theirVersion, scriptName) {
+        ourVersion = ourVersion.split('.');
+        const versionDiff = theirVersion.split('.')
+            // compare the two versions
+            .map((x, index) => parseInt(x) - ourVersion[index])
+            // find first non-equal part
+            .find(x => x !== 0);
+
+        if (typeof versionDiff === 'undefined') {
+            // the versions were equal
+            return;
+        }
+        const fillText = versionDiff > 0 ? 'more recent' : 'older';
+        console.warn(`The current ${scriptName} version is ${fillText} than expected for the viewer; ` +
+                        `expected: ${versions.jQuery}`);
     }
 })();
 
