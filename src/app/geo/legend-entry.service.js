@@ -514,7 +514,7 @@
             // TODO should we implement a data integrity check? The same index should never exist in both
             //      layerEntries and childOptions
             const layerEntriesOptions = {};
-            const configEntries = this.layerEntries.concat(this.childOptions);
+            const configEntries = this.layerEntries.concat(this.childOptions || []);
             configEntries.forEach(layerEntry => {
                 layerEntriesOptions[layerEntry.index] = layerEntry;
             });
