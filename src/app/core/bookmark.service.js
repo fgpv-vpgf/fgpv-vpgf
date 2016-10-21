@@ -13,7 +13,7 @@
         .factory('bookmarkService', bookmarkService);
 
     function bookmarkService($rootElement, $q, legendService, geoService, LayerBlueprint,
-            LayerRecordFactory, configService, gapiService, bmVer) {
+            LayerRecordFactory, configService, gapiService, bmVer, Geo) {
 
         const blankPrefix = 'blank_basemap_';
 
@@ -54,8 +54,7 @@
             const legend = geoService.legend.items.filter(legendEntry =>
                 !legendEntry.flags.user.visible && !legendEntry.removed);
             const layerBookmarks = legend.map(legendEntry => {
-                // FIXME: remove moving through _layerRecord
-                return encode64(legendEntry._layerRecord.makeLayerBookmark());
+                return encode64(makeLayerBookmark(legendEntry));
             });
 
             // bmVer.? is the version. update this accordingly whenever the structure of the bookmark changes
@@ -64,6 +63,189 @@
             console.log(bookmark);
             return bookmark;
 
+        }
+
+        /**
+         * Converts an string in binary to a string in hexadecimal
+         * Length of binary input should be a multiple of 4
+         *
+         * @function binaryToHex
+         * @private
+         * @param {String} value        A string of binary characters
+         * @returns {String}            Input value encoded as a string of hexadecimal characters.
+         */
+        function binaryToHex(value) {
+            // haha nope. parseInt(value, 2) will try to cram an enormous number into a decimal float
+            // return parseInt(value, 2).toString(16);
+
+            const fourBits = value.match(/.{1,4}/g);
+            return fourBits.map(b4 => {
+                return parseInt(b4, 2).toString(16);
+            }).join('');
+        }
+
+        /**
+         * Converts an integer to a fixed-length character representation in binary.
+         * The number will be zero-padded on the left to the specified size. E.g. encodeInteger(1, 3) = '001'
+         *
+         * @function encodeInteger
+         * @private
+         * @param {Number} value        Integer value to encode
+         * @param {Number} bitSize      Number of characters in resulting binary encoding
+         * @returns {String}            Digit string representation of value in binary, padded
+         */
+        function encodeInteger(value, bitSize) {
+            const binary = value.toString(2);
+            return '0'.repeat(bitSize - binary.length) + binary;
+        }
+
+        /**
+         * Converts an boolean to a 1 or 0 character.
+         *
+         * @function encodeBoolean
+         * @private
+         * @param {Boolean} value        A boolean value
+         * @returns {String}             One digit string representation the boolean, in binary. 1 or 0
+         */
+        function encodeBoolean(value) {
+            return value ? '1' : '0';
+        }
+
+        /**
+         * Converts an opacity number to a fixed-length character representation in binary.
+         * Values are multiplied by 100, and mapped from range 0 - 1  to 0000000 - 1100100 (0 - 100 in decimal).
+         * We always pad to seven binary digits.
+         *
+         * @function encodeOpacity
+         * @private
+         * @param {Number} value        Opacity value of a layer. A Decimal between 0 and 1
+         * @returns {String}            Seven digit string representation of value multiplied by 100, in binary
+         */
+        function encodeOpacity(value) {
+            // sometimes we get weird decimal numbers coming in, like 0.5599999999999 instead of 0.56
+            // so use the rounding function
+            return encodeInteger(Math.round(value * 100), 7);
+        }
+
+        /**
+         * Encode an object property (possibly nested), or handle the case that the property does not exist.
+         *
+         * @function encodeProperty
+         * @private
+         * @param {Object} obj          Object to inspect for the property
+         * @param {Array} propChain     Property names in an array. E.g. testing for obj.prop1.prop2 would use ['prop1', 'prop2']
+         * @returns {String}            One digit string representation the property (or default if missing), in binary. 1 or 0
+         */
+        function encodeProperty(obj, propChain) {
+            let pointer = obj;
+
+            propChain.forEach(p => {
+                if (pointer[p]) { // falsy ok here, as it still ends up encoding false
+                    pointer = pointer[p];
+                } else {
+                    // property doesn't exist.  default to false
+                    return encodeBoolean(false);
+                }
+            });
+
+            // if we've made it here, our property exists and has a value.  encode it
+            return encodeBoolean(pointer);
+        }
+
+        /**
+         * Encode bookmark information of a sub-layer of legend (currently Dynamic only, possibly WMS in future)
+         *
+         * @function encodeLegendChild
+         * @private
+         * @param {Object} legendChild        Legend entry to encode
+         * @param {Boolean} root              True if legendChild is top-level in the legend
+         * @returns {String}                  Encoded information in a 24-char binary data string
+         */
+        function encodeLegendChild(legendChild, root) {
+
+            // TODO do we need this extra check?
+            //      will the getOpacity function handle the value of something without opacity?
+            const opacity = legendChild.options.opacity ? encodeOpacity(legendChild.getOpacity()) : encodeOpacity(1);
+            const viz = encodeBoolean(legendChild.getVisibility());
+            const query = encodeProperty(legendChild, ['options', 'query', 'value']);
+            const idx = encodeInteger(legendChild.featureIdx, 12);
+
+            // extra 00 is padding to make our child have a length that is a factor of 4 (so it is encoded in 6 hex character)
+            return opacity + viz + query + encodeBoolean(root) + idx + '00';
+
+        }
+
+        /**
+         * Create bookmark sub-string for a layer.  Consists of <Layer Code><Layer Settings><Children Info><Layer Id>
+         *
+         * @function makeLayerBookmark
+         * @private
+         * @param {Object} legendEntry  Legend entry of the layer
+         * @returns {String}            Layer information encoded in bookmark format.
+         */
+        function makeLayerBookmark(legendEntry) {
+            // FIXME: remove use of accessing info via _layerRecord
+            // returning <Layer Code><Layer Settings><Children Info><Layer Id>
+
+            // Layer Code
+            const types = Geo.Layer.Types;
+            const typeToCode = {
+                [types.ESRI_FEATURE]: '0',
+                [types.OGC_WMS]: '1',
+                [types.ESRI_TILE]: '2',
+                [types.ESRI_DYNAMIC]: '3',
+                [types.ESRI_IMAGE]: '4'
+            };
+            const layerCode = typeToCode[legendEntry._layerRecord.config.layerType];
+
+            // Children Info (calculate first so we have the count when doing layer settings)
+            const childItems = [];
+            if (layerCode === typeToCode[types.ESRI_DYNAMIC]) {
+
+                // grab stuff on children.  we can't use walkItems because it returns a flat list.
+                // we need to be aware of hierarchy here (at least on the top level).
+                // loop over top-level children of the layer. these are the ones that have
+                // entries defined in .layerEntries in the config.
+                legendEntry.items.forEach(item => {
+
+                    childItems.push(encodeLegendChild(item, true)); // it is a root
+
+                    // tack on any children, which would have been auto-generated
+                    // we can use walkItems here, as we dont care about sub-heirachy
+                    if (item.type === 'group') {
+                        item.walkItems(subItem => {
+                            childItems.push(encodeLegendChild(subItem, false));
+                        });
+                    }
+                });
+
+                // TODO we currently have an open debate about disallowing funny nesting.
+                // funny nesting is when you have the same layer endpoint showing
+                // twice in the legend.  once as a root, once as an autogenerated child
+                // e.g.
+                //   - layer 0
+                //      - layer 1  <-- autogenerated as it is a child of 0
+                //      - layer 2
+                //   - layer 1
+
+                // if we ban this, then the above code is ok.
+                // if we allow it, we will probably want some kind of checking that will eliminate
+                // any duplicates, likely giving priority to a root-level entry.
+            }
+
+            // <Layer Settings> = <Opacity><Visibility><Bounding Box><Snapshot><Query><Child Count>
+
+            const opacity = encodeOpacity(legendEntry.getOpacity());
+            const viz = encodeBoolean(legendEntry.getVisibility());
+            const bb = encodeProperty(legendEntry, ['options', 'boundingBox', 'value']);
+            const query = encodeProperty(legendEntry, ['options', 'query', 'value']);
+            const snap = encodeProperty(legendEntry, ['options', 'snapshot', 'value']);
+
+            const layerSettingAndChildren = opacity + viz + bb + snap + query +
+                encodeInteger(childItems.length, 9) + childItems.join('');
+
+            // <Layer Code><Layer Settings><Children Info><Layer Id>
+            return layerCode + binaryToHex(layerSettingAndChildren) + legendEntry._layerRecord.layerId;
         }
 
         /**
