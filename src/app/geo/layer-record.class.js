@@ -119,13 +119,6 @@
             }
 
             /**
-             * Creates a bookmark snippet for the layer
-             *
-             * @returns {String}    bookmark snippet containing info and state for the layer
-             */
-            makeLayerBookmark () { throw new Error('This should be overridden in subclasses'); }
-
-            /**
              * Creates a config snippet (containing options) given a list of properties and values.
              *
              * @param {Array} props     The property names
@@ -294,18 +287,6 @@
             get layerClass () { return gapi().layer.ArcGISImageServiceLayer; }
 
             /**
-             * @see layerRecord.makeLayerBookmark
-             */
-            makeLayerBookmark () {
-                const opacity = padOpacity(this._legendEntry.getOpacity());
-                const viz = this._legendEntry.getVisibility() ? '1' : '0';
-                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
-
-                const bookmark = '04' + this.config.id + opacity + viz + bb;
-                return bookmark;
-            }
-
-            /**
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
@@ -341,49 +322,6 @@
                 return ['visibleAtMapScale', 'visible', 'spatialReference', 'layerInfos', 'supportsDynamicLayers'];
             }
             get layerClass () { return gapi().layer.ArcGISDynamicMapServiceLayer; }
-
-            /**
-             * @see layerRecord.makeLayerBookmark
-             */
-            makeLayerBookmark () {
-                const leg = this._legendEntry;
-                const opacity = padOpacity(leg.getOpacity());
-                const viz = leg.getVisibility() ? '1' : '0';
-                const bb = leg.options.boundingBox.value ? '1' : '0';
-                const query = leg.options.query.value ? '1' : '0';
-
-                const makeChildSetting = legItem => {
-                    const opC = legItem.options.opacity ? padOpacity(legItem.getOpacity()) : '99';
-                    const vizC = legItem.getVisibility() ? '1' : '0';
-                    const qC = legItem.options.query.value ? '1' : '0';
-                    const idx = legItem.featureIdx;
-                    return opC + vizC + qC + idx;
-                };
-
-                // grab stuff on children.  we can't use walkItems because it returns a flat list.
-                // we need to preserve hierarchy here.
-                // loop over top-level children of the layer. these are the ones that have
-                // entries defined in .layerEntries in the config.
-                // these get serialized, and delimited by a ;
-                const childSettings = leg.items.map(item => {
-                    // store the top first (important!)
-                    const topLevelSetting = [makeChildSetting(item)];
-
-                    // tack on any children, which would have been auto-generated
-                    // we can use walkItems here, as we have the parent.
-                    if (item.type === 'group') {
-                        topLevelSetting.splice(1, 0, ...item.walkItems(subItem => {
-                            return makeChildSetting(subItem);
-                        }));
-                    }
-
-                    // mash this cluster (all belong to the topLevel parent) into a string,
-                    // with child entries delimeted using a `
-                    return topLevelSetting.join('`');
-                }).join(';');
-                const bookmark = '03' + this.config.id + ';' + childSettings + opacity + viz + bb + query;
-                return bookmark;
-            }
 
             /**
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
@@ -460,18 +398,6 @@
             get layerClass () { return gapi().layer.TileLayer; }
 
             /**
-             * @see layerRecord.makeLayerBookmark
-             */
-            makeLayerBookmark () {
-                const opacity = padOpacity(this._legendEntry.getOpacity());
-                const viz = this._legendEntry.getVisibility() ? '1' : '0';
-                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
-
-                const bookmark = '02' + this.config.id + opacity + viz + bb;
-                return bookmark;
-            }
-
-            /**
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
@@ -505,19 +431,6 @@
                 const cfg = super.makeLayerConfig();
                 cfg.visibleLayers = this.config.layerEntries.map(le => le.id);
                 return cfg;
-            }
-
-            /**
-             * @see layerRecord.makeLayerBookmark
-             */
-            makeLayerBookmark () {
-                const opacity = padOpacity(this._legendEntry.getOpacity());
-                const viz = this._legendEntry.getVisibility() ? '1' : '0';
-                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
-                const query = this._legendEntry.options.query.value ? '1' : '0';
-
-                const bookmark = '01' + this.config.id + opacity + viz + bb + query;
-                return bookmark;
             }
 
             /**
@@ -556,20 +469,6 @@
                                                               : this.layerClass.MODE_ONDEMAND;
                 this.config.options.snapshot.enabled = !this.config.options.snapshot.value;
                 return cfg;
-            }
-
-            /**
-             * @see layerRecord.makeLayerBookmark
-             */
-            makeLayerBookmark () {
-                const opacity = padOpacity(this._legendEntry.getOpacity());
-                const viz = this._legendEntry.getVisibility() ? '1' : '0';
-                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
-                const snap = this._legendEntry.options.snapshot.value ? '1' : '0';
-                const query = this._legendEntry.options.query.value ? '1' : '0';
-
-                const bookmark = '00' + this.config.id + opacity + viz + bb + snap + query;
-                return bookmark;
             }
 
             /**
@@ -646,26 +545,6 @@
             ];
 
             return classes[layerType].parseData(dataString, version);
-        }
-
-        /**
-         * Converts an opacity number to a fixed-length character representation.
-         * Values are mapped from range 0 - 1  to 0 - 99, 99 representing 100 to save space.
-         * Single digits are zero-padded (i.e. 2 -> 02).
-         *
-         * @function padOpacity
-         * @param {Number} value        Opacity value of a layer. A Decimal between 0 and 1
-         * @returns {String}            Two digit string representation of value, mapped to between 0 and 99, 99 representing 100. Single digits are zero-padded.
-         */
-        function padOpacity(value) {
-            // sometimes we get weird decimal numbers coming in, like 0.5599999999999 instead of 0.56
-            value = String(Math.round(value * 100));
-
-            // save a char, yo
-            if (value === '100') {
-                value = '99';
-            }
-            return ('00' + value).substring(value.length);
         }
 
         return { makeServiceRecord, makeFileRecord, parseLayerData };
