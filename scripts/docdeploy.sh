@@ -6,9 +6,6 @@ if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/geoApi" ] && [ -n "$TRAVIS_TAG" ]; then
     npm run doc
     # this section assumes the id_rsa key has already been decrypted
     # devdeploy.sh should run before this script
-    echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
-    eval `ssh-agent -s`
-    ssh-add ~/.ssh/id_rsa
     git clone --depth=1 git@github.com:fgpv-vpgf/geoApi.git -b gh-pages ghdocs
     ls ghdocs
     mkdir -p ghdocs/$TRAVIS_TAG
