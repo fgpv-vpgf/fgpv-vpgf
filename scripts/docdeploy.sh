@@ -9,7 +9,8 @@ if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/geoApi" ] && [ -n "$TRAVIS_TAG" ]; then
     echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
     eval `ssh-agent -s`
     ssh-add ~/.ssh/id_rsa
-    git clone --depth=1 git@github.com:fgpv-vpgf/rcs.git -b gh-pages ghdocs
+    git clone --depth=1 git@github.com:fgpv-vpgf/geoApi.git -b gh-pages ghdocs
+    ls ghdocs
     mkdir -p ghdocs/$TRAVIS_TAG
     rsync -av --delete docbuild/ ghdocs/$TRAVIS_TAG/
     bash ./scripts/make_doc_index.sh ghdocs/ > ghdocs/index.html
