@@ -119,8 +119,8 @@
 
                 md-progress-circular {
                     position: absolute;
-                    left: 0;
-                    top: 0;
+                    left: rem(4.8 - 2.4) / 2; // loading spinner is 24 x 24 pixels
+                    top: rem(4.8 - 2.4) / 2;
                     z-index: 0;
                 }
 
