@@ -31,4 +31,6 @@ a {
     &:hover {
         border-bottom-color: $primary-color-dark;
     }
+
+    @include keyboard-focus;
 }

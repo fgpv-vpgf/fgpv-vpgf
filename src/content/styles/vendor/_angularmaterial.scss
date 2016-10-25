@@ -1,0 +1,5 @@
+@mixin angularmaterial {
+    md-dialog {
+        @include keyboard-focus;
+    }
+}

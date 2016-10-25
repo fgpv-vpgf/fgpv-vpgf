@@ -1,4 +1,3 @@
-/*jshint maxparams:12 */
 (() => {
     'use strict';
 
@@ -31,13 +30,11 @@
 
         function link(scope, el) {
             storageService.panels.shell = el;
-
             // fix for IE 11 where focus can move to esri generated svg elements
             $rootScope.$on(events.rvApiReady, () => {
                 $rootElement.find('.rv-esri-map svg').attr('focusable', false);
             });
 
-            // close all panels when escape key is pressed
             $rootElement.on('keydown', event => {
                 // detect if any side panels are open, if so ignore escape key (side panel has own listener and will continue to close)
                 const mdSidePanelOpen = $('md-sidenav').toArray().find(el => !$(el).hasClass('md-closed'));
@@ -59,7 +56,7 @@
     // ignore jshint maxparams options
     // FIXME: refactoring out shell directive into more manageable piece
     function Controller($mdDialog, $translate, version, sideNavigationService, geoService, // jshint ignore:line
-        fullScreenService, helpService, configService, storageService, exportService, focusService,
+        fullScreenService, helpService, configService, storageService, exportService,
         $rootScope, events) {
         'ngInject';
         const self = this;
@@ -67,6 +64,7 @@
         self.geoService = geoService;
         self.version = version;
         self.minimize = sideNavigationService.close;
+        self.translate = tag => $translate.instant('focus.dialog.' + tag);
 
         // set side nav menu items
         setDefaultItems();
@@ -144,10 +142,7 @@
                         name: $translate.instant('sidenav.label.share'),
                         type: 'link',
                         action: event => {
-                            sideNavigationService.close().then(() => {
-                                // create a focus link between the menu button and the dialog
-                                focusService.createLink(storageService.panels.shell.find('md-dialog button').first());
-                            });
+                            sideNavigationService.close();
 
                             $mdDialog.show({
                                 controller: sideNavigationService.ShareController,
@@ -164,6 +159,5 @@
                 }
             });
         }
-
     }
 })();

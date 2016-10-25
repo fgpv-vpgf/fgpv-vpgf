@@ -203,8 +203,8 @@
              * @param  {object} event event object
              */
             function killEvent(event) {
-                event.preventDefault();
-                event.stopPropagation();
+                event.preventDefault(true);
+                event.stopPropagation(true);
             }
 
             /**
@@ -229,7 +229,7 @@
              * Set focus to the drag handle of the supplied dom node if any.
              */
             function setFocusToDragHandle(element) {
-                element.find(`${dragHandleSelector}:first`).focus();
+                element.find(`${dragHandleSelector}:first`).focus(true);
             }
 
             /**
@@ -301,7 +301,7 @@
                 isReordering = true; // prevents escaping focus from ending dragging
 
                 targetBelowElement.before(dragElement); // move the dragElement
-                target.focus(); // reset focus on the drag handle of the moved element
+                target.focus(true); // reset focus on the drag handle of the moved element
 
                 isReordering = false;
 

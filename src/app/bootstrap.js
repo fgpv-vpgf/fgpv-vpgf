@@ -71,12 +71,6 @@
         versionCheck(versions.dataTables, $.fn.dataTable.version, 'dataTable');
     }
 
-    scriptsArr.forEach(src => loadScript(src));
-
-    // load core.js last and execute any deferred polyfills/patches
-    loadScript(`${repo}/core.js`, () =>
-        RV._deferredPolyfills.forEach(dp => dp()));
-
     // registry of map proxies
     const mapRegistry = [];
 
@@ -174,11 +168,21 @@
             node.setAttribute('id', appId);
         }
 
+        node.setAttribute('rv-trap-focus', appId);
+
         console.info('setting debug on', appId, node);
         // create debug object for each app instance
         RV.debug[appId] = {};
 
         mapRegistry[appId] = Object.create(mapProxy)._init(node);
+    });
+
+    scriptsArr.forEach(src => loadScript(src));
+
+    // load core.js last and execute any deferred polyfills/patches
+    loadScript(`${repo}/core.js`, () => {
+        RV._deferredPolyfills.forEach(dp => dp());
+        RV.focusManager.init();
     });
 
     /***/

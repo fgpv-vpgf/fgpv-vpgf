@@ -116,9 +116,7 @@
         function open() {
             $mdSidenav('left')
                 .open()
-                .then(function () {
-                    console.debug('close LEFT is done');
-                });
+                .then(() => $('md-sidenav[md-component-id="left"] button').first().focus(true));
         }
 
         /**
