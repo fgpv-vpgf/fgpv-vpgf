@@ -28,12 +28,13 @@
         return directive;
     }
 
-    function Controller(stateManager) {
+    function Controller(stateManager, appInfo) {
         'ngInject';
         const self = this;
 
         // TODO: need a better way to determine if the layer loader is active or not
         self.state = stateManager.state;
+        self.appID = appInfo.id;
 
         self.openFileLoader = openFileLoader;
         self.openServiceLoader = openServiceLoader;
