@@ -17,7 +17,7 @@
         .directive('rvInitMap', rvInitMap);
 
     function rvInitMap(geoService, events, storageService, mapService, gapiService, $rootElement, $interval,
-        focusService) {
+        globalRegistry) {
 
         // key codes that are currently active
         let keyMap = [];
@@ -64,7 +64,7 @@
         function keyDownDetected(event) {
             // prevent arrow keys from scrolling the page
             if (event.which >= 37 && event.which <= 40) {
-                event.preventDefault();
+                event.preventDefault(true);
             }
 
             if (event.which === 9) { // tab key should clear all active keys
@@ -102,7 +102,7 @@
          * @function animate
          * @param {Object} event     the keydown/keyup browser event
          */
-        function animate(event) {
+        function animate() {
             /*jshint maxcomplexity:14 */
             stopAnimate();
             if (keyMap.length === 0) {
@@ -128,7 +128,7 @@
                     case 13:
                         // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
                         // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
-                        if (focusService.statuses.WAITING !== focusService.status()) {
+                        if ($rootElement.attr('rv-focus-status') === globalRegistry.focusStatusTypes.ACTIVE) {
                             event.mapPoint = mapPntCntr;
                             event.screenPoint = mapScrnCntr;
                             geoService.state.identifyService.clickHandler(event);
