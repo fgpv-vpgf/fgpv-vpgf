@@ -51,19 +51,11 @@ describe('rvLayerItemFlag', () => {
         $provide.service('errorService', () => {});
     }
 
-    function mockFocusService($provide) {
-        $provide.factory('focusService', () => {
-            return {
-                createLink: () => {}
-            };
-        });
-    }
-
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
         bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo',
             'pascalprecht.translate', mockConfigService, mockLayoutService, mockGeoService,
-            mockToast, mockErrorService, mockFocusService, mockDebounceService);
+            mockToast, mockErrorService, mockDebounceService);
 
         // inject angular services
         bard.inject('$compile', '$rootScope');

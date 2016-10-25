@@ -16,8 +16,10 @@ md-icon {
 @import "_dragula.scss";
 @import "_wet.scss";
 @import "_minicolors.scss";
+@import "_angularmaterial.scss";
 
 @include datatable;
 @include esri;
 @include dragula;
 @include wet;
+@include angularmaterial;

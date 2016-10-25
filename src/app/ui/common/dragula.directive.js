@@ -203,8 +203,8 @@
              * @param  {object} event event object
              */
             function killEvent(event) {
-                event.preventDefault();
-                event.stopPropagation();
+                event.preventDefault(true);
+                event.stopPropagation(true);
             }
 
             /**

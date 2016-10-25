@@ -1,3 +1,4 @@
+// jshint maxparams:12
 (() => {
     'use strict';
 
@@ -152,7 +153,7 @@
      * `apiBlock` sets up language and RCS calls for the global API
      */
     function apiBlock($rootScope, globalRegistry, geoService, configService, events,
-        LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo) {
+        LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo, $rootElement, $mdDialog) {
 
         const service = {
             setLanguage,
@@ -167,6 +168,7 @@
         $rootScope.$on(events.rvApiReady, () => {
             globalRegistry.getMap(appInfo.id)._registerMap(service);
             console.log(appInfo.id + ' registered');
+            globalRegistry.focusManager.addViewer($rootElement, $mdDialog);
         });
 
         $rootScope.$on(events.rvApiHalt, () => {

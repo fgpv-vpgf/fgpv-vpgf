@@ -42,7 +42,8 @@ module.exports = function () {
         js: [
             app + '*/**/*.js',
             app + 'app.module.js',
-            '!' + app + '**/*.spec.js'
+            '!' + app + '**/*.spec.js',
+            app + 'focus-manager.js'
         ],
         jsOrder: [
             'lib.js',

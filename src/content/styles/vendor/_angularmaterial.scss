@@ -1,0 +1,9 @@
+@mixin angularmaterial {
+    md-sidenav {
+        @include keyboard-focus;
+    }
+
+    md-dialog {
+        @include keyboard-focus;
+    }
+}
