@@ -180,15 +180,71 @@
         }
     }
 
-    function decodeVerB(bookmark) {
+    function dataToTextB (props, info) {
+
+        var result = '';
+
+        props.forEach(function(prop) {
+            result += (prop + ': ' + info[prop].toString() + ', ' );
+        });
+        return result;
+    }
+
+	function encodeInteger(value, bitSize) {
+		const binary = value.toString(2);
+		return '0'.repeat(bitSize - binary.length) + binary;
+	}
+
+	function decodeBoolean(value) {
+		// very complex
+		return value === '1';
+	}
+
+	function hexToBinary(value) {
+		var hexes = value.match(/./g); // split into single chars
+		return hexes.map(h => {
+			return encodeInteger(parseInt(h, 16), 4); // 4-digit padded binary
+		}).join('');
+	}
+
+	function decodeOpacity(value) {
+		return parseInt(value, 2) / 100;
+	}
+
+	function extractLayerSettings(layerSettingsHex) {
+	    var splitty = hexToBinary(layerSettingsHex).match(/^(.{7})(.)(.)(.)(.)(.{9})/);
+
+		return {
+			opacity: decodeOpacity(splitty[1]),
+			visibility: decodeBoolean(splitty[2]),
+			boundingBox: decodeBoolean(splitty[3]),
+			snapshot: decodeBoolean(splitty[4]),
+			query: decodeBoolean(splitty[5]),
+			childCount: parseInt(splitty[6], 2)
+		};
+	}
+
+	function extractChildSettings(childSettingsHex) {
+		var splitty = hexToBinary(childSettingsHex).match(/^(.{7})(.)(.)(.)(.{12})/);
+
+		return {
+			opacity: decodeOpacity(splitty[1]),
+			visibility: decodeBoolean(splitty[2]),
+			query: decodeBoolean(splitty[3]),
+			index: parseInt(splitty[5], 2),
+			root: decodeBoolean(splitty[4])
+		};
+	}
+
+	function decodeVerB(bookmark) {
         var pattern = /^([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
-        // things for specific layers:[ layer type name, regex to strip data from id, regex to parse data, property names in data ]
+        // things for specific layers:[ layer type name,  property names in data ]
         var layerSpec = [
-            ['Feature', /^(.+?)(\d{6})$/, /^(\d{2})(\d{1})(\d{1})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox', 'snapshot', 'query']],
-            ['Wms', /^(.+?)(\d{5})$/, /^(\d{2})(\d{1})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox', 'query']],
-            ['Tile', /^(.+?)(\d{4})$/, /^(\d{2})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox']],
-            ['Dynamic', /^(.+?)([;].*\d{5})$/, /^(.+?)(\d{2})(\d{1})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox', 'query']],
-            ['Image', /^(.+?)(\d{4})$/, /^(\d{2})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox']]
+            ['Feature', ['opacity', 'visibility', 'boundingBox', 'snapshot', 'query']],
+            ['Wms', ['opacity', 'visibility', 'boundingBox', 'query']],
+            ['Tile', ['opacity', 'visibility', 'boundingBox']],
+            ['Dynamic', ['opacity', 'visibility', 'boundingBox', 'query', 'childCount']],
+            ['Image', ['opacity', 'visibility', 'boundingBox']]
         ];
 
         var info = bookmark.match(pattern);
@@ -218,48 +274,39 @@
             layers.forEach((layer, i) => {
                 layer = decode64(layer);
 
-                // strip out integer that defines the layer type
-                var layerType = parseInt(layer.substring(0, 2));
+                // strip out hex char that defines the layer type
+                var layerCode = parseInt(layer.substr(0, 1));
+
                 // split the remaining data into layer id and layer data
-                var layerGuts = layer.substring(2).match(layerSpec[layerType][1]);
-                var layerId = layerGuts[1];
-                // parse the data into discrete parts, specific to the layer type
-                var layerData = layerGuts[2].match(layerSpec[layerType][2]);
+                var layerSettings = extractLayerSettings(layer.substr(1, 5));
+                var layerId = layer.substr(6 + (layerSettings.childCount * 6));
 
                 // rip off child data if we are dynamic
-                if (layerType === 3) {
+                if (layerSettings.childCount > 0) {
 
                     var textArray = [];
-                    var childData = layerData[1].substr(1); // drop leading ;
-                    layerData.splice(1, 1); // remove child info from array, normalizing it with the other layer types
+                    var childrenInfo = layer.substr(6, layerSettings.childCount * 6);
+					var childItems = childrenInfo.match(/.{6}/g);
 
-                    // process the children and store them in our persistant var, so it can be accessed if someone clicks on the parent
+                    // process the children and store them in our persistant var, so it can be accessed if
+					// someone clicks on the parent
 
-                    // splitting on ; gives us chunks of data for each top-level index in the layer.
-                    // i.e. each chunk defines an object that goes in .layerEntries
-                    childData.split(';').forEach(function (cData) {
-                        // for a single top level index, we can also have auto-generated child settings along with it.
-                        // these values are separated by ` chars. The first one is always the parent.
-                        var subChildData = cData.split('`');
+                    childItems.forEach(function (cData) {
+						var childSettings = extractChildSettings(cData);
+						var prefix = childSettings.root ? 'Root Child: ' : 'Non Root Child: ';
 
-                        // make parent entry, then remove it from source array
-                        textArray.push( 'Parent: ' + childDataToText(subChildData[0], 'B'));
-                        subChildData.splice(0, 1);
-
-                        // if any child data remains, add it to the text array
-                        subChildData.forEach(function (scd) {
-                            textArray.push( '--Child: ' + childDataToText(scd, 'B'));
-                        });
+                        textArray.push( prefix  +
+							dataToTextB(['index', 'opacity', 'visibility', 'query' ], childSettings));
                     });
 
                     childDataStore[i.toString()] = textArray;
 
                 }
 
-                // show the raw data, and then a human friendly version of it
+                // show data
                 var opt = document.createElement("option");
-                opt.text = layerSpec[layerType][0] + ' Layer, id: ' + layerId + ', ' +
-                        dataToText(layerSpec[layerType][3], layerData, 'B');
+                opt.text = layerSpec[layerCode][0] + ' Layer, id: ' + layerId + ', ' +
+                        dataToTextB(layerSpec[layerCode][1], layerSettings);
                 opt.value = i;
                 layerList.add(opt);
 
