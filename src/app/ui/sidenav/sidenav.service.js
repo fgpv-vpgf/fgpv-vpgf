@@ -18,7 +18,7 @@
      * @param  {object} $mdSidenav
      * @return {object} service object
      */
-    function sideNavigationService($mdSidenav, globalRegistry) {
+    function sideNavigationService($mdSidenav, globalRegistry, focusService) {
         /* jshint shadow:true */
         /* jshint unused:false */
         /*
@@ -116,9 +116,7 @@
         function open() {
             $mdSidenav('left')
                 .open()
-                .then(function () {
-                    console.debug('close LEFT is done');
-                });
+                .then(() => focusService.setFocus($('md-sidenav[md-component-id="left"]')));
         }
 
         /**

@@ -64,7 +64,7 @@
         function keyDownDetected(event) {
             // prevent arrow keys from scrolling the page
             if (event.which >= 37 && event.which <= 40) {
-                event.preventDefault();
+                event.preventDefault(true);
             }
 
             if (event.which === 9) { // tab key should clear all active keys

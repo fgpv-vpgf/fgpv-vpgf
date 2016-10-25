@@ -25,8 +25,7 @@
 
     // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
-    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay,
-        $rootElement, $timeout, focusService) {
+    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay) {
         const service = {
             addState,
             setActive,
@@ -324,14 +323,6 @@
                 }
                 modifyHistory(panelToOpen);
                 animationPromise = propagate ? openPanel(getParent(panelToOpen.name), false) : $q.resolve();
-
-                animationPromise.then(() => {
-                    const panelFocusables = $rootElement.find(`[rv-state="${panelToOpen.name}"]`)
-                    .find('button, a, input, [tabindex]')
-                    .filter(':visible');
-
-                    focusService.createLink(panelFocusables.first());
-                });
             }
 
             return animationPromise;

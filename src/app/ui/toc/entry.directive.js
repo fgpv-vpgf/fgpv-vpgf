@@ -21,7 +21,7 @@
         .module('app.ui.toc')
         .directive('rvTocEntry', rvTocEntry);
 
-    function rvTocEntry(tocService, $compile, $templateCache) {
+    function rvTocEntry(tocService, $compile, $templateCache, $rootElement) {
         const directive = {
             restrict: 'E',
             scope: {
@@ -46,6 +46,8 @@
          */
         function link(scope, element) {
             const self = scope.self;
+
+            self.appSelector = $rootElement.attr('id');
 
             // get template from cache
             const template = $templateCache.get(`app/ui/toc/templates/${self.entry.type}-entry.html`);

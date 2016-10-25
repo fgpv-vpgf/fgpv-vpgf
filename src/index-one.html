@@ -18,7 +18,7 @@
 
 <body>
     <!-- TODO: remove rv-fullpage-app with resolution of issue #834 (when there is a config property)-->
-    <div class="fgpv" rv-config="config.${lang}.json" rv-langs='["en-CA", "fr-CA"]'
+    <div rv-trap-focus id="fgpmap" class="fgpv" rv-config="config.${lang}.json" rv-langs='["en-CA", "fr-CA"]'
          rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'
          rv-restore-bookmark="bookmark" rv-fullpage-app="true" >
          <noscript>

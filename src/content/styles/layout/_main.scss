@@ -52,7 +52,9 @@ rv-panel {
 }
 
 div.md-button {
-    margin-bottom: -10px;
+    line-height: 20px;
+    min-height: 20px;
+    min-width: 65px;
 }
 
 rv-panel[type='filters'] {

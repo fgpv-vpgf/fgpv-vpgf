@@ -14,7 +14,7 @@
         .module('app.common.router')
         .factory('displayManager', displayManager);
 
-    function displayManager($timeout, $q) {
+    function displayManager($timeout, $q, $rootElement, $injector) {
         const service = {
             toggleDisplayPanel,
             clearDisplayPanel
@@ -101,10 +101,20 @@
                         display.isLoading = true;
                     }, delay);
                 }
+                let animationPromise = $q.resolve();
+
                 if (!state.active) { // panel is not open; open it
                     display.data = null; // clear data so the newly opened panel doesn't have any content
-                    stateManager.setActive(panelName);
+                    animationPromise = stateManager.setActive(panelName);
                 }
+
+                animationPromise.then(() => {
+                    const panelFocusables = $rootElement.find(`[rv-state="${panelName}"]`)
+                    .find('button, a, input, [tabindex]')
+                    .filter(':visible');
+
+                    $injector.get('focusService').createLink(panelFocusables.first());
+                });
 
                 // update requestId and the requester object
                 display.requester = requester;

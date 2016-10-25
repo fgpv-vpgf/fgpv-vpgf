@@ -316,14 +316,6 @@ absolutely position a button underneath an item so it acts like a button body fo
                 margin: 0;
             }
         }
-
-        // hide layer toggles except the visibility toggle
-        & > md-menu,
-        & > rv-toc-entry-control {
-            &:not([option='visibility']):not([option='offscale']) {
-                display: none;
-            }
-        }
     }
 }
 

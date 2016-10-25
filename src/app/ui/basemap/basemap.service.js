@@ -19,7 +19,7 @@
         .module('app.geo')
         .factory('basemapService', basemapService);
 
-    function basemapService($rootScope, events, configService, $translate, $injector, $mdSidenav, $q) {
+    function basemapService($rootScope, events, configService, $translate, $injector, $mdSidenav, $q, focusService) {
 
         let bmSelected; // the current selected basemap
         let initialBasemapId;
@@ -48,7 +48,9 @@
          */
         function open() {
             closePromise = $q($mdSidenav('right').onClose);
-            return $mdSidenav('right').open();
+            return $mdSidenav('right')
+                .open()
+                .then(() => focusService.setFocus($('md-sidenav[md-component-id="right"]')));
         }
 
         /**

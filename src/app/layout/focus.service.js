@@ -1,6 +1,8 @@
-/* global RV */
+// jshint maxstatements:45
+/* global jQuery, RV */
 (() => {
-
+    const FOCUS_SELECTORS = `a[href], area[href], input:not([disabled]), select:not([disabled]),
+            textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex], [contenteditable]`;
     /**
      * @module focusService
      * @memberof app.layout
@@ -25,63 +27,142 @@
         .factory('focusService', focusService);
 
     function focusService($rootElement, $rootScope, $mdDialog, storageService, keyNames, $q, events, $timeout) {
-        let linkedList = []; // last known element with focus that is a descendent of $rootElement
-        let lockFocus = false; // prevents infinite looping
-        let isForward = true; // tracks focus directional movement
-        let lastFocusElement;
-        let firstFocusable; // first focusable element in the viewer
-        let lastFocusable; // last focusable element in the viewer
-        let currentStatus; // current status of the focus manager
-        let isFullPage;
 
+        const keys = {}; // object containing all currently depressed keys
         const statuses = {
             NONE: undefined,
             INACTIVE: 'NOT_ACTIVE',
             WAITING: 'WAITING',
             ACTIVE: 'ACTIVE'
         };
-        const focusSelector = `a[href], area[href], input:not([disabled]), select:not([disabled]),
-            textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex], [contenteditable]`;
-        const focusHistory = [];
-        const dlg = $mdDialog;
+        const VIEWER_SELECTOR = `[rv-trap-focus=""], [rv-trap-focus="${$rootElement.attr('id')}"]`;
 
-        // detect if there has been a mousedown, if so disable focus management until re-activated
+        let history = []; // ordered list of elements which has received focus
+        let linkedList = []; // list of element pairs which focus moves between
+        let lockFocus = false; // prevents infinite looping
+        let currentStatus; // current status of the focus manager
+        let focusTimeoutCancel;
+
+        // TODO: workaround for full-screen detection - replace with resolution of issue #834
+        if ($rootElement.attr('rv-fullpage-app') === 'true') {
+            setStatus(statuses.ACTIVE);
+        } else {
+            setStatus(statuses.INACTIVE);
+        }
+
+        $(document).on('keyup', documentKeyup);
         $(document).on('mousedown', event => {
-            if (currentStatus === statuses.WAITING) {
-                dlg.hide();
-            }
+            const evtTarget = $(event.target);
 
-            // disable if clicking on the viewer until mouse support is implemented
-            // TODO: this is temporary until epic #1213 is implemented to support simultaneous mouse/keyboard support
-            if ($.contains($rootElement[0], event.target)) {
-                setStatus();
-            }
-        });
+            // clicking inside the viewer activates focus manager
+            if (isPartOfViewer(evtTarget)) {
+                const rvEsriMap = evtTarget.closest('.rv-esri-map');
+                // click on map detected - set focus on the map
+                if (rvEsriMap.length === 1) {
+                    setFocus(rvEsriMap);
+                // find the nearest focusable parent (or self) which is focusable
+                // since click targets can be any element type (usually being md-icon)
+                } else {
+                    const firstFocusable = evtTarget.parents(FOCUS_SELECTORS).addBack(FOCUS_SELECTORS).first();
+                    setFocus(firstFocusable);
+                }
+                setStatus(statuses.ACTIVE);
 
-        $rootScope.$on(events.rvReady, () => {
-            firstFocusable = $rootElement.find('button:visible, [tabindex]:visible').first();
-            lastFocusable = $rootElement.find('button:visible, [tabindex]:visible').last();
-
-            // TODO: workaround for full-screen detection - replace with resolution of issue #834
-            isFullPage = $rootElement.attr('rv-fullpage-app') === 'true';
-
-            if (isFullPage) {
-                setStatus('ACTIVE');
+            // clicking outside the viewer deactivates focus manager
             } else {
-                setStatus('NOT_ACTIVE');
+                setStatus(statuses.INACTIVE);
             }
         });
+
+        /**
+         * The first focus manager to load (if there are multiple viewers) on the page is responsible for
+         * overriding four key javascript prototype functions for viewer elements only:
+         *      - focus
+         *      - preventDefault
+         *      - stopPropagation
+         *      - stopImmediatePropagation
+         *
+         * These original prototype functions are replaced with a wrapper function that takes a boolean parameter. If true it calls
+         * the original function, if not nothing is executed. e.g. $('$myElem').focus() does nothing, instead $('$myElem').focus(true) should
+         * be used. This prevents outside libraries like angular material from moving focus, and from hiding events.
+         *
+         * preventDefault, stopPropagation, and stopImmediatePropagation has been used in angular material to suppress click events.
+         */
+        if (typeof RV.initFocusManager === 'undefined') {
+            RV.initFocusManager = true;
+
+            const orginalFocus = $.fn.focus;
+            $.fn.focus = function (takeAction) {
+                if (takeAction || !isPartOfViewer($(this))) {
+                    return orginalFocus.apply(this, [...arguments].slice(1));
+                } else {
+                    console.warn('Setting focus on viewer elements is not allowed');
+                }
+            };
+
+            jQuery.Event.prototype.preventDefault = (function () {
+                var originalFunc = jQuery.Event.prototype.preventDefault;
+                return function (takeAction) {
+                    if (takeAction || !isPartOfViewer($(this))) {
+                        originalFunc.call(this);
+                    } else {
+                        console.warn('preventDefault not allowed on viewer elements');
+                    }
+                };
+            }());
+
+            jQuery.Event.prototype.stopPropagation = (function () {
+                var originalFunc = jQuery.Event.prototype.stopPropagation;
+                return function (takeAction) {
+                    if (takeAction || !isPartOfViewer($(this))) {
+                        originalFunc.call(this);
+                    } else {
+                        console.warn('stopPropagation not allowed on viewer elements');
+                    }
+                };
+            }());
+
+            jQuery.Event.prototype.stopImmediatePropagation = (function () {
+                var originalFunc = jQuery.Event.prototype.stopImmediatePropagation;
+                return function (takeAction) {
+                    if (takeAction || !isPartOfViewer($(this))) {
+                        originalFunc.call(this);
+                    } else {
+                        console.warn('stopImmediatePropagation not allowed on viewer elements');
+                    }
+                };
+            }());
+        }
 
         const service = {
             createLink,
-            setPanelFocus,
-            setFocusElement,
-            previousFocus,
             status,
-            statuses
+            statuses,
+            setFocus
         };
 
         return service;
+
+        /**
+         * Creates a link between the source element and the target element such that focus moves
+         * forward/backward between the two elements - regardless of their actual tab order
+         *
+         * @function createLink
+         * @param   {Object}    targetEl    the jQuery element focus moves to
+         * @param   {Object}    sourceEl    the optional jQuery element focus moves from (default is last visible element)
+         */
+        function createLink(targetEl, sourceEl = lastVisibleHistoryElement()) {
+            const source = jqueryElement(sourceEl);
+            const target = jqueryElement(targetEl);
+
+            linkedList = linkedList.filter(bundle => !bundle[1].is(target));
+
+            linkedList.push({
+                0: source,
+                1: target,
+                target: forward => forward ? target : source
+            });
+        }
 
         /**
          * Method for external focus manager status queries
@@ -94,56 +175,44 @@
         }
 
         /**
-         * Creates a link between the actively focused element and the provided targetElement. Focus then moves
-         * between the two elements regardless of their DOM position or tabindex
-         * @function createLink
-         * @param {Object}  targetElement  the jQuery element focus moves to
+         * Sets focus on the provided element and updates focus history. element MUST be
+         * focusable, no check is done here.
+         *
+         * @function setFocus
+         * @param   {Object}    element     the jQuery element object to set focus on
+         * @return  {Promise}   resolves to undefined when focus has been set
          */
-        function createLink(targetElement) {
+        function setFocus(element) {
+            const el = jqueryElement(element);
 
-            if (focusHistory.length > 0) {
-                const activeElement = focusHistory[focusHistory.length - 1];
-                linkedList = linkedList.filter(bundle =>
-                    !bundle.source.is(targetElement) && !bundle.source.is(activeElement) &&
-                    !bundle.target.is(targetElement) && !bundle.target.is(activeElement)
-                );
+            $timeout.cancel(focusTimeoutCancel);
 
-                linkedList.push({
-                    source: activeElement,
-                    target: targetElement
+            return $q(resolve => {
+                $rootScope.$applyAsync(() => {
+                    lockFocus = true;
+                    el.focus(true);
+                    lockFocus = false;
+
+                    const histIndex = history.findIndex(elem => elem.is(el));
+                    if (histIndex !== -1) {
+                        history.length = histIndex;
+                    }
+                    history.push(el);
+                    resolve();
                 });
-            }
+            });
         }
 
         /**
-         * Sets focus on the first visible button in panel named panelName
-         * @function setPanelFocus
-         * @param  {String} panelName the name of the panel to set focus on
-         */
-        function setPanelFocus(panelName) {
-            const firstButton =  $rootElement.find(`[rv-state="${panelName}"] button`).filter(':visible').first();
-            if (typeof firstButton !== 'undefined') {
-                setFocus(firstButton);
-            }
-        }
-
-        /**
-         * Saves a focusable element
+         * Determines if an element is part of this viewer
+         *
          * @private
-         * @function setFocusElement
-         * @param  {Object} element a focusable element
+         * @function isPartOfViewer
+         * @param   {Object}    element  the jQuery element to determine if part of this viewer
+         * @return  {Boolean}   true iff is part of the viewer, false otherwise
          */
-        function setFocusElement(element) {
-            lastFocusElement = element;
-        }
-
-        /**
-         * Changes focus to the last saved focusable element
-         * @private
-         * @function previousFocus
-         */
-        function previousFocus() {
-            setFocus(lastFocusElement);
+        function isPartOfViewer(element) {
+            return element.parents(VIEWER_SELECTOR).addBack(VIEWER_SELECTOR).length > 0;
         }
 
         /**
@@ -159,21 +228,22 @@
          * @param {String}  s  the focus status to switch to
          */
         function setStatus(s) {
-            currentStatus = s;
 
-            // remove all listeners before setting new ones
+            if (currentStatus === statuses.WAITING) {
+                $mdDialog.hide();
+            }
+
+            currentStatus = s;
             $rootElement
                 .off('keydown', waitingKeydown)
                 .off('focusin', inactiveFocusin);
 
             $(document)
-                .off('focusin', activeDocumentFocusin)
-                .off('keydown', activeDocumentKeydown)
-                .off('focusout', activeDocumentFocusout);
+                .off('focusout', activeFocusout)
+                .off('keydown', activeKeydown);
 
             switch (s) {
                 case 'NOT_ACTIVE':
-                    RV.lastFocusManager = undefined;
                     $rootElement.on('focusin', inactiveFocusin);
                     break;
 
@@ -182,250 +252,195 @@
                     break;
 
                 case 'ACTIVE':
-                    // this is used to determine which viewer (if there is more than one) should take
-                    // control of focus if it is going to be assigned to body by the browser
-                    RV.lastFocusManager = $rootElement.attr('id');
                     $(document)
-                        .on('focusin', activeDocumentFocusin)
-                        .on('keydown', activeDocumentKeydown)
-                        .on('focusout', activeDocumentFocusout);
+                        .on('focusout', activeFocusout)
+                        .on('keydown', activeKeydown);
                     break;
             }
         }
 
         /**
-         * Given a list of valid focus elements, go through the list until one element has been
-         * successfully focused.
+         * Converts an element, node, or jQuery element object (passthrough) into a jQuery element object.
+         *
+         * @function jqueryElement
          * @private
-         * @function setFocusOnList
-         * @return    {Boolean}    true if some element in the list could be focused
+         * @param   {Object}    element     the element, node, or jQuery element object to convert
+         * @return  {Object}    the jQuery element object
          */
-        function setFocusOnList(elemList) {
-            if (elemList.length === 0) {
-                return false;
+        function jqueryElement(element) {
+            if (!(element instanceof jQuery)) {
+                element = $(element);
             }
-
-            const elem = $(elemList.shift());
-            return setFocus(elem).then(isFocused => isFocused ? true : setFocusOnList(elemList));
+            return element;
         }
 
         /**
-         * Provides a list of potential focusable elements that are after the viewer.
+         * Searches the document tree for the next/previous focusable element given the currently focused element. Searches
+         * in the direction given by forward. To find the first/last element in a focus trap, set gotoEnd to true.
+         *
          * @private
-         * @function findNextFocusable
-         * @return    {List}    a list of potential focusable elements after the viewer
+         * @function focusableSearch
+         * @param     {Object}  element the reference element to determine next/previous focusable
+         * @param     {Boolean} forward the direction of focus movement
+         * @param     {Boolean} gotoEnd keep traversing until no longer possible
+         * @return    {Object}    a jQuery element which is next/previous to the reference element provided
          */
-        function findNextFocusable() {
-            let element = $rootElement;
-            let externalElement = $();
-            // loop until you find a focusable element or hit the top of the document
-            while (externalElement.length === 0 && element.length > 0) {
-                // if element is the last child of its parent, go up
-                if (element.is(':last-child')) {
+        function focusableSearch(element, forward, gotoEnd = false) {
+            /*jshint maxcomplexity:15 */
+
+            // forward focusables can be descendents of an element, unlike backward traversal
+            let foundElement = forward ? element.find(FOCUS_SELECTORS).filter(elemIsFocusable) : $();
+            // the originally passed element as a reference
+            let refElem = element;
+            // only stores actual elements - is not empty
+            let lastKnownElement = gotoEnd ? foundElement : $();
+            // loop until we locate an element
+            while (gotoEnd || (foundElement.length === 0 && element.length > 0)) {
+
+                // we have reached a focus trap, no more traversal is needed
+                if (element.is('[rv-trap-focus]')) {
+                    // breaking here knowing that lastKnownElement is very first/last focusable
+                    if (gotoEnd) {
+                        break;
+                    // no elements have been found, so lets find the first/last focusable in focus trap to loop to
+                    } else {
+                        return focusableSearch(refElem, !forward, true);
+                    }
+                }
+
+                if (element.is(forward ? ':last-child' : ':first-child')) {
                     element = element.parent();
-                // if not the last child, check the next sibling for any focusable elements
+
+                    // backward searching can include the focus trap itself - forward searches skip past them
+                    if (!forward && element.filter(FOCUS_SELECTORS).filter(elemIsFocusable).length > 0) {
+                        foundElement = element;
+                        lastKnownElement = element;
+                    }
+
                 } else {
-                    element = element.next();
-                    externalElement = element.find(focusSelector);
+                    element = forward ? element.next() : element.prev();
+
+                    foundElement = element.find(FOCUS_SELECTORS).addBack(FOCUS_SELECTORS).filter(elemIsFocusable);
+                    // lastKnownElement should only store actual elements (not empty jQuery objects)
+                    if (foundElement.length > 0) {
+                        lastKnownElement = foundElement;
+                    }
                 }
             }
 
-            return externalElement.toArray();
+            if (gotoEnd) {
+                return forward ? lastKnownElement.last() : lastKnownElement.first();
+            }
+
+            return forward ? foundElement.first() : foundElement.last();
         }
 
         /**
-         * Provides a list of potential focusable elements that are before the viewer.
+         * Finds and returns the last focusable element from history
+         *
+         * @function lastVisibleHistoryElement
          * @private
-         * @function findPrevFocusable
-         * @return    {List}    a list of potential focusable elements before the viewer
+         * @return  {Object}    jQuery element of last focusable element from history
          */
-        function findPrevFocusable() {
-            let element = $rootElement;
-            let externalElement = $();
+        function lastVisibleHistoryElement() {
+            return $(history.slice().reverse().find(el => el.is(elemIsFocusable)));
+        }
 
-            // loop until you find a focusable element or hit the top of the document
-            while (externalElement.length === 0 && element.length > 0) {
-                // if element is the last child of its parent, go up
-                if (element.is(':first-child')) {
-                    element = element.parent();
-                // if not the last child, check the next sibling for any focusable elements
+        /**
+         * A filter which determines if the provided element is focusable.
+         *
+         * @function elemIsFocusable
+         * @private
+         * @param   {Number}    index     the current index value while inside a jQuery filter
+         * @param   {Object}    element   the element to check if it is focusable
+         * @return  {Boolean}   true if the element is focusable, false otherwise
+         */
+        function elemIsFocusable(index, element) {
+            const el = $(element);
+
+            return el.is(':visible') &&
+                !el.is(':hidden') &&
+                el.css('visibility') !== 'hidden' &&
+                el.css('opacity') !== 0 &&
+                // avoid setting focus on closing menu items
+                !el.parents().hasClass('md-leave') &&
+                !el.parents().hasClass('md-leave-add');
+        }
+
+        /**
+         * Finds a link (created by the createLink function)
+         *
+         * @function hasLink
+         * @private
+         * @param   {Boolean}    forward   true iff focus is moving forward, false otherwise
+         * @return  {Object}     an object containing source and target elements if a link exists, undefined otherwise
+         */
+        function hasLink(forward) {
+            const lastHistoryElem = $(history.slice().reverse().find(el => el.is(elemIsFocusable)));
+            return linkedList.find(link => lastHistoryElem.is(link.target(!forward)));
+        }
+
+        /**
+         * Determines the element to set focus on.
+         *
+         * @function shiftFocus
+         * @private
+         * @param   {Boolean}    forward            true iff focus is moving forward (default), false otherwise
+         * @param   {Boolean}    onlyUseHistory     if true, will only focus on element in history
+         */
+        function shiftFocus(forward = true, onlyUseHistory = false) {
+            const link = hasLink(forward);
+            // link exists on current element
+            if (link) {
+                // goto target if focusable
+                if (link.target(forward).is(elemIsFocusable)) {
+                    setFocus(link.target(forward));
+                // otherwise remove link if not focusable
                 } else {
-                    element = element.prev();
-                    externalElement = element.find(focusSelector);
+                    linkedList.splice(linkedList.indexOf(link), 1);
+                    shiftFocus(forward);
                 }
-            }
+            // no link exists
+            } else {
+                const focSearch = dir => focusableSearch($(document.activeElement), dir);
 
-            return externalElement.toArray().reverse();
-        }
-
-        /**
-         * Restores focus to the most recently focused element which:
-         *      - is a descendant of $rootElement
-         *      - is focusable
-         * @private
-         * @function restore
-         */
-        function restore() {
-            if (focusHistory.length > 0) {
-                const focusElem = focusHistory[focusHistory.length - 1];
-                setFocus(focusElem).then(isFocused => {
-                    if (!isFocused) {
-                        focusHistory.pop();
-                        restore(); // continue moving back through history until focus is changed
-                    }
-                });
-            }
-        }
-
-        /**
-         * Sets focus for the provided element
-         * @private
-         * @function setFocus
-         * @param  {Object} element the jQuery element object to set focus on
-         * @return    {Promise}    resolves to a boolean, true indicating the focus operation was successful, false otherwise
-         */
-        function setFocus(element) {
-            return $q(resolve => {
-
-                $timeout(() => {
-                    lockFocus = true;
-                    element.focus();
-                    lockFocus = false;
-                    resolve(element.is(':focus'));
-                });
-            });
-        }
-
-        /**
-         * Handles focusout event when viewer focus management is in an active state.
-         * @private
-         * @function activeDocumentFocusout
-         * @param  {Object} event the focusout event object
-         */
-        function activeDocumentFocusout(event) {
-            if (lockFocus || RV.lastFocusManager !== $rootElement.attr('id')) {
-                return;
-            }
-
-            // detect if focus is moving to a null target, which indicates focus was lost due to
-            // a hidden or destroyed element (unless we are on the first or last focusable element)
-            if (event.relatedTarget === null && event.target !== firstFocusable[0] &&
-                event.target !== lastFocusable[0]) {
-                // check first and last focusable element links to see if they are still valid, if not
-                // remove them so that default focus rules apply (see below)
-                linkedList = linkedList.filter(bundle => {
-                    if (bundle.source.is(firstFocusable) || bundle.source.is(lastFocusable)) {
-                        return bundle.target.is(':visible');
-                    }
-                    return true;
-                });
-
-                restore();
-
-            } else if (event.target === firstFocusable[0] && !isForward &&
-                typeof hasTargetLink(firstFocusable) === 'undefined') {
-                setFocus(lastFocusable);
-
-            } else if (event.target === lastFocusable[0] && isForward &&
-                typeof hasTargetLink(lastFocusable) === 'undefined') {
-                setFocus(firstFocusable);
-            }
-        }
-
-        /**
-         * In active state, disengages focus management in SHIFT + ENTER key combination.
-         * @private
-         * @function activeDocumentKeydown
-         * @param  {Object} event the focusin event object
-         */
-        function activeDocumentKeydown(event) {
-            if (event.which === keyNames.ENTER && event.shiftKey) {
-                event.preventDefault();
-                setStatus('NOT_ACTIVE');
-                dlg.hide().then(() => setFocusOnList(findNextFocusable()));
-
-            // fixes focus browser bug where focus controll cannot be regained once outside body when SHIFT + TABBING
-            } else if (event.which === keyNames.TAB && event.shiftKey &&
-                document.activeElement === firstFocusable[0] && findPrevFocusable().length === 0) {
-                event.preventDefault();
-                setFocus(lastFocusable);
-
-            } else if (event.which === keyNames.TAB && !event.shiftKey &&
-                document.activeElement === lastFocusable[0] && findNextFocusable().length === 0 &&
-                typeof hasTargetLink(lastFocusable) === 'undefined') {
-                event.preventDefault();
-                setFocus(firstFocusable);
-            }
-            // this is set here since it is not availble in focusin/focusout events
-            isForward = event.which === keyNames.TAB ? !event.shiftKey : isForward;
-        }
-
-        function hasTargetLink(element) {
-            const [sourceType, targetType] = isForward ? ['source', 'target'] : ['target', 'source'];
-            const link = linkedList.find(bundle => element.is(bundle[sourceType]));
-
-            return typeof link !== 'undefined' && !link[targetType].is(':focus') ? link[targetType] : undefined;
-        }
-
-        /**
-         * In active state, adds focused elements to history, overrides focus for linked elements, and
-         * regains control of focus when focus moves to the body element.
-         * @private
-         * @function activeDocumentFocusin
-         * @param  {Object} event the focusin event object
-         */
-        function activeDocumentFocusin(event) {
-            if (lockFocus || RV.lastFocusManager !== $rootElement.attr('id')) {
-                return;
-            }
-
-            // goto first focusable when focus is moving to the body element
-            if (document.activeElement === $('body')[0]) {
-                restore();
-                return;
-            }
-
-            const targetElement = $(event.target);
-            const targetLink = hasTargetLink($(event.relatedTarget));
-            const historyIndex = focusHistory.findIndex(element => element.is(targetElement));
-
-            // find element in history (if exists) and set as last item
-            focusHistory.length = historyIndex !== -1 ? historyIndex : focusHistory.length;
-
-            if (targetLink) {
-                setFocus(targetLink);
-
-            // no link exists - add to focus history (if element is in viewer)
-            } else if ($.contains($rootElement[0], event.target)) {
-                focusHistory.push(targetElement);
+                if (onlyUseHistory) {
+                    setFocus(lastVisibleHistoryElement());
+                } else {
+                    setFocus(focSearch(forward));
+                }
             }
         }
 
         /**
          * Displays focus management dialog instructions and sets status to waiting when focus moves to
          * the viewer while state is inactive.
+         *
          * @private
          * @function inactiveFocusin
          */
-        function inactiveFocusin(event) {
-            if (typeof RV.lastFocusManager !== 'undefined' || $.contains($rootElement[0], event.relatedTarget)) {
-                return;
-            }
+        function inactiveFocusin() {
             // handle case where focus starts on last element of viewer, reset to first
-            setFocus(firstFocusable);
+            setFocus(focusableSearch($rootElement, true));
+            // change tabindex of all focusable elements to -1 except for the map so that tab presses naturally
+            // move to the next element outside the viewer
+            $rootElement.find(FOCUS_SELECTORS).not('.rv-esri-map').attr('tabindex', -1);
+            setStatus(statuses.WAITING);
 
-            setStatus('WAITING');
-            dlg.show({
-                template: `<div style="padding: 20px;">
-                            <h3 class="md-title" style="text-align: center;margin:0;margin-bottom:15px;">
-                                Press <div class="md-button md-subhead md-raised">Enter</div> to activate
-                            </h3>
-                            <span class="md-subhead">Focus will be kept on the viewer while active. Press
-                            <div class="md-button md-subhead md-raised">Shift</div> +
-                            <div class="md-button md-subhead md-raised">Enter</div> at any time to exit.</span><br>
-                            Alternatively, press the <div class="md-button md-subhead md-raised">Tab</div> key again
-                            to skip the viewer.
-                            </div>`,
+            $mdDialog.show({
+                template: `
+                    <md-dialog-content class="md-dialog-content" role="document">
+                        <h2 class="md-title ng-binding">Press
+                        <div class="md-button md-subhead md-raised">Enter</div>
+                        to activate or skip with <div class="md-button md-subhead md-raised">Tab
+                        </div></h2>
+
+                        <div class="md-dialog-content-body">
+                                We'll keep focus locked on the viewer, exit with
+                                <div class="md-button md-subhead md-raised">Escape</div> +
+                                <div class="md-button md-subhead md-raised">Tab</div>
+                        </div>
+                    </md-dialog-content>`,
                 clickOutsideToClose: false,
                 escapeToClose: false,
                 disableParentScroll: false,
@@ -435,33 +450,72 @@
         }
 
         /**
+         * Handles document keydown event when viewer focus management is active.
+         *
+         * @private
+         * @function activeKeydown
+         * @param  {Object} event the keydown event object
+         */
+        function activeKeydown(event) {
+            keys[event.which] = true;
+            if (event.which === keyNames.TAB) {
+                // prevent browser from moving focus
+                if (!keys[keyNames.ESCAPE]) {
+                    event.preventDefault(true);
+                    shiftFocus(!event.shiftKey);
+                // tab + escape key deactivates focus manager, focus leaves naturally
+                } else {
+                    setStatus(statuses.INACTIVE);
+                }
+            }
+        }
+
+        /**
+         * Handles document keyup event when viewer focus management is active.
+         *
+         * @private
+         * @function documentKeyup
+         * @param      {Object}     event the keyup event object
+         */
+        function documentKeyup(event) {
+            delete keys[event.which];
+        }
+
+        /**
          * Handles keydown event when viewer focus management is in a waiting state.
+         *
          * @private
          * @function waitingKeydown
          * @param  {Object} event the keydown event object
          */
         function waitingKeydown(event) {
-            switch (event.which) {
-                case keyNames.ENTER:
-                    if (!event.shiftKey) {
-                        event.preventDefault();
-                        dlg.hide().then(() => setStatus('ACTIVE'));
-                    }
-                    break;
+            if ((event.which === keyNames.ENTER && !event.shiftKey) || event.which === keyNames.SPACEBAR) {
+                event.preventDefault(true);
+                setStatus(statuses.ACTIVE);
 
-                case keyNames.SPACEBAR:
-                    dlg.hide().then(() => setStatus('ACTIVE'));
-                    break;
+            } else if (event.which === keyNames.TAB) {
+                setStatus(statuses.INACTIVE);
+                // prevents focus from moving to the dialogs focus trap
+                $rootElement.find('.md-dialog-focus-trap').attr('tabindex', -1);
+            }
+        }
 
-                case keyNames.TAB:
-                    event.preventDefault(); // prevent tabbing to first focusable map element
-                    dlg.hide();
-                    setStatus('NOT_ACTIVE');
-                    let elemList = event.shiftKey ? findPrevFocusable() : findNextFocusable();
-                    // handle case where there are no focusable elements remaining, goto first focusable on page
-                    elemList = elemList.length === 0 ? $(focusSelector).toArray() : elemList;
-                    setFocusOnList(elemList);
-                    break;
+        /**
+         * Handles focusout event when viewer focus management is active.
+         *
+         * @private
+         * @function activeFocusout
+         * @param  {Object} event the focusout event object
+         */
+        function activeFocusout(event) {
+            if (!lockFocus) {
+                if (event.relatedTarget === null) {
+                    // canceled by setFocus if called within 200ms - prevents timing conflicts between focus moving
+                    // off a target such as a closing panel to another target explicitly focused
+                    focusTimeoutCancel = $timeout(() => {
+                        shiftFocus(false, true);
+                    }, 200);
+                }
             }
         }
     }

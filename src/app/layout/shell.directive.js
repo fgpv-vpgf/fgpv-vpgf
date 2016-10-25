@@ -37,7 +37,6 @@
                 $rootElement.find('.rv-esri-map svg').attr('focusable', false);
             });
 
-            // close all panels when escape key is pressed
             $rootElement.on('keydown', event => {
                 // detect if any side panels are open, if so ignore escape key (side panel has own listener and will continue to close)
                 const mdSidePanelOpen = $('md-sidenav').toArray().find(el => !$(el).hasClass('md-closed'));
@@ -75,13 +74,25 @@
                     sideNavigationService.close();
                     fullScreenService.toggle();
                 }
+            },
+            {
+                name: $translate.instant('sidenav.label.export'),
+                type: 'link',
+                action: () => {
+                    sideNavigationService.close().then(() =>
+                        focusService.setFocus($('md-dialog.rv-export button').first())
+                    );
+                    exportService.open();
+                }
             }]
         },
         {
             name: $translate.instant('sidenav.label.help'),
             type: 'link',
             action: event => {
-                sideNavigationService.close();
+                sideNavigationService.close().then(() =>
+                    focusService.setFocus($('md-dialog.rv-help-summary button').first())
+                );
 
                 $mdDialog.show({
                     controller: helpService.HelpSummaryController,
@@ -115,10 +126,9 @@
                     name: $translate.instant('sidenav.label.share'),
                     type: 'link',
                     action: event => {
-                        sideNavigationService.close().then(() => {
-                            // create a focus link between the menu button and the dialog
-                            focusService.createLink(storageService.panels.shell.find('md-dialog button').first());
-                        });
+                        sideNavigationService.close().then(() =>
+                            focusService.setFocus($('md-dialog.side-nav-summary button').first())
+                        );
 
                         $mdDialog.show({
                             controller: sideNavigationService.ShareController,

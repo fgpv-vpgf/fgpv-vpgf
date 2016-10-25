@@ -28,10 +28,16 @@ html, body {
 
 md-sidenav {
     display: flex;
+
+    @include keyboard-focus;
 }
 
 md-menu-bar {
     padding: 0;
+}
+
+md-dialog {
+    @include keyboard-focus;
 }
 
 md-menu-content {
