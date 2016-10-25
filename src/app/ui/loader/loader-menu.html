@@ -11,8 +11,7 @@
         <md-icon md-svg-src="content:add"></md-icon>
     </md-button>
 
-    <md-menu-content class="rv-menu rv-dense" width="4">
-
+    <md-menu-content rv-trap-focus="{{::self.appID}}" class="rv-menu rv-dense" width="4">
         <md-menu-item>
             <md-button
                 ng-click="self.openFileLoader()"

@@ -30,3 +30,11 @@ $keyboard-only: '.rv-keyboard-only';
         @content;
     }
 }
+
+@mixin keyboard-focus {
+    @include keyboard {
+        &:focus {
+            outline: 2px solid #4d90fe;
+        }
+    }
+}
