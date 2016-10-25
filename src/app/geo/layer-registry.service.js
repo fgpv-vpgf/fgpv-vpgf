@@ -371,7 +371,7 @@
                         // TODO replace with existing function gapiService.gapi.proj.graphicsUtils.graphicsExtent()
                         // get the bbox extent if not defined
                         // it is calculated here to avoid calls when we enable bbox in settings
-                        if (typeof lr._layer.fullExtent !== 'undefined' &&
+                        if (lr._layer.fullExtent &&
                             typeof lr._layer.fullExtent.xmax === 'undefined') {
                             lr._layer.fullExtent.spatialReference.wkid = lr._layer.graphics[0]
                                                                             ._extent.spatialReference.wkid;
