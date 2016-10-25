@@ -34,7 +34,7 @@
         }
     }
 
-    function Controller($scope, stateManager, events, focusService, filterService) {
+    function Controller($scope, stateManager, events, filterService, appInfo) {
         'ngInject';
         const self = this;
 
@@ -44,10 +44,10 @@
         self.filter = filterService.filter;
         self.dataPrint = dataPrint;
         self.dataExportCSV = dataExportCSV;
+        self.appID = appInfo.id;
 
         function setMode(mode) {
             stateManager.setMorph('filters', mode);
-            focusService.setPanelFocus('filters');
         }
 
         /**

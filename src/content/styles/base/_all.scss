@@ -27,8 +27,15 @@ a {
     font-weight: 400;
     border-bottom: 1px solid $primary-color-light;
     transition: border-bottom 0.35s;
+    outline: none !important;
 
     &:hover {
         border-bottom-color: $primary-color-dark;
+    }
+
+    @include keyboard {
+        &:focus {
+            border: 2px solid #4d90fe;
+        }
     }
 }
