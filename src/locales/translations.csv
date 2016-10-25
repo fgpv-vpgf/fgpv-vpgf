@@ -402,3 +402,9 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 ,metadata.xslt.cataloguePage,Data Catalogue Page,Page des données du catalogue
 ,metadata.xslt.metadataPage,Raw Metadata,Raw Métadonnées
 ,metadata.xslt.metadata,Metadata,Métadonnées
+,focus.dialog.press,Press,Presse
+,focus.dialog.enter,Enter,Entrer
+,focus.dialog.toactivate,to activate or skip with,pour activer ou sauter avec
+,focus.dialog.tab,Tab,Languette
+,focus.dialog.main,We'll keep focus locked on the viewer - exit with,Nous allons garder le focus verrouillé sur la visionneuse - exit avec
+,focus.dialog.escape,Escape,Échapper

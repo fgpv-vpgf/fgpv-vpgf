@@ -19,7 +19,7 @@
         .module('app.ui.details')
         .directive('rvLayerListSlider', rvLayerListSlider);
 
-    function rvLayerListSlider(focusService) {
+    function rvLayerListSlider() {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/details/layer-list-slider.html',
@@ -78,10 +78,9 @@
              */
             self.itemSelectedByKeypress = (evt, item) => {
                 if (evt.which === 13 || evt.which === 32) {
-                    evt.preventDefault();
+                    evt.preventDefault(true);
                     animateClosed();
                     self.selectItem(item);
-                    focusService.previousFocus();
                 }
             };
 

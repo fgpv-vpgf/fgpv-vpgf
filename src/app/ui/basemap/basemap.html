@@ -1,5 +1,7 @@
+<!-- rv-trap-focus property is applied here so that focus remains inside the basemap selector (and wraps to the top/bottom as needed).
+This prevents focus from being applied to elements outside the basemap selector that are under the overlay, or hidden by the basemap itself (mapnav buttons) -->
 <md-sidenav rv-basemap class="rv-basemap-selector md-sidenav-right md-whiteframe-z2" md-component-id="right">
-    <rv-content-pane>
+    <rv-content-pane rv-trap-focus>
 
         <md-button class="md-icon-button black rv-button-32 rv-minimize-button" ng-click="self.minimize()">
             <md-icon md-svg-src="community:chevron-double-right"></md-icon>

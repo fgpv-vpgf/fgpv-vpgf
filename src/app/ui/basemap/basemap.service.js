@@ -43,7 +43,10 @@
          */
         function open() {
             closePromise = $q($mdSidenav('right').onClose);
-            return $mdSidenav('right').open();
+            return $mdSidenav('right')
+                .open()
+                // Once the side panel is open it hides the basemap mapnav button, so set focus on the panel
+                .then(() => $('md-sidenav[md-component-id="right"] button').first().focus(true));
         }
 
         /**

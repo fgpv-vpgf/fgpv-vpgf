@@ -43,6 +43,21 @@
     md-mode="indeterminate"
     ng-show="self.geoService.mapObject.isMapLoading"></md-progress-linear>
 
-<!-- TODO: remove with focus manager refactor, here since last focusable element is basemap panel toggle, which needs to
-tab to the basemap panel, but currently focus is moved to start of view -->
-<div tabindex="0"></div>
+<div class="rv-focus-dialog-content">
+    <div class="md-dialog-container">
+        <md-dialog>
+            <md-dialog-content class="md-dialog-content" role="document">
+                <h2 class="md-title ng-binding">{{self.translate('press')}}
+                <div class="md-button sm-button md-subhead md-raised">{{self.translate('enter')}}</div>
+                {{self.translate('toactivate')}} <div class="md-button sm-button md-subhead md-raised">{{self.translate('tab')}}
+                </div></h2>
+
+                <div class="md-dialog-content-body">
+                        {{self.translate('main')}}
+                        <div class="md-button sm-button md-subhead md-raised">{{self.translate('escape')}}</div> +
+                        <div class="md-button sm-button md-subhead md-raised">{{self.translate('tab')}}</div>
+                </div>
+            </md-dialog-content>
+        </md-dialog>
+    </div>
+</div>
