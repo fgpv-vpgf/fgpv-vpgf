@@ -48,7 +48,9 @@
          */
         function open() {
             closePromise = $q($mdSidenav('right').onClose);
-            return $mdSidenav('right').open();
+            return $mdSidenav('right')
+                .open()
+                .then(() => $('md-sidenav[md-component-id="right"]').focus(true));
         }
 
         /**

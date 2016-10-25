@@ -11,17 +11,9 @@ describe('rvMorph', () => {
         }
     };
 
-    function mockFocusService($provide) {
-        $provide.factory('focusService', () => {
-            return {
-                createLink: () => {}
-            };
-        });
-    }
-
     beforeEach(() => {
         // mock the module with bardjs
-        bard.appModule('app.ui.common', 'app.common.router', mockFocusService);
+        bard.appModule('app.ui.common', 'app.common.router');
 
         // inject angular services
         bard.inject('$compile', '$rootScope', 'stateManager');

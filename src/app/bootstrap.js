@@ -71,8 +71,10 @@
     scriptsArr.forEach(src => loadScript(src));
 
     // load core.js last and execute any deferred polyfills/patches
-    loadScript(`${repo}/core.js`, () =>
-        RV._deferredPolyfills.forEach(dp => dp()));
+    loadScript(`${repo}/core.js`, () => {
+        RV._deferredPolyfills.forEach(dp => dp());
+        RV.focusManager.bootstrap();
+    });
 
     // registry of map proxies
     const mapRegistry = [];
@@ -170,6 +172,8 @@
             appId = 'rv-app-' + counter++;
             node.setAttribute('id', appId);
         }
+
+        node.setAttribute('rv-trap-focus', appId);
 
         console.info('setting debug on', appId, node);
         // create debug object for each app instance

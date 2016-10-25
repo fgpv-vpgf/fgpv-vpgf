@@ -1,4 +1,3 @@
-/*jshint maxparams:12 */
 (() => {
     'use strict';
 
@@ -16,7 +15,7 @@
         .module('app.layout')
         .directive('rvShell', rvShell);
 
-    function rvShell($rootElement, $rootScope, events, storageService, stateManager) {
+    function rvShell($rootElement, $rootScope, events, storageService, stateManager, $mdDialog, globalRegistry) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/layout/shell.html',
@@ -35,9 +34,9 @@
             // fix for IE 11 where focus can move to esri generated svg elements
             $rootScope.$on(events.rvApiReady, () => {
                 $rootElement.find('.rv-esri-map svg').attr('focusable', false);
+                globalRegistry.focusManager.addViewer($rootElement, $mdDialog);
             });
 
-            // close all panels when escape key is pressed
             $rootElement.on('keydown', event => {
                 // detect if any side panels are open, if so ignore escape key (side panel has own listener and will continue to close)
                 const mdSidePanelOpen = $('md-sidenav').toArray().find(el => !$(el).hasClass('md-closed'));
@@ -57,13 +56,14 @@
     }
 
     function Controller($mdDialog, $translate, version, sideNavigationService, geoService,
-        fullScreenService, helpService, configService, storageService, exportService, focusService) {
+        fullScreenService, helpService, configService, storageService, exportService) {
         'ngInject';
         const self = this;
 
         self.geoService = geoService;
         self.version = version;
         self.minimize = sideNavigationService.close;
+        self.translate = tag => $translate.instant('focus.dialog.' + tag);
 
         self.menu = [{
             name: 'Options',
@@ -74,6 +74,14 @@
                 action: () => {
                     sideNavigationService.close();
                     fullScreenService.toggle();
+                }
+            },
+            {
+                name: $translate.instant('sidenav.label.export'),
+                type: 'link',
+                action: () => {
+                    sideNavigationService.close();
+                    exportService.open();
                 }
             }]
         },
@@ -115,10 +123,7 @@
                     name: $translate.instant('sidenav.label.share'),
                     type: 'link',
                     action: event => {
-                        sideNavigationService.close().then(() => {
-                            // create a focus link between the menu button and the dialog
-                            focusService.createLink(storageService.panels.shell.find('md-dialog button').first());
-                        });
+                        sideNavigationService.close();
 
                         $mdDialog.show({
                             controller: sideNavigationService.ShareController,
