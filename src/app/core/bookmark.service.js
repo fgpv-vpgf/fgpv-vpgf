@@ -180,14 +180,17 @@
         function encodeProperty(obj, propChain) {
             let pointer = obj;
 
-            propChain.forEach(p => {
+            // since we want to break the loop, use for instead of .forEach
+            for (let i = 0; i < propChain.length; i++) {
+                const p = propChain[i];
                 if (pointer[p]) { // falsy ok here, as it still ends up encoding false
                     pointer = pointer[p];
                 } else {
                     // property doesn't exist.  default to false
-                    return encodeBoolean(false);
+                    pointer = false;
+                    break;
                 }
-            });
+            }
 
             // if we've made it here, our property exists and has a value.  encode it
             return encodeBoolean(pointer);
