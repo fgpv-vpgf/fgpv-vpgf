@@ -190,53 +190,53 @@
         return result;
     }
 
-	function encodeInteger(value, bitSize) {
-		const binary = value.toString(2);
-		return '0'.repeat(bitSize - binary.length) + binary;
-	}
+    function encodeInteger(value, bitSize) {
+        const binary = value.toString(2);
+        return '0'.repeat(bitSize - binary.length) + binary;
+    }
 
-	function decodeBoolean(value) {
-		// very complex
-		return value === '1';
-	}
+    function decodeBoolean(value) {
+        // very complex
+        return value === '1';
+    }
 
-	function hexToBinary(value) {
-		var hexes = value.match(/./g); // split into single chars
-		return hexes.map(h => {
-			return encodeInteger(parseInt(h, 16), 4); // 4-digit padded binary
-		}).join('');
-	}
+    function hexToBinary(value) {
+        var hexes = value.match(/./g); // split into single chars
+        return hexes.map(h => {
+            return encodeInteger(parseInt(h, 16), 4); // 4-digit padded binary
+        }).join('');
+    }
 
-	function decodeOpacity(value) {
-		return parseInt(value, 2) / 100;
-	}
+    function decodeOpacity(value) {
+        return parseInt(value, 2) / 100;
+    }
 
-	function extractLayerSettings(layerSettingsHex) {
-	    var splitty = hexToBinary(layerSettingsHex).match(/^(.{7})(.)(.)(.)(.)(.{9})/);
+    function extractLayerSettings(layerSettingsHex) {
+        var splitty = hexToBinary(layerSettingsHex).match(/^(.{7})(.)(.)(.)(.)(.{9})/);
 
-		return {
-			opacity: decodeOpacity(splitty[1]),
-			visibility: decodeBoolean(splitty[2]),
-			boundingBox: decodeBoolean(splitty[3]),
-			snapshot: decodeBoolean(splitty[4]),
-			query: decodeBoolean(splitty[5]),
-			childCount: parseInt(splitty[6], 2)
-		};
-	}
+        return {
+            opacity: decodeOpacity(splitty[1]),
+            visibility: decodeBoolean(splitty[2]),
+            boundingBox: decodeBoolean(splitty[3]),
+            snapshot: decodeBoolean(splitty[4]),
+            query: decodeBoolean(splitty[5]),
+            childCount: parseInt(splitty[6], 2)
+        };
+    }
 
-	function extractChildSettings(childSettingsHex) {
-		var splitty = hexToBinary(childSettingsHex).match(/^(.{7})(.)(.)(.)(.{12})/);
+    function extractChildSettings(childSettingsHex) {
+        var splitty = hexToBinary(childSettingsHex).match(/^(.{7})(.)(.)(.)(.{12})/);
 
-		return {
-			opacity: decodeOpacity(splitty[1]),
-			visibility: decodeBoolean(splitty[2]),
-			query: decodeBoolean(splitty[3]),
-			index: parseInt(splitty[5], 2),
-			root: decodeBoolean(splitty[4])
-		};
-	}
+        return {
+            opacity: decodeOpacity(splitty[1]),
+            visibility: decodeBoolean(splitty[2]),
+            query: decodeBoolean(splitty[3]),
+            index: parseInt(splitty[5], 2),
+            root: decodeBoolean(splitty[4])
+        };
+    }
 
-	function decodeVerB(bookmark) {
+    function decodeVerB(bookmark) {
         var pattern = /^([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)(?:$|,(.*)$)/i;
         // things for specific layers:[ layer type name,  property names in data ]
         var layerSpec = [
@@ -286,17 +286,17 @@
 
                     var textArray = [];
                     var childrenInfo = layer.substr(6, layerSettings.childCount * 6);
-					var childItems = childrenInfo.match(/.{6}/g);
+                    var childItems = childrenInfo.match(/.{6}/g);
 
                     // process the children and store them in our persistant var, so it can be accessed if
-					// someone clicks on the parent
+                    // someone clicks on the parent
 
                     childItems.forEach(function (cData) {
-						var childSettings = extractChildSettings(cData);
-						var prefix = childSettings.root ? 'Root Child: ' : 'Non Root Child: ';
+                        var childSettings = extractChildSettings(cData);
+                        var prefix = childSettings.root ? 'Root Child: ' : 'Non Root Child: ';
 
                         textArray.push( prefix  +
-							dataToTextB(['index', 'opacity', 'visibility', 'query' ], childSettings));
+                            dataToTextB(['index', 'opacity', 'visibility', 'query' ], childSettings));
                     });
 
                     childDataStore[i.toString()] = textArray;
