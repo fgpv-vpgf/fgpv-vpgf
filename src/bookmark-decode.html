@@ -191,7 +191,7 @@
     }
 
     function encodeInteger(value, bitSize) {
-        const binary = value.toString(2);
+        var binary = value.toString(2);
         return '0'.repeat(bitSize - binary.length) + binary;
     }
 
@@ -202,7 +202,7 @@
 
     function hexToBinary(value) {
         var hexes = value.match(/./g); // split into single chars
-        return hexes.map(h => {
+        return hexes.map(function(h) {
             return encodeInteger(parseInt(h, 16), 4); // 4-digit padded binary
         }).join('');
     }
