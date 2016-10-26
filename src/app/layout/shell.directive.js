@@ -16,7 +16,7 @@
         .module('app.layout')
         .directive('rvShell', rvShell);
 
-    function rvShell(storageService, stateManager, $rootElement, events, $rootScope) {
+    function rvShell($rootElement, $rootScope, events, storageService, stateManager) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/layout/shell.html',
@@ -75,14 +75,6 @@
                     sideNavigationService.close();
                     fullScreenService.toggle();
                 }
-            },
-            {
-                name: $translate.instant('sidenav.label.export'),
-                type: 'link',
-                action: () => {
-                    sideNavigationService.close();
-                    exportService.open();
-                }
             }]
         },
         {
@@ -106,6 +98,17 @@
 
         configService.getCurrent().then(data => {
             self.markerImageSrc = data.logoUrl;
+
+            if (data.services.exportMapUrl) {
+                self.menu[0].children.push({
+                    name: $translate.instant('sidenav.label.export'),
+                    type: 'link',
+                    action: () => {
+                        sideNavigationService.close();
+                        exportService.open();
+                    }
+                });
+            }
 
             if (data.shareable) {
                 self.menu[0].children.push({

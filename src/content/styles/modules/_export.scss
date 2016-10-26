@@ -7,6 +7,7 @@
         max-height: calc(100% - #{$viewport-gutter} * 2);
 
         md-dialog-actions {
+            position: relative;
             order: 1;
             padding: 0 rem(1.6);
             flex: 1 0 0%;
@@ -15,26 +16,99 @@
 
         md-dialog-content {
             order: 2;
+            position: relative;
+            overflow-x: hidden;
+
+            .md-dialog-content {
+                transition: filter, opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+                &.rv-error {
+                    filter: grayscale(100%);
+                    opacity: 0.5;
+                }
+            }
         }
 
         .rv-export-map {
             display: block;
             width: 100%;
+            position: relative;
+            filter: blur(rem(0.5));
+            transition: filter $swift-ease-in-duration * 2 $swift-ease-in-out-timing-function;
+
+            > canvas {
+                width: 100% !important;
+                height: auto !important;
+                display: block;
+            }
+
+            &.rv-export-complete {
+                filter: none;
+            }
+        }
+
+        .rv-export-dummy {
+            display: block;
+
+            > canvas {
+                width: 100% !important;
+                height: auto !important;
+                display: block;
+            }
+        }
+
+        .rv-export-server,
+        .rv-export-local {
+            display: block;
+            position: absolute;
+            top: 0;
+
+            > canvas {
+                width: 100% !important;
+                height: auto !important;
+                display: block;
+            }
         }
 
         .rv-export-legend {
             display: block;
 
-            svg {
-                width: 100%;
-                height: auto;
+            canvas {
+                width: 100% !important;
+                height: auto !important;
+                display: block;
             }
         }
 
         .rv-export-progress-indicator {
             bottom: 0;
+            left: 0;
+            right: 0;
             height: 2px;
             overflow: hidden;
+            position: absolute;
+        }
+
+        .rv-export-title {
+            position: absolute;
+            top: rem(3.2);
+            display: flex;
+            justify-content: center;
+            right: rem(4.8);
+            left: rem(4.8);
+
+            md-input-container {
+                background: rgba(255, 255, 255, 0.86);
+                padding: rem(1.6);
+
+                > input {
+                    text-align: center;
+                }
+
+                .md-errors-spacer {
+                    display: none;
+                }
+            }
         }
     }
 }

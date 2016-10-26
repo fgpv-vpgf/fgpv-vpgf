@@ -367,6 +367,20 @@
                         registerLayerRecord(lr);
                         const pos = createPlaceholder(lr);
                         console.log(`adding ${lr.config.name} to map at ${pos}`);
+
+                        // TODO replace with existing function gapiService.gapi.proj.graphicsUtils.graphicsExtent()
+                        // get the bbox extent if not defined
+                        // it is calculated here to avoid calls when we enable bbox in settings
+                        if (lr._layer.fullExtent &&
+                            typeof lr._layer.fullExtent.xmax === 'undefined') {
+                            lr._layer.fullExtent.spatialReference.wkid = lr._layer.graphics[0]
+                                                                            ._extent.spatialReference.wkid;
+                            lr._layer.fullExtent.xmax = Math.max(...lr._layer.graphics.map(o => o._extent.xmax));
+                            lr._layer.fullExtent.xmin = Math.min(...lr._layer.graphics.map(o => o._extent.xmin));
+                            lr._layer.fullExtent.ymax = Math.max(...lr._layer.graphics.map(o => o._extent.ymax));
+                            lr._layer.fullExtent.ymin = Math.min(...lr._layer.graphics.map(o => o._extent.ymin));
+                        }
+
                         lr.addStateListener(makeFirstLoadHandler(lr));
                         mapObject.addLayer(lr._layer, pos);
                         // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events

@@ -88,9 +88,9 @@ Settings snapshot mode enable label,settings.label.snapshotEnable,Enable,Activer
 Settings query mode label,settings.label.query,Allow query,Permettre les requêtes
 Settings query mode aria,settings.aria.query,Allow query,Permettre les requêtes
 Side Navigation main title,sidenav.title,FGP R2 Viewer,Visualiseur PGF R2
-Side Navigation full screen,sidenav.label.fullscreen,FULL SCREEN,PLEIN ÉCRAN
-Side Navigation share,sidenav.label.share,SHARE,PARTAGER
-Side Navigation export,sidenav.label.export,export,export
+Side Navigation full screen,sidenav.label.fullscreen,Full Screen,Plein Écran
+Side Navigation share,sidenav.label.share,Share,Partager
+Side Navigation export,sidenav.label.export,Export,Exporter
 Bookmark share link,sidenav.label.sharelink,Share Link,Lien de partage
 Bookmark short link,sidenav.label.shortlink,Short Link,Lien court
 Bookmark link copied feedback,sidenav.label.copysuccess,Link copied to clipboard,Lien copié dans le presse-papiers
@@ -164,9 +164,14 @@ Geometry types,geometry.type.generic, feature|features, entité|entités
 Geometry types,geometry.type.esriGeometryPoint, point|points, point|points
 Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, polygone|polygones
 Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
-,export.cancel,Cancel,Annuler
-,export.continue,Continue,Continuer
+,export.close,Close,Fermer
+,export.save,Save,Sauver
 ,export.includelegend,Include legend,Inclure la légende
+,export.title,Enter Title,Titre
+,export.error.timeout,"Connection timed out. Stopping export task.","Connexion a expiré. Tâche d’exportation arrêt."
+,export.error.tainted,"Ops, we can't save the export image directly.","OPS, nous ne pouvons pas enregistrer l’image d’exportation directement."
+,export.error.somethingelseiswrong,"Ouch. Something went wrong. We cannot save the export image.","Aïe. Quelque chose n’allait pas. Nous ne pouvons pas enregistrer l’image de l’exportation."
+,export.retry,Retry,Réessayez
 ,import.title,Import Layers,Importer des couches
 ,import.file.title,Import File,Importer un fichier
 ,import.file.upload.title,Upload data,Charger des données
