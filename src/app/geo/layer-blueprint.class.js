@@ -160,6 +160,15 @@
                         if (data.layers.length > 0) { // if there are layers, it's a wms layer
                             console.log(`${this.config.url} is a WMS, yak!`);
 
+                            // it is mandatory to set featureInfoMimeType attribute to get fct identifyOgcWmsLayer to work.
+                            // get the first supported format available in the GetFeatureInfo section of the Capabilities XML.
+                            const formatType = Object.values(data.queryTypes)
+                                                    .filter(format => typeof format === 'string')
+                                                    .find(format => format in Geo.Layer.Ogc.INFO_FORMAT_MAP);
+
+                            const featInfoMimeType = { featureInfoMimeType: formatType };
+                            Object.assign(this.config, featInfoMimeType);
+
                             // return an object resembling fileInfo object returned by GeoApi
                             return {
                                 serviceType: Geo.Service.Types.WMS,
