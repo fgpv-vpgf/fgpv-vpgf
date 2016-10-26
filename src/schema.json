@@ -606,7 +606,7 @@
                 "childOptions": {
                     "type": "array",
                     "items": { "$ref": "#/definitions/dynamicChildOptionNode" },
-                    "minItems": 0,
+                    "default": [],
                     "description": "Settings for child layers not defined in layerEntries. I.e. sub layers that are not at the root level of the legend"
                 },
                 "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },

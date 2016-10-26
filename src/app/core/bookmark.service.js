@@ -12,8 +12,8 @@
         .module('app.core')
         .factory('bookmarkService', bookmarkService);
 
-    function bookmarkService($rootElement, $q, legendService, geoService, LayerBlueprint,
-            LayerRecordFactory, configService, gapiService, bmVer, Geo) {
+    function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
+            LayerRecordFactory, configService, gapiService, bookmarkVersions, Geo) {
 
         const blankPrefix = 'blank_basemap_';
 
@@ -57,8 +57,8 @@
                 return encode64(makeLayerBookmark(legendEntry));
             });
 
-            // bmVer.? is the version. update this accordingly whenever the structure of the bookmark changes
-            const bookmark = `${bmVer.B},${basemap},${extent.x},${extent.y},${extent.scale}` +
+            // bookmarkVersions.? is the version. update this accordingly whenever the structure of the bookmark changes
+            const bookmark = `${bookmarkVersions.B},${basemap},${extent.x},${extent.y},${extent.scale}` +
                 (layerBookmarks.length > 0 ? `,${layerBookmarks.toString()}` : '');
             console.log(bookmark);
             return bookmark;
@@ -81,7 +81,7 @@
         }
 
         /**
-         * Converts an boolean to a 1 or 0 character.
+         * Converts a boolean to a 1 or 0 character.
          *
          * @function encodeBoolean
          * @private
@@ -106,7 +106,7 @@
         }
 
         /**
-         * Converts an string in binary to a string in hexadecimal
+         * Converts a string in binary to a string in hexadecimal
          * Length of binary input should be a multiple of 4
          *
          * @function binaryToHex
@@ -119,13 +119,11 @@
             // return parseInt(value, 2).toString(16);
 
             const fourBits = value.match(/.{1,4}/g);
-            return fourBits.map(b4 => {
-                return parseInt(b4, 2).toString(16);
-            }).join('');
+            return fourBits.map(b4 => parseInt(b4, 2).toString(16)).join('');
         }
 
         /**
-         * Converts an string in hexadecimal to a string in binary
+         * Converts a string in hexadecimal to a string in binary
          *
          * @function hexToBinary
          * @private
@@ -156,7 +154,7 @@
         }
 
         /**
-         * Converts an binary encoding of opacity to an actual opacity number
+         * Converts a binary encoding of opacity to an actual opacity number
          * Values are mapped from range 0000000 - 1100100 (0 - 100 in decimal) to 0 - 1.
          *
          * @function decodeOpacity
@@ -170,6 +168,7 @@
 
         /**
          * Encode an object property (possibly nested), or handle the case that the property does not exist.
+         * Target property should be a boolean. All values will be converted to boolean result (encoded).
          *
          * @function encodeProperty
          * @private
@@ -183,7 +182,7 @@
             // since we want to break the loop, use for instead of .forEach
             for (let i = 0; i < propChain.length; i++) {
                 const p = propChain[i];
-                if (pointer[p]) { // falsy ok here, as it still ends up encoding false
+                if (pointer.hasOwnProperty(p)) {
                     pointer = pointer[p];
                 } else {
                     // property doesn't exist.  default to false
@@ -341,7 +340,7 @@
                 // also store any layer info
                 layers = info[6];
 
-                if (version !== bmVer.A) {
+                if (version !== bookmarkVersions.A) {
                     blankBaseMap = basemap.substr(basemap.length - 1, 1) === '1';
                     basemap = basemap.substring(0, basemap.length - 1);
                 }
@@ -535,7 +534,7 @@
         }
 
         /**
-         * Generates a layer config snippet with options initialzed
+         * Generates a layer config snippet with options initialized
          * based on the layer type and contents of the bookmark settings
          *
          * @function makeLayerConfig
@@ -578,7 +577,7 @@
             // fancier integration / code sharing can be considered after the
             // state snapshot refactor, which will likely change the whole situation.
 
-            if (version === bmVer.A) {
+            if (version === bookmarkVersions.A) {
                 const layerPatterns = [
                     /^(.+?)(\d{7})$/, // feature
                     /^(.+?)(\d{6})$/, // wms
