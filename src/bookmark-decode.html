@@ -80,7 +80,7 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
 <script>
-    
+
     var childDataStore = {};
 
     // decode from the customized base64 format
@@ -92,21 +92,29 @@
     // returns a human readable string of the properties
     function dataToText (props, info, version) {
         var lookup = {
-            opacity: value => {
+            opacity: function (value) {
                 if (version !== 'A' && value === '99') {
                     value = '100';
                 }
-                return parseInt(value) / 100
+                return parseInt(value) / 100;
             },
-            visibility: value => value === '1',
-            boundingBox: value => value === '1',
-            snapshot: value => value === '1',
-            query: value => value === '1'
+            visibility: function (value) {
+                return value === '1';
+            },
+            boundingBox: function (value) {
+                return value === '1';
+            },
+            snapshot: function (value) {
+                return value === '1';
+            },
+            query: function (value) {
+                return value === '1';
+            }
         };
 
         var result = '';
 
-        props.forEach((prop, index) => {
+        props.forEach(function(prop, index) {
             result += (prop + ': ' + lookup[prop](info[index]) + ', ' );
         });
         return result;
@@ -132,10 +140,10 @@
             ['Dynamic', /^(.+?)(\d{6})$/, /^(\d{3})(\d{1})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox', 'query']],
             ['Image', /^(.+?)(\d{5})$/, /^(\d{3})(\d{1})(\d{1})$/, [, 'opacity', 'visibility', 'boundingBox']]
         ];
-        
+
         var info = bookmark.match(pattern);
         var version = info[1];
-        var decoded = [2, 3, 4, 5].map(i => decode64(info[i]));
+        var decoded = [2, 3, 4, 5].map(function (i) { return decode64(info[i]); });
 
         $('#version').val( 'A' );
         $('#scale').val( decoded[3] );
@@ -151,7 +159,7 @@
             var layers = info[6].split(',');
 
             // Generate text for all layers
-            layers.forEach((layer, i) => {
+            layers.forEach(function (layer, i) {
                 layer = decode64(layer);
 
                 // strip out integer that defines the layer type
@@ -249,7 +257,7 @@
 
         var info = bookmark.match(pattern);
         var version = info[1];
-        var decoded = [2, 3, 4, 5].map(i => decode64(info[i]));
+        var decoded = [2, 3, 4, 5].map(function (i) { return decode64(info[i]); });
 
         // if we have the blank flag set, format it nicely
         var basemap = decoded[0].substring(0, decoded[0].length - 1);
@@ -271,7 +279,7 @@
             var layers = info[6].split(',');
 
             // Generate text for all layers
-            layers.forEach((layer, i) => {
+            layers.forEach(function (layer, i) {
                 layer = decode64(layer);
 
                 // strip out hex char that defines the layer type
