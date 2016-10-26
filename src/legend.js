@@ -82,29 +82,40 @@ function packLayersIntoSections(layers, sections) {
 }
 
 /**
- * Split a layer into N parts of roughly equal size.
+ * Split a layer into `splitCount` parts of roughly equal size.
  * @function
  * @private
  * @param {Object} layer a layer object to be split into `splitCount` parts
+ * @param {int} chunkSize the maximum height in pixels of the legend sections
  * @param {int} splitCount the number of pieces which the layer should be broken into
- * @return a reference to the layer passed in
+ * @return an object of the form { whiteSpace: <int>, splits: [ <layerItems> ] }
  */
-function splitLayer(layer, splitCount) {
-    let runningHeight = 0;
-    const chunkSize = layer.height / splitCount;
-    if (splitCount === 1) {
-        return layer;
-    }
+function splitLayer(layer, chunkSize, splitCount) {
+    let itemYOffset = layer.y;
+    let itemYMax = 0;
+    const splits = [];
+    let whiteSpace = 0;
 
     function traverse(items) {
         items.forEach(item => {
-            if (runningHeight >= chunkSize) {
-                item.splitBefore = true;
-                runningHeight = 0;
+
+            if (splitCount === 1) {
+                return;
             }
 
-            // FIXME this doesn't calculate gutters correctly
-            runningHeight += item.type === 'group' ? item.headerHeight : item.height;
+            // this is the y coordinate of the item's bottom boundary
+            itemYMax = item.y + (item.type === 'group' ? item.headerHeight : item.height);
+
+            if (itemYMax - itemYOffset >= chunkSize) {
+                splitCount--;
+
+                // whitespace is created when an item sitting on the boundary pulled into the next chunk, the space
+                // it would have occupied is wasted; the waste doubles as the entire item is moved to the next legend chunk
+                whiteSpace += (chunkSize - (item.y - itemYOffset)) * 2;
+                itemYOffset += chunkSize;
+                splits.push(item);
+            }
+
             if (item.type === 'group') {
                 traverse(item.items);
             }
@@ -112,6 +123,45 @@ function splitLayer(layer, splitCount) {
     }
 
     traverse(layer.items);
+    return { whiteSpace, splits };
+}
+
+/**
+ * Find the optimal split points for the given layer.
+ * @function
+ * @private
+ * @param {Object} layer a layer object to be split into `splitCount` parts
+ * @param {int} splitCount the number of pieces which the layer should be broken into
+ * @return a reference to the layer passed in
+ */
+function findOptimalSplit(layer, splitCount) {
+    if (splitCount === 1) {
+        return layer;
+    }
+
+    let chunkSize = layer.height / splitCount; // get initial chunk size for starters
+
+    // get initial splits and whitespace with initial chunk size; this will serve to determine the steps at which the chunk size will be increased
+    let { splits: minSplits, whiteSpace: minWhiteSpace } = splitLayer(layer, chunkSize, splitCount);
+
+    const stepCount = 8; // number of attempts
+    const step = minWhiteSpace / stepCount;
+
+    // calculate splits while increasing the chunk size
+    for (let i = 1; i <= stepCount; i++) {
+        chunkSize += step;
+
+        let { splits, whiteSpace } = splitLayer(layer, chunkSize, splitCount);
+
+        // store splits corresponding to the minimum whitespace
+        if (whiteSpace < minWhiteSpace) {
+            minWhiteSpace = whiteSpace;
+            minSplits = splits;
+        }
+    }
+
+    // apply split to the splits that result in the minimum of whitespace
+    minSplits.forEach(split => split.splitBefore = true);
     return layer;
 }
 
@@ -150,7 +200,7 @@ function allocateLayersToSections(layers, sectionsAvailable, mapHeight) {
         }
         --curSectionsUsed;
     }
-    layers.forEach((l, i) => splitLayer(l, bestSectionUsage[curSectionsUsed].segments[i]));
+    layers.forEach((l, i) => findOptimalSplit(l, bestSectionUsage[curSectionsUsed].segments[i]));
     return { layers, sectionsUsed: curSectionsUsed };
 }
 
@@ -176,4 +226,4 @@ function makeLegend(layerList, sectionsAvailable, mapHeight) {
     }
 }
 
-module.exports = () => ({ makeLegend, allComb, splitLayer });
+module.exports = () => ({ makeLegend, allComb, splitLayer, findOptimalSplit });
