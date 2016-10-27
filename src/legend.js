@@ -94,7 +94,7 @@ function splitLayer(layer, chunkSize, splitCount) {
     let itemYOffset = layer.y;
     let itemYMax = 0;
     const splits = [];
-    let whiteSpace = 0;
+    const splitSizes = Array(splitCount).fill(0);
 
     function traverse(items) {
         items.forEach(item => {
@@ -102,6 +102,8 @@ function splitLayer(layer, chunkSize, splitCount) {
             if (splitCount === 1) {
                 return;
             }
+
+            splitSizes[splitCount - 1] = itemYMax;
 
             // this is the y coordinate of the item's bottom boundary
             itemYMax = item.y + (item.type === 'group' ? item.headerHeight : item.height);
@@ -111,8 +113,7 @@ function splitLayer(layer, chunkSize, splitCount) {
 
                 // whitespace is created when an item sitting on the boundary pulled into the next chunk, the space
                 // it would have occupied is wasted; the waste doubles as the entire item is moved to the next legend chunk
-                whiteSpace += (chunkSize - (item.y - itemYOffset)) * 2;
-                itemYOffset += chunkSize;
+                itemYOffset = item.y;
                 splits.push(item);
             }
 
@@ -123,7 +124,13 @@ function splitLayer(layer, chunkSize, splitCount) {
     }
 
     traverse(layer.items);
-    return { whiteSpace, splits };
+    splitSizes[splitCount - 1] = layer.height - (itemYOffset - layer.y);
+
+    // with whiteSpace we want to find the difference between the chunkSize and used space
+    // for each section used (whiteSpace may be negative indicating that a section is
+    // spilling past the target size); the total amount of whiteSpace is a measure of how
+    // bad the layer allocation was
+    return { whiteSpace: splitSizes.reduce((a, b) => a + Math.abs(chunkSize - b), 0), splits };
 }
 
 /**
