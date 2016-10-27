@@ -2,7 +2,7 @@
 'use strict';
 const data = require('./legendData.json');
 const legend = require('../src/legend.js')();
-const sampleLayer = { height: 110, type: 'layer', items: [{type:'group', items:[{type:'item', height:20}, {type:'item', height:40}], headerHeight: 10},{type:'item', height:20},{type:'item', height:20}] };
+const sampleLayer = { y:0, headerHeight: 0, height: 110, type: 'layer', items: [{type:'group', items:[{type:'item', height:20, y: 10}, {type:'item', height:40, y: 30}], headerHeight: 10, y: 0},{type:'item', height:20, y: 70},{type:'item', height:20, y: 90}] };
 
 describe('Legend', () => {
     
@@ -21,17 +21,17 @@ describe('Legend', () => {
         
     });
     
-    describe('splitLayer', () => {
+    describe('findOptimalSplit', () => {
         it('should work for a simple split case', () => {
             const testdata = JSON.parse(JSON.stringify(sampleLayer));
-            legend.splitLayer(testdata, 2);
+            legend.findOptimalSplit(testdata, 2);
             expect(testdata.items[1].splitBefore).toBe(true);
             expect(testdata.items[2].splitBefore).toBe(undefined);
         });
 
         it('should work for another simple split case', () => {
             const testdata = JSON.parse(JSON.stringify(sampleLayer));
-            legend.splitLayer(testdata, 4);
+            legend.findOptimalSplit(testdata, 4);
             expect(testdata.items[0].items[1].splitBefore).toBe(true);
         });
     });
@@ -54,7 +54,7 @@ describe('Legend', () => {
             legend.makeLegend(testdata, 4, 200);
             expect(testdata[1].splitBefore).toBe(true);
             expect(testdata[2].splitBefore).toBe(true);
-            expect(testdata[1].items[1].splitBefore).toBe(true);
+            expect(testdata[1].items[0].items[3].items[3].splitBefore).toBe(true);
         });
 
         it('should do nothing fancy for very tall maps', () => {
