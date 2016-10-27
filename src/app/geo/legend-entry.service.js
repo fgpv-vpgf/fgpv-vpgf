@@ -140,7 +140,13 @@
              */
             setVisibility(value) {
                 const option = this.options.visibility;
-                option.value = typeof value !== 'undefined' ? value : !option.value;
+                if (option.fromConfig) {
+                    // we are initializing visibility. don't update value. erase flag so
+                    // future calls will update value.
+                    delete option.fromConfig;
+                } else {
+                    option.value = typeof value !== 'undefined' ? value : !option.value;
+                }
             },
 
             /**
@@ -189,6 +195,11 @@
                     sortGroup.indexOf(initialState.layerType) !== -1);
 
                 angular.merge(this, initialState);
+
+                // need to initialize the query flag
+                if (this.options.query) {
+                    this.flags.query.visible = !this.options.query.value;
+                }
 
                 // this.state = layerStates.default; ??
                 const colour = (new RColor()).get(true, 0.4, 0.8);
@@ -370,7 +381,13 @@
              */
             setVisibility(value, ...arg) {
                 const option = this.options.visibility;
-                option.value = typeof value !== 'undefined' ? value : !option.value;
+                if (option.fromConfig) {
+                    // we are initializing visibility. don't update value. erase flag so
+                    // future calls will update value.
+                    delete option.fromConfig;
+                } else {
+                    option.value = typeof value !== 'undefined' ? value : !option.value;
+                }
 
                 // set visibility to the rest of the group
                 if (this.type === 'group') {
@@ -492,11 +509,24 @@
             console.info(this);
             this.bindListeners();
 
-            // morph layerEntries array into an object where keys are indexes of sublayers:
+            // morph layerEntries array and childOptions into an object where keys are indexes of sublayers:
             // { 1: {index: 1, ...}, 4: { index: 4, ...} }
+            // TODO should we implement a data integrity check? The same index should never exist in both
+            //      layerEntries and childOptions
             const layerEntriesOptions = {};
-            this.layerEntries.forEach(layerEntry => {
+            const configEntries = this.layerEntries.concat(this.childOptions || []);
+            configEntries.forEach(layerEntry => {
                 layerEntriesOptions[layerEntry.index] = layerEntry;
+            });
+
+            // we need to mark entries that have explicit settings from the config file.
+            // this lets the legend initializer know if it should keep the current value
+            // or apply a default from the parent node.
+            // after defaulting, the marking properties will be deleted.
+            Object.keys(layerEntriesOptions).forEach(idx => {
+                if (layerEntriesOptions[idx].visibility) {
+                    layerEntriesOptions[idx].visibility.fromConfig = true;
+                }
             });
 
             // find appropriate sort group based on the initial layer type
@@ -618,7 +648,8 @@
         DYNAMIC_ENTRY_MASTER_GROUP._setVisibility = function () {
 
             // visibility is null iff it was set to false in a bookmark, so we force sublayers to hidden
-            // as their visibility state is not captured in a bookmark
+            // as their visibility state is not captured in a bookmark.
+            // Only valid for version A bookmarks, where we did not track child visibility.
             if (this.options.visibility.value === null) {
                 this.options.visibility.value = false;
                 this.walkItems(item => {

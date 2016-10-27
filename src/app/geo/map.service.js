@@ -57,7 +57,6 @@
                 clearHilight,
                 dropMapPin,
                 geolocate,
-                findClosestLOD,
                 getFullExtent
             };
 
@@ -550,22 +549,8 @@
                 const zoomPt = gapiService.gapi.proj.Point(geoPt[0], geoPt[1], map.spatialReference);
 
                 // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
-                const sweetLod = findClosestLOD(map.__tileInfo.lods, 50000);
+                const sweetLod = gapiService.gapi.mapManager.findClosestLOD(map.__tileInfo.lods, 50000);
                 map.centerAndZoom(zoomPt, Math.max(sweetLod.level, 0));
-            }
-
-            /**
-             * Finds the level of detail closest to the provided scale.
-             *
-             * @function findClosestLOD
-             * @param  {Array} lods     list of levels of detail objects
-             * @param  {Number} scale   scale value to search for in the levels of detail
-             * @return {Object} the level of detail object closest to the scale
-             */
-            function findClosestLOD(lods, scale) {
-                const diffs = lods.map(lod => Math.abs(lod.scale - scale));
-                const lodIdx = diffs.indexOf(Math.min(...diffs));
-                return lods[lodIdx];
             }
 
             /**

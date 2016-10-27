@@ -119,27 +119,22 @@
             }
 
             /**
-             * Creates a bookmark snippet for the layer
-             *
-             * @returns {String}    bookmark snippet containing info and state for the layer
-             */
-            makeLayerBookmark () { throw new Error('This should be overridden in subclasses'); }
-
-            /**
              * Creates a config snippet (containing options) given a list of properties and values.
+             * Only used for bookmark version A
              *
              * @param {Array} props     The property names
              * @param {Array} info      The values for the properties
              * @returns {Object}        config snippet for the layer
              */
             static parseData (props, info) {
-                // set visibility to null instead of false to distinguish a layer
-                // actually set to false in the config or set to false in a bookmark.
-                // If null, sublayer visibility will be forced off (since we dont track
-                // sublayer state in bookmarks)
+
                 const lookup = {
-                    opacity: value => parseInt(value) / 100,
-                    visibility: value => value === '1' ? true : null,
+                    opacity: value => {
+                        return parseInt(value) / 100;
+                    },
+                    visibility: value => {
+                        return value === '1' ? true : null;
+                    },
                     boundingBox: value => value === '1',
                     snapshot: value => value === '1',
                     query: value => value === '1'
@@ -285,25 +280,15 @@
             get layerClass () { return gapi().layer.ArcGISImageServiceLayer; }
 
             /**
-             * @see layerRecord.makeLayerBookmark
-             */
-            makeLayerBookmark () {
-                const opacity = padOpacity(this._legendEntry.getOpacity());
-                const viz = this._legendEntry.getVisibility() ? '1' : '0';
-                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
-
-                const bookmark = '04' + this.config.id + opacity + viz + bb;
-                return bookmark;
-            }
-
-            /**
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
              * @returns {Object}            config snippet for the layer
              */
             static parseData (dataString) {
-                // ( opacity )( viz )( boundingBox )
+                // Only used for bookmark version A
+                // ( opacity )( viz )( boundingBox )( query )
+
                 const format = /^(\d{3})(\d{1})(\d{1})$/;
 
                 const info = dataString.match(format);
@@ -327,28 +312,16 @@
             get layerClass () { return gapi().layer.ArcGISDynamicMapServiceLayer; }
 
             /**
-             * @see layerRecord.makeLayerBookmark
-             */
-            makeLayerBookmark () {
-                const opacity = padOpacity(this._legendEntry.getOpacity());
-                const viz = this._legendEntry.getVisibility() ? '1' : '0';
-                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
-                const query = this._legendEntry.options.query.value ? '1' : '0';
-
-                const bookmark = '03' + this.config.id + opacity + viz + bb + query;
-                return bookmark;
-            }
-
-            /**
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
              * @returns {Object}            config snippet for the layer
              */
             static parseData (dataString) {
+                // Only used for bookmark version A
                 // ( opacity )( viz )( boundingBox )( query )
-                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
 
+                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
                 const info = dataString.match(format);
 
                 if (info) {
@@ -364,25 +337,15 @@
             get layerClass () { return gapi().layer.TileLayer; }
 
             /**
-             * @see layerRecord.makeLayerBookmark
-             */
-            makeLayerBookmark () {
-                const opacity = padOpacity(this._legendEntry.getOpacity());
-                const viz = this._legendEntry.getVisibility() ? '1' : '0';
-                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
-
-                const bookmark = '02' + this.config.id + opacity + viz + bb;
-                return bookmark;
-            }
-
-            /**
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
              * @returns {Object}            config snippet for the layer
              */
             static parseData (dataString) {
+                // Only used for bookmark version A
                 // ( opacity )( viz )( boundingBox )
+
                 const format = /^(\d{3})(\d{1})(\d{1})$/;
                 const info = dataString.match(format);
 
@@ -405,28 +368,16 @@
             }
 
             /**
-             * @see layerRecord.makeLayerBookmark
-             */
-            makeLayerBookmark () {
-                const opacity = padOpacity(this._legendEntry.getOpacity());
-                const viz = this._legendEntry.getVisibility() ? '1' : '0';
-                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
-                const query = this._legendEntry.options.query.value ? '1' : '0';
-
-                const bookmark = '01' + this.config.id + opacity + viz + bb + query;
-                return bookmark;
-            }
-
-            /**
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
              * @returns {Object}            config snippet for the layer
              */
             static parseData (dataString) {
+                // Only used for bookmark version A
                 // ( opacity )( viz )( boundingBox )( query )
-                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
 
+                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})$/;
                 const info = dataString.match(format);
 
                 if (info) {
@@ -450,29 +401,16 @@
             }
 
             /**
-             * @see layerRecord.makeLayerBookmark
-             */
-            makeLayerBookmark () {
-                const opacity = padOpacity(this._legendEntry.getOpacity());
-                const viz = this._legendEntry.getVisibility() ? '1' : '0';
-                const bb = this._legendEntry.options.boundingBox.value ? '1' : '0';
-                const snap = this._legendEntry.options.snapshot.value ? '1' : '0';
-                const query = this._legendEntry.options.query.value ? '1' : '0';
-
-                const bookmark = '00' + this.config.id + opacity + viz + bb + snap + query;
-                return bookmark;
-            }
-
-            /**
              * Creates a config snippet (containing options) given the dataString portion of the layer bookmark.
              *
              * @param {String} dataString   a partial layer bookmark (everything after the id)
              * @returns {Object}            config snippet for the layer
              */
             static parseData (dataString) {
+                // Only used for bookmark version A
                 // ( opacity )( viz )( boundingBox )( snapshot )( query )
-                const format = /^(\d{3})(\d{1})(\d{1})(\d{1})(\d{1})$/;
 
+                const format =  /^(\d{3})(\d{1})(\d{1})(\d{1})(\d{1})$/;
                 const info = dataString.match(format);
 
                 if (info) {
@@ -530,11 +468,6 @@
             ];
 
             return classes[layerType].parseData(dataString);
-        }
-
-        function padOpacity(value) {
-            value = String(value * 100);
-            return ('000' + value).substring(value.length);
         }
 
         return { makeServiceRecord, makeFileRecord, parseLayerData };
