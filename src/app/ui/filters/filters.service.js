@@ -68,15 +68,7 @@
             // add a DataTable filter which only accepts rows with oidField values in the validOIDs list
             $.fn.dataTable.ext.search.push((settings, data) => validOIDs.indexOf(parseInt(data[oidColNum])) !== -1);
 
-            // call onExtentChange function when the extent has changed
-            const stopGeoServiceWatcher = $rootScope.$watch(() => geoService.isMapReady, isReady => {
-                if (isReady) {
-                    gapiService.gapi.events.wrapEvents(geoService.mapObject, {
-                        'extent-change': debounceService.registerDebounce(onExtentChange, 300, false)
-                    });
-                    stopGeoServiceWatcher();
-                }
-            });
+            $rootScope.$on('extentChange', debounceService.registerDebounce(onExtentChange, 300, false));
 
             // DataTable is either being created or destroyed
             $rootScope.$watch(() => stateManager.display.filters.data, (val, prevVal) => {
