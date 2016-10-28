@@ -1,9 +1,6 @@
 // Common functions for use across other geoApi modules
 'use strict';
 
-// store a reusable canvas
-let sharedCanvas;
-
 function getLayerTypeBuilder(esriBundle) {
     /**
     * Will return a string indicating the type of layer a layer object is.
@@ -51,13 +48,12 @@ function generateUUID() {
 * Convert an image to a canvas element
 *
 * @param {String} url image url to convert (result from the esri print task)
-* @param {Boolean} crossOrigin [optional] default to true; when set, tries to fetch an image with crossOrigin = anonymous
+* @param {Object} canvas [optional = null] canvas to draw the image upon; if not supplied, a new canvas will be made
+* @param {Boolean} crossOrigin [optional = true] when set, tries to fetch an image with crossOrigin = anonymous
 * @return {Promise} conversion promise resolving into a canvas of the image
 */
-function convertImageToCanvas(url, crossOrigin = true) {
-    if (!sharedCanvas) {
-        sharedCanvas = document.createElement('canvas');
-    }
+function convertImageToCanvas(url, canvas = null, crossOrigin = true) {
+    canvas = canvas || document.createElement('canvas');
 
     const image = document.createElement('img'); // create image node
 
@@ -68,12 +64,12 @@ function convertImageToCanvas(url, crossOrigin = true) {
     const conversionPromise = new Promise((resolve, reject) => {
         image.addEventListener('load', () => {
 
-            sharedCanvas.width = image.width; // changing canvas size will clear all previous content
-            sharedCanvas.height = image.height;
-            sharedCanvas.getContext('2d').drawImage(image, 0, 0); // draw image onto a canvas
+            canvas.width = image.width; // changing canvas size will clear all previous content
+            canvas.height = image.height;
+            canvas.getContext('2d').drawImage(image, 0, 0); // draw image onto a canvas
 
             // return canvas
-            resolve(sharedCanvas);
+            resolve(canvas);
         });
         image.addEventListener('error', error =>
             reject(error));
@@ -91,9 +87,10 @@ function convertImageToCanvas(url, crossOrigin = true) {
  *
  * @function convertImagetoDataURL
  * @param {String} imageUri url of the image to load and convert
+ * @param {String} imageType [optional = 'image/png'] format of the image representation
  * @return {Promise} promise resolving with the dataURL of the image
  */
-function convertImagetoDataURL(imageUri) {
+function convertImagetoDataURL(imageUri, imageType = 'image/png') {
     // this is already a dataUrl, just return
     if (imageUri.startsWith('data')) {
         console.log('ImageUri is already a data url');
@@ -103,7 +100,7 @@ function convertImagetoDataURL(imageUri) {
     const loadingPromise = convertImageToCanvas(imageUri)
         .then(canvas => {
             console.log('Converting image to dataURL');
-            return canvas.toDataURL('image/png');
+            return canvas.toDataURL(imageType);
         })
         .catch(error => {
             console.error('Failed to load crossorigin image', imageUri, error);
