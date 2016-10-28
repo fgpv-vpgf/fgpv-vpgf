@@ -5,22 +5,21 @@ const legend = require('../src/legend.js')();
 const sampleLayer = { y:0, headerHeight: 0, height: 110, type: 'layer', items: [{type:'group', items:[{type:'item', height:20, y: 10}, {type:'item', height:40, y: 30}], headerHeight: 10, y: 0},{type:'item', height:20, y: 70},{type:'item', height:20, y: 90}] };
 
 describe('Legend', () => {
-    
+
     describe('allComb', () => {
         it('should produce a single entry for (1,1)', () => {
             const res = legend.allComb(1,1);
             expect(res.length).toBe(1);
             expect(res[0][0]).toBe(true);
         });
-        
+
         it('should work correctly for (7,3)', () => {
             const res = legend.allComb(7,3);
             expect(res.length).toBe(35);
             res.forEach(perm => expect(perm.filter(x => x).length).toBe(3));
         });
-        
     });
-    
+
     describe('findOptimalSplit', () => {
         it('should work for a simple split case', () => {
             const testdata = JSON.parse(JSON.stringify(sampleLayer));
@@ -35,7 +34,7 @@ describe('Legend', () => {
             expect(testdata.items[0].items[1].splitBefore).toBe(true);
         });
     });
-    
+
     describe('makeLegend', () => {
         it('should work for more layers than sections (4,2,2), 2', () => {
             const res = legend.makeLegend([4,2,2].map(n => ({height: n})), 2);
@@ -69,8 +68,6 @@ describe('Legend', () => {
             expect(res.layers[7].splitBefore).toBe(true);
             expect(res.layers[14].splitBefore).toBe(true);
         });
-        
+
     });
-
-
 });
