@@ -1,6 +1,7 @@
 /* jshint maxcomplexity: false */
 'use strict';
 const svgjs = require('svg.js');
+const shared = require('./shared.js')();
 
 // Functions for turning ESRI Renderers into images
 // Specifically, converting ESRI "Simple" symbols into images,
@@ -206,20 +207,20 @@ function generateWMSSymbology(name, imageUri) {
     };
 
     if (imageUri) {
-        const symbologyPromise = new Promise(resolve => {
-            draw.image(imageUri)
-                .loaded(loader => {
-                    draw.viewbox(0, 0, loader.width, loader.height);
-                    symbologyItem.svgcode = draw.svg();
-                    resolve(symbologyItem);
-                })
-                .error(err => {
-                    // can't load legend image for some reason; return empty svg container
-                    symbologyItem.svgcode = draw.svg();
-                    resolve(symbologyItem);
-                    console.error(err);
-                });
-        });
+
+        const symbologyPromise = shared.convertImagetoDataURL(imageUri)
+            .then(imageUri =>
+                svgDrawImage(draw, imageUri))
+            .then(({ loader }) => {
+                draw.viewbox(0, 0, loader.width, loader.height);
+                symbologyItem.svgcode = draw.svg();
+
+                return symbologyItem;
+            })
+            .catch(err => {
+                console.error('Cannot draw wms legend image; returning empty', err);
+                symbologyItem.svgcode = draw.svg();
+            });
 
         return symbologyPromise;
     } else {
@@ -434,12 +435,12 @@ function symbolToLegend(symbol, label, window) {
         esriSLS() { // ESRI Simple Line Symbol
             const lineColour = parseEsriColour(symbol.color);
             const lineStroke = makeStroke({
-                    color: lineColour.colour,
-                    opacity: lineColour.opacity,
-                    width: symbol.width,
-                    linecap: 'butt',
-                    dasharray: ESRI_DASH_MAPS[symbol.style]
-                });
+                color: lineColour.colour,
+                opacity: lineColour.opacity,
+                width: symbol.width,
+                linecap: 'butt',
+                dasharray: ESRI_DASH_MAPS[symbol.style]
+            });
 
             const min = CONTENT_PADDING;
             const max = CONTAINER_SIZE - CONTENT_PADDING;
@@ -484,10 +485,6 @@ function symbolToLegend(symbol, label, window) {
             const imageWidth = symbol.width * symbol.xscale;
             const imageHeight = symbol.height * symbol.yscale;
 
-            // make a fill from a tiled image
-            const symbolFill = draw.pattern(imageWidth, imageHeight, add =>
-                add.image(imageUri, imageWidth, imageHeight));
-
             symbol.outline = symbol.outline || DEFAULT_OUTLINE;
             const outlineColour = parseEsriColour(symbol.outline.color);
             const outlineStroke = makeStroke({
@@ -497,10 +494,19 @@ function symbolToLegend(symbol, label, window) {
                 dasharray: ESRI_DASH_MAPS[symbol.outline.style]
             });
 
-            draw.rect(CONTENT_SIZE, CONTENT_SIZE)
-                .center(CONTAINER_CENTER, CONTAINER_CENTER)
-                .fill(symbolFill)
-                .stroke(outlineStroke);
+            const picturePromise = shared.convertImagetoDataURL(imageUri)
+                .then(imageUri => {
+                    // make a fill from a tiled image
+                    const symbolFill = draw.pattern(imageWidth, imageHeight, add =>
+                        add.image(imageUri, imageWidth, imageHeight, true));
+
+                    draw.rect(CONTENT_SIZE, CONTENT_SIZE)
+                        .center(CONTAINER_CENTER, CONTAINER_CENTER)
+                        .fill(symbolFill)
+                        .stroke(outlineStroke);
+                });
+
+            return picturePromise;
         },
 
         esriPMS() { // ESRI PMS? Picture Marker Symbol
@@ -508,18 +514,17 @@ function symbolToLegend(symbol, label, window) {
             const imageUri = symbol.imageData ? `data:${symbol.contentType};base64,${symbol.imageData}` : symbol.url;
 
             // need to draw the image to get its size (technically not needed if we have a url, but this is simpler)
-            const picturePromise = new Promise(resolve => {
-                const image = draw.image(imageUri).loaded(() => {
+            const picturePromise = shared.convertImagetoDataURL(imageUri)
+                .then(imageUri =>
+                    svgDrawImage(draw, imageUri))
+                .then(({ image }) => {
                     image
                         .center(CONTAINER_CENTER, CONTAINER_CENTER)
                         .rotate(symbol.angle || 0);
 
                     // scale image to fit into the symbology item container
                     fitInto(image, CONTENT_IMAGE_SIZE);
-
-                    resolve();
                 });
-            });
 
             return picturePromise;
         }
@@ -575,7 +580,7 @@ function symbolToLegend(symbol, label, window) {
         if (c) {
             return {
                 colour: `rgb(${c[0]},${c[1]},${c[2]})`,
-                opacity:  c[3] / 255
+                opacity: c[3] / 255
             };
         } else {
             return {
@@ -584,6 +589,32 @@ function symbolToLegend(symbol, label, window) {
             };
         }
     }
+}
+
+/**
+ * Renders a specified image on an svg element. This is a helper function that wraps around async `draw.image` call in the svg library.
+ *
+ * @function svgDrawImage
+ * @private
+ * @param {Object} draw svg element to render the image onto
+ * @param {String} imageUri image url or dataURL of the image to render
+ * @param {Number} width [optional = 0] width of the image
+ * @param {Number} height [optional = 0] height of the image
+ * @param {Boolean} crossOrigin [optional = true] specifies if the image should be loaded as crossOrigin
+ * @return {Promise} promise resolving with the loaded image and its loader object (see svg.js http://documentup.com/wout/svg.js#image for details)
+ */
+function svgDrawImage(draw, imageUri, width = 0, height = 0, crossOrigin = true) {
+    const promise = new Promise((resolve, reject) => {
+        const image = draw.image(imageUri, width, height, crossOrigin)
+            .loaded(loader =>
+                resolve({ image, loader }))
+            .error(err => {
+                reject(err);
+                console.error(err);
+            });
+    });
+
+    return promise;
 }
 
 /**

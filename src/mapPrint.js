@@ -3,6 +3,7 @@
 // ugly way to add rgbcolor to global scope so it can be used by canvg inside the viewer; this is done because canvg uses UMD loader and has rgbcolor as internal dependency; there is no elegant way around it; another approach would be to clone canvg and change its loader;
 window.RGBColor = require('rgbcolor');
 const canvg = require('canvg-origin');
+const shared = require('./shared.js')();
 
 /**
   * @ngdoc module
@@ -79,7 +80,7 @@ function generateServerImage(esriBundle, geoApi, map, options) {
         // execute the print task
         printTask.execute(printParams,
             response =>
-                resolve(convertImageToCanvas(response.url)),
+                resolve(shared.convertImageToCanvas(response.url)),
             error =>
                 reject(error)
         );
@@ -147,37 +148,6 @@ function generateLocalCanvas(map) {
     });
 
     return generationPromise;
-}
-
-/**
-* Convert an image to a canvas element
-*
-* @param {String} url image url to convert (result from the esri print task)
-* @return {Promise} conversion promise resolving into a canvas of the image
-*/
-function convertImageToCanvas(url) {
-    const canvas = document.createElement('canvas');
-    const image = document.createElement('img'); // create image node
-    image.crossOrigin = 'Anonymous'; // configure the CORS request
-
-    const conversionPromise = new Promise((resolve, reject) => {
-        image.addEventListener('load', () => {
-
-            canvas.width = image.width;
-            canvas.height = image.height;
-            canvas.getContext('2d').drawImage(image, 0, 0); // draw image onto a canvas
-
-            // return canvas
-            resolve(canvas);
-        });
-        image.addEventListener('error', error =>
-            reject(error));
-    });
-
-    // set image source to the one generated from the print task
-    image.src = url;
-
-    return conversionPromise;
 }
 
 /**
