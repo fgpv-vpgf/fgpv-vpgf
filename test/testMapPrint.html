@@ -20,7 +20,7 @@
     <script src="../dist/geoapi.js"></script>
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(api => {
-
+            api.mapManager.setProxy('http://cp.zz9.ca/index');
             // set debug
             api.debug(true);
 
@@ -60,6 +60,10 @@
             var geoFeatLayerSmall2 = new api.layer.FeatureLayer('http://geoappext.nrcan.gc.ca/arcgis/rest/services/FGP/canadian_airports_with_air_navigation_services_en/MapServer/0');
             map1.addLayer(geoFeatLayerSmall1);
             map2.addLayer(geoFeatLayerSmall2);
+
+            var wmsLayerVisible = ['railway.track', 'railway.station'];
+            var wmsLayer = new api.layer.ogc.WmsLayer('http://maps.geogratis.gc.ca/wms/railway_en', {visibleLayers:wmsLayerVisible});
+            map2.addLayer(wmsLayer);
 
             // fgp layer (3)
             var fgpLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://webservices-staging.maps.canada.ca/arcgis/rest/services/NRCAN/PEI_RRN/MapServer');
