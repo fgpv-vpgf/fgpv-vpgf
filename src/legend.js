@@ -103,7 +103,7 @@ function splitLayer(layer, chunkSize, splitCount) {
                 return;
             }
 
-            splitSizes[splitCount - 1] = itemYMax;
+            splitSizes[splitCount - 1] = itemYMax - itemYOffset; // bottom of current item - offset at current section start
 
             // this is the y coordinate of the item's bottom boundary
             itemYMax = item.y + (item.type === 'group' ? item.headerHeight : item.height);
@@ -124,7 +124,7 @@ function splitLayer(layer, chunkSize, splitCount) {
     }
 
     traverse(layer.items);
-    splitSizes[splitCount - 1] = layer.height - (itemYOffset - layer.y);
+    splitSizes[splitCount - 1] = layer.height - (itemYOffset - layer.y); // bottom of layer - start of last section; start of last section = total offset of last section - offset at start of layer
 
     // with whiteSpace we want to find the difference between the chunkSize and used space
     // for each section used (whiteSpace may be negative indicating that a section is

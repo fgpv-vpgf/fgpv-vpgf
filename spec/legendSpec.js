@@ -54,7 +54,7 @@ describe('Legend', () => {
             legend.makeLegend(testdata, 4, 200);
             expect(testdata[1].splitBefore).toBe(true);
             expect(testdata[2].splitBefore).toBe(true);
-            expect(testdata[1].items[0].items[3].items[3].splitBefore).toBe(true);
+            expect(testdata[1].items[0].items[3].items[4].splitBefore).toBe(true);
         });
 
         it('should do nothing fancy for very tall maps', () => {
