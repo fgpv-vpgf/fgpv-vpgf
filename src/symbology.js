@@ -102,7 +102,8 @@ function searchRenderer(attributes, renderer) {
         case UNIQUE_VALUE:
 
             // make a key value for the graphic in question, using comma-space delimiter if multiple fields
-            let graphicKey = attributes[renderer.field1];
+            // put an empty string when key value is null
+            let graphicKey = attributes[renderer.field1] === null ? '' : attributes[renderer.field1];
 
             // all key values are stored as strings.  if the attribute is in a numeric column, we must convert it to a string to ensure the === operator still works.
             if (typeof graphicKey !== 'string') {
