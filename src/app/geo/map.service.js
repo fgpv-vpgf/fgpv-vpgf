@@ -672,6 +672,7 @@
 
                                 setMapLoadingFlag(true, 300);
                             },
+                            'extent-change': data => $rootScope.$broadcast('extentChange', data),
                             'update-end': () => {
                                 console.log('   Map update END!');
 
