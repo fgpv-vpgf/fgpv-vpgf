@@ -4,6 +4,7 @@ const basemap = require('./basemap.js');
 const events = require('./events.js');
 const hilight = require('./hilight.js');
 const layer = require('./layer.js');
+const legend = require('./legend.js');
 const mapManager = require('./mapManager.js');
 const mapPrint = require('./mapPrint.js');
 const proj = require('./proj.js');
@@ -16,6 +17,7 @@ function initAll(esriBundle, window) {
     const api = {};
 
     api.layer = layer(esriBundle, api);
+    api.legend = legend();
     api.proj = proj(esriBundle);
     api.basemap = basemap(esriBundle);
     api.mapManager = mapManager(esriBundle);
