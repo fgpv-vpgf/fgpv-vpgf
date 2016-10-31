@@ -36,11 +36,15 @@
         </md-content>
 
         <span flex></span>
-        <p class="md-caption rv-version">
+        <div class="md-caption rv-version">
             <span class="rv-version-number">{{ self.version.major }}.{{ self.version.minor }}.{{ self.version.patch }}
                 <span class="rv-version-hash">[{{ self.version.hash }}]</span></span>
             <span class="rv-version-timestamp">{{ self.version.timestamp }}</span>
-        </p>
+            <div class="rv-version-github">
+                <a href="https://github.com/fgpv-vpgf/fgpv-vpgf" class="rv-icon-24">
+                    <md-icon md-svg-src="community:github"></md-icon>fgpv-vpgf/fgpv-vpgf</a>
+            </div>
+        </div>
 
     </md-content>
 </md-sidenav>
