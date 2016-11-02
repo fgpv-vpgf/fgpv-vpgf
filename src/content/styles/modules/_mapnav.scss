@@ -6,12 +6,33 @@
 
     rv-mapnav {
         position: absolute;
-        bottom: 100px;
+        bottom: $viewport-gutter;
+        top: 0;
         right: $viewport-gutter;
+        pointer-events: none;
+
+        .rv-spacer {
+            &:first-child {
+                flex: 5 1 50%;
+            }
+
+            &:last-child {
+                flex: 2;
+            }
+        }
+
+        display: flex;
+        flex-direction: column;
 
         @include media($rv-sm) {
             bottom: 5px;
             right: 5px;
+        }
+
+        .rv-mapnav-content {
+            // IE expands flex: 1 as flex-grow: 1; flex-shrink: 1; flex-basis: 0px; notice 0px; then it tries to squash the element to 0px; flex-basis needs to be set to 0 then the extra space around the item's content isn't factored in
+            flex: 1 1 0;
+            pointer-events: auto;
         }
 
         &.basemap {
