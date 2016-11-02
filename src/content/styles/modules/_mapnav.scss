@@ -30,7 +30,8 @@
         }
 
         .rv-mapnav-content {
-            flex: 1;
+            // IE expands flex: 1 as flex-grow: 1; flex-shrink: 1; flex-basis: 0px; notice 0px; then it tries to squash the element to 0px; flex-basis needs to be set to 0 then the extra space around the item's content isn't factored in
+            flex: 1 1 0;
             pointer-events: auto;
         }
 
