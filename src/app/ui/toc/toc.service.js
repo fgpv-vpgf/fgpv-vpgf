@@ -212,6 +212,21 @@
             const isEntryVisible = entry.getVisibility();
             const entryParent = entry.parent;
 
+            // close Settings or Metadata panel if displayed
+            const isSettingsVisible = stateManager.display.settings.data !== null ? true : false;
+
+            // if Metadata is loading the panel will be visible
+            // but isMetadataDisplay will still have value set to false until content is displayed
+            const isMetadataDisplay = stateManager.display.metadata.data !== null ? true : false;
+            const isMetadataLoading = stateManager.display.metadata.isLoading;
+            const isMetadataVisible = isMetadataDisplay || isMetadataLoading;
+
+            if (isMetadataVisible) {
+                toggleMetadata(entry, isMetadataVisible);
+            } else if (isSettingsVisible) {
+                toggleSettings(entry);
+            }
+
             // pretend we removed the layer by setting it's visibility to off and remove it from the layer selector
             entry.setVisibility(false);
             const entryPosition = entryParent.remove(entry);
@@ -238,9 +253,13 @@
                         // restore layer visibility on undo; and add it back to layer selector
                         entryParent.add(entry, entryPosition);
 
-                        // restore filters if it was open
+                        // restore filters or Metadata or Settings if one of them was opened it was open
                         if (isFilterOpen) {
                             toggleLayerFiltersPanel(entry);
+                        } else if (isMetadataVisible) {
+                            toggleMetadata(entry, !isMetadataVisible);
+                        } else if (isSettingsVisible) {
+                            toggleSettings(entry);
                         }
 
                         // restore original visibility, so if he removed and restored already invisible layer,
@@ -395,8 +414,11 @@
          * Opens metadata panel with data from the provided layer object.
          * @function toggleMetadata
          * @param  {Object} entry layer object whose data should be displayed.
+         * @param  {Bool | undefined} state of the panel
+         *         {state = true|undefined => pane visible,
+         *          state = false => pane not visible}.
          */
-        function toggleMetadata(entry) {
+        function toggleMetadata(entry, state) {
 
             const requester = {
                 id: entry.id,
@@ -410,37 +432,42 @@
             // if a sublayer of a group, select its root
             const layer = entry.master ? entry.master : entry;
 
-            // construct a temp promise which resolves when data is generated or retrieved;
-            const dataPromise = $q(fulfill => {
-                // check if metadata is cached
-                if (layer.cache.metadata) {
-                    fulfill(layer.cache.metadata);
-                } else {
-                    metadataService.transformXml(layer.metadataUrl).then(mdata => {
-                        // result is wrapped in an array due to previous setup
-                        // TODO: chagee the following when changing associated directive service
-                        layer.cache.metadata = mdata;
-
-                        if (layer.metadataUrl) {
-                            layer.cache.metadata.metadataUrl = layer.metadataUrl;
-                        }
-
-                        if (layer.catalogueUrl) {
-                            layer.cache.metadata.catalogueUrl = layer.catalogueUrl;
-                        }
-
+            if (typeof state === 'undefined' || state === false) {
+                // construct a temp promise which resolves when data is generated or retrieved;
+                const dataPromise = $q(fulfill => {
+                    // check if metadata is cached
+                    if (layer.cache.metadata) {
                         fulfill(layer.cache.metadata);
-                    });
-                }
-            });
+                    } else {
+                        metadataService.transformXml(layer.metadataUrl).then(mdata => {
+                            // result is wrapped in an array due to previous setup
+                            // TODO: chagee the following when changing associated directive service
+                            layer.cache.metadata = mdata;
 
-            stateManager
-                .setActive(panelToClose)
-                .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester))
-                .catch(() => {
-                    errorService.display($translate.instant('toc.error.resource.loadfailed'),
-                            layoutService.panes.metadata);
+                            if (layer.metadataUrl) {
+                                layer.cache.metadata.metadataUrl = layer.metadataUrl;
+                            }
+
+                            if (layer.catalogueUrl) {
+                                layer.cache.metadata.catalogueUrl = layer.catalogueUrl;
+                            }
+
+                            fulfill(layer.cache.metadata);
+
+                        }).catch(() => {
+                            errorService.display($translate.instant('toc.error.resource.loadfailed'),
+                                    layoutService.panes.metadata);
+                        });
+                    }
                 });
+                stateManager
+                    .setActive(panelToClose)
+                    .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester));
+            } else {
+                stateManager
+                    .setActive(panelToClose)
+                    .then(() => stateManager.toggleDisplayPanel('sideMetadata', entry, requester));
+            }
         }
 
         /**
