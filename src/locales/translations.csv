@@ -167,6 +167,8 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.close,Close,Fermer
 ,export.save,Save,Sauver
 ,export.includelegend,Include legend,Inclure la légende
+,export.includescale,Include Scale Bar,Inclure la barre d'échele
+,export.includearrow,Include North Arrow,Inclure la flèche du nord
 ,export.title,Enter Title,Titre
 ,export.error.timeout,"Connection timed out. Stopping export task.","Connexion a expiré. Tâche d’exportation arrêt."
 ,export.error.tainted,"Ops, we can't save the export image directly.","OPS, nous ne pouvons pas enregistrer l’image d’exportation directement."

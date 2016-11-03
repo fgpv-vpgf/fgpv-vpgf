@@ -89,15 +89,19 @@
             self.isGenerationComplete = false;
 
             self.isLegendIncluded = false;
+            self.isScaleIncluded = false;
+            self.isArrowIncluded = false;
             self.lengendGraphic = null;
 
             // functions
             self.saveImage = saveImage;
             self.includeLegend = includeLegend;
+
             self.close = service.close;
 
-            configService.getCurrent().then(config =>
-                startPrintTask(config.services.exportMapUrl));
+            configService.getCurrent().then(config => {
+                startPrintTask(config.services.exportMapUrl, config.export);
+            });
 
             /***/
 
@@ -105,9 +109,19 @@
              * @function startPrintTask
              * @private
              * @param {String} exportMapUrl url of the print service
+             * @param {Object} exportParams export parameters from config file
              * @param {Number} requestId [optional] current requestId used to detect stale requests
              */
-            function startPrintTask(exportMapUrl, requestId = ++requestCount) {
+            function startPrintTask(exportMapUrl, exportParams, requestId = ++requestCount) {
+                // set footnote (if present)
+                self.footnote = (exportParams && exportParams.footnote) ? exportParams.footnote : '';
+
+                // set north arrow
+                self.arrowRotation = `rotate(${geoService.getNorthArrowAngle()}deg)`;
+
+                // set scale
+                setScale();
+
                 // start the print task
                 const { serverPromise, localPromise } = gapiService.gapi.mapPrint.print(geoService.mapObject, {
                     url: exportMapUrl,
@@ -199,6 +213,53 @@
                         .then(graphic =>
                             self.legendGraphic = graphic);
                 }
+            }
+
+            /**
+             * Generates scale bar information
+             * @function setScale
+             */
+            function setScale() {
+                // get scale bar information (can specify output image size if not same as map size)
+                const scale = geoService.getScaleRatio();
+
+                // set label and pixel length for metric
+                const metric = getScaleInfo(scale.ratio, scale.unit[0]);
+                self.scaleValueKm = metric.label;
+                self.scaleWidthKm = metric.width;
+
+                // set label and pixel length for imperial
+                const imperial = getScaleInfo((scale.ratio / 1.6), scale.unit[1]);
+                self.scaleWidthMi = imperial.width;
+                self.scaleValueMi = imperial.label;
+            }
+
+            /**
+             * Get scale bar information to show on export map
+             * @function getScaleInfo
+             * @private
+             * @param {Number} ratio the earth distance for 1 pixel
+             * @param {String} unit the distance unit
+             * @return {Object} info information for the scalebar
+             *                          - label: label for the scalebar with unit
+             *                          - width: width to apply to style the bar itself
+             */
+            function getScaleInfo(ratio, unit) {
+                // find the first round distance that makes the scale bar less than 120 pixels
+                const scaleRatio = (120 * ratio);
+
+                // find modulo value to use
+                const modulo = Math.pow(10, (Math.floor(Math.log(scaleRatio) / Math.LN10) + 1) - 1);
+
+                // get bar length
+                const bar = (scaleRatio) - (scaleRatio % modulo);
+
+                // return label and pixel bar length
+                // add approx to warn user about using scale bar as a ruler (scalebar is always approximative)
+                return {
+                    label:  `${parseFloat(bar.toFixed(1)).toString()}${unit} approx.`,
+                    width: `${Math.floor((bar * 120) / scaleRatio)}px`
+                };
             }
 
             /**

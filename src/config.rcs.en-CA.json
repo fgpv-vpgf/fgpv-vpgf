@@ -7,6 +7,9 @@
     "proxyUrl": "http://cp.zz9.ca/index",
     "exportMapUrl": "http://webservices-staging.maps.canada.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
   },
+  "export": {
+      "footnote": "This is a footnote added from the configuration file. The note is very long so it should wrap on multiple lines when it reaches a certain limit in size."
+  },
   "map": {
     "components": {
       "geoSearch": {
