@@ -106,21 +106,24 @@
                 // FIXME: I should be migrated to the new config schema when geoApi is updated
                 const mapSettings = {
                     basemaps: [],
-                    scalebar: {},
-                    overviewMap: {}
+                    scalebar: { enabled: false },
+                    overviewMap: { enabled: false }
                 };
 
                 if (config.baseMaps) {
                     mapSettings.basemaps = config.baseMaps;
                 }
 
-                if (config.map.components.scaleBar) {
+                // TODO: components should be mandatory in the schema with value enabled false if not use
+                if (config.map.components.scaleBar && config.map.components.scaleBar.enabled) {
                     mapSettings.scalebar = {
+                        enabled: true,
                         attachTo: 'bottom-left',
                         scalebarUnit: 'dual'
                     };
                 }
 
+                // TODO: components should be mandatory in the schema with value enabled false if not use
                 if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
 
                     // FIXME: overviewMap has more settings
