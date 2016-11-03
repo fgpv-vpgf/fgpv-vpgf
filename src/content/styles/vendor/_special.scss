@@ -155,20 +155,19 @@ md-select-menu {
 .rv-full-screen {
     visibility: hidden;
 
-    // aria-hidden="false" will be read even though visibility set to hidden; need to completely hide it
-    [aria-hidden="false"] {
-        display: none;
-    }
+    // visibility: hidden is supposed to hide content from screen readers: http://webaim.org/techniques/css/invisiblecontent/
+    // however, it doesn't hide the content in NVDA screen reader, it will read the text on mouse over: https://github.com/nvaccess/nvda/issues/5320
+    // JAWS seems to work correctly
+    // trying to hide the aria marked nodes with display: none or other methods is difficult since it's not possible to restore the __previous__ property values with CSS
+    // setting all aria-marked nodes to 'display: none' and then restoring them with 'display: inherit' will take display value from their respective parent and ignore the previously set value; `display: flex' -> 'display: none' -> 'display: inherit' (this will render as 'display:block' in most cases)
+    // and CSS revert value (https://developer.mozilla.org/en-US/docs/Web/CSS/revert) is not widely supported :(
+
+    // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1326
 
     // all angular material components rendered outside of the viewer should be visible
+    // all aria maked nodes should display default behaviour
     > [class*="md-"],
     .fgpv {
         visibility: visible;
-
-        // no need to hide item inside the viewer
-        &[aria-hidden="false"],
-        [aria-hidden="false"] {
-            display: inherit;
-        }
     }
 }
