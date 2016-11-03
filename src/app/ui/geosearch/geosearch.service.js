@@ -13,7 +13,8 @@
         .module('app.ui.geosearch')
         .factory('geosearchService', geosearchService);
 
-    function geosearchService(stateManager, storageService, debounceService, geoSearch, $rootScope, geoService) {
+    function geosearchService(stateManager, storageService, debounceService, geoSearch, $rootScope, geoService,
+            events) {
 
         // main panel to know where to switch when we close geosearch
         const mainPanel = storageService.panels.shell.find('[rv-state=main]');
@@ -50,6 +51,12 @@
                 selection: false
             }
         };
+
+        // if language change, reset filters values
+        $rootScope.$on(events.rvLangSwitch, () => {
+            filters.provinces = [];
+            filters.types = [];
+        });
 
         // text value to search for
         const searchText = {
@@ -200,6 +207,9 @@
                     values.forEach((obj) => {
                         filters.provinces.push(obj.name);
                     });
+
+                    // make sure items are unique
+                    filters.provinces = [...new Set(filters.provinces)];
                 });
             }
         }
@@ -217,6 +227,9 @@
                     values.forEach((obj) => {
                         filters.types.push(obj.name);
                     });
+
+                    // make sure items are unique
+                    filters.types = [...new Set(filters.types)];
                 });
             }
         }
