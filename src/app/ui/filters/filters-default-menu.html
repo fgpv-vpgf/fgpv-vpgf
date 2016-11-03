@@ -14,11 +14,11 @@
                 {{ 'filter.menu.minimize' | translate }}
             </md-menu-item-->
 
-            <md-menu-item type="radio" ng-model="self.filtersMode" value="default" ng-click="self.setMode(self.filtersMode)" class="sm-hide">
+            <md-menu-item type="radio" ng-model="self.filtersMode" value="default" ng-click="self.setMode(self.filtersMode)" class="rv-lg">
                 {{ 'filter.menu.splitView' | translate }}
             </md-menu-item>
 
-            <md-menu-item type="radio" ng-model="self.filtersMode" value="full" ng-click="self.setMode(self.filtersMode)" class="sm-hide">
+            <md-menu-item type="radio" ng-model="self.filtersMode" value="full" ng-click="self.setMode(self.filtersMode)" class="rv-lg">
                 {{ 'filter.menu.maximize' | translate }}
             </md-menu-item>
 
@@ -40,7 +40,7 @@
             </md-menu-item>
             -->
 
-            <md-menu-divider class="sm-hide"></md-menu-divider>
+            <md-menu-divider class="rv-lg"></md-menu-divider>
                 <md-menu-item type="checkbox" ng-model="self.filter.isActive" ng-click="self.applyFilter(self.filter.isActive)" rv-right-icon="community:filter">
                     {{ 'filter.menu.extent' | translate }}
                 </md-menu-item>

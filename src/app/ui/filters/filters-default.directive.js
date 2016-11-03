@@ -128,13 +128,11 @@
 
                 // assign callbacks to row buttons
                 ROW_BUTTONS.details.self.action = row => {
-                    switch (layoutService.currentLayout()) {
-                        case 'small':
-                            onDetailsClick(row, true);
-                            break;
-
-                        default:
-                            onDetailsClick(row);
+                    const currentLayout = layoutService.currentLayout();
+                    if (currentLayout === 'small' || currentLayout === 'medium') {
+                        onDetailsClick(row, true);
+                    } else {
+                        onDetailsClick(row);
                     }
                 };
 

@@ -276,6 +276,65 @@
         }
 
         /**
+         * Opens a parent panel for display.
+         *
+         * A random child panel will be opened to avoid a blank parent "container" panel. Parent panels should
+         * not be explicitly opened as opening a child panel automatically opens it's parent.
+         *
+         * @private
+         * @function openParentPanel
+         * @param  {Object}   panelToOpen the parent panel object to be opened
+         * @param  {Boolean}  propagate optional allow sibling panels to be modified
+         * @return {Promise}  resolves to undefined when all opening panel animations are complete
+         */
+        function openParentPanel(panelToOpen, propagate) {
+            return propagate ?
+                openPanel(getChildren(panelToOpen.name)[0], false)
+                    .then(() => openPanel(panelToOpen, false)) :
+                setItemProperty(panelToOpen.name, 'active', true);
+        }
+
+        /**
+         * Opens a panel for display.
+         *
+         * If panelToOpen is a parent panel, a random child panel will be opened to avoid a blank panel. This should
+         * be avoided since passing a child panel will also open its parent panel. All other sibling panels are
+         * closed.
+         *
+         * @private
+         * @function openChildPanel
+         * @param  {Object}   panelToOpen the child panel object to be opened
+         * @param  {Boolean}  propagate optional allow parent/sibling panels to be modified
+         * @return {Promise}  resolves to undefined when all opening panel animations have completed
+         */
+        function openChildPanel(panelToOpen, propagate) {
+            setItemProperty(panelToOpen.name, 'active', true, true);
+
+            // go through history and close all sibling panels. remove any sibling opened after this one
+            // from history
+            for (let i = 0; i < service.panelHistory.length; i++) {
+                const panel = getItem(service.panelHistory[i]);
+                if (panel.name !== panelToOpen.name && panel.item.parent === panelToOpen.item.parent) {
+                    setItemProperty(panel.name, 'active', false, true);
+                    let indexInHistory = service.panelHistory.indexOf(panelToOpen.name);
+                    if (indexInHistory !== -1 && i > indexInHistory) {
+                        modifyHistory(panel);
+                    }
+                }
+            }
+            modifyHistory(panelToOpen);
+            const animationPromise = propagate ? openPanel(getParent(panelToOpen.name), false) : $q.resolve();
+
+            return animationPromise.then(() => {
+                const panelFocusables = $rootElement.find(`[rv-state="${panelToOpen.name}"]`)
+                .find('button, a, input, [tabindex]')
+                .filter(':visible');
+
+                focusService.createLink(panelFocusables.first());
+            });
+        }
+
+        /**
          * Opens a panel for display.
          *
          * If panelToOpen is a parent panel, a random child panel will be opened to avoid a blank panel. This should
@@ -286,55 +345,21 @@
          * @function openPanel
          * @param  {Object}   panelToOpen the panel object to be opened
          * @param  {Boolean}  propagate optional allow parent/sibling panels to be modified
-         * @return {Promise}  resolves when panel animation has completed
+         * @return {Promise}  resolves to undefined when all panel animations have completed
          */
         function openPanel(panelToOpen, propagate = true) {
-            let animationPromise;
-
             // TODO: mobile layout hack to be removed when details panel is
             // moved into its own parent panel
             if (panelToOpen.name === 'mainDetails') {
-                $('rv-panel[type="main"]').css('z-index', 4);
+                $rootElement.find('rv-panel[type="main"]').css('z-index', 4);
+            // prevent main panel from overlapping details panel in small/medium layouts
+            } else if (panelToOpen.name === 'filters') {
+                $rootElement.find('rv-panel[type="main"]').css('z-index', 2);
             }
 
-            // opening parent panel
-            if (typeof panelToOpen.item.parent === 'undefined') {
-                if (propagate) {
-                    animationPromise = openPanel(getChildren(panelToOpen.name)[0], false)
-                        .then(() => openPanel(panelToOpen, false));
-                } else {
-                    animationPromise = setItemProperty(panelToOpen.name, 'active', true);
-                }
-
-            // opening child panel
-            } else {
-                setItemProperty(panelToOpen.name, 'active', true, true);
-
-                // go through history and close all sibling panels. remove any sibling opened after this one
-                // from history
-                for (let i = 0; i < service.panelHistory.length; i++) {
-                    const panel = getItem(service.panelHistory[i]);
-                    if (panel.name !== panelToOpen.name && panel.item.parent === panelToOpen.item.parent) {
-                        setItemProperty(panel.name, 'active', false, true);
-                        let indexInHistory = service.panelHistory.indexOf(panelToOpen.name);
-                        if (indexInHistory !== -1 && i > indexInHistory) {
-                            modifyHistory(panel);
-                        }
-                    }
-                }
-                modifyHistory(panelToOpen);
-                animationPromise = propagate ? openPanel(getParent(panelToOpen.name), false) : $q.resolve();
-
-                animationPromise.then(() => {
-                    const panelFocusables = $rootElement.find(`[rv-state="${panelToOpen.name}"]`)
-                    .find('button, a, input, [tabindex]')
-                    .filter(':visible');
-
-                    focusService.createLink(panelFocusables.first());
-                });
-            }
-
-            return animationPromise;
+            return typeof panelToOpen.item.parent === 'undefined' ?
+                openParentPanel(panelToOpen, propagate) :
+                openChildPanel(panelToOpen, propagate);
         }
 
         /**
@@ -352,7 +377,7 @@
             // TODO: mobile layout hack to be removed when details panel is
             // moved into its own parent panel
             if (panelToClose.name === 'mainDetails') {
-                $('rv-panel[type="main"]').css('z-index', 1);
+                $rootElement.find('rv-panel[type="main"]').css('z-index', 1);
             }
 
             if (runCloseCallback(panelToClose.name)) {
