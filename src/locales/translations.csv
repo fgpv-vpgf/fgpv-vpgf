@@ -170,6 +170,9 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.close,Close,Fermer
 ,export.save,Save,Sauver
 ,export.includelegend,Legend,Légende
+,export.includescale,Scale Bar,Barre d'échele
+,export.includearrow,North Arrow,Flèche du nord
+,export.label.approx,approx.,approx.
 ,export.title,Enter Title,Titre
 ,export.error.timeout,"Connection timed out. Stopping export task.","Connexion a expiré. Tâche d’exportation arrêt."
 ,export.error.tainted,"Oops, we can't save the export image directly. You can right click the image and select ""Save As..."" if supported by your browser.","Nous ne pouvons pas enregistrer l’image directement. Vous pouvez cliquez sur le bouton droit de la souris sur l’image et sélectionnez « Enregistrer sous... » si cela est pris en charge par votre navigateur."
