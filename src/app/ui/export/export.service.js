@@ -89,15 +89,19 @@
             self.isGenerationComplete = false;
 
             self.isLegendIncluded = false;
+            self.isScaleIncluded = false;
+            self.isArrowIncluded = false;
             self.lengendGraphic = null;
 
             // functions
             self.saveImage = saveImage;
             self.includeLegend = includeLegend;
+
             self.close = service.close;
 
-            configService.getCurrent().then(config =>
-                startPrintTask(config.services.exportMapUrl));
+            configService.getCurrent().then(config => {
+                startPrintTask(config.services.exportMapUrl, config.export);
+            });
 
             /***/
 
@@ -105,9 +109,20 @@
              * @function startPrintTask
              * @private
              * @param {String} exportMapUrl url of the print service
+             * @param {Object} exportParams export parameters from config file
              * @param {Number} requestId [optional] current requestId used to detect stale requests
              */
-            function startPrintTask(exportMapUrl, requestId = ++requestCount) {
+            function startPrintTask(exportMapUrl, exportParams, requestId = ++requestCount) {
+                // set footnote (if present)
+                self.footnote = (exportParams && exportParams.footnote) ? exportParams.footnote : '';
+
+                // set north arrow
+                self.arrowRotation = `rotate(${geoService.getNorthArrowAngle()}deg)`;
+                self.arrowGraphic = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 61.06 96.62" height="35%" width="35%"><g transform="translate(-1.438 30.744)"><g fill="none" stroke="#000"><path d="m61 35c0 16.02-12.984 29-29 29-16.02 0-29-12.984-29-29 0-16.02 12.984-29 29-29 16.02 0 29 12.984 29 29z" stroke-width="3"/><path d="m55 35c0 12.979-10.521 23.5-23.5 23.5-12.979 0-23.5-10.521-23.5-23.5 0-12.979 10.521-23.5 23.5-23.5 12.979 0 23.5 10.521 23.5 23.5z" transform="matrix(1.01148 0 0 .99988-.089.004)" stroke-width=".497"/><path d="m32 35v-32" stroke-width=".25"/></g><path d="m32-9.453l28.938 73.826-29-29-29 29z" fill="#fff" stroke="#fff" stroke-width="3"/><path d="m32-9.453l29 73.45-29-29-29 29z" fill="none" stroke="#000" stroke-linecap="square"/><text x="22.71" y="-10.854" font-family="OPEN SANS" word-spacing="0" line-height="125%" letter-spacing="0" font-size="40"><tspan x="22.71" y="-10.854" font-family="Adobe Heiti Std R" font-size="26">N</tspan></text></g><g transform="translate(0-3.829)" fill="none" stroke="#000" stroke-width=".25"><path d="m4 92.82l6.74-3.891"/><path d="m4.603 90.7l10.397-6"/><path d="m3 95.17l4-2.309"/><path d="m5.442 88.45l13.856-8"/><path d="m12 72.26l18.686-10.812"/><path d="m14.593 65.45l16.09-9.291"/><path d="m15.343 63.24l15.343-8.858"/><path d="m16.877 60.58l13.809-7.972"/><path d="m17.511 58.45l13.174-7.606"/><path d="m18.412 56.15l12.274-7.087"/><path d="m19 54.04l11.427-6.597"/><path d="m20 51.757l10.822-6.311"/><path d="m20.826 49.45l9.86-5.693"/><path d="m21.48 47.3l9.206-5.315"/><path d="m23 44.647l7.686-4.437"/><path d="m23.744 42.45l6.928-4"/><path d="m24.549 40.21l6.137-3.543"/><path d="m25 38.18l5.686-3.283"/><path d="m26.663 35.446l4.02-2.323"/><path d="m27.617 33.12l3.069-1.772"/><path d="m28 31.13l2.686-1.551"/><path d="m29.15 28.694l1.534-.886"/><path d="m13 69.909l17.686-10.211"/><path d="m9.206 79.19l21.48-12.402"/><path d="m8.36 81.45l22.326-12.89"/><path d="m7.671 83.62l19.946-11.516"/><path d="m6.137 86.27l17.02-9.827"/><path d="m10 76.956l20.686-11.943"/><path d="m11.279 74.45l19.407-11.205"/><path d="m14 67.56l16.686-9.634"/><path d="m30.562 65.744v-43.566" transform="translate(0 3.829)"/></g></svg>';
+
+                // set scale
+                setScale();
+
                 // start the print task
                 const { serverPromise, localPromise } = gapiService.gapi.mapPrint.print(geoService.mapObject, {
                     url: exportMapUrl,
@@ -202,6 +217,53 @@
             }
 
             /**
+             * Generates scale bar information
+             * @function setScale
+             */
+            function setScale() {
+                // get scale bar information (can specify output image size if not same as map size)
+                const scale = geoService.getScaleRatio();
+
+                // set label and pixel length for metric
+                const metric = getScaleInfo(scale.ratio, scale.unit[0]);
+                self.scaleValueKm = metric.label;
+                self.scaleWidthKm = metric.width;
+
+                // set label and pixel length for imperial
+                const imperial = getScaleInfo((scale.ratio / 1.6), scale.unit[1]);
+                self.scaleWidthMi = imperial.width;
+                self.scaleValueMi = imperial.label;
+            }
+
+            /**
+             * Get scale bar information to show on export map
+             * @function getScaleInfo
+             * @private
+             * @param {Number} ratio the earth distance for 1 pixel
+             * @param {String} unit the distance unit
+             * @return {Object} info information for the scalebar
+             *                          - label: label for the scalebar with unit
+             *                          - width: width to apply to style the bar itself
+             */
+            function getScaleInfo(ratio, unit) {
+                // find the first round distance that makes the scale bar less than 120 pixels
+                const scaleRatio = (120 * ratio);
+
+                // find modulo value to use
+                const modulo = Math.pow(10, (Math.floor(Math.log(scaleRatio) / Math.LN10) + 1) - 1);
+
+                // get bar length
+                const bar = (scaleRatio) - (scaleRatio % modulo);
+
+                // return label and pixel bar length
+                // add approx to warn user about using scale bar as a ruler (scalebar is always approximative)
+                return {
+                    label:  `${parseFloat(bar.toFixed(1)).toString()}${unit} approx.`,
+                    width: `${Math.floor((bar * 120) / scaleRatio)}px`
+                };
+            }
+
+            /**
              * Creates a canvas DOM node;
              * @function createCanvas
              * @private
@@ -258,7 +320,6 @@
                             // something else happened
                             showToast('error.somethingelseiswrong');
                         }
-
                     }
                 });
 
@@ -305,6 +366,30 @@
                         title
                             .cx(shellWidth / 2)
                             .dy((EXPORT_IMAGE_GUTTER + mapOffset - titleHeight) / 2 - 4);
+
+                        // increase the resultant image height by the height of the title (+ white space)
+                        shellHeight += mapOffset;
+                        shellSvg.height(shellHeight);
+                    }
+
+                    // add footnote
+                    if (self.footnote) {
+                        const footnote = shellSvg.text(self.footnote)
+                            .attr({
+                                'font-family': 'Roboto',
+                                'font-weight': 'normal',
+                                'font-size': 14,
+                                anchor: 'end'
+                            })
+                            .leading(1);
+
+                        const footHeight = footnote.bbox().height;
+                        mapOffset = footHeight + EXPORT_IMAGE_GUTTER * 2;
+
+                        // position footnote lower right corner of the map image
+                        footnote
+                            .cx(shellWidth)
+                            .dy(shellHeight + footHeight);
 
                         // increase the resultant image height by the height of the title (+ white space)
                         shellHeight += mapOffset;

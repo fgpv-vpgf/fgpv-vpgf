@@ -734,6 +734,14 @@
             "required": ["serviceUrls"]
         },
 
+        "export": {
+            "type": "object",
+            "description": "Export properties",
+            "properties": {
+                "footnote": { "type": "string", "description": "Foot notice to add to exported map" }
+            }
+        },
+
         "map": {
             "type": "object",
             "description": "Core map properties (extent sets, levels of detail)",

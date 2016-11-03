@@ -47,6 +47,10 @@
             }
         }
 
+        .rv-export-map-border {
+            border: 1px solid $divider-color-light;
+        }
+
         .rv-export-dummy {
             display: block;
 
@@ -68,6 +72,27 @@
                 height: auto !important;
                 display: block;
             }
+        }
+
+        .rv-export-scale {
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            height: 1px;
+            padding: 2px;
+
+            &[type='km'] {
+                border-top: 2px solid black;
+            }
+
+            &[type='mi'] {
+                border-bottom: 2px solid black;
+            }
+        }
+
+        .rv-export-footnote {
+            margin-left: auto;
+            max-width: 50%;
         }
 
         .rv-export-legend {

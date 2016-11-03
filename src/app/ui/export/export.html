@@ -2,7 +2,9 @@
     <form ng-cloak>
         <md-dialog-content>
             <div class="md-dialog-content" ng-class="{ 'rv-error': self.isError }">
-                <div class="rv-export-map" ng-class="{ 'rv-export-complete': self.isGenerationComplete }">
+                <div class="rv-export-map"
+                    ng-class="{ 'rv-export-complete': self.isGenerationComplete,
+                    'rv-export-map-border': self.isLegendIncluded || self.isScaleIncluded || self.isArrowIncluded}">
                     <rv-svg class="rv-export-dummy"
                             src="self.dummyGraphic"></rv-svg>
 
@@ -11,9 +13,23 @@
 
                     <rv-svg class="rv-export-local"
                             src="self.localGraphic"></rv-svg>
-
                 </div>
 
+                <div layout="row">
+                    <div ng-show="self.isScaleIncluded">
+                        <span>{{ self.scaleValueKm }}</span>
+                        <svg width="120" height="2" viewbox="0 0 120 2"><line x1="0" y1="0" x2="100" y2="0" stroke-width="2" stroke="black"></line></svg>
+                        <div ng-style="{ 'width': self.scaleWidthKm }" class="rv-export-scale" type="km"></div>
+                        <div ng-style="{ 'width': self.scaleWidthMi }" class="rv-export-scale" type="mi"></div>
+                        <span>{{ self.scaleValueMi }}</span>
+                    </div>
+                    <rv-svg class="rv-export-arrow"
+                        ng-show="self.isArrowIncluded"
+                        ng-style="{ 'transform': self.arrowRotation }"
+                        src="self.arrowGraphic"></rv-svg>
+                    <!-- <span class="rv-export-footnote">{{ self.footnote }}</span> -->
+                    <rv-svg class="rv-export-footnote">{{ self.footnote }}</rv-svg>
+                </div>
                 <rv-svg ng-if="self.isLegendIncluded"
                         class="rv-export-legend"
                         src="self.legendGraphic"></rv-svg>
@@ -23,8 +39,8 @@
                         <input placeholder="{{ 'export.title' | translate }}" ng-model="self.exportTitle">
                     </md-input-container>
                 </div>
-
             </div>
+
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
@@ -39,6 +55,16 @@
                         ng-disabled="self.isError">
                 {{ 'export.includelegend' | translate }}
             </md-switch>
+            <md-switch translate-attr-aria-label="export.includescale" class="md-primary rv-switch"
+                       ng-model="self.isScaleIncluded"
+                       ng-disabled="self.isError">
+               {{ 'export.includescale' | translate }}
+           </md-switch>
+           <md-switch translate-attr-aria-label="export.includearrow" class="md-primary rv-switch"
+                      ng-model="self.isArrowIncluded"
+                      ng-disabled="self.isError">
+              {{ 'export.includearrow' | translate }}
+          </md-switch>
             <span flex></span>
 
             <md-button
