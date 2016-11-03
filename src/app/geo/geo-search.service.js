@@ -10,7 +10,7 @@
         .module('app.geo')
         .factory('geoSearch', geoSearch);
 
-    function geoSearch($http, $q, configService, geoService, gapiService) {
+    function geoSearch($http, $q, configService, geoService, gapiService, $rootScope, events) {
         let provinceList; // list of provinces fulfilled by getProvinces
         let typeList; // list of types fulfilled by getTypes
         let manualExtent; // extent object if manual extent filtering is required
@@ -32,15 +32,32 @@
             isEnabled
         };
 
-        configService.getCurrent().then(config => {
-            if (typeof config.search === 'undefined') {
-                enabled = false;
-            } else {
-                enabled = true;
-                serviceUrls = config.search.serviceUrls;
-                disableSearch = config.search.disabledSearches;
-            }
+        // configure geosearch
+        configureSearch();
+
+        // if language change, reset geosearch
+        $rootScope.$on(events.rvLangSwitch, () => {
+            configureSearch();
+            provinceList = undefined;
+            typeList = undefined;
         });
+
+        /**
+         * Configure search from config file
+         *
+         * @function configureSearch
+         */
+        function configureSearch() {
+            configService.getCurrent().then(config => {
+                if (typeof config.search === 'undefined') {
+                    enabled = false;
+                } else {
+                    enabled = true;
+                    serviceUrls = config.search.serviceUrls;
+                    disableSearch = config.search.disabledSearches;
+                }
+            });
+        }
 
         return service;
 

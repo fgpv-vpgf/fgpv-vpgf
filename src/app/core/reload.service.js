@@ -56,6 +56,7 @@
             $translate.use(lang);
             configService.getOriginal().then(config => {
                 bookmarkService.parseBookmark(bookmark, config);
+                $rootScope.$broadcast(events.rvLangSwitch);
                 geoService.assembleMap();
             });
         }
