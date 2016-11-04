@@ -32,7 +32,8 @@ module.exports = function (esriBundle, geoApi) {
         mapDefault,
         findClosestLOD,
         getNorthArrowAngle,
-        getScaleRatio
+        getScaleRatio,
+        checkBoundary
     };
 
     let basemapCtrl;
@@ -272,6 +273,58 @@ module.exports = function (esriBundle, geoApi) {
         const ratio = distance / width;
 
         return { distance, ratio, units };
+    }
+
+    /*
+     * @ngdoc method
+     * @name checkBoundary
+     * @memberof mapManager
+     * Checks if the given extent is outside of the maximum extent. If it is,
+     * also provides an adjusted extent that is inside the maximum extent
+     *
+     * @param {Object} extent      an ESRI extent to test
+     * @param {Object} maxExtent   an ESRI extent indicating the boundary of the map
+     * @return {Object}            an object with two properties. adjusted - boolean, true if extent was adjusted. newExtent - object, adjusted ESRI extent
+     */
+    function checkBoundary(extent, maxExtent) {
+        // clone extent
+        const newExtent = esriBundle.Extent(extent.toJson());
+        let flag = false;
+
+        // determine dimensions of adjusted extent.
+        // same as input, unless input is so large it consumes max.
+        // in that case, we shrink to the max. This avoids the "washing machine"
+        // bug where we over-correct past the valid range,
+        // and achieve infinite oscillating pans
+        const height = Math.min(extent.getHeight(), maxExtent.getHeight());
+        const width = Math.min(extent.getWidth(), maxExtent.getWidth());
+        const center = extent.getCenter();
+
+        // test if the center of our extent is outside of the boundary
+        if (center.y > maxExtent.ymax) {
+            newExtent.ymax = maxExtent.ymax;
+            newExtent.ymin = maxExtent.ymax - height;
+            flag = true;
+        } else if (center.y < maxExtent.ymin) {
+            newExtent.ymin = maxExtent.ymin;
+            newExtent.ymax = maxExtent.ymin + height;
+            flag = true;
+        }
+
+        if (center.x > maxExtent.xmax) {
+            newExtent.xmax = maxExtent.xmax;
+            newExtent.xmin = maxExtent.xmax - width;
+            flag = true;
+        } else if (center.x < maxExtent.xmin) {
+            newExtent.xmin = maxExtent.xmin;
+            newExtent.xmax = maxExtent.xmin + width;
+            flag = true;
+        }
+
+        return {
+            newExtent,
+            adjusted: flag
+        };
     }
 
     return mapManager;

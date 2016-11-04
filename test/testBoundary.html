@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <div id="map" style="height:90%; width: 100%;"></div>
+    <p id="mess" />
+    <script src="../dist/geoapi.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+
+            // http://localhost:6002/test/testBoundary.html
+
+            var maxJson = {
+                xmin: -2681457,
+                ymin: -883440,
+                xmax: 3549492,
+                ymax: 3482193,
+                spatialReference: {
+                    wkid: 3978
+                }
+            };
+
+            var inRangeJson = {
+                xmin: -2681457,
+                ymin: -883440,
+                xmax: 3549492,
+                ymax: 3482193,
+                spatialReference: {
+                    wkid: 3978
+                }
+            };
+
+            var tooNorthJson = {
+                xmin: -2681457,
+                ymin: 3482193,
+                xmax: 3549492,
+                ymax: 3482200,
+                spatialReference: {
+                    wkid: 3978
+                }
+            };
+
+            var tooSouthJson = {
+                xmin: -2681457,
+                ymin: -883450,
+                xmax: 3549492,
+                ymax: -883440,
+                spatialReference: {
+                    wkid: 3978
+                }
+            };
+
+            var tooEastJson = {
+                xmin: 3549492,
+                ymin: -883440,
+                xmax: 3549500,
+                ymax: 3482193,
+                spatialReference: {
+                    wkid: 3978
+                }
+            };
+
+            var tooWestJson = {
+                xmin: -2681470,
+                ymin: -883440,
+                xmax: -2681457,
+                ymax: 3482193,
+                spatialReference: {
+                    wkid: 3978
+                }
+            };
+
+            var tooNorthEastJson = {
+                xmin: 3549492,
+                ymin: 3482193,
+                xmax: 3549510,
+                ymax: 3482210,
+                spatialReference: {
+                    wkid: 3978
+                }
+            };
+
+            var maxExtent = api.mapManager.getExtentFromJson(maxJson);
+            console.log('MAX EXTENT IS:', maxExtent);
+
+            var goodcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(inRangeJson), maxExtent);
+            console.log('GOOD EXTENT TEST', goodcheck);
+
+            var northcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(tooNorthJson), maxExtent);
+            console.log('NORTH EXTENT TEST', northcheck);
+
+            var eastcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(tooEastJson), maxExtent);
+            console.log('EAST EXTENT TEST', eastcheck);
+
+            var southcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(tooSouthJson), maxExtent);
+            console.log('SOUTH EXTENT TEST', southcheck);
+
+            var westcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(tooWestJson), maxExtent);
+            console.log('WEST EXTENT TEST', westcheck);
+
+            var northeastcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(tooNorthEastJson), maxExtent);
+            console.log('NORTH EAST EXTENT TEST', northeastcheck);
+
+        });
+    </script>
+</body>
+</html>
