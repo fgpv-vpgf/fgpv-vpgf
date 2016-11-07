@@ -24,7 +24,8 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 
     echo "Destintation: $DESTDIR"
     ssh "$SSHSRV" mkdir -p "$DESTDIR/dist"
-    rsync -av --delete "build/" "$SSHSRV:$DESTDIR"
+    rsync -av --delete "build/" "$SSHSRV:$DESTDIR/prod"
     rsync -av "dist/" "$SSHSRV:$DESTDIR/dist"
+    ssh "$SSHSRV" unzip "$DESTDIR/dist/*-samples.zip" -d "$DESTDIR/dev"
 
 fi
