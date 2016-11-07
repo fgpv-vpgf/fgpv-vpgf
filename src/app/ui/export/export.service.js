@@ -23,6 +23,8 @@
         .service('exportService', exportService);
 
     function exportService($mdDialog, $mdToast, storageService) {
+        let requestCount = 0;
+
         const service = {
             open,
             close
@@ -99,7 +101,13 @@
 
             /***/
 
-            function startPrintTask(exportMapUrl) {
+            /**
+             * @function startPrintTask
+             * @private
+             * @param {String} exportMapUrl url of the print service
+             * @param {Number} requestId [optional] current requestId used to detect stale requests
+             */
+            function startPrintTask(exportMapUrl, requestId = ++requestCount) {
                 // start the print task
                 const { serverPromise, localPromise } = gapiService.gapi.mapPrint.print(geoService.mapObject, {
                     url: exportMapUrl,
@@ -108,19 +116,22 @@
 
                 // NOTE: geoApi returns Promise object, but it resolves outside of the Angular digest cycle and we need to trigger one on `then` to update the bindings. The easiest way here is to use `$q.resolve`, but `$timeout` or `$applyAsync` would also work.
                 // store graphic with service layers so it is bound to the ui
-                $q.resolve(serverPromise).then(canvas =>
-                    self.serviceGraphic = canvas);
-
                 // store graphic with local layers so it is bound to the ui
-                $q.resolve(localPromise).then(canvas =>
-                    self.localGraphic = canvas);
+                [[serverPromise, 'serviceGraphic'], [localPromise, 'localGraphic']]
+                    .forEach(data => checkRequest(...data));
 
                 // when both graphics are ready, allow the user to save the image
                 $q.all([serverPromise, localPromise])
                     .then(() =>
-                        self.isGenerationComplete = true)
+
+                        // if print promises resolve and the requestId is stale, do not set generation status as complete: solves https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1285
+                        requestId === requestCount ?
+                            (self.isGenerationComplete = true) :
+                            console.log(`Map Export request ${requestId} has expired.`))
                     .catch(error => {
-                        console.error(`Print task failed on try ${attempt++}`);
+                        attempt++;
+
+                        console.error(`Print task failed on try ${attempt}`);
                         console.error(error);
 
                         // print task with many layers will likely fail due to esri's proxy/cors issue https://github.com/fgpv-vpgf/fgpv-vpgf/issues/702
@@ -142,6 +153,18 @@
                                 });
                         }
                     });
+
+                /**
+                 * Checks if the print request is stale and assigns its result to the graphic.
+                 * @function checkRequest
+                 * @private
+                 * @param {Promise} promise print promise which resolves when its canvas is ready
+                 * @param {Object} graphic target graphic the canvas needs to be assigned ot
+                 */
+                function checkRequest(promise, graphic) {
+                    promise.then(canvas =>
+                        requestId === requestCount ? (self[graphic] = canvas) : angular.noop());
+                }
             }
 
             /**
