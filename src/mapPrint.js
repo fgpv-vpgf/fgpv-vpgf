@@ -5,6 +5,12 @@ window.RGBColor = require('rgbcolor');
 const canvg = require('canvg-origin');
 const shared = require('./shared.js')();
 
+const XML_ATTRIBUTES = {
+    xmlns: 'http://www.w3.org/2000/svg',
+    'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+    version: '1.1'
+};
+
 /**
   * @ngdoc module
   * @name mapPrint
@@ -121,26 +127,36 @@ function showLayers(layers) {
 * Create a canvas from the user added layers (svg tag)
 *
 * @param {Object} map esri map object
+* @param {Object} canvas [optional = null] canvas to draw the image upon; if not supplied, a new canvas will be made
 * @return {Promise} resolving when the canvas have been created
 *                           resolve with a canvas element with user added layer on it
 */
-function generateLocalCanvas(map) {
-    // convert svg to text (use map id to select the svg container)
-    const svgtext = document.getElementById(`esri\.Map_${map.id.split('_')[1]}_gc`).outerHTML;
-    const localCanvas = document.createElement('canvas'); // create canvas element
+function generateLocalCanvas(map, canvas = null) {
+    canvas = canvas || document.createElement('canvas');  // create canvas element
+
+    // find esri map's svg node
+    // check if xmlns prefixes are set - they aren't; add them
+    // without correct prefixes, Firefox and IE refuse to render svg onto the canvas; Chrome works;
+    // related issues: fgpv-vpgf/fgpv-vpgf#1324, fgpv-vpgf/fgpv-vpgf#1307, fgpv-vpgf/fgpv-vpgf#1306
+    const svgNode = document.getElementById(`esri\.Map_${map.id.split('_')[1]}_gc`);
+    if (!svgNode.getAttribute('xmlns')) {
+        Object.entries(XML_ATTRIBUTES).forEach(([key, value]) =>
+            svgNode.setAttribute(key, value));
+    }
 
     const generationPromise = new Promise((resolve, reject) => {
         // parse the svg
-        // convert svg text to canvas and stuff it into localCanvas canvas dom node
+        // convert svg text to canvas and stuff it into canvas canvas dom node
 
         // wrapping in try/catch since canvg has NO error handling; not sure what errors this can catch though
         try {
-            canvg(localCanvas, svgtext, {
+            // convert svg to text (use map id to select the svg container), then render svgxml back to canvas
+            canvg(canvas, svgNode.outerHTML, {
                 useCORS: true,
                 ignoreAnimation: true,
                 ignoreMouse: true,
                 renderCallback: () =>
-                    resolve(localCanvas)
+                    resolve(canvas)
             });
         } catch (error) {
             reject(error);
@@ -162,10 +178,13 @@ function printMap(esriBundle, geoApi) {
 
     return (map, options) => {
 
+        const localPromise = generateLocalCanvas(map);
+        const serverPromise = generateServerImage(esriBundle, geoApi, map, options);
+
         // generate image with server layer from esri print task
         return {
-            localPromise: generateLocalCanvas(map),
-            serverPromise: generateServerImage(esriBundle, geoApi, map, options)
+            localPromise,
+            serverPromise
         };
     };
 }
