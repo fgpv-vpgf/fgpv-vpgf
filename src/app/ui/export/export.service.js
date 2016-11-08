@@ -159,11 +159,11 @@
                  * @function checkRequest
                  * @private
                  * @param {Promise} promise print promise which resolves when its canvas is ready
-                 * @param {Object} graphic target graphic the canvas needs to be assigned ot
+                 * @param {String} graphicName name of the target graphic the canvas needs to be assigned to
                  */
-                function checkRequest(promise, graphic) {
+                function checkRequest(promise, graphicName) {
                     promise.then(canvas =>
-                        requestId === requestCount ? (self[graphic] = canvas) : angular.noop());
+                        requestId === requestCount ? (self[graphicName] = canvas) : angular.noop());
                 }
             }
 
