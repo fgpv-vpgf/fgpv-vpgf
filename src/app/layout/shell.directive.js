@@ -56,8 +56,11 @@
         }
     }
 
-    function Controller($mdDialog, $translate, version, sideNavigationService, geoService,
-        fullScreenService, helpService, configService, storageService, exportService, focusService) {
+    // ignore jshint maxparams options
+    // FIXME: refactoring out shell directive into more manageable piece
+    function Controller($mdDialog, $translate, version, sideNavigationService, geoService, // jshint ignore:line
+        fullScreenService, helpService, configService, storageService, exportService, focusService,
+        $rootScope, events) {
         'ngInject';
         const self = this;
 
@@ -65,74 +68,102 @@
         self.version = version;
         self.minimize = sideNavigationService.close;
 
-        self.menu = [{
-            name: 'Options',
-            type: 'heading',
-            children: [{
-                name: $translate.instant('sidenav.label.fullscreen'),
-                type: 'link',
-                action: () => {
-                    sideNavigationService.close();
-                    fullScreenService.toggle();
-                }
-            }]
-        },
-        {
-            name: $translate.instant('sidenav.label.help'),
-            type: 'link',
-            action: event => {
-                sideNavigationService.close();
+        // set side nav menu items
+        setDefaultItems();
+        setCustomItems();
 
-                $mdDialog.show({
-                    controller: helpService.HelpSummaryController,
-                    controllerAs: 'self',
-                    templateUrl: 'app/ui/help/help-summary.html',
-                    parent: storageService.panels.shell,
-                    disableParentScroll: false,
-                    targetEvent: event,
-                    clickOutsideToClose: true,
-                    fullscreen: false
-                });
-            }
-        }];
+        // if language change, reset menu item
+        $rootScope.$on(events.rvLangSwitch, () => {
+            setDefaultItems();
+            setCustomItems();
+        });
 
-        configService.getCurrent().then(data => {
-            self.markerImageSrc = data.logoUrl;
-
-            if (data.services.exportMapUrl) {
-                self.menu[0].children.push({
-                    name: $translate.instant('sidenav.label.export'),
+        /**
+         * Set default menu items
+         *
+         * @function setDefaultItems
+         */
+        function setDefaultItems() {
+            self.menu = [{
+                name: 'Options',
+                type: 'heading',
+                children: [{
+                    name: $translate.instant('sidenav.label.fullscreen'),
                     type: 'link',
                     action: () => {
                         sideNavigationService.close();
-                        exportService.open();
+                        fullScreenService.toggle();
                     }
-                });
-            }
+                }]
+            },
+            {
+                name: $translate.instant('sidenav.label.help'),
+                type: 'link',
+                action: event => {
+                    sideNavigationService.close();
 
-            if (data.shareable) {
-                self.menu[0].children.push({
-                    name: $translate.instant('sidenav.label.share'),
-                    type: 'link',
-                    action: event => {
-                        sideNavigationService.close().then(() => {
-                            // create a focus link between the menu button and the dialog
-                            focusService.createLink(storageService.panels.shell.find('md-dialog button').first());
-                        });
+                    $mdDialog.show({
+                        controller: helpService.HelpSummaryController,
+                        controllerAs: 'self',
+                        templateUrl: 'app/ui/help/help-summary.html',
+                        parent: storageService.panels.shell,
+                        disableParentScroll: false,
+                        targetEvent: event,
+                        clickOutsideToClose: true,
+                        fullscreen: false
+                    });
+                }
+            }];
+        }
 
-                        $mdDialog.show({
-                            controller: sideNavigationService.ShareController,
-                            controllerAs: 'self',
-                            templateUrl: 'app/ui/sidenav/share-dialog.html',
-                            parent: storageService.panels.shell,
-                            disableParentScroll: false,
-                            targetEvent: event,
-                            clickOutsideToClose: true,
-                            fullscreen: false
-                        });
-                    }
-                });
-            }
-        });
+        /**
+         * Set custom menu items
+         *
+         * @function setCustomItems
+         */
+        function setCustomItems() {
+            configService.getCurrent().then(data => {
+                self.markerImageSrc = data.logoUrl;
+
+                // reset custom menu items after first element (full screen)
+                self.menu[0].children = self.menu[0].children.slice(0, 1);
+
+                if (data.services.exportMapUrl) {
+                    self.menu[0].children.push({
+                        name: $translate.instant('sidenav.label.export'),
+                        type: 'link',
+                        action: () => {
+                            sideNavigationService.close();
+                            exportService.open();
+                        }
+                    });
+                }
+
+                if (data.shareable) {
+                    self.menu[0].children.push({
+                        name: $translate.instant('sidenav.label.share'),
+                        type: 'link',
+                        action: event => {
+                            sideNavigationService.close().then(() => {
+                                // create a focus link between the menu button and the dialog
+                                focusService.createLink(storageService.panels.shell.find('md-dialog button').first());
+                            });
+
+                            $mdDialog.show({
+                                controller: sideNavigationService.ShareController,
+                                controllerAs: 'self',
+                                templateUrl: 'app/ui/sidenav/share-dialog.html',
+                                parent: storageService.panels.shell,
+                                disableParentScroll: false,
+                                targetEvent: event,
+                                clickOutsideToClose: true,
+                                fullscreen: false
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
     }
 })();
