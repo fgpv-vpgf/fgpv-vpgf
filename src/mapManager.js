@@ -29,7 +29,7 @@ module.exports = function (esriBundle, geoApi) {
         findClosestLOD,
         getNorthArrowAngle,
         getScaleRatio,
-        checkBoundary
+        enforceBoundary
     };
 
     let basemapCtrl;
@@ -256,12 +256,12 @@ module.exports = function (esriBundle, geoApi) {
      * will determine an adjusted extent with a center inside the maximum extent.  Returns both
      * an indicator flag if an adjustment happened, and the adjusted extent.
      *
-     * @function checkBoundary
+     * @function enforceBoundary
      * @param {Object} extent      an ESRI extent to test
      * @param {Object} maxExtent   an ESRI extent indicating the boundary of the map
      * @return {Object}            an object with two properties. adjusted - boolean, true if extent was adjusted. newExtent - object, adjusted ESRI extent
      */
-    function checkBoundary(extent, maxExtent) {
+    function enforceBoundary(extent, maxExtent) {
         // clone extent
         const newExtent = esriBundle.Extent(extent.toJson());
         let flag = false;
@@ -275,26 +275,22 @@ module.exports = function (esriBundle, geoApi) {
         const width = Math.min(extent.getWidth(), maxExtent.getWidth());
         const center = extent.getCenter();
 
-        // test if the center of our extent is outside of the boundary
-        if (center.y > maxExtent.ymax) {
-            newExtent.ymax = maxExtent.ymax;
-            newExtent.ymin = maxExtent.ymax - height;
-            flag = true;
-        } else if (center.y < maxExtent.ymin) {
-            newExtent.ymin = maxExtent.ymin;
-            newExtent.ymax = maxExtent.ymin + height;
-            flag = true;
-        }
+        // takes information about co-ords of two extents (for either x or y)
+        // returns a pair of values that ensures enforcement. may be adjusted or not
+        const clip = (mid, max, min, mapMax, mapMin, len) => {
+            if (mid > mapMax) {
+                [max, min] = [mapMax, mapMax - len];
+            } else if (mid < mapMin) {
+                [max, min] = [mapMin + len, mapMin];
+            }
+            return [max, min];
+        };
 
-        if (center.x > maxExtent.xmax) {
-            newExtent.xmax = maxExtent.xmax;
-            newExtent.xmin = maxExtent.xmax - width;
-            flag = true;
-        } else if (center.x < maxExtent.xmin) {
-            newExtent.xmin = maxExtent.xmin;
-            newExtent.xmax = maxExtent.xmin + width;
-            flag = true;
-        }
+        [newExtent.xmax, newExtent.xmin] =
+            clip(center.x, newExtent.xmax, newExtent.xmin, maxExtent.xmax, maxExtent.xmin, width);
+        [newExtent.ymax, newExtent.ymin] =
+            clip(center.y, newExtent.ymax, newExtent.ymin, maxExtent.ymax, maxExtent.ymin, height);
+        flag = !extent.contains(newExtent); // true if we adjusted the extent
 
         return {
             newExtent,

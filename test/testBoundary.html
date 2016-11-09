@@ -89,22 +89,22 @@
             var maxExtent = api.mapManager.getExtentFromJson(maxJson);
             console.log('MAX EXTENT IS:', maxExtent);
 
-            var goodcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(inRangeJson), maxExtent);
+            var goodcheck = api.mapManager.enforceBoundary(api.mapManager.getExtentFromJson(inRangeJson), maxExtent);
             console.log('GOOD EXTENT TEST', goodcheck);
 
-            var northcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(tooNorthJson), maxExtent);
+            var northcheck = api.mapManager.enforceBoundary(api.mapManager.getExtentFromJson(tooNorthJson), maxExtent);
             console.log('NORTH EXTENT TEST', northcheck);
 
-            var eastcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(tooEastJson), maxExtent);
+            var eastcheck = api.mapManager.enforceBoundary(api.mapManager.getExtentFromJson(tooEastJson), maxExtent);
             console.log('EAST EXTENT TEST', eastcheck);
 
-            var southcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(tooSouthJson), maxExtent);
+            var southcheck = api.mapManager.enforceBoundary(api.mapManager.getExtentFromJson(tooSouthJson), maxExtent);
             console.log('SOUTH EXTENT TEST', southcheck);
 
-            var westcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(tooWestJson), maxExtent);
+            var westcheck = api.mapManager.enforceBoundary(api.mapManager.getExtentFromJson(tooWestJson), maxExtent);
             console.log('WEST EXTENT TEST', westcheck);
 
-            var northeastcheck = api.mapManager.checkBoundary(api.mapManager.getExtentFromJson(tooNorthEastJson), maxExtent);
+            var northeastcheck = api.mapManager.enforceBoundary(api.mapManager.getExtentFromJson(tooNorthEastJson), maxExtent);
             console.log('NORTH EAST EXTENT TEST', northeastcheck);
 
         });
