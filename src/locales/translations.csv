@@ -99,6 +99,7 @@ Bookmark short link,sidenav.label.shortlink,Short Link,Lien court
 Bookmark link copied feedback,sidenav.label.copysuccess,Link copied to clipboard,Lien copié dans le presse-papiers
 Bookmark link click to copy hint,sidenav.label.clicktocopy,Click to copy,Cliquez pour copier
 Side Navigation help,sidenav.label.help,HELP,AIDE
+Side Navigation touch mode,sidenav.label.touch,Touch Mode,Mode Tactile
 Side Navigation language,sidenav.label.language,Language,Langage
 Table of Content Unnamed service,toc.layer.unnamed,Unnamed Service #{{count}},Service sans nom #{{count}}
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,Menu du panneau des données ouvertes
