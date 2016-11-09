@@ -353,12 +353,12 @@ gulp.task('samples', 'Generate sample archives for distribution', ['remove-apike
     merge(
         gulp
             .src([config.build + '/**'])
-            .pipe($.tar('fgpv-' + pkg.version + '-samples.tgz'))
+            .pipe($.tar('fgpv-' + pkg.version + '-dev-samples.tgz'))
             .pipe($.gzip({ append: false }))
             .pipe(gulp.dest('dist')),
         gulp
             .src([config.build + '/**'])
-            .pipe($.zip('fgpv-' + pkg.version + '-samples.zip'))
+            .pipe($.zip('fgpv-' + pkg.version + '-dev-samples.zip'))
             .pipe(gulp.dest('dist')))
 );
 
