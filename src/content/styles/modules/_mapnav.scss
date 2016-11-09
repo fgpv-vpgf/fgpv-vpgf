@@ -51,6 +51,10 @@
             &:not([disabled]).md-focused {
                 background-color: rgba(255, 255, 255, $opacity-to);
             }
+
+            @include touch {
+                background-color: rgba(255, 255, 255, 1);
+            }
         }
 
         rv-mapnav-button {

@@ -25,6 +25,11 @@
             </li>
         </ul>
 
+        <div class="rv-touch menu-heading md-subhead">{{ 'sidenav.label.touch' | translate }}
+            <span flex></span>
+            <md-switch class="md-primary" ng-model="self.isTouch" ng-click="self.toggleTouch(self.isTouch)" translate-attr-aria-label="sidenav.label.touch"></md-switch>
+        </div>
+
         <md-divider></md-divider>
 
         <md-content role="language">
