@@ -20,7 +20,7 @@ function initAll(esriBundle, window) {
     api.legend = legend();
     api.proj = proj(esriBundle);
     api.basemap = basemap(esriBundle);
-    api.mapManager = mapManager(esriBundle);
+    api.mapManager = mapManager(esriBundle, api);
     api.mapPrint = mapPrint(esriBundle, api);
     api.attribs = attribute(esriBundle, api);
     api.symbology = symbology(window);

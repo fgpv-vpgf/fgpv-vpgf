@@ -15,7 +15,17 @@
     <script src="../dist/geoapi.js"></script>
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-            var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
+            var extent = api.mapManager.getExtentFromJson({
+                                                          "xmin": -14545988.445533132,
+                                                          "ymin": 4822907.964742964,
+                                                          "xmax": -4507771.626060756,
+                                                          "ymax": 9815875.184845109,
+                                                          "spatialReference": {
+                                                            "wkid": 102100,
+                                                          }
+                                                      });
+
+            var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, extent: extent });
             map.addLayer(new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0'));
 
             var settings = {"basemaps": [
@@ -213,13 +223,13 @@
                 }
             }
             ],
-                "scalebar": {
-                    "attachTo": "bottom-left",
-                    "scalebarUnit": "metric"
-                },
-                "overviewMap": {
-                    "enabled": true,
-                    "visible": true
+            "scalebar": {
+                "attachTo": "bottom-left",
+                "scalebarUnit": "metric"
+            },
+            "overviewMap": {
+                "enabled": true,
+                "visible": true
                 }
             };
 
@@ -235,6 +245,12 @@
             // basemapGallery.setBasemap('baseEsriStreet');
             var mapControls = api.mapManager.setupMap(map, settings);
 
+            map.spatialReference = 'EPSG:3857';
+            map.on('extent-change', function() {
+                console.log('Angle: ' + api.mapManager.getNorthArrowAngle(map));
+                var scale = api.mapManager.getScaleRatio(map);
+                console.log('distance: ' + scale.distance + ', ratio: ' + scale.ratio + ', units: ' + scale.units);
+            })
             // make sure returned object works properly
             setTimeout(() => {
                 mapControls.BasemapControl.setBasemap('baseEsriPhysical');

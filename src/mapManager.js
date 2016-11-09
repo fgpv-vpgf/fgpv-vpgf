@@ -17,7 +17,7 @@ const basemap = require('./basemap.js');
   */
 
 // mapManager module, provides function to setup a map
-module.exports = function (esriBundle) {
+module.exports = function (esriBundle, geoApi) {
     // note: a decision was made to include esri/dijit/Scalebar here because
     // it has minimum interaction after creation, no need for the additional
     // scalebar.js
@@ -30,7 +30,9 @@ module.exports = function (esriBundle) {
         setupMap,
         setProxy,
         mapDefault,
-        findClosestLOD
+        findClosestLOD,
+        getNorthArrowAngle,
+        getScaleRatio
     };
 
     let basemapCtrl;
@@ -197,6 +199,79 @@ module.exports = function (esriBundle) {
         const diffs = lods.map(lod => Math.abs(lod.scale - scale));
         const lodIdx = diffs.indexOf(Math.min(...diffs));
         return lods[lodIdx];
+    }
+
+    /**
+     * Calculate north arrow bearing. Angle returned is to to rotate north arrow image.
+     * http://www.movable-type.co.uk/scripts/latlong.html
+     * @function getNorthArrowAngle
+     * @param  {Object} map     map object
+     * @returns {Number} map rotation angle (in degree)
+     */
+    function getNorthArrowAngle(map) {
+        // get center point in longitude and use bottom value for latitude
+        const pointB = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326',
+                { x: (map.extent.xmin + map.extent.xmax) / 2, y: map.extent.ymin });
+
+        // north value (set longitude to be half of Canada extent (141° W, 52° W))
+        const pointA = { x: -96, y: 90 };
+
+        // set info on longitude and latitude
+        const dLon = (pointB.x - pointA.x) * Math.PI / 180;
+        const lat1 = pointA.y * Math.PI / 180;
+        const lat2 = pointB.y * Math.PI / 180;
+
+        // calculate bearing
+        const y = Math.sin(dLon) * Math.cos(lat2);
+        const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+        const bearing = Math.atan2(y, x) * 180 / Math.PI;
+
+        // return angle (180 is pointiong north)
+        return ((bearing + 360) % 360).toFixed(1);
+    }
+
+    /**
+     * Calculate distance between min and max extent to know the pixel ratio between
+     * screen size and earth distance.
+     * http://www.movable-type.co.uk/scripts/latlong.html
+     * @function getScaleRatio
+     * @param  {Object} map     map object
+     * @param {Number} mapWidth optional the map width to use to calculate ratio
+     * @returns {Object} contain information about the scale
+     *                               - distance: distance between min and max extentId
+     *                               - ratio: measure for 1 pixel in earth distance
+     *                               - units: array of units [metric, imperial]
+     */
+    function getScaleRatio(map, mapWidth = 0) {
+        // get left and right maximum value point to calculate distance from
+        const pointA = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326',
+                { x: map.extent.xmin, y: (map.extent.ymin + map.extent.ymax) / 2 });
+        const pointB = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326',
+                { x: map.extent.xmax, y: (map.extent.ymin + map.extent.ymax) / 2 });
+
+        // Haversine formula to calculate distance
+        const R = 6371e3; // earth radius in meters
+        const rad = Math.PI / 180;
+        const phy1 = pointA.y * rad; // radiant
+        const phy2 = pointB.y * rad; // radiant
+        const deltaPhy = (pointB.y - pointA.y) * rad; // radiant
+        const deltaLambda = (pointB.x - pointA.x) * rad; // radiant
+
+        const a = Math.sin(deltaPhy / 2) * Math.sin(deltaPhy / 2) +
+                    Math.cos(phy1) * Math.cos(phy2) *
+                    Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const d = (R * c);
+
+        // set map / image width (if mapWidth = 0, use map.width)
+        const width = mapWidth ? mapWidth : map.width;
+
+        // get unit from distance, set distance and ratio (earth size for 1 pixel)
+        const units = [(d > 1000) ? 'km' : 'm', (d > 1600) ? 'mi' : 'ft'];
+        const distance = (d > 1000) ? d / 1000 : d;
+        const ratio = distance / width;
+
+        return { distance, ratio, units };
     }
 
     return mapManager;
