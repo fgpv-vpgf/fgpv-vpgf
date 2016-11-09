@@ -12,11 +12,6 @@ const XML_ATTRIBUTES = {
 };
 
 /**
-  * @ngdoc module
-  * @name mapPrint
-  * @module geoAPI
-  * @description
-  *
   * The `mapPrint` module provides map print and export image related functions.
   *
   * This module exports an object with the following functions
