@@ -30,3 +30,9 @@ $keyboard-only: '.rv-keyboard-only';
         @content;
     }
 }
+
+@mixin touch {
+    @at-root.rv-touch#{&} {
+        @content;
+    }
+}
