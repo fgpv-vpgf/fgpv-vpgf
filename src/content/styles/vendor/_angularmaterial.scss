@@ -1,5 +1,26 @@
 @mixin angularmaterial {
+
     md-dialog {
         @include keyboard-focus;
+    }
+
+    md-icon {
+        color: #666666;
+
+        @include touch {
+            width: rem(3.6);
+            height: rem(3.6);
+        }
+
+        @include media($rv-sm) {
+            width: rem(3.6);
+            height: rem(3.6);
+        }
+    }
+
+    md-tooltip {
+        .rv-hide {
+            display: none;
+        }
     }
 }

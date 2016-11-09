@@ -38,3 +38,9 @@ $keyboard-only: '.rv-keyboard-only';
         }
     }
 }
+
+@mixin touch {
+    @at-root.rv-touch#{&} {
+        @content;
+    }
+}
