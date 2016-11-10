@@ -26,14 +26,15 @@ md-toast {
     .md-toast-text {
         padding-top: rem(1.4);
         padding-bottom: rem(1.4);
+        flex-basis: auto;
     }
 
     .md-toast-content {
         pointer-events: auto;
-    }
 
-    .md-toast-content span {
-        flex-basis: auto;
+        > button {
+            flex-shrink: 0; // prevents the button from shrinking when the toast text is long
+        }
     }
 }
 
