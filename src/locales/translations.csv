@@ -59,6 +59,9 @@ Basemap projection title,basemap.projection.title,{{name}} Maps,Cartes {{name}}
 ,basemap.select,Select basemap,Sélectionnez le fond de carte
 ,basemap.showdescription,Show basemap description,Voir la carte de base description
 ,basemap.hidedescription,Hide basemap description,Masquer la description de la carte de base
+WKIDs to name 3978 -> lambert,wkids.3978,Lambert,Lambert
+WKIDs to name 102100 -> Mercator,wkids.102100,Mercator,Mercator
+WKIDs to name other,wkids.other,Other,Autre
 Map Navigation slider only text,nav.sliderOnly,slider only,Curseur seulement
 Map Navigation slider text,nav.slider,slider,Curseur
 Map Navigation zoom in label,nav.label.zoomIn,Zoom in,Zoom avant
