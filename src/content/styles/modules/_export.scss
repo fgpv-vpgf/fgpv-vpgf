@@ -42,32 +42,17 @@
             filter: blur(rem(0.5));
             transition: filter $swift-ease-in-duration * 2 $swift-ease-in-out-timing-function;
 
-            > canvas {
-                width: 100% !important;
-                height: auto !important;
-                display: block;
-            }
-
             &.rv-export-complete {
                 filter: none;
             }
-        }
 
-        .rv-export-dummy {
-            display: block;
-
-            > canvas {
-                width: 100% !important;
-                height: auto !important;
-                display: block;
+            > rv-svg {
+                @extend %export-component;
             }
         }
 
-        .rv-export-server,
-        .rv-export-local {
+        %export-component {
             display: block;
-            position: absolute;
-            top: 0;
 
             > canvas {
                 width: 100% !important;
@@ -77,13 +62,14 @@
         }
 
         .rv-export-legend {
-            display: block;
+            @extend %export-component;
+        }
 
-            canvas {
-                width: 100% !important;
-                height: auto !important;
-                display: block;
-            }
+        .rv-export-server,
+        .rv-export-local,
+        .rv-export-tainted {
+            position: absolute;
+            top: 0;
         }
 
         .rv-export-progress-indicator {

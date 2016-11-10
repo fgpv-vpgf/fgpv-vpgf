@@ -12,13 +12,16 @@
                     <rv-svg class="rv-export-local"
                             src="self.localGraphic"></rv-svg>
 
+                    <rv-svg class="rv-export-tainted" ng-if="self.isTainted"
+                            src="self.taintedGraphic"></rv-svg>
                 </div>
 
                 <rv-svg ng-if="self.isLegendIncluded"
                         class="rv-export-legend"
                         src="self.legendGraphic"></rv-svg>
 
-                <div class="rv-export-title">
+                <!-- need to hide the title input field when displaying the tainted canvas image for manual saving -->
+                <div class="rv-export-title" ng-hide="self.isTainted">
                     <md-input-container md-no-float class="md-headline" ng-disabled="self.isError">
                         <input placeholder="{{ 'export.title' | translate }}" ng-model="self.exportTitle">
                     </md-input-container>

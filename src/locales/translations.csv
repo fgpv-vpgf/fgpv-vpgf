@@ -166,7 +166,7 @@ Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, polygone|pol
 Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.close,Close,Fermer
 ,export.save,Save,Sauver
-,export.includelegend,Include legend,Inclure la légende
+,export.includelegend,Legend,Légende
 ,export.title,Enter Title,Titre
 ,export.error.timeout,"Connection timed out. Stopping export task.","Connexion a expiré. Tâche d’exportation arrêt."
 ,export.error.tainted,"Ops, we can't save the export image directly. You can right click the image and select ""Save As..."" if supported by your browser.","OPS, nous ne pouvons pas enregistrer l’image d’exportation directement. Vous pouvez cliquez droit sur l’image et sélectionnez « Enregistrer sous... » si pris en charge par votre navigateur."

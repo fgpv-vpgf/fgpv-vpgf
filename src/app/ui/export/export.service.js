@@ -85,6 +85,7 @@
             self.dummyGraphic.height = mapHeight;
 
             self.isError = false;
+            self.isTainted = false; // indicates the canvas is tainted and cannot be directly saved
 
             self.isGenerationComplete = false;
 
@@ -252,8 +253,12 @@
 
                         // this one is likely a tainted canvas issue
                         if (error.name === 'SecurityError') {
-                            // TODO: seems browsers allow to right-click a canvas on the page and save it manually; we can output the final canvas on the page and instruct user how to save it manually
                             showToast('error.tainted');
+
+                            // some browsers (not IE) allow to right-click a canvas on the page and save it manually;
+                            // only when tainted, display resulting canvas inside the dialog, so users can save it manually, if the browser supports it
+                            self.isTainted = true;
+                            self.taintedGraphic = canvas;
                         } else {
                             // something else happened
                             showToast('error.somethingelseiswrong');
