@@ -12,6 +12,12 @@
             padding: 0 rem(1.6);
             flex: 1 0 0%;
             border-bottom: 1px solid $divider-color-light;
+            align-items: center;
+
+            md-checkbox {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
         }
 
         md-dialog-content {
