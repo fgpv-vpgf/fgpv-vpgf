@@ -237,7 +237,13 @@
                     // draw parts of the export image on the canvas
                     context.drawImage(self.serviceGraphic, EXPORT_IMAGE_GUTTER, mapOffset);
                     context.drawImage(self.localGraphic, EXPORT_IMAGE_GUTTER, mapOffset);
-                    context.drawImage(self.legendGraphic || createCanvas(), EXPORT_IMAGE_GUTTER, legendOffset);
+
+                    // only render legend graphic on canvas if it's included;
+                    // the legend graphic could be cached, but not included - user first inlcuded then removes the legend, for example
+                    // a cached (but not included) legend graphic rendered this way to the canvas won't be visible (most likely), since it will be ouside the canvas boundary; however, if the legend graphic is tainted it will prevent the export image from saving directly
+                    if (self.isLegendIncluded) {
+                        context.drawImage(self.legendGraphic, EXPORT_IMAGE_GUTTER, legendOffset);
+                    }
                     context.drawImage(shellGraphic, 0, 0);
 
                     // file name is either the title provided by the user or app id + timestamp
