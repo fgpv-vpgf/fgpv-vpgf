@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -29,7 +30,13 @@
          * Feature areas
          */
         'app.layout'
-    ]);
+    ]).config(($compileProvider, $mdInkRippleProvider) => {
+        // to improve IE performance disable ripple effects globally and debug info
+        if (RV.isIE) {
+            $mdInkRippleProvider.disableInkRipple();
+            $compileProvider.debugInfoEnabled(false);
+        }
+    });
 
     // a separate templates module is needed to facilitate directive unit testing
     angular.module('app.templates', []);
