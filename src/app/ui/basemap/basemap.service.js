@@ -1,10 +1,5 @@
 (() => {
     'use strict';
-    const wkidTypes = {
-        3978: 'Lambert',
-        102100: 'Mercator'
-    };
-    const wkidNames = wkid => wkid in wkidTypes ? wkidTypes[wkid] : 'Other';
 
     /**
      * @module basemapService
@@ -79,6 +74,21 @@
         }
 
         /**
+         * Returns the projection name given a basemap wkID as defined in translations,
+         * or 'Other' if not found
+         * @function wkidToName
+         * @private
+         * @param   {Number}    wkID    the basemap wkID from which to derive a name
+         * @return  {String}    the translated basemap projection name
+         */
+        function wkidToName(wkID) {
+            const translationID = `wkids.${wkID}`;
+            const translationStr = $translate.instant(translationID);
+
+            return translationID !== translationStr ? translationStr : $translate.instant('wkids.other');
+        }
+
+        /**
          * Sets a callback function that is called whenever basemaps changes.
          *
          * @function setOnChangeCallback
@@ -141,7 +151,7 @@
 
             basemapList.forEach(bm => {
                 const basemap = _normalizeBasemap(bm);
-                const projName = wkidNames(basemap.wkid);
+                const projName = wkidToName(basemap.wkid);
                 let projection = projections.find(proj => proj.name === projName);
                 // make first basemap selected by default
                 bmSelected = typeof bmSelected === 'undefined' ? basemap : bmSelected;
