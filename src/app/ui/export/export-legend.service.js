@@ -31,7 +31,7 @@
         .module('app.ui')
         .service('exportLegendService', exportLegendService);
 
-    function exportLegendService($q, $rootElement, geoService) {
+    function exportLegendService($q, $rootElement, geoService, gapiService) {
         const service = {
             generate
         };
@@ -43,13 +43,14 @@
         /**
          * Creates a legend svg graphic from the geoService legend entries.
          * @function generate
+         * @param {Number} availableHeight map height, used in legend wraping logic
          * @param {Number} availableWidth width of the legend graphic, should match width of the exported map image
          * @param {Number} prefferedSectionWidth width of the individual legend sections inside the legend graphic
          * @return {Promise} promise with resolves with a canvas containing the legend
          */
-        function generate(availableWidth = 1500, prefferedSectionWidth = 500) {
+        function generate(availableHeight = 500, availableWidth = 1500, prefferedSectionWidth = 500) {
 
-            // TODO: if section is wider than it's taller, reduce the number of sections
+            // I think this todo is done.
             // TODO: break item names when they overflow even if there are no spaces in the name
 
             const legendData = extractLegendTree(geoService.legend);
@@ -61,19 +62,35 @@
             const legend = SVG(hiddenNode[0]).size(availableWidth, 100);
             const legendSection = legend.group();
 
-            let sectionCount = Math.floor((availableWidth) / prefferedSectionWidth);
-            const sectionWidth =
-                (availableWidth -
-                    (LEGEND_MARGIN.l + LEGEND_MARGIN.r + (sectionCount - 1) * SECTION_SPACING)) /
-                sectionCount;
+            const sectionInfo = {
+                count: Math.floor((availableWidth) / prefferedSectionWidth),
+                width: 0,
+                height: 0
+            };
 
-            legendSection.clear();
-            const svgLegend = makeLegend(legendSection, legendData, sectionWidth);
-            const sectionHeight = findOptimumSectionHeight(svgLegend, sectionCount);
+            let svgLegend; // object containing  arrays of svg elements
+            let legendDataCopy; // clone the legendData object since it will be modified in place
+            let sectionsUsed = null;
 
-            wraplegend(svgLegend, sectionHeight, sectionWidth, sectionCount);
+            // keep optimizing until the number of used sections differs from the number of available sections
+            while (sectionsUsed !== sectionInfo.count) {
+                legendDataCopy = angular.copy(legendData);
+                sectionInfo.count = sectionsUsed || sectionInfo.count;
+                sectionInfo.width = getSectionWidth();
 
-            const totalLegendHeight = sectionHeight + LEGEND_MARGIN.t + LEGEND_MARGIN.b;
+                legendSection.clear();
+
+                // create svg legend
+                svgLegend = makeLegend(legendSection, legendDataCopy, sectionInfo.width);
+
+                // optimize; get back the number of sections used
+                sectionsUsed = gapiService.gapi.legend.makeLegend(legendDataCopy, sectionInfo.count, availableHeight)
+                    .sectionsUsed;
+            }
+
+            wraplegend(svgLegend, sectionInfo);
+
+            const totalLegendHeight = sectionInfo.height + LEGEND_MARGIN.t + LEGEND_MARGIN.b;
 
             // set the height of the legend based on the height of its sections
             legend
@@ -93,79 +110,12 @@
             });
 
             return generationPromise;
-        }
 
-        /**
-         * Finds an optimum legend section height to minimize empty space; also marks legend items for wrapping.
-         *
-         * Initially, the legend is constructed as a single list (section) and this function determines the best places to wrap it. It iterates over legend items keeping a running height. When the running height is greater than the height of the section, the element straddling the boundary )(with items following it) is wrapped (moved to a new section). Since that element was removed from the section, the total height of remaining elements is less than the section height and the difference is added to the running height.
-         *
-         * If after splitting the legend into `sectionCount` number of columns, the running height of the legend is greater than `sectionCount x sectionHeight` it means the legend doesn't fit. The section height is increased by 1px and tested again. After the minimum section height is found, do forty two more iterations increasing the section height. After that, pick the section height which results is smallest amount of whitespace. Whitespace is created when large legend elements (wms images) are wrapped.
-         *
-         * @function findOptimumSectionHeight
-         * @private
-         * @param {Object} svgLegend generated svg legend in a single columns
-         * @param {Number} sectionCount number of sections to break the legend into
-         * @return {Number} calculated section height
-         */
-        function findOptimumSectionHeight(svgLegend, sectionCount) {
-            let sectionHeight = svgLegend.height / sectionCount; // naive section height
-
-            let minDelta = sectionHeight;
-            let minSectionHeight = sectionHeight;
-            let wrapItems = [];
-
-            let repeat = true;
-            let iteration = 1; // tracking number of iteration we go through as we try to find an optimum section height
-
-            while (repeat) {
-                // console.log('@@', iteration);
-
-                let counter = 1; // section count
-                let deltaHeight = 0; // height adjustment when wrapping an item at the lower section boundary
-                const tempWrapItems = [];
-
-                if (sectionCount === 1) {
-                    break;
-                }
-
-                for (let i = 0; i < svgLegend.items.length; i++) {
-                    const svg = svgLegend.items[i];
-
-                    if (svg.rbox().height + svg.y() + deltaHeight >= sectionHeight * counter) {
-                        deltaHeight += sectionHeight * counter - (svg.y() + deltaHeight);
-                        const self = svg.remember('self');
-                        tempWrapItems.push(self);
-
-                        counter++;
-                    }
-                }
-
-                const delta = sectionHeight * sectionCount - (deltaHeight + svgLegend.height);
-
-                sectionHeight += 1;
-
-                if (delta > 0) { // delta > 0 indicates the legend height is less than combined section height
-                    iteration++;
-
-                    if (delta < minDelta) {
-                        minDelta = delta;
-                        minSectionHeight = sectionHeight;
-                        wrapItems = tempWrapItems;
-                    }
-
-                    // stop after a proper number of iterations and use the section height corresponding to the smallest amount of whitespace
-                    if (iteration > 42) {
-                        sectionHeight = minSectionHeight;
-                        wrapItems.forEach(item =>
-                            item.wrap = true);
-                        repeat = false;
-                    }
-
-                }
+            function getSectionWidth() {
+                return (availableWidth -
+                    (LEGEND_MARGIN.l + LEGEND_MARGIN.r + (sectionInfo.count - 1) * SECTION_SPACING)) /
+                sectionInfo.count;
             }
-
-            return sectionHeight;
         }
 
         /**
@@ -173,14 +123,15 @@
          * @function wraplegend
          * @private
          * @param {Object} svgLegend generated svg legend in a single columns
-         * @param {Number} sectionHeight section height
-         * @param {Number} sectionWidth section widht
-         * @param {Number} sectionCount number of sections to break the legend into
+         * @param {Object} sectionInfo object with the following section parameters:
+         *                 {Number} sectionHeight section height
+         *                 {Number} sectionWidth section widht
+         *                 {Number} sectionCount number of sections to break the legend into
          */
-        function wraplegend(svgLegend, sectionHeight, sectionWidth, sectionCount) {
+        function wraplegend(svgLegend, sectionInfo) {
 
             // create wrap legend sections
-            const sections = Array.from(Array(sectionCount)).map(() => svgLegend.container.set());
+            const sections = Array.from(Array(sectionInfo.count)).map(() => svgLegend.container.set());
 
             let sectionId = 0;
             let currentSection = sections[sectionId];
@@ -194,7 +145,7 @@
 
             svgLegend.items.forEach(svg => {
                 // wrap the legend at elements previously marked
-                if (svg.remember('self').wrap) {
+                if (svg.remember('self').splitBefore) {
 
                     const svgY = svg.y();
 
@@ -212,7 +163,7 @@
                         // if the line starts above and ends below the wrapping element
                         if (lineY + lineHeight > svgY) {
                             // split the line in two parts: above and below the wrap
-                            const up = svgLegend.container.line(lineX, lineY, lineX, Math.min(svgY, sectionHeight))
+                            const up = svgLegend.container.line(lineX, lineY, lineX, Math.min(svgY, sectionInfo.height))
                                 .stroke('black');
                             const down = svgLegend.container.line(lineX, svgY, lineX, lineY + lineHeight)
                                 .stroke('black');
@@ -250,12 +201,13 @@
 
             // move the sections into proper positions
             sections.forEach((section, index) => {
-                const dx = LEGEND_MARGIN.l + sectionWidth * index + SECTION_SPACING * index;
+                const dx = LEGEND_MARGIN.l + sectionInfo.width * index + SECTION_SPACING * index;
 
+                sectionInfo.height = Math.max(sectionInfo.height, section.bbox().h);
                 section.dmove(dx, LEGEND_MARGIN.t);
 
                 // draws borders around individual sections
-                /*legend.rect(sectionWidth, sectionHeight)
+                /*legend.rect(sectionInfo.width, sectionInfo.height)
                     .dmove(dx, LEGEND_MARGIN.t)
                     .fill('transparent').stroke({ color: 'black', opacity: 0.2 }).back();*/
             });
@@ -307,11 +259,15 @@
              * @param {Object} layer layer symbology from the legend tree
              */
             function makeLayer(layer) {
+                const startHeight = runningHeight;
+
                 makeHeader(layer, 18);
 
                 layer.items.forEach(item => {
                     makeLegendElement(item);
                 });
+
+                layer.height = runningHeight - startHeight;
 
                 runningHeight += LAYER_GUTTER;
             }
@@ -339,6 +295,8 @@
                     .line(runningIndent * indentD, startHeight, runningIndent * indentD, endHeight)
                     .stroke({ color: 'black', width: 1, opacity: 0.8 });
                 lineSet.add(line);
+
+                group.height = runningHeight - startHeight;
 
                 runningHeight += GROUP_GUTTER;
             }
@@ -390,6 +348,9 @@
                 legendItem.move(runningIndent * indentD, runningHeight);
                 runningHeight += legendItem.rbox().height + ITEM_GUTTER;
 
+                item.height = legendItem.rbox().height;
+                item.y = legendItem.y();
+
                 itemStore.push(legendItem);
 
                 return legendItem;
@@ -415,7 +376,10 @@
                     .remember('self', item)
                     .move(runningIndent * indentD, runningHeight); // TODO: add gutter;
 
-                runningHeight += header.rbox().height + size / 2; // TODO: add gutter
+                // store header height and its position for future legend wrapping
+                item.headerHeight = header.rbox().height;
+                item.y = header.y();
+                runningHeight += item.headerHeight + size / 2; // TODO: add gutter
 
                 itemStore.push(header);
 
