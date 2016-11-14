@@ -84,7 +84,7 @@ Settings main title,settings.title,Settings,Paramètres
 Settings visibility header label,settings.label.display,Display,Affichage
 Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,Zone de délimitation
 Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding Box,Zone de délimitation
-Settings opacity slider label,settings.label.opacity,Opacity,Transparence
+Settings opacity slider label,settings.label.opacity,Opacity,Opacité
 Settings data header label,settings.label.data,Data,Données
 Settings snapshot mode label,settings.label.snapshot,Snapshot mode,Mode copie instantanée
 Settings snapshot mode enable label,settings.label.snapshotEnable,Enable,Activer
@@ -324,7 +324,7 @@ Dans les options supplémentaires, sélectionnez le lien « Métadonnées », si
 <br>
 <br>
 'Options' <br>
-- La transparence de la couche peut être ajustée au moyen de la commande de réglage<br>
+- L'opacité de la couche peut être ajustée au moyen de la commande de réglage<br>
 - Si la couche a une zone de délimitation, sa visibilité peut être activée et désactivée au moyen du bouton à bascule.<br>
 <br>
 'Retirer'<br>
