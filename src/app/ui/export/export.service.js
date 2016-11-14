@@ -196,7 +196,7 @@
              */
             function includeLegend() {
                 if (!self.legendGraphic && self.isLegendIncluded) {
-                    exportLegendService.generate(mapWidth, 350)
+                    exportLegendService.generate(mapHeight, mapWidth, 350)
                         .then(graphic =>
                             self.legendGraphic = graphic);
                 }
