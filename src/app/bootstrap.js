@@ -10,6 +10,9 @@
     // check if the global RV registry object already exists and store a reference
     const RV = window.RV = typeof window.RV === 'undefined' ? {} : window.RV;
 
+    // test user browser, true if IE false otherwise
+    RV.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
+
     // set these outside of the initial creation in case the page defines RV for setting
     // properties like dojoURL
     Object.assign(RV, {
