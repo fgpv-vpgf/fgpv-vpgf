@@ -37,8 +37,16 @@
             B: 'B'
         })
         .constant('translations', AUTOFILLED_TRANSLATIONS)
-        .value('appInfo', {
+        .factory('appInfo', appInfo);
+
+    // Angular services that have no constructors (services that are just plain objects) are __shared__ across app instances
+    // to have it per instance, the appInfo service needs to have some initialization logic
+    function appInfo() {
+        const service = {
             id: null
             // something else ?
-        });
+        };
+
+        return service;
+    }
 })();
