@@ -45,10 +45,10 @@
          * @function generate
          * @param {Number} availableHeight map height, used in legend wraping logic
          * @param {Number} availableWidth width of the legend graphic, should match width of the exported map image
-         * @param {Number} prefferedSectionWidth width of the individual legend sections inside the legend graphic
+         * @param {Number} preferredSectionWidth width of the individual legend sections inside the legend graphic
          * @return {Promise} promise with resolves with a canvas containing the legend
          */
-        function generate(availableHeight = 500, availableWidth = 1500, prefferedSectionWidth = 500) {
+        function generate(availableHeight = 500, availableWidth = 1500, preferredSectionWidth = 500) {
 
             // I think this todo is done.
             // TODO: break item names when they overflow even if there are no spaces in the name
@@ -63,7 +63,7 @@
             const legendSection = legend.group();
 
             const sectionInfo = {
-                count: Math.floor((availableWidth) / prefferedSectionWidth),
+                count: Math.floor((availableWidth) / preferredSectionWidth),
                 width: 0,
                 height: 0
             };
@@ -72,7 +72,7 @@
             let legendDataCopy; // clone the legendData object since it will be modified in place
             let sectionsUsed = null;
 
-            // keep optimizing until the number of used sections differs from the number of available sections
+            // keep optimizing while the number of used sections differs from the number of available sections
             while (sectionsUsed !== sectionInfo.count) {
                 legendDataCopy = angular.copy(legendData);
                 sectionInfo.count = sectionsUsed || sectionInfo.count;
@@ -111,6 +111,12 @@
 
             return generationPromise;
 
+            /**
+             * Helper function which calculates the section width based on the number of sections and margins.
+             * @function getSectionWidth
+             * @private
+             * @return {Number} returns the section width
+             */
             function getSectionWidth() {
                 return (availableWidth -
                     (LEGEND_MARGIN.l + LEGEND_MARGIN.r + (sectionInfo.count - 1) * SECTION_SPACING)) /
