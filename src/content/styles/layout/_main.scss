@@ -52,8 +52,12 @@ rv-panel {
     }
 }
 
-div.md-button {
-    margin-bottom: -10px;
+// reduces the size of buttons to conform better with the inline text around them,
+// as is the case with the focus manager dialog
+div.sm-button {
+    line-height: 20px;
+    min-height: 20px;
+    min-width: 65px;
 }
 
 rv-panel[type='filters'] {

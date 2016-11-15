@@ -14,7 +14,7 @@
         .module('app.common.router')
         .factory('displayManager', displayManager);
 
-    function displayManager($timeout, $q) {
+    function displayManager($timeout, $q, $rootElement) {
         const service = {
             toggleDisplayPanel,
             clearDisplayPanel
@@ -101,10 +101,16 @@
                         display.isLoading = true;
                     }, delay);
                 }
+                let animationPromise = $q.resolve();
+
                 if (!state.active) { // panel is not open; open it
                     display.data = null; // clear data so the newly opened panel doesn't have any content
-                    stateManager.setActive(panelName);
+                    animationPromise = stateManager.setActive(panelName);
                 }
+
+                // whenever a panel is opened (or updated) create a focus link between the element which triggered the
+                // panel change to the first focusable element in the panel.
+                animationPromise.then(() => $.link($rootElement.find(`[rv-state="${panelName}"]`)));
 
                 // update requestId and the requester object
                 display.requester = requester;

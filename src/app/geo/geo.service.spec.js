@@ -52,14 +52,6 @@ describe('geo', () => {
         $provide.constant('events', $q => () => $q.resolve());
     }
 
-    function mockFocusService($provide) {
-        $provide.factory('focusService', () => {
-            return {
-                createLink: () => {}
-            };
-        });
-    }
-
     function mockMdSidenav($provide) {
         $provide.constant('$mdSidenav', $q => () => $q.resolve());
     }
@@ -67,7 +59,7 @@ describe('geo', () => {
     beforeEach(() => {
 
         bard.appModule('app.geo', 'app.common.router', mockStorageService, mockGapiService,
-            mockConfigService, mockTranslateService, mockEvents, mockFocusService, mockMdSidenav);
+            mockConfigService, mockTranslateService, mockEvents, mockMdSidenav);
 
         // inject services
         bard.inject('geoService', 'gapiService', '$rootScope', 'configService',
