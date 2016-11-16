@@ -88,7 +88,7 @@ function packLayersIntoSections(layers, sections) {
  * @param {Object} layer a layer object to be split into `splitCount` parts
  * @param {int} chunkSize the maximum height in pixels of the legend sections
  * @param {int} splitCount the number of pieces which the layer should be broken into
- * @return an object of the form { whiteSpace: <int>, splits: [ <layerItems> ] }
+ * @return an object with properties whiteSpace: <int>, splits: [ <layerItems> ]
  */
 function splitLayer(layer, chunkSize, splitCount) {
     let itemYOffset = layer.y;
@@ -217,7 +217,7 @@ function allocateLayersToSections(layers, sectionsAvailable, mapHeight) {
  * @param {Array} layerList a list of layers to be updated (modified in place)
  * @param {int} sectionsAvailable the maximum number of sections to use
  * @param {int} mapHeight the rendered height of the map image
- * @return an object in the form `{ layers, sectionsUsed }` (layerList is modified in place)
+ * @return an object with properties layers, sectionsUsed. (layerList is modified in place)
  */
 function makeLegend(layerList, sectionsAvailable, mapHeight) {
     if (layerList.length > TOO_MANY_LAYERS) {
