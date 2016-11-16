@@ -36,4 +36,22 @@ describe('Map Manager', () => {
         expect(testExtent.xmin).toBe(jsonExtent.xmin);
     });
 
+    it('should not enforce a valid extent range', () => {
+        const result = mapManager.clipExtentCoords(434017.5, 3549492, -2681457, 3549492, -2681457, 6230949);
+        expect(result[0]).toBeCloseTo(3549492);
+        expect(result[1]).toBeCloseTo(-2681457);
+    });
+
+    it('should enforce a too high extent range', () => {
+        const result = mapManager.clipExtentCoords(3549496, 3549500, 3549492, 3549492, -2681457, 8);
+        expect(result[0]).toBeCloseTo(3549492);
+        expect(result[1]).toBeCloseTo(3549484);
+    });
+
+    it('should enforce a too low extent range', () => {
+        const result = mapManager.clipExtentCoords(-2681463.5, -2681457, -2681470, 3549492, -2681457, 13);
+        expect(result[0]).toBeCloseTo(-2681444);
+        expect(result[1]).toBeCloseTo(-2681457);
+    });
+
 });

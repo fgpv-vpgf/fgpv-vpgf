@@ -29,7 +29,8 @@ module.exports = function (esriBundle, geoApi) {
         findClosestLOD,
         getNorthArrowAngle,
         getScaleRatio,
-        enforceBoundary
+        enforceBoundary,
+        clipExtentCoords // only exposed so unit tests can access it
     };
 
     let basemapCtrl;
@@ -251,7 +252,31 @@ module.exports = function (esriBundle, geoApi) {
         return { distance, ratio, units };
     }
 
-    /*
+    /**
+     * Compares to sets of co-ordinates for extents (valid for both x and y). If center of input co-ordinates falls outside
+     * map co-ordiantes, function will adjust them so the center is inside the map co-ordinates.
+     *
+     * @function clipExtentCoords
+     * @private
+     * @param {Numeric} mid      middle of the the range to test
+     * @param {Numeric} max      maximum value of the range to test
+     * @param {Numeric} min      minimum value of the range to test
+     * @param {Numeric} mapMax   maximum value of the map range
+     * @param {Numeric} mapMin   minimum value of the map range
+     * @param {Numeric} len      length of the adjusted range, if adjusted
+     * @return {Array}           two element array of Numeric, containing result max and min values
+     */
+    function clipExtentCoords(mid, max, min, mapMax, mapMin, len) {
+
+        if (mid > mapMax) {
+            [max, min] = [mapMax, mapMax - len];
+        } else if (mid < mapMin) {
+            [max, min] = [mapMin + len, mapMin];
+        }
+        return [max, min];
+    }
+
+    /**
      * Checks if the center of the given extent is outside of the maximum extent. If it is,
      * will determine an adjusted extent with a center inside the maximum extent.  Returns both
      * an indicator flag if an adjustment happened, and the adjusted extent.
@@ -264,7 +289,6 @@ module.exports = function (esriBundle, geoApi) {
     function enforceBoundary(extent, maxExtent) {
         // clone extent
         const newExtent = esriBundle.Extent(extent.toJson());
-        let flag = false;
 
         // determine dimensions of adjusted extent.
         // same as input, unless input is so large it consumes max.
@@ -275,26 +299,14 @@ module.exports = function (esriBundle, geoApi) {
         const width = Math.min(extent.getWidth(), maxExtent.getWidth());
         const center = extent.getCenter();
 
-        // takes information about co-ords of two extents (for either x or y)
-        // returns a pair of values that ensures enforcement. may be adjusted or not
-        const clip = (mid, max, min, mapMax, mapMin, len) => {
-            if (mid > mapMax) {
-                [max, min] = [mapMax, mapMax - len];
-            } else if (mid < mapMin) {
-                [max, min] = [mapMin + len, mapMin];
-            }
-            return [max, min];
-        };
-
         [newExtent.xmax, newExtent.xmin] =
-            clip(center.x, newExtent.xmax, newExtent.xmin, maxExtent.xmax, maxExtent.xmin, width);
+            clipExtentCoords(center.x, newExtent.xmax, newExtent.xmin, maxExtent.xmax, maxExtent.xmin, width);
         [newExtent.ymax, newExtent.ymin] =
-            clip(center.y, newExtent.ymax, newExtent.ymin, maxExtent.ymax, maxExtent.ymin, height);
-        flag = !extent.contains(newExtent); // true if we adjusted the extent
+            clipExtentCoords(center.y, newExtent.ymax, newExtent.ymin, maxExtent.ymax, maxExtent.ymin, height);
 
         return {
             newExtent,
-            adjusted: flag
+            adjusted: !extent.contains(newExtent) // true if we adjusted the extent
         };
     }
 
