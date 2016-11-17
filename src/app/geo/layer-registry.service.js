@@ -64,6 +64,7 @@
             service.legend = ref.legendService.legend;
 
             // set event handler for extent changes
+            // TODO consider listning to the $rootScope.$broadcast 'extentChange' event instead
             gapiService.gapi.events.wrapEvents(
                 geoState.mapService.mapObject,
                 {
@@ -146,6 +147,17 @@
                     Object.keys(service.layers).forEach(layerId => {
                         setScaleDepState(layerId);
                     });
+                }
+
+                // if extent suppressor is on, enforce it here
+                if (config.map.restrictNavigation && geoState.maxExtent) {
+                    const extentTest = gapiService.gapi.mapManager.enforceBoundary(params.extent, geoState.maxExtent);
+                    if (extentTest.adjusted) {
+                        // NOTE: the map wil not do a smooth pan because we have pan duration
+                        // set to 0 for reasons (keyboard pan?).
+                        // See http://jsfiddle.net/bbunker/JP565/ for sample of default behavior
+                        geoState.mapService.mapObject.setExtent(extentTest.newExtent);
+                    }
                 }
             }
 

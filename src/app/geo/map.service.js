@@ -191,6 +191,35 @@
             }
 
             /**
+             * Retrieve maximum extent from extentSets.
+             * @function getMaxExtFromExtentSets
+             * @param {Object} extentSets collection of extents from the app config
+             * @returns {Object|Null} the maximum extent as defined by the config. null if nothing is defined.
+             * @private
+             */
+            function getMaxExtFromExtentSets(extentSets) {
+
+                if (extentSets) {
+                    // In configSchema, at least one extent for a basemap
+                    const extentSetForId = extentSets.find(extentSet => {
+                        if (extentSet.id === geoState.selectedBaseMapExtentSetId) {
+                            return true;
+                        }
+                    });
+
+                    // no matching id in the extentset
+                    if (angular.isUndefined(extentSetForId)) {
+                        throw new Error('could not find an extent set with matching id.');
+                    }
+
+                    // find the maximum extent type from extentSetForId
+                    return extentSetForId.maximum || extentSetForId.full || extentSetForId.default || null;
+                } else {
+                    return null;
+                }
+            }
+
+            /**
              * Retrieve default extent from extentSets.
              * @function getDefaultExtFromExtentSets
              * @private
@@ -610,6 +639,28 @@
             }
 
             /**
+            * Takes a config based extent and returns a proper extent. Casts to Extent class.
+            * Reprojects to map projection if required.
+            *
+            * @function enhanceConfigExtent
+            * @private
+            * @param {Object} extent   the extent to enhance
+            * @param {Object} mapSR    the spatial reference of the map
+            * @returns {Object}        extent cast in Extent prototype, and in map spatial reference
+            */
+            function enhanceConfigExtent(extent, mapSR) {
+                const realExtent = gapiService.gapi.mapManager.getExtentFromJson(extent);
+
+                if (gapiService.gapi.proj.isSpatialRefEqual(mapSR, extent.spatialReference)) {
+                    // same spatial reference, no reprojection required
+                    return realExtent;
+                } else {
+                    // need to re-project
+                    return gapiService.gapi.proj.projectEsriExtent(realExtent, mapSR);
+                }
+            }
+
+            /**
             * Ready a trigger on the map load event.
             * Also initialize map full extent.
             * @function prepMapLoad
@@ -621,54 +672,40 @@
                 return $q(resolve => {
                     const map = service.mapObject;
                     const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
+                    const lMaxExtent = getMaxExtFromExtentSets(config.map.extentSets);
 
                     setMapLoadingFlag(true);
 
-                    // map extent is not available until map is loaded
-                    if (lFullExtent) {
-                        gapiService.gapi.events.wrapEvents(map, {
-                            load: () => {
-                                // setup hilight layer
-                                geoState.hilight = gapiService.gapi.hilight.makeHilightLayer();
-                                map.addLayer(geoState.hilight);
+                    gapiService.gapi.events.wrapEvents(map, {
+                        load: () => {
+                            // setup hilight layer
+                            geoState.hilight = gapiService.gapi.hilight.makeHilightLayer();
+                            map.addLayer(geoState.hilight);
 
-                                // setup full extent
-                                if (lFullExtent) {
-                                    // compare map extent and setting.extent spatial-references
-                                    // make sure the full extent has the same spatial reference as the map
-                                    if (gapiService.gapi.proj.isSpatialRefEqual(map.extent
-                                            .spatialReference,
-                                            lFullExtent.spatialReference)) {
-
-                                        // same spatial reference, no reprojection required
-                                        geoState.fullExtent = gapiService.gapi.mapManager.getExtentFromJson(
-                                            lFullExtent);
-                                    } else {
-
-                                        // need to re-project
-                                        geoState.fullExtent = gapiService.gapi.proj.projectEsriExtent(
-                                            gapiService.gapi.mapManager.getExtentFromJson(
-                                                lFullExtent),
-                                            map.extent.spatialReference);
-                                    }
-                                }
-
-                                setMapLoadingFlag(false);
-                                resolve();
-                            },
-                            'update-start': () => {
-                                console.log('   Map update START!');
-
-                                setMapLoadingFlag(true, 300);
-                            },
-                            'extent-change': data => $rootScope.$broadcast('extentChange', data),
-                            'update-end': () => {
-                                console.log('   Map update END!');
-
-                                setMapLoadingFlag(false, 100);
+                            // setup full extent
+                            if (lFullExtent) {
+                                geoState.fullExtent = enhanceConfigExtent(lFullExtent, map.extent.spatialReference);
                             }
-                        });
-                    }
+                            if (lMaxExtent) {
+                                geoState.maxExtent = enhanceConfigExtent(lMaxExtent, map.extent.spatialReference);
+                            }
+
+                            setMapLoadingFlag(false);
+                            resolve();
+                        },
+                        'update-start': () => {
+                            console.log('   Map update START!');
+
+                            setMapLoadingFlag(true, 300);
+                        },
+                        'extent-change': data => $rootScope.$broadcast('extentChange', data),
+                        'update-end': () => {
+                            console.log('   Map update END!');
+
+                            setMapLoadingFlag(false, 100);
+                        }
+                    });
+
                 });
             }
 
