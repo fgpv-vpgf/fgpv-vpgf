@@ -39,7 +39,7 @@
     "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git"
   },
   "overrides": {
-    "canvas-toBlob.js":{
+    "canvas-toBlob.js": {
       "main": "canvas-toBlob.js"
     },
     "svg.textflow.js": {
