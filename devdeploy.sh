@@ -23,11 +23,10 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     fi
 
     echo "Destintation: $DESTDIR"
+    # removes the previous build (necessary for long running branches)
+    ssh "$SSHSRV" rm -f -r "$DESTDIR"
     ssh "$SSHSRV" mkdir -p "$DESTDIR/dist"
     rsync -av --delete "build/" "$SSHSRV:$DESTDIR/prod"
     rsync -av "dist/" "$SSHSRV:$DESTDIR/dist"
-    # removes the previous dev folder folder
-    ssh "$SSHSRV" rm -f -r "$DESTDIR/dev"
     ssh "$SSHSRV" unzip "$DESTDIR/dist/*-samples.zip" -d "$DESTDIR/dev"
-
 fi
