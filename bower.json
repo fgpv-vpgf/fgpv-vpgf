@@ -1,7 +1,7 @@
 {
   "name": "r2v2",
   "description": "FGP R2 Viewer",
-  "version": "1.6.0",
+  "version": "1.6.0-1",
   "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf",
   "license": "MIT",
   "private": true,
@@ -39,7 +39,7 @@
     "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git"
   },
   "overrides": {
-    "canvas-toBlob.js":{
+    "canvas-toBlob.js": {
       "main": "canvas-toBlob.js"
     },
     "svg.textflow.js": {
