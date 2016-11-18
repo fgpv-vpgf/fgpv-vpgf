@@ -156,7 +156,9 @@
                         // NOTE: the map will not do a smooth pan because we have pan duration
                         // set to 0 for reasons (keyboard pan?).
                         // See http://jsfiddle.net/bbunker/JP565/ for sample of default behavior
-                        geoState.mapService.mapObject.setExtent(extentTest.newExtent);
+                        // NOTE: we use centerAt instead of setExtent, as setExtent can sometimes
+                        // cause the zoom level to change at extreme scales
+                        geoState.mapService.mapObject.centerAt(extentTest.newExtent.getCenter());
                     }
                 }
             }
