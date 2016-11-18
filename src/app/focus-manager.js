@@ -1,7 +1,7 @@
 /* global RV, jQuery */
 ((RV, jQuery) => {
     // delay in milliseconds from time focus is lost to when action is taken
-    const focusoutDelay = 200;
+    const focusoutDelay = 800;
     // all the possible states a viewer can be in - only one at any given time
     const statuses = {
         NONE: undefined,
