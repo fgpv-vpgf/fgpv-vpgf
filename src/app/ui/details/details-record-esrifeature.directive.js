@@ -102,8 +102,12 @@
         // check if items exist. it does not exist on single legend item
         if (self.requester.layerRec.legendEntry.items) {
             // get legend entry from the requester to watch modification on visiblity for sublayer
-            self.directLegendEntry = self.requester.layerRec.legendEntry.items.find(le =>
-                le.featureIdx === self.requester.featureIdx);
+            // needs to walk the items because it can be in a sub folder
+            self.requester.layerRec.legendEntry.walkItems(le => {
+                if (le.featureIdx === self.requester.featureIdx) {
+                    self.directLegendEntry = self.requester.layerRec.legendEntry;
+                }
+            });
         } else {
             // get legend entry from layer record
             self.directLegendEntry = self.requester.layerRec.legendEntry;
