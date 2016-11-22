@@ -1,6 +1,6 @@
 ## pip install PyGithub
 
-import re, sys, subprocess, json, collections, time
+import re, sys, subprocess, json, collections, time, os, sys
 from github import Github
 
 class WeeklyBuilder:
@@ -15,6 +15,7 @@ class WeeklyBuilder:
         self.github = Github(token)
         self.org_repo = self.github.get_organization("fgpv-vpgf").get_repo("fgpv-vpgf")
         self.user = self.github.get_user()
+        self.maxMergeTries = 0
 
     def listBuildBranches(self):
         """Return a list of upstream release branches to be updated in this weekly build.
@@ -22,9 +23,9 @@ class WeeklyBuilder:
         Returns:
             A list of string branch names
         """
-        pattern = re.compile("^upstream/(develop|v)+")
+        pattern = re.compile("^upstream/(develop|v)")
         list_remote_branches = subprocess.run(['git', 'branch', '-r'], shell=True, stdout=subprocess.PIPE, universal_newlines=True)
-        only_upstream_branches = list(map(str.strip, list_remote_branches.stdout.splitlines()))
+        only_upstream_branches = [str.strip(line) for line in list_remote_branches.stdout.splitlines()]
         return [up_branch for up_branch in only_upstream_branches if pattern.match(up_branch)]
 
     def readJsonFile(self, filename):
@@ -89,9 +90,11 @@ class WeeklyBuilder:
         """
         try:
             pull.merge()
+            self.maxMergeTries = 0
         except:
-            if (!pull.merged()):
+            if not pull.merged() and self.maxMergeTries < 3:
                 pull.create_issue_comment('Trying to merge - waiting for checks to pass')
+                self.maxMergeTries += 1
                 time.sleep(360)
                 self.mergePull(pull)
 
@@ -110,19 +113,23 @@ class WeeklyBuilder:
             head = self.user.login + ':' + self.next_branch
             print("Automated pull request for weekly release " + self.next_version)
 
-            pull = self.org_repo.create_pull("Automated pull request for weekly release " + self.next_version, "", base, head)
-            self.mergePull(pull)
+            #pull = self.org_repo.create_pull("Automated pull request for weekly release " + self.next_version, "", base, head)
+            #self.mergePull(pull)
 
-            subprocess.run(['git', 'tag', 'weekly-' + self.next_version], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-            subprocess.run(['git', 'push', 'upstream', 'weekly-' + self.next_version], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            #subprocess.run(['git', 'tag', 'weekly-' + self.next_version], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            #subprocess.run(['git', 'push', 'upstream', 'weekly-' + self.next_version], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
             title = 'Weekly RAMP2 Build - FGP Viewer v' + self.next_version
             body = """### Weekly Build Release %s
 - [Production Builds](http://fgpv.cloudapp.net/demo/users/%s/build/%s/prod/samples/)
 - [Developer Builds](http://fgpv.cloudapp.net/demo/users/%s/build/%s/dev/samples/)""" % self.next_version, self.user.login, 'weekly-' + self.next_version, self.user.login, 'weekly-' + self.next_version
 
-            self.org_repo.create_git_release('weekly-' + self.next_version, title, body, draft=False, prerelease=True)
+            #self.org_repo.create_git_release('weekly-' + self.next_version, title, body, draft=False, prerelease=True)
 
 if __name__ == '__main__':
-    build = WeeklyBuilder('github token')
+    if len(sys.argv) == 2:
+        build = WeeklyBuilder(sys.argv[1])
+    else:
+        build = WeeklyBuilder(os.environ['GITHUB_TOKEN'])
+
     build.run()
