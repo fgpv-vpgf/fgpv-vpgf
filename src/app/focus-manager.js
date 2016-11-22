@@ -10,8 +10,9 @@
         ACTIVE: 'ACTIVE'
     };
     // jQuery selectors for elements that are likely focusable
-    const focusSelector = `a[href], area[href], input:not([disabled]), select:not([disabled]),
-            textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex], [contenteditable]`;
+    // since we don't want focus on md-sidenav (focus instead on close button) we omit this with [tabindex]:not(md-sidenav)
+    const focusSelector = `a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]),
+        button:not([disabled]), iframe, object, embed, [tabindex]:not(md-sidenav), [contenteditable]`;
     // object containing all currently depressed keyboard keys
     const keys = {};
     // ordered list of elements which has received focus
