@@ -113,23 +113,20 @@ class WeeklyBuilder:
             head = self.user.login + ':' + self.next_branch
             print("Automated pull request for weekly release " + self.next_version)
 
-            #pull = self.org_repo.create_pull("Automated pull request for weekly release " + self.next_version, "", base, head)
-            #self.mergePull(pull)
+            pull = self.org_repo.create_pull("Automated pull request for weekly release " + self.next_version, "", base, head)
+            self.mergePull(pull)
 
-            #subprocess.run(['git', 'tag', 'weekly-' + self.next_version], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-            #subprocess.run(['git', 'push', 'upstream', 'weekly-' + self.next_version], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            subprocess.run(['git', 'tag', 'weekly-' + self.next_version], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            subprocess.run(['git', 'push', 'upstream', 'weekly-' + self.next_version], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
             title = 'Weekly RAMP2 Build - FGP Viewer v' + self.next_version
-            body = """### Weekly Build Release %s
-- [Production Builds](http://fgpv.cloudapp.net/demo/users/%s/build/%s/prod/samples/)
-- [Developer Builds](http://fgpv.cloudapp.net/demo/users/%s/build/%s/dev/samples/)""" % self.next_version, self.user.login, 'weekly-' + self.next_version, self.user.login, 'weekly-' + self.next_version
+            body = """### Weekly Build Release {0}
+- [Production Builds](http://fgpv.cloudapp.net/demo/users/{1}/build/{2}/prod/samples/)
+- [Developer Builds](http://fgpv.cloudapp.net/demo/users/{1}/build/{2}/dev/samples/)""".format(self.next_version, self.user.login, 'weekly-' + self.next_version)
 
-            #self.org_repo.create_git_release('weekly-' + self.next_version, title, body, draft=False, prerelease=True)
+            self.org_repo.create_git_release('weekly-' + self.next_version, title, body, draft=False, prerelease=True)
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        build = WeeklyBuilder(sys.argv[1])
-    else:
-        build = WeeklyBuilder(os.environ['GITHUB_TOKEN'])
-
+    github_token = sys.argv[1] if len(sys.argv) == 2 else os.environ['GITHUB_TOKEN']
+    build = WeeklyBuilder(github_token)
     build.run()
