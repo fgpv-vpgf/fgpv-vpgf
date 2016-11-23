@@ -34,7 +34,6 @@
         // to improve IE performance disable ripple effects globally and debug info
         if (RV.isIE) {
             $mdInkRippleProvider.disableInkRipple();
-            $compileProvider.debugInfoEnabled(false);
         }
     });
 
