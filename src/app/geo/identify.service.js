@@ -478,11 +478,13 @@
                         loadingPromises.push(infallibleLoadingPromise);
                     });
 
-                details.isLoaded = $q.all(loadingPromises).then(() => true);
-                // show details panel only when there is data
-                if (details.data.length) {
-                    stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
-                }
+                details.isLoaded = $q.all(loadingPromises).then(() => {
+                    // show details panel only when there is data
+                    if (details.data.length) {
+                        stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
+                    }
+                    return true;
+                });
             }
         }
     }
