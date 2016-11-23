@@ -478,9 +478,15 @@
                         loadingPromises.push(infallibleLoadingPromise);
                     });
 
-                details.isLoaded = $q.all(loadingPromises).then(() => true);
+                details.isLoaded = $q.all(loadingPromises).then(() => {
+                    if (details.data.length && details.data[0].requester.layerRec.constructor.name === 'WmsRecord') {
+                        stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
+                    }
+                    return true;
+                });
+
                 // show details panel only when there is data
-                if (details.data.length) {
+                if (details.data.length && details.data[0].requester.layerRec.constructor.name !== 'WmsRecord') {
                     stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
                 }
             }
