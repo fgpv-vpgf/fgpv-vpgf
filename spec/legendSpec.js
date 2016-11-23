@@ -48,6 +48,12 @@ describe('Legend', () => {
             expected.forEach((x,i) => expect(res.layers[i].splitBefore).toBe(x));
         });
 
+        it('should not use more sections than necessary (2,2,4,2,2), 4', () => {
+            const res = legend.makeLegend([2,2,4,2,2].map(n => ({height: n})), 4);
+            const expected = [false, false, true, true, false];
+            expected.forEach((x,i) => expect(res.layers[i].splitBefore).toBe(x));
+        });
+
         it('should work for more sections than layers', () => {
             const testdata = JSON.parse(JSON.stringify(data));
             legend.makeLegend(testdata, 4, 200);
