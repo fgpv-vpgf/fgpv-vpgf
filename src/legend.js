@@ -45,13 +45,14 @@ function assignLayerSplits(layers, splitPoints) {
 
 /**
  * Groups multiple layers into each section while attempting to minimize the legend height.
+ * Allocates to the exact number specified in the `sections` argument. 
  * NOTE: don't call this with too many layers as it tests all possible groupings and can be
  * computationally expensive (< 15 layers should be fine)
  * @function
  * @private
  * @param {Array} layers a list of layers to be updated (modified in place)
  * @param {int} sections the number of sections to use
- * @return the same layers array as passed in
+ * @return an object in the form { layers, sectionsUsed, bestPerm, bestHeight }
  */
 function packLayersIntoExactSections(layers, sections) {
     const potentialSplits = layers.length - 1;
@@ -80,13 +81,24 @@ function packLayersIntoExactSections(layers, sections) {
     return { layers, sectionsUsed: sections, bestPerm, bestHeight };
 }
 
+/**
+ * Groups multiple layers into each section while attempting to minimize the legend height.
+ * Repeats as necessary to use the least number of sections while still keeping the resulting
+ * legend height within 20% of optimal.
+ * NOTE: don't call this with too many layers as it tests all possible groupings and can be
+ * computationally expensive (< 15 layers should be fine)
+ * @function
+ * @private
+ * @param {Array} layers a list of layers to be updated (modified in place)
+ * @param {int} sections the number of sections to use
+ * @return an object in the form { layers, sectionsUsed }
+ */
 function packLayersIntoOptimalSections(layers, sections) {
     let bestHeight = Number.MAX_VALUE;
     let bestPerm = null;
     let sectionsUsed = -1;
     for (let n = sections; n > 1; --n) {
         const { bestPerm: perm, bestHeight: height } = packLayersIntoExactSections(layers, n);
-        console.log(perm, height, n);
         if (height * 0.8 > bestHeight) {
             break;
         } else if (height <= bestHeight) {
