@@ -346,7 +346,8 @@
      * it also watches for dispaly data changes and re-creates the table when it does change.
      * @function Controller
      */
-    function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events, filterService) {
+    function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events, filterService,
+        configService) {
         'ngInject';
         const self = this;
 
@@ -505,11 +506,13 @@
                     scroll.measure(false);
 
                     // because of no redraw datatable info does not update, set info manually
-                    // TODO: make sure it works for French translation as well
-                    const info = self.table.containers()[0].getElementsByClassName('dataTables_info')[0];
+                    // set index to make sure it works for French and English translation
+                    // TODO: make it work when new language is added
+                    const info = self.table.table().container().getElementsByClassName('dataTables_info')[0];
                     const infos = info.innerText.split(' ');
-                    infos[1] = scroll.page().start + 1;
-                    infos[3] = scroll.page().end + 1;
+                    const index = (configService.currentLang() === 'en-CA') ? 1 : 3;
+                    infos[index] = scroll.page().start + 1;
+                    infos[index + 2] = scroll.page().end + 1;
                     info.innerText = infos.join(' ');
                 } else if (value === 'full') {
                     // if scroll down to the bottom of the datatable, then up a little bit and switch view from default to full,
