@@ -62,7 +62,7 @@
      * @return {object} directive body
      */
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
-        layoutService, detailService) {
+        layoutService, detailService, $rootElement) {
 
         const directive = {
             restrict: 'E',
@@ -243,8 +243,30 @@
                     const objId = data[displayData.oidField];
                     const layer = geoService.layers[requester.layerId];
                     const zoomLayer = requester.legendEntry;
+                    const filterPanel = $rootElement.find('rv-panel[type="filters"]');
+                    const otherPanels = $rootElement.find('rv-appbar, rv-mapnav, rv-panel:not([type="filters"])');
+                    let ignoreClick = true;
 
                     geoService.zoomToGraphic(layer, zoomLayer, requester.legendEntry.featureIdx, objId);
+
+                    const removeZoomtoTransparency = () => {
+                        otherPanels.removeClass('rv-lt-lg-hide');
+                        filterPanel.removeClass('zoomto-transparent');
+                        filterPanel.off('.zoomTO');
+                        $(window).off('.zoomTo');
+                    };
+
+                    otherPanels.addClass('rv-lt-lg-hide');
+                    filterPanel.addClass('zoomto-transparent');
+
+                    filterPanel.on('click.zoomTO mousedown.zoomTO touchstart.zoomTO', () =>
+                        ignoreClick ? ignoreClick = false : removeZoomtoTransparency()
+                    );
+
+                    // ensures that resizing from sm/md to lg and back does not persist transparency
+                    $(window).on('resize.zoomTO', () =>
+                        layoutService.currentLayout() === 'large' ? removeZoomtoTransparency() : undefined
+                    );
                 }
 
                 /**
