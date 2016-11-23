@@ -50,6 +50,12 @@ rv-panel {
             bottom: 0;
         }
     }
+
+    @include media($rv-lt-lg) {
+        &.zoomto-transparent {
+            opacity: 0.14;
+        }
+    }
 }
 
 // reduces the size of buttons to conform better with the inline text around them,
