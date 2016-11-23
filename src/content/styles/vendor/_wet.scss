@@ -13,4 +13,10 @@
         max-width: inherit;
         margin-bottom: 0;
     }
+
+    // overwerite content ('|') for datatable info pseudo element after
+    // it is introduced by WET template 
+    .dataTables_info::after {
+        content: none;
+    }
 }
