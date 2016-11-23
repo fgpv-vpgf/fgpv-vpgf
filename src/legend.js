@@ -45,7 +45,7 @@ function assignLayerSplits(layers, splitPoints) {
 
 /**
  * Groups multiple layers into each section while attempting to minimize the legend height.
- * Allocates to the exact number specified in the `sections` argument. 
+ * Allocates to the exact number specified in the `sections` argument.
  * NOTE: don't call this with too many layers as it tests all possible groupings and can be
  * computationally expensive (< 15 layers should be fine)
  * @function
