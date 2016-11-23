@@ -53,7 +53,7 @@ function assignLayerSplits(layers, splitPoints) {
  * @param {int} sections the number of sections to use
  * @return the same layers array as passed in
  */
-function packLayersIntoSections(layers, sections) {
+function packLayersIntoExactSections(layers, sections) {
     const potentialSplits = layers.length - 1;
     const requiredSplits = sections - 1;
 
@@ -77,8 +77,24 @@ function packLayersIntoSections(layers, sections) {
             bestPerm = perm;
         }
     });
+    return { layers, sectionsUsed: sections, bestPerm, bestHeight };
+}
+
+function packLayersIntoOptimalSections(layers, sections) {
+    let bestHeight = Number.MAX_VALUE;
+    let bestPerm = null;
+    let sectionsUsed = -1;
+    for (let n = sections; n > 1; --n) {
+        const { bestPerm: perm, bestHeight: height } = packLayersIntoExactSections(layers, n);
+        console.log(perm, height, n);
+        if (height * 0.8 > bestHeight) {
+            break;
+        } else if (height <= bestHeight) {
+            [bestHeight, bestPerm, sectionsUsed] = [height, perm, n];
+        }
+    }
     assignLayerSplits(layers, bestPerm);
-    return { layers, sectionsUsed: sections };
+    return { layers, sectionsUsed };
 }
 
 /**
@@ -229,7 +245,7 @@ function makeLegend(layerList, sectionsAvailable, mapHeight) {
     if (layerList.length <= sectionsAvailable) {
         return allocateLayersToSections(layerList, sectionsAvailable, mapHeight);
     } else {
-        return packLayersIntoSections(layerList, sectionsAvailable);
+        return packLayersIntoOptimalSections(layerList, sectionsAvailable);
     }
 }
 
