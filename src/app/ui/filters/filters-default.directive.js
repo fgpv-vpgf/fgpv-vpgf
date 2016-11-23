@@ -62,7 +62,7 @@
      * @return {object} directive body
      */
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
-        layoutService, detailService) {
+        layoutService, detailService, $rootElement) {
 
         const directive = {
             restrict: 'E',
@@ -243,8 +243,25 @@
                     const objId = data[displayData.oidField];
                     const layer = geoService.layers[requester.layerId];
                     const zoomLayer = requester.legendEntry;
+                    const filterPanel = $rootElement.find('rv-panel[type="filters"]');
+                    const otherPanels = $rootElement.find('rv-appbar, rv-mapnav, rv-panel:not([type="filters"])');
+                    let ignoreClick = true;
 
                     geoService.zoomToGraphic(layer, zoomLayer, requester.legendEntry.featureIdx, objId);
+
+                    filterPanel.on('click mousedown touchstart', () => {
+                        // prevents event propagation on zoom button click (always fired)
+                        if (ignoreClick) {
+                            ignoreClick = false;
+                        } else {
+                            otherPanels.removeClass('rv-lt-lg-hide');
+                            filterPanel.removeClass('zoomto-transparent');
+                            filterPanel.off('click mousedown touchstart');
+                        }
+                    });
+
+                    otherPanels.addClass('rv-lt-lg-hide');
+                    filterPanel.addClass('zoomto-transparent');
                 }
 
                 /**
