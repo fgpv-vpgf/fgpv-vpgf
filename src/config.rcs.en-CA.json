@@ -133,6 +133,15 @@
         "wkid": 3978,
         "extentId": "EXT_NRCAN_Lambert_3978",
         "lodId": "LOD_NRCAN_Lambert_3978",
+        "attribution": {
+            "text": {
+                "enabled": true,
+                "value": "My personnal attribution"
+            },
+            "logo": {
+                "enabled": false
+            }
+        },
         "layers": [
           {
             "id": "CBMT",
@@ -150,6 +159,14 @@
         "wkid": 3978,
         "extentId": "EXT_NRCAN_Lambert_3978",
         "lodId": "LOD_NRCAN_Lambert_3978",
+        "attribution": {
+            "text": {
+                "enabled": false
+            },
+            "logo": {
+                "enabled": true
+            }
+        },
         "layers": [
           {
             "id": "SMR",
@@ -167,6 +184,14 @@
         "wkid": 3978,
         "extentId": "EXT_NRCAN_Lambert_3978",
         "lodId": "LOD_NRCAN_Lambert_3978",
+        "attribution": {
+            "text": {
+                "enabled": true
+            },
+            "logo": {
+                "enabled": false
+            }
+        },
         "layers": [
           {
             "id": "CBME_CBCE_HS_RO_3978",
@@ -184,6 +209,17 @@
         "wkid": 3978,
         "extentId": "EXT_NRCAN_Lambert_3978",
         "lodId": "LOD_NRCAN_Lambert_3978",
+        "attribution": {
+            "text": {
+                "enabled": true,
+                "value": "my custom attribution with custom logo that triggers the renderer because it is too long"
+            },
+            "logo": {
+                "enabled": true,
+                "value": "../../src/content/images/fgp.svg",
+                "link": "http://www.google.ca"
+            }
+        },
         "layers": [
           {
             "id": "CBMT_CBCT_GEOM_3978",
@@ -235,6 +271,14 @@
       "wkid": 102100,
       "extentId": "EXT_ESRI_World_AuxMerc_3857",
       "lodId": "LOD_ESRI_World_AuxMerc_3857",
+      "attribution": {
+          "text": {
+              "enabled": true
+          },
+          "logo": {
+              "enabled": true
+          }
+      },
       "layers": [
         {
           "id": "World_Shaded_Relief",
@@ -252,6 +296,14 @@
       "wkid": 102100,
       "extentId": "EXT_ESRI_World_AuxMerc_3857",
       "lodId": "LOD_ESRI_World_AuxMerc_3857",
+      "attribution": {
+          "text": {
+              "enabled": false
+          },
+          "logo": {
+              "enabled": true
+          }
+      },
       "layers": [
         {
           "id": "World_Street_Map",
@@ -269,6 +321,14 @@
       "wkid": 102100,
       "extentId": "EXT_ESRI_World_AuxMerc_3857",
       "lodId": "LOD_ESRI_World_AuxMerc_3857",
+      "attribution": {
+          "text": {
+              "enabled": true
+          },
+          "logo": {
+              "enabled": false
+          }
+      },
       "layers": [
         {
           "id": "World_Terrain_Base",
@@ -286,6 +346,14 @@
       "wkid": 102100,
       "extentId": "EXT_ESRI_World_AuxMerc_3857",
       "lodId": "LOD_ESRI_World_AuxMerc_3857",
+      "attribution": {
+          "text": {
+              "enabled": false
+          },
+          "logo": {
+              "enabled": false
+          }
+      },
       "layers": [
         {
           "id": "World_Topo_Map",
