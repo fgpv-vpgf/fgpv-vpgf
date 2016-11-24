@@ -1,15 +1,14 @@
-### Description
+## Description
 
-### Bug Report Details
-
-If this is not a bug report, then delete this section.
+## Bug Report Details
+<!-- If this is not a bug report, then delete this section. -->
 
 **Version tested**:
 
-#### Steps to Reproduce
+### Steps to Reproduce
 
-#### Expected Results
+### Expected Results
 
-#### Actual Results
+### Actual Results
 
-#### Logging Output / Screenshots
+### Logging Output / Screenshots

@@ -1,15 +1,17 @@
-### Description
+## Description
+<!-- Link to an issue (use #nnn for easy linking) or include a description -->
 
-- A summary of the commits in the PR.  If this is a single commit
-  PR feel free to copy the commit message.
+## Testing
+<!-- Have you added unit tests for this code?  If not explain why. -->
 
-### Checklist
+## Documentation
+<!-- Which areas of documentation have been changed: jsdoc, tutorials, samples, wiki -->
+
+## Checklist
+<!-- Quick checklist for items that are easy to miss -->
 
 - [ ] `gulp test` succeeds without warnings or errors
-- [ ] unit tests have been added (or their absense has been explained)
+- [ ] release notes have been updated
 - [ ] all commit messages are descriptive and follow guidelines
+- [ ] PR targets the correct release version
 - I will assign this PR to the primary reviewer
-
-### Associated Issues
-
-- Fill in associated issues here (use #nnn for easy linking)
