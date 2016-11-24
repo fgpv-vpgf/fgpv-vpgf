@@ -5,6 +5,7 @@ node_js:
 script:
   - gulp
   - gulp dist
+  - npm run doc
 
 notifications:
   webhooks:
