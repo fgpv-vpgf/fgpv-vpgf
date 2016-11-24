@@ -50,9 +50,9 @@ function assignLayerSplits(layers, splitPoints) {
  * computationally expensive (< 15 layers should be fine)
  * @function
  * @private
- * @param {Array} layers a list of layers to be updated (modified in place)
+ * @param {Array} layers a list of layers to be fitted
  * @param {int} sections the number of sections to use
- * @return an object in the form { layers, sectionsUsed, bestPerm, bestHeight }
+ * @return {Object} an object in the form { layers, sectionsUsed, bestPerm, bestHeight }
  */
 function packLayersIntoExactSections(layers, sections) {
     const potentialSplits = layers.length - 1;
@@ -91,7 +91,7 @@ function packLayersIntoExactSections(layers, sections) {
  * @private
  * @param {Array} layers a list of layers to be updated (modified in place)
  * @param {int} sections the number of sections to use
- * @return an object in the form { layers, sectionsUsed }
+ * @return {Object} an object in the form { layers, sectionsUsed }
  */
 function packLayersIntoOptimalSections(layers, sections) {
     let bestHeight = Number.MAX_VALUE;
