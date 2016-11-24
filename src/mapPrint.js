@@ -29,6 +29,8 @@ const XML_ATTRIBUTES = {
 * @param {Object} options options for the print task
 *                           url - for the esri geometry server
 *                           format - output format
+*                           width - target image height if different from default
+*                           height - target image width if different from default
 * @return {Promise} resolving when the print task created the image
 *                           resolve with a "response: { url: value }" where url is the path
 *                           for the print task export image
@@ -45,8 +47,8 @@ function generateServerImage(esriBundle, geoApi, map, options) {
 
     // only use when layout is MAP_ONLY
     printTemplate.exportOptions = {
-        height: map.height,
-        width: map.width,
+        height: options.height || map.height,
+        width: options.width || map.width,
         dpi: 96
     };
 
@@ -57,11 +59,10 @@ function generateServerImage(esriBundle, geoApi, map, options) {
     // define whether the printed map should preserve map scale or map extent.
     // if true, the printed map will use the outScale property or default to the scale of the input map.
     // if false, the printed map will use the same extent as the input map and thus scale might change.
-    // we always use true because the output image is the same size as the map (we have the same extent and
-    // same scale)
+    // we always use false because the output image needs to be of the same extend as the size might be different
     // we fit the image later because trying to fit the image with canvg when we add user added
     // layer is tricky!
-    printTemplate.preserveScale = true;
+    printTemplate.preserveScale = false;
 
     // set map and template
     printParams.map = map;
@@ -122,11 +123,12 @@ function showLayers(layers) {
 * Create a canvas from the user added layers (svg tag)
 *
 * @param {Object} map esri map object
+* @param {Object} options [optional = null] width and height values; needed to get canvas of a size different from default
 * @param {Object} canvas [optional = null] canvas to draw the image upon; if not supplied, a new canvas will be made
 * @return {Promise} resolving when the canvas have been created
 *                           resolve with a canvas element with user added layer on it
 */
-function generateLocalCanvas(map, canvas = null) {
+function generateLocalCanvas(map, options = null, canvas = null) {
     canvas = canvas || document.createElement('canvas');  // create canvas element
 
     // find esri map's svg node
@@ -137,6 +139,11 @@ function generateLocalCanvas(map, canvas = null) {
     if (!svgNode.getAttribute('xmlns')) {
         Object.entries(XML_ATTRIBUTES).forEach(([key, value]) =>
             svgNode.setAttribute(key, value));
+    }
+
+    let originalOptions;
+    if (options) {
+        originalOptions = resizeSVGElement(svgNode, options);
     }
 
     const generationPromise = new Promise((resolve, reject) => {
@@ -150,8 +157,13 @@ function generateLocalCanvas(map, canvas = null) {
                 useCORS: true,
                 ignoreAnimation: true,
                 ignoreMouse: true,
-                renderCallback: () =>
-                    resolve(canvas)
+                renderCallback: () => {
+                    if (options) {
+                        resizeSVGElement(svgNode, originalOptions.originalSize, originalOptions.originalViewbox);
+                    }
+
+                    resolve(canvas);
+                }
             });
         } catch (error) {
             reject(error);
@@ -159,34 +171,46 @@ function generateLocalCanvas(map, canvas = null) {
     });
 
     return generationPromise;
-}
 
-/**
-* Generate the print image by combining the output from esri print task and
-* svg export of the user added layers.
-*
-* @param {Object} esriBundle bundle of API classes
-* @param {Object} geoApi geoApi to determine if we are in debug mode
-* @return {Object} with two promises - local and server canvas; each promise resolves with a corresponding canvas; each promise can error separately if the canvas cannot be generated returning whatever error message was supplied; it's responsibility of the caller to handle errors appropriately
-*/
-function printMap(esriBundle, geoApi) {
-
-    return (map, options) => {
-
-        const localPromise = generateLocalCanvas(map);
-        const serverPromise = generateServerImage(esriBundle, geoApi, map, options);
-
-        // generate image with server layer from esri print task
-        return {
-            localPromise,
-            serverPromise
+    /**
+     * Scales up or down the specified svg element. To scale it, we need to set the viewbox to the current size and change the size of the element itself.
+     * @function resizeSVGElement
+     * @private
+     * @param {Object} element target svg element to be resized
+     * @param {Object} targetSize target width and height;
+     * @param {Object} targetViewbox [optiopnal = null] target viewbox width and height; if not specified, the original size will be used as the viewbox
+     * @return {Object} returns original size and viewbox of the svg element; can be used to restore the element to its original state
+     */
+    function resizeSVGElement(element, targetSize, targetViewbox = null) {
+        const originalSize = {
+            width: element.width.baseVal.value,
+            height: element.height.baseVal.value
         };
-    };
+
+        const originalViewbox = {
+            width: element.viewBox.baseVal.width,
+            height: element.viewBox.baseVal.height
+        };
+
+        // set the width/height of the svg element
+        element.width.baseVal.value = targetSize.width;
+        element.height.baseVal.value = targetSize.height;
+
+        // set the viewbox width/height of the svg element
+        element.viewBox.baseVal.width = targetViewbox ? targetViewbox.width : originalSize.width;
+        element.viewBox.baseVal.height = targetViewbox ? targetViewbox.height : originalSize.height;
+
+        return {
+            originalSize,
+            originalViewbox
+        };
+    }
 }
 
 // Print map related modules
 module.exports = (esriBundle, geoApi) => {
     return {
-        print: printMap(esriBundle, geoApi),
+        printLocal: (map, options) => generateLocalCanvas(map, options),
+        printServer: (map, options) => generateServerImage(esriBundle, geoApi, map, options)
     };
 };
