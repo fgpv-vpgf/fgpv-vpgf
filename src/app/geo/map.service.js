@@ -85,7 +85,8 @@
                 }
 
                 // set selected base map id
-                setSelectedBaseMap(config.map.initialBasemapId || config.baseMaps[0].id, config);
+                const selectedBaseMap =
+                    setSelectedBaseMap(config.map.initialBasemapId || config.baseMaps[0].id, config);
 
                 // FIXME remove the hardcoded settings when we have code which does this properly
                 mapObject = gapiService.gapi.mapManager.Map(geoState.mapNode, {
@@ -143,6 +144,9 @@
                 if (config.map.initialBasemapId && config.map.initialBasemapId.startsWith(blankBaseMapIdPattern)) {
                     hideBaseMap(true);
                 }
+
+                // set attribution
+                $timeout(() => setAttribution(selectedBaseMap), 500);
 
                 // FIXME temp link for debugging
                 window.FGPV = {
@@ -226,10 +230,11 @@
             /**
              * Switch basemap based on the uid provided.
              * @function selectBasemap
-             * @param {string} id identifier for a specific basemap layerbower
+             * @param {object} selectedBaseMap selected basemap
              */
-            function selectBasemap(id) {
+            function selectBasemap(selectedBaseMap) {
                 const mapManager = service.mapManager;
+                let id = selectedBaseMap.id;
 
                 // const map = service.mapObject;
 
@@ -259,6 +264,8 @@
                     // update for the blank base map.
                     mapManager.BasemapControl.setBasemap(id);
 
+                    // set attribution
+                    $timeout(() => setAttribution(selectedBaseMap), 500);
                 }
             }
 
@@ -294,6 +301,56 @@
 
                 return (oldWkid === newWkid);
 
+            }
+
+            /**
+             * Set attribution on selected base map.
+             * @function setAttribution
+             * @param {Object} config base map configuration
+             */
+            function setAttribution(config) {
+                const cfgAtt = config.attribution;
+                const attNode = $(service.mapObject.attribution.listNode.parentNode);
+                const logoNode = attNode.parent().find('.logo-med');
+
+                // if blank map, hide attribution
+                if (config.type === 'blank') {
+                    attNode.addClass('rv-attribution-hide');
+                    logoNode.addClass('rv-attribution-hide');
+                } else {
+                    // if config is undefined, show attribution text and use built in value
+                    // if it is !== then undefined take values from config file
+                    // for not esri basemap, logo should be disable if no custom logo are provided
+                    // because esri logo and liks are the default values
+                    attNode.removeClass('rv-attribution-hide');
+                    logoNode.removeClass('rv-attribution-hide');
+
+                    if (cfgAtt !== undefined) {
+                        if (cfgAtt.text.enabled && cfgAtt.text.value) {
+                            // loop through node keys to replace value with content from configuration file
+                            // TODO: test when will we have a base map with multiple layers
+                            for (let [key] of Object.entries(service.mapObject.attribution.itemNodes)) {
+                                service.mapObject.attribution.itemNodes[key].innerText = cfgAtt.text.value;
+                            }
+                        } else if (!cfgAtt.text.enabled) {
+                            attNode.addClass('rv-attribution-hide');
+                        }
+
+                        if (cfgAtt.logo.enabled) {
+                            // if values are supplied in the config file, use them
+                            // if not use the esri default value
+                            if (cfgAtt.logo.value && cfgAtt.logo.link) {
+                                logoNode.css('background-image', `url(${cfgAtt.logo.value})`);
+                                gapiService.gapi.mapManager.mapDefault('logoLink', cfgAtt.logo.link);
+                            } else {
+                                logoNode.css('background-image', '');
+                                gapiService.gapi.mapManager.mapDefault('logoLink', 'http://www.esri.com'); // TODO: create a function in geoapi to get default config value
+                            }
+                        } else {
+                            logoNode.addClass('rv-attribution-hide');
+                        }
+                    }
+                }
             }
 
             /**
@@ -573,6 +630,7 @@
             * Sets the current selected map id and extent set id, creates the fullExtent.
             * @function setSelectedBaseMap
             * @param {String} id of base map
+            * @return {Object} selectedBaseMap selected basemap configuration
             */
             function setSelectedBaseMap(id) {
                 geoState.selectedBaseMapId = id;
@@ -607,6 +665,7 @@
 
                 geoState.lods = getLod(config.map.lods);
 
+                return selectedBaseMap;
             }
 
             /**
