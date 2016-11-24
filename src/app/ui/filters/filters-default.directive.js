@@ -161,9 +161,9 @@
                     // map columns to their ordinal indexes. but mark the symbol column as -1.
                     // then filter out the -1. result is an array of column indexes that
                     // are not the symbol column.
-                    return columns.map((column, i) =>
-                        column.data === 'rvSymbol' ? -1 : i
-                    ).filter(idx => idx > -1);
+                    return columns
+                        .map((column, i) => column.data === 'rvSymbol' ? -1 : i)
+                        .filter(idx => idx > -1);
                 };
 
                 // ~~I hate DataTables~~ Datatables are cool!
