@@ -19,7 +19,7 @@
         .module('app.ui.common')
         .directive('rvDragula', rvDragula);
 
-    function rvDragula($compile, dragulaService, keyNames) {
+    function rvDragula($compile, dragulaService, keyNames, $timeout) {
         const directive = {
             restrict: 'A',
             link: link,
@@ -52,7 +52,43 @@
             const drake = dragulaService.find(dragulaScope, attr.rvDragula)
                 .drake;
 
+            // make dragula more touch friendly - only start drag after 1 second if y movement is less than 10 pixels
+            let touchTimeout;
+            let draggable = false;
+            let initYOffset;
+
+            el.on('touchmove mousemove', e => {
+                if (Math.abs(initYOffset - getYOffset(e)) > 10) {
+                    $timeout.cancel(touchTimeout);
+                }
+
+                if (!draggable) {
+                    e.stopPropagation(true);
+                }
+            });
+
+            el.on('touchstart mousedown', e => {
+                initYOffset = getYOffset(e);
+                touchTimeout = $timeout(() => draggable = true, 1000);
+            });
+
+            el.on('touchend mouseup', () => {
+                $timeout.cancel(touchTimeout);
+                draggable = false;
+            });
+
             keyboardDragula(el, scope, drake, dragulaOptions);
+        }
+
+        /**
+         * Returns the event pageY value for mousemove/mousedown/touchstart/touchmove events
+         * @function getYOffset
+         * @private
+         * @param  {Object} event event object
+         * @return {Number} the vertical position in pixels as defined by the event
+         */
+        function getYOffset(event) {
+            return event.pageY ? event.pageY : event.originalEvent.touches[0].pageY;
         }
 
         /**
