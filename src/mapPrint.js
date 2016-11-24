@@ -59,7 +59,7 @@ function generateServerImage(esriBundle, geoApi, map, options) {
     // define whether the printed map should preserve map scale or map extent.
     // if true, the printed map will use the outScale property or default to the scale of the input map.
     // if false, the printed map will use the same extent as the input map and thus scale might change.
-    // we always use false because the output image needs to be of the same extend as the size might be different
+    // we always use false because the output image needs to be of the same extent as the size might be different
     // we fit the image later because trying to fit the image with canvg when we add user added
     // layer is tricky!
     printTemplate.preserveScale = false;
@@ -123,7 +123,9 @@ function showLayers(layers) {
 * Create a canvas from the user added layers (svg tag)
 *
 * @param {Object} map esri map object
-* @param {Object} options [optional = null] width and height values; needed to get canvas of a size different from default
+* @param {Object} options [optional = null] { width, height } values; needed to get canvas of a size different from default
+*                           width {Number}
+*                           height {Number}
 * @param {Object} canvas [optional = null] canvas to draw the image upon; if not supplied, a new canvas will be made
 * @return {Promise} resolving when the canvas have been created
 *                           resolve with a canvas element with user added layer on it
@@ -177,9 +179,19 @@ function generateLocalCanvas(map, options = null, canvas = null) {
      * @function resizeSVGElement
      * @private
      * @param {Object} element target svg element to be resized
-     * @param {Object} targetSize target width and height;
-     * @param {Object} targetViewbox [optiopnal = null] target viewbox width and height; if not specified, the original size will be used as the viewbox
-     * @return {Object} returns original size and viewbox of the svg element; can be used to restore the element to its original state
+     * @param {Object} targetSize object with target sizes in the form of { width, height }
+     *                           width {Number}
+     *                           height {Number}
+     * @param {Object} targetViewbox [optional = null] target viewbox sizes in the form of { width, height }; if not specified, the original size will be used as the viewbox
+     *                           width {Number}
+     *                           height {Number}
+     * @return {Object} returns original size and viewbox of the svg element in the form of { originalSize: { width, height }, originalViewbox: { width, height } }; can be used to restore the element to its original state
+     *                          originalSize:
+     *                              width {Number}
+     *                              height {Number}
+     *                          originalViewbox:
+     *                              width {Number}
+     *                              height {Number}
      */
     function resizeSVGElement(element, targetSize, targetViewbox = null) {
         const originalSize = {
