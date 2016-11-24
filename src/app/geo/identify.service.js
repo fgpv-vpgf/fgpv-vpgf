@@ -318,7 +318,7 @@
 
                         // TODO: check for French service
                         // check if a result is returned by the service. If not, do not add to the array of data
-                        if (data.indexOf('Search returned no results') === -1) {
+                        if (data.indexOf('Search returned no results') === -1 && data !== '') {
                             identifyResult.data.push(data);
                         }
 
