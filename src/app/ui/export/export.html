@@ -2,9 +2,7 @@
     <form ng-cloak>
         <md-dialog-content>
             <div class="md-dialog-content" ng-class="{ 'rv-error': self.isError }">
-                <div class="rv-export-map"
-                    ng-class="{ 'rv-export-complete': self.isGenerationComplete,
-                    'rv-export-map-border': self.isLegendIncluded || self.isScaleIncluded || self.isArrowIncluded}">
+                <div class="rv-export-map" ng-class="{ 'rv-export-complete': self.isGenerationComplete }">
                     <rv-svg class="rv-export-dummy"
                             src="self.dummyGraphic"></rv-svg>
 
@@ -13,21 +11,10 @@
 
                     <rv-svg class="rv-export-local"
                             src="self.localGraphic"></rv-svg>
-                </div>
 
-                <rv-svg class="rv-export-tainted" ng-if="self.isTainted"
-                        src="self.taintedGraphic"></rv-svg>
-
-                <div class="rv-export-arrscale">
-                    <rv-svg class="rv-export-scale"
-                            ng-if="self.isScaleIncluded"
-                            src="self.scaleGraphic"></rv-svg>
-                    <rv-svg class="rv-export-arrow"
-                            ng-if="self.isArrowIncluded"
-                            src="self.arrowGraphic"></rv-svg>
+                    <rv-svg class="rv-export-tainted" ng-if="self.isTainted"
+                            src="self.taintedGraphic"></rv-svg>
                 </div>
-                <rv-svg class="rv-export-footnote"
-                        src="self.footnoteGraphic"></rv-svg>
 
                 <rv-svg ng-if="self.isLegendIncluded"
                         class="rv-export-legend"
@@ -39,8 +26,8 @@
                         <input placeholder="{{ 'export.title' | translate }}" ng-model="self.exportTitle">
                     </md-input-container>
                 </div>
-            </div>
 
+            </div>
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
@@ -56,20 +43,7 @@
                 class="md-primary">
                 {{ 'export.includelegend' | translate }}
             </md-checkbox>
-            <md-checkbox translate-attr-aria-label="export.includescale"
-                       ng-model="self.isScaleIncluded"
-                       ng-change="self.includeScale"
-                       ng-disabled="self.isError"
-                       class="md-primary">
-               {{ 'export.includescale' | translate }}
-           </md-checkbox>
-           <md-checkbox translate-attr-aria-label="export.includearrow"
-                      ng-model="self.isArrowIncluded"
-                      ng-change="self.includeArrow"
-                      ng-disabled="self.isError"
-                      class="md-primary">
-              {{ 'export.includearrow' | translate }}
-          </md-checkbox>
+
             <span flex></span>
 
             <md-button
