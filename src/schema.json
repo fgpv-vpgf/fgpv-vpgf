@@ -119,22 +119,18 @@
         "exportComponent": {
             "type": "object",
             "properties": {
-                "isIncluded": {
+                "isSelected": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Indicates if the component is included in the export graphic."
+                    "description": "Indicates if the component is selected and included in the export graphic."
                 },
-                "isEditable": {
+                "isSelectable": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Indicates if the component can be included or excluded by the user."
-                },
-                "isVisible": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Indicates if the component graphic is visible in the export dialog."
+                    "description": "Indicates if the component can be included or excluded from the export graphic by the user."
                 },
                 "value": {
+                    "type": "string",
                     "description": "Value to be passed to the generation function of this export component."
                 }
             },
@@ -765,11 +761,12 @@
              "properties": {
                  "title": { "$ref": "#/definitions/exportComponent", "description": "Title of the export graphic." },
                  "map": { "$ref": "#/definitions/exportComponent", "description": "Map component." },
-                 "mapelements": { "$ref": "#/definitions/exportComponent", "description": "North arrow and scalebar component." },
+                 "mapElements": { "$ref": "#/definitions/exportComponent", "description": "North arrow and scalebar component." },
                  "legend": { "$ref": "#/definitions/exportComponent", "description": "Legend component." },
                  "footnote": { "$ref": "#/definitions/exportComponent", "description": "Foot notice to add to exported map" },
                  "timestamp":  { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." }
-             }
+             },
+             "additionalProperties": false
          },
 
         "map": {
