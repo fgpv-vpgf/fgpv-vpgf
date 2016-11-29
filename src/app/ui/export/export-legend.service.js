@@ -31,7 +31,7 @@
         .module('app.ui')
         .service('exportLegendService', exportLegendService);
 
-    function exportLegendService($q, $rootElement, geoService, gapiService) {
+    function exportLegendService($q, $rootElement, geoService, gapiService, graphicsService) {
         const service = {
             generate
         };
@@ -54,6 +54,11 @@
             // TODO: break item names when they overflow even if there are no spaces in the name
 
             const legendData = extractLegendTree(geoService.legend);
+
+            // resolve with an empty 0 x 0 canvas if there is not layers in the legend
+            if (legendData.length === 0) {
+                return $q.resolve(graphicsService.createCanvas(0, 0));
+            }
 
             // make a hidden node to construct a legend in
             const hiddenNode = angular.element('<div>').css('visibility', 'hidden');
