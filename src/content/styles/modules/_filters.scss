@@ -28,7 +28,17 @@
                     flex-direction: column;
                     min-height: 0; // Firefox fix; otherwise div won't shrink: http://stackoverflow.com/questions/27424831/firefox-flexbox-overflow
 
-                    .dataTables_scrollHead {}
+                    // for filters in the header for large layout
+                    .dataTables_scrollHead {
+
+                        @include largeFilters;
+
+                        @include media($rv-lg) {
+                            .rv-filter-string, .rv-filter-number, .rv-filter-date {
+                                display: flex;
+                            }
+                        }
+                    }
 
                     .dataTables_scrollBody {
                         flex: 1; // this needed for the body to fill available space
@@ -65,6 +75,26 @@
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@mixin largeFilters {
+
+    .rv-filter-string, .rv-filter-number, .rv-filter-date {
+        display: none;
+        height: 35px;
+    }
+
+    md-input-container {
+        margin: 0;
+
+        input {
+            &[placeholder] {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
         }
     }

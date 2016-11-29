@@ -34,7 +34,11 @@
             filterTimeStamps,
             filter: {
                 isActive: false
-            }
+            },
+            onFilterStringChange: debounceService.registerDebounce(onFilterStringChange, 700, false),
+            onFilterNumberChange: debounceService.registerDebounce(onFilterNumberChange, 700, false),
+            onFilterDateChange: onFilterDateChange,
+            preventSorting: preventSorting
         };
 
         init();
@@ -55,6 +59,53 @@
                 filteredState().then(() => {
                     filterTimeStamps.onChanged = Date.now();
                 });
+            }
+        }
+
+        /**
+         * Apply on string filter change callback
+         *
+         * @function onFilterStringChange
+         * @param   {String}   column   column name
+         * @param   {String}   value   search filter
+         */
+        function onFilterStringChange(column, value) {
+            console.log(`string - ${column}: ${value}`);
+        }
+
+        /**
+         * Apply on number filter change callback
+         *
+         * @function onFilterNumberChange
+         * @param   {String}   column   column name
+         * @param   {Number}   min   minimum number search filter
+         * @param   {Number}   max   maximum number search filter
+         */
+        function onFilterNumberChange(column, min, max) {
+            console.log(`number - ${column}: ${min} - ${max}`);
+        }
+
+        /**
+         * Apply on date filter change callback
+         *
+         * @function onFilterDateChange
+         * @param   {String} column   column name
+         * @param   {Date}   min   minimum date search filter
+         * @param   {Date}   max   maximum date search filter
+         */
+        function onFilterDateChange(column, min, max) {
+            console.log(`date - ${column}: ${min} - ${max}`);
+        }
+
+        /**
+         * Prevent column sort when filter is clicked
+         *
+         * @function preventSorting
+         */
+        function preventSorting(event) {
+            if (event.type === 'click' || (event.type === 'keypress' && event.which === 13)) {
+                event.stopPropagation(true);
+                event.preventDefault(true);
             }
         }
 
