@@ -1,17 +1,16 @@
 @mixin export {
-
-    %canvas {
-        width: 100% !important;
-        height: auto !important;
-        display: block;
-    }
-
     .rv-export {
 
         align-self: flex-start; // stick the dialog to the top edge of the viewer container
         margin-top: $viewport-gutter;
         border-radius: 0;
         max-height: calc(100% - #{$viewport-gutter} * 2);
+
+        // TODO: abstract that into some generic rv- class
+        // this is to make primary buttons stand out, as in the import wizard
+        .md-primary {
+            min-width: rem(12);
+        }
 
         md-dialog-actions {
             position: relative;
@@ -20,10 +19,13 @@
             flex: 1 0 0%;
             border-bottom: 1px solid $divider-color-light;
             align-items: center;
+            display: flex;
 
-            md-checkbox {
-                margin-top: 0;
-                margin-bottom: 0;
+            md-select {
+                margin: 0 rem(2.4) 0 0;
+                max-width: rem(23);
+                min-width: rem(5);
+                flex: 2;
             }
         }
 
@@ -42,39 +44,108 @@
             }
         }
 
-        .rv-export-map {
-            display: block;
-            width: 100%;
+        .rv-invert {
+            background-color: $primary-color-dark;
+            color: $primary-color-text;
+
+            p, span {
+                color: $primary-color-text;
+            }
+
+            h1, h2, h3,
+            h4, h5, h6 {
+                color: $primary-color-text;
+            }
+
+            .md-button[disabled] span {
+                color: rgba($color: $primary-color-light, $alpha: 0.38);
+            }
+
+            md-icon {
+                color: $primary-color-light;
+            }
+
+            md-input-container {
+                > label {
+                    color: $primary-color-light;
+                }
+
+                .md-input {
+                    color: $primary-color-text;
+                    border-color: $primary-color-light;
+
+                    &::placeholder {
+                        color: $primary-color-text;
+                        opacity: 0.8;
+                    }
+                }
+
+                div[ng-message], .md-char-counter {
+                    color: $primary-color-light;
+                }
+
+                &.md-input-invalid .md-input {
+                    border-color: $alert-color;
+                }
+            }
+        }
+
+        .rv-export-custom-size,
+        .rv-export-settings {
             position: relative;
-            filter: blur(rem(0.5));
-            transition: filter $swift-ease-in-duration * 2 $swift-ease-in-out-timing-function;
+            top: - rem(2.4);
+            left: - rem(2.4);
+            width: calc( 100% + #{rem(2.4)} * 2);
 
-            &.rv-export-complete {
-                filter: none;
-            }
+            padding: rem(2.4);
 
-            > rv-svg {
-                @extend %export-component;
-            }
-
-            > canvas {
-                @extend %canvas;
-            }
-
-            &.rv-export-complete {
-                filter: none;
+            h4 {
+                margin: rem(1.2) 0;
             }
         }
 
-        .rv-export-map-border {
-            border: 1px solid $divider-color;
+        .rv-export-custom-size {
+            @include media($rv-gt-sm) {
+                .rv-container {
+                    max-width: $toolbar-width * 1.5;
+
+                    md-input-container {
+                        flex: 3;
+                    }
+
+                    md-icon {
+                        flex: 1;
+                    }
+                }
+            }
+
+            @include media($rv-sm) {
+                md-input-container, md-icon {
+                    flex-basis: 100%;
+                }
+            }
+
+            md-icon {
+                color: $primary-color-light;
+            }
         }
 
-        .rv-export-dummy {
+        .rv-export-settings .rv-list {
+            margin: rem(1.8) 0;
+        }
+
+        .rv-export-section {
+            // transition: filter $swift-ease-in-duration * 2 $swift-ease-in-out-timing-function;
+        }
+
+        rv-svg {
+            transition: filter $swift-ease-in-duration $swift-ease-in-out-timing-function;
             display: block;
 
             > canvas {
-                @extend %canvas;
+                width: 100% !important;
+                height: auto !important;
+                display: block;
             }
         }
 
@@ -82,47 +153,9 @@
             display: block;
 
             > canvas {
-                @extend %canvas;
-            }
-        }
-
-        .rv-export-arrscale {
-            width: 45%;
-            float: left;
-
-            .rv-export-scale {
-                display: inline-block;
-            }
-
-            .rv-export-arrow {
-                display: inline-block;
-                margin-top: 5px;
-                float: right;
-            }
-        }
-
-        .rv-export-footnote {
-            display: inline-block;
-            float: right;
-            width: 50%;
-
-            canvas {
-                @extend %canvas;
-            }
-        }
-
-        .rv-export-legend {
-            @extend %export-component;
-        }
-
-        .rv-export-server,
-        .rv-export-local,
-        .rv-export-tainted {
-            position: absolute;
-            top: 0;
-
-            canvas {
-                @extend %canvas;
+                width: 100% !important;
+                height: auto !important;
+                display: block;
             }
         }
 
@@ -137,7 +170,7 @@
 
         .rv-export-title {
             position: absolute;
-            top: rem(3.2);
+            top: rem(3.2) * 5;
             display: flex;
             justify-content: center;
             right: rem(4.8);
@@ -156,5 +189,7 @@
                 }
             }
         }
+
+        .rv-export-select {}
     }
 }
