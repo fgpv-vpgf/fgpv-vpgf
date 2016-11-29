@@ -169,12 +169,35 @@ Geometry types,geometry.type.esriGeometryPolygon, polygon|polygons, polygone|pol
 Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.close,Close,Fermer
 ,export.save,Save,Sauver
+,export.download,Download,Télécharger
+,export.cancel,Cancel,Annuler
 ,export.includelegend,Legend,Légende
 ,export.title,Enter Title,Titre
 ,export.error.timeout,"Connection timed out. Stopping export task.","Connexion a expiré. Tâche d’exportation arrêt."
 ,export.error.tainted,"Oops, we can't save the export image directly. You can right click the image and select ""Save As..."" if supported by your browser.","Nous ne pouvons pas enregistrer l’image directement. Vous pouvez cliquez sur le bouton droit de la souris sur l’image et sélectionnez « Enregistrer sous... » si cela est pris en charge par votre navigateur."
 ,export.error.somethingelseiswrong,"Ouch. Something went wrong. We cannot save the export image.","Aïe. Quelque chose n’allait pas. Nous ne pouvons pas enregistrer l’image de l’exportation."
+,export.error.minwidth, Too small. {{min}} px minimum., [fr] Too small. {{min}} px minimum.
+,export.error.minheight, Too small. {{min}} px minimum., [fr] Too small. {{min}} px minimum.
+,export.error.maxwidth, Too large. {{max}} px maximum., [fr] Too large. {{max}} px maximum.
+,export.error.maxheight, Too large. {{max}} px maximum., [fr] Too large. {{max}} px maximum.
 ,export.retry,Retry,Réessayez
+,export.size.customwidth, Width (pixels), [fr] Width (pixels)
+,export.size.customheight, Height (pixels), [fr] Height (pixels)
+,export.generate, generate, [fr] generate
+,export.settings, Settings, Paramètres
+,export.component.title, Title, [fr] Title
+,export.component.map, Map, [fr] Map
+,export.component.legend, Legend, [fr] Legend
+,export.component.arrow, North Arrow, [fr] North arrow
+,export.component.scale, Scalebar, Barre d'échele
+,export.component.mapelements, North arrow and scalebar, [fr] North arrow and scalebar
+,export.component.footnote, Footnote, [fr] Footnote
+,export.component.timestamp, Timestamp, [fr] Timestamp
+,export.label.approx,approx.,approx.
+,export.size.default, Default, [fr] Default
+,export.size.small, Small, [fr] Small
+,export.size.medium, Medium, [fr] Medium
+,export.size.custom, Custom size, [fr] Custom size
 ,import.title,Import Layers,Importer des couches
 ,import.file.title,Import File,Importer un fichier
 ,import.file.upload.title,Upload data,Charger des données
