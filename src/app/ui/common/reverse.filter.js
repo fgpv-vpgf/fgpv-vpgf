@@ -20,7 +20,11 @@
         /***/
 
         function filter(items) {
-            return items.slice().reverse();
+            if (Array.isArray(items)) {
+                return items.slice().reverse();
+            } else {
+                return undefined;
+            }
         }
     }
 })();
