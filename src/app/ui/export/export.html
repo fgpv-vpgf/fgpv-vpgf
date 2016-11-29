@@ -1,31 +1,133 @@
 <md-dialog class="rv-export">
-    <form ng-cloak>
+    <form ng-cloak name="exportForm">
         <md-dialog-content>
             <div class="md-dialog-content" ng-class="{ 'rv-error': self.isError }">
-                <div class="rv-export-map" ng-class="{ 'rv-export-complete': self.isGenerationComplete }">
-                    <rv-svg class="rv-export-dummy"
-                            src="self.dummyGraphic"></rv-svg>
 
-                    <rv-svg class="rv-export-server"
-                            src="self.serviceGraphic"></rv-svg>
+                <md-content class="rv-export-custom-size rv-invert rv-toggle-slide"
+                    ng-if="self.exportSizes.isCustomOptionSelected()">
 
-                    <rv-svg class="rv-export-local"
-                            src="self.localGraphic"></rv-svg>
+                    <h4 class="md-title">{{ ::'export.size.custom' | translate }}</h4>
 
-                    <rv-svg class="rv-export-tainted" ng-if="self.isTainted"
+                    <div class="rv-container" layout="column">
+                        <div layout="row" layout-wrap>
+                            <md-input-container ng-disabled="self.isError">
+                                <input type="number" required md-no-asterisk="true"
+                                    name="customSizeWidth"
+                                    min="{{ ::self.exportSizes.width.min }}"
+                                    max="{{ ::self.exportSizes.width.max }}"
+                                    ng-pattern="/\d/"
+                                    step="any"
+                                    placeholder="{{ 'export.size.customwidth' | translate }}"
+                                    ng-model="self.exportSizes.tempOption.width">
+
+                                <div ng-messages="exportForm.customSizeWidth.$error" role="alert">
+                                    <div ng-message="min">
+                                        {{ 'export.error.minwidth' | translate:self.exportSizes.width }}
+                                    </div>
+                                    <div ng-message="max">
+                                        {{ 'export.error.maxwidth' | translate:self.exportSizes.width }}
+                                    </div>
+                                </div>
+                            </md-input-container>
+
+                            <md-icon md-svg-src="navigation:close"></md-icon>
+
+                            <md-input-container ng-disabled="self.isError">
+                                <input type="number" required md-no-asterisk
+                                    name="customSizeHeight"
+                                    min="{{ ::self.exportSizes.height.min }}"
+                                    max="{{ ::self.exportSizes.height.max }}"
+                                    step="any"
+                                    ng-pattern="/\d/"
+                                    placeholder="{{ 'export.size.customheight' | translate }}"
+                                    ng-model="self.exportSizes.tempOption.height">
+
+                                <div ng-messages="exportForm.customSizeHeight.$error" role="alert">
+                                    <div ng-message="min">
+                                        {{ 'export.error.minheight' | translate:self.exportSizes.height }}
+                                    </div>
+                                    <div ng-message="max">
+                                        {{ 'export.error.maxheight' | translate:self.exportSizes.height }}
+                                    </div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <span flex></span>
+
+                            <md-button
+                                ng-click="self.exportSizes.resetTemporaryOption()"
+                                class="rv-button-square">
+                                {{ ::'export.cancel' | translate }}
+                            </md-button>
+
+                            <md-button
+                                ng-disabled="!exportForm.$valid"
+                                ng-click="self.exportSizes.updateCustomOption(); self.updateComponents();"
+                                class="rv-button-square md-raised md-primary">
+                                {{ ::'export.generate' | translate }}
+                            </md-button>
+                        </div>
+                    </div>
+
+                </md-content>
+
+                <md-content class="rv-export-settings rv-invert rv-toggle-slide"
+                    ng-if="self.isExportSettingsOpen">
+
+                    <h4 class="md-title">{{ ::'export.settings' | translate }}</h4>
+
+                    <div class="rv-container">
+                        <ul class="rv-list">
+                            <li ng-if="section.isSelectable"
+                                ng-repeat="section in self.exportComponents.items">
+
+                                    <md-checkbox
+                                        ng-model="section.isSelected"
+                                        class="md-primary">
+                                        {{ ::'export.component.' + section.id | translate }}
+                                    </md-checkbox>
+
+                            </li>
+                        </ul>
+
+                    </div>
+
+                </md-content>
+
+                <md-content>
+
+                    <div ng-if="self.isTainted">
+
+                        <rv-svg class="rv-export-graphic"
+                            once="false"
                             src="self.taintedGraphic"></rv-svg>
-                </div>
 
-                <rv-svg ng-if="self.isLegendIncluded"
-                        class="rv-export-legend"
-                        src="self.legendGraphic"></rv-svg>
+                    </div>
 
-                <!-- need to hide the title input field when displaying the tainted canvas image for manual saving -->
-                <div class="rv-export-title" ng-hide="self.isTainted">
-                    <md-input-container md-no-float class="md-headline" ng-disabled="self.isError">
-                        <input placeholder="{{ 'export.title' | translate }}" ng-model="self.exportTitle">
-                    </md-input-container>
-                </div>
+                    <div class="rv-export-section"
+                        ng-hide="self.isTainted"
+                        ng-if="section.isSelected && section.isVisible"
+                        ng-repeat="section in self.exportComponents.items">
+
+                        <rv-svg class="rv-export-graphic"
+                            once="false"
+                            ng-class="{ 'rv-blur': section.isGenerating }"
+                            src="section.graphic"></rv-svg>
+
+                    </div>
+
+                    <!-- need to hide the title input field when displaying the tainted canvas image for manual saving -->
+                    <div class="rv-export-title" ng-hide="self.isTainted" ng-if="self.titleComponent.isSelected">
+                        <md-input-container md-no-float class="md-headline" ng-disabled="self.isError">
+                            <input ng-model="self.titleComponent.value"
+                                ng-change="self.updateTitleComponent()"
+                                ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
+                                placeholder="{{ 'export.title' | translate }}">
+                        </md-input-container>
+                    </div>
+
+                </md-content>
 
             </div>
         </md-dialog-content>
@@ -33,30 +135,46 @@
         <md-dialog-actions layout="row">
              <md-progress-linear
                     class="rv-export-progress-indicator"
-                    ng-hide="self.isGenerationComplete || self.isError"
+                    ng-hide="!self.isGenerating() || self.isError"
                     md-mode="indeterminate"></md-progress-linear>
 
-            <md-checkbox translate-attr-aria-label="export.includelegend"
-                ng-model="self.isLegendIncluded"
-                ng-change="self.includeLegend()"
-                ng-disabled="self.isError"
-                class="md-primary">
-                {{ 'export.includelegend' | translate }}
-            </md-checkbox>
+            <md-select translate-attr-aria-label="export.size.selector" translate
+                ng-model="self.exportSizes.selectedOption"
+                md-container-class="rv-export-select">
+
+                <md-option ng-value="sizeOption" ng-repeat="sizeOption in self.exportSizes.options">
+                    <div class="rv-option">
+                        <span >{{ ::sizeOption.name | translate }}</span>
+                        <span flex> </span>
+                        <span>{{ sizeOption.dimensions }}</span>
+                    </div>
+                </md-option>
+            </md-select>
+
+            <!-- don't display a settings button if none of the settings can be edited -->
+            <span class="rv-button-divider-24" ng-if="::self.isSettingsEditable()"></span>
+
+            <md-button
+                class="md-icon-button"
+                ng-if="::self.isSettingsEditable()"
+                ng-class="{ selected: self.isExportSettingsOpen }"
+                ng-click="self.isExportSettingsOpen = !self.isExportSettingsOpen">
+                <md-icon md-svg-src="action:settings"></md-icon>
+            </md-button>
 
             <span flex></span>
 
             <md-button
                 class="rv-button-square"
                 ng-click="self.close()">
-                {{ 'export.close' | translate }}
+                {{ ::'export.close' | translate }}
             </md-button>
 
             <md-button
                 class="rv-button-square md-raised md-primary"
                 ng-click="self.saveImage()"
-                ng-disabled="!self.isGenerationComplete || self.isError">
-                {{ 'export.save' | translate }}
+                ng-disabled="self.isDownloadBlocked()">
+                {{ ::'export.download' | translate }}
             </md-button>
         </md-dialog-actions>
     </form>

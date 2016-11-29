@@ -63,7 +63,7 @@
             const legendSection = legend.group();
 
             const sectionInfo = {
-                count: Math.floor((availableWidth) / preferredSectionWidth),
+                count: Math.floor(availableWidth / preferredSectionWidth) || 1, // section count should never be 0
                 width: 0,
                 height: 0
             };
