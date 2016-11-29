@@ -4,6 +4,7 @@
     @include icon-sizes;
     @include button-group;
     @include button-effects;
+    @include button-divider;
 
     .rv-switch {
         flex-direction: row-reverse;
@@ -64,6 +65,7 @@
         @include button-size(rem(1.4));
     }
 }
+
 
 @mixin button-size($size) {
     // adjust size of the button container to fit around the icon
@@ -135,6 +137,7 @@
         @include icon-size(rem(1.4));
     }
 }
+
 
 @mixin icon-size($size) {
     &md-icon,
@@ -216,5 +219,24 @@ opacity: $opacity-from;
         bottom: 0;
         right: 0;
         width: 100%;
+    }
+}
+
+$icon-sizes: 40, 32, 24, 20, 16, 14;
+
+@mixin button-divider {
+    %button-divider {
+        border-right: $divider-color 1px solid;
+        margin: {
+            right: rem(0.4);
+            left: rem(0.4);
+        }
+    }
+
+    @each $item in $icon-sizes {
+        .rv-button-divider-#{$item} {
+            @extend %button-divider;
+            height: $item + 2px;
+        }
     }
 }

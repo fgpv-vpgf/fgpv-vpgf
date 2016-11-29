@@ -150,6 +150,25 @@ md-select-menu {
             }
         }
     }
+
+    md-option {
+        .md-text {
+            width: 100%;
+        }
+    }
+}
+
+.rv-export-select {
+    width: rem(25); // manually set the width of the export size selector; otherwise it will resize to fit the content
+
+    md-option .rv-option {
+        display: flex;
+        align-items: baseline;
+
+        > span:last-child {
+            font-weight: bold;
+        }
+    }
 }
 
 .rv-full-screen {
