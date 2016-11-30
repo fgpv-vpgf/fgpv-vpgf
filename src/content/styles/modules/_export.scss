@@ -171,6 +171,7 @@
         .rv-export-title {
             display: flex;
             justify-content: center;
+            z-index: 1; // move the title field on top of the map graphic
 
             md-input-container {
                 background: rgba(255, 255, 255, 0.86);
