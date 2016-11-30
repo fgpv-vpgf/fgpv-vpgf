@@ -126,7 +126,7 @@
             bmSelected.selected = true;
 
             if ($injector.get('geoService').baseMapHasSameSP(basemap.id)) { // avoid circular dependency
-                $injector.get('geoService').selectBasemap(basemap.id); // avoid circular dependency
+                $injector.get('geoService').selectBasemap(basemap); // avoid circular dependency
             } else {
                 // avoiding circular dependency on bookmarkService
                 $injector.get('reloadService').loadNewProjection(basemap.id); // avoid circular dependency
@@ -182,7 +182,8 @@
                 id: 'blank_basemap_' + p.basemaps[0].wkid,
                 url: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7/',
                 wkid: p.basemaps[0].wkid,
-                selected: false
+                selected: false,
+                attribution: p.basemaps[0].attribution
             }));
 
             bmSelected.selected = true;
@@ -205,7 +206,8 @@
             id: basemap.id,
             url: basemap.layers[0].url,
             wkid: basemap.wkid,
-            selected: false
+            selected: false,
+            attribution: basemap.attribution
         };
     }
 })();
