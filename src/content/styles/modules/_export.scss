@@ -169,12 +169,8 @@
         }
 
         .rv-export-title {
-            position: absolute;
-            top: rem(3.2) * 5;
             display: flex;
             justify-content: center;
-            right: rem(4.8);
-            left: rem(4.8);
 
             md-input-container {
                 background: rgba(255, 255, 255, 0.86);
@@ -187,6 +183,14 @@
                 .md-errors-spacer {
                     display: none;
                 }
+            }
+
+            // floatin the title on top of the map image
+            &.rv-float {
+                position: absolute;
+                top: rem(3.2) * 5;
+                right: rem(4.8);
+                left: rem(4.8);
             }
         }
 

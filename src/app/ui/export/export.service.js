@@ -93,6 +93,7 @@
 
                 // title component is special since the user can modify its value; we expose it to bind the value to the input field
                 self.titleComponent = self.exportComponents.get('title');
+                self.mapComponent = self.exportComponents.get('map');
 
                 // watch for the selected option to change and update all the export components
                 self.scope.$watch('self.exportSizes.selectedOption', (newValue, oldValue) => {
