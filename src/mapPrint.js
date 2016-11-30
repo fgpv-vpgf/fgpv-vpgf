@@ -194,10 +194,17 @@ function generateLocalCanvas(map, options = null, canvas = null) {
      *                              height {Number}
      */
     function resizeSVGElement(element, targetSize, targetViewbox = null) {
+
         const originalSize = {
             width: element.width.baseVal.value,
             height: element.height.baseVal.value
         };
+
+        // in Firefox, viewBox is null for some reason
+        // set the viewbox to "0 0 0 0" to normalize
+        if (!element.getAttribute('viewBox')) {
+            element.setAttribute('viewBox', '0 0 0 0');
+        }
 
         const originalViewbox = {
             width: element.viewBox.baseVal.width,
