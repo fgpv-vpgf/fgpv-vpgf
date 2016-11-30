@@ -105,6 +105,20 @@
 
                     </div>
 
+                    <!-- need to hide the title input field when displaying the tainted canvas image for manual saving -->
+                    <!-- the title should be floated on top of the map image only if the map component is selected; if not, just put it before the first export component -->
+                    <div class="rv-export-title"
+                        ng-class="{ 'rv-float' : self.mapComponent.isSelected }"
+                        ng-hide="self.isTainted"
+                        ng-if="self.titleComponent.isSelected">
+                        <md-input-container md-no-float class="md-headline" ng-disabled="self.isError">
+                            <input ng-model="self.titleComponent.value"
+                                ng-change="self.updateTitleComponent()"
+                                ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
+                                placeholder="{{ 'export.title' | translate }}">
+                        </md-input-container>
+                    </div>
+
                     <div class="rv-export-section"
                         ng-hide="self.isTainted"
                         ng-if="section.isSelected && section.isVisible"
@@ -115,16 +129,6 @@
                             ng-class="{ 'rv-blur': section.isGenerating }"
                             src="section.graphic"></rv-svg>
 
-                    </div>
-
-                    <!-- need to hide the title input field when displaying the tainted canvas image for manual saving -->
-                    <div class="rv-export-title" ng-hide="self.isTainted" ng-if="self.titleComponent.isSelected">
-                        <md-input-container md-no-float class="md-headline" ng-disabled="self.isError">
-                            <input ng-model="self.titleComponent.value"
-                                ng-change="self.updateTitleComponent()"
-                                ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
-                                placeholder="{{ 'export.title' | translate }}">
-                        </md-input-container>
                     </div>
 
                 </md-content>
