@@ -18,6 +18,15 @@ $rv-lt-lg: "<=medium";
     }
 }
 
+@mixin hide-element($class, $query) {
+    .#{$class} {
+        @include media($query...) {
+            display: none !important;
+        }
+    }
+}
+
 @include show-element("rv-gt-sm", $rv-gt-sm);
 @include show-element("rv-lt-lg", $rv-lt-lg);
 @include show-element("rv-lg", $rv-lg);
+@include hide-element("rv-lt-lg-hide", $rv-lt-lg);
