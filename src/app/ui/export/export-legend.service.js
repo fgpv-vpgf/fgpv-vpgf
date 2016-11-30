@@ -89,8 +89,11 @@
                 svgLegend = makeLegend(legendSection, legendDataCopy, sectionInfo.width);
 
                 // optimize; get back the number of sections used
-                sectionsUsed = gapiService.gapi.legend.makeLegend(legendDataCopy, sectionInfo.count, availableHeight)
-                    .sectionsUsed;
+                // if only one column available, ignore optimization
+                sectionsUsed = sectionInfo.count === 1 ?
+                    1 :
+                    gapiService.gapi.legend.makeLegend(legendDataCopy, sectionInfo.count, availableHeight)
+                        .sectionsUsed;
             }
 
             wraplegend(svgLegend, sectionInfo);
