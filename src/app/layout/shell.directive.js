@@ -29,7 +29,21 @@
         return directive;
 
         function link(scope, el) {
+            const self = scope.self;
+
             storageService.panels.shell = el;
+
+            // boolean used by touch mode toggle, true if touch mode is active
+            self.isTouch = $rootElement.hasClass('rv-touch');
+            self.toggleTouch = () => {
+                if (self.isTouch) {
+                    $rootElement.removeClass('rv-touch');
+                } else {
+                    $rootElement.addClass('rv-touch');
+                }
+                self.isTouch = !self.isTouch;
+            };
+
             // fix for IE 11 where focus can move to esri generated svg elements
             $rootScope.$on(events.rvApiReady, () => {
                 $rootElement.find('.rv-esri-map svg').attr('focusable', false);

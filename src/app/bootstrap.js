@@ -170,6 +170,11 @@
 
         node.setAttribute('rv-trap-focus', appId);
 
+        // basic touch device detection; if detected set rv-touch class so that touch mode is on by default
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            node.className += ' rv-touch';
+        }
+
         console.info('setting debug on', appId, node);
         // create debug object for each app instance
         RV.debug[appId] = {};
