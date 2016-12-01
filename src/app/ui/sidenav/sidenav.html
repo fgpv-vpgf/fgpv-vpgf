@@ -23,17 +23,31 @@
                     </li>
                 </ul>
             </li>
+
         </ul>
 
         <md-divider></md-divider>
 
-        <md-content role="language">
-            <h2 class="rv-language menu-heading md-subhead">{{ 'sidenav.label.language' | translate }}
-                <span flex></span>
-                <div class="rv-language-icon"></div>
-            </h2>
-            <rv-language></rv-language>
-        </md-content>
+        <h2 class="rv-language menu-heading md-subhead">{{ 'sidenav.label.language' | translate }}
+            <span flex></span>
+            <div class="rv-language-icon"></div>
+        </h2>
+        <rv-language></rv-language>
+
+        <md-divider></md-divider>
+
+        <ul class="app-menu rv-touch">
+            <li class="app-menu-item" >
+                <ul class="app-menu app-menu-sublist">
+                    <li>
+                        <md-button ng-click="self.toggleTouch()">
+                            {{ 'sidenav.label.touch' | translate }}
+                            <md-icon md-svg-src="navigation:check" ng-show="self.isTouch"></md-icon>
+                        </md-button>
+                    </li>
+                </ul>
+            </li>
+        </ul>
 
         <span flex></span>
         <div class="md-caption rv-version">
