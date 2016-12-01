@@ -1,5 +1,12 @@
 @mixin angularmaterial {
+
     md-dialog {
         @include keyboard-focus;
+    }
+
+    md-tooltip {
+        .rv-hide {
+            display: none;
+        }
     }
 }

@@ -45,9 +45,13 @@
                                 display: flex;
                                 align-items: center;
 
+                                @include touch {
+                                    @include button-size(rem(4.0));
+                                    @include icon-size(rem(2.0));
+                                }
+
                                 button {
-                                    margin-left: rem(0.3);
-                                    margin-right: rem(0.3);
+                                    margin: 0;
 
                                     &:first-of-type {
                                         margin-left: rem(3.6);
