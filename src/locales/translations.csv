@@ -160,6 +160,7 @@ Table of Content loading state tootlip,toc.tooltip.state.loading,Updating,Mise �
 Table of Content templates placeholder loading label,toc.tmp.label.state.loading,Loading layer...,Chargement de la couche...
 Table of Content templates placeholder loading error label,toc.tmp.label.error.loading,Can't load layer,Impossible de charger la couche
 Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
+Table of Content open datatable label,toc.label.dataTable,Datatable,Datatable
 Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
 Table of Content keyboard reoder tooltip,toc.tooltip.reorder,Reorder,Réorganiser
 While counting geometry,geometry.counting, ...counting, ...compte
