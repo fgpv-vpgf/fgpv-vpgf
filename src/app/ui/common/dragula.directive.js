@@ -19,7 +19,7 @@
         .module('app.ui.common')
         .directive('rvDragula', rvDragula);
 
-    function rvDragula($compile, dragulaService, keyNames) {
+    function rvDragula($compile, dragulaService, keyNames, $timeout) {
         const directive = {
             restrict: 'A',
             link: link,
@@ -51,6 +51,31 @@
             // get dragula instance of dragula
             const drake = dragulaService.find(dragulaScope, attr.rvDragula)
                 .drake;
+
+            // make dragula more touch friendly - only start drag after 1 second if y movement is less than 10 pixels
+            let touchTimeout;
+            let draggable = false;
+            let initYOffset;
+
+            el.on('touchmove', e => {
+                if (Math.abs(initYOffset - e.originalEvent.touches[0].pageY) > 10) {
+                    $timeout.cancel(touchTimeout);
+                }
+
+                if (!draggable) {
+                    e.stopPropagation(true);
+                }
+            });
+
+            el.on('touchstart', e => {
+                initYOffset = e.originalEvent.touches[0].pageY;
+                touchTimeout = $timeout(() => draggable = true, 1000);
+            });
+
+            el.on('touchend touchcancel', () => {
+                $timeout.cancel(touchTimeout);
+                draggable = false;
+            });
 
             keyboardDragula(el, scope, drake, dragulaOptions);
         }
