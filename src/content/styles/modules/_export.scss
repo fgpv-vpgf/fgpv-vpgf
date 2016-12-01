@@ -172,6 +172,7 @@
             display: flex;
             justify-content: center;
             z-index: 1; // move the title field on top of the map graphic
+            width: 100%;
 
             md-input-container {
                 background: rgba(255, 255, 255, 0.86);
@@ -186,12 +187,9 @@
                 }
             }
 
-            // floatin the title on top of the map image
             &.rv-float {
                 position: absolute;
-                top: rem(3.2) * 5;
-                right: rem(4.8);
-                left: rem(4.8);
+                top: rem(2.0);
             }
         }
 
