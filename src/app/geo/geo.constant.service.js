@@ -122,6 +122,11 @@
                         flags: angular.merge({},
                             flagDefaults, {
                                 // set type flag to the layer type
+                                data: {
+                                    // NOTE: this a temporary workaround for #1429; this should be removed after structured legend is implemented
+                                    // set `data` flag to visible if data option is enabled for this layer
+                                    visible: (({ data = {} }) => data.enabled || false)(LAYER_CONFIG_DEFAULTS[value])
+                                },
                                 type: {
                                     value: key
                                 }
