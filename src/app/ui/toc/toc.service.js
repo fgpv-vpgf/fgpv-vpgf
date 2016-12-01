@@ -84,6 +84,12 @@
                     tooltip: 'toc.tooltip.boundaryZoom',
                     action: zoomToBoundary
                 },
+                data: {
+                    icon: `community:table-large`,
+                    label: 'toc.label.dataTable',
+                    tooltip: 'toc.label.dataTable',
+                    action: service.actions.toggleLayerFiltersPanel
+                },
                 remove: {
                     icon: 'action:delete',
                     label: 'toc.label.remove',
