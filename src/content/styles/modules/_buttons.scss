@@ -115,26 +115,74 @@
 @mixin icon-sizes {
     .rv-icon-40 {
         @include icon-size(rem(4));
+
+        @include touch {
+            @include icon-size(rem(6));
+        }
+
+        @include media($rv-sm) {
+            @include icon-size(rem(6));
+        }
     }
 
     .rv-icon-32 {
         @include icon-size(rem(3.2));
+
+        @include touch {
+            @include icon-size(rem(4.8));
+        }
+
+        @include media($rv-sm) {
+            @include icon-size(rem(4.8));
+        }
     }
 
     .rv-icon-24 {
         @include icon-size(rem(2.4));
+
+        @include touch {
+            @include icon-size(rem(3.6));
+        }
+
+        @include media($rv-sm) {
+            @include icon-size(rem(3.6));
+        }
     }
 
     .rv-icon-20 {
         @include icon-size(rem(2));
+
+        @include touch {
+            @include icon-size(rem(3));
+        }
+
+        @include media($rv-sm) {
+            @include icon-size(rem(3));
+        }
     }
 
     .rv-icon-16 {
         @include icon-size(rem(1.6));
+
+        @include touch {
+            @include icon-size(rem(2.4));
+        }
+
+        @include media($rv-sm) {
+            @include icon-size(rem(2.4));
+        }
     }
 
     .rv-icon-14 {
         @include icon-size(rem(1.4));
+
+        @include touch {
+            @include icon-size(rem(2.1));
+        }
+
+        @include media($rv-sm) {
+            @include icon-size(rem(2.1));
+        }
     }
 }
 

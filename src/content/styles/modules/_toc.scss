@@ -33,6 +33,10 @@ $layer-item-height: rem(6.0);
     @include keyboard {
         @include entry-controls-keyboard;
     };
+
+    @include touch {
+        @include entry-controls-touch;
+    };
 }
 
 @mixin layer-list {
@@ -339,6 +343,12 @@ absolutely position a button underneath an item so it acts like a button body fo
 
 @mixin entry-controls-keyboard() {
     .rv-toc-entry-controls > * {
+        display: inline !important;
+    }
+}
+
+@mixin entry-controls-touch() {
+    .rv-toc-entry-controls > :first-child {
         display: inline !important;
     }
 }
