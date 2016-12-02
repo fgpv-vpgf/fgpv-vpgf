@@ -182,14 +182,18 @@ function generateLocalCanvas(map, options = null, canvas = null) {
      * @param {Object} targetSize object with target sizes in the form of { width, height }
      *                           width {Number}
      *                           height {Number}
-     * @param {Object} targetViewbox [optional = null] target viewbox sizes in the form of { width, height }; if not specified, the original size will be used as the viewbox
+     * @param {Object} targetViewbox [optional = null] target viewbox sizes in the form of { minX, minY, width, height }; if not specified, the original size will be used as the viewbox
+     *                           minX {Number}
+     *                           minxY {Number}
      *                           width {Number}
      *                           height {Number}
-     * @return {Object} returns original size and viewbox of the svg element in the form of { originalSize: { width, height }, originalViewbox: { width, height } }; can be used to restore the element to its original state
+     * @return {Object} returns original size and viewbox of the svg element in the form of { originalSize: { width, height }, originalViewbox: { minX, minY, width, height } }; can be used to restore the element to its original state
      *                          originalSize:
      *                              width {Number}
      *                              height {Number}
      *                          originalViewbox:
+     *                              minX {Number}
+     *                              minxY {Number}
      *                              width {Number}
      *                              height {Number}
      */
@@ -200,24 +204,31 @@ function generateLocalCanvas(map, options = null, canvas = null) {
             height: element.height.baseVal.value
         };
 
-        // in Firefox, viewBox is null for some reason
-        // set the viewbox to "0 0 0 0" to normalize
-        if (!element.getAttribute('viewBox')) {
-            element.setAttribute('viewBox', '0 0 0 0');
-        }
+        // get the current viewbox sizes
+        // if the viewbox is not defined, the viewbox is assumed to have the same dimensions as the svg element
+        // getAttribute('viewBox') returns a string in the form '{minx} {miny} {width} {height}'
+        // setAttribute('viewBox') accepts a string in the same form
+        const [ovMinX, ovMinY, ovWidth, ovHeight] =
+            (element.getAttribute('viewBox') || `0 0 ${originalSize.width} ${originalSize.height}`).split(' ');
 
         const originalViewbox = {
-            width: element.viewBox.baseVal.width,
-            height: element.viewBox.baseVal.height
+            minX: ovMinX,
+            minY: ovMinY,
+            width: ovWidth,
+            height: ovHeight
         };
 
-        // set the width/height of the svg element
-        element.width.baseVal.value = targetSize.width;
-        element.height.baseVal.value = targetSize.height;
+        // set the width/height of the svg element to the target values
+        element.setAttribute('width', targetSize.width);
+        element.setAttribute('height', targetSize.height);
 
-        // set the viewbox width/height of the svg element
-        element.viewBox.baseVal.width = targetViewbox ? targetViewbox.width : originalSize.width;
-        element.viewBox.baseVal.height = targetViewbox ? targetViewbox.height : originalSize.height;
+        // set the viewbox width/height of the svg element to the target values; or the values of the original viewbox (if the viewbox wasn't defined before, it is now)
+        element.setAttribute('viewBox', [
+            (targetViewbox || originalViewbox).minX,
+            (targetViewbox || originalViewbox).minY,
+            (targetViewbox || originalViewbox).width,
+            (targetViewbox || originalViewbox).height
+        ].join(' '));
 
         return {
             originalSize,
