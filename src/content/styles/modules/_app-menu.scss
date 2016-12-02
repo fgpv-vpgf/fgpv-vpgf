@@ -18,8 +18,9 @@
             }
 
             .rv-language {
-                display: flex!important;
+                display: flex !important;
                 align-items: center;
+                flex-shrink: 0;
             }
 
             .rv-language-icon {
@@ -112,7 +113,6 @@
                 margin: 0;
                 list-style: none;
                 max-width: 100%;
-                overflow-x: hidden;
             }
 
             .menu-heading {
@@ -126,6 +126,7 @@
             }
             @include menu-link;
             @include menu-language;
+            @include menu-touch;
         }
     }
 }
@@ -143,11 +144,33 @@
     }
 }
 
+@mixin menu-touch {
+    .rv-touch {
+        padding: 0;
+        margin: 0;
+        @include menu-button;
+
+        md-icon {
+            margin: 6px 8px;
+            float: right;
+        }
+    }
+}
+
 @mixin menu-link {
     rv-menu-link {
         padding: 0;
         margin: 0;
+
         @include menu-button;
+
+        button {
+            text-overflow: ellipsis;
+
+            > span {
+                white-space: nowrap;
+            }
+        }
     }
 }
 

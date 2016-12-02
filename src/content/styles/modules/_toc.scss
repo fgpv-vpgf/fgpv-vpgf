@@ -3,6 +3,10 @@ $toc-padding: rem(0.4);
 $group-item-height: rem(4.0);
 $layer-item-height: rem(6.0);
 
+$group-item-height-touch: rem(5.6);
+$layer-item-height-touch: rem(7.2);
+
+
 @mixin toc {
 
     rv-toc {
@@ -32,6 +36,10 @@ $layer-item-height: rem(6.0);
 
     @include keyboard {
         @include entry-controls-keyboard;
+    };
+
+    @include touch {
+        @include entry-controls-touch;
     };
 }
 
@@ -177,6 +185,10 @@ absolutely position a button underneath an item so it acts like a button body fo
         height: $group-item-height;
         padding-right: $toc-padding;
 
+        @include touch {
+            height: $group-item-height-touch;
+        }
+
         // setting layer list shadow color when hover over layer group toggle
         &:hover {
             @include entry-controls-hover;
@@ -226,6 +238,10 @@ absolutely position a button underneath an item so it acts like a button body fo
         position: relative;
         padding-right: $toc-padding;
 
+        @include touch {
+            height: $layer-item-height-touch;
+        }
+
         .rv-toc-entry-content {
             flex: 1; // content tries to take all available space
             min-width: 0; // Firefox fix for flexbox not wanting to shrink: http://stackoverflow.com/a/31349707
@@ -253,6 +269,10 @@ absolutely position a button underneath an item so it acts like a button body fo
         height: $layer-item-height;
         position: relative;
         padding-right: $toc-padding;
+
+        @include touch {
+            height: $layer-item-height-touch;
+        }
 
         .rv-layer-body-button {
             text-align: left;
@@ -283,8 +303,13 @@ absolutely position a button underneath an item so it acts like a button body fo
                 margin: 0 rem(0.2);
                 // main layer item button was overlapting the flag
                 position: relative; // why? http://philipwalton.com/articles/what-no-one-told-you-about-z-index/
+
                 &:first-child {
                     margin-left: 0;
+                }
+
+                @include touch {
+                    @include icon-size(rem(1.6));
                 }
             }
         }
@@ -339,6 +364,12 @@ absolutely position a button underneath an item so it acts like a button body fo
 
 @mixin entry-controls-keyboard() {
     .rv-toc-entry-controls > * {
+        display: inline !important;
+    }
+}
+
+@mixin entry-controls-touch() {
+    .rv-toc-entry-controls > :first-child {
         display: inline !important;
     }
 }
