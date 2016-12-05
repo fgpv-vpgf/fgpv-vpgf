@@ -69,9 +69,9 @@
      * @function rvFiltersDefault
      * @return {object} directive body
      */
-    // jshint maxparams:11
+    // jshint maxparams:12
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
-        layoutService, detailService, $rootElement, $filter, keyNames) {
+        layoutService, detailService, $rootElement, $filter, keyNames, uiStateService) {
 
         const directive = {
             restrict: 'E',
@@ -536,6 +536,8 @@
                     const details = {
                         data: [detailsObj]
                     };
+
+                    uiStateService.setDetails(details);
 
                     if (useDialog) {
                         stateManager.display.details.selectedItem = detailsObj;

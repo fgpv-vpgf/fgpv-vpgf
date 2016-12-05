@@ -10,7 +10,7 @@
         .module('app.geo')
         .factory('identifyService', identifyServiceFactory);
 
-    function identifyServiceFactory($q, gapiService, stateManager, Geo) {
+    function identifyServiceFactory($q, gapiService, stateManager, Geo, $injector) {
         return geoState => identifyService(
             geoState,
             geoState.mapService.mapObject,
@@ -486,6 +486,8 @@
                 if (details.data.length) {
                     stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
                 }
+
+                $injector.get('uiStateService').setIdentify(details);
             }
         }
     }

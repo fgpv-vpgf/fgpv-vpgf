@@ -44,6 +44,10 @@
 
         function link(scope, el) {
 
+            $rootScope.$watch('overviewActive', (newVal, oldVal) =>
+                newVal !== oldVal ? animate() : undefined
+            );
+
             const overviewAnimation = animationService.timeLineLite({
                 paused: true,
                 onComplete: animationCompleted,
