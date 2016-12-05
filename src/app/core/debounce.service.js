@@ -37,9 +37,10 @@
             let bouncing = false; // bouncing is true when the function is called during the detection period after the first call
 
             return (...args) => {
+                let valueToReturn;
                 if (!bouncing) {
                     // fire function before bouncing
-                    if (before) { fn(...args); }
+                    if (before) { valueToReturn = fn(...args); }
                     if (!skipApply) {
                         $rootScope.$applyAsync(); // applyAsync during the next digest cycle
                     }
@@ -49,9 +50,11 @@
                 $timeout.cancel(timeoutHandle);
                 timeoutHandle = $timeout(() => {
                     // fire function when bouncing is done
-                    if (!before) { fn(...args); } // pass any arguments to the registered function
+                    if (!before) { valueToReturn = fn(...args); } // pass any arguments to the registered function
                     bouncing = false;
                 }, delay); // stop bouncing
+
+                return valueToReturn;
             };
         }
     }

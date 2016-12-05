@@ -22,7 +22,9 @@
             // method called by the options and flags set on the layer item
             actions: {
                 toggleLayerGroup,
-                toggleLayerFiltersPanel
+                toggleLayerFiltersPanel,
+                toggleSettings,
+                toggleMetadata
             }
         };
 
@@ -391,7 +393,7 @@
             stateManager.setActive({
                 other: false
             });
-            stateManager
+            return stateManager
                 .setActive({
                     side: false
                 })
@@ -413,7 +415,7 @@
          * @param  {Object} entry layer object whose data should be displayed.
          */
         function toggleLayerFiltersPanel(entry) {
-            debToggleFilter(entry);
+            return debToggleFilter(entry);
         }
 
         /**

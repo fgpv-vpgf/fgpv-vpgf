@@ -62,7 +62,7 @@
      * @return {object} directive body
      */
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
-        layoutService, detailService, $rootElement) {
+        layoutService, detailService, $rootElement, uiStateService) {
 
         const directive = {
             restrict: 'E',
@@ -322,6 +322,8 @@
                     const details = {
                         data: [detailsObj]
                     };
+
+                    uiStateService.setDetails(details);
 
                     if (useDialog) {
                         stateManager.display.details.selectedItem = detailsObj;
