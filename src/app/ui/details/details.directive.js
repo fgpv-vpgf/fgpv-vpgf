@@ -37,8 +37,6 @@
 
         self.getSectionNode = () => $element.find('.rv-details');
 
-        stateManager.setCloseCallback('mainDetails', closeDetails);
-
         /**
         * Set the selected item from the array of items if previously set.
         * @private
