@@ -38,6 +38,10 @@
             A: 'A',
             B: 'B'
         })
+        .constant('bookmarkVersions', { // Bookmark versions https://github.com/fgpv-vpgf/fgpv-vpgf/wiki/Bookmark-Formats
+            A: 'A',
+            B: 'B'
+        })
         .constant('translations', AUTOFILLED_TRANSLATIONS)
         .factory('appInfo', appInfo);
 
