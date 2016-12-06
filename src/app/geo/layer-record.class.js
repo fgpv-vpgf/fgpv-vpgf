@@ -214,7 +214,7 @@
                 const fieldNameArray = [];
                 const columns = layerData.fields
                     .filter(field =>
-                        // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
+                        // assuming there is at least one attribute - empty attribute bundle promises should be rejected, so it never even gets this far
                         // filter out fields where there is no corresponding attribute data
                         attributes.features[0].attributes.hasOwnProperty(field.name))
                     .map(field => {
@@ -224,7 +224,13 @@
                         }
                         return {
                             data: field.name,
-                            title: field.alias || field.name
+                            name: field.name, // add name so we can get column from datatables (https://datatables.net/reference/type/column-selector)
+                            title: field.alias || field.name,
+                            display: true,
+                            sort: 'none', // can be none, up or down
+                            filter: { },
+                            width: '',
+                            init: false,
                         };
                     });
 
