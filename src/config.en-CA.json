@@ -131,6 +131,12 @@
   },
   "layers": [
     {
+      "id":"DateLayer",
+      "name":"Date layer field",
+      "layerType":"esriFeature",
+      "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/NEB/Incident/MapServer/0"
+    },
+    {
       "id":"scaleDep",
       "name":"Air Ozone Scale Dep",
       "layerType":"esriFeature",

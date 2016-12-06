@@ -19,6 +19,11 @@ rv-truncate directive show less,rv-truncate.showLess,Hide,Masquer
 Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,Zoom à l'élément
 Tooltip text for Details,filter.tooltip.description,Details,Détails
 Tooltip text for No Zoom Projection,filter.tooltip.nozoom,Data in custom projection. Cannot zoom to feature.,La donnée utilise une projection personnalisée. Le zoom à l'entité n'est pas supporté.
+DataTable string filter placeholder,filter.placeholder.string,text,texte
+DataTable min filter placeholder,filter.placeholder.min,min,min
+DataTable max filter placeholder,filter.placeholder.max,max,max
+DataTable date min filter placeholder,filter.placeholder.datemin, date min,date min
+DataTable date max filter placeholder,filter.placeholder.datemax,date max,date max
 DataTable text for Processing,filter.default.label.processing,Processing...,Traitement en cours...
 DataTable text for Search,filter.default.label.search,Search: ,"Rechercher : "
 DataTable text for Length Menu,filter.default.label.length.menu,Show _MENU_ entries,Afficher _MENU_ éléments

@@ -43,6 +43,101 @@
         </md-button>`;
     // jscs:enable maximumLineLength
 
+    const FILTERS = {
+        string: {
+            name: 'rv-filter-string',
+            scope: null,
+            self: {
+                isFunction: angular.isFunction,
+                placeholder: 'filter.placeholder.string',
+                value: '',
+                change: angular.noop,
+                prevent: angular.noop,
+                enabled: true
+            }
+        },
+        number: {
+            name: 'rv-filter-number',
+            scope: null,
+            self: {
+                isFunction: angular.isFunction,
+                min: {
+                    placeholder: 'filter.placeholder.min',
+                    value: ''
+                },
+                max: {
+                    placeholder: 'filter.placeholder.max',
+                    value: ''
+                },
+                change: angular.noop,
+                prevent: angular.noop,
+                enabled: true,
+            }
+        },
+        date: {
+            name: 'rv-filter-date',
+            scope: null,
+            self: {
+                isFunction: angular.isFunction,
+                min: {
+                    placeholder: 'filter.placeholder.datemin',
+                    value: ''
+                },
+                max: {
+                    placeholder: 'filter.placeholder.datemax',
+                    value: '',
+                },
+                change: angular.noop,
+                prevent: angular.noop,
+                enabled: true,
+            }
+        }
+    };
+
+    // jscs:disable maximumLineLength
+    const FILTERS_TEMPLATE = {
+        string: (column) =>
+            `<div class="rv-filter-string">
+                <md-input-container class="md-block" md-no-float flex>
+                    <input ng-click="self.prevent($event)"
+                            ng-keypress="self.prevent($event)"
+                            ng-change="self.change('${column}', self.${column})"
+                            ng-model="self.${column}" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.placeholder | translate }}"/>
+                </md-input-container>
+            </div>`,
+        number: (column) =>
+            `<div class="rv-filter-number">
+                <md-input-container class="md-block" md-no-float flex>
+                    <input rv-filters-number-only
+                            ng-click="self.prevent($event)"
+                            ng-change="self.change('${column}', self.min.${column}.value, self.max.${column}.value)"
+                            ng-model="self.min.${column}.value" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.min.placeholder | translate }}" />
+                </md-input-container>
+                <md-input-container class="md-block" md-no-float flex>
+                    <input rv-filters-number-only
+                            ng-click="self.prevent($event)"
+                            ng-change="self.change('${column}', self.min.${column}.value, self.max.${column}.value)"
+                            ng-model="self.max.${column}.value" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.max.placeholder | translate }}" />
+                </md-input-container>
+            </div>`,
+        date: (column) =>
+            `<div class="rv-filter-date">
+                <md-datepicker
+                    ng-click="self.prevent($event)"
+                    ng-change="self.change('${column}', self.min.${column}.value, self.max.${column}.value)"
+                    ng-model="self.min.${column}.value"
+                    md-placeholder="{{ self.min.placeholder | translate }}">
+                </md-datepicker>
+                <md-datepicker
+                    ng-click="self.prevent($event)"
+                    ng-change="self.change('${column}', self.min.${column}.value, self.max.${column}.value)"
+                    ng-model="self.max.${column}.value"
+                    md-placeholder="{{ self.max.placeholder | translate }}">
+                </md-datepicker>
+            </div>`
+    };
+    // jscs:enable maximumLineLength
+
     /**
      * @module rvFiltersDefault
      * @memberof app.ui
@@ -62,7 +157,7 @@
      * @return {object} directive body
      */
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
-        layoutService, detailService, $rootElement) {
+        layoutService, detailService, $rootElement, filterService) {
 
         const directive = {
             restrict: 'E',
@@ -102,7 +197,38 @@
                     onTableDraw,
                     onTableInit,
                     onZoomClick,
-                    onDetailsClick
+                    onDetailsClick,
+                };
+
+                const columnTypes = {
+                    esriFieldTypeString: {
+                        type: 'string',
+                        callback: 'onFilterStringChange'
+                    },
+                    esriFieldTypeDate: {
+                        type: 'date',
+                        callback: 'onFilterStringChange'
+                    },
+                    esriFieldTypeSmallInteger: {
+                        type: 'number',
+                        callback: 'onFilterStringChange'
+                    },
+                    esriFieldTypeInteger: {
+                        type: 'number',
+                        callback: 'onFilterStringChange'
+                    },
+                    esriFieldTypeSingle: {
+                        type: 'number',
+                        callback: 'onFilterStringChange'
+                    },
+                    esriFieldTypeDouble: {
+                        type: 'number',
+                        callback: 'onFilterStringChange'
+                    },
+                    esriFieldTypeOID: {
+                        type: 'number',
+                        callback: 'onFilterStringChange'
+                    }
                 };
 
                 // TODO: move hardcoded stuff in consts
@@ -199,6 +325,47 @@
                         // TODO: these ought to be moved to a helper function in displayManager
                         stateManager.display.filters.isLoading = false;
                         $timeout.cancel(stateManager.display.filters.loadingTimeout);
+
+                        setFilters();
+                    });
+                }
+
+                /**
+                 * Filters initialization
+                 * @function setFilters
+                 * @private
+                 */
+                function setFilters() {
+                    const displayData = stateManager.display.filters.data;
+
+                    displayData.columns.forEach(column => {
+                        const columnEdit = displayData.fields.find(field => column.name === field.name);
+
+                        // set filters from field type
+                        // TODO: for thematic map value will have to come from config file.
+                        if (typeof columnEdit !== 'undefined') {
+                            // get column info (type and callback function)
+                            const columnInfo = columnTypes[columnEdit.type];
+
+                            // set change action
+                            const filter = FILTERS[columnInfo.type];
+                            filter.self.change = filterService[columnInfo.callback];
+
+                            // set prevent default sorting
+                            filter.self.prevent = filterService.preventSorting;
+
+                            // set scope
+                            const filterScope = scope.$new(true);
+                            filterScope.self = filter.self;
+                            filter.scope = filterScope;
+
+                            // create firective
+                            const template = FILTERS_TEMPLATE[columnInfo.type](column.name);
+                            const filterDirective =  $compile(template)(filter.scope);
+
+                            // add to the table
+                            $(self.table.columns(`${column.name}:name`).header()[0]).append(filterDirective);
+                        }
                     });
                 }
 
