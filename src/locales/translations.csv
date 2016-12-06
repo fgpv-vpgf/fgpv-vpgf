@@ -40,6 +40,23 @@ DataTable text for Last,filter.default.label.last,Last,Dernier
 DataTable text for Sort Ascending,filter.default.aria.sortasc,: activate to sort column ascending,: activer pour trier la colonne par ordre croissant
 DataTable text for Sort Descending,filter.default.aria.sortdsc,: activate to sort column descending,: activer pour trier la colonne par ordre décroissant
 DataTable text for thousands delimeter,filter.default.thousands.delim,","," "
+DataTable global filters aria label search icon,filter.aria.filters.search,Global Search, Recherche globale
+DataTable global filters search text placeholder,filter.search.placeholder,Search Text,Texte à rechercher
+Datatable open setting tooltip,filter.filters.setting.tooltip,Toggle filters setting,Basculer le réglage des filtres
+Datatable clears filters tooltip,filter.filters.clear.tooltip,Clear filters,Effacer les filtres
+Datatable apply filters on map text,filter.filters.apply,Apply to map,Appliquer à la carte
+DataTable string filter placeholder,filter.placeholder.string,text,texte
+DataTable min filter placeholder,filter.placeholder.min,min,min
+DataTable max filter placeholder,filter.placeholder.max,max,max
+DataTable date min filter placeholder,filter.placeholder.datemin, date min,date min
+DataTable date max filter placeholder,filter.placeholder.datemax, date max,date max
+Datatables setting section title,filter.settings.title, Settings, Paramètres
+Datatable sort setting tooltip,filter.settings.sort,Sort,Trier
+Datatable reorder fields setting tooltip,filter.settings.reorder,Reorder fields,Réorganiser les champs
+Datatable settings name column label,filter.settings.label.name,Name,Nom
+Datatable settings filter column label,filter.settings.label.filter,Filter,Filtre
+Datatable settings sort column label,filter.settings.label.sort,Sort,Trier
+Datatable settings display column label,filter.settings.label.display,Display,Afficher
 Details pane title,details.title,Feature Information,Information sur l'entité
 Details pane aria label for expand button,details.aria.expand,Expand,Agrandir
 Details pane tooltip for expand button,details.tooltip.expand,Expand,Agrandir
