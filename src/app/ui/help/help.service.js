@@ -79,7 +79,9 @@
             const self = this;
             self.closeHelpSummary = () => $mdDialog.hide();
 
-            self.sections = Object.keys(translations[$translate.use()].help);
+            self.sections = Object.keys(translations[$translate.use()].help)
+                .map(sectionName =>
+                    ({ name: sectionName, isExpanded: false }));
 
             console.log(self);
         }

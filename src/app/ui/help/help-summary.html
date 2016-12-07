@@ -3,16 +3,37 @@
     <rv-content-pane close-panel="self.closeHelpSummary()" title-style="title" title-value="Help Summary">
 
         <!-- <br> tags in translation strings only get interpreted with the directive, not the filter -->
-            <div class="rv-subsection" ng-repeat="section in self.sections">
-                <div translate-namespace="help.{{ section }}">
-                    <div class="rv-subheader">
-                        <h4 translate class="md-subhead"> .header </h4>
-                    </div>
+            <div class="rv-subsection">
 
-                    <div class="rv-subcontent">
-                        <p translate> .info</p>
-                    </div>
-                </div>
+                <ul class="rv-help-list">
+                    <li class="rv-help-section" ng-repeat="section in self.sections" translate-namespace="help.{{ section.name }}">
+                        <div class="rv-help-header">
+
+                            <md-button
+                                    class="rv-group-body-button rv-button-square"
+                                    ng-click="section.isExpanded = !section.isExpanded"></md-button>
+
+                            <h4 class="rv-group-name" translate>
+                                .header
+                            </h4>
+
+                            <div class="rv-icon-24 rv-group-toggle-icon">
+                                <md-icon
+                                    class="md-toggle-icon"
+                                    ng-class="{ 'rv-toggled' : section.isExpanded }"
+                                    md-svg-src="hardware:keyboard_arrow_down"></md-icon>
+                            </div>
+                        </div>
+
+                        <div class="rv-help-content rv-toggle-slide"
+                            ng-show="section.isExpanded">
+                            <p translate> .info</p>
+                        </div>
+
+                        <div class="rv-shadow"></div>
+                    </li>
+                </ul>
+
             </div>
     </rv-content-pane>
 </md-dialog>

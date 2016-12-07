@@ -8,6 +8,9 @@
         }
     }
 
+    $help-padding: rem(0.4);
+    $help-record-height: rem(6.0);
+
     .rv-help-summary {
         height: 80%;
         width: 70%;
@@ -18,6 +21,40 @@
             width: 100%;
             max-width: 100%;
             max-height: 100%;
+        }
+
+        .rv-help-list {
+            @extend %action-list;
+            @extend %shadow-group-list;
+
+            > li:last-child .rv-help-list{
+                border-bottom: none;
+            }
+        }
+
+        .rv-content, .rv-subsection {
+            padding: rem(0.8) 0;
+        }
+
+        .rv-help-content {
+            padding: rem(0.8) rem(2.4);
+        }
+
+        .rv-help-header {
+            @extend %action-list-group;
+
+            height: $help-record-height;
+            padding-right: $help-padding + rem(1.0);
+            padding-left: $help-padding + rem(1.0);
+
+            .rv-toggled.md-toggle-icon {
+                transform: rotate(180deg) !important;
+            }
+
+            // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
+            &:hover ~ .rv-help-content:not(.ng-hide) ~ .rv-shadow {
+                background-color: $primary-color;
+            }
         }
     }
 }

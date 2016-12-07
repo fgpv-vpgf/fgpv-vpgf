@@ -89,11 +89,14 @@
 
         .rv-group-name {
             margin-left: rem(1.6);
+            margin-top: 0;
+            margin-bottom: 0;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
             font-size: rem(1.6);
             flex: 1;
+            font-weight: normal;
         }
 
         .rv-group-toggle-icon {
