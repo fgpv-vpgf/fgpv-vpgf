@@ -34,6 +34,8 @@ $layer-item-height-touch: rem(7.2);
         }
     }
 
+    @include toc-tools;
+
     @include keyboard {
         @include entry-controls-keyboard;
     };
@@ -41,6 +43,23 @@ $layer-item-height-touch: rem(7.2);
     @include touch {
         @include entry-controls-touch;
     };
+}
+
+@mixin toc-tools {
+    .rv-toc-tools {
+        height: $group-item-height;
+        align-items: center;
+        padding: 0 rem(0.4) + rem(0.6) 0 rem(2) - rem(0.4);
+        margin-bottom: rem(0.8);
+
+        md-menu > .md-button {
+            margin: 0;
+        }
+
+        @include touch {
+            height: $group-item-height-touch;
+        }
+    }
 }
 
 @mixin layer-list {

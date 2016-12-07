@@ -1,0 +1,35 @@
+<md-menu md-position-mode="target target">
+
+    <!-- TODO: add translate filters -->
+
+    <md-button
+        translate translate-attr-aria-label="import.title"
+        class="md-icon-button primary rv-icon-20"
+        ng-click="$mdOpenMenu($event)">
+        <md-tooltip>{{ 'toc.menu.visibility' | translate }}</md-tooltip>
+        <md-icon md-svg-src="action:visibility"></md-icon>
+    </md-button>
+
+    <md-menu-content rv-trap-focus="{{ ::self.appID }}" class="rv-menu rv-dense" width="4">
+        <md-menu-item>
+            <md-button
+                ng-click="self.showAllLegendEntries()"
+                ng-disabled="self.isAllLegendEntriesVisible()"
+                translate translate-attr-aria-label="toc.menu.visibility.allon">
+                <md-icon md-svg-icon="action:visibility"></md-icon>
+                {{ ::'toc.menu.visibility.allon' | translate }}
+            </md-button>
+        </md-menu-item>
+
+        <md-menu-item>
+            <md-button
+                ng-click="self.hideAllLegendEntries()"
+                ng-disabled="self.isAllLegendEntriesHidden()"
+                translate translate-attr-aria-label="toc.menu.visibility.alloff">
+                <md-icon md-svg-icon="action:visibility_off"></md-icon>
+                {{ ::'toc.menu.visibility.alloff' | translate }}
+            </md-button>
+        </md-menu-item>
+
+    </md-menu-content>
+</md-menu>
