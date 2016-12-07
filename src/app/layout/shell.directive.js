@@ -70,7 +70,7 @@
     // ignore jshint maxparams options
     // FIXME: refactoring out shell directive into more manageable piece
     function Controller($mdDialog, $translate, version, sideNavigationService, geoService, // jshint ignore:line
-        fullScreenService, helpService, configService, storageService, exportService,
+        fullScreenService, helpService, basemapService, configService, storageService, exportService,
         $rootScope, events) {
         'ngInject';
         const self = this;
@@ -112,6 +112,11 @@
                 name: $translate.instant('sidenav.label.help'),
                 type: 'link',
                 action: helpService.open
+            },
+            {
+                name: $translate.instant('nav.label.basemap'),
+                type: 'link',
+                action: basemapService.open
             }];
         }
 

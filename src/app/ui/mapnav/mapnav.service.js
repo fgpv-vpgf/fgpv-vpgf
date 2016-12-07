@@ -92,15 +92,7 @@
                 tooltip: 'nav.tooltip.basemap',
 
                 selected: () => stateManager.state.mapnav.morph !== 'default',
-                action: () => {
-                    const opacity = val => $rootElement.find(`rv-panel, rv-appbar`).css('opacity', val);
-                    basemapService.toggle();
-
-                    if (basemapService.isOpen()) {
-                        opacity(0.2);
-                        basemapService.onClose().then(() => opacity(1));
-                    }
-                }
+                action: basemapService.open
             }
         };
 
