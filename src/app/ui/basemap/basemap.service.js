@@ -14,7 +14,7 @@
         .module('app.geo')
         .factory('basemapService', basemapService);
 
-    function basemapService($rootScope, events, configService, $translate, $injector, $mdSidenav, $q) {
+    function basemapService($rootScope, $rootElement, events, configService, $translate, $injector, $mdSidenav, $q) {
 
         let bmSelected; // the current selected basemap
         let initialBasemapId;
@@ -42,11 +42,27 @@
          * @return  {Promise}   resolves to undefined when panel animation is complete
          */
         function open() {
-            closePromise = $q($mdSidenav('right').onClose);
+            closePromise = $q($mdSidenav('right').onClose)
+                .then(() => setOtherChromeOpacity(1));
+
+            setOtherChromeOpacity(0.2);
+
+            // close the side menu
+            $mdSidenav('left').close();
+
             return $mdSidenav('right')
                 .open()
-                // Once the side panel is open it hides the basemap mapnav button, so set focus on the panel
+                // Once the side panel is open, set focus on the panel
                 .then(() => $('md-sidenav[md-component-id="right"] button').first().focus(true));
+
+            /**
+             * Makes all other chrome almost transparent so the basemap is more clearly visible
+             * @function setOtherChromeOpacity
+             * @private
+             */
+            function setOtherChromeOpacity(value) {
+                $rootElement.find(`rv-panel, rv-appbar`).css('opacity', value);
+            }
         }
 
         /**

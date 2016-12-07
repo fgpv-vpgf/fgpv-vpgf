@@ -6,7 +6,7 @@
                 <md-content class="rv-export-custom-size rv-invert rv-toggle-slide"
                     ng-if="self.exportSizes.isCustomOptionSelected()">
 
-                    <h4 class="md-title">{{ ::'export.size.custom' | translate }}</h4>
+                    <h4 class="md-title">{{ 'export.size.custom' | translate }}</h4>
 
                     <div class="rv-container" layout="column">
                         <div layout="row" layout-wrap>
@@ -58,14 +58,14 @@
                             <md-button
                                 ng-click="self.exportSizes.resetTemporaryOption()"
                                 class="rv-button-square">
-                                {{ ::'export.cancel' | translate }}
+                                {{ 'export.cancel' | translate }}
                             </md-button>
 
                             <md-button
                                 ng-disabled="!exportForm.$valid"
                                 ng-click="self.exportSizes.updateCustomOption(); self.updateComponents();"
                                 class="rv-button-square md-raised md-primary">
-                                {{ ::'export.generate' | translate }}
+                                {{ 'export.generate' | translate }}
                             </md-button>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                 <md-content class="rv-export-settings rv-invert rv-toggle-slide"
                     ng-if="self.isExportSettingsOpen">
 
-                    <h4 class="md-title">{{ ::'export.settings' | translate }}</h4>
+                    <h4 class="md-title">{{ 'export.settings' | translate }}</h4>
 
                     <div class="rv-container">
                         <ul class="rv-list">
@@ -85,7 +85,7 @@
                                     <md-checkbox
                                         ng-model="section.isSelected"
                                         class="md-primary">
-                                        {{ ::'export.component.' + section.id | translate }}
+                                        {{ 'export.component.' + section.id | translate }}
                                     </md-checkbox>
 
                             </li>
@@ -148,7 +148,7 @@
 
                 <md-option ng-value="sizeOption" ng-repeat="sizeOption in self.exportSizes.options">
                     <div class="rv-option">
-                        <span >{{ ::sizeOption.name | translate }}</span>
+                        <span >{{ sizeOption.name | translate }}</span>
                         <span flex> </span>
                         <span>{{ sizeOption.dimensions }}</span>
                     </div>
@@ -171,14 +171,14 @@
             <md-button
                 class="rv-button-square"
                 ng-click="self.close()">
-                {{ ::'export.close' | translate }}
+                {{ 'export.close' | translate }}
             </md-button>
 
             <md-button
                 class="rv-button-square md-raised md-primary"
                 ng-click="self.saveImage()"
                 ng-disabled="self.isDownloadBlocked()">
-                {{ ::'export.download' | translate }}
+                {{ 'export.download' | translate }}
             </md-button>
         </md-dialog-actions>
     </form>

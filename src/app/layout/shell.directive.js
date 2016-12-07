@@ -70,7 +70,7 @@
     // ignore jshint maxparams options
     // FIXME: refactoring out shell directive into more manageable piece
     function Controller($mdDialog, $translate, version, sideNavigationService, geoService, // jshint ignore:line
-        fullScreenService, helpService, configService, storageService, exportService,
+        fullScreenService, helpService, basemapService, configService, storageService, exportService,
         $rootScope, events) {
         'ngInject';
         const self = this;
@@ -106,25 +106,17 @@
                         sideNavigationService.close();
                         fullScreenService.toggle();
                     }
+                },
+                {
+                    name: $translate.instant('nav.label.basemap'),
+                    type: 'link',
+                    action: basemapService.open
                 }]
             },
             {
                 name: $translate.instant('sidenav.label.help'),
                 type: 'link',
-                action: event => {
-                    sideNavigationService.close();
-
-                    $mdDialog.show({
-                        controller: helpService.HelpSummaryController,
-                        controllerAs: 'self',
-                        templateUrl: 'app/ui/help/help-summary.html',
-                        parent: storageService.panels.shell,
-                        disableParentScroll: false,
-                        targetEvent: event,
-                        clickOutsideToClose: true,
-                        fullscreen: false
-                    });
-                }
+                action: helpService.open
             }];
         }
 
@@ -136,9 +128,6 @@
         function setCustomItems() {
             configService.getCurrent().then(data => {
                 self.markerImageSrc = data.logoUrl;
-
-                // reset custom menu items after first element (full screen)
-                self.menu[0].children = self.menu[0].children.slice(0, 1);
 
                 if (data.services.exportMapUrl) {
                     self.menu[0].children.push({

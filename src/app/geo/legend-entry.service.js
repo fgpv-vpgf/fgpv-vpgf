@@ -427,7 +427,7 @@
              * Walks child items executing the provided function on each leaf;
              * Returns a flatten array of results from the provided function;
              * @param  {Function} action function which is passed the following arguments: legend layer entry, its index in its parent's array, parent
-             * @param  {Boolean} defaults to false; includeGroups flag specifying if the action should be applied to group items as well.
+             * @param  {Boolean} includeGroups defaults to false; includeGroups flag specifying if the action should be applied to group items as well.
              * @return {Array}        flat array of results
              */
             walkItems(action, includeGroups = false) {

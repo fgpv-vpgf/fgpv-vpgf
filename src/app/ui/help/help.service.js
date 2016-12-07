@@ -13,7 +13,7 @@
         .module('app.ui.help')
         .service('helpService', helpService);
 
-    function helpService($mdDialog, $translate, translations) {
+    function helpService($mdDialog, $translate, translations, storageService, sideNavigationService) {
         // all help sections (populated when elements tagged with rv-help are created)
         const registry = [];
 
@@ -27,10 +27,31 @@
             drawnCache,
             setDrawn,
             clearDrawn,
-            HelpSummaryController
+
+            open
         };
 
         return service;
+
+        /**
+         * Opens help panel.
+         *
+         * @function open
+         */
+        function open() {
+            sideNavigationService.close();
+
+            $mdDialog.show({
+                controller: HelpSummaryController,
+                controllerAs: 'self',
+                templateUrl: 'app/ui/help/help-summary.html',
+                parent: storageService.panels.shell,
+                disableParentScroll: false,
+                targetEvent: event,
+                clickOutsideToClose: true,
+                fullscreen: false
+            });
+        }
 
         /**
         * Adds an object to the service's registry.

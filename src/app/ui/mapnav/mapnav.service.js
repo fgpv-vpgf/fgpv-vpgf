@@ -20,7 +20,8 @@
      * @private
      * @return {object} service object
      */
-    function mapNavigationService(stateManager, geoService, $rootScope, locateService, basemapService, $rootElement) {
+    function mapNavigationService($rootElement, stateManager, geoService, $rootScope,
+        locateService, helpService, basemapService) {
         const service = {
             // FIXME: this config snippet should obvisouly come from config service
             config: {
@@ -31,7 +32,8 @@
                     // 'marquee',
                     'home',
                     // 'history',
-                    'basemap'
+                    // 'basemap'
+                    'help'
                 ]
             },
             controls: {}
@@ -78,21 +80,19 @@
                 tooltip: 'nav.tooltip.history',
                 action: function () {} // FIXME: user proper call
             },
+            help: {
+                label: 'sidenav.label.help',
+                icon: 'community:help',
+                tooltip: 'sidenav.label.help',
+                action: helpService.open
+            },
             basemap: {
                 label: 'nav.label.basemap',
                 icon: 'maps:map',
                 tooltip: 'nav.tooltip.basemap',
 
                 selected: () => stateManager.state.mapnav.morph !== 'default',
-                action: () => {
-                    const opacity = val => $rootElement.find(`rv-panel, rv-appbar`).css('opacity', val);
-                    basemapService.toggle();
-
-                    if (basemapService.isOpen()) {
-                        opacity(0.2);
-                        basemapService.onClose().then(() => opacity(1));
-                    }
-                }
+                action: basemapService.open
             }
         };
 
