@@ -5,11 +5,11 @@ Language name (English),lang.en,English,French
 Language name (French),lang.fr,anglais,français
 Language name (native),lang.native,English,Français
 Appbar tooltip for layers icon,appbar.tooltip.layers,Legend,Légende
-Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Point Information,Information de localisation
+Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature Details,Détails de la fonctionnalité
 Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,Menu
 Appbar tooltip for tools icon,appbar.tooltip.tools,Tools,Outils
 Appbar aria label for layers icon,appbar.aria.layers,Sets,Séries
-Appbar aria label for point info icon,appbar.aria.pointInfo,Point Information,Information de localisation
+Appbar aria label for point info icon,appbar.aria.pointInfo,Feature Details,Détails de la fonctionnalité
 Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,Ouvrir menu de navigation
 Map overview aria label for toggle icon,geo.aria.overviewtoggle,Expand/Shrink map overview,Développer / Shrink aperçu de la carte
 Map aria label description,geo.aria.mapdescription,Interactive Map,Carte Interactive
@@ -92,7 +92,7 @@ Settings query mode label,settings.label.query,Allow query,Permettre les requêt
 Settings query mode aria,settings.aria.query,Allow query,Permettre les requêtes
 Side Navigation main title,sidenav.title,FGP R2 Viewer,Visualiseur PGF R2
 Side Navigation full screen,sidenav.label.fullscreen,Full Screen,Plein Écran
-Side Navigation share,sidenav.label.share,Get Link,Obtenir le lien
+Side Navigation share,sidenav.label.share,Share,Partager
 Side Navigation export,sidenav.label.export,Export,Exporter
 Bookmark share link,sidenav.label.sharelink,Link to Share,Lien de partage
 Bookmark short link,sidenav.label.shortlink,Short Link,Lien court
@@ -103,7 +103,7 @@ Side Navigation touch mode,sidenav.label.touch,Touch Mode,Mode Tactile
 Side Navigation language,sidenav.label.language,Language,Langage
 Table of Content Unnamed service,toc.layer.unnamed,Unnamed Service #{{count}},Service sans nom #{{count}}
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,Menu du panneau des données ouvertes
-Table of Content show symbology label,toc.layer.label.symbologyShow,Show symbology,Afficher symbologie
+Table of Content expand symbology label,toc.layer.label.symbologyShow,Expand legend,Développer la légende
 Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide symbology,Masquer symbologie
 Table of Content main title,toc.title,Layer Selector,Sélecteur de couche
 Table of Content toggle group visibility label,toc.label.toggleGroupViz,Toggle group visibility,Masquer groupe de visibilité
@@ -198,7 +198,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.size.small, Small, Petit
 ,export.size.medium, Medium, Médium
 ,export.size.custom, Custom size, Format personnalisé
-,import.title,Import Layers,Importer des couches
+,import.title,Add Layer,Ajouter une couche
 ,import.file.title,Import File,Importer un fichier
 ,import.file.upload.title,Upload data,Charger des données
 ,import.file.upload.summary,"GeoJSON, CSV, or Shapefile","GeoJSON, CSV ou Shapefile"
@@ -293,11 +293,11 @@ FULL SCREEN: Click the FULL SCREEN option in the Menu slideout to hide departmen
 <br>
 Utilisation :<br>
 'Plein écran' : Cliquer sur l'option 'Plein écran' pour masquer le haut et le bas de page du Ministère. Cliquer de nouveau sur 'Plein écran' pour restaurer la vue par défaut."
-,help.share.header,Get Link,Obtenir le lien
-,help.share.info,"Get Link is used to generate a shareable URL of the current map state with selected datasets.<br>
+,help.share.header,Share,Partager
+,help.share.info,"Share is used to generate a shareable URL of the current map state with selected datasets.<br>
 <br>
 Usage:<br>
-GET LINK: Click the GET LINK option [add missing function and help text]","L'option OBTENIR LE LIEN est utilisée pour générer une URL partageable de l'état actuel de la carte avec les ensembles de données sélectionnés.<br>
+Share: Click the Share option [add missing function and help text]","L'option OBTENIR LE LIEN est utilisée pour générer une URL partageable de l'état actuel de la carte avec les ensembles de données sélectionnés.<br>
 <br>
 Utilisation:<br>
 Cliquer sur l'option 'Partager' [add missing function and fr help text]"
@@ -354,7 +354,7 @@ Dans les options supplémentaires, sélectionnez le lien « Métadonnées », si
 - Retirer la couche de la carte et la légende."
 ,help.zoomScale.header,Zoom Scale Dependent Layers,Couches dépendantes de la valeur de l’échelle
 ,help.zoomScale.info,Some layers may only be visible at certain zoom levels. If a layer is not visible at a given zoom level the legend will display a notice and have an action available to zoom to the closest zoom level at which the layer will be visible (this may involve either zooming in or zooming out).,"Certaines couches peuvent être visibles uniquement à certains niveaux de zoom. Si une couche n’est pas visible à un niveau de zoom donné, la légende affichera un avis et offrira une action afin d’établir une valeur de zoom à laquelle la couche sera visible (cela peut impliquer de faire soit un zoom avant ou un zoom arrière)."
-,help.importLayers.header,Import Layers,Importer des couches
+,help.importLayers.header,Add Layer,Ajouter une couche
 ,help.importLayers.info,"Additional layers can be added to the map viewer. Supported formats are: ESRI Feature Layer, SCW, GeoJSON, Shapefile, and CSV file. The '+' button in the at the top of the Legend menu will launch the Import Layers menu.<br>
 Usage: <br>
 - Select the 'From Local File' or 'From Internet' option.<br>
