@@ -168,7 +168,9 @@
                                 clickOutsideToClose: true,
                                 fullscreen: false
                             });
-                        }
+                        },
+                        icon: 'social:share',
+                        class: 'rv-share'
                     });
                 }
             });
