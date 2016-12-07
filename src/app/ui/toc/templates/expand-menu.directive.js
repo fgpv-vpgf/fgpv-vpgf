@@ -35,7 +35,7 @@
         self.appID = appInfo.id;
 
         self.expandAllLegendEntries = () => toggleLegendGroupEntries();
-        self.collapseAllLegendEntries = () => toggleLegendGroupEntries(false)
+        self.collapseAllLegendEntries = () => toggleLegendGroupEntries(false);
 
         self.isAllLegendEntriesExpanded = () => getLegendGroupEntriesExpandState();
         self.isAllLegendEntriesCollapsed = () => getLegendGroupEntriesExpandState(false);

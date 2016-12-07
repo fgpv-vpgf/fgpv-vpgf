@@ -111,20 +111,7 @@
             {
                 name: $translate.instant('sidenav.label.help'),
                 type: 'link',
-                action: event => {
-                    sideNavigationService.close();
-
-                    $mdDialog.show({
-                        controller: helpService.HelpSummaryController,
-                        controllerAs: 'self',
-                        templateUrl: 'app/ui/help/help-summary.html',
-                        parent: storageService.panels.shell,
-                        disableParentScroll: false,
-                        targetEvent: event,
-                        clickOutsideToClose: true,
-                        fullscreen: false
-                    });
-                }
+                action: helpService.open
             }];
         }
 

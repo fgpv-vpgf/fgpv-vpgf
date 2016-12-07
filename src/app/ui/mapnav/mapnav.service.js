@@ -20,7 +20,8 @@
      * @private
      * @return {object} service object
      */
-    function mapNavigationService(stateManager, geoService, $rootScope, locateService, basemapService, $rootElement) {
+    function mapNavigationService($rootElement, stateManager, geoService, $rootScope,
+        locateService, helpService, basemapService) {
         const service = {
             // FIXME: this config snippet should obvisouly come from config service
             config: {
@@ -31,7 +32,8 @@
                     // 'marquee',
                     'home',
                     // 'history',
-                    'basemap'
+                    // 'basemap'
+                    'help'
                 ]
             },
             controls: {}
@@ -77,6 +79,12 @@
                 icon: 'action:history',
                 tooltip: 'nav.tooltip.history',
                 action: function () {} // FIXME: user proper call
+            },
+            help: {
+                label: 'sidenav.label.help',
+                icon: 'community:help',
+                tooltip: 'sidenav.label.help',
+                action: helpService.open
             },
             basemap: {
                 label: 'nav.label.basemap',
