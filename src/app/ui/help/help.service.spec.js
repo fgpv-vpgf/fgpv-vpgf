@@ -19,9 +19,22 @@ describe('helpService', () => {
         });
     }
 
+    function mockStorageService($provide) {
+        $provide.factory('storageService', () => {
+            return {};
+        });
+    }
+
+    function mockSideNavigationService($provide) {
+        $provide.factory('sideNavigationService', () => {
+            return {};
+        });
+    }
+
     beforeEach(() => {
 
-        bard.appModule('app.ui.help', mockDialog, mockTranslate, mockTranslates);
+        bard.appModule('app.ui.help', mockDialog, mockTranslate, mockTranslates,
+            mockStorageService, mockSideNavigationService);
 
         // inject services
         bard.inject('helpService');
