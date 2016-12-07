@@ -98,7 +98,7 @@ Bookmark share link,sidenav.label.sharelink,Link to Share,Lien de partage
 Bookmark short link,sidenav.label.shortlink,Short Link,Lien court
 Bookmark link copied feedback,sidenav.label.copysuccess,Link copied to clipboard,Lien copié dans le presse-papiers
 Bookmark link click to copy hint,sidenav.label.clicktocopy,Click to copy,Cliquez pour copier
-Side Navigation help,sidenav.label.help,HELP,AIDE
+Side Navigation help,sidenav.label.help,Help,Aide
 Side Navigation touch mode,sidenav.label.touch,Touch Mode,Mode Tactile
 Side Navigation language,sidenav.label.language,Language,Langage
 Table of Content Unnamed service,toc.layer.unnamed,Unnamed Service #{{count}},Service sans nom #{{count}}
@@ -164,6 +164,12 @@ Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Bou
 Table of Content open datatable label,toc.label.dataTable,Datatable,Datatable
 Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
 Table of Content keyboard reoder tooltip,toc.tooltip.reorder,Reorder,Réorganiser
+,toc.menu.visibility.title,Toggle Visibility,Basculer la visibilité
+,toc.menu.visibility.allon,Show All,Montre tout
+,toc.menu.visibility.alloff,Hide All,Cacher tout
+,toc.menu.expand.title,Toggle Groups,Alternar grupos
+,toc.menu.expand.allon,Expand All,Expandir todo
+,toc.menu.expand.alloff,Collapse All,Desplegar todo
 While counting geometry,geometry.counting, ...counting, ...compte
 Geometry types,geometry.type.generic, feature|features, entité|entités
 Geometry types,geometry.type.esriGeometryPoint, point|points, point|points
