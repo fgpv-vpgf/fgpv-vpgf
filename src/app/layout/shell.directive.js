@@ -106,17 +106,17 @@
                         sideNavigationService.close();
                         fullScreenService.toggle();
                     }
+                },
+                {
+                    name: $translate.instant('nav.label.basemap'),
+                    type: 'link',
+                    action: basemapService.open
                 }]
             },
             {
                 name: $translate.instant('sidenav.label.help'),
                 type: 'link',
                 action: helpService.open
-            },
-            {
-                name: $translate.instant('nav.label.basemap'),
-                type: 'link',
-                action: basemapService.open
             }];
         }
 
@@ -128,9 +128,6 @@
         function setCustomItems() {
             configService.getCurrent().then(data => {
                 self.markerImageSrc = data.logoUrl;
-
-                // reset custom menu items after first element (full screen)
-                self.menu[0].children = self.menu[0].children.slice(0, 1);
 
                 if (data.services.exportMapUrl) {
                     self.menu[0].children.push({

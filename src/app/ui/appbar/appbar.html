@@ -20,7 +20,15 @@
 
     <!-- TODO: need a better way to determine when to include layer loader menu -->
 
-
+    <md-button
+        translate
+        translate-attr-aria-label="nav.tooltip.basemap"
+        class="md-icon-button primary"
+        ng-click="self.openBasemapSelector()"
+        ng-show="self.stateManager.state.mainToc.active">
+        <md-tooltip>{{ 'nav.tooltip.basemap' | translate }}</md-tooltip>
+        <md-icon md-svg-src="maps:map"></md-icon>
+    </md-button>
 
     <span class="rv-appbar-divider"></span>
 
@@ -32,7 +40,7 @@
         ng-class="{ selected: self.stateManager.state.mainDetails.active }"
         ng-click="self.toggleDetails()"
         ng-show="self.stateManager.display.details.requestId">
-        <md-tooltip>{{'appbar.tooltip.pointInfo' | translate}}</md-tooltip>
+        <md-tooltip>{{ 'appbar.tooltip.pointInfo' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:place"></md-icon>
     </md-button>
 
@@ -43,7 +51,7 @@
         rv-help="toc-button"
         ng-class="{ selected: self.stateManager.state.mainToc.active }"
         ng-click="self.toggleToc()">
-        <md-tooltip>{{'appbar.tooltip.layers' | translate}}</md-tooltip>
+        <md-tooltip>{{ 'appbar.tooltip.layers' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:layers"></md-icon>
     </md-button>
 
