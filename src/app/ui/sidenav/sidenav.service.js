@@ -35,6 +35,7 @@
         return service;
 
         function ShareController($mdDialog, $rootElement, $http, configService) {
+            'ngInject';
             const self = this;
 
             // url cache to avoid unneeded API calls
