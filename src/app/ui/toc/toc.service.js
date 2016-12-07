@@ -84,6 +84,12 @@
                     tooltip: 'toc.tooltip.boundaryZoom',
                     action: zoomToBoundary
                 },
+                data: {
+                    icon: `community:table-large`,
+                    label: 'toc.label.dataTable',
+                    tooltip: 'toc.label.dataTable',
+                    action: service.actions.toggleLayerFiltersPanel
+                },
                 remove: {
                     icon: 'action:delete',
                     label: 'toc.label.remove',
@@ -143,18 +149,9 @@
                     tooltip: 'toc.tooltip.flag.scale'
                 },
                 data: {
-                    icon: {
-                        table: 'community:table-large',
-                        filter: 'community:filter'
-                    },
-                    label: {
-                        table: 'toc.label.flag.data.table',
-                        filter: 'toc.label.flag.data.filter'
-                    },
-                    tooltip: {
-                        table: 'toc.tooltip.flag.data.table',
-                        filter: 'toc.tooltip.flag.data.filter'
-                    }
+                    icon: 'community:table-large',
+                    label: 'toc.label.flag.data.table',
+                    tooltip: 'toc.tooltip.flag.data.table'
                 },
                 query: {
                     icon: 'community:map-marker-off',

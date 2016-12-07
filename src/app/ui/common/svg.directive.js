@@ -37,6 +37,8 @@
         function link(scope, el, attr) {
             if (typeof attr.once === 'undefined') {
                 attr.once = true;
+            } else {
+                attr.once = attr.once.toLowerCase() !== 'false'; // any other value apart from "false" will be considered as true
             }
 
             const stopWatch = scope.$watch('src', newValue => {

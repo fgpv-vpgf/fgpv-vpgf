@@ -3,6 +3,7 @@
 @mixin esri {
     @include scalebar;
     @include overview;
+    @include attribution;
 }
 
 @mixin scalebar {
@@ -311,4 +312,44 @@
         display: none;
     }
     /* Sprites created using http://csssprites.com. Alternate choice: http://spritegen.website-performance.org/ */
+}
+
+@mixin attribution {
+    .esriControlsBR {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        z-index: 30;
+        text-align: right;
+
+        .esriAttribution {
+            font-size: 13px;
+            line-height: 15px;
+            color: #323232;
+            display: inline-block;
+            text-align: left;
+            vertical-align: bottom;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 4px;
+            margin: 0 5px 0 0;
+            background: rgba(255,255,255,0.7);
+
+            .esriAttributionLastItem span.esriAttributionDelim {
+                display: none;
+            }
+        }
+    }
+
+    .map .logo-med {
+        display: inline-block;
+        vertical-align: bottom;
+        min-width: 65px;
+        min-height: 36px;
+        z-index: 30;
+        background-repeat: no-repeat;
+        cursor: pointer;
+        _background-image: none;
+    }
 }

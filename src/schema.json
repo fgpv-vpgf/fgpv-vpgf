@@ -116,6 +116,54 @@
             "additionalProperties": false
         },
 
+        "exportComponent": {
+            "type": "object",
+            "properties": {
+                "isSelected": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Indicates if the component is selected and included in the export graphic."
+                },
+                "isSelectable": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Indicates if the component can be included or excluded from the export graphic by the user."
+                },
+                "value": {
+                    "type": "string",
+                    "description": "Value to be passed to the generation function of this export component."
+                }
+            },
+            "description": "This is the initial configuration for an export component.",
+            "additionalProperties": false
+        },
+
+        "attributionNode": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": { "type": "boolean", "default": true },
+                        "value": { "type": "string", "description": "Optional. Contains the attribution value. If empty, it will use copyright text from the server." }
+                    },
+                    "required": [ "enabled" ],
+                    "additionalProperties": false
+                },
+                "logo": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": { "type": "boolean", "default": true },
+                        "value": { "type": "string", "description": "URL for the image." },
+                        "link": { "type": "string", "description": "URL to go to when clicked." }
+                    },
+                    "required": [ "enabled" ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [ "text", "logo" ],
+            "additionalProperties": false
+        },
 
         "option": {
             "type": "object",
@@ -643,6 +691,7 @@
                 "extentId": { "type": "string", "description": "The extent set to be used for this basemap (should reference map.extentSets.id)" },
                 "lodId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" },
                 "layers": { "$ref": "#/definitions/layerList" },
+                "attribution": { "$ref": "#/definitions/attributionNode" },
                 "zoomLevels": {
                     "type": "object",
                     "properties": {
@@ -733,6 +782,20 @@
             "additionalProperties": false,
             "required": ["serviceUrls"]
         },
+
+        "export": {
+             "type": "object",
+             "description": "Export properties",
+             "properties": {
+                 "title": { "$ref": "#/definitions/exportComponent", "description": "Title of the export graphic." },
+                 "map": { "$ref": "#/definitions/exportComponent", "description": "Map component." },
+                 "mapElements": { "$ref": "#/definitions/exportComponent", "description": "North arrow and scalebar component." },
+                 "legend": { "$ref": "#/definitions/exportComponent", "description": "Legend component." },
+                 "footnote": { "$ref": "#/definitions/exportComponent", "description": "Foot notice to add to exported map" },
+                 "timestamp":  { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." }
+             },
+             "additionalProperties": false
+         },
 
         "map": {
             "type": "object",

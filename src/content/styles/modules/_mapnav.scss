@@ -51,14 +51,26 @@
             &:not([disabled]).md-focused {
                 background-color: rgba(255, 255, 255, $opacity-to);
             }
+
+            @include touch {
+                background-color: rgba(255, 255, 255, 1);
+            }
         }
 
         rv-mapnav-button {
             display: flex;
             overflow: hidden;
             width: rem(3.2);
-            line-height: rem(3.2);
             text-align: center;
+
+            @include touch {
+                width: rem(4.0);
+            }
+
+            @include touch {
+                @include button-size(rem(4.0));
+                @include icon-size(rem(2.0));
+            }
 
             .md-button {
                 margin: 0;

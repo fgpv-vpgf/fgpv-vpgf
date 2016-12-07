@@ -19,7 +19,7 @@
         <pre ng-switch-when="Text">{{ self.item.data[0] }}</pre>
 
         <!-- Raw HTML presentation  -->
-        <rv-details-record-html ng-switch-when="HTML" data="self.item.data[0]"></rv-details-record-html>
+        <rv-svg ng-switch-when="HTML" src="self.item.data[0]"></rv-svg>
 
         <md-divider></md-divider>
     </div>
