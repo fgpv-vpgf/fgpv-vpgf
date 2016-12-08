@@ -17,6 +17,7 @@
     function basemapService($rootScope, $rootElement, events, configService, $translate, $injector, $mdSidenav, $q) {
 
         let bmSelected; // the current selected basemap
+        let bmBlankSelected = null; // the current selected blank basemap
         let initialBasemapId;
         let closePromise;
 
@@ -137,6 +138,13 @@
          * @param {Object} basemap   the basemap object to set as selected
          */
         function select(basemap) {
+
+            // To avoid double checkmark on basemap selection
+            if (bmBlankSelected !== null) {
+                bmBlankSelected.selected = bmBlankSelected.type !== 'blank';
+                bmBlankSelected = null;
+            }
+
             bmSelected.selected = false; // set current basemap to unselected
             bmSelected = basemap;
             bmSelected.selected = true;
@@ -191,16 +199,27 @@
                 projection.basemaps.push(basemap);
             });
 
-            projections.forEach(p => p.basemaps.push({
-                name: $translate.instant('basemap.blank.title'),
-                description: $translate.instant('basemap.blank.desc'),
-                type: 'blank',
-                id: 'blank_basemap_' + p.basemaps[0].wkid,
-                url: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7/',
-                wkid: p.basemaps[0].wkid,
-                selected: false,
-                attribution: p.basemaps[0].attribution
-            }));
+            projections.forEach(p => {
+
+                const idBlank = 'blank_basemap_' + p.basemaps[0].wkid;
+                // do we have a selected blank basemap
+                const selectedBlank = idBlank === bmSelected.id;
+
+                const index = p.basemaps.push({
+                    name: $translate.instant('basemap.blank.title'),
+                    description: $translate.instant('basemap.blank.desc'),
+                    type: 'blank',
+                    id: idBlank,
+                    url: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7/',
+                    wkid: p.basemaps[0].wkid,
+                    selected: selectedBlank,
+                    attribution: p.basemaps[0].attribution
+                }) - 1;
+                // to keep a trace of the blank basemap selection
+                if (selectedBlank) {
+                    bmBlankSelected = p.basemaps[index];
+                }
+            });
 
             bmSelected.selected = true;
             onChangeCallback.forEach(cb => cb(projections, bmSelected));
