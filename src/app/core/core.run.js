@@ -1,4 +1,4 @@
-// jshint maxparams:12
+// jshint maxparams:13
 // FIXME reduce number of apiBlock parameters
 (() => {
     'use strict';
@@ -18,7 +18,7 @@
      * The `runBlock` triggers config and locale file loading, sets language of the app.
      */
     function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, events, configService,
-            gapiService, appInfo) {
+            gapiService, appInfo, translationService) {
 
         const promises = [
             configService.initialize(),
@@ -77,7 +77,8 @@
             const preMapService = {
                 initialBookmark,
                 restoreSession,
-                start
+                start,
+                translationService
             };
 
             globalRegistry.getMap(appInfo.id)._registerPreLoadApi(preMapService);
@@ -154,7 +155,7 @@
      * `apiBlock` sets up language and RCS calls for the global API
      */
     function apiBlock($rootScope, globalRegistry, geoService, configService, events,
-        LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo, $rootElement, $mdDialog) {
+        LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo, $rootElement, $mdDialog, pluginService) {
 
         const service = {
             setLanguage,
@@ -162,7 +163,8 @@
             getBookmark,
             centerAndZoom,
             useBookmark,
-            backToCart
+            backToCart,
+            registerPlugin: pi => pluginService.register(pi)
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
