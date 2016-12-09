@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
 
     // this is a default configuration of the side menu
@@ -41,10 +42,10 @@
      * @return {object} service object
      */
     // need to find a more elegant way to include all these dependencies
-    // jshint maxparams:15
+    // jshint maxparams:16
     function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegistry, configService, events,
         stateManager, basemapService, fullScreenService, exportService, storageService, helpService, reloadService,
-        translations, $mdDialog) {
+        translations, $mdDialog, pluginService) {
 
         const service = {
             open,
@@ -136,6 +137,12 @@
                 label: 'sidenav.label.language',
                 icon: 'action:translate',
                 children: []
+            },
+            plugins: {
+                type: 'group',
+                label: 'sidenav.menu.plugin',
+                icon: 'action:settings_input_svideo',
+                children: []
             }
         };
 
@@ -143,6 +150,17 @@
 
         // if language change, reset menu item
         $rootScope.$on(events.rvLangSwitch, init);
+
+        // Add any MenuItem plugins as they are created to the menu
+        pluginService.onCreate(RV.Plugin.MenuItem, mItem => {
+            // first plugin created should add the plugin group
+            if (service.controls.plugins.children.length === 0) {
+                SIDENAV_CONFIG_DEFAULT.items.push(['plugins']);
+            }
+
+            mItem.label = mItem.name;
+            service.controls.plugins.children.push(mItem);
+        });
 
         return service;
 
