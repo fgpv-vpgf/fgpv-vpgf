@@ -18,7 +18,7 @@
      * The `runBlock` triggers config and locale file loading, sets language of the app.
      */
     function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, events, configService,
-            gapiService, appInfo) {
+            gapiService, appInfo, translationService) {
 
         const promises = [
             configService.initialize(),
@@ -77,7 +77,8 @@
             const preMapService = {
                 initialBookmark,
                 restoreSession,
-                start
+                start,
+                translationService
             };
 
             globalRegistry.getMap(appInfo.id)._registerPreLoadApi(preMapService);
