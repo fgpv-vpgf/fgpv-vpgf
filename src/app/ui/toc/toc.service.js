@@ -105,6 +105,15 @@
                     icon: 'editor:drag_handle',
                     label: 'toc.tooltip.reorder',
                     tooltip: 'toc.tooltip.reorder'
+                },
+                symbologyStack: {
+                    icon: 'maps:layers',
+                    label: 'toc.menu.symbology',
+                    tooltip: 'toc.menu.symbology',
+                    action: entry => {
+                        entry.toggleSymbology();
+                        entry.wiggleSymbology();
+                    }
                 }
             },
             flags: {
