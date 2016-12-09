@@ -71,7 +71,7 @@
     // FIXME: refactoring out shell directive into more manageable piece
     function Controller($mdDialog, $translate, version, sideNavigationService, geoService, // jshint ignore:line
         fullScreenService, helpService, basemapService, configService, storageService, exportService,
-        $rootScope, events) {
+        $rootScope, events, globalRegistry) {
         'ngInject';
         const self = this;
 
@@ -89,6 +89,11 @@
             setDefaultItems();
             setCustomItems();
         });
+
+        // Add any MenuItem plugins as they are created to the menu
+        globalRegistry.Plugin.BasePlugin.onCreate(
+            globalRegistry.Plugin.MenuItem, mItem => self.menu[0].children.push(mItem)
+        );
 
         /**
          * Set default menu items

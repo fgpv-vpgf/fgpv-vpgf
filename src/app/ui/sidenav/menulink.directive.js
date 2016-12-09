@@ -17,14 +17,14 @@
      * `rvMenuLink` directive body.
      * @return {object} directive body
      */
-    function rvMenuLink() {
+    function rvMenuLink(globalRegistry) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/sidenav/menulink.html',
             scope: {
                 section: '='
             },
-            link: linkFunc,
+            link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
@@ -32,11 +32,13 @@
 
         return directive;
 
-        /**
-         * Skeleton link function.
-         */
-        function linkFunc() { // scope, el, attr, ctrl) {
-            // console.log(scope, el, attr, ctrl);
+        function link(scope, el) {
+            const self = scope.self;
+
+            // give MenuItem plugin a reference to the element for event listening
+            if (self.section instanceof globalRegistry.Plugin.MenuItem) {
+                self.section.bindElement(el);
+            }
         }
     }
 

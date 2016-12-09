@@ -551,6 +551,37 @@
     <!-- endinject -->
 
     <script>
+        // ----- MenuItem plugin example 1 - Instantiating as a stand alone object -----
+        const myMenuItem = new RV.Plugin.MenuItem(
+            'Plugin Button', // the translation key or a string label
+            ['click', () => {
+                alert('Alerts are great');
+                myMenuItem.name = 'New Button Name!';
+            }]
+        );
+
+        // When you're happy with the plugin call register to add the plugin to the viewer.
+        myMenuItem.register();
+
+        // ----- MenuItem plugin example 2 - Extending the MenuItem object for back to cart -----
+        class BackToCartMenuItem extends RV.Plugin.MenuItem {
+            constructor() {
+                super();
+                this.name = 'toc.menu.backToCart';
+                this.on('click', this.backToCart);
+                this.register();
+            }
+
+            backToCart() {
+                if (confirm('Are you sure you want to leave this page?')) {
+                    RV.getMap('fgpmap').backToCart().then(keys => window.location.href = window.location.href.split('?')[0] + '?keys=' + keys.toString());
+                }
+            }
+        }
+
+        // Instantiate your custom Menu Item Object, it self registers in constructor()
+        new BackToCartMenuItem();
+
         function queryStringToJSON(q) {
             var pairs = q.search.slice(1).split('&');
             var result = {};
