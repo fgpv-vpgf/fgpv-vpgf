@@ -485,3 +485,4 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 ,focus.dialog.main,We'll keep focus locked on the viewer - exit with,Nous allons garder le focus verrouillé sur la visionneuse - exit avec
 ,focus.dialog.escape,Escape,Échapper
 ,toc.menu.symbology,Show legend,Afficher la légende
+,sidenav.menu.plugin,Plugin Links,Liens
