@@ -14,7 +14,7 @@
      * - configure translation provider by prepping static loader (and optionally setting preferred language if we know what it is),
      * - configure theme colours for angular material
      */
-    function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider, translations) {
+    function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider) {
 
         configureTranslations();
         configureTheme();
@@ -27,10 +27,7 @@
          * @function
          */
         function configureTranslations() {
-            $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
-            Object.keys(translations).forEach(locale => $translateProvider.translations(locale, translations[locale]));
-
-            // $translateProvider.preferredLanguage('en-CA');
+            $translateProvider.useLoader('translationService', { action: 'loader' });
         }
 
         /**

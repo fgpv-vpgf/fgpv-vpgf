@@ -551,6 +551,25 @@
     <!-- endinject -->
 
     <script>
+
+        // ----- MenuItem plugin example - Back to Cart -----
+        const BackToCartPlugin = new RV.Plugin.MenuItem('backToCart');
+        BackToCartPlugin
+            .setName('cartButtonLabel')
+            .setAction(() => RV.getMap('fgpmap').backToCart().then(keys => window.location.href = window.location.href.split('?')[0] + '?keys=' + keys.toString()))
+            .translations({
+                'en-CA': {
+                    cartButtonLabel: 'Back to Cart'
+                },
+
+                'fr-CA': {
+                    cartButtonLabel: 'Retour au panier'
+                }
+            });
+
+        // register the plugin with the map
+        RV.getMap('fgpmap').registerPlugin(BackToCartPlugin);
+
         function queryStringToJSON(q) {
             var pairs = q.search.slice(1).split('&');
             var result = {};

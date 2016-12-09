@@ -10,6 +10,8 @@
     // check if the global RV registry object already exists and store a reference
     const RV = window.RV = typeof window.RV === 'undefined' ? {} : window.RV;
 
+    RV.plugins = {};
+
     // test user browser, true if IE false otherwise
     RV.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
 
@@ -85,6 +87,7 @@
     const mapProxy = {
         _appPromise: null,
         _initAppPromise: null,
+        appID: null,
 
         _proxy(action, ...args) {
             return this._appPromise.then(appInstance =>
@@ -130,7 +133,22 @@
             this._initProxy('restoreSession', keysArray);
         },
 
-        _init() {
+        registerPlugin(plugin) {
+            Object.keys(plugin.translations).forEach(lang => {
+                plugin.translations[lang] = {
+                    plugin: { [plugin.id]: plugin.translations[lang] }
+                };
+            });
+
+            this._initProxy('translationService', plugin.translations).then(() => {
+                this._proxy('registerPlugin', plugin);
+            });
+        },
+
+        _init(appID) {
+            this.appID = appID;
+            RV.plugins[this.appID] = [];
+
             this._appPromise = new Promise(resolve =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness
                 this._registerMap = appInstance =>
@@ -185,7 +203,7 @@
         // create debug object for each app instance
         RV.debug[appId] = {};
 
-        mapRegistry[appId] = Object.create(mapProxy)._init(node);
+        mapRegistry[appId] = Object.create(mapProxy)._init(appId);
     });
 
     scriptsArr.forEach(src => loadScript(src));
