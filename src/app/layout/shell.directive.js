@@ -71,7 +71,8 @@
     // FIXME: refactoring out shell directive into more manageable piece
     function Controller($mdDialog, $translate, version, sideNavigationService, geoService, // jshint ignore:line
         fullScreenService, helpService, basemapService, configService, storageService, exportService,
-        $rootScope, events, stateManager, $rootElement) {
+        $rootScope, events, stateManager, $rootElement, pluginService) {
+
         'ngInject';
         const self = this;
 
@@ -84,11 +85,9 @@
         setDefaultItems();
         setCustomItems();
 
-        // if language change, reset menu item
-        $rootScope.$on(events.rvLangSwitch, () => {
-            setDefaultItems();
-            setCustomItems();
-        });
+        // Add any MenuItem plugins as they are created to the menu
+        pluginService.onCreate('MenuItem', mItem => self.menu[0].children.push(mItem));
+
         /**
          * Set default menu items
          *
@@ -99,7 +98,7 @@
                 name: 'Options',
                 type: 'heading',
                 children: [{
-                    name: $translate.instant('sidenav.label.fullscreen'),
+                    name: 'sidenav.label.fullscreen',
                     type: 'link',
                     action: () => {
                         sideNavigationService.close();
@@ -122,13 +121,13 @@
                     showIcon: () => stateManager.state.mainToc.active
                 },
                 {
-                    name: $translate.instant('nav.label.basemap'),
+                    name: 'nav.label.basemap',
                     type: 'link',
                     action: basemapService.open
                 }]
             },
             {
-                name: $translate.instant('sidenav.label.help'),
+                name: 'sidenav.label.help',
                 type: 'link',
                 action: helpService.open
             }];
@@ -145,7 +144,7 @@
 
                 if (data.services.exportMapUrl) {
                     self.menu[0].children.push({
-                        name: $translate.instant('sidenav.label.export'),
+                        name: 'sidenav.label.export',
                         type: 'link',
                         action: () => {
                             sideNavigationService.close();
@@ -156,7 +155,7 @@
 
                 if (data.shareable) {
                     self.menu[0].children.push({
-                        name: $translate.instant('sidenav.label.share'),
+                        name: 'sidenav.label.share',
                         type: 'link',
                         action: event => {
                             sideNavigationService.close();
