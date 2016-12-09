@@ -41,10 +41,10 @@
      * @return {object} service object
      */
     // need to find a more elegant way to include all these dependencies
-    // jshint maxparams:15
+    // jshint maxparams:16
     function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegistry, configService, events,
         stateManager, basemapService, fullScreenService, exportService, storageService, helpService, reloadService,
-        translations, $mdDialog) {
+        translations, $mdDialog, pluginService) {
 
         const service = {
             open,
@@ -143,6 +143,22 @@
 
         // if language change, reset menu item
         $rootScope.$on(events.rvLangSwitch, init);
+
+        // Add any MenuItem plugins as they are created to the menu
+        pluginService.onCreate('MenuItem', mItem => {
+            // create menu group if not already created
+            if (!service.controls.plugins) {
+                service.controls.plugins = {
+                    type: 'group',
+                    label: 'sidenav.menu.plugin',
+                    icon: 'action:settings_input_svideo',
+                    children: []
+                };
+                SIDENAV_CONFIG_DEFAULT.items.push(['plugins']);
+            }
+            mItem.label = mItem.name;
+            service.controls.plugins.children.push(mItem);
+        });
 
         return service;
 
