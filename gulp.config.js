@@ -82,6 +82,7 @@ module.exports = function () {
 
         jsAppSeed: app + 'app-seed.js', // initializes viewer instances
         jsGlobalRegistry: app + 'global-registry.js', // create global registry; loads gapi, etc.
+        jsPluginSupport: app + 'plugin.js',
 
         jsInjectorFile: app + 'bootstrap.js',
         jsInjectorDest: 'bootstrap.js',
