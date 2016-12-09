@@ -34,6 +34,7 @@
             templateUrl: 'app/ui/toc/templates/entry-symbology.html',
             scope: {
                 symbology: '=',
+                entry: '=?',
                 type: '=?'
             },
             link: link,
@@ -50,8 +51,10 @@
             const self = scope.self;
 
             self.expanded = false; // holds the state of symbology section
-            self.toggleSymbology = toggleSymbology;
-            self.wiggleSymbology = wiggleSymbology;
+            // TODO: these should be attached to self.symbology instead of self.entry once geo module refactor is complete
+            self.entry.toggleSymbology = self.toggleSymbology = toggleSymbology;
+            self.entry.wiggleSymbology = self.wiggleSymbology = wiggleSymbology;
+
             self.isInteractive = ctrl ? true : false;
 
             // TODO: remove temp var to randomize images loaded
