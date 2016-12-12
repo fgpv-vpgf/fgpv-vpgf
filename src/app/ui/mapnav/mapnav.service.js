@@ -1,6 +1,20 @@
 (() => {
     'use strict';
 
+    const MAPNAV_CONFIG_DEFAULT = {
+        zoom: 'buttons', // 'all', 'slider', 'buttons'
+        extra: [
+            // NOTE: marquee and history buttons kept as options for future functionality
+            // possible values
+            // 'geoLocation',
+            // 'marquee',
+            // 'home',
+            // 'history',
+            // 'basemap'
+            // 'help'
+        ]
+    };
+
     /**
      * @module mapNavigationService
      * @memberof app.ui
@@ -20,24 +34,15 @@
      * @private
      * @return {object} service object
      */
-    function mapNavigationService($rootElement, stateManager, geoService, $rootScope,
-        locateService, helpService, basemapService) {
+    function mapNavigationService(stateManager, geoService, $rootScope,
+        locateService, helpService, basemapService, events, configService) {
+
         const service = {
-            // FIXME: this config snippet should obvisouly come from config service
-            config: {
-                zoom: 'buttons', // 'all', 'slider', 'buttons'
-                extra: [
-                    // NOTE: marquee and history buttons kept as options for future functionality
-                    'geoLocation',
-                    // 'marquee',
-                    'home',
-                    // 'history',
-                    // 'basemap'
-                    'help'
-                ]
-            },
+            config: {},
             controls: {}
         };
+
+        init();
 
         // navigation controls presets
         service.controls = {
@@ -56,7 +61,7 @@
                 tooltip: 'nav.tooltip.zoomOut',
                 action: () => geoService.shiftZoom(-1)
             },
-            geoLocation: {
+            geoLocator: {
                 label: 'nav.label.geoLocation',
                 icon: 'maps:my_location',
                 tooltip: 'nav.tooltip.geoLocation',
@@ -111,5 +116,30 @@
         return service;
 
         /*************/
+
+        /**
+         * Set up initial mapnav cluster buttons.
+         * Set up language change listener to update the buttons when a new config is loaded.
+         *
+         * @function init
+         * @private
+         */
+        function init() {
+            setupMapnavButton();
+
+            // if language change, reset menu item
+            $rootScope.$on(events.rvLangSwitch, setupMapnavButton);
+        }
+
+        /**
+         *
+         *
+         * @function setupMapnavButton
+         * @function private
+         */
+        function setupMapnavButton() {
+            configService.getCurrent().then(data =>
+                    angular.extend(service.config, MAPNAV_CONFIG_DEFAULT, data.navBar));
+        }
     }
 })();
