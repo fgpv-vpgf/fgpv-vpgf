@@ -1,7 +1,7 @@
 /* global RV, jQuery */
 ((RV, jQuery) => {
     // delay in milliseconds from time focus is lost to when action is taken
-    const focusoutDelay = 800;
+    const focusoutDelay = 200;
     // all the possible states a viewer can be in - only one at any given time
     const statuses = {
         NONE: undefined,
@@ -294,6 +294,12 @@
         const evtTarget = $(event.target);
         const viewer = viewerGroup.contains(evtTarget);
 
+        // fixes issue where md-backdrop is briefly created outside the viewer, and on click makes the waiting dialog appear
+        // ignoring the click when it happens on an md-backdrop
+        if (evtTarget.is('md-backdrop')) {
+            return;
+        }
+
         if (viewer) {
             viewer.setStatus(statuses.ACTIVE);
             evtTarget
@@ -410,7 +416,12 @@
             // leaves unexpectedly, focus can be manually set and we don't need to be back through history
             // Animations often cause focus loss when, for example, one element is being hidden while the
             // element we want focus on is being shown.
-            focusoutTimerCancel = setTimeout(() => shiftFocus(false, true), focusoutDelay);
+            focusoutTimerCancel = setTimeout(() => {
+                // check if focus is still off the viewer after the delay - if so shift focus back
+                if (!viewer.contains($(document.activeElement))) {
+                    shiftFocus(false, true);
+                }
+            }, focusoutDelay);
         }
     }
 
