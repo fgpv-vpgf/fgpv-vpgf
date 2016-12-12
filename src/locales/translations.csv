@@ -4,7 +4,8 @@ Language direction,lang.dir,ltr,ltr
 Language name (English),lang.en,English,French
 Language name (French),lang.fr,anglais,français
 Language name (native),lang.native,English,Français
-Appbar tooltip for layers icon,appbar.tooltip.layers,Legend,Légende
+Appbar tooltip for layers icon,appbar.tooltip.layers,Show Layers,Afficher les Calques
+Appbar headline for layers,appbar.headline.layers,Layers,Couches
 Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature Details,Détails de la fonctionnalité
 Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,Menu
 Appbar tooltip for tools icon,appbar.tooltip.tools,Tools,Outils
