@@ -15,11 +15,18 @@
             display: flex;
             white-space: nowrap;
             border-bottom: 1px solid $divider-color-light;
-            height: $toolbar-height + 1px; // 1px needed for a border
+            height: auto; // 1px needed for a border
+            min-height: $toolbar-height + 1px;
             align-items: center;
             padding: {
                 right: rem(0.6);
                 left: rem(1.6);
+                top: rem(0.8);
+                bottom: rem(0.8);
+            }
+
+            .rv-header-content {
+                overflow: hidden;
             }
 
             @include media($rv-lt-lg) {
@@ -77,14 +84,20 @@
 }
 
 @mixin pane-title {
-    > .md-headline,
-    > .md-title,
-    > .md-subhead {
-        line-height: 24px;
+    .md-headline,
+    .md-title,
+    .md-subhead,
+    .md-caption {
         margin: 0;
         display: inline-block;
         text-overflow: ellipsis;
         overflow: hidden;
+    }
+
+    .md-headline,
+    .md-title,
+    .md-subhead {
+        line-height: rem(2.4);
     }
 }
 

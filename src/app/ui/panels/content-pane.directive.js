@@ -14,10 +14,11 @@
      *
      * `title-value` a string to be displayed in the pane's header; if ommited, the header is not shown
      * `title-style` sets the style of the pane's title; options: "headline", "title", "subhead"
+     * `sub-title-value` a string to be displayed in the pane's header; if ommited, not shown; if the `title-value` is ommited, not shown;
      * `is-loading` a flag to show/hide the loading indicator
      * `hide-when-loading` if true, hides the content of the pane when the loading indicator is active
      * `header-controls` a list of directive names separated by ';' to be inserted into the header (extra controls like a menu for example)
-     * `floating-header` no explicit header is shown; close button sticks to the upper right corner of the scrollable content
+     * [deprecated] `floating-header` no explicit header is shown; close button sticks to the upper right corner of the scrollable content
      * `footer` directive name to insert into the footer
      * `close-panel` a custom "close" function to call when the pane is closed
      * `static-content` makes main content section non-scrollable
@@ -27,6 +28,7 @@
      * <rv-content-pane
      *         title-value="Panel"
      *         title-style="title"
+     *         sub-title-value="sub title"
      *         is-loading="true"
      *         hide-when-loading="true"
      *         header-controls="filters-default-menu"
@@ -56,6 +58,7 @@
             scope: {
                 titleValue: '@?', // binds to the evaluated dom property
                 titleStyle: '@?',
+                subTitleValue: '@?',
                 isLoading: '=?', // bind to a property
                 hideWhenLoading: '=?',
                 headerControls: '@?',
