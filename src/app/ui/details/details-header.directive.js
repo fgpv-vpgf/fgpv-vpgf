@@ -2,30 +2,31 @@
     'use strict';
 
     /**
-     * @module rvDetailsExpand
+     * @module rvDetailsHeader
      * @memberof app.ui
      * @restrict E
      * @description
      *
-     * The `rvDetailsExpand` directive allows details to be expanded into a modal box when
-     * the expand button is clicked.
+     * The `rvDetailsHeader` directive provides a custom header for details panel.
      *
      */
     angular
         .module('app.ui.details')
-        .directive('rvDetailsExpand', rvDetailsExpand);
+        .directive('rvDetailsHeader', rvDetailsHeader);
 
     /**
-     * `rvDetailsExpand` directive body.
+     * `rvDetailsHeader` directive body.
      *
-     * @function rvDetailsExpand
+     * @function rvDetailsHeader
      * @return {object} directive body
      */
-    function rvDetailsExpand() {
+    function rvDetailsHeader() {
         const directive = {
             restrict: 'E',
-            templateUrl: 'app/ui/details/details-expand.html',
-            scope: {},
+            templateUrl: 'app/ui/details/details-header.html',
+            scope: {
+                selectedItem: '='
+            },
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
@@ -39,5 +40,6 @@
         const self = this;
 
         self.expandPanel = detailService.expandPanel;
+        self.closeDetails = detailService.closeDetails;
     }
 })();

@@ -16,6 +16,10 @@
         }
     }
 
+    rv-details-header {
+        position: relative;
+    }
+
     .rv-details-summary {
         height: 80%;
         width: 70%;
@@ -42,6 +46,7 @@
     }
 
     .rv-details {
+        flex-direction: column;
         display: flex;
         position: absolute;
         top: 0;
@@ -181,7 +186,8 @@
         }
 
         &.rv-multiple {
-            .rv-details-data {
+            .rv-details-data,
+            rv-details-header {
                 margin-left: rem(4.8);
             }
         }

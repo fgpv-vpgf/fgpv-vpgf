@@ -3,9 +3,20 @@
     <div class="rv-header" ng-show="self.titleValue && !self.floatingHeader" ng-switch on="self.titleStyle">
         <!-- display an appropriate header based on `headline` value -->
         <!-- hide header if no title text provided -->
-        <h2 class="md-headline" ng-switch-when="headline">{{ self.titleValue }}</h2>
-        <h3 class="md-title" ng-switch-when="title">{{ self.titleValue }}</h3>
-        <h4 class="md-subhead" ng-switch-when="subhead">{{ self.titleValue }}</h4>
+        <div class="rv-header-content" layout="column">
+
+            <h2 class="md-headline" ng-switch-when="headline">{{ self.titleValue }}</h2>
+            <h3 class="md-title" ng-switch-when="headline" ng-if="self.subTitleValue">{{ self.subTitleValue }}</h3>
+
+            <h3 class="md-title" ng-switch-when="title">{{ self.titleValue }}</h3>
+            <h4 class="md-subhead" ng-switch-when="title" ng-if="self.subTitleValue">{{ self.subTitleValue }}</h4>
+
+            <h4 class="md-subhead" ng-switch-when="subhead">{{ self.titleValue }}</h4>
+            <h5 class="md-caption" ng-switch-when="subhead" ng-if="self.subTitleValue">{{ self.subTitleValue }}</h4>
+
+            <h5 class="md-caption" ng-switch-when="caption">{{ self.titleValue }}</h4>
+
+        </div>
 
         <span flex class="rv-spacer"></span>
 
@@ -22,6 +33,7 @@
         </md-button>
     </div>
 
+    <!-- floating header is deprecated -->
     <div class="rv-header-float" ng-show="self.floatingHeader && self.closePanel">
 
         <span flex class="rv-spacer"></span>
