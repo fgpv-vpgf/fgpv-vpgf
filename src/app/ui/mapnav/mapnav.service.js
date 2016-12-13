@@ -132,7 +132,7 @@
         }
 
         /**
-         *
+         * Merges a mapnav snippet from the config file with the default configuration. This is a shallow extend and the top-level properties (`extra` and `button` will be overwritten). Supplying an empty array as `extra` will remove all the extra buttons from the cluster.
          *
          * @function setupMapnavButton
          * @function private
