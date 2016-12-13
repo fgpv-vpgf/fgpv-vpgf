@@ -1,7 +1,7 @@
-<md-button ng-click="self.section.action($event)" ng-class="::self.section.class">
+<md-button ng-click="self.section.action($event)" ng-class="::self.section.class" ng-if="::self.section.show() !== false">
     {{ self.section.name | translate }}
     <span flex ng-if="::self.section.icon"></span>
-    <md-icon md-svg-src="{{::self.section.icon}}" ng-if="::self.section.icon"></md-icon>
+    <md-icon md-svg-src="{{::self.section.icon}}" ng-if="self.section.showIcon() !== false && self.section.icon"></md-icon>
     <span class="md-visually-hidden" ng-if="self.isSelected()">
         current page
     </span>
