@@ -18,6 +18,7 @@
      * `is-loading` a flag to show/hide the loading indicator
      * `hide-when-loading` if true, hides the content of the pane when the loading indicator is active
      * `header-controls` a list of directive names separated by ';' to be inserted into the header (extra controls like a menu for example)
+     * `header-controls-scope` a scope to be passed to the header controls directives; if not supplied, the current scope of the panel is used
      * [deprecated] `floating-header` no explicit header is shown; close button sticks to the upper right corner of the scrollable content
      * `footer` directive name to insert into the footer
      * `close-panel` a custom "close" function to call when the pane is closed
@@ -32,6 +33,7 @@
      *         is-loading="true"
      *         hide-when-loading="true"
      *         header-controls="filters-default-menu"
+     *         header-controls-scope=""
      *         floating-header="true"
      *         footer=""
      *         close-panel=""
@@ -62,6 +64,7 @@
                 isLoading: '=?', // bind to a property
                 hideWhenLoading: '=?',
                 headerControls: '@?',
+                headerControlsScope: '=?',
                 floatingHeader: '=?',
                 footer: '@?',
                 closePanel: '&?', // https://docs.angularjs.org/api/ng/service/$compile
@@ -133,7 +136,8 @@
 
                     self.headerControls.split(';')
                         .forEach(controlName => {
-                            const controlElement = $compile(`<${controlName}></${controlName}>`)(scope);
+                            const controlElement =
+                                $compile(`<${controlName}></${controlName}>`)(self.headerControlsScope || scope);
                             headerSpacer.after(controlElement);
                         });
                 }

@@ -37,7 +37,8 @@
         }
 
         .rv-help-content {
-            padding: rem(0.8) rem(2.4);
+            padding: rem(0.8) rem(2.4) rem(2.4) rem(2.4);
+            border-bottom: 1px solid $divider-color-light;
         }
 
         .rv-help-header {
@@ -54,6 +55,39 @@
             // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
             &:hover ~ .rv-help-content:not(.ng-hide) ~ .rv-shadow {
                 background-color: $primary-color;
+            }
+        }
+
+        .rv-help-highlight {
+            background-color: $primary-color;
+            color: $primary-color-text;
+        }
+
+        rv-help-search {
+            display: flex;
+            align-items: center;
+
+            md-input-container {
+                margin: 0;
+
+                .rv-clear-search {
+                    position: absolute;
+                    right: 0;
+
+                    @each $item in $button-sizes {
+                        &.rv-button-#{$item} {
+                            top: calc(50% - #{$item / 2}px);
+                        }
+                    }
+                }
+
+                .md-errors-spacer {
+                    display: none;
+                }
+            }
+
+            md-icon {
+                margin-right: rem(0.6);
             }
         }
     }

@@ -9,9 +9,28 @@
      * The `helpService` service provides stores for help items
      *
      */
+    /**
+     * @module highlightFilter
+     * @memberof app.ui
+     * @description
+     *
+     * The `highlightFilter` filter, highlights a phrase in the supplied text.
+     *
+     */
     angular
         .module('app.ui.help')
-        .service('helpService', helpService);
+        .service('helpService', helpService)
+        .filter('highlight', highlightFilter);
+
+    function highlightFilter($sce) {
+        return (text, searchTerm) => {
+            if (searchTerm) {
+                text = text.replace(new RegExp(`(${searchTerm})`, 'gi'), '<span class="rv-help-highlight">$1</span>');
+            }
+
+            return $sce.trustAsHtml(text);
+        };
+    }
 
     function helpService($mdDialog, $translate, translations, storageService, sideNavigationService) {
         // all help sections (populated when elements tagged with rv-help are created)
@@ -44,6 +63,7 @@
             $mdDialog.show({
                 controller: HelpSummaryController,
                 controllerAs: 'self',
+                bindToController: true,
                 templateUrl: 'app/ui/help/help-summary.html',
                 parent: storageService.panels.shell,
                 disableParentScroll: false,
@@ -98,13 +118,42 @@
         // FIXME add docs
         function HelpSummaryController() {
             const self = this;
-            self.closeHelpSummary = () => $mdDialog.hide();
 
+            self.closeHelpSummary = closeHelpSummary;
+            self.onSearchTermChange = onSearchTermChange;
+
+            self.filteredSections = [];
             self.sections = Object.keys(translations[$translate.use()].help)
                 .map(sectionName =>
-                    ({ name: sectionName, isExpanded: false }));
+                    ({
+                        header: $translate.instant(`help.${sectionName}.header`),
+                        info: $translate.instant(`help.${sectionName}.info`),
+                        isExpanded: false
+                    }));
 
-            console.log(self);
+            self.searchTerm = '';
+
+            /**
+             * Closes the Help panel.
+             *
+             * @function closeHelpSummary
+             * @private
+             */
+            function closeHelpSummary() {
+                $mdDialog.hide();
+            }
+
+            /**
+             * When a search term is entered, expand all the help sections (only once that are filtered will be visible, so it's okay).
+             * When a search term is cleared, collapse all the help sections.
+             * @function onSearchTermChange
+             * @private
+             * @param {String} value search string
+             */
+            function onSearchTermChange(value) {
+                self.sections.forEach(section =>
+                    (section.isExpanded = value ? true : false));
+            }
         }
     }
 })();
