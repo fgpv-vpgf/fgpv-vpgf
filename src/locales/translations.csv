@@ -248,6 +248,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.service.configure.layers,Layers,Couches
 ,import.service.configure.multipleselection,You can select several layers,Vous pouvez sélectionner plusieurs couches
 ,stepper.continue,Continue,Continuer
+,stepper.unresponsive,The application may feel unresponsive for a short time upon clicking the Continue button. This is normal while data is being processed.,L'application peut ne pas répondre pendant un court laps de temps après avoir cliqué sur le bouton Continuer. Cela est normal pendant le traitement des données.
 ,stepper.cancel,Cancel,Annuler
 ,config.service.rcs.error,"Layers could not be retrieved from the server, refresh to try again","Échec du SCR (RCS), démarrage de l'application avec un fichier de configuration"
 ,config.service.rcs.action,DISMISS,ANNULER
