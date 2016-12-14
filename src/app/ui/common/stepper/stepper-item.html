@@ -25,6 +25,8 @@
                 <ng-transclude></ng-transclude>
             </div>
 
+            <p class="md-caption" ng-if="self.step.stepNumber === 3">{{ 'stepper.unresponsive' | translate }}</p>
+
             <div
                 class="rv-stepper-item-footer"
                 ng-if="self.onCancel || self.step.onCancel || self.onContinue || self.step.onContinue">
