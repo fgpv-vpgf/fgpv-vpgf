@@ -26,10 +26,6 @@
         .factory('fullScreenService', fullScreenService);
 
     function fullScreenService($rootElement, $timeout, storageService, gapiService, geoService) {
-        const service = {
-            toggle
-        };
-
         const ref = {
             isExpanded: false,
             tl: undefined,
@@ -41,6 +37,11 @@
             shellNodeBox: undefined,
 
             trueCenterPoint: undefined
+        };
+
+        const service = {
+            toggle,
+            isExpanded: () => ref.isExpanded
         };
 
         return service;

@@ -71,7 +71,7 @@
     // FIXME: refactoring out shell directive into more manageable piece
     function Controller($mdDialog, $translate, version, sideNavigationService, geoService, // jshint ignore:line
         fullScreenService, helpService, basemapService, configService, storageService, exportService,
-        $rootScope, events) {
+        $rootScope, events, stateManager, $rootElement) {
         'ngInject';
         const self = this;
 
@@ -89,7 +89,6 @@
             setDefaultItems();
             setCustomItems();
         });
-
         /**
          * Set default menu items
          *
@@ -105,7 +104,22 @@
                     action: () => {
                         sideNavigationService.close();
                         fullScreenService.toggle();
-                    }
+                    },
+                    icon: 'navigation:check',
+                    class: 'rv-has-icon',
+                    showIcon: fullScreenService.isExpanded,
+                    show: () => !$rootElement.attr('rv-fullpage-app')
+                },
+                {
+                    name: $translate.instant('appbar.tooltip.layers'),
+                    type: 'link',
+                    action: () => {
+                        sideNavigationService.close();
+                        stateManager.setActive('mainToc');
+                    },
+                    icon: 'navigation:check',
+                    class: 'rv-has-icon',
+                    showIcon: () => stateManager.state.mainToc.active
                 },
                 {
                     name: $translate.instant('nav.label.basemap'),
@@ -159,7 +173,7 @@
                             });
                         },
                         icon: 'social:share',
-                        class: 'rv-share'
+                        class: 'rv-has-icon'
                     });
                 }
             });
