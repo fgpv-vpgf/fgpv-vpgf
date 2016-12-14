@@ -386,10 +386,8 @@
     "zoom": "buttons",
     "extra": [
       "geoLocator",
-      "marquee",
       "home",
-      "history",
-      "basemap"
+      "help"
     ]
   }
 }
