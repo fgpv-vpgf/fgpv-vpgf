@@ -251,6 +251,10 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,stepper.cancel,Cancel,Annuler
 ,config.service.rcs.error,"Layers could not be retrieved from the server, refresh to try again","Échec du SCR (RCS), démarrage de l'application avec un fichier de configuration"
 ,config.service.rcs.action,DISMISS,ANNULER
+,helpui.title,Help,Aide
+,helpui.nothingfound,Nothing is found. Please try a different search.,Rien n’est trouvé. Veuillez essayer une recherche différente.
+,helpui.search,Search Help,Aide à la recherche
+,helpui.clearsearch,Clear,Effacer
 ,help.navigationControls.header,Navigation Controls,Contrôles de navigation
 ,help.navigationControls.info,"Navigation controls are used for changing the viewing extent of the map.<br>
 <br>
