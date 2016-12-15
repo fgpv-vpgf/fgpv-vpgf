@@ -47,15 +47,6 @@
           "spatialReference": {
             "wkid": 3978
           }
-        },
-        "full": {
-          "xmin": -4282638.06150141,
-          "ymin": -5153821.09213678,
-          "xmax": 4852210.1755664,
-          "ymax": 4376714.4420974,
-          "spatialReference": {
-            "wkid": 3978
-          }
         }
       },
       {

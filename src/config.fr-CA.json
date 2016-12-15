@@ -55,15 +55,6 @@
           "spatialReference": {
             "wkid": 3978
           }
-        },
-        "full": {
-          "xmin": -4282638.06150141,
-          "ymin": 3153821.09213678,
-          "xmax": 4852210.1755664,
-          "ymax": 4376714.4420974,
-          "spatialReference": {
-            "wkid": 3978
-          }
         }
       },
       {
@@ -84,6 +75,9 @@
       {
         "id": "LOD_NRCAN_Lambert_3978",
         "lods": [
+            { "level": 0, "resolution": 38364.660062653464, "scale": 145000000 },
+            { "level": 1, "resolution": 22489.62831258996, "scale": 85000000 },
+            { "level": 2, "resolution": 13229.193125052918, "scale": 50000000 },
             { "level": 3, "resolution": 7937.5158750317505, "scale": 30000000 },
             { "level": 4, "resolution": 4630.2175937685215, "scale": 17500000 },
             { "level": 5, "resolution": 2645.8386250105837, "scale": 10000000 },
