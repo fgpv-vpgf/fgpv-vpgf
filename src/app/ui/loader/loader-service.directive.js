@@ -27,7 +27,7 @@
         return directive;
     }
 
-    function Controller($timeout, stateManager, geoService, Geo, Stepper, LayerBlueprint) {
+    function Controller($timeout, stateManager, geoService, Geo, Stepper, LayerBlueprint, $rootElement) {
         'ngInject';
         const self = this;
 
@@ -253,6 +253,11 @@
             // reset the loader after closing the panel
             stepper.reset().start();
             stateManager.setActive('mainToc');
+
+            // there is a bug with Firefox and Safari on a Mac. They don't focus back to add layer when close
+            $timeout(() => {
+                $rootElement.find('.rv-loader-add').first().focus(true);
+            }, 0);
         }
     }
 })();
