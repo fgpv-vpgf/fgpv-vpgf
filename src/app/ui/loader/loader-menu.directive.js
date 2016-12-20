@@ -28,7 +28,7 @@
         return directive;
     }
 
-    function Controller(stateManager, appInfo) {
+    function Controller(stateManager, appInfo, $timeout, $rootElement) {
         'ngInject';
         const self = this;
 
@@ -45,14 +45,27 @@
             // TODO: hack
             stateManager.setActive({
                 mainLoaderFile: true
-            });
+            }).then(() => { setFocus('rv-loader-file'); });
         }
 
         function openServiceLoader() {
             // TODO: hack
             stateManager.setActive({
                 mainLoaderService: true
-            });
+            }).then(() => { setFocus('rv-loader-service'); });
+        }
+
+        /**
+         * Sets focus on the close button when panel open.
+         *
+         * @function setFocus
+         * @private
+         * @param   {Object}    name     the class name to find button to focus on
+         */
+        function setFocus(name) {
+            $timeout(() => {
+                $rootElement.find(`${name} .rv-header-float button`).first().focus(true);
+            }, 0);
         }
     }
 })();

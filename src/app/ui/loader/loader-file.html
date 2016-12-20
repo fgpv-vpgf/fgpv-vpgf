@@ -5,6 +5,7 @@
     flow-drag-leave="self.dropActive = false"
     flow-prevent-drop
     class="rv-file-drop"
+    rv-trap-focus="{{ ::self.appID }}"
     ng-class="{'rv-file-drop-active': self.dropActive}">
 
     <div

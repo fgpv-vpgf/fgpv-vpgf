@@ -48,7 +48,8 @@
                 /*background: linear-gradient(to bottom, rgba(255,255,255,1) 30%,rgba(255,255,255,0.62) 60%, rgba(255,255,255,0) 100%);*/
                 align-items: center;
 
-                .md-button {
+                // add not md-focused because if, it is overwritten and focus background-color is not applied
+                .md-button:not(.md-focused) {
                     background: radial-gradient(ellipse at center, rgba(255,255,255,1) 30%,rgba(255,255,255,0.32) 100%);
                 }
             }
