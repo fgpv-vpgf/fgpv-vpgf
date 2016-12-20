@@ -13,6 +13,12 @@
     // test user browser, true if IE false otherwise
     RV.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
 
+    // Safari problem with file saver: https://github.com/eligrey/FileSaver.js/#supported-browsers
+    // test if it is Safari browser on desktop and it if is, show a message to let user know we can't automatically save the file
+    // they have to save it manually the same way as when the canvas is tainted.
+    RV.isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent) &&
+        !/(iPhone|iPod|iPad)/i.test(navigator.platform);
+
     // set these outside of the initial creation in case the page defines RV for setting
     // properties like dojoURL
     Object.assign(RV, {

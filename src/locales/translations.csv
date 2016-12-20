@@ -188,6 +188,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.error.minheight, Too small. {{min}} px minimum., Trop petit. {{min}} px minimum.
 ,export.error.maxwidth, Too large. {{max}} px maximum., Trop grand. {{max}} px maximum.
 ,export.error.maxheight, Too large. {{max}} px maximum., Trop grand. {{max}} px maximum.
+,export.error.safari,"We can't save the export image directly in Safari. You can right click the image and select ""Save Page As..."".","Nous ne pouvons pas enregistrer l’image directement dans Safari. Vous pouvez cliquez sur le bouton droit de la souris sur l’image et sélectionnez « Enregistrer la page sous... »."
 ,export.retry,Retry,Réessayez
 ,export.size.customwidth, Width (pixels), Largeur (pixels)
 ,export.size.customheight, Height (pixels), Hauteur (pixels)
