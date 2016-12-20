@@ -74,6 +74,7 @@
 
             self.isError = false;
             self.isTainted = false; // indicates the canvas is tainted and cannot be directly saved
+            self.isSafari = false;
 
             self.exportSizes = exportSizesService.update();
             self.lastUsedSizeOption = self.exportSizes.selectedOption;
@@ -145,6 +146,7 @@
              * Checks if anything is blocking the image download. The following things will block the download:
              *  - component graphics being generated
              *  - errors (tainted canvas is an error)
+             *  - Safari browser on desktop computer
              *  - if the custom size option was modified but not saved
              *  - if the graphics were generated for an size option different from the currently selected one
              *
@@ -155,6 +157,7 @@
             function isDownloadBlocked() {
                 return self.isGenerating() ||
                     self.isError ||
+                    self.isSafari ||
                     (self.exportSizes.isCustomOptionSelected() && !self.exportSizes.isCustomOptionUpdated()) ||
                     self.lastUsedSizeOption !== self.exportSizes.selectedOption;
             }
@@ -249,9 +252,20 @@
                 }
 
                 try {
-                    canvas.toBlob(blob => {
-                        saveAs(blob, `${fileName}.png`);
-                    });
+                    // Safari problem with file saver: https://github.com/eligrey/FileSaver.js/#supported-browsers
+                    // test if it is Safari browser on desktop and it if is, show a message to let user know we can't automatically save the file
+                    // they have to save it manually the same way as when the canvas is tainted.
+                    const isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent) &&
+                        !/(iPhone|iPod|iPad)/i.test(navigator.platform);
+
+                    if (!isSafari) {
+                        canvas.toBlob(blob => {
+                            saveAs(blob, `${fileName}.png`);
+                        });
+                    } else {
+                        showToast('error.safari');
+                        self.isSafari = true;
+                    }
                 } catch (error) {
                     // show error; nothing works
                     self.isError = true;
