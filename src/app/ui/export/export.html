@@ -7,7 +7,7 @@
                     ng-if="self.exportSizes.isCustomOptionSelected()">
 
                     <h4 class="md-title">{{ 'export.size.custom' | translate }}</h4>
-
+                    <p class="md-caption">{{ 'export.custom.note1' | translate }}</p>
                     <div class="rv-container" layout="column">
                         <div layout="row" layout-wrap>
                             <md-input-container ng-disabled="self.isError">
@@ -54,11 +54,11 @@
                         </div>
                         <div layout="row">
                             <span flex></span>
-
                             <md-button
+                                ng-disabled="self.exportSizes.isCustomOptionUpdated() || (!exportForm.customSizeWidth.$viewValue && !exportForm.customSizeHeight.$viewValue && !self.exportSizes.customOption.height)"
                                 ng-click="self.exportSizes.resetTemporaryOption()"
                                 class="rv-button-square">
-                                {{ 'export.cancel' | translate }}
+                                {{ 'export.undo' | translate }}
                             </md-button>
 
                             <md-button
@@ -174,12 +174,18 @@
                 {{ 'export.close' | translate }}
             </md-button>
 
-            <md-button
-                class="rv-button-square md-raised md-primary"
-                ng-click="self.saveImage()"
-                ng-disabled="self.isDownloadBlocked()">
-                {{ 'export.download' | translate }}
-            </md-button>
+            <!-- div needed to shop tooltip when button is disabled, see
+            https://github.com/angular/material/issues/1667#issuecomment-224651024
+            -->
+            <div>
+                <md-button
+                    class="rv-button-square md-raised md-primary"
+                    ng-click="self.saveImage()"
+                    ng-disabled="self.isDownloadBlocked()">
+                    {{ 'export.download' | translate }}
+                </md-button>
+                <md-tooltip ng-if="self.exportSizes.isCustomOptionSelected() && self.isDownloadBlocked()">{{ 'export.custom.note2' | translate }}</md-tooltip>
+            </div>
         </md-dialog-actions>
     </form>
 </md-dialog>

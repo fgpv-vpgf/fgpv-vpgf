@@ -179,7 +179,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.close,Close,Fermer
 ,export.save,Save,Sauver
 ,export.download,Download,Télécharger
-,export.cancel,Cancel,Annuler
+,export.undo,Undo,Annuler
 ,export.title,Enter Title,Titre
 ,export.error.timeout,"Connection timed out. Stopping export task.","Connexion a expiré. Tâche d’exportation arrêt."
 ,export.error.tainted,"We can't save the export image directly (same-origin policy exception). You can right click the image and select ""Save As..."" if supported by your browser.","Nous ne pouvons pas enregistrer l’image directement (exception de politique de même origine). Vous pouvez cliquez sur le bouton droit de la souris sur l’image et sélectionnez « Enregistrer sous... » si cela est pris en charge par votre navigateur."
@@ -205,6 +205,8 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.size.small, Small, Petit
 ,export.size.medium, Medium, Médium
 ,export.size.custom, Custom size, Format personnalisé
+,export.custom.note1,Custom sizes apply to the map image - the actual exported image size will vary based on the export options selected.,Les tailles personnalisées s'appliquent à l'image cartographique - la taille réelle de l'image exportée varie en fonction des options d'exportation sélectionnées.
+,export.custom.note2,You must first click on the Generate button below to create your custom size before downloading is enabled.,Vous devez d'abord cliquer sur le bouton Générer ci-dessous pour créer votre taille personnalisée avant que le téléchargement ne soit activé.
 ,import.title,Add Layer,Ajouter une couche
 ,import.file.title,Import File,Importer un fichier
 ,import.file.upload.title,Upload data,Charger des données
