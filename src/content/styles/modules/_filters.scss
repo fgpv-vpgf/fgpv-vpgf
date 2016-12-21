@@ -16,6 +16,10 @@
             height: 100%;
             min-height: 0; // Firefox fix; otherwise div won't shrink: http://stackoverflow.com/questions/27424831/firefox-flexbox-overflow
 
+            table {
+                table-layout: fixed; // make autowidth: false works for datatable https://datatables.net/forums/discussion/30530/set-fixed-column-width
+            }
+
             .dataTables_wrapper {
                 height: 100%;
                 display: flex !important; // there was an update in datatables styles that was overriding `flex` with `block`
@@ -35,6 +39,39 @@
                         background: lighten($divider-color, 20%);
 
                         tbody {
+                            // for datatable KeyTable extension
+                            td.focus {
+                                outline: 1px solid $focus-color;
+                                outline-offset: -1px;
+                            }
+
+                            // ellipsis renderer when text is longer then field width
+                            .rv-render-ellipsis {
+                                width: 100%;
+                                border: none;
+                                background: none;
+                                padding: 0;
+                                font-size: 14px;
+                                cursor: text;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            }
+
+                            .rv-render-tooltip {
+                                display: none;
+                            }
+
+                            // on keyboard focus show tooltip to be wcag compliant
+                            .rv-render-ellipsis:focus + .rv-render-tooltip {
+                                display: block;
+                                position: absolute;
+                                border: 1px solid #D3D3D3;
+                                background-color: #F2F2F2;
+                                padding: 2px 5px;
+                                box-shadow: 1px 1px 2px #CCC;
+                                max-width: 250px;
+                                white-space: normal;
+                            }
 
                             .rv-data {
                                 // flex: flex-grow flex-shrink flex-basis; IE sets flex-basis as 0px which collapses the span instead of 0% as Chrome does;
