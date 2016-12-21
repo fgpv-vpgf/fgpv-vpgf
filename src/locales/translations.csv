@@ -208,7 +208,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.title,Add Layer,Ajouter une couche
 ,import.file.title,Import File,Importer un fichier
 ,import.file.upload.title,Upload data,Charger des données
-,import.file.upload.summary,"GeoJSON, CSV, or Shapefile","GeoJSON, CSV ou Shapefile"
+,import.file.upload.summary,"GeoJSON, CSV or zipped Shapefile","GeoJSON, CSV ou Shapefile zippé"
 ,import.file.upload.choose,choose a file,Choisir un fichier
 ,import.file.upload.drop,Drop the file to upload,Déposer le fichier à téléverser
 ,import.file.upload.or,or,ou
@@ -226,7 +226,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.file.configure.colourfield,Colour,Couleur
 ,import.file.configure.invalid,ERROR: Invalid File,ERREUR: Le fichier est invalid
 ,import.file.type.csv,CSV,CSV
-,import.file.type.shapefile,Shapefile,Shapefile
+,import.file.type.shapefile,Shapefile,Shapefile 
 ,import.file.type.geojson,GeoJSON,GeoJSON
 ,import.service.title,Import Service,Importer un service
 ,import.service.connect.title,Connect service,Connecter le service
