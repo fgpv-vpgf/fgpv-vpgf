@@ -15,7 +15,7 @@
         .module('app.layout')
         .directive('rvShell', rvShell);
 
-    function rvShell($rootElement, $rootScope, events, storageService, stateManager) {
+    function rvShell($rootElement, $rootScope, events, storageService, stateManager, configService, layoutService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/layout/shell.html',
@@ -30,6 +30,13 @@
 
         function link(scope, el) {
             const self = scope.self;
+
+            // open legend panel if option is set in config for current viewport
+            configService.getCurrent().then(config => {
+                if (config.legendIsOpen && config.legendIsOpen[layoutService.currentLayout()]) {
+                    stateManager.setActive({ side: false }, 'mainToc');
+                }
+            });
 
             storageService.panels.shell = el;
 

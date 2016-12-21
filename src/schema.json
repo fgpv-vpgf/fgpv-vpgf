@@ -825,6 +825,17 @@
              "additionalProperties": false
          },
 
+         "legendIsOpen": {
+            "type": "object",
+            "description": "Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports",
+            "properties": {
+                "large": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for large viewports" },
+                "medium": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for medium viewports" },
+                "small": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for small viewports" }
+            },
+            "additionalProperties": false
+        },
+
         "map": {
             "type": "object",
             "description": "Core map properties (extent sets, levels of detail)",
