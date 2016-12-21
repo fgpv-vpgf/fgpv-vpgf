@@ -178,6 +178,31 @@
                     return copyArray;
                 };
 
+                // set width from field length if it is a string field type. If it is the oid field,
+                // set width to 100px because we have the oid, the details and zoom to button. If it is
+                // another type of field, set width to be the title.
+                displayData.columns.forEach(column => {
+                    const field = displayData.fields.find(field => field.name === column.data);
+
+                    if (typeof field !== 'undefined') {
+                        if (field.type === 'esriFieldTypeString') {
+                            const width = getColumnWidth(column.title, field.length);
+                            column.width = `${width}px`;
+                            column.render = renderEllipsis(width);
+                        } else if (field.type === 'esriFieldTypeOID') {
+                            // set column to be 100px width because of details and zoom to buttons
+                            column.width = '100px';
+                        } else {
+                            const width = getColumnWidth(column.title);
+                            column.width = `${width}px`;
+                            column.render = renderEllipsis(width);
+                        }
+                    } else {
+                        // set symbol column width
+                        column.width = '30px';
+                    }
+                });
+
                 // ~~I hate DataTables~~ Datatables are cool!
                 self.table = tableNode
                     .on('init.dt', callbacks.onTableInit)
@@ -194,6 +219,7 @@
                         scroller: {
                             displayBuffer: 3 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer
                         }, // turn on virtual scroller extension
+                        // keys: true, TODO: if enable, we need to set the renderer on the on focus event instead of what we do now. Before we can use this we need to solve a bug with scroller extension.
                         /*select: true,*/ // allow row select,
                         buttons: [
                             // 'excelHtml5',
@@ -212,6 +238,91 @@
                         ],
                         oLanguage: oLang
                     });
+
+                /**
+                 * Get column width from column title and field length.
+                 * @function getColumnWidth
+                 * @private
+                 * @param {Object} title    column title
+                 * @param {Object} length   optional column length (characters)
+                 * @param {Object}  maxLength   optional maximum column length (pixels)
+                 * @return {Number} width    width of the column
+                 */
+                function getColumnWidth(title, length = 0, maxLength = 200) {
+                    // get title length (minimum 50px)
+                    let metricsTitle = getTextWidth(title);
+                    metricsTitle = metricsTitle < 50 ? 50 : metricsTitle;
+
+                    // get column length (only type string have length)
+                    if (length) {
+                        // generate a string with that much characters and get width
+                        let metricsContent = getTextWidth(Array(length).join('x'));
+
+                        // set the column length from field length (maximum will be maxLength)
+                        metricsContent = metricsContent <= maxLength ? metricsContent : maxLength;
+
+                        // check if it is lower then title length. If so, use title length
+                        metricsTitle = metricsContent < metricsTitle ? metricsTitle : metricsContent;
+                    }
+
+                    return metricsTitle;
+                }
+
+                /**
+                 * Render long text width ellipsis (https://datatables.net/blog/2016-02-26)
+                 * @function RenderEllipsis
+                 * @private
+                 * @param {Object} width    column width
+                 * @return {String} text    text for td element or string who contain html element
+                 */
+                function renderEllipsis(width) {
+                    const esc = (text) => {
+                        return text
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;');
+                    };
+
+                    return (text, type) => {
+                        // order, search and type get the original data
+                        if (type !== 'display') {
+                            return text;
+                        }
+
+                        if (typeof text !== 'number' && typeof text !== 'string') {
+                            return text;
+                        }
+
+                        text = text.toString(); // cast numbers
+
+                        // if text width smaller then column width, return text
+                        if (getTextWidth(text) < width) {
+                            return text;
+                        }
+
+                        // for wcag we add a text input read only. This element is focusable so we can have tooltips.
+                        return `<input type="text" readonly title="${esc(text)}" value="${esc(text)}"
+                                    class="rv-render-ellipsis"></input>
+                                <span class="rv-render-tooltip">${esc(text)}</span>`;
+                    };
+                }
+
+                /**
+                 * Get text width (http://stackoverflow.com/questions/118241/calculate-text-width-with-javascript)
+                 * @function getTextWidth
+                 * @private
+                 * @param {String} input    text ot calculate width from
+                 * @return {Number} width    text width
+                 */
+                function getTextWidth(input) {
+                    // re-use canvas object for better performance
+                    const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement('canvas'));
+                    const context = canvas.getContext('2d');
+                    context.font = '14px Roboto';
+
+                    return context.measureText(input).width;
+                }
 
                 /**
                  * Table initialization callback. This will hide the loading indicator.

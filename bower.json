@@ -25,6 +25,7 @@
     "datatables-buttons": "~1.1.2",
     "datatables-scroller": "~1.4.0",
     "datatables-select": "~1.1.2",
+    "datatables-keytable": "~2.2.0",
     "datatables.net": "~1.10.10",
     "datatables.net-dt": "~1.10.10",
     "dotjem-angular-tree": "~0.2.1",
@@ -80,6 +81,10 @@
     },
     "datatables-select": {
       "main": "js/dataTables.select.js",
+      "dependencies": null
+    },
+    "datatables-keytable": {
+      "main": "js/dataTables.keyTable.js",
       "dependencies": null
     },
     "datatables.net-dt": {
