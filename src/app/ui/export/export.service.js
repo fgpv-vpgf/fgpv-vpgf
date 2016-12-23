@@ -1,4 +1,4 @@
-/* global saveAs */
+/* global saveAs, RV */
 (() => {
     'use strict';
 
@@ -145,6 +145,7 @@
              * Checks if anything is blocking the image download. The following things will block the download:
              *  - component graphics being generated
              *  - errors (tainted canvas is an error)
+             *  - Safari browser on desktop computer
              *  - if the custom size option was modified but not saved
              *  - if the graphics were generated for an size option different from the currently selected one
              *
@@ -155,6 +156,7 @@
             function isDownloadBlocked() {
                 return self.isGenerating() ||
                     self.isError ||
+                    self.isSafari ||
                     (self.exportSizes.isCustomOptionSelected() && !self.exportSizes.isCustomOptionUpdated()) ||
                     self.lastUsedSizeOption !== self.exportSizes.selectedOption;
             }
@@ -249,9 +251,14 @@
                 }
 
                 try {
-                    canvas.toBlob(blob => {
-                        saveAs(blob, `${fileName}.png`);
-                    });
+                    if (!RV.isSafari) {
+                        canvas.toBlob(blob => {
+                            saveAs(blob, `${fileName}.png`);
+                        });
+                    } else {
+                        showToast('error.safari');
+                        self.isSafari = true;
+                    }
                 } catch (error) {
                     // show error; nothing works
                     self.isError = true;
