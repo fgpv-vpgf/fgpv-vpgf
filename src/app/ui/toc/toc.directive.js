@@ -152,22 +152,29 @@
                 // handle autoscroll when dragging layers
                 const scrollElem = source.closest('md-content');
                 directiveElement.on('mousemove', event => {
-                    // Animation time is proportionate to the actual pixel distance to be scolled
-                    // times 3 - where 3 is the maximum animation time in seconds
-                    let scrollSpeed = (scrollElem.scrollTop() /
-                        (scrollElem[0].scrollHeight - scrollElem.height())) * 3;
+
+                    // scroll animation is linear
+                    let scrollDuration;
+                    const speedRatio = 1 / 500; // 500 px in 1 second
 
                     // scrolling upwards
                     if (scrollElem.offset().top + dragElement.height() > event.pageY) {
+                        scrollDuration = scrollElem.scrollTop() * speedRatio;
+
                         if (!scrollAnimation.isActive()) {
-                            scrollAnimation = TweenLite.to(scrollElem, scrollSpeed, { scrollTo: { y: 0 } });
+                            scrollAnimation = TweenLite.to(scrollElem, scrollDuration,
+                                { scrollTo: { y: 0 }, ease: 'Linear.easeNone' });
                         }
 
                     // scrolling downwards
                     } else if (scrollElem.height() - event.pageY <= 0) {
                         if (!scrollAnimation.isActive()) {
-                            scrollAnimation = TweenLite.to(scrollElem, 3 - scrollSpeed,
-                                { scrollTo: { y: scrollElem[0].scrollHeight - scrollElem.height() } });
+                            scrollDuration = (scrollElem[0].scrollHeight -
+                                scrollElem.height() - scrollElem.scrollTop()) * speedRatio;
+
+                            scrollAnimation = TweenLite.to(scrollElem, scrollDuration,
+                                { scrollTo: { y: scrollElem[0].scrollHeight - scrollElem.height() },
+                                ease: 'Linear.easeNone' });
                         }
 
                     // stop scrolling
