@@ -34,9 +34,13 @@
 
 </div>
 
-<div class="rv-toc-entry-controls">
+<div class="rv-toc-entry-controls" ng-if="self.isReorder">
+    <rv-toc-entry-control rv-drag-handle option="reorder"></rv-toc-entry-control>
+</div>
 
-    <md-menu md-position-mode="target-right target">
+<div class="rv-toc-entry-controls" ng-if="!self.isReorder">
+
+    <md-menu md-position-mode="target-right target" class="rv-hover-show">
         <md-button
             aria-label="{{ 'toc.entry.aria.openData' | translate }}"
             class="md-icon-button rv-button-40 rv-icon-20"
@@ -58,5 +62,5 @@
 
     <rv-toc-entry-control option="visibility" ng-if="!self.entry.flags.scale.visible || !self.entry.options.visibility.value"></rv-toc-entry-control>
     <rv-toc-entry-control option="offscale" ng-if="self.entry.flags.scale.visible && self.entry.options.visibility.value"></rv-toc-entry-control>
-    <rv-toc-entry-control class="rv-keyboard-only" rv-drag-handle persist option="reorder"></rv-toc-entry-control>
+
 </div>

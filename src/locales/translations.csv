@@ -171,6 +171,8 @@ Table of Content keyboard reoder tooltip,toc.tooltip.reorder,Reorder,Réorganise
 ,toc.menu.expand.title,Toggle Groups,Alternar grupos
 ,toc.menu.expand.allon,Expand All,Expandir todo
 ,toc.menu.expand.alloff,Collapse All,Desplegar todo
+,toc.menu.reorder.title,Reorder Layers,Réorganiser les couches
+,toc.menu.reorder.close,Stop Reordering,Arrêter de réorganiser
 While counting geometry,geometry.counting, ...counting, ...compte
 Geometry types,geometry.type.generic, feature|features, entité|entités
 Geometry types,geometry.type.esriGeometryPoint, point|points, point|points

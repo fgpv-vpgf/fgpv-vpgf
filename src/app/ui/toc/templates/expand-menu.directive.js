@@ -19,7 +19,9 @@
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/toc/templates/expand-menu.html',
-            scope: {},
+            scope: {
+                disabled: '='
+            },
             controller: Controller,
             controllerAs: 'self',
             bindToController: true

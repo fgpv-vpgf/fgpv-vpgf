@@ -8,7 +8,6 @@
      * @description
      * The `tocService` service provides bindable layer data to the `TocController`'s template.
      *
-     * __Lots of hardcoded sample config data.__
      *
      */
     angular

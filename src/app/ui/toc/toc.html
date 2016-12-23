@@ -1,14 +1,35 @@
 <rv-content-pane close-panel="self.actions.toggleLayerGroup()">
-    <div class="rv-toc">
+    <div class="rv-toc" ng-keydown="self.tocKeyDownHandler($event)">
 
         <div layout="row" class="rv-toc-tools">
 
             <rv-loader-menu></rv-loader-menu>
 
+            <md-button
+                translate translate-attr-aria-label="toc.menu.reorder.title"
+                class="md-icon-button primary rv-icon-20"
+                ng-class="{ selected: self.isReorder }"
+                ng-click="self.toggleReorderMode()">
+                <md-tooltip>{{ 'toc.menu.reorder.title' | translate }}</md-tooltip>
+                <md-icon md-svg-src="action:swap_vert"></md-icon>
+            </md-button>
+
+            <h4 class="md-subhead" ng-if="self.isReorder">{{ 'toc.menu.reorder.title' | translate }}</h4>
+
             <span flex></span>
 
-            <rv-toc-expand-menu></rv-toc-expand-menu>
-            <rv-toc-visibility-menu></rv-toc-visibility-menu>
+            <md-button
+                translate
+                translate-attr-aria-label="toc.menu.reorder.close"
+                class="rv-close md-icon-button black rv-icon-20"
+                ng-click="self.toggleReorderMode(false)"
+                ng-if="self.isReorder">
+                <md-tooltip>{{ 'toc.menu.reorder.close' | translate }}</md-tooltip>
+                <md-icon md-svg-src="navigation:close"></md-icon>
+            </md-button>
+
+            <rv-toc-expand-menu ng-if="!self.isReorder"></rv-toc-expand-menu>
+            <rv-toc-visibility-menu ng-if="!self.isReorder"></rv-toc-visibility-menu>
 
         </div>
 
@@ -24,14 +45,15 @@
                 <rv-toc-entry
                     class="rv-toc-{{ ::item.type }}-entry"
                     entry="::item"
-                    type="::item.type"
+                    is-reorder="self.isReorder"
+
                     ng-class="[ { 'rv-selected': item.selected }, item.state ]"></rv-toc-entry>
 
                 <ul
                     class="rv-layer-list rv-toggle-slide rv-layer-level-{{ ::$dxLevel }}"
                     ng-if-start="::item.type === 'group'"
                     dx-connect="item"
-                    ng-show="item.expanded"></ul>
+                    ng-show="item.expanded && !self.isReorder"></ul>
 
                 <div class="rv-shadow" ng-if-end></div>
 
