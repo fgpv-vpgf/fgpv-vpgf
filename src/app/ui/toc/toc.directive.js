@@ -1,4 +1,4 @@
-/* global TweenLite */
+/* global TimelineLite, TweenLite */
 (() => {
     'use strict';
 
@@ -35,6 +35,15 @@
 
         function link(scope, directiveElement) {
             const self = scope.self;
+
+            self.toggleSortGroups = toggleSortGroups;
+
+            // flag the touchstart event happening on the layers panel, so the default drag-n-drop reorder can be canceled;
+            // only reorder using the reorder mode is allowed when touch events are detected https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1457
+            let isTouchDetected = false;
+            directiveElement.on('touchstart', () =>
+                (isTouchDetected = true));
+
             // register toc node with layoutService so it can be targeted
             layoutService.panes.toc = directiveElement;
 
@@ -42,6 +51,32 @@
             // jscs doesn't like enhanced object notation
             // jscs:disable requireSpacesInAnonymousFunctionExpression
             self.dragulaOptions = {
+
+                moves(el, source, handle) { // , sibling) {
+                    console.log('moves'); // , el, source, handle, sibling);
+                    // return true; // elements are always draggable by default
+
+                    // only allow reordering using the drag handle when using touch
+                    if (isTouchDetected) {
+                        isTouchDetected = false;
+
+                        // prevent drag from starting if something other than a handle was grabbed
+                        if (angular.element(handle).parentsUntil(el, '[rv-drag-handle]').length > 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+
+                    } else {
+                        return true; // always allow drag for with mouse events
+                    }
+                },
+
+                /*invalid(el, handle) {
+                    // console.log('invalid', el, handle);
+                    return false; // don't prevent any drags from initiating by default
+                },*/
+
                 accepts(dragElement, target, source, sibling) {
                     // el and sibling are raw dom nodes, need to use `angular.element` to get jquery wrappers
                     [dragElement, sibling] = [angular.element(dragElement), angular.element(sibling)];
@@ -162,20 +197,61 @@
                 directiveElement.off('mousemove');
                 scrollAnimation.pause();
             });
+
+            /**
+             * @function toggleSortGroups
+             * @private
+             * @param {Booelan} value indicates whether the sort groups should be fanned out or collapsed
+             */
+            function toggleSortGroups(value) {
+
+                const legendListElement = directiveElement.find('.rv-root');
+                const legendListItemsElements = legendListElement.find('> li');
+                const sortGroupCount = parseInt(legendListItemsElements.last().attr('data-sort-group'));
+                let splitSortGroupElement;
+
+                const tl = new TimelineLite({
+                    paused: true,
+                    onComplete: () => {
+                        legendListElement.addClass('rv-reorder');
+                        TweenLite.set(legendListItemsElements,
+                            { clearProps: 'margin-top' }
+                        );
+                    },
+                    onReverseComplete: () => legendListElement.removeClass('rv-reorder')
+                });
+
+                for (let i = 0; i < sortGroupCount; i++) {
+                    splitSortGroupElement = legendListItemsElements
+                        .filter(`[data-sort-group="${i}"] + [data-sort-group="${i + 1}"]`);
+
+                    tl.fromTo(splitSortGroupElement, 0.3,
+                        { 'margin-top': 0 }, { 'margin-top': 36 }, 0);
+                }
+
+                if (value) {
+                    tl.play();
+                } else {
+                    tl.reverse(0);
+                }
+            }
         }
     }
 
-    function Controller(tocService, stateManager, geoService) {
+    function Controller(tocService, stateManager, geoService, keyNames) {
         'ngInject';
         const self = this;
 
         self.toggleFiltersFull = toggleFiltersFull;
+        self.toggleReorderMode = toggleReorderMode;
+        self.tocKeyDownHandler = tocKeyDownHandler;
 
         self.geoService = geoService;
         self.config = tocService.data;
         self.presets = tocService.presets;
 
-        activate();
+        // reorder mode is off by default
+        self.isReorder = false;
 
         /***/
 
@@ -201,8 +277,47 @@
             stateManager.setMode('filters', views[index]);
         }
 
-        function activate() {
+        /**
+         * Enabled or disabled the reorder mode based on its current state or supplied value.
+         *
+         * @function toggleReorderMode
+         * @private
+         * @param {Boolean} value [optional = !self.isReorder] indicates whether to enable or disalbe the reorder mode
+         */
+        function toggleReorderMode(value = !self.isReorder) {
+            self.toggleSortGroups(value);
+            self.isReorder = value;
+        }
 
+        /**
+         * Handle key down pressed on the toc panel.
+         *
+         * - Escape: turns off the reorder mode if enabled
+         *
+         *
+         * @function tocKeyDownHandler
+         * @private
+         * @param {Object} event key down event with keycode and everything
+         */
+        function tocKeyDownHandler(event) {
+            // cancel reorder mode on `Escape` key when pressed over toc
+            console.log(event.keyCode);
+            if (event.keyCode === keyNames.ESCAPE && self.isReorder) {
+                self.toggleReorderMode(false);
+                killEvent(event);
+            }
+        }
+
+        /**
+         * Kills default and event propagation.
+         * // TODO: useful function; should be in common module or something;
+         * @function killEvent
+         * @private
+         * @param  {object} event event object
+         */
+        function killEvent(event) {
+            event.preventDefault(true);
+            event.stopPropagation(true);
         }
     }
 })();
