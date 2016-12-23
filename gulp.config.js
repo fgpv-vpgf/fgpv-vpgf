@@ -31,6 +31,7 @@ module.exports = function () {
         index: [
             src + 'index-many.html',
             src + 'index-one.html',
+            src + 'index-mobile.html',
             src + 'index-wet.html',
             src + 'index-jso.html',
             src + 'index-fgp-en.html',
