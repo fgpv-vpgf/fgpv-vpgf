@@ -353,7 +353,9 @@
                 qry.outFields = ['*']; // this will result in just objectid fields, as that is all we have in feature layers
 
                 // more accurate results without making the buffer if we're dealing with extents
-                if (layerRecord._layer.geometryType === 'esriGeometryPolygon') {
+                // polygons from added file need buffer
+                if (layerRecord._layer.geometryType === 'esriGeometryPolygon' &&
+                    legendEntry.id.search('esriFeature#') === -1) {
                     qry.geometry = opts.geometry;
                 } else {
                     qry.geometry = makeClickBuffer(opts.clickEvent.mapPoint, opts.map, layerRecord.clickTolerance);
