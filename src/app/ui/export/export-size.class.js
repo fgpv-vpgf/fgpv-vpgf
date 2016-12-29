@@ -68,11 +68,21 @@
 
         get dimensions() {
             // returns a text description of the size in the form of `(width x height)`
-            if (this._height === null || this._width === null) {
+            if (!this.isValid()) {
                 return '';
             } else {
                 return `(${this._width} x ${this._height})`;
             }
+        }
+
+        /**
+         * Checks if this export size is valid (dimensions are defined)
+         *
+         * @function isValid
+         * @return {Boolean} true if width and height are defined; false otherwise
+         */
+        isValid() {
+            return this._height !== null && this._width !== null;
         }
     }
     // jscs:enable requireSpacesInAnonymousFunctionExpression
