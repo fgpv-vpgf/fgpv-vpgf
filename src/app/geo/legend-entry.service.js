@@ -262,6 +262,7 @@
             }
 
             // FIXME: this should be done only on feature layers, nothing else!
+            //        NOTE: once fixed, revist legend.service, function imageGenerator, to remove the bandaid fix for this.
             // HACK: to get file based layers working; this will be solved by the layer record and legend entry hierarchy
             if (typeof initialState.url !== 'undefined') {
                 const urlParts = initialState.url.split('/');
