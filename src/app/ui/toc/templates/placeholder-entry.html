@@ -12,10 +12,14 @@
     </div>
 </div>
 
-<div class="rv-toc-entry-controls" ng-if-end>
+<!-- only show reorder handle on placeholder entry when reordering -->
+<div class="rv-toc-entry-controls" ng-if="self.isReorder">
+    <rv-toc-entry-control rv-drag-handle option="reorder"></rv-toc-entry-control>
+</div>
+
+<div class="rv-toc-entry-controls" ng-if-end ng-if="!self.isReorder">
     <rv-toc-entry-control option="reload"></rv-toc-entry-control>
     <rv-toc-entry-control option="remove"></rv-toc-entry-control>
-    <rv-toc-entry-control class="rv-keyboard-only" rv-drag-handle persist option="reorder"></rv-toc-entry-control>
 </div>
 
 <div class="rv-icon-32" ng-if-start="self.entry.state !== 'rv-error'">
