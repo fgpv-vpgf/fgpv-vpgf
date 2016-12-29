@@ -67,7 +67,6 @@
                 templateUrl: 'app/ui/help/help-summary.html',
                 parent: storageService.panels.shell,
                 disableParentScroll: false,
-                targetEvent: event,
                 clickOutsideToClose: true,
                 fullscreen: false
             });
