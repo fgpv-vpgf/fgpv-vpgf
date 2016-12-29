@@ -5,7 +5,8 @@
     <md-button
         translate translate-attr-aria-label="toc.menu.visibility.title"
         class="md-icon-button primary rv-icon-20"
-        ng-click="$mdOpenMenu($event)">
+        ng-click="$mdOpenMenu($event)"
+        ng-disabled="self.disabled">
         <md-tooltip>{{ 'toc.menu.visibility.title' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:visibility"></md-icon>
     </md-button>
