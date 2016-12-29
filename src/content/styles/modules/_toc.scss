@@ -19,19 +19,6 @@ $layer-item-height-touch: rem(7.2);
     .rv-toc {
         padding: rem(0.8) 0;
         @include layer-list;
-
-        &-progress-indicator {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 2px;
-            overflow: hidden;
-
-            // This prevents layer loading indicators from showing when another panel overlays the toc (in small medium layouts only)
-            @include media($rv-lg) {
-                z-index: 10;
-            }
-        }
     }
 
     @include toc-tools;

@@ -12,4 +12,27 @@
             opacity: 0;
         }
     }
+
+    %progress {
+        position: absolute;
+        padding: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        overflow: hidden;
+
+        // This prevents layer loading indicators from showing when another panel overlays the toc (in small medium layouts only)
+        @include media($rv-lg) {
+            z-index: 10;
+        }
+    }
+
+    $progress-positions: top, bottom;
+
+    @each $item in $progress-positions {
+        .rv-progress-#{$item} {
+            @extend %progress;
+            #{$item}: 0;
+        }
+    }
 }

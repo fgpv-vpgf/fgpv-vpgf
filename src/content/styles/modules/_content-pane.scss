@@ -66,13 +66,8 @@
             border-top: 1px solid $divider-color-light;
         }
 
-        &-progress-indicator {
-            position: absolute;
-            top: 0;
+        .rv-progress-top {
             height: 3px;
-            overflow: hidden;
-            padding: 0;
-            z-index: 10;
         }
     }
 
