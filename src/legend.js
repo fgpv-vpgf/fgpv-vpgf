@@ -1,6 +1,8 @@
 'use strict';
 const TOO_MANY_LAYERS = 15;
 
+// This file relates to legends on an exported map, not legends in the layer selector
+
 /**
  * Generate all permutations of length M, with exactly N `true` values.
  *

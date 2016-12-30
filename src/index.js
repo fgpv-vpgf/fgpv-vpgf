@@ -23,7 +23,7 @@ function initAll(esriBundle, window) {
     api.mapManager = mapManager(esriBundle, api);
     api.mapPrint = mapPrint(esriBundle, api);
     api.attribs = attribute(esriBundle, api);
-    api.symbology = symbology(window);
+    api.symbology = symbology(esriBundle, api, window);
     api.hilight = hilight(esriBundle, api);
     api.events = events();
     api.query = query(esriBundle);

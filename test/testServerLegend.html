@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <p id="mess" />
+    <script src="../dist/geoapi.js"></script>
+    <script>
+        // http://localhost:6002/test/testServerLegend.html
+
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+
+            var mahLegendPromise = api.symbology.mapServerToLocalLegend('http://www.agr.gc.ca/atlas/rest/services/imageservices/landuse_2010/ImageServer', 0);
+
+            mahLegendPromise.then(function (legend) {
+                console.log('this is my legend result', legend);
+            });
+           
+        });
+</script>
+</body>
+</html>
