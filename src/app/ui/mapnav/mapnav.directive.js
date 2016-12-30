@@ -18,8 +18,7 @@
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/mapnav/mapnav.html',
-            scope: {
-            },
+            scope: {},
             link: link,
             controller: Controller,
             controllerAs: 'self',

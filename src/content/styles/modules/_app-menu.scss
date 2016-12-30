@@ -27,17 +27,6 @@
                 }
             }
 
-            .rv-language-icon {
-                margin-right: rem(0.8);
-                display: block;
-	            background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAyNDExLjIgMjc5NCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjQxMS4yIDI3OTQ7IiB4bWw6c3BhY2U9InByZXNlcnZlIj48c3R5bGUgdHlwZT0idGV4dC9jc3MiPi5zdDB7ZmlsbDojRkZGRkZGO30uc3Qxe2ZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO30uc3Qye2ZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO2ZpbGw6I0ZGRkZGRjt9PC9zdHlsZT48ZyBpZD0iTGF5ZXJfMiI+PC9nPjxnIGlkPSJMYXllcl94NUZfMV94NUZfMSI+PGc+PHBvbHlnb24gcG9pbnRzPSIxMjA0LjYsMzU5LjIgMjcxLjgsMzAgMjcxLjgsMjA2MC4xIDEyMDQuNiwxNzU4LjMgIi8+PHBvbHlnb24gY2xhc3M9InN0MCIgcG9pbnRzPSIxMTgyLjIsMzU4LjEgMjE1MC42LDI5IDIxNTAuNiwyMDU5IDExODIuMiwxNzU3LjMgIi8+PHBvbHlnb24gY2xhc3M9InN0MCIgcG9pbnRzPSIzMCwyNDE1LjQgMTE4Mi4yLDIwMzEuNCAxMTgyLjIsMzU3LjkgMzAsNzQyICIvPjxwb2x5Z29uIHBvaW50cz0iMTcwNy4yLDI0NDAuNyAxODcwLjUsMjcwOS40IDE5NTYuNiwyNDU5LjggIi8+PGc+PHBhdGggZD0iTTQyMS43LDkzNC44Yy02LjEtNiw4LDQ5LjEsMjcuNiw2OC45YzM0LjgsMzUuMSw2MS45LDM5LjYsNzYuNCw0MC4yYzMyLDEuMyw3MS41LTgsOTQuOS0xNy44YzIyLjctOS43LDYyLjQtMzAsNzcuNS01OS42YzMuMi02LjMsMTEuOS0xNyw2LjQtNDMuMmMtNC4yLTIwLjItMTctMjcuMy0zMi43LTI2LjJjLTE1LjcsMS4xLTYzLjIsMTMuNy04Ni4xLDIwLjhjLTIzLDctNzAuMywyMS40LTkwLjksMjUuOEM0NzQuMyw5NDguMiw0MjksOTQxLjcsNDIxLjcsOTM0Ljh6Ii8+PHBhdGggZD0iTTEwMDMuMSwxNTkzLjdjLTkuMS0zLjMtMTk2LjktODEuMS0yMjMuNi05My45Yy0yMS44LTEwLjUtNzUuMi0zMy4xLTEwMC40LTQzLjNjNzAuOC0xMDkuMiwxMTUuNS0xOTEuNiwxMjEuNS0yMDQuMWMxMS0yMyw4Ni0xNjkuNiw4Ny43LTE3OC43YzEuNy05LjEsMy44LTQyLjksMi4yLTUxYy0xLjctOC4yLTI5LjEsNy42LTY2LjQsMjAuMmMtMzcuNCwxMi42LTEwOC40LDU4LjgtMTM1LjgsNjQuNmMtMjcuNSw1LjctMTE1LjUsMzkuMS0xNjAuNSw1NGMtNDUsMTQuOS0xMzAuMiw0MC45LTE2NS4yLDUwLjRjLTM1LjEsOS41LTY1LjcsMTAuMi04NS4zLDE2LjJjMCwwLDIuNiwyNy41LDcuOCwzNS43YzUuMiw4LjIsMjMuNywyOC40LDQ1LjMsMzQuMWMyMS42LDUuNyw1Ny4zLDMuNCw3My42LTAuM2MxNi4zLTMuOCw0NC40LTE3LjUsNDguMi0yMy42YzMuOC02LjEtMi0yNC45LDQuNS0zMC42YzYuNS01LjYsOTIuMi0yNS43LDEyNC42LTM1LjRjMzIuNC0xMCwxNTYuMy01Mi42LDE3My4xLTUwLjVjLTUuMywxNy43LTEwNSwyMTUuMS0xMzcuMSwyNzRjLTMyLjEsNTguOS0yMTguNiwzMTgtMjU4LjMsMzYzLjZjLTMwLjEsMzQuNy0xMDMuMiwxMjMuNS0xMjguNSwxNDMuNmM2LjQsMS44LDUxLjYtMi4xLDU5LjktNy4yYzUxLjMtMzEuNiwxMzYuOS0xMzguMSwxNjQuNC0xNzAuNWM4MS45LTk2LDE1My44LTE5Ni44LDIxMC44LTI4My40aDAuMWMxMS4xLDQuNiwxMDAuOSw3Ny44LDEyNC40LDk0YzIzLjQsMTYuMiwxMTUuOSw2Ny44LDEzNiw3Ni40YzIwLDguNyw5Ny4xLDQ0LjIsMTAwLjMsMzIuMkMxMDI5LjQsMTY2OCwxMDEyLjIsMTU5Ny4xLDEwMDMuMSwxNTkzLjd6Ii8+PC9nPjxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik01NjksMjU3MmMxOCwxMSwzNSwyMCw1NCwyOWMzOCwxOSw4MSwzOSwxMjIsNTRjNTYsMjEsMTEyLDM4LDE2OCw1MWMzMSw3LDY1LDEzLDk4LDE4YzMsMCw5MiwxMSwxMTAsMTFoOTBjMzUtMyw2OC01LDEwMy0xMGMyOC00LDU5LTksODktMTZjMjItNSw0NS0xMCw2Ny0xN2MyMS02LDQ1LTE0LDY4LTIyYzE1LTUsMzEtMTIsNDctMThjMTMtNiwyOS0xMyw0NC0xOWMxOC04LDM5LTE5LDU5LTI5YzE2LTgsMzQtMTgsNTEtMjhjMTMtNyw0My0zMCw1OS0zMGMxOCwwLDMwLDE2LDMwLDMwYzAsMjktMzksMzgtNTcsNTFjLTE5LDEzLTQyLDIzLTYyLDM0Yy00MCwyMS04MSwzOS0xMjAsNTRjLTUxLDE5LTEwNywzNy0xNTcsNDljLTE5LDQtMzgsOS01NywxMmMtMTAsMi0xMTQsMTgtMTQzLDE4aC0xMzJjLTM1LTMtNzItNy0xMDctMTJjLTMxLTUtNjQtMTEtOTUtMThjLTI0LTUtNTAtMTItNzMtMTljLTQwLTExLTc5LTI1LTExNy00MGMtNjktMjYtMTQxLTYwLTIwOS0xMDVjLTEyLTgtMTMtMTYtMTMtMjVjMC0xNSwxMS0yOSwyOS0yOUM1MzEsMjU0Niw1NjMsMjU2OSw1NjksMjU3MnoiLz48cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTE1MSwyMDA5TDYxLDIzNzJWNzY0bDEwOTAtMzYzVjIwMDl6IE0xMjEyLDM1NHYxNjgwYy0xLDUtMywxMC03LDE1Yy0yLDMtNiw3LTksOGMtMjUsMTAtMTE1MSwzODgtMTE2NiwzODhjLTEyLDAtMjMtOC0yOS0yMWMwLTEtMS0yLTEtNFY3MzljMi01LDMtMTIsNy0xNmM4LTExLDIyLTEzLDMxLTE2YzE3LTYsMTEyNi0zNzgsMTE0Mi0zNzhDMTE5MCwzMjksMTIxMiwzMzYsMTIxMiwzNTR6Ii8+PHBhdGggY2xhc3M9InN0MSIgZD0iTTIxMjAsMjAxN2wtOTA3LTI4MlYzODBsOTA3LTMwOFYyMDE3eiBNMjE4MSwzMnYyMDIzYy0xLDIzLTE3LDMzLTMyLDMzYy0xMywwLTEwNy0zMi0xMjMtMzdjLTEyNi0zOS0yNTMtNzgtMzc4LTExN2MtMjgtOS01Ny0xOC04NC0yN2MtMjQtNy01MC0xNS03NC0yM2MtMTA3LTMzLTIxNi02Ni0zMjMtMTAyYy00LTEtMTQtMTUtMTQtMThWMzUxYzItNSw0LTExLDktMTVjOC05LDM1MS0xMjMsNDg2LTE2OGMzNi0xMyw0ODctMTY4LDUwMS0xNjhDMjE2NywwLDIxODEsMTMsMjE4MSwzMnoiLz48cG9seWdvbiBwb2ludHM9IjI0MTEuMiwyNDQwLjcgMTE5OS41LDIwNTQuNSAxMjA0LjYsMzczLjIgMjQxMS4yLDc1Ny4yICIvPjxnPjxwYXRoIGNsYXNzPSJzdDIiIGQ9Ik0xODAwLjMsMTEyNC42TDE2ODEuNCwxNDEybDIxOC42LDY2LjNMMTgwMC4zLDExMjQuNnogTTE3MjksODUzLjJsMTU2LjEsNDcuM2wyODQuNCwxMDI1bC0xNjAuMy00OC43bC01Ny42LTIxMC40TDE2MjAuMiwxNTY2bC03MS4zLDE3MS40bC0xNjAuNC00OC43TDE3MjksODUzLjJ6Ii8+PC9nPjwvZz48L2c+PC9zdmc+);
-                background-repeat: no-repeat;
-                background-size: contain;
-                background-position: center center;
-                width: 24px;
-                height: 24px;
-            }
-
             .rv-version {
                 text-align: center;
                 margin: rem(1.2);
@@ -114,9 +103,13 @@
 
             .app-menu {
                 padding: 0;
-                margin: 0;
+                margin: rem(0.8) 0;
                 list-style: none;
                 max-width: 100%;
+
+                &-sublist {
+                    margin: 0;
+                }
             }
 
             .menu-heading {
@@ -129,21 +122,7 @@
                 color: black;
             }
             @include menu-link;
-            @include menu-language;
             @include menu-touch;
-        }
-    }
-}
-
-@mixin menu-language {
-    rv-language {
-        padding: 0;
-        margin: 0;
-        @include menu-button;
-
-        md-icon {
-            margin: 6px 8px;
-            float: right;
         }
     }
 }
@@ -161,6 +140,19 @@
     }
 }
 
+%menu-item {
+    color: black;
+    line-height: rem(4);
+    max-height: rem(4);
+    margin: 0;
+    overflow: hidden;
+    padding: 0 rem(1.6);
+    text-align: left;
+    text-decoration: none;
+    white-space: normal;
+    width: 100%;
+}
+
 @mixin menu-link {
     rv-menu-link {
         padding: 0;
@@ -168,8 +160,19 @@
 
         @include menu-button;
 
-        button {
+        .rv-menulink-header {
+            @extend %menu-item;
+
+            text-transform: capitalize;
+
+        }
+
+        button, .rv-menulink-header {
             text-overflow: ellipsis;
+
+            md-icon:first-child {
+                margin-right: rem(1.6);
+            }
 
             > span {
                 white-space: nowrap;
@@ -180,19 +183,8 @@
 
 @mixin menu-button {
     .md-button {
+        @extend %menu-item;
+
         border-radius: 0;
-        color: black;
-        cursor: pointer;
-        display: block;
-        align-items: inherit;
-        line-height: 40px;
-        margin: 0;
-        max-height: 40px;
-        overflow: hidden;
-        padding: 0 16px;
-        text-align: left;
-        text-decoration: none;
-        white-space: normal;
-        width: 100%;
     }
 }

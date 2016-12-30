@@ -125,19 +125,19 @@
          * @private
          */
         function init() {
-            setupMapnavButton();
+            setupMapnavButtons();
 
             // if language change, reset menu item
-            $rootScope.$on(events.rvLangSwitch, setupMapnavButton);
+            $rootScope.$on(events.rvLangSwitch, setupMapnavButtons);
         }
 
         /**
          * Merges a mapnav snippet from the config file with the default configuration. This is a shallow extend and the top-level properties (`extra` and `button` will be overwritten). Supplying an empty array as `extra` will remove all the extra buttons from the cluster.
          *
-         * @function setupMapnavButton
+         * @function setupMapnavButtons
          * @function private
          */
-        function setupMapnavButton() {
+        function setupMapnavButtons() {
             configService.getCurrent().then(data =>
                     angular.extend(service.config, MAPNAV_CONFIG_DEFAULT, data.navBar));
         }

@@ -10,7 +10,6 @@
     angular
         .module('app.ui', [
             'app.ui.basemap',
-            'app.ui.sidenav',
             'app.ui.appbar',
             'app.ui.panels',
             'app.ui.details',
@@ -22,7 +21,6 @@
             'app.ui.common',
             'app.ui.settings',
             'app.ui.help',
-            'app.ui.language',
             'app.ui.loader'
         ]);
 })();
