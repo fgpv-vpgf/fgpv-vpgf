@@ -680,6 +680,101 @@ function buildRendererToLegend(window) {
     };
 }
 
+/**
+ * Returns the legend information of an ESRI map service.
+ *
+ * @function getMapServerLegend
+ * @private
+ * @param  {String} layerUrl service url (root service, not indexed endpoint)
+ * @param  {Object} esriBundle collection of ESRI API objects
+ * @returns {Promise} resolves in an array of legend data
+ *
+ */
+function getMapServerLegend(layerUrl, esriBundle) {
+
+    // standard json request with error checking
+    const defService = esriBundle.esriRequest({
+        url: `${layerUrl}/legend`,
+        content: { f: 'json' },
+        callbackParamName: 'callback',
+        handleAs: 'json',
+    });
+
+    // wrap in promise to contain dojo deferred
+    return new Promise((resolve, reject) => {
+        defService.then(srvResult => {
+
+            if (srvResult.error) {
+                reject(srvResult.error);
+            } else {
+                resolve(srvResult);
+            }
+        }, error => {
+            reject(error);
+        });
+    });
+
+}
+
+/**
+ * Our symbology engine works off of renderers. When dealing with layers with no renderers,
+ * we need to take server-side legend and convert it to a fake renderer, which lets us
+ * leverage all the existing symbology code.
+ *
+ * @function mapServerLegendToRenderer
+ * @private
+ * @param {Object} serverLegend legend json from an esri map server
+ * @param {Integer} layerIndex  the index of the layer in the legend we are interested in
+ * @returns {Object} a fake unique value renderer based off the legend
+ *
+ */
+function mapServerLegendToRenderer(serverLegend, layerIndex) {
+    const layerLegend = serverLegend.layers.find(l => {
+        return l.layerId === layerIndex;
+    });
+
+    // make the mock renderer
+    return {
+        type: 'uniqueValue',
+        uniqueValueInfos: layerLegend.legend.map(ll => {
+            return {
+                label: ll.label,
+                symbol: {
+                    type: 'esriPMS',
+                    imageData: ll.imageData,
+                    contentType: ll.contentType
+                }
+            };
+        })
+    };
+}
+
+function buildMapServerToLocalLegend(esriBundle, geoApi) {
+    /**
+     * Orchestrator function that will:
+     * - Fetch a legend from an esri map server
+     * - Extract legend for a specific sub layer
+     * - Convert server legend to a temporary renderer
+     * - Convert temporary renderer to a viewer-formatted legend (return value)
+     *
+     * @function mapServerToLocalLegend
+     * @param {String}    mapServerUrl  service url (root service, not indexed endpoint)
+     * @param {Integer}   layerIndex    the index of the layer in the legend we are interested in
+     * @returns {Promise} resolves in a viewer-compatible legend for the given server and layer index
+     *
+     */
+    return (mapServerUrl, layerIndex) => {
+        // get esri legend from server
+        return getMapServerLegend(mapServerUrl, esriBundle).then(serverLegendData => {
+            // derive renderer for specified layer
+            const fakeRenderer = mapServerLegendToRenderer(serverLegendData, layerIndex);
+
+            // convert renderer to viewer specific legend
+            return geoApi.symbology.rendererToLegend(fakeRenderer);
+        });
+    };
+}
+
 // TODO getZoomLevel should probably live in a file not named symbology
 /**
 * Takes the lod list and finds level as close to and above scale limit
@@ -715,7 +810,7 @@ function getZoomLevel(lods, maxScale) {
     return currentLod;
 }
 
-module.exports = window => {
+module.exports = (esriBundle, geoApi, window) => {
     return {
         getGraphicIcon,
         getGraphicSymbol,
@@ -723,6 +818,7 @@ module.exports = window => {
         generatePlaceholderSymbology,
         generateWMSSymbology,
         getZoomLevel,
-        enhanceRenderer
+        enhanceRenderer,
+        mapServerToLocalLegend: buildMapServerToLocalLegend(esriBundle, geoApi)
     };
 };
