@@ -115,9 +115,10 @@
                             applyFeatureCount('generic', layerEntry, 0);
 
                             // get our legend from the server (as we have no local renderer)
-                            mapServerToLocalLegend(state.url, layerEntry.featureIdx).then(legendData => {
-                                applySymbology(layerEntry, legendData.layers[0]);
-                            });
+                            gapiService.gapi.symbology.mapServerToLocalLegend(state.url, layerEntry.featureIdx)
+                                .then(legendData => {
+                                    applySymbology(layerEntry, legendData.layers[0]);
+                                });
 
                             // this will remove the click handler from the legend entry
                             // TODO suggested to make a new state for legend items that makes them
@@ -193,9 +194,10 @@
                 // FIXME in legend-entry.service, function SINGLE_ENTRY_ITEM.init, there is a FIXME to prevent
                 // the stripping of the final part of the url for non-feature layers.
                 // for now, we correct the issue here. when it is fixed, this function should be re-adjusted
-                mapServerToLocalLegend(`${state.url}/${state.featureIdx}`, 0).then(legendData => {
-                    applySymbology(state, legendData.layers[0]);
-                });
+                gapiService.gapi.symbology.mapServerToLocalLegend(`${state.url}/${state.featureIdx}`, 0)
+                    .then(legendData => {
+                        applySymbology(state, legendData.layers[0]);
+                    });
 
                 return state;
             }
@@ -298,88 +300,6 @@
         // TODO: maybe this should be split into a separate service; it can get messy otherwise in here
         function structuredLegendService() {
 
-        }
-
-        /*
-         * TODO: move to geoapi as it's stateless and very specific.
-         * Returns the legend information of an ESRI map service.
-         *
-         * @function getMapServerLegend
-         * @param  {String} layerUrl service url (root service, not indexed endpoint)
-         * @returns {Promise} resolves in an array of legend data
-         *
-         */
-        function getMapServerLegend(layerUrl) {
-            return $http.jsonp(`${layerUrl}/legend?f=json&callback=JSON_CALLBACK`)
-                .then(result => {
-                    // console.log(legendUrl, index, result);
-
-                    if (result.data.error) {
-                        return $q.reject(result.data.error);
-                    }
-                    return result.data;
-                })
-                .catch(error => {
-                    // TODO: apply default symbology to the layer in question in this case
-                    console.error(error);
-                });
-        }
-
-        /*
-         * TODO: move to geoapi as it's stateless and very specific.
-         * Our symbology engine works off of renderers. When dealing with layers with no renderers,
-         * we need to take server-side legend and convert it to a fake renderer, which lets us
-         * leverage all the existing symbology code.
-         *
-         * @function mapServerLegendToRenderer
-         * @param {Object} serverLegend legend json from an esri map server
-         * @param {Integer} layerIndex  the index of the layer in the legend we are interested in
-         * @returns {Object} a fake unique value renderer based off the legend
-         *
-         */
-        function mapServerLegendToRenderer(serverLegend, layerIndex) {
-            const layerLegend = serverLegend.layers.find(l => {
-                return l.layerId === layerIndex;
-            });
-
-            // make the mock renderer
-            return {
-                type: 'uniqueValue',
-                uniqueValueInfos: layerLegend.legend.map(ll => {
-                    return {
-                        label: ll.label,
-                        symbol: {
-                            type: 'esriPMS',
-                            imageData: ll.imageData,
-                            contentType: ll.contentType
-                        }
-                    };
-                })
-            };
-        }
-
-        /*
-         * TODO: move to geoapi as it's stateless and very specific.
-         * Orchestrator function that will:
-         * - Fetch a legend from an esri map server
-         * - Extract legend for a specific sub layer
-         * - Convert server legend to a temporary renderer
-         * - Convert temporary renderer to a viewer-formatted legend (return value)
-         *
-         * @function mapServerToLocalLegend
-         * @param  {String} mapServerUrl  service url (root service, not indexed endpoint)
-         * @param {Integer} layerIndex    the index of the layer in the legend we are interested in
-         * @returns {Promise} resolves in a viewer-compatible legend for the given server and layer index
-         *
-         */
-        function mapServerToLocalLegend(mapServerUrl, layerIndex) {
-            // get esri legend from server
-            return getMapServerLegend(mapServerUrl).then(serverLegendData => {
-                // derive renderer for specified layer
-                const fakeRenderer = mapServerLegendToRenderer(serverLegendData, layerIndex);
-                // convert renderer to viewer specific legend
-                return gapiService.gapi.symbology.rendererToLegend(fakeRenderer);
-            });
         }
 
         /**
