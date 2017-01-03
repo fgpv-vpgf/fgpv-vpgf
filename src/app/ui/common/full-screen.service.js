@@ -1,4 +1,4 @@
-/* global TimelineLite, TweenLite, Ease, BezierEasing */
+/* global Ease, BezierEasing */
 (() => {
     'use strict';
 
@@ -25,7 +25,7 @@
         .module('app.ui.common')
         .factory('fullScreenService', fullScreenService);
 
-    function fullScreenService($rootElement, $timeout, storageService, gapiService, geoService) {
+    function fullScreenService($rootElement, $timeout, storageService, gapiService, geoService, animationService) {
         const ref = {
             isExpanded: false,
             tl: undefined,
@@ -63,7 +63,7 @@
 
             if (!ref.isExpanded) {
 
-                ref.tl = new TimelineLite({
+                ref.tl = animationService.timeLineLite({
                     paused: true,
                     onComplete
                 });
@@ -114,7 +114,7 @@
                 ref.isExpanded = !ref.isExpanded;
                 ref.tl.play();
             } else {
-                ref.tl = new TimelineLite({
+                ref.tl = animationService.timeLineLite({
                     paused: true,
                     onComplete
                 });
@@ -174,7 +174,7 @@
                 geoService.mapObject.centerAt(ref.trueCenterPoint);
 
                 // clear offset properties on the map container node
-                TweenLite.set(ref.mapContainerNode, {
+                animationService.set(ref.mapContainerNode, {
                     clearProps: 'top,left'
                 });
 
