@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TweenLite */
+/* global Ease, BezierEasing */
 (() => {
 
     const RV_MORPH_DURATION = 0.3;
@@ -38,7 +38,7 @@
      * @function rvMorph
      * @return {object} directive body
      */
-    function rvMorph(stateManager) {
+    function rvMorph(stateManager, animationService) {
         const directive = {
             restrict: 'A',
             link: linkFunc
@@ -68,7 +68,7 @@
 
                 // animate only on class change
                 if (newClass !== oldClass) {
-                    TweenLite.to(el, attr.rvMorphSpeed || RV_MORPH_DURATION, {
+                    animationService.to(el, attr.rvMorphSpeed || RV_MORPH_DURATION, {
                         className: toClass,
                         ease: RV_SWIFT_IN_OUT_EASE,
                         onComplete: () => {
@@ -78,6 +78,7 @@
                             console.log('morph completed');
                         }
                     });
+
                 } else {
                     el.addClass(newClass);
                 }
