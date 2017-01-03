@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TimelineLite */
+/* global Ease, BezierEasing */
 (() => {
     'use strict';
     const RV_SLIDE_DURATION = 0.3;
@@ -19,7 +19,7 @@
         .module('app.ui.details')
         .directive('rvLayerListSlider', rvLayerListSlider);
 
-    function rvLayerListSlider() {
+    function rvLayerListSlider(animationService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/details/layer-list-slider.html',
@@ -32,7 +32,7 @@
             const self = scope.self;
 
             // create animation timeline
-            const tl = new TimelineLite({
+            const tl = animationService.timeLineLite({
                 paused: true
             });
 

@@ -1,4 +1,4 @@
-/* global TimelineLite, Ease, BezierEasing */
+/* global Ease, BezierEasing */
 
 (() => {
     'use strict';
@@ -27,7 +27,7 @@
         .module('app.ui.toc')
         .directive('rvTocEntrySymbology', rvLayerItemSymbology);
 
-    function rvLayerItemSymbology($q, Geo) {
+    function rvLayerItemSymbology($q, Geo, animationService) {
         const directive = {
             require: '^?rvTocEntry', // need access to layerItem to get its element reference
             restrict: 'E',
@@ -171,7 +171,7 @@
                 return initializePromise;
 
                 function makeShiftTimeline() {
-                    tlshift = new TimelineLite({
+                    tlshift = animationService.timeLineLite({
                         paused: true,
                         onReverseComplete: () =>
                             $q.resolve()
@@ -217,7 +217,7 @@
 
                 function makeWiggleTimeline() {
                     // we only need one timeline since we can reuse it
-                    tlwiggle = new TimelineLite({
+                    tlwiggle = animationService.timeLineLite({
                         paused: true
                     });
 

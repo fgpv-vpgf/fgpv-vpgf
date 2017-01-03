@@ -1,4 +1,3 @@
-/* global TimelineLite, TweenLite */
 (() => {
     'use strict';
 
@@ -20,7 +19,7 @@
      *
      * @return {object} directive body
      */
-    function rvToc($timeout, layoutService, dragulaService, geoService) {
+    function rvToc($timeout, layoutService, dragulaService, geoService, animationService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/toc/toc.html',
@@ -164,7 +163,7 @@
                         scrollDuration = scrollElem.scrollTop() * speedRatio;
 
                         if (!scrollAnimation.isActive()) {
-                            scrollAnimation = TweenLite.to(scrollElem, scrollDuration,
+                            scrollAnimation = animationService.to(scrollElem, scrollDuration,
                                 { scrollTo: { y: 0 }, ease: 'Linear.easeNone' });
                         }
 
@@ -174,7 +173,7 @@
                             scrollDuration = (scrollElem[0].scrollHeight -
                                 scrollElem.height() - scrollElem.scrollTop()) * speedRatio;
 
-                            scrollAnimation = TweenLite.to(scrollElem, scrollDuration,
+                            scrollAnimation = animationService.to(scrollElem, scrollDuration,
                                 { scrollTo: { y: scrollElem[0].scrollHeight - scrollElem.height() },
                                 ease: 'Linear.easeNone' });
                         }
@@ -219,11 +218,11 @@
                 const sortGroupCount = parseInt(legendListItemsElements.last().attr('data-sort-group'));
                 let splitSortGroupElement;
 
-                const tl = new TimelineLite({
+                const tl = animationService.timeLineLite({
                     paused: true,
                     onComplete: () => {
                         legendListElement.addClass('rv-reorder');
-                        TweenLite.set(legendListItemsElements,
+                        animationService.set(legendListItemsElements,
                             { clearProps: 'margin-top' }
                         );
                     },
