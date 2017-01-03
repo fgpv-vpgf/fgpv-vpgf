@@ -1,4 +1,4 @@
-/* global TimelineLite, Ease, BezierEasing */
+/* global TimelineLite, Ease, BezierEasing, RV */
 
 (() => {
     'use strict';
@@ -27,7 +27,7 @@
         .module('app.ui.toc')
         .directive('rvTocEntrySymbology', rvLayerItemSymbology);
 
-    function rvLayerItemSymbology($q, Geo) {
+    function rvLayerItemSymbology($q, Geo, $rootElement) {
         const directive = {
             require: '^?rvTocEntry', // need access to layerItem to get its element reference
             restrict: 'E',
@@ -236,6 +236,9 @@
                                 y: `+=${displacement}px`,
                                 ease: RV_SWIFT_IN_OUT_EASE
                             }, 0);
+
+                        // to improve performance in IE and on touch devices, immediatly complete the animation
+                        if (RV.isIE || $rootElement.hasClass('rv-touch')) { TimelineLite.exportRoot().progress(1); }
                     }
                 }
 

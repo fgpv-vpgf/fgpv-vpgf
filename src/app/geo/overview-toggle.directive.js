@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TimelineLite */
+/* global Ease, BezierEasing, TimelineLite, RV */
 (() => {
     'use strict';
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
@@ -76,6 +76,9 @@
                 animate();
             }
 
+            // to improve performance in IE and on touch devices, immediatly complete the animation
+            if (RV.isIE || $rootElement.hasClass('rv-touch')) { TimelineLite.exportRoot().progress(1); }
+
             /**
              * Adds/removes a class 'rv-minimized' to .esriOverviewMap so that the extent box is
              * hidden/shown. Corrects the overview map extent to its new box size.
@@ -110,7 +113,14 @@
              * @function animate
              */
             function animate() {
-                return $rootScope.overviewActive ? overviewAnimation.reverse() : overviewAnimation.play();
+                if ($rootScope.overviewActive) {
+                    overviewAnimation.reverse();
+                } else {
+                    overviewAnimation.play();
+                }
+
+                // to improve performance in IE and on touch devices, immediatly complete the animation
+                if (RV.isIE || $rootElement.hasClass('rv-touch')) { TimelineLite.exportRoot().progress(1); }
             }
         }
     }

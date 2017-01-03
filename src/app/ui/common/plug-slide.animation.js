@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TweenLite */
+/* global Ease, BezierEasing, TweenLite, RV, TimelineLite */
 
 (() => {
     'use strict';
@@ -293,5 +293,8 @@
             angular.extend({}, reverse ? start : end, config));
 
         element.data(RV_PLUG_SLIDE_ID_DATA, id);
+
+        // to improve performance in IE, immediatly complete the animation
+        if (RV.isIE) { TimelineLite.exportRoot().progress(1); }
     }
 })();

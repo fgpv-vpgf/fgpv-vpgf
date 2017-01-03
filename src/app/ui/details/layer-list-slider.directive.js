@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TimelineLite */
+/* global Ease, BezierEasing, TimelineLite, RV */
 (() => {
     'use strict';
     const RV_SLIDE_DURATION = 0.3;
@@ -19,7 +19,7 @@
         .module('app.ui.details')
         .directive('rvLayerListSlider', rvLayerListSlider);
 
-    function rvLayerListSlider() {
+    function rvLayerListSlider($rootElement) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/details/layer-list-slider.html',
@@ -51,12 +51,15 @@
                     'overflow-y': 'auto'
                 }, RV_SLIDE_DURATION / 2);
 
+            noIEAnimation();
+
             // Place rv-expanded class on parent element once defined in details.directive.js
             const pElemWatcher = scope.$watch(self.getSectionNode, node => {
                 if (typeof node !== 'undefined') {
                     tl.to(node, RV_SLIDE_DURATION, {
                         className: '+=rv-expanded'
                     }, 0);
+                    noIEAnimation();
                     pElemWatcher();
                 }
             });
@@ -109,6 +112,7 @@
             function animateOpen() {
                 if (tl.paused() || !forceClose) {
                     tl.play();
+                    noIEAnimation();
                 } else {
                     forceClose = false;
                 }
@@ -120,6 +124,12 @@
              */
             function animateClosed() {
                 tl.reverse();
+                noIEAnimation();
+            }
+
+            function noIEAnimation() {
+                // to improve performance in IE and on touch devices, immediatly complete the animation
+                if (RV.isIE || $rootElement.hasClass('rv-touch')) { TimelineLite.exportRoot().progress(1); }
             }
         }
     }

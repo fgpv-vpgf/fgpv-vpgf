@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TimelineLite */
+/* global Ease, BezierEasing, TimelineLite, RV */
 (() => {
     'use strict';
 
@@ -64,6 +64,9 @@
                     callback();
                 }
             });
+
+            // to improve performance in IE and on touch devices, immediatly complete the animation
+            if (RV.isIE) { TimelineLite.exportRoot().progress(1); }
         }
 
         /**
@@ -85,6 +88,9 @@
                 ease: RV_SWIFT_IN_OUT_EASE,
                 onComplete: () => callback()
             });
+
+            // to improve performance in IE and on touch devices, immediatly complete the animation
+            if (RV.isIE) { TimelineLite.exportRoot().progress(1); }
         }
 
         /**

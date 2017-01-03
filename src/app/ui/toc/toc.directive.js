@@ -1,4 +1,4 @@
-/* global TimelineLite, TweenLite */
+/* global TimelineLite, TweenLite, RV */
 (() => {
     'use strict';
 
@@ -20,7 +20,7 @@
      *
      * @return {object} directive body
      */
-    function rvToc($timeout, layoutService, dragulaService, geoService) {
+    function rvToc($timeout, layoutService, dragulaService, geoService, $rootElement) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/toc/toc.html',
@@ -181,6 +181,9 @@
                     } else {
                         scrollAnimation.pause();
                     }
+
+                    // to improve performance in IE and on touch devices, immediatly complete the animation
+                    if (RV.isIE || $rootElement.hasClass('rv-touch')) { TimelineLite.exportRoot().progress(1); }
                 });
 
                 // console.log('Drag start', evt, el, source);

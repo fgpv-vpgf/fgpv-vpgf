@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TweenLite */
+/* global Ease, BezierEasing, TweenLite, RV, TimelineLite */
 (() => {
 
     const RV_MORPH_DURATION = 0.3;
@@ -38,7 +38,7 @@
      * @function rvMorph
      * @return {object} directive body
      */
-    function rvMorph(stateManager) {
+    function rvMorph(stateManager, $rootElement) {
         const directive = {
             restrict: 'A',
             link: linkFunc
@@ -78,6 +78,9 @@
                             console.log('morph completed');
                         }
                     });
+
+                    // to improve performance in IE and on touch devices, immediatly complete the animation
+                    if (RV.isIE || $rootElement.hasClass('rv-touch')) { TimelineLite.exportRoot().progress(1); }
                 } else {
                     el.addClass(newClass);
                 }

@@ -1,4 +1,4 @@
-/* global TimelineLite, Ease, BezierEasing */
+/* global TimelineLite, Ease, BezierEasing, RV */
 (() => {
     'use strict';
 
@@ -27,7 +27,7 @@
         .module('app.ui.basemap')
         .directive('rvBasemapItem', rvBasemapItem);
 
-    function rvBasemapItem() {
+    function rvBasemapItem($rootElement) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/basemap/basemap-item.html',
@@ -93,6 +93,9 @@
                 // reversed reversed ? ... it works though.
                 tlToggle.reversed(!tlToggle.reversed());
                 self.isDescriptionVisible = !tlToggle.reversed();
+
+                // to improve performance in IE and on touch devices, immediatly complete the animation
+                if (RV.isIE || $rootElement.hasClass('rv-touch')) { TimelineLite.exportRoot().progress(1); }
             }
         }
     }

@@ -1,4 +1,4 @@
-/* global TimelineLite, TweenLite, Ease, BezierEasing */
+/* global TimelineLite, TweenLite, Ease, BezierEasing, RV */
 (() => {
     'use strict';
 
@@ -151,6 +151,9 @@
                 ref.isExpanded = !ref.isExpanded;
                 ref.tl.play();
             }
+
+            // to improve performance in IE and on touch devices, immediatly complete the animation
+            if (RV.isIE || $rootElement.hasClass('rv-touch')) { TimelineLite.exportRoot().progress(1); }
         }
 
         /**
