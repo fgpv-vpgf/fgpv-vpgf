@@ -1,4 +1,4 @@
-/* global TimelineLite, Ease, BezierEasing */
+/* global Ease, BezierEasing */
 (() => {
     'use strict';
 
@@ -27,7 +27,7 @@
         .module('app.ui.basemap')
         .directive('rvBasemapItem', rvBasemapItem);
 
-    function rvBasemapItem() {
+    function rvBasemapItem(animationService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/basemap/basemap-item.html',
@@ -70,7 +70,7 @@
                         footer.outerHeight(true) + descNode.outerHeight(true),
                         el[0].getBoundingClientRect().height); // jQuery.height() returns rounded pixels, using boundingBox instead
 
-                    tlToggle = new TimelineLite();
+                    tlToggle = animationService.timeLineLite();
                     tlToggle
                         .to(el, RV_DURATION / 3 * 2, {
                             height: fullHeight,
