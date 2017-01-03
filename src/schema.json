@@ -734,6 +734,25 @@
             "additionalProperties": false
         },
 
+        "sideMenuNode": {
+            "type": "object",
+            "properties": {
+                "logo": { "type": "boolean", "default": true, "description": "Indicates if the logo should be shown in the left side menu." },
+                "items": { "type": "array", "items": { "$ref": "#/definitions/sideMenuButtons" }, "default": [] }
+            },
+            "additionalProperties": false,
+            "description": "Specifies which options are available in the left side menu."
+        },
+
+        "sideMenuButtons": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": ["layers", "basemap", "fullscreen", "export", "share", "touch", "help", "language" ]
+            }
+        },
+
         "navBarNode": {
             "type": "object",
             "properties": {
@@ -881,6 +900,7 @@
         },
         "navigation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
         "navBar": { "$ref": "#/definitions/navBarNode" },
+        "sideMenu": { "$ref": "#/definitions/sideMenuNode" },
         "tools": { "type": "object", "additionalProperties": true, "description": "FIXME" },
         "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
     },
