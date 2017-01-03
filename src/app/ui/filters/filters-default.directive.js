@@ -166,13 +166,25 @@
                         .filter(idx => idx > -1);
                 };
 
+                // returns array of column info where .data field has any period characters escaped
+                const escapedColumns = (columns) => {
+                    // deep copy so we don't change the displayData.columns array.
+                    // that array is used in other places, and messing with it will
+                    // break things.
+                    const copyArray = angular.copy(columns);
+                    copyArray.forEach(column => {
+                        column.data = column.data.replace(/\./g, '\\.');
+                    });
+                    return copyArray;
+                };
+
                 // ~~I hate DataTables~~ Datatables are cool!
                 self.table = tableNode
                     .on('init.dt', callbacks.onTableInit)
                     .on('draw.dt', callbacks.onTableDraw)
                     .DataTable({
                         dom: 'rti',
-                        columns: displayData.columns,
+                        columns: escapedColumns(displayData.columns),
                         data: displayData.rows,
                         order: [],
                         deferRender: true,
