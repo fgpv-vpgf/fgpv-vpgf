@@ -114,6 +114,12 @@
                             // no features.  show "0 features"
                             applyFeatureCount('generic', layerEntry, 0);
 
+                            // get our legend from the server (as we have no local renderer)
+                            gapiService.gapi.symbology.mapServerToLocalLegend(state.url, layerEntry.featureIdx)
+                                .then(legendData => {
+                                    applySymbology(layerEntry, legendData.layers[0]);
+                                });
+
                             // this will remove the click handler from the legend entry
                             // TODO suggested to make a new state for legend items that makes them
                             // non-interactable until everything in them has loaded
@@ -182,6 +188,16 @@
                 // generate toc entry
                 const state = legendEntryFactory.singleEntryItem(layer.config, layer);
                 layer.legendEntry = state;
+
+                // get our legend from the server (as we have no local renderer)
+                // image server uses 0 as default layer id
+                // FIXME in legend-entry.service, function SINGLE_ENTRY_ITEM.init, there is a FIXME to prevent
+                // the stripping of the final part of the url for non-feature layers.
+                // for now, we correct the issue here. when it is fixed, this function should be re-adjusted
+                gapiService.gapi.symbology.mapServerToLocalLegend(`${state.url}/${state.featureIdx}`, 0)
+                    .then(legendData => {
+                        applySymbology(state, legendData.layers[0]);
+                    });
 
                 return state;
             }
@@ -285,32 +301,6 @@
         function structuredLegendService() {
 
         }
-
-        /*
-         * TODO: Work in progress... Works fine for feature layers only right now; everything else gest a generic icon.
-         * TODO: move to geoapi as it's stateless and very specific.
-         * Scrapes feaure and dynamic layers for their symbology.
-         *
-         * @function getMapServerSymbology
-         * @param  {String} layerUrl service url
-         * @returns {Array} array of legend items
-         *
-        function getMapServerSymbology(layerUrl) {
-            return $http.jsonp(`${layerUrl}/legend?f=json&callback=JSON_CALLBACK`)
-                .then(result => {
-                    // console.log(legendUrl, index, result);
-
-                    if (result.data.error) {
-                        return $q.reject(result.data.error);
-                    }
-                    return result.data;
-                })
-                .catch(error => {
-                    // TODO: apply default symbology to the layer in question in this case
-                    console.error(error);
-                });
-        }
-        */
 
         /**
          * Get feature count from a layer.
