@@ -62,19 +62,28 @@
                 }
             }
 
+            .rv-sidemenu-header {
+                border-bottom: 1px solid $primary-color-light;
+                background: linear-gradient(#CFD8DC, #FFFFFF);
+            }
+
             .app-logo {
                 text-align: center;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 margin: 0 auto;
-                border-bottom-color: $primary-color-light;
-                background: linear-gradient(#CFD8DC, #FFFFFF);
 
                 img {
                     flex-shrink: 0; // IE11 fix, see https://github.com/philipwalton/flexbugs#6-the-default-flex-value-has-changed
                     max-width: 100%;
                     max-height: 100%;
+                }
+
+                // default logo is svg, can stretch
+                md-icon {
+                    width: 100%;
+                    height: 100%;
                 }
 
                 div {
@@ -84,6 +93,27 @@
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                }
+
+                &.rv-no-logo {
+                    align-items: baseline;
+
+                    h1 {
+                        padding: 0 rem(5.2) 0 rem(1.6) + rem(2.4) + rem(1.6);
+                    }
+                }
+
+                // reset overrides
+                h1 {
+                    line-height: rem(5.2);
+                    margin: 0;
+                    border: 0;
+                    padding: 0;
+                    padding: 0 rem(1.6);
+                    width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
             }
 

@@ -3,6 +3,7 @@
     // this is a default configuration of the side menu
     // options are grouped into sections and will be rendered as distinct lists in the side menu panel
     const SIDENAV_CONFIG_DEFAULT = {
+        logo: true,
         items: [
             [
                 'layers',
@@ -270,6 +271,9 @@
         function setupSidenavButtons() {
             configService.getCurrent().then(data => {
                 service.config = angular.extend({}, SIDENAV_CONFIG_DEFAULT, data.sideMenu);
+
+                // a hack to get the logo url from the config to the template; need to decide where such things will be defined in the new schema
+                service.config.logoUrl = data.logoUrl;
 
                 // all menu items should be defined in the config's ui section
                 // should we account for cases when the export url is not specified, but export option is enabled in the side menu thought the config and hide it ourselves?

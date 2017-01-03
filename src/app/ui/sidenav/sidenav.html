@@ -1,11 +1,15 @@
 <md-sidenav rv-trap-focus class="site-sidenav md-sidenav-left md-whiteframe-z2" md-component-id="left">
-    <header class="nav-header">
-        <a class="app-logo" href="#">
-            <div>
-                <img ng-src="{{ self.markerImageSrc || 'data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E' }}" alt="">
+    <header class="rv-sidemenu-header">
+        <div class="app-logo" ng-class="{ 'rv-no-logo': !self.service.config.logo }">
+            <div ng-if="self.service.config.logo">
+
+                <img ng-src="{{ self.service.config.logoUrl }}" ng-if="self.service.config.logoUrl" alt="">
+
+                <md-icon md-svg-src="logo" ng-if="!self.service.config.logoUrl"></md-icon>
             </div>
+
             <h1 translate class="app-logotype md-heading">sidenav.title</h1>
-        </a>
+        </div>
     </header>
 
     <md-button class="md-icon-button black rv-button-32 minimize-button" ng-click="self.service.close()">
