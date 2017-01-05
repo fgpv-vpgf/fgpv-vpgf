@@ -1,4 +1,10 @@
 @mixin filters {
+    .filters-panel {
+        .rv-content {
+            height: 50%; // in Safari, content panel does not update to the right height when switch from maximized to split view
+        }
+    }
+
     .rv-filters {
         display: flex;
         flex-direction: column;
