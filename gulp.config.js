@@ -164,18 +164,18 @@ module.exports = function () {
 
     // jscs:disable maximumLineLength
     config.iconCache = [
-        { file: 'content/images/iconsets/default-icons.svg', prefix: 'default', icons: 'check'.split(' '), isDefault: true },
-        { file: 'content/images/iconsets/action-icons.svg', prefix: 'action', icons: 'search home history description delete settings info_outline info visibility visibility_off zoom_in zoom_out check_circle open_in_new print shopping_cart opacity swap_vert'.split(' ') },
+        { file: 'content/images/iconsets/default-icons.svg', prefix: 'default', icons: 'check logo'.split(' '), isDefault: true },
+        { file: 'content/images/iconsets/action-icons.svg', prefix: 'action', icons: 'search home history description delete settings info_outline info visibility visibility_off zoom_in zoom_out check_circle open_in_new print shopping_cart opacity swap_vert touch_app translate'.split(' ') },
         { file: 'content/images/iconsets/alert-icons.svg', prefix: 'alert', icons: 'error'.split(' ') },
         { file: 'content/images/iconsets/communication-icons.svg', prefix: 'communication', icons: 'location_on'.split(' ') },
-        { file: 'content/images/iconsets/mdi-icons.svg', prefix: 'community', icons: 'filter chevron-double-left chevron-double-right emoticon-sad emoticon-happy vector-square table-large map-marker-off apple-keyboard-control vector-point vector-polygon vector-polyline github help'.split(' ') },
+        { file: 'content/images/iconsets/mdi-icons.svg', prefix: 'community', icons: 'filter chevron-double-left chevron-double-right emoticon-sad emoticon-happy vector-square table-large map-marker-off apple-keyboard-control vector-point vector-polygon vector-polyline github help export'.split(' ') },
         { file: 'content/images/iconsets/content-icons.svg', prefix: 'content', icons: 'create add remove'.split(' ') },
         { file: 'content/images/iconsets/editor-icons.svg', prefix: 'editor', icons: 'insert_drive_file drag_handle'.split(' ') },
         { file: 'content/images/iconsets/file-icons.svg', prefix: 'file', icons: 'file_upload cloud'.split(' ') },
         { file: 'content/images/iconsets/hardware-icons.svg', prefix: 'hardware', icons: 'keyboard_arrow_right keyboard_arrow_down keyboard_arrow_up'.split(' ') },
         { file: 'content/images/iconsets/image-icons.svg', prefix: 'image', icons: 'tune photo'.split(' ') },
         { file: 'content/images/iconsets/maps-icons.svg', prefix: 'maps', icons: 'place layers my_location map layers_clear'.split(' ') },
-        { file: 'content/images/iconsets/navigation-icons.svg', prefix: 'navigation', icons: 'menu check more_vert close more_horiz refresh arrow_back'.split(' ') },
+        { file: 'content/images/iconsets/navigation-icons.svg', prefix: 'navigation', icons: 'menu check more_vert close more_horiz refresh arrow_back fullscreen'.split(' ') },
         { file: 'content/images/iconsets/social-icons.svg', prefix: 'social', icons: 'person share'.split(' ') }
     ];
     // jscs:enable maximumLineLength

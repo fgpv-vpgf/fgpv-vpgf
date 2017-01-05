@@ -1,5 +1,27 @@
 (() => {
 
+    // this is a default configuration of the side menu
+    // options are grouped into sections and will be rendered as distinct lists in the side menu panel
+    const SIDENAV_CONFIG_DEFAULT = {
+        logo: true,
+        items: [
+            [
+                'layers',
+                'basemap'
+            ],
+            [
+                'fullscreen',
+                'export',
+                'share',
+                'touch',
+                'help'
+            ],
+            [
+                'language'
+            ]
+        ]
+    };
+
     /**
      * @ngdoc service
      * @module sideNavigationService
@@ -10,7 +32,7 @@
      *
      */
     angular
-        .module('app.ui.sidenav')
+        .module('app.ui')
         .factory('sideNavigationService', sideNavigationService);
 
     /**
@@ -18,19 +40,109 @@
      * @param  {object} $mdSidenav
      * @return {object} service object
      */
-    function sideNavigationService($mdSidenav, globalRegistry) {
-        /* jshint shadow:true */
-        /* jshint unused:false */
-        /*
-         * Open and close are native browser functions for opening and closing windows.
-         * To prevent JShint's "already defined" error, we use shadow and unused switches.
-         */
+    // need to find a more elegant way to include all these dependencies
+    // jshint maxparams:15
+    function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegistry, configService, events,
+        stateManager, basemapService, fullScreenService, exportService, storageService, helpService, reloadService,
+        translations, $mdDialog) {
+
         const service = {
             open,
             close,
             toggle,
+
+            config: {},
+            controls: {},
+
             ShareController
         };
+
+        service.controls = {
+            layers: {
+                type: 'link',
+                label: 'appbar.tooltip.layers',
+                icon: 'maps:layers',
+                isChecked: () => stateManager.state.mainToc.active,
+                action: () => {
+                    service.close();
+                    stateManager.setActive('mainToc');
+                }
+            },
+            basemap: {
+                type: 'link',
+                label: 'nav.label.basemap',
+                icon: 'maps:map',
+                action: () => {
+                    service.close();
+                    basemapService.open();
+                }
+            },
+            export: {
+                type: 'link',
+                label: 'sidenav.label.export',
+                icon: 'community:export',
+                action: () => {
+                    service.close();
+                    exportService.open();
+                }
+            },
+            share: {
+                type: 'link',
+                label: 'sidenav.label.share',
+                icon: 'social:share',
+                action: () => {
+                    service.close();
+
+                    $mdDialog.show({
+                        controller: service.ShareController,
+                        controllerAs: 'self',
+                        templateUrl: 'app/ui/sidenav/share-dialog.html',
+                        parent: storageService.panels.shell,
+                        disableParentScroll: false,
+                        clickOutsideToClose: true,
+                        fullscreen: false
+                    });
+                }
+            },
+            fullscreen: {
+                type: 'link',
+                label: 'sidenav.label.fullscreen',
+                icon: 'navigation:fullscreen',
+                isHidden: $rootElement.attr('rv-fullpage-app'),
+                isChecked: fullScreenService.isExpanded,
+                action: () => {
+                    // service.close();
+                    fullScreenService.toggle();
+                }
+            },
+            touch: {
+                type: 'link',
+                label: 'sidenav.label.touch',
+                icon: 'action:touch_app',
+                isChecked: () => $rootElement.hasClass('rv-touch'),
+                action: () => $rootElement.toggleClass('rv-touch')
+            },
+            help: {
+                type: 'link',
+                label: 'sidenav.label.help',
+                icon: 'community:help',
+                action: () => {
+                    service.close();
+                    helpService.open();
+                }
+            },
+            language: {
+                type: 'group',
+                label: 'sidenav.label.language',
+                icon: 'action:translate',
+                children: []
+            }
+        };
+
+        init();
+
+        // if language change, reset menu item
+        $rootScope.$on(events.rvLangSwitch, init);
 
         return service;
 
@@ -136,6 +248,86 @@
          */
         function toggle(argument) {
             console.log(argument);
+        }
+
+        /**
+         * Set up initial mapnav cluster buttons.
+         * Set up language change listener to update the buttons when a new config is loaded.
+         *
+         * @function init
+         * @private
+         */
+        function init() {
+            setupSidenavButtons();
+            setupLanguages();
+        }
+
+        /**
+         * Merges a sidemenu snippet from the config file with the default configuration. This is a shallow extend and the top-level properties (`items` will be overwritten). Supplying an empty array as `items` will remove all the menu options.
+         *
+         * @function setupSidenavButtons
+         * @function private
+         */
+        function setupSidenavButtons() {
+            configService.getCurrent().then(data => {
+                service.config = angular.extend({}, SIDENAV_CONFIG_DEFAULT, data.sideMenu);
+
+                // a hack to get the logo url from the config to the template; need to decide where such things will be defined in the new schema
+                service.config.logoUrl = data.logoUrl;
+
+                // all menu items should be defined in the config's ui section
+                // should we account for cases when the export url is not specified, but export option is enabled in the side menu thought the config and hide it ourselves?
+                // or just let it failed
+                // or do these checks together with layer definition validity checks and remove export from the sidemenu options at that point
+                service.controls.export.isHidden = !data.services.exportMapUrl;
+                // shareable should be deprecated;
+                service.controls.share.isHidden = !data.shareable;
+            });
+        }
+
+        /**
+         * Generate the language selector menu
+         *
+         * @function setupLanguages
+         * @private
+         */
+        function setupLanguages() {
+            // get languages available from configService
+            const langs = configService.getLanguages();
+
+            service.controls.language.children = langs.map(l =>
+                ({
+                    type: 'link',
+                    label: translations[l].lang[l.substring(0, 2)],
+                    action: switchLanguage,
+                    isChecked: isCurrentLanguage,
+                    value: l
+                }));
+
+            /**
+             * Switches the language to the language represented by the sidemenu language control object.
+             *
+             * @function switchLanguage
+             * @param {Object} control sidemenu language control object
+             * @private
+             */
+            function switchLanguage(control) {
+                // reload service with the new language and close side panel
+                reloadService.loadNewLang(control.value);
+                service.close();
+            }
+
+            /**
+             * Checks if the provided sidemenu language control object represents the currently selected language
+             *
+             * @function isCurrentLanguage
+             * @private
+             * @param {Object} control sidemenu language control object
+             * @return {Boolean} true is sidemenu language control object represents the currently selected language
+             */
+            function isCurrentLanguage(control) {
+                return control.value === configService.currentLang();
+            }
         }
     }
 })();

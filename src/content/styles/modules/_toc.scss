@@ -256,6 +256,7 @@ absolutely position a button underneath an item so it acts like a button body fo
     .rv-toc-placeholder-entry {
         @include entry-controls;
         @include entry-controls-hover;
+        @include selected-layer-entry;
 
         display: flex;
         align-items: center;

@@ -32,7 +32,7 @@
         };
     }
 
-    function helpService($mdDialog, $translate, translations, storageService, sideNavigationService) {
+    function helpService($mdDialog, $translate, translations, storageService) {
         // all help sections (populated when elements tagged with rv-help are created)
         const registry = [];
 
@@ -58,8 +58,6 @@
          * @function open
          */
         function open() {
-            sideNavigationService.close();
-
             $mdDialog.show({
                 controller: HelpSummaryController,
                 controllerAs: 'self',

@@ -353,5 +353,23 @@
       "home",
       "help"
     ]
+  },
+  "sideMenu": {
+    "logo": false,
+    "items": [
+        [
+            "layers",
+            "basemap"
+        ],
+        [
+            "fullscreen",
+            "export",
+            "touch",
+            "help"
+        ],
+        [
+            "language"
+        ]
+    ]
   }
 }

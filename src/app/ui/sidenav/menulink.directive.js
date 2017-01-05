@@ -10,7 +10,7 @@
      * The `rvMenuLink` directive is a wrapper around a button to provide some extra functionality (highlight currently selected item for example).
      */
     angular
-        .module('app.ui.sidenav')
+        .module('app.ui')
         .directive('rvMenuLink', rvMenuLink);
 
     /**
@@ -22,37 +22,13 @@
             restrict: 'E',
             templateUrl: 'app/ui/sidenav/menulink.html',
             scope: {
-                section: '='
+                control: '='
             },
-            link: linkFunc,
-            controller: Controller,
+            controller: angular.noop,
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
-
-        /**
-         * Skeleton link function.
-         */
-        function linkFunc() { // scope, el, attr, ctrl) {
-            // console.log(scope, el, attr, ctrl);
-        }
-    }
-
-    /**
-     * Skeleton controller function.
-     */
-    function Controller() {
-        // let self = this;
-        // console.log('--', self.section);
-
-        activate();
-
-        /**************/
-
-        function activate() {
-
-        }
     }
 })();

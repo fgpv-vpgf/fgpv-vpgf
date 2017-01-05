@@ -427,5 +427,23 @@
       "home",
       "help"
     ]
+  },
+  "sideMenu": {
+    "items": [
+        [
+            "layers",
+            "basemap"
+        ],
+        [
+            "fullscreen",
+            "export",
+            "share",
+            "touch",
+            "help"
+        ],
+        [
+            "language"
+        ]
+    ]
   }
 }
