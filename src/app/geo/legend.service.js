@@ -203,6 +203,51 @@
             }
 
             /**
+             * Searches for a layer title defined by a wms.
+             * @function getWMSLayerTitle
+             * @private
+             * @param  {Object} wmsLayer     esri layer object for the wms
+             * @param  {String} wmsLayerId   layers id as defined in the wms (i.e. not wmsLayer.id)
+             * @return {String}              layer title as defined on the service, '' if no title defined
+             */
+            function getWMSLayerTitle(wmsLayer, wmsLayerId) {
+                // TODO include this in geoAPI after refactor?
+
+                // crawl esri layerInfos (which is a nested structure),
+                // returns sublayer that has matching id or null if not found.
+                // written as function to allow recursion
+                const crawlSubLayers = (subLayerInfos, wmsLayerId) => {
+                    let targetEntry = null;
+
+                    // we use .some to allow the search to stop when we find something
+                    subLayerInfos.some(layerInfo => {
+                        // wms ids are stored in .name
+                        if (layerInfo.name === wmsLayerId) {
+                            // found it. save it and exit the search
+                            targetEntry = layerInfo;
+                            return true;
+                        } else if (layerInfo.subLayers) {
+                            // search children. if in children, will exit search, else will continue
+                            return crawlSubLayers(layerInfo.subLayers, wmsLayerId);
+                        } else {
+                            // continue search
+                            return false;
+                        }
+                    });
+
+                    return targetEntry;
+                };
+
+                // init search on root layerInfos, then process result
+                const match = crawlSubLayers(wmsLayer.layerInfos, wmsLayerId);
+                if (match && match.title) {
+                    return match.title;
+                } else {
+                    return ''; // falsy!
+                }
+            }
+
+            /**
              * Parses WMS layer object and create a legend entry with symbology.
              * @function wmsGenerator
              * @private
@@ -220,7 +265,10 @@
                             svgcode: null
                         };
 
-                        const name = state.layerEntries[idx].name || state.layerEntries[idx].id;
+                        // config specified name || server specified name || config id
+                        const name = state.layerEntries[idx].name ||
+                            getWMSLayerTitle(layer._layer, state.layerEntries[idx].id) ||
+                            state.layerEntries[idx].id;
 
                         gapiService.gapi.symbology.generateWMSSymbology(name, imageUri).then(data => {
                             symbologyItem.name = data.name;
