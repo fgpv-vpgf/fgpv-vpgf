@@ -29,6 +29,7 @@
 @import "_md-icon.scss";
 @import "_export.scss";
 @import "_side-nav.scss";
+@import "_tooltip.scss";
 
 @include core;
 @include loading;
@@ -57,3 +58,4 @@
 @include md-icon;
 @include export;
 @include side-nav;
+@include tooltip;
