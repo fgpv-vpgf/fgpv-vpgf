@@ -1,0 +1,53 @@
+@mixin tooltip {
+
+    %rv-tooltip-base {
+        opacity: 0;
+        transition: opacity $swift-ease-in-duration / 2 $swift-ease-in-out-timing-function;
+
+        &.rv-show {
+            opacity: 1;
+        }
+    }
+
+    rv-tooltip {
+        position: absolute;
+
+        .rv-tooltip-hover {
+            @extend %rv-tooltip-base;
+
+            background-color: white;
+            border: 1px solid $divider-color;
+
+            // to prevent the hover tooltip from generating mouse events
+            pointer-events: none;
+
+            .rv-tooltip-content {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                max-width: rem(35);
+                padding: rem(0.6);
+
+                .rv-tooltip-text {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+
+                .rv-tooltip-graphic {
+                    width: rem(2.4);
+                    height: rem(2.4);
+
+                    svg {
+                        width: 100%;
+                        height: 100%;
+                    }
+
+                    display: inline-block;
+                    margin: 0;
+                    margin-right: rem(0.6);
+                }
+            }
+        }
+    }
+}

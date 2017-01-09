@@ -32,7 +32,9 @@
             rvDataPrint: 'rvDataPrint', // these data events should be removed after switching to angular 1.5 or 2 or React
             rvDataExportCSV: 'rvDataExportCSV',
 
-            rvLangSwitch: 'rvLangSwitch' // Fired when language is switch (loadNewLang function)
+            rvLangSwitch: 'rvLangSwitch', // Fired when language is switch (loadNewLang function)
+
+            rvMapPan: 'rvMapPan'
         })
         .constant('bookmarkVersions', { // Bookmark versions https://github.com/fgpv-vpgf/fgpv-vpgf/wiki/Bookmark-Formats
             A: 'A',
