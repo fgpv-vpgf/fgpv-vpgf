@@ -106,7 +106,7 @@
                     init: () => ({ value: '' })
                 },
                 esriFieldTypeDate: {
-                    init: () => ({ min: '', max: '' })
+                    init: () => ({ min: null, max: null })
                 },
                 esriFieldTypeSmallInteger: {
                     init: () => ({ min: '', max: '' })
@@ -136,7 +136,9 @@
                     onTableDraw,
                     onTableInit,
                     onZoomClick,
-                    onDetailsClick
+                    onDetailsClick,
+                    onTableSort,
+                    onTableProcess
                 };
 
                 // TODO: move hardcoded stuff in consts
@@ -150,21 +152,6 @@
                 const forcedDelay = $q(fulfill =>
                     $timeout(() => fulfill(), 100)
                 );
-
-                // add atributes for filters to each column (we can set value froom config file for thematic map here)
-                displayData.columns.forEach(column => {
-                    const columnEdit = displayData.fields.find(field => column.data === field.name);
-
-                    if (typeof columnEdit !== 'undefined' && !column.init) {
-                        // set minimum width for range filter (number and date)
-                        if (columnEdit.type !== 'esriFieldTypeString') {
-                            column.width = '120px';
-                        }
-
-                        // set filter initial value
-                        column.filter = columnTypes[columnEdit.type].init();
-                    }
-                });
 
                 // create a new table node
                 const tableNode = angular.element('<table class="display nowrap rv-data-table"></table>');
@@ -208,9 +195,11 @@
                 const exportColumns = (columns) => {
                     // map columns to their ordinal indexes. but mark the symbol and interactive column as -1.
                     // then filter out the -1. result is an array of column indexes that
+
                     // are not the symbol and interactive columns.
                     return columns
                         .map((column, i) => (column.data === 'rvInteractive' || column.data === 'rvSymbol') ? -1 : i)
+
                         .filter(idx => idx > -1);
                 };
 
@@ -234,7 +223,7 @@
 
                     if (typeof field !== 'undefined') {
                         if (field.type === 'esriFieldTypeString') {
-                            const width = getColumnWidth(column.title, field.length);
+                            const width = getColumnWidth(column.title, field.length, 250);
                             column.width = `${width}px`;
                             column.render = renderEllipsis(width);
                         } else if (field.type === 'esriFieldTypeOID') {
@@ -243,13 +232,16 @@
                         } else if (field.type === 'esriFieldTypeDate') {
                             // convert each date cell to a better format
                             displayData.rows.forEach(r => r[field.name] = $filter('dateTimeZone')(r[field.name]));
-                            const width = Math.max(getTextWidth(column.title), 175);
+                            const width = getColumnWidth(column.title, 0, 400, 375);
                             column.width =  `${width}px`;
                         } else {
-                            const width = getColumnWidth(column.title);
+                            const width = getColumnWidth(column.title, 0, 250, 120);
                             column.width = `${width}px`;
                             column.render = renderEllipsis(width);
                         }
+
+                        // set filter initial value
+                        column.filter = columnTypes[field.type].init();
                     }
                 });
 
@@ -257,16 +249,19 @@
                 self.table = tableNode
                     .on('init.dt', callbacks.onTableInit)
                     .on('draw.dt', callbacks.onTableDraw)
+                    .on('order.dt', callbacks.onTableSort)
+                    .on('processing.dt', callbacks.onTableProcess)
                     .DataTable({
                         dom: 'rti',
                         columns: escapedColumns(displayData.columns),
                         data: displayData.rows,
                         order: [],
                         deferRender: true,
+                        processing: true, // show processing when filtering takes time
                         scrollY: true, // allow vertical scroller
                         scrollX: true, // allow horizontal scroller
                         // need to remove because we can have autoWidth and fix columns at the same time (if so, columns are note well displayed)
-                        // autoWidth: false, // without autoWidth, few columns will be stretched to fill avaialbe width, and many columns will cause the table to scroll horizontally
+                        autoWidth: false, // without autoWidth, few columns will be stretched to fill avaialbe width, and many columns will cause the table to scroll horizontally
                         scroller: {
                             displayBuffer: 10 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer.
                             // see key-focus event to see why we put 10
@@ -302,14 +297,15 @@
                  * @function getColumnWidth
                  * @private
                  * @param {Object} title    column title
-                 * @param {Object} length   optional column length (characters)
-                 * @param {Object}  maxLength   optional maximum column length (pixels)
+                 * @param {Interger} length   optional column length (characters)
+                 * @param {Integer}  maxLength   optional maximum column length (pixels)
+                 * @param {Integer}  minLength   optional minimum column length (pixels)
                  * @return {Number} width    width of the column
                  */
-                function getColumnWidth(title, length = 0, maxLength = 200) {
+                function getColumnWidth(title, length = 0, maxLength = 200, minLength = 50) {
                     // get title length (minimum 50px)
                     let metricsTitle = getTextWidth(title);
-                    metricsTitle = metricsTitle < 50 ? 50 : metricsTitle;
+                    metricsTitle = metricsTitle < minLength ? minLength : metricsTitle;
 
                     // get column length (only type string have length)
                     if (length) {
@@ -406,7 +402,11 @@
                         layoutService.panes.filter.find('.dataTables_scrollBody').attr('rv-ignore-focusout', '');
 
                         // set active table so it can be accessed in filter-search.directive for global table search
-                        filterService.setTable(self.table);
+                        filterService.setTable(self.table, displayData.filter.globalSearch);
+
+                        // recalculate scroller space on table init because if the preopen table was maximized in setting view
+                        // the scroller is still in split view
+                        self.table.scroller.measure();
 
                         // fired event to create filters
                         $rootScope.$broadcast(events.rvTableReady);
@@ -423,6 +423,9 @@
 
                     // draw has been fired because of scrolling with the keyboard
                     if (scrollCell) { draw = true; }
+
+                    // hide processing display on redraw
+                    $rootElement.find('.dataTables_processing').css('display', 'none');
 
                     // find all the button placeholders
                     Object.values(ROW_BUTTONS).forEach(button => {
@@ -500,6 +503,30 @@
                         // user is using keyboard navigation
                         key = true;
                     });
+                }
+
+                /**
+                 * Table sort callback. This will update the sort columns so setting panel and table can be synchronize
+                 * @function onTableSort
+                 * @private
+                 */
+                function onTableSort(e, settings) {
+                    // update sort column from the last sort
+                    const item = settings.aLastSort[settings.aLastSort.length - 1];
+
+                    if (typeof item !== 'undefined') {
+                        // use value from statemangaer because interactive column may have been added
+                        stateManager.display.filters.data.columns[item.col].sort = item.dir;
+                    }
+                }
+
+                /**
+                 * Table processing callback. This will show processing notice when table process (mainly use when sort)
+                 * @function onTableProcess
+                 * @private
+                 */
+                function onTableProcess(e, settings, processing) {
+                    $rootElement.find('#processingIndicator').css('display', processing ? 'block' : 'none');
                 }
 
                 /**
@@ -702,6 +729,10 @@
                     // Table need to be displayed to initialize columns width properly. Setting visibility hidden doesn't work for FF and Safari
                     // we can't recalculate with columns.adjust() because we loose the predefine width
                     self.filterService.isSettingOpen = false;
+
+                    // clear all filters from datatables api (number and date). They are global for all tables and we recreate table every time so
+                    // there is no other way to reuse them later
+                    $.fn.dataTable.ext.search.splice(0, $.fn.dataTable.ext.search.length);
                 }
             });
 

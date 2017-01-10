@@ -32,6 +32,15 @@
                 flex-direction: column;
                 min-height: 0; // Firefox fix; otherwise div won't shrink: http://stackoverflow.com/questions/27424831/firefox-flexbox-overflow
 
+                .dataTables_processing {
+                    z-index: 50; // show processing notice when tables redraw from filtering or sorting
+                    background-color: $primary-color-light;
+                    bottom: -15px;
+                    top: inherit;
+                    padding-top: 15px;
+                    height: 45px;
+                }
+
                 .dataTables_scroll {
                     height: 100%;
                     display: flex;

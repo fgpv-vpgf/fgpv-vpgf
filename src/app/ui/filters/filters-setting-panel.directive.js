@@ -40,42 +40,91 @@
         $scope.$on(events.rvTableReady, () => {
             self.columns = stateManager.display.filters.data.columns;
             $scope.columns = self.columns;
+
+            init();
         });
 
         self.reorder = onReorder;
         self.sort = onSort;
         self.display = onDisplay;
+        self.filterService = filterService;
+
+        /**
+         * On table load, initialize sort and display for all columns
+         *
+         * @function init
+         */
+        function init() {
+            sortColumns();
+
+            // toggle the visibility
+            self.columns.forEach((column) => {
+                if (!column.display) {
+                    self.filterService.getTable().column(`${column.name}:name`).visible(false);
+                }
+            });
+        }
+
+        /**
+         * Sort table from array of sort values (all columns)
+         *
+         * @function sortColumns
+         */
+        function sortColumns() {
+            // create array of sort from columns
+            const sorts = [];
+            self.columns.forEach((column, i) => {
+                if (typeof column.sort !== 'undefined' && column.sort !== 'none') {
+                    sorts.push([i, column.sort]);
+                }
+            });
+
+            // sort columns
+            const table = self.filterService.getTable();
+            if (sorts.length) {
+                table.order(sorts).draw();
+            }
+        }
 
         /**
          * On drag click to reorder the column
          *
          * @function onReorder
-         * @param   {String}   column   column name
+         * @param   {Object}   columnInfo   column information
          */
-        function onReorder(column) {
+        function onReorder(columnInfo) {
             // use same approach as https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1457
-            console.log(`dragClick ${column.name}`);
+            console.log(`dragClick ${columnInfo.name}`);
         }
 
         /**
-         * On sort click to sort the column
+         * On sort click, apply sort value to the column then sort the table
          *
-         * @function onDrag
-         * @param   {String}   column   column name
+         * @function onSort
+         * @param   {Object}   columnInfo   column information
          */
-        function onSort(column) {
-            column.sort = 'up';
-            console.log(`sortClick ${column.isSorted}`);
+        function onSort(columnInfo) {
+            // set sort value on actual column
+            const sort = (columnInfo.sort === 'none') ? 'asc' : ((columnInfo.sort === 'asc') ?
+                'desc' : 'none');
+            columnInfo.sort = sort;
+
+            // sort the table
+            sortColumns();
         }
 
         /**
-         * On display click to show/hide column
+         * On display click, show/hide the column
          *
          * @function onDisplay
-         * @param   {String}   column   column name
+         * @param   {Object}   columnInfo   column information
          */
-        function onDisplay(column) {
-            console.log(`displayClick ${column.display}`);
+        function onDisplay(columnInfo) {
+            // get column
+            const column = self.filterService.getTable().column(`${columnInfo.name}:name`);
+
+            // toggle the visibility
+            column.visible(columnInfo.display);
         }
     }
 })();
