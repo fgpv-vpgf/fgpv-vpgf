@@ -4,17 +4,18 @@
 
     <ul>
         <li>
-            <span class="rv-filter-settting-reorder"></span>
+            <span class="rv-filter-settting-reorder" ng-if="false"></span>
             <span class="rv-filter-settting-name">{{ 'filter.settings.label.name' | translate }}</span>
             <span class="rv-filter-settting-item">{{ 'filter.settings.label.filter' | translate }}</span>
             <span class="rv-filter-settting-sort">{{ 'filter.settings.label.sort' | translate }}</span>
             <span class="rv-filter-settting-display">{{ 'filter.settings.label.display' | translate }}</span>
         </li>
-        <li ng-repeat="column in self.columns" ng-show="$index > 0">
+        <li ng-repeat="column in self.columns" ng-show="$index > 1"> <!-- do not show first 2 columns (symbol and interactive buttons) -->
            <md-button
                 translate translate-attr-aria-label="filter.settings.reorder"
                 class="md-icon-button"
-                ng-click="self.reorder(column)">
+                ng-click="self.reorder(column)"
+                ng-if="false"> <!-- TODO: need to implement. Need to check side effect with display and sort because it works on index. need to store index when table is recreated. -->
                     <md-tooltip>{{ 'filter.settings.reorder' | translate }}</md-tooltip>
                     <md-icon md-svg-src="editor:drag_handle"></md-icon>
             </md-button>
@@ -29,12 +30,12 @@
                     class="md-icon-button"
                     ng-click="self.sort(column)">
                         <md-tooltip>{{ 'filter.settings.sort' | translate }}</md-tooltip>
-                        <md-icon md-svg-src="navigation:arrow_downward" ng-show="column.sort === 'down'"></md-icon>
-                        <md-icon md-svg-src="navigation:arrow_upward" ng-show="column.sort === 'up'"></md-icon>
+                        <md-icon md-svg-src="navigation:arrow_downward" ng-show="column.sort === 'desc'"></md-icon>
+                        <md-icon md-svg-src="navigation:arrow_upward" ng-show="column.sort === 'asc'"></md-icon>
                         <md-icon md-svg-src="content:remove" ng-show="column.sort === 'none'"></md-icon>
                 </md-button>
             </div>
-            
+
             <div class="rv-filter-settting-display">
                 <md-checkbox
                     ng-model="column.display"

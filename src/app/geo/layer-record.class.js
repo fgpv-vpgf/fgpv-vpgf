@@ -227,7 +227,7 @@
                             name: field.name, // add name so we can get column from datatables (https://datatables.net/reference/type/column-selector)
                             title: field.alias || field.name,
                             display: true,
-                            sort: 'none', // can be none, up or down
+                            sort: 'none', // can be none, asc or desc (values use by datatable)
                             filter: { },
                             width: '',
                             init: false,
@@ -251,7 +251,12 @@
                     fields: layerData.fields, // keep fields for reference ...
                     oidField: layerData.oidField, // ... keep a reference to id field ...
                     oidIndex: attributes.oidIndex, // ... and keep id mapping array
-                    renderer: layerData.renderer
+                    renderer: layerData.renderer,
+                    filter:  { // use by filters to keep info on table so it persist when we change table
+                        globalSearch: '',
+                        isApplied: true,
+                        isActive: false
+                    }
                 };
             }
 
