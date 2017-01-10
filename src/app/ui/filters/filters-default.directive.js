@@ -61,8 +61,10 @@
      * @function rvFiltersDefault
      * @return {object} directive body
      */
+     /*jshint -W072 */ // max number of formal parameters allowed per function
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
-        layoutService, detailService, $rootElement) {
+        layoutService, detailService, $rootElement, filterService, $rootScope, events) {
+        /*jshint +W072 */
 
         const directive = {
             restrict: 'E',
@@ -91,6 +93,31 @@
 
             layoutService.panes.filter = el;
 
+            // columns type with filters information
+            const columnTypes = {
+                esriFieldTypeString: {
+                    init: () => ({ value: '' })
+                },
+                esriFieldTypeDate: {
+                    init: () => ({ min: '', max: '' })
+                },
+                esriFieldTypeSmallInteger: {
+                    init: () => ({ min: '', max: '' })
+                },
+                esriFieldTypeInteger: {
+                    init: () => ({ min: '', max: '' })
+                },
+                esriFieldTypeSingle: {
+                    init: () => ({ min: '', max: '' })
+                },
+                esriFieldTypeDouble: {
+                    init: () => ({ min: '', max: '' })
+                },
+                esriFieldTypeOID: {
+                    init: () => ({ min: '', max: '' })
+                }
+            };
+
             /**
              * Creates a new datatables instance (destroying existing if any). It pulls the data from the stateManager display store.
              *
@@ -116,6 +143,21 @@
                 const forcedDelay = $q(fulfill =>
                     $timeout(() => fulfill(), 100)
                 );
+
+                // add atributes for filters to each column (we can set value froom config file for thematic map here)
+                displayData.columns.forEach(column => {
+                    const columnEdit = displayData.fields.find(field => column.data === field.name);
+
+                    if (typeof columnEdit !== 'undefined' && !column.init) {
+                        // set minimum width for range filter (number and date)
+                        if (columnEdit.type !== 'esriFieldTypeString') {
+                            column.width = '120px';
+                        }
+
+                        // set filter initial value
+                        column.filter = columnTypes[columnEdit.type].init();
+                    }
+                });
 
                 // create a new table node
                 const tableNode = angular.element('<table class="display nowrap rv-data-table"></table>');
@@ -178,7 +220,8 @@
                         deferRender: true,
                         scrollY: true, // allow vertical scroller
                         scrollX: true, // allow horizontal scroller
-                        autoWidth: false, // without autoWidth, few columns will be stretched to fill avaialbe width, and many columns will cause the table to scroll horizontally
+                        // need to remove because we can have autoWidth and fix columns at the same time (if so, columns are note well displayed)
+                        // autoWidth: false, // without autoWidth, few columns will be stretched to fill avaialbe width, and many columns will cause the table to scroll horizontally
                         scroller: {
                             displayBuffer: 3 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer
                         }, // turn on virtual scroller extension
@@ -212,6 +255,12 @@
                         // TODO: these ought to be moved to a helper function in displayManager
                         stateManager.display.filters.isLoading = false;
                         $timeout.cancel(stateManager.display.filters.loadingTimeout);
+
+                        // set active table so it can be accessed in filter-search.directive for global table search
+                        filterService.setTable(self.table);
+
+                        // fired event to create filters
+                        $rootScope.$broadcast(events.rvTableReady);
                     });
                 }
 
@@ -387,6 +436,7 @@
         const self = this;
 
         self.display = stateManager.display.filters;
+        self.filterService = filterService;
 
         self.draw = draw;
 
@@ -431,6 +481,11 @@
             $scope.$watch(() => filterService.filterTimeStamps.onDeleted, val => {
                 if (val !== null) {
                     self.destroyTable();
+
+                    // when table is close, set isSettingOpen to false to make sure table always open visible
+                    // Table need to be displayed to initialize columns width properly. Setting visibility hidden doesn't work for FF and Safari
+                    // we can't recalculate with columns.adjust() because we loose the predefine width
+                    self.filterService.isSettingOpen = false;
                 }
             });
 

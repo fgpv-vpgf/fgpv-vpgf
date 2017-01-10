@@ -137,6 +137,12 @@
       "url":"http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2"
     },
     {
+      "id":"DateLayer",
+      "name":"Date layer field",
+      "layerType":"esriFeature",
+      "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/NEB/Incident/MapServer/0"
+    },
+    {
       "id":"scaleDepDynamic",
       "name":"Air SO2 Scale Dep",
       "layerType":"esriDynamic",
