@@ -370,6 +370,10 @@
                 "symbologyStack": {
                     "$ref": "#/definitions/option",
                     "description": "Allows symbology stack to be opened from menu"
+                },
+                "hoverTips": {
+                    "$ref": "#/definitions/option",
+                    "description": "Enables hovertips on map features"
                 }
             },
             "additionalProperties": false

@@ -18,7 +18,7 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, $timeout, gapiService, legendService, Geo) {
+    function layerRegistryFactory($q, $timeout, $translate, gapiService, legendService, tooltipService, Geo) {
 
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
@@ -71,6 +71,13 @@
                     'extent-change': extentChangeHandler
                 }
             );
+
+            // TODO this is bad. will change after big refactor.
+            // holds a reference to any hovertip, so we can change and smite it later
+            const hovertipState = {
+                tipRef: null,
+                tipContent: null
+            };
 
             // store service in geoState
             geoState.layerRegistry = service;
@@ -402,6 +409,14 @@
                             lr.onLoad();
                             lr.onUpdateEnd();
                         }
+
+                        // add listeners for hover tips
+                        // TODO add && lr.config.newConfigFlagForHover is true
+                        if (lr.config.layerType === Geo.Layer.Types.ESRI_FEATURE &&
+                            lr.config.options.hoverTips.enabled) {
+                            lr.addHoverListener(hoverHandler);
+                        }
+
                     });
                 });
             }
@@ -435,6 +450,57 @@
                     setScaleDepState(lr.layerId);
                 };
                 return firstListener;
+            }
+
+            // TODO find a better home for this function after grand refactor
+            /**
+             * Handles a hover event from a layer record.
+             * @function hoverHandler
+             * @param {Object} hoverParams  object with event parameters
+             */
+            function hoverHandler(hoverParams) {
+                // we use the mouse event target to track which
+                // graphic the active tooltip is pointing to.
+                // this lets us weed any delayed events that are meant
+                // for tooltips that are no longer active.
+                const typeMap = {
+                    mouseOver: e => {
+                        // make the content and display the hovertip
+                        const template = `<div class="rv-tooltip-content">
+                                <rv-svg once="false" class="rv-tooltip-graphic" src="self.svgcode"></rv-svg>
+                                <span class="rv-tooltip-text">{{ self.name }}</span>
+                            </div>`;
+
+                        hovertipState.tipContent = {
+                            name: $translate.instant('maptip.hover.label.loading'),
+                            svgcode: '<svg></svg>',
+                            graphic: e.target
+                        };
+
+                        hovertipState.tipRef = tooltipService.addHoverTooltip(e.point, template,
+                            hovertipState.tipContent);
+                    },
+                    tipLoaded: e => {
+                        // update the content of the tip with real data.
+                        if (hovertipState.tipContent && hovertipState.tipContent.graphic === e.target) {
+                            hovertipState.tipContent.name = e.name;
+                            hovertipState.tipContent.svgcode = e.svgcode;
+                        }
+                    },
+                    mouseOut: e => {
+                        // if there is a hovertip, get rid of it
+                        if (hovertipState.tipRef && hovertipState.tipContent &&
+                            hovertipState.tipContent.graphic === e.target) {
+
+                            hovertipState.tipRef.destroy();
+                            hovertipState.tipRef = null;
+                            hovertipState.tipContent = null;
+                        }
+                    }
+                };
+
+                // execute function for the given type
+                typeMap[hoverParams.type](hoverParams);
             }
 
             /**
