@@ -11,15 +11,17 @@
 
     rv-tooltip {
         position: absolute;
+        pointer-events: none;
+
+        .rv-tooltip-anchor {
+            pointer-events: auto;
+        }
 
         .rv-tooltip-hover {
             @extend %rv-tooltip-base;
 
             background-color: white;
             border: 1px solid $divider-color;
-
-            // to prevent the hover tooltip from generating mouse events
-            pointer-events: none;
 
             .rv-tooltip-content {
                 display: flex;
@@ -37,6 +39,7 @@
                 .rv-tooltip-graphic {
                     width: rem(2.4);
                     height: rem(2.4);
+                    flex-shrink: 0;
 
                     svg {
                         width: 100%;

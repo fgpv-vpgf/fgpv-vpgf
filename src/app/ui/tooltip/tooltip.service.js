@@ -22,12 +22,14 @@
              *
              * @function constructor
              * @param {Object} movementStrategy specifies how the tooltip moves on the screen
+             * @param {Object} collisionStrategy specified how the tooltip reacts to collisions
              * @param {String} content tooltips content
              * @param {Object} scope scope for the tooltip directive
              * @param {String} templateName [optional = 'hover'] the name of the tooltip outer template
              */
-            constructor(movementStrategy, content, scope, templateName = 'hover') {
+            constructor(movementStrategy, collisionStrategy, content, scope, templateName = 'hover') {
                 this._movementStrategy = movementStrategy;
+                this._collisionStrategy = collisionStrategy;
                 this._templateName = templateName;
 
                 this._scope = scope;
@@ -36,20 +38,24 @@
                 this._node = $compile(`<rv-tooltip template="${this._templateName}">${content}</rv-tooltip>`)(scope);
                 this._movementStrategy.register(this);
 
-                this._width = this._height = 0;
+                this._mouseGap = 10;
+
+                this._originPoint = { x: 0, y: 0 };
+                this._collisionOffset = { x: 0, y: 0 };
+                this._bounds = { width: 0, height: 0, left: 0, right: 0, top: 0, bottom: 0 };
 
                 this._resetOffset();
             }
 
             /**
-             * Reset the running offset of the tooltip node. Running offset is used by the movement strategy
+             * Reset the running offset of the tooltip node. Running offset is used by the movement strategy.
              *
              * @function _resetOffset
              * @private
              */
             _resetOffset() {
-                // reset running offset when manually repositioned
                 this._runningOffset = { x: 0, y: 0 };
+
                 this.offset(0, 0);
             }
 
@@ -60,11 +66,11 @@
              * @private
              */
             _updateDimensions(dimensions) {
-                this._width = dimensions.width;
-                this._height = dimensions.height;
+                this._bounds.width = dimensions.width;
+                this._bounds.height = dimensions.height;
 
                 // reposition taking into the account new dimensions
-                this.position(this._x, this._y, false);
+                this.position(this._originPoint.x, this._originPoint.y, false);
             }
 
             /**
@@ -78,7 +84,29 @@
             }
 
             /**
-             * Offset the tooltip from its current/initial position
+             * Returns bounds of the tooltip node relative to its parent container.
+             *
+             * @function getBounds
+             * @param {Boolean} includeRunningOffset if set, returns tooltip bounds including the running offset
+             */
+            getBounds(includeRunningOffset = true) {
+                this._bounds.left = this._originPoint.x - this._bounds.width / 2;
+                this._bounds.right = this._originPoint.x + this._bounds.width / 2;
+                this._bounds.top = this._originPoint.y - this._bounds.height - this._mouseGap;
+                this._bounds.bottom = this._originPoint.y - this._mouseGap;
+
+                if (includeRunningOffset) {
+                    this._bounds.left -= this._runningOffset.x;
+                    this._bounds.right -= this._runningOffset.x;
+                    this._bounds.top -= this._runningOffset.y;
+                    this._bounds.bottom -= this._runningOffset.y;
+                }
+
+                return this._bounds;
+            }
+
+            /**
+             * Offset the tooltip from its current/initial position. This is typically called by the movement strategy, although the code holding a tooltip reference may call this as well.
              *
              * @function offset
              * @param {Number} xOffset pixel offest on x
@@ -88,28 +116,44 @@
                 this._runningOffset.x += xOffset;
                 this._runningOffset.y += yOffset;
 
-                this._node.css('transform', `translate(${-this._runningOffset.x}px, ${-this._runningOffset.y}px)`);
+                const collisionOffset = this._collisionStrategy.checkCollisions(this);
+
+                // flip the tooltip when it hits the ceiling
+                if (collisionOffset.y > 0) {
+                    collisionOffset.y = this._bounds.height + this._mouseGap * 2;
+                }
+
+                this._node.css('transform', `translate(
+                    ${-this._runningOffset.x + collisionOffset.x}px,
+                    ${-this._runningOffset.y + collisionOffset.y}px)`);
+
             }
 
             /**
+             * Positions the tooltips at specified coordinates relative to its parent container.
+             *
              * @function position
              * @param {Number} x x coordinate of the tooltip origin point
              * @param {Number} y y coordinate of the tooltip origin point
              * @param {Boolean} resetOffset [optional = true] resets the current tooltip offset used by the movement strategy
              */
             position(x = 0, y = 0, resetOffset = true) {
+                this._originPoint.x = x;
+                this._originPoint.y = y;
 
-                this._x = x;
-                this._y = y;
+                // get bounds with the running offset
+                const bounds = this.getBounds(false);
 
                 this._node.css({
-                    left: `${this._x - this._width / 2}px`,
-                    top: `${this._y - this._height - 10}px`
+                    left: `${ bounds.left }px`,
+                    top: `${ bounds.top }px`
                 });
 
                 if (resetOffset) {
                     this._resetOffset();
                 }
+
+                this.offset(0, 0);
             }
 
             /**
@@ -124,9 +168,45 @@
             }
         }
 
+        // collision strategy
+        class ContainInside {
+            constructor (parentContainer, targetContainer = null) {
+                this._parentContainer = parentContainer;
+                this._targetContainer = targetContainer || this._parentContainer;
+            }
+
+            /**
+             * Checks if there is any collision between teh supplied item and the target container. Returns a vector to prevent collision.
+             *
+             * @function checkCollisions
+             * @param {Object} item a tooltip object
+             * @return {Object} { x: <Number>, y: <Number> } displacement vector to avoid collision between the item and the target container
+             */
+            checkCollisions(item) {
+                // need to get bounds every time; scrolling the page or resizing the browser will change the bound
+                const parentContainerBounds = this._parentContainer[0].getBoundingClientRect();
+                const targetContainerBounds = this._targetContainer[0].getBoundingClientRect();
+                const itemBounds = item.getBounds();
+
+                const collisionOffset = {
+                    x: Math.min(0, (targetContainerBounds.right - parentContainerBounds.left) - itemBounds.right) ||
+                        Math.max(0, (targetContainerBounds.left - parentContainerBounds.left) - itemBounds.left),
+                    y: Math.min(0, (targetContainerBounds.bottom - parentContainerBounds.top) - itemBounds.bottom) ||
+                        Math.max(0, (targetContainerBounds.top - parentContainerBounds.top) - itemBounds.top)
+                };
+
+                // tooltip direction
+                // const direction = 'top';
+
+                return collisionOffset;
+            }
+        }
+
         // movementStrategy
-        class FollowStrategy {
-            constructor () {}
+        class TooltipStrategy {
+            constructor () {
+                this._items = [];
+            }
 
             /**
              * Adds tooltip to the list of tooltips tracked by this strategy.
@@ -153,7 +233,7 @@
         }
 
         // movementStrategy
-        class FollowMap extends FollowStrategy {
+        class FollowMap extends TooltipStrategy {
             /**
              * FollowMap strategy keeps tracked tooltips in place relative to the map. This should be used for anchor tooltips.
              *
@@ -161,8 +241,6 @@
              */
             constructor() {
                 super();
-                this._items = [];
-
                 // TODO: need to track extent changes and zooms
 
                 // tracks map pan
@@ -181,9 +259,9 @@
              * @function register
              * @param {Object} item a tooltip object
              */
-            register(item) {
+            /*register(item) {
                 super.register(item);
-            }
+            }*/
 
             /**
              * Removes tooltip from the list of tracked tooltips.
@@ -191,13 +269,13 @@
              * @function deRegister
              * @param {Object} item a tooltip object
              */
-            deRegister(item) {
+            /*deRegister(item) {
                 super.deRegister(item);
-            }
+            }*/
         }
 
         // movementStrategy
-        class FollowMouse extends FollowStrategy {
+        class FollowMouse extends TooltipStrategy {
             /**
              * FollowMap strategy keeps tracked tooltips in place relative to the mouse cursor over a specified target.
              *
@@ -206,7 +284,6 @@
              */
             constructor(target) {
                 super();
-                this._items = [];
                 this._target = target;
 
                 this._previousPosition = null;
@@ -297,9 +374,11 @@
             // create both tooltip movement strategies
             ref.followMapStrategy = new FollowMap();
             ref.followMouseStrategy = new FollowMouse(storageService.panels.shell);
+            ref.containInsideStrategy = new ContainInside(storageService.panels.shell);
 
             // test code, remove before deployment //
-            const drink = angular.element('<div style="background: white; border: 1px solid black; position: absolute; top: 500px; left: 1000px; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">big white box</div>');
+            /*
+            const drink = angular.element('<div style="background: white; border: 1px solid black; position: absolute; top: 10px; right: 10px; width: 400px; height: 600px; display: flex; align-items: center; justify-content: center;">big white box</div>');
             storageService.panels.shell.append(drink);
 
             const ttcontent = `<div class="rv-tooltip-content">
@@ -311,7 +390,7 @@
                 name: 'Amazing anchor tooltip!'
             };
 
-            const tt = new Tooltip(ref.followMapStrategy, ttcontent, ttscope);
+            const tt = new Tooltip(ref.followMapStrategy, ref.containInsideStrategy, ttcontent, ttscope);
             storageService.panels.shell.append(tt.node);
             tt.position(600, 700);
 
@@ -325,16 +404,19 @@
                 }
 
                 const htcontent = `<div class="rv-tooltip-content">
-                        <rv-svg class="rv-tooltip-graphic" src="self.svgcode"></rv-svg>
+                        <!--rv-svg class="rv-tooltip-graphic" src="self.svgcode"></rv-svg-->
+                        <svg xmlns="http://www.w3.org/2000/svg" fit="" height="24" width="24" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="close_cache48"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></g></svg>
                         <span class="rv-tooltip-text">{{ self.name }}</span>
                     </div>`;
 
                 const htself = {
-                    name: 'Hover tooltip, equally as amazing!',
-                    svgcode: RV.blah.svgcode
+                    name: 'Hover tooltip, equally as amazing!'//,
+                    // svgcode: RV.blah.svgcode
                 };
 
-                hoverTooltip = addHoverTooltip({ x: event.clientX, y: event.clientY }, htcontent, htself);
+                const shellbb = storageService.panels.shell[0].getBoundingClientRect();
+
+                hoverTooltip = addHoverTooltip({ x: event.clientX - shellbb.left, y: event.clientY - shellbb.top }, htcontent, htself);
             });
 
             drink.on('mouseout', event => {
@@ -347,6 +429,7 @@
                 hoverTooltip.destroy();
                 hoverTooltip = null;
             });
+            */
         }
 
         /**
@@ -359,8 +442,7 @@
             const tooltipScope = $rootScope.$new();
             tooltipScope.self = self;
 
-            const tooltip = new Tooltip(ref.followMouseStrategy, content, tooltipScope);
-
+            const tooltip = new Tooltip(ref.followMouseStrategy, ref.containInsideStrategy, content, tooltipScope);
             storageService.panels.shell.append(tooltip.node);
 
             tooltip.position(point.x, point.y);
