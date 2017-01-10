@@ -5,7 +5,7 @@
         class="rv-filters-apply primary"
         rv-help="filters-apply-button"
         ng-click="self.filterService.applyFilters()"
-        ng-show="!self.filterService.isApplied">
+        ng-show="!self.filterService.filter.isApplied && (self.filterService.isFeatureLayer || self.filterService.isDynamicLayer)">
         {{ 'filter.filters.apply' | translate }}
     </md-button>
 
