@@ -99,7 +99,7 @@
                     init: () => ({ value: '' })
                 },
                 esriFieldTypeDate: {
-                    init: () => ({ min: '', max: '' })
+                    init: () => ({ min: null, max: null })
                 },
                 esriFieldTypeSmallInteger: {
                     init: () => ({ min: '', max: '' })
@@ -129,7 +129,9 @@
                     onTableDraw,
                     onTableInit,
                     onZoomClick,
-                    onDetailsClick
+                    onDetailsClick,
+                    onTableSort,
+                    onTableProcess
                 };
 
                 // TODO: move hardcoded stuff in consts
@@ -144,13 +146,15 @@
                     $timeout(() => fulfill(), 100)
                 );
 
-                // add atributes for filters to each column (we can set value froom config file for thematic map here)
+                // add atributes for filters to each column (we can set value from config file for thematic map here)
                 displayData.columns.forEach(column => {
                     const columnEdit = displayData.fields.find(field => column.data === field.name);
 
                     if (typeof columnEdit !== 'undefined' && !column.init) {
                         // set minimum width for range filter (number and date)
-                        if (columnEdit.type !== 'esriFieldTypeString') {
+                        if (columnEdit.type === 'esriFieldTypeDate') {
+                            column.width = '372px';
+                        } else if (columnEdit.type !== 'esriFieldTypeString') {
                             column.width = '120px';
                         }
 
@@ -193,18 +197,20 @@
                     button.scope = buttonScope;
                 });
 
-                // get the first column after the symbol column
-                const interactiveColumn = displayData.columns.find(column =>
-                    column.data !== 'rvSymbol');
-                addColumnInteractivity(interactiveColumn, ROW_BUTTONS);
+                // add a column with interactive button after symbol (only needed first time table is created)
+                // do not add it inside an existing field because filters will not work properly
+                // data is replaces by the cell content (data and buttons)
+                const interactiveColumnExist = displayData.columns.find(column =>
+                    column.data === 'rvInteractive');
+                if (!interactiveColumnExist) { addColumnInteractivity(); }
 
                 // returns array of column indexes we want in the CSV export
                 const exportColumns = (columns) => {
                     // map columns to their ordinal indexes. but mark the symbol column as -1.
                     // then filter out the -1. result is an array of column indexes that
-                    // are not the symbol column.
+                    // are not the symbol or interactive column.
                     return columns
-                        .map((column, i) => column.data === 'rvSymbol' ? -1 : i)
+                        .map((column, i) => column.data === 'rvInteractive' ? -1 : i)
                         .filter(idx => idx > -1);
                 };
 
@@ -212,12 +218,15 @@
                 self.table = tableNode
                     .on('init.dt', callbacks.onTableInit)
                     .on('draw.dt', callbacks.onTableDraw)
+                    .on('order.dt', callbacks.onTableSort)
+                    .on('processing.dt', callbacks.onTableProcess)
                     .DataTable({
                         dom: 'rti',
                         columns: displayData.columns,
                         data: displayData.rows,
                         order: [],
                         deferRender: true,
+                        processing: true, // show processing when filtering takes time
                         scrollY: true, // allow vertical scroller
                         scrollX: true, // allow horizontal scroller
                         // need to remove because we can have autoWidth and fix columns at the same time (if so, columns are note well displayed)
@@ -257,7 +266,11 @@
                         $timeout.cancel(stateManager.display.filters.loadingTimeout);
 
                         // set active table so it can be accessed in filter-search.directive for global table search
-                        filterService.setTable(self.table);
+                        filterService.setTable(self.table, displayData.filter.globalSearch);
+
+                        // recalculate scroller space on table init because if the preopen table was maximized in setting view
+                        // the scroller is still in split view
+                        self.table.scroller.measure();
 
                         // fired event to create filters
                         $rootScope.$broadcast(events.rvTableReady);
@@ -271,6 +284,9 @@
                  */
                 function onTableDraw() {
                     console.log('rows are drawn');
+
+                    // hide processing display on redraw
+                    $rootElement.find('.dataTables_processing').css('display', 'none');
 
                     // find all the button placeholders
                     Object.values(ROW_BUTTONS).forEach(button => {
@@ -290,6 +306,30 @@
                             item.replaceWith(rowButtonDirective);
                         });
                     });
+                }
+
+                /**
+                 * Table sort callback. This will update the sort columns so setting panel and table can be synchronize
+                 * @function onTableSort
+                 * @private
+                 */
+                function onTableSort(e, settings) {
+                    // update sort column from the last sort
+                    const item = settings.aLastSort[settings.aLastSort.length - 1];
+
+                    if (typeof item !== 'undefined') {
+                        // use value from statemangaer because interactive column may have been added
+                        stateManager.display.filters.data.columns[item.col].sort = item.dir;
+                    }
+                }
+
+                /**
+                 * Table processing callback. This will show processing notice when table process (mainly use when sort)
+                 * @function onTableProcess
+                 * @private
+                 */
+                function onTableProcess(e, settings, processing) {
+                    $rootElement.find('#processingIndicator').css('display', processing ? 'block' : 'none');
                 }
 
                 /**
@@ -384,26 +424,29 @@
                 }
 
                 /**
-                 * Adds zoom and details buttons to the column provided.
+                 * Adds zoom and details buttons.
                  * @function addColumnInteractivity
-                 * @param {Object} column from the formatted attributes bundle
                  */
-                function addColumnInteractivity(column, buttons) {
+                function addColumnInteractivity() {
                     // use render function to augment button to displayed data when the table is rendered
 
                     // we have to do some horrible string manipulations because Datatables required the `render` function to return a string
                     // it's not possble to return a compiled directive from the `render` function since directives compile directly into dom nodes
                     // first, button placeholder nodes are rendered as part of the cell data
                     // then, on `draw.dt`, these placeholders are replaced with proper compiled button directives
-                    column.render = (data, type, row, meta) => {
-                        const buttonPlaceholdersTemplate = Object.values(buttons).map(button =>
-                            `<${button.name} row="${meta.row}"></${button.name}>`)
-                            .join('');
 
-                        return `<div class="rv-wrapper"><span class="rv-data">${data}</span>
-                            ${buttonPlaceholdersTemplate}
-                        </div>`;
-                    };
+                    // add a column for after symbols
+                    displayData.columns.splice(1, 0, {
+                        data: 'rvInteractive',
+                        title: '',
+                        orderable: false,
+                        render: (data, type, row, meta) => {
+                            const buttonPlaceholdersTemplate = Object.values(ROW_BUTTONS).map(button =>
+                                `<${button.name} row="${meta.row}"></${button.name}>`)
+                                .join('');
+                            return `<div class="rv-wrapper">${buttonPlaceholdersTemplate}</div>`;
+                        }
+                    });
                 }
             }
 
@@ -486,6 +529,10 @@
                     // Table need to be displayed to initialize columns width properly. Setting visibility hidden doesn't work for FF and Safari
                     // we can't recalculate with columns.adjust() because we loose the predefine width
                     self.filterService.isSettingOpen = false;
+
+                    // clear all filters from datatables api (number and date). They are global for all tables and we recreate table every time so
+                    // there is no other way to reuse them later
+                    $.fn.dataTable.ext.search.splice(0, $.fn.dataTable.ext.search.length);
                 }
             });
 
