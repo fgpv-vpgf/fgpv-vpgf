@@ -42,7 +42,7 @@
 
                 this._originPoint = { x: 0, y: 0 };
                 this._collisionOffset = { x: 0, y: 0 };
-                this._bounds = { width: 0, height: 0, left: 0, right: 0, top: 0, bottom: 0 };
+                this._dimensions = { width: 0, height: 0 };
 
                 this._resetOffset();
             }
@@ -66,8 +66,8 @@
              * @private
              */
             _updateDimensions(dimensions) {
-                this._bounds.width = dimensions.width;
-                this._bounds.height = dimensions.height;
+                this._dimensions.width = dimensions.width;
+                this._dimensions.height = dimensions.height;
 
                 // reposition taking into the account new dimensions
                 this.position(this._originPoint.x, this._originPoint.y, false);
@@ -84,25 +84,46 @@
             }
 
             /**
+             * Returns origin point (mouse point) of the tooltip relative to its parent container.
+             *
+             * @function getOriginPoint
+             * @param {Boolean} includeRunningOffset if set, returns tooltip origin point including the running offset
+             */
+            getOriginPoint(includeRunningOffset = true) {
+                const result = angular.copy(this._originPoint);
+
+                if (includeRunningOffset) {
+                    result.x -= this._runningOffset.x;
+                    result.y -= this._runningOffset.y;
+                }
+
+                return result;
+            }
+
+            /**
              * Returns bounds of the tooltip node relative to its parent container.
              *
              * @function getBounds
              * @param {Boolean} includeRunningOffset if set, returns tooltip bounds including the running offset
              */
             getBounds(includeRunningOffset = true) {
-                this._bounds.left = this._originPoint.x - this._bounds.width / 2;
-                this._bounds.right = this._originPoint.x + this._bounds.width / 2;
-                this._bounds.top = this._originPoint.y - this._bounds.height - this._mouseGap;
-                this._bounds.bottom = this._originPoint.y - this._mouseGap;
+                const result = {
+                    width: this._dimensions.width,
+                    height: this._dimensions.height,
+                    left: this._originPoint.x - this._dimensions.width / 2,
+                    right: this._originPoint.x + this._dimensions.width / 2,
+                    top: this._originPoint.y - this._dimensions.height - this._mouseGap,
+                    bottom: this._originPoint.y - this._mouseGap
+                };
 
                 if (includeRunningOffset) {
-                    this._bounds.left -= this._runningOffset.x;
-                    this._bounds.right -= this._runningOffset.x;
-                    this._bounds.top -= this._runningOffset.y;
-                    this._bounds.bottom -= this._runningOffset.y;
+                    result.left -= this._runningOffset.x;
+                    result.right -= this._runningOffset.x;
+                    result.top -= this._runningOffset.y;
+                    result.bottom -= this._runningOffset.y;
                 }
 
-                return this._bounds;
+                return result;
             }
 
             /**
@@ -120,7 +141,7 @@
 
                 // flip the tooltip when it hits the ceiling
                 if (collisionOffset.y > 0) {
-                    collisionOffset.y = this._bounds.height + this._mouseGap * 2;
+                    collisionOffset.y = this._dimensions.height + this._mouseGap * 2;
                 }
 
                 this._node.css('transform', `translate(
@@ -170,9 +191,12 @@
 
         // collision strategy
         class ContainInside {
-            constructor (parentContainer, targetContainer = null) {
-                this._parentContainer = parentContainer;
-                this._targetContainer = targetContainer || this._parentContainer;
+            /**
+             * ContainInside strategy keeps the tooltips inside a specified container.
+             * @param {Object} targetContainer a target container the tooltip should be kept inside of (at the moment this should be tooltips parent container)
+             */
+            constructor (targetContainer) {
+                this._targetContainer = targetContainer;
             }
 
             /**
@@ -184,15 +208,14 @@
              */
             checkCollisions(item) {
                 // need to get bounds every time; scrolling the page or resizing the browser will change the bound
-                const parentContainerBounds = this._parentContainer[0].getBoundingClientRect();
                 const targetContainerBounds = this._targetContainer[0].getBoundingClientRect();
                 const itemBounds = item.getBounds();
 
                 const collisionOffset = {
-                    x: Math.min(0, (targetContainerBounds.right - parentContainerBounds.left) - itemBounds.right) ||
-                        Math.max(0, (targetContainerBounds.left - parentContainerBounds.left) - itemBounds.left),
-                    y: Math.min(0, (targetContainerBounds.bottom - parentContainerBounds.top) - itemBounds.bottom) ||
-                        Math.max(0, (targetContainerBounds.top - parentContainerBounds.top) - itemBounds.top)
+                    x: Math.min(0, targetContainerBounds.width - itemBounds.right) ||
+                        Math.max(0, 0 - itemBounds.left),
+                    y: Math.min(0, targetContainerBounds.height - itemBounds.bottom) ||
+                        Math.max(0, 0 - itemBounds.top)
                 };
 
                 // tooltip direction
@@ -252,26 +275,6 @@
                     console.log(movementOffset);
                 });
             }
-
-            /**
-             * Adds tooltip to the list of tooltips tracked by this strategy.
-             *
-             * @function register
-             * @param {Object} item a tooltip object
-             */
-            /*register(item) {
-                super.register(item);
-            }*/
-
-            /**
-             * Removes tooltip from the list of tracked tooltips.
-             *
-             * @function deRegister
-             * @param {Object} item a tooltip object
-             */
-            /*deRegister(item) {
-                super.deRegister(item);
-            }*/
         }
 
         // movementStrategy
@@ -280,28 +283,12 @@
              * FollowMap strategy keeps tracked tooltips in place relative to the mouse cursor over a specified target.
              *
              * @function constructor
-             * @param {Object} target a DOM node over which mouse movements should be tracked
+             * @param {Object} targetContainer a DOM node over which mouse movements should be tracked
              */
-            constructor(target) {
+            constructor (targetContainer) {
                 super();
-                this._target = target;
 
-                this._previousPosition = null;
-
-                this._mouseMoveHandler = event => {
-
-                    if (this._previousPosition === null) {
-                        this._previousPosition = { x: event.clientX, y: event.clientY };
-                    }
-
-                    this._items.forEach(item =>
-                        item.offset(
-                            this._previousPosition.x - event.clientX,
-                            this._previousPosition.y - event.clientY));
-
-                    this._previousPosition.x = event.clientX;
-                    this._previousPosition.y = event.clientY;
-                };
+                this._targetContainer = targetContainer;
             }
 
             /**
@@ -310,7 +297,7 @@
              * @function _start
              */
             _start() {
-                this._target.on('mousemove', this._mouseMoveHandler);
+                this._targetContainer.on('mousemove', this._mouseMoveHandler.bind(this));
             }
 
             /**
@@ -319,8 +306,28 @@
              * @function _stop
              */
             _stop() {
-                this._target.off('mousemove', this._mouseMoveHandler);
+                this._targetContainer.off('mousemove', this._mouseMoveHandler.bind(this));
                 this._previousPosition = null;
+            }
+
+            /**
+             * Calculates by how much a tooltip should be offset based on the mouse movement, tooltip original position, and its running offset.
+             *
+             * @function _mouseMoveHandler
+             * @private
+             * @param {Object} event mousemove event
+             */
+            _mouseMoveHandler(event) {
+                const targetContainerBounds = this._targetContainer[0].getBoundingClientRect();
+
+                this._items.forEach(item => {
+                    const itemOriginPoint = item.getOriginPoint();
+
+                    item.offset(
+                        itemOriginPoint.x - (event.clientX - targetContainerBounds.left),
+                        itemOriginPoint.y - (event.clientY - targetContainerBounds.top))
+                });
+
             }
 
             /**
@@ -356,6 +363,7 @@
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         const ref = {
+            hoverTooltip: null, // there can only be one hoverTooltip
             followMapStrategy: null,
             followMouseStrategy: null
         };
@@ -442,12 +450,17 @@
             const tooltipScope = $rootScope.$new();
             tooltipScope.self = self;
 
-            const tooltip = new Tooltip(ref.followMouseStrategy, ref.containInsideStrategy, content, tooltipScope);
-            storageService.panels.shell.append(tooltip.node);
+            // destroy the previous hover tooltip since there shouldn't be more than one at the same time
+            if (ref.hoverTooltip) {
+                ref.hoverTooltip.destroy();
+            }
 
-            tooltip.position(point.x, point.y);
+            ref.hoverTooltip = new Tooltip(ref.followMouseStrategy, ref.containInsideStrategy, content, tooltipScope);
+            storageService.panels.shell.append(ref.hoverTooltip.node);
 
-            return tooltip;
+            ref.hoverTooltip.position(point.x, point.y);
+
+            return ref.hoverTooltip;
         }
     }
 })();
