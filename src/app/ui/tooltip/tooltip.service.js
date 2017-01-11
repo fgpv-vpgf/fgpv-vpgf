@@ -325,7 +325,7 @@
 
                     item.offset(
                         itemOriginPoint.x - (event.clientX - targetContainerBounds.left),
-                        itemOriginPoint.y - (event.clientY - targetContainerBounds.top))
+                        itemOriginPoint.y - (event.clientY - targetContainerBounds.top));
                 });
 
             }

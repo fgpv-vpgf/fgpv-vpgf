@@ -154,6 +154,9 @@
                     Object.keys(service.layers).forEach(layerId => {
                         setScaleDepState(layerId);
                     });
+
+                    // nuke any hovertips
+                    hoverHandler({ type: 'forceClose' });
                 }
 
                 // if extent suppressor is on, enforce it here
@@ -452,6 +455,18 @@
                 return firstListener;
             }
 
+            /**
+             * Handles removal of a hovertip and cleanup tracking.
+             * @function destroyHovertip
+             */
+            function destroyHovertip() {
+                if (hovertipState.tipRef) {
+                    hovertipState.tipRef.destroy();
+                }
+                hovertipState.tipRef = null;
+                hovertipState.tipContent = null;
+            }
+
             // TODO find a better home for this function after grand refactor
             /**
              * Handles a hover event from a layer record.
@@ -488,14 +503,14 @@
                         }
                     },
                     mouseOut: e => {
-                        // if there is a hovertip, get rid of it
-                        if (hovertipState.tipRef && hovertipState.tipContent &&
-                            hovertipState.tipContent.graphic === e.target) {
-
-                            hovertipState.tipRef.destroy();
-                            hovertipState.tipRef = null;
-                            hovertipState.tipContent = null;
+                        // if there is a hovertip bound to what we just moused out of, get rid of it
+                        if (hovertipState.tipContent && hovertipState.tipContent.graphic === e.target) {
+                            destroyHovertip();
                         }
+                    },
+                    forceClose: () => {
+                        // if there is a hovertip, get rid of it
+                        destroyHovertip();
                     }
                 };
 
