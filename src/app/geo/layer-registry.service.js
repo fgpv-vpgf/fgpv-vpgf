@@ -458,6 +458,7 @@
             /**
              * Handles removal of a hovertip and cleanup tracking.
              * @function destroyHovertip
+             * @private
              */
             function destroyHovertip() {
                 if (hovertipState.tipRef) {
