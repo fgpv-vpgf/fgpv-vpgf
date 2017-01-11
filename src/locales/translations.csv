@@ -169,9 +169,9 @@ Table of Content keyboard reoder tooltip,toc.tooltip.reorder,Reorder,Réorganise
 ,toc.menu.visibility.title,Toggle Visibility,Basculer la visibilité
 ,toc.menu.visibility.allon,Show All,Montre tout
 ,toc.menu.visibility.alloff,Hide All,Cacher tout
-,toc.menu.expand.title,Toggle Groups,Alternar grupos
-,toc.menu.expand.allon,Expand All,Expandir todo
-,toc.menu.expand.alloff,Collapse All,Desplegar todo
+,toc.menu.expand.title,Toggle Groups,Basculer les groupes
+,toc.menu.expand.allon,Expand Groups,Élargir les groupes
+,toc.menu.expand.alloff,Collapse Groups,Réduire les groupes
 ,toc.menu.reorder.title,Reorder Layers,Réorganiser les couches
 ,toc.menu.reorder.close,Stop Reordering,Arrêter de réorganiser
 While counting geometry,geometry.counting, ...counting, ...compte
