@@ -76,6 +76,9 @@
              * @private
              */
             function mouseMoveHandlerBuilder(startingEvent) {
+                // TODO: IE is not fast enough to sustain this approach as the mousemove event don't start to fire immediately after mouseover event
+                // need to reimplement similar to followmouse tooltip strategy
+
                 let currentPosition = {
                     x: startingEvent.clientX,
                     y: startingEvent.clientY
