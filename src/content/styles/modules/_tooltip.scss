@@ -12,6 +12,7 @@
     rv-tooltip {
         position: absolute;
         pointer-events: none;
+        z-index: 10;
 
         .rv-tooltip-anchor {
             pointer-events: auto;
