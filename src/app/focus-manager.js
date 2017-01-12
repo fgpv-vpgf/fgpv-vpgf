@@ -29,6 +29,8 @@
     let lockFocus = false;
     // used to call cancelTimeout during focus if focusout timeout has started
     let focusoutTimerCancel;
+    // when true focus manager will only consider history elements for focus movement
+    let restoreFromHistory = false;
 
     /**
      * Represents one viewer on a page, with multiple viewers being possible. Tracks viewer state,
@@ -365,6 +367,7 @@
      * @param  {Object} event the keydown event object
      */
     function onKeydown(event) {
+        /*jshint maxcomplexity:9 */
         const viewerActive = viewerGroup.status(statuses.ACTIVE);
         const viewerWaiting = viewerGroup.status(statuses.WAITING);
         keys[event.which] = true;
@@ -375,8 +378,9 @@
                 viewerActive.setStatus(statuses.INACTIVE);
             // shiftFocus must return true indicating focus has been moved, and only then
             // do we want to prevent the browser from moving focus itself
-            } else if (event.which === 9 && shiftFocus(!event.shiftKey)) { // tab keydown only
+            } else if (event.which === 9 && shiftFocus(!event.shiftKey, restoreFromHistory)) { // tab keydown only
                 event.preventDefault(true);
+                restoreFromHistory = false;
             }
 
         } else if (viewerWaiting) {
@@ -411,7 +415,10 @@
      */
     function onFocusout(event) {
         const viewer = viewerGroup.status(statuses.ACTIVE);
-        if (viewer && !lockFocus && event.relatedTarget === null) {
+        if ($(event.target).closest('[rv-ignore-focusout]').length > 0) {
+            restoreFromHistory = true;
+
+        } else if (viewer && !lockFocus && event.relatedTarget === null) {
             // Allow for a short time as determined by focusoutDelay in milliseconds so that when focus
             // leaves unexpectedly, focus can be manually set and we don't need to be back through history
             // Animations often cause focus loss when, for example, one element is being hidden while the
