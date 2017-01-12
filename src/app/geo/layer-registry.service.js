@@ -414,7 +414,6 @@
                         }
 
                         // add listeners for hover tips
-                        // TODO add && lr.config.newConfigFlagForHover is true
                         if (lr.config.layerType === Geo.Layer.Types.ESRI_FEATURE &&
                             lr.config.options.hoverTips.enabled) {
                             lr.addHoverListener(hoverHandler);
