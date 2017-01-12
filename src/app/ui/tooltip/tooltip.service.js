@@ -15,16 +15,21 @@
 
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
+        /**
+         * Tooltip's origin point is generally the position of the initial mouse cursor or clientX/Y of a mouse event when the tooltip was first created.
+         * Movement and Collision strategies are defined in the TooltipService on initialization and then passed to Tooltip instances.
+         * It's responsibility of the code creating a Tooltip to add it to the proper DOM node (this node is considered to be Tooltip's parent container).
+         * @class Tooltip
+         */
         class Tooltip {
             /**
-             *
-             * Tooltip's origin point is generaly the position of the mouse cursor or clientX/Y of a mouse event.
+             * Creates an Tooltip instance by compiling a Tooltip directive along with provided content, scope, and templateName.
              *
              * @function constructor
-             * @param {Object} movementStrategy specifies how the tooltip moves on the screen
-             * @param {Object} collisionStrategy specified how the tooltip reacts to collisions
-             * @param {String} content tooltips content
-             * @param {Object} scope scope for the tooltip directive
+             * @param {Object} movementStrategy specifies how the tooltip moves on the screen;
+             * @param {Object} collisionStrategy specified how the tooltip reacts to collisions;
+             * @param {String} content tooltips content that will be transcluded by the tooltip directive; should be valid HTML
+             * @param {Object} scope scope for the tooltip directive; this scope is also available on the content template
              * @param {String} templateName [optional = 'hover'] the name of the tooltip outer template
              */
             constructor(movementStrategy, collisionStrategy, content, scope, templateName = 'hover') {
@@ -55,8 +60,6 @@
              */
             _resetOffset() {
                 this._runningOffset = { x: 0, y: 0 };
-
-                this.offset(0, 0);
             }
 
             /**
@@ -88,6 +91,7 @@
              *
              * @function getOriginPoint
              * @param {Boolean} includeRunningOffset if set, returns tooltip origin point including the running offset
+             * @return {Object} object in the form of { x: <Number>, y: <Number> } representing the tooltip's origin point
              */
             getOriginPoint(includeRunningOffset = true) {
                 const result = angular.copy(this._originPoint);
@@ -151,7 +155,8 @@
             }
 
             /**
-             * Positions the tooltips at specified coordinates relative to its parent container.
+             * Positions the tooltips at specified coordinates relative to its parent container. This will reset any relative offset of the tooltip.
+             * This function should be called when initially placing a Tooltip or to reposition it to a different target. All other tooltip movements are handled by its Movement strategy through the `offset` function.
              *
              * @function position
              * @param {Number} x x coordinate of the tooltip origin point
@@ -174,6 +179,7 @@
                     this._resetOffset();
                 }
 
+                // apply the current running offset and check for collisions
                 this.offset(0, 0);
             }
 
@@ -189,10 +195,14 @@
             }
         }
 
-        // collision strategy
+        /**
+         * This is a Collision strategy for Tooltips to keep them inside a specified target container. If a Tooltip is positioned so a part of it intersects the boundary of the target container, the Tooltip is offset to be fully contained.
+         *
+         * @class ContainInside
+         */
         class ContainInside {
             /**
-             * ContainInside strategy keeps the tooltips inside a specified container.
+             * Creates an instance of ContainInside Collision strategy.
              * @param {Object} targetContainer a target container the tooltip should be kept inside of (at the moment this should be tooltips parent container)
              */
             constructor (targetContainer) {
@@ -200,7 +210,7 @@
             }
 
             /**
-             * Checks if there is any collision between teh supplied item and the target container. Returns a vector to prevent collision.
+             * Checks if there is any collision between the supplied item and the target container. Returns a vector to prevent collision.
              *
              * @function checkCollisions
              * @param {Object} item a tooltip object
@@ -225,8 +235,16 @@
             }
         }
 
-        // movementStrategy
+        /**
+         * This is a base Tooltip movement strategy.
+         *
+         * @class TooltipStrategy
+         */
         class TooltipStrategy {
+            /**
+             * Creates an TooltipStrategy instance.
+             * @function constructor
+             */
             constructor () {
                 this._items = [];
             }
@@ -255,10 +273,14 @@
             }
         }
 
-        // movementStrategy
+        /**
+         * FollowMap strategy keeps tracked tooltips in place relative to the map. This should be used for anchor tooltips.
+         *
+         * @class FollowMap
+         */
         class FollowMap extends TooltipStrategy {
             /**
-             * FollowMap strategy keeps tracked tooltips in place relative to the map. This should be used for anchor tooltips.
+             * Creates an FollowMap instance.
              *
              * @function constructor
              */
@@ -277,10 +299,14 @@
             }
         }
 
-        // movementStrategy
+        /**
+         * FollowMap strategy keeps tracked tooltips in place relative to the mouse cursor over a specified target.
+         *
+         * @class FollowMouse
+         */
         class FollowMouse extends TooltipStrategy {
             /**
-             * FollowMap strategy keeps tracked tooltips in place relative to the mouse cursor over a specified target.
+             * Creates an FollowMap FollowMouse.
              *
              * @function constructor
              * @param {Object} targetContainer a DOM node over which mouse movements should be tracked
@@ -383,68 +409,14 @@
             ref.followMapStrategy = new FollowMap();
             ref.followMouseStrategy = new FollowMouse(storageService.panels.shell);
             ref.containInsideStrategy = new ContainInside(storageService.panels.shell);
-
-            // test code, remove before deployment //
-            /*
-            const drink = angular.element('<div style="background: white; border: 1px solid black; position: absolute; top: 10px; right: 10px; width: 400px; height: 600px; display: flex; align-items: center; justify-content: center;">big white box</div>');
-            storageService.panels.shell.append(drink);
-
-            const ttcontent = `<div class="rv-tooltip-content">
-                        <img src="http://lorempixel.com/24/24/technics/" style="width: 24px; height: 24px;" class="rv-tooltip-graphic"><span class="rv-tooltip-text">{{ self.name }}</span>
-                    </div>`;
-
-            const ttscope = $rootScope.$new();
-            ttscope.self = {
-                name: 'Amazing anchor tooltip!'
-            };
-
-            const tt = new Tooltip(ref.followMapStrategy, ref.containInsideStrategy, ttcontent, ttscope);
-            storageService.panels.shell.append(tt.node);
-            tt.position(600, 700);
-
-            let hoverTooltip;
-
-            drink.on('mouseover', event => {
-                console.log(event);
-
-                if (hoverTooltip) {
-                    return;
-                }
-
-                const htcontent = `<div class="rv-tooltip-content">
-                        <!--rv-svg class="rv-tooltip-graphic" src="self.svgcode"></rv-svg-->
-                        <svg xmlns="http://www.w3.org/2000/svg" fit="" height="24" width="24" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" focusable="false"><g id="close_cache48"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></g></svg>
-                        <span class="rv-tooltip-text">{{ self.name }}</span>
-                    </div>`;
-
-                const htself = {
-                    name: 'Hover tooltip, equally as amazing!'//,
-                    // svgcode: RV.blah.svgcode
-                };
-
-                const shellbb = storageService.panels.shell[0].getBoundingClientRect();
-
-                hoverTooltip = addHoverTooltip({ x: event.clientX - shellbb.left, y: event.clientY - shellbb.top }, htcontent, htself);
-            });
-
-            drink.on('mouseout', event => {
-                console.log(event);
-
-                if (event.relatedTarget === hoverTooltip.node[0]) {
-                    return;
-                }
-
-                hoverTooltip.destroy();
-                hoverTooltip = null;
-            });
-            */
         }
 
         /**
          * @function addHoverTooltip
          * @param {Object} point tooltip origin point (x/y in pixels relative to the map node)
-         * @param {String} content tooltip content
+         * @param {String} content tooltips content that will be transcluded by the tooltip directive; should be valid HTML
          * @param {Object} self a self object that will be available on the tooltip directive scope
+         * @return {Object} a Tooltip instance
          */
         function addHoverTooltip(point, content, self) {
             const tooltipScope = $rootScope.$new();
