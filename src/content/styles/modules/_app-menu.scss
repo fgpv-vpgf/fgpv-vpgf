@@ -15,6 +15,11 @@
                 display: flex;
                 flex: 1;
                 padding: rem(0.8) 0;
+
+                // this here is needed so IE doesn't crush menu content
+                > * {
+                    flex-shrink: 0;
+                }
             }
 
             .rv-has-icon {
@@ -23,13 +28,13 @@
                 flex-shrink: 0;
 
                 md-icon {
-                    margin-right: 8px;
+                    margin-right: rem(0.8);
                 }
             }
 
             .rv-version {
                 text-align: center;
-                margin: rem(1.2);
+                margin: rem(3.6) rem(1.2) rem(1.2) rem(1.2);
 
                 &-number {
                     font-weight: bold;
