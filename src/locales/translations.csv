@@ -303,13 +303,14 @@ Usage:<br>
 Utilisation :<br>
 * Menu : Cliquez sur 'Menu' pour afficher le menu déroulant. Cliquez en dehors du menu déroulant pour le fermer"
 ,help.fullScreen.header,Full Screen,Plein écran
-,help.fullScreen.info,"Full Screen is used to collapse the departmental headers and footers to provide larger screen space for mapping.<br>
+,help.fullScreen.info,"Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page.<br>
 <br>
 Usage:<br>
-FULL SCREEN: Click the FULL SCREEN option in the Menu slideout to hide departmental header and footer information. Click the FULL SCREEN option again to restore to default view.","L'option Plein écran masque le haut et le bas de page du Ministère afin d’allouer plus d’espace à l’écran pour l’affichage cartographique.<br>
+FULL SCREEN: Click the FULL SCREEN option in the Menu slideout to make the map content use the entire page. Click the FULL SCREEN option again to restore to default view.","
+Le plein écran présente le contenu de la carte en utilisant la page entière. L'option Plein écran n'est disponible que lorsque la carte est intégrée à une autre page.
 <br>
-Utilisation :<br>
-'Plein écran' : Cliquer sur l'option 'Plein écran' pour masquer le haut et le bas de page du Ministère. Cliquer de nouveau sur 'Plein écran' pour restaurer la vue par défaut."
+Utilisation: <br>
+ÉCRAN PLEIN: Cliquez sur l'option ÉCRAN PLEIN dans le menu déroulant Menu pour que le contenu de la carte utilise toute la page. Cliquez à nouveau sur l'option PLEIN ECRAN pour restaurer la vue par défaut."
 ,help.share.header,Share,Partager
 ,help.share.info,"Share is used to generate a shareable URL of the current map state with selected datasets.<br>
 <br>
@@ -326,13 +327,13 @@ HELP: Click the HELP option to open a windows and view this help text","L'option
 <br>
 Utilisation:<br>
 'Aide' : Cliquez sur l'option 'Aide' pour afficher une fenêtre et voir ce texte d'aide"
-,help.legend.header,Legend,Legend
-,help.legend.info,"The Legend dropdown serves as a map legend and lists the layers available to display in the map. Feature layers also display in the data table panel. There are three types of layers that can reside in the Legend dropdown:<br>
+,help.layer.header,Layers,Couches
+,help.layer.info,"The Layer dropdown serves as a map legend and lists the layers available to display in the map. Feature layers also display in the data table panel. There are three types of layers that can reside in the Legend dropdown:<br>
 - Feature layers represent data that can be interacted with on the map, and viewed in the data table panel.<br>
 - Dynamic layers represent interactive data on the map that cannot be cached, but have to be fetched from the server each time the map is changed. They can be a collection of feature layers and can be viewed in the data table panel.<br>
 - Image Service layers displays imagery and other types of raster data provided by an ArcGIS Server Image Service. They are not interactive and do not show in the data table panel.<br>
 - Tile layers displays map content from an ArcGIS Server Map service that has been cached (tiled). A cached map service contains pre-generated map tiles. They are not interactive and do not show in the data table panel.<br>
-- WMS layers provide an overlay of data from a Web Map Service. They can support a click interaction on the map, but do not show in the data table panel.","Le menu déroulant 'Légende' sert de légende pour la carte et répertorie les couches disponibles pour afficher sur la carte. Les couches d'entités s'affichent également dans le panneau 'Tableau de données'. Il existe trois types de couches qui peuvent être affichées dans le menu déroulant 'Légende' : <br>
+- WMS layers provide an overlay of data from a Web Map Service. They can support a click interaction on the map, but do not show in the data table panel.","Le menu déroulant 'Couches' sert de légende pour la carte et répertorie les couches disponibles pour afficher sur la carte. Les couches d'entités s'affichent également dans le panneau 'Tableau de données'. Il existe trois types de couches qui peuvent être affichées dans le menu déroulant 'Légende' : <br>
 - Les couches d'entités représentent des données avec lesquelles la carte peut interagir et qui peuvent être affichées dans le panneau 'Tableau de données'.<br>
 - Les couches dynamiques représentent des données interactives sur la carte qui ne peuvent être entreposées dans la mémoire cache. Celles-ci sont récupérées du serveur à chaque mise à jour de la carte. Elles peuvent représenter une collection de couches d'entités visualisables dans le panneau 'Tableau de données'.<br>
 - Les couches d'images permettent d'afficher de l'imagerie ainsi que divers types de données au format matriciel disponibles à travers un service d'imagerie d'ESRI. Elles ne sont pas interactives et leurs données ne peuvent être visualisées à l'aide du panneau 'Tableau de données'.<br>
@@ -356,45 +357,80 @@ In the additional options, if it is available for that layer, select the ""Metad
 - The layer's opacity can be adjusted using the Opacity slider control.<br>
 - If the layer has a bounding box, its visibility can be toggled using the Bounding Box toggle.<br>
 <br>
+'Datatable'<br>
+- Select to view this layers data in table format.<br>
+<br>
+'Show Legend'<br>
+- Expands/Collapses the legend image stack<br>
+<br>
+'Zoom to Layer Boundary'<br>
+- Pans and zooms the map so that the layer boundary is in view.<br>
+<br>
+'Reload'<br>
+- Reloads the layer <br>
+<br>
 'Remove'<br>
-- Remove the layer from the map and legend.","Passez la souris sur un nom de couche et cliquez sur l'icône de ""trois points"" pour accéder à des options supplémentaires pour la couche.<br>
+- Remove the layer from the map and legend.","Survolez le nom d'un calque et cliquez sur le lien "" trois points "" pour accéder aux options supplémentaires du calque. <br>
+
+'Métadonnées' <br>
+Dans les options supplémentaires, s'il est disponible pour ce calque, sélectionnez le lien "" Métadonnées "" pour afficher les métadonnées pertinentes pour cette source dans un panneau slideout. <br>
 <br>
-'Métadonnées'<br>
-Dans les options supplémentaires, sélectionnez le lien « Métadonnées », si elle est disponible pour cette couche, pour afficher les métadonnées pertinentes pour cette source dans un panneau d'informations.<br>
+'Paramètres' <br>
+- L'opacité de la couche peut être ajustée à l'aide du contrôle du curseur Opacité.
+- Si le calque a une zone de délimitation, sa visibilité peut être basculée à l'aide de la touche Bounding Box. <br>
 <br>
+'Datatable' <br>
+- Sélectionnez cette option pour afficher ces données de calques sous forme de tableau.
 <br>
-'Options' <br>
-- L'opacité de la couche peut être ajustée au moyen de la commande de réglage<br>
-- Si la couche a une zone de délimitation, sa visibilité peut être activée et désactivée au moyen du bouton à bascule.<br>
+'Afficher la légende' <br>
+- Agrandit / réduit la pile d'images de légende <br>
 <br>
-'Retirer'<br>
-- Retirer la couche de la carte et la légende."
+'Zoom sur la couche limite' <br>
+- Pans et zoomer la carte afin que la limite de couche est en vue.<br>
+<br>
+'Recharger' <br>
+- Recharge le calque <br>
+<br>
+'Supprimer' <br>
+- Retirez le calque de la carte et de la légende."
+,help.export.header,Export Image,Exporter l'image
+,help.export.info,"You can export an image of the map and its visible layers along with; a legend, title, north arrow with scalebar, custom footnote, and a timestamp.<br><br>
+Select the 'EXPORT' button from the left side menu to get started. A dialog will appear with an image of the map, and an option to enter a map title if desired.<br><br>
+If you'd like to add or remove sections of the exported image such as a legend, click on the options cogwheel in the header. There you'll be able to select/deselect the sections to appear in the exported image.<br><br>
+If you'd like to change the map canvas size you can do so from the dropdown in the header. Select from default to a preset small/medium size, or specify your own size by choosing the 'custom size' option. Note that sizes only affect the map image, the actual exported image may be larger.<br><br>
+Click on the download button in the header to get the final generated map image.","Vous pouvez exporter une image de la carte et ses couches visibles avec; Une légende, un titre, une flèche du nord avec une barre d'échelle, une note de bas de page personnalisée et un horodatage.
+Sélectionnez le bouton 'EXPORT' dans le menu de gauche pour commencer. Une boîte de dialogue s'affiche avec une image de la carte et une option pour saisir un titre de carte si vous le souhaitez.
+Si vous souhaitez ajouter ou supprimer des sections de l'image exportée telle qu'une légende, cliquez sur les options de la roue dentée dans l'en-tête. Vous pourrez ainsi sélectionner / désélectionner les sections à afficher dans l'image exportée. <br> <br>
+Si vous souhaitez modifier la taille de la toile de carte, vous pouvez le faire à partir de la liste déroulante dans l'en-tête. Sélectionnez une valeur par défaut sur une petite / moyenne taille prédéfinie ou spécifiez votre propre taille en choisissant l'option 'taille personnalisée'. Notez que les tailles affectent uniquement l'image de la carte, l'image exportée réelle peut être plus grande.
+Cliquez sur le bouton de téléchargement dans l'en-tête pour obtenir l'image de carte générée finale."
 ,help.zoomScale.header,Zoom Scale Dependent Layers,Couches dépendantes de la valeur de l’échelle
 ,help.zoomScale.info,Some layers may only be visible at certain zoom levels. If a layer is not visible at a given zoom level the legend will display a notice and have an action available to zoom to the closest zoom level at which the layer will be visible (this may involve either zooming in or zooming out).,"Certaines couches peuvent être visibles uniquement à certains niveaux de zoom. Si une couche n’est pas visible à un niveau de zoom donné, la légende affichera un avis et offrira une action afin d’établir une valeur de zoom à laquelle la couche sera visible (cela peut impliquer de faire soit un zoom avant ou un zoom arrière)."
-,help.importLayers.header,Import Layers,Importer des couches
-,help.importLayers.info,"Additional layers can be added to the map viewer. Supported formats are: ESRI Feature Layer, SCW, GeoJSON, Shapefile, and CSV file. The '+' button in the at the top of the Legend menu will launch the Import Layers menu.<br>
+,help.addLayers.header,Add Layers,Ajouter une couche
+,help.addLayers.info,"Additional layers can be added to the map viewer. Supported formats include: ESRI Feature Layer, ESRI Dynamic Layer, ESRI Tile Layer, ESRI Image Layer, OGC Web Map Service, or a Raster Layer. The '+' button at the top of the Legend menu will launch the Add Layers menu.<br><br>
 Usage: <br>
-- Select the 'From Local File' or 'From Internet' option.<br>
-- Specifying the Dataset Location - Enter the location of the service URL or dataset file in the location box. If the dataset is a file on your file system, you must click the 'File' button and browse to the location.<br>
-A web based URL can be typed or pasted into the box.<br>
-The Viewer will predict the dataset type, if it is incorrect, click the button that specifies the correct type.<br>
-- Click the 'Connect' or 'Load' button to initiate the loading of the dataset.<br>
-Specifying the Specifics of the Dataset - Depending on the type of dataset being loaded, various parameters can be set in this phase.<br>
+- Select the 'Import File' or 'Import Service' option.<br>
+- When 'Import File' is selected, click on the 'choose a file' button and select your local file, or you can provide a url to the file.<br>
+- When 'Import Service' is selected you'll be given the option to enter the service URL.<br>
+- Click the 'Continue' button to proceed.<br>
+- The Viewer will try to predict the dataset type. If it is incorrect, select the option from the dropdown with the correct type.<br>
+- Click the 'Continue' button to proceed.<br>
+- Depending on the type of dataset being loaded, various parameters can be set in this final phase.<br>
 - A Feature Service allows the choice of a Primary Attribute, which determines the attribute used to identify a feature in the data table panel and map tips. All other information is derived from the service's metadata.<br>
 - A WMS Service allows the choice of the Layer Name, which determines the layer in the WMS to be used as the source for the dataset. All other information is derived from the service's metadata.<br>
 - File based datasets allow the choice of the following: a Dataset Name, which will be displayed in the Layer Selector; a Primary Attribute, which acts the same as in the Feature Service; a Symbol Colour, which determines the colour of the points / lines / polygons on the map. CSV files also allow the specification of the columns that contain the Latitude and Longitude values, used to derive the point location on the map.<br>
-Clicking the 'Add Dataset' button will insert the layer into the map.<br>","Des couches de données supplémentaires peuvent être ajoutés au visualiseur de cartes. Les formats pris en charge sont : couche d'entités (Feature Layer) ESRI, WMS, GeoJSON, Shapefile (fichier de forme) et fichier CSV. Le bouton « + » au haut du menu 'Légende' lancera le menu « Importer des couches ».<br>
-Utilisation:<br>
-- Sélectionnez l'option « De fichier local » ou « À partir de l'Internet »<br>
-- Préciser l’emplacement du jeu de données - Saisir l'adresse URL du service ou l'emplacement du fichier du jeu de données. Si le jeu de données est un fichier du système de dossiers, sélectionner le bouton « Fichier » (File) et naviguer jusqu’à l’emplacement.<br>
-Une adresse URL peut être tapée ou collée dans la case.<br>
-Le visualisateur prédira le type du jeu de données, s'il est incorrecte, cliquer sur le bouton qui précise le type exact.<br>
-- Cliquer sur le bouton « Connecter » (Connect) ou « Charger » (Load) pour amorcer le chargement du jeu de données.<br>
-Préciser les caractéristiques du jeu de données. - Selon le type du jeu de données chargé, divers paramètres peuvent être établis à cette étape.<br>
-- Un service d'entités ESRI (Feature Service) permet de choisir un attribut primaire qui identifiera de façon unique les entités dans la grille de données et les éléments d'information sur la carte. Tous les autres renseignements proviennent des métadonnées du service.<br>
-- Un service SCW permet de choisir le nom d'une couche source pour un jeu de données. Tous les autres renseignements proviennent des métadonnées du service.<br>
-- Les jeux de données dont la source est un fichier peuvent être caractérisés par les éléments suivants : le nom du jeu de données, qui sera affiché dans le sélecteur de couche (Layer Selector); un attribut primaire (Primary Attribute), qui agit de la même manière que le service de fonctionnalité (Feature Service); une couleur de symbole (Symbol colour), qui détermine la couleur des points, des lignes, des polygones sur la carte.<br>
-En cliquant sur le bouton « Ajouter jeu de données » (Add Dataset), on peut insérer la couche dans la carte.<br>"
+- Click the 'Continue' button to insert the layer into the map and closes the Add Layer menu.","Des couches supplémentaires peuvent être ajoutées à la visionneuse de carte. Les formats pris en charge sont les suivants: ESRI Feature Layer, couche ESRI Dynamic Layer, ESRI Tile Layer, couche d'image ESRI, OGC Web Map Service ou couche Raster. Le bouton '+' en haut du menu Légende lance le menu Ajouter des calques. <br> <br>
+Utilisation: <br>
+- Sélectionnez l'option 'Importer un fichier' ou 'Importer un service'. <br>
+- Lorsque «Fichier d'importation» est sélectionné, cliquez sur le bouton «Choisissez un fichier» et sélectionnez votre fichier local, ou vous pouvez fournir une url au fichier. <br>
+- Lorsque vous sélectionnez «Service d'importation», vous aurez la possibilité d'entrer l'URL du service. <br>
+- Cliquez sur le bouton 'Continuer' pour continuer. <br>
+- Le Viewer essaiera de prédire le type de jeu de données. S'il est incorrect, sélectionnez l'option dans le menu déroulant avec le type correct. <br>
+- Cliquez sur le bouton 'Continuer' pour continuer. <br>
+- Selon le type d'ensemble de données chargé, différents paramètres peuvent être définis dans cette phase finale. <br>
+- Un service de fonctionnalité permet le choix d'un attribut principal, qui détermine l'attribut utilisé pour identifier une fonctionnalité dans le panneau de table de données et des conseils de carte. Toutes les autres informations proviennent des métadonnées du service.<br>
+- Un service WMS permet le choix du nom de couche, qui détermine le calque dans le WMS à utiliser comme source pour le jeu de données. Toutes les autres informations sont dérivées des métadonnées du service.<br>
+- Les jeux de données basés sur des fichiers permettent le choix des éléments suivants: un nom de jeu de données, qui sera affiché dans le sélecteur de calque; Un attribut principal, qui agit de la même façon que dans le service Feature; Une couleur de symbole, qui détermine la couleur des points / lignes / polygones sur la carte. Les fichiers CSV permettent également la spécification des colonnes qui contiennent les valeurs Latitude et Longitude, utilisées pour dériver l'emplacement du point sur la carte.
+- Cliquez sur le bouton 'Continuer' pour insérer le calque dans la carte et ferme le menu Ajouter calque."
 ,help.dataTable.header,Data Table Panel,Panneau Tableau de données
 ,help.dataTable.info,"The Data Table Panel lists detailed information about all the selected features in the map.<br>
 You can view, sort, print, and save the data and zoom the map to a specific entry listed in the data table.<br>
