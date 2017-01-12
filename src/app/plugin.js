@@ -37,7 +37,6 @@
         }
     }
 
-    RV.Plugin = {
-        MenuItem
-    };
+    RV.Plugin = {};
+    RV.Plugin.MenuItem = MenuItem;
 })();

@@ -38,6 +38,7 @@
 
             // register the plugin with this viewer
             pluginList.push(plugin);
+            console.info(`Registering ${plugin.constructor.name}`);
 
             // call all onCreate callbacks for this plugin
             if (_onCreate[plugin.constructor.name]) {
@@ -56,6 +57,7 @@
             _onCreate[pluginType.name] = _onCreate[pluginType.name] ? _onCreate[pluginType.name] : [];
             // register the plugin onCreate callback
             _onCreate[pluginType.name].push(cb);
+            console.info(`oncreate call for ${pluginType.name}`);
             // trigger this callback for any plugin already created
             pluginList.filter(pi => pi instanceof pluginType).forEach(cb);
         }
