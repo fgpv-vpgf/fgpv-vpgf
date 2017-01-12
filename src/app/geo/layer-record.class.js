@@ -488,30 +488,29 @@
                     // TODO after refactor, the class should have a .featureIdx property to use instead.
                     const featureIdx = this.attributeBundle.indexes[0];
                     this.attributeBundle[featureIdx].layerData.then(lInfo => {
+                        // TODO this will change a bit after we add in quick lookup. for now, get all attribs
+                        return $q.all([Promise.resolve(lInfo), this.attributeBundle[featureIdx].getAttribs()]);
+                    }).then(([lInfo, aInfo]) => {
                         // graphic attributes will only have the OID if layer is server based
                         const oid = e.graphic.attributes[lInfo.oidField];
 
-                        // TODO this will change a bit after we add in quick lookup. for now, get all attribs
-                        this.attributeBundle[featureIdx].getAttribs().then(aInfo => {
-                            // get name via attribs and name field
-                            const featAttribs = aInfo.features[aInfo.oidIndex[oid]].attributes;
-                            const featName = this.getFeatureName(featAttribs, oid);
+                        // get name via attribs and name field
+                        const featAttribs = aInfo.features[aInfo.oidIndex[oid]].attributes;
+                        const featName = this.getFeatureName(featAttribs, oid);
 
-                            // get icon via renderer and geoApi call
-                            const svgcode = gapi().symbology.getGraphicIcon(featAttribs, lInfo.renderer);
+                        // get icon via renderer and geoApi call
+                        const svgcode = gapi().symbology.getGraphicIcon(featAttribs, lInfo.renderer);
 
-                            // duplicate the position so listener can verify this event is same as mouseOver event above
-                            const loadBundle = {
-                                type: 'tipLoaded',
-                                name: featName,
-                                target: e.target,
-                                svgcode
-                            };
+                        // duplicate the position so listener can verify this event is same as mouseOver event above
+                        const loadBundle = {
+                            type: 'tipLoaded',
+                            name: featName,
+                            target: e.target,
+                            svgcode
+                        };
 
-                            // tell anyone listening we moused into something
-                            this._fireEvent(this._hoverListeners, loadBundle);
-                        });
-
+                        // tell anyone listening we moused into something
+                        this._fireEvent(this._hoverListeners, loadBundle);
                     });
                 }
             }
