@@ -370,11 +370,19 @@
 
             /**
              * Creates esri layer object for a set of layer config objects, triggers attribute loading on layer load event and adds it to the legend afterwards.
+             * Maintains the maximum number of concurrent layers to be loaded at one time based on the processNumLayers parameter.
              * @function constructLayers
-             * @param  {Array} layerBlueprints array of layer configuration objects
+             * @param  {Array}  layerBlueprints array of layer configuration objects
+             * @param  {Number} processNumLayers the number of concurrent layers to load from layerBlueprints array
              */
-            function constructLayers(layerBlueprints) {
-                layerBlueprints.forEach(layerBlueprint => {
+            function constructLayers(layerBlueprints, processNumLayers = 2) {
+                // no remaining layers to load - exiting
+                if (layerBlueprints.length === 0) {
+                    return;
+                }
+
+                // load first batch of layers, the number determined by the processNumLayers parameter
+                layerBlueprints.splice(0, processNumLayers).forEach(layerBlueprint => {
                     // get the layer config from blueprint
                     // TODO: decouple identifyservice from everything
                     layerBlueprint.generateLayer().then(lr => {
@@ -395,13 +403,14 @@
                             lr._layer.fullExtent.ymin = Math.min(...lr._layer.graphics.map(o => o._extent.ymin));
                         }
 
-                        lr.addStateListener(makeFirstLoadHandler(lr));
                         mapObject.addLayer(lr._layer, pos);
                         // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
                         if (lr._layer.loaded) {
                             lr.onLoad();
                             lr.onUpdateEnd();
                         }
+
+                        lr.addStateListener(makeFirstLoadHandler(lr, () => constructLayers(layerBlueprints, 1)));
                     });
                 });
             }
@@ -418,10 +427,20 @@
 
             }
 
-            // FIXME add docs
-            function makeFirstLoadHandler(lr) {
+            /**
+             * Returns a function expecting to be called whenever a layerRecord (lr) state changes.
+             *
+             * @function makeFirstLoadHandler
+             * @private
+             * @param  {Object}  lr a layerRecord Object
+             * @param  {Function} resolver a callback function to be executed on layer LOADED or ERROR states
+             * @return {Function} a callback function which is fired on all state changed
+             */
+            function makeFirstLoadHandler(lr, resolver) {
                 const firstListener = state => {
+                    if (state === Geo.Layer.States.ERROR) { resolver(); }
                     if (state !== Geo.Layer.States.LOADED) { return; }
+                    resolver();
                     lr.removeStateListener(firstListener);
                     const opts = lr.legendEntry.options;
                     if (opts.hasOwnProperty('boundingBox') && opts.boundingBox.value) {
