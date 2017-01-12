@@ -51,6 +51,10 @@
             const self = scope.self;
 
             self.expanded = false; // holds the state of symbology section
+
+            // when symbology is displayed in the details panel, it is not connected to the layer record entry and the two lines below were generating lots of console errors
+            self.entry = self.entry || {};
+
             // TODO: these should be attached to self.symbology instead of self.entry once geo module refactor is complete
             self.entry.toggleSymbology = self.toggleSymbology = toggleSymbology;
             self.entry.wiggleSymbology = self.wiggleSymbology = wiggleSymbology;

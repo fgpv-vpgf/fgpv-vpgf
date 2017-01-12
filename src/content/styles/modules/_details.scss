@@ -275,7 +275,7 @@ $details-record-height: rem(6.0);
 }
 
 @mixin Text {
-    pre {
+    .rv-details-text {
         white-space: pre-wrap;
         font-family: inherit;
         padding: rem(0.8) rem(1.6);
@@ -284,7 +284,9 @@ $details-record-height: rem(6.0);
 }
 
 @mixin HTML {
+    .rv-details-html {
 
+    }
 }
 
 @mixin nothing {

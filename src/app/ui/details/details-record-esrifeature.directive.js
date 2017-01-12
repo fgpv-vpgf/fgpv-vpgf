@@ -16,7 +16,7 @@
         .module('app.ui.details')
         .directive('rvDetailsRecordEsrifeature', rvDetailsRecordEsrifeature);
 
-    function rvDetailsRecordEsrifeature($compile, geoService) {
+    function rvDetailsRecordEsrifeature($compile, $filter, geoService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/details/details-record-esrifeature.html',
@@ -68,13 +68,13 @@
                     const LIST = listItems =>
                         `<ul class="ng-hide rv-details-list rv-toggle-slide"
                             ng-show="self.item.isExpanded">
-                            ${listItems}
+                            ${ listItems }
                         </ul>`;
 
                     const LIST_ITEM = (key, value) =>
                         `<li>
-                            <div class="rv-details-attrib-key">${key}</div>
-                            <div class="rv-details-attrib-value">${value}</div>
+                            <div class="rv-details-attrib-key">${ key }</div>
+                            <div class="rv-details-attrib-value">${ $filter('autolink')(value) }</div>
                         </li>`;
 
                     const detailsHhtml = LIST(

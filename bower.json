@@ -37,9 +37,16 @@
     "jquery-hoverintent": "~1.8.1",
     "ng-flow": "~2.7.1",
     "RandomColor": "https://github.com/sterlingwes/RandomColor.git",
-    "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git"
+    "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git",
+    "linkifyjs": "^2.1.4"
   },
   "overrides": {
+    "linkifyjs": {
+      "main": [
+        "linkify.js",
+        "linkify-string.js"
+      ]
+    },
     "canvas-toBlob.js": {
       "main": "canvas-toBlob.js"
     },
