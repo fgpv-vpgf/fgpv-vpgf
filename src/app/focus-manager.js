@@ -29,6 +29,8 @@
     let lockFocus = false;
     // used to call cancelTimeout during focus if focusout timeout has started
     let focusoutTimerCancel;
+    // when true focus manager will not attempt to artifically move focus, allowing it to be handled by the browser instead.
+    let allowBrowserMoveFocus = false;
 
     /**
      * Represents one viewer on a page, with multiple viewers being possible. Tracks viewer state,
@@ -375,9 +377,11 @@
                 viewerActive.setStatus(statuses.INACTIVE);
             // shiftFocus must return true indicating focus has been moved, and only then
             // do we want to prevent the browser from moving focus itself
-            } else if (event.which === 9 && shiftFocus(!event.shiftKey)) { // tab keydown only
+            } else if (!allowBrowserMoveFocus && event.which === 9 && shiftFocus(!event.shiftKey)) { // tab keydown only
                 event.preventDefault(true);
-            }
+            } 
+            // always set to false so subsequent focus movements are handled by focus manager
+            allowBrowserMoveFocus = false;
 
         } else if (viewerWaiting) {
             if (event.which === 13 || event.which === 32) { // enter or spacebar
@@ -411,7 +415,10 @@
      */
     function onFocusout(event) {
         const viewer = viewerGroup.status(statuses.ACTIVE);
-        if (viewer && !lockFocus && event.relatedTarget === null) {
+        if ($(event.target).closest('[rv-ignore-focusout]').length > 0) {
+            allowBrowserMoveFocus = true;
+
+        } else if (viewer && !lockFocus && event.relatedTarget === null) {
             // Allow for a short time as determined by focusoutDelay in milliseconds so that when focus
             // leaves unexpectedly, focus can be manually set and we don't need to be back through history
             // Animations often cause focus loss when, for example, one element is being hidden while the
