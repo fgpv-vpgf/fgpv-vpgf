@@ -151,14 +151,16 @@
 
                 // handle autoscroll when dragging layers
                 const scrollElem = source.closest('md-content');
-                directiveElement.on('mousemove', event => {
+                directiveElement.on('mousemove touchmove', event => {
+
+                    const pageY = event.pageY ? event.pageY :  event.originalEvent.touches[0].clientY;
 
                     // scroll animation is linear
                     let scrollDuration;
                     const speedRatio = 1 / 500; // 500 px in 1 second
 
                     // scrolling upwards
-                    if (scrollElem.offset().top + dragElement.height() > event.pageY) {
+                    if (scrollElem.offset().top + dragElement.height() > pageY) {
                         scrollDuration = scrollElem.scrollTop() * speedRatio;
 
                         if (!scrollAnimation.isActive()) {
@@ -167,7 +169,7 @@
                         }
 
                     // scrolling downwards
-                    } else if (scrollElem.height() - event.pageY <= 0) {
+                    } else if (scrollElem.height() - pageY <= 0) {
                         if (!scrollAnimation.isActive()) {
                             scrollDuration = (scrollElem[0].scrollHeight -
                                 scrollElem.height() - scrollElem.scrollTop()) * speedRatio;
@@ -192,7 +194,7 @@
                 self.dragulaOptions.rvDragDrop(evt, dragElement, target, source, sibling);
 
                 // stop and remove autoscroll
-                directiveElement.off('mousemove');
+                directiveElement.off('mousemove touchmove');
                 scrollAnimation.pause();
             });
 
@@ -201,7 +203,7 @@
                 self.dragulaOptions.rvDragCancel(evt, elem, target, source);
 
                 // stop and remove autoscroll
-                directiveElement.off('mousemove');
+                directiveElement.off('mousemove touchmove');
                 scrollAnimation.pause();
             });
 
