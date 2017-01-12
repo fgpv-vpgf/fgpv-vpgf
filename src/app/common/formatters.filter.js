@@ -20,17 +20,32 @@
         return autolink;
 
         /**
+         * Autolinks strings; doesn't not modify the original.
+         *
          * @function autolink
-         * @param {Array} items array of strings to autolink
+         * @param {Array|String} items array of strings or a single string to autolink
          * @param {Object} options [optional = {}] linkifyjs options object; the only default changed is classname (rv-linkified) for consistency
-         * @return {Array} array of autolinked strings
+         * @return {Array|String} array or string of autolinked strings
          */
         function autolink(items, options = {}) {
             // item must be a string
-            const results = items.map(item =>
-                linkifyStr((item || '').toString(), angular.extend(defaultOptions, options)));
+            const results = Array.isArray(items) ?
+                items.map(process) :
+                process(items);
 
             return results;
+
+            /**
+             * Autolink helper function.
+             *
+             * @function process
+             * @private
+             * @param {String} item string to autolink
+             * @return {String} autolinked string
+             */
+            function process(item) {
+                return linkifyStr((item || '').toString(), angular.extend(defaultOptions, options));
+            }
         }
     }
 })();

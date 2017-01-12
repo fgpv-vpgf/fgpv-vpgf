@@ -74,7 +74,7 @@
                     const LIST_ITEM = (key, value) =>
                         `<li>
                             <div class="rv-details-attrib-key">${ key }</div>
-                            <div class="rv-details-attrib-value">${ $filter('autolink')([value]) }</div>
+                            <div class="rv-details-attrib-value">${ $filter('autolink')(value) }</div>
                         </li>`;
 
                     const detailsHhtml = LIST(
