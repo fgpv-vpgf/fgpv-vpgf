@@ -6,7 +6,7 @@
      * @memberof app.ui
      * @description
      *
-     * The `rvTooltip` represents a tooltip on the map. Tooltip templates usually correspond with tooltip movement strategy.
+     * The `rvTooltip` represents a tooltip on the map. Templates specify the appearance of the tooltip's outer node (border, size, shape, pointer at the bottom, etc.) while transcluded content can modify anything inside this container.
      *
      */
     angular
@@ -37,16 +37,22 @@
                     self.isRendered = true;
                 }, 20, false, true);
 
-                scope.$watch(() => {
+                scope.$watch(watchBBoxChanges, (newDimensions) =>
+                        debouncedUpdateDimensions(newDimensions), true); // the last argument (true) is set for $watch to do object equality comparison instead of reference equality
+
+                /**
+                 * @function watchBBoxChanges
+                 * @private
+                 * @return {Object} object in the form of { width: <Number>, height: <Number> } which reflects the size of the tooltip's outer node
+                 */
+                function watchBBoxChanges() {
                     const br = el[0].getBoundingClientRect(); // jquery.width/height functions round pixel sizes :(
 
                     return {
                         width: br.width,
                         height: br.height
                     };
-                }, (newDimensions) =>
-                        debouncedUpdateDimensions(newDimensions),
-                true);
+                }
             }
         };
 

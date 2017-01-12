@@ -316,6 +316,7 @@
 
 @mixin attribution {
     .esriControlsBR {
+        pointer-events: none; // €$₨¥
         position: absolute;
         right: 5px;
         bottom: 5px;
