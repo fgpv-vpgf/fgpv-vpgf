@@ -62,7 +62,7 @@
      * @return {object} directive body
      */
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
-        layoutService, detailService, $rootElement) {
+        layoutService, detailService, $rootElement, $filter) {
 
         const directive = {
             restrict: 'E',
@@ -192,6 +192,9 @@
                         } else if (field.type === 'esriFieldTypeOID') {
                             // set column to be 100px width because of details and zoom to buttons
                             column.width = '100px';
+                        } else if (field.type === 'esriFieldTypeDate') {
+                            // convert each date cell to a better format
+                            displayData.rows.forEach(r => r[field.name] = $filter('dateTimeZone')(r[field.name]));
                         } else {
                             const width = getColumnWidth(column.title);
                             column.width = `${width}px`;
