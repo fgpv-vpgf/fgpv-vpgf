@@ -1,3 +1,4 @@
+/* global moment */
 (() => {
     /**
      * LayerRecordFactory is a lightweight wrapper around the LayerRecord class hierarchy.
@@ -264,13 +265,12 @@
                 // extract attributes to an array consumable by datatables
                 const rows = attributes.features.map(feature => feature.attributes);
 
-                // convert each date cell to ISO format
-                fieldNameArray.forEach(fieldName => {
-                    rows.forEach(row => {
-                        const date = new Date(row[fieldName]);
-                        row[fieldName] = date.toISOString().substring(0, 10);
-                    });
-                });
+                // convert each date cell to a better format
+                fieldNameArray.forEach(f =>
+                    rows.forEach(r =>
+                        r[f] = moment.tz(r[f], moment.tz.guess()).format('YYYY-MM-D H:MM:SSA z')
+                    )
+                );
 
                 return {
                     columns,
