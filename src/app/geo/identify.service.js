@@ -10,7 +10,7 @@
         .module('app.geo')
         .factory('identifyService', identifyServiceFactory);
 
-    function identifyServiceFactory($q, gapiService, stateManager, Geo) {
+    function identifyServiceFactory($q, gapiService, stateManager, Geo, $filter) {
         return geoState => identifyService(
             geoState,
             geoState.mapService.mapObject,
@@ -114,8 +114,7 @@
                         let val = attribs[key];
 
                         if (layerRegistry.checkDateType(key, fields) && val.length > 10) {
-                            const date = new Date(val);
-                            val = date.toISOString().substring(0, 10);
+                            val = $filter('dateTimeZone')(val);
                         }
 
                         return {
