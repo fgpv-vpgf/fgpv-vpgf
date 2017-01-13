@@ -5,6 +5,7 @@
             max-width: 300px;
             min-width: 300px;
             flex-direction: column;
+            overflow: hidden;
 
             @include media($rv-sm...) {
                 width: 80%;
