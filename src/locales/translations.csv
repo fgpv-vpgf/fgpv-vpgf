@@ -81,6 +81,7 @@ Map Navigation history tooltip,nav.tooltip.history,History,Historique
 Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,Fond de carte
 Metadata pane title,metadata.title,Metadata,Métadonnées
 Metadata pane expand,metadata.expand.tooltip,Expand Metadata,Agrandir métadonnées
+Hovertip loading text,maptip.hover.label.loading,Loading...,Chargement en cours...
 Settings main title,settings.title,Settings,Paramètres
 Settings visibility header label,settings.label.display,Display,Affichage
 Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,Zone de délimitation
