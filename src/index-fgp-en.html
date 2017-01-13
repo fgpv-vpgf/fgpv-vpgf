@@ -556,7 +556,11 @@
         const BackToCartPlugin = new RV.Plugin.MenuItem('backToCart');
         BackToCartPlugin
             .setName('cartButtonLabel')
-            .setAction(() => RV.getMap('fgpmap').backToCart().then(keys => window.location.href = window.location.href.split('?')[0] + '?keys=' + keys.toString()))
+            .setAction(function () {
+                RV.getMap('fgpmap').backToCart().then(function (keys) {
+                    window.location.href = window.location.href.split('?')[0] + '?keys=' + keys.toString();
+                });
+            })
             .translations({
                 'en-CA': {
                     cartButtonLabel: 'Back to Cart'
