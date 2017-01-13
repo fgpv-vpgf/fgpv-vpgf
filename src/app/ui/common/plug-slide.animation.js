@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TweenLite */
+/* global Ease, BezierEasing */
 
 (() => {
     'use strict';
@@ -11,6 +11,7 @@
 
     let sequences = {}; // store animation sequences
     let counter = 1; // simple id for animation sequences
+    let animSrv;
 
     /**
      * @module rvPlugSlide
@@ -58,9 +59,11 @@
      * @return {Object}  service     object with `enter` and `leave` functions
      */
     function animationBuilder(type, direction, grand) {
-        return $rootElement => {
+        return ($rootElement, animationService) => {
             'ngInject';
+
             const func = animationTypes[type];
+            animSrv = animationService;
             return {
                 enter: func($rootElement, direction, false, grand),
                 leave: func($rootElement, direction, true, grand),
@@ -288,7 +291,7 @@
 
         // Build and store the tween
         let id = counter++;
-        sequences[id] = TweenLite.fromTo(element.find(RV_PANEL_SELECTOR), duration,
+        sequences[id] = animSrv.fromTo(element.find(RV_PANEL_SELECTOR), duration,
             reverse ? end : start,
             angular.extend({}, reverse ? start : end, config));
 

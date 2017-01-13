@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing, TimelineLite */
+/* global Ease, BezierEasing */
 (() => {
     'use strict';
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
@@ -24,7 +24,7 @@
         .module('app.layout')
         .directive('rvOverviewToggle', rvOverviewToggle);
 
-    function rvOverviewToggle($compile, $rootElement, $rootScope, geoService, $timeout) {
+    function rvOverviewToggle($compile, $rootScope, geoService, $timeout, animationService) {
         const directive = {
             restrict: 'E',
             template: `
@@ -44,7 +44,7 @@
 
         function link(scope, el) {
 
-            const overviewAnimation = new TimelineLite({
+            const overviewAnimation = animationService.timeLineLite({
                 paused: true,
                 onComplete: animationCompleted,
                 onReverseComplete: () => animationCompleted(true)
@@ -110,7 +110,11 @@
              * @function animate
              */
             function animate() {
-                return $rootScope.overviewActive ? overviewAnimation.reverse() : overviewAnimation.play();
+                if ($rootScope.overviewActive) {
+                    overviewAnimation.reverse();
+                } else {
+                    overviewAnimation.play();
+                }
             }
         }
     }
