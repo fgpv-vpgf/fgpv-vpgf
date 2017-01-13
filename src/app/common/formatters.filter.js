@@ -1,4 +1,4 @@
-/* global linkifyStr */
+/* global linkifyStr, moment */
 (() => {
     'use strict';
 
@@ -12,7 +12,26 @@
      */
     angular
         .module('app.common')
-        .filter('autolink', autolink);
+        .filter('autolink', autolink)
+        .filter('dateTimeZone', dateTimeZone);
+
+    function dateTimeZone() {
+        const userTimeZone = moment.tz.guess();
+
+        return dateTimeZone;
+
+        /**
+         * Formats a given date with the users current timezone
+         *
+         * @function dateTimeZone
+         * @param {Number} esriDate epoch time to convert
+         * @param {String} format moment format string for output date/time
+         * @return {String} data/time adjusted to users timezone
+         */
+        function dateTimeZone(esriDate, format = 'YYYY-MM-D H:MM:SSA z') {
+            return moment.tz(esriDate, userTimeZone).format(format);
+        }
+    }
 
     function autolink() {
         const defaultOptions = { className: 'rv-linkified' };
