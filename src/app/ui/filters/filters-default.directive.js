@@ -1,3 +1,4 @@
+/* global moment */
 (() => {
     // button blueprints to be added to the table rows
     // `self` property is named so intentionally, as it will be passed on a scope to the ROW_BUTTON_TEMPLATE
@@ -181,6 +182,8 @@
                 // set width from field length if it is a string field type. If it is the oid field,
                 // set width to 100px because we have the oid, the details and zoom to button. If it is
                 // another type of field, set width to be the title.
+                const userTimeZone = moment.tz.guess();
+
                 displayData.columns.forEach(column => {
                     const field = displayData.fields.find(field => field.name === column.data);
 
@@ -192,6 +195,12 @@
                         } else if (field.type === 'esriFieldTypeOID') {
                             // set column to be 100px width because of details and zoom to buttons
                             column.width = '100px';
+                        } else if (field.type === 'esriFieldTypeDate') {
+                            // convert each date cell to a better format
+                            displayData.rows.forEach(r =>
+                                r[field.name] = moment.tz(r[field.name], userTimeZone).format('YYYY-MM-D H:MM:SSA z')
+                            );
+
                         } else {
                             const width = getColumnWidth(column.title);
                             column.width = `${width}px`;
