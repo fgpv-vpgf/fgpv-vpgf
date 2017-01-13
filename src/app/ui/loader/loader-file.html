@@ -46,7 +46,7 @@
 
                     <!-- this field is needed to attach the error messages; is't hidden -->
                     <input name="fileSelect" ng-model="self.upload.fileSelect">
-                    <div ng-messages="self.upload.form.fileSelect.$error" ng-if="self.upload.form.fileSelect.$invalid">
+                    <div ng-messages="self.upload.form.fileSelect.$error">
                         <div ng-message="upload-error" translate>import.file.upload.noaccess</div>
                     </div>
                 </md-input-container>
