@@ -71,17 +71,19 @@
                             ${ listItems }
                         </ul>`;
 
-                    const LIST_ITEM = (key, value) =>
+                    const LIST_ITEM = (key, value, type) =>
                         `<li>
                             <div class="rv-details-attrib-key">${ key }</div>
-                            <div class="rv-details-attrib-value">${ $filter('autolink')(value) }</div>
+                            <div class="rv-details-attrib-value">
+                                ${ $filter(type === 'esriFieldTypeDate' ? 'dateTimeZone' : 'autolink')(value) }
+                            </div>
                         </li>`;
 
                     const detailsHhtml = LIST(
                         self.item.data.map(row =>
                             // skip over the symbol column
                             // TODO: see #689
-                            row.key !== 'rvSymbol' ? LIST_ITEM(row.key, row.value) : '')
+                            row.key !== 'rvSymbol' ? LIST_ITEM(row.key, row.value, row.type) : '')
                         .join('')
                     );
 

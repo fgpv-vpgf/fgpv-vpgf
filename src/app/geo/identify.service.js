@@ -110,17 +110,11 @@
                 // simple array of text mapping for demonstration purposes. fancy grid formatting later?
                 return Object.keys(attribs)
                     .map(key => {
-                        let fieldName = layerRegistry.aliasedFieldName(key, fields);
-                        let val = attribs[key];
-
-                        if (layerRegistry.checkDateType(key, fields) && val.length > 10) {
-                            const date = new Date(val);
-                            val = date.toISOString().substring(0, 10);
-                        }
-
+                        const fieldType = fields.find(f => f.name === key);
                         return {
-                            key: fieldName,
-                            value: val
+                            key: layerRegistry.aliasedFieldName(key, fields),
+                            value: attribs[key],
+                            type: fieldType ? fieldType.type : fieldType
                         };
                     });
             }
