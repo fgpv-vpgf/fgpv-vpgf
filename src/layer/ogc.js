@@ -116,8 +116,15 @@ function parseCapabilitiesBuilder(esriBundle) {
         }
 
         function getCapabilities() {
+            let url = wmsEndpoint;
+
+            // if url has a '?' do not append to avoid errors, user must add this manually
+            if (wmsEndpoint.indexOf('?') === -1) {
+                url += '?service=WMS&version=1.3&request=GetCapabilities';
+            }
+
             return Promise.resolve(new esriBundle.esriRequest({
-                url: wmsEndpoint + '?service=WMS&version=1.3&request=GetCapabilities',
+                url,
                 handleAs: 'xml'
             }).promise);
         }
