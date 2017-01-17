@@ -13,14 +13,14 @@
         .module('app.core')
         .factory('pluginService', pluginService);
 
-    function pluginService() {
+    function pluginService(translationService) {
         const service = {
             onCreate,
             register
         };
 
         const pluginList = [];
-        const _onCreate = {};
+        const onCreateList = [];
 
         return service;
 
@@ -31,18 +31,37 @@
          * @function    register
          * @param       {Object}    plugin    the plugin instance being registered to this viewer
          */
-        function register(plugin) {
-            if (pluginList.find(pi => pi === plugin || pi.id === plugin.id)) {
+        function register() {
+            // initalize the plugin and give it api scope
+            const params = [...arguments];
+            const Plugin = params.splice(0, 1)[0];
+            const pluginId = params.splice(0, 1)[0];
+            const api = params.pop();
+
+            const p = new Plugin(pluginId, api);
+
+            if (typeof p.init === 'function') {
+                p.init(...params);
+            }
+
+            // check if the plugin already exists or shares an id with another plugin
+            if (pluginList.find(pi => pi === p || pi.id === p.id)) {
                 throw new Error('A plugin with the same instance or ID has already been registered.');
             }
 
-            // register the plugin with this viewer
-            pluginList.push(plugin);
+            // add plugin id to translations to avoid conflicts
+            Object.keys(p.translations).forEach(lang => {
+                p.translations[lang] = {
+                    plugin: { [p.id]: p.translations[lang] }
+                };
+            });
 
-            // call all onCreate callbacks for this plugin
-            if (_onCreate[plugin.constructor.name]) {
-                _onCreate[plugin.constructor.name].forEach(cb => cb(plugin));
-            }
+            // modify existing translations to include the plugin translations
+            translationService(p.translations);
+            pluginList.push(p);
+
+            // execute onCreate callbacks for this plugin type
+            onCreateList.forEach(x => p instanceof x.pluginType ? x.cb(p) : null);
         }
 
         /**
@@ -53,9 +72,12 @@
          * @param       {Function}    cb            callback function to execute on plugin creation
          */
         function onCreate(pluginType, cb) {
-            _onCreate[pluginType.name] = _onCreate[pluginType.name] ? _onCreate[pluginType.name] : [];
-            // register the plugin onCreate callback
-            _onCreate[pluginType.name].push(cb);
+            // save to list which is checked whenever a new plugin is registered
+            onCreateList.push({
+                pluginType,
+                cb
+            });
+
             // trigger this callback for any plugin already created
             pluginList.filter(pi => pi instanceof pluginType).forEach(cb);
         }

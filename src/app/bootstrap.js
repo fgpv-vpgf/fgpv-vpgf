@@ -10,8 +10,6 @@
     // check if the global RV registry object already exists and store a reference
     const RV = window.RV = typeof window.RV === 'undefined' ? {} : window.RV;
 
-    RV.plugins = {};
-
     // test user browser, true if IE false otherwise
     RV.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
 
@@ -129,29 +127,20 @@
             this._proxy('centerAndZoom', x, y, spatialRef, zoom);
         },
 
-        backToCart() {
-            return this._proxy('backToCart');
-        },
-
         restoreSession(keysArray) {
             this._initProxy('restoreSession', keysArray);
         },
 
-        registerPlugin(plugin) {
-            Object.keys(plugin.translations).forEach(lang => {
-                plugin.translations[lang] = {
-                    plugin: { [plugin.id]: plugin.translations[lang] }
-                };
-            });
+        getRcsLayerIDs() {
+            return this._proxy('getRcsLayerIDs');
+        },
 
-            this._initProxy('translationService', plugin.translations).then(() => {
-                this._proxy('registerPlugin', plugin);
-            });
+        registerPlugin() {
+            this._proxy('registerPlugin', ...arguments);
         },
 
         _init(appID) {
             this.appID = appID;
-            RV.plugins[this.appID] = [];
 
             this._appPromise = new Promise(resolve =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness
