@@ -125,12 +125,12 @@
             this._proxy('centerAndZoom', x, y, spatialRef, zoom);
         },
 
-        backToCart() {
-            return this._proxy('backToCart');
-        },
-
         restoreSession(keysArray) {
             this._initProxy('restoreSession', keysArray);
+        },
+
+        getRcsLayerIDs() {
+            return this._proxy('getRcsLayerIDs');
         },
 
         registerPlugin(plugin) {
