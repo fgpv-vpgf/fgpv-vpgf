@@ -51,7 +51,8 @@ module.exports = function () {
             'global-registry.js',
             'app.js',
             'templates.js',
-            'app-seed.js'
+            'app-seed.js',
+            'corePlugins.js',
         ],
         injectorOrder: [
             'polyfills.js',
@@ -84,6 +85,8 @@ module.exports = function () {
         jsAppSeed: app + 'app-seed.js', // initializes viewer instances
         jsGlobalRegistry: app + 'global-registry.js', // create global registry; loads gapi, etc.
         jsPluginSupport: app + 'plugin.js',
+        jsCorePlugins: src + 'plugins/core/*.js',
+        jsCorePluginFile: 'corePlugins.js',
 
         jsInjectorFile: app + 'bootstrap.js',
         jsInjectorDest: 'bootstrap.js',

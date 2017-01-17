@@ -37,4 +37,39 @@
             RV[name] = value;
         }
     }
+
+    class BasePlugin {
+        get id () { return this._id; }
+        set id (id) { this._id = id; }
+
+        get api () { return this._api; }
+
+        set translations (t) { this._translations = t; }
+        get translations () { return this._translations; }
+
+        setTranslatableProp (name, value) {
+            this[name] = 'plugin.' + this.id + '.' + value;
+        }
+
+        constructor (pluginID, api) {
+            this.id = pluginID;
+            this._api = api;
+        }
+    }
+
+    class MenuItem extends BasePlugin {
+        get type () { return 'link'; }
+
+        get action () { return this._action; }
+        set action (a) { this._action = a; }
+
+        set name (n) { this.setTranslatableProp('_name', n); }
+        get name () { return this._name; }
+    }
+
+    RV.BasePlugins = {
+        MenuItem
+    };
+
+    RV.Plugins = {};
 })();
