@@ -550,6 +550,12 @@
     <!-- endinject -->
 
     <script>
+
+        RV.ready(function() {
+            const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
+            RV.getMap('fgpmap').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
+        });
+
         function queryStringToJSON(q) {
             var pairs = q.search.slice(1).split('&');
             var result = {};
@@ -577,10 +583,17 @@
                 document.getElementById("bookmarkDisplay").value = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
             });
         }
-        function testBackToCart(){
-            RV.getMap('fgpmap').backToCart().then(function (keys) {
-                window.location.href = window.location.href.split('?')[0] + '?keys=' + keys.toString();
-            });
+        function testBackToCart() {
+            const map = RV.getMap('fgpmap');
+
+            map.getBookmark()
+                .then(function (bookmark) {
+                    sessionStorage.setItem('fgpmap', bookmark);
+                    return map.getRcsLayerIDs();
+                })
+                .then(function (keys) {
+                    window.location.href = window.location.href.split('?')[0] + '?keys=' + keys.toString();
+                });
         }
     </script>
     <script src="http://wet-boew.github.io/v4.0-ci/wet-boew/js/wet-boew.min.js"></script>

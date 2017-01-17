@@ -1,4 +1,3 @@
-/* global RV */
 (() => {
 
     // this is a default configuration of the side menu
@@ -152,7 +151,7 @@
         $rootScope.$on(events.rvLangSwitch, init);
 
         // Add any MenuItem plugins as they are created to the menu
-        pluginService.onCreate(RV.Plugin.MenuItem, mItem => {
+        pluginService.onCreate(globalRegistry.BasePlugins.MenuItem, mItem => {
             // first plugin created should add the plugin group
             if (service.controls.plugins.children.length === 0) {
                 SIDENAV_CONFIG_DEFAULT.items.push(['plugins']);
