@@ -18,7 +18,7 @@
      * The `runBlock` triggers config and locale file loading, sets language of the app.
      */
     function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, events, configService,
-            gapiService, appInfo, translationService) {
+            gapiService, appInfo) {
 
         const promises = [
             configService.initialize(),
@@ -77,8 +77,7 @@
             const preMapService = {
                 initialBookmark,
                 restoreSession,
-                start,
-                translationService
+                start
             };
 
             globalRegistry.getMap(appInfo.id)._registerPreLoadApi(preMapService);
@@ -163,8 +162,11 @@
             getBookmark,
             centerAndZoom,
             useBookmark,
-            backToCart,
-            registerPlugin: pi => pluginService.register(pi)
+            getRcsLayerIDs: () => geoService.getRcsLayerIDs(),
+            appInfo,
+            registerPlugin: function () {
+                pluginService.register(...arguments, this);
+            }
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
@@ -213,23 +215,6 @@
                     geoService.constructLayers(layerBlueprints);
                 });
 
-        }
-
-        /**
-         * Stores the viewer state in sessionStorage and returns a list of rcs keys to pass to the mapCart.
-         *
-         * @returns {array}     List of RCS keys
-         */
-        function backToCart() {
-            // get bookmark, throw bookmark into session storage
-            const bm = bookmarkService.getBookmark();
-
-            sessionStorage.setItem(appInfo.id, bm);
-
-            // get list of layers, find layers with rcs creation
-            // return array with layer keys
-            const layerKeys = geoService.getRcsLayerIDs();
-            return layerKeys;
         }
 
         /**

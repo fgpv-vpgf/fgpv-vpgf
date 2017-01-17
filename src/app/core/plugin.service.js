@@ -13,14 +13,14 @@
         .module('app.core')
         .factory('pluginService', pluginService);
 
-    function pluginService() {
+    function pluginService(translationService) {
         const service = {
             onCreate,
             register
         };
 
-        const pluginList = [];
-        const _onCreate = {};
+        const pluginList = []; // an array of registered plugin instances
+        const onCreateList = []; // an array of object pairs in the form {class, callback}.
 
         return service;
 
@@ -31,18 +31,44 @@
          * @function    register
          * @param       {Object}    plugin    the plugin instance being registered to this viewer
          */
-        function register(plugin) {
-            if (pluginList.find(pi => pi === plugin || pi.id === plugin.id)) {
+        function register() {
+            // this methods arguments are structured as [ PluginClass, id:string, ...pluginInitParams, mapApiReference]
+            // In other words, this function expects a minimum of three parameters such that:
+            //   - the first parameter is a plugin class reference
+            //   - the second parameter is a unique plugin id string
+            //   - the last parameter is the external api object
+            // Any additional parameters are passed directly to the plugins init method
+            const params = [...arguments];
+            const Plugin = params.splice(0, 1)[0];
+            const pluginId = params.splice(0, 1)[0];
+            const api = params.pop();
+
+            const p = new Plugin(pluginId, api);
+
+            // Plugins can define an init method which is an alternative to them overriding the constructor method.
+            // The former is used so that plugin authors don't need to capture and super() redundant parameters like API and plugin id for BasePlugin
+            if (typeof p.init === 'function') {
+                p.init(...params);
+            }
+
+            // check if the plugin already exists or shares an id with another plugin
+            if (pluginList.find(pi => pi === p || pi.id === p.id)) {
                 throw new Error('A plugin with the same instance or ID has already been registered.');
             }
 
-            // register the plugin with this viewer
-            pluginList.push(plugin);
+            // add plugin id to translations to avoid conflicts
+            Object.keys(p.translations).forEach(lang => {
+                p.translations[lang] = {
+                    plugin: { [p.id]: p.translations[lang] }
+                };
+            });
 
-            // call all onCreate callbacks for this plugin
-            if (_onCreate[plugin.constructor.name]) {
-                _onCreate[plugin.constructor.name].forEach(cb => cb(plugin));
-            }
+            // modify existing translations to include the plugin translations
+            translationService(p.translations);
+            pluginList.push(p);
+
+            // execute onCreate callbacks for this plugin type
+            onCreateList.filter(x => p instanceof x.pluginType).forEach(x => x.cb(p));
         }
 
         /**
@@ -53,9 +79,12 @@
          * @param       {Function}    cb            callback function to execute on plugin creation
          */
         function onCreate(pluginType, cb) {
-            _onCreate[pluginType.name] = _onCreate[pluginType.name] ? _onCreate[pluginType.name] : [];
-            // register the plugin onCreate callback
-            _onCreate[pluginType.name].push(cb);
+            // save to list which is checked whenever a new plugin is registered
+            onCreateList.push({
+                pluginType,
+                cb
+            });
+
             // trigger this callback for any plugin already created
             pluginList.filter(pi => pi instanceof pluginType).forEach(cb);
         }
