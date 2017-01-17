@@ -125,24 +125,16 @@
             this._proxy('centerAndZoom', x, y, spatialRef, zoom);
         },
 
-        backToCart() {
-            return this._proxy('backToCart');
-        },
-
         restoreSession(keysArray) {
             this._initProxy('restoreSession', keysArray);
         },
 
-        registerPlugin(plugin) {
-            Object.keys(plugin.translations).forEach(lang => {
-                plugin.translations[lang] = {
-                    plugin: { [plugin.id]: plugin.translations[lang] }
-                };
-            });
+        getRcsLayerIDs() {
+            return this._proxy('getRcsLayerIDs');
+        },
 
-            this._initProxy('translationService', plugin.translations).then(() => {
-                this._proxy('registerPlugin', plugin);
-            });
+        registerPlugin(plugin) {
+            this._proxy('registerPlugin', plugin);
         },
 
         _init(appID) {

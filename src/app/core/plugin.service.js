@@ -13,7 +13,7 @@
         .module('app.core')
         .factory('pluginService', pluginService);
 
-    function pluginService() {
+    function pluginService(translationService) {
         const service = {
             onCreate,
             register
@@ -31,12 +31,25 @@
          * @function    register
          * @param       {Object}    plugin    the plugin instance being registered to this viewer
          */
-        function register(plugin) {
+        function register(plugin, api) {
+            // initalize the plugin and give it api scope
+            plugin = plugin();
+            plugin.api = api;
+
+            // check if the plugin already exists or shares an id with another plugin
             if (pluginList.find(pi => pi === plugin || pi.id === plugin.id)) {
                 throw new Error('A plugin with the same instance or ID has already been registered.');
             }
 
-            // register the plugin with this viewer
+            // add plugin id to translations to avoid conflicts
+            Object.keys(plugin.translations).forEach(lang => {
+                plugin.translations[lang] = {
+                    plugin: { [plugin.id]: plugin.translations[lang] }
+                };
+            });
+
+            // modify existing translations to include the plugin translations
+            translationService(plugin.translations);
             pluginList.push(plugin);
 
             // call all onCreate callbacks for this plugin
@@ -53,11 +66,11 @@
          * @param       {Function}    cb            callback function to execute on plugin creation
          */
         function onCreate(pluginType, cb) {
-            _onCreate[pluginType.name] = _onCreate[pluginType.name] ? _onCreate[pluginType.name] : [];
+            _onCreate[pluginType] = _onCreate[pluginType] ? _onCreate[pluginType] : [];
             // register the plugin onCreate callback
-            _onCreate[pluginType.name].push(cb);
+            _onCreate[pluginType].push(cb);
             // trigger this callback for any plugin already created
-            pluginList.filter(pi => pi instanceof pluginType).forEach(cb);
+            pluginList.filter(pi => pi.constructor.name === pluginType).forEach(cb);
         }
     }
 })();
