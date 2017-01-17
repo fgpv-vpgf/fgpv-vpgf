@@ -163,8 +163,8 @@
             getBookmark,
             centerAndZoom,
             useBookmark,
-            backToCart,
-            registerPlugin: pi => pluginService.register(pi)
+            registerPlugin: pluginService.register,
+            getRcsLayerIDs: () => geoService.getRcsLayerIDs()
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
@@ -213,23 +213,6 @@
                     geoService.constructLayers(layerBlueprints);
                 });
 
-        }
-
-        /**
-         * Stores the viewer state in sessionStorage and returns a list of rcs keys to pass to the mapCart.
-         *
-         * @returns {array}     List of RCS keys
-         */
-        function backToCart() {
-            // get bookmark, throw bookmark into session storage
-            const bm = bookmarkService.getBookmark();
-
-            sessionStorage.setItem(appInfo.id, bm);
-
-            // get list of layers, find layers with rcs creation
-            // return array with layer keys
-            const layerKeys = geoService.getRcsLayerIDs();
-            return layerKeys;
         }
 
         /**

@@ -557,8 +557,15 @@
         BackToCartPlugin
             .setName('cartButtonLabel')
             .setAction(function () {
-                RV.getMap('fgpmap').backToCart().then(function (keys) {
-                    window.location.href = window.location.href.split('?')[0] + '?keys=' + keys.toString();
+                // save bookmark for restoration on user return
+                const bookmark = RV.getMap('fgpmap')
+                    .getBookmark()
+                    .then(b => sessionStorage.setItem('fgpmap', b));
+
+                RV.getMap('fgpmap').getRcsLayerIDs().then(function (layerKeys) {
+                    // replace with link to a catalog - for this example we return back to the
+                    // map which restores the bookmark from our sessionStorage - not the url
+                    window.location.href = window.location.href.split('?')[0] + '?keys=' + layerKeys.toString()
                 });
             })
             .translations({
