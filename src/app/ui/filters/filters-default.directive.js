@@ -46,6 +46,11 @@
     // max field length accepted
     const fieldLength = 500;
 
+    // use by keytable on focus event to prevent focus from jumping when keyboard scroll
+    let scrollCell = false; // keep the cell info so when pages redraw, it can focus at the right place
+    let draw = false; // if there is a scrollCell on table draw we set draw to true so we know draw has been fired by table redraw and we will need to focus to the right row
+    let key = false; // false if user use the mouse to scroll and become true if user use arrow keys to navigate
+
     /**
      * @module rvFiltersDefault
      * @memberof app.ui
@@ -64,8 +69,9 @@
      * @function rvFiltersDefault
      * @return {object} directive body
      */
+    // jshint maxparams:11
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
-        layoutService, detailService, $rootElement, $filter) {
+        layoutService, detailService, $rootElement, $filter, keyNames) {
 
         const directive = {
             restrict: 'E',
@@ -225,9 +231,13 @@
                         scrollX: true, // allow horizontal scroller
                         autoWidth: false, // without autoWidth, few columns will be stretched to fill avaialbe width, and many columns will cause the table to scroll horizontally
                         scroller: {
-                            displayBuffer: 3 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer
+                            displayBuffer: 10 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer.
+                            // see key-focus event to see why we put 10
                         }, // turn on virtual scroller extension
-                        // keys: true, TODO: if enable, we need to set the renderer on the on focus event instead of what we do now. Before we can use this we need to solve a bug with scroller extension.
+                        keys: {
+                            keys: [keyNames.LEFT_ARROW, keyNames.UP_ARROW, keyNames.RIGHT_ARROW, keyNames.DOWN_ARROW], // only navigate with arrow key
+                            className: 'rv-cell-focus'
+                        }, // turn on keytable extension
                         /*select: true,*/ // allow row select,
                         buttons: [
                             // 'excelHtml5',
@@ -313,9 +323,9 @@
                             return text;
                         }
 
-                        // for wcag we add a text input read only. This element is focusable so we can have tooltips.
-                        return `<input type="text" readonly title="${esc(text)}" value="${esc(text)}"
-                                    class="rv-render-ellipsis"></input>
+                        // for wcag we add a span element with a tooltip. With keytable extension, when this cell get focus
+                        // This element will be visible.
+                        return `<span class="rv-render-ellipsis" title="${esc(text)}">${esc(text)}</span>
                                 <span class="rv-render-tooltip">${esc(text)}</span>`;
                     };
                 }
@@ -347,6 +357,13 @@
                         // TODO: these ought to be moved to a helper function in displayManager
                         stateManager.display.filters.isLoading = false;
                         $timeout.cancel(stateManager.display.filters.loadingTimeout);
+
+                        // set keytable extension
+                        setkeytable();
+
+                        // set the ignore-focus only on the body. If not, header are not focusable and we can't go to the table with the keyboard
+                        // TODO: in 1.6 when we add the filters we will need a way to go to setting panel (skip the table)
+                        layoutService.panes.filter.find('.dataTables_scrollBody').attr('rv-ignore-focusout', '');
                     });
                 }
 
@@ -357,6 +374,9 @@
                  */
                 function onTableDraw() {
                     console.log('rows are drawn');
+
+                    // draw has been fired because of scrolling with the keyboard
+                    if (scrollCell) { draw = true; }
 
                     // find all the button placeholders
                     Object.values(ROW_BUTTONS).forEach(button => {
@@ -375,6 +395,64 @@
 
                             item.replaceWith(rowButtonDirective);
                         });
+                    });
+                }
+
+                function setkeytable() {
+                    // DOMMouseScroll (FF), mousewheel (Chrome, Safari and IE)
+                    layoutService.panes.filter.find('.dataTables_scrollBody').on('mousewheel DOMMouseScroll', () => {
+                        // if key is true it means user was using keyboard to navigate datatable so blur the focus
+                        // so datatables doesn't try to put back the focus where it was
+                        // then set user doesn't use keyboard navigation
+                        if (key) { self.table.cell.blur(); }
+                        key = false;
+                    });
+
+                    // focus on close button when table open (wcag requirement)
+                    // at the same time it solve a problem because when focus is on menu button, even if focus is on the
+                    // table cell it goes inside the menu and loop through it at the same time as we navigate the table
+                    $timeout(() => { $rootElement.find('[type=\'filters\'] button.rv-close').focus(true); }, 100);
+
+                    // when we navigate with the keyboard, the scroller extension has buffer items in memory. Without this
+                    // workaround, the keyboard can only navigate inside those items.
+                    self.table.on('key-focus', (e, datatable, cell) => {
+                        // known issue: Uncaught TypeError: Cannot read property 'top' of undefine at KeyTable._scroll (core.js:47509)
+                        //              Uncaught TypeError: Cannot read property 'row' of undefined at KeyTable._focus (core.js:47367)
+                        // when we scroll a lot of rows in one shot, datatables information is not updated well and keytable is not able to find where it should go
+                        // so it throws an error. The only way to solve this is to close then reopen the table
+                        // to solve/minimize the problem scroller displayBuffer has been increase from 3 to 10
+
+                        // there is a side effect when we mix mouse and keyboard. After a mouse scroll when we start to reuse the
+                        // keyboard the scroll jump to show the selected item at the second row.
+                        const info = datatable.scroller.page();
+                        const cellInfo = cell.index();
+
+                        // if there is a button inside the node, focus to it so keyboard user can interact with it
+                        // pressing tab will focus the next button
+                        const node = $(cell.node()).find('button');
+                        if (node.length > 0) { node.first().focus(true); }
+
+                        if (!key || !draw) {
+                            // need to scroll where the focus is (if outside the visible items). It is not always done automatically
+                            // keep the cell in memory so when there is a draw, we can put back the focus at the right place
+                            scrollCell = cell;
+                            if (cellInfo.row < info.start || cellInfo.row >= info.end) {
+                                self.table.row(cellInfo.row - 1).scrollTo(false); // false because we doesn't want animation
+                            }
+                        } else if (draw) {
+                            // when the rows are drawn, it shift the focus for the active cell. Need to put it back with
+                            // the value in memory
+                            // after the draw, datatable.scroller.page() info are wrong so we can't use them to know if we are
+                            // in the visible area
+                            const focusRow = scrollCell[0][0].row;
+                            self.table.cell(focusRow, cellInfo.column).focus();
+                            self.table.row(focusRow - 1).scrollTo(false); // false because we doesn't want animation
+                            draw = false;
+                            scrollCell = false;
+                        }
+
+                        // user is using keyboard navigation
+                        key = true;
                     });
                 }
 
@@ -506,6 +584,11 @@
                     // clear hilight when table closes or new table is opened
                     // TODO verify this is the proper location for this line
                     geoService.clearHilight();
+
+                    // reinitialize to false when table is destroyed
+                    scrollCell = false;
+                    draw = false;
+                    key = false;
                 }
             }
         }
@@ -517,12 +600,12 @@
      * @function Controller
      */
     function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events, filterService,
-        configService) {
+        configService, appInfo) {
         'ngInject';
         const self = this;
 
         self.display = stateManager.display.filters;
-
+        self.appID = appInfo.id;
         self.draw = draw;
 
         const languageObjects = {};
