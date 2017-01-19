@@ -49,37 +49,35 @@
 
                         tbody {
                             // for datatable KeyTable extension
-                            td.focus {
+                            td.rv-cell-focus {
                                 outline: 1px solid $focus-color;
                                 outline-offset: -1px;
+
+                                & > .rv-render-tooltip {
+                                    display: block;
+                                    position: absolute;
+                                    border: 1px solid #D3D3D3;
+                                    background-color: #F2F2F2;
+                                    padding: 2px 5px;
+                                    box-shadow: 1px 1px 2px #CCC;
+                                    max-width: 250px;
+                                    white-space: normal;
+                                    word-wrap: break-word;
+                                }
                             }
 
-                            // ellipsis renderer when text is longer then field width
-                            .rv-render-ellipsis {
-                                width: 100%;
-                                border: none;
-                                background: none;
-                                padding: 0;
-                                font-size: 14px;
-                                cursor: text;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                            }
-
+                            // hide tooltip if td doesn't have the focus
                             .rv-render-tooltip {
                                 display: none;
                             }
 
-                            // on keyboard focus show tooltip to be wcag compliant
-                            .rv-render-ellipsis:focus + .rv-render-tooltip {
-                                display: block;
-                                position: absolute;
-                                border: 1px solid #D3D3D3;
-                                background-color: #F2F2F2;
-                                padding: 2px 5px;
-                                box-shadow: 1px 1px 2px #CCC;
-                                max-width: 250px;
-                                white-space: normal;
+                            // ellipsis renderer when text is longer then field width
+                            .rv-render-ellipsis {
+                                cursor: text;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                display: list-item;
                             }
 
                             .rv-data {
