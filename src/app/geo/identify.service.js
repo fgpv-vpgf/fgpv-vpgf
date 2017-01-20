@@ -99,18 +99,20 @@
             }
 
             /**
-             * takes an attribute set (key-value mapping) and converts it to a format
-             * suitable for the details pane.
-             * the fields param is optional field information containing alias data
-             * TODO make this extensible / modifiable / configurable to allow different details looks for different data
-             * FIXME add docs
+             * Transforms esri key-value attribute object into key value array with format suitable
+             * for consumption by the details pane.
+             *
              * @function attributesToDetails
+             * @param  {Object} attribs      attribute key-value mapping, potentially with aliases as keys
+             * @param  {Object} fields       optional. fields definition array for layer
+             * @return {Array}               attribute data transformed into a list, with potential field aliasing applied
              */
             function attributesToDetails(attribs, fields) {
+                // TODO make this extensible / modifiable / configurable to allow different details looks for different data
                 // simple array of text mapping for demonstration purposes. fancy grid formatting later?
                 return Object.keys(attribs)
                     .map(key => {
-                        const fieldType = fields.find(f => f.name === key);
+                        const fieldType = fields ? fields.find(f => f.name === key) : null;
                         return {
                             key: layerRegistry.aliasedFieldName(key, fields),
                             value: attribs[key],
