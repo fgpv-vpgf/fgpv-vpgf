@@ -104,7 +104,7 @@
              *
              * @function attributesToDetails
              * @param  {Object} attribs      attribute key-value mapping, potentially with aliases as keys
-             * @param  {Object} fields       optional. fields definition array for layer
+             * @param  {Array} fields       optional. fields definition array for layer
              * @return {Array}               attribute data transformed into a list, with potential field aliasing applied
              */
             function attributesToDetails(attribs, fields) {
@@ -125,7 +125,7 @@
              * Convert an attribute set so that any keys using aliases are converted to proper fields
              * @function unAliasAttribs
              * @param  {Object} attribs      attribute key-value mapping, potentially with aliases as keys
-             * @param  {Object} fields       fields definition array for layer
+             * @param  {Array} fields       fields definition array for layer
              * @return {Object}              attribute key-value mapping with fields as keys
              */
             function unAliasAttribs(attribs, fields) {
