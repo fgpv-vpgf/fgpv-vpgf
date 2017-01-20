@@ -256,8 +256,12 @@
                     let metricsTitle = getTextWidth(title);
                     metricsTitle = metricsTitle < 50 ? 50 : metricsTitle;
 
-                    // get column length (only type string have length)
+                    // get column length (only type string have length) and length must not exceed 500
                     if (length) {
+                        // some layer like http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer/6
+                        // can have length = 2147483647 and it make the function crash
+                        length = (length < 500) ? length : 500;
+
                         // generate a string with that much characters and get width
                         let metricsContent = getTextWidth(Array(length).join('x'));
 
