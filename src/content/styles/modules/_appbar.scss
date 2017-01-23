@@ -10,7 +10,7 @@
         padding: rem(0.4);
         display: flex;
 
-        @include media($rv-gt-sm) {
+        @include include-size(rv-gt-sm) {
             width: $toolbar-width;
         }
 

@@ -21,13 +21,13 @@
         }
 
         @if $from != null {
-            @include media($rv-sm...) {
+            @include include-size(rv-sm) {
                 &.ng-animate {
                     overflow: hidden; // crops the panel only during animation
                 }
             }
 
-            @include media($rv-gt-sm) {
+            @include include-size(rv-gt-sm) {
                 @include active-panel-plug-transition($left: $left, $right: $right, $bottom: $bottom, $top: $top, $width: $width, $height: $height, $from: $from);
             }
         }
