@@ -195,6 +195,8 @@
                         } else if (field.type === 'esriFieldTypeDate') {
                             // convert each date cell to a better format
                             displayData.rows.forEach(r => r[field.name] = $filter('dateTimeZone')(r[field.name]));
+                            const width = Math.max(getTextWidth(column.title), 175);
+                            column.width =  `${width}px`;
                         } else {
                             const width = getColumnWidth(column.title);
                             column.width = `${width}px`;

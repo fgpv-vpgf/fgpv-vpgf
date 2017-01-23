@@ -29,9 +29,14 @@
          * @return {String} data/time adjusted to users timezone
          */
         function dateTimeZone(esriDate, format = 'YYYY-MM-D H:MM:SSA z') {
-            const time = moment.tz(esriDate, userTimeZone).format(format);
-            // if esriDate is not valid, assume it follows 'format'
-            return time !== 'Invalid date' ? time : moment.tz(esriDate, format, userTimeZone).format(format);
+            if (esriDate) {
+                const time = moment.tz(esriDate, userTimeZone).format(format);
+                // if esriDate is not valid, assume it follows 'format'
+                return time !== 'Invalid date' ? time : moment.tz(esriDate, format, userTimeZone).format(format);
+            } else {
+                // if field is blank or null, don't show 'invalid date', just leave it blank.
+                return '';
+            }
         }
     }
 
