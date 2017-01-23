@@ -222,6 +222,11 @@
 
     /***/
 
+    /**
+     * Called to buffer code until the library code has been fully loaded.  Behaves similar to jQuery style DOM ready events.
+     * @function
+     * @param {Function} callBack a function to be called once the library is loaded
+     */
     function ready(callBack) {
         if (RV.allScriptsLoaded) {
             callBack();
@@ -230,6 +235,10 @@
         }
     }
 
+    /**
+     * Fires all callbacks waiting on the ready event and empties the callback queue.
+     * @private
+     */
     function fireRvReady() {
         readyQueue.forEach(cb => cb());
         readyQueue = [];
