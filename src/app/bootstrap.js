@@ -25,6 +25,8 @@
     // properties like dojoURL
     Object.assign(RV, {
         getMap,
+        ready,
+        allScriptsLoaded: false,
         debug: {},
         _nodes: null,
         _deferredPolyfills: RV._deferredPolyfills || [] // holds callback for any polyfills or patching that needs to be done after the core.js is loaded
@@ -81,6 +83,8 @@
 
     // registry of map proxies
     const mapRegistry = [];
+
+    let readyQueue = []; // array of callbacks waiting on script loading to complete
 
     // appeasing this rule makes the code fail disallowSpaceAfterObjectKeys
     /* jscs:disable requireSpacesInAnonymousFunctionExpression */
@@ -212,9 +216,24 @@
     loadScript(`${repo}/core.js`, () => {
         RV._deferredPolyfills.forEach(dp => dp());
         RV.focusManager.init();
+        RV.allScriptsLoaded = true;
+        fireRvReady();
     });
 
     /***/
+
+    function ready(callBack) {
+        if (RV.allScriptsLoaded) {
+            callBack();
+        } else {
+            readyQueue.push(callBack);
+        }
+    }
+
+    function fireRvReady() {
+        readyQueue.forEach(cb => cb());
+        readyQueue = [];
+    }
 
     // external "sync" function to retrieve a map instance
     // in reality it returns a map proxy queueing calls to the map until it's ready
