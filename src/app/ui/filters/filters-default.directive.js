@@ -43,6 +43,9 @@
         </md-button>`;
     // jscs:enable maximumLineLength
 
+    // max field length accepted
+    const fieldLength = 500;
+
     /**
      * @module rvFiltersDefault
      * @memberof app.ui
@@ -260,6 +263,10 @@
 
                     // get column length (only type string have length)
                     if (length) {
+                        // some layer like http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer/6
+                        // can have length = 2147483647 and it make the function crash
+                        length = (length < fieldLength) ? length : fieldLength;
+
                         // generate a string with that much characters and get width
                         let metricsContent = getTextWidth(Array(length).join('x'));
 
