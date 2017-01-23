@@ -22,7 +22,7 @@
         overflow: hidden;
 
         // This prevents layer loading indicators from showing when another panel overlays the toc (in small medium layouts only)
-        @include media($rv-lg) {
+        @include include-size(rv-lg) {
             z-index: 10;
         }
     }

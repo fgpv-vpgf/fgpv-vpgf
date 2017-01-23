@@ -154,7 +154,7 @@
         position: absolute;
         z-index: 99;
 
-        @include media($rv-lt-lg) {
+        @include include-size(rv-lt-lg) {
             display: none;
         }
 
