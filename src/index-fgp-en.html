@@ -572,7 +572,11 @@
             });
 
         // register the plugin with the map
-        RV.getMap('fgpmap').registerPlugin(BackToCartPlugin);
+        RV.ready(function () {
+            RV.getMap('fgpmap').registerPlugin(BackToCartPlugin);
+            console.debug('if this is working correctly queryStringToJSON should already be defined');
+            console.debug(typeof queryStringToJSON);
+        });
 
         function queryStringToJSON(q) {
             var pairs = q.search.slice(1).split('&');
