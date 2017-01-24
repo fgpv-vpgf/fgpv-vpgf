@@ -243,7 +243,9 @@
             const scalebarGroup = containerSvg.group();
 
             // get scale bar information (can specify output image size if not same as map size)
-            const scale = gapiService.gapi.mapManager.getScaleRatio(geoService.mapObject);
+            // need to specify containerWidth because when we resize the container width may changed
+            // if we don't do this, scale bar does not update when output is resized
+            const scale = gapiService.gapi.mapManager.getScaleRatio(geoService.mapObject, containerWidth);
 
             // text attributes
             const attr = {

@@ -123,6 +123,12 @@
          * @returns {Boolean} true if the custom size option is currently selected
          */
         function isCustomOptionSelected() {
+            if (service.customOption === service.selectedOption) {
+                // scroll to custom options section. If scroll down, user can't see the section
+                // and if he clicks on customOption section nothing happened. Feels like something is broken.
+                $('md-dialog-content').scrollTop(0);
+            }
+
             return service.customOption === service.selectedOption;
         }
     }
