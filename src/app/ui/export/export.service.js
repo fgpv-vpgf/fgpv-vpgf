@@ -86,6 +86,7 @@
             self.isSettingsEditable = isSettingsEditable;
             self.updateTitleComponent = updateTitleComponent;
             self.updateComponents = updateComponents;
+            self.scrollCustomSettings = scrollCustomSettings;
 
             // updating export components will initialize them if this is called for the first time;
             exportComponentsService.init().then(() => {
@@ -195,6 +196,20 @@
                 };
 
                 return $mdToast.show($mdToast.simple(options));
+            }
+
+            /**
+             * If custom size option is selected from the select option, scroll to the rv-export-custom-size section
+             * @function scrollCustomSettings
+             * @private
+             * @param {Object} option the export size object seleted
+             */
+            function scrollCustomSettings(option) {
+                if (option._name === 'export.size.custom') {
+                    // scroll to custom options section. If scroll down, user can't see the section
+                    // and if he clicks on customOption section nothing happened. Feels like something is broken.
+                    self.scope.element.find('md-dialog-content').scrollTop(0);
+                }
             }
 
             /**
