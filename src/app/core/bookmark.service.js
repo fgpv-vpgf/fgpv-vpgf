@@ -721,8 +721,19 @@
             if (Object.keys(rcsBookmarks).length > 0) {
                 return configService.rcsAddKeys(Object.keys(rcsBookmarks).map(id => (id.split('.')[1] || id)))
                     .then(rcsConfigs => {
-                        const configSnippets = rcsConfigs.map(cfg =>
-                                angular.merge(cfg, rcsBookmarks[cfg.id], { origin: 'rcs' }));
+                        const configSnippets = rcsConfigs.map(cfg => {
+                            const merge =  angular.merge(cfg, rcsBookmarks[cfg.id], { origin: 'rcs' });
+
+                            // check if it is a dynamic service and layers entries are different.
+                            // if so, replace layerEntries by bookmark snippet because user made modification like remove a layer
+                            // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1611
+                            if (!angular.equals(cfg.layerEntries, rcsBookmarks[cfg.id].layerEntries) &&
+                                merge.layerType === 'esriDynamic') {
+                                merge.layerEntries = rcsBookmarks[cfg.id].layerEntries;
+                            }
+
+                            return merge;
+                        });
                         config.layers = config.layers.concat(configSnippets);
 
                         return config;
