@@ -16,7 +16,7 @@
         .module('app.ui.details')
         .directive('rvDetailsRecordEsrifeature', rvDetailsRecordEsrifeature);
 
-    function rvDetailsRecordEsrifeature($compile, $filter, geoService) {
+    function rvDetailsRecordEsrifeature($compile, $filter, geoService, Geo) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/details/details-record-esrifeature.html',
@@ -44,7 +44,17 @@
             self.renderDetails = renderDetails;
 
             self.triggerZoom = () => {
-                geoService.zoomToGraphic(self.requester.layerRec, self.requester.layerRec.legendEntry,
+                let entry = self.requester.layerRec.legendEntry;
+
+                // for dynamic layer we need to find the right layer entry inside the service to link to the proper layer
+                // we need this espcially for scale dependant layer for the "zoom to" to go to the proper zoom level for the
+                // selected layer
+                if (entry.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    const index = entry.layerEntries.findIndex(item => item.index === self.requester.featureIdx);
+                    entry = entry.items[index];
+                }
+
+                geoService.zoomToGraphic(self.requester.layerRec, entry,
                     self.requester.featureIdx, self.item.oid);
             };
 
