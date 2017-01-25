@@ -7,7 +7,7 @@
             flex-direction: column;
             overflow: hidden;
 
-            @include media($rv-sm...) {
+            @include include-size(rv-sm) {
                 width: 80%;
             }
 

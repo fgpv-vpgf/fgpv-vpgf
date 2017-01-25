@@ -27,9 +27,19 @@
             bindToController: true
         };
 
+        let elemWidth; // last known width of the $rootElement
+
         return directive;
 
         function link(scope, el) {
+
+            elemWidth = $rootElement.width();
+            updateClass(); // first run update
+
+            // performance optimization - only update dom if the $rootElement width has changed
+            // TODO: to further improve performance only have one listener regardless of the number of viewers on the page
+            $(window).on('resize', () => $rootElement.width() !== elemWidth ? updateClass() : null);
+
             // open legend panel if option is set in config for current viewport
             configService.getCurrent().then(config => {
                 if (config.legendIsOpen && config.legendIsOpen[layoutService.currentLayout()]) {
@@ -59,6 +69,17 @@
                     });
                 }
             });
+        }
+
+        /**
+        * Updates the $rootElement class with rv-small, rv-medium, or rv-large depending on its width
+        * @function  updateClass
+        */
+        function updateClass() {
+            elemWidth = $rootElement.width();
+            $rootElement
+                .removeClass('rv-small rv-medium rv-large')
+                .addClass('rv-' + layoutService.currentLayout());
         }
     }
 

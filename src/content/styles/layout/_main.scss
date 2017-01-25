@@ -2,12 +2,12 @@ rv-appbar {
     position: absolute;
     transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
 
-    @include media($rv-gt-sm) {
+    @include include-size(rv-gt-sm) {
         left: $viewport-gutter;
         top: $viewport-gutter;
     }
 
-    @include media($rv-sm) {
+    @include include-size(rv-sm) {
         width: 100%;
     }
 }
@@ -51,7 +51,7 @@ rv-panel {
         }
     }
 
-    @include media($rv-lt-lg) {
+    @include include-size(rv-lt-lg) {
         &.zoomto-transparent {
             opacity: 0.14;
         }
@@ -68,21 +68,21 @@ div.sm-button {
 
 rv-panel[type='filters'] {
 
-    @include media($rv-sm) {
+    @include include-size(rv-sm) {
         &.default, &.full, &.attached {
             @include active-panel-plug($left: 0, $top: 0, $right: 0, $bottom: 0, $width: 100%, $from: right);
             z-index: 3;
         }
     }
 
-    @include media($rv-md...) {
+    @include include-size(rv-md) {
         &.default, &.full, &.attached {
             @include active-panel-plug($left: $viewport-gutter - 2, $top: $viewport-gutter - 2, $right: $viewport-gutter - 2, $bottom: $viewport-gutter - 2, $from: right);
             z-index: 3;
         }
     }
 
-    @include media($rv-lg) {
+    @include include-size(rv-lg) {
         &.default {
             @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: 50%);
         }
@@ -124,11 +124,11 @@ rv-panel[type='filters'] {
 
 rv-panel[type='main'] {
 
-    @include media($rv-gt-sm) {
+    @include include-size(rv-gt-sm) {
         @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $toolbar-width, $from: top);
     }
 
-    @include media($rv-sm) {
+    @include include-size(rv-sm) {
         @include active-panel-plug($left: 0, $top: $toolbar-height + 1, $bottom: 0, $width: 100%, $from: top);
         z-index: 1;
     }
@@ -159,17 +159,17 @@ rv-panel[type='main'] {
 
 rv-panel[type='side'] {
 
-    @include media($rv-sm) {
+    @include include-size(rv-sm) {
         @include active-panel-plug($left: 0, $top: 0, $bottom: 0, $width: 100%, $from: right);
         z-index: 2;
     }
 
-    @include media($rv-md...) {
+    @include include-size(rv-md) {
         @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: $toolbar-width, $from: left);
         z-index: 2;
     }
 
-    @include media($rv-lg) {
+    @include include-size(rv-lg) {
         @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
     }
 
@@ -182,7 +182,7 @@ rv-panel[type='side'] {
         width: 1px;
         z-index: 1;
 
-        @include media($rv-gt-sm) {
+        @include include-size(rv-gt-sm) {
             border-left: 1px solid $divider-color;
         }
     }

@@ -24,7 +24,7 @@
                 overflow: hidden;
             }
 
-            @include media($rv-lt-lg) {
+            @include include-size(rv-lt-lg) {
                 padding-left: 50px;
 
                 .rv-close {
@@ -100,7 +100,7 @@
         .rv-subheader {
             border-bottom: 1px solid $divider-color-light;
 
-            @include media($rv-gt-sm) {
+            @include include-size(rv-gt-sm) {
                 margin: {
                     top: 5px;
                     bottom: 11px;
