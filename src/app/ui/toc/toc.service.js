@@ -368,16 +368,28 @@
                     // check if the symbol column already exists
                     if (!attributes.columns.find(({ data }) => data === rvSymbolColumnName)) {
 
-                        attributes.rows.forEach(row =>
-                            row.rvSymbol = geoService.retrieveSymbol(row, attributes.renderer)
-                        );
+                        attributes.rows.forEach(row => {
+                            row.rvSymbol = geoService.retrieveSymbol(row, attributes.renderer);
+                            row.rvInteractive = '';
+                        });
+
+                        // add a column for interactive actions (detail and zoom)
+                        // do not add it inside an existing field because filters will not work properly and because of https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1631
+                        attributes.columns.unshift({
+                            data: 'rvInteractive',
+                            title: '',
+                            orderable: false,
+                            render: '',
+                            width: '20px' // for datatables
+                        });
 
                         // add a column for symbols
                         attributes.columns.unshift({
                             data: rvSymbolColumnName,
                             title: '',
                             orderable: false,
-                            render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`
+                            render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`,
+                            width: '20px' // for datatables
                         });
                     }
 
