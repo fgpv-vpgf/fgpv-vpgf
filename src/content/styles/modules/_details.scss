@@ -207,6 +207,16 @@
             padding-left: 15px;
             position: relative;
             float: right;
+
+            // fix for https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1635
+            // truncate values that do not wrap (links for example)
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            a {
+                white-space: nowrap;
+            }
         }
 
         .rv-sub-subhead {
