@@ -160,18 +160,17 @@
                     button.scope = buttonScope;
                 });
 
-                // get the first column after the symbol column
-                const interactiveColumn = displayData.columns.find(column =>
-                    column.data !== 'rvSymbol');
-                addColumnInteractivity(interactiveColumn, ROW_BUTTONS);
+                // add the column interactive buttons renderer
+                addColumnInteractivity();
 
                 // returns array of column indexes we want in the CSV export
+                // are not the symbol or interactive column.
                 const exportColumns = (columns) => {
-                    // map columns to their ordinal indexes. but mark the symbol column as -1.
+                    // map columns to their ordinal indexes. but mark the symbol and interactive column as -1.
                     // then filter out the -1. result is an array of column indexes that
-                    // are not the symbol column.
+                    // are not the symbol and interactive columns.
                     return columns
-                        .map((column, i) => column.data === 'rvSymbol' ? -1 : i)
+                        .map((column, i) => (column.data === 'rvInteractive' || column.data === 'rvSymbol') ? -1 : i)
                         .filter(idx => idx > -1);
                 };
 
@@ -211,9 +210,6 @@
                             column.width = `${width}px`;
                             column.render = renderEllipsis(width);
                         }
-                    } else {
-                        // set symbol column width
-                        column.width = '30px';
                     }
                 });
 
@@ -229,7 +225,7 @@
                         deferRender: true,
                         scrollY: true, // allow vertical scroller
                         scrollX: true, // allow horizontal scroller
-                        autoWidth: false, // without autoWidth, few columns will be stretched to fill avaialbe width, and many columns will cause the table to scroll horizontally
+                        autoWidth: false, // without autoWidth, few columns will be stretched to fill availalbe width, and many columns will cause the table to scroll horizontally
                         scroller: {
                             displayBuffer: 10 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer.
                             // see key-focus event to see why we put 10
@@ -244,7 +240,10 @@
                             // 'pdfHtml5',
                             {
                                 extend: 'print',
-                                title: self.display.requester.name
+                                title: self.display.requester.name,
+                                exportOptions: {
+                                    columns: exportColumns(displayData.columns)
+                                }
                             },
                             {
                                 extend: 'csvHtml5',
@@ -548,25 +547,24 @@
                 }
 
                 /**
-                 * Adds zoom and details buttons to the column provided.
+                 * Adds zoom and details renderer to rvInteractive column.
                  * @function addColumnInteractivity
-                 * @param {Object} column from the formatted attributes bundle
                  */
-                function addColumnInteractivity(column, buttons) {
+                function addColumnInteractivity() {
                     // use render function to augment button to displayed data when the table is rendered
 
                     // we have to do some horrible string manipulations because Datatables required the `render` function to return a string
                     // it's not possble to return a compiled directive from the `render` function since directives compile directly into dom nodes
                     // first, button placeholder nodes are rendered as part of the cell data
                     // then, on `draw.dt`, these placeholders are replaced with proper compiled button directives
-                    column.render = (data, type, row, meta) => {
-                        const buttonPlaceholdersTemplate = Object.values(buttons).map(button =>
+                    const interactiveColumnExist = displayData.columns.find(column =>
+                        column.data === 'rvInteractive');
+
+                    interactiveColumnExist.render =  (data, type, row, meta) => {
+                        const buttonPlaceholdersTemplate = Object.values(ROW_BUTTONS).map(button =>
                             `<${button.name} row="${meta.row}"></${button.name}>`)
                             .join('');
-
-                        return `<div class="rv-wrapper"><span class="rv-data">${data}</span>
-                            ${buttonPlaceholdersTemplate}
-                        </div>`;
+                        return `<div class="rv-wrapper">${buttonPlaceholdersTemplate}</div>`;
                     };
                 }
             }
