@@ -18,6 +18,8 @@
 
     rv-details-header {
         position: relative;
+        display: flex; // go on IE with your obscure bugs: http://stackoverflow.com/a/33222765; fixes https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1646
+        flex-direction: column; //this bug is apparently fixed in IE Edge;
     }
 
     .rv-details-summary {
