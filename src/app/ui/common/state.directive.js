@@ -26,10 +26,10 @@
 
             scope.$watch(`stateManager.state.${attr.rvState}.active`,
                 value => {
-                    let skip = `stateManager.state.${attr.rvState}.activeSkip`;
+                    let skip = stateManager.state[attr.rvState].activeSkip;
 
                     // check if the transition should be animated
-                    if (skip) { // animate hide/show
+                    if (!skip) { // animate hide/show
                         $animate[value ? 'removeClass' : 'addClass']
                             (element, 'ng-hide', {
                                 tempClasses: 'ng-hide-animate'

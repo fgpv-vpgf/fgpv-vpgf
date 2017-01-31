@@ -1,115 +1,167 @@
+$result-item-height: rem(4.0);
+
+$result-item-height-touch: rem(4.8);
+
 @mixin geolegappbar {
-    .geoleg-appbar {
+    .rv-geosearch-bar {
         @extend %appbar;
-        position: absolute;
-        bottom: -52px;
 
-        .rv-geoleg-title {
-            @extend %appbar-title;
-        }
+        flex-shrink: 0;
 
-        @include media($rv-sm) {
+        /*@include media($rv-sm) {
             width: 100%;
         }
-    }
-}
 
-.rv-geosearch {
-    display: flex;
-    align-items: center;
-    height: $toolbar-height - 8;
+        md-input-container {
+            margin-left: rem(0.6);
+        }*/
 
-    .rv-geosearch-input {
-        top: 9px;
+        // style autocomplete control
+        md-autocomplete {
+            // hide the default progress bar on the control itself
+            md-progress-linear {
+                display: none;
+            }
 
-        @include media($rv-gt-sm) {
+            // the default height is 40px; we don't need that
+            height: auto;
+
+        /*@include media($rv-gt-sm) {
             width: 220px;
         }
-    }
+    }*/
+            md-autocomplete-wrap {
+                box-shadow: none; // remove shadow since it needs to look like a regular forn input field
+                height: auto; // same as above
 
-    .rv-geosearch-clear {
-        position: absolute;
-        top: -5px;
-        right: -10px;
-        min-width: 0;
-
-        md-icon {
-            height: 15px;
-        }
-    }
-}
-
-.rv-geosearch-filters {
-    bottom: 80px!important;
-    top: 110px!important;
-}
-
-rv-geosearch-filters {
-    display: flex;
-    width: 100%;
-    height: $toolbar-height + 10;
-    justify-content: space-around;
-    border-top: $divider-color 1px solid;
-
-    md-input-container {
-        overflow: hidden;
-        height: 100%;
-
-        > * {
-            max-width: 125px;
-
-            > .md-label {
-                white-space: nowrap;
+                // the clear button is not positioned correctly because we wrapped autocomplete in md-input-container to get the behaviour of a regular input field
+                // hide it
+                > button {
+                    display: none;
+                    position: absolute;
+                    right: 0;
+                }
             }
         }
-    }
-}
 
-.rv-geosearch-list-item {
-    .rv-geosearch-main {
+        // offset and color search icon
+        md-icon[md-svg-src="action:search"] {
+            color: $primary-color;
+            margin: rem(0.8);
+        }
+    }
+
+    rv-geosearch {
+        max-height: 100%;
+
         display: flex;
-        text-align: left;
-        white-space: nowrap;
-        width: 75%;
-        padding-right: 10px;
+        flex-direction: column;
 
-        .rv-geosearch-name {
-            font-size: rem(1.4);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex: 1 0 auto;
-            max-width: 85%
+        pointer-events: all;
+
+        .rv-geosearch-content {
+            background-color: white;
+
+            position: relative;
+            margin-top: 10px;
+
+            display: flex;
+            flex-direction: column;
+
+            %geosearch-fixed-section {
+                height: rem(4.0);
+                display: flex;
+                align-items: center;
+                flex-shrink: 0;
+            }
+
+            .rv-geosearch-top-filters {
+                @extend %geosearch-fixed-section;
+
+                padding: rem(0.4) rem(1.2) rem(0.4) rem(1.0 + 0.8); // rem(1.0 + 4.0 + 0.6);
+
+                md-input-container {
+                    margin: 0 rem(0.4) 0 0;
+                }
+
+                .rv-geosearch-province-filter {
+                    flex: 2;
+                }
+
+                .rv-geosearch-type-filter {
+                    flex: 1;
+                    margin-right: rem(1.0);
+                }
+            }
+
+            .rv-geosearch-results {
+                overflow: auto;
+                padding: rem(1.0) 0;
+
+                .rv-no-results {
+                    display: block;
+                    text-align: center;
+                }
+
+                .rv-results-list {
+                    @extend %action-list;
+
+                    .rv-results-item {
+                        // TODO: height for touch
+                        height: $result-item-height;
+                        display: flex;
+                        align-items: center;
+
+                        padding: 0 18px;
+
+                        .rv-results-item-main {
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            margin-right: 8px;
+                        }
+
+                        .rv-results-item-city,
+                        .rv-results-item-province {
+                            color: $secondary-text-color;
+                        }
+
+                        .rv-results-item-type {
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            font-weight: bold;
+                            max-width: 40%;
+                        }
+
+                        .rv-geosearch-highlight {
+                            font-weight: bold;
+                            color: $primary-color;
+                        }
+
+                        // TODO: abstract
+                        .rv-results-item-body-button {
+                            position: absolute;
+                            padding: 0;
+                            margin: 0;
+                            top: 0; // anchor the button to its parent container
+                            bottom: 0;
+                            left: 0;
+                            width: 100%;
+                        }
+                    }
+                }
+            }
+
+            .rv-geosearch-bottom-filters {
+                @extend %geosearch-fixed-section;
+
+                padding: rem(0.4) rem(1.0) rem(0.4) rem(1.0 + 1.0);
+
+                md-checkbox {
+                    margin: 0;
+                }
+            }
         }
-
-        .rv-geosearch-location {
-            color: $secondary-text-color;
-            font-size: rem(1.2);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex: 0 100 100%;
-        }
-    }
-
-    .rv-geosearch-type {
-        text-align: right;
-        font-size: rem(1.2);
-        color: $secondary-text-color;
-        width: 25%;
-
-        div {
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-    }
-
-    .rv-geosearch-button {
-        display: flex;
-        width: 100%;
-        border-radius: 0;
-        border-bottom: $divider-color 1px solid;
-        padding: 0;
-        margin: 0;
-        text-transform: none;
-        font-weight: 400;
     }
 }

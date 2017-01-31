@@ -38,7 +38,7 @@
         return directive;
     }
 
-    function Controller(layoutService, stateManager, debounceService, basemapService) {
+    function Controller(layoutService, stateManager, debounceService, basemapService, geosearchService) {
         'ngInject';
         const self = this;
 
@@ -46,9 +46,10 @@
         self.stateManager = stateManager;
 
         self.toggleDetails = toggleDetails;
-        self.toggleToc = toggleToc;
+        self.toggleToc = toggleTocBuilder();
         self.toggleToolbox = toggleToolbox;
         self.openBasemapSelector = basemapService.open;
+        self.toggleGeosearch = geosearchService.toggle;
 
         activate();
 
@@ -60,13 +61,11 @@
             stateManager.setActive({ side: false }, 'mainDetails');
         }
 
-        // debounce the toggle toc button to avoid wierd behaviour
-        const debToggleToc = debounceService.registerDebounce(() => {
-            stateManager.setActive({ side: false }, 'mainToc');
-        });
-
-        function toggleToc() {
-            debToggleToc();
+        function toggleTocBuilder() {
+            // debounce the toggle toc button to avoid wierd behaviour
+            return debounceService.registerDebounce(() => {
+                stateManager.setActive({ side: false }, 'mainToc');
+            });
         }
 
         function toggleToolbox() {

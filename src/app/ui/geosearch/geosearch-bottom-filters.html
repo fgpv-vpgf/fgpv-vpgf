@@ -1,0 +1,10 @@
+<div class="rv-geosearch-bottom-filters">
+    <md-input-container>
+        <md-checkbox translate-attr-aria-label="geosearch.aria.extent" class="md-primary"
+            ng-model="self.visibleOnly"
+            ng-disabled="self.filters.extent.outside"
+            ng-change="self.onUpdateDebounce()">
+            {{ 'geosearch.label.extent' | translate }}
+        </md-checkbox>
+    </md-input-container>
+</div>

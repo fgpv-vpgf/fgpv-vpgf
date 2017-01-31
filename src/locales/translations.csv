@@ -60,8 +60,10 @@ Filter pane menu label for Filter by Extent,filter.menu.extent,Filter by Extent,
 Geosearch text place holder,geosearch.text.placeholder,Search Text,Texte à rechercher
 Geosearch province filter label,geosearch.label.province,Province,Province
 Geosearch type filter label,geosearch.label.type,Type,Type
-Geosearch extent filter label,geosearch.aria.extent,Visible,Visible
-Geosearch extent filter label,geosearch.label.extent,Visible,Visible
+Geosearch extent filter label,geosearch.aria.extent,Visible,Visible seulement
+Geosearch extent filter label,geosearch.label.extent,Visible,Visible seulement
+,geosearch.nomatches.label,No matches found for ""{{ noResultsSearchValue }}"",Aucun résultat correspondant à ""{{ noResultsSearchValue }}"".
+,geosearch.loadingfilters.label,Loading filters,Chargement des filtres
 Basemap refresh required,basemap.refresh.req,Map refresh required,Actualiser la carte
 Basemap blank title,basemap.blank.title,blank map,Carte vide
 Basemap blank description,basemap.blank.desc,Remove base map,Retirer la carte de base
