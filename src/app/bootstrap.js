@@ -145,7 +145,7 @@
          * @function    registerPlugin
          */
         registerPlugin() {
-            this._proxy('registerPlugin', ...arguments);
+            this._loadPromise.then(app => app.registerPlugin(...arguments));
         },
 
         _init(appID) {
@@ -158,6 +158,15 @@
                     // after this point, all queued calls to `loadRcsLayers`, `setLanguage`, etc. will trigger
                     resolve(appInstance)
             );
+
+            // this promise waits to be resolved by the rvReady event on the angular side
+            // unlike the other promises this is only resolved once during the page load cycle
+            if (typeof this._loadPromise === 'undefined') {
+                this._loadPromise = new Promise(resolve =>
+                    // store a callback function in the proxy object itself for map instances to call upon readiness
+                    this._applicationLoaded = appInstance => resolve(appInstance)
+                );
+            }
 
             this._initAppPromise = new Promise(resolve =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness

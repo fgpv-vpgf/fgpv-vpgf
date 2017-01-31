@@ -171,7 +171,8 @@
 
         // Attaches a promise to the appRegistry which resolves with apiService
         $rootScope.$on(events.rvApiReady, () => {
-            globalRegistry.getMap(appInfo.id)._registerMap(service);
+            globalRegistry.getMap(appInfo.id)._registerMap(service); // this enables the main API
+            globalRegistry.getMap(appInfo.id)._applicationLoaded(service); // this triggers once
             console.log(appInfo.id + ' registered');
             globalRegistry.focusManager.addViewer($rootElement, $mdDialog);
         });
