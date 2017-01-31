@@ -4,7 +4,7 @@
     rv-help="layer-item"
     ng-mouseover="self.entry.wiggleSymbology(true)"
     ng-mouseleave="self.entry.wiggleSymbology(false)"
-    ng-if="self.entry.options.data"
+    ng-if="self.entry.options.data.enabled"
     ng-click="self.defaultAction(self.entry)">
     <!-- TODO: add aria attribues on the button to provide context on what it does; also mute the actual layer name below, so a screen reader wouldn't pronounce it twice-->
 </md-button>
