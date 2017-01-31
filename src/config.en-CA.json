@@ -157,7 +157,7 @@
       "id":"ecogeo",
       "name": "Eco Geo",
       "layerType":"esriDynamic",
-      "layerEntries": [{"index": 6}, {"index": 7}, {"index": 8}, {"index": 9}],
+      "layerEntries": [{"index": 6, "data": {"enabled": false}}, {"index": 7}, {"index": 8}, {"index": 9}],
       "url":"http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer",
       "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
     },
@@ -175,7 +175,9 @@
       "layerType":"esriFeature",
       "url":"http://ec.gc.ca/arcgis/rest/services/data_donnees/be12386d/MapServer/0",
       "options": {
-        "opacity": { "value": 0.1 }
+        "opacity": { "value": 0.1 },
+        "data": { "enabled": false },
+        "query": { "enabled": true, "value": false }
       }
     },
     {

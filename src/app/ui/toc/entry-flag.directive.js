@@ -48,6 +48,15 @@
             self.control = ctrl.entry.flags[self.name];
             self.template = tocService.presets.flags[self.name];
             self.isFunction = angular.isFunction;
+
+            // set flags visibility from configuration file if present
+            if (typeof ctrl.entry.options[self.name] !== 'undefined') {
+                // if the flag is query, the visible value is reverse of option value because flag is shown if layer is exclude from identify.
+                // for other flag, it is the value of enabled
+                const visible = (self.name === 'query') ?
+                    !ctrl.entry.options[self.name].value : ctrl.entry.options[self.name].enabled;
+                ctrl.entry.flags[self.name].visible = visible;
+            }
         }
     }
 })();
