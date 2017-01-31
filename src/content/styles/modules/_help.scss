@@ -62,38 +62,62 @@
             background-color: $primary-color;
             color: $primary-color-text;
         }
+    }
 
-        rv-help-search {
-            display: flex;
-            align-items: center;
+    .rv-clearable-input {
+        // remove clear button rendered by IE;
+        input::-ms-clear {
+            display: none;
+        }
 
-            md-input-container {
-                margin: 0;
+        button.rv-clear-button {
+            position: absolute;
+            right: 0;
 
-                // remove clear button rendered by IE;
-                input::-ms-clear {
-                    display: none;
+            @each $item in $button-sizes {
+                &.rv-button-#{$item} {
+                    top: calc(50% - #{$item / 2}px);
                 }
+            }
+        }
+    }
 
-                .rv-clear-search {
-                    position: absolute;
-                    right: 0;
+    .rv-no-message-input {
+        .md-errors-spacer {
+            display: none;
+        }
+    }
 
-                    @each $item in $button-sizes {
-                        &.rv-button-#{$item} {
-                            top: calc(50% - #{$item / 2}px);
-                        }
+    rv-help-search {
+        display: flex;
+        align-items: center;
+
+        md-input-container {
+            margin: 0;
+
+            // remove clear button rendered by IE;
+            input::-ms-clear {
+                display: none;
+            }
+
+            .rv-clear-search {
+                position: absolute;
+                right: 0;
+
+                @each $item in $button-sizes {
+                    &.rv-button-#{$item} {
+                        top: calc(50% - #{$item / 2}px);
                     }
                 }
-
-                .md-errors-spacer {
-                    display: none;
-                }
             }
 
-            md-icon {
-                margin-right: rem(0.6);
+            .md-errors-spacer {
+                display: none;
             }
+        }
+
+        md-icon {
+            margin-right: rem(0.6);
         }
     }
 }

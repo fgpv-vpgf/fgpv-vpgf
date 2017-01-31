@@ -841,7 +841,7 @@
             }
 
             /**
-             * Check if visible extent is contain in full extent
+             * Check if visible extent is contained in the full extent.
              *
              * @function validateExtent
              * @param {Number} factor optional; factor to expand the full extent

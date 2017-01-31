@@ -68,16 +68,24 @@
 
                 // animate only on class change
                 if (newClass !== oldClass) {
-                    animationService.to(el, attr.rvMorphSpeed || RV_MORPH_DURATION, {
-                        className: toClass,
-                        ease: RV_SWIFT_IN_OUT_EASE,
-                        onComplete: () => {
-                            // Remove old class from the element after morph is completed.
-                            el.removeClass(oldClass);
-                            callback();
-                            console.log('morph completed');
-                        }
-                    });
+
+                    // skip morph
+                    if (stateManager.state[attr.rvMorph].morphSkip) {
+                        el.removeClass(oldClass).addClass(newClass);
+                        callback();
+                        console.log('morph completed');
+                    } else {
+                        animationService.to(el, attr.rvMorphSpeed || RV_MORPH_DURATION, {
+                            className: toClass,
+                            ease: RV_SWIFT_IN_OUT_EASE,
+                            onComplete: () => {
+                                // Remove old class from the element after morph is completed.
+                                el.removeClass(oldClass);
+                                callback();
+                                console.log('morph completed');
+                            }
+                        });
+                    }
 
                 } else {
                     el.addClass(newClass);
