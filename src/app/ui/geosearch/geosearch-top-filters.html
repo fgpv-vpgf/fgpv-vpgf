@@ -1,0 +1,34 @@
+<div class="rv-geosearch-top-filters">
+
+    <md-input-container md-no-float class="rv-geosearch-province-filter">
+        <md-select
+            placeholder="{{ 'geosearch.label.province' | translate }}"
+            ng-model="self.selectedProvince"
+            ng-change="self.service.setProvince(self.selectedProvince.code); self.onUpdate();">
+            <md-option ng-repeat="province in self.service.provinces | orderBy: 'abbr'" ng-value="province">
+                {{ province.name }}
+            </md-option>
+        </md-select>
+    </md-input-container>
+
+    <md-input-container md-no-float class="rv-geosearch-type-filter">
+        <md-select
+            placeholder="{{ 'geosearch.label.type' | translate }}"
+            ng-model="self.selectedType"
+            ng-change="self.service.setType(self.selectedType.code); self.onUpdate();">
+            <md-option ng-repeat="type in self.service.types | orderBy: 'name'" ng-value="type">
+                {{ type.name }}
+            </md-option>
+        </md-select>
+    </md-input-container>
+
+    <md-button
+        ng-disabled="!self.selectedType && !self.selectedProvince"
+        translate
+        translate-attr-aria-label="appbar.aria.geosearchclose"
+        class="md-icon-button rv-icon-20 rv-button-24 black"
+        ng-click="self.clear()">
+        <md-tooltip>{{ 'appbar.aria.geosearchclose' | translate }}</md-tooltip>
+        <md-icon md-svg-src="community:filter-remove"></md-icon>
+    </md-button>
+</div>
