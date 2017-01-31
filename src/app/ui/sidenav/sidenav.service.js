@@ -100,8 +100,9 @@
                         parent: storageService.panels.shell,
                         disableParentScroll: false,
                         clickOutsideToClose: true,
-                        fullscreen: false
-                    });
+                        fullscreen: false,
+                        onShowing: (scope, element) => (scope.element = element.find('.side-nav-summary'))
+                    }).then(() => ($rootElement.find('.rv-shareLink').select()));
                 }
             },
             fullscreen: {
@@ -163,7 +164,7 @@
 
         return service;
 
-        function ShareController($mdDialog, $rootElement, $http, configService) {
+        function ShareController(scope, $mdDialog, $rootElement, $http, configService) {
             'ngInject';
             const self = this;
 
@@ -173,7 +174,6 @@
                 long: undefined
             };
 
-            self.bookmarkClicked = bookmarkClicked;
             self.switchChanged = switchChanged;
             self.close = $mdDialog.hide;
 
@@ -202,10 +202,11 @@
             function getLongLink() {
                 if (typeof URLS.long === 'undefined') { // no cached url exists
                     globalRegistry.getMap($rootElement.attr('id')).getBookmark().then(bookmark =>
-                        URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark)
-                    );
+                        URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark))
+                        .then(() => (selectURL()));
                 } else { // cache exists
                     self.url = URLS.long;
+                    selectURL();
                 }
             }
 
@@ -217,24 +218,26 @@
                 // no cached url exists - making API call
                 if (typeof URLS.short === 'undefined') {
                     $http.post(self.googleAPIUrl, { longUrl: self.url })
-                        .then(r => URLS.short = self.url = r.data.id)
+                        .then(r => {
+                            URLS.short = self.url = r.data.id;
+                            selectURL();
+                        })
                         .catch(() => URLS.short = undefined); // reset cache from failed API call);
                 // cache exists, API call not needed
                 } else {
                     self.url = URLS.short;
+                    selectURL();
                 }
             }
 
             /**
-            * Handles onClick event on URL input box
-            * @function bookmarkClicked
-            * @param    {Object}    event   the jQuery onClick event
+            * Select URL in input box
+            * @function selectURL
             */
-            function bookmarkClicked(event) {
-                // select/highlight the URL link
-                $(event.currentTarget).select();
-                // try to automatically copy link - if successful display message
-                self.linkCopied = document.execCommand('copy');
+            function selectURL() {
+                if (scope.element !== undefined) {
+                    scope.element.find('.rv-shareLink').select();
+                }
             }
         }
 
