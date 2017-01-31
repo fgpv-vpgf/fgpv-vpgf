@@ -1,44 +1,53 @@
-<div class="rv-geosearch">
-    <md-input-container
-        md-no-float=""
-        class="rv-geosearch-input md-block"
-        ng-show="self.stateManager.state.mainGeosearch.active">
-        <input ng-model="self.geosearchService.searchText.value"
-            placeholder="{{ 'geosearch.text.placeholder' | translate }}"
-            ng-change="self.geosearchService.queryGeosearch()">
-        <md-button
-            ng-show="self.geosearchService.searchText.value.length > 2"
-            class="rv-geosearch-clear"
-            ng-click="self.geosearchService.clearSearch()">
-            <md-icon md-svg-src="navigation:close"></md-icon>
-        </md-button>
-    </md-input-container>
+<div class="rv-geosearch-content rv-whiteframe-z2" ng-show="self.service.searchValue && self.service.isResultsVisible">
 
-    <md-button
-        translate
-        translate-attr-aria-label="appbar.aria.geosearch"
-        class="md-icon-button primary"
-        rv-help="geosearch-button"
-        ng-class="{ selected: self.stateManager.state.mainGeosearch.active }"
-        ng-click="self.geosearchService.toggleGeosearch()">
-        <md-tooltip>{{ 'appbar.tooltip.geosearch' | translate }}</md-tooltip>
-        <md-icon md-svg-src="action:search"></md-icon>
-    </md-button>
+    <rv-geosearch-top-filters on-update="self.onTopFiltersUpdate"></rv-geosearch-top-filters>
 
-    <span
-        class="rv-appbar-divider"
-        ng-show="self.stateManager.state.mainGeosearch.active">
-    </span>
+    <md-divider class="rv-geosearch-divider"></md-divider>
 
-    <md-button
-        translate
-        translate-attr-aria-label="appbar.aria.geosearchclose"
-        class="md-icon-button primary"
-        rv-help="geosearch-close-button"
-        ng-class="{ selected: self.stateManager.state.mainGeosearch.active }"
-        ng-click="self.geosearchService.toggleGeosearch()"
-        ng-show="self.stateManager.state.mainGeosearch.active">
-        <md-tooltip>{{'appbar.aria.geosearchclose' | translate}}</md-tooltip>
-        <md-icon md-svg-src="navigation:close"></md-icon>
-    </md-button>
+    <div class="rv-geosearch-results">
+
+        <md-progress-linear
+            class="rv-progress-top"
+            md-mode="indeterminate"
+            ng-show="self.service.isLoading"></md-progress-linear>
+
+        <span class="rv-no-results" ng-if="self.service.noResultsSearchValue">{{ 'geosearch.nomatches.label' | translate:self.service }}</span>
+
+        <ul class="rv-results-list">
+
+            <li class="rv-results-item" ng-repeat="result in self.service.searchResults">
+
+                <md-button
+                    aria-label="result.name + ' ' + result.location.city ' ' + result.location.province.abbr + ' ' + result.type.name"
+                    class="rv-results-item-body-button rv-button-square"
+                    ng-click="self.service.zoomTo(result)"></md-button>
+
+                <div class="rv-results-item-main">
+
+                    <!-- no spaces between spans here please; https://css-tricks.com/fighting-the-space-between-inline-block-elements/ -->
+                    <span class="rv-results-item-name"
+                        ng-bind-html="::result.name | highlight:self.service.searchValue:'rv-geosearch-highlight'">
+                    </span><span class="rv-results-item-city md-caption" ng-if="result.location.city">
+                        , {{ ::result.location.city }}
+                    </span><span class="rv-results-item-province md-caption" ng-if="result.location.province.name">
+                        , {{ ::result.location.province.abbr }}
+                    </span>
+
+                </div>
+
+                <span flex></span>
+
+                <span class="rv-results-item-type md-caption">
+                    {{ ::result.type.name }}
+                </span>
+
+            </li>
+        </ul>
+
+    </div>
+
+    <md-divider class="rv-geosearch-divider"></md-divider>
+
+    <rv-geosearch-bottom-filters on-update="self.onBottomFiltersUpdate"></rv-geosearch-bottom-filters>
+
 </div>

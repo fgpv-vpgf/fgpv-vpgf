@@ -7,14 +7,20 @@
                 parent: parentName,
                 active: false,
                 activeSkip: false,
+
+                // this is a horrible hack, but the statemanger was supposed to allow setting `activeSkip` from the outside code; this got lost somewhere along the way and now statemanager ignores this value and uses internal one;
+                // setting this to `true` will force statemanager to use this value, and not the internal one
+                activeSkipOverride: false,
                 display: displayName
             };
         } else {
             return {
                 active: false,
                 activeSkip: false,
+                activeSkipOverride: false,
                 morph: 'default',
                 morphSkip: false,
+                morphSkipOverride: false,
                 history: []
             };
         }
