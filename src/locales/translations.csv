@@ -100,6 +100,7 @@ Bookmark share link,sidenav.label.sharelink,Link to Share,Lien de partage
 Bookmark short link,sidenav.label.shortlink,Short Link,Lien court
 Bookmark link copied feedback,sidenav.label.copysuccess,Link copied to clipboard,Lien copié dans le presse-papiers
 Bookmark link click to copy hint,sidenav.label.clicktocopy,Click to copy,Cliquez pour copier
+Bookmark link copy hint,sidenav.label.copy,Press Ctrl+C to copy,Appuyez sur Ctrl+C pour copier
 Side Navigation help,sidenav.label.help,Help,Aide
 Side Navigation touch mode,sidenav.label.touch,Touch Mode,Mode Tactile
 Side Navigation language,sidenav.label.language,Language,Langage

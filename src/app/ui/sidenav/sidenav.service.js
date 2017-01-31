@@ -22,6 +22,8 @@
         ]
     };
 
+    const SHARE_LINK_ID = 'rv-shareLink';
+
     /**
      * @ngdoc service
      * @module sideNavigationService
@@ -101,6 +103,8 @@
                         disableParentScroll: false,
                         clickOutsideToClose: true,
                         fullscreen: false
+                    }).then(function () {
+                        $(document.getElementById(SHARE_LINK_ID)).select();
                     });
                 }
             },
@@ -163,7 +167,7 @@
 
         return service;
 
-        function ShareController($mdDialog, $rootElement, $http, configService) {
+        function ShareController($scope, $mdDialog, $rootElement, $http, configService, $timeout) {
             'ngInject';
             const self = this;
 
@@ -173,17 +177,23 @@
                 long: undefined
             };
 
-            self.bookmarkClicked = bookmarkClicked;
             self.switchChanged = switchChanged;
             self.close = $mdDialog.hide;
 
             getLongLink();
+
+            // $(document.getElementById('rv-shareLink')).select();
 
             // fetch googleAPIKey - if it exists the short link switch option is shown
             configService.getCurrent().then(conf =>
                 self.googleAPIUrl = conf.googleAPIKey ?
                     `https://www.googleapis.com/urlshortener/v1/url?key=${conf.googleAPIKey}` : null
             );
+
+            // watch for changing URL value to set actual value
+            $scope.$watch('self.url', () => {
+                $timeout(selectURL());
+            });
 
             /**
             * Handles onClick event on URL input box
@@ -226,15 +236,11 @@
             }
 
             /**
-            * Handles onClick event on URL input box
-            * @function bookmarkClicked
-            * @param    {Object}    event   the jQuery onClick event
+            * Select URL in input box
+            * @function selectURL
             */
-            function bookmarkClicked(event) {
-                // select/highlight the URL link
-                $(event.currentTarget).select();
-                // try to automatically copy link - if successful display message
-                self.linkCopied = document.execCommand('copy');
+            function selectURL() {
+                $(document.getElementById(SHARE_LINK_ID)).select();
             }
         }
 
