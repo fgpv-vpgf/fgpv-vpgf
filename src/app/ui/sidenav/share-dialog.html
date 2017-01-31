@@ -6,9 +6,8 @@
         </md-switch>
 
             <md-input-container class="md-block" flex-gt-xs>
-                <input ng-click="self.bookmarkClicked($event)" ng-model="self.url" readonly />
-                <div class="hint" ng-if="!self.linkCopied">{{'sidenav.label.clicktocopy' | translate}}</div>
-                <div class="hint" ng-if="self.linkCopied">{{'sidenav.label.copysuccess' | translate}}</div>
+                <input class="rv-shareLink" type="text" ng-model="self.url" readonly md-select-on-focus/>
+                <span>{{'sidenav.label.copy' | translate}}</span>
           </md-input-container>
 
     </rv-content-pane>
