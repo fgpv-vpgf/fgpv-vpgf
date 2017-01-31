@@ -12,10 +12,13 @@
             width: $toolbar-width;
         }
 
-        margin: {
+        /*margin: {
             top: auto;
             bottom: auto;
-        }
+        }*/
+
+        margin: auto 0 auto rem(0.6);
+
     }
 }
 
@@ -25,10 +28,15 @@
     z-index: auto;
     background: white;
     align-items: center;
-    padding: rem(0.4);
+    padding: rem(0.4) rem(1.0);
     display: flex;
+    position: absolute;
 
-    @include media($rv-gt-sm) {
+    button {
+        margin: 0;
+    }
+
+    @include include-size(rv-gt-sm) {
         width: $toolbar-width;
     }
 }
@@ -41,7 +49,7 @@
             @extend %appbar-title;
         }
 
-        .rv-appbar-divider {
+        /*.rv-appbar-divider {
             border-right: $divider-color 1px solid;
             height: 65%;
             margin: {
@@ -49,6 +57,12 @@
                 left: rem(0.4);
                 //left: rem(1);
             }
-        }
+        }*/
+    }
+
+    rv-geosearchbar {
+        position: absolute;
+        top: 90px;
+        left: 10px;
     }
 }

@@ -151,6 +151,18 @@ rv-panel[type='main'] {
         }
     }
 
+    &.geosearch {
+        pointer-events: none;
+
+        .rv-panel {
+            background: transparent;
+
+            &:after {
+                box-shadow: none;
+            }
+        }
+    }
+
     rv-toc,
     rv-toolbox {
         @include content-plug;
@@ -213,3 +225,21 @@ rv-panel[type='other'] {
 md-content {
     background-color: #fff;
 }
+
+/*rv-geosearch {
+    position: absolute;
+
+    z-index: 1;
+
+    @include media($rv-gt-sm) {
+        left: $viewport-gutter;
+        top: $viewport-gutter;
+        width: $toolbar-width;
+        bottom: $viewport-gutter;
+    }
+
+    @include media($rv-sm) {
+        width: 100%;
+        height: 100%;
+    }
+}*/
