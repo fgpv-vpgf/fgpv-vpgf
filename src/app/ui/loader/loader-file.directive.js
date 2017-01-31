@@ -27,7 +27,8 @@
         return directive;
     }
 
-    function Controller($scope, $q, $timeout, stateManager, Stepper, geoService, LayerBlueprint, Geo, $rootElement) {
+    function Controller($scope, $q, $timeout, stateManager, Stepper, geoService, LayerBlueprint, Geo, $rootElement,
+        keyNames) {
         'ngInject';
         const self = this;
 
@@ -49,7 +50,9 @@
                 isCompleted: false,
                 onContinue: uploadOnContinue,
                 onCancel: () => onCancel(self.upload.step),
-                reset: uploadReset
+                onKeypress: checkContinue,
+                reset: uploadReset,
+                focus: 'dataUpload'
             },
             form: null,
             file: null,
@@ -74,7 +77,8 @@
                 isCompleted: false,
                 onContinue: selectOnContinue,
                 onCancel: () => onCancel(self.select.step),
-                reset: selectReset
+                reset: selectReset,
+                focus: 'dataType'
             },
             selectResetValidation,
             form: null
@@ -88,7 +92,8 @@
                 isCompleted: false,
                 onContinue: configureOnContinue,
                 onCancel: () => onCancel(self.configure.step),
-                reset: configureReset
+                reset: configureReset,
+                focus: 'layerName'
             },
             configureResetValidation,
             colourPickerSettings: {
@@ -140,6 +145,17 @@
                 stepper.cancelMove();
             } else {
                 stepper.previousStep(); // going to the previous step will auto-reset the current one (even if there is no previous step to go to)
+            }
+        }
+
+        /**
+         * Check if enter key have been pressed and call the next step if so
+         * @function checkContinue
+         * @param {Object} event keypress event
+         */
+        function checkContinue(event) {
+            if (event.keyCode === keyNames.ENTER) {
+                uploadOnContinue();
             }
         }
 

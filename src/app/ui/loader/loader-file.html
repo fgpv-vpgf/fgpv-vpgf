@@ -31,6 +31,7 @@
                                 flow-btn
                                 flow-progress="console.log()"
                                 flow-attrs="{ accept: '.csv,.zip,.json' }"
+                                name="dataUpload"
                                 ng-click="self.upload.step.reset()">
                                 <md-icon md-svg-src="file:file_upload"></md-icon>
                                 {{ "import.file.upload.choose" | translate }}
@@ -61,6 +62,7 @@
                         ng-focus="self.upload.fileReset(); self.upload.fileUrlResetValidation()"
                         ng-model="self.upload.fileUrl"
                         ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
+                        ng-keypress="self.upload.step.onKeypress($event)"
                         required>
 
                     <!-- TODO: decide whether and how to display a hint or error messages -->
