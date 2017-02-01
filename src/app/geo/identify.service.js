@@ -225,6 +225,11 @@
                     identifyResults[legendEntry.featureIdx] = identifyResult;
                 });
 
+                // if all the dynamic layer children are unqueriable, do not run identify as with `opts.layerrIds` it will search through all of them and fail trying to access items in `identifyResults` which is also empty
+                if (opts.layerIds.length === 0) {
+                    return {};
+                }
+
                 opts.tolerance = layerRecord.clickTolerance;
 
                 const identifyPromise = gapiService.gapi.layer.serverLayerIdentify(layerRecord._layer, opts)

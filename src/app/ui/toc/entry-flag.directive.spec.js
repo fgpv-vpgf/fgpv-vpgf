@@ -17,7 +17,7 @@ describe('rvLayerItemFlag', () => {
                     visible: true
                 }
             }
-        },
+        }
     };
 
     function mockLayoutService($provide) {

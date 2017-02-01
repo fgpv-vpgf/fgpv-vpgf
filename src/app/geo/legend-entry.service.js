@@ -201,6 +201,12 @@
                     this.flags.query.visible = !this.options.query.value;
                 }
 
+                // need to initialize the data flag as it's value defaults to layer type data flag value (feature and dynamic layers have data; others do not)
+                // solves https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1628
+                if (this.options.data) {
+                    this.flags.data.visible = this.options.data.enabled;
+                }
+
                 // this.state = layerStates.default; ??
                 const colour = (new RColor()).get(true, 0.4, 0.8);
                 gapiService.gapi.symbology.generatePlaceholderSymbology(this.name, colour).then(symbologyItem => {
