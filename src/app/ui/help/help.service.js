@@ -22,6 +22,7 @@
         .service('helpService', helpService)
         .filter('highlight', highlightFilter);
 
+    // TODO: this needs to be moved into a separate into ui/common folder
     function highlightFilter($sce) {
         return (text, searchTerm, className = 'rv-help-highlight') => {
 
@@ -32,16 +33,6 @@
                 text = text.replace(
                     new RegExp(`(${searchTerm})`, 'gi'),
                     `<span class="${className}">$1</span>`);
-
-                // needs improvement
-                // break subsearch into words and apply separatelly
-                /*searchTerm
-                    .split(' ')
-                    .forEach(subTerm =>
-                        (text = text.replace(
-                            new RegExp(`(${subTerm})`, 'gi'),
-                            `<span class="${className}">$1</span>`)));
-                */
             }
 
             return $sce.trustAsHtml(text);

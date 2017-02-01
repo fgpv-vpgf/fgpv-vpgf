@@ -14,7 +14,7 @@
         let provinceList; // list of provinces fulfilled by getProvinces
         let typeList; // list of types fulfilled by getTypes
         let manualExtent; // extent object if manual extent filtering is required
-        let bbox; // string ('visible' or 'canada') or extent object which will be converted into a proper extent lat/lng string
+        let bbox; // string ('visible' or 'canada') or extent object which will be converted into a proper extent lat/long string
         let enabled; // boolean indicating search is not disabled by config
         let serviceUrls;
         let disableSearch;
@@ -233,10 +233,10 @@
 
         /**
          * Creates/updates geoName service query parameters before the service is called. This function has two main jobs:
-         *     - Capture current extent and convert into a geoName readable lat/lng string
-         *     - Call the geoLocation service for FSA and NTS detected queries for their lat/lng values
+         *     - Capture current extent and convert into a geoName readable lat/long string
+         *     - Call the geoLocation service for FSA and NTS detected queries for their lat/long values
          *
-         * Note that FSA and NTS queries are intercepted and replaced with lat/lng properties from the geoLocation service.
+         * Note that FSA and NTS queries are intercepted and replaced with lat/long properties from the geoLocation service.
          *
          * @function preQuery
          * @private
@@ -252,7 +252,7 @@
                 extent = geoService.getFullExtent();
             }
 
-            if (typeof extent === 'object') { // convert to lat/lng geoName readable string
+            if (typeof extent === 'object') { // convert to lat/long geoName readable string
                 // use the extent to reproject because it use a densify object that keep
                 // proportion and in the end good values for min and max. If we use points
                 // the results are bad, especially in LCC
@@ -264,24 +264,24 @@
             setQueryParam('bbox', extent);
 
             return $q((resolve, reject) => {
-                // define regex expressions for FSA, NTS, or LAT/LNG inputs
+                // define regex expressions for FSA, NTS, or lat/long inputs
                 const fsaReg = /^[A-Za-z]\d[A-Za-z]/;
                 const ntsReg = /^\d{1,3}[A-Z]\/\d{1,3}$/;
                 const latlngReg = /^-?\d{1,3}\.\d+,-?\d{1,3}\.\d+$/;
 
-                // FSA or NTS - use geoService to find point information (in lat/lng)
+                // FSA or NTS - use geoService to find point information (in lat/long)
                 if ((fsaReg.test(q) && isEnabled('FSA')) || (ntsReg.test(q) && isEnabled('NTS'))) {
                     $http.get(serviceUrls.geoLocation + q).then(results => {
                         setLatLng(...results.data[0].geometry.coordinates.reverse());
                         resolve();
                     }, reject);
 
-                // LAT/LNG inputted as query, split lat/lng string into individual components
+                // lat/long inputted as query, split lat/long string into individual components
                 } else if (latlngReg.test(q) && isEnabled('LAT/LNG')) {
                     setLatLng(...q.split(','));
                     resolve();
 
-                // no lat/lng information is needed (delete any existing from prior query)
+                // no lat/long information is needed (delete any existing from prior query)
                 } else {
                     delete queryParams.lat;
                     delete queryParams.lon;
@@ -313,8 +313,8 @@
          * Zoom to the search extent bbox and show map pin at location
          *
          * @function zoomSearchExtent
-         * @param   {Array}    bbox     4 coordinnates for the bbox
-         * @param   {Array}    position       2 coordinnates for the position
+         * @param   {Array}    bbox     4 coordinates for the bbox in the form of [xmin, ymin, xmax, ymax]
+         * @param   {Array}    position       2 coordinates for the position in the form of [x, y]
          */
         function zoomSearchExtent(bbox, position) {
             const mapObject = geoService.mapObject;
@@ -362,7 +362,7 @@
         }
 
         /**
-         * Set the query parameters lat/lng values, and move bbox property.
+         * Set the query parameters lat/long values, and move bbox property.
          *
          * @function setLatLng
          * @private
@@ -372,7 +372,7 @@
         function setLatLng(lat, lng) {
             [queryParams.lat, queryParams.lon] = [lat, lng];
 
-            // lat/lng with bbox is not allowed in a geoName query. Remove bbox
+            // lat/long with bbox is not allowed in a geoName query. Remove bbox
             // from query and save to manualExtent which will manually filter after results have come back
             if (queryParams.bbox) {
                 manualExtent = queryParams.bbox;

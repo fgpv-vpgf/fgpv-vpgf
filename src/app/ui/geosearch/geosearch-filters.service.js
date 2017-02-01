@@ -59,7 +59,7 @@
          * Sets the 'show items from the current extent only' filter.
          *
          * @function setVisible
-         * @param {Boolean} visibleOnly specifies that only items from teh current extent should be included in the query
+         * @param {Boolean} visibleOnly specifies that only items from the current extent should be included in the query
          */
         function setVisible(visibleOnly) {
 
