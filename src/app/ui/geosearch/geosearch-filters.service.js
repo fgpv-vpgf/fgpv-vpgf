@@ -59,7 +59,7 @@
          * Sets the 'show items from the current extent only' filter.
          *
          * @function setVisible
-         * @param {Boolean} visibleOnly specifies that only items from teh current extent should be included in the query
+         * @param {Boolean} visibleOnly specifies that only items from the current extent should be included in the query
          */
         function setVisible(visibleOnly) {
 
@@ -76,7 +76,7 @@
 
             /**
              * Internally, 'visible' value is ignored at low zoom levels, but the ui is not updated to not confuse the user.
-             * on each extent change event, the extent is validated it's determined if `visible only` parameter should be included in the query
+             * on each extent change event, the extent is validated and it's determined if `visible only` parameter should be included in the query
              *
              * @function setExtentParameter
              * @private

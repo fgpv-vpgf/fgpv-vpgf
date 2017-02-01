@@ -846,8 +846,8 @@
              * Check if visible extent is contained in the full extent.
              *
              * @function validateExtent
-             * @param {Number} factor optional; factor to expand the full extent
-             * @return   {Boolean}   True if the visible extent is contain in full extent - false if not contain
+             * @param {Number} [factor = 1] multiplier used to expand the full extent
+             * @return {Boolean} True if the visible extent is contained in the full extent - false if not contained
              */
             function validateExtent(factor = 1) {
                 return getFullExtent().expand(factor).contains(service.mapObject.extent);
