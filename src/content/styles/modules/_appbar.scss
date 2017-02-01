@@ -12,13 +12,7 @@
             width: $toolbar-width;
         }
 
-        /*margin: {
-            top: auto;
-            bottom: auto;
-        }*/
-
         margin: auto 0 auto rem(0.6);
-
     }
 }
 
@@ -38,6 +32,10 @@
 
     @include include-size(rv-gt-sm) {
         width: $toolbar-width;
+    }
+
+    @include include-size(rv-sm) {
+        width: 100%;
     }
 }
 
