@@ -36,6 +36,8 @@
             /**
              * A shorthand for $rootScope.$on; no need to inject `$rootScope` separately;
              * @function $on
+             * @param {String} eventName event name to listen once
+             * @param {Function} listener a callback function to execute
              */
             $on: (eventName, listener) =>
                 $rootScope.$on(eventName, listener),

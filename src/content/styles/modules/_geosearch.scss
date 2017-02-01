@@ -8,14 +8,6 @@ $result-item-height-touch: rem(4.8);
 
         flex-shrink: 0;
 
-        /*@include media($rv-sm) {
-            width: 100%;
-        }
-
-        md-input-container {
-            margin-left: rem(0.6);
-        }*/
-
         // style autocomplete control
         md-autocomplete {
             // hide the default progress bar on the control itself
@@ -26,12 +18,8 @@ $result-item-height-touch: rem(4.8);
             // the default height is 40px; we don't need that
             height: auto;
 
-        /*@include media($rv-gt-sm) {
-            width: 220px;
-        }
-    }*/
             md-autocomplete-wrap {
-                box-shadow: none; // remove shadow since it needs to look like a regular forn input field
+                box-shadow: none; // remove shadow since it needs to look like a regular form input field
                 height: auto; // same as above
 
                 // the clear button is not positioned correctly because we wrapped autocomplete in md-input-container to get the behaviour of a regular input field
