@@ -6,7 +6,7 @@
      * @memberof app.ui
      * @description
      *
-     * The `geosearchService` is responsible for opening and closing geosearch panel and to running queries.
+     * The `geosearchService` is responsible for opening and closing geosearch panel and for running queries.
      *
      */
     angular
@@ -33,7 +33,7 @@
         const ref = {
             mainPanel: storageService.panels.shell.find('[rv-state=main]'),
 
-            runningRequestCount: 0 //
+            runningRequestCount: 0 // used to track the latest query and discard results from previous ones if they resolve after an older query
         };
 
         // this is horrible, but `onCloseCallback` stateManager function doesn't work correctly
@@ -102,7 +102,7 @@
          * Runs geosearch query and returns the results or suggestions.
          *
          * @function runQuery
-         * @return {Promise} promise resolving with results (when results are found -  { results: [] }) or suggestions (when results are not found - { suggestions: [] }) or nothing (when search value is not specified - {});
+         * @return {Promise} promise resolving with results (when results are found - { results: [] }) or suggestions (when results are not found - { suggestions: [] }) or nothing (when search value is not specified - {});
          */
         function runQuery() {
             const requestCount = ++ref.runningRequestCount;
