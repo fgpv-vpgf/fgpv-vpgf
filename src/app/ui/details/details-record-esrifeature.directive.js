@@ -84,6 +84,7 @@
                     const LIST_ITEM = (key, value, type) =>
                         `<li>
                             <div class="rv-details-attrib-key">${ key }</div>
+                            <span flex></span>
                             <div class="rv-details-attrib-value">
                                 ${ $filter(type === 'esriFieldTypeDate' ? 'dateTimeZone' : 'autolink')(value) }
                             </div>
