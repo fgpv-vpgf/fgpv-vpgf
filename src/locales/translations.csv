@@ -62,6 +62,10 @@ Geosearch province filter label,geosearch.label.province,Province,Province
 Geosearch type filter label,geosearch.label.type,Type,Type
 Geosearch extent filter label,geosearch.aria.extent,Visible,Visible seulement
 Geosearch extent filter label,geosearch.label.extent,Visible,Visible seulement
+Geosearch scale type,geosearch.type.scale,Scale,Échelle
+Geosearch lat/long type,geosearch.type.latlong,Latitude/Longitude,Latitude/Longitude
+Geosearch FSA type,geosearch.type.fsa,Postal Code,Code postal
+Geosearch National Topographic System type,geosearch.type.nts,NTS,SNRC
 ,geosearch.nomatches.label,No matches found for ""{{ noResultsSearchValue }}"",Aucun résultat correspondant à ""{{ noResultsSearchValue }}"".
 ,geosearch.loadingfilters.label,Loading filters,Chargement des filtres
 Basemap refresh required,basemap.refresh.req,Map refresh required,Actualiser la carte
