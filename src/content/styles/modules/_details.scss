@@ -194,31 +194,6 @@
             }
         }
 
-        .rv-details-attrib-key {
-            margin-right: 0;
-            padding-right: 10px;
-            position: relative;
-            font-weight: bold;
-            float: left;
-        }
-
-        .rv-details-attrib-value {
-            margin-right: 0;
-            padding-left: 15px;
-            position: relative;
-            float: right;
-
-            // fix for https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1635
-            // truncate values that do not wrap (links for example)
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-
-            a {
-                white-space: nowrap;
-            }
-        }
-
         .rv-sub-subhead {
             font-size: rem(1.6);
         }
@@ -265,6 +240,40 @@ $details-record-height: rem(6.0);
 
             padding: rem(0.8) rem(1.6);
             border-bottom: 1px solid $divider-color-light;
+
+            li {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .rv-details-attrib-key {
+                margin-right: 0;
+                padding-right: rem(1);
+                font-weight: bold;
+
+                // from MDN:
+                // The `word-break` CSS property is used to specify whether to break lines within words...
+                // break unbreakable strings to avoid scrollbars
+                word-break: break-word;
+            }
+
+            .rv-details-attrib-value {
+                margin-right: 0;
+                padding-left: rem(1.5);
+
+                // break unbreakable strings to avoid scrollbars
+                word-break: break-word;
+
+                // this will truncate anything overflowing (only link will overflow since we prevent them from wrapping)
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                a {
+                    // fix for https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1635
+                    // prevent wrapping links to truncate them as we don't want them to wrap
+                    white-space: nowrap;
+                }
+            }
         }
 
         rv-details-record-esrifeature {
@@ -288,6 +297,10 @@ $details-record-height: rem(6.0);
 
 @mixin Text {
     .rv-details-text {
+        // force-wrap any unbreakable strings
+        word-break: break-word;
+
+        // keep the original formatting of the details text since we need to display it as is
         white-space: pre-wrap;
         font-family: inherit;
         padding: rem(0.8) rem(1.6);
