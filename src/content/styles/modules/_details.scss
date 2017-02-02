@@ -297,6 +297,10 @@ $details-record-height: rem(6.0);
 
 @mixin Text {
     .rv-details-text {
+        // force-wrap any unbreakable strings
+        word-break: break-word;
+
+        // keep the original formatting of the details text since we need to display it as is
         white-space: pre-wrap;
         font-family: inherit;
         padding: rem(0.8) rem(1.6);
