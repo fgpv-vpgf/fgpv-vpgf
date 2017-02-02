@@ -8,10 +8,14 @@ Appbar tooltip for layers icon,appbar.tooltip.layers,Layers,Couches
 Appbar headline for layers,appbar.headline.layers,Layers,Couches
 Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature Details,Détails de la fonctionnalité
 Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,Menu
+Appbar tooltip for geosearch icon,appbar.tooltip.geosearch,Geolocation Search, Recherche géolocalisée
+Appbar tooltip for geosearch close icon,appbar.tooltip.geosearchclose,Close Geolocation Search, Fermer la recherche géolocalisée
 Appbar tooltip for tools icon,appbar.tooltip.tools,Tools,Outils
 Appbar aria label for layers icon,appbar.aria.layers,Sets,Séries
 Appbar aria label for point info icon,appbar.aria.pointInfo,Feature Details,Détails de la fonctionnalité
+Appbar aria for geosearch close icon,appbar.aria.geosearchclose,Close Geolocation Search, Fermer la recherche géolocalisée
 Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,Ouvrir menu de navigation
+Appbar aria label for geosearch icon,appbar.aria.geosearch,Geolocation Search, Recherche géolocalisée
 Map overview aria label for toggle icon,geo.aria.overviewtoggle,Expand/Shrink map overview,Développer / Shrink aperçu de la carte
 Map aria label description,geo.aria.mapdescription,Interactive Map,Carte Interactive
 Appbar aria label for tools icon,appbar.aria.tools,Tools,Outils
@@ -53,6 +57,13 @@ Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable Filte
 Filter pane menu label for Print,filter.menu.print,Print,Imprimer
 Filter pane menu label for Export,filter.menu.export,Export,Exporter
 Filter pane menu label for Filter by Extent,filter.menu.extent,Filter by Extent,Filtrer par étendue
+Geosearch text place holder,geosearch.text.placeholder,Search Text,Texte à rechercher
+Geosearch province filter label,geosearch.label.province,Province,Province
+Geosearch type filter label,geosearch.label.type,Type,Type
+Geosearch extent filter label,geosearch.aria.extent,Visible,Visible seulement
+Geosearch extent filter label,geosearch.label.extent,Visible,Visible seulement
+,geosearch.nomatches.label,No matches found for ""{{ noResultsSearchValue }}"",Aucun résultat correspondant à ""{{ noResultsSearchValue }}"".
+,geosearch.loadingfilters.label,Loading filters,Chargement des filtres
 Basemap refresh required,basemap.refresh.req,Map refresh required,Actualiser la carte
 Basemap blank title,basemap.blank.title,blank map,Carte vide
 Basemap blank description,basemap.blank.desc,Remove base map,Retirer la carte de fond

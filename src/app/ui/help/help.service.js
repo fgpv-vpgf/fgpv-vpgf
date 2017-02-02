@@ -22,10 +22,17 @@
         .service('helpService', helpService)
         .filter('highlight', highlightFilter);
 
+    // TODO: this needs to be moved into a separate into ui/common folder
     function highlightFilter($sce) {
-        return (text, searchTerm) => {
+        return (text, searchTerm, className = 'rv-help-highlight') => {
+
             if (searchTerm) {
-                text = text.replace(new RegExp(`(${searchTerm})`, 'gi'), '<span class="rv-help-highlight">$1</span>');
+                // sanitizes a regex by removing all common RegExp identifiers
+                searchTerm = searchTerm.replace(/[\\\^\$\*\+\?\.\(\)\|\{}\[\]]/g, '\\$&');
+
+                text = text.replace(
+                    new RegExp(`(${searchTerm})`, 'gi'),
+                    `<span class="${className}">$1</span>`);
             }
 
             return $sce.trustAsHtml(text);

@@ -1,36 +1,53 @@
 // Primary mixin
+%appbar-title {
+    flex: 1;
+    overflow: hidden;
 
-@mixin appbar {
-    .main-appbar {
-        box-sizing: border-box;
-        height: $toolbar-height;
-        z-index: auto;
-        background: white;
-        align-items: center;
-        padding: rem(0.4);
-        display: flex;
+    h2 {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
 
         @include include-size(rv-gt-sm) {
             width: $toolbar-width;
         }
 
+        margin: auto 0 auto rem(0.6);
+    }
+}
+
+%appbar {
+    box-sizing: border-box;
+    height: $toolbar-height;
+    z-index: auto;
+    background: white;
+    align-items: center;
+    padding: rem(0.4) rem(1.0);
+    display: flex;
+    position: absolute;
+
+    button {
+        margin: 0;
+    }
+
+    @include include-size(rv-gt-sm) {
+        width: $toolbar-width;
+    }
+
+    @include include-size(rv-sm) {
+        width: 100%;
+    }
+}
+
+@mixin appbar {
+    .main-appbar {
+        @extend %appbar;
+
         .rv-appbar-title {
-            flex: 1;
-            overflow: hidden;
-
-            h2 {
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-
-                margin: {
-                    top: auto;
-                    bottom: auto;
-                }
-            }
+            @extend %appbar-title;
         }
 
-        .rv-appbar-divider {
+        /*.rv-appbar-divider {
             border-right: $divider-color 1px solid;
             height: 65%;
             margin: {
@@ -38,6 +55,12 @@
                 left: rem(0.4);
                 //left: rem(1);
             }
-        }
+        }*/
+    }
+
+    rv-geosearchbar {
+        position: absolute;
+        top: 90px;
+        left: 10px;
     }
 }

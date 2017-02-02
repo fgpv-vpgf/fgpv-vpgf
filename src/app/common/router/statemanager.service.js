@@ -176,8 +176,12 @@
             return $q(fulfill => {
                 const fulfillKey = `${property}${itemName}`; // key to store `fulfill` function
                 const skipKey = `${property}Skip`; // key to store `skip` animation flag
+                const skipOverrideKey = `${property}SkipOverride`;
 
-                item[skipKey] = skip; // even if the item has proper state, set its skip value for sanity
+                if (!item[skipOverrideKey]) {
+                    // set the skip value __only__ when it's not overridden
+                    item[skipKey] = skip;
+                }
 
                 // console.log('settingItem', item, item.active, value);
                 if (item[property] !== value) {
