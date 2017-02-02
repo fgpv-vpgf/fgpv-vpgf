@@ -10,7 +10,7 @@
         .module('app.geo')
         .factory('geoSearch', geoSearch);
 
-    function geoSearch($http, $q, configService, geoService, gapiService, $rootScope, events) {
+    function geoSearch($http, $q, configService, geoService, gapiService, $rootScope, events, $translate) {
         let provinceList; // list of provinces fulfilled by getProvinces
         let typeList; // list of types fulfilled by getTypes
         let manualExtent; // extent object if manual extent filtering is required
@@ -30,7 +30,8 @@
             getProvinces,
             getTypes,
             isEnabled,
-            zoomSearchExtent
+            zoomSearchExtent,
+            zoomScale
         };
 
         // configure geosearch
@@ -170,6 +171,13 @@
                             code: def.code,
                             name: def.term
                         }));
+
+                        // add types from geogratis service (NTS, FSA) and for scale and coordinates
+                        typeList.push({ code: 'NTS', name: $translate.instant('geosearch.type.nts') });
+                        typeList.push({ code: 'FSA', name: $translate.instant('geosearch.type.fsa') });
+                        typeList.push({ code: 'SCALE', name: $translate.instant('geosearch.type.scale') });
+                        typeList.push({ code: 'COORD', name: $translate.instant('geosearch.type.latlong') });
+
                         resolve(typeList);
                     }, reject);
                 }
@@ -210,8 +218,11 @@
             // delete any prior query terms
             delete queryParams.q;
 
-            return $q.all([preQuery(q), getProvinces(), getTypes()])
-                .then(() => $http.get(serviceUrls.geoNames, { params: queryParams }))
+            // get geogratis, provinces and types values
+            const pre = $q.all([preQuery(q), getProvinces(), getTypes()]);
+
+            // get geonames values
+            const query = pre.then(() => $http.get(serviceUrls.geoNames, { params: queryParams })
                 .then(result => postQuery(result.data.items.map(item => ({
                     name: item.name,
                     type: typeList.find(concise => concise.code === item.concise.code),
@@ -226,9 +237,22 @@
                 }))))
                 .then(res => res.length === 0 ?
                         $http.get(serviceUrls.geoSuggest + q)
-                            .then(s => ({ suggestions: s.data.suggestions })) :
+                            .then(s => ({ suggestions: s.data.suggestions, results: [] })) :
                         { results: res }
-                );
+                ));
+
+            // return value from geogratis and geonames services
+            return $q.all([pre, query]).then(([[preQueryResults], names]) => {
+
+                // check if there is values for NTS, FSA, Scale or coordinates nad filter them
+                let otherValues = preQueryResults.filter(item =>
+                    (typeof queryParams.concise === 'undefined' || (queryParams.concise === item.type.code)));
+
+                // if results are present, add the FSA, NTS, Scale or coordinates to the results.
+                names.results = otherValues.concat(names.results);
+
+                return names;
+            });
         }
 
         /**
@@ -264,31 +288,146 @@
             setQueryParam('bbox', extent);
 
             return $q((resolve, reject) => {
-                // define regex expressions for FSA, NTS, or lat/long inputs
-                const fsaReg = /^[A-Za-z]\d[A-Za-z]/;
-                const ntsReg = /^\d{1,3}[A-Z]\/\d{1,3}$/;
-                const latlngReg = /^-?\d{1,3}\.\d+,-?\d{1,3}\.\d+$/;
+                // define regex expressions for FSA, NTS, lat/long or scale inputs
+                // fot NTS http://www.nrcan.gc.ca/earth-sciences/geography/topographic-information/maps/9765
+                // for lat/long dd http://stackoverflow.com/questions/3518504/regular-expression-for-matching-latitude-longitude-coordinates
+                // for lat long dms http://stackoverflow.com/questions/19839728/regex-for-latitude-and-longitude-with-form-ddmmssx
+                // jscs:disable maximumLineLength
+                const fsaReg = /^[A-Za-z]\d[A-Za-z][*]$/; // look only for the first 3 characters because we do not have data for the whole postal code.
+                const ntsReg = /^\d{3}[a-pA-P](0[1-9]|1[0-6])*[*]$/;
+                const latlngRegDD = /^([-+]?([1-8]?\d(\.\d+)?|90(\.0+)?))([\s+|,|;])([-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?))[*]$/; // [-+] 0-90 [space , ;] [-+] 0-180 (lat/long)
+                const latlngRegDMS = /^[-+]?(?:[0-8]\d|90)\s(?:[0-5]\d)\s(?:[0-5]\d)[,|;][-+]?(?:\d{2}|1[0-7]\d|180)\s(?:[0-5]\d)\s(?:[0-5]\d)[*]$/; // [+-] 0-90 [space] 0-60 [space] 0-60 [, ;] [+-] 0-120 [space] 0-60 [space] 60 [space] (lat/long)
+                const scaleReg = /^[1][:]\d{1,3}[ ]*\d{1,3}[ ]*\d{1,3}[*]$/; // from 1:100 to 1:100 000 000
+                // jscs:enable maximumLineLength
 
                 // FSA or NTS - use geoService to find point information (in lat/long)
                 if ((fsaReg.test(q) && isEnabled('FSA')) || (ntsReg.test(q) && isEnabled('NTS'))) {
                     $http.get(serviceUrls.geoLocation + q).then(results => {
                         setLatLng(...results.data[0].geometry.coordinates.reverse());
-                        resolve();
+                        resolve(postQuery(results.data.map(item => parseData(item))));
                     }, reject);
 
                 // lat/long inputted as query, split lat/long string into individual components
-                } else if (latlngReg.test(q) && isEnabled('LAT/LNG')) {
-                    setLatLng(...q.split(','));
-                    resolve();
+                } else if ((latlngRegDD.test(q) || latlngRegDMS.test(q)) && isEnabled('LAT/LNG')) {
+                    // parse lat long to have it in decimal degree and formated like other element
+                    let coord;
+                    if (latlngRegDD.test(q)) {
+                        coord = parseLatLong(q.slice(0, -1), 'dd');
+                    } else {
+                        coord = parseLatLong(q.slice(0, -1), 'dms');
+                    }
+
+                    setLatLng(coord.position[1], coord.position[0]);
+                    resolve(postQuery([coord]));
 
                 // no lat/long information is needed (delete any existing from prior query)
                 } else {
                     delete queryParams.lat;
                     delete queryParams.lon;
                     queryParams.q = q;
-                    resolve();
+
+                    // if scale, use value to zoom to a specific scale
+                    if (scaleReg.test(q) && isEnabled('SCALE')) {
+                        resolve([{ name: q.slice(0, -1),
+                            type: { name: $translate.instant('geosearch.type.scale'), code: 'SCALE' } }]);
+                    } else {
+                        resolve([]);
+                    }
                 }
             });
+        }
+
+        /**
+         * Parse data from geogratis service for FSA and NTS so they are the same format as geoname service
+         *
+         * @function parseData
+         * @private
+         * @param   {Object}    item   the item to parse
+         * @return  {Object}    the parse item
+         */
+        function parseData(item) {
+            // FSA and NTS 250 000 have their coordinates in reverse order
+            // for canada it is easy to find because long is always minus and lat is always positive
+            // this service only works for canadian data so it is ok
+            const coord0 = parseFloat(item.geometry.coordinates[0]);
+            const coord1 = parseFloat(item.geometry.coordinates[1]);
+            const coordinates = (coord0 < coord1) ? [coord0, coord1] : [coord1, coord0]; // [long, lat]
+
+            // FSA doesn't have a bbox attribute, apply buffer to create bbox from point coordinates
+            const buff = 0.015; // degrees
+            const bbox = (typeof item.bbox !== 'undefined') ? item.bbox :
+                [coordinates[0] - buff, coordinates[1] - buff, coordinates[0] + buff, coordinates[1] + buff];
+
+            // get type from the last item of type string
+            const type = (typeof item.bbox !== 'undefined') ?
+                { name: $translate.instant('geosearch.type.nts'), code: 'NTS' } :
+                { name: $translate.instant('geosearch.type.fsa'), code: 'FSA' };
+
+            return {
+                name: item.title,
+                type: type,
+                location: {
+                    latitude: coordinates[1],
+                    longitude: coordinates[0],
+                },
+                bbox: bbox,
+                position: coordinates
+            };
+        }
+
+        /**
+         * Parse lat long coordinates so they are the same format as geoname service
+         *
+         * @function parseLatLong
+         * @private
+         * @param   {String}    coord   the lat long coordinates
+         * @param  {String}    type the type of coodinates (decimal degree - dd or degree minute second - dms)
+         * @return {Object}     the parse item
+         */
+        function parseLatLong(coord, type) {
+            // if decimal degree, split by one of the delimiters
+            // if degree, minute, second, convert to decimal degree
+            let coordinates = (type === 'dd') ? coord.split(/[\s|,|;|]/) : convertLatLongDms(coord);
+            coordinates = coordinates.map(item => parseFloat(item)).reverse(); // reverse, need to be long/lat
+
+            // apply buffer to create bbox from point coordinates
+            const buff = 0.015; // degrees
+            const bbox = [coordinates[0] - buff, coordinates[1] - buff, coordinates[0] + buff, coordinates[1] + buff];
+
+            return {
+                name: coord,
+                type: { name: $translate.instant('geosearch.type.latlong'), code: 'COORD' },
+                location: {
+                    latitude: coordinates[1],
+                    longitude: coordinates[0],
+                },
+                bbox: bbox,
+                position: coordinates
+            };
+        }
+
+        /**
+         * Convert lat long in degree minute second to decimal degree
+         *
+         * @function convertLatLongDMS
+         * @private
+         * @param   {String}    coord   the lat long coordinates ("latitude,longitude")
+         *                                  * "45,-100"
+         *                                  * "56.54535455;120.344342"
+         * @return {Array}     the lat long coordinate in decimal degree [lat, long]
+         */
+        function convertLatLongDms(coord) {
+            const latLong = coord.split(/[,|;]/);
+            const lat = latLong[0].split(' ').map(item => parseFloat(item));
+            const long = latLong[1].split(' ').map(item => parseFloat(item));
+            let latdd = Math.abs(lat[0]) + lat[1] / 60 + lat[2] / 3600; // unsigned
+            let longdd = Math.abs(long[0]) + long[1] / 60 + long[2] / 3600; // unsigned
+
+            // check if we need to reset sign
+            latdd = (lat[0] > 0) ? latdd : latdd * -1;
+            longdd = (long[0] > 0) ? longdd : longdd * -1;
+
+            return [latdd, longdd];
         }
 
         /**
@@ -302,8 +441,12 @@
         function postQuery(results) {
             if (typeof manualExtent !== 'undefined') {
                 const extent = manualExtent.split(',').map(parseFloat);
-                return results.filter(r => r.location.longitude >= extent[0] && r.location.longitude <= extent[2] &&
-                    r.location.latitude >= extent[1] && r.location.latitude <= extent[3]);
+
+                // compare extent so it will include item even if the centroide is not visible.
+                // for example, 250 000 NTS is huge but not visible even if the map extent is totally within bbox if
+                // centroide is not visible
+                return results.filter(r => !(r.bbox[0] > extent[2] || r.bbox[2] < extent[0] ||
+                                               r.bbox[3] < extent[1] || r.bbox[1] > extent[3]));
             }
 
             return results;
@@ -342,6 +485,18 @@
                 // show pin on the map
                 geoService.dropMapPin(projPt);
             });
+        }
+
+        /**
+         * Zoom to scale
+         *
+         * @function zoomScale
+         * @private
+         * @param   {String}    scale   the scale to zoom to
+         */
+        function zoomScale(scale) {
+            // remove space if scale is like 1 000 000 then use map to zoom to scale
+            geoService.mapObject.setScale(parseInt(scale.replace(/ /g, ''), 10));
         }
 
         /**
