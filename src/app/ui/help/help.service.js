@@ -24,7 +24,7 @@
 
     // TODO: this needs to be moved into a separate into ui/common folder
     function highlightFilter($sce) {
-        return (text, searchTerm, className = 'rv-help-highlight') => {
+        return (text = '', searchTerm = undefined, className = 'rv-help-highlight') => {
 
             if (searchTerm) {
                 // sanitizes a regex by removing all common RegExp identifiers
