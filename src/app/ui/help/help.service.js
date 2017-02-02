@@ -30,9 +30,11 @@
                 // sanitizes a regex by removing all common RegExp identifiers
                 searchTerm = searchTerm.replace(/[\\\^\$\*\+\?\.\(\)\|\{}\[\]]/g, '\\$&');
 
-                text = text.replace(
+                if (typeof text !== 'undefined') {
+                    text = text.replace(
                     new RegExp(`(${searchTerm})`, 'gi'),
                     `<span class="${className}">$1</span>`);
+                }
             }
 
             return $sce.trustAsHtml(text);

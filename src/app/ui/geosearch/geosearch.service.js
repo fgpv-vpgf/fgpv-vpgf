@@ -143,7 +143,12 @@
          * @param {Object} result a search result to zoom to
          */
         function zoomTo(result) {
-            geoSearch.zoomSearchExtent(result.bbox, result.position);
+            if (typeof result.bbox !== 'undefined') {
+                geoSearch.zoomSearchExtent(result.bbox, result.position);
+            } else {
+                // zoom to a scale
+                geoSearch.zoomScale(result.name.split(':')[1]);
+            }
         }
     }
 })();
