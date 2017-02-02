@@ -6,36 +6,36 @@ Language name (French),lang.fr,anglais,français
 Language name (native),lang.native,English,Français
 Appbar tooltip for layers icon,appbar.tooltip.layers,Layers,Couches
 Appbar headline for layers,appbar.headline.layers,Layers,Couches
-Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature Details,Détails de la fonctionnalité
+Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature Details,Détails sur l'entité
 Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,Menu
 Appbar tooltip for tools icon,appbar.tooltip.tools,Tools,Outils
 Appbar aria label for layers icon,appbar.aria.layers,Sets,Séries
-Appbar aria label for point info icon,appbar.aria.pointInfo,Feature Details,Détails de la fonctionnalité
-Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,Ouvrir menu de navigation
-Map overview aria label for toggle icon,geo.aria.overviewtoggle,Expand/Shrink map overview,Développer / Shrink aperçu de la carte
+Appbar aria label for point info icon,appbar.aria.pointInfo,Feature Details,Détails sur l'entité
+Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,Ouvrir le menu de navigation
+Map overview aria label for toggle icon,geo.aria.overviewtoggle,Expand/Shrink map overview,Agrandir/Minimiser l'aperçu de la carte
 Map aria label description,geo.aria.mapdescription,Interactive Map,Carte Interactive
 Appbar aria label for tools icon,appbar.aria.tools,Tools,Outils
 rv-truncate directive show more,rv-truncate.showMore,Show More,Montrer davantage
 rv-truncate directive show less,rv-truncate.showLess,Hide,Masquer
-Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,Zoom à l'élément
+Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,Zoom à l'entité
 Tooltip text for Details,filter.tooltip.description,Details,Détails
 Tooltip text for No Zoom Projection,filter.tooltip.nozoom,Data in custom projection. Cannot zoom to feature.,La donnée utilise une projection personnalisée. Le zoom à l'entité n'est pas supporté.
 DataTable text for Processing,filter.default.label.processing,Processing...,Traitement en cours...
 DataTable text for Search,filter.default.label.search,Search: ,"Rechercher : "
-DataTable text for Length Menu,filter.default.label.length.menu,Show _MENU_ entries,Afficher _MENU_ éléments
-DataTable text for Info,filter.default.label.info,Showing _START_ to _END_ of _TOTAL_ entries,Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments
-DataTable text for Empty,filter.default.label.zero,Showing 0 to 0 of 0 entries,Affichage de l'élément 0 à 0 sur 0 élément
-DataTable text for Filtered,filter.default.label.filtered,(filtered from _MAX_ total entries),(filtrés de _MAX_ éléments au total)
+DataTable text for Length Menu,filter.default.label.length.menu,Show _MENU_ entries,Afficher _MENU_ entités
+DataTable text for Info,filter.default.label.info,Showing _START_ to _END_ of _TOTAL_ entries,Affichage de l'entité _START_ à _END_ sur _TOTAL_ entités
+DataTable text for Empty,filter.default.label.zero,Showing 0 to 0 of 0 entries,Affichage de l'entité 0 à 0 sur 0 entité
+DataTable text for Filtered,filter.default.label.filtered,(filtered from _MAX_ total entries),(filtrés de _MAX_ entités au total)
 DataTable text for Postfix,filter.default.label.postfix,,
 DataTable text for Loading Records,filter.default.label.loadrec,Loading...,Chargement en cours...
-DataTable text for Zero records,filter.default.label.zerorecords,No matching records found,Aucun élément à afficher
+DataTable text for Zero records,filter.default.label.zerorecords,No matching records found,Aucun entité à afficher
 DataTable text for Empty table,filter.default.label.emptytable,No data available in table,Aucune donnée disponible dans le tableau
 DataTable text for First,filter.default.label.first,First,Premier
 DataTable text for Previous,filter.default.label.previous,Previous,Précédent
 DataTable text for Next,filter.default.label.next,Next,Suivant
 DataTable text for Last,filter.default.label.last,Last,Dernier
-DataTable text for Sort Ascending,filter.default.aria.sortasc,: activate to sort column ascending,: activer pour trier la colonne par ordre croissant
-DataTable text for Sort Descending,filter.default.aria.sortdsc,: activate to sort column descending,: activer pour trier la colonne par ordre décroissant
+DataTable text for Sort Ascending,filter.default.aria.sortasc,: activate to sort column ascending,: activer pour trier la colonne en ordre croissant
+DataTable text for Sort Descending,filter.default.aria.sortdsc,: activate to sort column descending,: activer pour trier la colonne en ordre décroissant
 DataTable text for thousands delimeter,filter.default.thousands.delim,","," "
 Details pane title,details.title,Feature Information,Information sur l'entité
 Details pane aria label for expand button,details.aria.expand,Expand,Agrandir
@@ -55,10 +55,10 @@ Filter pane menu label for Export,filter.menu.export,Export,Exporter
 Filter pane menu label for Filter by Extent,filter.menu.extent,Filter by Extent,Filtrer par étendue
 Basemap refresh required,basemap.refresh.req,Map refresh required,Actualiser la carte
 Basemap blank title,basemap.blank.title,blank map,Carte vide
-Basemap blank description,basemap.blank.desc,Remove base map,Retirer la carte de fond
+Basemap blank description,basemap.blank.desc,Remove base map,Retirer la carte de base
 Basemap projection title,basemap.projection.title,{{name}} Maps,Cartes {{name}}
-,basemap.select,Select basemap,Sélectionnez le fond de carte
-,basemap.showdescription,Show basemap description,Voir la carte de base description
+,basemap.select,Select basemap,Sélectionner la carte de base
+,basemap.showdescription,Show basemap description,Montrer la description de la carte de base
 ,basemap.hidedescription,Hide basemap description,Masquer la description de la carte de base
 WKIDs to name 3978 -> lambert,wkids.3978,Lambert,Lambert
 WKIDs to name 102100 -> Mercator,wkids.102100,Mercator,Mercator
@@ -71,14 +71,14 @@ Map Navigation geolocation label,nav.label.geoLocation,Your Location,Votre posit
 Map Navigation search label,nav.label.search,Search,Recherche
 Map Navigation home label,nav.label.home,Canada,Canada
 Map Navigation history label,nav.label.history,History,Historique
-Map Navigation basemap label,nav.label.basemap,Basemap,Fond de carte
+Map Navigation basemap label,nav.label.basemap,Basemap,Carte de base
 Map Navigation zoom in tooltip,nav.tooltip.zoomIn,Zoom in,Zoom avant
 Map Navigation zoom out tooltip,nav.tooltip.zoomOut,Zoom out,Zoom arrière
 Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your Location,Votre position
 Map Navigation search tooltip,nav.tooltip.search,Search,Recherche
 Map Navigation home tooltip,nav.tooltip.home,Canada,Canada
 Map Navigation history tooltip,nav.tooltip.history,History,Historique
-Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,Fond de carte
+Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,Carte de base
 Metadata pane title,metadata.title,Metadata,Métadonnées
 Metadata pane expand,metadata.expand.tooltip,Expand Metadata,Agrandir métadonnées
 Hovertip loading text,maptip.hover.label.loading,Loading...,Chargement en cours...
@@ -103,14 +103,14 @@ Bookmark link click to copy hint,sidenav.label.clicktocopy,Click to copy,Cliquez
 Bookmark link copy hint,sidenav.label.copy,Press Ctrl+C to copy,Appuyez sur Ctrl+C pour copier
 Side Navigation help,sidenav.label.help,Help,Aide
 Side Navigation touch mode,sidenav.label.touch,Touch Mode,Mode Tactile
-Side Navigation language,sidenav.label.language,Language,Langage
+Side Navigation language,sidenav.label.language,Language,Langue
 Table of Content Unnamed service,toc.layer.unnamed,Unnamed Service #{{count}},Service sans nom #{{count}}
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,Menu du panneau des données ouvertes
 Table of Content show symbology label,toc.layer.label.symbologyShow,Expand legend,Développer la légende
 Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide legend,Masquer la légende
 Table of Content main title,toc.title,Layer Selector,Sélecteur de couche
-Table of Content toggle group visibility label,toc.label.toggleGroupViz,Toggle group visibility,Masquer groupe de visibilité
-Table of Content toggle group visibility tootlip,toc.tooltip.toggleGroupViz,Toggle group visibility,Masquer groupe de visibilité
+Table of Content toggle group visibility label,toc.label.toggleGroupViz,Toggle group visibility,Masquer le groupe de visibilité
+Table of Content toggle group visibility tootlip,toc.tooltip.toggleGroupViz,Toggle group visibility,Masquer le groupe de visibilité
 Table of Content extra menu items label,toc.label.extraMenu,Extra,Extra
 Table of Content extra menu items tootlip,toc.tooltip.extraMenu,Extra,Extra
 Table of Content metadata label,toc.label.metadata,Metadata,Métadonnées
@@ -146,17 +146,17 @@ Table of Content tile layer flag tootlip,toc.tooltip.flag.tile,ESRI Tile Layer,C
 Table of Content image layer flag label,toc.label.flag.image,ESRI Image Layer,Couche d'images d'ESRI
 Table of Content image layer flag tootlip,toc.tooltip.flag.image,ESRI Image Layer,Couche d'images d'ESRI
 Table of Content scale flag label,toc.label.flag.scale,Toggle scale,Basculer l'échelle
-Table of Content scale flag tootlip,toc.tooltip.flag.scale,Layer out of scale,Couche hors de portée
+Table of Content scale flag tootlip,toc.tooltip.flag.scale,Layer out of scale,Couche hors portée
 Table of Content data table flag label,toc.label.flag.data.table,Layer has viewable data,Données disponibles pour la visualisation associées à cette couche
 Table of Content data table flag tootlip,toc.tooltip.flag.data.table,Layer has viewable data,Données disponibles pour la visualisation associées à cette couche
 Table of Content data filter flag label,toc.label.flag.data.filter,Layer data is filtered,Couche de données filtrée
 Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer data is filtered,Couche de données filtrée
-Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,Couche sera exclue de la carte - cliquez sur les résultats
-Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,Couche sera exclue de la carte - cliquez sur les résultats
+Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,La couche sera exclue de la carte - cliquer sur les résultats
+Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,La couche sera exclue de la carte - cliquer sur les résultats
 Table of Content user flag label,toc.label.flag.user,Layer added by user,Couche ajoutée par l'utilisateur
-Table of Content filter by extent flag label,toc.label.flag.filter,Map data is filtered by your current extent,Les données des cartes est filtré par votre étendue actuelle
+Table of Content filter by extent flag label,toc.label.flag.filter,Map data is filtered by your current extent,Les données sont filtrées selon l'étendue actuelle
 Table of Content user flag tootlip,toc.tooltip.flag.user,Layer added by user,Couche ajoutée par l'utilisateur
-Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Map data is filtered by your current extent,Les données des cartes est filtré par votre étendue actuelle
+Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Map data is filtered by your current extent,Les données sont filtrées selon l'étendue actuelle
 Table of Content error state label,toc.label.state.error,Error,Erreur
 Table of Content error state tootlip,toc.tooltip.state.error,Error,Erreur
 Table of Content loading state label,toc.label.state.loading,Updating,Mise à jour
@@ -168,7 +168,7 @@ Table of Content open datatable label,toc.label.dataTable,Datatable,Datatable
 Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
 Table of Content keyboard reoder tooltip,toc.tooltip.reorder,Reorder,Réorganiser
 ,toc.menu.visibility.title,Toggle Visibility,Basculer la visibilité
-,toc.menu.visibility.allon,Show All,Montre tout
+,toc.menu.visibility.allon,Show All,Montrer tout
 ,toc.menu.visibility.alloff,Hide All,Cacher tout
 ,toc.menu.expand.title,Toggle Groups,Basculer les groupes
 ,toc.menu.expand.allon,Expand Groups,Élargir les groupes
@@ -185,15 +185,15 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.download,Download,Télécharger
 ,export.undo,Undo,Annuler
 ,export.title,Enter Title,Titre
-,export.error.timeout,"Connection timed out. Stopping export task.","Connexion a expiré. Tâche d’exportation arrêt."
-,export.error.tainted,"We can't save the export image directly (same-origin policy exception). You can right click the image and select ""Save As..."" if supported by your browser.","Nous ne pouvons pas enregistrer l’image directement (exception de politique de même origine). Vous pouvez cliquez sur le bouton droit de la souris sur l’image et sélectionnez « Enregistrer sous... » si cela est pris en charge par votre navigateur."
-,export.error.somethingelseiswrong,"Ouch. Something went wrong. We cannot save the export image.","Aïe. Quelque chose n’allait pas. Nous ne pouvons pas enregistrer l’image de l’exportation."
+,export.error.timeout,"Connection timed out. Stopping export task.","Connexion expirée. Processus d’exportation arrêté."
+,export.error.tainted,"We can't save the export image directly (same-origin policy exception). You can right click the image and select ""Save As..."" if supported by your browser.","Nous ne pouvons enregistrer l’image directement (exception liée à la politique de même origine). Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer sous... » si votre navigateur le permet."
+,export.error.somethingelseiswrong,"Ouch. Something went wrong. We cannot save the export image.","Aïe. Une erreur s'est produite. Nous ne pouvons enregistrer l’image créer par l'outil d'exportation."
 ,export.error.minwidth, Too small. {{min}} px minimum., Trop petit. {{min}} px minimum.
 ,export.error.minheight, Too small. {{min}} px minimum., Trop petit. {{min}} px minimum.
 ,export.error.maxwidth, Too large. {{max}} px maximum., Trop grand. {{max}} px maximum.
 ,export.error.maxheight, Too large. {{max}} px maximum., Trop grand. {{max}} px maximum.
-,export.error.safari,"We can't save the export image directly in Safari. You can right click the image and select ""Save Page As..."".","Nous ne pouvons pas enregistrer l’image directement dans Safari. Vous pouvez cliquez sur le bouton droit de la souris sur l’image et sélectionnez « Enregistrer la page sous... »."
-,export.retry,Retry,Réessayez
+,export.error.safari,"We can't save the export image directly in Safari. You can right click the image and select ""Save Page As..."".","Nous ne pouvons enregistrer l’image directement à l'aide de Safari. Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer la page sous... »."
+,export.retry,Retry,Réessayer
 ,export.size.customwidth, Width (pixels), Largeur (pixels)
 ,export.size.customheight, Height (pixels), Hauteur (pixels)
 ,export.generate, generate, générer
@@ -201,17 +201,17 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,export.component.title, Title, Titre
 ,export.component.map, Map, Carte
 ,export.component.legend, Legend, Légende
-,export.component.scale, Scalebar, Barre d'échele
-,export.component.mapelements, North arrow and scalebar, Flèche du nord et Barre d'échele
+,export.component.scale, Scalebar, Échelle graphique
+,export.component.mapelements, North arrow and scalebar, Flèche du nord et échelle graphique
 ,export.component.footnote, Footnote, Référence
-,export.component.timestamp, Timestamp, Timestamp
+,export.component.timestamp, Timestamp, Estampille temporelle
 ,export.label.approx,approx.,approx.
 ,export.size.default, Default, Par défaut
 ,export.size.small, Small, Petit
 ,export.size.medium, Medium, Médium
 ,export.size.custom, Custom size, Format personnalisé
 ,export.custom.note1,Custom sizes apply to the map image - the actual exported image size will vary based on the export options selected.,Les tailles personnalisées s'appliquent à l'image cartographique - la taille réelle de l'image exportée varie en fonction des options d'exportation sélectionnées.
-,export.custom.note2,You must first click on the Generate button below to create your custom size before downloading is enabled.,Vous devez d'abord cliquer sur le bouton Générer ci-dessous pour créer votre taille personnalisée avant que le téléchargement ne soit activé.
+,export.custom.note2,You must first click on the Generate button below to create your custom size before downloading is enabled.,Vous devez d'abord cliquer sur le bouton Générer ci-dessous pour créer votre taille personnalisée avant d'activer le téléchargement.
 ,import.title,Add Layer,Ajouter une couche
 ,import.file.title,Import File,Importer un fichier
 ,import.file.upload.title,Upload data,Charger des données
@@ -231,9 +231,9 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.file.configure.latitudefield,Latitude Field,Champ latitude
 ,import.file.configure.longitudefield,Longitude Field,Champ longitude
 ,import.file.configure.colourfield,Colour,Couleur
-,import.file.configure.invalid,ERROR: Invalid File,ERREUR: Le fichier est invalid
+,import.file.configure.invalid,ERROR: Invalid File,ERREUR: Le fichier est invalide
 ,import.file.type.csv,CSV,CSV
-,import.file.type.shapefile,Shapefile,Shapefile
+,import.file.type.shapefile,zipped Shapefile,Shapefile zippé
 ,import.file.type.geojson,GeoJSON,GeoJSON
 ,import.service.title,Import Service,Importer un service
 ,import.service.connect.title,Connect service,Connecter le service
@@ -242,7 +242,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.service.connect.broken,Service does not respond,Le service ne répond pas
 ,import.service.select.title,Select Service type,Sélectionner le type de service
 ,import.service.select.servicetype,Service Type,Type de service
-,import.service.select.wrong,Service can not be imported using this type,Service ne peut pas être importé en utilisant ce type
+,import.service.select.wrong,Service can not be imported using this type,Le service ne peut être importé en utilisant ce type
 ,import.service.type.featurelayer,ESRI Feature Layer,Couche d'entités d'ESRI
 ,import.service.type.dynamicservice,ESRI Dynamic Layer,Couche dynamique d'ESRI
 ,import.service.type.imageservice,ESRI Image Layer,Couche d'images d'ESRI
@@ -255,7 +255,7 @@ Geometry types,geometry.type.esriGeometryPolyline, line|lines, ligne|lignes
 ,import.service.configure.layers,Layers,Couches
 ,import.service.configure.multipleselection,You can select several layers,Vous pouvez sélectionner plusieurs couches
 ,stepper.continue,Continue,Continuer
-,stepper.unresponsive,The application may feel unresponsive for a short time upon clicking the Continue button. This is normal while data is being processed.,L'application peut ne pas répondre pendant un court laps de temps après avoir cliqué sur le bouton Continuer. Cela est normal pendant le traitement des données.
+,stepper.unresponsive,The application may feel unresponsive for a short time upon clicking the Continue button. This is normal while data is being processed.,L'application peut ne pas répondre pendant un court laps de temps après avoir cliqué sur le bouton Continuer. Cette situation est normale pendant le traitement des données.
 ,stepper.cancel,Cancel,Annuler
 ,config.service.rcs.error,"Layers could not be retrieved from the server, refresh to try again","Échec du SCR (RCS), démarrage de l'application avec un fichier de configuration"
 ,config.service.rcs.action,DISMISS,ANNULER
@@ -270,28 +270,30 @@ Usage:<br>
 Click and drag to move the map in a particular direction.<br>
 <br>
 * Zoom In/Out: Click 'Zoom In/Out' to change the map extent<br>
-* Canada: Click 'Canada' to view map at its full extent","Les contrôles de navigation servent à modifier la taille de l’affichage de la carte.<br>
+* Canada: Click 'Canada' to view map at its full extent","
+Les contrôles de navigation servent à modifier la taille de l’affichage de la carte.<br>
 <br>
 Utilisation :<br>
-Cliquez et faites glisser pour déplacer la carte dans une direction particulière.<br>
+Cliquez et faites glisser pour déplacer la carte dans la direction désirée.<br>
 <br>
 * Zoom avant/arrière : Cliquez sur 'Zoom avant' ou sur 'Zoom arrière' pour modifier la taille de l’affichage de la carte<br>
 * Canada : Cliquez sur 'Canada' pour afficher la carte en entier"
-,help.basemaps.header,Basemaps,Fonds de carte
+,help.basemaps.header,Basemaps,Cartes de base
 ,help.basemaps.info,"The Basemap selector is used to modify the underlying basemap to provide a variety of geographical contexts.<br>
 <br>
 Usage: <br>
-* Basemap: Click 'Basemap'. From the slideout menu, select the basemap of your choice and the map display will update. Click 'Basemap' again to close the slideout menu.","Utilisez le sélecteur de fonds de carte pour remplacer le fond de carte et afficher divers contextes géographiques.<br>
+* Basemap: Click 'Basemap'. From the slideout menu, select the basemap of your choice and the map display will update. Click 'Basemap' again to close the slideout menu.","
+Utilisez le sélecteur de cartes de base pour remplacer la carte de base et afficher divers contextes géographiques.<br>
 <br>
 Utilisation : <br>
-* Fonds de carte : Cliquez sur 'Fonds de carte'. Dans le menu déroulant,  sélectionnez le fond de carte désiré et la carte sera actualisée en conséquence. Cliquez sur 'Fonds de carte' à nouveau pour fermer le menu déroulant."
+* Cartes de base : Cliquez sur 'Cartes de base'. Dans le menu déroulant, sélectionnez la carte de base désirée et la carte sera actualisée en conséquence. Cliquez sur 'Cartes de base' à nouveau pour fermer le menu déroulant."
 ,help.overviewMap.header,Overview Map,Carte d'aperçu
 ,help.overviewMap.info,"The Overview map displays a generalised view of the main map at a smaller scale.<br>
 <br>
 Usage:<br>
 Drag to change the map extent of the main map.
-
-* Hide/Show: Click 'Hide/Show' to close or open the overview map window","La 'Carte d'aperçu' affiche une vue générale de la carte principale à plus petite échelle.<br>
+* Hide/Show: Click 'Hide/Show' to close or open the overview map window","
+La 'Carte d'aperçu' affiche une vue générale de la carte principale à plus petite échelle.<br>
 <br>
 Utilisation :<br>
 Cliquez et faites glisser pour changer l'étendue de la carte principale.
@@ -300,7 +302,8 @@ Cliquez et faites glisser pour changer l'étendue de la carte principale.
 ,help.mainMenu.info,"The main menu displays general usage options.<br>
 <br>
 Usage:<br>
-* Menu: Click 'Menu' to display the slideout menu. Click anywhere outside the slideout menu to close it. ","Le menu principal affiche les options générales d'utilisation.<br>
+* Menu: Click 'Menu' to display the slideout menu. Click anywhere outside the slideout menu to close it. ","
+Le menu principal affiche les options générales d'utilisation.<br>
 <br>
 Utilisation :<br>
 * Menu : Cliquez sur 'Menu' pour afficher le menu déroulant. Cliquez en dehors du menu déroulant pour le fermer"
@@ -309,23 +312,26 @@ Utilisation :<br>
 <br>
 Usage:<br>
 FULL SCREEN: Click the FULL SCREEN option in the Menu slideout to make the map content use the entire page. Click the FULL SCREEN option again to restore to default view.","
-Le plein écran présente le contenu de la carte en utilisant la page entière. L'option Plein écran n'est disponible que lorsque la carte est intégrée à une autre page.
+L'option plein écran permet de présenter le contenu de la carte en utilisant l'entièreté de la page. L'option Plein écran n'est disponible que lorsque la carte est intégrée à une autre page.
 <br>
 Utilisation: <br>
-ÉCRAN PLEIN: Cliquez sur l'option ÉCRAN PLEIN dans le menu déroulant Menu pour que le contenu de la carte utilise toute la page. Cliquez à nouveau sur l'option PLEIN ECRAN pour restaurer la vue par défaut."
+PLEIN ÉCRAN: Cliquez sur l'option PLEIN ÉCRAN dans le menu déroulant Menu pour que le contenu de la carte couvre toute la page. Cliquez à nouveau sur l'option PLEIN ECRAN pour restaurer la vue par défaut."
 ,help.share.header,Share,Partager
 ,help.share.info,"Share is used to generate a shareable URL of the current map state with selected datasets.<br>
 <br>
 Usage:<br>
-Share: Click the Share option [add missing function and help text]","L'option OBTENIR LE LIEN est utilisée pour générer une URL partageable de l'état actuel de la carte avec les ensembles de données sélectionnés.<br>
+SHARE: Click the Share option [add missing function and help text]","
+L'option Partager est utilisée pour générer une adresse URL (courte ou longue) partageable de l'état actuel de la carte avec les ensembles de données sélectionnés.<br>
 <br>
 Utilisation:<br>
-Cliquer sur l'option 'Partager' [add missing function and fr help text]"
+PARTAGER: Cliquez sur l'option PLEIN ÉCRAN dans le menu déroulant Menu pour faire apparaître la boîte de dialogue Lien de partage. Appuyer sur Ctrl+C pour copier le lien se situant dans la boîte de texte.<br>
+Appuyer sur le bouton à bascule afin d'obtenir une adresse URL courte."
 ,help.help.header,Help,Aide
 ,help.help.info,"Help is used to display this help text.<br>
 <br>
 Usage:<br>
-HELP: Click the HELP option to open a windows and view this help text","L'option 'Aide' affiche affiche cette fenêtre d'aide.<br>
+HELP: Click the HELP option to open a windows and view this help text","
+L'option 'Aide' affiche affiche cette fenêtre d'aide.<br>
 <br>
 Utilisation:<br>
 'Aide' : Cliquez sur l'option 'Aide' pour afficher une fenêtre et voir ce texte d'aide"
@@ -335,18 +341,21 @@ Utilisation:<br>
 - Dynamic layers represent interactive data on the map that cannot be cached, but have to be fetched from the server each time the map is changed. They can be a collection of feature layers and can be viewed in the data table panel.<br>
 - Image Service layers displays imagery and other types of raster data provided by an ArcGIS Server Image Service. They are not interactive and do not show in the data table panel.<br>
 - Tile layers displays map content from an ArcGIS Server Map service that has been cached (tiled). A cached map service contains pre-generated map tiles. They are not interactive and do not show in the data table panel.<br>
-- WMS layers provide an overlay of data from a Web Map Service. They can support a click interaction on the map, but do not show in the data table panel.","Le menu déroulant 'Couches' sert de légende pour la carte et répertorie les couches disponibles pour afficher sur la carte. Les couches d'entités s'affichent également dans le panneau 'Tableau de données'. Il existe trois types de couches qui peuvent être affichées dans le menu déroulant 'Légende' : <br>
+- WMS layers provide an overlay of data from a Web Map Service. They can support a click interaction on the map, but do not show in the data table panel.","
+Le menu déroulant 'Couches' sert de légende pour la carte et répertorie les couches disponibles à afficher sur la carte. Les couches d'entités s'affichent également dans le panneau 'Tableau de données'. Il existe trois types de couches qui peuvent être affichées dans le menu déroulant 'Légende' : <br>
 - Les couches d'entités représentent des données avec lesquelles la carte peut interagir et qui peuvent être affichées dans le panneau 'Tableau de données'.<br>
 - Les couches dynamiques représentent des données interactives sur la carte qui ne peuvent être entreposées dans la mémoire cache. Celles-ci sont récupérées du serveur à chaque mise à jour de la carte. Elles peuvent représenter une collection de couches d'entités visualisables dans le panneau 'Tableau de données'.<br>
 - Les couches d'images permettent d'afficher de l'imagerie ainsi que divers types de données au format matriciel disponibles à travers un service d'imagerie d'ESRI. Elles ne sont pas interactives et leurs données ne peuvent être visualisées à l'aide du panneau 'Tableau de données'.<br>
 - Les couches de tuiles affichent du contenu cartographique, prédécoupé en tuiles, provenant d'un service de carte Web d'ESRI. Elles ne sont pas interactives et leurs données ne peuvent être visualisées à l'aide du panneau 'Tableau de données'.<br>
-- Les couches SCW fournissent une superposition de données fournies d'un service de carte Web. Ces données sont interactives sur la carte, mais ne peuvent apparaître dans le panneau 'Tableau de données'."
+- Les couches WMS fournissent une superposition de données fournies d'un service de carte Web. Ces données sont interactives sur la carte, mais ne peuvent apparaître dans le panneau 'Tableau de données'."
 ,help.layerVisibility.header,Layer Visibility,Visibilité de la couche
 ,help.layerVisibility.info,"* Hide/Show: Select the ""eye"" icon next to a dataset or group name to toggle the layer display on or off on the map.",* Masquer/Afficher : Sélectionnez l’icône en forme d’œil près du nom de l’ensemble de données pour masquer ou afficher la couche sur la carte.
 ,help.layerLegends.header,Layer Legends,Légende des couches
-,help.layerLegends.info,"Each layer has some symbology associated with it. For simple feature layers a single icon will be present next to the layer name. For complex feature layers (i.e. those with multiple symbols used per layer) the icon will show as a stack and maybe toggled on and off. When toggled on a section will expand beneath the layer name and show the full symbology for the layer. WMS layers may optionally have a graphical legend defined, if one is present it will be displayed in the same drop down manner.","Une certaine symbologie est associée à chaque couche. Pour des couches d'entités (feature layer) simples, une seule icône sera présente à côté du nom de la couche. Pour les couches de d'entités complexes (c.-à-d. celles où de multiples symboles sont utilisés par couche) l’icône apparaîtra comme une pile qui peut être activée ou désactivée. Lorsqu'activée, une section s'étendra sous la couche et affichera la symbologie correspondante. Les couches SCW peuvent optionnellement possèder une légende graphique qui sera, de la même manière, affichée sous la couche associée."
-,help.handlingLayerErrors.header,Handling Layer Errors,Traitement des erreurs de couche
-,help.handlingLayerErrors.info,"If a layer fails to load correctly it will be identified by an error notice. Instead of the standard layer actions you can select to either reload the layer (this is particularly helpful if there is a temporary network connectivity issue) or remove the layer. If a layer is removed it will be taken out of the layer selector completely and if it is added back via ""Undo"" or ""Add Dataset"" it will lose any previous customizations.","Si la couche ne se charge pas correctement, un avis d’erreur s'affichera. Au lieu des mesures standards liées à la couche, on peut choisir de recharger la couche (ce qui est particulièrement utile en cas de problème temporaire de connexion au réseau) ou de retirer la couche. Si une couche est retirée, elle sera retirée de la légende via « Annuler ». Si elle est rajoutée via « Ajouter une couche » elle perdra toutes les personnalisations précédentes."
+,help.layerLegends.info,"Each layer has some symbology associated with it. For simple feature layers a single icon will be present next to the layer name. For complex feature layers (i.e. those with multiple symbols used per layer) the icon will show as a stack and maybe toggled on and off. When toggled on a section will expand beneath the layer name and show the full symbology for the layer. WMS layers may optionally have a graphical legend defined, if one is present it will be displayed in the same drop down manner.","
+Une certaine symbologie est associée à chaque couche. Pour des couches d'entités (feature layer) simples, une seule icône sera présente à côté du nom de la couche. Pour les couches de d'entités complexes (c.-à-d. celles où de multiples symboles sont utilisés par couche) l’icône apparaîtra comme une pile qui peut être activée ou désactivée. Lorsqu'activée, une section s'étendra sous la couche et affichera la symbologie correspondante. Les couches SCW (WMS) peuvent optionnellement possèder une légende graphique qui sera, de la même manière, affichée sous la couche associée."
+,help.handlingLayerErrors.header,Handling Layer Errors,Prise en charge des erreurs liées à la couche couche
+,help.handlingLayerErrors.info,"If a layer fails to load correctly it will be identified by an error notice. Instead of the standard layer actions you can select to either reload the layer (this is particularly helpful if there is a temporary network connectivity issue) or remove the layer. If a layer is removed it will be taken out of the layer selector completely and if it is added back via ""Undo"" or ""Add Dataset"" it will lose any previous customizations.","
+Si la couche ne se charge pas correctement, un avis d’erreur s'affichera. Au lieu des mesures standards liées à la couche, on peut choisir de recharger la couche (ce qui est particulièrement utile en cas de problème temporaire de connexion au réseau) ou de retirer la couche. Si une couche est retirée, elle sera retirée de la légende via « Annuler ». Si elle est rajoutée via « Ajouter une couche » elle perdra toutes les personnalisations précédentes."
 ,help.geolocation.header,Geolocation,Géolocalisation
 ,help.geolocation.info,"Click to zoom to the current geographical location of the user.","Cliquez pour zoomer à la position actuelle de l'utilisateur."
 ,help.layerSettings.header,Layer Settings,Paramètres de couches
@@ -372,41 +381,43 @@ In the additional options, if it is available for that layer, select the ""Metad
 - Reloads the layer <br>
 <br>
 'Remove'<br>
-- Remove the layer from the map and legend.","Survolez le nom d'un calque et cliquez sur le lien "" trois points "" pour accéder aux options supplémentaires du calque. <br>
-
+- Remove the layer from the map and legend.","
+Survolez le nom d'une couche et cliquez sur le lien "" trois points "" pour accéder aux options supplémentaires de celle-ci. <br>
 'Métadonnées' <br>
-Dans les options supplémentaires, s'il est disponible pour ce calque, sélectionnez le lien "" Métadonnées "" pour afficher les métadonnées pertinentes pour cette source dans un panneau slideout. <br>
+Dans les options supplémentaires, sélectionnez le lien "" Métadonnées "", s'il est disponible pour la couche choisie, afin d'afficher dans un panneau coulissant les métadonnées pertinentes. <br>
 <br>
 'Paramètres' <br>
-- L'opacité de la couche peut être ajustée à l'aide du contrôle du curseur Opacité.
-- Si le calque a une zone de délimitation, sa visibilité peut être basculée à l'aide de la touche Bounding Box. <br>
+- L'opacité de la couche peut être ajustée à l'aide du contrôle à curseur Opacité.
+- Si la couche a une zone de délimitation, sa visibilité peut être activée à l'aide du bouton à bascule Zone de délimitation. <br>
 <br>
-'Datatable' <br>
-- Sélectionnez cette option pour afficher ces données de calques sous forme de tableau.
+'Table de données' <br>
+- Sélectionnez cette option pour afficher les données d'une couche sous forme de tableau.
 <br>
 'Afficher la légende' <br>
-- Agrandit / réduit la pile d'images de légende <br>
+- Agrandit / réduit la pile d'images de la légende <br>
 <br>
-'Zoom sur la couche limite' <br>
-- Pans et zoomer la carte afin que la limite de couche est en vue.<br>
+'Zoomer à la limite' <br>
+- Déplace et zoome la carte afin que la limite de la couche soit en vue.<br>
 <br>
 'Recharger' <br>
-- Recharge le calque <br>
+- Recharge la couche <br>
 <br>
-'Supprimer' <br>
-- Retirez le calque de la carte et de la légende."
+'Retirer' <br>
+- Retire la couche de la carte et de la légende."
 ,help.export.header,Export Image,Exporter l'image
 ,help.export.info,"You can export an image of the map and its visible layers along with; a legend, title, north arrow with scalebar, custom footnote, and a timestamp.<br><br>
 Select the 'EXPORT' button from the left side menu to get started. A dialog will appear with an image of the map, and an option to enter a map title if desired.<br><br>
 If you'd like to add or remove sections of the exported image such as a legend, click on the options cogwheel in the header. There you'll be able to select/deselect the sections to appear in the exported image.<br><br>
 If you'd like to change the map canvas size you can do so from the dropdown in the header. Select from default to a preset small/medium size, or specify your own size by choosing the 'custom size' option. Note that sizes only affect the map image, the actual exported image may be larger.<br><br>
-Click on the download button in the header to get the final generated map image.","Vous pouvez exporter une image de la carte et ses couches visibles avec; Une légende, un titre, une flèche du nord avec une barre d'échelle, une note de bas de page personnalisée et un horodatage.
-Sélectionnez le bouton 'EXPORT' dans le menu de gauche pour commencer. Une boîte de dialogue s'affiche avec une image de la carte et une option pour saisir un titre de carte si vous le souhaitez.
-Si vous souhaitez ajouter ou supprimer des sections de l'image exportée telle qu'une légende, cliquez sur les options de la roue dentée dans l'en-tête. Vous pourrez ainsi sélectionner / désélectionner les sections à afficher dans l'image exportée. <br> <br>
-Si vous souhaitez modifier la taille de la toile de carte, vous pouvez le faire à partir de la liste déroulante dans l'en-tête. Sélectionnez une valeur par défaut sur une petite / moyenne taille prédéfinie ou spécifiez votre propre taille en choisissant l'option 'taille personnalisée'. Notez que les tailles affectent uniquement l'image de la carte, l'image exportée réelle peut être plus grande.
+Click on the download button in the header to get the final generated map image.","
+Vous pouvez exporter une image de la carte et de ses couches visibles avec; Une légende, un titre, une flèche du nord avec une échelle graphique, une note de bas de page personnalisée et une estampille temporelle.
+Sélectionnez le bouton 'EXPORTER' dans le menu de gauche pour faire apparaître une boîte de dialogue contenant une image de la carte ainsi qu'une zone d'édition vous permettant de saisir un titre si vous le souhaitez.
+Si vous désirez ajouter ou supprimer des sections de l'image exportée telle que la légende, cliquez sur les options de la roue dentée dans l'en-tête. Vous pourrez ainsi sélectionner / désélectionner les sections à afficher dans l'image exportée. <br> <br>
+Pour modifier la taille du canvas de la carte, vous pouvez le faire à partir de la liste déroulante située dans l'en-tête. Sélectionnez une valeur prédéfinie (Par défaut/Petit/Médium) ou spécifiez votre propre taille en choisissant l'option 'taille personnalisée'. Notez que les tailles affectent uniquement l'image de la carte, l'image exportée réelle peut être plus grande.
 Cliquez sur le bouton de téléchargement dans l'en-tête pour obtenir l'image de carte générée finale."
 ,help.zoomScale.header,Zoom Scale Dependent Layers,Couches dépendantes de la valeur de l’échelle
-,help.zoomScale.info,Some layers may only be visible at certain zoom levels. If a layer is not visible at a given zoom level the legend will display a notice and have an action available to zoom to the closest zoom level at which the layer will be visible (this may involve either zooming in or zooming out).,"Certaines couches peuvent être visibles uniquement à certains niveaux de zoom. Si une couche n’est pas visible à un niveau de zoom donné, la légende affichera un avis et offrira une action afin d’établir une valeur de zoom à laquelle la couche sera visible (cela peut impliquer de faire soit un zoom avant ou un zoom arrière)."
+,help.zoomScale.info,"Some layers may only be visible at certain zoom levels. If a layer is not visible at a given zoom level the legend will display a notice and have an action available to zoom to the closest zoom level at which the layer will be visible (this may involve either zooming in or zooming out).","
+Certaines couches peuvent être visibles uniquement à certains niveaux de zoom. Si une couche n’est pas visible à un niveau de zoom donné, la légende affichera un avis et offrira une action afin d’établir une valeur de zoom à laquelle la couche sera visible (cela peut impliquer de faire soit un zoom avant ou un zoom arrière)."
 ,help.addLayers.header,Add Layers,Ajouter une couche
 ,help.addLayers.info,"Additional layers can be added to the map viewer. Supported formats include: ESRI Feature Layer, ESRI Dynamic Layer, ESRI Tile Layer, ESRI Image Layer, OGC Web Map Service, or a Raster Layer. The '+' button at the top of the Legend menu will launch the Add Layers menu.<br><br>
 Usage: <br>
@@ -420,23 +431,25 @@ Usage: <br>
 - A Feature Service allows the choice of a Primary Attribute, which determines the attribute used to identify a feature in the data table panel and map tips. All other information is derived from the service's metadata.<br>
 - A WMS Service allows the choice of the Layer Name, which determines the layer in the WMS to be used as the source for the dataset. All other information is derived from the service's metadata.<br>
 - File based datasets allow the choice of the following: a Dataset Name, which will be displayed in the Layer Selector; a Primary Attribute, which acts the same as in the Feature Service; a Symbol Colour, which determines the colour of the points / lines / polygons on the map. CSV files also allow the specification of the columns that contain the Latitude and Longitude values, used to derive the point location on the map.<br>
-- Click the 'Continue' button to insert the layer into the map and closes the Add Layer menu.","Des couches supplémentaires peuvent être ajoutées à la visionneuse de carte. Les formats pris en charge sont les suivants: ESRI Feature Layer, couche ESRI Dynamic Layer, ESRI Tile Layer, couche d'image ESRI, OGC Web Map Service ou couche Raster. Le bouton '+' en haut du menu Légende lance le menu Ajouter des calques. <br> <br>
+- Click the 'Continue' button to insert the layer into the map and closes the Add Layer menu.","
+Des couches supplémentaires peuvent être ajoutées à la visionneuse de carte. Les formats pris en charge sont les suivants: couche d'entités d'ESRI, couche dynamique d'ESRI, couche de tuiles d'ESRI, couche d'images d'ESRI, couche WMS de l'OGC ou couche Raster. Le bouton '+' en haut du menu Légende lance le menu «Ajouter une couche». <br> <br>
 Utilisation: <br>
-- Sélectionnez l'option 'Importer un fichier' ou 'Importer un service'. <br>
-- Lorsque «Fichier d'importation» est sélectionné, cliquez sur le bouton «Choisissez un fichier» et sélectionnez votre fichier local, ou vous pouvez fournir une url au fichier. <br>
-- Lorsque vous sélectionnez «Service d'importation», vous aurez la possibilité d'entrer l'URL du service. <br>
-- Cliquez sur le bouton 'Continuer' pour continuer. <br>
-- Le Viewer essaiera de prédire le type de jeu de données. S'il est incorrect, sélectionnez l'option dans le menu déroulant avec le type correct. <br>
-- Cliquez sur le bouton 'Continuer' pour continuer. <br>
+- Sélectionnez l'option «Importer un fichier» ou «Importer un service». <br>
+- Lorsqu' «Importer un service» est sélectionné, cliquez sur le bouton «Choisir un fichier» pour sélectionnez un fichier à l'aide d'un utilitaire de recherche de fichier ou saisissez dans la zone d'édition une adresse URL pointant sur le fichier désiré. <br>
+- Lorsque vous sélectionnez «Importer un service», vous aurez la possibilité d'entrer l'adresse URL d'un service dans une zone d'édition. <br>
+- Cliquez sur le bouton «Continuer» pour continuer. <br>
+- Le Viewer essaiera de prédire le type de jeu de données. S'il est incorrect, sélectionnez manuellement le type correspondant à l'aide du menu déroulant. <br>
+- Cliquez sur le bouton «Continuer» pour continuer. <br>
 - Selon le type d'ensemble de données chargé, différents paramètres peuvent être définis dans cette phase finale. <br>
-- Un service de fonctionnalité permet le choix d'un attribut principal, qui détermine l'attribut utilisé pour identifier une fonctionnalité dans le panneau de table de données et des conseils de carte. Toutes les autres informations proviennent des métadonnées du service.<br>
-- Un service WMS permet le choix du nom de couche, qui détermine le calque dans le WMS à utiliser comme source pour le jeu de données. Toutes les autres informations sont dérivées des métadonnées du service.<br>
-- Les jeux de données basés sur des fichiers permettent le choix des éléments suivants: un nom de jeu de données, qui sera affiché dans le sélecteur de calque; Un attribut principal, qui agit de la même façon que dans le service Feature; Une couleur de symbole, qui détermine la couleur des points / lignes / polygones sur la carte. Les fichiers CSV permettent également la spécification des colonnes qui contiennent les valeurs Latitude et Longitude, utilisées pour dériver l'emplacement du point sur la carte.
-- Cliquez sur le bouton 'Continuer' pour insérer le calque dans la carte et ferme le menu Ajouter calque."
-,help.dataTable.header,Data Table Panel,Panneau Tableau de données
+- Un service d'entité permet le choix d'un attribut principal, qui détermine l'attribut utilisé pour identifier une entité (enregistrement) dans le tableau de données et les étiquettes correspondantes sur la carte. Toutes les autres informations proviennent des métadonnées du service.<br>
+- Un service WMS permet le choix du nom de la couche, qui détermine la couche dans le WMS à utiliser comme source pour le jeu de données. Toutes les autres informations sont dérivées des métadonnées du service.<br>
+- Les jeux de données basés sur des fichiers permettent le choix des attributs suivants: un nom de jeu de données qui sera affiché dans le sélecteur de couche; Un attribut principal qui agit de la même façon que dans le service d'entité; Une couleur de symbole qui détermine la couleur des points /lignes/polygones sur la carte. Les fichiers CSV permettent également la spécification des colonnes qui contiennent les valeurs de positionnement (Latitude et Longitude) utilisées pour déterminer l'emplacement des entités sur la carte.
+- Cliquez sur le bouton «Continuer» pour ajouter la couche à la carte et fermer le menu «Ajouter une couche»."
+,help.dataTable.header,Data Table Panel,Tableau de données
 ,help.dataTable.info,"The Data Table Panel lists detailed information about all the selected features in the map.<br>
 You can view, sort, print, and save the data and zoom the map to a specific entry listed in the data table.<br>
-You can also minimize, maximize, or split the panel view.<br>","Le panneau 'Tableau de données' répertorie des informations détaillées sur toutes les entités de la carte.<br>
+You can also minimize, maximize, or split the panel view.<br>","
+Le panneau 'Tableau de données' répertorie des informations détaillées sur toutes les entités de la carte.<br>
 Vous pouvez afficher, trier, imprimer, enregistrer les données et zoomer la carte à une entrée spécifique figurant dans le tableau de données. <br>
 Vous pouvez également réduire, agrandir, ou diviser la vue du panneau.<br>"
 ,help.informationPanel.header,Information Panel (Point),Panneau d’information (Point)
@@ -449,28 +462,29 @@ Sélectionnez une entité interactive directement sur la carte. Le panneau d’i
 ,help.accessibility.info,"This page is WCAG 2.0 AA compliant.<br>
 Keyboard Accessibility - Keyboard functionality is provided as an alternative for users who are unable to use a mouse. Use the Tab key to navigate forward to links and controls on the page. Press Shift+Tab to go back one step. Use the Enter or Spacebar keys to activate links and controls.
 ","Cette page respecte les règles pour l’accessibilité des contenus Web WCAG 2.0 AA.<br>
-Accessibilité au clavier - La fonctionnalité du clavier est offerte en tant qu’alternative pour les utilisateurs qui sont incapables d’utiliser une souris. Utilisez la touche de tabulation pour naviguer vers les liens et les contrôles sur la page. Appuyez simultanément sur les touches Majuscule+Tabulation pour revenir un pas en arrière. Utilisez la touche Entrée ou la barre d’espace pour activer les liens et les contrôles."
+Accessibilité au clavier - La fonctionnalité du clavier est offerte en tant qu’alternative pour les utilisateurs qui sont dans l'impossibilité d’utiliser une souris. Utilisez la touche de tabulation pour naviguer vers les liens et les contrôles sur la page. Appuyez simultanément sur les touches Majuscule+Tabulation pour revenir un pas en arrière. Utilisez la touche Entrée ou la barre d’espacement pour activer les liens et les contrôles."
 ,help.loadTimes.header,Load Times / Unanticipated Behaviour,Durée du chargement / Comportement imprévu
 ,help.loadTimes.info,"Load times may vary based on network location and bandwidth availability, and unanticipated behaviour may occur if any map interactions occur before data is fully loaded. Please allow the webpage to load completely before triggering any map functions. <br>
-Note: If the scrolling loading line indicator appears at the bottom of the map or in the legend, or the data table panel displays a loading message, please allow the loading indicator to disappear before triggering any function on the map.","La durée des chargements peut varier selon l’emplacement réseau et la disponibilité de la bande passante. Un comportement imprévu peut survenir lorsque des interactions avec la carte ont lieu avant la conclusion du chargement des données. Veuillez permettre le chargement complet de la page Web avant d’activer d’autres fonctions sur la carte.<br>
-Remarque: Si l'indicateur de chargement de ligne de défilement apparaît au bas de la carte ou dans la légende, ou lorsque la grille de données affiche un message de chargement en cours, attendez que l’indicateur de chargement disparaisse avant d’activer d’autres fonctions sur la carte."
+Note: If the scrolling loading line indicator appears at the bottom of the map or in the legend, or the data table panel displays a loading message, please allow the loading indicator to disappear before triggering any function on the map.","
+La durée des chargements peut varier selon l’emplacement réseau et la disponibilité de la bande passante. Un comportement imprévu peut survenir lorsque des interactions avec la carte ont lieu avant la conclusion du chargement des données. Veuillez permettre le chargement complet de la page Web avant d’activer d’autres fonctions sur la carte.<br>
+Remarque: Si l'indicateur de chargement de ligne de défilement apparaît au bas de la carte ou dans la légende, ou lorsque le tableau de données affiche un message de chargement en cours, attendez que l’indicateur de chargement disparaisse avant d’activer d’autres fonctions sur la carte."
 Error message when resource fails to load,toc.error.resource.loadfailed,There was an error retrieving this resource - try again later,Une erreur s'est produite lors du chargement de cette ressource - réessayez plus tard
-Error message when feature count cannot be retrieved,toc.error.resource.countfailed,Could not get number of,Impossible d'obtenir nombre de
+Error message when feature count cannot be retrieved,toc.error.resource.countfailed,Could not get number of,Impossible d'obtenir le nombre de
 ,metadata.xslt.Abstract,Abstract,Résumé
 ,metadata.xslt.Scope,Scope,Portée
-,metadata.xslt.hereBeScope,here be scope,Ici être la portée
+,metadata.xslt.hereBeScope,here be scope,la portée jusqu'ici
 ,metadata.xslt.timePeriod,Time Period,Période
-,metadata.xslt.supplementalData,Supplemental Data,Données Supplémentaires
+,metadata.xslt.supplementalData,Supplemental Data,Données supplémentaires
 ,metadata.xslt.contactInfo,Contact Information,Coordonnées
 ,metadata.xslt.resourceProvider,Resource Provider,Fournisseur de la ressource
-,metadata.xslt.custodian,Custodian,Gardien
+,metadata.xslt.custodian,Custodian,Dépositaire
 ,metadata.xslt.owner,Owner,Propriétaire
 ,metadata.xslt.user,User,Utilisateur
 ,metadata.xslt.distributor,Distributor,Distributeur
 ,metadata.xslt.originator,Originator,Auteur
 ,metadata.xslt.pointOfContact,Point of Contact,Point de contact
 ,metadata.xslt.principalInvestigator,Principal Investigator,Chercheur principal
-,metadata.xslt.processor,Processor,Processeur
+,metadata.xslt.processor,Processor,Préparateur
 ,metadata.xslt.publisher,Publisher,Éditeur
 ,metadata.xslt.author,Author,Auteur
 ,metadata.xslt.collaborator,Collaborator,Collaborateur
@@ -478,13 +492,13 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 ,metadata.xslt.mediator,Mediator,Médiateur
 ,metadata.xslt.rightsHolder,Rights Holder,Titulaire des droits
 ,metadata.xslt.cataloguePage,Data Catalogue Page,Page des données du catalogue
-,metadata.xslt.metadataPage,Raw Metadata,Raw Métadonnées
+,metadata.xslt.metadataPage,Raw Metadata,Métadonnées brutes
 ,metadata.xslt.metadata,Metadata,Métadonnées
-,focus.dialog.press,Press,Presse
+,focus.dialog.press,Press,Appuyer
 ,focus.dialog.enter,Enter,Entrer
 ,focus.dialog.toactivate,to activate or skip with,pour activer ou sauter avec
-,focus.dialog.tab,Tab,Languette
-,focus.dialog.main,We'll keep focus locked on the viewer - exit with,Nous allons garder le focus verrouillé sur la visionneuse - exit avec
+,focus.dialog.tab,Tab,Onglet
+,focus.dialog.main,We'll keep focus locked on the viewer - exit with,Nous allons garder le focus verrouillé sur le visualiseur - sortir à l'aide de
 ,focus.dialog.escape,Escape,Échapper
 ,toc.menu.symbology,Show legend,Afficher la légende
 ,sidenav.menu.plugin,Plugin Links,Liens
