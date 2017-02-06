@@ -88,8 +88,7 @@ function enhanceRenderer(renderer, legend) {
 */
 function searchRenderer(attributes, renderer) {
 
-    // make an empty svg graphic as a default, in case nothing is found
-    let svgcode = svgjs(document.createElement('div')).svg();
+    let svgcode;
     let symbol = {};
 
     switch (renderer.type) {
@@ -147,7 +146,9 @@ function searchRenderer(attributes, renderer) {
             // attempt to find the range our gVal belongs in
             const cbi = renderer.classBreakInfos.find((cbi, index) => gVal > minSplits[index] &&
                 gVal <= cbi.classMaxValue);
-            if (!cbi) { break; } // outside of range on the high end
+            if (!cbi) { // outside of range on the high end
+                break;
+            }
             svgcode = cbi.svgcode;
             symbol = cbi.symbol;
 
@@ -158,6 +159,11 @@ function searchRenderer(attributes, renderer) {
             // TODO set svgcode to blank image?
             console.warn(`Unknown renderer type encountered - ${renderer.type}`);
 
+    }
+
+    // make an empty svg graphic in case nothing is found to avoid undefined inside the filters
+    if (typeof svgcode === 'undefined') {
+        svgcode = svgjs(document.createElement('div')).svg();
     }
 
     return { svgcode, symbol };
