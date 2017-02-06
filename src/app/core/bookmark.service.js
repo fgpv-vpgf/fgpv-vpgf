@@ -744,8 +744,10 @@
         function addRcsConfigs(rcsBookmarks, config) {
             if (Object.keys(rcsBookmarks).length > 0) {
                 return configService
-                    .rcsAddKeys(Object.keys(rcsBookmarks).map(id => (id.split('.')[1] || id)))
+                    .rcsAddKeys(Object.keys(rcsBookmarks).map(id => (id.split('.')[1] || id)), false)
                     .then(rcsConfigs => {
+                        // ideally this unique filter code should not be needed anymore
+                        /*
                         const uniqueRcsLayers = {};
                         rcsConfigs.forEach((cfg, i) => {
                             if (!rcsConfigs.hasOwnProperty(cfg.id)) {
@@ -753,6 +755,7 @@
                             }
                         });
                         rcsConfigs = rcsConfigs.filter((cfg, i) => uniqueRcsLayers[cfg.id] === i);
+                        */
                         const configSnippets = rcsConfigs.map(cfg => {
                             const merge =  angular.merge(cfg, rcsBookmarks[cfg.id], { origin: 'rcs' });
 

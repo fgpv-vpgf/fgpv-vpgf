@@ -278,9 +278,10 @@
          * Add RCS config layers to configuration after startup has finished
          * @function rcsAddKeys
          * @param {Array}  keys    list of keys marking which layers to retrieve
+         * @param {Boolean}  fromApi    determines if we are adding keys from the api. false if from internal reloads
          * @return {Promise} promise of full config nodes for newly added layers
          */
-        function rcsAddKeys(keys) {
+        function rcsAddKeys(keys, fromApi = true) {
 
             // strip languages out of data object.
             const langs =  Object.keys(originalConfigs);
@@ -290,17 +291,26 @@
 
             return $q(resolve => {
                 const currLang = currentLang();
-                let newIds;
 
                 langs.forEach(lang => {
                     // wait for rcs data to finish loading
                     rcsDataSet[lang].then(rcsConfig => {
-                        if (lang === currLang) {
-                            // store list of layer ids, so we can identify new items in the config later
-                            newIds = rcsConfig.layers.map(layer => layer.id);
-                        }
+
+                        // store list of layer ids, so we can identify new items in the config later
+                        const newIds = rcsConfig.layers.map(layer => layer.id);
 
                         originalConfigs[lang].then(fullConfig => {
+                            if (!fromApi) {
+                                // it is possible the rcs keys we are adding already exist in the current
+                                // config object. we want to remove those keys prior to doing the merge below
+                                newIds.forEach(newId => {
+                                    const oldLayer = fullConfig.layers.find(c => c.id === newId);
+                                    if (oldLayer) {
+                                        fullConfig.layers.splice(fullConfig.layers.indexOf(oldLayer), 1);
+                                    }
+                                });
+                            }
+
                             // call the merge into config, passing result and targeting innards of config service (all languages)
                             // make rcs value an array, as it will be a singleton with all things mooshed into .layers
                             mergeConfigParts(fullConfig, [rcsConfig]);

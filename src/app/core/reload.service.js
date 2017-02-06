@@ -77,7 +77,7 @@
 
                 // modify the original config
                 configService.getOriginal().then(config => {
-                    bookmarkService.parseBookmark(bookmark, config);
+                    bookmarkService.parseBookmark(bookmark, config, {});
 
                     if (service.bookmarkBlocking) {
                         // broadcast startup event
