@@ -471,22 +471,15 @@
 
             if (newLang) {
                 (() => {
-                    console.debug(newLang, config);
                     const translatedLayers = {};
-                    const bookmarkedKeys = [];
                     Object.entries(bookmarkLayers).forEach(([id, layer]) => {
                         if (id.startsWith('rcs.')) {
                             const key = id.split('.')[1];
-                            bookmarkedKeys.push(key);
                             layer.id = `rcs.${key}.${newLang.substring(0, 2)}`;
                         }
                         translatedLayers[layer.id] = layer;
                     });
                     bookmarkLayers = translatedLayers;
-                    console.debug(bookmarkLayers);
-                    // only keep layers that are not coming from the bookmark
-                    config.layers = config.layers.filter(l => bookmarkedKeys.indexOf(l.id.split('.')[1]) === -1);
-                    console.debug(config.layers);
                 })();
             }
 
