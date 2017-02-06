@@ -1,0 +1,39 @@
+{
+    "getting_started": {
+        "title": "Getting Started"
+    },
+
+    "contributing_guide": {
+        "title": "Contributing Guide"
+    },
+
+    "branching": {
+        "title": "Branching Strategy"
+    },
+
+    "architecture_overview": {
+        "title": "Architecture Overview"
+    },
+
+    "ui_overview": {
+        "title": "UI Overview & Terminology"
+    },
+    
+    "app_startup": {
+        "title": "Application Startup Flow"
+    },
+
+    "translations": {
+        "title": "Translations"
+    },
+
+    "plugins": {
+        "title": "Plugins",
+        "children": ["base_plugins", "core_plugins", "external_plugins"]
+    },
+
+    "modules": {
+        "title": "Modules",
+        "children": ["common", "core", "geo", "layout", "ui"]
+    }
+}

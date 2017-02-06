@@ -1,0 +1,17 @@
+{
+    "common": {
+        "title": "Common Module"
+    },
+    "core": {
+        "title": "Core Module"
+    },
+    "geo": {
+        "title": "Geo Module"
+    },
+    "layout": {
+        "title": "Layout Module"
+    },
+    "ui": {
+        "title": "UI Module"
+    }
+}

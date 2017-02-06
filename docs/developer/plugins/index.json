@@ -1,0 +1,27 @@
+{
+    "base_plugins": {
+        "title": "Base Plugins",
+        "children": ["base_plugin", "menu_item"]
+    },
+
+    "base_plugin": {
+        "title": "BasePlugin"
+    },
+    
+    "menu_item": {
+        "title": "MenuItem"
+    },
+
+    "core_plugins": {
+        "title": "Core Plugins",
+        "children": ["back_to_cart"]
+    },
+
+    "back_to_cart": {
+        "title": "BackToCart"
+    },
+
+    "external_plugins": {
+        "title": "External Plugins"
+    }
+}

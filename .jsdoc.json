@@ -10,6 +10,13 @@
     "plugins": [ "plugins/markdown" ],
     "templates": {
         "cleverLinks": false,
-        "monospaceLinks": false
+        "monospaceLinks": false,
+        "default": {
+            "staticFiles": {
+                "include": [
+                    "./docs/images"
+                ]
+            }
+        }
     }
 }
