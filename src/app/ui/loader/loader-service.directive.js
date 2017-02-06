@@ -27,7 +27,7 @@
         return directive;
     }
 
-    function Controller($timeout, stateManager, geoService, Geo, Stepper, LayerBlueprint, $rootElement) {
+    function Controller($timeout, stateManager, geoService, Geo, Stepper, LayerBlueprint, $rootElement, keyNames) {
         'ngInject';
         const self = this;
 
@@ -51,7 +51,9 @@
                 isCompleted: false,
                 onContinue: connectOnContinue,
                 onCancel: () => onCancel(self.connect.step),
-                reset: connectReset
+                onKeypress: (event) => { if (event.keyCode === keyNames.ENTER) { connectOnContinue(); } }, // check if enter key have been pressed and call the next step if so
+                reset: connectReset,
+                focus: 'serviceUrl'
             },
             form: null,
             serviceUrl: null,
@@ -66,7 +68,8 @@
                 isCompleted: false,
                 onContinue: selectOnContinue,
                 onCancel: () => onCancel(self.select.step),
-                reset: selectReset
+                reset: selectReset,
+                focus: 'serviceType'
             },
             serviceTypeResetValidation,
             form: null,
@@ -81,7 +84,8 @@
                 isCompleted: false,
                 onContinue: configureOnContinue,
                 onCancel: () => onCancel(self.configure.step),
-                reset: configureReset
+                reset: configureReset,
+                focus: 'layerServiceName'
             },
             form: null,
             defaultOptions: {}

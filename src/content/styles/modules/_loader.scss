@@ -11,6 +11,12 @@
                 &:last-of-type .rv-stepper-item-container:after {
                     display: none;
                 }
+
+                // we have to do this to remove select element added inside md-select in rv-stepper-item like in loader-file.html
+                // when we set name attribute, a select element is created and it becomes a hidden tab
+                .md-visually-hidden {
+                    display: none;
+                }
             }
 
             &-caption {
