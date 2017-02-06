@@ -277,8 +277,8 @@
         /**
          * Add RCS config layers to configuration after startup has finished
          * @function rcsAddKeys
-         * @param {Array}  keys    list of keys marking which layers to retrieve
-         * @param {Boolean}  fromApi    determines if we are adding keys from the api. false if from internal reloads
+         * @param {Array} keys                list of keys marking which layers to retrieve
+         * @param {Boolean} [fromApi=true]    determines if we are adding keys from the api. false if from internal reloads
          * @return {Promise} promise of full config nodes for newly added layers
          */
         function rcsAddKeys(keys, fromApi = true) {
