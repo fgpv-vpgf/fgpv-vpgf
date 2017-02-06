@@ -38,7 +38,7 @@
 
             // get original config and add bookmark to it
             configService.getOriginal().then(config => {
-                bookmarkService.parseBookmark(bookmark, config, undefined, basemapId);
+                bookmarkService.parseBookmark(bookmark, config, { newBaseMap: basemapId });
                 geoService.assembleMap();
             });
         }
@@ -55,7 +55,7 @@
             const bookmark = bookmarkService.getBookmark();
             $translate.use(lang);
             configService.getOriginal().then(config => {
-                bookmarkService.parseBookmark(bookmark, config);
+                bookmarkService.parseBookmark(bookmark, config, { newLang: lang });
                 $rootScope.$broadcast(events.rvLangSwitch);
                 geoService.assembleMap();
             });
@@ -95,7 +95,7 @@
             if (service.bookmarkBlocking) {
                 $rootScope.$broadcast(events.rvApiHalt);
                 configService.getOriginal().then(config => {
-                    bookmarkService.parseBookmark(bookmark, config, keys);
+                    bookmarkService.parseBookmark(bookmark, config, { newKeyList: keys });
 
                     // broadcast startup event
                     $rootScope.$broadcast(events.rvBookmarkInit);
