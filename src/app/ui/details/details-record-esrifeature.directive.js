@@ -75,30 +75,29 @@
              */
             function renderDetails() {
                 if (!isCompiled) {
-                    const LIST = listItems =>
+                    const excludedColumns = ['rvSymbol', 'rvInteractive'];
+
+                    // there should be no spaces between the row values and surrounding div tags, they mess up layout
+                    const detailsHTMLTemplate =
                         `<ul class="ng-hide rv-details-list rv-toggle-slide"
                             ng-show="self.item.isExpanded">
-                            ${ listItems }
+
+                            <li ng-repeat="row in self.item.filteredData" ng-switch on="row.type">
+                                <div class="rv-details-attrib-key">{{ ::row.key }}</div>
+                                <span flex></span>
+
+                                <div class="rv-details-attrib-value"
+                                    ng-switch-when="esriFieldTypeDate">{{ ::row.value | dateTimeZone }}</div>
+                                <div class="rv-details-attrib-value"
+                                    ng-switch-default>{{ ::row.value | autolink }}</div>
+                            </li>
                         </ul>`;
 
-                    const LIST_ITEM = (key, value, type) =>
-                        `<li>
-                            <div class="rv-details-attrib-key">${ key }</div>
-                            <span flex></span>
-                            <div class="rv-details-attrib-value">
-                                ${ $filter(type === 'esriFieldTypeDate' ? 'dateTimeZone' : 'autolink')(value) }
-                            </div>
-                        </li>`;
+                    self.item.filteredData =
+                        self.item.data.filter(column =>
+                            excludedColumns.indexOf(column.key) === -1);
 
-                    const detailsHhtml = LIST(
-                        self.item.data.map(row =>
-                            // skip over the symbol column
-                            // TODO: see #689
-                            row.key !== 'rvSymbol' ? LIST_ITEM(row.key, row.value, row.type) : '')
-                        .join('')
-                    );
-
-                    const details = $compile(detailsHhtml)(scope); // compile with the local scope to set proper bindings
+                    const details = $compile(detailsHTMLTemplate)(scope); // compile with the local scope to set proper bindings
                     el.after(details);
                     isCompiled = true;
                 }
