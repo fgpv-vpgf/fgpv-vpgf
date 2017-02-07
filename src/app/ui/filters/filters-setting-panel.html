@@ -1,0 +1,47 @@
+<md-content class="rv-filter-setting rv-invert rv-toggle-slide">
+
+    <h4 class="md-title">{{ 'filter.settings.title' | translate }}</h4>
+
+    <ul>
+        <li>
+            <span class="rv-filter-settting-reorder"></span>
+            <span class="rv-filter-settting-name">{{ 'filter.settings.label.name' | translate }}</span>
+            <span class="rv-filter-settting-item">{{ 'filter.settings.label.filter' | translate }}</span>
+            <span class="rv-filter-settting-sort">{{ 'filter.settings.label.sort' | translate }}</span>
+            <span class="rv-filter-settting-display">{{ 'filter.settings.label.display' | translate }}</span>
+        </li>
+        <li ng-repeat="column in self.columns" ng-show="$index > 0">
+           <md-button
+                translate translate-attr-aria-label="filter.settings.reorder"
+                class="md-icon-button"
+                ng-click="self.reorder(column)">
+                    <md-tooltip>{{ 'filter.settings.reorder' | translate }}</md-tooltip>
+                    <md-icon md-svg-src="editor:drag_handle"></md-icon>
+            </md-button>
+
+            <span class="rv-filter-settting-name">{{ column.title }}</span>
+
+            <div rv-filters-definition class="rv-filter-settting-item" info="column"></div>
+
+            <div class="rv-filter-settting-sort">
+                <md-button
+                    translate translate-attr-aria-label="filter.settings.sort"
+                    class="md-icon-button"
+                    ng-click="self.sort(column)">
+                        <md-tooltip>{{ 'filter.settings.sort' | translate }}</md-tooltip>
+                        <md-icon md-svg-src="navigation:arrow_downward" ng-show="column.sort === 'down'"></md-icon>
+                        <md-icon md-svg-src="navigation:arrow_upward" ng-show="column.sort === 'up'"></md-icon>
+                        <md-icon md-svg-src="content:remove" ng-show="column.sort === 'none'"></md-icon>
+                </md-button>
+            </div>
+            
+            <div class="rv-filter-settting-display">
+                <md-checkbox
+                    ng-model="column.display"
+                    class="md-primary"
+                    ng-change="self.display(column)">
+                </md-checkbox>
+            </div>
+        </li>
+    </ul>
+</md-content>
