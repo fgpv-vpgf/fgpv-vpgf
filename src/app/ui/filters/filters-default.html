@@ -9,9 +9,13 @@
         <!-- do not put rv-ignore-focusout here because it will exclude header from tabing -->
         <div class="rv-filters">
             <!--md-button ng-click="self.draw()">click this button if you don't see the table below</md-button-->
+            <div class="rv-filters-data-container"
+                rv-filters-definition info="columns"
+                ng-show="!self.filterService.isSettingOpen"></div>
 
-            <div class="rv-filters-data-container"></div>
+            <rv-filters-setting-panel ng-cloak ng-show="self.filterService.isSettingOpen"></rv-filters-setting-panel>
 
+            <rv-filters-setting-cluster></rv-filters-setting-cluster>
         </div>
     </rv-content-pane>
 </div>

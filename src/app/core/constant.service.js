@@ -49,6 +49,7 @@
 
             rvDataPrint: 'rvDataPrint', // these data events should be removed after switching to angular 1.5 or 2 or React
             rvDataExportCSV: 'rvDataExportCSV',
+            rvDataReady: 'rvDataReady', // Fired when table is loaded
 
             rvLangSwitch: 'rvLangSwitch', // Fired when language is switch (loadNewLang function)
 
