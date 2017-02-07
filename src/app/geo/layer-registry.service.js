@@ -122,9 +122,10 @@
              * @returns {Array}     list of rcs layers' ids
              */
             function getRcsLayerIDs() {
-                return Object.keys(layers).filter(
-                    id => (layers[id].origin || layers[id].initialConfig.origin) === 'rcs')
-                        .map(id => id.split('.')[1]);
+                return Object.keys(layers)
+                    .filter(id => ((layers[id].origin || layers[id].initialConfig.origin) === 'rcs') &&
+                        !layers[id].deleted)
+                    .map(id => id.split('.')[1]);
             }
 
             // FIXME  add a check to see if layer has config setting for not supporting a click

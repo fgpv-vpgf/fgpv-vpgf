@@ -297,11 +297,13 @@
          * @function parseBookmark
          * @param {String} bookmark     A bookmark created by getBookmark
          * @param {Object} origConfig   The config object to modify
-         * @param {Array} newKeyList    Optional modified RCS key list
-         * @param {String} newBaseMap   Optional new basemap id we are switching to
+         * @param {Object} [opts={}]    Optional parameters:
+         *                                `newKeyList` an array of RCS keys
+         *                                `newBaseMap` basemap ID to switch to
+         *                                `newLang` the language code we are switching to
          * @returns {Object}            The config with changes from the bookmark
          */
-        function parseBookmark(bookmark, origConfig, newKeyList, newBaseMap) {
+        function parseBookmark(bookmark, origConfig, opts) {
             // this methods uses a lot of sub-methods because of the following rules
             // RULE #1 single method can't have more than 40 commands
             // RULE #2 obey all rules
@@ -309,6 +311,7 @@
             const config = angular.copy(origConfig);
 
             const dBookmark = decodeURI(bookmark);
+            const { newKeyList, newBaseMap, newLang } = opts;
 
             console.log(dBookmark);
 
@@ -464,6 +467,20 @@
 
             if (newKeyList) {
                 modifyRcsKeyList(bookmarkLayers, newKeyList);
+            }
+
+            if (newLang) {
+                (() => {
+                    const translatedLayers = {};
+                    Object.entries(bookmarkLayers).forEach(([id, layer]) => {
+                        if (id.startsWith('rcs.')) {
+                            const key = id.split('.')[1];
+                            layer.id = `rcs.${key}.${newLang.substring(0, 2)}`;
+                        }
+                        translatedLayers[layer.id] = layer;
+                    });
+                    bookmarkLayers = translatedLayers;
+                })();
             }
 
             // set the new current config, RCS layers will be loaded on first getCurrent() call
@@ -719,7 +736,8 @@
          */
         function addRcsConfigs(rcsBookmarks, config) {
             if (Object.keys(rcsBookmarks).length > 0) {
-                return configService.rcsAddKeys(Object.keys(rcsBookmarks).map(id => (id.split('.')[1] || id)))
+                return configService
+                    .rcsAddKeys(Object.keys(rcsBookmarks).map(id => (id.split('.')[1] || id)), false)
                     .then(rcsConfigs => {
                         const configSnippets = rcsConfigs.map(cfg => {
                             const merge =  angular.merge(cfg, rcsBookmarks[cfg.id], { origin: 'rcs' });
@@ -730,8 +748,8 @@
                             // for nested group, even if we remove a child from a subgroup, when it reloads the child we be there again
                             // there is no childOptions value on cfg (rcsConfigs) so they are alwas merge by rcsBookmarks
                             // TODO: refactor to solve this
-                            if (!angular.equals(cfg.layerEntries, rcsBookmarks[cfg.id].layerEntries) &&
-                                merge.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                            if (merge.layerType === Geo.Layer.Types.ESRI_DYNAMIC &&
+                               !angular.equals(cfg.layerEntries, rcsBookmarks[cfg.id].layerEntries)) {
                                 merge.layerEntries = rcsBookmarks[cfg.id].layerEntries;
                             }
 
