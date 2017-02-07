@@ -244,6 +244,7 @@ $details-record-height: rem(6.0);
             li {
                 display: flex;
                 flex-wrap: wrap;
+                justify-content: flex-end; // forces the key value to move the rigth of the container; key name is pushed to the left by the flexed span
             }
 
             .rv-details-attrib-key {
