@@ -35,6 +35,7 @@
         jQuery: '2.2.1',
         dataTables: '1.10.11'
     };
+    const customAttrs = ['config', 'langs', 'service-endpoint', 'restore-bookmark', 'wait', 'keys', 'fullpage-app'];
     const URLs = {
         jQuery: `http://ajax.aspnetcdn.com/ajax/jQuery/jquery-${versions.jQuery}.min.js`,
         dataTables: `https://cdn.datatables.net/${versions.dataTables}/js/jquery.dataTables.min.js`
@@ -188,6 +189,8 @@
     // convert html collection to array:
     // https://babeljs.io/docs/learn-es2015/#math-number-string-object-apis
     const nodes = [].slice.call(document.getElementsByClassName('fgpv'));
+    const isAttrNodes = [].slice.call(document.querySelectorAll('[is=rv-map]'));
+    isAttrNodes.filter(node => nodes.indexOf(node) === -1).forEach(node => nodes.push(node));
 
     // store nodes to use in app-seed; avoids a second DOM traversal
     RV._nodes = nodes;
@@ -197,6 +200,9 @@
     nodes.forEach(node => {
 
         let appId = node.getAttribute('id');
+        customAttrs
+            .filter(attrName => node.getAttribute(`data-rv-${attrName}`))
+            .forEach(attrName => node.setAttribute(`rv-${attrName}`, node.getAttribute(`data-rv-${attrName}`))); // getAttribute returns a string so data-rv-fullscreen-app="false" will copy correctly
 
         if (!appId) {
             appId = 'rv-app-' + counter++;
