@@ -202,7 +202,7 @@
         let appId = node.getAttribute('id');
         customAttrs
             .filter(attrName => node.getAttribute(`data-rv-${attrName}`))
-            .forEach(attrName => node.setAttribute(`rv-${attrName}`, node.getAttribute(`data-rv-${attrName}`)));
+            .forEach(attrName => node.setAttribute(`rv-${attrName}`, node.getAttribute(`data-rv-${attrName}`))); // getAttribute returns a string so data-rv-fullscreen-app="false" will copy correctly
 
         if (!appId) {
             appId = 'rv-app-' + counter++;
