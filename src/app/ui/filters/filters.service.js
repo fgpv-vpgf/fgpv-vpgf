@@ -14,7 +14,8 @@
         .module('app.ui.filters')
         .factory('filterService', filterService);
 
-    function filterService(stateManager, geoService, $rootScope, $q, gapiService, debounceService) {
+    function filterService(stateManager, geoService, $rootScope, $q, gapiService, debounceService,
+        $rootElement, $timeout) {
 
         // timestamps can be watched for key changes to filter data
         const filterTimeStamps = {
@@ -34,8 +35,26 @@
             filterTimeStamps,
             filter: {
                 isActive: false
-            }
+            },
+            setTable,
+            getTable,
+            clearFilters,
+            applyFilters,
+            toggleSetting,
+            onFilterStringChange: debounceService.registerDebounce(onFilterStringChange, 700, false),
+            onFilterNumberChange: debounceService.registerDebounce(onFilterNumberChange, 700, false),
+            onFilterDateChange: onFilterDateChange,
+            preventSorting: preventSorting,
+            filters: {},
+            isApplied: true,
+            isSettingOpen: false
         };
+
+        // active table for global search to link to
+        let activeTable;
+
+        // array who contains filters (use to show/hide apply on map button)
+        let filtersObject;
 
         init();
 
@@ -70,6 +89,11 @@
 
             $rootScope.$on('extentChange', debounceService.registerDebounce(onExtentChange, 300, false));
 
+            // show filters only when filters are in maximum view
+            $rootScope.$watch(() => stateManager.state.filters.morph, (val) => {
+                $rootScope.isFiltersVisible = (val === 'full' || service.isSettingOpen) ? true : false;
+            });
+
             // DataTable is either being created or destroyed
             $rootScope.$watch(() => stateManager.display.filters.data, (val, prevVal) => {
                 // triggered on DataTable panel close or switching from one layer to another
@@ -81,6 +105,192 @@
                     onCreate();
                 }
             });
+        }
+
+        /**
+         * Set active table
+         *
+         * @function setTable
+         * @param   {Object}   table   active table
+         */
+        function setTable(table) {
+            activeTable = table;
+
+            const filters = table.columns().dataSrc();
+            filters.shift();
+            filtersObject = filters;
+            filtersObject.each((el) => {
+                service.filters[el] = false;
+            });
+        }
+
+        /**
+         * Get active table
+         *
+         * @function getTable
+         * @return   {Object}  activeTable the active table
+         */
+        function getTable() {
+            return activeTable;
+        }
+
+        /**
+         * Clear all filters
+         *
+         * @function clearFilters
+         */
+        function clearFilters() {
+            console.log('clear filters');
+
+            // set isApplied to hide apply filters on map button
+            service.isApplied = true;
+
+            // set all filters state to false
+            filtersObject.each((el) => {
+                service.filters[el] = false;
+            });
+
+            applyBackdrop();
+        }
+
+        /**
+         * Apply filters on map
+         *
+         * @function applyFilters
+         */
+        function applyFilters() {
+            console.log('apply filters');
+
+            // set isApplied to hide apply filters on map button
+            service.isApplied = true;
+
+            applyBackdrop();
+        }
+
+        /**
+         * Toggle settings info section
+         *
+         * @function toggleSetting
+         */
+        function toggleSetting() {
+            console.log('toggle filters');
+            service.isSettingOpen = !(service.isSettingOpen);
+
+            // show filters if setting is open
+            if (service.isSettingOpen) {
+                $rootScope.isFiltersVisible = true;
+            } else {
+                // when setting is close, check if we need to show setting
+                $rootScope.isFiltersVisible = (stateManager.state.filters.morph === 'full') ? true : false;
+
+                // need to recalculate scroller space because user may have switch from default to full view inside setting panel
+                // need a timeout, if not measure occurs when datatable is not displayed and it fails
+                $timeout(() => { activeTable.scroller.measure(); }, 0);
+            }
+        }
+
+        /**
+         * Apply on string filter change callback
+         *
+         * @function onFilterStringChange
+         * @param   {String}   column   column name
+         * @param   {String}   value   search filter
+         */
+        function onFilterStringChange(column, value) {
+            console.log(`string - ${name}: ${value}`);
+            setFiltersState(name, value);
+
+            // keep filter value to reapply when table reopens
+            const item = stateManager.display.filters.data.columns.find(filter => column === filter.name);
+            item.filter.value = value;
+        }
+
+        /**
+         * Apply on number filter change callback
+         *
+         * @function onFilterNumberChange
+         * @param   {String}   column   column name
+         * @param   {Number}   min   minimum number search filter
+         * @param   {Number}   max   maximum number search filter
+         */
+        function onFilterNumberChange(column, min, max) {
+            console.log(`number - ${column}: ${min} - ${max}`);
+            setFiltersState(column, `${min}${max}`);
+
+            // keep filter value to reapply when table reopens
+            const item = stateManager.display.filters.data.columns.find(filter => column === filter.name);
+            item.filter.min = min;
+            item.filter.max = max;
+        }
+
+        /**
+         * Apply on date filter change callback
+         *
+         * @function onFilterDateChange
+         * @param   {String} column   column name
+         * @param   {Date}   min   minimum date search filter
+         * @param   {Date}   max   maximum date search filter
+         */
+        function onFilterDateChange(column, min, max) {
+            console.log(`date - ${column}: ${min} - ${max}`);
+            setFiltersState(column, `${min}${max}`);
+
+            // keep filter value to reapply when table reopens
+            const item = stateManager.display.filters.data.columns.find(filter => column === filter.name);
+            item.filter.min = min;
+            item.filter.max = max;
+        }
+
+        /**
+         * Set filters state on filters modification to know when show/hide apply on map button
+         *
+         * @function setFilterState
+         * @private
+         * @param   {String}   column   column name
+         * @param   {String}   value   search filter value
+         */
+        function setFiltersState(column, value) {
+            if (value) {
+                service.filters[column] = true;
+                service.isApplied = false;
+            } else {
+                service.filters[column] = false;
+
+                service.isApplied = true;
+                filtersObject.each((el) => {
+                    if (service.filters[el]) { service.isApplied = false; }
+                });
+            }
+
+            applyBackdrop();
+        }
+
+        /**
+         * Apply backdrop if filters have been modified and not apply on map
+         *
+         * @function applyBackdrop
+         * @private
+         */
+        function applyBackdrop() {
+            const elem = $rootElement.find('.rv-esri-map');
+            if (!service.isApplied) {
+                elem.css('opacity', 0.2);
+            } else {
+                elem.css('opacity', 1);
+            }
+        }
+
+        /**
+         * Prevent column sort when filter is clicked
+         *
+         * @function preventSorting
+         * @param   {Object} event   event fired when user click or press a key on a filter
+         */
+        function preventSorting(event) {
+            if (event.type === 'click' || (event.type === 'keypress' && event.which === 13)) {
+                event.stopPropagation(true);
+                event.preventDefault(true);
+            }
         }
 
         /**
