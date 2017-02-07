@@ -1,0 +1,33 @@
+<div class="rv-button-group">
+    <md-button
+        translate
+        translate-attr-aria-label="filter.filters.apply"
+        class="rv-filters-apply primary"
+        rv-help="filters-apply-button"
+        ng-click="self.filterService.applyFilters()"
+        ng-show="!self.filterService.isApplied">
+        {{ 'filter.filters.apply' | translate }}
+    </md-button>
+
+    <md-button
+        translate
+        translate-attr-aria-label="filter.filters.clear.tooltip"
+        class="md-icon-button primary"
+        rv-help="filters-clear-button"
+        ng-click="self.filterService.clearFilters()">
+        <md-tooltip>{{ 'filter.filters.clear.tooltip' | translate }}</md-tooltip>
+        <md-icon md-svg-src="community:filter"></md-icon>
+    </md-button>
+
+    <span class="rv-filters-divider"></span>
+
+    <md-button
+        translate
+        translate-attr-aria-label="filter.filters.setting.tooltip"
+        class="md-icon-button primary"
+        rv-help="filters-setting-button"
+        ng-click="self.filterService.toggleSetting()">
+        <md-tooltip>{{ 'filter.filters.setting.tooltip' | translate }}</md-tooltip>
+        <md-icon md-svg-src="action:settings"></md-icon>
+    </md-button>
+</div>

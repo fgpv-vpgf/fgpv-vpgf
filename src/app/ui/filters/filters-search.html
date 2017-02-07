@@ -1,0 +1,18 @@
+<md-input-container md-no-float
+    class="rv-filters-search md-block">
+    <input
+        translate
+        translate-attr-aria-label="filter.aria.filters.search"
+        ng-model="self.searchText"
+        ng-keypress="self.search()"
+        placeholder="{{ 'filter.search.placeholder' | translate }}">
+    <md-button ng-show="self.searchText.length > 2"
+            ng-click="self.clear()">
+        <md-icon md-svg-src="navigation:close"></md-icon>
+    </md-button>
+    <md-icon md-svg-src="action:search">
+        <md-tooltip>{{ 'filter.aria.filters.search' | translate }}</md-tooltip>
+    </md-icon>
+</md-input-container>
+
+<span class="rv-filters-divider"></span>
