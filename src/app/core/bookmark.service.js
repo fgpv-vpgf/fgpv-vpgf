@@ -243,7 +243,7 @@
 
             // Children Info (calculate first so we have the count when doing layer settings)
             const childItems = [];
-            if (layerCode === typeToCode[types.ESRI_DYNAMIC]) {
+            if (layerCode === typeToCode[types.ESRI_DYNAMIC] && legendEntry.items) {
 
                 // grab stuff on children.  we can't use walkItems because it returns a flat list.
                 // we need to be aware of hierarchy here (at least on the top level).
@@ -772,7 +772,8 @@
                             // there is no childOptions value on cfg (rcsConfigs) so they are alwas merge by rcsBookmarks
                             // TODO: refactor to solve this
                             if (merge.layerType === Geo.Layer.Types.ESRI_DYNAMIC &&
-                               !angular.equals(cfg.layerEntries, rcsBM.layerEntries)) {
+                               !angular.equals(cfg.layerEntries, rcsBM.layerEntries) &&
+                               rcsBM.layerEntries && rcsBM.layerEntries.length > 0) {
                                 merge.layerEntries = rcsBM.layerEntries;
                             }
 
