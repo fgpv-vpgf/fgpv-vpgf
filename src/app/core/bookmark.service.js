@@ -243,7 +243,7 @@
 
             // Children Info (calculate first so we have the count when doing layer settings)
             const childItems = [];
-            if (layerCode === typeToCode[types.ESRI_DYNAMIC]) {
+            if (layerCode === typeToCode[types.ESRI_DYNAMIC] && legendEntry.items) {
 
                 // grab stuff on children.  we can't use walkItems because it returns a flat list.
                 // we need to be aware of hierarchy here (at least on the top level).
@@ -289,6 +289,19 @@
 
             // <Layer Code><Layer Settings><Children Info><Layer Id>
             return layerCode + binaryToHex(layerSettingAndChildren) + legendEntry._layerRecord.layerId;
+        }
+
+        /**
+         * Will extract the core rcs key from a system-defined rcs layer id.
+         * E.g. 'rcs.MyKey.fr' will result in 'MyKey'
+         * An id with invalid format will return itself
+         *
+         * @function extractRcsKey
+         * @param {String} rcsLayerId   An rcs layer id. Ideally in the format rcs.<key>.<lang>
+         * @returns {String}            The rcs key embedded in the id
+         */
+        function extractRcsKey(rcsLayerId) {
+            return rcsLayerId.split('.')[1] || rcsLayerId;
         }
 
         /**
@@ -474,7 +487,7 @@
                     const translatedLayers = {};
                     Object.entries(bookmarkLayers).forEach(([id, layer]) => {
                         if (id.startsWith('rcs.')) {
-                            const key = id.split('.')[1];
+                            const key = extractRcsKey(id);
                             layer.id = `rcs.${key}.${newLang.substring(0, 2)}`;
                         }
                         translatedLayers[layer.id] = layer;
@@ -708,7 +721,7 @@
             // Loop through keys in layerObjs
             Object.keys(layerObjs).forEach(id => {
                 // strip rcs. and .en/.fr from the layer id
-                const plainID = id.split('.')[1];
+                const plainID = extractRcsKey(id);
                 if (keys.indexOf(plainID) > -1) {
                     // id is in both layerObjs and keys, safe to remove from keyList
                     delete keys[keys.indexOf(plainID)];
@@ -736,11 +749,21 @@
          */
         function addRcsConfigs(rcsBookmarks, config) {
             if (Object.keys(rcsBookmarks).length > 0) {
+                // create a lookup object against rcs key. the layer ids will be language specific.
+                // until we update the bookmark format to encode langauge, we cannot be guaranteed
+                // the page is loading in the same language the bookmark was created in.
+                const noLangRcsBM = {};
+                Object.keys(rcsBookmarks).forEach(id => {
+                    noLangRcsBM[extractRcsKey(id)] = rcsBookmarks[id];
+                });
+
+                // download rcs fragments, then merge in any bookmark information
                 return configService
-                    .rcsAddKeys(Object.keys(rcsBookmarks).map(id => (id.split('.')[1] || id)), false)
+                    .rcsAddKeys(Object.keys(noLangRcsBM), false)
                     .then(rcsConfigs => {
                         const configSnippets = rcsConfigs.map(cfg => {
-                            const merge =  angular.merge(cfg, rcsBookmarks[cfg.id], { origin: 'rcs' });
+                            const rcsBM = noLangRcsBM[extractRcsKey(cfg.id)];
+                            const merge = angular.merge(cfg, rcsBM, { origin: 'rcs' });
 
                             // check if it is a dynamic service and layers entries are different.
                             // if so, replace layerEntries by bookmark snippet because user made modification like remove a layer
@@ -749,8 +772,9 @@
                             // there is no childOptions value on cfg (rcsConfigs) so they are alwas merge by rcsBookmarks
                             // TODO: refactor to solve this
                             if (merge.layerType === Geo.Layer.Types.ESRI_DYNAMIC &&
-                               !angular.equals(cfg.layerEntries, rcsBookmarks[cfg.id].layerEntries)) {
-                                merge.layerEntries = rcsBookmarks[cfg.id].layerEntries;
+                               !angular.equals(cfg.layerEntries, rcsBM.layerEntries) &&
+                               rcsBM.layerEntries && rcsBM.layerEntries.length > 0) {
+                                merge.layerEntries = rcsBM.layerEntries;
                             }
 
                             return merge;
