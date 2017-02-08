@@ -87,9 +87,10 @@
                                 <span flex></span>
 
                                 <div class="rv-details-attrib-value"
-                                    ng-switch-when="esriFieldTypeDate">{{ ::row.value | dateTimeZone }}</div>
+                                    ng-switch-when="esriFieldTypeDate"
+                                    ng-bind-html="::row.value | dateTimeZone"></div>
                                 <div class="rv-details-attrib-value"
-                                    ng-switch-default>{{ ::row.value | autolink }}</div>
+                                    ng-switch-default ng-bind-html="::row.value | autolink"></div>
                             </li>
                         </ul>`;
 
