@@ -40,6 +40,13 @@
                 mirrorContainer: el[0]
             };
 
+            // extend default rvDrag functions so if they are not include in rvDragulaOptions it will not fail
+            const dragOptions = { rvDragCancel: () => { },
+                                    rvDragDrop: () => { },
+                                    rvDragStart: () => { }
+                                };
+            angular.extend(dragulaOptions, dragOptions);
+
             // extend default options with extras from the the parent scope
             angular.extend(dragulaOptions, dragulaScope.self[attr.rvDragulaOptions]);
             dragulaService.options(dragulaScope, attr.rvDragula, dragulaOptions);

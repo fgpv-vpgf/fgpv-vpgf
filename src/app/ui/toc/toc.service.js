@@ -380,7 +380,8 @@
                             title: '',
                             orderable: false,
                             render: '',
-                            width: '20px' // for datatables
+                            width: '20px', // for datatables
+                            position: 1 // for datatable colreorder extension
                         });
 
                         // add a column for symbols
@@ -389,7 +390,8 @@
                             title: '',
                             orderable: false,
                             render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`,
-                            width: '20px' // for datatables
+                            width: '20px', // for datatables
+                            position: 0 // for datatable colreorder extension
                         });
                     }
 
