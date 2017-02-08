@@ -54,6 +54,7 @@ DataTable date max filter placeholder,filter.placeholder.datemax, date max,date 
 Datatables setting section title,filter.settings.title, Settings, Paramètres
 Datatable sort setting tooltip,filter.settings.sort,Sort,Trier
 Datatable reorder fields setting tooltip,filter.settings.reorder,Reorder fields,Réorganiser les champs
+Datatable settings reorder column label,filter.settings.label.reorder,Reorder,Réorganiser
 Datatable settings name column label,filter.settings.label.name,Name,Nom
 Datatable settings filter column label,filter.settings.label.filter,Filter,Filtre
 Datatable settings sort column label,filter.settings.label.sort,Sort,Trier

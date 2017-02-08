@@ -218,10 +218,13 @@
                 // set width from field length if it is a string field type. If it is the oid field,
                 // set width to 100px because we have the oid, the details and zoom to button. If it is
                 // another type of field, set width to be the title.
-                displayData.columns.forEach(column => {
+                displayData.columns.forEach((column, index) => {
                     const field = displayData.fields.find(field => field.name === column.data);
 
                     if (typeof field !== 'undefined') {
+                        // set position if not defined
+                        if (column.position === -1) { column.position = index; }
+
                         if (field.type === 'esriFieldTypeString') {
                             const width = getColumnWidth(column.title, field.length, 250);
                             column.width = `${width}px`;
@@ -240,8 +243,11 @@
                             column.render = renderEllipsis(width);
                         }
 
-                        // set filter initial value
-                        column.filter = columnTypes[field.type].init();
+                        // set filter initial value if not initialize
+                        if (!column.filter.init) {
+                            column.filter = columnTypes[field.type].init();
+                            column.filter.init = true;
+                        }
                     }
                 });
 
@@ -270,6 +276,10 @@
                             keys: [keyNames.LEFT_ARROW, keyNames.UP_ARROW, keyNames.RIGHT_ARROW, keyNames.DOWN_ARROW], // only navigate with arrow key
                             className: 'rv-cell-focus'
                         }, // turn on keytable extension
+                        colReorder: {
+                            fixedColumnsLeft: 2, // fix symbol and interactive columns
+                            realtime: false// we need this to know when reorder is done
+                        }, // turn on colReorder extension
                         /*select: true,*/ // allow row select,
                         buttons: [
                             // 'excelHtml5',
@@ -394,6 +404,9 @@
                         stateManager.display.filters.isLoading = false;
                         $timeout.cancel(stateManager.display.filters.loadingTimeout);
 
+                        // set colReorder extension
+                        setColumnReorder();
+
                         // set keytable extension
                         setkeytable();
 
@@ -401,12 +414,15 @@
                         // TODO: in 1.6 when we add the filters we will need a way to go to setting panel (skip the table)
                         layoutService.panes.filter.find('.dataTables_scrollBody').attr('rv-ignore-focusout', '');
 
-                        // set active table so it can be accessed in filter-search.directive for global table search
-                        filterService.setTable(self.table, displayData.filter.globalSearch);
-
                         // recalculate scroller space on table init because if the preopen table was maximized in setting view
                         // the scroller is still in split view
                         self.table.scroller.measure();
+
+                        // initialize a temporary array to store all the custom filters so they don't fire every time we add new one
+                        $.fn.dataTable.ext.searchTemp = [];
+
+                        // set active table so it can be accessed in filter-search.directive for global table search
+                        filterService.setTable(self.table, displayData.filter.globalSearch);
 
                         // fired event to create filters
                         $rootScope.$broadcast(events.rvTableReady);
@@ -447,6 +463,36 @@
                     });
                 }
 
+                /**
+                 * Initialize the colReorder extenstion events to reorder stateManager on when columns reorder
+                 * @function setColumnReorder
+                 * @private
+                 */
+                function setColumnReorder() {
+                    self.table.on('column-reorder', (e, settings, details) => {
+                        // only reorder columns if modificattion have been made on the table itself
+                        // from the setting panel, we have another to deal with it
+                        if (!filterService.isSettingOpen) {
+                            // reorder columns in statemanager to preserve the order
+                            // remove the moved element then add a it back at the right place
+                            const item = stateManager.display.filters.data.columns.splice(details.from, 1)[0];
+                            stateManager.display.filters.data.columns.splice(details.to, 0, item);
+
+                            // blur the focus cell and reset scrollCell
+                            self.table.cell.blur();
+                            scrollCell = false;
+
+                            // redraw table to put back interactive column (the wrapper gets empty after a column reorder)
+                            self.table.draw();
+                        }
+                    });
+                }
+
+                /**
+                 * Initialize the keyTable extenstion who let navigate the datatables like Excel spread sheet
+                 * @function setkeytable
+                 * @private
+                 */
                 function setkeytable() {
                     // DOMMouseScroll (FF), mousewheel (Chrome, Safari and IE)
                     layoutService.panes.filter.find('.dataTables_scrollBody').on('mousewheel DOMMouseScroll', () => {
@@ -460,7 +506,7 @@
                     // focus on close button when table open (wcag requirement)
                     // at the same time it solve a problem because when focus is on menu button, even if focus is on the
                     // table cell it goes inside the menu and loop through it at the same time as we navigate the table
-                    $timeout(() => { $rootElement.find('[type=\'filters\'] button.rv-close').focus(true); }, 100);
+                    $timeout(() => { $rootElement.find('[type=\'filters\'] button.rv-close').focus(true); }, 250);
 
                     // when we navigate with the keyboard, the scroller extension has buffer items in memory. Without this
                     // workaround, the keyboard can only navigate inside those items.
@@ -481,7 +527,8 @@
                         const node = $(cell.node()).find('button');
                         if (node.length > 0) { node.first().focus(true); }
 
-                        if (!key || !draw) {
+                        // do not shift focus if scrollCell is false (sort will set scrollCell to false to avoid focus shifting)
+                        if (!key || !draw && scrollCell) {
                             // need to scroll where the focus is (if outside the visible items). It is not always done automatically
                             // keep the cell in memory so when there is a draw, we can put back the focus at the right place
                             scrollCell = cell;
@@ -511,13 +558,16 @@
                  * @private
                  */
                 function onTableSort(e, settings) {
-                    // update sort column from the last sort
-                    const item = settings.aLastSort[settings.aLastSort.length - 1];
+                    // reset sort values
+                    stateManager.display.filters.data.columns.forEach(item => item.sort = 'none');
 
-                    if (typeof item !== 'undefined') {
-                        // use value from statemangaer because interactive column may have been added
+                    // update sort column from the last sort, use value from statemanager because interactive column may have been added
+                    settings.aLastSort.forEach(item => {
                         stateManager.display.filters.data.columns[item.col].sort = item.dir;
-                    }
+                    });
+
+                    // reset scrollCell because table has been sort, we dont want the focus to shift
+                    scrollCell = false;
                 }
 
                 /**
