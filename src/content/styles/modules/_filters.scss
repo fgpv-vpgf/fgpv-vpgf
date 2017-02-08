@@ -57,6 +57,10 @@
                                 display: flex;
                             }
                         }
+
+                        th {
+                            user-select: none; // do not select header text to avoid table selection when drag & drop columns
+                        }
                     }
 
                     .dataTables_scrollBody {
@@ -216,6 +220,7 @@ rv-filters-setting-panel {
     position: absolute;
     padding-bottom: 45px;
     overflow-y: auto;
+    user-select: none; // do not select header text to avoid table selection when drag & drop columns
 
     md-content {
         height: 100%;
@@ -233,6 +238,15 @@ rv-filters-setting-panel {
         ul {
             list-style-type: none;
 
+            .rv-filter-list {
+                padding-left: 0px;
+            }
+
+            li.rv-mirror {
+                box-shadow: $whiteframe-shadow-4dp;
+                background-color: $primary-color;
+            }
+
             li {
                 display: flex;
                 align-content: center;
@@ -244,11 +258,13 @@ rv-filters-setting-panel {
                 }
 
                 .rv-filter-settting-reorder {
-                    width: 52px;
+                    display: flex;
+                    justify-content: center;
                 }
 
                 .rv-filter-settting-name {
                     flex: 1 0 30%;
+                    margin-left: 12px;
                 }
 
                 .rv-filter-settting-item {

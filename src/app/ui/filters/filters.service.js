@@ -119,7 +119,7 @@
             activeTable = table;
 
             // set global search for the active table
-            table.search(search).draw();
+            table.search(search);
 
             // reset all filters state to false (they will be populated by the loading table)
             filtersObject = table.columns().dataSrc();
@@ -132,7 +132,9 @@
                     col.data === stateManager.display.filters.data.oidField);
 
             // add a DataTable filter which only accepts rows with oidField values in the validOIDs list
-            $.fn.dataTable.ext.search.push((settings, data) => validOIDs.indexOf(parseInt(data[oidColNum])) !== -1);
+            $.fn.dataTable.ext.searchTemp.push((settings, data) => {
+                return validOIDs.indexOf(parseInt(data[settings._colReorder.fnTranspose(oidColNum)])) !== -1;
+            });
         }
 
         /**

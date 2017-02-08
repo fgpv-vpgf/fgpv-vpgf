@@ -194,21 +194,28 @@
                         // get column directive, scope and type
                         const filterInfo = setFilter(column);
 
-                        // set filters on table for numbers and date (they are global and they apply themselve automatically)
-                        // set string filter from existing value
-                        if (column.type === 'number') {
-                            setNumberFilter(filterInfo.scope, i);
-                        } else if (column.type === 'date') {
-                            setDateFilter(filterInfo.scope, i);
-                        } else if (column.type === 'string') {
-                            const val = `^${column.filter.value.replace(/\*/g, '.*')}.*$`;
-                            table.column(`${column.name}:name`).search(val, true, false);
-                        }
+                        // check if filterInfo is define. Because we have ng-if columns on setting panel to wait until columns is set before
+                        // we call dragula with the proper scope filterInfo is not define for symbol and interactive
+                        if (typeof filterInfo !== 'undefined') {
+                            // set filters on table for numbers and date (they are global and they apply themselve automatically)
+                            // set string filter from existing value
+                            if (column.type === 'number') {
+                                setNumberFilter(filterInfo.scope, i);
+                            } else if (column.type === 'date') {
+                                setDateFilter(filterInfo.scope, i);
+                            } else if (column.type === 'string') {
+                                const val = `^${column.filter.value.replace(/\*/g, '.*')}.*$`;
+                                table.column(`${column.name}:name`).search(val, true, false);
+                            }
 
-                        // add to table
-                        $(table.columns(`${column.data}:name`).header()[0]).append(filterInfo.directive);
+                            // add to table
+                            $(table.columns(`${column.data}:name`).header()[0]).append(filterInfo.directive);
+                        }
                     }
                 });
+
+                // set the temporary array of filters to the real datatable filter array. This way datatables doesn't redraw each time a filter is added
+                $.fn.dataTable.ext.search = $.fn.dataTable.ext.searchTemp;
 
                 // draw table when all string filter have been set
                 table.draw();
@@ -260,48 +267,28 @@
             }
 
             /**
-             * Set a closure function to be able to pass additional paramaters to a callback function
-             * http://stackoverflow.com/questions/5033861/pass-additional-parameters-to-jquery-each-callback
-             * @function closureFunc
-             * @private
-             * @param {Object} fn the function
-             * @return {Object} function    the function with additionnal parameters
-             */
-            function closureFunc(fn) {
-                const args = Array.prototype.slice.call(arguments, 1);
-
-                // can't use ES6 arrow function becaue arguments is replaces by _arguments
-                return function () {
-                    // Clone the array (with slice()) and append additional arguments
-                    // to the existing arguments.
-                    const newArgs = args.slice();
-                    newArgs.push.apply(newArgs, arguments);
-                    return fn.apply(this, newArgs);
-                };
-            }
-
-            /**
              * Add a custom number filter to datatable
              * https://datatables.net/examples/plug-ins/range_filtering.html
              * @function setNumberFilter
              * @private
              * @param {Object} filter the filter object who contains filter values { min, max }
-             * @return {Number} index    the column index to retreive the data to filter on
+             * @return {Integer} index    the column index to retreive the data to filter on
              */
             function setNumberFilter(filter, index) {
-                $.fn.dataTable.ext.search.push(closureFunc((filter, i, settings, data) => {
+                $.fn.dataTable.ext.searchTemp.push((settings, data) => {
                     let flag = false;
+                    const i = settings._colReorder.fnTranspose(index); // get the real index if columns have been reordered
                     const min = parseFloat(filter.min, 10);
                     const max = parseFloat(filter.max, 10);
                     const val = parseFloat(data[i]) || 0;
 
                     if ((isNaN(min) && isNaN(max)) || (isNaN(min) && val <= max) ||
-                         (min <= val   && isNaN(max)) || (min <= val   && val <= max)) {
+                         (min <= val && isNaN(max)) || (min <= val && val <= max)) {
                         flag = true;
                     }
 
                     return flag;
-                }, filter, index));
+                });
             }
 
             /**
@@ -309,12 +296,13 @@
              * @function setDateFilter
              * @private
              * @param {Object} filter the filter object who contains filter values { min, max }
-             * @return {Number} index    the column index to retreive the data to filter on
+             * @return {Integer} index    the column index to retreive the data to filter on
              */
             function setDateFilter(filter, index) {
-                $.fn.dataTable.ext.search.push(closureFunc((filter, i, settings, data) => {
+                $.fn.dataTable.ext.searchTemp.push((settings, data) => {
                     // check if it is a valid date and remove leading 0 because it doesn't set the date properly
                     let flag = false;
+                    const i = settings._colReorder.fnTranspose(index); // get the real index if columns have been reordered
                     const date = data[i].split('-');
                     const val = (date.length === 3) ?
                         new Date(`${date[0]}-${parseInt(date[1], 10)}-${parseInt(date[2], 10)}`) : false;
@@ -330,7 +318,7 @@
                     }
 
                     return flag;
-                }, filter, index));
+                });
             }
         }
     }

@@ -265,6 +265,7 @@
                             filter: { },
                             width: '',
                             init: false,
+                            position: -1, // use to synchronize columns when reorder
                         };
                     });
 
