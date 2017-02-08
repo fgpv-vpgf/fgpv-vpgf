@@ -243,8 +243,15 @@
                 .parent(layoutService.panes.toc)
                 .position('bottom rv-flex');
 
+            // function to avoid cyclomatic check
+            const markRecDeleted = (entry, flag) => {
+                if (entry._layerRecord) {
+                    entry._layerRecord.deleted = flag;
+                }
+            };
+
             entry.removed = true;
-            entry._layerRecord.deleted = true;
+            markRecDeleted(entry, true);
 
             // if filters is open, close it at the same time we remove the layer
             const smRequest = stateManager.display.filters.requester;
@@ -272,7 +279,7 @@
                         // it is restored also invisible
                         entry.setVisibility(isEntryVisible);
                         entry.removed = false;
-                        entry._layerRecord.deleted = false;
+                        markRecDeleted(entry, false);
                     } else {
                         if (entry.type !== 'placeholder') {
                             // remove layer for real now
