@@ -3,7 +3,8 @@
     <rv-content-pane
         close-panel="self.cancel()"
         title-style="title"
-        title-value="{{ 'details.title' | translate }}: {{ self.item.requester.name }} {{ self.item.requester.caption }} ">
+        title-value="{{ self.item.requester.name }}"
+        sub-title-value="{{ self.item.requester.caption }}">
 
         <div class="rv-details">
             <md-content class="rv-details-data rv-content"

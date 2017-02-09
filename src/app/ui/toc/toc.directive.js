@@ -1,4 +1,3 @@
-/* global TweenLite */
 (() => {
     'use strict';
 
@@ -20,7 +19,7 @@
      *
      * @return {object} directive body
      */
-    function rvToc($timeout, layoutService, dragulaService, geoService) {
+    function rvToc($timeout, layoutService, dragulaService, geoService, animationService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/toc/toc.html',
@@ -35,6 +34,15 @@
 
         function link(scope, directiveElement) {
             const self = scope.self;
+
+            self.toggleSortGroups = toggleSortGroups;
+
+            // flag the touchstart event happening on the layers panel, so the default drag-n-drop reorder can be canceled;
+            // only reorder using the reorder mode is allowed when touch events are detected https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1457
+            let isTouchDetected = false;
+            directiveElement.on('touchstart', () =>
+                (isTouchDetected = true));
+
             // register toc node with layoutService so it can be targeted
             layoutService.panes.toc = directiveElement;
 
@@ -42,6 +50,32 @@
             // jscs doesn't like enhanced object notation
             // jscs:disable requireSpacesInAnonymousFunctionExpression
             self.dragulaOptions = {
+
+                moves(el, source, handle) { // , sibling) {
+                    console.log('moves'); // , el, source, handle, sibling);
+                    // return true; // elements are always draggable by default
+
+                    // only allow reordering using the drag handle when using touch
+                    if (isTouchDetected) {
+                        isTouchDetected = false;
+
+                        // prevent drag from starting if something other than a handle was grabbed
+                        if (angular.element(handle).parentsUntil(el, '[rv-drag-handle]').length > 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+
+                    } else {
+                        return true; // always allow drag for with mouse events
+                    }
+                },
+
+                /*invalid(el, handle) {
+                    // console.log('invalid', el, handle);
+                    return false; // don't prevent any drags from initiating by default
+                },*/
+
                 accepts(dragElement, target, source, sibling) {
                     // el and sibling are raw dom nodes, need to use `angular.element` to get jquery wrappers
                     [dragElement, sibling] = [angular.element(dragElement), angular.element(sibling)];
@@ -116,23 +150,32 @@
 
                 // handle autoscroll when dragging layers
                 const scrollElem = source.closest('md-content');
-                directiveElement.on('mousemove', event => {
-                    // Animation time is proportionate to the actual pixel distance to be scolled
-                    // times 3 - where 3 is the maximum animation time in seconds
-                    let scrollSpeed = (scrollElem.scrollTop() /
-                        (scrollElem[0].scrollHeight - scrollElem.height())) * 3;
+                directiveElement.on('mousemove touchmove', event => {
+
+                    const pageY = event.pageY ? event.pageY :  event.originalEvent.touches[0].clientY;
+
+                    // scroll animation is linear
+                    let scrollDuration;
+                    const speedRatio = 1 / 500; // 500 px in 1 second
 
                     // scrolling upwards
-                    if (scrollElem.offset().top + dragElement.height() > event.pageY) {
+                    if (scrollElem.offset().top + dragElement.height() > pageY) {
+                        scrollDuration = scrollElem.scrollTop() * speedRatio;
+
                         if (!scrollAnimation.isActive()) {
-                            scrollAnimation = TweenLite.to(scrollElem, scrollSpeed, { scrollTo: { y: 0 } });
+                            scrollAnimation = animationService.to(scrollElem, scrollDuration,
+                                { scrollTo: { y: 0 }, ease: 'Linear.easeNone' });
                         }
 
                     // scrolling downwards
-                    } else if (scrollElem.height() - event.pageY <= 0) {
+                    } else if (scrollElem.height() - pageY <= 0) {
                         if (!scrollAnimation.isActive()) {
-                            scrollAnimation = TweenLite.to(scrollElem, 3 - scrollSpeed,
-                                { scrollTo: { y: scrollElem[0].scrollHeight - scrollElem.height() } });
+                            scrollDuration = (scrollElem[0].scrollHeight -
+                                scrollElem.height() - scrollElem.scrollTop()) * speedRatio;
+
+                            scrollAnimation = animationService.to(scrollElem, scrollDuration,
+                                { scrollTo: { y: scrollElem[0].scrollHeight - scrollElem.height() },
+                                ease: 'Linear.easeNone' });
                         }
 
                     // stop scrolling
@@ -150,7 +193,7 @@
                 self.dragulaOptions.rvDragDrop(evt, dragElement, target, source, sibling);
 
                 // stop and remove autoscroll
-                directiveElement.off('mousemove');
+                directiveElement.off('mousemove touchmove');
                 scrollAnimation.pause();
             });
 
@@ -159,23 +202,64 @@
                 self.dragulaOptions.rvDragCancel(evt, elem, target, source);
 
                 // stop and remove autoscroll
-                directiveElement.off('mousemove');
+                directiveElement.off('mousemove touchmove');
                 scrollAnimation.pause();
             });
+
+            /**
+             * @function toggleSortGroups
+             * @private
+             * @param {Booelan} value indicates whether the sort groups should be fanned out or collapsed
+             */
+            function toggleSortGroups(value) {
+
+                const legendListElement = directiveElement.find('.rv-root');
+                const legendListItemsElements = legendListElement.find('> li');
+                const sortGroupCount = parseInt(legendListItemsElements.last().attr('data-sort-group'));
+                let splitSortGroupElement;
+
+                const tl = animationService.timeLineLite({
+                    paused: true,
+                    onComplete: () => {
+                        legendListElement.addClass('rv-reorder');
+                        animationService.set(legendListItemsElements,
+                            { clearProps: 'margin-top' }
+                        );
+                    },
+                    onReverseComplete: () => legendListElement.removeClass('rv-reorder')
+                });
+
+                for (let i = 0; i < sortGroupCount; i++) {
+                    splitSortGroupElement = legendListItemsElements
+                        .filter(`[data-sort-group="${i}"] + [data-sort-group="${i + 1}"]`);
+
+                    tl.fromTo(splitSortGroupElement, 0.3,
+                        { 'margin-top': 0 }, { 'margin-top': 36 }, 0);
+                }
+
+                if (value) {
+                    tl.play();
+                } else {
+                    tl.reverse(0);
+                }
+            }
         }
     }
 
-    function Controller(tocService, stateManager, geoService) {
+    function Controller(tocService, stateManager, geoService, keyNames) {
         'ngInject';
         const self = this;
 
         self.toggleFiltersFull = toggleFiltersFull;
+        self.toggleReorderMode = toggleReorderMode;
+        self.tocKeyDownHandler = tocKeyDownHandler;
 
         self.geoService = geoService;
         self.config = tocService.data;
         self.presets = tocService.presets;
 
-        activate();
+        // reorder mode is off by default
+        self.isReorder = false;
 
         /***/
 
@@ -201,8 +285,47 @@
             stateManager.setMode('filters', views[index]);
         }
 
-        function activate() {
+        /**
+         * Enabled or disabled the reorder mode based on its current state or supplied value.
+         *
+         * @function toggleReorderMode
+         * @private
+         * @param {Boolean} value [optional = !self.isReorder] indicates whether to enable or disalbe the reorder mode
+         */
+        function toggleReorderMode(value = !self.isReorder) {
+            self.toggleSortGroups(value);
+            self.isReorder = value;
+        }
 
+        /**
+         * Handle key down pressed on the toc panel.
+         *
+         * - Escape: turns off the reorder mode if enabled
+         *
+         *
+         * @function tocKeyDownHandler
+         * @private
+         * @param {Object} event key down event with keycode and everything
+         */
+        function tocKeyDownHandler(event) {
+            // cancel reorder mode on `Escape` key when pressed over toc
+            console.log(event.keyCode);
+            if (event.keyCode === keyNames.ESCAPE && self.isReorder) {
+                self.toggleReorderMode(false);
+                killEvent(event);
+            }
+        }
+
+        /**
+         * Kills default and event propagation.
+         * // TODO: useful function; should be in common module or something;
+         * @function killEvent
+         * @private
+         * @param  {object} event event object
+         */
+        function killEvent(event) {
+            event.preventDefault(true);
+            event.stopPropagation(true);
         }
     }
 })();

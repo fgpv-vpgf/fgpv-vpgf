@@ -5,10 +5,8 @@ and collates multiple hits per layer into one view
 WARNING be sure to change the detail content display logic in both blocks (single view and list view)
 -->
 <rv-content-pane
-    header-controls="rv-details-expand"
     close-panel="self.closeDetails()"
     static-content="true"
-    floating-header="true"
     is-loading="self.display.isLoading"
     hide-when-loading="self.display.data.length === 1 || !self.display.data">
 
@@ -18,14 +16,20 @@ WARNING be sure to change the detail content display logic in both blocks (singl
 
     <!-- this handles the case of only one layer returning results. hides the side selector  -->
     <div class="rv-details" ng-if="self.display.data.length === 1">
+
+        <rv-details-header selected-item="self.selectedItem"></rv-details-header>
+
         <md-content class="rv-details-data rv-content"
             rv-detect-scrollbar
             rv-details-content rv-item="self.selectedItem">
         </md-content>
+
     </div>
 
     <!-- this handles the case of multiple layers returning results. shows the side selector  -->
     <div class="rv-details rv-multiple" ng-if="self.display.data.length > 1">
+
+        <rv-details-header selected-item="self.selectedItem"></rv-details-header>
 
         <md-content class="rv-details-data rv-content"
             rv-detect-scrollbar

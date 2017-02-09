@@ -13,10 +13,18 @@
     // test user browser, true if IE false otherwise
     RV.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
 
+    // Safari problem with file saver: https://github.com/eligrey/FileSaver.js/#supported-browsers
+    // test if it is Safari browser on desktop and it if is, show a message to let user know we can't automatically save the file
+    // they have to save it manually the same way as when the canvas is tainted.
+    RV.isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent) &&
+        !/(iPhone|iPod|iPad)/i.test(navigator.platform);
+
     // set these outside of the initial creation in case the page defines RV for setting
     // properties like dojoURL
     Object.assign(RV, {
         getMap,
+        ready,
+        allScriptsLoaded: false,
         debug: {},
         _nodes: null,
         _deferredPolyfills: RV._deferredPolyfills || [] // holds callback for any polyfills or patching that needs to be done after the core.js is loaded
@@ -27,6 +35,7 @@
         jQuery: '2.2.1',
         dataTables: '1.10.11'
     };
+    const customAttrs = ['config', 'langs', 'service-endpoint', 'restore-bookmark', 'wait', 'keys', 'fullpage-app'];
     const URLs = {
         jQuery: `http://ajax.aspnetcdn.com/ajax/jQuery/jquery-${versions.jQuery}.min.js`,
         dataTables: `https://cdn.datatables.net/${versions.dataTables}/js/jquery.dataTables.min.js`
@@ -74,11 +83,14 @@
     // registry of map proxies
     const mapRegistry = [];
 
+    let readyQueue = []; // array of callbacks waiting on script loading to complete
+
     // appeasing this rule makes the code fail disallowSpaceAfterObjectKeys
     /* jscs:disable requireSpacesInAnonymousFunctionExpression */
     const mapProxy = {
         _appPromise: null,
         _initAppPromise: null,
+        appID: null,
 
         _proxy(action, ...args) {
             return this._appPromise.then(appInstance =>
@@ -116,15 +128,30 @@
             this._proxy('centerAndZoom', x, y, spatialRef, zoom);
         },
 
-        backToCart() {
-            return this._proxy('backToCart');
-        },
-
         restoreSession(keysArray) {
             this._initProxy('restoreSession', keysArray);
         },
 
-        _init() {
+        getRcsLayerIDs() {
+            return this._proxy('getRcsLayerIDs');
+        },
+
+        /**
+         * Registers a plugin with a viewer instance.
+         * This function expects a minimum of two parameters such that:
+         *   - the first parameter is a plugin class reference
+         *   - the second parameter is a unique plugin id string
+         * Any additional parameters will be passed to the plugins init method
+         *
+         * @function    registerPlugin
+         */
+        registerPlugin() {
+            this._loadPromise.then(app => app.registerPlugin(...arguments));
+        },
+
+        _init(appID) {
+            this.appID = appID;
+
             this._appPromise = new Promise(resolve =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness
                 this._registerMap = appInstance =>
@@ -132,6 +159,15 @@
                     // after this point, all queued calls to `loadRcsLayers`, `setLanguage`, etc. will trigger
                     resolve(appInstance)
             );
+
+            // this promise waits to be resolved by the rvReady event on the angular side
+            // unlike the other promises this is only resolved once during the page load cycle
+            if (typeof this._loadPromise === 'undefined') {
+                this._loadPromise = new Promise(resolve =>
+                    // store a callback function in the proxy object itself for map instances to call upon readiness
+                    this._applicationLoaded = appInstance => resolve(appInstance)
+                );
+            }
 
             this._initAppPromise = new Promise(resolve =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness
@@ -153,6 +189,8 @@
     // convert html collection to array:
     // https://babeljs.io/docs/learn-es2015/#math-number-string-object-apis
     const nodes = [].slice.call(document.getElementsByClassName('fgpv'));
+    const isAttrNodes = [].slice.call(document.querySelectorAll('[is=rv-map]'));
+    isAttrNodes.filter(node => nodes.indexOf(node) === -1).forEach(node => nodes.push(node));
 
     // store nodes to use in app-seed; avoids a second DOM traversal
     RV._nodes = nodes;
@@ -162,6 +200,9 @@
     nodes.forEach(node => {
 
         let appId = node.getAttribute('id');
+        customAttrs
+            .filter(attrName => node.getAttribute(`data-rv-${attrName}`))
+            .forEach(attrName => node.setAttribute(`rv-${attrName}`, node.getAttribute(`data-rv-${attrName}`))); // getAttribute returns a string so data-rv-fullscreen-app="false" will copy correctly
 
         if (!appId) {
             appId = 'rv-app-' + counter++;
@@ -179,7 +220,7 @@
         // create debug object for each app instance
         RV.debug[appId] = {};
 
-        mapRegistry[appId] = Object.create(mapProxy)._init(node);
+        mapRegistry[appId] = Object.create(mapProxy)._init(appId);
     });
 
     scriptsArr.forEach(src => loadScript(src));
@@ -188,9 +229,33 @@
     loadScript(`${repo}/core.js`, () => {
         RV._deferredPolyfills.forEach(dp => dp());
         RV.focusManager.init();
+        RV.allScriptsLoaded = true;
+        fireRvReady();
     });
 
     /***/
+
+    /**
+     * Called to buffer code until the library code has been fully loaded.  Behaves similar to jQuery style DOM ready events.
+     * @function
+     * @param {Function} callBack a function to be called once the library is loaded
+     */
+    function ready(callBack) {
+        if (RV.allScriptsLoaded) {
+            callBack();
+        } else {
+            readyQueue.push(callBack);
+        }
+    }
+
+    /**
+     * Fires all callbacks waiting on the ready event and empties the callback queue.
+     * @private
+     */
+    function fireRvReady() {
+        readyQueue.forEach(cb => cb());
+        readyQueue = [];
+    }
 
     // external "sync" function to retrieve a map instance
     // in reality it returns a map proxy queueing calls to the map until it's ready

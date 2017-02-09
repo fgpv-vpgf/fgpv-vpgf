@@ -1,10 +1,12 @@
-/* global Ease, BezierEasing, TimelineLite */
+/* global Ease, BezierEasing */
 (() => {
     'use strict';
 
     const RV_TOGGLE_SLIDE_DURATION = 0.25;
     const RV_TOGGLE_OPACITY_DURATION = 0.1;
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
+
+    let animSrv;
 
     /**
      * @module rvToggleSlide
@@ -34,7 +36,12 @@
             removeClass: ngShowHideBootstrap(false)
         };
 
-        return () => service;
+        return animationService => {
+            'ngInject';
+
+            animSrv = animationService;
+            return service;
+        };
 
         /******/
 
@@ -47,7 +54,7 @@
         function toggleOpen(element, callback) {
             const targetHeight = getTargetHeight(element);
 
-            const animation = new TimelineLite();
+            const animation = animSrv.timeLineLite();
 
             animation.fromTo(element, RV_TOGGLE_SLIDE_DURATION, {
                 height: 0
@@ -73,7 +80,7 @@
          * @param  {callback} callback
          */
         function toggleClose(element, callback) {
-            const animation = new TimelineLite();
+            const animation = animSrv.timeLineLite();
 
             animation.fromTo(element, RV_TOGGLE_OPACITY_DURATION, {
                 opacity: 1

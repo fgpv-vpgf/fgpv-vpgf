@@ -13,14 +13,21 @@
         .module('app.ui.filters')
         .factory('detailService', detailService);
 
-    function detailService(stateManager, $mdDialog, storageService) {
+    function detailService($mdDialog, stateManager, geoService, storageService) {
 
         const service = {
-            expandPanel
+            expandPanel,
+            closeDetails
         };
 
         return service;
 
+        /**
+         * Opens a dialog panel with feature details.
+         *
+         * @function expandPanel
+         * @param {Boolean} hasBackdrop [optional = true] specifies if a backdrop should be displayed behind the dialog popup
+         */
         function expandPanel(hasBackdrop = true) {
             $mdDialog.show({
                 controller: () => {},
@@ -37,6 +44,21 @@
                 bindToController: true,
                 hasBackdrop
             });
+        }
+
+        /**
+         * Closes loader pane and switches to the previous pane if any.
+         * @function closeDetails
+         */
+        function closeDetails() {
+            stateManager.clearDisplayPanel('mainDetails');
+            geoService.clearHilight();
+
+            if (stateManager.panelHistory.find(x => x === 'mainToc')) {
+                stateManager.togglePanel('mainDetails', 'mainToc');
+            } else {
+                stateManager.setActive({ mainDetails: false });
+            }
         }
     }
 })();

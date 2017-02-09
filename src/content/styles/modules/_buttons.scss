@@ -157,7 +157,8 @@
         @if $color != auto {
             color: $color;
         }
-opacity: $opacity-from;
+
+        opacity: $opacity-from;
         //&:not([disabled]):focus,
     }
 
@@ -171,6 +172,12 @@ opacity: $opacity-from;
     &:not([disabled]).selected {
         md-icon {
             opacity: $opacity-full;
+        }
+    }
+
+    &[disabled] {
+        md-icon {
+            color: rgba(0,0,0,0.38);
         }
     }
 }
@@ -223,6 +230,7 @@ opacity: $opacity-from;
     }
 }
 
+$button-sizes: 32, 24, 20, 16, 14;
 $icon-sizes: 40, 32, 24, 20, 16, 14;
 
 @mixin button-divider {

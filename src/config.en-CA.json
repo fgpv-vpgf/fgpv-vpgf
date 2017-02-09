@@ -1,5 +1,5 @@
 {
-  "version": "1.3",
+  "version": "1.6",
   "shareable": true,
   "googleAPIKey": "AIzaSyD_FwYU_mT1xhTdUoiHBRjwToWUe--KVVU",
   "services": {
@@ -19,6 +19,11 @@
     "footnote": {
       "value": "This is a footnote added from the configuration file. The note is very long so it should wrap on multiple lines when it reaches a certain limit in size. Maybe some user will want to use this as aplace holder to put a lot of information so we need to be able to wrap this content. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce aliquet ante quis aliquet feugiat. Cras eget semper nunc, eu placerat purus. Nunc sed lacinia enim, ut sollicitudin quam. Nunc quis finibus massa, eget maximus enim. Donec ac nisl libero. Nunc eu pharetra arcu. Fusce luctus, magna cursus gravida tristique, risus nisi porttitor magna, ac dictum ipsum dui vel nulla. Integer id ornare augue. Quisque condimentum velit quis elementum porta. Sed dui enim, iaculis cursus diam volutpat, laoreet porta quam. Sed nec aliquet magna. Curabitur commodo fringilla metus, eu posuere sapien mollis nec."
     }
+  },
+  "legendIsOpen": {
+    "large": true,
+    "medium": true,
+    "small": false
   },
   "map": {
     "components": {
@@ -60,10 +65,10 @@
       {
         "id": "EXT_ESRI_World_AuxMerc_3857",
         "default": {
-          "xmin": -14545988.445533132,
-          "ymin": 4822907.964742964,
-          "xmax": -4507771.626060756,
-          "ymax": 9815875.184845109,
+          "xmin": -16632697.354854,
+          "ymin": 5022907.964742964,
+          "xmax": -5007771.626060756,
+          "ymax": 10015875.184845109,
           "spatialReference": {
             "wkid": 102100,
             "latestWkid": 3857
@@ -92,36 +97,32 @@
             { "level": 14, "resolution": 22.48962831258996, "scale": 85000 },
             { "level": 15, "resolution": 13.229193125052918, "scale": 50000 },
             { "level": 16, "resolution": 7.9375158750317505, "scale": 30000 },
-            { "level": 17, "resolution": 4.6302175937685215, "scale": 17500 }
-        ]
+            { "level": 17, "resolution": 4.6302175937685215, "scale": 17500 }        ]
       },
       {
         "id": "LOD_ESRI_World_AuxMerc_3857",
         "lods": [
-            { "level": 0, "resolution": 156543.03392800014, "scale": 591657527.591555 },
-            { "level": 1, "resolution": 78271.51696399994, "scale": 295828763.795777 },
-            { "level": 2, "resolution": 39135.75848200009, "scale": 147914381.897889 },
-            { "level": 3, "resolution": 19567.87924099992, "scale": 73957190.948944 },
-            { "level": 4, "resolution": 9783.93962049996, "scale": 36978595.474472 },
-            { "level": 5, "resolution": 4891.96981024998, "scale": 18489297.737236 },
-            { "level": 6, "resolution": 2445.98490512499, "scale": 9244648.868618 },
-            { "level": 7, "resolution": 1222.992452562495, "scale": 4622324.434309 },
-            { "level": 8, "resolution": 611.4962262813797, "scale": 2311162.217155 },
-            { "level": 9, "resolution": 305.74811314055756, "scale": 1155581.108577 },
-            { "level": 10, "resolution": 152.87405657041106, "scale": 577790.554289 },
-            { "level": 11, "resolution": 76.43702828507324, "scale": 288895.277144 },
-            { "level": 12, "resolution": 38.21851414253662, "scale": 144447.638572 },
-            { "level": 13, "resolution": 19.10925707126831, "scale": 72223.819286 },
-            { "level": 14, "resolution": 9.554628535634155, "scale": 36111.909643 },
-            { "level": 15, "resolution": 4.77731426794937, "scale": 18055.954822 },
-            { "level": 16, "resolution": 2.388657133974685, "scale": 9027.977411 },
-            { "level": 17, "resolution": 1.1943285668550503, "scale": 4513.988705 },
-            {"level": 18, "resolution": 0.5971642835598172, "scale": 2256.994353 },
-            {"level": 19, "resolution": 0.29858214164761665, "scale": 1128.497176 },
-            {"level": 20, "resolution": 0.14929107082380833, "scale": 564.248588 },
-            {"level": 21, "resolution": 0.07464553541190416, "scale": 282.124294 },
-            {"level": 22, "resolution": 0.03732276770595208, "scale": 141.062147 },
-            {"level": 23, "resolution": 0.01866138385297604, "scale": 70.5310735 }
+            { "level": 0, "resolution": 19567.87924099992, "scale": 73957190.948944 },
+            { "level": 1, "resolution": 9783.93962049996, "scale": 36978595.474472 },
+            { "level": 2, "resolution": 4891.96981024998, "scale": 18489297.737236 },
+            { "level": 3, "resolution": 2445.98490512499, "scale": 9244648.868618 },
+            { "level": 4, "resolution": 1222.992452562495, "scale": 4622324.434309 },
+            { "level": 5, "resolution": 611.4962262813797, "scale": 2311162.217155 },
+            { "level": 6, "resolution": 305.74811314055756, "scale": 1155581.108577 },
+            { "level": 7, "resolution": 152.87405657041106, "scale": 577790.554289 },
+            { "level": 8, "resolution": 76.43702828507324, "scale": 288895.277144 },
+            { "level": 9, "resolution": 38.21851414253662, "scale": 144447.638572 },
+            { "level": 10, "resolution": 19.10925707126831, "scale": 72223.819286 },
+            { "level": 11, "resolution": 9.554628535634155, "scale": 36111.909643 },
+            { "level": 12, "resolution": 4.77731426794937, "scale": 18055.954822 },
+            { "level": 13, "resolution": 2.388657133974685, "scale": 9027.977411 },
+            { "level": 14, "resolution": 1.1943285668550503, "scale": 4513.988705 },
+            {"level": 15, "resolution": 0.5971642835598172, "scale": 2256.994353 },
+            {"level": 16, "resolution": 0.29858214164761665, "scale": 1128.497176 },
+            {"level": 17, "resolution": 0.14929107082380833, "scale": 564.248588 },
+            {"level": 18, "resolution": 0.07464553541190416, "scale": 282.124294 },
+            {"level": 19, "resolution": 0.03732276770595208, "scale": 141.062147 },
+            {"level": 20, "resolution": 0.01866138385297604, "scale": 70.5310735 }
         ]
       }
     ]
@@ -156,7 +157,7 @@
       "id":"ecogeo",
       "name": "Eco Geo",
       "layerType":"esriDynamic",
-      "layerEntries": [{"index": 6}, {"index": 7}, {"index": 8}, {"index": 9}],
+      "layerEntries": [{"index": 6, "data": {"enabled": false}}, {"index": 7}, {"index": 8}, {"index": 9}],
       "url":"http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer",
       "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
     },
@@ -174,7 +175,9 @@
       "layerType":"esriFeature",
       "url":"http://ec.gc.ca/arcgis/rest/services/data_donnees/be12386d/MapServer/0",
       "options": {
-        "opacity": { "value": 0.1 }
+        "opacity": { "value": 0.1 },
+        "data": { "enabled": false },
+        "query": { "enabled": true, "value": false }
       }
     },
     {
@@ -419,10 +422,26 @@
     "zoom": "buttons",
     "extra": [
       "geoLocator",
-      "marquee",
       "home",
-      "history",
-      "basemap"
+      "help"
+    ]
+  },
+  "sideMenu": {
+    "items": [
+        [
+            "layers",
+            "basemap"
+        ],
+        [
+            "fullscreen",
+            "export",
+            "share",
+            "touch",
+            "help"
+        ],
+        [
+            "language"
+        ]
     ]
   }
 }

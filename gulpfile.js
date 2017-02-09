@@ -182,6 +182,16 @@ function libbuild() {
 }
 
 /**
+ * Concat and build core plugins.
+ * @return {Stream}
+ */
+function pluginbuild() {
+    return gulp.src(config.jsCorePlugins)
+        .pipe($.babel())
+        .pipe($.concat(config.jsCorePluginFile));
+}
+
+/**
  * Create $templateCache from the html templates
  * @return {Stream}
  */
@@ -264,6 +274,7 @@ gulp.task('jsrollup', 'Roll up all js into one file',
     function () {
 
         const jslib = libbuild();
+        const plugins = pluginbuild();
         const jscache = templatecache();
         const jsapp = jsbuild();
         const seed = gulp.src([config.jsGlobalRegistry, config.jsAppSeed])
@@ -275,7 +286,7 @@ gulp.task('jsrollup', 'Roll up all js into one file',
         // app-seed `must` be the last item
 
         // merge all js streams to avoid writing individual files to disk
-        return merge(jslib, jscache, jsapp, seed) // merge doesn't guarantee file order :(
+        return merge(jslib, plugins, jscache, jsapp, seed) // merge doesn't guarantee file order :(
             .pipe($.order(config.jsOrder))
             .pipe($.concat(config.jsCoreFile))
             // can't use lazy pipe with uglify
@@ -302,7 +313,10 @@ gulp.task('jsinjector', 'Copy fixed assets to the build directory',
         // NOTE it is currently reasonable to load ES7 polyfills with injector as
         // the only one we have is Object.entries and it is very small
         // if it gets bigger we should split it into a separate file
-        const injector = merge(gulp.src(config.jsInjectorFile).pipe($.babel()), polyfills)
+        const injector = merge(
+            gulp.src(config.jsInjectorFile).pipe($.babel()),
+            polyfills
+        )
             .pipe($.order(config.injectorOrder))
             .pipe($.concat(config.jsInjectorDest));
 

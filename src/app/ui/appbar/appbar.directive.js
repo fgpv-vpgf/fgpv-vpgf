@@ -38,7 +38,7 @@
         return directive;
     }
 
-    function Controller(layoutService, stateManager, debounceService) {
+    function Controller(layoutService, stateManager, debounceService, basemapService) {
         'ngInject';
         const self = this;
 
@@ -48,6 +48,7 @@
         self.toggleDetails = toggleDetails;
         self.toggleToc = toggleToc;
         self.toggleToolbox = toggleToolbox;
+        self.openBasemapSelector = basemapService.open;
 
         activate();
 

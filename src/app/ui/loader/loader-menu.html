@@ -4,14 +4,13 @@
 
     <md-button
         translate translate-attr-aria-label="import.title"
-        class="md-icon-button primary"
-        ng-click="$mdOpenMenu($event)"
-        ng-class="{ selected: self.state.mainLoaderFile.active || self.state.mainLoaderService.active }">
+        class="md-icon-button primary rv-loader-add"
+        ng-click="$mdOpenMenu($event)">
         <md-tooltip>{{ 'import.title' | translate }}</md-tooltip>
         <md-icon md-svg-src="content:add"></md-icon>
     </md-button>
 
-    <md-menu-content rv-trap-focus="{{::self.appID}}" class="rv-menu rv-dense" width="4">
+    <md-menu-content rv-trap-focus="{{ ::self.appID }}" class="rv-menu rv-dense" width="4">
         <md-menu-item>
             <md-button
                 ng-click="self.openFileLoader()"

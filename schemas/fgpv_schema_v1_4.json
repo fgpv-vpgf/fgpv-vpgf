@@ -1,0 +1,845 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "FGPV Config Schema",
+    "type": "object",
+    "comments": "FIXME: when draft 05 is release redo schema inheritance with patching / merging if they are accepted",
+    "additionalProperties": true,
+
+    "definitions": {
+        "spatialReference": {
+            "type": "object",
+            "properties": {
+                "wkid": { "type": "number" },
+                "vcsWkid": { "type": "number" },
+                "latestWkid": { "type": "number" },
+                "latestVcsWkid": { "type": "number" },
+                "wkt": { "type": "string" }
+            },
+            "anyOf": [
+                { "required": [ "wkid" ] },
+                { "required": [ "vcsWkid" ] },
+                { "required": [ "latestWkid" ] },
+                { "required": [ "latestVcsWkid" ] },
+                { "required": [ "wkt" ] }
+            ]
+        },
+        "spatialReferenceNode": {
+            "type": "object",
+            "properties": {
+                "wkid": { "type": "number" },
+                "vcsWkid": { "type": "number" },
+                "latestWkid": { "type": "number" },
+                "latestVcsWkid": { "type": "number" },
+                "wkt": { "type": "string" }
+            },
+            "anyOf": [
+                { "required": [ "wkid" ] },
+                { "required": [ "vcsWkid" ] },
+                { "required": [ "latestWkid" ] },
+                { "required": [ "latestVcsWkid" ] },
+                { "required": [ "wkt" ] }
+            ],
+            "additionalProperties": false
+        },
+        "extent": {
+            "properties": {
+                "xmin": { "type": "number" },
+                "ymin": { "type": "number" },
+                "xmax": { "type": "number" },
+                "ymax": { "type": "number" }
+            },
+            "required": [ "xmin", "ymin", "xmax", "ymax" ]
+        },
+        "extentNode": {
+            "properties": {
+                "xmin": { "type": "number" },
+                "ymin": { "type": "number" },
+                "xmax": { "type": "number" },
+                "ymax": { "type": "number" }
+            },
+            "required": [ "xmin", "ymin", "xmax", "ymax" ],
+            "additionalProperties": false
+        },
+        "extentWithReferenceNode": {
+            "type": "object",
+            "properties": {
+                "xmin": { "type": "number" },
+                "ymin": { "type": "number" },
+                "xmax": { "type": "number" },
+                "ymax": { "type": "number" },
+                "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" }
+            },
+            "required": [ "xmin", "ymin", "xmax", "ymax" ],
+            "additionalProperties": false
+        },
+        "extentSetNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "default": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The default (starting) extent." },
+                "full": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The full extent (should give good view of the whole map, not necessarily the maximum extent); default will be used if not supplied." },
+                "maximum": { "$ref": "#/definitions/extentWithReferenceNode", "description": "The maximum extent; full or default extents will be used if not supplied." }
+            },
+            "required": [ "id", "default" ],
+            "additionalProperties": false
+        },
+
+        "symbolNode": {
+            "type": "object",
+            "properties": {
+                "label": { "type": "string", "description": "description" },
+                "icon": { "type": "string", "description": "Graphical symbol as a URL (data URLs are encouraged for smaller symbols)" }
+            },
+            "required": [ "label", "icon" ],
+            "additionalProperties": false
+        },
+        "lodNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "lods": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "level": { "type": "number" },
+                            "resolution": { "type": "number" },
+                            "scale": { "type": "number" }
+                        },
+                        "required": [ "level", "resolution", "scale" ],
+                        "additionalProperties": false
+                    },
+                    "description": "Level of details for a specific tile schema"
+                }
+            },
+            "required": [ "id", "lods" ],
+            "additionalProperties": false
+        },
+
+        "exportComponent": {
+            "type": "object",
+            "properties": {
+                "isSelected": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Indicates if the component is selected and included in the export graphic."
+                },
+                "isSelectable": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Indicates if the component can be included or excluded from the export graphic by the user."
+                },
+                "value": {
+                    "type": "string",
+                    "description": "Value to be passed to the generation function of this export component."
+                }
+            },
+            "description": "This is the initial configuration for an export component.",
+            "additionalProperties": false
+        },
+
+        "attributionNode": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": { "type": "boolean", "default": true },
+                        "value": { "type": "string", "description": "Optional. Contains the attribution value. If empty, it will use copyright text from the server." }
+                    },
+                    "required": [ "enabled" ],
+                    "additionalProperties": false
+                },
+                "logo": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": { "type": "boolean", "default": true },
+                        "value": { "type": "string", "description": "URL for the image." },
+                        "link": { "type": "string", "description": "URL to go to when clicked." }
+                    },
+                    "required": [ "enabled" ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [ "text", "logo" ],
+            "additionalProperties": false
+        },
+
+        "option": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                }
+            },
+            "description": "Specifies if the corresponding control, option or function is interactive. Doesn't not have any effect on actual state, if any, of the corresponding option"
+        },
+        "visibilityOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Visibility of the layer.  This value is not affected by zoom scale dependency which is a runtime value."
+                }
+            },
+            "description": "Visibility toggle in the layer selector and its current state.",
+            "additionalProperties": false
+        },
+        "offscaleOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies the off scale direction. True: need to zoom in to see the layer; False: need to zoom out to see the layer."
+                }
+            },
+            "description": "Specifies if the layer is off scale or not, this option will replace visibility option when layer is off scale and visibility is true",
+            "additionalProperties": false
+        },
+        "opacityOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Specifies the opacity of the layer. Should be between 0 and 1 inclusively."
+                }
+            },
+            "description": "Specifies the opacity of the layer.",
+            "additionalProperties": false
+        },
+        "boundingBoxOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies the initial state of the bounding box option. True: the layer bounding box is visible; False: the bounding box is hidden."
+                }
+            },
+            "description": "Displays layers bounding box",
+            "additionalProperties": false
+        },
+        "queryOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "True: layer attribute data (or wms results, etc.) can be accessed by clicking on layer features; False: layer attribute data (not wms results), if any, can only be accessed through the data panel"
+                }
+            },
+            "description": "Specifies if the layer can be queried by clicking on the map",
+            "additionalProperties": false
+        },
+        "snapshotOptionNode": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "value": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies the layer data will be initially retrieved. True: everything is fetched upfront; False: fetched based on map extent."
+                }
+            },
+            "description": "Specifies how layer attributes are loaded",
+            "additionalProperties": false
+        },
+
+        "basicLayerOptionsNode": {
+            "type": "object",
+            "properties": {
+                "visibility": {
+                    "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "offscale": {
+                    "$ref": "#/definitions/offscaleOptionNode"
+                },
+                "opacity": {
+                    "$ref": "#/definitions/opacityOptionNode"
+                },
+                "boundaryZoom": {
+                    "$ref": "#/definitions/option",
+                    "description": "Zoom to layer boundary in the layer selector"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "refresh": {
+                    "$ref": "#/definitions/option",
+                    "description": "Refresh control in the layer selector"
+                },
+                "reload": {
+                    "$ref": "#/definitions/option",
+                    "description": "Reload control in the layer selector"
+                },
+                "remove": {
+                    "$ref": "#/definitions/option",
+                    "description": "Remove control in the layer selector"
+                },
+                "boundingBox": {
+                    "$ref": "#/definitions/boundingBoxOptionNode"
+                }
+            },
+            "additionalProperties": false
+        },
+        "featureLayerOptionsNode": {
+            "type": "object",
+            "properties": {
+                "visibility": {
+                    "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "offscale": {
+                    "$ref": "#/definitions/offscaleOptionNode"
+                },
+                "opacity": {
+                    "$ref": "#/definitions/opacityOptionNode"
+                },
+                "boundaryZoom": {
+                    "$ref": "#/definitions/option",
+                    "description": "Zoom to layer boundary in the layer selector"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "refresh": {
+                    "$ref": "#/definitions/option",
+                    "description": "Refresh control in the layer selector"
+                },
+                "reload": {
+                    "$ref": "#/definitions/option",
+                    "description": "Reload control in the layer selector"
+                },
+                "remove": {
+                    "$ref": "#/definitions/option",
+                    "description": "Remove control in the layer selector"
+                },
+                "boundingBox": {
+                    "$ref": "#/definitions/boundingBoxOptionNode"
+                },
+                "query": {
+                    "$ref": "#/definitions/queryOptionNode"
+                },
+                "snapshot": {
+                    "$ref": "#/definitions/snapshotOptionNode"
+                },
+                "data": {
+                    "$ref": "#/definitions/option",
+                    "description": "Enables data panel"
+                }
+            },
+            "additionalProperties": false
+        },
+        "dynamicLayerOptionsNode": {
+            "type": "object",
+            "properties": {
+                "visibility": {
+                    "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "offscale": {
+                    "$ref": "#/definitions/offscaleOptionNode"
+                },
+                "opacity": {
+                    "$ref": "#/definitions/opacityOptionNode"
+                },
+                "boundaryZoom": {
+                    "$ref": "#/definitions/option",
+                    "description": "Zoom to layer boundary in the layer selector"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "refresh": {
+                    "$ref": "#/definitions/option",
+                    "description": "Refresh control in the layer selector"
+                },
+                "reload": {
+                    "$ref": "#/definitions/option",
+                    "description": "Reload control in the layer selector"
+                },
+                "remove": {
+                    "$ref": "#/definitions/option",
+                    "description": "Remove control in the layer selector"
+                },
+                "boundingBox": {
+                    "$ref": "#/definitions/boundingBoxOptionNode"
+                },
+                "query": {
+                    "$ref": "#/definitions/queryOptionNode"
+                },
+                "data": {
+                    "$ref": "#/definitions/option",
+                    "description": "Enables data panel"
+                }
+            },
+            "additionalProperties": false
+        },
+        "compoundLayerOptionsNode": {
+            "type": "object",
+            "properties": {
+                "visibility": {
+                    "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "offscale": {
+                    "$ref": "#/definitions/offscaleOptionNode"
+                },
+                "opacity": {
+                    "$ref": "#/definitions/opacityOptionNode"
+                },
+                "boundaryZoom": {
+                    "$ref": "#/definitions/option",
+                    "description": "Zoom to layer boundary in the layer selector"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "refresh": {
+                    "$ref": "#/definitions/option",
+                    "description": "Refresh control in the layer selector"
+                },
+                "reload": {
+                    "$ref": "#/definitions/option",
+                    "description": "Reload control in the layer selector"
+                },
+                "remove": {
+                    "$ref": "#/definitions/option",
+                    "description": "Remove control in the layer selector"
+                },
+                "boundingBox": {
+                    "$ref": "#/definitions/boundingBoxOptionNode"
+                },
+                "query": {
+                    "$ref": "#/definitions/queryOptionNode"
+                }
+            },
+            "additionalProperties": false
+        },
+        "wmsLayerEntryNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer entry in the WMS" },
+                "name": { "type": "string", "description": "A descriptive name for the layer.  To be used in the legend." },
+                "visibility": {
+                    "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "opacity": {
+                    "$ref": "#/definitions/opacityOptionNode"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "query": {
+                    "$ref": "#/definitions/queryOptionNode"
+                }
+            },
+            "required": ["id"],
+            "additionalProperties": false
+        },
+        "dynamicChildOptionNode": {
+            "type": "object",
+            "properties": {
+                "index": { "type": "number", "description": "The index of the layer in the map service." },
+                "visibility": {
+                    "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "opacity": {
+                    "$ref": "#/definitions/opacityOptionNode"
+                },
+                "query": {
+                    "$ref": "#/definitions/queryOptionNode"
+                }
+            },
+            "required": ["index"],
+            "additionalProperties": false
+        },
+        "dynamicLayerEntryNode": {
+            "type": "object",
+            "properties": {
+                "index": { "type": "number", "description": "The index of the layer in the map service." },
+                "visibility": {
+                    "$ref": "#/definitions/visibilityOptionNode"
+                },
+                "offscale": {
+                    "$ref": "#/definitions/offscaleOptionNode"
+                },
+                "opacity": {
+                    "$ref": "#/definitions/opacityOptionNode"
+                },
+                "remove": {
+                    "$ref": "#/definitions/option",
+                    "description": "Remove control in the layer selector"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/option",
+                    "description": "Metadata toggle in the layer selector"
+                },
+                "settings": {
+                    "$ref": "#/definitions/option",
+                    "description": "Settings toggle in the layer selector"
+                },
+                "query": {
+                    "$ref": "#/definitions/queryOptionNode"
+                },
+                "data": {
+                    "$ref": "#/definitions/option",
+                    "description": "Enables data panel"
+                },
+                "outfields": { "type": "string", "default": "*", "description": "A comma separated list of attribute names that should be requested on query." }
+            },
+            "required": ["index"],
+            "additionalProperties": false
+        },
+
+        "legendAuto": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "autopopulate" ] }
+            },
+            "required": ["type"],
+            "additionalProperties": false
+        },
+        "structuredNode": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string", "description": "Display name of the legend entry" },
+                "renderChildren": { "type": "string", "enum": ["tree", "inline"], "default": "tree", "description": "How to render the elements in the children array (inline only makes sense with symbolNode entries but this is not enforced by the schema)."},
+                "expanded": {  "type": "boolean", "default": true, "description": "If true the initial state of the group will be expanded"},
+                "children": { "type": "array", "items": { "oneOf": [ {"$ref": "#/definitions/structuredNode" }, {"$ref": "#/definitions/symbolNode"} ] }, "description": "Child elements of the legend node" },
+                "layerId": { "type": "string", "description": "A reference to an entry in the layers list, if set this node will have controls setup for that particular layer" },
+                "index": { "type": "string", "description": "If layerId is a compound layer this should reference the particular entry in that layer.  WMSes will have an id property in layerEntries and dynamic layers will have an index." }
+            },
+            "required": ["name"],
+            "additionalProperties": false
+        },
+        "legendStructured": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "structured" ] },
+                "root": { "$ref": "#/definitions/structuredNode" }
+            },
+            "required": ["type", "root"],
+            "additionalProperties": false
+        },
+
+        "basicLayer": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "layerType": { "type": "string", "enum": [ "esriDynamic", "esriFeature", "esriImage", "esriTile", "ogcWms" ] },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" }
+            },
+            "required": [ "id", "layerType", "url" ]
+        },
+        "basicLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
+                "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
+                "layerType": { "type": "string", "enum": [ "esriImage", "esriTile" ] },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "options": { "$ref": "#/definitions/basicLayerOptionsNode" }
+            },
+            "required": [ "id", "layerType", "url" ],
+            "additionalProperties": false
+        },
+        "featureLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
+                "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
+                "layerType": { "type": "string", "enum": [ "esriFeature" ] },
+                "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "options": { "$ref": "#/definitions/featureLayerOptionsNode" }
+            },
+            "required": [ "id", "layerType", "url" ],
+            "additionalProperties": false
+        },
+        "wmsLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
+                "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
+                "layerEntries": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/wmsLayerEntryNode" },
+                    "minItems": 1
+                },
+                "layerType": { "type": "string", "enum": [ "ogcWms" ] },
+                "featureInfoMimeType": { "type": "string", "enum": [ "text/html;fgpv=summary", "text/html", "text/plain", "application/json" ], "description": "If specified indicates that GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested." },
+                "legendMimeType": { "type": "string", "enum": [ "image/png", "image/gif", "image/jpeg", "image/svg", "image/svg+xml" ], "description": "If specified indicates that GetLegendGraphic should be enabled for this WMS and indicates the format that should be requested.  FIXME check legendUrl for additional requirements" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "options": { "$ref": "#/definitions/compoundLayerOptionsNode" }
+            },
+            "required": [ "id", "layerType", "layerEntries", "url" ],
+            "additionalProperties": false
+        },
+        "dynamicLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
+                "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
+                "layerType": { "type": "string", "enum": [ "esriDynamic" ] },
+                "layerEntries": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/dynamicLayerEntryNode" },
+                    "minItems": 1
+                },
+                "childOptions": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/dynamicChildOptionNode" },
+                    "default": [],
+                    "description": "Settings for child layers not defined in layerEntries. I.e. sub layers that are not at the root level of the legend"
+                },
+                "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "options": { "$ref": "#/definitions/dynamicLayerOptionsNode" }
+            },
+            "required": [ "id", "layerType", "layerEntries", "url" ],
+            "additionalProperties": false
+        },
+        "layerNode": {
+            "oneOf": [
+                { "$ref": "#/definitions/basicLayerNode" },
+                { "$ref": "#/definitions/featureLayerNode" },
+                { "$ref": "#/definitions/wmsLayerNode" },
+                { "$ref": "#/definitions/dynamicLayerNode" }
+            ]
+        },
+
+        "layerList": {
+            "type": "array",
+            "items": { "oneOf": [ { "$ref": "#/definitions/layerNode" } ] }
+        },
+
+        "baseMapNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "A unique identifier for the basemap" },
+                "name": { "type": "string", "description": "Name of the basemap used for labeling" },
+                "description": { "type": "string", "description": "Description of the basemap. Will be visible when basemap selector is expanded.Description of the basemap. Will be visible when basemap selector is expanded." },
+                "typeSummary": { "type": "string", "description": "Optional base map type. This is descriptive only, and will be shown in the basemap selector." },
+                "altText": { "type": "string", "description": "Alt text for the basemap thumbnail image.Alt text for the basemap thumbnail image." },
+                "thumbnailUrl": { "type": "string", "description": "Path to image file to display in the basemap selector." },
+                "wkid": { "type": "number", "description": "The WKID of spatial reference" },
+                "extentId": { "type": "string", "description": "The extent set to be used for this basemap (should reference map.extentSets.id)" },
+                "lodId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" },
+                "layers": { "$ref": "#/definitions/layerList" },
+                "attribution": { "$ref": "#/definitions/attributionNode" },
+                "zoomLevels": {
+                    "type": "object",
+                    "properties": {
+                        "min": { "type": "number" },
+                        "max": { "type": "number" }
+                    },
+                    "default": { },
+                    "additionalProperties": false
+                }
+            },
+            "required": [ "id", "name", "description", "altText", "thumbnailUrl", "wkid", "extentId" ],
+            "additionalProperties": false
+        },
+
+        "navBarNode": {
+            "type": "object",
+            "properties": {
+                "zoom": { "type": "string", "enum": ["all", "buttons", "slider"], "default": "buttons" },
+                "extra": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/navBarButtons" }, "default": [] }
+            },
+            "required": [ "zoom" ],
+            "additionalProperties": false
+        },
+
+        "navBarButtons": {
+            "type": "string",
+            "enum": ["geoLocator", "marquee", "home", "history", "basemap"]
+        },
+
+        "mapComponentsNode": {
+            "type": "object",
+            "properties": {
+                "geoSearch": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": true }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
+                "mouseInfo": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": true }, "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
+                "northArrow": { "type": "object", "properties": {"enabled": { "type": "boolean", "default": true } } },
+                "overviewMap": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": true }, "maximizeButton": { "type": "boolean"}, "layerType": { "type": "string"} } },
+                "scaleBar": { "type": "object", "properties": {"enabled": { "type": "boolean", "default": true } } }
+            }
+        }
+
+    },
+
+    "properties": {
+        "version": { "type": "string", "enum": [ "1.4", "1.3","1.2","1.1.0","1.0" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
+        "language": { "type": "string", "enum": [ "en", "fr", "es" ], "description": "ISO 639-1 code indicating the language of strings in the schema file" },
+        "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
+        "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
+        "shareable": { "type": "boolean", "default": false, "description": "Allow user to generate bookmark URLs from within the map application" },
+
+        "services": {
+            "description": "A set of service endpoints used by the viewer",
+            "type": "object",
+            "properties": {
+                "proxyUrl": { "type": "string", "description": "An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers." },
+                "exportMapUrl": { "type": "string", "description": "An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask." },
+                "geometryUrl": { "type": "string", "description": "A URL to an ESRI ArcGIS geometry service REST endpoint." },
+                "geolocation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+                "coordInfo": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+                "print": { "type": "object", "additionalProperties": true, "description": "FIXME" }
+            }
+        },
+
+        "search": {
+            "type": "object",
+            "description": "Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls",
+            "properties": {
+                "disabledSearches": {
+                    "type": "array",
+                    "items": { "type": "string", "enum": [ "NTS", "FSA", "LAT/LNG" ] },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "Disable specific types of searches including NTS, FSA, or LAT/LNG"
+                },
+                "serviceUrls": {
+                    "type": "object",
+                    "description": "Service endpoint urls",
+                    "properties": {
+                        "geoNames": { "type": "string", "description": "Endpoint url for geoNames service" },
+                        "geoLocation": { "type": "string", "description": "Endpoint url for geoLocation service" },
+                        "geoSuggest": { "type": "string", "description": "Endpoint url for geoSuggest service" },
+                        "provinces": { "type": "string", "description": "Endpoint url for provinces service" },
+                        "types": { "type": "string", "description": "Endpoint url for types service" }
+                    },
+                    "additionalProperties": false,
+                    "required": ["geoNames", "geoLocation", "geoSuggest", "provinces", "types"]
+                }
+            },
+            "additionalProperties": false,
+            "required": ["serviceUrls"]
+        },
+
+        "export": {
+             "type": "object",
+             "description": "Export properties",
+             "properties": {
+                 "title": { "$ref": "#/definitions/exportComponent", "description": "Title of the export graphic." },
+                 "map": { "$ref": "#/definitions/exportComponent", "description": "Map component." },
+                 "mapElements": { "$ref": "#/definitions/exportComponent", "description": "North arrow and scalebar component." },
+                 "legend": { "$ref": "#/definitions/exportComponent", "description": "Legend component." },
+                 "footnote": { "$ref": "#/definitions/exportComponent", "description": "Foot notice to add to exported map" },
+                 "timestamp":  { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." }
+             },
+             "additionalProperties": false
+         },
+
+        "map": {
+            "type": "object",
+            "description": "Core map properties (extent sets, levels of detail)",
+            "properties": {
+                "extentSets": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/extentSetNode" },
+                    "description": "The default, full and maximum extents of the map"
+                },
+                "lods": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/lodNode" },
+                    "description": "The levels of detail available for the map"
+                },
+                "components": {
+                    "type": "object",
+                    "$ref": "#/definitions/mapComponentsNode"
+                },
+                "initialBasemapId": {
+                    "type": "string",
+                    "description": "Initial basemap to load. If not supplied viewer will select any basemap."
+                }
+            },
+            "required": ["lods"]
+        },
+        "baseMaps": {
+            "type": "array",
+            "items": { "oneOf": [ { "$ref": "#/definitions/baseMapNode" } ] },
+            "description": "A list of basemaps to be made available via the basemap selector."
+        },
+        "layers": {
+            "$ref": "#/definitions/layerList",
+            "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
+        },
+        "legend": {
+            "oneOf": [ { "$ref": "#/definitions/legendAuto" }, { "$ref": "#/definitions/legendStructured" } ],
+            "description": "A structured or automatically generated legend"
+        },
+        "navigation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+        "navBar": { "$ref": "#/definitions/navBarNode" },
+        "tools": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+        "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
+    },
+
+    "required": [ "version" ]
+}

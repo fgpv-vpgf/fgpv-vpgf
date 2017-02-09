@@ -1,4 +1,10 @@
 @mixin filters {
+    .filters-panel {
+        .rv-content {
+            height: 50%; // in Safari, content panel does not update to the right height when switch from maximized to split view
+        }
+    }
+
     .rv-filters {
         display: flex;
         flex-direction: column;
@@ -16,6 +22,10 @@
             height: 100%;
             min-height: 0; // Firefox fix; otherwise div won't shrink: http://stackoverflow.com/questions/27424831/firefox-flexbox-overflow
 
+            table {
+                table-layout: fixed; // make autowidth: false works for datatable https://datatables.net/forums/discussion/30530/set-fixed-column-width
+            }
+
             .dataTables_wrapper {
                 height: 100%;
                 display: flex !important; // there was an update in datatables styles that was overriding `flex` with `block`
@@ -28,13 +38,47 @@
                     flex-direction: column;
                     min-height: 0; // Firefox fix; otherwise div won't shrink: http://stackoverflow.com/questions/27424831/firefox-flexbox-overflow
 
-                    .dataTables_scrollHead {}
+                    .dataTables_scrollHead {
+                        width: 100% !important;
+                    }
 
                     .dataTables_scrollBody {
                         flex: 1; // this needed for the body to fill available space
                         background: lighten($divider-color, 20%);
+                        width: 100% !important;
 
                         tbody {
+                            // for datatable KeyTable extension
+                            td.rv-cell-focus {
+                                outline: 1px solid $focus-color;
+                                outline-offset: -1px;
+
+                                & > .rv-render-tooltip {
+                                    display: block;
+                                    position: absolute;
+                                    border: 1px solid #D3D3D3;
+                                    background-color: #F2F2F2;
+                                    padding: 2px 5px;
+                                    box-shadow: 1px 1px 2px #CCC;
+                                    max-width: 250px;
+                                    white-space: normal;
+                                    word-wrap: break-word;
+                                }
+                            }
+
+                            // hide tooltip if td doesn't have the focus
+                            .rv-render-tooltip {
+                                display: none;
+                            }
+
+                            // ellipsis renderer when text is longer then field width
+                            .rv-render-ellipsis {
+                                cursor: text;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                display: list-item;
+                            }
 
                             .rv-data {
                                 // flex: flex-grow flex-shrink flex-basis; IE sets flex-basis as 0px which collapses the span instead of 0% as Chrome does;
@@ -52,14 +96,6 @@
 
                                 button {
                                     margin: 0;
-
-                                    &:first-of-type {
-                                        margin-left: rem(3.6);
-                                    }
-
-                                    &:last-of-type {
-                                        margin-right: 0;
-                                    }
                                 }
                             }
                         }

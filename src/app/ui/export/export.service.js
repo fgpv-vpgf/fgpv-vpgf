@@ -1,4 +1,4 @@
-/* global saveAs */
+/* global saveAs, RV */
 (() => {
     'use strict';
 
@@ -86,6 +86,7 @@
             self.isSettingsEditable = isSettingsEditable;
             self.updateTitleComponent = updateTitleComponent;
             self.updateComponents = updateComponents;
+            self.scrollCustomSettings = scrollCustomSettings;
 
             // updating export components will initialize them if this is called for the first time;
             exportComponentsService.init().then(() => {
@@ -145,6 +146,7 @@
              * Checks if anything is blocking the image download. The following things will block the download:
              *  - component graphics being generated
              *  - errors (tainted canvas is an error)
+             *  - Safari browser on desktop computer
              *  - if the custom size option was modified but not saved
              *  - if the graphics were generated for an size option different from the currently selected one
              *
@@ -155,6 +157,7 @@
             function isDownloadBlocked() {
                 return self.isGenerating() ||
                     self.isError ||
+                    self.isSafari ||
                     (self.exportSizes.isCustomOptionSelected() && !self.exportSizes.isCustomOptionUpdated()) ||
                     self.lastUsedSizeOption !== self.exportSizes.selectedOption;
             }
@@ -193,6 +196,20 @@
                 };
 
                 return $mdToast.show($mdToast.simple(options));
+            }
+
+            /**
+             * If custom size option is selected from the select option, scroll to the rv-export-custom-size section
+             * @function scrollCustomSettings
+             * @private
+             * @param {Object} option the export size object seleted
+             */
+            function scrollCustomSettings(option) {
+                if (option._name === 'export.size.custom') {
+                    // scroll to custom options section. If scroll down, user can't see the section
+                    // and if he clicks on customOption section nothing happened. Feels like something is broken.
+                    self.scope.element.find('md-dialog-content').scrollTop(0);
+                }
             }
 
             /**
@@ -249,9 +266,14 @@
                 }
 
                 try {
-                    canvas.toBlob(blob => {
-                        saveAs(blob, `${fileName}.png`);
-                    });
+                    if (!RV.isSafari) {
+                        canvas.toBlob(blob => {
+                            saveAs(blob, `${fileName}.png`);
+                        });
+                    } else {
+                        showToast('error.safari');
+                        self.isSafari = true;
+                    }
                 } catch (error) {
                     // show error; nothing works
                     self.isError = true;

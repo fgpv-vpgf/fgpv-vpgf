@@ -201,6 +201,12 @@
                     this.flags.query.visible = !this.options.query.value;
                 }
 
+                // need to initialize the data flag as it's value defaults to layer type data flag value (feature and dynamic layers have data; others do not)
+                // solves https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1628
+                if (this.options.data) {
+                    this.flags.data.visible = this.options.data.enabled;
+                }
+
                 // this.state = layerStates.default; ??
                 const colour = (new RColor()).get(true, 0.4, 0.8);
                 gapiService.gapi.symbology.generatePlaceholderSymbology(this.name, colour).then(symbologyItem => {
@@ -262,6 +268,7 @@
             }
 
             // FIXME: this should be done only on feature layers, nothing else!
+            //        NOTE: once fixed, revist legend.service, function imageGenerator, to remove the bandaid fix for this.
             // HACK: to get file based layers working; this will be solved by the layer record and legend entry hierarchy
             if (typeof initialState.url !== 'undefined') {
                 const urlParts = initialState.url.split('/');
@@ -427,7 +434,7 @@
              * Walks child items executing the provided function on each leaf;
              * Returns a flatten array of results from the provided function;
              * @param  {Function} action function which is passed the following arguments: legend layer entry, its index in its parent's array, parent
-             * @param  {Boolean} defaults to false; includeGroups flag specifying if the action should be applied to group items as well.
+             * @param  {Boolean} includeGroups defaults to false; includeGroups flag specifying if the action should be applied to group items as well.
              * @return {Array}        flat array of results
              */
             walkItems(action, includeGroups = false) {

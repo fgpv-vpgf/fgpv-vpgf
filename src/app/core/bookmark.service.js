@@ -243,7 +243,7 @@
 
             // Children Info (calculate first so we have the count when doing layer settings)
             const childItems = [];
-            if (layerCode === typeToCode[types.ESRI_DYNAMIC]) {
+            if (layerCode === typeToCode[types.ESRI_DYNAMIC] && legendEntry.items) {
 
                 // grab stuff on children.  we can't use walkItems because it returns a flat list.
                 // we need to be aware of hierarchy here (at least on the top level).
@@ -292,16 +292,31 @@
         }
 
         /**
+         * Will extract the core rcs key from a system-defined rcs layer id.
+         * E.g. 'rcs.MyKey.fr' will result in 'MyKey'
+         * An id with invalid format will return itself
+         *
+         * @function extractRcsKey
+         * @param {String} rcsLayerId   An rcs layer id. Ideally in the format rcs.<key>.<lang>
+         * @returns {String}            The rcs key embedded in the id
+         */
+        function extractRcsKey(rcsLayerId) {
+            return rcsLayerId.split('.')[1] || rcsLayerId;
+        }
+
+        /**
          * Reads and applies the options specified by bookmark to config
          *
          * @function parseBookmark
          * @param {String} bookmark     A bookmark created by getBookmark
          * @param {Object} origConfig   The config object to modify
-         * @param {Array} newKeyList    Optional modified RCS key list
-         * @param {String} newBaseMap   Optional new basemap id we are switching to
+         * @param {Object} [opts={}]    Optional parameters:
+         *                                `newKeyList` an array of RCS keys
+         *                                `newBaseMap` basemap ID to switch to
+         *                                `newLang` the language code we are switching to
          * @returns {Object}            The config with changes from the bookmark
          */
-        function parseBookmark(bookmark, origConfig, newKeyList, newBaseMap) {
+        function parseBookmark(bookmark, origConfig, opts) {
             // this methods uses a lot of sub-methods because of the following rules
             // RULE #1 single method can't have more than 40 commands
             // RULE #2 obey all rules
@@ -309,6 +324,7 @@
             const config = angular.copy(origConfig);
 
             const dBookmark = decodeURI(bookmark);
+            const { newKeyList, newBaseMap, newLang } = opts;
 
             console.log(dBookmark);
 
@@ -464,6 +480,20 @@
 
             if (newKeyList) {
                 modifyRcsKeyList(bookmarkLayers, newKeyList);
+            }
+
+            if (newLang) {
+                (() => {
+                    const translatedLayers = {};
+                    Object.entries(bookmarkLayers).forEach(([id, layer]) => {
+                        if (id.startsWith('rcs.')) {
+                            const key = extractRcsKey(id);
+                            layer.id = `rcs.${key}.${newLang.substring(0, 2)}`;
+                        }
+                        translatedLayers[layer.id] = layer;
+                    });
+                    bookmarkLayers = translatedLayers;
+                })();
             }
 
             // set the new current config, RCS layers will be loaded on first getCurrent() call
@@ -691,7 +721,7 @@
             // Loop through keys in layerObjs
             Object.keys(layerObjs).forEach(id => {
                 // strip rcs. and .en/.fr from the layer id
-                const plainID = id.split('.')[1];
+                const plainID = extractRcsKey(id);
                 if (keys.indexOf(plainID) > -1) {
                     // id is in both layerObjs and keys, safe to remove from keyList
                     delete keys[keys.indexOf(plainID)];
@@ -719,10 +749,37 @@
          */
         function addRcsConfigs(rcsBookmarks, config) {
             if (Object.keys(rcsBookmarks).length > 0) {
-                return configService.rcsAddKeys(Object.keys(rcsBookmarks).map(id => (id.split('.')[1] || id)))
+                // create a lookup object against rcs key. the layer ids will be language specific.
+                // until we update the bookmark format to encode langauge, we cannot be guaranteed
+                // the page is loading in the same language the bookmark was created in.
+                const noLangRcsBM = {};
+                Object.keys(rcsBookmarks).forEach(id => {
+                    noLangRcsBM[extractRcsKey(id)] = rcsBookmarks[id];
+                });
+
+                // download rcs fragments, then merge in any bookmark information
+                return configService
+                    .rcsAddKeys(Object.keys(noLangRcsBM), false)
                     .then(rcsConfigs => {
-                        const configSnippets = rcsConfigs.map(cfg =>
-                                angular.merge(cfg, rcsBookmarks[cfg.id], { origin: 'rcs' }));
+                        const configSnippets = rcsConfigs.map(cfg => {
+                            const rcsBM = noLangRcsBM[extractRcsKey(cfg.id)];
+                            const merge = angular.merge(cfg, rcsBM, { origin: 'rcs' });
+
+                            // check if it is a dynamic service and layers entries are different.
+                            // if so, replace layerEntries by bookmark snippet because user made modification like remove a layer
+                            // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1611
+                            // for nested group, even if we remove a child from a subgroup, when it reloads the child we be there again
+                            // there is no childOptions value on cfg (rcsConfigs) so they are alwas merge by rcsBookmarks
+                            // TODO: refactor to solve this
+                            if (merge.layerType === Geo.Layer.Types.ESRI_DYNAMIC &&
+                               !angular.equals(cfg.layerEntries, rcsBM.layerEntries) &&
+                               rcsBM.layerEntries && rcsBM.layerEntries.length > 0) {
+                                merge.layerEntries = rcsBM.layerEntries;
+                            }
+
+                            return merge;
+                        });
+
                         config.layers = config.layers.concat(configSnippets);
 
                         return config;

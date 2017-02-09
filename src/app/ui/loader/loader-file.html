@@ -5,6 +5,7 @@
     flow-drag-leave="self.dropActive = false"
     flow-prevent-drop
     class="rv-file-drop"
+    rv-trap-focus="{{ ::self.appID }}"
     ng-class="{'rv-file-drop-active': self.dropActive}">
 
     <div
@@ -30,6 +31,7 @@
                                 flow-btn
                                 flow-progress="console.log()"
                                 flow-attrs="{ accept: '.csv,.zip,.json' }"
+                                name="dataUpload"
                                 ng-click="self.upload.step.reset()">
                                 <md-icon md-svg-src="file:file_upload"></md-icon>
                                 {{ "import.file.upload.choose" | translate }}
@@ -45,7 +47,7 @@
 
                     <!-- this field is needed to attach the error messages; is't hidden -->
                     <input name="fileSelect" ng-model="self.upload.fileSelect">
-                    <div ng-messages="self.upload.form.fileSelect.$error" ng-if="self.upload.form.fileSelect.$invalid">
+                    <div ng-messages="self.upload.form.fileSelect.$error">
                         <div ng-message="upload-error" translate>import.file.upload.noaccess</div>
                     </div>
                 </md-input-container>
@@ -60,6 +62,7 @@
                         ng-focus="self.upload.fileReset(); self.upload.fileUrlResetValidation()"
                         ng-model="self.upload.fileUrl"
                         ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
+                        ng-keypress="self.upload.step.onKeypress($event)"
                         required>
 
                     <!-- TODO: decide whether and how to display a hint or error messages -->
@@ -166,6 +169,8 @@
                 <div ng-messages="self.configure.form.$error" class="rv-form-error">
                     <div ng-message="invalid" translate>import.file.configure.invalid</div>
                 </div>
+
+                <p class="md-caption">{{ 'stepper.unresponsive' | translate }}</p>
 
             </rv-stepper-item>
         </div>

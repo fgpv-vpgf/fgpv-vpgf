@@ -16,8 +16,8 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
-    function rvInitMap(geoService, events, storageService, mapService, gapiService, $rootElement, $interval,
-        globalRegistry) {
+    function rvInitMap($rootScope, geoService, events, storageService, mapService, gapiService, $rootElement,
+        $interval, globalRegistry) {
 
         // key codes that are currently active
         let keyMap = [];
@@ -32,6 +32,8 @@
         return directive;
 
         function linkFunc(scope, el) {
+            let mouseMoveHanlder;
+
             // deregister after the first `rvReady` event as it's fired only once
             const deRegister = scope.$on(events.rvReady, () => {
                 storageService.panels.map = el;
@@ -47,21 +49,77 @@
                     gapiService.gapi.mapManager.mapDefault('panDuration', 0);
                     gapiService.gapi.mapManager.mapDefault('panRate', 0);
 
-                    el.on('keydown', keyDownDetected);
-                    el.on('keyup', keyUpDetected);
+                    el.on('keydown', keyDownHandler);
+                    el.on('keyup', keyUpHandler);
 
+                    el.on('mousedown', mouseDownHandler);
+                    el.on('mouseup', mouseUpHandler);
                 }
             });
+
+            /**
+             * Track mousedown events on the map that start map pan.
+             *
+             * @function mouseDownHandler
+             * @private
+             */
+            function mouseDownHandler(event) {
+                mouseMoveHanlder = mouseMoveHandlerBuilder(event);
+                el.on('mousemove', mouseMoveHanlder);
+            }
+
+            /**
+             * Track mousemove events when the map is being panned.
+             * This will fire `rvMapPan` event with relative x/y offsets.
+             *
+             * @function mouseMoveHandlerBuilder
+             * @private
+             */
+            function mouseMoveHandlerBuilder(startingEvent) {
+                // TODO: IE is not fast enough to sustain this approach as the mousemove event don't start to fire immediately after mouseover event
+                // need to reimplement similar to followmouse tooltip strategy
+
+                let currentPosition = {
+                    x: startingEvent.clientX,
+                    y: startingEvent.clientY
+                };
+
+                return event => {
+                    const newPosition = {
+                        x: event.clientX,
+                        y: event.clientY
+                    };
+
+                    const momevementOffset = {
+                        x: currentPosition.x - newPosition.x,
+                        y: currentPosition.y - newPosition.y
+                    };
+
+                    $rootScope.$broadcast(events.rvMapPan, momevementOffset);
+
+                    currentPosition = newPosition;
+                };
+            }
+
+            /**
+             * Track mousedown events on the map that end map pan.
+             *
+             * @function mouseUpHandler
+             * @private
+             */
+            function mouseUpHandler() {
+                el.off('mousemove', mouseMoveHanlder);
+            }
         }
 
         /**
          * Ensures this directive has focus before any key presses become active. If so
          * registers the key as active and starts animation.
          *
-         * @function keyDownDetected
+         * @function keyDownHandler
          * @param {Object} event     the keydown/keyup browser event
          */
-        function keyDownDetected(event) {
+        function keyDownHandler(event) {
             // prevent arrow keys from scrolling the page
             if (event.which >= 37 && event.which <= 40) {
                 event.preventDefault(true);
@@ -83,10 +141,10 @@
         /**
          * Removes the key from keyMap so that it is no longer active
          *
-         * @function keyUpDetected
+         * @function keyUpHandler
          * @param {Object} event     the keydown/keyup browser event
          */
-        function keyUpDetected(event) {
+        function keyUpHandler(event) {
             let keyMapIndex = keyMap.indexOf(event.which);
 
             if (keyMapIndex !== -1) {

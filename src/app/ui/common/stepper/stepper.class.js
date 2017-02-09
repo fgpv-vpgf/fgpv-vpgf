@@ -16,7 +16,7 @@
         .module('app.ui.common.stepper')
         .factory('Stepper', StepperFactory);
 
-    function StepperFactory($q) {
+    function StepperFactory($q, $rootElement, $timeout) {
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         /**
@@ -160,6 +160,14 @@
 
                         this.currentStep = this.steps[stepNumber];
                         this._configureStep(this.currentStep, false, true);
+
+                        // focus on the first input element when step is open. Need to be inside $timeout because focus manager tries to focus on close
+                        // when step is closed. We put 250 ms because with 100ms Safari sometimes lose focus.
+                        if (typeof this.currentStep.focus !== 'undefined') {
+                            $timeout(() => {
+                                $rootElement.find(`[name=${this.currentStep.focus}]`).first().focus(true);
+                            }, 250);
+                        }
                     }
                 })).finally(() =>
                     this._think(currentStep, false)); // in any outcome, restore `continue` button to default state

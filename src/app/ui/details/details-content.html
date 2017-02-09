@@ -1,8 +1,5 @@
 <div class="rv-subsection rv-hide-animate">
-    <div class="rv-subheader">
-        <h4 class="md-subhead">{{ self.item.requester.name }}</h4>
-        <span class="md-caption">{{ self.item.requester.caption }}</span>
-    </div>
+
     <div class="rv-subcontent rv-{{self.item.requester.format}}" ng-class="{ 'rv-hide': self.isHidden }" ng-switch on="self.item.requester.format">
 
         <p class="rv-nothing" ng-if="self.item.data.length === 0" translate>details.label.noresult</p>
@@ -16,10 +13,10 @@
         </ul>
 
         <!-- Plain text presentation  -->
-        <pre ng-switch-when="Text">{{ self.item.data[0] }}</pre>
+        <div class="rv-details-text" ng-switch-when="Text" ng-bind-html="self.item.data[0] | autolink"></div>
 
         <!-- Raw HTML presentation  -->
-        <rv-svg ng-switch-when="HTML" src="self.item.data[0]"></rv-svg>
+        <rv-svg class="rv-details-html" ng-switch-when="HTML" src="self.item.data[0]"></rv-svg>
 
         <md-divider></md-divider>
     </div>

@@ -47,12 +47,19 @@
             }
 
             bindEvents (layer) {
+                // TODO optional refactor.  Rather than making the events object in the parameter,
+                //      do it as a variable, and only add mouse-over, mouse-out events if we are
+                //      in an app configuration that will use it. May save a bit of processing
+                //      by not having unused events being handled and ignored.
+                //      Second optional thing. Call a separate wrapEvents in FeatuerRecord class
                 gapi().events.wrapEvents(layer, {
                     // wrapping the function calls to keep `this` bound correctly
                     load: () => this.onLoad(),
                     error: e => this.onError(e),
                     'update-start': () => this.onUpdateStart(),
-                    'update-end': () => this.onUpdateEnd()
+                    'update-end': () => this.onUpdateEnd(),
+                    'mouse-over': e => this.onMouseOver(e),
+                    'mouse-out': e => this.onMouseOut(e),
                 });
             }
 
@@ -67,7 +74,7 @@
                 console.log(`State change for ${this.layerId} to ${newState}`);
                 // if we don't copy the array we could be looping on an array
                 // that is being modified as it is being read
-                this._stateListeners.slice(0).forEach(l => l(this._state));
+                this._fireEvent(this._stateListeners, this._state);
             }
 
             addStateListener (listenerCallback) {
@@ -81,6 +88,19 @@
                     throw new Error('Attempting to remove a listener which is not registered.');
                 }
                 this._stateListeners.splice(idx, 1);
+            }
+
+            addHoverListener (listenerCallback) {
+                this._hoverListeners.push(listenerCallback);
+                return listenerCallback;
+            }
+
+            removeHoverListener (listenerCallback) {
+                const idx = this._hoverListeners.indexOf(listenerCallback);
+                if (idx < 0) {
+                    throw new Error('Attempting to remove a listener which is not registered.');
+                }
+                this._hoverListeners.splice(idx, 1);
             }
 
             onLoad () {
@@ -116,6 +136,18 @@
                     opacity: this.config.options.opacity.value,
                     visible: this.config.options.visibility.value
                 };
+            }
+
+            onMouseOver () {
+                // do nothing in baseclass
+            }
+
+            onMouseOut () {
+                // do nothing in baseclass
+            }
+
+            _fireEvent (handlerArray, ...eventParams) {
+                handlerArray.slice(0).forEach(l => l(...eventParams));
             }
 
             /**
@@ -159,6 +191,7 @@
             constructor (config, esriLayer, epsgLookup) {
                 this.initialConfig = config;
                 this._stateListeners = [];
+                this._hoverListeners = [];
                 this._epsgLookup = epsgLookup;
                 this._layerPassthroughBindings.forEach(bindingName =>
                     this[bindingName] = (...args) => this._layer[bindingName](...args));
@@ -211,37 +244,19 @@
              */
             formatAttributes (attributes, layerData) {
                 // create columns array consumable by datables
-                const fieldNameArray = [];
                 const columns = layerData.fields
                     .filter(field =>
                         // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
                         // filter out fields where there is no corresponding attribute data
                         attributes.features[0].attributes.hasOwnProperty(field.name))
-                    .map(field => {
-                        // check if date type; append key to fieldNameArray if so
-                        if (field.type === 'esriFieldTypeDate') {
-                            fieldNameArray.push(field.name);
-                        }
-                        return {
-                            data: field.name,
-                            title: field.alias || field.name
-                        };
-                    });
-
-                // extract attributes to an array consumable by datatables
-                const rows = attributes.features.map(feature => feature.attributes);
-
-                // convert each date cell to ISO format
-                fieldNameArray.forEach(fieldName => {
-                    rows.forEach(row => {
-                        const date = new Date(row[fieldName]);
-                        row[fieldName] = date.toISOString().substring(0, 10);
-                    });
-                });
+                    .map(field => ({
+                        data: field.name,
+                        title: field.alias || field.name
+                    }));
 
                 return {
                     columns,
-                    rows,
+                    rows: attributes.features.map(feature => feature.attributes),
                     fields: layerData.fields, // keep fields for reference ...
                     oidField: layerData.oidField, // ... keep a reference to id field ...
                     oidIndex: attributes.oidIndex, // ... and keep id mapping array
@@ -416,6 +431,79 @@
                 if (info) {
                     return super.parseData([, 'opacity', 'visibility', 'boundingBox', 'snapshot', 'query'], info); // jshint ignore:line
                 }
+            }
+
+            // HACK this is a duplicate of the function that is in identify.service.js
+            //      after refactor, everything will be in geoApi and happy.
+            //      for now, this class can't access geo service, so duplicating.
+            getFeatureName (attribs, objId) {
+                let nameField = '';
+
+                if (this.legendEntry && this.legendEntry.nameField) {
+                    nameField = this.legendEntry.nameField;
+                } else if (this._layer && this._layer.displayField) {
+                    nameField = this._layer.displayField;
+                }
+
+                if (nameField) {
+                    return attribs[nameField];
+                } else {
+                    // FIXME wire in "feature" to translation service
+                    return 'Feature ' + objId;
+                }
+            }
+
+            onMouseOver (e) {
+                if (this._hoverListeners.length > 0) {
+                    // TODO add in quick lookup for layers that dont have attributes loaded yet
+
+                    const showBundle = {
+                        type: 'mouseOver',
+                        point: e.screenPoint,
+                        target: e.target
+                    };
+
+                    // tell anyone listening we moused into something
+                    this._fireEvent(this._hoverListeners, showBundle);
+
+                    // pull metadata for this layer. feature layer only ever has one index (thus index 0)
+                    // TODO after refactor, the class should have a .featureIdx property to use instead.
+                    const featureIdx = this.attributeBundle.indexes[0];
+                    this.attributeBundle[featureIdx].layerData.then(lInfo => {
+                        // TODO this will change a bit after we add in quick lookup. for now, get all attribs
+                        return $q.all([Promise.resolve(lInfo), this.attributeBundle[featureIdx].getAttribs()]);
+                    }).then(([lInfo, aInfo]) => {
+                        // graphic attributes will only have the OID if layer is server based
+                        const oid = e.graphic.attributes[lInfo.oidField];
+
+                        // get name via attribs and name field
+                        const featAttribs = aInfo.features[aInfo.oidIndex[oid]].attributes;
+                        const featName = this.getFeatureName(featAttribs, oid);
+
+                        // get icon via renderer and geoApi call
+                        const svgcode = gapi().symbology.getGraphicIcon(featAttribs, lInfo.renderer);
+
+                        // duplicate the position so listener can verify this event is same as mouseOver event above
+                        const loadBundle = {
+                            type: 'tipLoaded',
+                            name: featName,
+                            target: e.target,
+                            svgcode
+                        };
+
+                        // tell anyone listening we moused into something
+                        this._fireEvent(this._hoverListeners, loadBundle);
+                    });
+                }
+            }
+
+            onMouseOut (e) {
+                // tell anyone listening we moused out
+                const outBundle = {
+                    type: 'mouseOut',
+                    target: e.target
+                };
+                this._fireEvent(this._hoverListeners, outBundle);
             }
         }
 

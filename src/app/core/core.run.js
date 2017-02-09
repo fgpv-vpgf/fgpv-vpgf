@@ -1,4 +1,4 @@
-// jshint maxparams:12
+// jshint maxparams:13
 // FIXME reduce number of apiBlock parameters
 (() => {
     'use strict';
@@ -154,7 +154,7 @@
      * `apiBlock` sets up language and RCS calls for the global API
      */
     function apiBlock($rootScope, globalRegistry, geoService, configService, events,
-        LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo, $rootElement, $mdDialog) {
+        LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo, $rootElement, $mdDialog, pluginService) {
 
         const service = {
             setLanguage,
@@ -162,12 +162,17 @@
             getBookmark,
             centerAndZoom,
             useBookmark,
-            backToCart
+            getRcsLayerIDs: () => geoService.getRcsLayerIDs(),
+            appInfo,
+            registerPlugin: function () {
+                pluginService.register(...arguments, this);
+            }
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
         $rootScope.$on(events.rvApiReady, () => {
-            globalRegistry.getMap(appInfo.id)._registerMap(service);
+            globalRegistry.getMap(appInfo.id)._registerMap(service); // this enables the main API
+            globalRegistry.getMap(appInfo.id)._applicationLoaded(service); // this triggers once
             console.log(appInfo.id + ' registered');
             globalRegistry.focusManager.addViewer($rootElement, $mdDialog);
         });
@@ -211,23 +216,6 @@
                     geoService.constructLayers(layerBlueprints);
                 });
 
-        }
-
-        /**
-         * Stores the viewer state in sessionStorage and returns a list of rcs keys to pass to the mapCart.
-         *
-         * @returns {array}     List of RCS keys
-         */
-        function backToCart() {
-            // get bookmark, throw bookmark into session storage
-            const bm = bookmarkService.getBookmark();
-
-            sessionStorage.setItem(appInfo.id, bm);
-
-            // get list of layers, find layers with rcs creation
-            // return array with layer keys
-            const layerKeys = geoService.getRcsLayerIDs();
-            return layerKeys;
         }
 
         /**

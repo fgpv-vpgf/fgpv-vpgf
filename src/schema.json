@@ -310,6 +310,10 @@
                 },
                 "boundingBox": {
                     "$ref": "#/definitions/boundingBoxOptionNode"
+                },
+                "symbologyStack": {
+                    "$ref": "#/definitions/option",
+                    "description": "Allows symbology stack to be opened from menu"
                 }
             },
             "additionalProperties": false
@@ -362,6 +366,14 @@
                 "data": {
                     "$ref": "#/definitions/option",
                     "description": "Enables data panel"
+                },
+                "symbologyStack": {
+                    "$ref": "#/definitions/option",
+                    "description": "Allows symbology stack to be opened from menu"
+                },
+                "hoverTips": {
+                    "$ref": "#/definitions/option",
+                    "description": "Enables hovertips on map features"
                 }
             },
             "additionalProperties": false
@@ -411,6 +423,10 @@
                 "data": {
                     "$ref": "#/definitions/option",
                     "description": "Enables data panel"
+                },
+                "symbologyStack": {
+                    "$ref": "#/definitions/option",
+                    "description": "Allows symbology stack to be opened from menu"
                 }
             },
             "additionalProperties": false
@@ -456,6 +472,10 @@
                 },
                 "query": {
                     "$ref": "#/definitions/queryOptionNode"
+                },
+                "symbologyStack": {
+                    "$ref": "#/definitions/option",
+                    "description": "Allows symbology stack to be opened from menu"
                 }
             },
             "additionalProperties": false
@@ -481,6 +501,10 @@
                 },
                 "query": {
                     "$ref": "#/definitions/queryOptionNode"
+                },
+                "symbologyStack": {
+                    "$ref": "#/definitions/option",
+                    "description": "Allows symbology stack to be opened from menu"
                 }
             },
             "required": ["id"],
@@ -498,6 +522,10 @@
                 },
                 "query": {
                     "$ref": "#/definitions/queryOptionNode"
+                },
+                "symbologyStack": {
+                    "$ref": "#/definitions/option",
+                    "description": "Allows symbology stack to be opened from menu"
                 }
             },
             "required": ["index"],
@@ -535,7 +563,11 @@
                     "$ref": "#/definitions/option",
                     "description": "Enables data panel"
                 },
-                "outfields": { "type": "string", "default": "*", "description": "A comma separated list of attribute names that should be requested on query." }
+                "outfields": { "type": "string", "default": "*", "description": "A comma separated list of attribute names that should be requested on query." },
+                "symbologyStack": {
+                    "$ref": "#/definitions/option",
+                    "description": "Allows symbology stack to be opened from menu"
+                }
             },
             "required": ["index"],
             "additionalProperties": false
@@ -706,6 +738,25 @@
             "additionalProperties": false
         },
 
+        "sideMenuNode": {
+            "type": "object",
+            "properties": {
+                "logo": { "type": "boolean", "default": true, "description": "Indicates if the logo should be shown in the left side menu." },
+                "items": { "type": "array", "items": { "$ref": "#/definitions/sideMenuButtons" }, "default": [] }
+            },
+            "additionalProperties": false,
+            "description": "Specifies which options are available in the left side menu."
+        },
+
+        "sideMenuButtons": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": ["layers", "basemap", "fullscreen", "export", "share", "touch", "help", "language" ]
+            }
+        },
+
         "navBarNode": {
             "type": "object",
             "properties": {
@@ -718,7 +769,7 @@
 
         "navBarButtons": {
             "type": "string",
-            "enum": ["geoLocator", "marquee", "home", "history", "basemap"]
+            "enum": ["geoLocator", "marquee", "home", "history", "basemap", "help"]
         },
 
         "mapComponentsNode": {
@@ -735,7 +786,7 @@
     },
 
     "properties": {
-        "version": { "type": "string", "enum": [ "1.4", "1.3","1.2","1.1.0","1.0" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
+        "version": { "type": "string", "enum": [ "1.6", "1.5", "1.4", "1.3","1.2","1.1.0","1.0" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
         "language": { "type": "string", "enum": [ "en", "fr", "es" ], "description": "ISO 639-1 code indicating the language of strings in the schema file" },
         "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
         "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
@@ -797,6 +848,17 @@
              "additionalProperties": false
          },
 
+         "legendIsOpen": {
+            "type": "object",
+            "description": "Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports",
+            "properties": {
+                "large": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for large viewports" },
+                "medium": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for medium viewports" },
+                "small": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for small viewports" }
+            },
+            "additionalProperties": false
+        },
+
         "map": {
             "type": "object",
             "description": "Core map properties (extent sets, levels of detail)",
@@ -818,6 +880,11 @@
                 "initialBasemapId": {
                     "type": "string",
                     "description": "Initial basemap to load. If not supplied viewer will select any basemap."
+                },
+                "restrictNavigation": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Will restrict the user from panning beyond the maximum extent."
                 }
             },
             "required": ["lods"]
@@ -837,6 +904,7 @@
         },
         "navigation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
         "navBar": { "$ref": "#/definitions/navBarNode" },
+        "sideMenu": { "$ref": "#/definitions/sideMenuNode" },
         "tools": { "type": "object", "additionalProperties": true, "description": "FIXME" },
         "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
     },

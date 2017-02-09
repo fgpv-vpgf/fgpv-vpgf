@@ -1,4 +1,4 @@
-<rv-content-pane rv-trap-focus close-panel="self.closeLoaderService()" floating-header="true">
+<rv-content-pane close-panel="self.closeLoaderService()" floating-header="true" rv-trap-focus="{{ ::self.appID }}">
 
     <div class="rv-loader-service">
         <rv-stepper-item
@@ -14,6 +14,7 @@
                     ng-change="self.connect.serviceUrlResetValidation()"
                     ng-model="self.connect.serviceUrl"
                     ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
+                    ng-keypress="self.connect.step.onKeypress($event)"
                     required>
                 <div ng-messages="self.connect.form.serviceUrl.$error">
                     <div ng-message="url" translate>import.service.connect.invalidurl</div>
@@ -41,7 +42,7 @@
 
             <md-input-container class="md-block">
                 <label translate>import.service.configure.layername</label>
-                <input name="layerName" ng-model="self.layerBlueprint.config.name" required>
+                <input name="layerServiceName" ng-model="self.layerBlueprint.config.name" required>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
                 <!--div ng-messages="self.configure.form.layerName.$error">
                     <div ng-message="required">This is required!</div>
@@ -91,12 +92,13 @@
                 </div-->
             </md-input-container>
 
-
             <img
                 src="https://d13yacurqjgara.cloudfront.net/users/355650/screenshots/2181500/unicorn_drib_v2.gif"
                 style="width: 100%;"
                 alt=""
                 ng-switch-when="unicorn"/>
+
+            <p class="md-caption">{{ 'stepper.unresponsive' | translate }}</p>
 
         </rv-stepper-item>
     </div>

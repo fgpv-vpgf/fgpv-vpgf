@@ -19,28 +19,39 @@ $layer-item-height-touch: rem(7.2);
     .rv-toc {
         padding: rem(0.8) 0;
         @include layer-list;
-
-        &-progress-indicator {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 2px;
-            overflow: hidden;
-
-            // This prevents layer loading indicators from showing when another panel overlays the toc (in small medium layouts only)
-            @include media($rv-lg) {
-                z-index: 10;
-            }
-        }
     }
 
+    @include toc-tools;
+
     @include keyboard {
-        @include entry-controls-keyboard;
+        @include entry-controls-hover;
     };
 
     @include touch {
-        @include entry-controls-touch;
+        @include entry-controls-hover;
     };
+}
+
+@mixin toc-tools {
+    .rv-toc-tools {
+        height: $group-item-height;
+        align-items: center;
+        padding: 0 rem(0.4) + rem(0.6) 0 rem(2) - rem(0.4);
+        margin-bottom: rem(0.8);
+
+        .md-subhead {
+            margin-left: rem(1.0);
+        }
+
+        md-menu > .md-button,
+        > .md-button {
+            margin: 0;
+        }
+
+        @include touch {
+            height: $group-item-height-touch;
+        }
+    }
 }
 
 @mixin layer-list {
@@ -134,6 +145,20 @@ $layer-item-height-touch: rem(7.2);
                 bottom: 0;
                 background-color: rgba(0, 0, 0, 0.2);
             }
+        }
+    }
+
+    &.rv-reorder {
+        li[data-sort-group="#{$index}"] {
+            margin-top: 0; // !important;
+
+            rv-toc-entry:before {
+                background-color: lighten($color: $primary-color, $amount: $index * 20);
+            }
+        }
+
+        li[data-sort-group="#{$index}"] + li[data-sort-group="#{$index + 1}"] {
+            margin-top: rem(3.6);
         }
     }
 }
@@ -231,6 +256,7 @@ absolutely position a button underneath an item so it acts like a button body fo
     .rv-toc-placeholder-entry {
         @include entry-controls;
         @include entry-controls-hover;
+        @include selected-layer-entry;
 
         display: flex;
         align-items: center;
@@ -346,30 +372,15 @@ absolutely position a button underneath an item so it acts like a button body fo
             }
         }
 
-        // hide layer toggles except the visibility toggle
-        & > md-menu,
-        & > rv-toc-entry-control {
-            &:not([option='visibility']):not([option='offscale']) {
-                display: none;
-            }
+        // hide controls which should only be shown on hover, selected, touch or keyboard mode
+        .rv-hover-show {
+            display: none;
         }
     }
 }
 
 @mixin entry-controls-hover() {
-    .rv-toc-entry-controls > *:not(#{$keyboard-only}) {
-        display: inline !important;
-    }
-}
-
-@mixin entry-controls-keyboard() {
-    .rv-toc-entry-controls > * {
-        display: inline !important;
-    }
-}
-
-@mixin entry-controls-touch() {
-    .rv-toc-entry-controls > :first-child {
+    .rv-toc-entry-controls > .rv-hover-show {
         display: inline !important;
     }
 }

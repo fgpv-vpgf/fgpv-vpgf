@@ -15,14 +15,16 @@
             display: flex;
             white-space: nowrap;
             border-bottom: 1px solid $divider-color-light;
-            height: $toolbar-height + 1px; // 1px needed for a border
+            height: auto; // 1px needed for a border
+            min-height: $toolbar-height + 1px;
             align-items: center;
-            padding: {
-                right: rem(0.6);
-                left: rem(1.6);
+            padding: 0 rem(0.6) 0 rem(1.6);
+
+            .rv-header-content {
+                overflow: hidden;
             }
 
-            @include media($rv-lt-lg) {
+            @include include-size(rv-lt-lg) {
                 padding-left: 50px;
 
                 .rv-close {
@@ -46,7 +48,8 @@
                 /*background: linear-gradient(to bottom, rgba(255,255,255,1) 30%,rgba(255,255,255,0.62) 60%, rgba(255,255,255,0) 100%);*/
                 align-items: center;
 
-                .md-button {
+                // add not md-focused because if, it is overwritten and focus background-color is not applied
+                .md-button:not(.md-focused) {
                     background: radial-gradient(ellipse at center, rgba(255,255,255,1) 30%,rgba(255,255,255,0.32) 100%);
                 }
             }
@@ -63,13 +66,8 @@
             border-top: 1px solid $divider-color-light;
         }
 
-        &-progress-indicator {
-            position: absolute;
-            top: 0;
+        .rv-progress-top {
             height: 3px;
-            overflow: hidden;
-            padding: 0;
-            z-index: 10;
         }
     }
 
@@ -77,14 +75,20 @@
 }
 
 @mixin pane-title {
-    > .md-headline,
-    > .md-title,
-    > .md-subhead {
-        line-height: 24px;
+    .md-headline,
+    .md-title,
+    .md-subhead,
+    .md-caption {
         margin: 0;
         display: inline-block;
         text-overflow: ellipsis;
         overflow: hidden;
+    }
+
+    .md-headline,
+    .md-title,
+    .md-subhead {
+        line-height: rem(2.4);
     }
 }
 
@@ -96,7 +100,7 @@
         .rv-subheader {
             border-bottom: 1px solid $divider-color-light;
 
-            @include media($rv-gt-sm) {
+            @include include-size(rv-gt-sm) {
                 margin: {
                     top: 5px;
                     bottom: 11px;

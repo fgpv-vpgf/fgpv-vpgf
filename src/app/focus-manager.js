@@ -1,7 +1,7 @@
 /* global RV, jQuery */
 ((RV, jQuery) => {
     // delay in milliseconds from time focus is lost to when action is taken
-    const focusoutDelay = 800;
+    const focusoutDelay = 200;
     // all the possible states a viewer can be in - only one at any given time
     const statuses = {
         NONE: undefined,
@@ -29,6 +29,8 @@
     let lockFocus = false;
     // used to call cancelTimeout during focus if focusout timeout has started
     let focusoutTimerCancel;
+    // when true focus manager will only consider history elements for focus movement
+    let restoreFromHistory = false;
 
     /**
      * Represents one viewer on a page, with multiple viewers being possible. Tracks viewer state,
@@ -294,6 +296,12 @@
         const evtTarget = $(event.target);
         const viewer = viewerGroup.contains(evtTarget);
 
+        // fixes issue where md-backdrop is briefly created outside the viewer, and on click makes the waiting dialog appear
+        // ignoring the click when it happens on an md-backdrop
+        if (evtTarget.is('md-backdrop')) {
+            return;
+        }
+
         if (viewer) {
             viewer.setStatus(statuses.ACTIVE);
             evtTarget
@@ -359,6 +367,7 @@
      * @param  {Object} event the keydown event object
      */
     function onKeydown(event) {
+        /*jshint maxcomplexity:9 */
         const viewerActive = viewerGroup.status(statuses.ACTIVE);
         const viewerWaiting = viewerGroup.status(statuses.WAITING);
         keys[event.which] = true;
@@ -369,8 +378,9 @@
                 viewerActive.setStatus(statuses.INACTIVE);
             // shiftFocus must return true indicating focus has been moved, and only then
             // do we want to prevent the browser from moving focus itself
-            } else if (event.which === 9 && shiftFocus(!event.shiftKey)) { // tab keydown only
+            } else if (event.which === 9 && shiftFocus(!event.shiftKey, restoreFromHistory)) { // tab keydown only
                 event.preventDefault(true);
+                restoreFromHistory = false;
             }
 
         } else if (viewerWaiting) {
@@ -405,12 +415,20 @@
      */
     function onFocusout(event) {
         const viewer = viewerGroup.status(statuses.ACTIVE);
-        if (viewer && !lockFocus && event.relatedTarget === null) {
+        if ($(event.target).closest('[rv-ignore-focusout]').length > 0) {
+            restoreFromHistory = true;
+
+        } else if (viewer && !lockFocus && event.relatedTarget === null) {
             // Allow for a short time as determined by focusoutDelay in milliseconds so that when focus
             // leaves unexpectedly, focus can be manually set and we don't need to be back through history
             // Animations often cause focus loss when, for example, one element is being hidden while the
             // element we want focus on is being shown.
-            focusoutTimerCancel = setTimeout(() => shiftFocus(false, true), focusoutDelay);
+            focusoutTimerCancel = setTimeout(() => {
+                // check if focus is still off the viewer after the delay - if so shift focus back
+                if (!viewer.contains($(document.activeElement))) {
+                    shiftFocus(false, true);
+                }
+            }, focusoutDelay);
         }
     }
 

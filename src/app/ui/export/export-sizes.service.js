@@ -29,12 +29,10 @@
             customOption
         ];
 
-        const selectedOption = defaultOption;
-
         const service = {
             options,
             customOption,
-            selectedOption,
+            selectedOption: defaultOption,
             tempOption,
             exportSizeRatio: 1,
 
@@ -77,6 +75,13 @@
             service.tempOption.widthHeightRatio = service.exportSizeRatio;
 
             defaultOption.height = mapHeight;
+
+            // in cases when the custom option was selected, but no valid width/height entered, the selected option become invalid
+            // need to reset selected option to default; otherwise the browser will lock trying to divide by null or somethings
+            // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1532
+            if (!service.selectedOption.isValid()) {
+                service.selectedOption = defaultOption;
+            }
 
             service.width = {
                 min: Math.round(service.height.min * service.exportSizeRatio),

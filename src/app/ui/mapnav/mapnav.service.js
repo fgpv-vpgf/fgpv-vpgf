@@ -1,6 +1,20 @@
 (() => {
     'use strict';
 
+    const MAPNAV_CONFIG_DEFAULT = {
+        zoom: 'buttons', // 'all', 'slider', 'buttons'
+        extra: [
+            // NOTE: marquee and history buttons kept as options for future functionality
+            // possible values
+            // 'geoLocation',
+            // 'marquee',
+            // 'home',
+            // 'history',
+            // 'basemap'
+            // 'help'
+        ]
+    };
+
     /**
      * @module mapNavigationService
      * @memberof app.ui
@@ -20,22 +34,15 @@
      * @private
      * @return {object} service object
      */
-    function mapNavigationService(stateManager, geoService, $rootScope, locateService, basemapService, $rootElement) {
+    function mapNavigationService(stateManager, geoService, $rootScope,
+        locateService, helpService, basemapService, events, configService) {
+
         const service = {
-            // FIXME: this config snippet should obvisouly come from config service
-            config: {
-                zoom: 'buttons', // 'all', 'slider', 'buttons'
-                extra: [
-                    // NOTE: marquee and history buttons kept as options for future functionality
-                    'geoLocation',
-                    // 'marquee',
-                    'home',
-                    // 'history',
-                    'basemap'
-                ]
-            },
+            config: {},
             controls: {}
         };
+
+        init();
 
         // navigation controls presets
         service.controls = {
@@ -54,7 +61,7 @@
                 tooltip: 'nav.tooltip.zoomOut',
                 action: () => geoService.shiftZoom(-1)
             },
-            geoLocation: {
+            geoLocator: {
                 label: 'nav.label.geoLocation',
                 icon: 'maps:my_location',
                 tooltip: 'nav.tooltip.geoLocation',
@@ -78,21 +85,19 @@
                 tooltip: 'nav.tooltip.history',
                 action: function () {} // FIXME: user proper call
             },
+            help: {
+                label: 'sidenav.label.help',
+                icon: 'community:help',
+                tooltip: 'sidenav.label.help',
+                action: helpService.open
+            },
             basemap: {
                 label: 'nav.label.basemap',
                 icon: 'maps:map',
                 tooltip: 'nav.tooltip.basemap',
 
                 selected: () => stateManager.state.mapnav.morph !== 'default',
-                action: () => {
-                    const opacity = val => $rootElement.find(`rv-panel, rv-appbar`).css('opacity', val);
-                    basemapService.toggle();
-
-                    if (basemapService.isOpen()) {
-                        opacity(0.2);
-                        basemapService.onClose().then(() => opacity(1));
-                    }
-                }
+                action: basemapService.open
             }
         };
 
@@ -111,5 +116,30 @@
         return service;
 
         /*************/
+
+        /**
+         * Set up initial mapnav cluster buttons.
+         * Set up language change listener to update the buttons when a new config is loaded.
+         *
+         * @function init
+         * @private
+         */
+        function init() {
+            setupMapnavButtons();
+
+            // if language change, reset menu item
+            $rootScope.$on(events.rvLangSwitch, setupMapnavButtons);
+        }
+
+        /**
+         * Merges a mapnav snippet from the config file with the default configuration. This is a shallow extend and the top-level properties (`extra` and `button` will be overwritten). Supplying an empty array as `extra` will remove all the extra buttons from the cluster.
+         *
+         * @function setupMapnavButtons
+         * @function private
+         */
+        function setupMapnavButtons() {
+            configService.getCurrent().then(data =>
+                    angular.extend(service.config, MAPNAV_CONFIG_DEFAULT, data.navBar));
+        }
     }
 })();

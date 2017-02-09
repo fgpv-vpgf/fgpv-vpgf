@@ -27,13 +27,14 @@
         return directive;
     }
 
-    function Controller($scope, stateManager, geoService, $element) {
+    function Controller($scope, $element, stateManager, geoService, detailService) {
         'ngInject';
         const self = this;
 
-        self.closeDetails = closeDetails;
+        self.closeDetails = detailService.closeDetails;
         self.display = stateManager.display.details;
         self.selectItem = selectItem;
+        self.expandPanel = detailService.expandPanel;
 
         self.getSectionNode = () => $element.find('.rv-details');
 
@@ -48,21 +49,6 @@
             // get selected item if there is a match
             return items.find(item =>
                 `${item.requester.caption}${item.requester.name}` === self.selectedInfo) || items[0];
-        }
-
-        /**
-         * Closes loader pane and switches to the previous pane if any.
-         * @function closeDetails
-         */
-        function closeDetails() {
-            stateManager.clearDisplayPanel('mainDetails');
-            geoService.clearHilight();
-
-            if (stateManager.panelHistory.find(x => x === 'mainToc')) {
-                stateManager.togglePanel('mainDetails', 'mainToc');
-            } else {
-                stateManager.setActive({ mainDetails: false });
-            }
         }
 
         /**

@@ -8,7 +8,6 @@
      * @description
      * The `tocService` service provides bindable layer data to the `TocController`'s template.
      *
-     * __Lots of hardcoded sample config data.__
      *
      */
     angular
@@ -105,6 +104,15 @@
                     icon: 'editor:drag_handle',
                     label: 'toc.tooltip.reorder',
                     tooltip: 'toc.tooltip.reorder'
+                },
+                symbologyStack: {
+                    icon: 'maps:layers',
+                    label: 'toc.menu.symbology',
+                    tooltip: 'toc.menu.symbology',
+                    action: entry => {
+                        entry.toggleSymbology();
+                        entry.wiggleSymbology();
+                    }
                 }
             },
             flags: {
@@ -235,7 +243,15 @@
                 .parent(layoutService.panes.toc)
                 .position('bottom rv-flex');
 
+            // function to avoid cyclomatic check
+            const markRecDeleted = (entry, flag) => {
+                if (entry._layerRecord) {
+                    entry._layerRecord.deleted = flag;
+                }
+            };
+
             entry.removed = true;
+            markRecDeleted(entry, true);
 
             // if filters is open, close it at the same time we remove the layer
             const smRequest = stateManager.display.filters.requester;
@@ -263,6 +279,7 @@
                         // it is restored also invisible
                         entry.setVisibility(isEntryVisible);
                         entry.removed = false;
+                        markRecDeleted(entry, false);
                     } else {
                         if (entry.type !== 'placeholder') {
                             // remove layer for real now
@@ -360,16 +377,28 @@
                     // check if the symbol column already exists
                     if (!attributes.columns.find(({ data }) => data === rvSymbolColumnName)) {
 
-                        attributes.rows.forEach(row =>
-                            row.rvSymbol = geoService.retrieveSymbol(row, attributes.renderer)
-                        );
+                        attributes.rows.forEach(row => {
+                            row.rvSymbol = geoService.retrieveSymbol(row, attributes.renderer);
+                            row.rvInteractive = '';
+                        });
+
+                        // add a column for interactive actions (detail and zoom)
+                        // do not add it inside an existing field because filters will not work properly and because of https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1631
+                        attributes.columns.unshift({
+                            data: 'rvInteractive',
+                            title: '',
+                            orderable: false,
+                            render: '',
+                            width: '20px' // for datatables
+                        });
 
                         // add a column for symbols
                         attributes.columns.unshift({
                             data: rvSymbolColumnName,
                             title: '',
                             orderable: false,
-                            render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`
+                            render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`,
+                            width: '20px' // for datatables
                         });
                     }
 

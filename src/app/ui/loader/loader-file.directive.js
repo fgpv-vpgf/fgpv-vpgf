@@ -27,7 +27,8 @@
         return directive;
     }
 
-    function Controller($scope, $q, $timeout, stateManager, Stepper, geoService, LayerBlueprint, Geo) {
+    function Controller($scope, $q, $timeout, stateManager, Stepper, geoService, LayerBlueprint, Geo, $rootElement,
+        keyNames) {
         'ngInject';
         const self = this;
 
@@ -49,7 +50,9 @@
                 isCompleted: false,
                 onContinue: uploadOnContinue,
                 onCancel: () => onCancel(self.upload.step),
-                reset: uploadReset
+                onKeypress: (event) => { if (event.keyCode === keyNames.ENTER) { uploadOnContinue(); } }, // check if enter key have been pressed and call the next step if so
+                reset: uploadReset,
+                focus: 'dataUpload'
             },
             form: null,
             file: null,
@@ -74,7 +77,8 @@
                 isCompleted: false,
                 onContinue: selectOnContinue,
                 onCancel: () => onCancel(self.select.step),
-                reset: selectReset
+                reset: selectReset,
+                focus: 'dataType'
             },
             selectResetValidation,
             form: null
@@ -88,7 +92,8 @@
                 isCompleted: false,
                 onContinue: configureOnContinue,
                 onCancel: () => onCancel(self.configure.step),
-                reset: configureReset
+                reset: configureReset,
+                focus: 'layerName'
             },
             configureResetValidation,
             colourPickerSettings: {
@@ -365,6 +370,11 @@
             // reset the loader after closing the panel
             stepper.reset().start();
             stateManager.setActive('mainToc');
+
+            // there is a bug with Firefox and Safari on a Mac. They don't focus back to add layer when close
+            $timeout(() => {
+                $rootElement.find('.rv-loader-add').first().focus(true);
+            }, 0);
         }
     }
 })();

@@ -99,28 +99,24 @@
             }
 
             /**
-             * takes an attribute set (key-value mapping) and converts it to a format
-             * suitable for the details pane.
-             * the fields param is optional field information containing alias data
-             * TODO make this extensible / modifiable / configurable to allow different details looks for different data
-             * FIXME add docs
+             * Transforms esri key-value attribute object into key value array with format suitable
+             * for consumption by the details pane.
+             *
              * @function attributesToDetails
+             * @param  {Object} attribs      attribute key-value mapping, potentially with aliases as keys
+             * @param  {Array} fields       optional. fields definition array for layer
+             * @return {Array}               attribute data transformed into a list, with potential field aliasing applied
              */
             function attributesToDetails(attribs, fields) {
+                // TODO make this extensible / modifiable / configurable to allow different details looks for different data
                 // simple array of text mapping for demonstration purposes. fancy grid formatting later?
                 return Object.keys(attribs)
                     .map(key => {
-                        let fieldName = layerRegistry.aliasedFieldName(key, fields);
-                        let val = attribs[key];
-
-                        if (layerRegistry.checkDateType(key, fields) && val.length > 10) {
-                            const date = new Date(val);
-                            val = date.toISOString().substring(0, 10);
-                        }
-
+                        const fieldType = fields ? fields.find(f => f.name === key) : null;
                         return {
-                            key: fieldName,
-                            value: val
+                            key: layerRegistry.aliasedFieldName(key, fields),
+                            value: attribs[key],
+                            type: fieldType ? fieldType.type : fieldType
                         };
                     });
             }
@@ -129,7 +125,7 @@
              * Convert an attribute set so that any keys using aliases are converted to proper fields
              * @function unAliasAttribs
              * @param  {Object} attribs      attribute key-value mapping, potentially with aliases as keys
-             * @param  {Object} fields       fields definition array for layer
+             * @param  {Array} fields       fields definition array for layer
              * @return {Object}              attribute key-value mapping with fields as keys
              */
             function unAliasAttribs(attribs, fields) {
@@ -228,6 +224,11 @@
 
                     identifyResults[legendEntry.featureIdx] = identifyResult;
                 });
+
+                // if all the dynamic layer children are unqueriable, do not run identify as with `opts.layerrIds` it will search through all of them and fail trying to access items in `identifyResults` which is also empty
+                if (opts.layerIds.length === 0) {
+                    return {};
+                }
 
                 opts.tolerance = layerRecord.clickTolerance;
 
@@ -353,7 +354,9 @@
                 qry.outFields = ['*']; // this will result in just objectid fields, as that is all we have in feature layers
 
                 // more accurate results without making the buffer if we're dealing with extents
-                if (layerRecord._layer.geometryType === 'esriGeometryPolygon') {
+                // polygons from added file need buffer
+                if (layerRecord._layer.geometryType === 'esriGeometryPolygon' &&
+                    legendEntry.id.search('esriFeature#') === -1) {
                     qry.geometry = opts.geometry;
                 } else {
                     qry.geometry = makeClickBuffer(opts.clickEvent.mapPoint, opts.map, layerRecord.clickTolerance);

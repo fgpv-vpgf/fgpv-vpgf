@@ -43,6 +43,14 @@
         </md-button>`;
     // jscs:enable maximumLineLength
 
+    // max field length accepted
+    const fieldLength = 500;
+
+    // use by keytable on focus event to prevent focus from jumping when keyboard scroll
+    let scrollCell = false; // keep the cell info so when pages redraw, it can focus at the right place
+    let draw = false; // if there is a scrollCell on table draw we set draw to true so we know draw has been fired by table redraw and we will need to focus to the right row
+    let key = false; // false if user use the mouse to scroll and become true if user use arrow keys to navigate
+
     /**
      * @module rvFiltersDefault
      * @memberof app.ui
@@ -61,8 +69,9 @@
      * @function rvFiltersDefault
      * @return {object} directive body
      */
+    // jshint maxparams:11
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
-        layoutService, detailService, $rootElement) {
+        layoutService, detailService, $rootElement, $filter, keyNames) {
 
         const directive = {
             restrict: 'E',
@@ -151,10 +160,58 @@
                     button.scope = buttonScope;
                 });
 
-                // get the first column after the symbol column
-                const interactiveColumn = displayData.columns.find(column =>
-                    column.data !== 'rvSymbol');
-                addColumnInteractivity(interactiveColumn, ROW_BUTTONS);
+                // add the column interactive buttons renderer
+                addColumnInteractivity();
+
+                // returns array of column indexes we want in the CSV export
+                // are not the symbol or interactive column.
+                const exportColumns = (columns) => {
+                    // map columns to their ordinal indexes. but mark the symbol and interactive column as -1.
+                    // then filter out the -1. result is an array of column indexes that
+                    // are not the symbol and interactive columns.
+                    return columns
+                        .map((column, i) => (column.data === 'rvInteractive' || column.data === 'rvSymbol') ? -1 : i)
+                        .filter(idx => idx > -1);
+                };
+
+                // returns array of column info where .data field has any period characters escaped
+                const escapedColumns = (columns) => {
+                    // deep copy so we don't change the displayData.columns array.
+                    // that array is used in other places, and messing with it will
+                    // break things.
+                    const copyArray = angular.copy(columns);
+                    copyArray.forEach(column => {
+                        column.data = column.data.replace(/\./g, '\\.');
+                    });
+                    return copyArray;
+                };
+
+                // set width from field length if it is a string field type. If it is the oid field,
+                // set width to 100px because we have the oid, the details and zoom to button. If it is
+                // another type of field, set width to be the title.
+                displayData.columns.forEach(column => {
+                    const field = displayData.fields.find(field => field.name === column.data);
+
+                    if (typeof field !== 'undefined') {
+                        if (field.type === 'esriFieldTypeString') {
+                            const width = getColumnWidth(column.title, field.length);
+                            column.width = `${width}px`;
+                            column.render = renderEllipsis(width);
+                        } else if (field.type === 'esriFieldTypeOID') {
+                            // set column to be 100px width because of details and zoom to buttons
+                            column.width = '100px';
+                        } else if (field.type === 'esriFieldTypeDate') {
+                            // convert each date cell to a better format
+                            displayData.rows.forEach(r => r[field.name] = $filter('dateTimeZone')(r[field.name]));
+                            const width = Math.max(getTextWidth(column.title), 175);
+                            column.width =  `${width}px`;
+                        } else {
+                            const width = getColumnWidth(column.title);
+                            column.width = `${width}px`;
+                            column.render = renderEllipsis(width);
+                        }
+                    }
+                });
 
                 // ~~I hate DataTables~~ Datatables are cool!
                 self.table = tableNode
@@ -162,31 +219,131 @@
                     .on('draw.dt', callbacks.onTableDraw)
                     .DataTable({
                         dom: 'rti',
-                        columns: displayData.columns,
+                        columns: escapedColumns(displayData.columns),
                         data: displayData.rows,
                         order: [],
                         deferRender: true,
                         scrollY: true, // allow vertical scroller
                         scrollX: true, // allow horizontal scroller
-                        autoWidth: false, // without autoWidth, few columns will be stretched to fill avaialbe width, and many columns will cause the table to scroll horizontally
+                        autoWidth: false, // without autoWidth, few columns will be stretched to fill availalbe width, and many columns will cause the table to scroll horizontally
                         scroller: {
-                            displayBuffer: 3 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer
+                            displayBuffer: 10 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer.
+                            // see key-focus event to see why we put 10
                         }, // turn on virtual scroller extension
+                        keys: {
+                            keys: [keyNames.LEFT_ARROW, keyNames.UP_ARROW, keyNames.RIGHT_ARROW, keyNames.DOWN_ARROW], // only navigate with arrow key
+                            className: 'rv-cell-focus'
+                        }, // turn on keytable extension
                         /*select: true,*/ // allow row select,
                         buttons: [
                             // 'excelHtml5',
                             // 'pdfHtml5',
                             {
                                 extend: 'print',
-                                title: self.display.requester.name
+                                title: self.display.requester.name,
+                                exportOptions: {
+                                    columns: exportColumns(displayData.columns)
+                                }
                             },
                             {
                                 extend: 'csvHtml5',
-                                title: self.display.requester.name
+                                title: self.display.requester.name,
+                                exportOptions: {
+                                    columns: exportColumns(displayData.columns)
+                                }
                             }
                         ],
                         oLanguage: oLang
                     });
+
+                /**
+                 * Get column width from column title and field length.
+                 * @function getColumnWidth
+                 * @private
+                 * @param {Object} title    column title
+                 * @param {Object} length   optional column length (characters)
+                 * @param {Object}  maxLength   optional maximum column length (pixels)
+                 * @return {Number} width    width of the column
+                 */
+                function getColumnWidth(title, length = 0, maxLength = 200) {
+                    // get title length (minimum 50px)
+                    let metricsTitle = getTextWidth(title);
+                    metricsTitle = metricsTitle < 50 ? 50 : metricsTitle;
+
+                    // get column length (only type string have length)
+                    if (length) {
+                        // some layer like http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer/6
+                        // can have length = 2147483647 and it make the function crash
+                        length = (length < fieldLength) ? length : fieldLength;
+
+                        // generate a string with that much characters and get width
+                        let metricsContent = getTextWidth(Array(length).join('x'));
+
+                        // set the column length from field length (maximum will be maxLength)
+                        metricsContent = metricsContent <= maxLength ? metricsContent : maxLength;
+
+                        // check if it is lower then title length. If so, use title length
+                        metricsTitle = metricsContent < metricsTitle ? metricsTitle : metricsContent;
+                    }
+
+                    return metricsTitle;
+                }
+
+                /**
+                 * Render long text width ellipsis (https://datatables.net/blog/2016-02-26)
+                 * @function RenderEllipsis
+                 * @private
+                 * @param {Object} width    column width
+                 * @return {String} text    text for td element or string who contain html element
+                 */
+                function renderEllipsis(width) {
+                    const esc = (text) => {
+                        return text
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;');
+                    };
+
+                    return (text, type) => {
+                        // order, search and type get the original data
+                        if (type !== 'display') {
+                            return text;
+                        }
+
+                        if (typeof text !== 'number' && typeof text !== 'string') {
+                            return text;
+                        }
+
+                        text = text.toString(); // cast numbers
+
+                        // if text width smaller then column width, return text
+                        if (getTextWidth(text) < width) {
+                            return text;
+                        }
+
+                        // for wcag we add a span element with a tooltip. With keytable extension, when this cell get focus
+                        // This element will be visible.
+                        return `<span class="rv-render-ellipsis" title="${esc(text)}">${esc(text)}</span>
+                                <span class="rv-render-tooltip">${esc(text)}</span>`;
+                    };
+                }
+
+                /**
+                 * Get text width (http://stackoverflow.com/questions/118241/calculate-text-width-with-javascript)
+                 * @function getTextWidth
+                 * @private
+                 * @param {String} input    text ot calculate width from
+                 * @return {Number} width    text width
+                 */
+                function getTextWidth(input) {
+                    // re-use canvas object for better performance
+                    const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement('canvas'));
+                    const context = canvas.getContext('2d');
+                    context.font = '14px Roboto';
+
+                    return context.measureText(input).width;
+                }
 
                 /**
                  * Table initialization callback. This will hide the loading indicator.
@@ -199,6 +356,13 @@
                         // TODO: these ought to be moved to a helper function in displayManager
                         stateManager.display.filters.isLoading = false;
                         $timeout.cancel(stateManager.display.filters.loadingTimeout);
+
+                        // set keytable extension
+                        setkeytable();
+
+                        // set the ignore-focus only on the body. If not, header are not focusable and we can't go to the table with the keyboard
+                        // TODO: in 1.6 when we add the filters we will need a way to go to setting panel (skip the table)
+                        layoutService.panes.filter.find('.dataTables_scrollBody').attr('rv-ignore-focusout', '');
                     });
                 }
 
@@ -209,6 +373,9 @@
                  */
                 function onTableDraw() {
                     console.log('rows are drawn');
+
+                    // draw has been fired because of scrolling with the keyboard
+                    if (scrollCell) { draw = true; }
 
                     // find all the button placeholders
                     Object.values(ROW_BUTTONS).forEach(button => {
@@ -227,6 +394,64 @@
 
                             item.replaceWith(rowButtonDirective);
                         });
+                    });
+                }
+
+                function setkeytable() {
+                    // DOMMouseScroll (FF), mousewheel (Chrome, Safari and IE)
+                    layoutService.panes.filter.find('.dataTables_scrollBody').on('mousewheel DOMMouseScroll', () => {
+                        // if key is true it means user was using keyboard to navigate datatable so blur the focus
+                        // so datatables doesn't try to put back the focus where it was
+                        // then set user doesn't use keyboard navigation
+                        if (key) { self.table.cell.blur(); }
+                        key = false;
+                    });
+
+                    // focus on close button when table open (wcag requirement)
+                    // at the same time it solve a problem because when focus is on menu button, even if focus is on the
+                    // table cell it goes inside the menu and loop through it at the same time as we navigate the table
+                    $timeout(() => { $rootElement.find('[type=\'filters\'] button.rv-close').focus(true); }, 100);
+
+                    // when we navigate with the keyboard, the scroller extension has buffer items in memory. Without this
+                    // workaround, the keyboard can only navigate inside those items.
+                    self.table.on('key-focus', (e, datatable, cell) => {
+                        // known issue: Uncaught TypeError: Cannot read property 'top' of undefine at KeyTable._scroll (core.js:47509)
+                        //              Uncaught TypeError: Cannot read property 'row' of undefined at KeyTable._focus (core.js:47367)
+                        // when we scroll a lot of rows in one shot, datatables information is not updated well and keytable is not able to find where it should go
+                        // so it throws an error. The only way to solve this is to close then reopen the table
+                        // to solve/minimize the problem scroller displayBuffer has been increase from 3 to 10
+
+                        // there is a side effect when we mix mouse and keyboard. After a mouse scroll when we start to reuse the
+                        // keyboard the scroll jump to show the selected item at the second row.
+                        const info = datatable.scroller.page();
+                        const cellInfo = cell.index();
+
+                        // if there is a button inside the node, focus to it so keyboard user can interact with it
+                        // pressing tab will focus the next button
+                        const node = $(cell.node()).find('button');
+                        if (node.length > 0) { node.first().focus(true); }
+
+                        if (!key || !draw) {
+                            // need to scroll where the focus is (if outside the visible items). It is not always done automatically
+                            // keep the cell in memory so when there is a draw, we can put back the focus at the right place
+                            scrollCell = cell;
+                            if (cellInfo.row < info.start || cellInfo.row >= info.end) {
+                                self.table.row(cellInfo.row - 1).scrollTo(false); // false because we doesn't want animation
+                            }
+                        } else if (draw) {
+                            // when the rows are drawn, it shift the focus for the active cell. Need to put it back with
+                            // the value in memory
+                            // after the draw, datatable.scroller.page() info are wrong so we can't use them to know if we are
+                            // in the visible area
+                            const focusRow = scrollCell[0][0].row;
+                            self.table.cell(focusRow, cellInfo.column).focus();
+                            self.table.row(focusRow - 1).scrollTo(false); // false because we doesn't want animation
+                            draw = false;
+                            scrollCell = false;
+                        }
+
+                        // user is using keyboard navigation
+                        key = true;
                     });
                 }
 
@@ -322,25 +547,24 @@
                 }
 
                 /**
-                 * Adds zoom and details buttons to the column provided.
+                 * Adds zoom and details renderer to rvInteractive column.
                  * @function addColumnInteractivity
-                 * @param {Object} column from the formatted attributes bundle
                  */
-                function addColumnInteractivity(column, buttons) {
+                function addColumnInteractivity() {
                     // use render function to augment button to displayed data when the table is rendered
 
                     // we have to do some horrible string manipulations because Datatables required the `render` function to return a string
                     // it's not possble to return a compiled directive from the `render` function since directives compile directly into dom nodes
                     // first, button placeholder nodes are rendered as part of the cell data
                     // then, on `draw.dt`, these placeholders are replaced with proper compiled button directives
-                    column.render = (data, type, row, meta) => {
-                        const buttonPlaceholdersTemplate = Object.values(buttons).map(button =>
+                    const interactiveColumnExist = displayData.columns.find(column =>
+                        column.data === 'rvInteractive');
+
+                    interactiveColumnExist.render =  (data, type, row, meta) => {
+                        const buttonPlaceholdersTemplate = Object.values(ROW_BUTTONS).map(button =>
                             `<${button.name} row="${meta.row}"></${button.name}>`)
                             .join('');
-
-                        return `<div class="rv-wrapper"><span class="rv-data">${data}</span>
-                            ${buttonPlaceholdersTemplate}
-                        </div>`;
+                        return `<div class="rv-wrapper">${buttonPlaceholdersTemplate}</div>`;
                     };
                 }
             }
@@ -358,6 +582,11 @@
                     // clear hilight when table closes or new table is opened
                     // TODO verify this is the proper location for this line
                     geoService.clearHilight();
+
+                    // reinitialize to false when table is destroyed
+                    scrollCell = false;
+                    draw = false;
+                    key = false;
                 }
             }
         }
@@ -369,12 +598,12 @@
      * @function Controller
      */
     function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events, filterService,
-        configService) {
+        configService, appInfo) {
         'ngInject';
         const self = this;
 
         self.display = stateManager.display.filters;
-
+        self.appID = appInfo.id;
         self.draw = draw;
 
         const languageObjects = {};
@@ -552,6 +781,7 @@
          * @param  {Number|String} index button selector: https://datatables.net/reference/api/button()
          */
         function triggerTableButton(index) {
+            // see `buttons` array in the DataTable constructor object in the directive above
             const button = self.table.button(index);
             if (button) {
                 button.trigger();

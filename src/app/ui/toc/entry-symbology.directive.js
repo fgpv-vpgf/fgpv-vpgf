@@ -1,4 +1,4 @@
-/* global TimelineLite, Ease, BezierEasing */
+/* global Ease, BezierEasing */
 
 (() => {
     'use strict';
@@ -27,13 +27,14 @@
         .module('app.ui.toc')
         .directive('rvTocEntrySymbology', rvLayerItemSymbology);
 
-    function rvLayerItemSymbology($q, Geo) {
+    function rvLayerItemSymbology($q, Geo, animationService) {
         const directive = {
             require: '^?rvTocEntry', // need access to layerItem to get its element reference
             restrict: 'E',
             templateUrl: 'app/ui/toc/templates/entry-symbology.html',
             scope: {
                 symbology: '=',
+                entry: '=?',
                 type: '=?'
             },
             link: link,
@@ -50,8 +51,14 @@
             const self = scope.self;
 
             self.expanded = false; // holds the state of symbology section
-            self.toggleSymbology = toggleSymbology;
-            self.wiggleSymbology = wiggleSymbology;
+
+            // when symbology is displayed in the details panel, it is not connected to the layer record entry and the two lines below were generating lots of console errors
+            self.entry = self.entry || {};
+
+            // TODO: these should be attached to self.symbology instead of self.entry once geo module refactor is complete
+            self.entry.toggleSymbology = self.toggleSymbology = toggleSymbology;
+            self.entry.wiggleSymbology = self.wiggleSymbology = wiggleSymbology;
+
             self.isInteractive = ctrl ? true : false;
 
             // TODO: remove temp var to randomize images loaded
@@ -164,7 +171,7 @@
                 return initializePromise;
 
                 function makeShiftTimeline() {
-                    tlshift = new TimelineLite({
+                    tlshift = animationService.timeLineLite({
                         paused: true,
                         onReverseComplete: () =>
                             $q.resolve()
@@ -210,7 +217,7 @@
 
                 function makeWiggleTimeline() {
                     // we only need one timeline since we can reuse it
-                    tlwiggle = new TimelineLite({
+                    tlwiggle = animationService.timeLineLite({
                         paused: true
                     });
 

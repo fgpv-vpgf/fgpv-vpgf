@@ -1,16 +1,17 @@
-<rv-content-pane
-    header-controls="rv-filters-default-menu"
-    static-content="true"
-    title-style="title"
-    title-value="{{ 'filter.title' | translate }}{{ self.display.requester.name }}"
-    is-loading="self.display.isLoading">
+<div rv-trap-focus="{{ ::self.appID }}">
+    <rv-content-pane
+        header-controls="rv-filters-default-menu"
+        static-content="true"
+        title-style="title"
+        title-value="{{ 'filter.title' | translate }}{{ self.display.requester.name }}"
+        is-loading="self.display.isLoading">
 
-    <div class="rv-filters">
+        <!-- do not put rv-ignore-focusout here because it will exclude header from tabing -->
+        <div class="rv-filters">
+            <!--md-button ng-click="self.draw()">click this button if you don't see the table below</md-button-->
 
-        <!--md-button ng-click="self.draw()">click this button if you don't see the table below</md-button-->
+            <div class="rv-filters-data-container"></div>
 
-        <div class="rv-filters-data-container"></div>
-
-    </div>
-
-</rv-content-pane>
+        </div>
+    </rv-content-pane>
+</div>

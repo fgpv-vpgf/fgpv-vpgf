@@ -1,4 +1,4 @@
-<ng-include src="'app/ui/sidenav/sidenav.html'"></ng-include>
+<rv-sidenav></rv-sidenav>
 
 <!-- TODO: add proper loading message or animation to the loading splash -->
 <div class="rv-loading-screen" layout layout-align="center center" ng-class="{ 'rv-loaded': self.geoService.isMapReady }">
@@ -39,7 +39,7 @@
 <!--div ng-class="{ active: self.active }" ui-view="geoSearchPlug"></div-->
 
 <md-progress-linear
-    class="rv-shell-progress-indicator"
+    class="rv-progress-bottom"
     md-mode="indeterminate"
     ng-show="self.geoService.mapObject.isMapLoading"></md-progress-linear>
 

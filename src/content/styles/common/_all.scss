@@ -3,7 +3,6 @@ Things like mixin declarations, functions, and variables. */
 
 // import all common files
 @import "_palette.scss";
-@import "_breakpoints.scss";
 
 $font-family: Roboto, 'Helvetica Neue', sans-serif !default;
 $font-size:   rem(1.0);
@@ -43,4 +42,41 @@ $keyboard-only: '.rv-keyboard-only';
     @at-root.rv-touch#{&} {
         @content;
     }
+}
+
+@mixin include-size($name) {
+    @if $name == rv-gt-sm {
+        @at-root {
+            .rv-medium#{&}, .rv-large#{&} {
+                @content;
+            }
+        }
+    } @else if $name == rv-sm {
+        @at-root.rv-small#{&} {
+            @content;
+        }
+    } @else if $name == rv-lt-lg {
+        @at-root {
+            .rv-small#{&}, .rv-medium#{&} {
+                @content;
+            }
+        }
+    } @else if $name == rv-md {
+        @at-root.rv-medium#{&} {
+            @content;
+        }
+    } @else if $name == rv-lg {
+        @at-root.rv-large#{&} {
+            @content;
+        }
+    }
+}
+
+.rv-small .rv-gt-sm,
+.rv-large .rv-lt-lg,
+.rv-small .rv-lg,
+.rv-medium .rv-lg,
+.rv-small .rv-lt-lg-hide,
+.rv-medium .rv-lt-lg-hide {
+    display: none !important;
 }
