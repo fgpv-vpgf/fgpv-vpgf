@@ -1,6 +1,6 @@
 {
   "name": "geoApi",
-  "version": "1.1.6-2",
+  "version": "0.0.0-protoLR-33",
   "description": "",
   "main": "dist/geoapi.js",
   "dependencies": {
@@ -41,7 +41,7 @@
     "proj4": "^2.3.12",
     "run-sequence": "^1.2.2",
     "shpjs": "https://github.com/calvinmetcalf/shapefile-js.git#v3.3.1",
-    "svg.js": "^2.3.4",
+    "svg.js": "2.5.1",
     "terraformer": "~1.0.4",
     "terraformer-arcgis-parser": "~1.0.4",
     "terraformer-proj4js": "https://github.com/RAMP-PCAR/terraformer-proj4js.git#v0.2.2",

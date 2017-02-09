@@ -72,8 +72,10 @@ this is a layer data object.  it contains information describing the server-side
     "oidField": "objectid",
     "renderer": {...},
     "geometryType": "esriGeometryPoint",
+    "layerType": "Feature Layer",
     "minScale": 0,
-    "maxScale": 0
+    "maxScale": 0,
+    "extent": {...}
 }
 
 */
@@ -315,10 +317,11 @@ function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
 
                 // properties for all endpoints
                 layerData.layerType = serviceResult.type;
-                layerData.geometryType = serviceResult.geometryType;
+                layerData.geometryType = serviceResult.geometryType || 'none'; // TODO need to decide what propert default is. Raster Layer has null gt.
                 layerData.minScale = serviceResult.minScale;
                 layerData.maxScale = serviceResult.maxScale;
                 layerData.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
+                layerData.extent = serviceResult.extent;
 
                 if (serviceResult.type === 'Feature Layer') {
                     layerData.supportsFeatures = true;
@@ -437,6 +440,7 @@ function processFeatureLayer(layer, options, esriBundle, geoApi) {
             geometryType: layer.geometryType || JSON.parse(layer._json).layerDefinition.drawingInfo.geometryType,
             minScale: layer.minScale,
             maxScale: layer.maxScale,
+            layerType: 'Feature Layer',
             renderer,
             legend
         });
@@ -567,6 +571,7 @@ function loadLayerAttribsBuilder(esriBundle, geoApi) {
 // TODO consider re-writing all the asynch stuff with the ECMA-7 style of asynch keywords
 module.exports = (esriBundle, geoApi) => {
     return {
-        loadLayerAttribs: loadLayerAttribsBuilder(esriBundle, geoApi)
+        loadLayerAttribs: loadLayerAttribsBuilder(esriBundle, geoApi),
+        getLayerIndex
     };
 };

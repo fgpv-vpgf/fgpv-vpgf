@@ -3,7 +3,7 @@
 // ugly way to add rgbcolor to global scope so it can be used by canvg inside the viewer; this is done because canvg uses UMD loader and has rgbcolor as internal dependency; there is no elegant way around it; another approach would be to clone canvg and change its loader;
 window.RGBColor = require('rgbcolor');
 const canvg = require('canvg-origin');
-const shared = require('./shared.js')();
+const shared = require('../shared.js')();
 
 const XML_ATTRIBUTES = {
     xmlns: 'http://www.w3.org/2000/svg',
@@ -24,7 +24,6 @@ const XML_ATTRIBUTES = {
 * Generate the image from the esri print task
 *
 * @param {Object} esriBundle bundle of API classes
-* @param {Object} geoApi geoApi to determine if we are in debug mode
 * @param {Object} map esri map object
 * @param {Object} options options for the print task
 *                           url - for the esri geometry server
@@ -35,7 +34,7 @@ const XML_ATTRIBUTES = {
 *                           resolve with a "response: { url: value }" where url is the path
 *                           for the print task export image
 */
-function generateServerImage(esriBundle, geoApi, map, options) {
+function generateServerImage(esriBundle, map, options) {
     // create esri print object with url to print server
     const printTask = esriBundle.PrintTask(options.url, { async: true });
     const printParams = new esriBundle.PrintParameters();
@@ -238,9 +237,9 @@ function generateLocalCanvas(map, options = null, canvas = null) {
 }
 
 // Print map related modules
-module.exports = (esriBundle, geoApi) => {
+module.exports = (esriBundle) => {
     return {
         printLocal: (map, options) => generateLocalCanvas(map, options),
-        printServer: (map, options) => generateServerImage(esriBundle, geoApi, map, options)
+        printServer: (map, options) => generateServerImage(esriBundle, map, options)
     };
 };

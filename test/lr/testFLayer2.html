@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Feature Layer Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <div id="map" style="height:90%; width: 100%;"></div>
+    <p id="mess" />
+    <script src="../../dist/geoapi.js"></script>
+    <script>
+        // http://localhost:6002/test/testClass.html
+
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
+
+            var config1 = {
+                "id":"scaleDep",
+                "name":"Air Ozone Scale Dep",
+                "url":"http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2",
+                "layerType":"esriFeature",
+                "disabledControls":["visibility"],
+                "state":{"opacity":1,"visibility":true,"boundingBox":false,"query":true,"snapshot":false},
+                "controls":["opacity","visibility","boundingBox","query","snapshot","metadata","boundaryZoom","refresh","reload","remove","settings","data"]
+            }
+        
+            var layerRec = api.layer.createFeatureRecord(config1);
+            console.log('layer PROOF ', layerRec);
+            var proxy = layerRec.getProxy();
+            console.log('proxy PROOF ', proxy);
+            
+            console.log('early symbology - sb one placeholder', proxy.symbology);
+
+            // hack to wait for layer to load
+
+            var to = setInterval(() => {
+                if (layerRec.state === 'rv-loaded') {
+                    clearInterval(to);
+                    afterLoadTests();
+                }
+            }, 1000);
+
+            function afterLoadTests() {
+                console.log('enhanced loaded')
+
+                console.log('symbology - sb ?', proxy.symbology);
+                console.log('feature count - sb 247', proxy.featureCount);
+                
+                layerRec.createBbox(layerRec._layer.spatialReference);
+                console.log('bbox visible - sb true', proxy.boundingBox);
+                proxy.setVisibility(false);
+                console.log('bbox visible - sb false', proxy.boundingBox);
+
+            }
+
+        });
+    </script>
+</body>
+</html>

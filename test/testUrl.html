@@ -48,32 +48,32 @@
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_WaterLevels/MapServer/1').then(data => {
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI/CESI_WaterLevels/MapServer/1').then(data => {
                 console.log('feature layer, no hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_WaterLevels/MapServer/1', api.layer.serviceType.FeatureLayer).then(data => {
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI/CESI_WaterLevels/MapServer/1', api.layer.serviceType.FeatureLayer).then(data => {
                 console.log('feature layer, hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_WaterLevels/MapServer/').then(data => {
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI/CESI_WaterLevels/MapServer/').then(data => {
                 console.log('dynamic layer, no hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI_WaterLevels/MapServer/', api.layer.serviceType.DynamicService).then(data => {
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/CESI/CESI_WaterLevels/MapServer/', api.layer.serviceType.DynamicService).then(data => {
                 console.log('dynamic layer, hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/E2MS_Atlantic_region_data/MapServer/1').then(data => {
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/5').then(data => {
                 console.log('group layer, no hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/E2MS_Atlantic_region_data/MapServer/1', api.layer.serviceType.GroupLayer).then(data => {
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/5', api.layer.serviceType.GroupLayer).then(data => {
                 console.log('group layer, hint');
                 console.log(data);
             });
@@ -88,26 +88,45 @@
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSandsBasemap/MapServer').then(data => {
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer').then(data => {
                 console.log('tile layer, no hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/OilSandsBasemap/MapServer', api.layer.serviceType.TileService).then(data => {
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer', api.layer.serviceType.TileService).then(data => {
                 console.log('tile layer, hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('http://www.agr.gc.ca/atlas/rest/services/imageservices/mb_colour_orthos_50cm/ImageServer').then(data => {
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer/11').then(data => {
+                console.log('tile layer feature endpoint, no hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://maps-cartes.ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer/14').then(data => {
+                console.log('tile layer group endpoint, no hint');
+                console.log(data);
+            });
+
+            api.layer.predictLayerUrl('http://www.agr.gc.ca/atlas/rest/services/imageservices/annual_crop_inventory_2009/ImageServer').then(data => {
                 console.log('imagesrv layer, no hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('http://www.agr.gc.ca/atlas/rest/services/imageservices/mb_colour_orthos_50cm/ImageServer', api.layer.serviceType.ImageService).then(data => {
+            api.layer.predictLayerUrl('http://www.agr.gc.ca/atlas/rest/services/imageservices/annual_crop_inventory_2009/ImageServer', api.layer.serviceType.ImageService).then(data => {
                 console.log('imagesrv layer, hint');
                 console.log(data);
             });
 
+            api.layer.predictLayerUrl('http://www.agr.gc.ca/atlas/rest/services/app_cdm_ssc/canadian_drought_monitor_editing/FeatureServer/1').then(data => {
+                console.log('feature layer feature server, no');
+                console.log(data);
+            });
+
+
+
+            // need a new server we can put files on
+            /*
             api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/test.csv').then(data => {
                 console.log('web file CSV, no hint');
                 console.log(data);
@@ -137,6 +156,7 @@
                 console.log('web file shape, hint');
                 console.log(data);
             });
+            */
 
         });
     </script>

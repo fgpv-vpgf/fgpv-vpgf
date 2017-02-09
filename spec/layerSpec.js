@@ -13,7 +13,8 @@ describe('Layer', () => {
             getProjection: () => Promise.resolve(null),
             projectGeojson: () => { return; }
         },
-        shared: { generateUUID: () => 'layer0' }
+        shared: { generateUUID: () => 'layer0' },
+        events: { wrapEvents: () => { return; }}
     };
     beforeEach(() => {
         layer = layerBuilder(mockEsri, mockGapi);
@@ -33,6 +34,24 @@ describe('Layer', () => {
             fail(`Exception was thrown: ${e}`);
             done();
         });
+    });
+
+    it ('should create a feature record object, preloaded layer', (done) => {
+        // things i need to mock:
+        // basic constructor for mocked FeatureLayer
+        // .on function for FeatureLayer
+        // fake config fragment with id, visibility, opacity
+        // fake api.events.wrapEvents DONE
+
+        const fakeConfig = {
+            id: 'testFeature'
+        }
+
+        // const featRec = layer.createFeatureRecord({}, mockEsri.FeatureLayer);
+                
+        // expect(featRec.layerId).toEqual('testFeature');
+        expect(true);
+        done();
     });
 
 });

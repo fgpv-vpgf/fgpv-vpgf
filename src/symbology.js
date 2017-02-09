@@ -242,7 +242,7 @@ function generateWMSSymbology(name, imageUri) {
  * @private
  * @param  {String} name label symbology label
  * @param  {String} colour colour to use in the graphic
- * @return {Promise}       promise resolving with symbology svg code and its label
+ * @return {Object} symbology svg code and its label
  */
 function generatePlaceholderSymbology(name, colour = '#000') {
     const draw = svgjs(window.document.createElement('div'))
@@ -263,10 +263,10 @@ function generatePlaceholderSymbology(name, colour = '#000') {
         })
         .center(CONTAINER_CENTER, CONTAINER_CENTER);
 
-    return Promise.resolve({
+    return {
         name,
         svgcode: draw.svg()
-    });
+    };
 }
 
 /**
@@ -797,20 +797,27 @@ function buildMapServerToLocalLegend(esriBundle, geoApi) {
      *
      * @function mapServerToLocalLegend
      * @param {String}    mapServerUrl  service url (root service, not indexed endpoint)
-     * @param {Integer}   [layerIndex]    the index of the layer in the legend we are interested in. If not provided, all layers will be collapsed into a single legend
+     * @param {Integer}   [layerIndex]  the index of the layer in the legend we are interested in. If not provided, all layers will be collapsed into a single legend
      * @returns {Promise} resolves in a viewer-compatible legend for the given server and layer index
      *
      */
     return (mapServerUrl, layerIndex) => {
         // get esri legend from server
+
         return getMapServerLegend(mapServerUrl, esriBundle).then(serverLegendData => {
             // derive renderer for specified layer
-            const fakeRenderer = typeof layerIndex === 'undefined' ?
-                mapServerLegendToRendererAll(serverLegendData) :
-                mapServerLegendToRenderer(serverLegendData, layerIndex);
+            let fakeRenderer;
+            let intIndex;
+            if (typeof layerIndex === 'undefined') {
+                intIndex = 0;
+                fakeRenderer = mapServerLegendToRendererAll(serverLegendData);
+            } else {
+                intIndex = parseInt(layerIndex); // sometimes a stringified value comes in. careful now.
+                fakeRenderer = mapServerLegendToRenderer(serverLegendData, intIndex);
+            }
 
             // convert renderer to viewer specific legend
-            return geoApi.symbology.rendererToLegend(fakeRenderer);
+            return geoApi.symbology.rendererToLegend(fakeRenderer, intIndex);
         });
     };
 }
