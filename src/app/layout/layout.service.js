@@ -61,7 +61,7 @@
          * @function onResize
          * @param {Object} element a node to watch for size changes
          * @param {Function} callback a function to call on size changes; the callback is called with { oldDimensions, newDimensions }; dimension objects specify element's height and width { width: <Number>, height: <Number> };
-         * @return {Function} a functions to deregister listener
+         * @return {Function} a function to deregister listener
          */
         function onResize(element, callback) {
 
