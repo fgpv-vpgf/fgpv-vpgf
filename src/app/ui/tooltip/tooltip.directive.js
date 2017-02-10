@@ -37,6 +37,7 @@
                     self.isRendered = true;
                 }, 20, false, true);
 
+                // TODO: use layoutservice on resize here somehow to avoid duplication
                 scope.$watch(watchBBoxChanges, (newDimensions) =>
                         debouncedUpdateDimensions(newDimensions), true); // the last argument (true) is set for $watch to do object equality comparison instead of reference equality
 
