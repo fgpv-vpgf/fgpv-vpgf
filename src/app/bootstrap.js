@@ -104,34 +104,85 @@
             );
         },
 
+        /**
+         * RCS layers to be loaded once the map has been instantiated.
+         *
+         * @function    loadRcsLayers
+         * @param {Array}  keys  array of strings containing RCS keys to be added
+         */
         loadRcsLayers(keys) {
             this._proxy('loadRcsLayers', keys);
         },
 
+        /**
+         * Sets the translation language and reloads the map.
+         *
+         * @function    setLanguage
+         * @param   {String}    lang    the new language to use
+         */
         setLanguage(lang) {
             this._proxy('setLanguage', lang);
         },
 
+        /**
+         * Returns a bookmark for the current viewers state.
+         *
+         * @function    getBookmark
+         * @returns     {Promise}    a promise that resolves to the bookmark containing the state of the viewer
+         */
         getBookmark() {
             return this._proxy('getBookmark');
         },
 
+        /**
+         * Updates the map using bookmark.
+         *
+         * @function    useBookmark
+         * @param   {String}    bookmark    bookmark containing the desired state of the viewer
+         */
         useBookmark(bookmark) {
             this._proxy('useBookmark', bookmark);
         },
 
+        /**
+         * Initializes the viewer with this bookmark.
+         *
+         * @function    initialBookmark
+         * @param   {String}    bookmark    bookmark containing the desired state of the viewer
+         */
         initialBookmark(bookmark) {
             this._initProxy('initialBookmark', bookmark);
         },
 
+        /**
+         *  Updates the extent of the map by centering and zooming the map.
+         *
+         * @function    centerAndZoom
+         * @param {Number} x                    The x coord to center on
+         * @param {Number} y                    The y coord to center on
+         * @param {Object} spatialRef           The spatial reference for the coordinates
+         * @param {Number} zoom                 The level to zoom to
+         */
         centerAndZoom(x, y, spatialRef, zoom) {
             this._proxy('centerAndZoom', x, y, spatialRef, zoom);
         },
 
-        restoreSession(keysArray) {
-            this._initProxy('restoreSession', keysArray);
+        /**
+         * Loads using a bookmark from sessionStorage (if found) and a keyList.
+         *
+         * @function    restoreSession
+         * @param   {Array}     keys      array of strings containing RCS keys to load
+         */
+        restoreSession(keys) {
+            this._initProxy('restoreSession', keys);
         },
 
+        /**
+         * Returns an array of ids for rcs added layers.
+         *
+         * @function    getRcsLayerIDs
+         * @returns     {Promise}     a promise which resolves to a list of rcs layer ids
+         */
         getRcsLayerIDs() {
             return this._proxy('getRcsLayerIDs');
         },

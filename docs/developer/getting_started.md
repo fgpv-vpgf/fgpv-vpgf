@@ -48,5 +48,3 @@ Take a moment to browse the `http://localhost:6001/build/samples/` folder. There
 |`gulp test`| Runs unit tests and jshint |
 |`gulp clean`| Removes all files from build folder |
 |`gulp dist`| Generates tgz and zip files for distribution |
-|`gulp sass`|Compile sass files to CSS, add vendor prefixes, and copy to the temp folder.|
-|`gulp clean-sass`|Remove all styles from the temp folder.|

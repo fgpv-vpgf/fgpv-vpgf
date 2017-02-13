@@ -1,0 +1,22 @@
+{
+    "user": {
+        "title": "User Guide",
+        "children": ["custom_attributes", "external_api", "working_examples", "wcag_compliance"]
+    },
+
+    "custom_attributes": {
+        "title": "DOM node attributes"
+    },
+
+    "external_api": {
+        "title": "External API"
+    },
+
+    "working_examples": {
+        "title": "Working Examples"
+    },
+
+    "wcag_compliance": {
+        "title": "Host Page Responsibilities for WCAG Compliance"
+    }
+}
