@@ -8,7 +8,7 @@ Exposes the `geoApi` interface on `geoService.gapi` once it has been loaded (ext
 
 ## geo.service.js
 
-Wraps all calls to GeoAPI and also tracks the state of anything map related (ex: layers, filters, extent history).
+This is the only external interface to the rest of the modules (i.e. if UI needs to do something it should call geo service instead of any specific services). Wraps all calls to GeoAPI and also tracks the state of anything map related (ex: layers, filters, extent history).
 
 ## geo-search.service.js
 
@@ -16,6 +16,7 @@ This service implements the geosearch functionality. This includes searching by:
 - Lat/Lng coordinates
 - Place or Name
 - FSA or NTS 
+- Zoom to a specific scale
 
 It consumes five external geogratis services; provinces, concise, suggest, locate, and geonames.
 

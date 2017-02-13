@@ -1,4 +1,4 @@
-The core module is intended for **viewer specific** reusable functionality, which differs from the common module in that common is for **generic** functionality. 
+The core module is intended for **viewer specific** reusable functionality, which differs from the common module (now depreciated). 
 
 # bookmark.service.js
 

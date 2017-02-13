@@ -1,0 +1,1 @@
+This guide is intended for those looking to integrate a viewer into their own hostpage. In the above links provide working examples, the various initialization attributes, and the external API.

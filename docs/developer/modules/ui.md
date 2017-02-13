@@ -1,15 +1,7 @@
-The UI module is where most of the viewers visible elements can be found. Use the table below to scroll to the appropriate sub-module. Each sub-module includes a screenshot of where to visually find it on the map, as well as what should or shouldn't go into that sub-module.
+The UI module contains all of the viewers visible elements. Each sub-module below includes a screenshot of where to visually find it, as well as guidance on what should (and shouldn't) go into them.
 
-| Submodule Names   |         |          |
-|-------------------|---------|----------|
-| [appbar](#appbar) | [basemap](#basemap) | [common](#common) |
-| [details](#details)           | [export](#export)  | [filters](#filters)  |
-| [help](#help)              | [loader](#loader)  | [mapnav](#mapnav)|
-| [metadata](#metadata)          | [panels](#panels)  | [settings](#settings) |
-| [sidenav](#sidenav)           | [toc](#toc)     | [toolbox](#toolbox)  |
-| [tooltip](#tooltip)           |         |          |
 
-# Appbar
+### Appbar
 ![](./images/modules/appbar.png)
 
 Contains the functionality of the top left navigation bar as shown above. This includes the functionality for displaying:
@@ -20,14 +12,14 @@ Contains the functionality of the top left navigation bar as shown above. This i
 
 Only content that appears in either the main navigation bar or the secondary context aware bar should be added here. The actual implementation of features that appear in the appbar (like basemaps or importing layers) should not go here, see their respective sections below.
 
-# Basemap
+### Basemap
 ![](./images/modules/basemap.png)
 
 The basemap selector panel can be accessed by clicking on the icon in the [appbar](#appbar) (only visible when the layer list is open). 
 
 Code in this sub-module should remain focused on generating a list of available basemaps (from the config), tracking the currently selected basemap, rendering the slide out menu panel, and rendering individual basemap options and their descriptions. You should not put basemap switching logic in here, this belongs in the GEO module.
 
-# Common
+### Common
 Home to any directive or service which can be used by other sub-modules for ui related purposes. In general, if some functionality is UI related and can be shared by more than one sub-module, it should go here. Below is a general list of some commonly used directives and services:
 
 | File Name         | Description |
@@ -37,7 +29,7 @@ Home to any directive or service which can be used by other sub-modules for ui r
 | dragula.directive.js| Used in the layer list to handle drag-and-drop functionality|
 | stepper | Step implementation for forms (used in import service/file) based on the Material Design stepper component |
 
-# Details
+### Details
 
 ![](./images/modules/details-slider.png)
 
@@ -54,13 +46,13 @@ Some notable directives and services in this sub-module include:
 | details-record-esrifeature.directive.js | Renders a single identify result from an esri feature (and dynamic) layers |
 | layer-list-slider.directive.js | Handles the in/out sliding of the details panel. The panel slides open when either any point layer is focused or on mouseover. It closes when no point layers have focus, no mouseover, or the user clicked on a point layer. |
 
-# Export
+### Export
 
 ![](./images/modules/export.png)
 
 Allows the map to be exported in image format. This includes functionality for rendering the map, layer list, scale bar, and north arrow. 
 
-# Filters
+### Filters
 
 ![](./images/modules/filters.png)
 
@@ -76,19 +68,19 @@ This is what the menu looks like:
 
 The `filters-default.directive.js` file handles the creation of the DataTable instance. The `filters.service.js` file handles filtering by extent.
 
-# Help
+### Help
 
 ![](./images/modules/help.png)
 
 Relates to anything in the help dialog popup including its display and search capabilities. Please note that there are remnants of an overlay help system that are not yet implemented. 
 
-# Loader
+### Loader
 
 ![](./images/modules/loader.png)
 
 This includes importing a file or a service as implemented in `loader-file.directive.js` and `loader-service.directive.js` respectively.
 
-# Mapnav
+### Mapnav
 
 ![](./images/modules/mapnav.png)
 
@@ -96,7 +88,7 @@ Found in the lower right corner of the map, these buttons perform actions to the
 
 `mapnav.service.js` defines these buttons including their icons and actions to perform when clicked. You should avoid implementation logic for button actions, deferring this task out to the appropriate directives and services in other modules.
 
-# Metadata
+### Metadata
 
 ![](./images/modules/metadata.png)
 
@@ -104,7 +96,7 @@ Secondary panel to the right of the layer list. Only available for layers with m
 
 ![](./images/modules/metadata-popup.png)
 
-# Panels
+### Panels
 
 There are three panels in the viewer:
 - 'main' panel which is used for the layer list, layer details view, and import functionality
@@ -113,7 +105,7 @@ There are three panels in the viewer:
 
 While this sub-module is not meant for any particular content implementation, it handles the panels headers like the close and expand buttons as well as their animations from open to close. 
 
-# Settings
+### Settings
 
 ![](./images/modules/settings.png)
 
@@ -121,7 +113,7 @@ While this sub-module is not meant for any particular content implementation, it
 
 Note that this section should not contain any viewer settings (as found in the left sliding panel). The next section covers this.
 
-# Sidenav
+### Sidenav
 
 ![](./images/modules/sidenav-open.png)
 
@@ -129,7 +121,7 @@ Note that this section should not contain any viewer settings (as found in the l
 
 This is where you'll find various application settings such as the language selector, full screen toggle, export image, share link among others. This panel should not implement any of these features, it should instead link to the functionality better suited in a more specific module.
 
-# TOC
+### TOC
 
 Also known as "Table of Contents", "Legend", or more recently "Layer List". 
 
@@ -144,11 +136,11 @@ Also known as "Table of Contents", "Legend", or more recently "Layer List".
 | toc.directive.js | Mostly involved with the implementation of `Dragula`, a drag and drop library used for reordering layers and groups |
 | toc.service.js | Responsible for implementing most functionality such as toggling visibility, zooming to layer scale, and removing layers. |
 
-# Toolbox
+### Toolbox
 
 Not currently used and may be removed.
 
-# Tooltip
+### Tooltip
 
 ![](./images/modules/tooltip.png)
 

@@ -17,7 +17,6 @@ This page is intended to help you assess the usefulness of this library for your
   - Project [managed on GitHub](https://github.com/fgpv-vpgf/fgpv-vpgf)
   - External contributions are welcome
   - Easy to report issues and suggestions as well as search existing ones
-  - Ability to fork project and take it in your own direction
 
 4. Easy to use and setup
   - Intuitive layout with context aware controls

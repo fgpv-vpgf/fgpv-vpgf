@@ -81,7 +81,7 @@ const translations = {
     },
 
     'fr-CA': {
-        helloButtonLabel: 'Boujour Monde'
+        helloButtonLabel: 'Bonjour Monde'
     }
 };
 ```
@@ -106,7 +106,7 @@ const translations = {
     },
 
     'fr-CA': {
-        helloButtonLabel: 'Boujour Monde'
+        helloButtonLabel: 'Bonjour Monde'
     }
 };
 

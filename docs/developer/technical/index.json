@@ -1,0 +1,22 @@
+{
+    "technical": {
+        "title": "Technical Guides",
+        "children": ["datatables", "details", "bookmark_formats", "focus_manager"]
+    },
+
+    "datatables": {
+        "title": "Working with DataTables"
+    },
+
+    "details": {
+        "title": "Details Panel"
+    },
+
+    "bookmark_formats": {
+        "title": "Bookmark Formats"
+    },
+
+    "focus_manager": {
+        "title": "Focus Manager"
+    }
+}
