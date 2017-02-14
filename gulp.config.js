@@ -190,6 +190,7 @@ module.exports = function () {
             files: [].concat(
                 config.specHelpers, // order matters
                 bowerModules + 'jquery/dist/jquery.js',
+                bowerModules + 'angular/angular.min.js',
                 bowerModules + 'datatables.net/js/jquery.dataTables.js',
                 bowerFiles(),
                 src + 'polyfill/*.js',
