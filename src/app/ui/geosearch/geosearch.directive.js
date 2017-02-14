@@ -20,14 +20,29 @@
      * @function rvGeosearch
      * @return {object} directive body
      */
-    function rvGeosearch() {
+    function rvGeosearch(storageService, layoutService, debounceService, globalRegistry) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/geosearch/geosearch.html',
             scope: {},
             controller: Controller,
             controllerAs: 'self',
-            bindToController: true
+            bindToController: true,
+            link: (scope, element) => {
+
+                // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1668
+                // IE requires a specific fix because it will not size a flex child's height correctly unless its parent has a set height (not percentage); so the height is set explicitly every time the main panel height changes;
+                // read here for more details http://stackoverflow.com/a/35537510
+                // tecnhically, this fix will work for all browsers, but it's ugly and should be reserved for IE only; other browsers are fixes using CSS just fine;
+                if (globalRegistry.isIE) {
+                    const geosearchContentNode = element.find('.rv-geosearch-content:first');
+
+                    const debounceUpdateMaxHeight = debounceService.registerDebounce(newDimensions =>
+                        geosearchContentNode.css('max-height', newDimensions.height - 10), 175, false, true); // 10 accounts for top margin :()
+
+                    layoutService.onResize(storageService.panels.main, debounceUpdateMaxHeight);
+                }
+            }
         };
 
         return directive;

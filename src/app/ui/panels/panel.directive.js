@@ -21,7 +21,7 @@
      * @function rvPanel
      * @return {object} directive body
      */
-    function rvPanel() {
+    function rvPanel(storageService) {
         const directive = {
             restrict: 'E',
             templateUrl: function (element, attr) {
@@ -32,10 +32,24 @@
             },
             controller: Controller,
             controllerAs: 'self',
-            bindToController: true
+            bindToController: true,
+            link
         };
 
         return directive;
+
+        /**
+         * Directive's link function. Stores the panel element in the storage for other code to access.
+         *
+         * @function link
+         * @private
+         * @param {Object} scope directive's scope
+         * @param {Object} element directive's node
+         * @param {Array} attr directive's attributes
+         */
+        function link(scope, element, attr) {
+            storageService.panels[attr.type] = element;
+        }
     }
 
     /**
