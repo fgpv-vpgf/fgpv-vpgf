@@ -40,7 +40,7 @@ Button label for Hello World, helloworld.button.label, Yes, Oui, Si
 Now on the host page code, such as `index.html`, we have to locate the viewer element and append the new language. Here is a partial view of what that would look like:
 
 ```html
-<div class="fgpv" rv-langs='["en-CA", "fr-CA", "es-ES"]'
+<div class="fgpv" is="rv-map" rv-langs='["en-CA", "fr-CA", "es-ES"]'
 ```
 
 ## Removing a language

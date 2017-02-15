@@ -69,11 +69,4 @@ git push -f origin my-bootstrap-fix
 
 ## Pull Request Process
 
-- a PR can be opened at any time
-- PRs must be assigned when they are opened (try to pick someone familiar with the area of the code being changed)
-- reviewers should announce on gitter before merging if the PR has been open for less than an hour (e.g. if this is a quick bugfix try to call out before merging in case anyone wants to have a look)
-- reviewers must announce on gitter before merging if multiple PRs are reviewed and ready to be merged for the same project
-- most PRs should be subjected to the same 2 reviewers rule (exceptions are milestone builds and very small changesets - less than 10 lines or so), the assigned reviewer must find a second reviewer if necessary
-- if the PR comments are not trivial the reviewer should reassign the PR to the dev who opened it and the dev should add an estimate for the work required to address the comments
-
-Violators will be fined in muffins.
+See {@link https://github.com/fgpv-vpgf/fgpv-vpgf/wiki/Pull-Requests-Process|Wiki documentation} for more information.

@@ -135,7 +135,7 @@
         },
 
         /**
-         * Updates the map using bookmark.
+         * useBookmark loads the provided bookmark into the map application. Unlike initialBookmark, it does not need to be the first bookmark loaded nor does it require `rv-wait` on the map DOM node. This method is typically triggered by user actions, taking priority over existing bookmarks.
          *
          * @function    useBookmark
          * @param   {String}    bookmark    bookmark containing the desired state of the viewer
@@ -145,7 +145,9 @@
         },
 
         /**
-         * Initializes the viewer with this bookmark.
+         * initialBookmark is intended to be the first bookmark loaded by the map application (for example, when a bookmark comes in the URL bar) and should only be used if the `rv-wait` attribute is set on the map DOM node.  `rv-wait` will inform the viewer to wait until an unblocking call like initialBookmark is called.
+         *
+         * If a useBookmark call happens to be triggered before initialBookmark it will take priority (useBookmark is typically triggered by user actions which should take priority over automated actions).
          *
          * @function    initialBookmark
          * @param   {String}    bookmark    bookmark containing the desired state of the viewer
