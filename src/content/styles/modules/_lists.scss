@@ -1,11 +1,12 @@
 @mixin lists {
     // TODO: move
-    ul.rv-list {
+    div.rv-list {
+        display:flex;
+        flex-direction:column;
         margin: 0;
         padding: 0;
-        list-style: none;
 
-        > li {
+        > div {
             margin: 0;
             padding: 0;
         }

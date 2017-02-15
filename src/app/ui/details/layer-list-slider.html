@@ -1,9 +1,10 @@
 
-<ul class="rv-list">
-    <li
+<div class="rv-list">
+    <div
         ng-repeat="item in self.display.data"
         ng-class="{'rv-selected': item === self.selectedItem }"
-        class="rv-details-layer-list-item">
+        class="rv-details-layer-list-item"
+        ng-style="{ order: item.data.length === 0 ? $index : -1 * (self.display.data.length - $index) }">
 
         <md-button
             ng-keydown="self.itemSelectedByKeypress($event, item)"
@@ -21,5 +22,5 @@
             <span class="">{{ item.requester.name }}</span>
             <span class="md-caption" ng-if="item.requester.caption">{{ item.requester.caption }}</span>
         </div>
-    </li>
-</ul>
+    </div>
+</div>
