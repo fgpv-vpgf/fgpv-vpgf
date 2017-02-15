@@ -1,7 +1,7 @@
 
 <ul class="rv-list">
     <li
-        ng-repeat="item in self.display.data"
+        ng-repeat="item in self.display.data | orderBy:['data.length == 0','-isLoading']"
         ng-class="{'rv-selected': item === self.selectedItem }"
         class="rv-details-layer-list-item">
 
