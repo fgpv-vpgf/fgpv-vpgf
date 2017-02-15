@@ -104,34 +104,87 @@
             );
         },
 
+        /**
+         * RCS layers to be loaded once the map has been instantiated.
+         *
+         * @function    loadRcsLayers
+         * @param {Array}  keys  array of strings containing RCS keys to be added
+         */
         loadRcsLayers(keys) {
             this._proxy('loadRcsLayers', keys);
         },
 
+        /**
+         * Sets the translation language and reloads the map.
+         *
+         * @function    setLanguage
+         * @param   {String}    lang    the new language to use
+         */
         setLanguage(lang) {
             this._proxy('setLanguage', lang);
         },
 
+        /**
+         * Returns a bookmark for the current viewers state.
+         *
+         * @function    getBookmark
+         * @returns     {Promise}    a promise that resolves to the bookmark containing the state of the viewer
+         */
         getBookmark() {
             return this._proxy('getBookmark');
         },
 
+        /**
+         * useBookmark loads the provided bookmark into the map application. Unlike initialBookmark, it does not need to be the first bookmark loaded nor does it require `rv-wait` on the map DOM node. This method is typically triggered by user actions, taking priority over existing bookmarks.
+         *
+         * @function    useBookmark
+         * @param   {String}    bookmark    bookmark containing the desired state of the viewer
+         */
         useBookmark(bookmark) {
             this._proxy('useBookmark', bookmark);
         },
 
+        /**
+         * initialBookmark is intended to be the first bookmark loaded by the map application (for example, when a bookmark comes in the URL bar) and should only be used if the `rv-wait` attribute is set on the map DOM node.  `rv-wait` will inform the viewer to wait until an unblocking call like initialBookmark is called.
+         *
+         * If a useBookmark call happens to be triggered before initialBookmark it will take priority (useBookmark is typically triggered by user actions which should take priority over automated actions).
+         *
+         * @function    initialBookmark
+         * @param   {String}    bookmark    bookmark containing the desired state of the viewer
+         */
         initialBookmark(bookmark) {
             this._initProxy('initialBookmark', bookmark);
         },
 
+        /**
+         *  Updates the extent of the map by centering and zooming the map.
+         *
+         * @function    centerAndZoom
+         * @param {Number} x                    The x coord to center on
+         * @param {Number} y                    The y coord to center on
+         * @param {Object} spatialRef           The spatial reference for the coordinates
+         * @param {Number} zoom                 The level to zoom to
+         */
         centerAndZoom(x, y, spatialRef, zoom) {
             this._proxy('centerAndZoom', x, y, spatialRef, zoom);
         },
 
-        restoreSession(keysArray) {
-            this._initProxy('restoreSession', keysArray);
+        /**
+         * Loads using a bookmark from sessionStorage (if found) and a keyList.
+         *
+         * @function    restoreSession
+         * @param   {Array}     keys      array of strings containing RCS keys to load
+         */
+        restoreSession(keys) {
+            this._initProxy('restoreSession', keys);
         },
 
+        /**
+         * Returns an array of ids for rcs added layers.
+         *
+         * @function    getRcsLayerIDs
+         * @returns     {Promise}     a promise which resolves to a list of rcs layer ids
+         */
         getRcsLayerIDs() {
             return this._proxy('getRcsLayerIDs');
         },

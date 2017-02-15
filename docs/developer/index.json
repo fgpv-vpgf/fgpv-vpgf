@@ -35,5 +35,9 @@
     "modules": {
         "title": "Modules",
         "children": ["common", "core", "geo", "layout", "ui"]
+    },
+
+    "meta_documentation": {
+        "title": "Meta Documentation"
     }
 }
