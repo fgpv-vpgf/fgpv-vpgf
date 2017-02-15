@@ -30,16 +30,28 @@
         _deferredPolyfills: RV._deferredPolyfills || [] // holds callback for any polyfills or patching that needs to be done after the core.js is loaded
     });
 
-    // versions of scripts to inject
-    const versions = {
-        jQuery: '2.2.1',
-        dataTables: '1.10.11'
-    };
     const customAttrs = ['config', 'langs', 'service-endpoint', 'restore-bookmark', 'wait', 'keys', 'fullpage-app'];
-    const URLs = {
-        jQuery: `http://ajax.aspnetcdn.com/ajax/jQuery/jquery-${versions.jQuery}.min.js`,
-        dataTables: `https://cdn.datatables.net/${versions.dataTables}/js/jquery.dataTables.min.js`
+
+    // versions of scripts to inject
+    const dependencies = {
+        angular: {
+            get ourVersion() { return '1.4.12'; },
+            get theirVersion() { return angular.version.full; },
+            get url() { return `https://ajax.googleapis.com/ajax/libs/angularjs/${this.ourVersion}/angular.min.js`; }
+        },
+        jQuery: {
+            get ourVersion() { return '2.2.1'; },
+            get theirVersion() { return $.fn.jquery; },
+            get url() { return `http://ajax.aspnetcdn.com/ajax/jQuery/jquery-${this.ourVersion}.min.js`; }
+        },
+        dataTables: {
+            get ourVersion() { return '1.10.11'; },
+            get theirVersion() { return $.fn.dataTable.version; },
+            get url() { return `https://cdn.datatables.net/${this.ourVersion}/js/jquery.dataTables.min.js`; }
+        }
     };
+    const dependenciesOrder = ['jQuery', 'dataTables', 'angular'];
+
     const d = document;
     const scripts = d.getElementsByTagName('script'); // get scripts
 
@@ -69,15 +81,24 @@
     const scriptsArr = [];
 
     // append proper srcs to scriptsArray
-    if (!window.jQuery) {
-        // TODO: should we use a local file here instead?
-        scriptsArr.push(URLs.jQuery, URLs.dataTables);
-    } else if (!$.fn.dataTable) {
-        scriptsArr.push(URLs.dataTables);
-        versionCheck(versions.jQuery, $.fn.jquery, 'jQuery');
-    } else {
-        versionCheck(versions.jQuery, $.fn.jquery, 'jQuery');
-        versionCheck(versions.dataTables, $.fn.dataTable.version, 'dataTable');
+    dependenciesOrder.forEach(dependencyName => {
+        const dependency = dependencies[dependencyName];
+
+        if (window[dependencyName]) {
+            versionCheck(dependency.ourVersion, dependency.theirVersion, dependencyName);
+        } else {
+            scriptsArr.push(dependency.url);
+        }
+    });
+
+    // in cases when Angular is loaded by the host page before jQuery (or jQuery is not loaded at all), the viewer will not work as Angular will not bind jQuery correctly even if bootstrap loads a correct version of jQuery
+    // more info, third paragraph from the top: https://code.angularjs.org/1.4.12/docs/api/ng/function/angular.element
+    if (window.angular && !window.jQuery) {
+        console.error('The viewer requires jQuery to work correctly.' +
+            'Ensure a compatible version of jQuery is loaded before Angular by the host page.');
+
+        // stopping initialization
+        return;
     }
 
     // registry of map proxies
@@ -349,10 +370,10 @@
      * @param  {String} scriptName      the name of the script
      */
     function versionCheck(ourVersion, theirVersion, scriptName) {
-        ourVersion = ourVersion.split('.');
+        const ourVersionSplit = ourVersion.split('.');
         const versionDiff = theirVersion.split('.')
             // compare the two versions
-            .map((x, index) => parseInt(x) - ourVersion[index])
+            .map((x, index) => parseInt(x) - ourVersionSplit[index])
             // find first non-equal part
             .find(x => x !== 0);
 
@@ -360,9 +381,12 @@
             // the versions were equal
             return;
         }
-        const fillText = versionDiff > 0 ? 'more recent' : 'older';
-        console.warn(`The current ${scriptName} version is ${fillText} than expected for the viewer; ` +
-                        `expected: ${versions.jQuery}`);
+
+        const warningMessgage = `${scriptName} ${theirVersion} is detected ` +
+            `(${ versionDiff > 0 ? 'more recent' : 'older' } that expected ${ourVersion} version). ` +
+            `No tests were done with this version. The viewer might be unstable or not work correctly.`;
+
+        console.warn(warningMessgage);
     }
 })();
 
