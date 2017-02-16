@@ -10,7 +10,7 @@ The first thing we'll need to do is to download a copy of the viewer's code. Vis
 Now that we have the source code available, we'll need to add an HTML snippet to our host page. This is where the map will be placed on the page. Here is an example of a DOM node:
 
 ```html
-<div class="fgpv" is="rv-map" data-rv-config="config.${lang}.json" data-rv-langs='["en-CA", "fr-CA"]'
+<div class="myMap" is="rv-map" data-rv-config="config.${lang}.json" data-rv-langs='["en-CA", "fr-CA"]'
         data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-keys='["Airports"]'
         data-rv-restore-bookmark="bookmark" data-rv-fullpage-app="true" >
         <noscript>
@@ -23,10 +23,10 @@ Now that we have the source code available, we'll need to add an HTML snippet to
 
 You'll notice that the `is="rv-map"` lets the viewer know this is the element to use for a viewer instance. We can certainly have multiple nodes with `is="rv-map"` if we'd like to have multiple viewers active on the page. For more information on the other attributes present in the DOM node, refer to {@tutorial custom_attributes}.
 
-Note that we have full control over where we can place this DOM node (anywhere within the `body` tags). We can also assign a CSS style to `.fgpv` to change the width or height of the map. For the above example, we want to create a viewer that takes up the entire page, so our CSS style would look something like:
+Note that we have full control over where we can place this DOM node (anywhere within the `body` tags). We can also assign a CSS style to `.myMap` to change the width or height of the map. For the above example, we want to create a viewer that takes up the entire page, so our CSS style would look something like:
 
 ```css 
- .fgpv {
+ .myMap {
     height: 100%;
 }
 ```
@@ -34,7 +34,7 @@ Note that we have full control over where we can place this DOM node (anywhere w
 We could also make a viewer a specific width or height with:
 
 ```css 
- .fgpv {
+ .myMap {
     height: 600px;
     width: 600px;
 }

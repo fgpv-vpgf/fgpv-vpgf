@@ -274,6 +274,19 @@
     nodes.forEach(node => {
 
         let appId = node.getAttribute('id');
+
+        // TODO v2.0: Remove the following deprecation warning
+        // deprecating class fgpv on node for 2.0 release - use is="fgpv" instead
+        if (node.classList.contains('fgpv')) {
+            console.warn('Using class fgpv on the map DOM node is deprecated' +
+                'and will be removed on v2.0 release. Use is="fgpv" instead.'); /*RemoveLogging:skip*/
+        }
+
+        // provide alternative `data-is` for validation support
+        if (node.getAttribute('data-is')) {
+            node.setAttribute('is', node.getAttribute('data-is'));
+        }
+
         customAttrs
             .filter(attrName => node.getAttribute(`data-rv-${attrName}`))
             .forEach(attrName => node.setAttribute(`rv-${attrName}`, node.getAttribute(`data-rv-${attrName}`))); // getAttribute returns a string so data-rv-fullscreen-app="false" will copy correctly
