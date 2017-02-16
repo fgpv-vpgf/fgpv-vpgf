@@ -52,6 +52,7 @@
     "gulp-uglify": "^1.4.2",
     "gulp-util": "^3.0.6",
     "gulp-zip": "^3.1.0",
+    "gulp-remove-logging": "^1.2.0",
     "http-server": "^0.6.1",
     "jasmine-core": "^2.3.4",
     "jsdoc": "^3.4.0",
