@@ -186,7 +186,7 @@ md-select-menu {
     // all angular material components rendered outside of the viewer should be visible
     // all aria maked nodes should display default behaviour
     > [class*="md-"],
-    .fgpv {
+    .fgpv, [is=rv-map] {
         visibility: visible;
     }
 }

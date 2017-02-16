@@ -18,13 +18,13 @@
                 border: 1px solid darkorange;
             }
 
-            .fgpv {
+            .myMap {
                 border: 1px solid black;
                 margin: 50px;
                 position: relative;
             }
 
-            ._fgpv:after {
+            ._myMap:after {
                 position: absolute;
                 content: "";
                 width: 50%;
@@ -56,7 +56,7 @@
     </head>
 
     <body>
-        <div class="fgpv one" rv-config='config-all.en.json'>
+        <div class="myMap one" is="rv-map" rv-config='config-all.en.json'>
             <noscript>
                 <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -65,7 +65,7 @@
         </div>
 
         <div class="row">
-            <div class="fgpv two" rv-config="config.fr-CA.json">
+            <div class="myMap two" is="rv-map" rv-config="config.fr-CA.json">
                 <noscript>
                     <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -73,7 +73,7 @@
                 </noscript>
             </div>
 
-            <div class="fgpv three" rv-config="config.en-CA.json">
+            <div class="myMap three" is="rv-map" rv-config="config.en-CA.json">
                 <noscript>
                     <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 

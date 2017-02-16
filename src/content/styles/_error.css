@@ -1,4 +1,4 @@
-.fgpv:after {
+.fgpv:after, [is=rv-map]:after {
     content: "I am error!";
     position: absolute;
     left: 0;

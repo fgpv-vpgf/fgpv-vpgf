@@ -7,7 +7,7 @@
 
 @import "common/_all.scss";
 
-.fgpv {
+[is=rv-map], .fgpv {
     @import "base/_all.scss";
     @import "modules/_all.scss";
     @import "other/_all.scss";
