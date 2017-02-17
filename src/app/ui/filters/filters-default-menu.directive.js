@@ -14,7 +14,7 @@
         .module('app.ui.filters')
         .directive('rvFiltersDefaultMenu', rvFiltersDefaultMenu);
 
-    function rvFiltersDefaultMenu() {
+    function rvFiltersDefaultMenu(layoutService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-default-menu.html',
@@ -29,8 +29,9 @@
 
         /*********/
 
-        function link() { // scope, el, attr, ctrl) {
-
+        function link(scope) {
+            const self = scope.self;
+            self.currentLayout = layoutService.currentLayout;
         }
     }
 
