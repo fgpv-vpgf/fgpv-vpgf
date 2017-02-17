@@ -30,11 +30,13 @@
          * Feature areas
          */
         'app.layout'
-    ]).config(($compileProvider, $mdInkRippleProvider) => {
+    ]).config(($compileProvider, $mdInkRippleProvider, $mdAriaProvider) => {
         // to improve IE performance disable ripple effects globally and debug info
         if (RV.isIE) {
             $mdInkRippleProvider.disableInkRipple();
         }
+
+        $mdAriaProvider.disableWarnings();
     });
 
     // a separate templates module is needed to facilitate directive unit testing
