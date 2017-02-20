@@ -56,9 +56,11 @@
      * Skeleton controller function.
      * @function Controller
      */
-    function Controller($attrs, stateManager) {
+    function Controller($attrs, stateManager, storageService, $element) {
         'ngInject';
         const self = this;
+
+        storageService.panels[$attrs.type] = $element;
 
         self.closePanel = self.closeButton !== 'false' ? closePanel : undefined;
 

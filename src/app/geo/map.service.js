@@ -15,7 +15,8 @@
         .factory('mapService', mapServiceFactory);
 
     function mapServiceFactory($q, $timeout, gapiService, storageService, $rootElement, $compile, $rootScope,
-        tooltipService) {
+        tooltipService, stateManager) {
+
         const settings = { zoomPromise: $q.resolve(), zoomCounter: 0 };
         return mapService;
 
@@ -597,14 +598,19 @@
             function zoomWithOffset(geo, layer, zoomLayer) {
                 const map = service.mapObject;
 
-                const barWidth = storageService.panels.sidePanel.outerWidth();
-                const mapWidth = storageService.panels.map.outerWidth();
+                // panelD/mapD is the % of map blocked by a panel (be it width or height)
+                // by shifting it 1/2 % of blocked map, it offsets the point to center of visible map
+                const computeRatio = (panelD, mapD) => (panelD / mapD) / 2;
 
-                // barWidth/mapWidth is the % of map blocked by side panel
-                // shifting by 1/2 % of blocked map offsets point to center of visible map
-                // this ratio always changes based on window resizing/map resizing
-                // since the side panel is always 400px; need ratio every time zoom happens
-                const ratio = (barWidth / mapWidth) / 2;
+                // on identify, only main panel can be open, so offset x position by main panel width
+                const mainPanelWidth = stateManager.panelDimension('main').width;
+                // on identify, only filters panel can be open, so offset y position by filters panel height
+                const filterPanelHeight = stateManager.panelDimension('filters').height;
+
+                const mapWidth = storageService.panels.map.outerWidth();
+                const mapHeight = storageService.panels.map.outerHeight();
+                const xRatio = computeRatio(mainPanelWidth, mapWidth);
+                const yRatio = computeRatio(filterPanelHeight, mapHeight);
 
                 // make new graphic (on the chance it came from server and is just raw geometry)
                 const newg = gapiService.gapi.proj.Graphic({
@@ -624,8 +630,9 @@
                 // handles extent
                 if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
                     const eExt = newExt.expand(4);
-                    const xOffset = (eExt.xmax - eExt.xmin) * ratio * (-1);
-                    const gExt = eExt.offset(xOffset, (eExt.ymax - eExt.ymin) / 4);
+                    const xOffset = (eExt.xmax - eExt.xmin) * xRatio * (-1);
+                    const yOffset = (eExt.ymax - eExt.ymin) * yRatio;
+                    const gExt = eExt.offset(xOffset, yOffset);
                     return map.setExtent(gExt);
                 } else {
                     // handles points
@@ -633,8 +640,9 @@
                     const zoomed = geoState.layerRegistry.zoomToScale(
                         zoomLayer, zoomLayer.options.offscale.value, true);
                     return zoomed.then(() => {
-                        const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
-                        const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
+                        const xOffset = (map.extent.xmax - map.extent.xmin) * xRatio * (-1);
+                        const yOffset = (map.extent.ymax - map.extent.ymin) * yRatio;
+                        const newPt = pt.offset(xOffset, yOffset);
                         return map.centerAt(newPt);
                     });
                 }
