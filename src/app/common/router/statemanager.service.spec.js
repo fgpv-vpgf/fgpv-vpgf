@@ -5,9 +5,13 @@ describe('stateManager', () => {
     const mainPanelNames = ['main', 'mainToc', 'mainToolbox', 'mainDetails',
         'mainGeosearch', 'mainLoaderFile', 'mainLoaderService'];
 
+    function mockStorageService($provide) {
+        $provide.service('storageService', $q => () => $q.resolve());
+    }
+
     beforeEach(() => {
 
-        bard.appModule('app.common.router');
+        bard.appModule('app.common.router', mockStorageService);
 
         // inject services
         bard.inject('stateManager', '$rootScope');
