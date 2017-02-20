@@ -14,11 +14,11 @@
                 {{ 'filter.menu.minimize' | translate }}
             </md-menu-item-->
 
-            <md-menu-item type="radio" ng-model="self.filtersMode" value="default" ng-click="self.setMode(self.filtersMode)" class="rv-lg">
+            <md-menu-item type="radio" ng-model="self.filtersMode" value="default" ng-click="self.setMode(self.filtersMode)" ng-if="self.currentLayout() === 'large'">
                 {{ 'filter.menu.splitView' | translate }}
             </md-menu-item>
 
-            <md-menu-item type="radio" ng-model="self.filtersMode" value="full" ng-click="self.setMode(self.filtersMode)" class="rv-lg">
+            <md-menu-item type="radio" ng-model="self.filtersMode" value="full" ng-click="self.setMode(self.filtersMode)" ng-if="self.currentLayout() === 'large'">
                 {{ 'filter.menu.maximize' | translate }}
             </md-menu-item>
 
