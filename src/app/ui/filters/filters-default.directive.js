@@ -242,14 +242,16 @@
                                 extend: 'print',
                                 title: self.display.requester.name,
                                 exportOptions: {
-                                    columns: exportColumns(displayData.columns)
+                                    columns: exportColumns(displayData.columns),
+                                    orthogonal: null // use real data, not renderer
                                 }
                             },
                             {
                                 extend: 'csvHtml5',
                                 title: self.display.requester.name,
                                 exportOptions: {
-                                    columns: exportColumns(displayData.columns)
+                                    columns: exportColumns(displayData.columns),
+                                    orthogonal: null // use real data, not renderer
                                 }
                             }
                         ],
