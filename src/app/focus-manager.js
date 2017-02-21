@@ -45,11 +45,47 @@
             this.rootElement = $(rootElem);
             this.id = this.rootElement.attr('id');
             this.status = statuses.INACTIVE;
+
             this.mdDialog = mdDialog;
+            this._mdDialogLock = false;
+            this._mdDialogChain = [];
 
             // TODO: workaround for full-screen detection - replace with resolution of issue #834
             if (this.rootElement.attr('rv-fullpage-app') === 'true') {
                 this.setStatus(statuses.ACTIVE);
+            }
+        }
+
+        /**
+         * Executes the callback function which performs some angular material dialog action.
+         * $mdDialog ignores actions while it is in the middle of an animation, so this method queues
+         * the callbacks so that the are fired in order when $mdDialog is ready.
+         *
+         * Note that dlgCB must return a promise that resolves when $mdDialg is in a ready state
+         *
+         * @param   {Function}  dlgCB       a function to be invoked when $mdDialg is ready (must return a promise)
+         * @param   {Boolean}   doNotQueue  internal method use for recursion, do not set
+         */
+        setDialogAction (dlgCB, doNotQueue = false) {
+            if (this._mdDialogLock && !doNotQueue) {
+                // indicates dialog animation in progress, will resolve at a later time from queue
+                this._mdDialogChain.push(dlgCB);
+
+            // no animation in progress implies an empty queue, start resolving dlgCB
+            } else {
+                this._mdDialogLock = true;
+                // Starting animation callback
+                dlgCB().then(() => {
+                    // Animation has completed, however the queue may have pending items
+                    // If this is the case start recursing from front of queue
+                    // This also takes care of queue items being added during recursions
+                    if (this._mdDialogChain.length > 0) {
+                        this.setDialogAction(this._mdDialogChain.shift(), true);
+                    } else {
+                        // Queue is empty, release the lock
+                        this._mdDialogLock = false;
+                    }
+                });
             }
         }
 
@@ -61,7 +97,7 @@
         setStatus (status) {
             // hide the focus manager dialog
             if (this.mdDialog && this.status === statuses.WAITING) {
-                this.mdDialog.hide();
+                this.setDialogAction(this.mdDialog.hide);
             }
 
             this.status = status;
@@ -332,14 +368,16 @@
         history.push(targetEl);
         viewer.setStatus(statuses.WAITING);
 
-        viewer.mdDialog.show({
-            contentElement: viewer.rootElement.find('.rv-focus-dialog-content > div'),
-            clickOutsideToClose: false,
-            escapeToClose: false,
-            disableParentScroll: false,
-            parent: viewer.rootElement.find('rv-shell'),
-            focusOnOpen: false
-        }).then(() => resetTabindex(viewer));
+        viewer.setDialogAction(() => {
+            return viewer.mdDialog.show({
+                contentElement: viewer.rootElement.find('.rv-focus-dialog-content > div'),
+                clickOutsideToClose: false,
+                escapeToClose: false,
+                disableParentScroll: false,
+                parent: viewer.rootElement.find('rv-shell'),
+                focusOnOpen: false
+            }).then(() => resetTabindex(viewer));
+        });
     }
 
     /**
