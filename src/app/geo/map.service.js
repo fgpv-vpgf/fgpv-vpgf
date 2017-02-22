@@ -14,7 +14,8 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, $timeout, gapiService, storageService, $rootElement, $compile, $rootScope) {
+    function mapServiceFactory($q, $timeout, gapiService, storageService, $rootElement, $compile, $rootScope,
+        tooltipService) {
         const settings = { zoomPromise: $q.resolve(), zoomCounter: 0 };
         return mapService;
 
@@ -578,6 +579,7 @@
 
                 $q.all(hilitePromises).then(hilightGraphics => {
                     geoState.hilight.addHilight(hilightGraphics);
+                    tooltipService.removeHoverTooltip();
                 });
             }
 

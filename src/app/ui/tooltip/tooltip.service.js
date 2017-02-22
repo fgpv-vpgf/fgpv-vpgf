@@ -395,7 +395,8 @@
         };
 
         const service = {
-            addHoverTooltip
+            addHoverTooltip,
+            removeHoverTooltip
         };
 
         const deRegisterRVReady = $rootScope.$on(events.rvReady, init);
@@ -423,9 +424,7 @@
             tooltipScope.self = self;
 
             // destroy the previous hover tooltip since there shouldn't be more than one at the same time
-            if (ref.hoverTooltip) {
-                ref.hoverTooltip.destroy();
-            }
+            removeHoverTooltip();
 
             ref.hoverTooltip = new Tooltip(ref.followMouseStrategy, ref.containInsideStrategy, content, tooltipScope);
             storageService.panels.shell.append(ref.hoverTooltip.node);
@@ -433,6 +432,17 @@
             ref.hoverTooltip.position(point.x, point.y);
 
             return ref.hoverTooltip;
+        }
+
+        /**
+         * Removes an existing hover tooltip if one exists, otherwise does nothing.
+         *
+         * @function removeHoverTooltip
+         */
+        function removeHoverTooltip() {
+            if (ref.hoverTooltip) {
+                ref.hoverTooltip.destroy();
+            }
         }
     }
 })();
