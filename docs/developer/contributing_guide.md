@@ -66,3 +66,7 @@ Great, now we just test our changes one last time then push them
 gulp test
 git push -f origin my-bootstrap-fix
 ```
+
+## Pull Request Process
+
+See {@link https://github.com/fgpv-vpgf/fgpv-vpgf/wiki/Pull-Requests-Process|Wiki documentation} for more information.

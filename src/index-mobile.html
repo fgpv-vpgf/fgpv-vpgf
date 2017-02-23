@@ -7,18 +7,23 @@
     <title>title</title>
 
     <style>
-        .fgpv {
+        .myMap {
             height: 100%;
         }
 
         /* Edge hack, seems like body is at z-index 0 and sits on top of the map which is at z-index: -1 */
         body { background: transparent; }
     </style>
+
+    <!-- example of host page loading angular and jquery dependencies by itself -->
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script>
+
 </head>
 
 <body>
     <!-- TODO: remove rv-fullpage-app with resolution of issue #834 (when there is a config property)-->
-    <div class="fgpv" rv-config="config-mobile.json" rv-langs='["en-CA", "fr-CA"]'
+    <div class="myMap" is="rv-map" rv-config="config-mobile.json" rv-langs='["en-CA", "fr-CA"]'
          rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'
          rv-restore-bookmark="bookmark" rv-fullpage-app="true" >
          <noscript>

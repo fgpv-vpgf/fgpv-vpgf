@@ -2,17 +2,17 @@ This page describes the general startup procedure of the viewer, including a bas
 
 To load the viewer on a webpage, two things must be present on the host page:
 - A script tag which loads `bootstrap.js`
-- One or more HTML elements having the class `fgpv`
+- One or more HTML elements having the property `is="rv-map"`
 
 ### bootstrap.js
 
 The goal of `bootstrap.js` is to make including the viewer on a host page simple. It takes care of several important steps including:
 - Initializing the external API as `RV`
 - Proxying the map API until it is loaded
-- Injecting the `jQuery` and `datatables` libraries
+- Injecting the `jQuery` and `datatables` libraries (if necessary)
 - Injecting our compressed and minified `core.js` script and `main.css` stylesheet
-- Browser detection (for IE polyfills, and touch support for some mobile browsers)
-- Store all elements having class `fgpv` in an array `RV._nodes`
+- Browser detection (for touch support for some mobile browsers)
+- Store all elements having the property `is="rv-map"` in an array `RV._nodes`
 
 There are two other important startup files worth mentioning; `global-registry.js` and `app-seed.js`. These two files are merged inside the `core.js` file during the build process.
 
@@ -21,6 +21,8 @@ There are two other important startup files worth mentioning; `global-registry.j
 This file serves two purposes:
 - Initialize geoapi and store it on `RV.gapi`
 - Define {@tutorial base_plugins}
+
+This file should also be used for any interaction with `window.RV` outside of the viewer (including adding or changing its properties).
 
 ### app-seed.js
 

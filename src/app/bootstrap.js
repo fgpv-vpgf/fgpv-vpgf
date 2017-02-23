@@ -30,16 +30,28 @@
         _deferredPolyfills: RV._deferredPolyfills || [] // holds callback for any polyfills or patching that needs to be done after the core.js is loaded
     });
 
-    // versions of scripts to inject
-    const versions = {
-        jQuery: '2.2.1',
-        dataTables: '1.10.11'
-    };
     const customAttrs = ['config', 'langs', 'service-endpoint', 'restore-bookmark', 'wait', 'keys', 'fullpage-app'];
-    const URLs = {
-        jQuery: `http://ajax.aspnetcdn.com/ajax/jQuery/jquery-${versions.jQuery}.min.js`,
-        dataTables: `https://cdn.datatables.net/${versions.dataTables}/js/jquery.dataTables.min.js`
+
+    // versions of scripts to inject
+    const dependencies = {
+        angular: {
+            get ourVersion() { return '1.4.12'; },
+            get theirVersion() { return angular.version.full; },
+            get url() { return `https://ajax.googleapis.com/ajax/libs/angularjs/${this.ourVersion}/angular.min.js`; }
+        },
+        jQuery: {
+            get ourVersion() { return '2.2.1'; },
+            get theirVersion() { return $.fn.jquery; },
+            get url() { return `http://ajax.aspnetcdn.com/ajax/jQuery/jquery-${this.ourVersion}.min.js`; }
+        },
+        dataTables: {
+            get ourVersion() { return '1.10.11'; },
+            get theirVersion() { return $.fn.dataTable.version; },
+            get url() { return `https://cdn.datatables.net/${this.ourVersion}/js/jquery.dataTables.min.js`; }
+        }
     };
+    const dependenciesOrder = ['jQuery', 'dataTables', 'angular'];
+
     const d = document;
     const scripts = d.getElementsByTagName('script'); // get scripts
 
@@ -69,15 +81,24 @@
     const scriptsArr = [];
 
     // append proper srcs to scriptsArray
-    if (!window.jQuery) {
-        // TODO: should we use a local file here instead?
-        scriptsArr.push(URLs.jQuery, URLs.dataTables);
-    } else if (!$.fn.dataTable) {
-        scriptsArr.push(URLs.dataTables);
-        versionCheck(versions.jQuery, $.fn.jquery, 'jQuery');
-    } else {
-        versionCheck(versions.jQuery, $.fn.jquery, 'jQuery');
-        versionCheck(versions.dataTables, $.fn.dataTable.version, 'dataTable');
+    dependenciesOrder.forEach(dependencyName => {
+        const dependency = dependencies[dependencyName];
+
+        if (window[dependencyName]) {
+            versionCheck(dependency.ourVersion, dependency.theirVersion, dependencyName);
+        } else {
+            scriptsArr.push(dependency.url);
+        }
+    });
+
+    // in cases when Angular is loaded by the host page before jQuery (or jQuery is not loaded at all), the viewer will not work as Angular will not bind jQuery correctly even if bootstrap loads a correct version of jQuery
+    // more info, third paragraph from the top: https://code.angularjs.org/1.4.12/docs/api/ng/function/angular.element
+    if (window.angular && !window.jQuery) {
+        console.error('The viewer requires jQuery to work correctly.' +
+            'Ensure a compatible version of jQuery is loaded before Angular by the host page.');
+
+        // stopping initialization
+        return;
     }
 
     // registry of map proxies
@@ -104,34 +125,87 @@
             );
         },
 
+        /**
+         * RCS layers to be loaded once the map has been instantiated.
+         *
+         * @function    loadRcsLayers
+         * @param {Array}  keys  array of strings containing RCS keys to be added
+         */
         loadRcsLayers(keys) {
             this._proxy('loadRcsLayers', keys);
         },
 
+        /**
+         * Sets the translation language and reloads the map.
+         *
+         * @function    setLanguage
+         * @param   {String}    lang    the new language to use
+         */
         setLanguage(lang) {
             this._proxy('setLanguage', lang);
         },
 
+        /**
+         * Returns a bookmark for the current viewers state.
+         *
+         * @function    getBookmark
+         * @returns     {Promise}    a promise that resolves to the bookmark containing the state of the viewer
+         */
         getBookmark() {
             return this._proxy('getBookmark');
         },
 
+        /**
+         * useBookmark loads the provided bookmark into the map application. Unlike initialBookmark, it does not need to be the first bookmark loaded nor does it require `rv-wait` on the map DOM node. This method is typically triggered by user actions, taking priority over existing bookmarks.
+         *
+         * @function    useBookmark
+         * @param   {String}    bookmark    bookmark containing the desired state of the viewer
+         */
         useBookmark(bookmark) {
             this._proxy('useBookmark', bookmark);
         },
 
+        /**
+         * initialBookmark is intended to be the first bookmark loaded by the map application (for example, when a bookmark comes in the URL bar) and should only be used if the `rv-wait` attribute is set on the map DOM node.  `rv-wait` will inform the viewer to wait until an unblocking call like initialBookmark is called.
+         *
+         * If a useBookmark call happens to be triggered before initialBookmark it will take priority (useBookmark is typically triggered by user actions which should take priority over automated actions).
+         *
+         * @function    initialBookmark
+         * @param   {String}    bookmark    bookmark containing the desired state of the viewer
+         */
         initialBookmark(bookmark) {
             this._initProxy('initialBookmark', bookmark);
         },
 
+        /**
+         *  Updates the extent of the map by centering and zooming the map.
+         *
+         * @function    centerAndZoom
+         * @param {Number} x                    The x coord to center on
+         * @param {Number} y                    The y coord to center on
+         * @param {Object} spatialRef           The spatial reference for the coordinates
+         * @param {Number} zoom                 The level to zoom to
+         */
         centerAndZoom(x, y, spatialRef, zoom) {
             this._proxy('centerAndZoom', x, y, spatialRef, zoom);
         },
 
-        restoreSession(keysArray) {
-            this._initProxy('restoreSession', keysArray);
+        /**
+         * Loads using a bookmark from sessionStorage (if found) and a keyList.
+         *
+         * @function    restoreSession
+         * @param   {Array}     keys      array of strings containing RCS keys to load
+         */
+        restoreSession(keys) {
+            this._initProxy('restoreSession', keys);
         },
 
+        /**
+         * Returns an array of ids for rcs added layers.
+         *
+         * @function    getRcsLayerIDs
+         * @returns     {Promise}     a promise which resolves to a list of rcs layer ids
+         */
         getRcsLayerIDs() {
             return this._proxy('getRcsLayerIDs');
         },
@@ -200,9 +274,20 @@
     nodes.forEach(node => {
 
         let appId = node.getAttribute('id');
+
+        // TODO v2.0: Remove the following deprecation warning
+        // deprecating class fgpv on node for 2.0 release - use is="fgpv" instead
+        if (node.classList.contains('fgpv')) {
+            console.warn('Using class fgpv on the map DOM node is deprecated' +
+                'and will be removed on v2.0 release. Use is="fgpv" instead.'); /*RemoveLogging:skip*/
+        }
+
         customAttrs
             .filter(attrName => node.getAttribute(`data-rv-${attrName}`))
-            .forEach(attrName => node.setAttribute(`rv-${attrName}`, node.getAttribute(`data-rv-${attrName}`))); // getAttribute returns a string so data-rv-fullscreen-app="false" will copy correctly
+            .forEach(attrName => {
+                node.setAttribute(`rv-${attrName}`, node.getAttribute(`data-rv-${attrName}`)); // getAttribute returns a string so data-rv-fullscreen-app="false" will copy correctly
+                node.removeAttribute(`data-rv-${attrName}`);
+            });
 
         if (!appId) {
             appId = 'rv-app-' + counter++;
@@ -296,10 +381,10 @@
      * @param  {String} scriptName      the name of the script
      */
     function versionCheck(ourVersion, theirVersion, scriptName) {
-        ourVersion = ourVersion.split('.');
+        const ourVersionSplit = ourVersion.split('.');
         const versionDiff = theirVersion.split('.')
             // compare the two versions
-            .map((x, index) => parseInt(x) - ourVersion[index])
+            .map((x, index) => parseInt(x) - ourVersionSplit[index])
             // find first non-equal part
             .find(x => x !== 0);
 
@@ -307,9 +392,12 @@
             // the versions were equal
             return;
         }
-        const fillText = versionDiff > 0 ? 'more recent' : 'older';
-        console.warn(`The current ${scriptName} version is ${fillText} than expected for the viewer; ` +
-                        `expected: ${versions.jQuery}`);
+
+        const warningMessgage = `${scriptName} ${theirVersion} is detected ` +
+            `(${ versionDiff > 0 ? 'more recent' : 'older' } that expected ${ourVersion} version). ` +
+            `No tests were done with this version. The viewer might be unstable or not work correctly.`;
+
+        console.warn(warningMessgage);
     }
 })();
 

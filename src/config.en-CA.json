@@ -1,9 +1,9 @@
 {
   "version": "1.6",
   "shareable": true,
-  "googleAPIKey": "AIzaSyD_FwYU_mT1xhTdUoiHBRjwToWUe--KVVU",
+  "googleAPIKey": "AIzaSyBT2w4TvDdWFhFk35kcoO2C2hXJrw9W5SA",
   "services": {
-    "proxyUrl": "http://cp.zz9.ca/index",
+    "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
     "exportMapUrl": "http://webservices-staging.maps.canada.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
   },
 "search": {
