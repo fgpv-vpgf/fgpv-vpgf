@@ -41,7 +41,8 @@
 
         const service = {
             toggle,
-            isExpanded: () => ref.isExpanded
+            isExpanded: () => ref.isExpanded,
+            isFullPageApp: $rootElement.attr('rv-fullpage-app') // TODO: change to config option when this is available
         };
 
         return service;
