@@ -34,8 +34,8 @@
      * @private
      * @return {object} service object
      */
-    function mapNavigationService(stateManager, geoService, $rootScope,
-        locateService, helpService, basemapService, events, configService) {
+    function mapNavigationService(stateManager, geoService, $rootScope, locateService,
+    helpService, basemapService, events, configService, fullScreenService) {
 
         const service = {
             config: {},
@@ -46,6 +46,13 @@
 
         // navigation controls presets
         service.controls = {
+            fullScreen: {
+                label: 'sidenav.label.fullscreen',
+                icon: 'navigation:fullscreen',
+                tooltip: 'sidenav.label.fullscreen',
+                visible: !fullScreenService.isFullPageApp,
+                action: fullScreenService.toggle
+            },
             zoomIn: {
                 label: 'nav.label.zoomIn',
                 icon: 'content:add',
