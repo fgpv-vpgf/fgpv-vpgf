@@ -620,16 +620,19 @@
                     gextent.x0, gextent.y0, gextent.sr);
 
                 // handles extent
+
                 if ((newExt.xmin !== newExt.xmax) && (newExt.ymin !== newExt.ymax)) {
                     const eExt = newExt.expand(4);
                     const xOffset = (eExt.xmax - eExt.xmin) * ratio * (-1);
                     const gExt = eExt.offset(xOffset, (eExt.ymax - eExt.ymin) / 4);
                     return map.setExtent(gExt);
                 } else {
-                    // handles points
+                    // TODO: remove with refactor, part of issue https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1637
+                    let zoomOffset = zoomLayer ? zoomLayer.options.offscale.value : false;
+
                     const pt = newExt.getCenter();
                     const zoomed = geoState.layerRegistry.zoomToScale(
-                        zoomLayer, zoomLayer.options.offscale.value, true);
+                        zoomLayer, zoomOffset, true);
                     return zoomed.then(() => {
                         const xOffset = (map.extent.xmax - map.extent.xmin) * ratio * (-1);
                         const newPt = pt.offset(xOffset, (map.extent.ymax - map.extent.ymin) / 4);
