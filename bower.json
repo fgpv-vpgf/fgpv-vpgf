@@ -1,14 +1,13 @@
 {
   "name": "r2v2",
   "description": "FGP R2 Viewer",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf",
   "license": "MIT",
   "private": true,
   "devDependencies": {
     "angular-mocks": "~1.4.3",
-    "sinon": "http://sinonjs.org/releases/sinon-1.15.4.js",
-    "bardjs": "0.1.4"
+    "bardjs": "0.1.10"
   },
   "dependencies": {
     "angular": "1.4.12",
