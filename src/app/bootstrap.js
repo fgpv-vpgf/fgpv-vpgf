@@ -397,7 +397,7 @@
             `(${ versionDiff > 0 ? 'more recent' : 'older' } that expected ${ourVersion} version). ` +
             `No tests were done with this version. The viewer might be unstable or not work correctly.`;
 
-        console.warn(warningMessgage);
+        console.warn(warningMessgage); /*RemoveLogging:skip*/
     }
 })();
 
