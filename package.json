@@ -1,7 +1,7 @@
 {
   "name": "r2v2",
   "private": true,
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "FGP R2 Viewer",
   "repository": "https://github.com/fgpv-vpgf/fgpv-vpgf",
   "license": "MIT",
