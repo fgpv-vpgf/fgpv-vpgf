@@ -113,13 +113,9 @@
          *
          * @function setTable
          * @param   {Object}   table   active table
-         * @param   {String}   search   search filter to apply
          */
-        function setTable(table, search) {
+        function setTable(table) {
             activeTable = table;
-
-            // set global search for the active table
-            table.search(search);
 
             // reset all filters state to false (they will be populated by the loading table)
             filtersObject = table.columns().dataSrc();
@@ -155,6 +151,9 @@
         function clearFilters() {
             const filters = stateManager.display.filters;
 
+            // show processing
+            $rootElement.find('.dataTables_processing').css('display', 'block');
+
             // set isApplied to hide apply filters on map button
             service.filter.isApplied = true;
             filters.data.filter.isApplied = service.filter.isApplied;  // set on layer so it can persist when we change layer
@@ -162,6 +161,9 @@
             // check if we need to show filter flag
             filters.requester.legendEntry.flags.filter.visible =
                 (service.filter.isActive) ? true : false;
+
+            // reset global search ($watch in filters-search.directive will remove the value)
+            stateManager.display.filters.data.filter.globalSearch = '_reset_';
 
             // reset all filters state to false
             filtersObject.each((el) => {
@@ -183,9 +185,6 @@
                     }
                 }
             });
-
-            // show processing
-            $rootElement.find('.dataTables_processing').css('display', 'block');
 
             // if filter by extent is enable, manually trigger the on extentChange event to refresh the table
             if (service.filter.isActive) { onExtentChange(); }

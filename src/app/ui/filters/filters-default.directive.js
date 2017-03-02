@@ -225,28 +225,28 @@
                         // set position if not defined
                         if (column.position === -1) { column.position = index; }
 
-                        if (field.type === 'esriFieldTypeString') {
-                            const width = getColumnWidth(column.title, field.length, 250);
-                            column.width = `${width}px`;
-                            column.render = renderEllipsis(width);
-                        } else if (field.type === 'esriFieldTypeOID') {
-                            // set column to be 100px width because of details and zoom to buttons
-                            column.width = '100px';
-                        } else if (field.type === 'esriFieldTypeDate') {
-                            // convert each date cell to a better format
-                            displayData.rows.forEach(r => r[field.name] = $filter('dateTimeZone')(r[field.name]));
-                            const width = getColumnWidth(column.title, 0, 400, 375);
-                            column.width =  `${width}px`;
-                        } else {
-                            const width = getColumnWidth(column.title, 0, 250, 120);
-                            column.width = `${width}px`;
-                            column.render = renderEllipsis(width);
-                        }
-
-                        // set filter initial value if not initialize
+                        // set filter and column initial values if not initialize
                         if (!column.filter.init) {
                             column.filter = columnTypes[field.type].init();
                             column.filter.init = true;
+
+                            if (field.type === 'esriFieldTypeString') {
+                                const width = getColumnWidth(column.title, field.length, 250);
+                                column.width = `${width}px`;
+                                column.render = renderEllipsis(width);
+                            } else if (field.type === 'esriFieldTypeOID') {
+                                // set column to be 100px width because of details and zoom to buttons
+                                column.width = '100px';
+                            } else if (field.type === 'esriFieldTypeDate') {
+                                // convert each date cell to a better format
+                                displayData.rows.forEach(r => r[field.name] = $filter('dateTimeZone')(r[field.name]));
+                                const width = getColumnWidth(column.title, 0, 400, 375);
+                                column.width =  `${width}px`;
+                            } else {
+                                const width = getColumnWidth(column.title, 0, 250, 120);
+                                column.width = `${width}px`;
+                                column.render = renderEllipsis(width);
+                            }
                         }
                     }
                 });
@@ -414,15 +414,15 @@
                         // TODO: in 1.6 when we add the filters we will need a way to go to setting panel (skip the table)
                         layoutService.panes.filter.find('.dataTables_scrollBody').attr('rv-ignore-focusout', '');
 
-                        // recalculate scroller space on table init because if the preopen table was maximized in setting view
-                        // the scroller is still in split view
-                        self.table.scroller.measure();
-
                         // initialize a temporary array to store all the custom filters so they don't fire every time we add new one
                         $.fn.dataTable.ext.searchTemp = [];
 
                         // set active table so it can be accessed in filter-search.directive for global table search
                         filterService.setTable(self.table, displayData.filter.globalSearch);
+
+                        // recalculate scroller space on table init because if the preopen table was maximized in setting view
+                        // the scroller is still in split view
+                        self.table.scroller.measure();
 
                         // fired event to create filters
                         $rootScope.$broadcast(events.rvTableReady);
