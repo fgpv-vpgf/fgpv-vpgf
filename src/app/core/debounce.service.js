@@ -47,6 +47,7 @@
 
                     // fire function before bouncing
                     if (before) { resolveBouncePromise(fn(...args)); }
+
                     if (!skipApply) {
                         $rootScope.$applyAsync(); // applyAsync during the next digest cycle
                     }
