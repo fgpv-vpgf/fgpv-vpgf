@@ -1,0 +1,17 @@
+@mixin truncate {
+    .rv-truncate-title {
+        display: flex;
+
+        &-left {
+            flex-shrink: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        &-right {
+            flex-shrink: 0;
+            text-overflow: clip !important;
+        }
+    }
+}
