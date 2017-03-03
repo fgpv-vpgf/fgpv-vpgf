@@ -16,7 +16,8 @@
      */
     angular
         .module('app.ui.common')
-        .directive('rvTruncate', rvTruncate);
+        .directive('rvTruncate', rvTruncate)
+        .directive('rvTruncateTitle', rvTruncateTitle);
 
     /**
      * `rvTruncate` directive body.
@@ -66,6 +67,83 @@
                     scope.hide = () => changeTxt(shortText);
                 }
             });
+        }
+    }
+
+    /**
+     * `rvTruncateTitle` truncates a given string be taking the middle part of the string out leaving the beginning and end intact.
+     *
+     * @function rvTruncateTitle
+     * @return {object} directive body
+     */
+    function rvTruncateTitle(graphicsService) {
+        const directive = {
+            restrict: 'A',
+            scope: {
+                rvTruncateTitle: '='
+            },
+            link,
+            controller: () => {},
+            controllerAs: 'self',
+            bindToController: true
+        };
+
+        const canvas = document.createElement('canvas');
+
+        return directive;
+
+        function link(scope, el) {
+            let string = '';
+
+            scope.$watch('self.rvTruncateTitle', newString => {
+                if (newString) { string = newString; }
+                update();
+            });
+
+            scope.$watch(() => el.width(), () => update());
+
+            el.addClass('rv-truncate-title');
+
+            /**
+             * Updates the split string DOM node.
+             *
+             * @function update
+             * @private
+             */
+            function update() {
+                const [left, right] = splitString(string, el.width() - 10); // 10 accounts for letter spacing
+
+                el.empty().append(`
+                    <span class="rv-truncate-title-left">${left}</span>
+                    <span calss="rv-truncate-title-right">${right}</span>
+                `);
+            }
+
+            /**
+             * Splits the given string into two parts:
+             * left string can be arbitrary long and it will be truncated with an ellipsis using CSS but using flex-shrink;
+             * right string must be smaller than the width of the container; this part will not be shrinkable;
+             *
+             * @function splitString
+             * @private
+             * @param {String} string title text
+             * @param {Number} widthToFit container width that the title text needs to fit in
+             * @return {Array} [leftString, rightString] parts of the original string
+             */
+            function splitString(string, widthToFit) {
+                const stringWidth = graphicsService.getTextWidth(canvas, string, 'normal 16px Roboto');
+
+                if (stringWidth < widthToFit) {
+                    return [string, ''];
+                }
+
+                const desiredStringLength = Math.floor(string.length * widthToFit / stringWidth * 0.3);
+
+                return [
+                    string.substring(0, string.length - desiredStringLength),
+                    string.substring(string.length - desiredStringLength, string.length)
+                ];
+            }
         }
     }
 })();
