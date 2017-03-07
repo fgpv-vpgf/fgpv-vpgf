@@ -229,7 +229,7 @@
              * Set focus to the drag handle of the supplied dom node if any.
              */
             function setFocusToDragHandle(element) {
-                element.find(`${dragHandleSelector}:first`).focus(true);
+                element.find(`${dragHandleSelector}:first`).rvFocus();
             }
 
             /**
@@ -301,7 +301,7 @@
                 isReordering = true; // prevents escaping focus from ending dragging
 
                 targetBelowElement.before(dragElement); // move the dragElement
-                target.focus(true); // reset focus on the drag handle of the moved element
+                target.rvFocus(); // reset focus on the drag handle of the moved element
 
                 isReordering = false;
 
