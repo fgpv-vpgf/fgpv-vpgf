@@ -54,7 +54,7 @@
             return $mdSidenav('right')
                 .open()
                 // Once the side panel is open, set focus on the panel
-                .then(() => $('md-sidenav[md-component-id="right"] button').first().focus(true));
+                .then(() => $('md-sidenav[md-component-id="right"] button').first().rvFocus());
 
             /**
              * Makes all other chrome almost transparent so the basemap is more clearly visible

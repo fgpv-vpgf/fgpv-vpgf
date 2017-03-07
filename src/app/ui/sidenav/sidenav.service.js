@@ -248,7 +248,7 @@
         function open() {
             $mdSidenav('left')
                 .open()
-                .then(() => $('md-sidenav[md-component-id="left"] button').first().focus(true));
+                .then(() => $('md-sidenav[md-component-id="left"] button').first().rvFocus());
         }
 
         /**
