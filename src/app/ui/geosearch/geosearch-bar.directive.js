@@ -42,7 +42,7 @@
         /***/
         function link(scope, el) {
             // auto focus on the search field when created
-            el.find('md-autocomplete').focus(true);
+            el.find('md-autocomplete').rvFocus();
         }
     }
 

@@ -315,7 +315,6 @@
     // load core.js last and execute any deferred polyfills/patches
     loadScript(`${repo}/core.js`, () => {
         RV._deferredPolyfills.forEach(dp => dp());
-        RV.focusManager.init();
         RV.allScriptsLoaded = true;
         fireRvReady();
     });
