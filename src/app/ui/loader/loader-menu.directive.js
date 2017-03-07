@@ -64,7 +64,7 @@
          */
         function setFocus(name) {
             $timeout(() => {
-                $rootElement.find(`${name} .rv-header-float button`).first().focus(true);
+                $rootElement.find(`${name} .rv-header-float button`).first().rvFocus();
             }, 0);
         }
     }

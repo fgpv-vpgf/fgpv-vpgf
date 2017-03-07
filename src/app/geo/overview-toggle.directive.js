@@ -32,7 +32,7 @@
                     translate
                     translate-attr-aria-label="geo.aria.overviewtoggle"
                     class="md-icon-button rv-button-24 md-button"
-                    tabindex="0"
+                    tabindex="-2"
                     ng-click="toggleOverview()">
                     <md-icon md-svg-src="community:apple-keyboard-control"></md-icon>
                 </md-button>`,
