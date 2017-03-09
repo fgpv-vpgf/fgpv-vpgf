@@ -2,7 +2,9 @@
     ng-if="!self.isReorder"
     class="rv-group-body-button rv-button-square"
     ng-click="self.defaultAction(self.entry)"
-    rv-help="group-toggle"></md-button>
+    rv-help="group-toggle">
+    <md-tooltip md-delay="700" md-direction="{{ self.getTooltipDirection() }}">{{ self.entry.name }}</md-tooltip>
+</md-button>
 
 <div class="rv-icon-24 rv-group-toggle-icon">
     <md-icon
@@ -11,9 +13,7 @@
         md-svg-src="hardware:keyboard_arrow_down"></md-icon>
 </div>
 
-<span class="rv-group-name">
-    {{ self.entry.name }}
-</span>
+<span class="rv-group-name" rv-truncate-title="self.entry.name"></span>
 
 <div class="rv-toc-entry-controls" ng-if="self.isReorder">
     <rv-toc-entry-control rv-drag-handle option="reorder"></rv-toc-entry-control>
