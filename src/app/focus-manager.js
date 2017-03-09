@@ -12,7 +12,7 @@
     // jQuery selectors for elements that are likely focusable
     // since we don't want focus on md-sidenav (focus instead on close button) we omit this with [tabindex]:not(md-sidenav)
     const focusSelector = `a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]),
-        button:not([disabled]), iframe, object, embed, [tabindex]:not(md-sidenav), [contenteditable]`;
+        button:not([disabled]), iframe, object, embed, [contenteditable], [tabindex]:not(label, md-dialog, md-sidenav)`;
     // object containing all currently depressed keyboard keys
     const keys = {};
     // ordered list of elements which has received focus
@@ -530,6 +530,11 @@
 
         $.fn.link = function (targetElement) {
             link($(this), $(targetElement));
+        };
+
+        // sets focus on the next focusable element starting at currently scoped element
+        $.fn.nextFocus = function () {
+            focusableSearch($(this), true).focus(true);
         };
 
         /**
