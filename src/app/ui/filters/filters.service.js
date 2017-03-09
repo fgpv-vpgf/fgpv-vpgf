@@ -35,7 +35,10 @@
             filterTimeStamps,
             filter: {
                 isActive: false,
-                isApplied: true
+                isOpen: true,
+                isApplied: true,
+                globalSearch: '',
+                isInit: false
             },
             setTable,
             getTable,
@@ -43,13 +46,15 @@
             applyFilters,
             toggleSetting,
             onFilterStringChange: debounceService.registerDebounce(onFilterStringChange, 700, false),
+            onFilterSelectorChange: onFilterSelectorChange,
             onFilterNumberChange: debounceService.registerDebounce(onFilterNumberChange, 700, false),
             onFilterDateChange: onFilterDateChange,
             preventSorting: preventSorting,
             filters: {},
             isFeatureLayer: false,
             isDynamicLayer: false,
-            isSettingOpen: false
+            isSettingOpen: false,
+            isGlobalSearch: true
         };
 
         // active table for global search to link to
@@ -91,8 +96,8 @@
             $rootScope.$on('extentChange', debounceService.registerDebounce(onExtentChange, 300, false));
 
             // show filters only when filters are in maximum view
-            $rootScope.$watch(() => stateManager.state.filters.morph, (val) => {
-                $rootScope.isFiltersVisible = (val === 'full' || service.isSettingOpen) ? true : false;
+            $rootScope.$watch(() => stateManager.state.filters.morph, () => {
+                $rootScope.isFiltersVisible = (service.filter.isOpen || service.isSettingOpen) ? true : false;
             });
 
             // DataTable is either being created or destroyed
@@ -150,6 +155,7 @@
          */
         function clearFilters() {
             const filters = stateManager.display.filters;
+            const table = service.getTable();
 
             // show processing
             $rootElement.find('.dataTables_processing').css('display', 'block');
@@ -157,10 +163,6 @@
             // set isApplied to hide apply filters on map button
             service.filter.isApplied = true;
             filters.data.filter.isApplied = service.filter.isApplied;  // set on layer so it can persist when we change layer
-
-            // check if we need to show filter flag
-            filters.requester.legendEntry.flags.filter.visible =
-                (service.filter.isActive) ? true : false;
 
             // reset global search ($watch in filters-search.directive will remove the value)
             stateManager.display.filters.data.filter.globalSearch = '_reset_';
@@ -171,41 +173,45 @@
             });
 
             // reset all filters value to default
-            filters.data.columns.forEach((column, i) => {
-                // skip first 2 columns because it is the symbol and interactive buttons
-                if (i > 1) {
-                    if (column.type === 'string') {
-                        column.filter.value = '';
-                    } else if (column.type === 'number') {
-                        column.filter.min = '';
-                        column.filter.max = '';
-                    } else if (column.type === 'date') {
-                        column.filter.min = null;
-                        column.filter.max = null;
+            let defs = [];
+            let filter = false;
+            filters.data.columns.forEach(column => {
+                // skip columns with no filter
+                if (typeof column.filter !== 'undefined') {
+                    if (!column.filter.static) {
+                        if (column.type === 'string') {
+                            column.filter.value = '';
+                            table.column(`${column.data}:name`).search('');
+                        } else if (column.type === 'selector') {
+                            column.filter.value = [];
+                            table.column(`${column.data}:name`).search('');
+                        } else if (column.type === 'number') {
+                            column.filter.min = '';
+                            column.filter.max = '';
+                        } else if (column.type === 'date') {
+                            column.filter.min = null;
+                            column.filter.max = null;
+                        }
+                    } else {
+                        // if filter is static, apply the value
+                        defs = getFilterDefintion(defs, column);
+                        filter = true;
                     }
                 }
             });
+
+            // check if we need to show filter flag (we show it if there is static filter or filter by extent is enable)
+            filters.requester.legendEntry.flags.filter.visible =
+                (service.filter.isActive || filter) ? true : false;
 
             // if filter by extent is enable, manually trigger the on extentChange event to refresh the table
             if (service.filter.isActive) { onExtentChange(); }
 
             // redraw table to clear filters (use timeout for redraw so processing can show)
-            $timeout(() => { service.getTable().search('').columns().search('').draw(); }, 100);
+            $timeout(() => { table.search('').draw(); }, 100);
 
-            // clear definition query
-            // TODO: need to be refactor to be inside geo module or geoApi
-            const layer = filters.requester.legendEntry.master ?
-                filters.requester.legendEntry.master._layerRecord._layer :
-                filters.requester.legendEntry._layerRecord._layer;
-            if (service.isFeatureLayer) {
-                // https://developers.arcgis.com/javascript/3/jssamples/map_multiplelayerdef.html
-                layer.setDefinitionExpression('');
-            } else if (service.isDynamicLayer) {
-                // https://developers.arcgis.com/javascript/3/jssamples/fl_layer_definition.html
-                const layerDef = (layer.layerDefinitions !== null) ? layer.layerDefinitions : [];
-                layerDef[filters.requester.legendEntry.featureIdx] = '';
-                layer.setLayerDefinitions(layerDef);
-            }
+            // set layer defintion query
+            setDefinitionExpression(filters.requester.legendEntry, defs);
         }
 
         /**
@@ -214,7 +220,6 @@
          * @function applyFilters
          */
         function applyFilters() {
-            /*jshint maxcomplexity:10 */
             const filters = stateManager.display.filters;
 
             // set isApplied to hide apply filters on map button
@@ -225,56 +230,92 @@
             filters.requester.legendEntry.flags.filter.visible = true;
 
             // loop trought all the filters to construct the array queries
-            const defs = [];
-            filters.data.columns.forEach((column, i) => {
-                // skip first 2 columns because it is the symbol and interactive buttons
-                if (i > 1) {
-                    if (column.type === 'string') {
-                        // replace ' by '' to be able to perform the search in the datatable
-                        // relpace * wildcard and construct the query (add wildcard at the end)
-                        const val = column.filter.value.replace(/'/g, /''/);
-                        if (val !== '') {
-                            defs.push(`UPPER(${column.name}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
-                        }
-                    } else if (column.type === 'number') {
-                        const min = column.filter.min;
-                        const max = column.filter.max;
-
-                        if (min !== '') {
-                            defs.push(`${column.name} >= ${min}`);
-                        }
-                        if (max !== '') {
-                            defs.push(`${column.name} <= ${max}`);
-                        }
-                    } else if (column.type === 'date') {
-                        const min = column.filter.min;
-                        const max = column.filter.max;
-
-                        if (min !== null) {
-                            const dateMin = `${min.getMonth() + 1}/${min.getDate()}/${min.getFullYear()}`;
-                            defs.push(`${column.name} >= DATE \'${dateMin}\'`);
-                        }
-                        if (max !== null) {
-                            const dateMax = `${max.getMonth() + 1}/${max.getDate()}/${max.getFullYear()}`;
-                            defs.push(`${column.name} <= DATE \'${dateMax}\'`);
-                        }
-                    }
+            let defs = [];
+            filters.data.columns.forEach(column => {
+                // skip columns with no filter
+                if (typeof column.filter !== 'undefined') {
+                    defs = getFilterDefintion(defs, column);
                 }
             });
 
+            // set layer defintion query
+            setDefinitionExpression(filters.requester.legendEntry, defs);
+        }
+
+        /**
+         * Set the layer definition query
+         *
+         * @function getFilterDefintion
+         * @private
+         * @param   {Array}   defs   array of definition queries
+         * @param   {Object}   column   column object
+         * @return {Array} defs definition queries array
+         */
+        function getFilterDefintion(defs, column) {
+            /*jshint maxcomplexity:11 */
+            if (column.type === 'string') {
+                // replace ' by '' to be able to perform the search in the datatable
+                // relpace * wildcard and construct the query (add wildcard at the end)
+                const val = column.filter.value.replace(/'/g, /''/);
+                if (val !== '') {
+                    defs.push(`UPPER(${column.name}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
+                }
+            } if (column.type === 'selector') {
+                const val =  column.filter.value.join(',').replace(/"/g, '\'');
+                if (val !== '') {
+                    defs.push(`${column.name} IN (${val})`);
+                }
+            } else if (column.type === 'number') {
+                const min = column.filter.min;
+                const max = column.filter.max;
+
+                if (min !== '') {
+                    defs.push(`${column.name} >= ${min}`);
+                }
+                if (max !== '') {
+                    defs.push(`${column.name} <= ${max}`);
+                }
+            } else if (column.type === 'date') {
+                const min = column.filter.min;
+                const max = column.filter.max;
+
+                if (min !== null) {
+                    const dateMin = `${min.getMonth() + 1}/${min.getDate()}/${min.getFullYear()}`;
+                    defs.push(`${column.name} >= DATE \'${dateMin}\'`);
+                }
+                if (max !== null) {
+                    const dateMax = `${max.getMonth() + 1}/${max.getDate()}/${max.getFullYear()}`;
+                    defs.push(`${column.name} <= DATE \'${dateMax}\'`);
+                }
+            }
+
+            return defs;
+        }
+
+        /**
+         * Set the layer definition query
+         *
+         * @function setDefinitionExpression
+         * @private
+         * @param   {Object}   legendEntry   legendEntry item to get layer from
+         * @param   {Array}   defs   array of definition queries to apply
+         */
+        function setDefinitionExpression(legendEntry, defs) {
             // stringnify the array
             const definition = defs.join(' AND ');
 
             // set definition query
-            // TODO: need to be refactor to be inside geo module or geoApi
-            const layer = filters.requester.legendEntry.master ?
-                filters.requester.legendEntry.master._layerRecord._layer :
-                filters.requester.legendEntry._layerRecord._layer;
+            const layer = legendEntry.master ?
+                legendEntry.master._layerRecord._layer :
+                legendEntry._layerRecord._layer;
+
             if (service.isFeatureLayer) {
+                // https://developers.arcgis.com/javascript/3/jssamples/map_multiplelayerdef.html
                 layer.setDefinitionExpression(definition);
             } else if (service.isDynamicLayer) {
+                // https://developers.arcgis.com/javascript/3/jssamples/fl_layer_definition.html
                 const layerDef = (layer.layerDefinitions !== null) ? layer.layerDefinitions : [];
-                layerDef[filters.requester.legendEntry.featureIdx] = definition;
+                layerDef[legendEntry.featureIdx] = definition;
                 layer.setLayerDefinitions(layerDef);
             }
         }
@@ -292,7 +333,7 @@
                 $rootScope.isFiltersVisible = true;
             } else {
                 // when setting is close, check if we need to show setting
-                $rootScope.isFiltersVisible = (stateManager.state.filters.morph === 'full') ? true : false;
+                $rootScope.isFiltersVisible = service.filter.isOpen;
 
                 // need to recalculate scroller space because user may have switch from default to full view inside setting panel
                 // need a timeout, if not measure occurs when datatable is not displayed and it fails
@@ -306,8 +347,9 @@
          * @function onFilterStringChange
          * @param   {String}   column   column name
          * @param   {String}   value   search filter
+         * @param   {Boolean}  [keep=false]    optional true: keep value for filter, false do not keep
          */
-        function onFilterStringChange(column, value) {
+        function onFilterStringChange(column, value, keep = false) {
             // show processing
             $rootElement.find('.dataTables_processing').css('display', 'block');
 
@@ -320,8 +362,27 @@
             setFiltersState(column, value);
 
             // keep filter value to reapply when table reopens
+            if (keep) {
+                const item = stateManager.display.filters.data.columns.find(filter => column === filter.name);
+                item.filter.value = value;
+            }
+        }
+
+        /**
+         * Apply on selector filter change callback
+         *
+         * @function onFilterSelectorChange
+         * @param   {String}   column   column name
+         * @param   {Array}   values   search filter array
+         */
+        function onFilterSelectorChange(column, values) {
+            // join the values by | for or and remove all ". They are use to split the values
+            const value = (values.length > 0) ? values.join('|').replace(/"/g, '') : '';
+            onFilterStringChange(column, value);
+
+            // keep filter value to reapply when table reopens
             const item = stateManager.display.filters.data.columns.find(filter => column === filter.name);
-            item.filter.value = value;
+            item.filter.value = values;
         }
 
         /**
@@ -391,7 +452,9 @@
             } else {
                 service.filters[column] = false;
 
-                service.filter.isApplied = true;
+                service.filter.isApplied =
+                    stateManager.display.filters.requester.legendEntry.flags.filter.visible ? false : true;
+
                 filtersObject.each((el) => {
                     // check if another field have a filter. If so, show Apply Map
                     if (service.filters[el]) { service.filter.isApplied = false; }
@@ -427,7 +490,7 @@
             service.filter.isApplied = filter.isApplied;
 
             // check if we need to show the filters (need this check when table is created)
-            $rootScope.isFiltersVisible = stateManager.state.filters.morph === 'full' ? true : false;
+            $rootScope.isFiltersVisible = service.filter.isOpen;
 
             // set layer type to see if we show apply filter button. Only works on feature layer
             // not user added layer (FeatureLayer: layer created by value (from a feature collection) does not support definition expressions and time definitions)

@@ -390,7 +390,8 @@
                             orderable: false,
                             render: '',
                             width: '20px', // for datatables
-                            position: 1 // for datatable colreorder extension
+                            position: 1, // for datatable colreorder extension
+                            className: 'rv-filter-noexport' // do not show when datatble export or print
                         });
 
                         // add a column for symbols
@@ -400,7 +401,8 @@
                             orderable: false,
                             render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`,
                             width: '20px', // for datatables
-                            position: 0 // for datatable colreorder extension
+                            position: 0, // for datatable colreorder extension
+                            className: 'rv-filter-noexport' // do not show when datatble export or print
                         });
                     }
 

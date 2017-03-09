@@ -146,6 +146,7 @@
         self.filterService = filterService;
 
         $scope.$on(events.rvTableReady, () => {
+            self.description = stateManager.display.filters.data.filter.description;
             self.columns = stateManager.display.filters.data.columns;
             $scope.columns = self.columns;
 
@@ -215,8 +216,9 @@
             // get column
             const column = self.filterService.getTable().column(`${columnInfo.name}:name`);
 
-            // toggle the visibility
+            // toggle the visibility and class name use to show/hide collumn when export or print
             column.visible(columnInfo.display);
+            column.header().classList.toggle('rv-filter-noexport');
         }
     }
 })();

@@ -53,13 +53,25 @@
                         @include largeFilters;
 
                         @include include-size(rv-lg) {
-                            .rv-filter-string, .rv-filter-number, .rv-filter-date {
+                            .rv-filter-string, .rv-filter-selector, .rv-filter-number, .rv-filter-date {
                                 display: flex;
                             }
                         }
 
                         th {
                             user-select: none; // do not select header text to avoid table selection when drag & drop columns
+
+                            md-input-container {
+                                width: 100%; // because md-input-container with md-select inside will expand beyound the div
+                            }
+
+                            .rv-filter-selector {
+                                font-weight: normal;
+
+                                md-select {
+                                    padding-top: 4px;
+                                }
+                            }
                         }
                     }
 
@@ -196,7 +208,7 @@ rv-filters-search {
 }
 
 @mixin largeFilters {
-    .rv-filter-string, .rv-filter-number, .rv-filter-date {
+    .rv-filter-string, .rv-filter-selector, .rv-filter-number, .rv-filter-date {
         display: none;
         height: 35px;
     }
@@ -226,13 +238,43 @@ rv-filters-setting-panel {
         height: 100%;
     }
 
+    .rv-filter-desc {
+        display: flex;
+        position: relative;
+        align-items: center;
+        height: 40px;
+
+        .rv-filter-desc-button {
+            text-align: left;
+            position: absolute;
+            padding: 0;
+            margin: 0;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1;
+        }
+    }
+
+    .rv-filter-desc-main {
+        padding: 5px;
+    }
+    .rv-filter-desc-column {
+        padding-left: 12px;
+    }
+
     .rv-filter-setting {
         background-color: $primary-color-dark;
         color: $primary-color-text;
         padding: 10px;
 
-        h4 {
+        h4, h3, .md-toggle-icon {
             color: $primary-color-text;
+
+            &.rv-toggled {
+                transform: rotate(180deg) !important;
+            }
         }
 
         ul {
@@ -272,7 +314,7 @@ rv-filters-setting-panel {
                     margin-top: 20px;
                     height: 40px;
 
-                    .rv-filter-number, .rv-filter-string, .rv-filter-date {
+                    .rv-filter-string, .rv-filter-selector, .rv-filter-number, .rv-filter-date {
                         height: 40px;
                         align-items: center;
                     }
@@ -302,8 +344,9 @@ rv-filters-setting-panel {
             }
         }
 
-        .rv-filter-number, .rv-filter-string, .rv-filter-date {
+        .rv-filter-string, .rv-filter-selector, .rv-filter-number, .rv-filter-date {
             display: inline-flex;
+            width: 90%;
 
             // TODO: create a mixin with same section inside export
             input {

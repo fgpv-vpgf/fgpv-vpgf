@@ -20,7 +20,7 @@
      * @function rvFiltersSearch
      * @return {object} directive body
      */
-    function rvFiltersSearch(filterService, stateManager) {
+    function rvFiltersSearch(filterService, stateManager, $rootScope, events) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/filters/filters-search.html',
@@ -34,12 +34,15 @@
         return directive;
 
         function link(scope, el) {
-            el.find('input').on('focus', () => {
-                changeColumnsName('data');
-            });
+            // wait until table is ready. If not, input is not created yet
+            $rootScope.$on(events.rvTableReady, () => {
+                el.find('input').on('focus', () => {
+                    changeColumnsName('data');
+                });
 
-            el.find('input').on('blur', () => {
-                changeColumnsName('title');
+                el.find('input').on('blur', () => {
+                    changeColumnsName('title');
+                });
             });
         }
 
@@ -54,7 +57,9 @@
 
             angular.element(filterService.getTable().header()).find('th').each((i, el) => {
                 if (columns[i].data !== 'rvSymbol' && columns[i].data !== 'rvInteractive') {
-                    el.innerHTML = columns[i][value];
+                    const columnName = el.getElementsByTagName('span')[0];
+                    const column = columns.find(col => col.title === columnName.getAttribute('data-rv-column'));
+                    columnName.textContent = column[value];
                 }
             });
         }
@@ -68,7 +73,7 @@
         self.searchText = '';
         self.search = debounceService.registerDebounce(search, 1200, false);
         self.clear = clear;
-
+        self.service = filterService;
         self.searchFilter = {};
 
         // all test operations for filtering (\\ is use to escape character when we remove the operand)

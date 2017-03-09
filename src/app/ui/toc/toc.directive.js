@@ -246,7 +246,9 @@
         }
     }
 
-    function Controller(tocService, stateManager, geoService, keyNames) {
+    function Controller(tocService, stateManager, geoService, keyNames,
+        $rootScope, configService, events, layoutService) {
+
         'ngInject';
         const self = this;
 
@@ -260,6 +262,26 @@
 
         // reorder mode is off by default
         self.isReorder = false;
+
+        // check if we need to open a filter panel by default
+        configService.getCurrent().then(config => {
+            if (config.filterIsOpen && config.filterIsOpen[layoutService.currentLayout()]) {
+
+                // when map is ready, geoService.legend is not undefined anymore
+                $rootScope.$on(events.rvApiReady, () => {
+                    // need to add placeholder because legend entry is not finish loading
+                    const entry = geoService.legend.getItemById(`${config.filterIsOpen.id}placeholder`);
+
+                    // when attributes are loaded, open table
+                    $rootScope.$watch(() => entry._layerRecord.attributeBundle, val => {
+                        if (typeof val !== 'undefined') {
+                            tocService.actions.toggleLayerFiltersPanel(geoService.legend.
+                                getItemById(config.filterIsOpen.id));
+                        }
+                    });
+                });
+            }
+        });
 
         /***/
 

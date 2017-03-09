@@ -12,6 +12,16 @@
                 prevent: angular.noop
             }
         },
+        selector: {
+            name: 'rv-filter-selector',
+            scope: null,
+            self: {
+                isFunction: angular.isFunction,
+                placeholder: 'filter.placeholder.selector',
+                change: angular.noop,
+                prevent: angular.noop
+            }
+        },
         number: {
             name: 'rv-filter-number',
             scope: null,
@@ -52,7 +62,21 @@
                     <input ng-click="self.prevent($event)"
                             ng-keypress="self.prevent($event)"
                             ng-change="self.change('${column}', self.${column}.value)"
-                            ng-model="self.${column}.value" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.placeholder | translate }}"/>
+                            ng-model="self.${column}.value" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.placeholder | translate }}"
+                            ng-disabled="self.${column}.static" />
+            </div>`,
+        selector: (column) =>
+            `<div class="rv-filter-selector" ng-show="$root.isFiltersVisible">
+                <md-input-container class="md-block" md-no-float flex>
+                    <md-select ng-click="self.prevent($event)"
+                        ng-model="self.${column}.value"
+                        md-on-close="self.change('${column}', self.${column}.value)"
+                        ng-disabled="self.${column}.static"
+                        placeholder="{{ self.placeholder | translate }}" multiple>
+                        <md-option ng-repeat="value in self.${column}.values" ng-value="value">
+                            {{ value }}
+                        </md-option>
+                    </md-select>
                 </md-input-container>
             </div>`,
         number: (column) =>
@@ -61,13 +85,15 @@
                     <input rv-filters-number-only
                             ng-click="self.prevent($event)"
                             ng-change="self.change('${column}', self.${column}.min, self.${column}.max)"
-                            ng-model="self.${column}.min" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.min.placeholder | translate }}" />
+                            ng-model="self.${column}.min" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.min.placeholder | translate }}"
+                            ng-disabled="self.${column}.static" />
                 </md-input-container>
                 <md-input-container class="md-block" md-no-float flex>
                     <input rv-filters-number-only
                             ng-click="self.prevent($event)"
                             ng-change="self.change('${column}', self.${column}.min, self.${column}.max)"
-                            ng-model="self.${column}.max" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.max.placeholder | translate }}" />
+                            ng-model="self.${column}.max" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.max.placeholder | translate }}"
+                            ng-disabled="self.${column}.static" />
                 </md-input-container>
             </div>`,
         date: (column) =>
@@ -76,13 +102,15 @@
                     ng-click="self.prevent($event)"
                     ng-change="self.change('${column}', self.${column}.min, self.${column}.max)"
                     ng-model="self.${column}.min"
-                    md-placeholder="{{ self.min.placeholder | translate }}">
+                    md-placeholder="{{ self.min.placeholder | translate }}"
+                    ng-disabled="self.${column}.static" />
                 </md-datepicker>
                 <md-datepicker
                     ng-click="self.prevent($event)"
                     ng-change="self.change('${column}', self.${column}.min, self.${column}.max)"
                     ng-model="self.${column}.max"
-                    md-placeholder="{{ self.max.placeholder | translate }}">
+                    md-placeholder="{{ self.max.placeholder | translate }}"
+                    ng-disabled="self.${column}.static" />
                 </md-datepicker>
             </div>`
     };
@@ -126,33 +154,18 @@
 
             // columns type with filters information
             const columnTypes = {
-                esriFieldTypeString: {
-                    type: 'string',
+                string: {
                     callback: 'onFilterStringChange',
                 },
-                esriFieldTypeDate: {
-                    type: 'date',
+                selector: {
+                    callback: 'onFilterSelectorChange',
+                },
+                number: {
+                    callback: 'onFilterNumberChange',
+                },
+                date: {
+                    type: 'number',
                     callback: 'onFilterDateChange',
-                },
-                esriFieldTypeSmallInteger: {
-                    type: 'number',
-                    callback: 'onFilterNumberChange',
-                },
-                esriFieldTypeInteger: {
-                    type: 'number',
-                    callback: 'onFilterNumberChange',
-                },
-                esriFieldTypeSingle: {
-                    type: 'number',
-                    callback: 'onFilterNumberChange',
-                },
-                esriFieldTypeDouble: {
-                    type: 'number',
-                    callback: 'onFilterNumberChange',
-                },
-                esriFieldTypeOID: {
-                    type: 'number',
-                    callback: 'onFilterNumberChange',
                 }
             };
 
@@ -160,9 +173,13 @@
             transclude(() => {
                 if (!el[0].hasChildNodes() && typeof scope.self.info !== 'undefined' &&
                     (scope.self.info.data !== 'rvSymbol' && scope.self.info.data !== 'rvInteractive')) {
-                    const filterInfo = setFilter(scope.self.info);
-                    el.append(filterInfo.directive);
-                    scope.self.info.init = true;
+
+                    // if filter is not visible. This happen for customize columns where user doesn't want to have a filter.
+                    if (typeof scope.self.info.filter !== 'undefined') {
+                        const filterInfo = setFilter(scope.self.info);
+                        el.append(filterInfo.directive);
+                        scope.self.info.init = true;
+                    }
                 }
             });
 
@@ -189,8 +206,10 @@
                 const columns = displayData.columns !== null ? displayData.columns : [];
 
                 columns.forEach((column, i) => {
-                    // skip first 2 columns because it is the symbol and interactive buttons
-                    if (i > 1) {
+                    // skip the symbol, interactive columns and if the filter is not visible.
+                    // this happen for customize columns where user doesn't want to have a filter.
+                    if (typeof column.filter !== 'undefined') {
+
                         // get column directive, scope and type
                         const filterInfo = setFilter(column);
 
@@ -205,6 +224,12 @@
                                 setDateFilter(filterInfo.scope, i);
                             } else if (column.type === 'string') {
                                 const val = `^${column.filter.value.replace(/\*/g, '.*')}.*$`;
+                                table.column(`${column.name}:name`).search(val, true, false);
+                            } else if (column.type === 'selector') {
+                                // set options for the selector then set filter (split with | for or and remove the ")
+                                filterInfo.scope.values = table.column(`${column.name}:name`).data().unique()
+                                    .sort().map(val => `"${val}"`);
+                                const val = `^${column.filter.value.join('|').replace(/"/g, '')}.*$`;
                                 table.column(`${column.name}:name`).search(val, true, false);
                             }
 
@@ -222,48 +247,35 @@
             }
 
             /**
-             * Set filter
+             * Set filter from field type
              * @function setFilter
              * @private
              * @param {Object} column the column
-             * @return {Object} array  [the directive for the filter, the scope, the column type]
+             * @return {Object} array  [the directive for the filter, the scope]
              */
             function setFilter(column) {
-                const displayData = stateManager.display.filters.data;
-                const columnEdit = displayData.fields.find(field => column.data === field.name);
+                // set change action (callback)
+                const filter = FILTERS[column.type];
+                filter.self.change = filterService[columnTypes[column.type].callback];
 
-                // set filters from field type
-                // TODO: for thematic map value may come from config file.
-                if (typeof columnEdit !== 'undefined') {
-                    // get column info (type and callback function)
-                    const columnInfo = columnTypes[columnEdit.type];
+                // set prevent default sorting
+                filter.self.prevent = filterService.preventSorting;
 
-                    // set change action
-                    const filter = FILTERS[columnInfo.type];
-                    filter.self.change = filterService[columnInfo.callback];
+                // set filter initial value
+                filter.self[column] = column.filter;
 
-                    // set prevent default sorting
-                    filter.self.prevent = filterService.preventSorting;
+                // set scope
+                const filterScope = scope.$new(true);
+                filterScope.self = filter.self;
+                filter.scope = filterScope;
+                filter.scope.self[column.name] = column.filter;
 
-                    // set filter initial value
-                    filter.self[column] = column.filter;
+                // create directive
+                const template = FILTERS_TEMPLATE[column.type](column.name);
 
-                    // set scope
-                    const filterScope = scope.$new(true);
-                    filterScope.self = filter.self;
-                    filter.scope = filterScope;
-                    filter.scope.self[column.name] = column.filter;
-
-                    // set field type
-                    column.type = columnInfo.type;
-
-                    // create directive
-                    const template = FILTERS_TEMPLATE[columnInfo.type](column.name);
-
-                    // return the directive, the scope and the column type
-                    return { directive: $compile(template)(filter.scope),
-                            scope: filter.scope.self[column.name] };
-                }
+                // return directive, scope and column type
+                return { directive: $compile(template)(filter.scope),
+                        scope: filter.scope.self[column.name] };
             }
 
             /**
