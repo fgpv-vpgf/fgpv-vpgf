@@ -35,7 +35,7 @@
         }
     }
 
-    function Controller($scope, stateManager, events, filterService, appInfo) {
+    function Controller($scope, stateManager, events, filterService, appInfo, $rootScope, layoutService) {
         'ngInject';
         const self = this;
 
@@ -43,9 +43,18 @@
         self.filtersMode = stateManager.state.filters.morph;
         self.applyFilter = filterService.setActive;
         self.filter = filterService.filter;
+        self.isShowFilters = (layoutService.currentLayout() === 'large') ? true : false;
+        self.showFilters = showFilters;
         self.dataPrint = dataPrint;
         self.dataExportCSV = dataExportCSV;
         self.appID = appInfo.id;
+
+        // check if filter size is modified from outside this directive and apply the filter mode. This can happen if config filters wants the panel maximize on open.
+        $rootScope.$watch(() => stateManager.state.filters.morph, val => self.filtersMode = val);
+
+        function showFilters() {
+            $rootScope.isFiltersVisible = self.filter.isOpen;
+        }
 
         function setMode(mode) {
             stateManager.setMorph('filters', mode);

@@ -47,11 +47,14 @@ Datatable open setting tooltip,filter.filters.setting.tooltip,Toggle filters set
 Datatable clears filters tooltip,filter.filters.clear.tooltip,Clear filters,Effacer les filtres
 Datatable apply filters on map text,filter.filters.apply,Apply to map,Appliquer à la carte
 DataTable string filter placeholder,filter.placeholder.string,text,texte
+DataTable selector filter placeholder,filter.placeholder.selector,selection,sélection
 DataTable min filter placeholder,filter.placeholder.min,min,min
 DataTable max filter placeholder,filter.placeholder.max,max,max
 DataTable date min filter placeholder,filter.placeholder.datemin, date min,date min
 DataTable date max filter placeholder,filter.placeholder.datemax, date max,date max
 Datatables setting section title,filter.settings.title, Settings, Paramètres
+Datatable settings description label,filter.setting.label.description, Description, Description
+Datatable settings field label,filter.setting.label.fields,Fields,Champs
 Datatable sort setting tooltip,filter.settings.sort,Sort,Trier
 Datatable reorder fields setting tooltip,filter.settings.reorder,Reorder fields,Réorganiser les champs
 Datatable settings reorder column label,filter.settings.label.reorder,Reorder,Réorganiser
@@ -75,6 +78,7 @@ Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable Filte
 Filter pane menu label for Print,filter.menu.print,Print,Imprimer
 Filter pane menu label for Export,filter.menu.export,Export,Exporter
 Filter pane menu label for Filter by Extent,filter.menu.extent,Filter by Extent,Filtrer par étendue
+Filter pane menu label for show Filters,filter.menu.showfilters,Show Filters,Afficher les filtres
 Geosearch text place holder,geosearch.text.placeholder,Search Text,Texte à rechercher
 Geosearch province filter label,geosearch.label.province,Province,Province
 Geosearch type filter label,geosearch.label.type,Type,Type
@@ -183,9 +187,9 @@ Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer dat
 Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,La couche sera exclue de la carte - cliquer sur les résultats
 Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,La couche sera exclue de la carte - cliquer sur les résultats
 Table of Content user flag label,toc.label.flag.user,Layer added by user,Couche ajoutée par l'utilisateur
-Table of Content filter by extent flag label,toc.label.flag.filter,Map data is filtered by your current extent,Les données sont filtrées selon l'étendue actuelle
+Table of Content filter by extent flag label,toc.label.flag.filter,Map data is filtered by your current extent and/or filters,Les données sont filtrées selon l'étendue actuelle et/ou les filtres
 Table of Content user flag tootlip,toc.tooltip.flag.user,Layer added by user,Couche ajoutée par l'utilisateur
-Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Map data is filtered by your current extent,Les données sont filtrées selon l'étendue actuelle
+Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Map data is filtered by your current extent and/or filters,Les données sont filtrées selon l'étendue actuelle et/ou les filtres
 Table of Content error state label,toc.label.state.error,Error,Erreur
 Table of Content error state tootlip,toc.tooltip.state.error,Error,Erreur
 Table of Content loading state label,toc.label.state.loading,Updating,Mise à jour

@@ -1,5 +1,6 @@
 <md-input-container md-no-float
-    class="rv-filters-search md-block">
+    class="rv-filters-search md-block"
+    ng-if="self.service.isGlobalSearch">
     <input
         translate
         translate-attr-aria-label="filter.aria.filters.search"
@@ -15,4 +16,4 @@
     </md-icon>
 </md-input-container>
 
-<span class="rv-filters-divider"></span>
+<span class="rv-filters-divider" ng-if="self.service.isGlobalSearch"></span>

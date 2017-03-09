@@ -2,6 +2,27 @@
 
     <h4 class="md-title">{{ 'filter.settings.title' | translate }}</h4>
 
+    <div class="rv-filter-desc" ng-if="self.description">
+        <md-button
+            class="rv-filter-desc-button rv-button-square"
+            ng-click="self.isShowDescription = !self.isShowDescription"
+            rv-help="group-toggle"></md-button>
+        <div class="rv-icon-24 rv-group-toggle-icon">
+            <md-icon
+                class="md-toggle-icon"
+                ng-class="{ 'rv-toggled' : self.isShowDescription === true }"
+                md-svg-src="hardware:keyboard_arrow_down">
+            </md-icon>
+        </div>
+        <h3>{{ 'filter.setting.label.description' | translate }}</h3>
+    </div>
+    <div ng-show="self.isShowDescription">
+        <span class="rv-filter-desc-main">{{ self.description }}</span>
+        <ul class="rv-filter-desc-column">{{ 'filter.setting.label.fields' | translate }}
+            <li ng-repeat="column in self.columns" ng-if="column.description">{{ column.title }} ({{ column.data}}): {{ column.description}}</li>
+        </ul>
+    </div>
+
     <ul>
         <li>
             <span class="rv-filter-settting-reorder">{{ 'filter.settings.label.reorder' | translate }}</span>
