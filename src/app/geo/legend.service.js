@@ -140,6 +140,11 @@
              * @return {Object}       legend item
              */
             function tileGenerator(layer) {
+                // show icon if map projection does not match own projection
+                if (layer._layer._map.spatialReference.wkid !== layer.spatialReference.wkid) {
+                    layer.config.flags.wrongprojection.visible = true;
+                }
+
                 const state = legendEntryFactory.singleEntryItem(layer.config, layer);
                 layer.legendEntry = state;
 
