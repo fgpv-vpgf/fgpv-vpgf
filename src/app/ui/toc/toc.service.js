@@ -175,6 +175,11 @@
                     icon: 'community:filter',
                     label: 'toc.label.flag.filter',
                     tooltip: 'toc.tooltip.flag.filter'
+                },
+                wrongprojection: {
+                    icon: 'alert:warning',
+                    label: 'toc.label.flag.wrongprojection',
+                    tooltip: 'toc.tooltip.flag.wrongprojection'
                 }
             },
             state: {
