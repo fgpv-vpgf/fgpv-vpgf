@@ -98,6 +98,9 @@
                 },
                 filter: {
                     visible: false
+                },
+                wrongprojection: {
+                    visible: false
                 }
             };
 
