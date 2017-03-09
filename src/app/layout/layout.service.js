@@ -35,7 +35,13 @@
             panels: {},
             panes: {}, // registry for content pane nodes,
 
-            onResize
+            onResize,
+
+            LAYOUT: {
+                SMALL: 'small',
+                MEDIUM: 'medium',
+                LARGE: 'large'
+            }
         };
 
         return service;
@@ -47,11 +53,11 @@
         */
         function currentLayout() {
             if ($rootElement.width() <= 480) {
-                return 'small';
+                return service.LAYOUT.SMALL;
             } else if ($rootElement.width() <= 840) {
-                return 'medium';
+                return service.LAYOUT.MEDIUM;
             } else {
-                return 'large';
+                return service.LAYOUT.LARGE;
             }
         }
 

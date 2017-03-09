@@ -71,9 +71,10 @@
     }
 
     /**
-     * `rvTruncateTitle` truncates a given string be taking the middle part of the string out leaving the beginning and end intact.
+     * `rvTruncateTitle` truncates a given string by taking the middle part of the string out leaving the beginning and end intact.
      *
      * @function rvTruncateTitle
+     * @param {Object} graphicsService common service providing helper function to work with canvas and svg
      * @return {object} directive body
      */
     function rvTruncateTitle(graphicsService) {
@@ -131,6 +132,8 @@
              * @return {Array} [leftString, rightString] parts of the original string
              */
             function splitString(string, widthToFit) {
+
+                // TODO: use [getComputerStyles](https://developer.mozilla.org/en/docs/Web/API/Window/getComputedStyle) to get the actual font name and font size instead of this hardcoded font
                 const stringWidth = graphicsService.getTextWidth(canvas, string, 'normal 16px Roboto');
 
                 if (stringWidth < widthToFit) {
