@@ -659,6 +659,10 @@
                 if (configUpdate) {
                     configUpdate(lr.config);
                 }
+
+                // reset error state - fixes issue where error state persists after reload
+                l.state = l.state === 'rv-error' ? '' : l.state;
+
                 mapObject.addLayer(lr.constructLayer(), pos);
             }
 
