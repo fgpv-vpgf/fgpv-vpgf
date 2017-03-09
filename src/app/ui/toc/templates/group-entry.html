@@ -3,7 +3,7 @@
     class="rv-group-body-button rv-button-square"
     ng-click="self.defaultAction(self.entry)"
     rv-help="group-toggle">
-    <md-tooltip md-delay="700" md-direction="right">{{ self.entry.name }}</md-tooltip>
+    <md-tooltip md-delay="700" md-direction="{{ self.getTooltipDirection() }}">{{ self.entry.name }}</md-tooltip>
 </md-button>
 
 <div class="rv-icon-24 rv-group-toggle-icon">

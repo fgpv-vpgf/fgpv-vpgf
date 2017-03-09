@@ -8,7 +8,7 @@
     ng-click="self.defaultAction(self.entry)">
     <!-- TODO: add aria attribues on the button to provide context on what it does; also mute the actual layer name below, so a screen reader wouldn't pronounce it twice-->
 
-    <md-tooltip md-delay="700" md-direction="right">{{ self.entry.name }}</md-tooltip>
+    <md-tooltip md-delay="700" md-direction="{{ self.getTooltipDirection() }}">{{ self.entry.name }}</md-tooltip>
 </md-button>
 
 <div
@@ -17,7 +17,7 @@
     ng-mouseleave="self.entry.wiggleSymbology(false)"
     ng-if="!self.entry.options.data || !self.entry.options.data.enabled">
 
-    <md-tooltip md-delay="700" md-direction="right">{{ self.entry.name }}</md-tooltip>
+    <md-tooltip md-delay="700" md-direction="{{ self.getTooltipDirection() }}">{{ self.entry.name }}</md-tooltip>
 </div>
 
 <rv-toc-entry-symbology entry="self.entry" type="self.entry.layerType" symbology="self.entry.symbology"></rv-toc-entry-symbology>

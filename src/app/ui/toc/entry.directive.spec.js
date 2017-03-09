@@ -27,7 +27,16 @@ describe('rvTocEntry', () => {
     };
 
     function mockLayoutService($provide) {
-        $provide.factory('layoutService', $q => () => $q(fulfill => fulfill()));
+        $provide.factory('layoutService', () =>
+            ({
+                LAYOUT: {
+                    SMALL: 'small',
+                    MEDIUM: 'medium',
+                    LARGE: 'large'
+                },
+                currentLayout: () => 'large'
+            }
+        ));
     }
 
     // fake gapi service
