@@ -659,6 +659,8 @@
                 if (configUpdate) {
                     configUpdate(lr.config);
                 }
+
+                l.state = Geo.Layer.States.NEW;
                 mapObject.addLayer(lr.constructLayer(), pos);
             }
 
