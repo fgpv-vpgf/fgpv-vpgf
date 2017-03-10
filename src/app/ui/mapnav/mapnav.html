@@ -1,5 +1,10 @@
 <span class="rv-spacer"></span>
 <div class="rv-mapnav-content">
+    <div class="rv-button-group hover rv-whiteframe-z2" ng-if="self.fullScreenVisisble">
+        <rv-mapnav-button name="fullScreen" class="rv-icon-20"></rv-mapnav-button>
+        <md-divider></md-divider>
+    </div>
+
     <div class="rv-button-group hover rv-whiteframe-z2" ng-switch on="self.config.zoom">
         <rv-mapnav-button name="zoomIn" ng-switch-when="buttons" class="rv-icon-20"></rv-mapnav-button>
         <rv-mapnav-button name="zoomIn" ng-switch-when="all" class="rv-icon-20"></rv-mapnav-button>
