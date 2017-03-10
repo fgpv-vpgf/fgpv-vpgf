@@ -9,6 +9,8 @@
 
     // check if the global RV registry object already exists and store a reference
     const RV = window.RV = typeof window.RV === 'undefined' ? {} : window.RV;
+    // TODO: Replace with an actual logging library
+    RV.logManager = console;
 
     // test user browser, true if IE false otherwise
     RV.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
@@ -94,7 +96,7 @@
     // in cases when Angular is loaded by the host page before jQuery (or jQuery is not loaded at all), the viewer will not work as Angular will not bind jQuery correctly even if bootstrap loads a correct version of jQuery
     // more info, third paragraph from the top: https://code.angularjs.org/1.4.12/docs/api/ng/function/angular.element
     if (window.angular && !window.jQuery) {
-        console.error('The viewer requires jQuery to work correctly.' +
+        RV.logManager.error('The viewer requires jQuery to work correctly.' +
             'Ensure a compatible version of jQuery is loaded before Angular by the host page.');
 
         // stopping initialization
@@ -278,8 +280,8 @@
         // TODO v2.0: Remove the following deprecation warning
         // deprecating class fgpv on node for 2.0 release - use is="fgpv" instead
         if (node.classList.contains('fgpv')) {
-            console.warn('Using class fgpv on the map DOM node is deprecated' +
-                'and will be removed on v2.0 release. Use is="fgpv" instead.'); /*RemoveLogging:skip*/
+            RV.logManager.warn('Using class fgpv on the map DOM node is deprecated' +
+                'and will be removed on v2.0 release. Use is="fgpv" instead.');
         }
 
         customAttrs
@@ -397,7 +399,7 @@
             `(${ versionDiff > 0 ? 'more recent' : 'older' } that expected ${ourVersion} version). ` +
             `No tests were done with this version. The viewer might be unstable or not work correctly.`;
 
-        console.warn(warningMessgage); /*RemoveLogging:skip*/
+        RV.logManager.warn(warningMessgage);
     }
 })();
 

@@ -248,8 +248,7 @@ function jsbuild() {
             single_quotes: true
         }))
         .pipe($.angularFilesort())
-        .pipe($.concat(config.jsSingleFile))
-        .pipe($.if(PROD_MODE, $.removeLogging()));
+        .pipe($.concat(config.jsSingleFile));
 }
 
 // NOTE assetcopy should only be used for samples for development
@@ -281,8 +280,7 @@ gulp.task('jsrollup', 'Roll up all js into one file',
         const seed = gulp.src([config.jsGlobalRegistry, config.jsAppSeed])
             .pipe($.plumber({ errorHandler: injectError }))
             .pipe($.babel({ presets: ['latest'] }))
-            .pipe($.plumber.stop())
-            .pipe($.if(PROD_MODE, $.removeLogging()));
+            .pipe($.plumber.stop());
 
         // global registry goes after the lib package
         // app-seed `must` be the last item
@@ -293,7 +291,7 @@ gulp.task('jsrollup', 'Roll up all js into one file',
             .pipe($.concat(config.jsCoreFile))
             // can't use lazy pipe with uglify
             .pipe($.if(PROD_MODE, $.sourcemaps.init()))
-            .pipe($.if(PROD_MODE, $.uglify()))
+            .pipe($.if(PROD_MODE, $.uglify({ compress: { drop_console:true } })))
             .pipe($.if(PROD_MODE, $.sourcemaps.write('./maps')))
             .pipe(gulp.dest(config.libBuild));
     });
@@ -316,9 +314,7 @@ gulp.task('jsinjector', 'Copy fixed assets to the build directory',
         // the only one we have is Object.entries and it is very small
         // if it gets bigger we should split it into a separate file
         const injector = merge(
-            gulp.src(config.jsInjectorFile)
-                .pipe($.babel({ presets: ['latest'] }))
-                .pipe($.if(PROD_MODE, $.removeLogging())),
+            gulp.src(config.jsInjectorFile).pipe($.babel({ presets: ['latest'] })),
             polyfills
         )
             .pipe($.order(config.injectorOrder))
@@ -327,7 +323,7 @@ gulp.task('jsinjector', 'Copy fixed assets to the build directory',
         const streams = [iePolyfills, injector].map(stream => {
             return stream
                 .pipe($.if(PROD_MODE, $.sourcemaps.init()))
-                .pipe($.if(PROD_MODE, $.uglify()))
+                .pipe($.if(PROD_MODE, $.uglify({ compress: { drop_console:true } })))
                 .pipe($.if(PROD_MODE, $.sourcemaps.write('./maps')))
                 .pipe(gulp.dest(config.libBuild));
         });
