@@ -4,7 +4,8 @@
     },
 
     "contributing_guide": {
-        "title": "Contributing Guide"
+        "title": "Contributing Guide",
+        "children": ["geo_merging"]
     },
 
     "branching": {
@@ -18,7 +19,7 @@
     "ui_overview": {
         "title": "UI Overview & Terminology"
     },
-    
+
     "app_startup": {
         "title": "Application Startup Flow"
     },
