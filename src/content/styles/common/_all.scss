@@ -25,8 +25,10 @@ $fade-in-out-duration: 130ms;
 $keyboard-only: '.rv-keyboard-only';
 
 @mixin keyboard {
-    @at-root.rv-keyboard#{&} {
-        @content;
+    @at-root {
+        #{selector-append('.rv-keyboard', &)} {
+            @content;
+        }
     }
 }
 
@@ -39,34 +41,38 @@ $keyboard-only: '.rv-keyboard-only';
 }
 
 @mixin touch {
-    @at-root.rv-touch#{&} {
-        @content;
+    @at-root {
+        #{selector-append('.rv-touch', &)} {
+            @content;
+        }
     }
 }
 
 @mixin include-size($name) {
     @if $name == rv-gt-sm {
         @at-root {
-            .rv-medium#{&}, .rv-large#{&} {
+            #{selector-append('.rv-medium', &)},
+            #{selector-append('.rv-large', &)} {
                 @content;
             }
         }
     } @else if $name == rv-sm {
-        @at-root.rv-small#{&} {
+        @at-root #{selector-append('.rv-small', &)} {
             @content;
         }
     } @else if $name == rv-lt-lg {
         @at-root {
-            .rv-small#{&}, .rv-medium#{&} {
+            #{selector-append('.rv-small', &)},
+            #{selector-append('.rv-medium', &)} {
                 @content;
             }
         }
     } @else if $name == rv-md {
-        @at-root.rv-medium#{&} {
+        @at-root #{selector-append('.rv-medium', &)} {
             @content;
         }
     } @else if $name == rv-lg {
-        @at-root.rv-large#{&} {
+        @at-root #{selector-append('.rv-large', &)} {
             @content;
         }
     }
