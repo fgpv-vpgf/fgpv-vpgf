@@ -148,6 +148,11 @@
                 const state = legendEntryFactory.singleEntryItem(layer.config, layer);
                 layer.legendEntry = state;
 
+                state.walkItems(layerEntry => {
+                    gapiService.gapi.symbology.mapServerToLocalLegend(state.url).then(legendData =>
+                        applySymbology(layerEntry, legendData.layers[0]));
+                });
+
                 return state;
             }
 
