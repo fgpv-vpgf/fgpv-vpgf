@@ -33,6 +33,7 @@
 
         // expose navigation service to the template
         self.config = mapNavigationService.config;
-        self.fullScreenVisisble = mapNavigationService.controls.fullScreen.visible;
+
+        mapNavigationService.controls.fullScreen.visible.then(result => self.fullScreenVisisble = !result);
     }
 })();

@@ -15,11 +15,8 @@ The following attributes are defined on the application's DOM node (e.g. `<div i
 **rv-restore-bookmark** (example: `data-rv-restore-bookmark="bookmark"`)
 > Appearantly, some attributes prefer an air of mistery surrounding them
 
-**rv-fullpage-app** (example: `data-rv-fullpage-app="true"`)
-> Specifies that the viewer is full screen by default. 
-
 **rv-wait** (example: `data-rv-wait="true"`)
-> Required if the viewer accepts a bookmark. The viewer then waits for either a url bookmark or until it confirms no bookmark is present. 
+> Required if the viewer accepts a bookmark. The viewer then waits for either a url bookmark or until it confirms no bookmark is present.
 
 
 Note that in the examples, all attributes are prefixed with `data-`; although not strictly necessary, this allows your HTML to pass HTML validation.

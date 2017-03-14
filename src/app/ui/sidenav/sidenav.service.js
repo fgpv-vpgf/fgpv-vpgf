@@ -109,7 +109,7 @@
                 type: 'link',
                 label: 'sidenav.label.fullscreen',
                 icon: 'navigation:fullscreen',
-                isHidden: $rootElement.attr('rv-fullpage-app'),
+                isHidden: false,
                 isChecked: fullScreenService.isExpanded,
                 action: () => {
                     // service.close();
@@ -302,6 +302,7 @@
                 service.controls.export.isHidden = !data.services.exportMapUrl;
                 // shareable should be deprecated;
                 service.controls.share.isHidden = !data.shareable;
+                service.controls.fullscreen.isHidden = data.fullscreen;
             });
         }
 
