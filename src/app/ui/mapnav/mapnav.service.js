@@ -50,7 +50,7 @@
                 label: 'sidenav.label.fullscreen',
                 icon: 'navigation:fullscreen',
                 tooltip: 'sidenav.label.fullscreen',
-                visible: !fullScreenService.isFullPageApp,
+                visible: fullScreenService.isFullPageApp,
                 action: fullScreenService.toggle
             },
             zoomIn: {
