@@ -43,7 +43,21 @@
 
             const stopWatch = scope.$watch('src', newValue => {
                 if (newValue) {
-                    el.empty().append(scope.src);
+                    const node = angular.element(scope.src);
+                    const img = node.find('image');
+                    if (img.length === 1) {
+                        // get the href value from href (Safari) or xlink:href for the other browsers
+                        const href = (typeof img.attr('href') === 'undefined') ?
+                            img.attr('xlink:href') : img.attr('href');
+
+                        // reset href element because it is not well populated for Safari
+                        // it seems to be a bug from svg.js library
+                        // TODO: send issue to svg library
+                        node.find('image')[0].setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', href);
+                        el.empty().append(node);
+                    } else {
+                        el.empty().append(scope.src);
+                    }
 
                     // do not watch for updates to src anymore
                     if (attr.once) {
