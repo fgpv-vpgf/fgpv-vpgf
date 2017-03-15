@@ -43,12 +43,42 @@
 
             const stopWatch = scope.$watch('src', newValue => {
                 if (newValue) {
-                    el.empty().append(scope.src);
+                    // jscs:disable maximumLineLength
+
+                    const img = angular.element(scope.src).find('image');
+                    if (img.length === 1) {
+                        let href = img.attr('href');
+                        let xlinkhref = img.attr('xlink:href');
+
+                        if (typeof href === 'undefined') {
+                            href = xlinkhref;
+                        }
+
+                        // while (href.length % 4 > 0) {
+                        //     href += '=';
+                        // }
+
+                        // works
+                        // el.empty().append(`<svg id="SvgjsSvg1281" width="32" height="32" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 32 32"><defs id="SvgjsDefs1282"></defs><image height="${img.attr('height')}" width="${img.attr('width')}" xlink:href="${href}"></image></svg>`);
+
+
+                        // el.empty().append(`<svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        //                       <image xlink:href="circle_thin1600.png" x="0" y="0" height="100" width="100"></image>
+                        //                     </svg>`);
+
+                        scope.src = scope.src.substring(0, scope.src.indexOf('xlink:href')) + 'href="' + href + '" ' + scope.src.substring(scope.src.lastIndexOf('width'));
+                        el.empty().append(scope.src);
+
+                    } else {
+                        el.empty().append(scope.src);
+                    }
 
                     // do not watch for updates to src anymore
                     if (attr.once) {
                         stopWatch();
                     }
+
+                    // jscs:enable maximumLineLength
                 }
             });
         }
