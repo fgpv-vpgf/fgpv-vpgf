@@ -61,8 +61,9 @@
              * @function setOtherChromeOpacity
              * @private
              */
-            function setOtherChromeOpacity(value) {
-                $rootElement.find(`rv-panel, rv-appbar`).css('opacity', value);
+            function setOtherChromeOpacity(opacity) {
+                $rootElement.find(`rv-panel, rv-appbar`).css('opacity', opacity);
+                $rootElement.find(`.rv-esri-map .layersDiv > *:not(:first)`).css('opacity', opacity);
             }
         }
 
