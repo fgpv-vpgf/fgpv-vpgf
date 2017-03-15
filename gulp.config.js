@@ -51,6 +51,7 @@ module.exports = function () {
             'global-registry.js',
             'app.js',
             'templates.js',
+            'focus-manager.js',
             'app-seed.js',
             'corePlugins.js',
         ],

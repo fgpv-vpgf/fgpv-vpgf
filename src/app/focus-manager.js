@@ -9,10 +9,19 @@
         WAITING: 'WAITING',
         ACTIVE: 'ACTIVE'
     };
-    // jQuery selectors for elements that are likely focusable
-    // since we don't want focus on md-sidenav (focus instead on close button) we omit this with [tabindex]:not(md-sidenav)
-    const focusSelector = `a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]),
-        button:not([disabled]), iframe, object, embed, [tabindex]:not(md-sidenav), [contenteditable]`;
+    // focus selectors we want to target
+    const focusSelector = [
+        'a[href]',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        'button:not([disabled])',
+        '.rv-esri-map',
+        '[tabindex=-2]',
+        '[tabindex=-3]',
+        'md-switch'
+    ].join(', ');
+
     // object containing all currently depressed keyboard keys
     const keys = {};
     // ordered list of elements which has received focus
@@ -108,11 +117,28 @@
 
         /**
          * Determines if a given element is a part of this viewer.
-         * @param   {Object}    el - jQuery element object to check if contained in this viewer
+         * @param   {Object}    el      jQuery element object to check if contained in this viewer
+         * @param   {Boolean}   strict  whether the element must strictly be a direct child of the viewers focus trap
          * @return  {Object}    this viewer instance if contained, undefined otherwise
          */
-        contains (el) {
-            return el.closest(`[rv-trap-focus="${this.id}"]`).length !== 0 ? this : undefined;
+        contains (el, strict = false) {
+            const trap = el.closest(`[rv-trap-focus="${this.id}"]`);
+            return (strict && trap.is(this.rootElement)) || (!strict && trap.length > 0) ? this : undefined;
+        }
+
+        /**
+         * Removes the tabindex for all elements of the viewer except the map and allowed negative values so that when a user tabs
+         * during a waiting state, the next focusable element outside the viewer is focused. This also
+         * solves an issue where focus cannot be manually set to the browsers url bar, which in turn causes
+         * focus to be trapped inside the document body.
+         */
+        clearTabindex () {
+            this.rootElement
+                .find(focusSelector)
+                .not('.rv-esri-map')
+                .not('[tabindex=-2]')
+                .not('[tabindex=-3]')
+                .attr('tabindex', '-1');
         }
     }
 
@@ -161,7 +187,6 @@
     const viewerGroup = new ViewerGroup();
 
     RV.focusManager = {
-        init,
         addViewer
     };
 
@@ -299,12 +324,12 @@
     function shiftFocus(forward = true, onlyUseHistory = false) {
         const link = hasLink(forward);
         if (onlyUseHistory) {
-            lastVisibleHistoryElement().focus(true);
+            lastVisibleHistoryElement().rvFocus();
 
         } else if (link) {
             // goto target if focusable
             if (link.getDestinationElement(forward).is(elemIsFocusable)) {
-                link.getDestinationElement(forward).focus(true);
+                link.getDestinationElement(forward).rvFocus();
             // otherwise remove link if not focusable
             } else {
                 linkedList.splice(linkedList.indexOf(link), 1);
@@ -315,7 +340,7 @@
             if (focusSearch.length === 0) {
                 return false;
             }
-            focusSearch.focus(true);
+            focusSearch.rvFocus();
         }
 
         return true;
@@ -342,7 +367,7 @@
             viewer.setStatus(statuses.ACTIVE);
             evtTarget
                 .closest('.rv-esri-map, ' + focusSelector)
-                .focus(true);
+                .rvFocus();
         } else {
             viewerGroup.deactivate();
         }
@@ -376,25 +401,8 @@
                 disableParentScroll: false,
                 parent: viewer.rootElement.find('rv-shell'),
                 focusOnOpen: false
-            }).then(() => resetTabindex(viewer));
+            }).then(() => viewer.clearTabindex());
         });
-    }
-
-    /**
-     * Sets tabindex for all elements of the viewer except the map so that when a user tabs
-     * during a waiting state, the next focusable element outside the viewer is focused. This also
-     * solves an issue where focus cannot be manually set to the browsers url bar, which in turn causes
-     * focus to be trapped inside the document body.
-     *
-     * @private
-     * @function resetTabindex
-     * @param  {Object} viewer a viewer instance
-     */
-    function resetTabindex(viewer) {
-        viewer.rootElement
-            .find(focusSelector)
-            .not('.rv-esri-map')
-            .attr('tabindex', -1);
     }
 
     /**
@@ -405,20 +413,31 @@
      * @param  {Object} event the keydown event object
      */
     function onKeydown(event) {
-        /*jshint maxcomplexity:9 */
+        /*jshint maxcomplexity:12 */
         const viewerActive = viewerGroup.status(statuses.ACTIVE);
         const viewerWaiting = viewerGroup.status(statuses.WAITING);
+        const hasFocus = $(document.activeElement);
         keys[event.which] = true;
 
         if (viewerActive) {
             // set viewer inactive but allow tab action to be handled by the browser
             if (event.which === 9 && keys[27]) { // escape + tab keydown
                 viewerActive.setStatus(statuses.INACTIVE);
-            // shiftFocus must return true indicating focus has been moved, and only then
-            // do we want to prevent the browser from moving focus itself
-            } else if (event.which === 9 && shiftFocus(!event.shiftKey, restoreFromHistory)) { // tab keydown only
-                event.preventDefault(true);
+
+            } else if (event.which === 9) { // tab keydown only
+                const shiftState = shiftFocus(!event.shiftKey, restoreFromHistory);
+                // prevent browser from changing focus iff our change took effect OR ours failed but did so on a non-direct child of the viewer trap
+                // In general we ALWAYS want to prevent browser focus movements but on full page viewers shiftfocus will fail (correct behaviour) so we
+                // want to allow the browser to take over so that focus can move to the url.
+                event.preventDefault(shiftState || !viewerActive.contains(hasFocus, true));
                 restoreFromHistory = false;
+
+            // allow arrow key movement (up, down) on menu items. preventDefault not needed as arrow keys are not handled by the browser
+            } else if (event.which === 38 || event.which === 40) {
+                const isMenuItem = hasFocus.closest('md-menu-content').length > 0;
+                if (isMenuItem) {
+                    shiftFocus(event.which === 40);
+                }
             }
 
         } else if (viewerWaiting) {
@@ -427,7 +446,7 @@
                 viewerWaiting.setStatus(statuses.ACTIVE);
 
             } else if (event.which === 9) { // tab key
-                resetTabindex(viewerWaiting);
+                viewerWaiting.clearTabindex();
                 viewerWaiting.setStatus(statuses.INACTIVE);
             }
         }
@@ -470,121 +489,144 @@
         }
     }
 
+    // for consistency angular should use the status object when trying to infer a status string
+    RV.focusStatusTypes = statuses;
+
+    $(document)
+        .on('keydown', onKeydown)
+        .on('keyup', onKeyup)
+        .on('mousedown', onMouseDown)
+        .on('focusin', onFocusin)
+        .on('focusout', onFocusout);
+
     /**
-     * Initializes document event listeners and contains the jQuery prototypes overrides
+     * Creates a link between the last focusable element in history and the first focusable element in the target set
+     *
+     * @function noSourceLink
+     * @param   {Object}    targetElemSet    the jQuery element set to find a focusable element
      */
-    function init() {
-        // for consistency angular should use the status object when trying to infer a status string
-        RV.focusStatusTypes = statuses;
-
-        $(document)
-            .on('keydown', onKeydown)
-            .on('keyup', onKeyup)
-            .on('mousedown', onMouseDown)
-            .on('focusin', onFocusin)
-            .on('focusout', onFocusout);
-
-        /**
-         * Creates a link between the last focusable element in history and the first focusable element in the target set
-         *
-         * @function noSourceLink
-         * @param   {Object}    targetElemSet    the jQuery element set to find a focusable element
-         */
-        function noSourceLink(targetElemSet) {
-            // similar to focusout, we wait a short time as determined by focusoutDelay in milliseconds so that
-            // any immediate animations that hide history elements happen first (such as md-menu actions)
-            setTimeout(() => link(lastVisibleHistoryElement(), targetElemSet), focusoutDelay + 10);
-        }
-
-        /**
-         * Creates a link between the source element and the target element such that focus moves
-         * forward/backward between the two elements - regardless of their actual tab order
-         *
-         * @function link
-         * @param   {Object}    sourceEl         the jQuery element focus moves from
-         * @param   {Object}    targetElemSet    the jQuery element set to find a focusable element
-         */
-        function link(sourceEl, targetElemSet) {
-            const targetEl = targetElemSet
-                .find(focusSelector)
-                .addBack(focusSelector)
-                .filter(elemIsFocusable)
-                .first();
-
-            if (targetEl.length === 0) {
-                return;
-            }
-
-            linkedList = linkedList.filter(bundle => !bundle[1].is(targetEl));
-
-            linkedList.push({
-                0: sourceEl,
-                1: targetEl,
-                getDestinationElement: forward => forward ? targetEl : sourceEl
-            });
-        }
-
-        $.extend({
-            link: noSourceLink
-        });
-
-        $.fn.link = function (targetElement) {
-            link($(this), $(targetElement));
-        };
-
-        /**
-         * Sets focus on the provided element and updates focus history.
-         *
-         * @function setFocus
-         * @param   {Object}    element     the jQuery element object to set focus on
-         * @return  {Promise}   resolves to undefined when focus has been set
-         */
-        const orginalFocus = $.fn.focus;
-        $.fn.focus = function (takeAction) {
-            const el = $(this);
-
-            if (el.length === 0) {
-                return;
-            }
-
-            const viewer = viewerGroup.contains(el);
-            // manually setting focus on viewer element
-            if (takeAction && viewer) {
-                lockFocus = true;
-                orginalFocus.apply(this);
-                clearTimeout(focusoutTimerCancel);
-                lockFocus = false;
-
-                const histIndex = history.findIndex(elem => elem.is(el));
-                if (histIndex !== -1) {
-                    history.length = histIndex;
-                }
-
-                if (el.is(':focus')) {
-                    history.push(el);
-                } else {
-                    // applying focus didn't work, try going back to a history element
-                    shiftFocus(false, true);
-                }
-
-            // allow elements outside the viewer to retain normal focus behavior
-            } else if (!takeAction && !viewer) {
-                orginalFocus.apply(this);
-                clearTimeout(focusoutTimerCancel);
-
-            // manual focus being set incorrectly, most likely an outside library
-            } else {
-                console.warn('Setting focus on viewer elements is not allowed');
-            }
-        };
-
-        // these event functions are disabled for events stemming from within a viewer. Angular material was, for
-        // example, preventing mouse clicks from bubbling for mouse clicks on menu items. In general we want to always
-        // see events then decide if they require action
-        jQuery.Event.prototype.stopImmediatePropagation = disableCommonPrototypes('stopImmediatePropagation');
-        jQuery.Event.prototype.stopPropagation = disableCommonPrototypes('stopPropagation');
-        jQuery.Event.prototype.preventDefault = disableCommonPrototypes('preventDefault');
+    function noSourceLink(targetElemSet) {
+        // similar to focusout, we wait a short time as determined by focusoutDelay in milliseconds so that
+        // any immediate animations that hide history elements happen first (such as md-menu actions)
+        setTimeout(() => link(lastVisibleHistoryElement(), targetElemSet), focusoutDelay + 10);
     }
+
+    /**
+     * Creates a link between the source element and the target element such that focus moves
+     * forward/backward between the two elements - regardless of their actual tab order
+     *
+     * @function link
+     * @param   {Object}    sourceEl         the jQuery element focus moves from
+     * @param   {Object}    targetElemSet    the jQuery element set to find a focusable element
+     */
+    function link(sourceEl, targetElemSet) {
+        const targetEl = targetElemSet
+            .find(focusSelector)
+            .addBack(focusSelector)
+            .filter(elemIsFocusable)
+            .first();
+
+        if (targetEl.length === 0) {
+            return;
+        }
+
+        linkedList = linkedList.filter(bundle => !bundle[1].is(targetEl));
+
+        linkedList.push({
+            0: sourceEl,
+            1: targetEl,
+            getDestinationElement: forward => forward ? targetEl : sourceEl
+        });
+    }
+
+    $.extend({
+        link: noSourceLink
+    });
+
+    $.fn.link = function (targetElement) {
+        link($(this), $(targetElement));
+    };
+
+    // sets focus on the next focusable element starting at the currently scoped element
+    $.fn.nextFocus = function () {
+        focusableSearch($(this), true).rvFocus();
+    };
+
+    // move original focus implementation to new prototype property for later use for approved movement
+    HTMLElement.prototype.origfocus = HTMLElement.prototype.focus;
+
+    /**
+     * Sets focus on the provided element if the provided element is contained in the viewer, or is a viewer component.
+     *
+     * You may not use this method if the element is not part of a viewer.
+     *
+     * @function rvFocus
+     * @param   {Object}    opts    configuration obect for setting focus, currently only supports on property (delay) which is the amount of time to delay a focus movement.
+     */
+    HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
+        const jqueryElem = $(this);
+        const elem = jqueryElem[0];
+
+        if (!viewerGroup.contains(jqueryElem)) {
+            console.warn('You cannot use rvFocus on elements outside the viewer'); /*RemoveLogging:skip*/
+            return;
+        }
+
+        // clear any delayed focus movements
+        clearTimeout(focusoutTimerCancel);
+
+        const focusDelay = opts.delay ? opts.delay : 0;
+        setTimeout(() => {
+            // starting focus movement
+            lockFocus = true;
+            elem.origfocus(); // browser implementation
+            lockFocus = false;
+
+            // check focus history, if exists make it last element in history, else do nothing
+            const histIndex = history.findIndex(elem => elem.is(jqueryElem));
+            history.length = histIndex !== -1 ? histIndex : history.length;
+
+            if (jqueryElem.is(':focus')) {
+                history.push(jqueryElem);
+            } else {
+                // applying focus didn't work, try going back to a history element
+                shiftFocus(false, true);
+            }
+        }, focusDelay);
+    };
+
+    /**
+     * Wrapper for original focus which does not affect the use of focus() on non-viewer elements.
+     *
+     * You may not use this method if the element is a part of a viewer.
+     *
+     * @function focus
+     */
+    HTMLElement.prototype.focus = $.fn.focus = function () {
+        const el = $(this);
+
+        const initElem = el.closest('[rv-focus-init]');
+        const isAllowedInitFocus = initElem.length > 0 && !$.contains(initElem[0], document.activeElement);
+        const isAllowedByTabIndex = el.attr('tabindex') === '-3';
+
+        // allow caller to set initial focus if scoped element or any ancestor has attribute rv-focus-init
+        if (isAllowedInitFocus || isAllowedByTabIndex) {
+            el[0].origfocus(); // more performant to use el[0] instead of el, since jQuery focus is implemented on HTMLElement.prototype.focus
+
+        } else if (viewerGroup.contains(el)) {
+            console.warn('You must use rvFocus to set focus on viewer elements'); /*RemoveLogging:skip*/
+            return;
+        }
+
+        el[0].origfocus();
+    };
+
+    // these event functions are disabled for events stemming from within a viewer. Angular material was, for
+    // example, preventing mouse clicks from bubbling for mouse clicks on menu items. In general we want to always
+    // see events then decide if they require action
+    jQuery.Event.prototype.stopImmediatePropagation = disableCommonPrototypes('stopImmediatePropagation');
+    jQuery.Event.prototype.stopPropagation = disableCommonPrototypes('stopPropagation');
+    jQuery.Event.prototype.preventDefault = disableCommonPrototypes('preventDefault');
 
     /**
      * Sets focus on the provided element and updates focus history.
@@ -600,7 +642,7 @@
                 if (takeAction || !viewerGroup.contains($(this.target))) {
                     originalFunc.call(this);
                 } else {
-                    console.warn(`${funcName} is disabled on viewer elements`);
+                    console.warn(`${funcName} is disabled on viewer elements`); /*RemoveLogging:skip*/
                 }
             };
         })();
