@@ -44,9 +44,9 @@
          */
         function open() {
             closePromise = $q($mdSidenav('right').onClose)
-                .then(() => setOtherChromeOpacity(1));
+                .then(() => setOtherChromeOpacity(1, 1));
 
-            setOtherChromeOpacity(0.2);
+            setOtherChromeOpacity(0.2, 0.86);
 
             // close the side menu
             $mdSidenav('left').close();
@@ -61,8 +61,9 @@
              * @function setOtherChromeOpacity
              * @private
              */
-            function setOtherChromeOpacity(value) {
-                $rootElement.find(`rv-panel, rv-appbar`).css('opacity', value);
+            function setOtherChromeOpacity(panelOpacity, layerOpacity) {
+                $rootElement.find(`rv-panel, rv-appbar`).css('opacity', panelOpacity);
+                $rootElement.find(`.rv-esri-map .layersDiv > svg`).css('opacity', layerOpacity);
             }
         }
 
