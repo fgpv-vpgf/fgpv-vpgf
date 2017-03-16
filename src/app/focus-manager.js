@@ -116,12 +116,24 @@
         }
 
         /**
-         * Determines if a given element is a part of this viewer.
+         * Determines if a given element is a part of this viewer. This includes elements which are either trapped inside a viewer, or are
+         * declared as being a member of a viewer.
+         *
+         * @param   {Object}    el      jQuery element object to check if contained in this viewer
+         * @return  {Object}    this viewer instance if contained, undefined otherwise
+         */
+        contains (el) {
+            const container = el.closest(`[rv-focus-member="${this.id}"]`);
+            return container.length > 0 || this.trapped(el) ? this : undefined;
+        }
+
+        /**
+         * Determines if a given element is trapped inside a viewer. When strict is true, the element must be trapped directly by the rootElement.
          * @param   {Object}    el      jQuery element object to check if contained in this viewer
          * @param   {Boolean}   strict  whether the element must strictly be a direct child of the viewers focus trap
          * @return  {Object}    this viewer instance if contained, undefined otherwise
          */
-        contains (el, strict = false) {
+        trapped (el, strict = false) {
             const trap = el.closest(`[rv-trap-focus="${this.id}"]`);
             return (strict && trap.is(this.rootElement)) || (!strict && trap.length > 0) ? this : undefined;
         }
@@ -168,6 +180,15 @@
         }
 
         /**
+         * Returns the viewer, if one exists, that element is trapped inside
+         * @param   {Object}    el - jQuery element object to check if contained in any viewer
+         * @return  {Object}    Viewer instance which contains the element, or undefined if not contained
+         */
+        trapped (el) {
+            return this.viewerList.find(v => v.trapped(el));
+        }
+
+        /**
          * Returns the viewer, if one exists, that is in the given state
          * @param   {Object}    status - a value from `statuses` object
          * @return  {Object}    Viewer instance in the given state
@@ -196,7 +217,7 @@
      * @param   {Object}    mdDialog  - angular material $mdDialg object reference
      */
     function addViewer(rootElem, mdDialog, isFullscreen) {
-        if (!viewerGroup.contains(rootElem)) {
+        if (!viewerGroup.trapped(rootElem)) {
             viewerGroup.add(new Viewer(rootElem, mdDialog, isFullscreen));
         }
     }
@@ -386,7 +407,7 @@
      */
     function onFocusin(event) {
         const targetEl = $(event.target);
-        const viewer = viewerGroup.contains(targetEl);
+        const viewer = viewerGroup.trapped(targetEl);
 
         // only care if viewer is inactive
         if (!viewer || viewer.status !== statuses.INACTIVE) {
@@ -432,7 +453,7 @@
                 // prevent browser from changing focus iff our change took effect OR ours failed but did so on a non-direct child of the viewer trap
                 // In general we ALWAYS want to prevent browser focus movements but on full page viewers shiftfocus will fail (correct behaviour) so we
                 // want to allow the browser to take over so that focus can move to the url.
-                event.preventDefault(shiftState || !viewerActive.contains(hasFocus, true));
+                event.preventDefault(shiftState || !viewerActive.trapped(hasFocus, true));
                 restoreFromHistory = false;
 
             // allow arrow key movement (up, down) on menu items. preventDefault not needed as arrow keys are not handled by the browser
@@ -485,7 +506,7 @@
             // element we want focus on is being shown.
             focusoutTimerCancel = setTimeout(() => {
                 // check if focus is still off the viewer after the delay - if so shift focus back
-                if (!viewer.contains($(document.activeElement))) {
+                if (!viewer.trapped($(document.activeElement))) {
                     shiftFocus(false, true);
                 }
             }, focusoutDelay);
@@ -570,7 +591,7 @@
         const jqueryElem = $(this);
         const elem = jqueryElem[0];
 
-        if (!viewerGroup.contains(jqueryElem)) {
+        if (!viewerGroup.trapped(jqueryElem)) {
             console.warn('You cannot use rvFocus on elements outside the viewer'); /*RemoveLogging:skip*/
             return;
         }
@@ -616,7 +637,7 @@
         if (isAllowedInitFocus || isAllowedByTabIndex) {
             el[0].origfocus(); // more performant to use el[0] instead of el, since jQuery focus is implemented on HTMLElement.prototype.focus
 
-        } else if (viewerGroup.contains(el)) {
+        } else if (viewerGroup.trapped(el)) {
             console.warn('You must use rvFocus to set focus on viewer elements'); /*RemoveLogging:skip*/
             return;
         }
@@ -642,7 +663,7 @@
         return (() => {
             const originalFunc = jQuery.Event.prototype[funcName];
             return function (takeAction) {
-                if (takeAction || !viewerGroup.contains($(this.target))) {
+                if (takeAction || !viewerGroup.trapped($(this.target))) {
                     originalFunc.call(this);
                 } else {
                     console.warn(`${funcName} is disabled on viewer elements`); /*RemoveLogging:skip*/
