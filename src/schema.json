@@ -791,6 +791,7 @@
         "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
         "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
         "shareable": { "type": "boolean", "default": false, "description": "Allow user to generate bookmark URLs from within the map application" },
+        "fullscreen": { "type": "boolean", "default": false, "description": "Indicate that the viewer is the only content on the page and is in fullscreen mode" },
 
         "services": {
             "description": "A set of service endpoints used by the viewer",

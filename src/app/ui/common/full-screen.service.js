@@ -25,7 +25,8 @@
         .module('app.ui.common')
         .factory('fullScreenService', fullScreenService);
 
-    function fullScreenService($rootElement, $timeout, storageService, gapiService, geoService, animationService) {
+    function fullScreenService($rootElement, $timeout, storageService, gapiService, geoService, animationService,
+        configService) {
         const ref = {
             isExpanded: false,
             tl: undefined,
@@ -42,7 +43,7 @@
         const service = {
             toggle,
             isExpanded: () => ref.isExpanded,
-            isFullPageApp: $rootElement.attr('rv-fullpage-app') // TODO: change to config option when this is available
+            isFullPageApp: configService.getCurrent().then(conf => conf.fullscreen)
         };
 
         return service;

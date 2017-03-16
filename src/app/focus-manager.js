@@ -50,17 +50,17 @@
          * @param   {Object}    rootElem - jQuery or HTML element node of the angular viewer, equivalent to $rootElement
          * @param   {Object}    mdDialog  - angular material $mdDialg object reference
          */
-        constructor (rootElem, mdDialog) {
+        constructor (rootElem, mdDialog, isFullscreen) {
             this.rootElement = $(rootElem);
             this.id = this.rootElement.attr('id');
             this.status = statuses.INACTIVE;
+            this.isFullscreen = isFullscreen;
 
             this.mdDialog = mdDialog;
             this._mdDialogLock = false;
             this._mdDialogChain = [];
 
-            // TODO: workaround for full-screen detection - replace with resolution of issue #834
-            if (this.rootElement.attr('rv-fullpage-app') === 'true') {
+            if (this.isFullscreen) {
                 this.setStatus(statuses.ACTIVE);
             }
         }
@@ -195,9 +195,9 @@
      * @param   {Object}    rootElem - jQuery or HTML element node of the angular viewer, equivalent to $rootElement
      * @param   {Object}    mdDialog  - angular material $mdDialg object reference
      */
-    function addViewer(rootElem, mdDialog) {
+    function addViewer(rootElem, mdDialog, isFullscreen) {
         if (!viewerGroup.contains(rootElem)) {
-            viewerGroup.add(new Viewer(rootElem, mdDialog));
+            viewerGroup.add(new Viewer(rootElem, mdDialog, isFullscreen));
         }
     }
 
@@ -240,7 +240,10 @@
                     // this wraps focus such that if the current direction is forward and we're currently on the
                     // last focusable element, we want the very first focusable in this trap, similar to the direction
                     // being reversed and we're on the first element, we would want the very last element in the focus trap
-                    return element.attr('rv-fullpage-app') === 'true' ? $() : focusableSearch(refElem, !forward, true);
+                    // however if focus should be leaving a fullpage viewer, do not wrap an return an empty element (none found)
+                    const viewer = viewerGroup.contains(element);
+                    return element.is(viewer.rootElement) && viewer.isFullscreen ?
+                        $() : focusableSearch(refElem, !forward, true);
                 }
             }
 
