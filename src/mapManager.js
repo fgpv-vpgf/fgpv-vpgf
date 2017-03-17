@@ -187,25 +187,34 @@ module.exports = function (esriBundle, geoApi) {
      * @returns {Number} map rotation angle (in degree)
      */
     function getNorthArrowAngle(map) {
-        // get center point in longitude and use bottom value for latitude
-        const pointB = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326',
-                { x: (map.extent.xmin + map.extent.xmax) / 2, y: map.extent.ymin });
 
-        // north value (set longitude to be half of Canada extent (141° W, 52° W))
-        const pointA = { x: -96, y: 90 };
+        // if web mercator, angle will be 180 (this projection always show north straight and 180 is pointing north)
+        let angle = 180;
 
-        // set info on longitude and latitude
-        const dLon = (pointB.x - pointA.x) * Math.PI / 180;
-        const lat1 = pointA.y * Math.PI / 180;
-        const lat2 = pointB.y * Math.PI / 180;
+        // if not web mercator calculate angle.
+        if (map.spatialReference.wkid !== 3857 && map.spatialReference.wkid !== 102100) {
+            // get center point in longitude and use bottom value for latitude
+            const pointB = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326',
+                    { x: (map.extent.xmin + map.extent.xmax) / 2, y: map.extent.ymin });
 
-        // calculate bearing
-        const y = Math.sin(dLon) * Math.cos(lat2);
-        const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-        const bearing = Math.atan2(y, x) * 180 / Math.PI;
+            // north value (set longitude to be half of Canada extent (141° W, 52° W))
+            const pointA = { x: -96, y: 90 };
 
-        // return angle (180 is pointiong north)
-        return ((bearing + 360) % 360).toFixed(1);
+            // set info on longitude and latitude
+            const dLon = (pointB.x - pointA.x) * Math.PI / 180;
+            const lat1 = pointA.y * Math.PI / 180;
+            const lat2 = pointB.y * Math.PI / 180;
+
+            // calculate bearing
+            const y = Math.sin(dLon) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+            const bearing = Math.atan2(y, x) * 180 / Math.PI;
+
+            // angle (180 is pointing north)
+            angle = ((bearing + 360) % 360).toFixed(1);
+        }
+
+        return angle;
     }
 
     /**
