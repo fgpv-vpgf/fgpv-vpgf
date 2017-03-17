@@ -242,14 +242,16 @@
                                 extend: 'print',
                                 title: self.display.requester.name,
                                 exportOptions: {
-                                    columns: exportColumns(displayData.columns)
+                                    columns: exportColumns(displayData.columns),
+                                    orthogonal: null // use real data, not renderer
                                 }
                             },
                             {
                                 extend: 'csvHtml5',
                                 title: self.display.requester.name,
                                 exportOptions: {
-                                    columns: exportColumns(displayData.columns)
+                                    columns: exportColumns(displayData.columns),
+                                    orthogonal: null // use real data, not renderer
                                 }
                             }
                         ],
@@ -410,7 +412,7 @@
                     // focus on close button when table open (wcag requirement)
                     // at the same time it solve a problem because when focus is on menu button, even if focus is on the
                     // table cell it goes inside the menu and loop through it at the same time as we navigate the table
-                    $timeout(() => { $rootElement.find('[type=\'filters\'] button.rv-close').focus(true); }, 100);
+                    $rootElement.find('[type=\'filters\'] button.rv-close').rvFocus({ delay: 100 });
 
                     // when we navigate with the keyboard, the scroller extension has buffer items in memory. Without this
                     // workaround, the keyboard can only navigate inside those items.
@@ -429,7 +431,7 @@
                         // if there is a button inside the node, focus to it so keyboard user can interact with it
                         // pressing tab will focus the next button
                         const node = $(cell.node()).find('button');
-                        if (node.length > 0) { node.first().focus(true); }
+                        if (node.length > 0) { node.first().rvFocus(); }
 
                         if (!key || !draw) {
                             // need to scroll where the focus is (if outside the visible items). It is not always done automatically
@@ -444,7 +446,7 @@
                             // after the draw, datatable.scroller.page() info are wrong so we can't use them to know if we are
                             // in the visible area
                             const focusRow = scrollCell[0][0].row;
-                            self.table.cell(focusRow, cellInfo.column).focus();
+                            self.table.cell(focusRow, cellInfo.column).rvFocus();
                             self.table.row(focusRow - 1).scrollTo(false); // false because we doesn't want animation
                             draw = false;
                             scrollCell = false;

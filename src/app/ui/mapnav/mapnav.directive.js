@@ -7,7 +7,7 @@
      * @restrict E
      * @description
      *
-     * The `rvMapnav` description handles the map navigation component.
+     * The `rvMapnav` directive handles the rendering of the map navigation component.
      *
      */
     angular
@@ -19,19 +19,12 @@
             restrict: 'E',
             templateUrl: 'app/ui/mapnav/mapnav.html',
             scope: {},
-            link: link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
-
-        /*********/
-
-        function link() { // scope, el, attr, ctrl) {
-
-        }
     }
 
     function Controller(mapNavigationService) {
@@ -41,12 +34,6 @@
         // expose navigation service to the template
         self.config = mapNavigationService.config;
 
-        activate();
-
-        /*********/
-
-        function activate() {
-
-        }
+        mapNavigationService.controls.fullScreen.visible.then(result => self.fullScreenVisisble = !result);
     }
 })();

@@ -174,7 +174,9 @@
             globalRegistry.getMap(appInfo.id)._registerMap(service); // this enables the main API
             globalRegistry.getMap(appInfo.id)._applicationLoaded(service); // this triggers once
             console.log(appInfo.id + ' registered');
-            globalRegistry.focusManager.addViewer($rootElement, $mdDialog);
+
+            configService.getCurrent().then(conf =>
+                globalRegistry.focusManager.addViewer($rootElement, $mdDialog, conf.fullscreen));
         });
 
         $rootScope.$on(events.rvApiHalt, () => {

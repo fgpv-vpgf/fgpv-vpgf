@@ -151,6 +151,18 @@ rv-panel[type='main'] {
         }
     }
 
+    &.geosearch {
+        pointer-events: none;
+
+        .rv-panel {
+            background: transparent;
+
+            &:after {
+                box-shadow: none;
+            }
+        }
+    }
+
     rv-toc,
     rv-toolbox {
         @include content-plug;
