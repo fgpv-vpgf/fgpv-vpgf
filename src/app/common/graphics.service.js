@@ -19,7 +19,8 @@
             svgToCanvas,
             createSvg,
             createCanvas,
-            mergeCanvases
+            mergeCanvases,
+            getTextWidth
         };
 
         return service;
@@ -109,6 +110,23 @@
             });
 
             return baseCanvas;
+        }
+
+        /**
+         * Returns width of the supplied text string.
+         * @function getTextWidth
+         * @param  {Object} canvas cached canvas node
+         * @param  {String} text   string of text to measure
+         * @param  {String} font   text font and size https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font
+         * @return {Number}        width of the text
+         */
+        function getTextWidth(canvas, text, font) {
+            const context = canvas.getContext('2d');
+            context.font = font;
+
+            // measure text width on the canvas: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText
+            const metrics = context.measureText(text);
+            return metrics.width;
         }
     }
 })();

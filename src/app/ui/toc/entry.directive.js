@@ -21,7 +21,7 @@
         .module('app.ui.toc')
         .directive('rvTocEntry', rvTocEntry);
 
-    function rvTocEntry(tocService, $compile, $templateCache, appInfo) {
+    function rvTocEntry($compile, $templateCache, tocService, layoutService, appInfo) {
         const directive = {
             restrict: 'E',
             scope: {
@@ -57,12 +57,27 @@
             // store reference to element on the scope for legend directive to access
             self.element = element;
 
+            self.getTooltipDirection = getTooltipDirection;
+
             if (self.entry.type === 'layer') {
                 // call toggleGroup function on the tocController with the group object (see template)
                 self.defaultAction = tocService.actions.toggleLayerFiltersPanel;
             } else if (self.entry.type === 'group') {
                 // call toggleGroup function on the tocController with the group object (see template)
                 self.defaultAction = tocService.actions.toggleLayerGroup;
+            }
+
+            /**
+             * Maps tooltip direction on the legend items to the current layout size:
+             * - to the right of the legend item in large layouts
+             * - above the element on small and medium layouts
+             *
+             * @function getTooltipDirection
+             * @private
+             * @return {String} direction of the tooltip; either 'right' or 'top'
+             */
+            function getTooltipDirection() {
+                return layoutService.currentLayout() === layoutService.LAYOUT.LARGE ? 'right' : 'top';
             }
         }
     }

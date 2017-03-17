@@ -1,4 +1,4 @@
-This section will show you how to load a viewer on your own host page. 
+This section will show you how to load a viewer on your own host page.
 
 ### Getting the source
 
@@ -12,7 +12,7 @@ Now that we have the source code available, we'll need to add an HTML snippet to
 ```html
 <div class="myMap" is="rv-map" data-rv-config="config.${lang}.json" data-rv-langs='["en-CA", "fr-CA"]'
         data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-keys='["Airports"]'
-        data-rv-restore-bookmark="bookmark" data-rv-fullpage-app="true" >
+        data-rv-restore-bookmark="bookmark">
         <noscript>
         <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -25,7 +25,7 @@ You'll notice that the `is="rv-map"` lets the viewer know this is the element to
 
 Note that we have full control over where we can place this DOM node (anywhere within the `body` tags). We can also assign a CSS style to `.myMap` to change the width or height of the map. For the above example, we want to create a viewer that takes up the entire page, so our CSS style would look something like:
 
-```css 
+```css
  .myMap {
     height: 100%;
 }
@@ -33,7 +33,7 @@ Note that we have full control over where we can place this DOM node (anywhere w
 
 We could also make a viewer a specific width or height with:
 
-```css 
+```css
  .myMap {
     height: 600px;
     width: 600px;
@@ -65,6 +65,6 @@ Polyfills are bundled in the viewers source code under `./lib/ie-polyfills.js`, 
 ```
 
 ### Including bootstrap.js
-Lastly we want to include `bootstrap.js` at the end of our file (right before the closing `body` tag). Refer to {@tutorial app_startup} for more information about the bootstrapping process. 
+Lastly we want to include `bootstrap.js` at the end of our file (right before the closing `body` tag). Refer to {@tutorial app_startup} for more information about the bootstrapping process.
 
 `<script src="../lib/bootstrap.js"><\/script>`

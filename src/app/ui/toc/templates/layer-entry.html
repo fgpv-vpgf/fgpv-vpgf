@@ -7,20 +7,25 @@
     ng-if="self.entry.options.data.enabled"
     ng-click="self.defaultAction(self.entry)">
     <!-- TODO: add aria attribues on the button to provide context on what it does; also mute the actual layer name below, so a screen reader wouldn't pronounce it twice-->
+
+    <md-tooltip md-delay="700" md-direction="{{ self.getTooltipDirection() }}">{{ self.entry.name }}</md-tooltip>
 </md-button>
 
 <div
+    tabindex="0"
     class="rv-layer-body-button rv-button-square"
     ng-mouseover="self.entry.wiggleSymbology(true)"
     ng-mouseleave="self.entry.wiggleSymbology(false)"
-    ng-if="!self.entry.options.data">
+    ng-if="!self.entry.options.data || !self.entry.options.data.enabled">
+
+    <md-tooltip md-delay="700" md-direction="{{ self.getTooltipDirection() }}">{{ self.entry.name }}</md-tooltip>
 </div>
 
 <rv-toc-entry-symbology entry="self.entry" type="self.entry.layerType" symbology="self.entry.symbology"></rv-toc-entry-symbology>
 
 <div class="rv-layer-item-content">
-    <div class="rv-layer-item-name">
-        {{ self.entry.name }}
+
+    <div class="rv-layer-item-name" rv-truncate-title="self.entry.name">
     </div>
 
     <div class="rv-toc-entry-flags">
@@ -30,6 +35,7 @@
         <rv-toc-entry-flag name="scale"></rv-toc-entry-flag>
         <rv-toc-entry-flag name="query"></rv-toc-entry-flag>
         <rv-toc-entry-flag name="filter"></rv-toc-entry-flag>
+        <rv-toc-entry-flag name="wrongprojection"></rv-toc-entry-flag>
     </div>
 
 </div>

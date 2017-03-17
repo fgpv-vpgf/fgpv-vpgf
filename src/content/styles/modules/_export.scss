@@ -6,10 +6,30 @@
         border-radius: 0;
         max-height: calc(100% - #{$viewport-gutter} * 2);
 
+        @include include-size(rv-sm) {
+            .md-button {
+                min-width: 0;
+            }
+
+            .md-select-value {
+                padding: 0;
+                min-width: 100px;
+            }
+
+            .md-button.md-icon-button {
+                margin: 0;
+                width: auto;
+            }
+        }
+
         // TODO: abstract that into some generic rv- class
         // this is to make primary buttons stand out, as in the import wizard
         .md-primary {
             min-width: rem(12);
+
+            @include include-size(rv-sm) {
+                min-width: rem(10);
+            }
         }
 
         md-dialog-actions {
@@ -26,6 +46,10 @@
                 max-width: rem(23);
                 min-width: rem(5);
                 flex: 2;
+
+                @include include-size(rv-sm) {
+                    min-width: rem(7.5);
+                }
             }
         }
 

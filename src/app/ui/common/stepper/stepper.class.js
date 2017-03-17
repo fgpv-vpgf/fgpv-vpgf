@@ -165,7 +165,7 @@
                         // when step is closed. We put 250 ms because with 100ms Safari sometimes lose focus.
                         if (typeof this.currentStep.focus !== 'undefined') {
                             $timeout(() => {
-                                $rootElement.find(`[name=${this.currentStep.focus}]`).first().focus(true);
+                                $rootElement.find(`[name=${this.currentStep.focus}]`).first().rvFocus();
                             }, 250);
                         }
                     }

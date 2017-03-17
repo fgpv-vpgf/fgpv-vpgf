@@ -54,15 +54,16 @@
             return $mdSidenav('right')
                 .open()
                 // Once the side panel is open, set focus on the panel
-                .then(() => $('md-sidenav[md-component-id="right"] button').first().focus(true));
+                .then(() => $('md-sidenav[md-component-id="right"] button').first().rvFocus());
 
             /**
              * Makes all other chrome almost transparent so the basemap is more clearly visible
              * @function setOtherChromeOpacity
              * @private
              */
-            function setOtherChromeOpacity(value) {
-                $rootElement.find(`rv-panel, rv-appbar`).css('opacity', value);
+            function setOtherChromeOpacity(opacity) {
+                $rootElement.find(`rv-panel, rv-appbar`).css('opacity', opacity);
+                $rootElement.find(`.rv-esri-map .layersDiv > *:not(:first)`).css('opacity', opacity);
             }
         }
 

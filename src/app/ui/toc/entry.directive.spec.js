@@ -27,7 +27,16 @@ describe('rvTocEntry', () => {
     };
 
     function mockLayoutService($provide) {
-        $provide.factory('layoutService', $q => () => $q(fulfill => fulfill()));
+        $provide.factory('layoutService', () =>
+            ({
+                LAYOUT: {
+                    SMALL: 'small',
+                    MEDIUM: 'medium',
+                    LARGE: 'large'
+                },
+                currentLayout: () => 'large'
+            }
+        ));
     }
 
     // fake gapi service
@@ -69,12 +78,16 @@ describe('rvTocEntry', () => {
         $provide.service('animationService', () => {});
     }
 
+    function mockStorageService($provide) {
+        $provide.service('storageService', $q => () => $q.resolve());
+    }
+
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
         bard.appModule('app.ui.toc', 'app.templates', 'app.common.router', 'app.geo',
             'pascalprecht.translate', mockConfigService, mockLayoutService, mockGeoService,
             mockToast, mockReverseFilter, mockErrorService, mockDebounceService, mockAppInfo,
-            mockAnimationService);
+            mockAnimationService, mockStorageService);
 
         // inject angular services
         bard.inject('$compile', '$rootScope', '$httpBackend', 'tocService');

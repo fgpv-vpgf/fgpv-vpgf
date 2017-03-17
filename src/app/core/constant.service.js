@@ -23,7 +23,25 @@
 
     angular
         .module('app.core')
-        .constant('events', {
+        .factory('events', events)
+        .constant('bookmarkVersions', { // Bookmark versions https://github.com/fgpv-vpgf/fgpv-vpgf/wiki/Bookmark-Formats
+            A: 'A',
+            B: 'B'
+        })
+        .constant('translations', AUTOFILLED_TRANSLATIONS)
+        .factory('appInfo', appInfo);
+
+    function events($rootScope) {
+        return {
+            /**
+             * A shorthand for $rootScope.$on; no need to inject `$rootScope` separately;
+             * @function $on
+             * @param {String} eventName event name to listen once
+             * @param {Function} listener a callback function to execute
+             */
+            $on: (eventName, listener) =>
+                $rootScope.$on(eventName, listener),
+
             rvReady: 'rvReady', // Fired when map should be created the first time; should not be broadcasted more then once
             rvApiHalt: 'rvApiHalt', // Fired when API should be put back into 'queue' mode
             rvApiReady: 'rvApiReady', // Fired when API should let calls through
@@ -34,14 +52,10 @@
 
             rvLangSwitch: 'rvLangSwitch', // Fired when language is switch (loadNewLang function)
 
-            rvMapPan: 'rvMapPan'
-        })
-        .constant('bookmarkVersions', { // Bookmark versions https://github.com/fgpv-vpgf/fgpv-vpgf/wiki/Bookmark-Formats
-            A: 'A',
-            B: 'B'
-        })
-        .constant('translations', AUTOFILLED_TRANSLATIONS)
-        .factory('appInfo', appInfo);
+            rvMapPan: 'rvMapPan',
+            rvExtentChange: 'extentChange' // TODO: rename event to `rvExtentChange` and all the instances that use hardcoded `extentChange` instance
+        };
+    }
 
     // Angular services that have no constructors (services that are just plain objects) are __shared__ across app instances
     // to have it per instance, the appInfo service needs to have some initialization logic
