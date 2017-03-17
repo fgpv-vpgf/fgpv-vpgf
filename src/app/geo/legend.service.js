@@ -140,8 +140,20 @@
              * @return {Object}       legend item
              */
             function tileGenerator(layer) {
+                // show icon if map projection does not match own projection
+                if (layer._layer._map.spatialReference.wkid !== layer.spatialReference.wkid) {
+                    layer.config.flags.wrongprojection.visible = true;
+                }
+
                 const state = legendEntryFactory.singleEntryItem(layer.config, layer);
                 layer.legendEntry = state;
+
+                // get our legend from the server (as we have no local renderer)
+                // FIXME in legend-entry.service, function SINGLE_ENTRY_ITEM.init, there is a FIXME to prevent
+                // the stripping of the final part of the url for non-feature layers.
+                // for now, we correct the issue here. when it is fixed, this function should be re-adjusted
+                gapiService.gapi.symbology.mapServerToLocalLegend(`${state.url}/${state.featureIdx}`).then(legendData =>
+                    applySymbology(state, legendData.layers[0]));
 
                 return state;
             }

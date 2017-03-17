@@ -373,7 +373,7 @@
 
             // there is a bug with Firefox and Safari on a Mac. They don't focus back to add layer when close
             $timeout(() => {
-                $rootElement.find('.rv-loader-add').first().focus(true);
+                $rootElement.find('.rv-loader-add').first().rvFocus();
             }, 0);
         }
     }

@@ -34,15 +34,26 @@
             return $q(resolve => {
                 opts.focusOnOpen = opts.focusOnOpen === false ? false : true;
                 opts.onComplete = (_, element) => {
-                    // newly created focus trap tabindex must be -1 as required by focus manager for all focusable elements
-                    element
-                        .find('.md-dialog-focus-trap')
-                        .attr('tabindex', -1);
+                    // these traps are not needed and can cause issues, remove from DOM
+                    element.find('.md-dialog-focus-trap').remove();
 
+                    // keep focus within the dialog
                     element
                         .find('md-dialog')
                         .attr('rv-trap-focus', '')
-                        .focus(opts.focusOnOpen);
+                        .removeAttr('tabindex');
+
+                    // if an element with property rv-close-button exists we set focus on it. Sometimes the close button is
+                    // not the first focusable element, but in most cases it should be the first focused element
+                    if (opts.focusOnOpen) {
+                        const closeBtn = $(element).find('[rv-close-button]');
+                        if (closeBtn.length === 0) {
+                            element.nextFocus();
+                        } else {
+                            closeBtn.first().rvFocus();
+                        }
+                    }
+
                     resolve();
                 };
                 origShow(opts);

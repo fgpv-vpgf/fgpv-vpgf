@@ -26,7 +26,8 @@
             translate-attr-aria-label="contentPane.aria.close"
             class="rv-close md-icon-button black rv-button-24"
             ng-click="self.closePanel()"
-            ng-if="self.closePanel">
+            ng-if="self.closePanel"
+            rv-close-button>
             <md-tooltip>{{'contentPane.tooltip.close' | translate}}</md-tooltip>
             <md-icon class="rv-lt-lg" md-svg-src="navigation:arrow_back"></md-icon>
             <md-icon class="rv-lg" md-svg-src="navigation:close"></md-icon>
@@ -43,7 +44,8 @@
             aria-label="Close"
             class="md-icon-button black rv-button-auto"
             ng-click="self.closePanel()"
-            ng-if="self.closePanel">
+            ng-if="self.closePanel"
+            rv-close-button>
             <md-tooltip>Close</md-tooltip>
             <md-icon class="rv-show-single" md-svg-src="navigation:arrow_back"></md-icon>
             <md-icon class="rv-hide-single" md-svg-src="navigation:close"></md-icon>

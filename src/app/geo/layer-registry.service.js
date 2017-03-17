@@ -550,6 +550,13 @@
              *                                  true used to zoom to a graphic element; false not used to zoom to a graphic element
              */
             function zoomToScale(layer, zoomIn, zoomGraphic = false) {
+
+                // TODO: remove when all this gets refactored
+                // Implementation of "Working Lazy" solution provided by James (issue https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1637)
+                if (typeof layer === 'undefined') {
+                    return setMapScale({}, geoState.lods[geoState.lods.length - 1], false);
+                }
+
                 // if the function is used to zoom to a graphic element and the layer is out of scale we always want
                 // the layer to zoom to the maximum scale allowed for the layer. In this case, zoomIn must be
                 // always false
@@ -652,6 +659,8 @@
                 if (configUpdate) {
                     configUpdate(lr.config);
                 }
+
+                l.state = Geo.Layer.States.NEW;
                 mapObject.addLayer(lr.constructLayer(), pos);
             }
 

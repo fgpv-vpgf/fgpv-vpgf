@@ -25,7 +25,9 @@
 
     // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
-    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement) {
+    function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement,
+        storageService) {
+
         const service = {
             addState,
             setActive,
@@ -36,7 +38,8 @@
             panelHistory: [],
             state: angular.copy(initialState),
             display: angular.copy(initialDisplay),
-            setCloseCallback
+            setCloseCallback,
+            panelDimension
         };
 
         const fulfillStore = {}; // keeping references to promise fulfill functions
@@ -49,6 +52,27 @@
         return service;
 
         /*********/
+
+        /**
+         * Computes the width and height of the provided panel in pixels.
+         *
+         * @function panelDimension
+         * @param   {String}    pName   the name of the panel to compute dimensions
+         * @returns {Object}    an object with width and height properties in pixels
+         */
+        function panelDimension(pName) {
+            const dimensions = {
+                width: 0,
+                height: 0
+            };
+
+            if (service.state[pName].active) {
+                dimensions.width = storageService.panels[pName].outerWidth();
+                dimensions.height = storageService.panels[pName].outerHeight();
+            }
+
+            return dimensions;
+        }
 
         /**
          * Adds new items to the state collection with overrride;
@@ -176,8 +200,12 @@
             return $q(fulfill => {
                 const fulfillKey = `${property}${itemName}`; // key to store `fulfill` function
                 const skipKey = `${property}Skip`; // key to store `skip` animation flag
+                const skipOverrideKey = `${property}SkipOverride`;
 
-                item[skipKey] = skip; // even if the item has proper state, set its skip value for sanity
+                if (!item[skipOverrideKey]) {
+                    // set the skip value __only__ when it's not overridden
+                    item[skipKey] = skip;
+                }
 
                 // console.log('settingItem', item, item.active, value);
                 if (item[property] !== value) {
