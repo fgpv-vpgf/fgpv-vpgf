@@ -245,6 +245,20 @@
             return this._proxy('northArrow');
         },
 
+        /**
+        * Provides data needed for the display of a map coordinates on the map in latitude/longitude (degree, minute, second and decimal degree).
+        *
+        * The returned object has the following properties:
+        *    dms                {Number}    lat/long in degree, minute, second
+        *    decimal           {Number}    lat/long in decimal degree
+        *
+        * @function  mapCoordinates
+        * @returns  {Object}    an object containing data needed for map coordinates
+        */
+        getMapCoordinates() {
+            return this._proxy('mapCoordinates');
+        },
+
         _init(appID) {
             this.appID = appID;
 

@@ -1,5 +1,8 @@
+/* global Ease, BezierEasing */
 (() => {
     'use strict';
+
+    const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
     /**
      * @restrict A
@@ -16,8 +19,9 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
+    // jshint maxparams:11
     function rvInitMap($rootScope, geoService, events, storageService, mapService, gapiService, $rootElement,
-        $interval, globalRegistry) {
+        $interval, globalRegistry, animationService, stateManager) {
 
         // key codes that are currently active
         let keyMap = [];
@@ -54,6 +58,27 @@
 
                     el.on('mousedown', mouseDownHandler);
                     el.on('mouseup', mouseUpHandler);
+
+                    // scale and map coordinates animation
+                    const scaleAnimation = animationService.timeLineLite({ paused: true });
+                    scaleAnimation
+                        .to(el.find('.esriScalebar'), 0.3, {
+                            left: 425,
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        }, 0)
+                        .to(el.parent().find('.rv-map-coordinates'), 0.3, {
+                            left: 575,
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        }, 0);
+
+                    // watch main panel open to move scalebar and map coordinates
+                    $rootScope.$watch(() => stateManager.state.main.active, (val) => {
+                        if (val) {
+                            scaleAnimation.play();
+                        } else {
+                            scaleAnimation.reverse();
+                        }
+                    });
                 }
             });
 

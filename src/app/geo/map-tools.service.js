@@ -10,10 +10,17 @@
         .module('app.geo')
         .factory('mapToolService', mapToolService);
 
-    function mapToolService(geoService, gapiService) {
+    function mapToolService(geoService, gapiService, $translate) {
 
         const service = {
-            northArrow
+            northArrow,
+            mapCoordinates
+        };
+
+        // get values once to reuse in private functions (cardinal points and degree symbol)
+        // need to set in function because $translate.instant does not work at this point
+        const cardinal = {
+            deg: String.fromCharCode(176)
         };
 
         return service;
@@ -77,6 +84,79 @@
                 mapPntCntr,
                 mapScrnCntr
             };
+        }
+
+        /**
+        * Provides data needed for the display of a map coordinates on the map in latitude/longitude (degree, minute, second and decimal degree).
+        *
+        * The returned object has the following properties:
+        *    dms                {Number}    lat/long in degree, minute, second
+        *    decimal           {Number}    lat/long in decimal degree
+        *
+        * @function  mapCoordinates
+        * @param {Object} point point in map coordinate to project and get lat/long from
+        * @returns  {Object}    an object containing data needed for map coordinates
+        */
+        function mapCoordinates(point) {
+            // project point in lat/long
+            const coord = gapiService.gapi.proj.localProjectGeometry(4326, point);
+
+            // get values once to reuse in private functions (cardinal points and degree symbol)
+            if (typeof cardinal.east === 'undefined') {
+                cardinal.east = $translate.instant('geo.coord.east');
+                cardinal.west = $translate.instant('geo.coord.west');
+                cardinal.north = $translate.instant('geo.coord.north');
+                cardinal.south = $translate.instant('geo.coord.south');
+            }
+
+            // degree, minute, second
+            const dmsCoords = convertDDToDMS(coord.y, coord.x);
+            const dms = `${dmsCoords.y} | ${dmsCoords.x}`;
+
+            // decimal
+            coord.y = coord.y.toFixed(5);
+            coord.x = coord.x.toFixed(5);
+            coord.y = (coord.y > 0) ? `${coord.y} ${cardinal.north}` : `${Math.abs(coord.y)} ${cardinal.south}`;
+            coord.x = (coord.x < 0) ? `${Math.abs(coord.x)} ${cardinal.west}` : `${coord.x} ${cardinal.east}`;
+            const decimal = `${coord.y} | ${coord.x}`;
+
+            return { dms, decimal };
+        }
+
+        /**
+        * Convert lat/long in decimal degree to degree, minute, second.
+        *
+        * @function convertDDToDMS
+        * @private
+        * @param {Number} lat latitude value
+        * @param {Number} long longitude value
+        * @return {Object} object who contain lat/long in degree, minute, second
+        */
+        function convertDDToDMS(lat, long) {
+            const oy = (lat > 0) ? cardinal.north : cardinal.south;
+            const dy = Math.floor(lat);
+            const my = Math.floor((lat - dy) * 60);
+            const sy = Math.round((lat - dy - my / 60) * 3600);
+
+            const ox = (long < 0) ? cardinal.west : cardinal.east;
+            const dx = Math.floor(long);
+            const mx = Math.floor((long - dx) * 60);
+            const sx = Math.round((long - dx - mx / 60) * 3600);
+
+            return { y: `${Math.abs(dy)}${cardinal.deg} ${padZero(my)}\' ${padZero(sy)}\" ${oy}`,
+                    x: `${Math.abs(dx)}${cardinal.deg} ${padZero(mx)}\' ${padZero(sx)}\" ${ox}` };
+        }
+
+        /**
+        * Pad value with leading 0 to make sure there is always 2 digits if number is below 10.
+        *
+        * @function padZero
+        * @private
+        * @param {Number} val value to pad with 0
+        * @return {String} string with always 2 characters
+        */
+        function padZero(val) {
+            return (val >= 10) ? `${val}` : `0${val}`;
         }
     }
 

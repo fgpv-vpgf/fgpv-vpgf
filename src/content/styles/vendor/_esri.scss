@@ -24,7 +24,7 @@
 
     .scalebar_bottom-left {
         left: 25px;
-        bottom: 25px;
+        bottom: 5px;
     }
 
     .scalebar_bottom-center {
@@ -40,8 +40,10 @@
     .esriScalebar {
         z-index: 30;
         position: absolute;
-        width: 0;
-        height: 20px;
+        width: 150px;
+        height: 40px;
+        padding: 2px;
+        background-color: rgba(255, 255, 255, 0.62);
     }
 
     .esriScalebarRuler {

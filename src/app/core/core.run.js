@@ -168,7 +168,8 @@
             registerPlugin: function () {
                 pluginService.register(...arguments, this);
             },
-            northArrow: mapToolService.northArrow
+            northArrow: mapToolService.northArrow,
+            mapCoordinates: mapToolService.mapCoordinates
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService
