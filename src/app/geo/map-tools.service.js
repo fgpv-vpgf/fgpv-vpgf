@@ -10,10 +10,17 @@
         .module('app.geo')
         .factory('mapToolService', mapToolService);
 
-    function mapToolService(geoService, gapiService) {
+    function mapToolService(geoService, gapiService, $translate) {
 
         const service = {
-            northArrow
+            northArrow,
+            mapCoordinates
+        };
+
+        // get values once to reuse in private functions (cardinal points and degree symbol)
+        // need to set in function because $translate.instant does not work at this point
+        const cardinal = {
+            deg: String.fromCharCode(176)
         };
 
         return service;
@@ -77,6 +84,95 @@
                 mapPntCntr,
                 mapScrnCntr
             };
+        }
+
+        /**
+        * Provides data needed for the display of a map coordinates on the map in latitude/longitude (degree, minute, second and decimal degree) if
+        * wkid is 4326 or only show coordinates if wkid is different
+        *
+        * The returned array can contain 2 items:
+        *   if spatial reference ouput = 4326 (lat/long)
+        *    [0]           {String}    lat/long in degree, minute, second (N/S) | lat/long in degree, minute, second (E/W)
+        *    [1]           {String}    lat/long in decimal degree (N/S)| lat/long in decimal degree (E/W)
+        *   otherwise
+        *    [0]           {String}    number (N/S)
+        *    [1]           {String}    number (E/W)
+        *
+        * @function  mapCoordinates
+        * @param {Object} point point in map coordinate to project and get lat/long from
+        * @param {Object} outMouseSR output wkid to show coordinates
+        * @returns  {Array}    an array containing data needed for map coordinates
+        */
+        function mapCoordinates(point, outMouseSR) {
+            // project point in lat/long
+            const coord = gapiService.gapi.proj.localProjectGeometry(4326, point);
+
+            // get values once to reuse in private functions (cardinal points and degree symbol)
+            if (typeof cardinal.east === 'undefined') {
+                cardinal.east = $translate.instant('geo.coord.east');
+                cardinal.west = $translate.instant('geo.coord.west');
+                cardinal.north = $translate.instant('geo.coord.north');
+                cardinal.south = $translate.instant('geo.coord.south');
+            }
+
+            // get cardinality
+            const yLabel = (coord.y > 0) ? cardinal.north : cardinal.south;
+            const xLabel = (coord.x < 0) ? cardinal.west : cardinal.east;
+
+            const coordArray = [];
+            if (outMouseSR === 4326) {
+                // degree, minute, second
+                const dmsCoords = convertDDToDMS(coord.y, coord.x);
+                coordArray.push(`${dmsCoords.y} ${yLabel} | ${dmsCoords.x} ${xLabel}`);
+
+                // decimal
+                coord.y = coord.y.toFixed(5);
+                coord.x = coord.x.toFixed(5);
+                coord.y = `${(coord.y > 0) ? coord.y : Math.abs(coord.y)} ${yLabel}`;
+                coord.x = `${(coord.x < 0) ? Math.abs(coord.x) : coord.x} ${xLabel}`;
+                coordArray.push(`${coord.y} | ${coord.x}`);
+            } else {
+                // project point if wkid was different then 4326
+                const coordProj = gapiService.gapi.proj.localProjectGeometry(outMouseSR, point);
+                coordArray.push(`${coordProj.y.toFixed(5)} ${yLabel}`);
+                coordArray.push(`${coordProj.x.toFixed(5)} ${xLabel}`);
+            }
+
+            return coordArray;
+        }
+
+        /**
+        * Convert lat/long in decimal degree to degree, minute, second.
+        *
+        * @function convertDDToDMS
+        * @private
+        * @param {Number} lat latitude value
+        * @param {Number} long longitude value
+        * @return {Object} object who contain lat/long in degree, minute, second
+        */
+        function convertDDToDMS(lat, long) {
+            const dy = Math.floor(lat);
+            const my = Math.floor((lat - dy) * 60);
+            const sy = Math.round((lat - dy - my / 60) * 3600);
+
+            const dx = Math.floor(long);
+            const mx = Math.floor((long - dx) * 60);
+            const sx = Math.round((long - dx - mx / 60) * 3600);
+
+            return { y: `${Math.abs(dy)}${cardinal.deg} ${padZero(my)}\' ${padZero(sy)}\"`,
+                    x: `${Math.abs(dx)}${cardinal.deg} ${padZero(mx)}\' ${padZero(sx)}\"` };
+        }
+
+        /**
+        * Pad value with leading 0 to make sure there is always 2 digits if number is below 10.
+        *
+        * @function padZero
+        * @private
+        * @param {Number} val value to pad with 0
+        * @return {String} string with always 2 characters
+        */
+        function padZero(val) {
+            return (val >= 10) ? `${val}` : `0${val}`;
         }
     }
 
