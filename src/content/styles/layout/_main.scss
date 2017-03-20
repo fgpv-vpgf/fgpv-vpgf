@@ -125,7 +125,7 @@ rv-panel[type='filters'] {
 rv-panel[type='main'] {
 
     @include include-size(rv-gt-sm) {
-        @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $toolbar-width, $from: top);
+        @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter + 40, $width: $toolbar-width, $from: top);
     }
 
     @include include-size(rv-sm) {

@@ -786,6 +786,7 @@
                             setMapLoadingFlag(true, 300);
                         },
                         'extent-change': data => $rootScope.$broadcast('extentChange', data),
+                        'mouse-move': data => $rootScope.$broadcast('mouseMove', data.mapPoint),
                         'update-end': () => {
                             console.log('   Map update END!');
 
