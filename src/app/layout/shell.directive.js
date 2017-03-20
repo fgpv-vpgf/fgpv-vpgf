@@ -16,7 +16,7 @@
         .directive('rvShell', rvShell);
 
     function rvShell($rootElement, $rootScope, events, storageService, stateManager, configService, layoutService,
-        mapToolService) {
+        mapToolService, debounceService) {
 
         const directive = {
             restrict: 'E',
@@ -58,6 +58,9 @@
                 updateNorthArrow();
                 // init here since rvExtentChange fires before rvApiReady which will cause gapi issues
                 $rootScope.$on(events.rvExtentChange, updateNorthArrow);
+
+                // set map coordinates
+                $rootScope.$on('rvMouseMove', debounceService.registerDebounce(updateMapCoordinates, 100, false));
             });
 
             $rootElement.on('keydown', event => {
@@ -93,6 +96,17 @@
                         .css('top', Math.max(2, north.screenY))
                         .css('transform', north.screenY > 0 ? '' : `rotate(${north.rotationAngle}deg)`);
                 }
+            }
+
+            /**
+            * Displays map coordinates on map
+            * @function  updateMapCoordinates
+            */
+            function updateMapCoordinates(evt, point) {
+                const coord = mapToolService.mapCoordinates(point);
+                const coordElem = el.find('.rv-map-coordinates span');
+                coordElem[0].innerText = coord.dms;
+                coordElem[1].innerText = coord.decimal;
             }
         }
 
