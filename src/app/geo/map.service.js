@@ -158,6 +158,9 @@
                     if (geoState.blankBaseMapId === null) {
                         $timeout(() => setAttribution(selectedBaseMapCfg), 500);
                     }
+
+                    // will be use by the scalebar animation. Animation needs to be recreated on projection change.
+                    $rootScope.$broadcast('rvBasemapChange');
                 });
 
                 if (config.map.initialBasemapId && config.map.initialBasemapId.startsWith(blankBaseMapIdPattern)) {
@@ -786,6 +789,7 @@
                             setMapLoadingFlag(true, 300);
                         },
                         'extent-change': data => $rootScope.$broadcast('extentChange', data),
+                        'mouse-move': data => $rootScope.$broadcast('rvMouseMove', data.mapPoint),
                         'update-end': () => {
                             console.log('   Map update END!');
 

@@ -16,7 +16,7 @@
         .directive('rvShell', rvShell);
 
     function rvShell($rootElement, $rootScope, events, storageService, stateManager, configService, layoutService,
-        mapToolService) {
+        mapToolService, debounceService, geoService) {
 
         const directive = {
             restrict: 'E',
@@ -27,6 +27,8 @@
             controllerAs: 'self',
             bindToController: true
         };
+
+        let outMouseSR;
 
         let elemWidth; // last known width of the $rootElement
 
@@ -54,10 +56,28 @@
             $rootScope.$on(events.rvApiReady, () => {
                 $rootElement.find('.rv-esri-map svg').attr('focusable', false);
 
-                // set initial position of the north arrow
-                updateNorthArrow();
-                // init here since rvExtentChange fires before rvApiReady which will cause gapi issues
-                $rootScope.$on(events.rvExtentChange, updateNorthArrow);
+                configService.getCurrent().then(config => {
+                    const mapConfig = config.map.components;
+
+                    if (mapConfig.northArrow.enabled) {
+                        // set initial position of the north arrow
+                        updateNorthArrow();
+
+                        // init here since rvExtentChange fires before rvApiReady which will cause gapi issues
+                        $rootScope.$on(events.rvExtentChange, updateNorthArrow);
+                    }
+
+                    if (mapConfig.mouseInfo.enabled) {
+                        // set ouput spatial reference for mouse coordinates. If spatial reference is defined in configuration file
+                        // use it. If not, use the basemap spatial reference
+                        const sr = mapConfig.mouseInfo.spatialReference;
+                        outMouseSR = (typeof sr !== 'undefined') ? sr.wkid : geoService.mapObject.spatialReference;
+
+                        // set map coordinates
+                        $rootScope.$on('rvMouseMove',
+                            debounceService.registerDebounce(updateMapCoordinates, 100, false));
+                    }
+                });
             });
 
             $rootElement.on('keydown', event => {
@@ -93,6 +113,19 @@
                         .css('top', Math.max(2, north.screenY))
                         .css('transform', north.screenY > 0 ? '' : `rotate(${north.rotationAngle}deg)`);
                 }
+            }
+
+            /**
+            * Displays map coordinates on map
+            * @function  updateMapCoordinates
+            * @param {Object} evt mouse mouve events
+            * @param {Object} point point to show coordinates for
+            */
+            function updateMapCoordinates(evt, point) {
+                const coords = mapToolService.mapCoordinates(point, outMouseSR);
+                const coordElem = el.find('.rv-map-coordinates span');
+                coordElem[0].innerText = coords[0];
+                coordElem[1].innerText = coords[1];
             }
         }
 
