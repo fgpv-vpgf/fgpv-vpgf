@@ -1,5 +1,8 @@
+/* global Ease, BezierEasing */
 (() => {
     'use strict';
+
+    const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
     /**
      * @restrict A
@@ -16,8 +19,9 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
+    // jshint maxparams:11
     function rvInitMap($rootScope, geoService, events, storageService, mapService, gapiService, $rootElement,
-        $interval, globalRegistry) {
+        $interval, globalRegistry, animationService, stateManager) {
 
         // key codes that are currently active
         let keyMap = [];
@@ -54,6 +58,47 @@
 
                     el.on('mousedown', mouseDownHandler);
                     el.on('mouseup', mouseUpHandler);
+
+                    // scale animation
+                    let scaleAnimation = animationService.timeLineLite();
+                    const scaleTween = scaleAnimation
+                        .to(el.find('.esriScalebar'), 0.3, {
+                            left: 425,
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        }, 0);
+
+                    // coordinates animation
+                    const coordAnimation = animationService.timeLineLite();
+                    coordAnimation
+                        .to(el.parent().find('.rv-map-coordinates'), 0.3, {
+                            left: 575,
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        }, 0);
+
+                    // on basemap change, if projection is different, map is recreated with a new scalebar.
+                    // when this is done, the reference to the scale is lost and the animation break.
+                    $rootScope.$on('rvBasemapChange', () => {
+                        // remove the tween (reference is lost) and recreate it
+                        scaleAnimation.remove(scaleTween);
+                        scaleAnimation.to(el.find('.esriScalebar'), 0.3, {
+                            left: 425,
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        }, 0);
+
+                        // if main panel is active, run the animation
+                        if (stateManager.state.main.active) { scaleAnimation.play(); }
+                    });
+
+                    // watch main panel open to move scalebar and map coordinates
+                    $rootScope.$watch(() => stateManager.state.main.active, (val) => {
+                        if (val) {
+                            scaleAnimation.play();
+                            coordAnimation.play();
+                        } else {
+                            scaleAnimation.reverse();
+                            coordAnimation.reverse();
+                        }
+                    });
                 }
             });
 

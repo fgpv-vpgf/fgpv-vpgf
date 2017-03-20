@@ -245,6 +245,24 @@
             return this._proxy('northArrow');
         },
 
+        /**
+        * Provides data needed for the display of a map coordinates on the map in latitude/longitude (degree, minute, second and decimal degree).
+        *
+        * The returned array can contain 2 items:
+        *   if spatial reference ouput = 4326 (lat/long)
+        *    [0]           {String}    lat/long in degree, minute, second (N/S) | lat/long in degree, minute, second (E/W)
+        *    [1]           {String}    lat/long in decimal degree (N/S)| lat/long in decimal degree (E/W)
+        *   otherwise
+        *    [0]           {String}    number (N/S)
+        *    [1]           {String}    number (E/W)
+        *
+        * @function  mapCoordinates
+        * @returns  {Array}    an array containing data needed for map coordinates
+        */
+        getMapCoordinates() {
+            return this._proxy('mapCoordinates');
+        },
+
         _init(appID) {
             this.appID = appID;
 

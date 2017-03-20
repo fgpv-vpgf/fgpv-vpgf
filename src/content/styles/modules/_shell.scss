@@ -31,6 +31,24 @@
             padding: rem(0.5);
         }
 
+        .rv-map-coordinates {
+            position: absolute;
+            left: rem(17.5);
+            bottom: rem(0.5);
+            padding: rem(0.2);
+            display: flex;
+            flex-direction: column;
+            font-size: rem(1.2);
+            font-weight: 500;
+            line-height: 1.5;
+            background-color: rgba(255, 255, 255, 0.62);
+
+            span {
+                width: rem(16);
+                text-align: center;
+            }
+        }
+
         @include include-size(rv-sm) {
             .rv-north-arrow {
                 top: $toolbar-height;
