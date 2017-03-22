@@ -30,6 +30,14 @@
             > li:last-child .rv-help-list{
                 border-bottom: none;
             }
+
+            table {
+                margin-bottom: 15px;
+            }
+
+            td, th {
+                padding: 0px 5px;
+            }
         }
 
         .rv-content, .rv-subsection {
