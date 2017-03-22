@@ -11,6 +11,7 @@ To be accessible and WCAG 2 compliant, the viewer needs to support keyboard user
 | rv-ignore-focusout    |  Normally the focus manager attempts to recover from a loss of focus by moving back through its history. This attribute disables this behaviour so no recovery is initiated.
 | rv-focus-init         |  Allows the use of focus() on the viewer element with this attribute or any of its children if focus is not current on the element or any of its children. This allows outside libraries to set initial focus normally, yet restricts them on subsequent movement attempts.
 | rv-focus-member | Declares an element and all its children are a part of the viewer. Unlike rv-focus-trap, focus is not trapped inside these elements. The most common use case is for elements rendered outside the viewers DOM structure where we do not want to control focus - we only wish to recognize that it is a part of the viewer so that action taken within it do not deactivate the focus manager.  |
+| rv-focus-exempt | Declares an element and all its children to be exempt from setting their own focus. This has no effect on the normal flow of focus by the FM.  |
 
 
 #### Important concepts you should know

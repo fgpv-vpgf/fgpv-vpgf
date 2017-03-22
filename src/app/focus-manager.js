@@ -591,7 +591,7 @@
         const jqueryElem = $(this);
         const elem = jqueryElem[0];
 
-        if (!viewerGroup.trapped(jqueryElem)) {
+        if (!viewerGroup.trapped(jqueryElem) && !opts.exempt) {
             console.warn('You cannot use rvFocus on elements outside the viewer'); /*RemoveLogging:skip*/
             return;
         }
@@ -630,19 +630,23 @@
         const el = $(this);
 
         const initElem = el.closest('[rv-focus-init]');
+        const exemptElem = el.closest('[rv-focus-exempt]');
         const isAllowedInitFocus = initElem.length > 0 && !$.contains(initElem[0], document.activeElement);
+        const isAllowedByExemption = exemptElem.length > 0;
         const isAllowedByTabIndex = el.attr('tabindex') === '-3';
 
         // allow caller to set initial focus if scoped element or any ancestor has attribute rv-focus-init
-        if (isAllowedInitFocus || isAllowedByTabIndex) {
-            el[0].origfocus(); // more performant to use el[0] instead of el, since jQuery focus is implemented on HTMLElement.prototype.focus
+        if (isAllowedInitFocus || isAllowedByTabIndex || isAllowedByExemption) {
+            // must process via rvFocus so that FM is aware of the change, and can add it to the history.
+            // otherwise calling origfocus bypasses FM, which makes it think focus is being lost and tries to recover
+            el[0].rvFocus({ exempt: true }); // more performant to use el[0] instead of el, since jQuery focus is implemented on HTMLElement.prototype.focus
 
         } else if (viewerGroup.trapped(el)) {
             console.warn('You must use rvFocus to set focus on viewer elements'); /*RemoveLogging:skip*/
             return;
+        } else {
+            el[0].origfocus();
         }
-
-        el[0].origfocus();
     };
 
     // these event functions are disabled for events stemming from within a viewer. Angular material was, for
