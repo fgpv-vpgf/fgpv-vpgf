@@ -17,6 +17,8 @@ module.exports = function () {
     var build = './build/'; // build target, suitable for usage as a dev server
     var libBuild = build + 'lib/';
     var sampleBuild = build + 'samples/';
+    var helpSource = src + 'locales/help/**/*';
+    var helpBuild = sampleBuild + 'help/';
     var dist = './dist/'; // contains packaged builds (ex: tgz and zip)
     var app = src + 'app/';
     var tmp = '.tmp/';
@@ -134,6 +136,8 @@ module.exports = function () {
         build,
         libBuild,
         sampleBuild,
+        helpSource,
+        helpBuild,
         dist,
         root,
         tmp,
