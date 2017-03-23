@@ -349,6 +349,14 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
         // if there is a better option we can add this back but for now '../lib/ie-polyfills.js' is hardcoded
         // const iePolyOpts = { ignorePath: '../build', addPrefix: '..', relative: true, name: 'ie', removeTags: true };
 
+        gulp
+            .src(config.helpSource)
+            .pipe(gulp.dest(config.helpBuild));
+
+        gulp
+            .src(config.aboutSource)
+            .pipe(gulp.dest(config.aboutBuild));
+
         return gulp
             .src(index)
             .pipe($.inject(gulp.src(config.jsInjectorFilePath), injectOpts))

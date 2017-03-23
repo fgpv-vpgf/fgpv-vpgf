@@ -1,3 +1,4 @@
+/* global marked */
 (() => {
 
     // this is a default configuration of the side menu
@@ -54,7 +55,8 @@
             config: {},
             controls: {},
 
-            ShareController
+            ShareController,
+            AboutController
         };
 
         service.controls = {
@@ -103,6 +105,24 @@
                         fullscreen: false,
                         onShowing: (scope, element) => (scope.element = element.find('.side-nav-summary'))
                     }).then(() => ($rootElement.find('.rv-shareLink').select()));
+                }
+            },
+            about: {
+                type: 'link',
+                label: 'sidenav.label.about',
+                icon: 'action:info_outline',
+                action: () => {
+                    service.close();
+
+                    $mdDialog.show({
+                        controller: service.AboutController,
+                        controllerAs: 'self',
+                        templateUrl: 'app/ui/sidenav/about-dialog.html',
+                        parent: storageService.panels.shell,
+                        disableParentScroll: false,
+                        clickOutsideToClose: true,
+                        fullscreen: false
+                    });
                 }
             },
             fullscreen: {
@@ -238,6 +258,34 @@
                 if (scope.element !== undefined) {
                     scope.element.find('.rv-shareLink').select();
                 }
+            }
+        }
+
+        function AboutController(scope, $mdDialog, $sanitize, $http, configService) {
+            'ngInject';
+            const self = this;
+
+            self.close = $mdDialog.hide;
+
+            // get about map description from markdown or config file
+            configService.getCurrent().then(conf => self.about = conf.about)
+                .then(about => about.type === 'config' ? self.about = about.value : useMarkdown(about.value));
+
+            function useMarkdown() {
+                const renderer = new marked.Renderer();
+                // make it easier to use images in markdown by prepending path to href if href is not an external source
+                // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
+                renderer.image = (href, title) => {
+                    if (href.indexOf('http') === -1) {
+                        href = 'about/images/' + href;
+                    }
+                    return `<img src="${href}" alt="${title}">`;
+                };
+
+                const mdLocation = `about/${configService.currentLang()}.md`;
+                $http.get(mdLocation).then(r => {
+                    self.about = marked(r.data, { renderer });
+                });
             }
         }
 

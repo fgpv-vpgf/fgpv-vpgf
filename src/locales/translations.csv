@@ -108,6 +108,7 @@ Settings snapshot mode enable label,settings.label.snapshotEnable,Enable,Activer
 Settings query mode label,settings.label.query,Allow query,Permettre les requêtes
 Settings query mode aria,settings.aria.query,Allow query,Permettre les requêtes
 Side Navigation main title,sidenav.title,FGP R2 Viewer,Visualiseur PGF R2
+Side Navigation about map,sidenav.label.about,About Map,À propos de la carte
 Side Navigation full screen,sidenav.label.fullscreen,Full Screen,Plein Écran
 Side Navigation share,sidenav.label.share,Share,Partager
 Side Navigation export,sidenav.label.export,Export,Exporter
