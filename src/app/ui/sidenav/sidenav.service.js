@@ -10,6 +10,7 @@
                 'basemap'
             ],
             [
+                'about',
                 'fullscreen',
                 'export',
                 'share',
@@ -54,7 +55,8 @@
             config: {},
             controls: {},
 
-            ShareController
+            ShareController,
+            AboutController
         };
 
         service.controls = {
@@ -103,6 +105,24 @@
                         fullscreen: false,
                         onShowing: (scope, element) => (scope.element = element.find('.side-nav-summary'))
                     }).then(() => ($rootElement.find('.rv-shareLink').select()));
+                }
+            },
+            about: {
+                type: 'link',
+                label: 'sidenav.label.about',
+                icon: 'action:info_outline',
+                action: () => {
+                    service.close();
+
+                    $mdDialog.show({
+                        controller: service.AboutController,
+                        controllerAs: 'self',
+                        templateUrl: 'app/ui/sidenav/about-dialog.html',
+                        parent: storageService.panels.shell,
+                        disableParentScroll: false,
+                        clickOutsideToClose: true,
+                        fullscreen: false
+                    });
                 }
             },
             fullscreen: {
@@ -239,6 +259,16 @@
                     scope.element.find('.rv-shareLink').select();
                 }
             }
+        }
+
+        function AboutController(scope, $mdDialog, $sanitize, configService) {
+            'ngInject';
+            const self = this;
+
+            self.close = $mdDialog.hide;
+
+            // get about map description
+            configService.getCurrent().then(conf => self.about = conf.about ? conf.about : null);
         }
 
         /**

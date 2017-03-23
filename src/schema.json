@@ -753,7 +753,7 @@
             "uniqueItems": true,
             "items": {
                 "type": "string",
-                "enum": ["layers", "basemap", "fullscreen", "export", "share", "touch", "help", "language" ]
+                "enum": ["layers", "basemap", "about", "fullscreen", "export", "share", "touch", "help", "language"]
             }
         },
 
@@ -847,6 +847,10 @@
                  "timestamp":  { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." }
              },
              "additionalProperties": false
+         },
+
+         "about": {
+             "type": "string", "default": "", "description": "Gives a description about the map"
          },
 
          "legendIsOpen": {

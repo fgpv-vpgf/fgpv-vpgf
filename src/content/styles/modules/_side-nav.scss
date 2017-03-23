@@ -24,4 +24,14 @@
             }
         }
     }
+
+    .side-nav-about {
+        height: 60%;
+        width: 80%;
+        border-radius: 0;
+
+        p {
+            overflow-y: scroll;
+        }
+    }
 }
