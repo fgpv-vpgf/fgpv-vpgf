@@ -27,6 +27,7 @@
          * @function
          */
         function configureTranslations() {
+            $translateProvider.directivePriority(222);
             $translateProvider.useLoader('translationService', { action: 'loader' });
         }
 
