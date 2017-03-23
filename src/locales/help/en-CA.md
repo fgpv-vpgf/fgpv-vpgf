@@ -2,146 +2,122 @@
 
 Navigation controls are used for changing the viewing extent of the map.
 
-Usage:
+The following navigation controls can be found in the bottom right corner of the map:
 
-Click and drag to move the map in a particular direction.
+|Symbol|Name|Key Binding|Description|
+|----|----|----|----|
+|![](navigation/fullscreen.png)| Fullscreen | | Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page  |
+|![](navigation/zoomin.png)| Zoom in | Plus (+) | Zoom in one level on the map to see more detailed content |
+|![](navigation/zoomout.png)| Zoom out | Minus (-) | Zoom out one level on the map to see less detailed content  |
+|![](navigation/geolocation.png)| Geolocation | | Zoom and pan to your current geographical location |
+|![](navigation/canada.png)| Canada | | Zoom and pan map such that all of Canada is visible |
+|![](navigation/help.png)| Help | | Open the help dialog |
 
-- Zoom In/Out: Click 'Zoom In/Out' to change the map extent
-- Canada: Click 'Canada' to view map at its full extent
+You can also pan the map by using your left and right arrow keys, or by click-holding on the map and dragging. Using the mouse scroll wheel while hovering over the map will zoom the map in/out.
+
+Note that the map __must be__ focused for key binding to work. The map has focus when there is a blue border around it.
 
 
-# Basemaps
+# Basemap Selector
 
-The Basemap selector is used to modify the underlying basemap to provide a variety of geographical contexts.
+The basemap selector modifies the underlying basemap to provide a variety of geographical contexts.
 
-Usage:
+__To open the basemap selector:__
 
-BASEMAP: Click BASEMAP. From the slideout menu, select the basemap of your choice and the map display will update. Click on the double arrow to close the slideout menu.
+![](basemap/open.png)
+
+First open the layers panel by selecting the layer button (shown above in red). You will then see the basemap selector appear to the left of the layer button (shown above in blue). You can also open the basemap selector from within the main menu.
+
+You'll be presented with one or more basemaps to chose from, separated by their projection types (mercator vs lambert). The map will reload if you change projections, but won't if you switch basemaps within the same projection.
 
 
 # Overview Map
 
-The Overview map displays a generalised view of the main map at a smaller scale.
+The overview map displays a generalised view of the main map at a smaller scale. It can be found in the top right corner of the map.
 
-Usage:
-
-Drag to change the map extent of the main map.
-
-- Hide/Show: Click 'Hide/Show' to close or open the overview map window
+Click-hold on the overview map and drag it to change the extent of the main map. Clicking on the toggle icon (![](overview/toggle.png)) in the top right corner of the overview map will expand or contract it.
 
 
 # Main Menu
 
-The main menu displays general usage options.
+![](menu/menu.png) Access the menu by clicking on the menu button near the top left of the viewer.
 
-Usage:
+There are a variety of options described below. Note that some options may not be available or are preselected depending on various factors.
 
-- Menu: Click 'Menu' to display the slideout menu. Click anywhere outside the slideout menu to close it.
-
-
-# Full Screen
-
-Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page.
-
-Usage:
-
-FULL SCREEN: Click the FULL SCREEN option in the Menu slideout to make the map content use the entire page. Click the FULL SCREEN option again to restore to default view.
+|Symbol|Name|Description|
+|----|----|----|
+| ![](menu/layers.png) | Layers | Opens the layer panel |
+| ![](menu/basemap.png) | Basemap | Opens the basemap selection panel |
+| ![](menu/fullscreen.png) | Full Screen | Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page |
+| ![](menu/export.png) | Export | Opens the export image dialog  |
+| ![](menu/share.png) | Share | Opens the share a url dialog |
+| ![](menu/touch.png) | Touch Mode | Increases button sizes and generally improves the experience for touch users |
+| ![](menu/help.png) | Help | Opens the help dialog |
+| ![](menu/language.png) | Language | Displays a list of supported languages you can switch to |
 
 
 # Share
 
-Share is used to generate a shareable URL of the current map state with selected datasets.
-
-Usage:
-SHARE: Click the SHARE option [add missing function and help text]
-
-
-# Help
-
-Help is used to display this help text.
-
-Usage:
-
-HELP: Click the HELP option to open a windows and view this help text
+Share is used to generate a shareable URL of the current map state with selected datasets. It can be accessed in the main menu. You may also have the option to generate a short link which greatly reduces the length of the link. Once you highlight the link copy it as you normally would copy text (right click -> copy or Ctrl+C)
 
 
 # Layers
 
-The Layer dropdown serves as a map legend and lists the layers available to display in the map. Feature layers also display in the data table panel. There are three types of layers that can reside in the Legend dropdown:
+The Layer dropdown serves as a map legend and lists the layers available to display in the map.
 
-- Feature layers represent data that can be interacted with on the map, and viewed in the data table panel.
-- Dynamic layers represent interactive data on the map that cannot be cached, but have to be fetched from the server each time the map is changed. They can be a collection of feature layers and can be viewed in the data table panel.
-- Image Service layers displays imagery and other types of raster data provided by an ArcGIS Server Image Service. They are not interactive and do not show in the data table panel.
-- Tile layers displays map content from an ArcGIS Server Map service that has been cached (tiled). A cached map service contains pre-generated map tiles. They are not interactive and do not show in the data table panel.
-- WMS layers provide an overlay of data from a Web Map Service. They can support a click interaction on the map, but do not show in the data table panel.
+![](layer/layer.png) Access the layer list by clicking on the layer button in the top, left of center portion of the viewer.
 
+Each layer has some symbology associated with it. For simple feature layers a single icon will be present next to the layer name. For complex feature layers (i.e. those with multiple symbols used per layer) the icon will show as a stack that can be toggled open and closed which is expanded beneath the layer name. WMS layers may optionally have a graphical legend defined, if one is present it will be displayed in the same drop down manner.
 
-# Layer Visibility
+Some layers may only be visible at certain zoom levels. If a layer is not visible at a given zoom level the legend will display an icon (![](layer/scale.png)). Further, a zoom to the nearest valid level button will be displayed (![](layer/zoom.png)).
 
-- Hide/Show: Select the ""eye"" icon next to a dataset or group name to toggle the layer display on or off on the map.
+You can toggle the visibility of the layer at any time by selecting the eye icon (![](layer/eye.png)) next to each layer.
 
+There are five types of layers that can reside in the Legend dropdown:
 
-# Layer Legends
+|Layer Type|Interactive|Server Renders|Datatable support|Notes|
+|----|----|----|----|----|
+| Feature | Yes | No | Yes | Fast, efficient - local rendering for small to medium size geometry sets |
+| Dynamic | Yes | Yes | Yes | Good choice for large, complex geometry that would be slow to render locally |
+| Image | No | Yes | No | Raster and image file support |
+| Tile | No | Yes | No | Fast, efficient - server contains pre-rendered map tiles |
+| WMS | Yes | Yes | No | Georeferenced map images which server generates using data from a GIS database |
 
-Each layer has some symbology associated with it. For simple feature layers a single icon will be present next to the layer name. For complex feature layers (i.e. those with multiple symbols used per layer) the icon will show as a stack and maybe toggled on and off. When toggled on a section will expand beneath the layer name and show the full symbology for the layer. WMS layers may optionally have a graphical legend defined, if one is present it will be displayed in the same drop down manner.
-
-
-# Handling Layer Errors
-
-If a layer fails to load correctly it will be identified by an error notice. Instead of the standard layer actions you can select to either reload the layer (this is particularly helpful if there is a temporary network connectivity issue) or remove the layer. If a layer is removed it will be taken out of the layer selector completely and if it is added back via ""Undo"" or ""Add Dataset"" it will lose any previous customizations.
-
-
-# Geolocation
-
-Click to zoom to the current geographical location of the user.
+Note that if a layer fails to load correctly it will be identified by an error notice. Instead of the standard layer actions you can select to either reload the layer (this is particularly helpful if there is a temporary network connectivity issue) or remove the layer. If a layer is removed it will be taken out of the layer selector completely and if it is added back via "Undo" it will lose any previous customizations.
 
 
 # Layer Settings
 
-Hover over a layer name and click the ""three dots"" icon link to access additional options for the layer.
+While hovering over a layer or tabbing to one, select the three dots icon ![](layer_settings/ellipses.png) to make the settings menu appear.
 
-'Metadata'
-In the additional options, if it is available for that layer, select the ""Metadata"" link to display relevant metadata for that source in a slideout panel.
+Note that some settings may not be available depending on various factors such as layer type or configuration.
 
-'Settings'
-- The layer's opacity can be adjusted using the Opacity slider control.
-- If the layer has a bounding box, its visibility can be toggled using the Bounding Box toggle.
-
-'Datatable'
-- Select to view this layers data in table format.
-
-'Show Legend'
-- Expands/Collapses the legend image stack
-
-'Zoom to Layer Boundary'
-- Pans and zooms the map so that the layer boundary is in view.
-
-'Reload'
-- Reloads the layer
-
-'Remove'
-- Remove the layer from the map and legend.
+|Symbol|Name|Description|
+|----|----|----|
+| ![](layer_settings/metadata.png) | Metadata | Display relevant metadata in a slideout panel |
+| ![](layer_settings/settings.png) | Settings | Opens slideout panel where opacity amount, bounding box visibility, and queryable data can be toggled |
+| ![](layer_settings/datatable.png) | Datatable | Select to view data in table format |
+| ![](layer_settings/layer.png) | Show legend | Expands/Collapses the legend image stack  |
+| ![](layer_settings/zoomto.png) | Zoom to layer boundary | Pans and zooms the map so that the layer boundary is in view |
+| ![](layer_settings/reload.png) | Reload | Reloads the layer |
+| ![](layer_settings/remove.png) | Remove | Remove the layer from the map and legend |
 
 
-# Export Image
+# Layer Submenu
 
-You can export an image of the map and its visible layers along with; a legend, title, north arrow with scalebar, custom footnote, and a timestamp.
+![](layer_submenu/menu.png)
 
-Select the 'EXPORT' button from the left side menu to get started. A dialog will appear with an image of the map, and an option to enter a map title if desired.
+Provides additional layer options when the layer panel is open. It is shown in red above. It has the following features:
 
-If you'd like to add or remove sections of the exported image such as a legend, click on the options cogwheel in the header. There you'll be able to select/deselect the sections to appear in the exported image.
-
-If you'd like to change the map canvas size you can do so from the dropdown in the header. Select from default to a preset small/medium size, or specify your own size by choosing the 'custom size' option. Note that sizes only affect the map image, the actual exported image may be larger.
-
-Click on the download button in the header to get the final generated map image.
-
-
-# Zoom Scale Dependent Layers
-
-Some layers may only be visible at certain zoom levels. If a layer is not visible at a given zoom level the legend will display a notice and have an action available to zoom to the closest zoom level at which the layer will be visible (this may involve either zooming in or zooming out).
+|Symbol|Name|Description|
+|----|----|----|
+| ![](layer_submenu/add.png) | Add Layer | Menu options to add a file or service based layer |
+| ![](layer_submenu/reorder.png) | Reorder Layers | Provides an alternative to the click-hold and drag reordering already available. When selected, layers are only reorderable by holding onto the handle icon next to each layer. Most useful for touch devices |
+| ![](layer_submenu/expand.png) | Toggle Groups | Opens or closes all groups |
+| ![](layer_submenu/view.png) | Toggle Visibility | Enables or disables the visibility for all layers  |
 
 
-# Add Layers
+# Add Layer
 
 Additional layers can be added to the map viewer. Supported formats include: ESRI Feature Layer, ESRI Dynamic Layer, ESRI Tile Layer, ESRI Image Layer, OGC Web Map Service, or a Raster Layer. The '+' button at the top of the Legend menu will launch the Add Layers menu.
 
@@ -159,22 +135,36 @@ Usage:
 - Click the 'Continue' button to insert the layer into the map and closes the Add Layer menu.
 
 
+# Export Image
+
+You can export an image of the map and its visible layers along with; a legend, title, north arrow with scalebar, custom footnote, and a timestamp.
+
+Select the 'EXPORT' button from the main menu to get started. A dialog will appear with an image of the map, and an option to enter a map title if desired.
+
+If you'd like to add or remove sections of the exported image such as a legend, click on the options cogwheel in the header. There you'll be able to select/deselect the sections to appear in the exported image.
+
+If you'd like to change the map canvas size you can do so from the dropdown in the header. Select from default to a preset small/medium size, or specify your own size by choosing the 'custom size' option. Note that sizes only affect the map image, the actual exported image may be larger.
+
+Click on the download button in the header to get the final generated map image.
+
+
 # Data Table Panel
 
-The Data Table Panel lists detailed information about all the selected features in the map.
+![](datatable/overview.png)
 
-You can view, sort, print, and save the data and zoom the map to a specific entry listed in the data table.
+The data table panel is shown above with its menu options open. You can scroll through all the data as well as:
+- increase/decrease the size of the table (via split view/maximize options)
+- sort the data by selecting the column header
+- filter the data such that only data in your current extent is shown
+- export the data as a csv file
+- print the data
 
-You can also minimize, maximize, or split the panel view.
+You can also open a corresponding details panel for an given row by selecting the ![](datatable/details.png) details icon. You can also pan and zoom the map to a given row by selecting the ![](datatable/zoomto.png) zoom icon.
 
 
-# Information Panel (Point)
+# Feature Details Panel
 
-The Information Panel (Point) displays data associated with a selected feature.
-
-Usage:
-
-Select a feature on the map interface. The Info Panel will display information related to the selected feature. Clicking the 'X' in the top right corner of the panel will hide panel.
+Displays the data associated with a selected feature. This can be accessed by either performing an identify query on the map and selecting the layer from the list of available layers, or by clicking on the details icon in a data table.
 
 
 # Accessibility
@@ -186,6 +176,12 @@ Keyboard Accessibility - Keyboard functionality is provided as an alternative fo
 
 # Load Times / Unanticipated Behaviour
 
-Load times may vary based on network location and bandwidth availability, and unanticipated behaviour may occur if any map interactions occur before data is fully loaded. Please allow the webpage to load completely before triggering any map functions.
+Load times may vary based on:
+- network location
+- bandwidth availability
+- number of layers being loaded
+- Layer types and their sizes
 
-Note: If the scrolling loading line indicator appears at the bottom of the map or in the legend, or the data table panel displays a loading message, please allow the loading indicator to disappear before triggering any function on the map.
+Unanticipated behaviour may occur if any map interactions occur before data is fully loaded. Please allow the webpage to load completely before triggering any map functions.
+
+**Note:** If the scrolling loading line indicator appears at the bottom of the map or in the legend, or the data table panel displays a loading message, please allow the loading indicator to disappear before triggering any function on the map.
