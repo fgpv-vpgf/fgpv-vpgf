@@ -353,6 +353,10 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
             .src(config.helpSource)
             .pipe(gulp.dest(config.helpBuild));
 
+        gulp
+            .src(config.aboutSource)
+            .pipe(gulp.dest(config.aboutBuild));
+
         return gulp
             .src(index)
             .pipe($.inject(gulp.src(config.jsInjectorFilePath), injectOpts))

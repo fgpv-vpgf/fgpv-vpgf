@@ -753,7 +753,7 @@
             "uniqueItems": true,
             "items": {
                 "type": "string",
-                "enum": ["layers", "basemap", "fullscreen", "export", "share", "touch", "help", "language" ]
+                "enum": ["layers", "basemap", "about", "fullscreen", "export", "share", "touch", "help", "language"]
             }
         },
 
@@ -845,6 +845,16 @@
                  "legend": { "$ref": "#/definitions/exportComponent", "description": "Legend component." },
                  "footnote": { "$ref": "#/definitions/exportComponent", "description": "Foot notice to add to exported map" },
                  "timestamp":  { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." }
+             },
+             "additionalProperties": false
+         },
+
+         "about": {
+             "type": "object",
+             "description": "About properties",
+             "properties": {
+                 "type": { "type": "string", "enum": ["config", "markdown"], "default": "config", "description": "Specifies to use string from config file or markdown" },
+                 "value": { "type": "string", "default": "", "description": "Gives a description about the map" }
              },
              "additionalProperties": false
          },
