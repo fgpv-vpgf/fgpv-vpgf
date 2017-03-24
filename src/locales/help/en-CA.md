@@ -10,10 +10,10 @@ The following navigation controls can be found in the bottom right corner of the
 |![](navigation/zoomin.png)| Zoom in | Plus (+) | Zoom in one level on the map to see more detailed content |
 |![](navigation/zoomout.png)| Zoom out | Minus (-) | Zoom out one level on the map to see less detailed content  |
 |![](navigation/geolocation.png)| Geolocation | | Zoom and pan to your current geographical location |
-|![](navigation/canada.png)| Canada | | Zoom and pan map such that all of Canada is visible |
+|![](navigation/canada.png)| Initial extent | | Zoom and pan map such that initial extent is visible |
 |![](navigation/help.png)| Help | | Open the help dialog |
 
-You can also pan the map by using your left and right arrow keys, or by click-holding on the map and dragging. Using the mouse scroll wheel while hovering over the map will zoom the map in/out.
+You can also pan the map by using your left, right, up and down arrow keys, or by click-holding on the map and dragging. Using the mouse scroll wheel while hovering over the map will zoom the map in/out.
 
 Note that the map __must be__ focused for key binding to work. The map has focus when there is a blue border around it.
 
@@ -164,7 +164,7 @@ You can also open a corresponding details panel for an given row by selecting th
 
 # Feature Details Panel
 
-Displays the data associated with a selected feature. This can be accessed by either performing an identify query on the map and selecting the layer from the list of available layers, or by clicking on the details icon in a data table.
+Displays the data associated with a selected feature. This can be accessed by either performing an identify query on the map and selecting the layer from the list of available layers, or by clicking on the details icon ![](datatable/details.png) in a data table.
 
 
 # Accessibility
