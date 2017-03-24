@@ -1,4 +1,4 @@
-// jshint maxparams:13
+// jshint maxparams:14
 // FIXME reduce number of apiBlock parameters
 (() => {
     'use strict';
@@ -154,7 +154,8 @@
      * `apiBlock` sets up language and RCS calls for the global API
      */
     function apiBlock($rootScope, globalRegistry, geoService, configService, events,
-        LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo, $rootElement, $mdDialog, pluginService) {
+        LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo, $rootElement,
+        $mdDialog, pluginService, mapToolService) {
 
         const service = {
             setLanguage,
@@ -166,7 +167,8 @@
             appInfo,
             registerPlugin: function () {
                 pluginService.register(...arguments, this);
-            }
+            },
+            northArrow: mapToolService.northArrow
         };
 
         // Attaches a promise to the appRegistry which resolves with apiService

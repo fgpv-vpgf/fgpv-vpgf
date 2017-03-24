@@ -15,7 +15,8 @@
         .module('app.layout')
         .directive('rvShell', rvShell);
 
-    function rvShell($rootElement, $rootScope, events, storageService, stateManager, configService, layoutService) {
+    function rvShell($rootElement, $rootScope, events, storageService, stateManager, configService, layoutService,
+        mapToolService) {
 
         const directive = {
             restrict: 'E',
@@ -52,6 +53,12 @@
             // fix for IE 11 where focus can move to esri generated svg elements
             $rootScope.$on(events.rvApiReady, () => {
                 $rootElement.find('.rv-esri-map svg').attr('focusable', false);
+
+                // set initial position of the north arrow
+                updateNorthArrow();
+                // init here since rvExtentChange fires before rvApiReady which will cause gapi issues
+                $rootScope.$on(events.rvMapPan, updateNorthArrow);
+                $rootScope.$on(events.rvExtentChange, updateNorthArrow);
             });
 
             $rootElement.on('keydown', event => {
@@ -69,6 +76,25 @@
                     });
                 }
             });
+
+            /**
+            * Displays a north arrow along the top of the viewer
+            * @function  updateNorthArrow
+            */
+            function updateNorthArrow() {
+                const north = mapToolService.northArrow();
+                const arrowElem = el.find('.rv-north-arrow');
+
+                // hide the north arrow if projection is not supported
+                if (!north.projectionSupported) {
+                    arrowElem.css('display', 'none');
+                } else {
+                    arrowElem
+                        .css('display', 'block')
+                        .css('left', north.screenX)
+                        .css('transform', `rotate(${north.rotationAngle}deg)`);
+                }
+            }
         }
 
         /**
