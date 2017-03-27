@@ -39,17 +39,17 @@
         angular: {
             get ourVersion() { return '1.4.12'; },
             get theirVersion() { return angular.version.full; },
-            get url() { return `https://ajax.googleapis.com/ajax/libs/angularjs/${this.ourVersion}/angular.min.js`; }
+            get url() { return `//ajax.googleapis.com/ajax/libs/angularjs/${this.ourVersion}/angular.min.js`; }
         },
         jQuery: {
             get ourVersion() { return '2.2.1'; },
             get theirVersion() { return $.fn.jquery; },
-            get url() { return `http://ajax.aspnetcdn.com/ajax/jQuery/jquery-${this.ourVersion}.min.js`; }
+            get url() { return `//ajax.aspnetcdn.com/ajax/jQuery/jquery-${this.ourVersion}.min.js`; }
         },
         dataTables: {
             get ourVersion() { return '1.10.11'; },
             get theirVersion() { return $.fn.dataTable.version; },
-            get url() { return `https://cdn.datatables.net/${this.ourVersion}/js/jquery.dataTables.min.js`; }
+            get url() { return `//cdn.datatables.net/${this.ourVersion}/js/jquery.dataTables.min.js`; }
         }
     };
     const dependenciesOrder = ['jQuery', 'dataTables', 'angular'];
@@ -75,7 +75,7 @@
 
     // inject fonts
     const fontsLink = d.createElement('link');
-    fontsLink.href = 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic';
+    fontsLink.href = '//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic';
     fontsLink.rel = 'stylesheet';
 
     headNode.appendChild(fontsLink);
