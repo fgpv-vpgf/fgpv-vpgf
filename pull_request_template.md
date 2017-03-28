@@ -14,3 +14,6 @@
 - [ ] code passes unit tests
 - [ ] release notes have been updated
 - [ ] PR targets the correct release version
+- [ ] original issue is updated with the final solution, expected behaviour, and any additional notes for testers
+
+Remember, it is a *muffin basket* offence to merge PRs with incomplete checklists
