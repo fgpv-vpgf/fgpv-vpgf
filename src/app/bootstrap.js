@@ -225,6 +225,26 @@
             this._loadPromise.then(app => app.registerPlugin(...arguments));
         },
 
+        /**
+        * Provides data needed for the display of a north arrow on the map for lambert and mercator projections. All other projections
+        * are not supported, however mapPntCntr and mapScrnCntr are still returned so that if needed, external API's can be created for
+        * any projection type.
+        *
+        * The returned object has the following properties:
+        *    projectionSupported    {boolean}   true iff current projection is lambert or mercator
+        *    screenX                {Number}    left offset for arrow to intersect line between map center and north point
+        *    angleDegrees           {Number}    angle derived from intersection of horizontal axis line with line between map center and north point
+        *    rotationAngle          {Number}    number of degrees to rotate north arrow, 0 being none with heading due north
+        *    mapPntCntr             {Object}    lat/lng of center in current extent
+        *    mapScrnCntr            {Object}    pixel x,y of center in current extent
+        *
+        * @function  northArrow
+        * @returns  {Object}    an object containing data needed for either static or moving north arrows
+        */
+        getNorthArrowData() {
+            return this._proxy('northArrow');
+        },
+
         _init(appID) {
             this.appID = appID;
 

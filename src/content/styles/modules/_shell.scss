@@ -22,5 +22,21 @@
         .rv-focus-dialog-content {
             display: none;
         }
+
+        .rv-north-arrow {
+            position: absolute;
+            top: rem(0.2);
+            z-index: 10;
+            border-radius: rem(2);
+            background-color: rgba(white, 0.82);
+            padding: rem(0.5);
+        }
+
+        @include include-size(rv-sm) {
+            .rv-north-arrow {
+                top: $toolbar-height;
+                z-index: 0;
+            }
+        }
     }
 }
