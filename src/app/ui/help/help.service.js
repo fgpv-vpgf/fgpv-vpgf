@@ -27,16 +27,78 @@
     function highlightFilter($sce) {
         return (text = '', searchTerm = undefined, className = 'rv-help-highlight') => {
 
-            if (searchTerm) {
-                // sanitizes a regex by removing all common RegExp identifiers
-                searchTerm = searchTerm.replace(/[\\\^\$\*\+\?\.\(\)\|\{}\[\]]/g, '\\$&');
-
-                text = text.replace(
-                    new RegExp(`(${searchTerm})`, 'gi'),
-                    `<span class="${className}">$1</span>`);
+            // no searchTerm provided, return all html
+            if (!searchTerm) {
+                return $sce.trustAsHtml(text);
             }
 
-            return $sce.trustAsHtml(text);
+            // Regex in javascript is not capable of searching html text while avoiding matches
+            // on the element attributes. To accomplish this, we render the text html as a DOM tree,
+            // then search the DOM tree for text nodes. We then look for the searchTerm within these
+            // textNodes so that elements and their attributes are not affected
+            const htmlFragment = document.createDocumentFragment();
+            const searchElement = document.createElement('div');
+            searchTerm = searchTerm.toLowerCase(); // case insensitive search
+
+            // Turn HTML text provided into a DOM searchable tree
+            searchElement.innerHTML = text;
+            // Recursively search tree for text node
+            findTextNodes(searchElement);
+            // tree is now searched - append results to html fragment
+            htmlFragment.appendChild(searchElement);
+
+            /**
+            * Given some node it searches the node and its children for textNodes, which are sent to doSearch for searching
+            *
+            * @function findTextNodes
+            * @param {Object} node    node to search for textNodes
+            */
+            function findTextNodes(node) {
+                let childNode;
+                let nextNode;
+                // document, document fragment, or element recurse search
+                if ([1, 9, 11].find(n => n === node.nodeType)) {
+                    childNode = node.firstChild;
+                    while (childNode) {
+                        nextNode = childNode.nextSibling;
+                        findTextNodes(childNode);
+                        childNode = nextNode;
+                    }
+                // found a text node - perform search on it
+                } else if (node.nodeType === 3) {
+                    doSearch(node);
+                }
+            }
+
+            /**
+            * Given a textnode, wraps the searchTerm in a span element so that it is visible to the user
+            *
+            * @function doSearch
+            * @param {Object} preMatch    textNode to be searched
+            */
+            function doSearch(preMatch) {
+                // try to find search term index in the preMatch
+                const searchIndex = preMatch.nodeValue.toLowerCase().indexOf(searchTerm);
+                if (searchIndex !== -1) { // found a match, continuing
+                    let match; // contains only the matched text
+                    let postMatch; // contains text after the match
+                    // this next part can be confusing - but this is the general idea:
+                    //   - preMatch first contains the entire textNode
+                    //   - match is then assigned all text prior to the search term
+                    //   - preMatch then contains the search term and all text after it
+                    //   - postMatch is then assigned all text after the match, which leaves match with, well, the match
+                    match = preMatch.splitText(searchIndex);
+                    postMatch = match.splitText(searchTerm.length);
+
+                    const span = document.createElement('span');
+                    span.className = className;
+                    // now bring together split pieces including wrapped search term
+                    preMatch.parentNode.insertBefore(span, postMatch);
+                    span.appendChild(match);
+                }
+            }
+
+            return $sce.trustAsHtml(searchElement.innerHTML);
         };
     }
 
