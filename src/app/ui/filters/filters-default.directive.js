@@ -69,9 +69,9 @@
      * @function rvFiltersDefault
      * @return {object} directive body
      */
-    // jshint maxparams:11
+    // jshint maxparams:12
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
-        layoutService, detailService, $rootElement, $filter, keyNames) {
+        layoutService, detailService, $rootElement, $filter, keyNames, $sanitize) {
 
         const directive = {
             restrict: 'E',
@@ -299,14 +299,6 @@
                  * @return {String} text    text for td element or string who contain html element
                  */
                 function renderEllipsis(width) {
-                    const esc = (text) => {
-                        return text
-                            .replace(/&/g, '&amp;')
-                            .replace(/</g, '&lt;')
-                            .replace(/>/g, '&gt;')
-                            .replace(/"/g, '&quot;');
-                    };
-
                     return (text, type) => {
                         // order, search and type get the original data
                         if (type !== 'display') {
@@ -317,17 +309,22 @@
                             return text;
                         }
 
-                        text = text.toString(); // cast numbers
+                        // cast number and get text width
+                        text = text.toString();
+                        const textWidth = getTextWidth(text);
 
-                        // if text width smaller then column width, return text
-                        if (getTextWidth(text) < width) {
-                            return text;
+                        // linkify anchor tag check if it is inside plain text or html
+                        text = $filter('autolink')(text);
+
+                        // if text width smaller then column width, return text as is.
+                        // for wcag we add a span element with a tooltip. With keytable extension, when this cell get focus
+                        // this element will be visible.
+                        if (textWidth > width) {
+                            text = `<span class="rv-render-ellipsis">${$sanitize(text)}</span>
+                                    <span class="rv-render-tooltip">${$sanitize(text)}</span>`;
                         }
 
-                        // for wcag we add a span element with a tooltip. With keytable extension, when this cell get focus
-                        // This element will be visible.
-                        return `<span class="rv-render-ellipsis" title="${esc(text)}">${esc(text)}</span>
-                                <span class="rv-render-tooltip">${esc(text)}</span>`;
+                        return text;
                     };
                 }
 
