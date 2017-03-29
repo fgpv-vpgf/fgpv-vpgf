@@ -1,3 +1,4 @@
+/* global linkifyStr, linkifyHtml */
 (() => {
     // button blueprints to be added to the table rows
     // `self` property is named so intentionally, as it will be passed on a scope to the ROW_BUTTON_TEMPLATE
@@ -301,7 +302,6 @@
                 function renderEllipsis(width) {
                     const esc = (text) => {
                         return text
-                            .replace(/&/g, '&amp;')
                             .replace(/</g, '&lt;')
                             .replace(/>/g, '&gt;')
                             .replace(/"/g, '&quot;');
@@ -319,15 +319,24 @@
 
                         text = text.toString(); // cast numbers
 
-                        // if text width smaller then column width, return text
-                        if (getTextWidth(text) < width) {
-                            return text;
-                        }
+                        // linkify anchor tag check if it is inside plain text or html
+                        const html = /<(?=.*? .*?\/ ?>|br|hr|input|!--|wbr)[a-z]+.*?>|<([a-z]+).*?<\/\1>/; // https://regex101.com/r/cX0eP2/1
+                        const opts = { className: 'rv-linkified', ignoreTags: ['script'] };
+                        text = html.test(text) ? linkifyHtml(text, opts) : linkifyStr(text, opts);
 
+                        // if text width smaller then column width, return text as is
                         // for wcag we add a span element with a tooltip. With keytable extension, when this cell get focus
                         // This element will be visible.
-                        return `<span class="rv-render-ellipsis" title="${esc(text)}">${esc(text)}</span>
-                                <span class="rv-render-tooltip">${esc(text)}</span>`;
+                        if (getTextWidth(text) > width && !html.test(text)) {
+                            text = `<span class="rv-render-ellipsis" title="${esc(text)}">${esc(text)}</span>
+                                    <span class="rv-render-tooltip">${esc(text)}</span>`;
+                        } else if (html.test(text)) {
+                            // if it is html return html element whitout escape and the text content for the tooltip
+                            text = `<span class="rv-render-ellipsis" title="${$(text)[0].textContent}">${text}</span>
+                                    <span class="rv-render-tooltip">${$(text)[0].textContent}</span>`;
+                        }
+
+                        return text;
                     };
                 }
 

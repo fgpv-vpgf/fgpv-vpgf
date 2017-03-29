@@ -45,7 +45,8 @@
     "linkifyjs": {
       "main": [
         "linkify.js",
-        "linkify-string.js"
+        "linkify-string.js",
+        "linkify-html.js"
       ]
     },
     "canvas-toBlob.js": {

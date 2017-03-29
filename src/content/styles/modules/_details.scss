@@ -269,6 +269,12 @@ $details-record-height: rem(6.0);
                 overflow: hidden;
                 text-overflow: ellipsis;
 
+                // only use when render html inside details panel
+                ul li {
+                    display: list-item;
+                    list-style-type: disc;
+                }
+
                 a {
                     // fix for https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1635
                     // prevent wrapping links to truncate them as we don't want them to wrap
