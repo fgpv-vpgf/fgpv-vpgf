@@ -1,4 +1,4 @@
-/* global linkifyStr, moment */
+/* global linkifyStr, linkifyHtml, moment */
 (() => {
     'use strict';
 
@@ -41,7 +41,7 @@
     }
 
     function autolink() {
-        const defaultOptions = { className: 'rv-linkified' };
+        const defaultOptions = { className: 'rv-linkified', ignoreTags: ['script'] };
 
         return autolink;
 
@@ -70,7 +70,11 @@
              * @return {String} autolinked string
              */
             function process(item) {
-                return linkifyStr((item || '').toString(), angular.extend(defaultOptions, options));
+                // check if we need to use linkify html or linkify string
+                const html = /<(?=.*? .*?\/ ?>|br|hr|input|!--|wbr)[a-z]+.*?>|<([a-z]+).*?<\/\1>/; // https://regex101.com/r/cX0eP2/1
+                const opts = angular.extend(defaultOptions, options);
+                return (html.test(item)) ?
+                    linkifyHtml((item || '').toString(), opts) : linkifyStr((item || '').toString(), opts);
             }
         }
     }
