@@ -358,7 +358,8 @@
          */
         function getServiceFeatureCount(layerUrl, finalTry = false) {
             return $http.jsonp(
-                `${layerUrl}/query?where=1=1&returnCountOnly=true&returnGeometry=false&f=json&callback=JSON_CALLBACK`)
+                `${layerUrl}/query?where=1=1&returnCountOnly=true&returnGeometry=false&f=json`,
+                { jsonpCallbackParam: 'callback' })
                 .then(result => {
                     if (result.data.count) {
                         return result.data.count;

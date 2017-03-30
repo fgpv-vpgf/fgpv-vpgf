@@ -30,13 +30,17 @@
          * Feature areas
          */
         'app.layout'
-    ]).config(($compileProvider, $mdInkRippleProvider, $mdAriaProvider) => {
+    ]).config(($compileProvider, $mdInkRippleProvider, $mdAriaProvider, $sceDelegateProvider) => {
         // to improve IE performance disable ripple effects globally and debug info
         if (RV.isIE) {
             $mdInkRippleProvider.disableInkRipple();
         }
 
         $mdAriaProvider.disableWarnings();
+
+        // whitelist all URLs for now to make $sce happy
+        // TODO: We should remove this and explicitly allow urls in all external calls
+        $sceDelegateProvider.resourceUrlWhitelist(['**']);
     });
 
     // a separate templates module is needed to facilitate directive unit testing
