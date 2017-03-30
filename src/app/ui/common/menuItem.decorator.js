@@ -49,7 +49,7 @@
 
                     // specify icon for checkbox and radio in rv-right-icon - done here since angular material actively removes icons to place its own checkmark icon
                     if ((attrs.type === 'checkbox' || attrs.type === 'radio') && attrs.rvRightIcon) {
-                        button.append($compile(
+                        button.prepend($compile(
                             `<md-icon md-svg-icon="${attrs.rvRightIcon}"></md-icon>`
                         )(scope));
                     }
@@ -61,8 +61,15 @@
                         } else {
                             button.prepend(icon);
                         }
+
                         // wrap the button content in div, so we can set flex on that div as Firefox doesn't support display: flex on button nodes yet: https://bugzilla.mozilla.org/show_bug.cgi?id=984869#c24
                         button.wrapInner(`<div class='rv-button-flex'></div>`);
+
+                        // reverse the icon so it is icon/text and remove the ident class
+                        if ((attrs.type === 'checkbox' || attrs.type === 'radio') && attrs.rvRightIcon) {
+                            el.append(icon);
+                            el.removeClass('md-indent');
+                        }
                     }
                 };
             };

@@ -45,12 +45,12 @@ md-menu-content {
 
     md-menu-item {
 
+        md-icon {
+            width: rem(2.4);
+        }
+
         &[rv-right-icon] .md-button {
             padding-right: rem(1.6) !important;
-
-            md-icon:last-of-type {
-                margin-right: 0;
-            }
         }
 
         &[rv-right-icon="true"] .md-button {
