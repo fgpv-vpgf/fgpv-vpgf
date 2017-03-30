@@ -50,6 +50,9 @@ md-menu-content {
 
             md-icon:last-of-type {
                 margin-right: 0;
+                right: rem(2);
+                position: absolute;
+                top: rem(0.5);
             }
         }
 
