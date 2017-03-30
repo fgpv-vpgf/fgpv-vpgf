@@ -446,7 +446,7 @@
                             // after the draw, datatable.scroller.page() info are wrong so we can't use them to know if we are
                             // in the visible area
                             const focusRow = scrollCell[0][0].row;
-                            self.table.cell(focusRow, cellInfo.column).rvFocus();
+                            self.table.cell(focusRow, cellInfo.column).focus();
                             self.table.row(focusRow - 1).scrollTo(false); // false because we doesn't want animation
                             draw = false;
                             scrollCell = false;
