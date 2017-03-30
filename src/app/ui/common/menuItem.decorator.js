@@ -48,22 +48,24 @@
                     const button = el.find('.md-button');
 
                     // specify icon for checkbox and radio in rv-right-icon - done here since angular material actively removes icons to place its own checkmark icon
-                    if ((attrs.type === 'checkbox' || attrs.type === 'radio') && attrs.rvRightIcon) {
-                        button.append($compile(
-                            `<md-icon md-svg-icon="${attrs.rvRightIcon}"></md-icon>`
-                        )(scope));
-                    }
+                    if (attrs.rvRightIcon) {
+                        if (attrs.type === 'checkbox' || attrs.type === 'radio') {
 
-                    if (icon.length > 0 && button.length > 0) {
-                        // append empty icon to non checkbox/radio items so that they have a common alignment
-                        if (attrs.rvRightIcon && attrs.type !== 'checkbox' && attrs.type !== 'radio') {
+                            // specifying any string that is not an actual icon name will create an empty icon; use `rv-right-icon="none"` for consistency
+                            button.prepend($compile(`<md-icon md-svg-icon="${attrs.rvRightIcon}"></md-icon>`)(scope));
+
+                            // reverse the checkbox icon so it is icon/text and remove the ident class
+                            el.removeClass('md-indent');
+
+                            // need to apped the icon to the button, otherwise the button will shrink
                             button.append(icon);
                         } else {
                             button.prepend(icon);
                         }
-                        // wrap the button content in div, so we can set flex on that div as Firefox doesn't support display: flex on button nodes yet: https://bugzilla.mozilla.org/show_bug.cgi?id=984869#c24
-                        button.wrapInner(`<div class='rv-button-flex'></div>`);
                     }
+
+                    // wrap the button content in div, so we can set flex on that div as Firefox doesn't support display: flex on button nodes yet: https://bugzilla.mozilla.org/show_bug.cgi?id=984869#c24
+                    button.wrapInner(`<div class='rv-button-flex'></div>`);
                 };
             };
         }
