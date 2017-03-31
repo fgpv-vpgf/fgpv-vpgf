@@ -14,3 +14,7 @@
 - [ ] code passes unit tests
 - [ ] release notes have been updated
 - [ ] PR targets the correct release version
+
+Remember, it is a *muffin offence* to open a PR with any of the above checklist items incomplete.
+
+Please keep the original issue up to date with the final solution, expected behaviour, and any additional notes for testers
