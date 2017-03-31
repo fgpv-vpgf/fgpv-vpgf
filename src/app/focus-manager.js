@@ -40,6 +40,12 @@
     let focusoutTimerCancel;
     // when true focus manager will only consider history elements for focus movement
     let restoreFromHistory = false;
+    // true between the time a mouse click occurs and the tab key is pressed
+    // clicking on an element moves focus to the closest parent focusable element since for example
+    // clicking on an icon in a button should place focus on the button, the icon is not a valid focusable element
+    // during traversal focus is lost until a valid target is reached. We want to ignore focus loss during this process.
+    // We are guaranteed to reach a valid target during traversal so there is no need for focusout intervention.
+    let ignoreFocusLoss = false;
 
     /**
      * Represents one viewer on a page, with multiple viewers being possible. Tracks viewer state,
@@ -388,6 +394,7 @@
         }
 
         if (viewer) {
+            ignoreFocusLoss = true;
             viewer.setStatus(statuses.ACTIVE);
             evtTarget
                 .closest('.rv-esri-map, ' + focusSelector)
@@ -449,6 +456,7 @@
                 viewerActive.setStatus(statuses.INACTIVE);
 
             } else if (event.which === 9) { // tab keydown only
+                ignoreFocusLoss = false;
                 const shiftState = shiftFocus(!event.shiftKey, restoreFromHistory);
                 // prevent browser from changing focus iff our change took effect OR ours failed but did so on a non-direct child of the viewer trap
                 // In general we ALWAYS want to prevent browser focus movements but on full page viewers shiftfocus will fail (correct behaviour) so we
@@ -495,6 +503,11 @@
      * @param  {Object} event the focusout event object
      */
     function onFocusout(event) {
+
+        if (ignoreFocusLoss) {
+            return;
+        }
+
         const viewer = viewerGroup.status(statuses.ACTIVE);
         if ($(event.target).closest('[rv-ignore-focusout]').length > 0) {
             restoreFromHistory = true;
