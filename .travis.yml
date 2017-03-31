@@ -21,8 +21,6 @@ before_script:
 - sleep 1
 script:
 - gulp test
-- gulp inject --protractor
-- node_modules/.bin/protractor src/e2e-test/protractor.conf.js --browser=firefox
 notifications:
   webhooks:
     urls:
