@@ -19,6 +19,8 @@ module.exports = function () {
     var sampleBuild = build + 'samples/';
     var helpSource = src + 'locales/help/**/*';
     var helpBuild = sampleBuild + 'help/';
+    var aboutSource = src + 'locales/about/**/*';
+    var aboutBuild = sampleBuild + 'about/';
     var dist = './dist/'; // contains packaged builds (ex: tgz and zip)
     var app = src + 'app/';
     var tmp = '.tmp/';
@@ -138,6 +140,8 @@ module.exports = function () {
         sampleBuild,
         helpSource,
         helpBuild,
+        aboutSource,
+        aboutBuild,
         dist,
         root,
         tmp,
