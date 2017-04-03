@@ -5,7 +5,7 @@
      * These are global values defined in the RV registry. They can be overridden by creating a global `RV` object with the same properties __before__ `injector.js` is executed.
      */
     const rvDefaults = {
-        dojoURL: 'http://js.arcgis.com/3.14/'
+        dojoURL: '//js.arcgis.com/3.14/'
     };
 
     /**
