@@ -35,7 +35,7 @@
     // versions of scripts to inject
     const dependencies = {
         angular: {
-            get ourVersion() { return '1.4.12'; },
+            get ourVersion() { return '1.6.3'; },
             get theirVersion() { return angular.version.full; },
             get url() { return `https://ajax.googleapis.com/ajax/libs/angularjs/${this.ourVersion}/angular.min.js`; }
         },
