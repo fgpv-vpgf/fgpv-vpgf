@@ -11,6 +11,11 @@
     // check if the global RV registry object already exists and store a reference
     const RV = window.RV = typeof window.RV === 'undefined' ? {} : window.RV;
 
+    // fixes logger issue where it can be called before it is loaded, this reverts it to console
+    // TODO: load logger lib before app starts
+    RV.logger = {};
+    ['debug', 'log', 'info', 'warn', 'error'].forEach(t => RV.logger[t] = console[t]);
+
     // test user browser, true if IE false otherwise
     RV.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
 
