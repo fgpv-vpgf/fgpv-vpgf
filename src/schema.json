@@ -780,7 +780,8 @@
                 "northArrow": { "type": "object", "properties": {"enabled": { "type": "boolean", "default": true } } },
                 "overviewMap": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": true }, "maximizeButton": { "type": "boolean"}, "layerType": { "type": "string"} } },
                 "scaleBar": { "type": "object", "properties": {"enabled": { "type": "boolean", "default": true } } }
-            }
+            },
+            "required": [ "geoSearch", "mouseInfo", "northArrow", "overviewMap", "scaleBar" ]
         }
 
     },

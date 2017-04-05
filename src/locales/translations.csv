@@ -18,6 +18,10 @@ Appbar aria for geosearch close icon,appbar.aria.geosearchclose,Close Geolocatio
 Appbar aria label for geosearch icon,appbar.aria.geosearch,Geolocation Search, Recherche géolocalisée
 Map overview aria label for toggle icon,geo.aria.overviewtoggle,Expand/Shrink map overview,Agrandir/Minimiser l'aperçu de la carte
 Map aria label description,geo.aria.mapdescription,Interactive Map,Carte Interactive
+Map coordinates east label,geo.coord.east,E,E
+Map coordinates west label,geo.coord.west,W,O
+Map coordinates north label,geo.coord.north,N,N
+Map coordinates south label,geo.coord.south,S,S
 Appbar aria label for tools icon,appbar.aria.tools,Tools,Outils
 rv-truncate directive show more,rv-truncate.showMore,Show More,Montrer davantage
 rv-truncate directive show less,rv-truncate.showLess,Hide,Masquer

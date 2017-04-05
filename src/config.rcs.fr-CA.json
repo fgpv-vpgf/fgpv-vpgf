@@ -43,10 +43,7 @@
         "showInfo": true
       },
       "mouseInfo": {
-        "enabled": true,
-        "spatialReference": {
-          "wkid": 102100
-        }
+        "enabled": true
       },
       "northArrow": {
         "enabled": true
