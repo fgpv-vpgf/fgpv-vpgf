@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -172,14 +173,12 @@
                         .then(data => resolve(data))
                         .catch(error => {
                             attempt++;
-
-                            console.error(`Print task failed on try ${attempt}`);
-                            console.error(error);
-
+                            RV.logger.error('exportGeneratorsService', `print task failed ` +
+                                `on try ${attempt} with error`, error);
                             // print task with many layers will likely fail due to esri's proxy/cors issue https://github.com/fgpv-vpgf/fgpv-vpgf/issues/702
                             // submitting it a second time usually works; if not, submit a third time
                             if (attempt <= RETRY_LIMIT) {
-                                console.log(`Trying print task again`);
+                                RV.logger.log('exportGeneratorsService', `trying print task again`);
                                 resolve(serverPrint(exportMapUrl, attempt));
                             } else {
                                 // show error; likely service timeout
@@ -191,7 +190,7 @@
                                             attempt = 0;
 
                                             // self.isError = false;
-                                            console.log(`Trying print task again`);
+                                            RV.logger.log('exportGeneratorsService', `trying print task again`);
                                             resolve(serverPrint(exportMapUrl, attempt));
                                         } else {
                                             reject();

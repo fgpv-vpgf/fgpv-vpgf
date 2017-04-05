@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -168,15 +169,13 @@
                             // cancel loading indicator timeout if any
                             $timeout.cancel(display.loadingTimeout);
                         } else {
-                            // TODO: add fancy es6 string substitution when adding a logger library
-                            console.log(displayName + ' Data rejected for request id ' + requestId +
-                                '; loading in progress or panel is closed');
+                            RV.logger.log('displayManager', `${displayName}: data rejected for request id ` +
+                                `${requestId} - any loading in progress or panel has been closed.`);
                         }
                     });
             } else {
-                // TODO: add fancy es6 string substitution when adding a logger library
-                console.log(displayName + ' Data rejected for request id ' + requestId +
-                    '; loading in progress or panel is closed');
+                RV.logger.log('displayManager', `${displayName}: data rejected for request id ${requestId} - ` +
+                    `any loading in progress or panel has been closed.```);
             }
         }
 
@@ -189,8 +188,6 @@
             // TODO: the following 4 statements could be moved to a helper function
             const state = stateManager.state[panelName];
             const displayName = state.display;
-
-            // console.log('Clearing ' + panelName);
 
             if (typeof displayName === 'undefined') {
                 return -1; // display for this panel is not defined, exit

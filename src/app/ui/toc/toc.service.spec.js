@@ -29,7 +29,6 @@ describe('tocService', () => {
         // const sm = stateManager; // global stateManager variable was disappearing for some reason
 
         rs.$watch(() => sm.state[name].active, (newValue, oldValue) => {
-            // console.log('resolving', name, newValue, oldValue);
 
             sm.callback(name, 'active');
             if (func) {

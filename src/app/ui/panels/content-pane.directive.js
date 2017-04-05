@@ -114,7 +114,6 @@
                     addHeaderControl(element, FLOATING_HEADER_CLASS);
 
                     scope.$on('rv-detect-scrollbar', (evt, newValue, oldValue, scrollbarWidth) => {
-                        // console.log(evt, oldValue, newValue, scrollbarWidth);
                         TweenLite.set(floatingHeader, {
                             x: newValue ? -scrollbarWidth : 0
                         });

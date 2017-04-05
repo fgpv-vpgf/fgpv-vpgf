@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -128,7 +129,6 @@
 
             // watch for changing slider to set actual layer opacity
             $scope.$watch('self.opacityValue', newValue => {
-                // console.log('opacity --->', newValue, self.opacityValue);
 
                 if (angular.isNumber(newValue) && self.tocEntry && !opacityTimeoutActive) {
                     // set opacity immediately
@@ -143,7 +143,7 @@
              */
             function setTocEntryOpacity() {
                 if (self.tocEntry.options.opacity.value !== self.opacityValue) {
-                    console.log('update opacity to', self.opacityValue);
+                    RV.logger.log('settingsDirective', `update opacity to ${self.opacityValue}`);
                     self.tocEntry.setOpacity(self.opacityValue);
                 }
 

@@ -51,10 +51,8 @@
             // jscs:disable requireSpacesInAnonymousFunctionExpression
             self.dragulaOptions = {
 
-                moves(el, source, handle) { // , sibling) {
-                    console.log('moves'); // , el, source, handle, sibling);
-                    // return true; // elements are always draggable by default
-
+                moves(el, source, handle) {
+                    // elements are always draggable by default
                     // only allow reordering using the drag handle when using touch
                     if (isTouchDetected) {
                         isTouchDetected = false;
@@ -71,11 +69,6 @@
                     }
                 },
 
-                /*invalid(el, handle) {
-                    // console.log('invalid', el, handle);
-                    return false; // don't prevent any drags from initiating by default
-                },*/
-
                 accepts(dragElement, target, source, sibling) {
                     // el and sibling are raw dom nodes, need to use `angular.element` to get jquery wrappers
                     [dragElement, sibling] = [angular.element(dragElement), angular.element(sibling)];
@@ -90,8 +83,6 @@
                     const belowSortGroup = belowItem.length > 0 ? belowItem.scope().item.sortGroup : -1;
 
                     const elementSortGroup = dragElement.scope().item.sortGroup;
-
-                    // console.log(`accept check, ${aboveSortGroup}, ${belowSortGroup}, ${elementSortGroup}`);
 
                     // if the drop place is surrounded by sort groups different from the element's sort group, forbid drop
                     if (elementSortGroup !== aboveSortGroup && elementSortGroup !== belowSortGroup) {
@@ -183,8 +174,6 @@
                         scrollAnimation.pause();
                     }
                 });
-
-                // console.log('Drag start', evt, el, source);
             });
 
             // on drop, remove data attribute from the list restoring normal appearance
@@ -309,7 +298,6 @@
          */
         function tocKeyDownHandler(event) {
             // cancel reorder mode on `Escape` key when pressed over toc
-            console.log(event.keyCode);
             if (event.keyCode === keyNames.ESCAPE && self.isReorder) {
                 self.toggleReorderMode(false);
                 killEvent(event);

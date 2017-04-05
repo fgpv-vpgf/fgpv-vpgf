@@ -359,6 +359,8 @@ gulp.task('inject', 'Adds configured dependencies to the HTML page',
 
         return gulp
             .src(index)
+            .pipe($.injectString.before('<!-- inject:js -->', `<script>
+                window.RV = {PROD_MODE: ${!!PROD_MODE}}</script>`))
             .pipe($.inject(gulp.src(config.jsInjectorFilePath), injectOpts))
             .pipe(gulp.dest(config.sampleBuild));
     }, {

@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -36,11 +37,10 @@
             service.isReady = globalRegistry.gapiPromise
                 .then(gapi => {
                     service.gapi = gapi;
-                    console.info('gapi is ready');
                     return $q.resolve(null);
                 })
                 .catch(() => {
-                    console.error('gapi is not ready :(');
+                    RV.logger.error('gapiService', 'gapi is not ready');
                 });
         }
     }

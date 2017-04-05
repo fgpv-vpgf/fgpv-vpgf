@@ -605,7 +605,7 @@
         const elem = jqueryElem[0];
 
         if (!viewerGroup.trapped(jqueryElem) && !opts.exempt) {
-            console.warn('You cannot use rvFocus on elements outside the viewer'); /*RemoveLogging:skip*/
+            RV.logger.warn('focusManager', 'You cannot use *rvFocus* on elements that are outside the viewer');
             return;
         }
 
@@ -655,7 +655,8 @@
             el[0].rvFocus({ exempt: true }); // more performant to use el[0] instead of el, since jQuery focus is implemented on HTMLElement.prototype.focus
 
         } else if (viewerGroup.trapped(el)) {
-            console.warn('You must use rvFocus to set focus on viewer elements'); /*RemoveLogging:skip*/
+            RV.logger.warn('focusManager', `*rvFocus* must be used to set focus ` +
+                `on elements that are a part of the viewer`);
             return;
         } else {
             el[0].origfocus();
@@ -683,7 +684,8 @@
                 if (takeAction || !viewerGroup.trapped($(this.target))) {
                     originalFunc.call(this);
                 } else {
-                    console.warn(`${funcName} is disabled on viewer elements`); /*RemoveLogging:skip*/
+                    RV.logger.warn('focusManager', `*${funcName}* is disabled on elements ` +
+                        `inside or part of the viewer`);
                 }
             };
         })();

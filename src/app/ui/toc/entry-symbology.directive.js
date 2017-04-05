@@ -1,4 +1,4 @@
-/* global Ease, BezierEasing */
+/* global Ease, BezierEasing, RV */
 
 (() => {
     'use strict';
@@ -160,7 +160,7 @@
                     symbologyItems.forEach(symbologyItem =>
                         symbologyItem.label.css('width', maxItemWidth));
 
-                    console.log('maxItemWidth', maxItemWidth);
+                    RV.logger.log('entrySymbologyDirective', `maxItemWidth is ${maxItemWidth}`);
 
                     makeShiftTimeline();
                     makeWiggleTimeline();

@@ -146,7 +146,6 @@
         function callback(itemName, property) {
             const fulfillKey = `${property}${itemName}`;
 
-            // console.log('Resolving state item lock:', itemName, property, fulfillStore[fulfillKey]); //, item.fulfill);
             // there is no memory leak since there is a finite (and small) number of fulfill keys
             if (fulfillStore[fulfillKey]) {
                 fulfillStore[fulfillKey]();
@@ -207,7 +206,6 @@
                     item[skipKey] = skip;
                 }
 
-                // console.log('settingItem', item, item.active, value);
                 if (item[property] !== value) {
 
                     // check if fulfill function exists from before exist and resolve it
@@ -231,7 +229,6 @@
             })
             .then(skipEvent => {
                 if (!skipEvent) {
-                    // console.log('EMIT EVENT for', itemName, property, value, skip);
                     // emit event on the rootscope when change is complete
                     $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
 

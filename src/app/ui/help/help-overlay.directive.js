@@ -141,11 +141,6 @@
         // used in the template to know which help sections need a button
         self.helpSections = helpService.drawnCache;
 
-        // temp functionality for help buttons
-        self.show = function show(key) {
-            console.log('Show help for: ' + key);
-        };
-
         activate();
 
         /*********/

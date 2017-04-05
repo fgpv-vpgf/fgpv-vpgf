@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -92,7 +93,7 @@
                         try {
                             langs = angular.fromJson(langAttr);
                         } catch (e) {
-                            console.warn('Could not parse langs, defaulting to en-CA and fr-CA');
+                            RV.logger.warn('configService', 'could not parse langs, defaulting to *en-CA* and *fr-CA*');
 
                             // TODO: better way to handle when no languages are specified?
                             langs = ['en-CA', 'fr-CA'];
@@ -130,7 +131,7 @@
                             })
                             .catch(() => {
                                 // TODO: possibly retry rcsLoad?
-                                console.warn('RCS failed, starting app with file-only config.');
+                                RV.logger.warn('configService', '*RCS failed* - starting app with file-only config.');
                                 const toast = $mdToast.simple()
                                     .textContent($translate.instant('config.service.rcs.error'))
                                     .action($translate.instant('config.service.rcs.action'))
@@ -151,7 +152,7 @@
                         })
                         .catch(error => {
                             reject(error);
-                            console.error(error);
+                            RV.logger.error('configService', error);
                         });
                 }
             });
@@ -260,8 +261,7 @@
                 try {
                     keys = angular.fromJson(keysAttr);
                 } catch (e) {
-                    console.error(e);
-                    console.error('RCS key retrieval failed');
+                    RV.logger.error('configService', 'RCS key retrieval failed with error', e);
                 }
 
                 const rcsData = rcsLoad(svcAttr, keys, langs);
@@ -270,7 +270,7 @@
                     partials[lang].push(rcsData[lang]);
                 });
             } else {
-                console.warn('RCS endpoint set but no keys were specified');
+                RV.logger.warn('configService', 'RCS endpoint set but no keys were specified');
             }
         }
 
@@ -391,11 +391,10 @@
         function ready(nextPromises) {
             return initializePromise
                 .then(() => {
-                    console.log('Ready promise resolved.');
                     return $q.all(nextPromises);
                 })
                 .catch(() => {
-                    console.log('"ready" function failed');
+                    RV.logger.log('configService', '*ready* function failed');
                 });
         }
     }

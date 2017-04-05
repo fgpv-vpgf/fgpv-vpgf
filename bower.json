@@ -39,7 +39,8 @@
     "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git",
     "linkifyjs": "^2.1.4",
     "moment-timezone": "^0.5.11",
-    "marked": "^0.3.6"
+    "marked": "^0.3.6",
+    "logdown": "^2.2.0"
   },
   "overrides": {
     "linkifyjs": {

@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     /**
      * @module identifyService
@@ -234,8 +235,7 @@
 
                 const identifyPromise = gapiService.gapi.layer.serverLayerIdentify(layerRecord._layer, opts)
                     .then(clickResults => {
-                        console.log('got a click result');
-                        console.log(clickResults);
+                        RV.logger.log('identifyService', 'click result', clickResults);
                         const hitIndexes = []; // sublayers that we got results for
 
                         // transform attributes of click results into {name,data} objects
@@ -322,8 +322,6 @@
                         if (data.indexOf('Search returned no results') === -1 && data !== '') {
                             identifyResult.data.push(data);
                         }
-
-                        // console.info(data);
                     });
 
                 return { identifyResults: [identifyResult], identifyPromise };
@@ -430,8 +428,6 @@
                     return;
                 }
 
-                console.info('Click start');
-
                 const loadingPromises = [];
                 const details = {
                     data: []
@@ -464,8 +460,8 @@
                         const loadingPromise = identifyPromise.catch(error => {
                             // add common error handling
 
-                            console.warn(`Identify query failed for ${layerRecord.legendEntry.name}`);
-                            console.warn(error);
+                            RV.logger.warn('identifyService', `Identify query failed for
+                                ${layerRecord.legendEntry.name} with error`, error);
 
                             identifyResults.forEach(identifyResult => {
                                 // TODO: this outputs raw error message from the service
