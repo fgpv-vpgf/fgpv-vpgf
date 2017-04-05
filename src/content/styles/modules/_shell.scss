@@ -26,9 +26,13 @@
         .rv-north-arrow {
             position: absolute;
             top: rem(0.2);
-            border-radius: rem(2);
+            border-radius: rem(2.5);
             background-color: rgba(white, 0.82);
-            padding: rem(0.5);
+            padding: rem(0.3);
+
+            md-icon {
+                color: black;
+            }
         }
 
         .rv-map-coordinates {
