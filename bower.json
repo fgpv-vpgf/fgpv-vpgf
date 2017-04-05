@@ -38,7 +38,8 @@
     "RandomColor": "https://github.com/sterlingwes/RandomColor.git#83308d7627ba4a50c4cd571543871bd5052a1322",
     "svg.textflow.js": "https://github.com/fgpv-vpgf/svg.textflow.js.git",
     "linkifyjs": "^2.1.4",
-    "moment-timezone": "^0.5.11"
+    "moment-timezone": "^0.5.11",
+    "marked": "^0.3.6"
   },
   "overrides": {
     "linkifyjs": {
