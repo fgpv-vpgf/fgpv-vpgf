@@ -1,3 +1,4 @@
+/* global RV */
 // jshint maxparams:14
 // FIXME reduce number of apiBlock parameters
 (() => {
@@ -31,15 +32,8 @@
                 readyDelay();
             })
             .catch(reason => {
-                console.error('Everything broke');
-                console.error(reason);
+                RV.logger.error('runBlock', 'fatal error', reason);
             });
-
-        // to prevent FOUC (flash of unstyled content) need to load translation
-        // files with config initialization if we know the language
-        // $rootScope.$on('$translateLoadingSuccess', data => console.log(data));
-        $rootScope.$on('$translateLoadingSuccess', () => console.log(
-            '$translateLoadingSuccess ->'));
 
         $rootScope.uid = uid;
 
@@ -123,7 +117,7 @@
              * @function start
              */
             function start() {
-                console.log('Bypassing rv-wait');
+                RV.logger.log('preLoadApiBlock', 'bypassing *rv-wait*');
                 reloadService.bookmarkBlocking = false;
                 $rootScope.$broadcast(events.rvBookmarkInit);
             }
@@ -176,7 +170,7 @@
         $rootScope.$on(events.rvApiReady, () => {
             globalRegistry.getMap(appInfo.id)._registerMap(service); // this enables the main API
             globalRegistry.getMap(appInfo.id)._applicationLoaded(service); // this triggers once
-            console.log(appInfo.id + ' registered');
+            RV.logger.log('apiBlock', `registered viewer with id *${appInfo.id}*`);
 
             configService.getCurrent().then(conf =>
                 globalRegistry.focusManager.addViewer($rootElement, $mdDialog, conf.fullscreen));

@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
 
     /**
@@ -294,7 +295,7 @@
                     this._items.forEach(item =>
                         item.offset(movementOffset.x, movementOffset.y));
 
-                    console.log(movementOffset);
+                    RV.logger.log('tooltipService', `movementOffset is ${movementOffset}`);
                 });
             }
         }

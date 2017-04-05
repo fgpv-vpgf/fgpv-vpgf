@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -86,7 +87,7 @@
                     (visibleOnly ? 'visible' : 'canada') :
                     'canada';
 
-                console.log('setting isvisible to', visibleOnly, targetExtentValue);
+                RV.logger.log('geosearchFiltersService', 'setting isvisible to', visibleOnly, targetExtentValue);
 
                 geoSearch.setExtent(targetExtentValue);
             }

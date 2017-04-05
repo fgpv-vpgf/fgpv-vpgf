@@ -113,8 +113,6 @@
          */
         function getSuggestions() {
             const suggestionsPromise = geosearchService.runQuery().then((data = {}) => {
-                console.log('get suggestions relust', data);
-
                 return data.suggestions || [];
             });
 

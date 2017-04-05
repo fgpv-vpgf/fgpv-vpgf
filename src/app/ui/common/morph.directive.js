@@ -73,7 +73,6 @@
                     if (stateManager.state[attr.rvMorph].morphSkip) {
                         el.removeClass(oldClass).addClass(newClass);
                         callback();
-                        console.log('morph completed');
                     } else {
                         animationService.to(el, attr.rvMorphSpeed || RV_MORPH_DURATION, {
                             className: toClass,
@@ -82,7 +81,6 @@
                                 // Remove old class from the element after morph is completed.
                                 el.removeClass(oldClass);
                                 callback();
-                                console.log('morph completed');
                             }
                         });
                     }

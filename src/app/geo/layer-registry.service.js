@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -323,7 +324,6 @@
 
                 _testSyncCheck();
 
-                // console.log(`reodder ${sourceId} on ${targetIndex}`);
                 mapObject.reorderLayer(sourceLayer, targetIndex);
             }
 
@@ -346,14 +346,13 @@
                 // compare the order of layer ids in both arrays - they should match
                 fullMapStack.forEach((layerId, index) => {
                     if (fullLegendStack[index] !== layerId) {
-                        console.error(`Map stack is out of ~~whack~~ sync! ${fullLegendStack[index]} !== ${layerId}`);
-                        console.warn('fullMapStack', fullMapStack);
-                        console.warn('fullLegendStack', fullLegendStack);
+                        RV.logger.error('layerRegistryService', `map stack is out of ` +
+                            `sync - ${fullLegendStack[index]} !== ${layerId}`);
+                        RV.logger.warn('layerRegistryService', 'fullMapStack', fullMapStack);
+                        RV.logger.warn('layerRegistryService', 'fullLegendStack', fullLegendStack);
                         return;
                     }
                 });
-
-                console.log('Map stack is in sync with legend');
             }
 
             /**
@@ -391,7 +390,7 @@
                     layerBlueprint.generateLayer().then(lr => {
                         registerLayerRecord(lr);
                         const pos = createPlaceholder(lr);
-                        console.log(`adding ${lr.config.name} to map at ${pos}`);
+                        RV.logger.log('layerRegistryService', `adding *${lr.config.name}* to map at _${pos}_`);
 
                         // TODO replace with existing function gapiService.gapi.proj.graphicsUtils.graphicsExtent()
                         // get the bbox extent if not defined

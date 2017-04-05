@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -297,7 +298,7 @@
         // TODO: rename to something like `setVisibility` to make it clearer what this does
         // if 'value' is not specified, toggle
         function toggleVisiblity(tocEntry, value) {
-            console.log('Toggle visiblity of layer: ' + tocEntry.name);
+            RV.logger.log('tocService', `toggle visiblity of layer with name ${tocEntry.name}`);
             tocEntry.setVisibility(value);
 
             // hide bounding box only when visibility is hidden
@@ -333,7 +334,7 @@
 
         // temp function to open layer groups
         function toggleLayerGroup(group) {
-            console.log('toggle layer group', group.name);
+            RV.logger.log('tocService', `toggle layer group with name ${group.name}`);
             group.expanded = !group.expanded;
         }
 
@@ -511,7 +512,6 @@
         function watchPanelState(panelName, displayName) {
             // clear display on metadata, settings, and filters panels when closed
             $rootScope.$on('stateChangeComplete', (event, name, property, value) => {
-                // console.log(name, property, value);
                 if (property === 'active' && name === panelName && value === false) {
                     stateManager.clearDisplayPanel(panelName);
                 }
