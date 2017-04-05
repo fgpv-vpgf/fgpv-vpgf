@@ -1,4 +1,4 @@
-/* global RColor */
+/* global RColor, RV */
 (() => {
     'use strict';
 
@@ -95,7 +95,7 @@
                     // TODO remove this test once it has passed the test of time
                     // quite often, it is undefined for example Eco Geo always start at 1. We need to keep this or modify upfront
                     if (typeof scaleSet[adjIdx] === 'undefined') {
-                        console.warn('setLayerScaleFlag - indexes are not lining up');
+                        RV.logger.warn('legendEntryService', 'in *setLayerScaleFlag* the indexes are not aligned');
                     } else {
                         // set scale flag properties and offscale options (only for legend entry, only on featureLayer and dynamicLayer for now)
                         const scale = scaleSet[adjIdx];
@@ -108,7 +108,8 @@
                     // walk through layerEntries and update each one
                     obj.walkItems(slave => {
                         if (typeof scaleSet[slave.featureIdx].value === 'undefined') {
-                            console.warn('setLayerScaleFlag - indexes are not lining up -- slave case');
+                            RV.logger.warn('legendEntryService', `in *setLayerScaleFlag* the indexes are not ` +
+                                `aligned for slaves`);
                         }
 
                         slave.flags.scale.visible = scaleSet[slave.featureIdx].value;
@@ -512,8 +513,7 @@
 
         DYNAMIC_ENTRY_MASTER_GROUP.init = function (initialState, layerRec, expanded) {
             DYNAMIC_ENTRY_GROUP.init.call(this, initialState, layerRec, expanded);
-            console.info('Binding master group listener');
-            console.info(this);
+            RV.logger.info('legendEntryService', 'binding the master group listener', this);
             this.bindListeners();
 
             // morph layerEntries array and childOptions into an object where keys are indexes of sublayers:
@@ -544,8 +544,8 @@
             this.slaves = [];
 
             // generate all the slave sublayers upfornt ...
-            console.log(this._layerRecord);
-            console.log(initialState);
+            RV.logger.log('legendEntryService', '_layerRecord', this._layerRecord);
+            RV.logger.log('legendEntryService', 'initialState', initialState);
             this._layerRecord.layerInfos.forEach((layerInfo, index) => {
                 let sublayerEntry;
                 const sublayerEntryInitialState = {

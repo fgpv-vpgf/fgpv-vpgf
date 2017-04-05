@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -155,8 +156,7 @@
         function uploadOnContinue() {
             onLayerBlueprintReady(self.upload.fileUrl)
                 .catch(error => {
-                    // TODO: show a meaningful error about why upload failed.
-                    console.error('Something awful happen', error);
+                    RV.logger.error('loaderFileDirective', 'problem retrieving file link with error', error);
                     toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
                 });
         }
@@ -169,16 +169,14 @@
          * @param  {Object} event submitted event
          * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
          */
-        function uploadFilesSubmitted(files) { // , event, flow) {
-            // console.log('submitted', files, event, flow);
+        function uploadFilesSubmitted(files) {
             if (files.length > 0) {
                 const file = files[0];
                 self.upload.file = file; // store the first file from the array;
 
                 onLayerBlueprintReady(file.name, file.file)
                     .catch(error => {
-                        // TODO: show a meaningful error about why upload failed.
-                        console.error('Something awful happen', error);
+                        RV.logger.error('loaderFileDirective', 'file upload has failed with error', error);
                         toggleErrorMessage(self.upload.form, 'fileSelect', 'upload-error', false);
                     });
             }
@@ -217,7 +215,7 @@
                     const percentLoaded = Math.round((event.loaded / event.total) * 100);
                     // Increase the progress bar length.
                     if (percentLoaded <= 100) {
-                        console.log(percentLoaded + '%');
+                        RV.logger.log('loaderFileDirective', `currently loaded ${percentLoaded}%`);
 
                         self.upload.progress = percentLoaded;
                         $scope.$apply();
@@ -291,9 +289,8 @@
 
             stepper.nextStep(validationPromise);
 
-            // console.log('User selected', self.layerBlueprint.fileType);
             validationPromise.catch(error => {
-                console.error('File type is wrong', error);
+                RV.logger.error('loaderFileDirective', 'file type is wrong', error);
                 toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
                 // TODO: display a meaningful error message why the file doesn't validate (malformed csv, zip with pictures of cats, etc.)
             });
@@ -357,7 +354,7 @@
                     closeLoaderFile();
                 })
                 .catch(error => {
-                    console.warn('File is Invalid ', error);
+                    RV.logger.warn('loaderFileDirective', 'file is invalid ', error);
                     self.configure.form.$setValidity('invalid', false);
                 });
         }

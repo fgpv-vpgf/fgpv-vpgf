@@ -1,3 +1,4 @@
+/* global Logdown */
 (() => { // jshint ignore:line
     // disabled checks on above line due to 'too many statements in this function' (jshint W071)
 
@@ -9,8 +10,6 @@
 
     // check if the global RV registry object already exists and store a reference
     const RV = window.RV = typeof window.RV === 'undefined' ? {} : window.RV;
-    // TODO: Replace with an actual logging library
-    RV.logManager = console;
 
     // test user browser, true if IE false otherwise
     RV.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
@@ -96,7 +95,7 @@
     // in cases when Angular is loaded by the host page before jQuery (or jQuery is not loaded at all), the viewer will not work as Angular will not bind jQuery correctly even if bootstrap loads a correct version of jQuery
     // more info, third paragraph from the top: https://code.angularjs.org/1.4.12/docs/api/ng/function/angular.element
     if (window.angular && !window.jQuery) {
-        RV.logManager.error('The viewer requires jQuery to work correctly.' +
+        console.error('The viewer requires jQuery to work correctly.' +
             'Ensure a compatible version of jQuery is loaded before Angular by the host page.');
 
         // stopping initialization
@@ -318,7 +317,7 @@
         // TODO v2.0: Remove the following deprecation warning
         // deprecating class fgpv on node for 2.0 release - use is="fgpv" instead
         if (node.classList.contains('fgpv')) {
-            RV.logManager.warn('Using class fgpv on the map DOM node is deprecated' +
+            console.warn('Using class fgpv on the map DOM node is deprecated' +
                 'and will be removed on v2.0 release. Use is="fgpv" instead.');
         }
 
@@ -341,7 +340,6 @@
             node.className += ' rv-touch';
         }
 
-        console.info('setting debug on', appId, node);
         // create debug object for each app instance
         RV.debug[appId] = {};
 
@@ -354,10 +352,56 @@
     loadScript(`${repo}/core.js`, () => {
         RV._deferredPolyfills.forEach(dp => dp());
         RV.allScriptsLoaded = true;
+        // init here since logging library is in core.js
+        RV.logger = enhanceLogger(RV.PROD_MODE ? ['error'] : ['debug', 'log', 'info', 'warn', 'error']);
+        RV.logger.log('bootstrapLogdown        ', 'has been started'); // pad prefix so they line up better
         fireRvReady();
     });
 
-    /***/
+    /**
+     * The following enhancements are applied to make Logdown better for our use cases:
+     *      1) Allows log prefixes to be added as the first argument to a logging function
+     *         For example, RV.logger.warn('focusManager', 'is the best');
+     *         Normally, prefixes cannot be defined after a Logdown instance is created. We correct this
+     *         by wrapping console functions such that Logdown instances are created after the console message is executed.
+     *
+     *      2) We correct an issue where Logdown does not retrieve a pre-existing instance by prefix name, which causes prefix
+     *         instances with the same name to have multiple colors.
+     *
+     * @function    enhanceLogger
+     * @param       {Array}  enabledMethods    an array of console function string names like log, debug, warn that should be displayed
+     */
+    function enhanceLogger(enabledMethods = []) {
+        const methods = ['debug', 'log', 'info', 'warn', 'error'];
+        const logger = {};
+
+        methods.forEach(type => {
+            logger[type] = function() {
+                const args = [].slice.call(arguments);
+                if (enabledMethods.indexOf(type) !== -1) {
+                    getLogdownInstance(args.splice(0, 1)[0])[type](...args);
+                }
+            };
+        });
+        return logger;
+    }
+
+    /**
+     * Logdown should return an existing instance of a logger if it finds one with matching prefixes. However, there seems to be a bug
+     * where logdown does not trim() its prefix search when alignOutput is true - the extra spaces cause the error. So we manually try
+     * to find instances and only create a new one if one if not found.
+     *
+     * @function    getLogdownInstance
+     * @param       {String}  prefix    the name/prefix of the logger instance
+     */
+    function getLogdownInstance(prefix) {
+        let logger = Logdown._instances.find(ld => ld.opts.prefix.trim() === prefix);
+        // logger for prefix was not found, create a new one
+        if (!logger) {
+            logger = new Logdown({ prefix, alignOutput: true });
+        }
+        return logger;
+    }
 
     /**
      * Called to buffer code until the library code has been fully loaded.  Behaves similar to jQuery style DOM ready events.
@@ -436,7 +480,7 @@
             `(${ versionDiff > 0 ? 'more recent' : 'older' } that expected ${ourVersion} version). ` +
             `No tests were done with this version. The viewer might be unstable or not work correctly.`;
 
-        RV.logManager.warn(warningMessgage);
+        console.warn(warningMessgage);
     }
 })();
 
@@ -460,10 +504,10 @@
         return () => {
             isActive = !isActive;
             if (isActive) {
-                console.debug('trackFocus is enabled.');
+                RV.logger.debug('trackFocus', 'Enabled');
                 attachEvents();
             } else {
-                console.debug('trackFocus is disabled.');
+                RV.logger.debug('trackFocus', 'Disabled');
                 detachEvents();
             }
         };
@@ -479,7 +523,7 @@
         function detectBlur(event) {
             // Do logic related to blur using document.activeElement;
             // You can do change detection too using lastActiveElement as a history
-            console.debug('[trackFocus]: blur', document.activeElement, event, isSameActiveElement());
+            RV.logger.debug('trackFocus', 'blur detected', document.activeElement, event, isSameActiveElement());
         }
 
         /**
@@ -506,7 +550,7 @@
          */
         function detectFocus(event) {
             // Add logic to detect focus and to see if it has changed or not from the lastActiveElement.
-            console.debug('[trackFocus]: focus', document.activeElement, event, isSameActiveElement());
+            RV.logger.debug('trackFocus', 'focus detected', document.activeElement, event, isSameActiveElement());
         }
 
         /**

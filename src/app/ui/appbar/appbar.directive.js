@@ -41,7 +41,6 @@
     function Controller(layoutService, stateManager, debounceService, basemapService, geosearchService) {
         'ngInject';
         const self = this;
-
         self.layoutService = layoutService;
         self.stateManager = stateManager;
 

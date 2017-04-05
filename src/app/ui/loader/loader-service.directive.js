@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -99,9 +100,6 @@
             .addSteps(self.select.step)
             .addSteps(self.configure.step)
             .start(); // activate stepper on the first step
-
-        console.log(stepper);
-
         /***/
 
         /**
@@ -154,11 +152,7 @@
             // TODO: refactor this
             self.layerBlueprint.initialConfig = { flags: { user: { visible: true } } };
 
-            self.layerBlueprint.ready.catch(() => {
-                console.log('self.connect.form.serviceUrl');
-
-                toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false); // , connect.step);
-            });
+            self.layerBlueprint.ready.catch(() => toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false));
 
             stepper.nextStep(self.layerBlueprint.ready);
         }
@@ -199,9 +193,8 @@
             self.configure.defaultOptions = angular.copy(self.layerBlueprint.config);
             stepper.nextStep(validationPromise);
 
-            // console.log('User selected', self.layerBlueprint.fileType);
             validationPromise.catch(error => {
-                console.error('Service type is wrong', error);
+                RV.logger.error('loaderServiceDirective', 'service type is wrong', error);
                 toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
             });
         }

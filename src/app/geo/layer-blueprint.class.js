@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -128,8 +129,7 @@
              */
             constructor(initialConfig, epsgLookup) {
                 if (typeof initialConfig.url === 'undefined') {
-                    // TODO: throw error ?
-                    console.error('Service layer needs a url.');
+                    RV.logger.error('layerBlueprint', 'service layer requires a url');
                     return;
                 } else if (initialConfig.layerType === Geo.Layer.Types.FeatureLayer) {
                     // `replace` strips trailing slashes. Assists in plucking index off url.
@@ -158,7 +158,7 @@
                 return $q.resolve(gapiService.gapi.layer.ogc.parseCapabilities(this.config.url))
                     .then(data => {
                         if (data.layers.length > 0) { // if there are layers, it's a wms layer
-                            console.log(`${this.config.url} is a WMS, yak!`);
+                            RV.logger.log('layerBlueprint', `the url ${this.config.url} is a WMS`);
 
                             // it is mandatory to set featureInfoMimeType attribute to get fct identifyOgcWmsLayer to work.
                             // get the first supported format available in the GetFeatureInfo section of the Capabilities XML.
@@ -177,7 +177,7 @@
                             };
 
                         } else {
-                            console.log(`${this.config.url} is not a WMS, running more checks.`);
+                            RV.logger.log('layerBlueprint', `the url ${this.config.url} is not a WMS`);
                             const prediction = gapiService.gapi.layer.predictLayerUrl(this.config.url, hint);
 
                             // if a raster layer is predicted we switch it to a dynamic service with the raster layer pre-selected
@@ -205,7 +205,7 @@
                         }
                     })
                     .then(fileInfo => {
-                        console.log(fileInfo);
+                        RV.logger.log('layerBlueprint', 'fileInfo', fileInfo);
 
                         // this is not a service URL;
                         // in some cases, if URL is not a service URL, dojo script used to interogate the address
@@ -308,8 +308,6 @@
              * @return {Array|null} array of fields in the form of [{ name: "Long", type: "esriFieldTypeString"}]
              */
             get fields() {
-                // console.log(this._formatedFileData);
-
                 if (this._serviceInfo !== null) {
                     return this._serviceInfo.fields;
                 } else {
@@ -449,8 +447,6 @@
              * @return {Array|null} array of fields in the form of [{ name: "Long", type: "esriFieldTypeString"}]
              */
             get fields() {
-                // console.log(this._formatedFileData);
-
                 if (this._formatedFileData !== null) {
                     return this._formatedFileData.fields;
                 } else {
@@ -485,7 +481,7 @@
                 this.config.name = this.userOptions.layerName;
                 this.config.nameField = this.userOptions.primaryField;
 
-                console.log(this.userOptions);
+                RV.logger.log('layerBlueprint', 'layer userOptions', this.userOptions);
 
                 const layerPromise = layerFileGenerators[this.fileType]();
 
@@ -514,13 +510,10 @@
                 const dataPromise = $q((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onerror = () => {
-                        console.error('Failed to read a file');
+                        RV.logger.error('layerBlueprint', 'failed to read a file');
                         reject('Failed to read a file');
                     };
-                    reader.onload = () => {
-                        console.log('Fully loaded');
-                        resolve(reader.result); // ???
-                    };
+                    reader.onload = () => resolve(reader.result);
                     reader.onprogress = event => progressCallback(event);
 
                     reader.readAsArrayBuffer(file);

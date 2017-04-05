@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -63,8 +64,7 @@
                     return response.data;
                 })
                 .catch(err => {
-                    console.warn(err);
-
+                    RV.logger.warn('geoService', 'proj4 style projection lookup failed with error', err);
                     // jscs check doesn't realize return null; returns a promise
                     return null; // jscs:ignore jsDoc
                 });
@@ -125,10 +125,7 @@
 
                     return service;
                 })
-                .catch(error => {
-                    console.error('Failed to assemble the map');
-                    console.error(error);
-                });
+                .catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
         }
 
     }

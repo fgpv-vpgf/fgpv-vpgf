@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -70,9 +71,6 @@
                     step._index = index + this.steps.length;
                     this.steps.push(step);
                 });
-
-                // console.log('this.steps', this.steps);
-
                 return this;
             }
 
@@ -121,7 +119,7 @@
                 const currentStep = this.currentStep;
 
                 if (stepNumber > this.steps.length - 1 || stepNumber < 0) {
-                    console.error(`Step number is out of bounds: ${stepNumber}`);
+                    RV.logger.error('stepperClass', `step number is out of bounds: ${stepNumber}`);
                     return this;
                 }
 
@@ -145,13 +143,11 @@
                         // one solution would be to disable `cancel/continue` buttons when transition starts
                         if (stepNumber > currentStepNumber) { // move forward
                             for (let i = currentStepNumber; i < stepNumber; i++) {
-                                // console.log(i);
                                 const step = this.steps[i];
                                 this._configureStep(step, true, false);
                             }
                         } else { // move backward
                             for (let i = currentStepNumber; i > stepNumber; i--) {
-                                // console.log(i);
                                 const step = this.steps[i];
                                 this._reset(step) // reset intermediate steps when going backward
                                     ._configureStep(step, false, false);

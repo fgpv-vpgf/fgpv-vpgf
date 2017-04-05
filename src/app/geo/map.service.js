@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -287,8 +288,8 @@
                 // const map = service.mapObject;
 
                 if (typeof mapManager === 'undefined' || !mapManager.BasemapControl) {
-                    console.error('Error: Map manager or basemap control is not setup,' +
-                        ' please setup map manager by calling setupMap().');
+                    RV.logger.error('mapService', `the map manager or basemap control is not setup, please ` +
+                       `setup map manager by calling setupMap()`);
                 } else {
 
                     if (id.startsWith('blank_basemap_')) {
@@ -443,7 +444,7 @@
                 if (geoState.fullExtent) {
                     map.setExtent(geoState.fullExtent);
                 } else {
-                    console.warn('GeoService: fullExtent value is not set.');
+                    RV.logger.warn('mapService', 'geoService *fullExtent* value is not set');
                 }
             }
 
@@ -784,15 +785,13 @@
                             resolve();
                         },
                         'update-start': () => {
-                            console.log('   Map update START!');
-
+                            RV.logger.log('mapService', 'map update has started');
                             setMapLoadingFlag(true, 300);
                         },
                         'extent-change': data => $rootScope.$broadcast('extentChange', data),
                         'mouse-move': data => $rootScope.$broadcast('rvMouseMove', data.mapPoint),
                         'update-end': () => {
-                            console.log('   Map update END!');
-
+                            RV.logger.log('mapService', 'map update has ended');
                             setMapLoadingFlag(false, 100);
                         }
                     });
