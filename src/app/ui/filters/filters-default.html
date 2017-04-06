@@ -6,7 +6,7 @@
         title-value="{{ 'filter.title' | translate }}{{ self.display.requester.name }}"
         is-loading="self.display.isLoading">
 
-        <!-- do not put rv-ignore-focusout here because it will exclude header from tabing -->
+        <!-- do not put rv-ignore-focusout here because it will exclude header from tabing. Remove from code as well because it creates a double tab problem and it is not needed anymore -->
         <div class="rv-filters">
             <!--md-button ng-click="self.draw()">click this button if you don't see the table below</md-button-->
 
