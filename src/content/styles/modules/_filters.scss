@@ -73,7 +73,7 @@
 
                             // ellipsis renderer when text is longer then field width
                             .rv-render-ellipsis {
-                                cursor: text;
+                                height: rem(2);
                                 overflow: hidden;
                                 text-overflow: ellipsis;
                                 white-space: nowrap;
