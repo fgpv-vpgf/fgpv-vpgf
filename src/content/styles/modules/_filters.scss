@@ -49,7 +49,7 @@
 
                         tbody {
                             // for datatable KeyTable extension
-                            td.rv-cell-focus {
+                            td:focus {
                                 outline: 1px solid $focus-color;
                                 outline-offset: -1px;
 
