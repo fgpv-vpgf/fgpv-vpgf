@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -91,8 +92,8 @@
              * @param  {Object} event event object
              */
             function focusOutHandler(event) {
-                console.log('--', event, 'isReordering', isReordering, 'isDraggin', isDragging);
-
+                RV.logger.log('dragulaDirective', 'event', event,
+                    `isReordering ${isReordering} isDragging ${isDragging}`);
                 if (isDragging && !isReordering) {
                     dropElement(event, event.target);
                 }
@@ -103,7 +104,7 @@
              * @param  {Object} event event object
              */
             function keyDownHandler(event) {
-                console.log(event.keyCode);
+                RV.logger.log('dragulaDirective', event.keyCode);
                 const target = angular.element(event.target);
 
                 // if the target cannot be moved, exit

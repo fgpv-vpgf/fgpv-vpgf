@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     /**
      * @module metadataService
@@ -10,7 +11,7 @@
         .module('app.geo')
         .factory('metadataService', metadataService);
 
-    function metadataService($q, $http, $translate, Geo, configService) {
+    function metadataService($q, $http, $translate, Geo) {
 
         const service = {
             transformXml
@@ -70,7 +71,7 @@
         function loadXmlFile(url) {
             return $http.get(url)
                         .then(response => response.data)
-                        .catch(error => console.error(`XHR request failed. Error: ${error}`));
+                        .catch(error => RV.logger.error('metadataService', `XHR request failed with error`, error));
         }
 
         /**
@@ -84,15 +85,12 @@
         * @return {Promise} a promise resolving with formatted HTML text
         */
         function transformXml(xmlUrl, returnFragment, params) {
-
-            console.log(`transformXML ${configService.currentLang()}`);
             const xsltString = Geo.Metadata.XSLT_LANGUAGE_NEUTRAL.replace(/\{\{([\w\.]+)\}\}/g, (match, tag) =>
                 $translate.instant(tag)
             );
             return loadXmlFile(xmlUrl)
                 .then(xmlData => applyXSLT(xmlData, xsltString, returnFragment, params))
-                .catch(err => console.error('Error: ' + err));
-
+                .catch(err => RV.logger.error('metadataService', 'could not load xml file with error', err));
         }
 
     }

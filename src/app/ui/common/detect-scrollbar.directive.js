@@ -50,7 +50,6 @@
             scope.$watch(() => domNode.scrollHeight > domNode.clientHeight, (newValue, oldValue) => {
                 $timeout.cancel(handle);
                 handle = $timeout(() => {
-                    // console.log('watch scrollbar', newValue, oldValue);
                     scope.$emit('rv-detect-scrollbar', newValue, oldValue, SCROLLBAR_WIDTH);
                 }, 20); // magic binding sometimes doubles the height of the node; add a small timeout to avoid false detections
             });

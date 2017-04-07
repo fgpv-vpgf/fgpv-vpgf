@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     /**
      * LayerRecordFactory is a lightweight wrapper around the LayerRecord class hierarchy.
@@ -71,7 +72,7 @@
 
             _stateChange (newState) {
                 this._state = newState;
-                console.log(`State change for ${this.layerId} to ${newState}`);
+                RV.logger.log('layerRecord', `state change for layer with id *${this.layerId}* to`, newState);
                 // if we don't copy the array we could be looping on an array
                 // that is being modified as it is being read
                 this._fireEvent(this._stateListeners, this._state);
@@ -105,7 +106,7 @@
 
             onLoad () {
                 if (this.legendEntry && this.legendEntry.removed) { return; }
-                console.info(`Layer loaded: ${this._layer.id}`);
+                RV.logger.info('layerRecord', `layer with id *${this._layer.id}* has loaded`);
                 let lookupPromise = Promise.resolve();
                 if (this._epsgLookup) {
                     const check = gapi().proj.checkProj(this.spatialReference, this._epsgLookup);
@@ -117,8 +118,7 @@
             }
 
             onError (e) {
-                console.warn(`Layer error: ${e}`);
-                console.warn(e);
+                RV.logger.warn('layerRecord', 'layer error', e);
                 this._stateChange(Geo.Layer.States.ERROR);
             }
 

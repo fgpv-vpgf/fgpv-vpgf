@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     // button blueprints to be added to the table rows
     // `self` property is named so intentionally, as it will be passed on a scope to the ROW_BUTTON_TEMPLATE
@@ -371,8 +372,6 @@
                  * @private
                  */
                 function onTableDraw() {
-                    console.log('rows are drawn');
-
                     // draw has been fired because of scrolling with the keyboard
                     if (scrollCell) { draw = true; }
 
@@ -614,9 +613,9 @@
 
         function activate() {
             // wait for morph on filters panel to complete and redraw the datatable
-            $scope.$on('stateChangeComplete', (event, name, property, value) => { // , skip) => {
+            $scope.$on('stateChangeComplete', (event, name, property, value) => {
                 if (name === 'filters') {
-                    console.log('Filters: ', event, name, property, value); // , skip);
+                    RV.logger.log('filtersDefaultDirective', event, name, property, value);
                     self.draw(value);
 
                     if (property === 'active') {
@@ -657,15 +656,13 @@
 
             // wait for print event and print the table
             $scope.$on(events.rvDataPrint, () => {
-                console.log('Printing Datatable');
-
+                RV.logger.log('filtersDefaultDirective', 'printing Datatable');
                 triggerTableButton(0);
             });
 
             // wait for data export CSV event and export
             $scope.$on(events.rvDataExportCSV, () => {
-                console.log('Exporting CSV Datatable');
-
+                RV.logger.log('filtersDefaultDirective', 'exporting CSV Datatable');
                 triggerTableButton(1);
             });
 
@@ -747,7 +744,7 @@
         // redraw the table using scroller extension
         function draw(value) {
             if (self.table) {
-                console.log('Filters: drawing table');
+                RV.logger.log('filtersDefaultDirective', 'drawing table');
 
                 const scroll = self.table.scroller;
                 if (value === 'default') {

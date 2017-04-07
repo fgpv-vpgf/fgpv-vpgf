@@ -26,7 +26,6 @@
          */
         function link(scope, element) {
             scope.$watch(() => element.width(), (newValue, oldValue) => {
-                // console.log('wathc', newValue, oldValue);
                 scope.$emit('rv-resize', newValue, oldValue);
             });
         }

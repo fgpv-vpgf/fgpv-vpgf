@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
     'use strict';
 
@@ -317,9 +318,11 @@
                 position = position !== -1 ? position : undefined;
                 position = service.legend.add(entry, position);
 
-                console.log(`Inserting placeholder ${entry.name} ${position}`);
+                RV.logger.log('legendService', `inserting placeholder with name ` +
+                    `*${entry.name}* into position _${position}_`);
                 const listener = state => {
-                    console.info(`Placeholder listener fired ${state} ${layerRecord.layerId}`);
+                    RV.logger.info('legendService', `placeholder listener fired with state ` +
+                        `${state} on layerReord id ${layerRecord.layerId}`);
                     if (!entry.removed && state === Geo.Layer.States.LOADED) {
                         layerRecord.removeStateListener(listener);
                         entry.unbindListeners();
@@ -351,7 +354,7 @@
                     enabled: true
                 };
 
-                console.log(`Inserting legend entry ${entry.name} ${index}`);
+                RV.logger.log('legendService', `inserting legend entry with name *${entry.name}* to index _${index}_`);
 
                 service.legend.add(entry, index);
             }

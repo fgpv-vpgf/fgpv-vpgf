@@ -1,3 +1,4 @@
+/* global RV */
 (() => {
 
     /**
@@ -60,7 +61,7 @@
             // bookmarkVersions.? is the version. update this accordingly whenever the structure of the bookmark changes
             const bookmark = `${bookmarkVersions.B},${basemap},${extent.x},${extent.y},${extent.scale}` +
                 (layerBookmarks.length > 0 ? `,${layerBookmarks.toString()}` : '');
-            console.log(bookmark);
+            RV.logger.log('bookmarkService', 'bookmark object', bookmark);
             return bookmark;
 
         }
@@ -326,7 +327,7 @@
             const dBookmark = decodeURI(bookmark);
             const { newKeyList, newBaseMap, newLang } = opts;
 
-            console.log(dBookmark);
+            RV.logger.log('bookmarkService', 'in function *parseBookmark* the decoded URI is', dBookmark);
 
             const version = dBookmark.match(/^([^,]+)/)[0];
             let blankBaseMap = false;
