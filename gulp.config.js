@@ -40,7 +40,8 @@ module.exports = function () {
             src + 'index-jso.html',
             src + 'index-fgp-en.html',
             src + 'index-fgp-fr.html',
-            src + 'bookmark-decode.html'
+            src + 'bookmark-decode.html',
+            src + 'multiple-angular.html'
         ],
         indexProtractor: src + 'index-protractor.html',
 

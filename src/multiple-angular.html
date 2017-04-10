@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <style>
+            div.myMap {
+                height: 675px;
+            }
+            div#app1, div#app2 {
+                padding: 5px;
+            }
+        </style>
+
+        <!-- Load any version of angular you'd like to use for host page angular application -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.js"></script>
+    </head>
+
+
+    <body>
+        <!-- This is our custom angular app. It can be placed before or after the viewer html below (order not important) -->
+        <div id="app1">
+            <div ng-controller="myController">
+                App1 version number: {{version}}
+            </div>
+        </div>
+
+        <div id="app2">
+            <div ng-controller="myController">
+                App2 version number: {{version}}
+            </div>
+        </div>
+
+        <!-- This is the viewer app, it displays the map-->
+        <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config-mobile.json" data-rv-langs='["en-CA", "fr-CA"]' data-rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' rv-restore-bookmark="bookmark"></div>
+
+        <script>
+            // note that we wrap our custom application in an Immediately-Invoked Function Expression (IIFE) with angular scoped in
+            // this must be done before the inject:js comment below, since the viewer will override our custom angular version when it loads
+            (function (angular) {
+                angular.module('myApp1', [])
+                    .controller('myController', function ($scope, $interval) {
+                        $interval(() => {
+                            $scope.version = angular.version.full;
+                        }, 1000);
+                });
+                angular.bootstrap(document.getElementById("app1"), ['myApp1']);
+            })(angular);
+
+            // If scoping angular is not ideal for your custom application you can also assign it to another global variable as we do here
+            // However you must remember to use your custom global angular version throughout your application as the global "angular" will
+            // reference the viewers angular version once it is loaded.
+
+            window.myAngular = angular;
+            myAngular.module('myApp2', [])
+                    .controller('myController', function ($scope, $interval) {
+                        $interval(() => {
+                            // note that we use "myAngular", using "angular" will show the viewers version
+                            $scope.version = myAngular.version.full;
+                        }, 1000);
+                });
+            myAngular.bootstrap(document.getElementById("app2"), ['myApp2']);
+
+        </script>
+
+
+        <!-- inject:js -->
+        <!-- endinject -->
+    </body>
+</html>
