@@ -144,6 +144,10 @@
                             abbr: def.term,
                             name: def.description
                         }));
+
+                        // add ... to the list to reset filter from the selection bbox
+                        provinceList.push({ code: -1, abbr: '...', name: '...' });
+
                         resolve(provinceList);
                     }, reject);
                 }
@@ -177,6 +181,9 @@
                         typeList.push({ code: 'FSA', name: $translate.instant('geosearch.type.fsa') });
                         typeList.push({ code: 'SCALE', name: $translate.instant('geosearch.type.scale') });
                         typeList.push({ code: 'COORD', name: $translate.instant('geosearch.type.latlong') });
+
+                        // add ... to the list to reset filter from the selection bbox
+                        typeList.push({ code: -1, name: '...' });
 
                         resolve(typeList);
                     }, reject);
