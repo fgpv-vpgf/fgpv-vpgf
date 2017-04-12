@@ -58,10 +58,57 @@
             extentChangeListener: angular.noop
         };
 
+        self.onItemFocus = onItemFocus;
+        self.onItemBlur = onItemBlur;
         self.onTopFiltersUpdate = onTopFiltersUpdate;
         self.onBottomFiltersUpdate = onBottomFiltersUpdate;
 
         return;
+
+        /**
+         * On focus, create a tooltip who contains all text section.
+         *
+         * @function onItemFocus
+         * @private
+         */
+        function onItemFocus(evt) {
+            const target = evt.target;
+            if (target.classList.contains('rv-results-item-body-button')) {
+                const li = target.parentElement;
+                const item = li.getElementsByClassName('rv-results-item-main')[0];
+                const type = li.getElementsByClassName('rv-results-item-type')[0];
+                const children = item.children;
+
+                // concatenate all text inside one string
+                let text = '';
+                $(children).each((i, val) => text += val.innerText);
+                text += `, ${type.innerText}`;
+
+                // create a span and include text inside
+                const span = document.createElement('span');
+                span.innerText = text;
+                span.className = 'rv-results-item-tooltip';
+                li.appendChild(span);
+
+                // check it the text exceed the menu width. If so, set the animation so text will move and
+                // user will be able to see it.
+                span.style.left = $(span).width() > 380 ? `${360 - $(span).width()}px` : 0;
+            }
+        }
+
+        /**
+         * On blur, remove tooltip.
+         *
+         * @function onItemBlur
+         * @private
+         */
+        function onItemBlur(evt) {
+            const target = evt.target;
+            if (target.classList.contains('rv-results-item-body-button')) {
+                const li = target.parentElement;
+                li.removeChild(li.getElementsByClassName('rv-results-item-tooltip')[0]);
+            }
+        }
 
         /**
          * Triggers geosearch query on top filters (province, type) update.

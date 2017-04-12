@@ -16,11 +16,13 @@
         <ul class="rv-results-list">
 
             <li class="rv-results-item" ng-repeat="result in self.service.searchResults">
-
                 <md-button
                     aria-label="result.name + ' ' + result.location.city ' ' + result.location.province.abbr + ' ' + result.type.name"
                     class="rv-results-item-body-button rv-button-square"
-                    ng-click="self.service.zoomTo(result)"></md-button>
+                    ng-click="self.service.zoomTo(result)"
+                    ng-focus="self.onItemFocus($event)"
+                    ng-blur="self.onItemBlur($event)">
+                </md-button>
 
                 <div class="rv-results-item-main">
 
@@ -32,7 +34,6 @@
                     </span><span class="rv-results-item-province md-caption" ng-if="result.location.province.name">
                         , {{ ::result.location.province.abbr }}
                     </span>
-
                 </div>
 
                 <span flex></span>

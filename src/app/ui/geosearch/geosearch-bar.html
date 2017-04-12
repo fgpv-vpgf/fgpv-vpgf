@@ -1,8 +1,8 @@
-<div class="rv-geosearch-bar rv-whiteframe-z2" ng-attr-rv-trap-focus="{{!self.service.isResultsVisible ? '' : undefined}}">
+<div class="rv-geosearch-bar rv-whiteframe-z2" ng-attr-rv-trap-focus="{{ !self.service.isResultsVisible ? '' : undefined }}">
     <md-button
         translate
         translate-attr-aria-label="appbar.aria.menu"
-        class="md-icon-button black"
+        class="md-icon-button black rv-geosearch-open"
         ng-click="self.layoutService.sidenav.open();">
         <md-tooltip>{{ 'appbar.tooltip.menu' | translate }}</md-tooltip>
         <md-icon md-svg-src="navigation:menu"></md-icon>
