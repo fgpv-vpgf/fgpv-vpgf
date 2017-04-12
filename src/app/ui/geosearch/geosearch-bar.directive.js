@@ -58,6 +58,7 @@
 
         self.geosearchMenuClass = GEOSEARCH_MENU_CLASS;
         self.layoutService = layoutService;
+        self.searchLength = 0;
 
         self.onUpdateDebounce = onUpdateDebounceBuilder();
 
@@ -73,9 +74,18 @@
          * @return {Function} debounced onUpdateFunction
          */
         function onUpdateDebounceBuilder() {
+
             const onUpdateDebounce = debounceService.registerDebounce(getSuggestions, 300, false);
 
             return () => {
+                // because search value is cleared on esc, keep a reference if not empty or empty but user erase it
+                const prevLength = self.searchLength;
+                const actualLength = self.service.searchValue.length;
+                if (self.service.searchValue !== '' || (prevLength === 1 && actualLength === 0)) {
+                    self.service.searchValuePerm = self.service.searchValue;
+                }
+                self.searchLength = self.service.searchValue.length;
+
                 getGeosearchMenuNode().css('visibility', 'hidden');
 
                 return onUpdateDebounce().then(data => {
