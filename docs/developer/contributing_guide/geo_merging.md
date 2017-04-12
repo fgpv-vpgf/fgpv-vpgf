@@ -5,17 +5,32 @@ This guide will help you transition changes made in geoApi for inclusion in this
 Open a terminal in your local geoApi folder and execute the following commands. They will create a local and origin branch which we'll use to open a new PR.
 
 ```shell
-git fetch upstream
-git checkout master
-git reset --hard upstream/master
-git merge --ff-only upstream/develop
-git checkout -b master-vx.y.z
-git push --set-upstream origin master-vx.y.z
+git fetch --all
+git checkout develop
+git reset --hard upstream/develop
+git checkout -b build-vx.y.z
+```
+
+Update `bower.json` with the proper x.y.z version.
+
+```shell
+git commit -am 'chore(build): version x.y.z'
+git push --set-upstream origin build-vx.y.z
 ```
 
 #### Open a PR & merge
 
-The master branch is protected, so we can't push our branch directly. Instead, open a PR on geoApi which targets master. Once all checks have passed the branch can be merged,.
+Open a PR on geoApi targeting the `develop` branch. Once all checks have passed the branch can be merged.
+
+#### Change head pointer on master
+
+Unlock the `master` branch then run the following command (after which you should re-lock master):
+
+```shell
+git checkout develop
+git pull --ff-only upstream develop
+git push upstream develop:master -f
+```
 
 #### Tagging
 
