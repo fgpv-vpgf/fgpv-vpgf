@@ -3,7 +3,8 @@
         <md-checkbox aria-label="{{ geosearch.aria.extent | translate }}" class="md-primary"
             ng-model="self.visibleOnly"
             ng-disabled="self.filters.extent.outside"
-            ng-change="self.onUpdateDebounce()">
+            ng-change="self.onUpdateDebounce()"
+            tabindex="-2">
             {{ 'geosearch.label.extent' | translate }}
         </md-checkbox>
     </md-input-container>

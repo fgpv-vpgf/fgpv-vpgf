@@ -21,6 +21,7 @@
             noResultsSearchValue: '', // the (previous) search term which returned no results
 
             searchValue: '', // current search term
+            searchValuePerm: '', // searchValue is cleared on esc, keep a reference
             searchResults: [], // currect search results
 
             runQuery,
@@ -41,6 +42,9 @@
             if (!newValue) {
                 // this will properly hide geosearch content
                 onClose();
+
+                // emit close to directive
+                $rootScope.$emit(events.rvGeosearchClose);
             }
         });
 
@@ -66,13 +70,14 @@
         }
 
         /**
-         * Properly closes the geosearch content and restores previous panel if any.
+         * Properly closes the geosearch content and restores previous panel if any. Do not clear the search term when closing
+         * so when user come back he doesn't lose is search. Especially useful for small screen.
          *
          * @function onClose
          */
         function onClose() {
-            // clear the search term when closing
-            service.searchValue = '';
+            // because search value is cleared on esc, reset it to make permanent when we close geosearch
+            service.searchValue = service.searchValuePerm;
 
             // stateManager is a mess; it needs to be refactored; this won't happen.
 
