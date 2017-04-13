@@ -6,12 +6,12 @@
             <rv-loader-menu></rv-loader-menu>
 
             <md-button
-                translate translate-attr-aria-label="toc.menu.reorder.title"
+                translate-attr-aria-label="toc.menu.reorder.title"
                 class="md-icon-button primary rv-icon-20"
                 ng-class="{ selected: self.isReorder }"
                 ng-click="self.toggleReorderMode()">
                 <md-tooltip>{{ 'toc.menu.reorder.title' | translate }}</md-tooltip>
-                <md-icon md-svg-src="action:swap_vert"></md-icon>
+                <md-icon>swap_vert</md-icon>
             </md-button>
 
             <h4 class="md-subhead" ng-if="self.isReorder">{{ 'toc.menu.reorder.title' | translate }}</h4>
@@ -19,13 +19,12 @@
             <span flex></span>
 
             <md-button
-                translate
                 translate-attr-aria-label="toc.menu.reorder.close"
                 class="rv-close md-icon-button black rv-icon-20"
                 ng-click="self.toggleReorderMode(false)"
                 ng-if="self.isReorder">
                 <md-tooltip>{{ 'toc.menu.reorder.close' | translate }}</md-tooltip>
-                <md-icon md-svg-src="navigation:close"></md-icon>
+                <md-icon>close</md-icon>
             </md-button>
 
             <rv-toc-expand-menu ng-if="!self.isReorder"></rv-toc-expand-menu>

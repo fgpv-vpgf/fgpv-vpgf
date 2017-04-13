@@ -17,3 +17,11 @@
 }
 
 @import "vendor/_special.scss";
+
+.mdi:before, .mdi-set {
+    width: inherit;
+    height: inherit;
+    vertical-align: super;
+    line-height: normal !important;
+    font-size: 24px !important;
+}

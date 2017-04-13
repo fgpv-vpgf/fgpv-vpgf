@@ -4,18 +4,17 @@
     class="rv-button-square">
 
     <div layout="row">
-        <md-icon md-svg-src="{{ ::self.control.icon }}"></md-icon>
+        <md-icon>{{ ::self.control.icon }}</md-icon>
 
         {{ self.control.label | translate }}
         <span flex></span>
-        <md-icon md-svg-src="navigation:check" ng-if="self.control.isChecked(self.control)"></md-icon>
+        <md-icon ng-if="self.control.isChecked(self.control)">check</md-icon>
     </div>
 
 </md-button>
 
 <div layout="row" ng-if="self.control.type === 'group'" class="rv-menulink-header md-subhead">
-    <md-icon md-svg-src="{{ ::self.control.icon }}"></md-icon>
-
+    <md-icon>{{ ::self.control.icon }}</md-icon>
     {{ self.control.label | translate }}
     <span flex></span>
 </div>

@@ -22,18 +22,16 @@
 
         <!-- show close button if there is a closePanel function -->
         <md-button
-            translate
             translate-attr-aria-label="contentPane.aria.close"
             class="rv-close md-icon-button black rv-button-24"
             ng-click="self.closePanel()"
             ng-if="self.closePanel"
             rv-close-button>
             <md-tooltip>{{'contentPane.tooltip.close' | translate}}</md-tooltip>
-            <md-icon class="rv-lt-lg" md-svg-src="navigation:arrow_back"></md-icon>
-            <md-icon class="rv-lg" md-svg-src="navigation:close"></md-icon>
+            <md-icon class="rv-lt-lg">arrow_back</md-icon>
+            <md-icon class="rv-lg">close</md-icon>
         </md-button>
     </div>
-
     <!-- floating header is deprecated -->
     <div class="rv-header-float" ng-show="self.floatingHeader && self.closePanel">
 
@@ -47,8 +45,8 @@
             ng-if="self.closePanel"
             rv-close-button>
             <md-tooltip>Close</md-tooltip>
-            <md-icon class="rv-show-single" md-svg-src="navigation:arrow_back"></md-icon>
-            <md-icon class="rv-hide-single" md-svg-src="navigation:close"></md-icon>
+            <md-icon class="rv-show-single">arrow_back</md-icon>
+            <md-icon class="rv-hide-single">close</md-icon>
         </md-button>
     </div>
 

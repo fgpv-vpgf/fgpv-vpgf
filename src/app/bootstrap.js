@@ -74,10 +74,17 @@
 
     // inject fonts
     const fontsLink = d.createElement('link');
-    fontsLink.href = '//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic';
+    fontsLink.href = '//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons';
     fontsLink.rel = 'stylesheet';
 
     headNode.appendChild(fontsLink);
+
+    // inject mdi fonts
+    const mdiFontsLink = d.createElement('link');
+    mdiFontsLink.href = '//cdn.materialdesignicons.com/1.9.32/css/materialdesignicons.min.css';
+    mdiFontsLink.rel = 'stylesheet';
+
+    headNode.appendChild(mdiFontsLink);
 
     const scriptsArr = [];
 

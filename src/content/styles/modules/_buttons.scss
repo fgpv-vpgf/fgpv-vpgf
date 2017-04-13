@@ -141,10 +141,15 @@
 
 
 @mixin icon-size($size) {
+    .mdi:before, .mdi-set {
+        font-size: $size !important;
+    }
+
     &md-icon,
     > md-icon,
     &.md-button > md-icon,
     > .md-button > md-icon {
+        font-size: $size;
         height: $size;
         width: $size;
     }
