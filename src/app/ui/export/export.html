@@ -105,7 +105,7 @@
                     ng-hide="!self.isGenerating() || self.isError"
                     md-mode="indeterminate"></md-progress-linear>
 
-            <md-select translate-attr-aria-label="export.size.selector" translate
+            <md-select aria-label="{{ export.size.selector | translate }}" translate
                 ng-model="self.exportSizes.selectedOption"
                 md-container-class="rv-export-select">
 

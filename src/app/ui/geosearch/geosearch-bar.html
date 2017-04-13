@@ -1,7 +1,6 @@
 <div class="rv-geosearch-bar rv-whiteframe-z2" ng-attr-rv-trap-focus="{{!self.service.isResultsVisible ? '' : undefined}}">
     <md-button
-        translate
-        translate-attr-aria-label="appbar.aria.menu"
+        aria-label="{{ appbar.aria.menu | translate }}"
         class="md-icon-button black"
         ng-click="self.layoutService.sidenav.open();">
         <md-tooltip>{{ 'appbar.tooltip.menu' | translate }}</md-tooltip>
@@ -31,8 +30,7 @@
     <span class="rv-button-divider-24 rv-lg"></span>
 
     <md-button
-        translate
-        translate-attr-aria-label="appbar.aria.geosearchclose"
+        aria-label="{{ appbar.aria.geosearchclose | translate }}"
         class="md-icon-button black"
         ng-click="self.service.toggle()">
         <md-tooltip>{{ 'appbar.aria.geosearchclose' | translate }}</md-tooltip>

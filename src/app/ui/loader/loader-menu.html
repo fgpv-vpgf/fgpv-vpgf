@@ -3,7 +3,7 @@
     <!-- TODO: add translate filters -->
 
     <md-button
-        translate translate-attr-aria-label="import.title"
+        aria-label="{{ import.title | translate }}"
         class="md-icon-button primary rv-loader-add"
         ng-click="$mdOpenMenu($event)">
         <md-tooltip>{{ 'import.title' | translate }}</md-tooltip>
@@ -14,7 +14,7 @@
         <md-menu-item>
             <md-button
                 ng-click="self.openFileLoader()"
-                translate translate-attr-aria-label="import.file.title">
+                aria-label="{{ import.file.title | translate }}">
                 <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
                 {{ 'import.file.title' | translate }}
             </md-button>
@@ -22,7 +22,7 @@
 
         <md-menu-item>
             <md-button ng-click="self.openServiceLoader()"
-                translate translate-attr-aria-label="import.service.title">
+                aria-label="{{ import.service.title | translate }}">
                 <md-icon md-svg-icon="file:cloud"></md-icon>
                 {{ 'import.service.title' | translate }}
             </md-button>

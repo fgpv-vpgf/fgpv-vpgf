@@ -22,8 +22,7 @@
 
         <!-- show close button if there is a closePanel function -->
         <md-button
-            translate
-            translate-attr-aria-label="contentPane.aria.close"
+            aria-label="{{ contentPane.aria.close | translate }}"
             class="rv-close md-icon-button black rv-button-24"
             ng-click="self.closePanel()"
             ng-if="self.closePanel"

@@ -1,7 +1,7 @@
 <div class="main-appbar rv-whiteframe-z2" ng-show="!self.stateManager.state.mainGeosearch.active">
     <md-button
         translate
-        translate-attr-aria-label="appbar.aria.menu"
+        aria-label="{{ appbar.aria.menu | translate }}"
         class="md-icon-button black"
         rv-help="sidenav-button"
         ng-click="self.layoutService.sidenav.open()">
@@ -20,8 +20,7 @@
     </div>
 
     <md-button
-        translate
-        translate-attr-aria-label="appbar.aria.geosearch"
+        aria-label="{{ appbar.aria.geosearch | translate }}"
         class="md-icon-button primary"
         ng-click="self.toggleGeosearch()">
         <md-tooltip>{{ 'appbar.tooltip.geosearch' | translate }}</md-tooltip>
@@ -29,8 +28,7 @@
     </md-button>
 
     <md-button
-        translate
-        translate-attr-aria-label="nav.tooltip.basemap"
+        aria-label="{{ nav.tooltip.basemap | translate }}"
         class="md-icon-button primary"
         ng-click="self.openBasemapSelector()"
         ng-show="self.stateManager.state.mainToc.active">
@@ -43,8 +41,7 @@
     </span>
 
     <md-button
-        translate
-        translate-attr-aria-label="appbar.aria.pointInfo"
+        aria-label="{{ appbar.aria.pointInfo | translate }}"
         class="md-icon-button primary"
         rv-help="details-button"
         ng-class="{ selected: self.stateManager.state.mainDetails.active }"
@@ -55,8 +52,7 @@
     </md-button>
 
     <md-button
-        translate
-        translate-attr-aria-label="appbar.aria.layers"
+        aria-label="{{ appbar.aria.layers | translate }}"
         class="md-icon-button primary"
         rv-help="toc-button"
         ng-class="{ selected: self.stateManager.state.mainToc.active }"
@@ -67,8 +63,7 @@
 
     <!-- hiding tools section for now; TODO: re-enable when we have tools -->
     <!--md-button
-        translate
-        translate-attr-aria-label="appbar.aria.tools"
+        aria-label="{{ appbar.aria.tools | translate }}"
         class="md-icon-button primary"
         rv-help="tool-button"
         ng-class="{ selected: self.stateManager.state.mainToolbox.active }"

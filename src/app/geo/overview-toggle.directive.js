@@ -30,7 +30,7 @@
             template: `
                 <md-button
                     translate
-                    translate-attr-aria-label="geo.aria.overviewtoggle"
+                    aria-label="{{ geo.aria.overviewtoggle | translate }}"
                     class="md-icon-button rv-button-24 md-button"
                     tabindex="-2"
                     ng-click="toggleOverview()">
