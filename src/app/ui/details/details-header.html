@@ -9,13 +9,13 @@
 
     <md-button class="md-icon-button black rv-button-24 rv-gt-sm" ng-click="self.expandPanel()">
         <md-tooltip>{{ 'details.tooltip.expand' | translate }}</md-tooltip>
-        <md-icon md-svg-src="action:open_in_new"></md-icon>
+        <md-icon>open_in_new</md-icon>
     </md-button>
 
-    <md-button translate translate-attr-aria-label="contentPane.aria.close" class="rv-close md-icon-button black rv-button-24"
+    <md-button translate-attr-aria-label="contentPane.aria.close" class="rv-close md-icon-button black rv-button-24"
         ng-click="self.closeDetails()">
         <md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip>
-        <md-icon class="rv-lt-lg" md-svg-src="navigation:arrow_back"></md-icon>
-        <md-icon class="rv-lg" md-svg-src="navigation:close"></md-icon>
+        <md-icon class="rv-lt-lg">arrow_back</md-icon>
+        <md-icon class="rv-lg">close</md-icon>
     </md-button>
 </div>

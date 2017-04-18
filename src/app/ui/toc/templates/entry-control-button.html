@@ -10,6 +10,6 @@
     <!-- the terrible hack below (testing for .call) is due to angular not having typeof available in $Parse
          https://github.com/angular/angular.js/pull/6886
     -->
-    <md-icon md-svg-src="{{ self.isFunction(self.template.icon) ? self.template.icon(self.control.value) : self.template.icon }}"></md-icon>
+    <md-icon>{{ self.isFunction(self.template.icon) ? self.template.icon(self.control.value) : self.template.icon }}</md-icon>
 
 </md-button>

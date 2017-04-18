@@ -48,14 +48,14 @@
         service.controls = {
             fullScreen: {
                 label: 'sidenav.label.fullscreen',
-                icon: 'navigation:fullscreen',
+                icon: 'fullscreen',
                 tooltip: 'sidenav.label.fullscreen',
                 visible: fullScreenService.isFullPageApp,
                 action: fullScreenService.toggle
             },
             zoomIn: {
                 label: 'nav.label.zoomIn',
-                icon: 'content:add',
+                icon: 'add',
                 tooltip: 'nav.tooltip.zoomIn',
                 action: () => geoService.shiftZoom(1)
             },
@@ -64,31 +64,31 @@
             },
             zoomOut: {
                 label: 'nav.label.zoomOut',
-                icon: 'content:remove',
+                icon: 'remove',
                 tooltip: 'nav.tooltip.zoomOut',
                 action: () => geoService.shiftZoom(-1)
             },
             geoLocator: {
                 label: 'nav.label.geoLocation',
-                icon: 'maps:my_location',
+                icon: 'my_location',
                 tooltip: 'nav.tooltip.geoLocation',
                 action: locateService.find
             },
             marquee: {
                 label: 'nav.label.search',
-                icon: 'action:search',
+                icon: 'search',
                 tooltip: 'nav.tooltip.search',
                 action: function () {} // FIXME: user proper call
             },
             home: {
                 label: 'nav.label.home',
-                icon: 'action:home',
+                icon: 'home',
                 tooltip: 'nav.tooltip.home',
                 action: () => geoService.setFullExtent()
             },
             history: {
                 label: 'nav.label.history',
-                icon: 'action:history',
+                icon: 'history',
                 tooltip: 'nav.tooltip.history',
                 action: function () {} // FIXME: user proper call
             },
@@ -100,7 +100,7 @@
             },
             basemap: {
                 label: 'nav.label.basemap',
-                icon: 'maps:map',
+                icon: 'map',
                 tooltip: 'nav.tooltip.basemap',
 
                 selected: () => stateManager.state.mapnav.morph !== 'default',

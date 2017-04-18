@@ -4,8 +4,7 @@
             <div ng-if="self.service.config.logo">
 
                 <img ng-src="{{ self.service.config.logoUrl }}" ng-if="self.service.config.logoUrl" alt="">
-
-                <md-icon md-svg-src="logo" ng-if="!self.service.config.logoUrl"></md-icon>
+                <md-icon>logo</md-icon>
             </div>
 
             <h1 translate class="app-logotype md-heading">sidenav.title</h1>
@@ -13,7 +12,7 @@
     </header>
 
     <md-button class="md-icon-button black rv-button-32 minimize-button" ng-click="self.service.close()">
-        <md-icon md-svg-src="community:chevron-double-left"></md-icon>
+        <md-icon>community:chevron-double-left</md-icon>
     </md-button>
 
     <md-content role="navigation">
@@ -37,7 +36,8 @@
             <span class="rv-version-timestamp">{{ self.version.timestamp }}</span>
             <div class="rv-version-github">
                 <a href="https://github.com/fgpv-vpgf/fgpv-vpgf" class="rv-icon-24">
-                    <md-icon md-svg-src="community:github"></md-icon>fgpv-vpgf/fgpv-vpgf</a>
+                    <md-icon>community:github-circle</md-icon> fgpv-vpgf/fgpv-vpgf</a>
+
             </div>
         </div>
 

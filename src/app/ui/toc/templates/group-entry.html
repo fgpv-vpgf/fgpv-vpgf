@@ -9,8 +9,9 @@
 <div class="rv-icon-24 rv-group-toggle-icon">
     <md-icon
         class="md-toggle-icon"
-        ng-class="{ 'rv-toggled' : self.entry.expanded && !self.isReorder }"
-        md-svg-src="hardware:keyboard_arrow_down"></md-icon>
+        ng-class="{ 'rv-toggled' : self.entry.expanded && !self.isReorder }">
+        keyboard_arrow_down
+    </md-icon>
 </div>
 
 <span class="rv-group-name" rv-truncate-title="self.entry.name"></span>
@@ -26,7 +27,7 @@
             aria-label="{{ 'toc.layer.aria.openData' | translate }}"
             class="md-icon-button rv-button-40 rv-icon-20"
             ng-click="$mdOpenMenu($event)">
-            <md-icon md-svg-src="navigation:more_horiz"></md-icon>
+            <md-icon>more_horiz</md-icon>
         </md-button>
 
         <md-menu-content rv-trap-focus="{{::self.appID}}" class="rv-menu rv-dense" width="4">

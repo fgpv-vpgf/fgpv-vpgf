@@ -63,7 +63,7 @@
             layers: {
                 type: 'link',
                 label: 'appbar.tooltip.layers',
-                icon: 'maps:layers',
+                icon: 'layers',
                 isChecked: () => stateManager.state.mainToc.active,
                 action: () => {
                     service.close();
@@ -73,7 +73,7 @@
             basemap: {
                 type: 'link',
                 label: 'nav.label.basemap',
-                icon: 'maps:map',
+                icon: 'map',
                 action: () => {
                     service.close();
                     basemapService.open();
@@ -91,7 +91,7 @@
             share: {
                 type: 'link',
                 label: 'sidenav.label.share',
-                icon: 'social:share',
+                icon: 'share',
                 action: () => {
                     service.close();
 
@@ -110,7 +110,7 @@
             about: {
                 type: 'link',
                 label: 'sidenav.label.about',
-                icon: 'action:info_outline',
+                icon: 'info_outline',
                 action: () => {
                     service.close();
 
@@ -128,7 +128,7 @@
             fullscreen: {
                 type: 'link',
                 label: 'sidenav.label.fullscreen',
-                icon: 'navigation:fullscreen',
+                icon: 'fullscreen',
                 isHidden: false,
                 isChecked: fullScreenService.isExpanded,
                 action: () => {
@@ -139,7 +139,7 @@
             touch: {
                 type: 'link',
                 label: 'sidenav.label.touch',
-                icon: 'action:touch_app',
+                icon: 'touch_app',
                 isChecked: () => $rootElement.hasClass('rv-touch'),
                 action: () => $rootElement.toggleClass('rv-touch')
             },
@@ -155,13 +155,13 @@
             language: {
                 type: 'group',
                 label: 'sidenav.label.language',
-                icon: 'action:translate',
+                icon: 'translate',
                 children: []
             },
             plugins: {
                 type: 'group',
                 label: 'sidenav.menu.plugin',
-                icon: 'action:settings_input_svideo',
+                icon: 'settings_input_svideo',
                 children: []
             }
         };

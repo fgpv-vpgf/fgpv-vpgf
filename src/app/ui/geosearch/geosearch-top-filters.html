@@ -24,11 +24,10 @@
 
     <md-button
         ng-disabled="!self.selectedType && !self.selectedProvince"
-        translate
         translate-attr-aria-label="appbar.aria.geosearchclose"
         class="md-icon-button rv-icon-20 rv-button-24 black"
         ng-click="self.clear()">
         <md-tooltip>{{ 'appbar.aria.geosearchclose' | translate }}</md-tooltip>
-        <md-icon md-svg-src="community:filter-remove"></md-icon>
+        <md-icon>community:filter-remove</md-icon>
     </md-button>
 </div>

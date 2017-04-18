@@ -40,11 +40,13 @@
                 return (scope, el, attrs, ctrls) => {
                     // call the original link function
                     originalLink(scope, el, attrs, ctrls);
-
+                    fontSwitching(el);
                     // used to prevent multiple callbacks from firing where svgElements.attr
                     // can trigger another DOMSubtreeModified event
                     let allowDOMSubtreeModified = false;
                     el.on('DOMSubtreeModified', () => {
+
+                        fontSwitching(el);
                         let svgElements = el.find('svg');
                         // always set to true if there are no svg elements since the next DOMSubtreeModified
                         // event could be triggered by adding an SVG element
@@ -55,6 +57,17 @@
                     });
                 };
             };
+        }
+
+        function fontSwitching(el) {
+            const elHTML = el.html();
+
+            const communitySet = elHTML.split('community:');
+            if (communitySet.length === 2) {
+                el.addClass('mdi').addClass(`mdi-${communitySet[1]}`);
+                el.removeClass('material-icons');
+                el.html('');
+            }
         }
     }
 })();

@@ -2,11 +2,10 @@
     <md-menu md-position-mode="target-right target">
 
         <md-button
-            translate
             translate-attr-aria-label="filter.aria.menu"
             class="md-icon-button black rv-button-24"
             ng-click="$mdOpenMenu($event)">
-            <md-icon md-svg-src="navigation:more_vert"></md-icon>
+            <md-icon>more_vert</md-icon>
         </md-button>
 
         <md-menu-content rv-trap-focus="{{::self.appID}}" class="rv-menu rv-dense" width="5">
@@ -27,14 +26,14 @@
 
             <md-menu-item>
                 <md-button ng-click="self.toggleNotifications()" md-prevent-menu-close="md-prevent-menu-close">
-                    <md-icon md-svg-icon="action:search"></md-icon>
+                    <md-icon></md-icon>
                     {{'filter.menu.enableSearch' | translate}}
                 </md-button>
             </md-menu-item>
 
             <md-menu-item>
                 <md-button ng-click="self.toggleNotifications()" md-prevent-menu-close="md-prevent-menu-close">
-                    <md-icon md-svg-icon="community:filter"></md-icon>
+                    <md-icon></md-icon>
                     {{'filter.menu.enableFilters' | translate}}
                 </md-button>
             </md-menu-item>
@@ -48,14 +47,14 @@
 
             <md-menu-item>
                 <md-button ng-click="self.dataPrint()">
-                    <md-icon md-svg-icon="action:print"></md-icon>
+                    <md-icon>print</md-icon>
                     {{ 'filter.menu.print' | translate }}
                 </md-button>
             </md-menu-item>
 
             <md-menu-item>
                 <md-button ng-click="self.dataExportCSV()">
-                    <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
+                    <md-icon>insert_drive_file</md-icon>
                     {{ 'filter.menu.export' | translate }}
                 </md-button>
             </md-menu-item>

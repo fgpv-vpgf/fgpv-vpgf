@@ -7,8 +7,7 @@
         <md-icon
             class="rv-stepper-item-check"
             ng-class="{ 'rv-active': self.isActive || self.step.isActive }"
-            md-svg-src="action:check_circle"
-            ng-if="self.isCompleted || self.step.isCompleted"></md-icon>
+            ng-if="self.isCompleted || self.step.isCompleted">check_circle</md-icon>
 
         <div class="rv-stepper-item-title">
             <h5 class="md-body-2">{{ self.titleValue || self.step.titleValue | translate }}</h5>

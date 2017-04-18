@@ -32,54 +32,54 @@
             groupOptions: {
                 visibility: {
                     action: null,
-                    icon: vis => `action:visibility${vis ? '' : '_off'}`,
+                    icon: vis => `visibility${vis ? '' : '_off'}`,
                     label: 'toc.label.toggleGroupViz',
                     tooltip: 'toc.tooltip.toggleGroupViz'
                 }
             },
             options: {
                 extra: {
-                    icon: 'navigation:more_horiz',
+                    icon: 'more_horiz',
                     label: 'toc.label.extraMenu',
                     tooltip: 'toc.tooltip.extraMenu'
                 },
                 metadata: {
-                    icon: 'action:description',
+                    icon: 'description',
                     label: 'toc.label.metadata',
                     tooltip: 'toc.tooltip.metadata',
                     action: toggleMetadata
                 },
                 query: {
-                    icon: 'communication:location_on',
+                    icon: 'community:location_on',
                     label: 'toc.label.query',
                     tooltip: 'toc.tooltip.query'
                 },
                 settings: {
-                    icon: 'image:tune',
+                    icon: 'tune',
                     label: 'toc.label.settings',
                     tooltip: 'toc.tooltip.settings',
                     action: toggleSettings
                 },
                 visibility: {
-                    icon: vis => `action:visibility${vis ? '' : '_off'}`,
+                    icon: vis => `visibility${vis ? '' : '_off'}`,
                     label: vis => `toc.label.visibility.${vis ? 'on' : 'off'}`,
                     tooltip: vis => `toc.tooltip.visibility.${vis ? 'on' : 'off'}`,
                     action: toggleVisiblity
                 },
                 offscale: {
-                    icon: zoom => `action:zoom_${zoom ? 'in' : 'out'}`,
+                    icon: zoom => `zoom_${zoom ? 'in' : 'out'}`,
                     label: zoom => `toc.label.visibility.zoom${zoom ? 'In' : 'Out'}`,
                     tooltip: zoom => `toc.tooltip.visibility.zoom${zoom ? 'In' : 'Out'}`,
                     action: zoomLayerScale
                 },
                 reload: {
-                    icon: 'navigation:refresh',
+                    icon: 'refresh',
                     label: 'toc.label.reload',
                     tooltip: 'toc.tooltip.reload',
                     action: entry => geoService.reloadLayer(entry)
                 },
                 boundaryZoom: {
-                    icon: `action:zoom_in`,
+                    icon: `zoom_in`,
                     label: 'toc.label.boundaryZoom',
                     tooltip: 'toc.tooltip.boundaryZoom',
                     action: zoomToBoundary
@@ -91,7 +91,7 @@
                     action: service.actions.toggleLayerFiltersPanel
                 },
                 remove: {
-                    icon: 'action:delete',
+                    icon: 'delete',
                     label: 'toc.label.remove',
                     tooltip: 'toc.tooltip.remove',
                     action: removeLayer
@@ -102,12 +102,12 @@
                     tooltip: 'toc.tooltip.filters'
                 },
                 reorder: {
-                    icon: 'editor:drag_handle',
+                    icon: 'drag_handle',
                     label: 'toc.tooltip.reorder',
                     tooltip: 'toc.tooltip.reorder'
                 },
                 symbologyStack: {
-                    icon: 'maps:layers',
+                    icon: 'layers',
                     label: 'toc.menu.symbology',
                     tooltip: 'toc.menu.symbology',
                     action: entry => {
@@ -126,12 +126,12 @@
                                 esriGeometryPolyline: 'community:vector-polyline'
                             }[type];
                         },
-                        esriDynamic: 'action:settings',
-                        esriDynamicLayerEntry: 'image:photo',
-                        ogcWms: 'image:photo',
-                        ogcWmsLayerEntry: 'image:photo',
-                        esriImage: 'image:photo',
-                        esriTile: 'image:photo'
+                        esriDynamic: 'settings',
+                        esriDynamicLayerEntry: 'photo',
+                        ogcWms: 'photo',
+                        ogcWmsLayerEntry: 'photo',
+                        esriImage: 'photo',
+                        esriTile: 'photo'
                     },
                     label: {
                         esriFeature: 'toc.label.flag.feature',
@@ -153,7 +153,7 @@
                     }
                 },
                 scale: {
-                    icon: 'maps:layers_clear',
+                    icon: 'layers_clear',
                     label: 'toc.label.flag.scale',
                     tooltip: 'toc.tooltip.flag.scale'
                 },
@@ -168,7 +168,7 @@
                     tooltip: 'toc.tooltip.flag.query'
                 },
                 user: {
-                    icon: 'social:person',
+                    icon: 'person',
                     label: 'toc.label.flag.user',
                     tooltip: 'toc.tooltip.flag.user'
                 },
@@ -178,15 +178,15 @@
                     tooltip: 'toc.tooltip.flag.filter'
                 },
                 wrongprojection: {
-                    icon: 'alert:warning',
+                    icon: 'warning',
                     label: 'toc.label.flag.wrongprojection',
                     tooltip: 'toc.tooltip.flag.wrongprojection'
                 }
             },
             state: {
                 icon: {
-                    error: 'alert:error',
-                    reloading: 'navigation:refresh'
+                    error: 'error',
+                    reloading: 'refresh'
                 },
                 label: {
                     error: 'toc.label.state.error',
