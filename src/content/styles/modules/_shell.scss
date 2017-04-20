@@ -25,10 +25,12 @@
 
         .rv-north-arrow {
             position: absolute;
-            top: rem(0.2);
-            border-radius: rem(2);
-            background-color: rgba(white, 0.82);
-            padding: rem(0.5);
+            transform-origin: top center;
+            transition: all $swift-ease-in-duration ease-out;
+
+            md-icon {
+                color: black;
+            }
         }
 
         .rv-map-coordinates {

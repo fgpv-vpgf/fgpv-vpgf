@@ -110,7 +110,7 @@
                     arrowElem
                         .css('display', 'block')
                         .css('left', north.screenX)
-                        .css('top', Math.max(2, north.screenY))
+                        .css('top', Math.max(1, north.screenY))
                         .css('transform', north.screenY > 0 ? '' : `rotate(${north.rotationAngle}deg)`);
                 }
             }
