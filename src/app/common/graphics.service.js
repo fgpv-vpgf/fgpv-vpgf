@@ -20,7 +20,8 @@
             createSvg,
             createCanvas,
             mergeCanvases,
-            getTextWidth
+            getTextWidth,
+            setSvgHref
         };
 
         return service;
@@ -127,6 +128,18 @@
             // measure text width on the canvas: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText
             const metrics = context.measureText(text);
             return metrics.width;
+        }
+
+        /**
+         * Returns svg with proper href value. for Safari, xlink:href element is named ns1:href. Rename the element xlink:href to show symbology.
+         * it seems to be a bug from svg.js library.
+         * @function setSvgHref
+         * @param  {String} link link to reset the href for
+         * @return {String}        reseted href
+         */
+        function setSvgHref(link) {
+            // TODO: send issue to svg library
+            return link.replace(/ns1:href/gi, 'xlink:href');
         }
     }
 })();
