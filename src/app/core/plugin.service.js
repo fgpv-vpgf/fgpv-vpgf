@@ -13,10 +13,11 @@
         .module('app.core')
         .factory('pluginService', pluginService);
 
-    function pluginService(translationService) {
+    function pluginService(translationService, $mdDialog, storageService) {
         const service = {
             onCreate,
-            register
+            register,
+            openDialogInfo
         };
 
         const pluginList = []; // an array of registered plugin instances
@@ -87,6 +88,46 @@
 
             // trigger this callback for any plugin already created
             pluginList.filter(pi => pi instanceof pluginType).forEach(cb);
+        }
+
+        /**
+         * Open mdDialog window
+         *
+         * @function    openDialogInfo
+         * @param       {Object}    opts    options for the mfDialog window
+         */
+        function openDialogInfo(opts) {
+            $mdDialog.show({
+                controller: PluginDialogController,
+                controllerAs: 'self',
+                locals: {
+                    items: opts.items
+                },
+                template: opts.template,
+                parent: storageService.panels.shell,
+                disableParentScroll: opts.hasOwnProperty('disableParentScroll') ? opts.disableParentScroll : false,
+                clickOutsideToClose: opts.hasOwnProperty('clickOutsideToClose') ? opts.clickOutsideToClose : true,
+                fullscreen: opts.hasOwnProperty('fullscreen') ? opts.fullscreen : false
+            });
+        }
+
+        /**
+         * Controller to set content for $mdDialog
+         *
+         * @function PluginDialogController
+         * @private
+         * @param {Object}  items    the items to set inside the dialog
+         */
+        function PluginDialogController(items) {
+            'ngInject';
+            const self = this;
+
+            self.close = $mdDialog.hide;
+
+            // loop trought all key value pair to create reference on self
+            for (let [key, val] of Object.entries(items)) {
+                self[key] = val;
+            }
         }
     }
 })();
