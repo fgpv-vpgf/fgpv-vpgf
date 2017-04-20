@@ -14,7 +14,9 @@
 
         const service = {
             northArrow,
-            mapCoordinates
+            mapCoordinates,
+            getMapClickInfo,
+            convertDDToDMS
         };
 
         // get values once to reuse in private functions (cardinal points and degree symbol)
@@ -24,6 +26,21 @@
         };
 
         return service;
+
+        /**
+        * Provides a event to listen to map click information
+        *
+        * @function  getMapClickInfo
+        * @param {Function} clickHandler the callback function for the event to call
+        */
+        function getMapClickInfo(clickHandler) {
+            return gapiService.gapi.events.wrapEvents(
+                geoService.mapObject,
+                {
+                    click: clickHandler
+                }
+            );
+        }
 
         /**
         * Provides data needed for the display of a north arrow on the map for lambert and mercator projections. All other projections
@@ -145,12 +162,14 @@
         * Convert lat/long in decimal degree to degree, minute, second.
         *
         * @function convertDDToDMS
-        * @private
         * @param {Number} lat latitude value
         * @param {Number} long longitude value
         * @return {Object} object who contain lat/long in degree, minute, second
         */
         function convertDDToDMS(lat, long) {
+            lat = Math.abs(lat);
+            long = Math.abs(long);
+
             const dy = Math.floor(lat);
             const my = Math.floor((lat - dy) * 60);
             const sy = Math.round((lat - dy - my / 60) * 3600);
@@ -159,8 +178,8 @@
             const mx = Math.floor((long - dx) * 60);
             const sx = Math.round((long - dx - mx / 60) * 3600);
 
-            return { y: `${Math.abs(dy)}${cardinal.deg} ${padZero(my)}\' ${padZero(sy)}\"`,
-                    x: `${Math.abs(dx)}${cardinal.deg} ${padZero(mx)}\' ${padZero(sx)}\"` };
+            return { y: `${dy}${cardinal.deg} ${padZero(my)}\' ${padZero(sy)}\"`,
+                    x: `${dx}${cardinal.deg} ${padZero(mx)}\' ${padZero(sx)}\"` };
         }
 
         /**

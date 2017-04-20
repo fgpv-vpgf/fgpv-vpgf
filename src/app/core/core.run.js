@@ -1,5 +1,5 @@
 /* global RV */
-// jshint maxparams:14
+// jshint maxparams:16
 // FIXME reduce number of apiBlock parameters
 (() => {
     'use strict';
@@ -149,10 +149,11 @@
      */
     function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo, $rootElement,
-        $mdDialog, pluginService, mapToolService) {
+        $mdDialog, pluginService, mapToolService, $mdSidenav, storageService) {
 
         const service = {
             setLanguage,
+            getCurrentLang,
             loadRcsLayers,
             getBookmark,
             centerAndZoom,
@@ -163,8 +164,42 @@
                 pluginService.register(...arguments, this);
             },
             northArrow: mapToolService.northArrow,
-            mapCoordinates: mapToolService.mapCoordinates
+            mapCoordinates: mapToolService.mapCoordinates,
+            getMapClickInfo: mapToolService.getMapClickInfo,
+            convertDDToDMS: mapToolService.convertDDToDMS,
+            projectGeometry,
+            toggleSideNav: (val) => { $mdSidenav('left')[val](); },
+            toggleDialogInfo: (title, content) => {
+                $mdDialog.show({
+                    controller: PluginController,
+                    controllerAs: 'self',
+                    locals: {
+                        items: { title, content }
+                    },
+                    templateUrl: 'app/ui/sidenav/plugin-dialog.html',
+                    parent: storageService.panels.shell,
+                    disableParentScroll: false,
+                    clickOutsideToClose: true,
+                    fullscreen: false
+                });
+            }
         };
+
+        /**
+         * Sets content of $mdDialog for plugin
+         *
+         * @function PluginController
+         * @param {Object}  $mdDialog    the dialog window
+         * @param {Object}  items    the items to set inside the dialog  (title {string} title for the window, content {string} html content)
+         */
+        function PluginController($mdDialog, items) {
+            'ngInject';
+            const self = this;
+
+            self.close = $mdDialog.hide;
+            self.title = items.title;
+            self.content = items.content;
+        }
 
         // Attaches a promise to the appRegistry which resolves with apiService
         $rootScope.$on(events.rvApiReady, () => {
@@ -192,6 +227,15 @@
          */
         function setLanguage(lang) {
             reloadService.loadNewLang(lang);
+        }
+
+        /**
+         * Get current language
+         *
+         * @function getCurrentLang
+         */
+        function getCurrentLang() {
+            return configService.currentLang();
         }
 
         /**
@@ -255,6 +299,18 @@
             // separate zoom and center calls, calling centerAndZoom sets the map to an extent made up of NaN
             geoService.mapObject.setZoom(zoom);
             geoService.mapObject.centerAt(zoomPoint);
+        }
+
+        /**
+         * Project a geometry
+         *
+         * @function projectGeometry
+         * @param {Object} geometry     The geometry to project
+         * @param {Number} outSR        The output spatial reference ID
+         * @return {Object}             The projected geometry
+         */
+        function projectGeometry(geometry, outSR) {
+            return gapiService.gapi.proj.localProjectGeometry(outSR, geometry);
         }
     }
 
