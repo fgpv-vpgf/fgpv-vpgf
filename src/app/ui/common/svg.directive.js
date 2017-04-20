@@ -50,8 +50,8 @@
                         // for Safari, xlink:href element is named href. Rename the element xlink:href to show symbology
                         // it seems to be a bug from svg.js library
                         // TODO: send issue to svg library
-                        if (typeof img.attr('href') !== 'undefined') {
-                            scope.src = scope.src.replace('href', 'xlink:href');
+                        if (typeof img.attr('ns1:href') !== 'undefined') {
+                            scope.src = scope.src.replace('NS1:href', 'xlink:href');
                         }
                     }
 
