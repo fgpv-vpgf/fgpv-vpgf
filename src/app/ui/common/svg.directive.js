@@ -41,6 +41,13 @@
                 attr.once = attr.once.toLowerCase() !== 'false'; // any other value apart from "false" will be considered as true
             }
 
+            // because symbol in filter panel is not added the same way as symbology, we need to check the creation here and modify href.
+            // for Safari, xlink:href element is named href. Rename the element xlink:href to show symbology
+            if (typeof attr.symbol !== 'undefined') {
+                const svg = angular.element(el[0].innerHTML.replace('ns1:href', 'xlink:href'));
+                el.empty().append(svg);
+            }
+
             const stopWatch = scope.$watch('src', newValue => {
                 if (newValue) {
                     // check if this is a svg node and if it contain an image. If so, we need to modify the href element (for Safari)
@@ -50,8 +57,8 @@
                         // for Safari, xlink:href element is named href. Rename the element xlink:href to show symbology
                         // it seems to be a bug from svg.js library
                         // TODO: send issue to svg library
-                        if (typeof img.attr('href') !== 'undefined') {
-                            scope.src = scope.src.replace('href', 'xlink:href');
+                        if (typeof img.attr('ns1:href') !== 'undefined') {
+                            scope.src = scope.src.replace('NS1:href', 'xlink:href');
                         }
                     }
 

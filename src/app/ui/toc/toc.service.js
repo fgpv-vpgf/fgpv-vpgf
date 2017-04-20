@@ -15,8 +15,9 @@
         .module('app.ui.toc')
         .factory('tocService', tocService);
 
+    // jshint maxparams:11
     function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateManager,
-                        geoService, metadataService, errorService, debounceService) {
+                        geoService, metadataService, errorService, debounceService, $compile) {
 
         const service = {
             // method called by the options and flags set on the layer item
@@ -383,8 +384,12 @@
                     // check if the symbol column already exists
                     if (!attributes.columns.find(({ data }) => data === rvSymbolColumnName)) {
 
+                        const scope = $rootScope.$new();
                         attributes.rows.forEach(row => {
-                            row.rvSymbol = geoService.retrieveSymbol(row, attributes.renderer);
+                            // compile rvSvg directive to solve problem in Safari with svg not rendered
+                            const item = $compile(`<rv-svg data-symbol="filter">
+                                ${geoService.retrieveSymbol(row, attributes.renderer)}</rv-svg>`)(scope);
+                            row.rvSymbol = item[0].outerHTML;
                             row.rvInteractive = '';
                         });
 
