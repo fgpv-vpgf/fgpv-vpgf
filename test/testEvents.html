@@ -12,6 +12,7 @@
     <p id="mess" />
     <script src="../dist/geoapi.js"></script>
     <script>
+        var evt;
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
             var layer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0');
@@ -21,6 +22,12 @@
                 console.log(x);
                 console.log(x.layer);
                 console.log(x.target);
+                }
+            });
+
+            evt = api.events.wrapEvents(map, { click: (clickEvent) => {
+                console.log(clickEvent.mapPoint.x);
+                evt.click.remove();
                 }
             });
         });
