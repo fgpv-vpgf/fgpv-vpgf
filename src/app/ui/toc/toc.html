@@ -6,7 +6,7 @@
             <rv-loader-menu></rv-loader-menu>
 
             <md-button
-                translate translate-attr-aria-label="toc.menu.reorder.title"
+                aria-label="{{ toc.menu.reorder.title | translate }}"
                 class="md-icon-button primary rv-icon-20"
                 ng-class="{ selected: self.isReorder }"
                 ng-click="self.toggleReorderMode()">
@@ -19,8 +19,7 @@
             <span flex></span>
 
             <md-button
-                translate
-                translate-attr-aria-label="toc.menu.reorder.close"
+                aria-label="{{ toc.menu.reorder.close | translate }}"
                 class="rv-close md-icon-button black rv-icon-20"
                 ng-click="self.toggleReorderMode(false)"
                 ng-if="self.isReorder">

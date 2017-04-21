@@ -3,7 +3,7 @@
     <!-- TODO: add translate filters -->
 
     <md-button
-        translate translate-attr-aria-label="toc.menu.expand.title"
+        aria-label="{{ 'toc.menu.expand.title' | translate }}"
         class="md-icon-button primary rv-icon-20"
         ng-click="$mdOpenMenu($event)"
         ng-disabled="self.disabled">
@@ -16,7 +16,7 @@
             <md-button
                 ng-click="self.expandAllLegendEntries()"
                 ng-disabled="self.isAllLegendEntriesExpanded()"
-                translate translate-attr-aria-label="toc.menu.expand.allon">
+                aria-label="{{ 'toc.menu.expand.allon' | translate }}">
                 <md-icon md-svg-icon="hardware:keyboard_arrow_down"></md-icon>
                 {{ 'toc.menu.expand.allon' | translate }}
             </md-button>
@@ -26,7 +26,7 @@
             <md-button
                 ng-click="self.collapseAllLegendEntries()"
                 ng-disabled="self.isAllLegendEntriesCollapsed()"
-                translate translate-attr-aria-label="toc.menu.expand.alloff">
+                aria-label="{{ 'toc.menu.expand.alloff' | translate }}">
                 <md-icon md-svg-icon="hardware:keyboard_arrow_up"></md-icon>
                 {{ 'toc.menu.expand.alloff' | translate }}
             </md-button>
