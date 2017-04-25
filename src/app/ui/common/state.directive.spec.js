@@ -28,7 +28,7 @@ describe('rvState', () => {
         scope = $rootScope.$new();
 
         // create new element; set morph speed to 0 to speed up tests
-        directiveElement = $compile(angular.element('<div rv-state="filters"></div>'))(scope);
+        directiveElement = $compile(angular.element( '<div rv-state="filters"></div>'))(scope);
         scope.$digest();
     });
 

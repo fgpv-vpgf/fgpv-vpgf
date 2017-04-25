@@ -1,0 +1,8 @@
+<div ng-switch="self.block.infoType" class="rv-list-item-content rv-legend-{{ self.block.infoType }}">
+
+    <h3 ng-switch-when="title" class="md-subhead">{{ self.block.content }}</h3>
+
+    <p ng-switch-when="text">{{ self.block.content }}</p>
+
+    <img ng-switch-when="image" ng-src="{{ self.block.content }}" alt="">
+</div>

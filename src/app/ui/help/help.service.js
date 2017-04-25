@@ -12,7 +12,7 @@
      */
     /**
      * @module highlightFilter
-     * @memberof app.ui
+     * @memberof app.ur
      * @description
      *
      * The `highlightFilter` filter, highlights a phrase in the supplied text.
@@ -192,8 +192,10 @@
             self.filteredSections = [];
 
             // get help location
-            configService.getCurrent().then(conf => conf.hasOwnProperty('help') ?
-                    useMarkdown(conf.help.folderName) : useMarkdown('default'));
+            const conf = configService.getSync;
+            if (conf.ui.help) {
+                useMarkdown(conf.ui.help.folderName || 'default');
+            }
 
             function useMarkdown(foldername) {
                 const renderer = new marked.Renderer();
@@ -206,7 +208,7 @@
                     return `<img src="${href}" alt="${title}">`;
                 };
 
-                const mdLocation = `help/${foldername}/${configService.currentLang()}.md`;
+                const mdLocation = `help/${foldername}/${configService.getSync.language}.md`;
                 $http.get(mdLocation).then(r => {
                     // matches help sections from markdown file where each section begins with one hashbang and a space
                     // followed by the section header, exactly 2 spaces, then up to but not including a double space

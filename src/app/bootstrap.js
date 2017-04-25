@@ -1,4 +1,5 @@
 /* global Logdown */
+// eslint-disable-next-line max-statements
 (() => { // jshint ignore:line
     // disabled checks on above line due to 'too many statements in this function' (jshint W071)
 
@@ -271,10 +272,10 @@
 
             this._appPromise = new Promise(resolve =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness
-                this._registerMap = appInstance =>
+                (this._registerMap = appInstance =>
                     // resolve with the actual instance of the map;
                     // after this point, all queued calls to `loadRcsLayers`, `setLanguage`, etc. will trigger
-                    resolve(appInstance)
+                    resolve(appInstance))
             );
 
             // this promise waits to be resolved by the rvReady event on the angular side
@@ -282,16 +283,16 @@
             if (typeof this._loadPromise === 'undefined') {
                 this._loadPromise = new Promise(resolve =>
                     // store a callback function in the proxy object itself for map instances to call upon readiness
-                    this._applicationLoaded = appInstance => resolve(appInstance)
+                    (this._applicationLoaded = appInstance => resolve(appInstance))
                 );
             }
 
             this._initAppPromise = new Promise(resolve =>
                 // store a callback function in the proxy object itself for map instances to call upon readiness
-                this._registerPreLoadApi = appInstance =>
+                (this._registerPreLoadApi = appInstance =>
                     // resolve with the actual instance of the map;
                     // after this point, all queued calls to `loadRcsLayers`, `setLanguage`, etc. will trigger
-                    resolve(appInstance)
+                    resolve(appInstance))
             );
 
             return this;
@@ -374,6 +375,7 @@
      *
      * @function    enhanceLogger
      * @param       {Array}  enabledMethods    an array of console function string names like log, debug, warn that should be displayed
+     * @return {Object} the logger object
      */
     function enhanceLogger(enabledMethods = []) {
         const methods = ['debug', 'log', 'info', 'warn', 'error'];
@@ -404,6 +406,7 @@
         if (!logger) {
             logger = new Logdown({ prefix, alignOutput: true });
         }
+
         return logger;
     }
 

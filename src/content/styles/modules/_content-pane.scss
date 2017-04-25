@@ -99,11 +99,16 @@
 
         .rv-subheader {
             border-bottom: 1px solid $divider-color-light;
+            display: flex;
+
+            h4, h5, h6 {
+                color: darken(#00BCD4, 20%);
+            }
 
             @include include-size(rv-gt-sm) {
                 margin: {
-                    top: 5px;
-                    bottom: 11px;
+                    top: rem(0.6);
+                    bottom: rem(0.6);
                 }
             }
             padding: {
@@ -116,7 +121,13 @@
         .rv-subcontent {
             .rv-sub-subhead {
                 margin: 0;
+
+                h1, h2, h3,
+                h4, h5, h6 {
+                    color: darken(#00BCD4, 30%);
+                }
             }
+
             // remove margin from the first and last child paragraph
             p:first-child {
                 margin-top: 0;
@@ -125,6 +136,8 @@
             p:last-child {
                 margin-bottom: 0;
             }
+
+            margin-bottom: rem(1);
         }
     }
 }

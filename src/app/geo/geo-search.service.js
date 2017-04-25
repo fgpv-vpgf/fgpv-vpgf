@@ -34,34 +34,31 @@
             zoomScale
         };
 
-        // configure geosearch
-        configureSearch();
+        init();
 
-        // if language change, reset geosearch
-        $rootScope.$on(events.rvLangSwitch, () => {
-            configureSearch();
-            provinceList = undefined;
-            typeList = undefined;
-        });
+        return service;
 
         /**
-         * Configure search from config file
+         * Configure search from config file.
          *
-         * @function configureSearch
+         * @function init
+         * @private
          */
-        function configureSearch() {
-            configService.getCurrent().then(config => {
-                if (typeof config.search === 'undefined') {
+        function init() {
+            // reset geosearch on every config reload, this will include language changes as well
+            configService.onEveryConfigLoad(config => {
+                provinceList = undefined;
+                typeList = undefined;
+
+                if (typeof config.services.search === 'undefined') {
                     enabled = false;
                 } else {
                     enabled = true;
-                    serviceUrls = config.search.serviceUrls;
-                    disableSearch = config.search.disabledSearches;
+                    serviceUrls = config.services.search.serviceUrls;
+                    disableSearch = config.services.search.disabledSearches;
                 }
             });
         }
-
-        return service;
 
         /**
          * Determines if search functionality is enabled/disabled by the config. If no type parameter is passed,
@@ -294,6 +291,7 @@
 
             setQueryParam('bbox', extent);
 
+            // eslint-disable-next-line complexity
             return $q((resolve, reject) => {
                 // define regex expressions for FSA, NTS, lat/long or scale inputs
                 // fot NTS http://www.nrcan.gc.ca/earth-sciences/geography/topographic-information/maps/9765
@@ -375,7 +373,7 @@
                 type: type,
                 location: {
                     latitude: coordinates[1],
-                    longitude: coordinates[0],
+                    longitude: coordinates[0]
                 },
                 bbox: bbox,
                 position: coordinates
@@ -406,7 +404,7 @@
                 type: { name: $translate.instant('geosearch.type.latlong'), code: 'COORD' },
                 location: {
                     latitude: coordinates[1],
-                    longitude: coordinates[0],
+                    longitude: coordinates[0]
                 },
                 bbox: bbox,
                 position: coordinates
@@ -472,14 +470,14 @@
             const gapi = gapiService.gapi;
 
             // set extent from bbox
-            const latlongExtent = gapi.mapManager.Extent(...bbox, { wkid: 4326 });
+            const latlongExtent = gapi.Map.Extent(...bbox, { wkid: 4326 });
 
             // reproject extent
             const projExtent = gapi.proj.localProjectExtent(
                 latlongExtent, mapSR);
 
             // set extent from reprojected values
-            const zoomExtent = gapi.mapManager.Extent(projExtent.x0, projExtent.y0,
+            const zoomExtent = gapi.Map.Extent(projExtent.x0, projExtent.y0,
                 projExtent.x1, projExtent.y1, projExtent.sr);
 
             // zoom to location (expand the bbox to include all the area)
@@ -503,7 +501,7 @@
          */
         function zoomScale(scale) {
             // remove space if scale is like 1 000 000 then use map to zoom to scale
-            geoService.mapObject.setScale(parseInt(scale.replace(/ /g, ''), 10));
+            geoService.mapObject.setScale(parseInt(scale.replace(/ /g, '')));
         }
 
         /**

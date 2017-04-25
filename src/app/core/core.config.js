@@ -66,7 +66,8 @@
                 .iconSet('image', 'app/image.svg')
                 .iconSet('maps', 'app/maps.svg')
                 .iconSet('navigation', 'app/navigation.svg')
-                .iconSet('social', 'app/social.svg');
+                .iconSet('social', 'app/social.svg')
+                .iconSet('toggle', 'app/toggle.svg');
         }
     }
 })();

@@ -19,6 +19,7 @@
         > li {
             margin: 0;
             padding: 0;
+            position: relative;
         }
     }
 
@@ -30,6 +31,24 @@
             // rv-shadow is a thin guideline drawn on the right side of the list when group toggle is hovered over;
             // it helps to visualize which layers will be affected by the group toggle
             .rv-shadow {
+                content: "";
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: rem(0.5);
+                opacity: 0.45;
+                background-color: transparent;
+                transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            }
+        }
+    }
+
+    %grouped-list {
+        > li {
+            .rv-shadow {
+                // rv-shadow is a thin guideline drawn on the right side of the list when group toggle is hovered over;
+                // it helps to visualize which layers will be affected by the group toggle
                 content: "";
                 position: absolute;
                 right: 0;

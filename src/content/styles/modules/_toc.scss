@@ -18,7 +18,7 @@ $layer-item-height-touch: rem(7.2);
 
     .rv-toc {
         padding: rem(0.8) 0;
-        @include layer-list;
+        // @include layer-list;
     }
 
     @include toc-tools;
@@ -30,7 +30,337 @@ $layer-item-height-touch: rem(7.2);
     @include touch {
         @include entry-controls-hover;
     };
+
+
+    @include newLegend;
 }
+
+@mixin newLegend {
+
+    .rv-legend-list {
+        @extend %base-list;
+        @extend %grouped-list;
+
+        > li {
+            overflow: hidden; // prevents the progress bar from sticking to the bottom of the legend entry when the symbology stack is expanded
+        }
+
+        &.ng-hide + .rv-shadow {
+            // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
+            background-color: transparent !important;
+        }
+
+        @for $i from 0 to 2 {
+            @include sort-group($i);
+        }
+    }
+
+    // provide indentations for nested elements
+    .rv-legend-level {
+        @for $i from 0 to 10 {
+            @include legend-list-step($i);
+        }
+    }
+
+    rv-legend-block rv-legend-control[name="visibilityset"] {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    ul.rv-legend-set-highlight > li > rv-legend-block rv-legend-control[name="visibilityset"] {
+        &:before, &:after {
+            background-color: rgba($accent-color, 0.075);
+        }
+    }
+
+    ul.rv-legend-set > li {
+        > rv-legend-block {
+            rv-legend-control[name="visibilityset"] {
+                &:before, &:after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                    border: 1px solid transparent;
+                    pointer-events: none;
+                    transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+                }
+            }
+        }
+
+        &:first-child > rv-legend-block {
+            rv-legend-control[name="visibilityset"] {
+                &:before {
+                    border-image: linear-gradient(to bottom, rgba($divider-color, 1) 0%, rgba($divider-color, 1) 6px, rgba(0,0,0,0) 7px);
+                    border-image-slice: 1;
+                }
+            }
+        }
+
+        &:last-child > rv-legend-block {
+            rv-legend-control[name="visibilityset"] {
+                &:after {
+                    border-image: linear-gradient(to top, rgba($divider-color, 1) 0%, rgba($divider-color, 1) 6px, rgba(0,0,0,0) 7px);
+                    border-image-slice: 1;
+                }
+            }
+        }
+    }
+
+    rv-legend-block {
+
+        @extend %list-item;
+
+        padding-right: $toc-padding;
+
+        height: $layer-item-height;
+        @include touch {
+            height: $layer-item-height-touch;
+        }
+
+        &.rv-legend-set {
+            display: none;
+        }
+
+        &.rv-legend-group {
+            height: $group-item-height;
+            @include touch {
+                height: $group-item-height-touch;
+            }
+
+            @extend %list-item-control-section;
+
+            // setting layer list shadow color when hover over layer group toggle
+            &:hover ~ .rv-shadow {
+                background-color: $primary-color;
+            }
+        }
+
+        &.rv-legend-node {
+            .rv-list-item-content {
+                .rv-list-item-flags {
+                    display: flex;
+
+                    rv-legend-flag {
+                        margin: 0 rem(0.2);
+
+                        &:first-child {
+                            margin-left: 0;
+                        }
+
+                        &:last-child {
+                            margin-right: 0;
+                        }
+
+                        &:empty {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            @extend %list-item-control-section;
+
+            // highlight the selected item
+            &.rv-selected:before {
+                background-color: $accent-color;
+            }
+        }
+
+        &.rv-legend-info {
+
+            height: auto;
+            margin: rem(0.6) 0;
+
+             .rv-list-item-content {
+                 margin-left: 0;
+             }
+
+             .rv-legend-title h3 {
+                 margin: 0;
+             }
+
+             .rv-legend-text p {
+                 margin: rem(0.6) 0;
+             }
+
+             .rv-legend-image img {
+                 max-width: 100%;
+                 align-self: center;
+             }
+        }
+
+        &.rv-legend-placeholder {
+            @extend %list-item-control-section;
+        }
+
+        &.rv-legend-error {
+            @extend %list-item-control-section;
+
+            &:before {
+                background-color: $alert-color;
+            }
+        }
+
+        rv-legend-flag {
+            // main layer item button was overlapting the flag
+            position: relative; // why? http://philipwalton.com/articles/what-no-one-told-you-about-z-index/
+
+            md-icon {
+                display: block;
+            }
+        }
+
+        rv-legend-control {
+            display: flex;
+        }
+
+        rv-legend-control,
+        .rv-list-item-control {
+            .md-icon-button {
+                margin: 0;
+            }
+        }
+    }
+}
+
+@mixin sort-group($index) {
+    &[data-sort-group="#{$index}"] {
+
+        > li:not([data-sort-group="#{$index}"]) {
+            opacity: 0.5 !important;
+
+            &:after {
+                content: '';
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.2);
+            }
+        }
+    }
+
+    &.rv-reorder {
+        li[data-sort-group="#{$index}"] {
+            margin-top: 0; // !important;
+
+            rv-legend-block:before {
+                background-color: lighten($color: $primary-color, $amount: $index * 20);
+            }
+        }
+
+        li[data-sort-group="#{$index}"] + li[data-sort-group="#{$index + 1}"] {
+            margin-top: rem(3.6);
+        }
+    }
+}
+
+%list-item {
+    display: flex;
+
+    align-items: center;
+    position: relative;
+
+    .rv-list-item-body {
+        @extend %body-element;
+        .rv-body-button span {
+            visibility: hidden;
+        }
+    }
+
+    .rv-list-item-content {
+        display: flex;
+        flex-direction: column;
+        flex: 1; // content tries to take all available space
+        min-width: 0; // Firefox fix for flexbox not wanting to shrink: http://stackoverflow.com/a/31349707
+        margin: 0 rem(1.0) 0 rem(1.6);
+
+        .rv-list-item-name {
+            font-size: rem(1.6);
+            // truncate layer name if it's too long
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .rv-list-item-toggle {
+        padding: rem(0.4);
+        pointer-events: none;
+    }
+
+    // selection indicator
+    &:before {
+        position: absolute;
+        content: "";
+        background-color: transparent;
+        width: rem(0.5);
+        right: 0;
+        height: 100%;
+        top: 0;
+        transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+    }
+}
+
+%list-item-control-section {
+    .rv-list-item-controls {
+        display: flex;
+        align-items: center;
+        height: 100%;
+
+        .rv-list-item-control {
+            position: relative;
+            margin: 0;
+
+            &:first-child {
+                margin-left: rem(0.6);
+            }
+            &:last-child {
+                margin-right: rem(0.6);
+            }
+
+            &:not(.rv-stay-visible) {
+                display: none;
+
+                @include keyboard {
+                    display: flex !important;
+                };
+
+                @include touch {
+                    display: flex !important;
+                };
+            }
+        }
+    }
+
+    // force-display list item controls when the list item gets focus or is hovered over
+    &:hover, &.rv-selected {
+        .rv-list-item-controls .rv-list-item-control {
+            display: flex;
+            //display: block;
+            // display: inline-block !important;
+        }
+    }
+}
+
+// http://krasimirtsonev.com/blog/article/Two-handy-and-advanced-SASS-features-and-their-limitations
+// adjust layer item, layer group toggle, and layer list divider indent
+@mixin legend-list-step($index) {
+    &-#{$index} {
+        $offset: rem(0.8); // multiplied by the indentation level
+
+        rv-legend-block {
+            padding-left: $offset * ($index) + rem(1.6) + $toc-padding;
+        }
+    }
+}
+
+/* ---------------------- */
 
 @mixin toc-tools {
     .rv-toc-tools {
@@ -125,12 +455,12 @@ $layer-item-height-touch: rem(7.2);
 
     .rv-root {
         @for $i from 0 to 2 {
-            @include sort-group($i);
+            @include _sort-group($i);
         }
     }
 }
 
-@mixin sort-group($index) {
+@mixin _sort-group($index) {
     &[data-sort-group="#{$index}"] {
 
         > li:not([data-sort-group="#{$index}"]) {
@@ -165,7 +495,6 @@ $layer-item-height-touch: rem(7.2);
 
 // http://krasimirtsonev.com/blog/article/Two-handy-and-advanced-SASS-features-and-their-limitations
 // adjust layer item, layer group toggle, and layer list divider indent
-
 @mixin layer-level-step($index) {
     &-#{$index} {
         $offset: rem(0.8); // multiplied by the indentation level
@@ -181,7 +510,7 @@ $layer-item-height-touch: rem(7.2);
 
                 .rv-symbology-item-name {
                     position: absolute;
-                    left: -10px;
+                    left: - rem(1.0);
                 }
             }
         }
@@ -195,6 +524,7 @@ $layer-item-height-touch: rem(7.2);
         }
     }
 }
+
 /*
 absolutely position a button underneath an item so it acts like a button body for the item; add content to it using aria labels; make the actual text not pronounceable by aria as well or something like that. this should work for both layer items and layer group toggles;
 */

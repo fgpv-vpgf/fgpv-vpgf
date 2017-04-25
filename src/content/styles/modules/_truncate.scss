@@ -1,4 +1,8 @@
 @mixin truncate {
+    rv-truncate {
+        word-wrap: break-word;
+    }
+
     .rv-truncate-title {
         display: flex;
 

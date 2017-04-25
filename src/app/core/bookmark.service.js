@@ -37,7 +37,7 @@
             // TODO: possibly race condition to clean up or need basemapService to expose original projection
 
             // we tack a flag at the end to indicate if we were in blank mode or not
-            const bmkey = geoService.mapManager.BasemapControl.basemapGallery.getSelected().id +
+            const bmkey = geoService.Map.BasemapControl.basemapGallery.getSelected().id +
                 (geoService.state.blankBaseMapId ? '1' : '0');
             const basemap = encode64(bmkey);
 
@@ -54,9 +54,8 @@
             // loop through layers in legend, remove user added layers and "removed" layer which are in the "undo" time frame
             const legend = geoService.legend.items.filter(legendEntry =>
                 !legendEntry.flags.user.visible && !legendEntry.removed);
-            const layerBookmarks = legend.map(legendEntry => {
-                return encode64(makeLayerBookmark(legendEntry));
-            });
+            const layerBookmarks = legend.map(legendEntry =>
+                encode64(makeLayerBookmark(legendEntry)));
 
             // bookmarkVersions.? is the version. update this accordingly whenever the structure of the bookmark changes
             const bookmark = `${bookmarkVersions.B},${basemap},${extent.x},${extent.y},${extent.scale}` +
@@ -317,6 +316,7 @@
          *                                `newLang` the language code we are switching to
          * @returns {Object}            The config with changes from the bookmark
          */
+        // eslint-disable-next-line max-statements
         function parseBookmark(bookmark, origConfig, opts) {
             // this methods uses a lot of sub-methods because of the following rules
             // RULE #1 single method can't have more than 40 commands
@@ -431,7 +431,7 @@
                 // find the LOD set for the basemap in the config file,
                 // then find the LOD closest to the scale provided by the bookmark.
                 const configLodSet = config.map.lods.find(lodset => lodset.id === lodId);
-                const zoomLod = gapiService.gapi.mapManager.findClosestLOD(configLodSet.lods, scale);
+                const zoomLod = gapiService.gapi.Map.findClosestLOD(configLodSet.lods, scale);
 
                 // Note: we used to use a centerAndZoom() call to position the map to the basemap co-ords.
                 //       it was causing a race condition during a projection change, so we now calculate
@@ -498,7 +498,7 @@
             }
 
             // set the new current config, RCS layers will be loaded on first getCurrent() call
-            configService.setCurrent(addRcsConfigs(bookmarkLayers, config));
+            // FIXME oldConfig.setCurrent(addRcsConfigs(bookmarkLayers, config));
         }
 
         /**

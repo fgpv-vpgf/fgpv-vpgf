@@ -5,6 +5,7 @@
     @include button-group;
     @include button-effects;
     @include button-divider;
+    @include toggle-button;
 
     .rv-switch {
         flex-direction: row-reverse;
@@ -17,10 +18,36 @@
         > .md-label {
             margin-left: 0;
             flex: 1;
+
+            @include icon-size(rem(2));
+
+            > md-icon {
+                margin-right: rem(1);
+            }
         }
 
         > .md-container {
             margin-left: rem(1.6);
+        }
+    }
+}
+
+@mixin toggle-button {
+    .rv-toggle-button {
+        display: flex;
+        align-items: center;
+        position: relative;
+
+        md-icon {
+            margin-right: rem(1);
+        }
+
+        span {
+            flex: 1;
+        }
+
+        .md-button {
+            margin: 0;
         }
     }
 }

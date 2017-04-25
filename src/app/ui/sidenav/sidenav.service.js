@@ -1,4 +1,3 @@
-/* global marked */
 (() => {
 
     // this is a default configuration of the side menu
@@ -42,7 +41,6 @@
      * @return {object} service object
      */
     // need to find a more elegant way to include all these dependencies
-    // jshint maxparams:16
     function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegistry, configService, events,
         stateManager, basemapService, fullScreenService, exportService, storageService, helpService, reloadService,
         translations, $mdDialog, pluginService) {
@@ -50,9 +48,7 @@
         const service = {
             open,
             close,
-            toggle,
 
-            config: {},
             controls: {},
 
             ShareController,
@@ -131,10 +127,7 @@
                 icon: 'navigation:fullscreen',
                 isHidden: false,
                 isChecked: fullScreenService.isExpanded,
-                action: () => {
-                    // service.close();
-                    fullScreenService.toggle();
-                }
+                action: () => fullScreenService.toggle(false)
             },
             touch: {
                 type: 'link',
@@ -168,9 +161,7 @@
 
         init();
 
-        // if language change, reset menu item
-        $rootScope.$on(events.rvLangSwitch, init);
-
+        // TODO: is this affected by the config reload at all?
         // Add any MenuItem plugins as they are created to the menu
         pluginService.onCreate(globalRegistry.BasePlugins.MenuItem, mItem => {
             // first plugin created should add the plugin group
@@ -200,9 +191,9 @@
             getLongLink();
 
             // fetch googleAPIKey - if it exists the short link switch option is shown
-            configService.getCurrent().then(conf =>
-                self.googleAPIUrl = conf.googleAPIKey ?
-                    `https://www.googleapis.com/urlshortener/v1/url?key=${conf.googleAPIKey}` : null
+            configService.onEveryConfigLoad(conf =>
+                (self.googleAPIUrl = conf.googleAPIKey ?
+                    `https://www.googleapis.com/urlshortener/v1/url?key=${conf.googleAPIKey}` : null)
             );
 
             /**
@@ -221,6 +212,7 @@
             */
             function getLongLink() {
                 if (typeof URLS.long === 'undefined') { // no cached url exists
+                    // eslint-disable-next-line no-return-assign
                     globalRegistry.getMap($rootElement.attr('id')).getBookmark().then(bookmark =>
                         URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark))
                         .then(() => (selectURL()));
@@ -242,7 +234,7 @@
                             URLS.short = self.url = r.data.id;
                             selectURL();
                         })
-                        .catch(() => URLS.short = undefined); // reset cache from failed API call);
+                        .catch(() => (URLS.short = undefined)); // reset cache from failed API call);
                 // cache exists, API call not needed
                 } else {
                     self.url = URLS.short;
@@ -268,10 +260,19 @@
             self.close = $mdDialog.hide;
 
             // get about map description from markdown or config file
-            configService.getCurrent().then(conf => self.about = conf.about)
-                .then(about => about.hasOwnProperty('content') ?
-                    self.about = about.content : useMarkdown(about.folderName));
+            configService.onEveryConfigLoad(config => {
+                if (config.ui.about.isMarkdown) {
+                    self.about = config.ui.about.content;
+                } else {
+                    useMarkdown(config.ui.about.folderName).then(html => { self.about = html; });
+                }
+            });
 
+            /**
+             * Takes a folder path, fetches markdown files and parses them.
+             * @param {String} foldername path to the markdown files
+             * @return {Promise} a promise resolving to rendered HTML
+             */
             function useMarkdown(foldername) {
                 const renderer = new marked.Renderer();
                 // make it easier to use images in markdown by prepending path to href if href is not an external source
@@ -283,10 +284,8 @@
                     return `<img src="${href}" alt="${title}">`;
                 };
 
-                const mdLocation = `about/${foldername}/${configService.currentLang()}.md`;
-                $http.get(mdLocation).then(r => {
-                    self.about = marked(r.data, { renderer });
-                });
+                const mdLocation = `about/${foldername}/${configService.getSync.language}.md`;
+                return $http.get(mdLocation).then(r => marked(r.data, { renderer }));
             }
         }
 
@@ -308,71 +307,32 @@
             return $mdSidenav('left').close();
         }
 
-        // FIXME: write a proper toggle function
-        /**
-         * Toggles side navigation panel.
-         *
-         * @function toggle
-         * @param  {object} argument [description]
-         */
-        function toggle(argument) {
-            console.log(argument);
-        }
-
         /**
          * Set up initial mapnav cluster buttons.
-         * Set up language change listener to update the buttons when a new config is loaded.
+         * Set up language change listener to update the buttons and language menus when a new config is loaded.
          *
          * @function init
          * @private
          */
         function init() {
-            setupSidenavButtons();
-            setupLanguages();
-        }
-
-        /**
-         * Merges a sidemenu snippet from the config file with the default configuration. This is a shallow extend and the top-level properties (`items` will be overwritten). Supplying an empty array as `items` will remove all the menu options.
-         *
-         * @function setupSidenavButtons
-         * @function private
-         */
-        function setupSidenavButtons() {
-            configService.getCurrent().then(data => {
-                service.config = angular.extend({}, SIDENAV_CONFIG_DEFAULT, data.sideMenu);
-
-                // a hack to get the logo url from the config to the template; need to decide where such things will be defined in the new schema
-                service.config.logoUrl = data.logoUrl;
-
+            configService.onEveryConfigLoad(config => {
                 // all menu items should be defined in the config's ui section
                 // should we account for cases when the export url is not specified, but export option is enabled in the side menu thought the config and hide it ourselves?
                 // or just let it failed
                 // or do these checks together with layer definition validity checks and remove export from the sidemenu options at that point
-                service.controls.export.isHidden = !data.services.exportMapUrl;
-                // shareable should be deprecated;
-                service.controls.share.isHidden = !data.shareable;
-                service.controls.fullscreen.isHidden = data.fullscreen;
+                service.controls.export.isHidden = typeof config.services.exportMapUrl === 'undefined';
+
+                // generate the language selector menu;
+                const langs = config.languages;
+                service.controls.language.children = langs.map(l =>
+                    ({
+                        type: 'link',
+                        label: translations[l].lang[l.substring(0, 2)],
+                        action: switchLanguage,
+                        isChecked: isCurrentLanguage,
+                        value: l
+                    }));
             });
-        }
-
-        /**
-         * Generate the language selector menu
-         *
-         * @function setupLanguages
-         * @private
-         */
-        function setupLanguages() {
-            // get languages available from configService
-            const langs = configService.getLanguages();
-
-            service.controls.language.children = langs.map(l =>
-                ({
-                    type: 'link',
-                    label: translations[l].lang[l.substring(0, 2)],
-                    action: switchLanguage,
-                    isChecked: isCurrentLanguage,
-                    value: l
-                }));
 
             /**
              * Switches the language to the language represented by the sidemenu language control object.
@@ -396,7 +356,7 @@
              * @return {Boolean} true is sidemenu language control object represents the currently selected language
              */
             function isCurrentLanguage(control) {
-                return control.value === configService.currentLang();
+                return control.value === configService.getSync.language;
             }
         }
     }

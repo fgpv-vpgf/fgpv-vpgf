@@ -28,19 +28,13 @@
         return directive;
     }
 
-    function Controller($scope, $q, $timeout, stateManager, Stepper, geoService, LayerBlueprint, Geo, $rootElement,
-        keyNames) {
+    function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint, $rootElement,
+        keyNames, layerSource, legendService) {
         'ngInject';
         const self = this;
 
         self.closeLoaderFile = closeLoaderFile;
         self.dropActive = false; // flag to indicate if file drop zone is active
-
-        self.fileTypes = [
-            Geo.Service.Types.CSV,
-            Geo.Service.Types.GeoJSON,
-            Geo.Service.Types.Shapefile
-        ];
 
         // create three steps: upload data, selecct data type, and configure layer
         self.upload = {
@@ -50,8 +44,10 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: uploadOnContinue,
-                onCancel: () => onCancel(self.upload.step),
-                onKeypress: (event) => { if (event.keyCode === keyNames.ENTER) { uploadOnContinue(); } }, // check if enter key have been pressed and call the next step if so
+                onCancel: () =>
+                    onCancel(self.upload.step),
+                onKeypress: event =>
+                    { if (event.keyCode === keyNames.ENTER) { uploadOnContinue(); } }, // check if enter key have been pressed and call the next step if so
                 reset: uploadReset,
                 focus: 'dataUpload'
             },
@@ -163,11 +159,8 @@
 
         /**
          * Starts file upload.
-         * FIXME this describes more args than it takes
          * @function uploadFilesSubmitted
          * @param  {Array} files uploaded array of files
-         * @param  {Object} event submitted event
-         * @param  {Object} flow  flow object https://github.com/flowjs/ng-flow
          */
         function uploadFilesSubmitted(files) {
             if (files.length > 0) {
@@ -190,19 +183,19 @@
          * @return {Promise} layerBlueprint ready promise
          */
         function onLayerBlueprintReady(name, file) {
-            self.layerBlueprint = new LayerBlueprint.file(
-                geoService.epsgLookup, geoService.mapObject.spatialReference.wkid,
-                name, file, updateProgress
-            );
 
-            // TODO: refactor this
-            self.layerBlueprint.initialConfig = { flags: { user: { visible: true } } };
+            const layerSourcePromise = layerSource.fetchFileInfo(name, file, updateProgress)
+                .then(({ options: layerSourceOptions, preselectedIndex }) => {
+                    self.layerSourceOptions = layerSourceOptions;
+                    self.layerSource = layerSourceOptions[preselectedIndex];
+                });
 
             // add some delay before going to the next step
             // explicitly move to step 1 (select); if the current step is not 0 (upload), drag-dropping a file may advance farther than needed when using just `stepper.nextStep()`
-            stepper.moveToStep(1, $timeout(() => self.layerBlueprint.ready, 300));
+            stepper.moveToStep(1, $timeout(() =>
+                layerSourcePromise, 300));
 
-            return self.layerBlueprint.ready;
+            return layerSourcePromise;
 
             /**
              * Updates file load progress status.
@@ -285,15 +278,15 @@
          * @function selectOnContinue
          */
         function selectOnContinue() {
-            const validationPromise = self.layerBlueprint.validate();
-
-            stepper.nextStep(validationPromise);
+            const validationPromise = self.layerSource.validate()
 
             validationPromise.catch(error => {
                 RV.logger.error('loaderFileDirective', 'file type is wrong', error);
                 toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
                 // TODO: display a meaningful error message why the file doesn't validate (malformed csv, zip with pictures of cats, etc.)
             });
+
+            stepper.nextStep(validationPromise);
         }
 
         /**
@@ -329,6 +322,9 @@
             configure.form.$setPristine();
             configure.form.$setUntouched();
 
+            // this will reset all the user-editable options to their defaults
+            self.layerSource.reset();
+
             // TODO: generalize resetting custom form validation
             configure.configureResetValidation();
         }
@@ -348,12 +344,13 @@
          * @function configureOnContinue
          */
         function configureOnContinue() {
-            self.layerBlueprint.generateLayer()
-                .then(() => {
-                    geoService.constructLayers([self.layerBlueprint]);
+            const layerBlueprint = new LayerBlueprint.file(self.layerSource);
+
+            layerBlueprint.validateFileLayerSource()
+                .then(esriLayer => {
+                    legendService.importLayerBlueprint(layerBlueprint);
                     closeLoaderFile();
-                })
-                .catch(error => {
+                }).catch(error => {
                     RV.logger.warn('loaderFileDirective', 'file is invalid ', error);
                     self.configure.form.$setValidity('invalid', false);
                 });

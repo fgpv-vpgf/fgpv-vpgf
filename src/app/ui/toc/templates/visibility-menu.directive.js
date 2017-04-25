@@ -30,17 +30,21 @@
         return directive;
     }
 
-    function Controller(geoService, appInfo) {
+    function Controller(LegendBlock, geoService, appInfo, configService) {
         'ngInject';
         const self = this;
 
         self.appID = appInfo.id;
 
-        self.showAllLegendEntries = () => toggleLegendEntries();
-        self.hideAllLegendEntries = () => toggleLegendEntries(false);
+        self.showAllLegendEntries = () =>
+            toggleLegendEntries();
+        self.hideAllLegendEntries = () =>
+            toggleLegendEntries(false);
 
-        self.isAllLegendEntriesVisible = () => getLegendEntriesVisibility();
-        self.isAllLegendEntriesHidden = () => getLegendEntriesVisibility(false);
+        self.isAllLegendEntriesVisible = () =>
+            getLegendEntriesVisibility();
+        self.isAllLegendEntriesHidden = () =>
+            getLegendEntriesVisibility(false);
 
         /***/
 
@@ -55,8 +59,20 @@
                 return;
             }
 
-            geoService.legend.items.forEach(item =>
-                item.setVisibility(value));
+            // set visibility on all interactive legend blocks, but do not set visibility on children of LegendSets;
+            // if we do set visibility on LegendSet's children, the last child in the set will be selected as opposed to the first one;
+            configService.getSync.map.legendBlocks
+                .walk(_walkAction, _walkDecision);
+
+            function _walkAction(block) {
+                if (block.isInteractive) {
+                    block.visibility = value
+                }
+            }
+
+            function _walkDecision(block) {
+                return block.blockType === LegendBlock.TYPES.GROUP;
+            }
         }
 
         /**
@@ -71,11 +87,21 @@
                 return;
             }
 
-            return geoService.legend
-                .walkItems(item =>
-                    (item.getVisibility()), true)
-                .every(item =>
-                    (item === value));
+            // find all interactive legendblocks whose visibility controls are not system disabled and aggregate their visibility
+            const isAllVisible = configService.getSync.map.legendBlocks
+                .walk(block => {
+                    if (!block.isInteractive) {
+                        return null;
+                    }
+
+                    return block.isControlSystemDisabled('visibility') ? null : block.visibility;
+                })
+                .filter(isVisible =>
+                    isVisible !== null)
+                .every(isVisible =>
+                    isVisible === value);
+
+            return isAllVisible;
         }
     }
 })();

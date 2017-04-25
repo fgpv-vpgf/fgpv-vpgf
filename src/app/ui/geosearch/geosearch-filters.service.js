@@ -101,7 +101,7 @@
          * @private
          */
         function waitOnConfig() {
-            configService.getCurrent().then(init);
+            configService.getAsync.then(init);
         }
 
         /**

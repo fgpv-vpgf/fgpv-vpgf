@@ -27,9 +27,13 @@
         return directive;
     }
 
-    function Controller(sideNavigationService, version) {
+    function Controller(sideNavigationService, version, configService) {
         'ngInject';
         const self = this;
+
+        // expose sidemenu config to the template
+        configService.onEveryConfigLoad(config =>
+            (self.config = config.ui.sideMenu));
 
         self.service = sideNavigationService;
 

@@ -148,6 +148,7 @@
       "thumbnailUrl": "assets/images/basemap/baseToponrcan.jpg",
       "wkid": 3978,
       "extentId": "123456789",
+      "lodId": "LOD_NRCAN_Lambert_3978",
       "layers": [
         {
           "id": "CBMT",
@@ -164,6 +165,7 @@
       "thumbnailUrl": "assets/images/basemap/baseSimple.jpg",
       "wkid": 3978,
       "extentId": "123456789",
+      "lodId": "LOD_NRCAN_Lambert_3978",
       "layers": [
         {
           "id": "SMR",
@@ -190,6 +192,7 @@
       "thumbnailUrl": "assets/images/basemap/baseCBMT_CBCT_GEOM_3978.jpg",
       "wkid": 3978,
       "extentId": "123456789",
+      "lodId": "LOD_NRCAN_Lambert_3978",
       "layers": [
         {
           "id": "CBME_CBCE_HS_RO_3978",
@@ -206,6 +209,7 @@
       "thumbnailUrl": "assets/images/basemap/baseCBME_CBCE_HS_RO_3978.jpg",
       "wkid": 3978,
       "extentId": "123456789",
+      "lodId": "LOD_NRCAN_Lambert_3978",
       "layers": [
         {
           "id": "CBMT_CBCT_GEOM_3978",
@@ -222,6 +226,7 @@
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
       "extentId": "123456789",
+      "lodId": "LOD_ESRI_World_AuxMerc_3857",
       "layers": [
         {
           "id": "World_Imagery",
@@ -238,6 +243,7 @@
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
       "extentId": "123456789",
+      "lodId": "LOD_ESRI_World_AuxMerc_3857",
       "layers": [
         {
           "id": "World_Physical_Map",
@@ -254,6 +260,7 @@
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
       "extentId": "123456789",
+      "lodId": "LOD_ESRI_World_AuxMerc_3857",
       "layers": [
         {
           "id": "World_Shaded_Relief",
@@ -270,6 +277,7 @@
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
       "extentId": "123456789",
+      "lodId": "LOD_ESRI_World_AuxMerc_3857",
       "layers": [
         {
           "id": "World_Street_Map",
@@ -286,6 +294,7 @@
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
       "extentId": "123456789",
+      "lodId": "LOD_ESRI_World_AuxMerc_3857",
       "layers": [
         {
           "id": "World_Terrain_Base",
@@ -302,6 +311,7 @@
       "thumbnailUrl": "assets/images/basemap/imagery.jpg",
       "wkid": 102100,
       "extentId": "123456789",
+      "lodId": "LOD_ESRI_World_AuxMerc_3857",
       "layers": [
         {
           "id": "World_Topo_Map",

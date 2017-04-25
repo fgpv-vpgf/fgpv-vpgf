@@ -60,7 +60,7 @@
                     'update-start': () => this.onUpdateStart(),
                     'update-end': () => this.onUpdateEnd(),
                     'mouse-over': e => this.onMouseOver(e),
-                    'mouse-out': e => this.onMouseOut(e),
+                    'mouse-out': e => this.onMouseOut(e)
                 });
             }
 
@@ -194,7 +194,7 @@
                 this._hoverListeners = [];
                 this._epsgLookup = epsgLookup;
                 this._layerPassthroughBindings.forEach(bindingName =>
-                    this[bindingName] = (...args) => this._layer[bindingName](...args));
+                    (this[bindingName] = (...args) => this._layer[bindingName](...args)));
                 this._layerPassthroughProperties.forEach(propName => {
                     const descriptor = {
                         enumerable: true,

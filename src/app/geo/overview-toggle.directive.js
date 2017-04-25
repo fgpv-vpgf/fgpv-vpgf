@@ -3,6 +3,17 @@
     'use strict';
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
 
+    const TEMPLATE = `
+        <md-button
+            translate
+            aria-label="{{ geo.aria.overviewtoggle | translate }}"
+            class="md-icon-button rv-button-24 rv-overview-toggle"
+            tabindex="-2"
+            ng-click="self.toggleOverview()">
+            <md-icon md-svg-src="community:apple-keyboard-control"></md-icon>
+        </md-button>
+    `;
+
     /**
      * @module rvOverviewToggle
      * @memberof app.geo
@@ -24,19 +35,9 @@
         .module('app.layout')
         .directive('rvOverviewToggle', rvOverviewToggle);
 
-    function rvOverviewToggle($compile, $rootScope, geoService, $timeout, animationService) {
+    function rvOverviewToggle($compile, $rootScope, geoService, $timeout, animationService, events, configService) {
         const directive = {
-            restrict: 'E',
-            template: `
-                <md-button
-                    translate
-                    aria-label="{{ geo.aria.overviewtoggle | translate }}"
-                    class="md-icon-button rv-button-24 md-button"
-                    tabindex="-2"
-                    ng-click="toggleOverview()">
-                    <md-icon md-svg-src="community:apple-keyboard-control"></md-icon>
-                </md-button>`,
-            scope: {},
+            restrict: 'A',
             link: link
         };
 
@@ -44,76 +45,95 @@
 
         function link(scope, el) {
 
-            const overviewAnimation = animationService.timeLineLite({
-                paused: true,
-                onComplete: animationCompleted,
-                onReverseComplete: () => animationCompleted(true)
-            });
+            // events.$on(events.rvApiReady, init);
+            //events.$on(events.rvBasemapChange, init);
+
+            // TODO: instead of relying on esri event here, listen on it in map service and re-emit as rv-basemapchange event
+            events.$on(events.rvApiReady, () =>
+                configService.getSync.map.instance.basemapGallery.on('selection-change', init));
+
+            const self = scope.self;
+            self.overviewActive = true;
+
+            const overviewScope = $rootScope.$new();
+            overviewScope.self = self;
 
             let timeoutPromise;
 
-            scope.toggleOverview = toggleOverview;
+            function init() {
+                self.toggleOverview = toggleOverview;
 
-            overviewAnimation
-                .to(el.parent(), 0.3, {
-                    width: 40,
-                    height: 40,
-                    ease: RV_SWIFT_IN_OUT_EASE }, 0)
-                .to(el, 0.3, { // rotate toggle icon
-                    top: '-=3',
-                    right: '-=3',
-                    directionalRotation: '225_ccw'
-                }, 0);
+                const overviewCompiledTemplate = $compile(TEMPLATE)(overviewScope);
+                const ovwContainer = el.find('.ovwContainer');
 
-            el.parent().siblings('div.ovwButton').remove(); // remove esri button
+                ovwContainer.append(overviewCompiledTemplate);
 
-            // default overview map to expanded state. Using $rootScope here to preserve
-            // state between projection changes (since this directive is destroyed and re-created)
-            if (typeof $rootScope.overviewActive === 'undefined') {
-                $rootScope.overviewActive = true;
-                el.parent().css({ width: 200, height: 200 });
-            } else {
-                animate();
-            }
+                const overviewAnimation = animationService.timeLineLite({
+                    paused: true,
+                    onComplete: animationCompleted,
+                    onReverseComplete: () => animationCompleted(true)
+                });
 
-            /**
-             * Adds/removes a class 'rv-minimized' to .esriOverviewMap so that the extent box is
-             * hidden/shown. Corrects the overview map extent to its new box size.
-             *
-             * @param   {Boolean}   isReversed  if true overview map is full size, defaults to false
-             *
-             * @function animationCompleted
-             */
-            function animationCompleted(isReversed = false) {
-                const overviewMapMap = geoService.mapManager.OverviewMapControl.map;
-                const esriNode = el.parent().parent();
+                overviewAnimation
+                    .to(ovwContainer, 0.3, {
+                        width: 40,
+                        height: 40,
+                        ease: RV_SWIFT_IN_OUT_EASE }, 0)
+                    .to(overviewCompiledTemplate, 0.3, { // rotate toggle icon
+                        top: '-=3',
+                        right: '-=3',
+                        directionalRotation: '225_ccw'
+                    }, 0);
 
-                $timeout.cancel(timeoutPromise); // cancel existing timeout if present
-                // $timeout workaround to prevent event collision with ESRI
-                timeoutPromise = $timeout(() => overviewMapMap.setExtent(overviewMapMap.extent), 500);
-                return !isReversed ? esriNode.addClass('rv-minimized') : esriNode.removeClass('rv-minimized');
-            }
-
-            /**
-             * Toggles the overview map from visible to hidden and vice versa
-             *
-             * @function toggleOverview
-             */
-            function toggleOverview() {
-                $rootScope.overviewActive = !$rootScope.overviewActive;
-                animate();
-            }
-
-            /**
-             * Plays or reverses the TimelineLite animation depending on the current expanded state
-             *
-             * @function animate
-             */
-            function animate() {
-                if ($rootScope.overviewActive) {
-                    overviewAnimation.reverse();
+                if (self.overviewActive) {
+                    ovwContainer.css({ width: 200, height: 200 });
                 } else {
-                    overviewAnimation.play();
+                    animate();
+                }
+
+                /**
+                 * Adds/removes a class 'rv-minimized' to .esriOverviewMap so that the extent box is
+                 * hidden/shown. Corrects the overview map extent to its new box size.
+                 *
+                 * @param   {Boolean}   isReversed  if true overview map is full size, defaults to false
+                 *
+                 * @function animationCompleted
+                 */
+                function animationCompleted(isReversed = false) {
+                    const overviewMapMap = configService.getSync.map.instance.overviewMap.map;
+
+                    $timeout.cancel(timeoutPromise); // cancel existing timeout if present
+
+                    // $timeout workaround to prevent event collision with ESRI
+                    timeoutPromise = $timeout(() =>
+                        overviewMapMap.setExtent(overviewMapMap.extent), 500);
+
+                    return !isReversed ?
+                        ovwContainer.addClass('rv-minimized') :
+                        ovwContainer.removeClass('rv-minimized');
+                }
+
+                /**
+                 * Toggles the overview map from visible to hidden and vice versa
+                 *
+                 * @function toggleOverview
+                 */
+                function toggleOverview() {
+                    self.overviewActive = !self.overviewActive;
+                    animate();
+                }
+
+                /**
+                 * Plays or reverses the TimelineLite animation depending on the current expanded state
+                 *
+                 * @function animate
+                 */
+                function animate() {
+                    if (self.overviewActive) {
+                        overviewAnimation.reverse();
+                    } else {
+                        overviewAnimation.play();
+                    }
                 }
             }
         }

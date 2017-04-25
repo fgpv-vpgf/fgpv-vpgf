@@ -35,10 +35,6 @@
         }
     }
 
-    .rv-body-button:focus {
-        border: 2px solid #4d90fe;
-    }
-
     rv-basemap-item {
         position: relative;
         display: block;
@@ -49,6 +45,10 @@
             content: "";
             display: block;
             padding-top: 100% / (3 / 2);
+        }
+
+        .rv-body-button:focus {
+            border: 2px solid #4d90fe;
         }
     }
 

@@ -1,9 +1,23 @@
 // ESRI specific css
 // scalebar dijit styles
 @mixin esri {
+    @include map;
     @include scalebar;
     @include overview;
     @include attribution;
+}
+
+@mixin map {
+    // makes bounding box ignore any mouse events and allow for hover tips to be triggered on feature layers underneath the bbox    .rv-esri-map.map {
+    // it seems that in 3.20 `layersDiv` class was changed to `esriMapLayers`
+    .esriMapLayers g[id$="bbox_layer"] {
+        pointer-events: none;
+    }
+
+    // no idea what this is, but it seems we don't need this
+    .esriPopup {
+        display: none;
+    }
 }
 
 @mixin scalebar {
@@ -159,10 +173,6 @@
         @include include-size(rv-lt-lg) {
             display: none;
         }
-
-        &.rv-minimized .ovwHighlight {
-            display: none !important;
-        }
     }
 
     .esriOverviewMap .ovwContainer {
@@ -175,6 +185,10 @@
         max-width: rem(20);
         max-height: rem(20);
         @extend .rv-whiteframe-z2; // this is dirty trick to apply z class to esri dijit;
+
+        &.rv-minimized .ovwHighlight {
+            display: none !important;
+        }
     }
     /*
  * Have added "width 100% height 100%" to the map div in template
@@ -191,7 +205,7 @@
         background-color: #FFF;
         overflow: hidden;
 
-        > .container > .container {
+        > .esriMapContainer > .esriMapContainer {
             overflow: hidden;
             margin: rem(0.3);
             width: calc(100% - #{rem(0.3)} * 2);
@@ -214,6 +228,7 @@
         cursor: pointer;
         z-index: 99;
         /*background-color: #666;*/
+        display: none;
     }
 
     .esriOverviewMap .ovwMaximizer {

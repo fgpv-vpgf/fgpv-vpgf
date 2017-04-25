@@ -1,24 +1,28 @@
 <div ng-switch="self.basemap.wkid" class="rv-wkid rv-{{self.basemap.wkid}}">
 
-    <div ng-switch-when="3978">
+    <div ng-if="self.basemap.thumbnailUrl">
+        <img alt="" ng-src="{{ self.basemap.thumbnailUrl }}"/>
+    </div>
+
+    <div ng-switch-when="3978" ng-if="!self.basemap.thumbnailUrl">
         <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/268"/>
         <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/269"/>
     </div>
 
-    <div ng-switch-when="102100">
+    <div ng-switch-when="102100" ng-if="!self.basemap.thumbnailUrl">
         <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/74"/>
         <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/75"/>
     </div>
 </div>
 
-<div class="rv-basemap-description" id="{{ ::$root.uid($id) }}-basemap-desc">{{ self.basemap.description }}</div>
+<div class="rv-basemap-description" id="{{ ::$root.uid($id) }}-basemap-desc">{{ self.basemap.description | translate }}</div>
 
 <span flex></span>
 
-<div class="rv-basemap-footer" ng-class="{ 'rv-double': self.basemap.type && self.basemap.type !== 'blank' }">
+<div class="rv-basemap-footer" ng-class="{ 'rv-double': self.basemap.typeSummary }">
     <div class="rv-basemap-name" >
-        <span class="md-body-2">{{ self.basemap.name }}</span>
-        <span class="md-body-2" ng-if=" self.basemap.type && self.basemap.type !== 'blank' ">{{ self.basemap.type }}</span>
+        <span class="md-body-2">{{ self.basemap.name | translate }}</span>
+        <span class="md-body-2" ng-if=" self.basemap.typeSummary">{{ self.basemap.typeSummary | translate }}</span>
     </div>
 
     <span flex></span>
@@ -37,7 +41,7 @@
     </md-button>
 </div>
 
-<div class="rv-basemap-check" ng-if="self.basemap.selected">
+<div class="rv-basemap-check" ng-if="self.basemap.isSelected">
     <md-icon md-svg-src="navigation:check" ></md-icon>
 </div>
 

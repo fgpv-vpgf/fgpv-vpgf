@@ -1,30 +1,53 @@
-<md-button
-    ng-if="::!self.solorecord"
-    class="rv-group-body-button rv-button-square"
-    ng-focus="self.renderDetails()"
-    ng-mouseover="self.renderDetails()"
-    ng-click="self.toggleDetails()"></md-button>
+<div
+    class="rv-record-header"
+    ng-class="{ 'rv-selected rv-expanded': self.isExpanded }">
 
-<rv-toc-entry-symbology
-    symbology="self.item.symbology"></rv-toc-entry-symbology>
+    <md-button
+        ng-if="::!self.solorecord"
+        class="rv-group-body-button rv-button-square"
+        ng-focus="self.isRendered = true"
+        ng-mouseover="self.isRendered = true"
+        ng-click="self.toggleDetails()"></md-button>
 
-<span class="rv-group-name">
-    {{ self.item.name }}
-</span>
+    <rv-symbology-stack
+        symbology="self.item.symbologyStack"></rv-symbology-stack>
 
-<div class="rv-group-controls">
+    <span class="rv-group-name">
+        {{ self.item.name }}
+    </span>
 
-    <md-button class="md-icon-button rv-icon-20" ng-click="self.zoomToFeature()"
-        ng-disabled="!self.requester.layerRec.visible || !self.directLegendEntry.options.visibility.value">
-        <md-tooltip md-direction="top">{{ 'filter.tooltip.zoom' | translate }}</md-tooltip>
-        <md-icon md-svg-src="action:zoom_in"></md-icon>
-    </md-button>
+    <div class="rv-group-controls">
 
+        <md-button class="md-icon-button rv-icon-20" ng-click="self.zoomToFeature()"
+            ng-disabled="!self.requester.proxy.visible">
+            <md-tooltip md-direction="top">{{ 'filter.tooltip.zoom' | translate }}</md-tooltip>
+            <md-icon md-svg-src="action:zoom_in"></md-icon>
+        </md-button>
+
+    </div>
+
+    <div ng-if="::!self.solorecord" class="rv-icon-24 rv-group-toggle-icon">
+        <md-icon
+            class="md-toggle-icon"
+            ng-class="{ 'rv-toggled' : self.isExpanded }"
+            md-svg-src="hardware:keyboard_arrow_down"></md-icon>
+    </div>
 </div>
 
-<div ng-if="::!self.solorecord" class="rv-icon-24 rv-group-toggle-icon">
-    <md-icon
-        class="md-toggle-icon"
-        ng-class="{ 'rv-toggled' : self.item.isExpanded }"
-        md-svg-src="hardware:keyboard_arrow_down"></md-icon>
+<div class="rv-details-list-wrapper" ng-if="self.isRendered">
+    <ul class="rv-details-list rv-toggle-slide ng-hide" ng-show="self.isExpanded">
+
+        <li ng-repeat="row in self.item.data" ng-switch on="row.type">
+            <div class="rv-details-attrib-key">{{ ::row.key }}</div>
+            <span flex></span>
+
+            <div class="rv-details-attrib-value"
+                ng-switch-when="esriFieldTypeDate"
+                ng-bind-html="::row.value | dateTimeZone"></div>
+            <div class="rv-details-attrib-value"
+                ng-switch-default ng-bind-html="::row.value | autolink"></div>
+        </li>
+    </ul>
 </div>
+
+<div class="rv-shadow"></div>

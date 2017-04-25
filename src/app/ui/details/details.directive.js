@@ -27,7 +27,7 @@
         return directive;
     }
 
-    function Controller($scope, $element, stateManager, geoService, detailService) {
+    function Controller($scope, $element, stateManager, geoService, detailService, SymbologyStack) {
         'ngInject';
         const self = this;
 
@@ -36,7 +36,8 @@
         self.selectItem = selectItem;
         self.expandPanel = detailService.expandPanel;
 
-        self.getSectionNode = () => $element.find('.rv-details');
+        self.getSectionNode = () =>
+            $element.find('.rv-details');
 
         /**
         * Set the selected item from the array of items if previously set.
@@ -48,7 +49,7 @@
         function getSelectedItem(items) {
             // get selected item if there is a match
             return items.find(item =>
-                `${item.requester.caption}${item.requester.name}` === self.selectedInfo) || items[0];
+                item.requester.proxy === self.selectedLayerProxy);
         }
 
         /**
@@ -58,24 +59,30 @@
          */
         function selectItem(item) {
             self.selectedItem = item;
-            self.selectedInfo = (item) ? `${item.requester.caption}${item.requester.name}` : null;
+            self.selectedLayerProxy = item ? item.requester.proxy : null;
 
             self.display.selectedItem = self.selectedItem;
 
             // add hilights to all things in the layer.
             // featureIdx can be 0, so no falsy checks allowed
             // TODO is this the appropriate place for hilighting code?
+            // FIXME: refactor restore
+            /*
             if (item && item.requester && typeof item.requester.featureIdx !== 'undefined') {
                 geoService.hilightGraphic(item.requester.layerRec, item.requester.featureIdx,
                     item.data.map(d => d.oid));
-            }
+            }*/
         }
 
         $scope.$watch('self.display.data', newValue => {
             // if multiple points added to the details panel ...
             if (newValue && newValue.length > 0) {
                 // pick selected item user previously selected one, otherwise pick the first one
-                selectItem(self.selectedInfo ? getSelectedItem(newValue) : newValue[0]);
+                selectItem(getSelectedItem(newValue) || newValue[0]);
+
+                // wrap symbology returned by the proxy into a symbology stack object
+                newValue.forEach(item =>
+                    (item.requester.symbologyStack = new SymbologyStack(item.requester.proxy)));
             } else {
                 self.selectItem(null);
             }

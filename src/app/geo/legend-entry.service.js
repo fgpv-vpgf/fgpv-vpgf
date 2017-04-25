@@ -19,6 +19,7 @@
         .module('app.geo')
         .service('legendEntryFactory', legendEntryFactory);
 
+    // eslint-disable-next-line max-statements
     function legendEntryFactory($timeout, $translate, gapiService, Geo, layerDefaults) {
 
         const service = {
@@ -68,7 +69,7 @@
             obj.setLayerState = (state = Geo.Layer.States.DEFAULT, delay = 0) => {
                 // same as with map loading indicator, need timeout since it's a non-Angular async call
                 $timeout.cancel(obj._stateTimeout);
-                obj._stateTimeout = $timeout(() => obj.state = state, delay);
+                obj._stateTimeout = $timeout(() => (obj.state = state), delay);
             };
 
             /**
@@ -79,7 +80,7 @@
             obj.setLayerLoadingFlag = (isLoading = true, delay = 0) => {
                 // same as with map loading indicator, need timeout since it's a non-Angular async call
                 $timeout.cancel(obj._loadingTimeout);
-                obj._loadingTimeout = $timeout(() => obj.isLoading = isLoading, delay);
+                obj._loadingTimeout = $timeout(() => (obj.isLoading = isLoading), delay);
             };
 
             /**
@@ -600,7 +601,7 @@
             }
 
             // user flags set here because case specific to dynamic layer children
-            this.walkItems(slave => slave.flags.user = this.flags.user);
+            this.walkItems(slave => (slave.flags.user = this.flags.user));
 
             // set initial visibility of the sublayers;
             // this cannot be set in `layerRegistry` because legend entry for dynamic layer didn't exist yet;

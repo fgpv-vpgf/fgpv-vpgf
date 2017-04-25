@@ -30,8 +30,9 @@
 
                     // check if the transition should be animated
                     if (!skip) { // animate hide/show
-                        $animate[value ? 'removeClass' : 'addClass']
-                            (element, 'ng-hide', {
+                        $animate[value ? 'removeClass' : 'addClass'](
+                            element, 'ng-hide',
+                            {
                                 tempClasses: 'ng-hide-animate'
                             })
                             .then(() => callback()); // resolve state change after animation ends

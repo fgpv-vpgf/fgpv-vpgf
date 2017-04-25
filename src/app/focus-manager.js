@@ -1,4 +1,5 @@
 /* global RV, jQuery */
+// eslint-disable-next-line max-statements
 ((RV, jQuery) => {
     // delay in milliseconds from time focus is lost to when action is taken
     const focusoutDelay = 200;
@@ -244,6 +245,7 @@
      * @param     {Boolean} gotoEnd keep traversing until no longer possible
      * @return    {Object}    a jQuery element which is next/previous to the reference element provided
      */
+    // eslint-disable-next-line complexity
     function focusableSearch(element, forward, gotoEnd = false) {
         /*jshint maxcomplexity:15 */
 
@@ -424,16 +426,17 @@
         history.push(targetEl);
         viewer.setStatus(statuses.WAITING);
 
-        viewer.setDialogAction(() => {
-            return viewer.mdDialog.show({
+        viewer.setDialogAction(() =>
+            viewer.mdDialog
+            .show({
                 contentElement: viewer.rootElement.find('.rv-focus-dialog-content > div'),
                 clickOutsideToClose: false,
                 escapeToClose: false,
                 disableParentScroll: false,
                 parent: viewer.rootElement.find('rv-shell'),
                 focusOnOpen: false
-            }).then(() => viewer.clearTabindex());
-        });
+            })
+            .then(() => viewer.clearTabindex()));
     }
 
     /**
@@ -443,6 +446,7 @@
      * @function onKeydown
      * @param  {Object} event the keydown event object
      */
+    // eslint-disable-next-line complexity
     function onKeydown(event) {
         /*jshint maxcomplexity:12 */
         const viewerActive = viewerGroup.status(statuses.ACTIVE);

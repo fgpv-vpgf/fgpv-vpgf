@@ -44,10 +44,11 @@
             $(window).on('resize', () => $rootElement.width() !== elemWidth ? updateClass() : null);
 
             // open legend panel if option is set in config for current viewport
-            configService.getCurrent().then(config => {
-                if (config.legendIsOpen && config.legendIsOpen[layoutService.currentLayout()]) {
+            configService.onEveryConfigLoad(config => {
+                if (config.ui.legendIsOpen && config.ui.legendIsOpen[layoutService.currentLayout()]) {
                     stateManager.setActive({ side: false }, 'mainToc');
                 }
+                scope.self.map = config.map;
             });
 
             storageService.panels.shell = el;
@@ -56,17 +57,8 @@
             $rootScope.$on(events.rvApiReady, () => {
                 $rootElement.find('.rv-esri-map svg').attr('focusable', false);
 
-                configService.getCurrent().then(config => {
+                configService.getAsync.then(config => {
                     const mapConfig = config.map.components;
-
-                    if (mapConfig.northArrow.enabled) {
-                        // set initial position of the north arrow
-                        updateNorthArrow();
-
-                        // init here since rvExtentChange fires before rvApiReady which will cause gapi issues
-                        $rootScope.$on(events.rvExtentChange, updateNorthArrow);
-                    }
-
                     if (mapConfig.mouseInfo.enabled) {
                         // set ouput spatial reference for mouse coordinates. If spatial reference is defined in configuration file
                         // use it. If not, use the basemap spatial reference
@@ -97,25 +89,6 @@
             });
 
             /**
-            * Displays a north arrow along the top of the viewer
-            * @function  updateNorthArrow
-            */
-            function updateNorthArrow() {
-                const north = mapToolService.northArrow();
-                const arrowElem = el.find('.rv-north-arrow');
-                // hide the north arrow if projection is not supported
-                if (!north.projectionSupported) {
-                    arrowElem.css('display', 'none');
-                } else {
-                    arrowElem
-                        .css('display', 'block')
-                        .css('left', north.screenX)
-                        .css('top', Math.max(1, north.screenY))
-                        .css('transform', north.screenY > 0 ? '' : `rotate(${north.rotationAngle}deg)`);
-                }
-            }
-
-            /**
             * Displays map coordinates on map
             * @function  updateMapCoordinates
             * @param {Object} evt mouse mouve events
@@ -127,6 +100,11 @@
                 coordElem[0].innerText = coords[0];
                 coordElem[1].innerText = coords[1];
             }
+
+            // TODO: remove; opens the main panel for easier dev work
+            // stateManager.setActive({ side: false }, 'mainLoaderService');
+            // stateManager.setActive({ side: false }, 'mainLoaderFile');
+            stateManager.setActive({ side: false }, { mainToc: true });
         }
 
         /**
@@ -141,11 +119,12 @@
         }
     }
 
-    function Controller($translate, geoService) {
+    function Controller($translate, geoService, configService) {
         'ngInject';
         const self = this;
 
         self.geoService = geoService;
+        self.configService = configService; // TODO: fix when config service can fire events
         self.translate = tag => $translate.instant('focus.dialog.' + tag);
     }
 })();

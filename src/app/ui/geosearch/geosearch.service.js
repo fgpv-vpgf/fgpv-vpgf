@@ -88,7 +88,7 @@
             if (panels.length > 0) {
                 stateManager.state.main.activeSkipOverride = false;
 
-                const toPanel = panels.reverse().find((item) =>
+                const toPanel = panels.reverse().find(item =>
                     item === 'mainToc' || item === 'mainDetails');
 
                 stateManager.setActive({ [toPanel]: true });

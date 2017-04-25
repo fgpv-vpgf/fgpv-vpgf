@@ -17,32 +17,45 @@
                     ng-keypress="self.connect.step.onKeypress($event)"
                     required>
                 <div ng-messages="self.connect.form.serviceUrl.$error">
-                    <div ng-message="url" translate>import.service.connect.invalidurl</div>
-                    <div ng-message="broken" translate>import.service.connect.broken</div>
+                    <div ng-message="url">{{ 'import.service.connect.invalidurl' | translate }}</div>
+                    <div ng-message="broken">{{ 'import.service.connect.broken' | translate }}</div>
                 </div>
             </md-input-container>
         </rv-stepper-item>
 
+        <!-- Selecting layer type -->
+
         <rv-stepper-item step="self.select.step" form="self.select.form"
-            summary-value="{{ self.select.step.isCompleted ? 'import.service.type.' + self.layerBlueprint.serviceType : '' }}">
+            summary-value="{{ self.select.step.isCompleted ? 'import.service.type.' + self.layerSource.type : '' }}">
             <md-input-container class="md-block">
                 <label translate>import.service.select.servicetype</label>
-                <md-select name="serviceType" ng-model="self.layerBlueprint.serviceType" md-on-open="self.select.serviceTypeResetValidation()" required>
-                    <md-option ng-repeat="serviceType in self.serviceTypes" value="{{ serviceType }}">
-                        {{ 'import.service.type.' + serviceType | translate }}
+                <md-select
+                    name="serviceType"
+                    ng-disabled="self.layerSourceOptions.length === 1"
+                    ng-model="self.layerSource"
+                    md-on-open="self.select.serviceTypeResetValidation()" required>
+                    <md-option
+                        ng-repeat="sourceOption in self.layerSourceOptions"
+                        ng-value="sourceOption">
+                        {{ 'import.service.type.' + sourceOption.type | translate }}
                     </md-option>
                 </md-select>
                 <div ng-messages="self.select.form.serviceType.$error">
-                    <div ng-message="wrong" translate>import.service.select.wrong</div>
+                    <div ng-message="wrong">{{ 'import.service.select.wrong' | translate }}</div>
                 </div>
             </md-input-container>
         </rv-stepper-item>
 
-        <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.layerBlueprint.serviceType">
+        <!-- Configuring layer -->
+
+        <rv-stepper-item
+            step="self.configure.step"
+            form="self.configure.form"
+            ng-switch on="self.layerSource.type">
 
             <md-input-container class="md-block">
                 <label translate>import.service.configure.layername</label>
-                <input name="layerServiceName" ng-model="self.layerBlueprint.config.name" required>
+                <input name="layerServiceName" ng-model="self.layerSource.config.name" required>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
                 <!--div ng-messages="self.configure.form.layerName.$error">
                     <div ng-message="required">This is required!</div>
@@ -52,8 +65,11 @@
 
             <md-input-container class="md-block" ng-switch-when="featurelayer">
                 <label translate>import.service.configure.primaryfield</label>
-                <md-select name="primaryField" ng-model="self.layerBlueprint.config.nameField" required>
-                    <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
+                <md-select
+                    name="primaryField"
+                    ng-model="self.layerSource.config.nameField"
+                    required>
+                    <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
                         {{ field.alias || field.name }}
                     </md-option>
                 </md-select>
@@ -63,11 +79,15 @@
                     </div-->
             </md-input-container>
 
-            <!-- turn off this for now as all dynamic sublayers are added at the moment -->
             <md-input-container class="md-block" ng-switch-when="dynamicservice">
                 <label translate>import.service.configure.layers</label>
-                <md-select name="layer" ng-model="self.layerBlueprint.config.layerEntries" required multiple>
-                    <md-option ng-repeat="layer in self.layerBlueprint.serviceInfo.layers" ng-value="{ index: layer.id }" ng-selected="{{ self.layerBlueprint.serviceInfo.groupIdx === layer.id }}">
+                <md-select
+                    name="layer"
+                    ng-model="self.layerSource.config.layerEntries"
+                    ng-model-options="{ trackBy: '$value.index' }"
+                    required multiple>
+                    <md-option ng-repeat="layer in self.layerSource.layers"
+                        ng-value="layer">
                         {{ layer.indent + ' ' + layer.name }}
                     </md-option>
                 </md-select>
@@ -80,8 +100,13 @@
 
             <md-input-container class="md-block" ng-switch-when="wms">
                 <label translate>import.service.configure.layers</label>
-                <md-select name="layers" ng-model="self.layerBlueprint.config.layerEntries" required multiple>
-                    <md-option ng-repeat="layer in self.layerBlueprint.serviceInfo.layers" ng-value="{ id: layer.name, name: layer.desc }">
+                <md-select
+                    name="layers"
+                    ng-model="self.layerSource.config.layerEntries"
+                    ng-model-options="{ trackBy: '$value.index' }"
+                    required multiple>
+                    <md-option ng-repeat="layer in self.layerSource.layers"
+                        ng-value="layer">
                         {{ layer.indent + ' ' + layer.desc }}
                     </md-option>
                 </md-select>
@@ -91,12 +116,6 @@
                     <div ng-message="required">Required</div>
                 </div-->
             </md-input-container>
-
-            <!--img
-                src="https://d13yacurqjgara.cloudfront.net/users/355650/screenshots/2181500/unicorn_drib_v2.gif"
-                style="width: 100%;"
-                alt=""
-                ng-switch-when="unicorn"/-->
 
             <p class="md-caption">{{ 'stepper.unresponsive' | translate }}</p>
 

@@ -38,13 +38,13 @@
             // Append document fragment 'metadata' from stateManager. Shorten long runs of text
             // with rv-truncate directive.
             const maxTextLength = attr.maxTextLength > 0 ? attr.maxTextLength : 0;
-            scope.$watch('self.display.data', md => {
+            scope.$watch('self.display.data', metadataPackage => {
                 // abort if there is no document fragment
-                if (!md) {
+                if (!metadataPackage) {
                     return;
                 }
 
-                const metadataElem = angular.element(angular.copy(md));
+                const metadataElem = angular.element(angular.copy(metadataPackage.metadata));
                 angular.forEach(metadataElem.find('p'), pElem => {
                     pElem = angular.element(pElem);
                     pElem.html($compile(
@@ -53,17 +53,17 @@
 
                 // insert any extra content into styled div (in doc-fragment)
                 const amendDiv = metadataElem.find('div').first();
-                if (md.catalogueUrl || md.metadataUrl) {
+                if (metadataPackage.catalogueUrl || metadataPackage.metadataUrl) {
                     amendDiv.append(`<h5 class="md-title">${$translate.instant('metadata.xslt.metadata')}</h5>`);
                 }
 
                 // jscs:disable maximumLineLength
-                if (md.catalogueUrl) {
-                    amendDiv.append(`<p><a href="${md.catalogueUrl}" target="_blank">${$translate.instant('metadata.xslt.cataloguePage')}</a></p>`);
+                if (metadataPackage.catalogueUrl) {
+                    amendDiv.append(`<p><a href="${metadataPackage.catalogueUrl}" target="_blank">${$translate.instant('metadata.xslt.cataloguePage')}</a></p>`);
                 }
 
-                if (md.metadataUrl) {
-                    amendDiv.append(`<p><a href="${md.metadataUrl}" target="_blank">${$translate.instant('metadata.xslt.metadataPage')}</a> (xml)</p>`);
+                if (metadataPackage.metadataUrl) {
+                    amendDiv.append(`<p><a href="${metadataPackage.metadataUrl}" target="_blank">${$translate.instant('metadata.xslt.metadataPage')}</a> (xml)</p>`);
                 }
                 // jscs:enable maximumLineLength
 
