@@ -29,13 +29,7 @@
                 flex-direction: row;
                 align-items: center;
                 max-width: rem(35);
-                padding: rem(0.6);
-
-                .rv-tooltip-text {
-                    text-overflow: ellipsis;
-                    overflow: hidden;
-                    white-space: nowrap;
-                }
+                padding: rem(0.6) rem(1.2);
 
                 .rv-tooltip-graphic {
                     width: rem(2.4);
@@ -48,8 +42,17 @@
                     }
 
                     display: inline-block;
-                    margin: 0;
-                    margin-right: rem(0.6);
+                    margin: 0 rem(0.6) 0 0;
+
+                    &:only-child {
+                        margin: 0;
+                    }
+                }
+
+                .rv-tooltip-text {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
                 }
             }
         }

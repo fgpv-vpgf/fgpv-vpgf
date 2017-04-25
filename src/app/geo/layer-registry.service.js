@@ -212,12 +212,12 @@
 
             // TODO: where to put the template? it shouldn't be in layer registry
             const tooltipTemplate = `
-                <div class="rv-tooltip-content" ng-if="self.name">
+                <div class="rv-tooltip-content" ng-if="self.name !== null">
                     <rv-svg once="false" class="rv-tooltip-graphic" src="self.svgcode"></rv-svg>
-                    <span class="rv-tooltip-text">{{ self.name }}</span>
+                    <span class="rv-tooltip-text" ng-if="self.name">{{ self.name }}</span>
                 </div>
 
-                <div class="rv-tooltip-content" ng-if="!self.name">
+                <div class="rv-tooltip-content" ng-if="self.name === null">
                     <span class="rv-tooltip-text">{{ 'maptip.hover.label.loading' | translate }}</span>
                 </div>
             `;
@@ -236,7 +236,7 @@
 
                         // make the content and display the hovertip
                         tipContent = {
-                            name: '',
+                            name: null,
                             svgcode: '<svg></svg>',
                             graphic: e.target
                         };
