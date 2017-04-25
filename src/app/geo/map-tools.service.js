@@ -10,7 +10,7 @@
         .module('app.geo')
         .factory('mapToolService', mapToolService);
 
-    function mapToolService(geoService, gapiService, $translate) {
+    function mapToolService(configService, geoService, gapiService, $translate) {
 
         const service = {
             northArrow,
@@ -42,6 +42,8 @@
         * @returns  {Object}    an object containing data needed for either static or moving north arrows
         */
         function northArrow() {
+            // TODO: fix after config service is done
+            // const map = configService._sharedConfig_.map.body;
             const map = geoService.mapObject;
             const mapPntCntr = map.extent.getCenter();
             const mapScrnCntr = map.toScreen(mapPntCntr);

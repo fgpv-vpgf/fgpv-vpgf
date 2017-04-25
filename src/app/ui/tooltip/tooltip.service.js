@@ -1,4 +1,3 @@
-/* global RV */
 (() => {
 
     /**
@@ -14,8 +13,6 @@
 
     function tooltipService($rootScope, $compile, $q, storageService, events) {
 
-        // jscs doesn't like enhanced object notation
-        // jscs:disable requireSpacesInAnonymousFunctionExpression
         /**
          * Tooltip's origin point is generally the position of the initial mouse cursor or clientX/Y of a mouse event when the tooltip was first created.
          * Movement and Collision strategies are defined in the TooltipService on initialization and then passed to Tooltip instances.
@@ -33,7 +30,7 @@
              * @param {Object} scope scope for the tooltip directive; this scope is also available on the content template
              * @param {String} templateName [optional = 'hover'] the name of the tooltip outer template
              */
-            constructor(movementStrategy, collisionStrategy, content, scope, templateName = 'hover') {
+            constructor (movementStrategy, collisionStrategy, content, scope, templateName = 'hover') {
                 this._movementStrategy = movementStrategy;
                 this._collisionStrategy = collisionStrategy;
                 this._templateName = templateName;
@@ -59,7 +56,7 @@
              * @function _resetOffset
              * @private
              */
-            _resetOffset() {
+            _resetOffset () {
                 this._runningOffset = { x: 0, y: 0 };
             }
 
@@ -68,8 +65,9 @@
              *
              * @function _updateDimensions
              * @private
+             * @param {Object} dimensions tooltips dimensions object in the form of { width: <Number>, height: <Nubmer> }
              */
-            _updateDimensions(dimensions) {
+            _updateDimensions (dimensions) {
                 this._dimensions.width = dimensions.width;
                 this._dimensions.height = dimensions.height;
 
@@ -80,10 +78,9 @@
             /**
              * Tooltip's node.
              *
-             * @property node
              * @return {Object} tolltip's node
              */
-            get node() {
+            get node () {
                 return this._node;
             }
 
@@ -190,9 +187,13 @@
              * @function destroy
              *
              */
-            destroy() {
+            destroy () {
                 this._movementStrategy.deRegister(this);
                 this._node.remove();
+            }
+
+            refresh () {
+                this._scope.$apply();
             }
         }
 
@@ -387,7 +388,6 @@
                 }
             }
         }
-        // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         const ref = {
             hoverTooltip: null, // there can only be one hoverTooltip
@@ -397,7 +397,8 @@
 
         const service = {
             addHoverTooltip,
-            removeHoverTooltip
+            removeHoverTooltip,
+            refreshHoverTooltip
         };
 
         const deRegisterRVReady = $rootScope.$on(events.rvReady, init);
@@ -415,7 +416,7 @@
 
         /**
          * @function addHoverTooltip
-         * @param {Object} point tooltip origin point (x/y in pixels relative to the map node)
+         * @param {Object} point tooltip origin point ({ x: <Number>, y: <Number> } in pixels relative to the map node)
          * @param {String} content tooltips content that will be transcluded by the tooltip directive; should be valid HTML
          * @param {Object} self a self object that will be available on the tooltip directive scope
          * @return {Object} a Tooltip instance
@@ -443,6 +444,16 @@
         function removeHoverTooltip() {
             if (ref.hoverTooltip) {
                 ref.hoverTooltip.destroy();
+            }
+        }
+
+        /**
+         * Triggers a digest cycle on the tooltip's scope object to udpate the template if tooltip's content changed outside Angular modules.
+         * @function refreshHoverTooltip
+         */
+        function refreshHoverTooltip() {
+            if (ref.hoverTooltip) {
+                ref.hoverTooltip.refresh();
             }
         }
     }

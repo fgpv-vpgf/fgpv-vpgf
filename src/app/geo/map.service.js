@@ -1,4 +1,3 @@
-/* global RV */
 (() => {
     'use strict';
 
@@ -15,8 +14,219 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, $timeout, gapiService, storageService, $rootElement, $compile, $rootScope,
-        tooltipService, stateManager) {
+    function mapServiceFactory($q, $timeout, gapiService, configService, events) {
+        const service = {
+            makeMap,
+            selectBasemap,
+
+            zoomToLatLong
+        };
+
+        return service;
+
+        function makeMap(mapNode) {
+            const gapi = gapiService.gapi;
+            const { map: mapConfig, services: servicesConfig } = configService._sharedConfig_;
+
+            const mapSettings = {
+                basemaps: mapConfig.basemaps,
+                scalebar: mapConfig.components.scaleBar,
+                overviewMap: mapConfig.components.overviewMap
+            };
+
+            // reset before rebuilding the map if `geoState` already has an instance of mapService
+            // TODO: restore
+            /*if (typeof geoState.mapService !== 'undefined') {
+                // NOTE: Possible to have dom listeners stick around after the node is destroyed
+                const mapService = geoState.mapService;
+                mapService.mapObject.destroy();
+                mapService.mapManager.ScalebarControl.destroy();
+                mapService.mapManager.OverviewMapControl.destroy();
+                mapService.mapObject = null;
+            }*/
+
+            const mapBody = gapi.mapManager.Map(mapNode, {
+                extent: mapConfig.selectedBasemap.default,
+                lods: mapConfig.selectedBasemap.lods
+            });
+
+            // TODO: convert service section of the config to typed objects
+            if (servicesConfig.proxyUrl) {
+                gapi.mapManager.setProxy(servicesConfig.proxyUrl);
+            }
+
+            const mapManager = gapi.mapManager.setupMap(mapBody, mapSettings);
+
+            mapConfig.storeMapReference(mapNode, mapBody, mapManager);
+
+            service.selectBasemap(mapConfig.selectedBasemap);
+
+            _setMapListeners(mapConfig);
+
+            return;
+
+            // TODO: move to _setMapListeners
+            /*mapConfig.components.basemap.body.basemapGallery.on('selection-change', event => {
+                $rootElement.find('div.ovwContainer').append('<rv-overview-toggle></rv-overview-toggle>');
+                $compile($rootElement.find('rv-overview-toggle')[0])($rootScope);
+
+                console.log(event);
+
+                //TODO: fix code setting basempa attribution
+                /*
+                // get selected basemap configuration
+                const selectedBaseMapCfg = config.baseMaps.find(bm => {
+                    return bm.id === event.target._selectedBasemap.id;
+                });
+
+                // hide attribution and set logo not visible between basemap change selection to avoid stuff moving
+                // when we change language
+                const attNode = $(service.mapObject.attribution.listNode.parentNode);
+                const logoNode = attNode.parent().find('.logo-med');
+                attNode.hide();
+                logoNode.css('visibility', 'hidden');
+
+                // set attribution if not a blank map
+                if (geoState.blankBaseMapId === null) {
+                    $timeout(() => setAttribution(selectedBaseMapCfg), 500);
+                }
+
+                // TODO: refactor/fix
+                // will be use by the scalebar animation. Animation needs to be recreated on projection change.
+                $rootScope.$broadcast('rvBasemapChange');
+                }*/
+            //});
+
+            // TODO: remove all the code related to "blank" basemaps as they will be handled differently
+            /*if (config.map.initialBasemapId && config.map.initialBasemapId.startsWith(blankBaseMapIdPattern)) {
+                hideBaseMap(true);
+            }*/
+
+            // FIXME temp link for debugging
+            /* window.FGPV = {
+                layers: service.layers
+            };*/
+
+            // store service in geoState
+            // geoState.mapService = service;
+
+            // return a promise that resolves in the service once the map has loaded
+            // return onMapLoad.then(() => service);
+
+
+        }
+
+        /**
+         * Switch basemap based on the uid provided.
+         * @function selectBasemap
+         * @param {Basemap} basemap selected basemap
+         */
+        function selectBasemap(basemap) {
+            const mapConfig = configService._sharedConfig_.map;
+
+            const oldBasemap = mapConfig.selectedBasemap.deselect();
+            basemap.select();
+
+            mapConfig.components.basemap.body.setBasemap(basemap.id);
+        }
+
+        /**
+        * Takes a location object in lat/long, converts to current map spatialReference using
+        * reprojection method in geoApi, and zooms to the point.
+        *
+        * @function zoomToLatLong
+        * @param {Object} location is a location object, containing geometries in the form of { longitude: <Number>, latitude: <Number> }
+        */
+        function zoomToLatLong({ longitude, latitude }) {
+            const mapBody = configService._sharedConfig_.map.body;
+
+            // get reprojected point and zoom to it
+            const geoPt = gapiService.gapi.proj.localProjectPoint(4326, mapBody.spatialReference.wkid,
+                [parseFloat(longitude), parseFloat(latitude)]);
+            const zoomPt = gapiService.gapi.proj.Point(geoPt[0], geoPt[1], mapBody.spatialReference);
+
+            // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
+            const sweetLod = gapiService.gapi.mapManager.findClosestLOD(mapBody.__tileInfo.lods, 50000);
+            mapBody.centerAndZoom(zoomPt, Math.max(sweetLod.level, 0));
+        }
+
+        /**
+        * Ready a trigger on the map load event.
+        * Also initialize map full extent.
+        * @function _setMapListeners
+        * @private
+        */
+        function _setMapListeners(mapConfig) {
+            // we are returning a promise that resolves when the map load happens.
+            const gapi = gapiService.gapi;
+            let mapLoadingTimeout;
+
+            // const map = service.mapObject;
+            // const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
+            // const lMaxExtent = getMaxExtFromExtentSets(config.map.extentSets);
+
+            //const lFullExtent = gapiService.gapi.mapManager.getExtentFromJson(geoState.selectedBaseMap.tileSchema.extentSet.full);
+            //const lMaxExtent = gapiService.gapi.mapManager.getExtentFromJson(geoState.selectedBaseMap.tileSchema.extentSet.maximum);
+
+            _setLoadingFlag(true);
+
+            gapi.events.wrapEvents(mapConfig.body, {
+                load: () => {
+                    // setup hilight layer
+                    // TODO: fix layer highlighting
+                    //geoState.hilight = gapi.hilight.makeHilightLayer();
+                    // mapBody.addLayer(geoState.hilight);
+
+                    // setup full extent
+                    // TODO: full and max extents can be retrieved directly from the selectedBasemap
+                    /*if (lFullExtent) {
+                        geoState.fullExtent = enhanceConfigExtent(lFullExtent, map.extent.spatialReference);
+                    }
+                    if (lMaxExtent) {
+                        geoState.maxExtent = enhanceConfigExtent(lMaxExtent, map.extent.spatialReference);
+                    }*/
+
+                    // TODO: fire `mapReady` event here instead of in geo service
+
+                    _setLoadingFlag(false);
+                },
+                'update-start': () => {
+                    RV.logger.log('mapService', 'map update has started');
+
+                    _setLoadingFlag(true, 300);
+                },
+                'extent-change': data =>
+                    events.$broadcast(events.rvExtentChange, data),
+                'mouse-move': data =>
+                    events.$broadcast(events.rvMouseMove, data.mapPoint),
+                'update-end': () => {
+                    RV.logger.log('mapService', 'map update has ended');
+
+                    _setLoadingFlag(false, 100);
+                }
+            });
+
+            /**
+             * Sets `isMapLoading` flag indicating map layers are updating.
+             * @function _setLoadingFlag
+             * @param {Boolean} isLoading defaults to true; flag indicating if one or more layers begins updating their content
+             * @param {Number}  delay     defaults to 0; delay before setting `isMapLoading` state; useful to avoid setting indicator for a small amounts of time
+             * @private
+             */
+            function _setLoadingFlag(isLoading = true, delay = 0) {
+                $timeout.cancel(mapLoadingTimeout);
+                mapLoadingTimeout = $timeout(() =>
+                    (mapConfig.isMapLoading = isLoading), delay);
+            }
+        }
+    }
+
+
+
+
+
+    function mapServiceFactory_($q, $timeout, gapiService, storageService, $rootElement, $compile, $rootScope,
+        tooltipService, stateManager, configService) {
 
         const settings = { zoomPromise: $q.resolve(), zoomCounter: 0 };
         return mapService;
@@ -32,7 +242,11 @@
                 }
             });
 
-            const blankBaseMapIdPattern = 'blank_basemap_';
+            // const blankBaseMapIdPattern = 'blank_basemap_';
+
+            const ref = {
+                timeoutHandle: null
+            };
 
             // this `service` object will be exposed through `geoService`
             const service = {
@@ -47,7 +261,7 @@
                  */
                 mapManager: null, // Object
 
-                baseMapHasSameSP,
+                // baseMapHasSameSP,
                 setZoom,
                 shiftZoom,
                 selectBasemap,
@@ -75,8 +289,10 @@
              * @return {Object} returns `service` object
              */
             function buildMapObject() {
+                const gapi = gapiService.gapi;
+                const mapConfig = configService._sharedConfig_.map;
 
-                let mapObject;
+                let mapBody;
 
                 // reset before rebuilding the map if `geoState` already has an instance of mapService
                 if (typeof geoState.mapService !== 'undefined') {
@@ -89,60 +305,78 @@
                 }
 
                 // set selected base map id
-                setSelectedBaseMap(config.map.initialBasemapId || config.baseMaps[0].id, config);
+                // setSelectedBaseMap(geoState.configObject.map.selectedBasemap);
+                // setSelectedBaseMap(config.map.initialBasemapId || config.baseMaps[0].id, config);
 
                 // FIXME remove the hardcoded settings when we have code which does this properly
-                mapObject = gapiService.gapi.mapManager.Map(geoState.mapNode, {
-
-                    // basemap: 'gray',
-                    extent: geoState.mapExtent,
-                    lods: geoState.lods
+                mapBody = gapi.mapManager.Map(geoState.mapNode, { // TODO: need to find a place to store a reference to mapNode
+                    extent: mapConfig.selectedBasemap.default,
+                    lods: mapConfig.selectedBasemap.lods
                 });
 
                 // store map object in service
-                service.mapObject = mapObject;
+                // service.mapObject = mapObject;
 
+                // TODO: convert service section of the config to typed objects
                 if (config.services && config.services.proxyUrl) {
-                    gapiService.gapi.mapManager.setProxy(config.services.proxyUrl);
+                    gapi.mapManager.setProxy(config.services.proxyUrl);
                 }
 
-                // setup map using configs
-                // FIXME: I should be migrated to the new config schema when geoApi is updated
-                const mapSettings = {
-                    basemaps: [],
-                    scalebar: { enabled: false },
-                    overviewMap: { enabled: false }
-                };
-
+                /*
                 if (config.baseMaps) {
                     mapSettings.basemaps = config.baseMaps;
                 }
+                */
 
                 // TODO: components should be mandatory in the schema with value enabled false if not use
-                if (config.map.components.scaleBar && config.map.components.scaleBar.enabled) {
+                /*if (config.map.components.scaleBar && config.map.components.scaleBar.enabled) {
                     mapSettings.scalebar = {
                         enabled: true,
                         attachTo: 'bottom-left',
                         scalebarUnit: 'dual'
                     };
-                }
+                }*/
 
                 // TODO: components should be mandatory in the schema with value enabled false if not use
-                if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
+                /*if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
 
                     // FIXME: overviewMap has more settings
                     mapSettings.overviewMap = config.map.components.overviewMap;
-                }
+                }*/
 
-                const onMapLoad = prepMapLoad();
+                const onMapLoad = prepMapLoad(mapBody);
 
-                service.mapManager = gapiService.gapi.mapManager.setupMap(mapObject, mapSettings);
-                service.mapManager.BasemapControl.setBasemap(geoState.selectedBaseMapId);
+                mapConfig.body = mapBody;
 
-                service.mapManager.BasemapControl.basemapGallery.on('selection-change', event => {
+                // setup map using configs
+                // FIXME: I should be migrated to the new config schema when geoApi is updated
+                const mapSettings = {
+                    basemaps: mapConfig.basemaps,
+                    scalebar: mapConfig.components.scaleBar,
+                    overviewMap: mapConfig.components.overviewMap
+                };
+                mapConfig.manager = gapi.mapManager.setupMap(mapBody, mapSettings);
+
+                // service.mapManager = gapi.mapManager.setupMap(mapBody, mapSettings);
+
+                // const { BasemapControl, OverviewMapControl, ScalebarControl } = service.mapManager;
+
+                // store references to esri objects
+                /* mapConfig.components.basemap.body = BasemapControl;
+                mapConfig.components.overviewMap.body = OverviewMapControl;
+                mapConfig.components.scaleBar.body = ScalebarControl; */
+
+                selectBasemap(mapConfig.selectedBasemap);
+                // service.mapManager.BasemapControl.setBasemap(geoState.configObject.map.selectedBasemap.id);
+
+                mapConfig.components.basemap.body.basemapGallery.on('selection-change', event => {
                     $rootElement.find('div.ovwContainer').append('<rv-overview-toggle></rv-overview-toggle>');
                     $compile($rootElement.find('rv-overview-toggle')[0])($rootScope);
 
+                    console.log(event);
+
+                    //TODO: fix code setting basempa attribution
+                    /*
                     // get selected basemap configuration
                     const selectedBaseMapCfg = config.baseMaps.find(bm => {
                         return bm.id === event.target._selectedBasemap.id;
@@ -160,21 +394,24 @@
                         $timeout(() => setAttribution(selectedBaseMapCfg), 500);
                     }
 
+                    // TODO: refactor/fix
                     // will be use by the scalebar animation. Animation needs to be recreated on projection change.
                     $rootScope.$broadcast('rvBasemapChange');
+                    }*/
                 });
 
-                if (config.map.initialBasemapId && config.map.initialBasemapId.startsWith(blankBaseMapIdPattern)) {
+                // TODO: remove all the code related to "blank" basemaps as they will be handled differently
+                /*if (config.map.initialBasemapId && config.map.initialBasemapId.startsWith(blankBaseMapIdPattern)) {
                     hideBaseMap(true);
-                }
+                }*/
 
                 // FIXME temp link for debugging
-                window.FGPV = {
+                /* window.FGPV = {
                     layers: service.layers
-                };
+                };*/
 
                 // store service in geoState
-                geoState.mapService = service;
+                // geoState.mapService = service;
 
                 // return a promise that resolves in the service once the map has loaded
                 return onMapLoad.then(() => service);
@@ -185,7 +422,7 @@
              * @function getFullExtFromExtentSets
              * @private
              */
-            function getFullExtFromExtentSets(extentSets) {
+            /*function getFullExtFromExtentSets(extentSets) {
 
                 // FIXME: default basemap should be indicated in the config as well
                 // const currentBasemapExtentSetId = '123456789';
@@ -212,7 +449,7 @@
                 } else {
                     return null;
                 }
-            }
+            }*/
 
             /**
              * Retrieve maximum extent from extentSets.
@@ -221,7 +458,7 @@
              * @returns {Object|Null} the maximum extent as defined by the config. null if nothing is defined.
              * @private
              */
-            function getMaxExtFromExtentSets(extentSets) {
+            /*function getMaxExtFromExtentSets(extentSets) {
 
                 if (extentSets) {
                     // In configSchema, at least one extent for a basemap
@@ -241,25 +478,25 @@
                 } else {
                     return null;
                 }
-            }
+            }*/
 
             /**
              * Retrieve default extent from extentSets.
              * @function getDefaultExtFromExtentSets
              * @private
              */
-            function getDefaultExtFromExtentSets(extentSets) {
+            /*function getDefaultExtFromExtentSets(extentSets) {
                 // TODO: Need to handle cases where an extentset not defined
                 return extentSets.find(extentSet => extentSet.id === geoState.selectedBaseMapExtentSetId)
                     .default;
-            }
+            }*/
 
             /**
              * Retrieve level of details array from config for current basemap.
              * @function getLod
              * @private
              */
-            function getLod(lodSets) {
+            /*function getLod(lodSets) {
 
                 // In configSchema, at least one extent for a basemap
                 const lodForId = lodSets.find(lodSet => {
@@ -274,14 +511,42 @@
                 }
 
                 return lodForId.lods;
-            }
+            }*/
 
             /**
              * Switch basemap based on the uid provided.
              * @function selectBasemap
-             * @param {object} selectedBaseMap selected basemap
+             * @param {Basemap} selectedBaseMap selected basemap
              */
-            function selectBasemap(selectedBaseMap) {
+            function selectBasemap(basemap) {
+                const mapConfig = configService._sharedConfig_.map;
+
+                const oldBasemap = mapConfig.selectedBasemap.deselect();
+                basemap.select();
+
+                mapConfig.components.basemap.body.setBasemap(basemap.id);
+
+
+                // const currentBasemap = geoState.configObject.map.selectedBasemap.deselect();
+                // basemap.select();
+
+                // const mapManager = service.mapManager;
+                // mapManager.BasemapControl.setBasemap(basemap.id);
+
+                // TODO: put code loading new projections here; it shouldn't be in the basemap service;
+                /*if (currentBasemap.wkid !== basemap.wkid) {
+                    geoState.loadNewProjection(basemap.id)
+                }*/
+
+                /*if ($injector.get('geoService').baseMapHasSameSP(basemap.id)) { // avoid circular dependency
+                    $injector.get('geoService').selectBasemap(basemap); // avoid circular dependency
+                } else {
+                    // avoiding circular dependency on bookmarkService
+                    $injector.get('reloadService').loadNewProjection(basemap.id); // avoid circular dependency
+                }*/
+
+                return;
+                /*
                 const mapManager = service.mapManager;
                 let id = selectedBaseMap.id;
 
@@ -312,16 +577,17 @@
                     // call this to set the base map, need to call this for all, this will force
                     // update for the blank base map.
                     mapManager.BasemapControl.setBasemap(id);
-                }
+                }*/
             }
 
+            // obsolete
             /**
              * Check to see if given base map id has same wkid value as previously selected base map.
              * @function baseMapHasSameSP
              * @param {String} id base map id
              * @return {bool} true if current base map has the same wkid as the previous one
              */
-            function baseMapHasSameSP(id) {
+            /*function baseMapHasSameSP(id) {
 
                 const blankBaseMapIdPattern = 'blank_basemap_';
                 let newWkid;
@@ -347,13 +613,14 @@
 
                 return (oldWkid === newWkid);
 
-            }
+            }*/
 
             /**
              * Set attribution on selected base map.
              * @function setAttribution
              * @param {Object} config base map configuration
              */
+            // eslint-disable-next-line complexity
             function setAttribution(config) {
                 const cfgAtt = config.attribution;
                 const attNode = $(service.mapObject.attribution.listNode.parentNode);
@@ -481,9 +748,8 @@
                 // if triggers when layer has no service, or all geometry is on client, in which case we use local geometry instead of pulling from server
                 // snapshot mode is set by the constant MODE_SNAPSHOT that maps to 0 in esri's api for FeatureLayer
                 if (layerObj.graphics) {
-                    const myG = layerObj.graphics.find(g => {
-                        return g.attributes[layerObj.objectIdField] === objId;
-                    });
+                    const myG = layerObj.graphics.find(g =>
+                        g.attributes[layerObj.objectIdField] === objId);
                     if (myG) {
                         result.graphic = myG;
                         result.source = 'layer';
@@ -693,11 +959,15 @@
             * @param {String} id of base map
             * @return {Object} selectedBaseMap selected basemap configuration
             */
-            function setSelectedBaseMap(id) {
-                geoState.selectedBaseMapId = id;
+            function setSelectedBaseMap(basemap) {
+                // geoState.selectedBaseMapId = id;
 
-                let selectedBaseMap;
+                // TODO: this should be stored where?
+                // geoState.selectedBaseMap = geoState.configObject.map.basemaps[0];
 
+                // TODO: select initial basemap from the config value
+
+                /*
                 // search base map config based on  'blank_basemap_' condition
                 if (!id.startsWith(blankBaseMapIdPattern)) {
 
@@ -720,13 +990,18 @@
                 // get selected base map extent set id, so we can store teh map extent
                 geoState.selectedBaseMapExtentSetId = selectedBaseMap.extentId;
                 geoState.selectedBaseMapLodId = selectedBaseMap.lodId;
+                */
 
-                const defaultExtentJson = getDefaultExtFromExtentSets(config.map.extentSets);
-                geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(defaultExtentJson);
+                // const defaultExtentJson = getDefaultExtFromExtentSets(config.map.extentSets);
+                // geoState.mapExtent = gapiService.gapi.mapManager.getExtentFromJson(defaultExtentJson);
 
-                geoState.lods = getLod(config.map.lods);
+                // geoState.mapExtent = geoState.selectedBaseMap.tileSchema.extentSet.default;
 
-                return selectedBaseMap;
+                // geoState.lods = geoState.selectedBaseMap.tileSchema.lods.lods;
+
+                // geoState.lods = getLod(config.map.lods);
+
+                // return geoState.selectedBaseMap;
             }
 
             /**
@@ -739,8 +1014,8 @@
             * @param {Object} mapSR    the spatial reference of the map
             * @returns {Object}        extent cast in Extent prototype, and in map spatial reference
             */
-            function enhanceConfigExtent(extent, mapSR) {
-                const realExtent = gapiService.gapi.mapManager.getExtentFromJson(extent);
+            /*function enhanceConfigExtent(extent, mapSR) {
+                // const realExtent = gapiService.gapi.mapManager.getExtentFromJson(extent);
 
                 if (gapiService.gapi.proj.isSpatialRefEqual(mapSR, extent.spatialReference)) {
                     // same spatial reference, no reprojection required
@@ -749,7 +1024,7 @@
                     // need to re-project
                     return gapiService.gapi.proj.projectEsriExtent(realExtent, mapSR);
                 }
-            }
+            }*/
 
             /**
             * Ready a trigger on the map load event.
@@ -757,29 +1032,34 @@
             * @function prepMapLoad
             * @private
             */
-            function prepMapLoad() {
+            function prepMapLoad(mapBody) {
                 // we are returning a promise that resolves when the map load happens.
 
                 return $q(resolve => {
-                    const map = service.mapObject;
-                    const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
-                    const lMaxExtent = getMaxExtFromExtentSets(config.map.extentSets);
+                    const gapi = gapiService.gapi;
+                    // const map = service.mapObject;
+                    // const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
+                    // const lMaxExtent = getMaxExtFromExtentSets(config.map.extentSets);
+
+                    //const lFullExtent = gapiService.gapi.mapManager.getExtentFromJson(geoState.selectedBaseMap.tileSchema.extentSet.full);
+                    //const lMaxExtent = gapiService.gapi.mapManager.getExtentFromJson(geoState.selectedBaseMap.tileSchema.extentSet.maximum);
 
                     setMapLoadingFlag(true);
 
-                    gapiService.gapi.events.wrapEvents(map, {
+                    gapi.events.wrapEvents(mapBody, {
                         load: () => {
                             // setup hilight layer
-                            geoState.hilight = gapiService.gapi.hilight.makeHilightLayer();
-                            map.addLayer(geoState.hilight);
+                            geoState.hilight = gapi.hilight.makeHilightLayer();
+                            mapBody.addLayer(geoState.hilight);
 
                             // setup full extent
-                            if (lFullExtent) {
+                            // TODO: full and max extents can be retrieved directly from the selectedBasemap
+                            /*if (lFullExtent) {
                                 geoState.fullExtent = enhanceConfigExtent(lFullExtent, map.extent.spatialReference);
                             }
                             if (lMaxExtent) {
                                 geoState.maxExtent = enhanceConfigExtent(lMaxExtent, map.extent.spatialReference);
-                            }
+                            }*/
 
                             setMapLoadingFlag(false);
                             resolve();
@@ -788,8 +1068,10 @@
                             RV.logger.log('mapService', 'map update has started');
                             setMapLoadingFlag(true, 300);
                         },
-                        'extent-change': data => $rootScope.$broadcast('extentChange', data),
-                        'mouse-move': data => $rootScope.$broadcast('rvMouseMove', data.mapPoint),
+                        'extent-change': data =>
+                            $rootScope.$broadcast('extentChange', data),
+                        'mouse-move': data =>
+                            $rootScope.$broadcast('rvMouseMove', data.mapPoint),
                         'update-end': () => {
                             RV.logger.log('mapService', 'map update has ended');
                             setMapLoadingFlag(false, 100);
@@ -819,8 +1101,11 @@
              */
             function setMapLoadingFlag(isLoading = true, delay = 0) {
                 // need to wrap this in a timeout since these are esri events, Angular wouldn't pick up on any changes unless a new digest cycle is triggered
-                $timeout.cancel(service.loadingTimeout);
-                service.loadingTimeout = $timeout(() => service.mapObject.isMapLoading = isLoading, delay);
+                const mapConfig = configService._sharedConfig_.map;
+
+                $timeout.cancel(ref.timeoutHandle);
+                ref.timeoutHandle = $timeout(() =>
+                    (mapConfig.isMapLoading = isLoading), delay);
             }
 
             /**

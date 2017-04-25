@@ -82,7 +82,7 @@
         border-radius: 50%;
         border: 3px solid transparent;
         border-top-color: #3498db;
-        animation: xLoaderGoogleSpin 2s linear infinite;
+        animation: spinloop 2s linear infinite;
 
         &:before {
             content: "";
@@ -94,7 +94,7 @@
             border-radius: 50%;
             border: 3px solid transparent;
             border-top-color: #e74c3c;
-            animation: xLoaderGoogleSpin 3s linear infinite;
+            animation: spinloop 3s linear infinite;
         }
 
         &:after {
@@ -107,18 +107,7 @@
             border-radius: 50%;
             border: 3px solid transparent;
             border-top-color: #f9c922;
-            animation: xLoaderGoogleSpin 1.7s linear infinite;
-        }
-    }
-
-    //xLoaderCrossingShapesBefore
-    @keyframes xLoaderGoogleSpin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
+            animation: spinloop 1.7s linear infinite;
         }
     }
 }

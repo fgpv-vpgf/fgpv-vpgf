@@ -35,6 +35,7 @@ module.exports = function () {
         index: [
             src + 'index-many.html',
             src + 'index-one.html',
+            src + 'index-two.html',
             src + 'index-mobile.html',
             src + 'index-wet.html',
             src + 'index-jso.html',
@@ -57,7 +58,7 @@ module.exports = function () {
             'templates.js',
             'focus-manager.js',
             'app-seed.js',
-            'corePlugins.js',
+            'corePlugins.js'
         ],
         injectorOrder: [
             'polyfills.js',
@@ -78,7 +79,7 @@ module.exports = function () {
 
         scss: src + 'content/styles/main.scss',
         css: build + 'main.css',
-        csslib: [ ],
+        csslib: [],
         csserror: src + 'content/styles/_error.css',
 
         // all html template files
@@ -109,7 +110,13 @@ module.exports = function () {
         schema: src + 'schema.json',
 
         vetjs: [src + '**/*.js', '*.js', 'e2e-test/**/*.js', 'test/**/*.js', 'docs/app/js/app.js',
-            'docs/config/**/*.js', '!docs/config/templates/*.js', '!docs/config/tag-defs/*.js'],
+            'docs/config/**/*.js', '!docs/config/templates/*.js', '!docs/config/tag-defs/*.js',
+            '!gulp.config.js',
+            '!gulpfile.js',
+            '!karma.conf.js',
+            `!${src}**/*.spec.js`,
+            `!${src}test/*.js`,
+            `!${src}polyfill/*.js`],
 
         watchsass: `${src}content/styles/**/*.scss`,
         watchjs: `${src}**/*.js`,
@@ -178,10 +185,10 @@ module.exports = function () {
     // jscs:disable maximumLineLength
     config.iconCache = [
         { file: 'content/images/iconsets/default-icons.svg', prefix: 'default', icons: 'check logo northarrow'.split(' '), isDefault: true },
-        { file: 'content/images/iconsets/action-icons.svg', prefix: 'action', icons: 'settings_input_svideo search home history description delete settings info_outline info visibility visibility_off zoom_in zoom_out check_circle open_in_new print shopping_cart opacity swap_vert touch_app translate'.split(' ') },
+        { file: 'content/images/iconsets/action-icons.svg', prefix: 'action', icons: 'settings_input_svideo search home history description delete settings info_outline info visibility visibility_off zoom_in zoom_out check_circle open_in_new print shopping_cart opacity swap_vert touch_app translate cached'.split(' ') },
         { file: 'content/images/iconsets/alert-icons.svg', prefix: 'alert', icons: 'error warning'.split(' ') },
         { file: 'content/images/iconsets/communication-icons.svg', prefix: 'communication', icons: 'location_on'.split(' ') },
-        { file: 'content/images/iconsets/mdi-icons.svg', prefix: 'community', icons: 'filter filter-remove chevron-double-left chevron-double-right emoticon-sad emoticon-happy vector-square table-large map-marker-off apple-keyboard-control vector-point vector-polygon vector-polyline github help export'.split(' ') },
+        { file: 'content/images/iconsets/mdi-icons.svg', prefix: 'community', icons: 'filter filter-remove chevron-double-left chevron-double-right emoticon-sad emoticon-happy vector-square table-large map-marker-off apple-keyboard-control vector-point vector-polygon vector-polyline github help export cube-outline'.split(' ') },
         { file: 'content/images/iconsets/content-icons.svg', prefix: 'content', icons: 'create add remove'.split(' ') },
         { file: 'content/images/iconsets/editor-icons.svg', prefix: 'editor', icons: 'insert_drive_file drag_handle'.split(' ') },
         { file: 'content/images/iconsets/file-icons.svg', prefix: 'file', icons: 'file_upload cloud'.split(' ') },
@@ -189,7 +196,8 @@ module.exports = function () {
         { file: 'content/images/iconsets/image-icons.svg', prefix: 'image', icons: 'tune photo'.split(' ') },
         { file: 'content/images/iconsets/maps-icons.svg', prefix: 'maps', icons: 'place layers my_location map layers_clear navigation'.split(' ') },
         { file: 'content/images/iconsets/navigation-icons.svg', prefix: 'navigation', icons: 'menu check more_vert close more_horiz refresh arrow_back fullscreen'.split(' ') },
-        { file: 'content/images/iconsets/social-icons.svg', prefix: 'social', icons: 'person share'.split(' ') }
+        { file: 'content/images/iconsets/social-icons.svg', prefix: 'social', icons: 'person share'.split(' ') },
+        { file: 'content/images/iconsets/toggle-icons.svg', prefix: 'toggle', icons: 'radio_button_checked radio_button_unchecked check_box check_box_outline_blank'.split(' ') }
     ];
     // jscs:enable maximumLineLength
     config.svgSources = config.svgCache + '/*.svg';
@@ -223,10 +231,15 @@ module.exports = function () {
                     { type: 'text-summary' } // , subdir: '.', file: 'text-summary.txt'}
                 ]
             },
-            preprocessors: {}
+            preprocessors: {
+                [app + '**/*.js']: ['coverage', 'babel']
+            },
+            babelPreprocessor: {
+                options: {
+                    presets: ['latest', 'stage-2']
+                }
+            }
         };
-
-        options.preprocessors[app + '**/*.js'] = ['coverage', 'babel'];
 
         return options;
     }

@@ -50,7 +50,8 @@
         function setActive(value) {
             if (filterTimeStamps.onCreated !== null) { // ignore if no DataTable is active
                 service.filter.isActive = value;
-                stateManager.display.filters.requester.legendEntry.flags.filter.visible = service.filter.isActive;
+                // TODO: fix
+                // stateManager.display.filters.requester.legendEntry.flags.filter.visible = service.filter.isActive;
 
                 filteredState().then(() => {
                     filterTimeStamps.onChanged = Date.now();
@@ -94,7 +95,8 @@
             oidColNum = stateManager.display.filters.data.columns.findIndex(col =>
                     col.data === stateManager.display.filters.data.oidField);
 
-            service.filter.isActive = stateManager.display.filters.requester.legendEntry.flags.filter.visible;
+            // TODO: fix
+            // service.filter.isActive = stateManager.display.filters.requester.legendEntry.flags.filter.visible;
 
             filteredState().then(() => {
                 filterTimeStamps.onCreated = Date.now();
@@ -205,7 +207,7 @@
                     return queryMapserver(lastOID).then(oIDs => {
                         return validOIDs.concat(oIDs); // merge recursive list with own results
                     });
-                } else { // either query did not trigger a exceededTransferLimit exception, or this marks the end of the result set
+                } else { // either query did not trigger an exceededTransferLimit exception, or this marks the end of the result set
                     return validOIDs;
                 }
             });

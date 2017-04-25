@@ -164,7 +164,7 @@
     // create a key names object for the reverse lookup
     Object.entries(KEY_CODES)
         .forEach(([code, name]) =>
-            KEY_NAMES[name] = parseInt(code));
+            (KEY_NAMES[name] = parseInt(code)));
 
     /**
      * @name keyCodes

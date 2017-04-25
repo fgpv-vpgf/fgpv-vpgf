@@ -463,15 +463,12 @@
          */
         function getChildren(parentName) {
             return Object.keys(service.state)
-                .filter((key) => {
-                    return service.state[key].parent === parentName;
-                })
-                .map((key) => {
-                    return {
+                .filter(key =>
+                    service.state[key].parent === parentName)
+                .map(key => ({
                         name: key,
                         item: service.state[key]
-                    };
-                });
+                    }));
         }
     }
 })();

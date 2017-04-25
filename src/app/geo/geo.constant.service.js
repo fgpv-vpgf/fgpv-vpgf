@@ -40,13 +40,16 @@
                 CSV: 'csv',
                 GeoJSON: 'geojson',
                 Shapefile: 'shapefile',
+
                 FeatureLayer: 'featurelayer',
                 RasterLayer: 'rasterlayer',
                 GroupLayer: 'grouplayer',
+
                 TileService: 'tileservice',
                 FeatureService: 'featureservice',
                 DynamicService: 'dynamicservice',
                 ImageService: 'imageservice',
+
                 WMS: 'wms',
                 Unknown: 'unknown',
                 Error: 'error'
@@ -61,11 +64,18 @@
             [GEO.Layer.Types.ESRI_FEATURE],
             [GEO.Layer.Types.ESRI_IMAGE, GEO.Layer.Types.ESRI_TILE,
              GEO.Layer.Types.ESRI_DYNAMIC, GEO.Layer.Types.OGC_WMS]
-        ]
+        ],
+        SORT_GROUPS_: {
+            [GEO.Layer.Types.ESRI_DYNAMIC]: 1,
+            [GEO.Layer.Types.ESRI_FEATURE]: 0,
+            [GEO.Layer.Types.ESRI_IMAGE]: 1,
+            [GEO.Layer.Types.ESRI_TILE]: 1,
+            [GEO.Layer.Types.OGC_WMS]: 1
+        }
     });
 
     // this is populated with default schema snippets during build;
-    const LAYER_CONFIG_DEFAULTS = '_LAYER_CONFIG_DEFAULTS_';
+    // const LAYER_CONFIG_DEFAULTS = '_LAYER_CONFIG_DEFAULTS_';
     GEO.Metadata = { XSLT_LANGUAGE_NEUTRAL: '_XSLT_BLOB_' };
 
     /**
@@ -79,8 +89,10 @@
         .module('app.geo')
         .constant('Geo', GEO)
         .service('layerDefaults', () => {
+            const service = {};
+
             // construct layer default options and flags objects from schema snippets
-            const flagDefaults = {
+            /*const flagDefaults = {
                 type: {
                     visible: true
                 },
@@ -104,8 +116,6 @@
                 }
             };
 
-            const service = {};
-
             const LAYER_TYPE_OPTIONS = {
                 esriDynamic: 'dynamicLayerOptionsNode',
                 esriDynamicLayerEntry: 'dynamicLayerEntryNode',
@@ -114,8 +124,10 @@
                 esriTile: 'basicLayerOptionsNode',
                 ogcWms: 'compoundLayerOptionsNode',
                 ogcWmsLayerEntry: 'wmsLayerEntryNode'
-            };
-            Object.entries(LAYER_TYPE_OPTIONS)
+            };*/
+
+            // TODO: implement new default values generation
+            /*Object.entries(LAYER_TYPE_OPTIONS)
                 .forEach(([key, value]) => {
                     service[key] = {
                         // get default options for a specific layer type
@@ -136,7 +148,7 @@
                                 }
                             })
                     };
-                });
+                });*/
 
             return service;
         });

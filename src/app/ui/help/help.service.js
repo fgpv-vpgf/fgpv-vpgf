@@ -217,7 +217,7 @@
                 mdStr = mdStr.replace(new RegExp(String.fromCharCode(13), 'g'), '');
 
                 // start breaking down markdown file into sections where h1 headers (#) denote a new section
-                while (section = reg.exec(mdStr)) { // jshint ignore:line
+                while ((section = reg.exec(mdStr))) {
                     self.sections.push({
                         header: section[1],
                         // parse markdown on info section only. Note that the split/splice/join removes the header

@@ -8,6 +8,7 @@
             <md-button
                 aria-label="{{ toc.menu.reorder.title | translate }}"
                 class="md-icon-button primary rv-icon-20"
+                ng-if="self.configService._sharedConfig_.map.legend.isReorderable"
                 ng-class="{ selected: self.isReorder }"
                 ng-click="self.toggleReorderMode()">
                 <md-tooltip>{{ 'toc.menu.reorder.title' | translate }}</md-tooltip>
@@ -31,6 +32,47 @@
             <rv-toc-visibility-menu ng-if="!self.isReorder"></rv-toc-visibility-menu>
 
         </div>
+
+        <ul class="rv-legend-list rv-legend-root rv-legend-level-0" dx-start-with="self.configService._sharedConfig_.map._legendBlocks">
+        <!--ul class="rv-legend-list rv-legend-root rv-legend-level-0" dx-start-with="self.secondToc"-->
+
+            <li ng-repeat="block in $dxPrior.entries track by block.id"
+                class="rv-toggle-slide"
+                data-sort-group="{{ ::block.sortGroup }}">
+
+                <rv-legend-block
+                    ng-if="$dxPrior.blockType !== 'set'"
+                    class="rv-legend-{{ block.template }}"
+                    block="block"
+                    is-reorder="self.isReorder"
+                    ng-class="{ 'rv-selected': block.isSelected }"></rv-legend-block>
+
+                <rv-legend-block
+                    ng-if="$dxPrior.blockType === 'set'"
+                    class="rv-legend-{{ block.template }} rv-legend-set-{{ $dxPrior.id }}"
+                    block="block"
+                    is-reorder="self.isReorder"
+                    is-in-set="true"
+                    ng-class="{ 'rv-selected': block.isSelected }"></rv-legend-block>
+
+                <ul
+                    class="rv-legend-list rv-toggle-slide rv-legend-level-{{ ::$dxLevel }}"
+                    ng-if-start="block.blockType === 'group'"
+                    dx-connect="block"
+                    ng-show="block.expanded && !self.isReorder"></ul>
+
+                <div class="rv-shadow" ng-if-end></div>
+
+                <ul
+                    class="rv-legend-list rv-legend-set"
+                    ng-class="{ 'rv-legend-set-highlight': block.highlightSet }"
+                    ng-if="block.blockType === 'set'"
+                    dx-connect="block"></ul>
+
+                <md-progress-linear class="rv-progress-bottom" md-mode="indeterminate" ng-show="block.isRefreshing"></md-progress-linear>
+
+            </li>
+        </ul>
 
         <!--dragula='"bag-one"' dragula-scope="self.dragulaScope" dragula-model="::self.geoService.legend.items"-->
 

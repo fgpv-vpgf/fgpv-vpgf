@@ -175,7 +175,7 @@
                         paused: true,
                         onReverseComplete: () =>
                             $q.resolve()
-                            .then(() => self.expanded = false)
+                            .then(() => (self.expanded = false))
                     });
 
                     // in pixels
@@ -197,8 +197,8 @@
 
                     // loop over symbologyItems, generate timeline for each one, increase total height
                     symbologyItems.reverse().forEach((symbologyItem, index) =>
-                        totalHeight += legendItemTLgenerator[self.type](tlshift, symbologyItem, totalHeight,
-                            index === symbologyItems.length - 1));
+                        (totalHeight += legendItemTLgenerator[self.type](tlshift, symbologyItem, totalHeight,
+                            index === symbologyItems.length - 1)));
 
                     totalHeight += symbologyListMargin; // add margin at the bottom of the list
 

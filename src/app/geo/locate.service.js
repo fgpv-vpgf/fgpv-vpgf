@@ -78,8 +78,7 @@
          */
         function _apiLocate(onSuccess, onFailure) {
             if (typeof apiURL !== 'undefined') {
-                $http.post(apiURL)
-                .then(apiResponse => {
+                $http.post(apiURL).then(apiResponse => {
                     geoService.geolocate({
                         latitude: apiResponse.data.location.lat,
                         longitude: apiResponse.data.location.lng

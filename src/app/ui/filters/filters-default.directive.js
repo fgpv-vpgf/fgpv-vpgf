@@ -132,8 +132,11 @@
                 containerNode.append(tableNode);
 
                 // disabled zoom row button if projection is not valid
-                const isZoomEnabled = geoService.validateProj(
-                    geoService.layers[requester.layerId]._layer.spatialReference);
+
+                // TODO: fix
+                // const isZoomEnabled = geoService.validateProj(
+                //    geoService.layers[requester.layerId]._layer.spatialReference);
+                const isZoomEnabled = true;
                 ROW_BUTTONS.zoom.self.enabled = isZoomEnabled;
 
                 // assign callbacks to row buttons
@@ -155,7 +158,9 @@
 
                     if (button.name === 'rv-zoom-marker') {
                         // disabled zoom button if layer is not visible
-                        buttonScope.self.visibility = requester.legendEntry.options.visibility;
+                        // TODO: fix
+                        // buttonScope.self.visibility = requester.legendEntry.options.visibility;
+                        buttonScope.self.visibility = true;
                     }
 
                     button.scope = buttonScope;
@@ -203,7 +208,8 @@
                             column.width = '100px';
                         } else if (field.type === 'esriFieldTypeDate') {
                             // convert each date cell to a better format
-                            displayData.rows.forEach(r => r[field.name] = $filter('dateTimeZone')(r[field.name]));
+                            displayData.rows.forEach(r =>
+                                (r[field.name] = $filter('dateTimeZone')(r[field.name])));
                             const width = Math.max(getTextWidth(column.title), 175);
                             column.width =  `${width}px`;
                         } else {
@@ -482,6 +488,7 @@
                     otherPanels.addClass('rv-lt-lg-hide');
                     filterPanel.addClass('zoomto-transparent');
 
+                    // eslint-disable-next-line no-return-assign
                     filterPanel.on('click.zoomTO mousedown.zoomTO touchstart.zoomTO', () =>
                         ignoreClick ? ignoreClick = false : removeZoomtoTransparency()
                     );
@@ -501,6 +508,10 @@
                 function onDetailsClick(rowNumber, useDialog = false) {
                     const data = self.table.row(rowNumber).data();
                     const layerRec = geoService.layers[requester.layerId];
+
+                    // TODO: disabled during refactor; needs to be restored
+                    // const layerRecord = layerRegistry.getLayerRecord()
+
 
                     // get object id from row data
                     const objId = data[displayData.oidField];
@@ -729,11 +740,11 @@
                 };
                 const oLang = { oPaginate: {}, oAria: {} };
                 Object.keys(oLangSrc).forEach(key =>
-                    oLang[key] = $translate.instant(`filter.default.label.${oLangSrc[key]}`));
+                    (oLang[key] = $translate.instant(`filter.default.label.${oLangSrc[key]}`)));
                 Object.keys(oPaginateSrc).forEach(key =>
-                    oLang.oPaginate[key] = $translate.instant(`filter.default.label.${oPaginateSrc[key]}`));
+                    (oLang.oPaginate[key] = $translate.instant(`filter.default.label.${oPaginateSrc[key]}`)));
                 Object.keys(oAriaSrc).forEach(key =>
-                    oLang.oAria[key] = $translate.instant(`filter.default.aria.${oAriaSrc[key]}`));
+                    (oLang.oAria[key] = $translate.instant(`filter.default.aria.${oAriaSrc[key]}`)));
 
                 languageObjects[lang] = oLang;
 

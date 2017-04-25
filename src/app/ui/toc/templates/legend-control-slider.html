@@ -1,0 +1,14 @@
+<div class="rv-slider">
+    <div class="rv-slider-header rv-icon-20">
+        <md-icon md-svg-icon="{{ self.uiControl.icon }}"></md-icon>
+        {{ self.uiControl.label | translate }}
+    </div>
+
+    <div class="rv-slider-body">
+        <md-slider
+            ng-disabled="self.uiControl.isDisabled"
+            class="md-primary"
+            max="1" min="0" step="0.01" ng-model="self.uiControl.value"></md-slider>
+        <span class="rv-slider-indicator">{{ self.Math.round(self.uiControl.value * 100) }}%</span>
+    </div>
+</div>

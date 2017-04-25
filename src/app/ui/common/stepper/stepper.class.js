@@ -76,7 +76,7 @@
 
             /**
              * Moves to the next step.
-             * @param  {Promise} [optional] continuePromise the move will happen only after this promise resolves
+             * @param  {Promise} continuePromise [optional = $q.resolve()] continuePromise the move will happen only after this promise resolves
              * @return {Object}            itself for chaining
              */
             nextStep(continuePromise = $q.resolve()) {
@@ -108,7 +108,7 @@
             /**
              * Set a specified step as active, completing or resetting all intermediate steps depending on directive of the move.
              * @param  {Number} stepNumber                step id to jump to
-             * @param  {Promise} [optional] continuePromise the move will happen only after this promise resolves
+             * @param  {Promise} continuePromise [optional = $q.resolve()] the move will happen only after this promise resolves
              * @return {Object}            itself for chaining
              */
             moveToStep(stepNumber, continuePromise = $q.resolve()) {
@@ -129,15 +129,18 @@
 
                 this._think(); // set "thinking" mode to block `continue` button from further clicks
 
+                let isMoveCanceled = false;
                 // create a cancel promise for the move can be canceled by calling `cancelMove` on the stepper instance
                 // technically, it's a deferred
                 const cancelPromise = $q(resolve =>
-                    this._resolveCancelPromise = resolve);
+                    (this._resolveCancelPromise = resolve)).then(() =>
+                        (isMoveCanceled = true));
 
                 // TODO: switch to $q.race when we update to Angular 1.5+
                 // wraps regular promise in $q since Promise doesn't have `finally`
-                $q.when(Promise.race([continuePromise, cancelPromise]).then(value => {
-                    if (value !== 'cancelPromise') {
+                // can't use Promise.race - it resolves on reject: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
+                $q.when(continuePromise.then(() => {
+                    if (!isMoveCanceled) {
 
                         // TODO: it's possible to click the `cancel/continue` button at the moment when the transition to a differnt step starts and this will yo-yo stepper in place
                         // one solution would be to disable `cancel/continue` buttons when transition starts

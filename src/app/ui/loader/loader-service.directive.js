@@ -28,7 +28,8 @@
         return directive;
     }
 
-    function Controller($timeout, stateManager, geoService, Geo, Stepper, LayerBlueprint, $rootElement, keyNames) {
+    function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerBlueprint, $rootElement, keyNames,
+        ConfigObject, layerSource, legendService) {
         'ngInject';
         const self = this;
 
@@ -52,7 +53,10 @@
                 isCompleted: false,
                 onContinue: connectOnContinue,
                 onCancel: () => onCancel(self.connect.step),
-                onKeypress: (event) => { if (event.keyCode === keyNames.ENTER) { connectOnContinue(); } }, // check if enter key have been pressed and call the next step if so
+                onKeypress: event => {
+                    if (event.keyCode === keyNames.ENTER) {
+                        connectOnContinue();
+                    }}, // check if enter key have been pressed and call the next step if so
                 reset: connectReset,
                 focus: 'serviceUrl'
             },
@@ -68,7 +72,8 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: selectOnContinue,
-                onCancel: () => onCancel(self.select.step),
+                onCancel: () =>
+                    onCancel(self.select.step),
                 reset: selectReset,
                 focus: 'serviceType'
             },
@@ -84,7 +89,8 @@
                 isActive: false,
                 isCompleted: false,
                 onContinue: configureOnContinue,
-                onCancel: () => onCancel(self.configure.step),
+                onCancel: () =>
+                    onCancel(self.configure.step),
                 reset: configureReset,
                 focus: 'layerServiceName'
             },
@@ -100,6 +106,7 @@
             .addSteps(self.select.step)
             .addSteps(self.configure.step)
             .start(); // activate stepper on the first step
+
         /***/
 
         /**
@@ -143,6 +150,21 @@
         function connectOnContinue() {
             const connect = self.connect;
 
+            const layerSourcePromise = layerSource.fetchServiceInfo(connect.serviceUrl)
+                .then(({ options: layerSourceOptions, preselectedIndex }) => {
+                    self.layerSourceOptions = layerSourceOptions;
+                    self.layerSource = layerSourceOptions[preselectedIndex];
+                })
+                .catch(error => {
+                    toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false);
+                    return $q.reject(error);
+                });
+
+
+            stepper.nextStep(layerSourcePromise);
+
+            /*
+
             // creating new service blueprint with the provided url
             // since there is no layer type provided, blueprint will try to get service data
             self.layerBlueprint = new LayerBlueprint.service({
@@ -155,6 +177,8 @@
             self.layerBlueprint.ready.catch(() => toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false));
 
             stepper.nextStep(self.layerBlueprint.ready);
+
+            */
         }
 
         /**
@@ -187,6 +211,12 @@
          * @function selectOnContinue
          */
         function selectOnContinue() {
+
+            // we don't validate service layer info source;
+            // it seem not to be possible to tell if the layer will work on not until the layer is build and added to the map
+            stepper.nextStep($q.resolve());
+
+            /*
             const validationPromise = self.layerBlueprint.validate();
 
             // TODO: move reseting options to defaults into blueprint; this can be done upon successful validation
@@ -196,7 +226,7 @@
             validationPromise.catch(error => {
                 RV.logger.error('loaderServiceDirective', 'service type is wrong', error);
                 toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
-            });
+            });*/
         }
 
         // FIXME add docs
@@ -220,9 +250,12 @@
          * @function configureOnContinue
          */
         function configureOnContinue() {
+            const layerBlueprint = new LayerBlueprint.service(null, self.layerSource);
+
+            legendService.importLayer(layerBlueprint);
+
             // TODO: display error message if something breaks
             // TODO: close import wizard if build is successful
-            geoService.constructLayers([self.layerBlueprint]);
             closeLoaderService();
         }
 
@@ -237,8 +270,8 @@
             configure.form.$setUntouched();
 
             // if reset called before the first step is complete, layerBlueprint will not exist yet
-            if (self.layerBlueprint) {
-                self.layerBlueprint.config = self.configure.defaultOptions;
+            if (self.layerSource) {
+                self.layerSource.reset();
             }
         }
 

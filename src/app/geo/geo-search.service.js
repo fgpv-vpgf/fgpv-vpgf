@@ -51,12 +51,12 @@
          */
         function configureSearch() {
             configService.getCurrent().then(config => {
-                if (typeof config.search === 'undefined') {
+                if (typeof config.services.search === 'undefined') {
                     enabled = false;
                 } else {
                     enabled = true;
-                    serviceUrls = config.search.serviceUrls;
-                    disableSearch = config.search.disabledSearches;
+                    serviceUrls = config.services.search.serviceUrls;
+                    disableSearch = config.services.search.disabledSearches;
                 }
             });
         }
@@ -287,6 +287,7 @@
 
             setQueryParam('bbox', extent);
 
+            // eslint-disable-next-line complexity
             return $q((resolve, reject) => {
                 // define regex expressions for FSA, NTS, lat/long or scale inputs
                 // fot NTS http://www.nrcan.gc.ca/earth-sciences/geography/topographic-information/maps/9765
@@ -368,7 +369,7 @@
                 type: type,
                 location: {
                     latitude: coordinates[1],
-                    longitude: coordinates[0],
+                    longitude: coordinates[0]
                 },
                 bbox: bbox,
                 position: coordinates
@@ -399,7 +400,7 @@
                 type: { name: $translate.instant('geosearch.type.latlong'), code: 'COORD' },
                 location: {
                     latitude: coordinates[1],
-                    longitude: coordinates[0],
+                    longitude: coordinates[0]
                 },
                 bbox: bbox,
                 position: coordinates
@@ -496,7 +497,7 @@
          */
         function zoomScale(scale) {
             // remove space if scale is like 1 000 000 then use map to zoom to scale
-            geoService.mapObject.setScale(parseInt(scale.replace(/ /g, ''), 10));
+            geoService.mapObject.setScale(parseInt(scale.replace(/ /g, '')));
         }
 
         /**

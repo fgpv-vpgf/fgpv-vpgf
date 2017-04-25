@@ -1,6 +1,6 @@
 /* global bard, $compile, $rootScope */
 
-describe('rvLayerItemFlag', () => {
+xdescribe('rvLayerItemFlag', () => {
     let scope;
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;

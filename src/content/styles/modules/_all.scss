@@ -32,6 +32,7 @@
 @import "_tooltip.scss";
 @import "_geosearch.scss";
 @import "_truncate.scss";
+@import "_effects.scss";
 
 @include core;
 @include loading;
@@ -63,3 +64,4 @@
 @include side-nav;
 @include tooltip;
 @include truncate;
+@include effects;

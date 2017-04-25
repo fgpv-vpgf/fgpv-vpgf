@@ -235,7 +235,7 @@
         }
     }
 
-    function Controller(tocService, stateManager, geoService, keyNames) {
+    function Controller(tocService, stateManager, geoService, keyNames, configService) {
         'ngInject';
         const self = this;
 
@@ -246,6 +246,10 @@
         self.geoService = geoService;
         self.config = tocService.data;
         self.presets = tocService.presets;
+
+        self.secondToc = tocService.secondToc;
+
+        self.configService = configService;
 
         // reorder mode is off by default
         self.isReorder = false;

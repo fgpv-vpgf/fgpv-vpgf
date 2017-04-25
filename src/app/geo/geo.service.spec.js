@@ -193,7 +193,7 @@ describe('geo', () => {
         });
 
         describe('epsg lookup', () => {
-            it('should fetch an integer code', (done) => {
+            xit('should fetch an integer code', (done) => {
                 $httpBackend.expectGET('http://epsg.io/4326.proj4')
                     .respond('+proj=longlat +datum=WGS84 +no_defs');
                 geoService.epsgLookup(4326)
@@ -209,7 +209,7 @@ describe('geo', () => {
                 $httpBackend.flush();
             });
 
-            it('should fetch an EPSG string code', (done) => {
+            xit('should fetch an EPSG string code', (done) => {
                 /* jscs:disable maximumLineLength */
                 $httpBackend.expectGET('http://epsg.io/3979.proj4')
                     .respond(

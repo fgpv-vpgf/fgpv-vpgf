@@ -46,7 +46,7 @@
 
         // navigation controls presets
         service.controls = {
-            fullScreen: {
+            fullscreen: {
                 label: 'sidenav.label.fullscreen',
                 icon: 'navigation:fullscreen',
                 tooltip: 'sidenav.label.fullscreen',
@@ -145,8 +145,13 @@
          * @function private
          */
         function setupMapnavButtons() {
-            configService.getCurrent().then(data =>
-                    angular.extend(service.config, MAPNAV_CONFIG_DEFAULT, data.navBar));
+            // TODO: fix when the config service returns config
+            // workaround
+            angular.extend(service.config, MAPNAV_CONFIG_DEFAULT);
+
+            return;
+            /*configService.getCurrent().then(data =>
+                    angular.extend(service.config, MAPNAV_CONFIG_DEFAULT, data.navBar));*/
         }
     }
 })();

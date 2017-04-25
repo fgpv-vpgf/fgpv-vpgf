@@ -23,7 +23,12 @@
 
         const onChangeCallback = [];
         const projections = [];
+
         const service = {
+            selectedBasemap: null,
+
+            // selectBasemap,
+
             select,
             getSelected,
             reload,
@@ -102,12 +107,12 @@
          * @param   {Number}    wkID    the basemap wkID from which to derive a name
          * @return  {String}    the translated basemap projection name
          */
-        function wkidToName(wkID) {
+        /*function wkidToName(wkID) {
             const translationID = `wkids.${wkID}`;
             const translationStr = $translate.instant(translationID);
 
             return translationID !== translationStr ? translationStr : $translate.instant('wkids.other');
-        }
+        }*/
 
         /**
          * Sets a callback function that is called whenever basemaps changes.
@@ -131,6 +136,19 @@
                 _addBaseMaps(conf.baseMaps);
             });
         }
+
+        /*function selectBasemap(newSelection) {
+            const oldSelection = service.selectedBasemap || { deselect: angular.noop };
+
+            oldSelection.deselect();
+            newSelection.select();
+
+            // TODO: use this call after config is typed and basemap classes are moved out of here
+            // geoService.changeBasemap(basemap);
+
+            // TODO: would any other code need to know when the basemap changes? an event for that can be fired
+            // $rootScope.$broadcast('rv-basemap-change', [newSelection, oldSelection]);
+        }*/
 
         /**
          * Set the provided basemap as selected and update the map
@@ -175,7 +193,15 @@
          * @private
          * @param {Array} basemapList   A list of basemap objects
          */
-        function _addBaseMaps(basemapList) {
+        function _addBaseMaps(mapConfig) {
+
+            console.log(mapConfig);
+
+            // creates lists of extentSets, tileShemas and basemaps;
+            // the basemap list is flat and will be grouped by tileSchema id and sorted by basemap name directly in the template
+
+
+            /*
 
             basemapList.forEach(bm => {
                 const basemap = _normalizeBasemap(bm);
@@ -224,6 +250,7 @@
 
             bmSelected.selected = true;
             onChangeCallback.forEach(cb => cb(projections, bmSelected));
+            */
         }
     }
 
@@ -234,7 +261,7 @@
      * @private
      * @returns {Object}    the basemap object
      */
-    function _normalizeBasemap(basemap) {
+    /*function _normalizeBasemap(basemap) {
         return {
             name: basemap.name,
             description: basemap.description,
@@ -245,5 +272,5 @@
             selected: false,
             attribution: basemap.attribution
         };
-    }
+    }*/
 })();

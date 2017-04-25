@@ -1,0 +1,24 @@
+<div
+    class="rv-symbology-container rv-render-{{ self.symbology.renderStyle }}"
+    ng-class='[{ "rv-expanded" : self.isExpanded }, { "rv-compound" : self.symbology.stack.length > 1 } ]'>
+
+    <div class="rv-symbol" ng-repeat="symbol in self.symbology.stack | rvReverse">
+        <rv-svg class="rv-symbol-graphic" src="symbol.svgcode"></rv-svg>
+        <div class="rv-symbol-label-container">
+            <span class="rv-symbol-label">{{ symbol.name }}</span>
+        </div>
+    </div>
+
+    <md-button
+        class="rv-symbol-trigger rv-button-32 rv-icon-24 md-icon-button"
+        ng-if="self.symbology.isInteractive"
+        ng-click="self.expandSymbology()"
+        ng-focus="self.fanOutSymbology(true)"
+        ng-blur="self.fanOutSymbology(false)"
+        ng-mouseover="self.fanOutSymbology(true)"
+        ng-mouseout="self.fanOutSymbology(false)">
+        <md-tooltip md-direction="top">{{ self.isExpanded ? 'toc.layer.label.symbologyHide' : 'toc.layer.label.symbologyShow' | translate }}</md-tooltip>
+        <md-icon md-svg-src="navigation:close"></md-icon>
+    </md-button>
+
+</div>

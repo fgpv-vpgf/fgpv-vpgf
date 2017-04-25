@@ -1,7 +1,42 @@
 @mixin setting-controls {
     @include setting-option;
     @include slider-setting;
-    @include toggle-setting;
+
+    @include settings-panel;
+}
+
+
+@mixin settings-panel {
+    rv-settings {
+        .rv-subheader {
+            border: none !important;
+        }
+
+        .rv-settings-divider {
+            left: 0;
+            position: absolute;
+            width: 100%;
+
+            // this will hide any extra dividers left when a layer setting is hidden
+            + .rv-settings-divider {
+                display: none;
+            }
+        }
+
+        rv-legend-control {
+            display: block;
+            padding: rem(1.2) 0;
+
+            > * {
+                margin: 0;
+            }
+
+            &[name="reload"] {
+                position: relative;
+                display: block;
+            }
+        }
+    }
 }
 
 @mixin setting-option {
@@ -12,43 +47,41 @@
 
 // more styling on top of the default material slider control
 @mixin slider-setting {
-    .rv-slider-setting {
+    .rv-slider {
         display: flex;
-        flex-direction: row;
-        align-items: center;
+        flex-direction: column;
 
         > md-icon {
             margin-right: rem(1);
         }
 
-        .rv-slider-setting-body {
-            flex: 1;
+        .rv-slider-header {
+            > md-icon {
+                margin-right: rem(1);
+            }
+        }
 
-            .rv-slider-setting-label {
+        .rv-slider-body {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding-left: rem(3.2);
+
+            .rv-slider-label {
                 margin-bottom: - rem(1.4);
                 display: block;
             }
 
             > md-slider {
+                flex: 1;
                 margin-left: 0;
             }
-        }
 
-        .rv-slider-setting-indicator {
-            padding-left: rem(1);
-            min-width: rem(4.5);
-            text-align: right;
-        }
-    }
-}
-
-@mixin toggle-setting {
-    .rv-toggle-setting {
-        display: flex;
-        align-items: center;
-
-        .md-button {
-            margin: 0;
+            .rv-slider-indicator {
+                padding-left: rem(1);
+                min-width: rem(4.5);
+                text-align: right;
+            }
         }
     }
 }

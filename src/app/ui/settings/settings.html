@@ -1,61 +1,6 @@
-<rv-content-pane title-style="title" title-value="{{'settings.title' | translate}}: {{ self.display.requester.name }}">
-    <div>
-
-        <div class="rv-subsection" ng-if="self.settingSectionVisibility.display">
-            <div class="rv-subheader">
-                <h4 translate class="md-subhead">settings.label.display</h4>
-            </div>
-
-            <div class="rv-subcontent">
-
-                <div class="rv-setting-option" ng-if="self.tocEntry.options.opacity">
-                    {{'settings.label.opacity' | translate}}
-                    <div class="rv-icon-20 rv-slider-setting">
-                        <md-icon md-svg-icon="action:opacity"></md-icon>
-                        <div class="rv-slider-setting-body">
-                            <md-slider class="md-primary" max="1" min="0" step="0.01" ng-model="self.opacityValue"></md-slider>
-                        </div>
-                        <span class="rv-slider-setting-indicator">{{ self.Math.round(self.opacityValue * 100) }}%</span>
-                    </div>
-                </div>
-
-                <div class="rv-setting-option" ng-if="self.tocEntry.options.boundingBox">
-                    <md-switch aria-label="{{ settings.aria.boundingBox | translate }}" class="md-primary rv-switch"
-                               ng-model="self.tocEntry.options.boundingBox.value"
-                               ng-change="self.setBbox(self.tocEntry.options.boundingBox.value)">
-                        {{'settings.label.boundingBox' | translate}}
-                    </md-switch>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="rv-subsection" ng-if="self.settingSectionVisibility.data">
-
-            <div class="rv-subheader">
-                <h4 translate class="md-subhead">settings.label.data</h4>
-            </div>
-            <div class="rv-subcontent">
-                <div class="rv-setting-option" ng-if="self.tocEntry.options.snapshot">
-                    <div class="rv-toggle-setting">
-                        <span translate>settings.label.snapshot</span>
-                        <span flex></span>
-                        <md-button ng-disabled="!self.tocEntry.options.snapshot.enabled" ng-click="self.loadSnapshot(self.tocEntry)" class="rv-button-square">
-                            {{'settings.label.snapshotEnable' | translate}}
-                        </md-button>
-                    </div>
-                </div>
-                <div class="rv-setting-option" ng-if="self.tocEntry.options.query">
-                    <md-switch aria-label="{{ settings.aria.query | translate }}" class="md-primary rv-switch"
-                               ng-model="self.tocEntry.options.query.value"
-                               ng-change="self.toggleQuery(self.tocEntry, self.tocEntry.options.query.value)">
-                        {{'settings.label.query' | translate}}
-                    </md-switch>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
+<rv-content-pane
+    title-style="title"
+    class=""
+    title-value="{{'settings.title' | translate}}: {{ self.display.requester.name }}">
+    <div class="rv-settings-content-panel"></div>
 </rv-content-pane>

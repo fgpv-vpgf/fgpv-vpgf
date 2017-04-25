@@ -38,16 +38,32 @@
         .module('app.core')
         .factory('configService', configService);
 
-    function configService($q, $rootElement, $timeout, $http, $translate, $mdToast) {
-        let initializePromise;
-        let isInitialized = false;
+    function configService($q, $rootScope, $rootElement, $timeout, $http, $translate, $mdToast, events, schemaUpgrade) {
+        // let initializePromise;
+        // let isInitialized = false;
+
+        const DEFAULT_LANGS = ['en-CA', 'fr-CA'];
+
+        const States = {
+            NEW: 0,
+            LOADING: 1,
+            LOADED: 2,
+            UPDATING: 3
+        };
+
+        let loadingState = States.NEW;
+
+        const configs = {};
 
         const service = {
+            _sharedConfig_: null,
+
+            configs,
+            loadingState,
             currentLang,
             getCurrent,
             getOriginal,
             initialize,
-            ready,
             rcsAddKeys,
             rcsUrl: '',
             setCurrent,
@@ -57,123 +73,114 @@
         const originalConfigs = {};
         let bookmarkConfig;
 
-        const partials = {}; // partial config promises, one array per language entry
-        const configFile = {};
+        const startupRcsLayers = {}; // partial config promises, one array per language entry
+        // const configFile = {};
+        const initialPromises = {}; // only the initial configurations (i.e. whatever comes in config attribute)
+        let remoteConfig = false;
         let languages;
 
         return service;
 
         /***************/
 
+        function configLoader(configAttr, langs) {
+            loadingState = States.LOADING;
+            try {
+                const config = JSON.parse(configAttr);
+                config.forEach(lang =>
+                    (initialPromises[lang] = $q.resolve(config[lang])));
+            } catch (e) {
+                if (window.hasOwnProperty(configAttr)) {
+                    const config = window[configAttr];
+                    langs.forEach(lang =>
+                        (initialPromises[lang] = $q.resolve(config[lang])));
+                } else {
+                    remoteConfig = true;
+                    langs.forEach(lang => {
+                        initialPromises[lang] = $http.get(configAttr.replace('${lang}', lang)).then(r => r.data);
+                    });
+                }
+            }
+
+            // unwrap the async value, since this should be accessed after rvCfgInitialized
+            langs.forEach(lang => {
+                initialPromises[lang] = initialPromises[lang].then(cfg => {
+                    if (schemaUpgrade.isV1Schema(cfg.version)) {
+                        cfg = schemaUpgrade.oneToTwo(cfg);
+                    }
+                    configs[lang] = cfg;
+                    return cfg;
+                });
+                if (lang === langs[0]) {
+                    initialPromises[lang].then((/*cfg*/) => {
+                        loadingState = States.LOADED;
+                        $rootScope.$broadcast(events.rvCfgInitialized);
+                    });
+                }
+            });
+
+        }
+
+        function rcsLoader(svcAttr, keysAttr, languages) {
+            service.rcsUrl = svcAttr;
+            const keys = rcsInit(svcAttr, keysAttr, languages);
+            languages.forEach(lang => {
+                $q.all([startupRcsLayers[lang], initialPromises[lang]])
+                .then(configParts => {
+                    // generate a blank config, merge in all the stuff we have loaded
+                    // the merged config is our promise result for all to use
+                    const newConfig = {
+                        layers: []
+                    };
+                    mergeConfigParts(newConfig, configParts);
+                    configs[lang] = newConfig;
+                    $rootScope.$broadcast(events.rvCfgUpdated, keys);
+                })
+                .catch(() => {
+                    // TODO: possibly retry rcsLoad?
+                    console.warn('RCS failed, starting app with file-only config.');
+                    const toast = $mdToast.simple()
+                        .textContent($translate.instant('config.service.rcs.error'))
+                        .action($translate.instant('config.service.rcs.action'))
+                        .highlightAction(true)
+                        .hideDelay(0)
+                        .position('bottom rv-flex-global');
+                    $mdToast.show(toast);
+                });
+            });
+        }
+
         /**
          * Initializes `configService` by fetching and parsing `config` object.
          * @function initialize
          */
         function initialize() {
-            if (initializePromise) {
-                return initializePromise;
+            if (loadingState !== States.NEW) {
+                return;
             }
 
-            // store the promise and return it on all future calls; this way initialize can be called one time only
-            initializePromise = $q((fulfill, reject) => {
-                const configAttr = $rootElement.attr('rv-config');
-                const langAttr = $rootElement.attr('rv-langs');
-                const svcAttr = $rootElement.attr('rv-service-endpoint');
-                const keysAttr = $rootElement.attr('rv-keys');
-                let langs;
-
-                // This function can only be called once.
-                if (isInitialized) {
-                    return fulfill();
+            const langAttr = $rootElement.attr('rv-langs');
+            languages = DEFAULT_LANGS;
+            if (langAttr) {
+                try {
+                    languages = angular.fromJson(langAttr);
+                } catch (e) {
+                    console.warn(`Could not parse langs, defaulting to ${DEFAULT_LANGS}`);
+                    // TODO: better way to handle when no languages are specified?
                 }
+            }
+            languages.forEach(lang =>
+            (startupRcsLayers[lang] = []));
 
-                // check if config attribute exist
-                if (configAttr) {
-                    if (langAttr) {
-                        try {
-                            langs = angular.fromJson(langAttr);
-                        } catch (e) {
-                            RV.logger.warn('configService', 'could not parse langs, defaulting to *en-CA* and *fr-CA*');
+            const configAttr = $rootElement.attr('rv-config');
+            $translate.use(languages[0]);
+            configLoader(configAttr, languages);
 
-                            // TODO: better way to handle when no languages are specified?
-                            langs = ['en-CA', 'fr-CA'];
-                        }
-                    } else {
-                        langs = ['en-CA', 'fr-CA'];
-                    }
-
-                    // set available languages
-                    languages = langs;
-
-                    // set the language right away and not wait the initialization to be fullfilled
-                    $translate.use(langs[0]);
-
-                    langs.forEach(lang => partials[lang] = []);
-
-                    if (svcAttr) {
-                        service.rcsUrl = svcAttr;  // store for future RCS loads
-                        rcsInit(svcAttr, keysAttr, langs);
-                    }
-
-                    // start loading every config file
-                    fileInit(configAttr, langs);
-
-                    langs.forEach(lang => {
-                        originalConfigs[lang] = $q.all(partials[lang])
-                            .then(configParts => {
-                                // generate a blank config, merge in all the stuff we have loaded
-                                // the merged config is our promise result for all to use
-                                const newConfig = {
-                                    layers: []
-                                };
-                                mergeConfigParts(newConfig, configParts);
-                                return newConfig;
-                            })
-                            .catch(() => {
-                                // TODO: possibly retry rcsLoad?
-                                RV.logger.warn('configService', '*RCS failed* - starting app with file-only config.');
-                                const toast = $mdToast.simple()
-                                    .textContent($translate.instant('config.service.rcs.error'))
-                                    .action($translate.instant('config.service.rcs.action'))
-                                    .highlightAction(true)
-                                    .hideDelay(0)
-                                    .position('bottom rv-flex-global');
-                                $mdToast.show(toast);
-                                return configFile[lang];
-                            });
-                    });
-
-                    // initialize the app once the default language's config is loaded
-                    // FIXME: replace with getCurrent().then / originalConfigs[Default language] if we have a way to check
-                    originalConfigs[langs[0]]
-                        .then(() => {
-                            isInitialized = true;
-                            fulfill(originalConfigs[langs[0]]);
-                        })
-                        .catch(error => {
-                            reject(error);
-                            RV.logger.error('configService', error);
-                        });
-                }
-            });
-
-            return initializePromise;
-        }
-
-        /**
-         * Config initialization block for file-based configs
-         * @function fileInit
-         * @param {string}  configAttr  the file path tied to the config attribute
-         * @param {array}   langs       array of languages which have configs
-         */
-        function fileInit(configAttr, langs) {
-            langs.forEach(lang => {
-                // try to load config file
-                const p = $http.get(configAttr.replace('${lang}', lang))
-                    .then(xhr => xhr.data);
-                partials[lang].push(p);
-                configFile[lang] = p;
-            });
+            const svcAttr = $rootElement.attr('rv-service-endpoint');
+            const keysAttr = $rootElement.attr('rv-keys');
+            if (svcAttr) {
+                rcsLoader(svcAttr, keysAttr, languages);
+            }
         }
 
         /**
@@ -193,7 +200,13 @@
          * @return {Promise}     The config promise object as described above
          */
         function getCurrent() {
-            return bookmarkConfig || originalConfigs[currentLang()];
+            return $q(resolve => {
+                if (loadingState < States.LOADED) {
+                    $rootScope.$on(events.rvCfgInitialized, () => resolve(configs[currentLang()]));
+                } else {
+                    resolve(configs[currentLang()]);
+                }
+            });
         }
 
         /**
@@ -213,7 +226,7 @@
          * @return {Promise}    The config promise resolving with the lang's original config
          */
         function getOriginal() {
-            return originalConfigs[currentLang()];
+            return getCurrent();
         }
 
         /**
@@ -254,6 +267,7 @@
          * @param {string}  svcAttr     the server path tied to the config attribute
          * @param {string}  keysAttr    list of keys marking which layers to retrieve
          * @param {array}   langs       array of languages which have configs
+         * @return {array}              the list of keys used for the RCS request (parsed from keysAttr)
          */
         function rcsInit(svcAttr, keysAttr, langs) {
             let keys;
@@ -267,11 +281,12 @@
                 const rcsData = rcsLoad(svcAttr, keys, langs);
                 langs.forEach(lang => {
                     // add the rcs data promises to our partials set
-                    partials[lang].push(rcsData[lang]);
+                    startupRcsLayers[lang].push(rcsData[lang]);
                 });
             } else {
                 RV.logger.warn('configService', 'RCS endpoint set but no keys were specified');
             }
+            return keys;
         }
 
         /**
@@ -317,9 +332,8 @@
 
                             if (lang === currLang) {
                                 // pull fully populated layer config nodes out the main config
-                                const newConfigs = fullConfig.layers.filter(layerConfig => {
-                                    return newIds.indexOf(layerConfig.id) > -1;
-                                });
+                                const newConfigs = fullConfig.layers.filter(layerConfig =>
+                                    newIds.indexOf(layerConfig.id) > -1);
 
                                 // return the new configs to the caller
                                 resolve(newConfigs);
@@ -368,7 +382,8 @@
                         resp.data.forEach(layerEntry => {
                             // if the key is wrong rcs will return null
                             if (layerEntry) {
-                                const layer = layerEntry.layers[0];
+                                let layer = layerEntry.layers[0];
+                                layer = schemaUpgrade.layerNodeUpgrade(layer);
                                 layer.origin = 'rcs';
                                 result.layers.push(layer);
                             }
@@ -380,22 +395,6 @@
             });
 
             return results;
-        }
-
-        /**
-         * Checks if the service is ready to use.
-         * @function ready
-         * @param  {Promise|Array} nextPromises optional promises to be resolved before returning
-         * @return {Promise}              promise to be resolved on config service initialization
-         */
-        function ready(nextPromises) {
-            return initializePromise
-                .then(() => {
-                    return $q.all(nextPromises);
-                })
-                .catch(() => {
-                    RV.logger.log('configService', '*ready* function failed');
-                });
         }
     }
 })();

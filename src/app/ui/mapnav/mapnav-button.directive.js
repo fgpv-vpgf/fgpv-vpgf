@@ -26,7 +26,7 @@
                 name: '@' // get the name of the control object to fetch
             },
             link: linkFunc,
-            controller: Controller,
+            controller: angular.noop,
             controllerAs: 'self',
             bindToController: true
         };
@@ -41,21 +41,6 @@
 
             // getting toggle object from the navigation servcie directly using toggle's name
             self.control = mapNavigationService.controls[self.name];
-        }
-    }
-
-    /**
-     * Skeleton controller function.
-     */
-    function Controller() {
-        // var self = this;
-
-        /*********/
-
-        activate();
-
-        function activate() {
-
         }
     }
 })();

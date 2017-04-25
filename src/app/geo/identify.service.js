@@ -440,7 +440,7 @@
                     geometry: clickEvent.mapPoint,
                     width: mapObject.width,
                     height: mapObject.height,
-                    mapExtent: mapObject.extent,
+                    mapExtent: mapObject.extent
                 };
 
                 geoState.mapService.dropMapPin(clickEvent.mapPoint);

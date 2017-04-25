@@ -1,6 +1,6 @@
 /* global bard, $compile, $rootScope, $httpBackend, tocService */
 
-describe('rvTocEntryControl', () => {
+xdescribe('rvTocEntryControl', () => {
     let scope;
     let directiveScope; // needed since directive requests an isolated scope
     let directiveElement;

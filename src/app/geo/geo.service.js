@@ -16,7 +16,7 @@
         .factory('geoService', geoService);
 
     function geoService($http, $q, $rootScope, events, mapService, layerRegistry, configService,
-        identifyService, LayerBlueprint, basemapService) {
+        identifyService, /*LayerBlueprint,*/ ConfigObject, legendService) {
 
         // TODO update how the layerOrder works with the UI
         // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -25,50 +25,17 @@
 
         const service = {
             isMapReady: false, // flag indicating that the map is ready
-            epsgLookup,
+            // epsgLookup,
             assembleMap,
             reloadLayer: l => layerRegistry.reloadLayer(l),
             snapshotLayer: l => layerRegistry.snapshotLayer(l),
 
-            state: null
+            state: null,
+
+            configObject: null
         };
 
         return service;
-
-        /**
-         * Lookup a proj4 style projection definition for a given ESPG code.
-         * @function epsgLookup
-         * @param {string|number} code the EPSG code as a string or number
-         * @return {Promise} a Promise resolving to proj4 style definition or null if the definition could not be found
-         */
-        function epsgLookup(code) {
-            // FIXME this should be moved to a plugin; it is hardcoded to use epsg.io
-
-            const urnRegex = /urn:ogc:def:crs:EPSG::(\d+)/;
-            const epsgRegex = /EPSG:(\d+)/;
-            let lookup = code;
-            if (typeof lookup === 'number') {
-                lookup = String(lookup);
-            }
-            const urnMatches = lookup.match(urnRegex);
-            if (urnMatches) {
-                lookup = urnMatches[1];
-            }
-            const epsgMatches = lookup.match(epsgRegex);
-            if (epsgMatches) {
-                lookup = epsgMatches[1];
-            }
-
-            return $http.get(`http://epsg.io/${lookup}.proj4`)
-                .then(response => {
-                    return response.data;
-                })
-                .catch(err => {
-                    RV.logger.warn('geoService', 'proj4 style projection lookup failed with error', err);
-                    // jscs check doesn't realize return null; returns a promise
-                    return null; // jscs:ignore jsDoc
-                });
-        }
 
         /**
          * Constructs a map on the given DOM node given the current config object.
@@ -92,28 +59,56 @@
 
             let config; // reference to the current config
 
+            let layers;
+
             return configService.getCurrent()
                 .then(cf => {
                     config = cf;
 
+                    configService._sharedConfig_ = new ConfigObject.ConfigObject(config);
+
+                    // TODO: remove after config is typed and returns proper typed objects;
+                    // it's like this will have to be moved to the mapService or something
+                    state.configObject = service.configObject = configService._sharedConfig_;
+
+                    mapService.makeMap(mapNode);
+
+                    return true;
+
+                    // state._map = service._map = basemapService.constructBasemaps(config);
+
                     // assemble geo state object
-                    return mapService(state, config);
+                    // return mapService(state, config);
                 })
                 .then(ms => {
                     // expose mapService on geoService
                     angular.extend(service, ms);
-                    basemapService.reload();
-                    return layerRegistry(state, config);
+
+                    layers = legendService.contructLegend(state.configObject.map.layers, state.configObject.map.legend);
+
+                    // layers.forEach(layer =>
+                        // state.mapService.mapObject.addLayer(layer._layer));
+
+                    // basemapService.reload();
+
+                    return true; //layerRegistry(state, config);
                 })
                 .then(lr => {
                     // expose layerRegistry service on geoService
                     angular.extend(service, lr);
 
+                    // TODO: move blueprint construction to the layer registry
+                    /*
                     const layerBlueprints = config.layers.map(layerConfig =>
                         new LayerBlueprint.service(layerConfig, epsgLookup));
                     service.constructLayers(layerBlueprints);
+                    */
 
-                    return identifyService(state);
+                    // service.constructLayers([]);
+
+                    // return identifyService(state);
+
+                    return true;
                 })
                 .then(id => {
                     // expose idenitifyService on geoService

@@ -2,6 +2,9 @@
 (() => {
     'use strict';
 
+    const THROTTLE_COUNT = 2;
+    const THROTTLE_TIMEOUT = 3000;
+
     /**
      * @ngdoc service
      * @module layerRegistry
@@ -19,10 +22,260 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, $timeout, $translate, gapiService, legendService, tooltipService, Geo) {
+    function layerRegistryFactory($timeout, gapiService, Geo, configService, tooltipService) {
+        const service = {
+            getLayerRecord,
+            makeLayerRecord,
+            loadLayerRecord,
+
+            getBoundingBoxRecord,
+            makeBoundingBoxRecord
+        };
+
+        const ref = {
+            loadingQueue: [],
+            loadingCount: 0
+        };
+
+        /**
+         * Finds and returns the layer record using the id specified.
+         *
+         * @function getLayerRecord
+         * @param {Number} id the id of the layer record to be returned
+         * @return {LayerRecord} layer record with the id specified; undefined if not found
+         */
+        function getLayerRecord(id) {
+            const layerRecords = configService._sharedConfig_.map.layerRecords;
+
+            return layerRecords.find(layerRecord =>
+                layerRecord.layerId === id);
+        }
+
+        /**
+         * Creates the layer record from the provided layerBlueprint, stores it in the shared config and returns the results.
+         *
+         * @function makeLayerRecord
+         * @param {LayerBlueprint} layerBlueprint layerBlueprint used for creating the layer record
+         * @return {LayerRecord} created layerRecord
+         */
+        function makeLayerRecord(layerBlueprint) {
+            const layerRecords = configService._sharedConfig_.map.layerRecords;
+
+            let layerRecord = getLayerRecord(layerBlueprint.config.id);
+            if (!layerRecord) {
+                layerRecord = layerBlueprint.generateLayer();
+                layerRecords.push(layerRecord);
+            }
+
+            return layerRecord;
+        }
+
+        /**
+         * Finds a layer record with the specified id and adds it to the map
+         * @param {Number} id layer record id to load on the map
+         * @return {Boolean} true if the layer record existed and was added to the map; false otherwise
+         */
+        function loadLayerRecord(id) { //, pos = null) {
+            const layerRecord = getLayerRecord(id);
+
+            if (layerRecord) {
+                ref.loadingQueue.push(layerRecord);
+                _loadNextLayerRecord();
+
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        /**
+         * Loads a LayerRecord from the `loadingQueue` by adding it to the map. If the throttle count is reached, waits until some of the currently loading layers finish (or error.)
+         *
+         * @function _loadNextLayerRecord
+         * @private
+         */
+        function _loadNextLayerRecord() {
+            if (ref.loadingCount >= THROTTLE_COUNT || ref.loadingQueue.length === 0) {
+                return;
+            }
+
+            const mapBody = configService._sharedConfig_.map.body;
+            const layerRecord = ref.loadingQueue.shift();
+
+            let isRefreshed = false;
+            layerRecord.addStateListener(_onLayerRecordLoad);
+
+            mapBody.addLayer(layerRecord._layer);
+            ref.loadingCount ++;
+
+            // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
+            if (layerRecord._layer.loaded) {
+                isRefreshed = true;
+                _onLayerRecordLoad('rv-loaded');
+            }
+
+            // when a layer takes too long to load, it could be a slow service or a failed service
+            // in any case, the queue will advance after THROTTLE_TIMEOUT
+            // failed layers will be marked as failed when the finally resolve
+            // slow layers will load on their own at some point
+            const throttleTimeoutHandle = $timeout(_advanceLoadingQueue, THROTTLE_TIMEOUT);
+
+            /**
+             * Waits fro the layer to load or fail.
+             *
+             * // TODO: check if there is a better way to wait for layer to load than to wait for 'refresh' -> 'load' event chain
+             * // TODO: file-based layers don't fire these events; need a hack to handle those as well
+             * @function _onLayerRecordLoad
+             * @private
+             * @param {String} state name of the new LayerRecord state
+             * @private
+             */
+            function _onLayerRecordLoad(state) {
+                if (state === 'rv-refresh') {
+                    isRefreshed = true;
+                } else if (
+                    (isRefreshed && state === 'rv-loaded') ||
+                    (state === 'rv-error')
+                ) {
+                    layerRecord.removeStateListener(_onLayerRecordLoad);
+
+                    $timeout.cancel(throttleTimeoutHandle);
+                    _setHoverTips(layerRecord);
+                    _advanceLoadingQueue();
+                }
+            }
+
+            /**
+             * Advances the loading queue and starts loading the next layer record if any is available.
+             * @function _advanceLoadingQueue
+             * @private
+             */
+            function _advanceLoadingQueue() {
+                console.info('avancidng que');
+                ref.loadingCount = Math.max(--ref.loadingCount, 0);
+                _loadNextLayerRecord();
+            }
+        }
+
+        /**
+         * // TODO: make a wrapper for the bounding box layer
+         *
+         * Finds and returns a bounding box layer record using the id provided.
+         *
+         * @function getBoundingBoxRecord
+         * @param {Number} id id of the bounding box record to be found
+         * @return {Featurelayer} the bounding box record; `undefined` if not found
+         */
+        function getBoundingBoxRecord(id) {
+            const boundingBoxRecords = configService._sharedConfig_.map.boundingBoxRecords;
+
+            return boundingBoxRecords.find(boundingBoxRecord =>
+                boundingBoxRecord.layerId === id);
+        }
+
+        /**
+         * Creates and returns a feature layer to represent a boundign box with the id and extent specified.
+         *
+         * @function makeBoundingBoxRecord
+         * @param {Number} id id of the bounding box record to be assigned to the created bounding box layer record
+         * @param {Extent} bbExtent ESRI extent object with the bounding box extent
+         * @return {Featurelayer} the bounding box record
+         */
+        function makeBoundingBoxRecord(id, bbExtent) {
+            const boundingBoxRecords = configService._sharedConfig_.map.boundingBoxRecords;
+            const mapBody = configService._sharedConfig_.map.body;
+
+            let boundingBoxRecord = getBoundingBoxRecord(id);
+            if (!boundingBoxRecord) {
+                boundingBoxRecord = gapiService.gapi.layer.bbox.makeBoundingBox(
+                        id, bbExtent, mapBody.extent.spatialReference);
+
+                boundingBoxRecords.push(boundingBoxRecord);
+                mapBody.addLayer(boundingBoxRecord);
+            }
+
+            return boundingBoxRecord;
+        }
+
+        function _setHoverTips(layerRecord) {
+            // TODO: layerRecord returns a promise on layerType to be consistent with dynamic children which don't know their type upfront
+            // to not wait on promise, check the layerRecord config
+            if (layerRecord.config.layerType !== Geo.Layer.Types.ESRI_FEATURE) {
+                return;
+            }
+
+            // TODO: reenable when this option is added to the config
+            /*
+            if (!layerRecord.config.tooltipEnabled) {
+                return;
+            }*/
+
+            // TODO: where to put the template? it shouldn't be in layer registry
+            const tooltipTemplate = `
+                <div class="rv-tooltip-content" ng-if="self.name">
+                    <rv-svg once="false" class="rv-tooltip-graphic" src="self.svgcode"></rv-svg>
+                    <span class="rv-tooltip-text">{{ self.name }}</span>
+                </div>
+
+                <div class="rv-tooltip-content" ng-if="!self.name">
+                    <span class="rv-tooltip-text">{{ 'maptip.hover.label.loading' | translate }}</span>
+                </div>
+            `;
+
+            let tipContent;
+
+            layerRecord.addHoverListener(_onHoverHandler);
+
+            function _onHoverHandler(data) {
+                // we use the mouse event target to track which
+                // graphic the active tooltip is pointing to.
+                // this lets us weed any delayed events that are meant
+                // for tooltips that are no longer active.
+                const typeMap = {
+                    mouseOver: e => {
+
+                        // make the content and display the hovertip
+                        tipContent = {
+                            name: '',
+                            svgcode: '<svg></svg>',
+                            graphic: e.target
+                        };
+
+                        const tipRef = tooltipService.addHoverTooltip(e.point, tooltipTemplate, tipContent);
+                    },
+                    tipLoaded: e => {
+                        // update the content of the tip with real data.
+                        if (tipContent && tipContent.graphic === e.target) {
+                            tipContent.name = e.name;
+                            tipContent.svgcode = e.svgcode;
+                        }
+                        tooltipService.refreshHoverTooltip();
+                    },
+                    mouseOut: e =>
+                        tooltipService.removeHoverTooltip()
+                    ,
+                    // TODO: reattach this
+                    forceClose: () => {
+                        // if there is a hovertip, get rid of it
+                        //destroyHovertip();
+                    }
+                };
+
+                // execute function for the given type
+                typeMap[data.type](data);
+            }
+        }
+
+        return service;
+    }
+
+    _layerRegistryFactory();
+
+    function _layerRegistryFactory($q, $timeout, $translate, gapiService, legendService, tooltipService, Geo) {
 
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
+        // eslint-disable-next-line max-statements
         function layerRegistry(geoState, mapObject, config) {
 
             const layers = {};
@@ -43,14 +296,19 @@
 
                 constructLayers,
                 removeLayer,
+
                 zoomToScale,
                 zoomToBoundary,
+
                 reloadLayer,
                 snapshotLayer,
+
                 aliasedFieldName,
+
                 getLayersByType,
                 getRcsLayerIDs,
                 getAllQueryableLayerRecords,
+
                 moveLayer,
                 checkDateType,
                 setBboxState,
@@ -274,6 +532,7 @@
              * @param {String} targetId the id of the layer the target layer will be moved on top of; can be -1, if its the end of the list
              * @return {Number}          index at which the source layer should be inserted in the map stack
              */
+            // eslint-disable-next-line complexity
             function getLayerInsertPosition(sourceId, targetId) {
                 const sourceEntry = service.layers[sourceId].legendEntry;
                 const targetEntry = typeof targetId !== 'undefined' ? service.layers[targetId].legendEntry : null;
@@ -669,7 +928,8 @@
              * @param {LayerRecord|LegendEntry} l the layer to be reloaded
              */
             function snapshotLayer(l) {
-                const configUpdate = cfg => cfg.options.snapshot.value = true;
+                const configUpdate = cfg =>
+                    (cfg.options.snapshot.value = true);
                 reloadLayer(l, configUpdate);
             }
 
@@ -700,9 +960,8 @@
 
                 // search for aliases
                 if (fields) {
-                    const attribField = fields.find(field => {
-                        return field.name === attribName;
-                    });
+                    const attribField = fields.find(field =>
+                        field.name === attribName);
                     if (attribField && attribField.alias && attribField.alias.length > 0) {
                         fName = attribField.alias;
                     }
@@ -720,9 +979,8 @@
              */
             function checkDateType(attribName, fields) {
                 if (fields) {
-                    const attribField = fields.find(field => {
-                        return field.name === attribName;
-                    });
+                    const attribField = fields.find(field =>
+                        field.name === attribName);
                     if (attribField && attribField.type) {
                         return attribField.type === 'esriFieldTypeDate';
                     }

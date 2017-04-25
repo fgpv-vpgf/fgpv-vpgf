@@ -54,9 +54,8 @@
             // loop through layers in legend, remove user added layers and "removed" layer which are in the "undo" time frame
             const legend = geoService.legend.items.filter(legendEntry =>
                 !legendEntry.flags.user.visible && !legendEntry.removed);
-            const layerBookmarks = legend.map(legendEntry => {
-                return encode64(makeLayerBookmark(legendEntry));
-            });
+            const layerBookmarks = legend.map(legendEntry =>
+                encode64(makeLayerBookmark(legendEntry)));
 
             // bookmarkVersions.? is the version. update this accordingly whenever the structure of the bookmark changes
             const bookmark = `${bookmarkVersions.B},${basemap},${extent.x},${extent.y},${extent.scale}` +
@@ -317,6 +316,7 @@
          *                                `newLang` the language code we are switching to
          * @returns {Object}            The config with changes from the bookmark
          */
+        // eslint-disable-next-line max-statements
         function parseBookmark(bookmark, origConfig, opts) {
             // this methods uses a lot of sub-methods because of the following rules
             // RULE #1 single method can't have more than 40 commands

@@ -30,17 +30,21 @@
         return directive;
     }
 
-    function Controller(geoService, appInfo) {
+    function Controller(LegendBlock, geoService, appInfo, configService) {
         'ngInject';
         const self = this;
 
         self.appID = appInfo.id;
 
-        self.expandAllLegendEntries = () => toggleLegendGroupEntries();
-        self.collapseAllLegendEntries = () => toggleLegendGroupEntries(false);
+        self.expandAllLegendEntries = () =>
+            toggleLegendGroupEntries();
+        self.collapseAllLegendEntries = () =>
+            toggleLegendGroupEntries(false);
 
-        self.isAllLegendEntriesExpanded = () => getLegendGroupEntriesExpandState();
-        self.isAllLegendEntriesCollapsed = () => getLegendGroupEntriesExpandState(false);
+        self.isAllLegendEntriesExpanded = () =>
+            getLegendGroupEntriesExpandState();
+        self.isAllLegendEntriesCollapsed = () =>
+            getLegendGroupEntriesExpandState(false);
 
         /***/
 
@@ -55,11 +59,11 @@
                 return;
             }
 
-            geoService.legend.walkItems(item => {
-                if (item.type === 'group') {
-                    item.expanded = value;
+            configService._sharedConfig_.map.legendBlocks.walk(block => {
+                if (block.blockType === LegendBlock.TYPES.GROUP) {
+                    (block.expanded = value);
                 }
-            }, true);
+            });
         }
 
         /**
@@ -74,13 +78,15 @@
                 return;
             }
 
-            return geoService.legend
-                .walkItems(item =>
-                    (item.expanded), true) // leaf entries will return "undefined"
-                .filter(item =>
-                    (typeof item !== 'undefined')) // filter out leaf entries
-                .every(item =>
-                    (item === value));
+            const isAllExpanded = configService._sharedConfig_.map.legendBlocks
+                .walk(block =>
+                    block.blockType === LegendBlock.TYPES.GROUP ? block.expanded : null)
+                .filter(expanded =>
+                    expanded !== null)
+                .every(expanded =>
+                    expanded === value);
+
+            return isAllExpanded;
         }
     }
 })();

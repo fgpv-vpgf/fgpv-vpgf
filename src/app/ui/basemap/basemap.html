@@ -3,14 +3,14 @@ This prevents focus from being applied to elements outside the basemap selector 
 <md-sidenav rv-basemap class="rv-basemap-selector md-sidenav-left md-whiteframe-z2" md-component-id="right">
     <rv-content-pane rv-trap-focus>
 
-        <md-button class="md-icon-button black rv-button-32 rv-minimize-button" ng-click="self.minimize()">
+        <md-button class="md-icon-button black rv-button-32 rv-minimize-button" ng-click="self.close()">
             <md-icon md-svg-src="community:chevron-double-left"></md-icon>
         </md-button>
 
-        <div class="rv-subsection" ng-repeat="projection in self.projections">
+        <div class="rv-subsection" ng-repeat="tileSchema in self.geoService.configObject.map.tileSchemas">
 
             <div class="rv-subheader">
-                <h3 class="md-title" >{{ 'basemap.projection.title' | translate:projection }}</h3>
+                <h3 class="md-title">{{ tileSchema.name }}</h3>
                 <div class="rv-icon-16" ng-show="self.selectedWkid != projection.wkid">
                     <md-icon md-svg-src="action:info" class="rv-basemap-warning"></md-icon>
                     <span class="md-catpion" >{{ 'basemap.refresh.req' | translate }}</span>
@@ -20,8 +20,8 @@ This prevents focus from being applied to elements outside the basemap selector 
             <div class="rv-subcontent">
 
                 <ul class="rv-list rv-basemap-list">
-                    <li class="rv-basemap-list-item" ng-repeat="basemap in projection.basemaps">
-                        <rv-basemap-item basemap="basemap" select="self.select(basemap)"></rv-basemap-item>
+                    <li class="rv-basemap-list-item" ng-repeat="basemap in self.geoService.configObject.map.basemaps | filter:{ tileSchema: { id: tileSchema.id } }">
+                        <rv-basemap-item basemap="basemap" select="self.mapService.selectBasemap(basemap)"></rv-basemap-item>
                     </li>
                 </ul>
 
