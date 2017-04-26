@@ -28,11 +28,10 @@
         .module('app.geo')
         .factory('legendService', legendServiceFactory);
 
-    function legendServiceFactory($q, Geo, ConfigObject, LegendBlock, LayerBlueprint, configService, layerRegistry, common) {
+    function legendServiceFactory($q, Geo, ConfigObject, configService, LegendBlock, LayerBlueprint, layerRegistry, common) {
 
         const service = {
-            contructLegend,
-
+            constructLegend,
             importLayer
         };
 
@@ -41,18 +40,17 @@
         /***/
 
         // rename: construct config legend
-        function contructLegend(layerDefinitions, legendStructure) {
+        function constructLegend(layerDefinitions, legendStructure) {
             // all layer defintions are passed as config fragments - turning them into layer blueprints
             const layerBluePrints = layerDefinitions.map(layerDefinition =>
                 new LayerBlueprint.service(layerDefinition));
 
             // in structured legend, the legend's root is actually a group, although it's not visible
-            const rootGroup = _makeLegendBlock(legendStructure.root, layerBluePrints);
+            return _makeLegendBlock(legendStructure.root, layerBluePrints);
 
-            configService._sharedConfig_.map._legendBlocks = rootGroup;
         }
 
-        function importLayer(layerBlueprint) {
+        function importLayer(layerBlueprint, typedMap) {
 
             // when adding a layer through the layer loader, set symbology render style as images for wms;
             // TODO: this can potentially move to blueprint code
@@ -67,9 +65,11 @@
             const blockConfig = new ConfigObject.legend.Entry(entryConfigObject);
 
             const legendBlock = _makeLegendBlock(blockConfig, [layerBlueprint]);
+            configService.getSync.map.legendBlocks.addEntry(legendBlock);
+
+            return legendBlock;
 
             // TODO: this a hacky way to get it working for now; needs rethinking
-            configService._sharedConfig_.map._legendBlocks.addEntry(legendBlock);
         }
 
         /**

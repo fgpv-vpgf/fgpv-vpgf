@@ -41,10 +41,7 @@ describe('geo', () => {
 
             console.log(current);
 
-            return {
-                getCurrent: () => $q.resolve(current),
-                setCurrent: config => current = config
-            };
+            return {};
         });
     }
 
@@ -163,7 +160,6 @@ describe('geo', () => {
                 spyOn(m, 'Map')
                     .and.callThrough();
 
-                configService.setCurrent(emptyConfig);
                 geoService.assembleMap(el[0])
                     .then(() => {
                         console.log('map is done');

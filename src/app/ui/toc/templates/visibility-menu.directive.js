@@ -61,7 +61,7 @@
 
             // set visibility on all interactive legend blocks, but do not set visibility on children of LegendSets;
             // if we do set visibility on LegendSet's children, the last child in the set will be selected as opposed to the first one;
-            configService._sharedConfig_.map.legendBlocks
+            configService.getSync.map.legendBlocks
                 .walk(_walkAction, _walkDecision);
 
             function _walkAction(block) {
@@ -88,7 +88,7 @@
             }
 
             // find all interactive legendblocks whose visibility controls are not system disabled and aggregate their visibility
-            const isAllVisible = configService._sharedConfig_.map.legendBlocks
+            const isAllVisible = configService.getSync.map.legendBlocks
                 .walk(block => {
                     if (!block.isInteractive) {
                         return null;

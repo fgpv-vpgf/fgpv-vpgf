@@ -37,7 +37,7 @@
             const bookmark = bookmarkService.getBookmark();
 
             // get original config and add bookmark to it
-            configService.getOriginal().then(config => {
+            configService.getAsync.then(config => {
                 bookmarkService.parseBookmark(bookmark, config, { newBaseMap: basemapId });
                 geoService.assembleMap();
             });
@@ -54,7 +54,7 @@
             $rootScope.$broadcast(events.rvApiHalt);
             const bookmark = bookmarkService.getBookmark();
             $translate.use(lang);
-            configService.getOriginal().then(config => {
+            configService.getAsync.then(config => {
                 bookmarkService.parseBookmark(bookmark, config, { newLang: lang });
                 $rootScope.$broadcast(events.rvLangSwitch);
                 geoService.assembleMap();
@@ -76,7 +76,7 @@
                 $rootScope.$broadcast(events.rvApiHalt);
 
                 // modify the original config
-                configService.getOriginal().then(config => {
+                configService.getAsync.then(config => {
                     bookmarkService.parseBookmark(bookmark, config, {});
 
                     if (service.bookmarkBlocking) {
@@ -94,7 +94,7 @@
         function loadWithExtraKeys(bookmark, keys) {
             if (service.bookmarkBlocking) {
                 $rootScope.$broadcast(events.rvApiHalt);
-                configService.getOriginal().then(config => {
+                configService.getAsync.then(config => {
                     bookmarkService.parseBookmark(bookmark, config, { newKeyList: keys });
 
                     // broadcast startup event

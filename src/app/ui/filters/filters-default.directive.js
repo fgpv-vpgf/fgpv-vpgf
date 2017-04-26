@@ -768,7 +768,7 @@
                     // TODO: make it work when new language is added
                     const info = self.table.table().container().getElementsByClassName('dataTables_info')[0];
                     const infos = info.innerText.split(' ');
-                    const index = (configService.currentLang() === 'en-CA') ? 1 : 3;
+                    const index = (configService.getSync.language === 'en-CA') ? 1 : 3;
                     infos[index] = scroll.page().start + 1;
                     infos[index + 2] = scroll.page().end + 1;
                     info.innerText = infos.join(' ');

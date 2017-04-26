@@ -201,7 +201,7 @@
                 return `<img src="${href}" alt="${title}">`;
             };
 
-            const mdLocation = `help/${configService.currentLang()}.md`;
+            const mdLocation = `help/${configService.getSync.language}.md`;
             $http.get(mdLocation).then(r => {
                 // matches help sections from markdown file where each section begins with one hashbang and a space
                 // followed by the section header, exactly 2 spaces, then up to but not including a double space

@@ -20,9 +20,9 @@
             find
         };
 
-        configService.getCurrent().then(conf => {
-            if (conf.googleAPIKey) {
-                apiURL = `https://www.googleapis.com/geolocation/v1/geolocate?key=${conf.googleAPIKey}`;
+        configService.getAsync.then(conf => {
+            if (conf.services.googleAPIKey) {
+                apiURL = `https://www.googleapis.com/geolocation/v1/geolocate?key=${conf.services.googleAPIKey}`;
             }
         });
 

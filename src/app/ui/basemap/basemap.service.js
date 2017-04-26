@@ -131,7 +131,7 @@
          */
         function reload() {
             projections.length = 0;
-            configService.getCurrent().then(conf => {
+            configService.getAsync.then(conf => {
                 initialBasemapId = conf.map ? conf.map.initialBasemapId : null;
                 _addBaseMaps(conf.baseMaps);
             });

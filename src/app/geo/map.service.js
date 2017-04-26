@@ -26,7 +26,7 @@
 
         function makeMap(mapNode) {
             const gapi = gapiService.gapi;
-            const { map: mapConfig, services: servicesConfig } = configService._sharedConfig_;
+            const { map: mapConfig, services: servicesConfig } = configService.getSync;
 
             const mapSettings = {
                 basemaps: mapConfig.basemaps,
@@ -122,7 +122,7 @@
          * @param {Basemap} basemap selected basemap
          */
         function selectBasemap(basemap) {
-            const mapConfig = configService._sharedConfig_.map;
+            const mapConfig = configService.getSync.map;
 
             const oldBasemap = mapConfig.selectedBasemap.deselect();
             basemap.select();
@@ -138,7 +138,7 @@
         * @param {Object} location is a location object, containing geometries in the form of { longitude: <Number>, latitude: <Number> }
         */
         function zoomToLatLong({ longitude, latitude }) {
-            const mapBody = configService._sharedConfig_.map.body;
+            const mapBody = configService.getSync.map.body;
 
             // get reprojected point and zoom to it
             const geoPt = gapiService.gapi.proj.localProjectPoint(4326, mapBody.spatialReference.wkid,
@@ -290,7 +290,7 @@
              */
             function buildMapObject() {
                 const gapi = gapiService.gapi;
-                const mapConfig = configService._sharedConfig_.map;
+                const mapConfig = configService.getSync.map;
 
                 let mapBody;
 
@@ -519,7 +519,7 @@
              * @param {Basemap} selectedBaseMap selected basemap
              */
             function selectBasemap(basemap) {
-                const mapConfig = configService._sharedConfig_.map;
+                const mapConfig = configService.getSync.map;
 
                 const oldBasemap = mapConfig.selectedBasemap.deselect();
                 basemap.select();
@@ -1101,7 +1101,7 @@
              */
             function setMapLoadingFlag(isLoading = true, delay = 0) {
                 // need to wrap this in a timeout since these are esri events, Angular wouldn't pick up on any changes unless a new digest cycle is triggered
-                const mapConfig = configService._sharedConfig_.map;
+                const mapConfig = configService.getSync.map;
 
                 $timeout.cancel(ref.timeoutHandle);
                 ref.timeoutHandle = $timeout(() =>

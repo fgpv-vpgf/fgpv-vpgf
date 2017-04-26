@@ -498,7 +498,7 @@
             }
 
             // set the new current config, RCS layers will be loaded on first getCurrent() call
-            configService.setCurrent(addRcsConfigs(bookmarkLayers, config));
+            // FIXME oldConfig.setCurrent(addRcsConfigs(bookmarkLayers, config));
         }
 
         /**

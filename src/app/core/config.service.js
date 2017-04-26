@@ -38,7 +38,7 @@
         .module('app.core')
         .factory('configService', configService);
 
-    function configService($q, $rootScope, $rootElement, $timeout, $http, $translate, $mdToast, events, schemaUpgrade) {
+    function configService($q, $rootScope, $rootElement, $timeout, $http, $translate, $mdToast, events, schemaUpgrade, gapiService, ConfigObject) {
         // let initializePromise;
         // let isInitialized = false;
 
@@ -51,40 +51,52 @@
             UPDATING: 3
         };
 
-        let loadingState = States.NEW;
+        let _loadingState = States.NEW;
+        let _remoteConfig = false;
 
         const configs = {};
-
-        const service = {
-            _sharedConfig_: null,
-
-            configs,
-            loadingState,
-            currentLang,
-            getCurrent,
-            getOriginal,
-            initialize,
-            rcsAddKeys,
-            rcsUrl: '',
-            setCurrent,
-            getLanguages
-        };
-
-        const originalConfigs = {};
-        let bookmarkConfig;
-
-        const startupRcsLayers = {}; // partial config promises, one array per language entry
-        // const configFile = {};
+        const configObjects = {};
         const initialPromises = {}; // only the initial configurations (i.e. whatever comes in config attribute)
-        let remoteConfig = false;
+
+        class ConfigService {
+            get remoteConfig() { return _remoteConfig; }
+            get loadingState() { return _loadingState; }
+            get getSync() {
+                if (_loadingState < States.LOADED) {
+                    throw new Error('Attempted to access config synchronously before loading completed.  Either use the promise based API or wait for rvReady.');
+                }
+                return configs[currentLang()];
+            }
+            get getAsync() { return initialPromises[currentLang()].then(() => configs[currentLang()]); }
+
+            initialize() {
+                _initialize();
+            }
+
+            rcsAddKeys() {
+                throw new Error(`This doesn't work yet`);
+            }
+
+        }
+
+        const jsonConfigs = {};
+        let bookmarkConfig;
+        const startupRcsLayers = {}; // partial config promises, one array per language entry
         let languages;
 
-        return service;
+        return new ConfigService();
 
         /***************/
 
-        function configLoader(configAttr, langs) {
-            loadingState = States.LOADING;
+        /**
+         * Loads the primary config based on the tagged attribute. This can be from a file, local variable or inline JSON.
+         *
+         * @param {String} configAttr the value of `rv-config`
+         * @param {Array} langs an array of locales used to load and parse the config data
+         * @return {Void}
+         */
+        function configLoader(configAttr, svcAttr, langs) {
+            _loadingState = States.LOADING;
             try {
                 const config = JSON.parse(configAttr);
                 config.forEach(lang =>
@@ -95,7 +107,7 @@
                     langs.forEach(lang =>
                         (initialPromises[lang] = $q.resolve(config[lang])));
                 } else {
-                    remoteConfig = true;
+                    _remoteConfig = true;
                     langs.forEach(lang => {
                         initialPromises[lang] = $http.get(configAttr.replace('${lang}', lang)).then(r => r.data);
                     });
@@ -104,16 +116,22 @@
 
             // unwrap the async value, since this should be accessed after rvCfgInitialized
             langs.forEach(lang => {
-                initialPromises[lang] = initialPromises[lang].then(cfg => {
-                    if (schemaUpgrade.isV1Schema(cfg.version)) {
-                        cfg = schemaUpgrade.oneToTwo(cfg);
-                    }
-                    configs[lang] = cfg;
-                    return cfg;
-                });
+                initialPromises[lang] = $q.all([gapiService.isReady, initialPromises[lang]])
+                    .then(([,cfg]) => {
+                        if (schemaUpgrade.isV1Schema(cfg.version)) {
+                            cfg = schemaUpgrade.oneToTwo(cfg);
+                        }
+                        jsonConfigs[lang] = cfg;
+                        cfg.language = lang;
+                        cfg.languages = langs;
+                        cfg.services.rcsEndpoint = svcAttr;
+                        configs[lang] = new ConfigObject.ConfigObject(cfg);
+                        RV.logger.log('configService', 'config object created', configs[lang]);
+                        return configs[lang];
+                    });
                 if (lang === langs[0]) {
-                    initialPromises[lang].then((/*cfg*/) => {
-                        loadingState = States.LOADED;
+                    initialPromises[lang].then(cfg => {
+                        _loadingState = States.LOADED;
                         $rootScope.$broadcast(events.rvCfgInitialized);
                     });
                 }
@@ -122,7 +140,6 @@
         }
 
         function rcsLoader(svcAttr, keysAttr, languages) {
-            service.rcsUrl = svcAttr;
             const keys = rcsInit(svcAttr, keysAttr, languages);
             languages.forEach(lang => {
                 $q.all([startupRcsLayers[lang], initialPromises[lang]])
@@ -133,7 +150,7 @@
                         layers: []
                     };
                     mergeConfigParts(newConfig, configParts);
-                    configs[lang] = newConfig;
+                    // configs[lang] = newConfig;
                     $rootScope.$broadcast(events.rvCfgUpdated, keys);
                 })
                 .catch(() => {
@@ -152,10 +169,10 @@
 
         /**
          * Initializes `configService` by fetching and parsing `config` object.
-         * @function initialize
+         * @function _initialize
          */
-        function initialize() {
-            if (loadingState !== States.NEW) {
+        function _initialize() {
+            if (_loadingState !== States.NEW) {
                 return;
             }
 
@@ -173,11 +190,12 @@
             (startupRcsLayers[lang] = []));
 
             const configAttr = $rootElement.attr('rv-config');
-            $translate.use(languages[0]);
-            configLoader(configAttr, languages);
-
             const svcAttr = $rootElement.attr('rv-service-endpoint');
             const keysAttr = $rootElement.attr('rv-keys');
+
+            $translate.use(languages[0]);
+            configLoader(configAttr, svcAttr, languages);
+
             if (svcAttr) {
                 rcsLoader(svcAttr, keysAttr, languages);
             }
@@ -190,53 +208,6 @@
          */
         function currentLang() {
             return ($translate.proposedLanguage() || $translate.use());
-        }
-
-        /**
-         * Returns the currently used config. If a bookmark-modified config is stored it is returned,
-         * otherwise the original config for the language is returned.
-         *
-         * @function getCurrent
-         * @return {Promise}     The config promise object as described above
-         */
-        function getCurrent() {
-            return $q(resolve => {
-                if (loadingState < States.LOADED) {
-                    $rootScope.$on(events.rvCfgInitialized, () => resolve(configs[currentLang()]));
-                } else {
-                    resolve(configs[currentLang()]);
-                }
-            });
-        }
-
-        /**
-         * Stores configPromise to be returned using getCurrent.
-         *
-         * @function setCurrent
-         * @param {Promise} configPromise   A promise resolving with a config (usually modified by a bookmark)
-         */
-        function setCurrent(configPromise) {
-            bookmarkConfig = configPromise;
-        }
-
-        /**
-         * Returns the original config for the current language.
-         *
-         * @function getOriginal
-         * @return {Promise}    The config promise resolving with the lang's original config
-         */
-        function getOriginal() {
-            return getCurrent();
-        }
-
-        /**
-         * Returns the array of available languages.
-         *
-         * @function getLanguages
-         * @return {array}    The available languages
-         */
-        function getLanguages() {
-            return languages;
         }
 
         /**
@@ -299,10 +270,10 @@
         function rcsAddKeys(keys, fromApi = true) {
 
             // strip languages out of data object.
-            const langs =  Object.keys(originalConfigs);
+            const langs =  Object.keys(jsonConfigs);
 
             // get array of promises containing RCS bundles per language
-            const rcsDataSet = rcsLoad(service.rcsUrl, keys, langs);
+            const rcsDataSet = rcsLoad(configs[currentLang()].services.rcsEndpoint, keys, langs);
 
             return $q(resolve => {
                 const currLang = currentLang();
@@ -314,7 +285,7 @@
                         // store list of layer ids, so we can identify new items in the config later
                         const newIds = rcsConfig.layers.map(layer => layer.id);
 
-                        originalConfigs[lang].then(fullConfig => {
+                        initialPromises[lang].then(fullConfig => {
                             if (!fromApi) {
                                 // it is possible the rcs keys we are adding already exist in the current
                                 // config object. we want to remove those keys prior to doing the merge below

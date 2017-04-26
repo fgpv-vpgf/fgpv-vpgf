@@ -43,8 +43,8 @@
         */
         function northArrow() {
             // TODO: fix after config service is done
-            // const map = configService._sharedConfig_.map.body;
-            const map = geoService.mapObject;
+            const map = configService.getSync.map.body;
+            // const map = geoService.mapObject;
             const mapPntCntr = map.extent.getCenter();
             const mapScrnCntr = map.toScreen(mapPntCntr);
             const wkid = map.spatialReference.wkid;

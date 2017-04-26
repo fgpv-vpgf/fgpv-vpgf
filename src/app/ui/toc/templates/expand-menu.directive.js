@@ -59,7 +59,7 @@
                 return;
             }
 
-            configService._sharedConfig_.map.legendBlocks.walk(block => {
+            configService.getSync.map.legendBlocks.walk(block => {
                 if (block.blockType === LegendBlock.TYPES.GROUP) {
                     (block.expanded = value);
                 }
@@ -78,7 +78,7 @@
                 return;
             }
 
-            const isAllExpanded = configService._sharedConfig_.map.legendBlocks
+            const isAllExpanded = configService.getSync.map.legendBlocks
                 .walk(block =>
                     block.blockType === LegendBlock.TYPES.GROUP ? block.expanded : null)
                 .filter(expanded =>

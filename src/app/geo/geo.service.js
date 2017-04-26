@@ -57,10 +57,17 @@
                 mapNode: mapNode
             };
 
-            let config; // reference to the current config
+            return configService.getAsync
+                .then(config => {
+                    mapService.makeMap(mapNode);
+                    config.map.legendBlocks = legendService.constructLegend(config.map.layers, config.map.legend);
+                    service.isMapReady = true;
+                    $rootScope.$broadcast(events.rvApiReady);
+                })
+                .catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
 
-            let layers;
-
+        }
+/*
             return configService.getCurrent()
                 .then(cf => {
                     config = cf;
@@ -71,7 +78,6 @@
                     // it's like this will have to be moved to the mapService or something
                     state.configObject = service.configObject = configService._sharedConfig_;
 
-                    mapService.makeMap(mapNode);
 
                     return true;
 
@@ -84,7 +90,6 @@
                     // expose mapService on geoService
                     angular.extend(service, ms);
 
-                    layers = legendService.contructLegend(state.configObject.map.layers, state.configObject.map.legend);
 
                     // layers.forEach(layer =>
                         // state.mapService.mapObject.addLayer(layer._layer));
@@ -98,11 +103,9 @@
                     angular.extend(service, lr);
 
                     // TODO: move blueprint construction to the layer registry
-                    /*
-                    const layerBlueprints = config.layers.map(layerConfig =>
-                        new LayerBlueprint.service(layerConfig, epsgLookup));
-                    service.constructLayers(layerBlueprints);
-                    */
+                    // const layerBlueprints = config.layers.map(layerConfig =>
+                    //     new LayerBlueprint.service(layerConfig, epsgLookup));
+                    // service.constructLayers(layerBlueprints);
 
                     // service.constructLayers([]);
 
@@ -122,6 +125,7 @@
                 })
                 .catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
         }
+        */
 
     }
 })();

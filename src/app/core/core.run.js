@@ -172,8 +172,7 @@
             globalRegistry.getMap(appInfo.id)._applicationLoaded(service); // this triggers once
             RV.logger.log('apiBlock', `registered viewer with id *${appInfo.id}*`);
 
-            configService.getCurrent().then(conf =>
-                globalRegistry.focusManager.addViewer($rootElement, $mdDialog, conf.fullscreen));
+            globalRegistry.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
         });
 
         $rootScope.$on(events.rvApiHalt, () => {

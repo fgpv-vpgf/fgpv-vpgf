@@ -45,7 +45,7 @@
          * @return {LayerRecord} layer record with the id specified; undefined if not found
          */
         function getLayerRecord(id) {
-            const layerRecords = configService._sharedConfig_.map.layerRecords;
+            const layerRecords = configService.getSync.map.layerRecords;
 
             return layerRecords.find(layerRecord =>
                 layerRecord.layerId === id);
@@ -59,7 +59,7 @@
          * @return {LayerRecord} created layerRecord
          */
         function makeLayerRecord(layerBlueprint) {
-            const layerRecords = configService._sharedConfig_.map.layerRecords;
+            const layerRecords = configService.getSync.map.layerRecords;
 
             let layerRecord = getLayerRecord(layerBlueprint.config.id);
             if (!layerRecord) {
@@ -99,7 +99,7 @@
                 return;
             }
 
-            const mapBody = configService._sharedConfig_.map.body;
+            const mapBody = configService.getSync.map.body;
             const layerRecord = ref.loadingQueue.shift();
 
             let isRefreshed = false;
@@ -243,7 +243,7 @@
          * @return {Featurelayer} the bounding box record; `undefined` if not found
          */
         function getBoundingBoxRecord(id) {
-            const boundingBoxRecords = configService._sharedConfig_.map.boundingBoxRecords;
+            const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
 
             return boundingBoxRecords.find(boundingBoxRecord =>
                 boundingBoxRecord.layerId === id);
@@ -258,8 +258,8 @@
          * @return {Featurelayer} the bounding box record
          */
         function makeBoundingBoxRecord(id, bbExtent) {
-            const boundingBoxRecords = configService._sharedConfig_.map.boundingBoxRecords;
-            const mapBody = configService._sharedConfig_.map.body;
+            const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
+            const mapBody = configService.getSync.map.body;
 
             let boundingBoxRecord = getBoundingBoxRecord(id);
             if (!boundingBoxRecord) {

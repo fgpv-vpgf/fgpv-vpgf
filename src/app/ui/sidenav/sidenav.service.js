@@ -200,7 +200,7 @@
             getLongLink();
 
             // fetch googleAPIKey - if it exists the short link switch option is shown
-            configService.getCurrent().then(conf =>
+            configService.getAsync.then(conf =>
                 (self.googleAPIUrl = conf.googleAPIKey ?
                     `https://www.googleapis.com/urlshortener/v1/url?key=${conf.googleAPIKey}` : null)
             );
@@ -269,7 +269,7 @@
             self.close = $mdDialog.hide;
 
             // get about map description from markdown or config file
-            configService.getCurrent()
+            configService.getAsync
                 .then(conf =>
                     (self.about = conf.about))
                 .then(about => {
@@ -291,7 +291,7 @@
                     return `<img src="${href}" alt="${title}">`;
                 };
 
-                const mdLocation = `about/${configService.currentLang()}.md`;
+                const mdLocation = `about/${configService.getSync.language}.md`;
                 $http.get(mdLocation).then(r => {
                     self.about = marked(r.data, { renderer });
                 });
@@ -346,7 +346,7 @@
          * @function private
          */
         function setupSidenavButtons() {
-            configService.getCurrent().then(data => {
+            configService.getAsync.then(data => {
                 service.config = angular.extend({}, SIDENAV_CONFIG_DEFAULT, data.sideMenu);
 
                 // a hack to get the logo url from the config to the template; need to decide where such things will be defined in the new schema
@@ -371,16 +371,18 @@
          */
         function setupLanguages() {
             // get languages available from configService
-            const langs = configService.getLanguages();
+            configService.getAsync.then(cfg => {
+                const langs = cfg.languages;
+                service.controls.language.children = langs.map(l =>
+                    ({
+                        type: 'link',
+                        label: translations[l].lang[l.substring(0, 2)],
+                        action: switchLanguage,
+                        isChecked: isCurrentLanguage,
+                        value: l
+                    }));
+            })
 
-            service.controls.language.children = langs.map(l =>
-                ({
-                    type: 'link',
-                    label: translations[l].lang[l.substring(0, 2)],
-                    action: switchLanguage,
-                    isChecked: isCurrentLanguage,
-                    value: l
-                }));
 
             /**
              * Switches the language to the language represented by the sidemenu language control object.
@@ -404,7 +406,7 @@
              * @return {Boolean} true is sidemenu language control object represents the currently selected language
              */
             function isCurrentLanguage(control) {
-                return control.value === configService.currentLang();
+                return control.value === configService.getSync.language;
             }
         }
     }

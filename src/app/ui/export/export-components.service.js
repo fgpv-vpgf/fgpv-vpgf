@@ -88,7 +88,7 @@
             if (service.items === null || force) {
                 service.items = [];
 
-                initPromise = configService.getCurrent().then(config => {
+                initPromise = configService.getAsync.then(config => {
                     const newConfig = angular.merge({}, initialExportConfig, config.export);
 
                     componentOrder.forEach(id => {

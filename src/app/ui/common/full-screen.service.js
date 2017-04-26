@@ -43,7 +43,7 @@
         const service = {
             toggle,
             isExpanded: () => ref.isExpanded,
-            isFullPageApp: configService.getCurrent().then(conf => conf.fullscreen)
+            isFullPageApp: configService.getAsync.then(conf => conf.fullscreen)
         };
 
         return service;

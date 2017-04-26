@@ -626,11 +626,9 @@
              * @return {Object} returns Esri extent object
              */
             _parseExtent (extent) {
-                const completeExtent = angular.extend(
-                    {},
-                    extent, {
-                        spatialReference: this._spatialReference
-                    });
+                console.info(extent);
+                const completeExtent = angular.extend({}, extent, { spatialReference: this._spatialReference });
+                console.info(completeExtent);
 
                 return gapiService.gapi.mapManager.getExtentFromJson(completeExtent);
             }
@@ -1055,6 +1053,7 @@
                 this._print = source.print;
                 this._search = source.search;
                 this._export = source.export;
+                this._rcsEndpoint = source.rcsEndpoint;
             }
 
             get proxyUrl () { return this._proxyUrl; }
@@ -1066,6 +1065,7 @@
             get print () { return this._print; }
             get search () { return this._search; }
             get export () { return this._export; }
+            get rcsEndpoint () { return this._rcsEndpoint; }
         }
 
         /**
@@ -1140,6 +1140,7 @@
             get layerRecords () { return this._layerRecords; }
             get boundingBoxRecords () { return this._boundingBoxRecords; }
             get legendBlocks () { return this._legendBlocks; }
+            set legendBlocks (lb) { this._legendBlocks = lb; }
 
             get body () {       return this._body; }
             get node () {       return this._node; }
@@ -1174,10 +1175,11 @@
 
                 this._version = configSource.version;
                 this._language = configSource.language;
+                this._languages = configSource.languages;
 
                 this._map = new Map(configSource.map);
                 this._services = new Services(configSource.services);
-                // TODO: parse ui sections
+                this._ui = configSource.ui; // TODO: parse ui sections
             }
 
             /**
@@ -1188,6 +1190,7 @@
 
             get version () { return this._version; }
             get language () { return this._language; }
+            get languages () { return this._languages; }
 
             get ui () { return this._ui; }
             get services () { return this._services; }

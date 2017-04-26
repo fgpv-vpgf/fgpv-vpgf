@@ -50,7 +50,7 @@
          * @function configureSearch
          */
         function configureSearch() {
-            configService.getCurrent().then(config => {
+            configService.getAsync.then(config => {
                 if (typeof config.services.search === 'undefined') {
                     enabled = false;
                 } else {

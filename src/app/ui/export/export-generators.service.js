@@ -155,8 +155,7 @@
          *                  value {Object} - a modified value passed from the ExportComponent
          */
         function mapServerGenerator(exportSize, showToast) {
-            const serverGeneratorPromise = configService.getCurrent().then(config =>
-                serverPrint(config.services.exportMapUrl));
+            const serverGeneratorPromise = configService.getAsync.then(config => serverPrint(config.services.exportMapUrl));
 
             return wrapOutput(serverGeneratorPromise);
 

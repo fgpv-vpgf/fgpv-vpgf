@@ -44,8 +44,8 @@
             $(window).on('resize', () => $rootElement.width() !== elemWidth ? updateClass() : null);
 
             // open legend panel if option is set in config for current viewport
-            configService.getCurrent().then(config => {
-                if (config.legendIsOpen && config.legendIsOpen[layoutService.currentLayout()]) {
+            configService.getAsync.then(config => {
+                if (config.ui.legendIsOpen && config.ui.legendIsOpen[layoutService.currentLayout()]) {
                     stateManager.setActive({ side: false }, 'mainToc');
                 }
             });
@@ -56,10 +56,10 @@
             $rootScope.$on(events.rvApiReady, () => {
                 $rootElement.find('.rv-esri-map svg').attr('focusable', false);
 
-                configService.getCurrent().then(config => {
+                configService.getAsync.then(config => {
                     const mapConfig = config.map.components;
 
-                    if (mapConfig.northArrow.enabled) {
+                    if (mapConfig.northArrow && mapConfig.northArrow.enabled) {
                         // set initial position of the north arrow
                         updateNorthArrow();
 

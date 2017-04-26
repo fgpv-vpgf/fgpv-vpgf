@@ -542,14 +542,14 @@
         "mapComponentsNode": {
             "type": "object",
             "properties": {
-                "geoSearch": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": true }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
-                "mouseInfo": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": true }, "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
-                "northArrow": { "type": "object", "properties": {"enabled": { "type": "boolean", "default": true } } },
-                "overviewMap": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": true }, "maximizeButton": { "type": "boolean"}, "layerType": { "type": "string"} } },
-                "scaleBar": { "type": "object", "properties": {"enabled": { "type": "boolean", "default": true } } },
-                "basemap": { "type": "object", "properties": {"enabled": { "type": "boolean", "default": true } } }
+                "geoSearch": { "type": "object", "properties": { "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
+                "mouseInfo": { "type": "object", "properties": { "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
+                "northArrow": { "type": "object" },
+                "overviewMap": { "type": "object", "properties": { "maximizeButton": { "type": "boolean"}, "layerType": { "type": "string"} } },
+                "scaleBar": { "type": "object" },
+                "basemap": { "type": "object" }
             },
-            "required": [ "geoSearch", "mouseInfo", "northArrow", "overviewMap", "scaleBar" ]
+            "additionalProperties": false
         }
     },
 
