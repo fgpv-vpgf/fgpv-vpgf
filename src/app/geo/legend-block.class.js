@@ -207,8 +207,8 @@
 
             reApplyStateSettings() {
                 if (!this._mainProxyWrapper.isInitialStateSettingsApplied) {
-                    // TODO: uncomment when extent is available on dynamic children on `rv-loaded`
-                    // this.boundingBox = this._mainProxyWrapper.boundingBox;
+                    this.boundingBox = this._mainProxyWrapper.boundingBox;
+
                     // TODO: uncomment thid when query is supported
                     // this.query = this._mainProxyWrapper.query;
 

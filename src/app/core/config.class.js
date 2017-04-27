@@ -537,12 +537,16 @@
 
                 this._outfields = source.outfields || '*';
                 this._stateOnly = source.stateOnly;
+                this._extent = source.extent ?
+                    gapiService.gapi.mapManager.getExtentFromJson(source.extent) :
+                    undefined;
 
                 this.isLayerEntry = true;
             }
 
             get outfields () { return this._outfields; }
             get stateOnly () { return this._stateOnly; }
+            get extent () { return this._extent; }
 
             get layerType () { return layerTypes.ESRI_DYNAMIC; }
         }
