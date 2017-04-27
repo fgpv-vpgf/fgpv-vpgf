@@ -303,7 +303,7 @@
           {
             "layerId": "scaleDep",
             "controlledIds": [
-              "ecogeo"
+              "ecogeo", "powerplant100mw-25"
             ]
           },
           {
@@ -325,7 +325,10 @@
                 "layerId": "esri_tile"
               },
               {
-                "layerId": "ecogeofull"
+                "layerId": "ecogeofull",
+                "controlledIds": [
+                  "powerplant100mw-12"
+                ]
               }
             ]
           },
@@ -377,6 +380,24 @@
     },
     "layers": [
       {
+        "id": "powerplant100mw-25",
+        "name": "Power Plants, 25",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 11
+          },
+          {
+            "index": 30
+          }
+        ],
+        "state": {
+          "boundingBox": true,
+          "opacity": 0.2
+        },
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+      {
         "id": "powerplant100mw-2",
         "name": "Power Plants, 2",
         "layerType": "esriFeature",
@@ -407,6 +428,17 @@
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
       },
       {
+        "id": "powerplant100mw-12",
+        "name": "Power Plants, 12",
+        "layerType": "esriFeature",
+        "state": {
+          "opacity": 0.4
+        },
+        "disabledControls": ["opacity"],
+        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/12"
+      },
+      {
         "id": "scaleDep",
         "name": "Air Ozone Scale Dep",
         "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2",
@@ -415,7 +447,7 @@
         "state": {
           "opacity": 0.75
         },
-        "disabledControls": [ "opacity" ]
+        "disabledControls": [ "query" ]
       },
       {
         "id":"ecogeo",
@@ -430,7 +462,8 @@
         "layerType": "esriDynamic",
         "layerEntries": [
           {
-            "index": 8
+            "index": 8,
+            "controls": ["opacity"]
           },
           {
             "index": 7,
@@ -499,7 +532,8 @@
         "layerType":"esriTile",
         "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer",
         "state": {
-          "opacity": 0.5
+          "opacity": 0.5,
+          "visibility": false
         }
       }
     ],

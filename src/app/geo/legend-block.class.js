@@ -20,7 +20,12 @@
         const ref = {
             walkFunction,
             aggregateStates,
-            getPropertyDescriptor
+            getPropertyDescriptor,
+
+            isControlVisible,
+            isControlDisabled,
+            isControlSystemDisabled,
+            isControlUserDisabled
         };
 
         const TYPES = {
@@ -31,8 +36,8 @@
         };
 
         class SymbologyStack {
-            constructor(proxy, blockConfig, isInteractive = false) {
-                this._proxy = proxy;
+            constructor(proxyWrapper, blockConfig, isInteractive = false) {
+                this._proxyWrapper = proxyWrapper;
                 this._blockConfig = blockConfig;
                 this._isInteractive = isInteractive;
             }
@@ -42,7 +47,7 @@
             _fannedOut = false; // jshint ignore:line
             _expanded = false; // jshint ignore:line
 
-            get stack () {          return this._proxy.symbology || this._blockConfig.symbologyStack; }
+            get stack () {          return this._proxyWrapper.symbology || this._blockConfig.symbologyStack; }
             get renderStyle () {    return this._blockConfig.symbologyRenderStyle; }
 
             get fannedOut () {      return this._fannedOut; }
@@ -56,24 +61,80 @@
             }
         }
 
-        /* -------- */
-        class LegendBlock {
-            constructor (layerProxy, blockConfig) {
+        class ProxyWrapper {
+            constructor(proxy, layerConfig) {
+                this._proxy = proxy;
+                this._layerConfig = layerConfig;
 
-                // this._id = `${this.blockType}_${++legendBlockCounter}`;
+                this.isControlVisible = ref.isControlVisible.bind(this);
+                this.isControlDisabled = ref.isControlDisabled.bind(this);
+                this.isControlSystemDisabled = ref.isControlSystemDisabled.bind(this);
+                this.isControlUserDisabled = ref.isControlUserDisabled.bind(this);
 
-                // this._layerProxy = layerProxy;
-                this._blockConfig = blockConfig;
-
-                /*Object.defineProperty(this._layerProxy.main, 'isRefreshing', {
-                    get: () => false,
-                    enumerable: true,
-                    configurable: true
-                });*/
+                this._isInitialStateSettingsApplied = false;
             }
 
-            // _id;
-            // _layerProxy;
+            applyInitialStateSettings() {
+                if (this._isInitialStateSettingsApplied) {
+                    return;
+                }
+
+                this._proxy.setOpacity(this._layerConfig.state.opacity);
+                this._proxy.setVisibility(this._layerConfig.state.visibility);
+
+                this._isInitialStateSettingsApplied = true;
+            }
+
+            get isInitialStateSettingsApplied () { return this._isInitialStateSettingsApplied }
+
+            zoomToBoundary(...args) {          this._proxy.zoomToBoundary(...args); }
+
+            get state () {              return this._proxy.state; }
+            get name () {               return (this._proxy || this._layerConfig).name; }
+            get layerType () {          return this._proxy.layerType; }
+            get featureCount () {       return this._proxy.featureCount; }
+            get geometryType () {       return this._proxy.geometryType; }
+            get extent () {             return this._proxy.extent; }
+            get symbology() {           return this._proxy.symbology; }
+
+            get opacity () { return this._proxy.opacity; }
+            get visibility () { return this._proxy.visibility; }
+            get query () { return this; }
+            get snapshot () { return this; }
+            get boundingBox () { return this._layerConfig.state.boundingBox; }
+            // bounding box belongs to the LegendBlock, not ProxyWrapper
+
+            set opacity (value) {
+                if (this.isControlSystemDisabled('opacity')) {
+                    return;
+                }
+
+                this._proxy.setOpacity(value);
+            }
+            set visibility (value) {
+                if (this.isControlSystemDisabled('visibility')) {
+                    return;
+                }
+
+                this._proxy.setVisibility(value);
+            }
+            set query (value) { this._ = value; }
+            set snapshot (value) { this._ = value; }
+
+            get metadataUrl () {        return this._layerConfig.metadataUrl; }
+            get catalogueUrl () {       return this._layerConfig.catalogueUrl; }
+
+            get availableControls () {      return this._layerConfig.controls; }
+            get disabledControls () {       return this._layerConfig.disabledControls; }
+            get userDisabledControls () {   return this._layerConfig.userDisabledControls; }
+        }
+
+        class LegendBlock {
+            constructor (blockConfig, controlled = false) {
+                this._blockConfig = blockConfig;
+
+                this._controlled = controlled;
+            }
 
             get isInteractive () { return false; }
 
@@ -85,21 +146,20 @@
                 return this._id;
             }
 
-            // get layerProxy () {     return this._layerProxy; }
-
             get blockConfig () {    return this._blockConfig; }
-            // get blockType () {      return this._blockType; }
             get template () {       return this.blockType; }
 
-            static INFO = 'info'; // jshint ignore:line
-            static NODE = 'node'; // jshint ignore:line
-            static GROUP = 'group'; // jshint ignore:line
-            static SET = 'set'; // jshint ignore:line
+            get controlled () {         return this._controlled; }
+
+            static INFO = 'info';
+            static NODE = 'node';
+            static GROUP = 'group';
+            static SET = 'set';
         }
 
         class LegendInfo extends LegendBlock {
             constructor(blockConfig) {
-                super({}, blockConfig);
+                super(blockConfig);
             }
 
             get blockType () { return TYPES.INFO; }
@@ -111,8 +171,13 @@
         // can be node or group
         class LegendEntry extends LegendBlock {
 
-            constructor(...args) {
-                super(...args);
+            constructor(blockConfig, controlled) {
+                super(blockConfig, controlled);
+
+                this.isControlVisible = ref.isControlVisible.bind(this);
+                this.isControlDisabled = ref.isControlDisabled.bind(this);
+                this.isControlSystemDisabled = ref.isControlSystemDisabled.bind(this);
+                this.isControlUserDisabled = ref.isControlUserDisabled.bind(this);
             }
 
             get isInteractive () { return true; }
@@ -121,53 +186,50 @@
 
             get isSelected () {         return this._isSelected; }
             set isSelected (value) {      this._isSelected = value; return this; }
-
-            isControlVisible(controlName) {
-                return this.availableControls.indexOf(controlName) !== -1;
-            }
-
-            isControlDisabled(controlname) {
-                return this.disabledControls.indexOf(controlname) !== -1;
-            }
-
-            isControlSystemDisabled(controlName) {
-                const value =
-                    this.isControlDisabled(controlName) ||
-                    !this.isControlVisible(controlName);
-
-                return value;
-            }
-
-            isControlUserDisabled(controlName) {
-                return this.userDisabledControls.indexOf(controlName) !== -1;
-            }
         }
 
         class LegendNode extends LegendEntry {
 
-            constructor(proxies, blockConfig, layerConfig) {
-                super({}, blockConfig);
+            constructor(mainProxyWrapper, blockConfig, controlled) {
+                super(blockConfig, controlled);
 
-                this._mainProxy = proxies.main;
-                this._controlledProcies = proxies.adjunct;
-
-                this._layerConfig = layerConfig;
+                this._mainProxyWrapper = mainProxyWrapper;
+                this._controlledProxyWrappers = [];
 
                 this._aggregateStates = ref.aggregateStates;
                 this._symbologyStack =
-                    new SymbologyStack(this._mainProxy, blockConfig, true);
+                    new SymbologyStack(this._mainProxyWrapper, blockConfig, true);
+            }
+
+            addControlledProxyWrapper(proxyWrapper) {
+                this._controlledProxyWrappers.push(proxyWrapper);
+            }
+
+            reApplyStateSettings() {
+                if (!this._mainProxyWrapper.isInitialStateSettingsApplied) {
+                    // TODO: uncomment when extent is available on dynamic children on `rv-loaded`
+                    // this.boundingBox = this._mainProxyWrapper.boundingBox;
+                    // TODO: uncomment thid when query is supported
+                    // this.query = this._mainProxyWrapper.query;
+
+                    // initial snapshot should be handled by geoapi
+                }
+
+                this._allProxyWrappers.map(proxyWrapper =>
+                    proxyWrapper.applyInitialStateSettings());
             }
 
             get blockType () { return TYPES.NODE; }
 
-            get _allProxies () {            return [this._mainProxy].concat(this._controlledProcies); }
+            get _allProxyWrappers () {      return [this._mainProxyWrapper].concat(this._controlledProxyWrappers); }
 
-            get availableControls () {      return this._layerConfig.controls; }
-            get disabledControls () {       return this._layerConfig.disabledControls; }
-            get userDisabledControls () {   return this._layerConfig.userDisabledControls; }
+            get availableControls () {      return this._mainProxyWrapper.availableControls; }
+            get disabledControls () {       return this._mainProxyWrapper.disabledControls; }
+            get userDisabledControls () {   return this._mainProxyWrapper.userDisabledControls; }
 
             get state () {
-                const allStates = this._allProxies.map(proxy => proxy.state);
+                const allStates = this._allProxyWrappers.map(proxyWrapper =>
+                    proxyWrapper.state);
                 const combinedState = this._aggregateStates(allStates);
 
                 return combinedState;
@@ -190,42 +252,36 @@
                 return state === 'rv-loading' || state === 'rv-refresh';
             }
 
-            get name () {               return (this._mainProxy || this._config).name; }
-            get layerType () {          return this._mainProxy.layerType; }
-            get featureCount () {       return this._mainProxy.featureCount; }
-            get geometryType () {       return this._mainProxy.geometryType; }
+            get name () {               return this._mainProxyWrapper.name; }
+            get layerType () {          return this._mainProxyWrapper.layerType; }
+            get featureCount () {       return this._mainProxyWrapper.featureCount; }
+            get geometryType () {       return this._mainProxyWrapper.geometryType; }
 
-            get visibility () {         return this._mainProxy.visibility; }
+            get visibility () {         return this._mainProxyWrapper.visibility; }
             set visibility (value) {
                 if (this.isControlSystemDisabled('visibility')) {
                     return;
                 }
 
-                this._allProxies.forEach(proxy => {
-                    // TODO: try/catch
-                    proxy.setVisibility(value);
-                });
+                this._allProxyWrappers.forEach(proxyWrapper =>
+                    (proxyWrapper.visibility = value)
+                );
 
                 // hide bounding box when the layer goes invisible
                 if (!value) {
                     this.boundingBox = false;
                 }
-
-                return this;
             }
 
-            get opacity () {            return this._mainProxy.opacity; }
+            get opacity () {            return this._mainProxyWrapper.opacity; }
             set opacity (value) {
                 if (this.isControlSystemDisabled('opacity')) {
                     return;
                 }
 
-                this._allProxies.forEach(proxy => {
-                    // TODO: try/catch
-                    proxy.setOpacity(value);
-                });
-
-                return this;
+                this._allProxyWrappers.forEach(proxyWrapper =>
+                    (proxyWrapper.opacity = value)
+                );
             }
 
             /**
@@ -237,12 +293,13 @@
              */
             _makeBbox () {
                 if (!this._bboxProxy) {
-                    this._bboxProxy = layerRegistry.makeBoundingBoxRecord(`${this.id}_bbox`, this._mainProxy.extent);
+                    this._bboxProxy = layerRegistry
+                        .makeBoundingBoxRecord(`${this.id}_bbox`, this._mainProxyWrapper.extent);
                 }
             }
             get boundingBox () {
                 // TODO: is extent always defined?
-                if (!this._mainProxy.extent) {
+                if (!this._mainProxyWrapper.extent) {
                     return false;
                 }
 
@@ -269,24 +326,24 @@
             }
 
             get formattedData () {
-                return this._mainProxy.formattedAttributes;
+                return this._mainProxyWrapper.formattedAttributes;
             }
 
             zoomToBoundary () {
-                this._mainProxy.zoomToBoundary(configService._sharedConfig_.map.body);
+                this._mainProxyWrapper.zoomToBoundary(configService._sharedConfig_.map.body);
             }
 
             get symbologyStack () {     return this._symbologyStack; }
 
-            get metadataUrl () {        return this._layerConfig.metadataUrl; }
-            get catalogueUrl () {       return this._layerConfig.catalogueUrl; }
+            get metadataUrl () {        return this._mainProxyWrapper.metadataUrl; }
+            get catalogueUrl () {       return this._mainProxyWrapper.catalogueUrl; }
         }
 
         // who is responsible for populating legend groups with entries? legend service or the legend group itself
         class LegendGroup extends LegendEntry {
 
-            constructor(blockConfig) {
-                super();
+            constructor(blockConfig, controlled) {
+                super(blockConfig, controlled);
 
                 this._name = blockConfig.name;
                 this._expanded = blockConfig.expanded;
@@ -299,6 +356,12 @@
             }
 
             get blockType () { return TYPES.GROUP; }
+
+            reApplyStateSettings() {
+                // this will ensure all the controlled layers settings in this group match settings of the observable entries
+                this.visibility = this.visibility;
+                this.opacity = this.opacity;
+            }
 
             _entries = [];
 
@@ -332,7 +395,7 @@
             get name () {                   return this._name; }
 
             get visibility () {
-                return this._activeEntries.some(entry =>
+                return this._observableEntries.some(entry =>
                     entry.visibility);
             }
             set visibility (value) {
@@ -355,10 +418,11 @@
                 const defaultValue = 0.5;
                 let isAllSame = false;
 
-                const entries = this._activeEntries;
-                const value = entries[0].opacity;
+                const entries = this._observableEntries;
+                let value;
 
                 if (entries.length > 0) {
+                    value = entries[0].opacity;
                     isAllSame = entries.every(entry =>
                         entry.opacity === value);
                 }
@@ -384,10 +448,16 @@
 
             get entries () {                return this._entries; }
             get _activeEntries () {
-                return this.entries.filter(entry =>
-                    entry.blockType === TYPES.SET ||
-                    entry.blockType === TYPES.GROUP ||
-                    entry.blockType === TYPES.NODE);
+                return this.entries
+                    .filter(entry =>
+                        entry.blockType === TYPES.SET ||
+                        entry.blockType === TYPES.GROUP ||
+                        entry.blockType === TYPES.NODE);
+            }
+            get _observableEntries () {
+                // when calculating group opacity or visibility, exclude controlled layers as they might have locked opacity specified in the config
+                return this._activeEntries.filter(entry =>
+                    !entry.controlled);
             }
 
             addEntry (entry, position = this._entries.length) {
@@ -413,8 +483,8 @@
 
         class LegendSet extends LegendEntry {
             // cannot directly contain another legend set
-            constructor(...args) {
-                super(...args);
+            constructor(blockConfig) {
+                super(blockConfig);
 
                 this._entries = [];
                 this._entryWatchers = [];
@@ -542,10 +612,48 @@
             Set: LegendSet,
             Info: LegendInfo,
 
+            ProxyWrapper,
+
             TYPES
         };
 
         return service;
+
+        /**
+         *
+         * @param {String} controlName
+         * @return {Boolean} true if the control specified should be visible in UI
+         */
+        function isControlVisible(controlName) {
+            return this.availableControls.indexOf(controlName) !== -1;
+        }
+
+        /**
+         *
+         * @param {String} controlName
+         * @return {Boolean} true if the control specified should be disabled in UI
+         */
+        function isControlDisabled(controlname) {
+            return this.disabledControls.indexOf(controlname) !== -1;
+        }
+
+        /**
+         *
+         * @param {String} controlName
+         * @return {Boolean} true if the control specified is locked to modifications by the system and user
+         */
+        function isControlSystemDisabled(controlName) {
+            return this.isControlDisabled(controlName);
+        }
+
+        /**
+         *
+         * @param {String} controlName
+         * @return {Boolean} true if the control specified is locked to modifications by user but can be changed by the system
+         */
+        function isControlUserDisabled(controlName) {
+            return this.userDisabledControls.indexOf(controlName) !== -1;
+        }
 
         /**
          * Given an array of proxy states, returns the aggregates state using the following rules:

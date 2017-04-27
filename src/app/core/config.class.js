@@ -7,6 +7,19 @@
      * @requires dependencies
      * @description     *
      *
+     * ### About controls:
+     * Each layer and group has two arrays of control settings: `controls` and `disabledControls`.
+     * `controls` specify if the layer has corresponding ui elements to control the setting
+     * `disabledConrols` specify if the corresponding setting can be modified
+     *
+     * #### Control behaviour
+     * | control | disabledControl | result                                                          |
+     * |---------|-----------------|-----------------------------------------------------------------|
+     * | x       |                 | control is visible to the user and can be modified              |
+     * |         | x               | control is invisible and is locked to modification              |
+     * |         |                 | control is invisible to the user, but can be modified indirecly |
+     * | x       | x               | control is visible and is locked to modifications               |
+     *
      */
     angular
         .module('app.core')
@@ -35,12 +48,15 @@
                     controls: [
                         'opacity',
                         'visibility',
-                        'symbology',
                         'query',
+
+                        'symbology',
                         'reload',
                         'remove',
                         'settings'
-                    ]
+                    ],
+                    disabledControls: [],
+                    userDisabledControls: []
                 }
             },
             layer: {
@@ -235,22 +251,26 @@
          * Applies supplied layer node and layer entry node defaults to the node/entry node source config object (not typed config).
          *
          * @function applyLayerNodeDefaults
-         * @param {Object} ownSource original config object from the config file
-         * @param {Object} ownDefaults default value for this layer node or layer entry node
+         * @param {Object} ownSource original config object from the config file (not typed)
+         * @param {Object} ownDefaults default value for this layer node or layer entry node (not typed)
          * @param {Object} parentSource [optional={}] already defaulted config of an immediate parent; needed only for dynamic layres (possibly wms as well)
          * @return {Object} a copy of the original `ownSource` config with state, controls, disabledControls and userDisabledControls applied
          */
-        function applyLayerNodeDefaults(ownSource, ownDefaults, parentSource = {}) {
+        function applyLayerNodeDefaults(ownSource =
+            { state: {}, controls: [], disabledControls: [], userDisabledControls: [] },
+            ownDefaults, parentSource = {}) {
             const ownSourceCopy = angular.copy(ownSource);
 
             ownSourceCopy.state = _defaultState(ownSourceCopy.state, ownDefaults.state, parentSource.state);
 
             ownSourceCopy.controls = _defaultControls(ownSourceCopy.controls,
-                ownDefaults.controls, parentSource.controls);
+                ownDefaults.controls, ownDefaults.controls, parentSource.controls);
+
             ownSourceCopy.disabledControls = _defaultControls(ownSourceCopy.disabledControls,
-                ownDefaults.disabledControls, parentSource.disabledControls);
+                ownDefaults.disabledControls, ownDefaults.controls, parentSource.disabledControls);
+
             ownSourceCopy.userDisabledControls = _defaultControls(ownSourceCopy.userDisabledControls,
-                ownDefaults.userDisabledControls, parentSource.userDisabledControls);
+                ownDefaults.userDisabledControls, ownDefaults.controls, parentSource.userDisabledControls);
 
             return ownSourceCopy;
 
@@ -289,12 +309,12 @@
              * Controls are defaulted in the following order:
              * - own controls specified
              *   - parent controls specified
-             *     - return intersect between own, parent and default controls
+             *     - return intersect between own, parent and available controls
              *   - parent controls are not specified
-             *     - return intersect between own and default controls
+             *     - return intersect between own and available controls
              * - own controls are not specified
              *   - parent controls specified
-             *     - return intersect between parent and default controls
+             *     - return intersect between parent and availalbe controls
              *   - parent controls are not specified
              *     - return default controls
              *
@@ -302,28 +322,27 @@
              * @private
              * @param {Array} controls original controls
              * @param {Array} controlsDefault controls defaults
-             * @param {Array} parentControls [optional={}] parent defaulted values if child of a dynamic wms layer
+             * @param {Array} controlsAvailable controls which are available on this layer type
+             * @param {Array} controlsParent [optional={}] parent defaulted values if child of a dynamic wms layer
              * @return {Array} defaulted state object
              */
-            function _defaultControls(controls, controlsDefault, parentControls) {
+            function _defaultControls(controls, controlsDefault, controlsAvailable, controlsParent) {
                 let result = controls;
 
                 if (typeof controls === 'undefined') {
-                    if (typeof parentControls !== 'undefined') {
-                        result = common.intersect(parentControls, controlsDefault);
-                    }
-
-                    result = angular.copy(controlsDefault);
-
-                } else {
-                    if (typeof parentControls !== 'undefined') {
-                        result = common.intersect(controls, parentControls);
+                    if (typeof controlsParent !== 'undefined') {
+                        result = common.intersect(controlsParent, controlsAvailable);
                     } else {
-                        result = common.intersect(result, controlsDefault);
+                        result = angular.copy(controlsDefault);
+                    }
+                } else {
+                    if (typeof controlsParent !== 'undefined') {
+                        result = common.intersect(controls, controlsParent);
                     }
                 }
 
-                return result;
+                // this will just remove names that are not controls or not available on this layer type
+                return common.intersect(result, controlsAvailable);
             }
         }
 

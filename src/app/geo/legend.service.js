@@ -28,11 +28,10 @@
         .module('app.geo')
         .factory('legendService', legendServiceFactory);
 
-    function legendServiceFactory(Geo, ConfigObject, LegendBlock, LayerBlueprint, configService, layerRegistry, common) {
+    function legendServiceFactory($q, Geo, ConfigObject, LegendBlock, LayerBlueprint, configService, layerRegistry, common) {
 
         const service = {
             contructLegend,
-            getLegendBlock,
 
             importLayer
         };
@@ -91,17 +90,15 @@
                     // real blueprints are only available on Legend.NODEs
                     const nodeBlueprints = {
                         main: _getLayerBlueprint(blockConfig.layerId),
-                        adjunct: blockConfig.controlledIds.map(id =>
+                        controlled: blockConfig.controlledIds.map(id =>
                             _getLayerBlueprint(id))
                     };
 
-                    const nodeProxies = _getLegendBlockProxies(blockConfig, nodeBlueprints);
-
                     // dynamic layers render as LegendGroup blocks; all other layers are rendered as LegendNode blocks;
                     if (nodeBlueprints.main.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                        return _makeDynamicGroupBlock(blockConfig, nodeBlueprints.main, nodeProxies);
+                        return _makeDynamicGroupBlock(blockConfig, nodeBlueprints);
                     } else {
-                        return _makeNodeBlock(blockConfig, nodeBlueprints.main, nodeProxies);
+                        return _makeNodeBlock(blockConfig, nodeBlueprints);
                     }
                 },
                 [legendTypes.GROUP]: _makeGroupBlock,
@@ -120,34 +117,56 @@
              * @function _makeDynamicGroupBlock
              * @private
              * @param {LayerNode} blockConfig legend entry config object
-             * @param {LayerBlueprint} mainBlueprint layerBlueprint of the
+             * @param {Object} blueprints an object containing the main and controlled blueprints { main: <LayerBlueprint>, controlled: [<LayerBlueprint>] }
              * @return {LegendBlock.GROUP} the resulting LegendBlock.GROUP object
              */
-            function _makeDynamicGroupBlock(blockConfig, mainBlueprint, proxies) {
-                const layerConfig = mainBlueprint.config;
+            function _makeDynamicGroupBlock(blockConfig, blueprints) {
+                const layerConfig = blueprints.main.config;
 
-                // TODO: handle adjunct proxies; they need to be converted to invisible Legendblocks and added to the group
-                console.log(proxies.adjunct);
+                const groupDefaults = ConfigObject.DEFAULTS.legend[ConfigObject.TYPES.legend.GROUP];
+
+                // convention:
+                // variable names ending in `source` are raw JSON objects
+                // variable names ending in `config` are typed objects
+
+                // this will load the layer record onto the map, but we don't need the root proxy of a dynamic layer as it's not used
+                _getLegendBlockProxy(blueprints.main);
 
                 // to create a group for a dynamic layer, create a entryGroup config object by using properties
                 // from dynamic layer definition config object
-                const derivedEntryGroupConfig = {
+                const derivedEntryGroupSource = {
                     name: layerConfig.name,
                     children: [],
-                    controls: layerConfig.controls,
-                    disabledControls: layerConfig.disabledControls
+                    controls: common.intersect(layerConfig.controls, groupDefaults.controls),
+                    disabledControls: common.intersect(layerConfig.disabledControls, groupDefaults.controls)
                 };
-                const entryGroup = new ConfigObject.legend.EntryGroup(derivedEntryGroupConfig);
 
-                const legendBlockGroup = new LegendBlock.Group(entryGroup);
+                // convert the newly created config source into a types config and a Legend Group
+                const derivedEntryGroupConfig = new ConfigObject.legend.EntryGroup(derivedEntryGroupSource);
+                const legendBlockGroup = new LegendBlock.Group(derivedEntryGroupConfig);
 
                 // wait for the dynamic layer record to load to get its children
                 const layerRecord = layerRegistry.getLayerRecord(blockConfig.layerId);
 
+                // TODO: there is a potential for race condition if a listener is set too late
                 layerRecord.addStateListener(_onLayerRecordLoad);
 
-                const dynamicLayerChildDefaults = angular.copy(
-                    ConfigObject.DEFAULTS.layer[Geo.Layer.Types.ESRI_DYNAMIC].child);
+                // to handle controlled layers, first, get their proxies, it will load the layers,
+                // then convert the list of return proxyWrappers into a list of LegendBlocks, marked them as controlled (makes them hidden in the layer selector),
+                // and add to the main dynamic group
+                blueprints.controlled.forEach(blueprint =>
+                    _getControlledLegendBlockProxy(blueprint).then(proxyWrappers => {
+
+                        proxyWrappers.forEach(proxyWrapper => {
+                            const entryConfig = new ConfigObject.legend.Entry({});
+                            const legendBlock = new LegendBlock.Node(proxyWrapper, entryConfig, true);
+                            legendBlock.reApplyStateSettings();
+
+                            legendBlockGroup.addEntry(legendBlock);
+                        })
+
+                        legendBlockGroup.reApplyStateSettings();
+                    }));
 
                 return legendBlockGroup;
 
@@ -162,66 +181,125 @@
                  */
                 function _onLayerRecordLoad(state) {
                     if (state === 'rv-loaded') {
-                        console.info('layer state:', state);
-
-                        // dynamic children might not support opacity if the layer is not a true dynamic layer
-                        // TODO: check/handle controlledIds proxies as well
-                        // TODO: allow for an optional description why the control is disabled
-                        if (!layerRecord.isTrueDynamic) {
-                            dynamicLayerChildDefaults.userDisabledControls.push('opacity');
-                        }
-
-                        const tempEntryGroup = new ConfigObject.legend.EntryGroup({
-                            children: layerRecord.getChildTree()
-                        });
-
-                        //common.$timeout(() => {
-                        tempEntryGroup.children.forEach((tempEntryGroupChild, index) =>
-                            _addChildBlock(tempEntryGroupChild, legendBlockGroup, layerConfig));
-                        //}, 5000);
-
                         layerRecord.removeStateListener(_onLayerRecordLoad);
+
+                        const tree = _createDynamicChildTree(layerRecord, layerConfig);
+                        tree.forEach(item =>
+                            _addChildBlock(item, legendBlockGroup));
+
+                        legendBlockGroup.reApplyStateSettings();
                     }
                 }
 
                 /**
-                 * Traverses dynamic layerEntries and converts them to a hierarchy of LegendBlocks.
+                 * Traverses dynamic child tree and converts them to a hierarchy of LegendBlocks.
                  *
                  * @function _addChildBlock
                  * @private
-                 * @param {Entry|GroupEntry} entryObject typed config objects
-                 * @param {LegendBlock.GROUP} parent parent LegendBlock
-                 * @param {LayerNode} parentLayerConfig typed layer config object
+                 * @param {Object} item a tree item in the form of { layerEntry: <Number>, childs: [<Object>], proxyWrapper: { proxy: <Proxy>, layerConfig: <LayerNode> } }, `childs` and `proxyWrapper` are mutually exclusive
+                 * @param {LegendBlock.GROUP} parentLegendGroup parent LegendGroup block when the newly created child will be added
                  */
-                function _addChildBlock(entryObject, parent, parentLayerConfig) {
-                    let chilLegenddBlock;
+                function _addChildBlock(item, parentLegendGroup) {
+                    let legendBlock;
 
-                    // get the initial layerEntry config from the layer record config
+                    if (item.childs) {
+                        const groupConfig = new ConfigObject.legend.EntryGroup(item.groupSource);
+                        legendBlock = new LegendBlock.Group(groupConfig);
+
+                        item.childs.forEach(child =>
+                            _addChildBlock(child, legendBlock));
+
+                    } else {
+                        const entryConfig = new ConfigObject.legend.Entry(item);
+                        legendBlock = new LegendBlock.Node(item.proxyWrapper, entryConfig);
+                        legendBlock.reApplyStateSettings();
+                    }
+
+                    parentLegendGroup.addEntry(legendBlock);
+                }
+            }
+
+            /**
+             * Traverses the dynamic layer record childTree structure, defaults their config based on any optins specified
+             * in the layer record config and their immediate parent, fetches corresponding proxies and stores proxyWrappers on the tree
+             *
+             * @function _createDynamicChildTree
+             * @private
+             * @param {LayerRecord} layerRecord the loaded dynamic layer record to travers
+             * @param {LayerNode} layerConfig the typed and defaults config of the supplied dynamic layer record
+             * @return {Object}
+             */
+            function _createDynamicChildTree(layerRecord, layerConfig) {
+                const dynamicLayerChildDefaults = angular.copy(
+                    ConfigObject.DEFAULTS.layer[Geo.Layer.Types.ESRI_DYNAMIC].child);
+
+                const groupDefaults = ConfigObject.DEFAULTS.legend[ConfigObject.TYPES.legend.GROUP];
+
+                // dynamic children might not support opacity if the layer is not a true dynamic layer
+                // TODO: allow for an optional description why the control is disabled
+                if (!layerRecord.isTrueDynamic) {
+                    dynamicLayerChildDefaults.userDisabledControls.push('opacity');
+                }
+
+                const tree = layerRecord.getChildTree();
+                tree.forEach(treeChild =>
+                    _createDynamicChildLegendBlock(treeChild, layerConfig.source));
+
+                return tree;
+
+                /**
+                 * Recursively parses individual children of the dynamic layer record child tree.
+                 * If a child is a leaf, fetches it's proxy object and derives a layer config for that leaf. Proxy wrapper is stored directly on the child itself.
+                 * If a child is a group, derives the legend block config for this group, and runs itself on its children. Block config is stored on the child itself.
+                 *
+                 * @function _createDynamicChildLegendBlock
+                 * @private
+                 * @param {Object} treeChild a tree child object of the form { layerEntry: <Number>, childs: [<treechild>], name: <String> }, `childs` and `name` present only on groups
+                 * @param {Object} parentLayerConfigSource
+                 */
+                function _createDynamicChildLegendBlock(treeChild, parentLayerConfigSource) {
+                    let childLegendBlock;
+
+                    // get the initial layerEntry config from the layer record config, or
+                    // create a source object if config object can't be found (this will happen when the dynamic subgroups are expanded)
                     const layerEntryConfig = layerConfig.layerEntries.find(entry =>
-                        entry.index === entryObject.entryIndex);
+                        entry.index === treeChild.entryIndex) || { source: { entryIndex: treeChild.entryIndex } };
 
                     // `layerEntryConfig` might have some controls and states specified;
                     // apply immediate parent state (which can be root) and child default values
-                    const derivedChildBlockLayerConfig = ConfigObject.applyLayerNodeDefaults(
-                        layerEntryConfig.source, dynamicLayerChildDefaults, parentLayerConfig);
+                    const derivedChildLayerConfigSource = ConfigObject.applyLayerNodeDefaults(
+                        layerEntryConfig.source, dynamicLayerChildDefaults, parentLayerConfigSource);
 
-                    if (entryObject.children) {
-                        // TODO: this line might not be needed as entryObject should be typed already
-                        chilLegenddBlock = new LegendBlock.Group(entryObject);
+                    if (treeChild.childs) {
 
-                        entryObject.children.forEach(subEntryObject =>
-                            _addChildBlock(subEntryObject, chilLegenddBlock, derivedChildBlockLayerConfig));
+                        // converting a child source config into a group source config;
+                        // for that we need to filter out `controls` array, add `name` and empty `children` array
+                        const derivedChildGroupConfigSource = angular.merge({},
+                            derivedChildLayerConfigSource,
+                            {
+                                children: [],
+                                controls: common.intersect(
+                                    derivedChildLayerConfigSource.controls,
+                                    groupDefaults.controls
+                                ),
+                                disabledControls: common.intersect(
+                                    derivedChildLayerConfigSource.disabledControls,
+                                    groupDefaults.controls),
+                                name: treeChild.name
+                            });
+
+                        treeChild.groupSource = derivedChildGroupConfigSource;
+
+                        treeChild.childs.forEach(subTreeChild =>
+                            _createDynamicChildLegendBlock(subTreeChild, derivedChildLayerConfigSource));
                     } else {
-                        const proxies = {
-                            main: layerRecord.getChildProxy(entryObject.entryIndex),
-                            adjunct: []
-                        };
+                        const mainProxy = layerRecord.getChildProxy(treeChild.entryIndex);
+                        const derviedChildLayerConfig = new ConfigObject.layers.DynamicLayerEntryNode(
+                            derivedChildLayerConfigSource);
+                        const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, derviedChildLayerConfig);
 
-                        chilLegenddBlock = new LegendBlock.Node(proxies, entryObject, derivedChildBlockLayerConfig);
-                        _applyState(chilLegenddBlock, derivedChildBlockLayerConfig.state);
+                        treeChild.proxyWrapper = proxyWrapper;
                     }
-
-                    parent.addEntry(chilLegenddBlock);
                 }
             }
 
@@ -254,48 +332,53 @@
              * @function _makeNodeBlock
              * @private
              * @param {Object} blockConfig legend entry config object
+             * @param {Object} blueprints an object containing the main and controlled blueprints { main: <LayerBlueprint>, controlled: [<LayerBlueprint>] }
              * @return {LegendBlock.NODE} the resulting LegendBlock.NODE object
              */
-            function _makeNodeBlock(blockConfig, mainBlueprint, proxies) {
-                const layerConfig = mainBlueprint.config;
-                const node = new LegendBlock.Node(proxies, blockConfig, layerConfig);
+            function _makeNodeBlock(blockConfig, blueprints) {
+                const layerConfig = blueprints.main.config;
+                const mainProxy = _getLegendBlockProxy(blueprints.main, blockConfig);
+
+                const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, layerConfig);
+
+                const node = new LegendBlock.Node(proxyWrapper, blockConfig);
 
                 const layerRecord = layerRegistry.getLayerRecord(blockConfig.layerId);
                 layerRecord.addStateListener(_onLayerRecordLoad);
 
+                // handling controlled layers by getting their proxies and adding them as controlled proxies to the legend node
+                blueprints.controlled.forEach(blueprint =>
+                    _getControlledLegendBlockProxy(blueprint).then(proxyWrappers =>
+                        proxyWrappers.forEach(proxyWrapper => {
+                            node.addControlledProxyWrapper(proxyWrapper);
+
+                            // reapply state setting to the node so any settings changed by the user will apply to the newly added controlled proxy (this is possible if the controlled is a dynamic layer and there is a lag when fetching its child proxies)
+                            node.reApplyStateSettings();
+                        })
+                    ));
+
                 return node;
 
+                /**
+                 * A helper function to handle layerRecord state change. On loaded, it applies states setting to the legend node.
+                 *
+                 * @function _onLayerRecordLoad
+                 * @private
+                 * @param {String} state the current state of the layerRecord
+                 * @return {undefined}
+                 */
                 function _onLayerRecordLoad(state) {
                     if (state === 'rv-loaded') {
+                        layerRecord.removeStateListener(_onLayerRecordLoad);
+
                         // this is the first chance to properly create bounding box for this legend node
                         // since it's created on demand and cannot be created by geoapi when creating layerRecord
                         // need to read the layer config state here and initialize the bounding box manually when the layer loads
-                        // node.boundingBox = layerConfig.state.boundingBox;
-
-                        _applyState(node, layerConfig.state);
-
-                        layerRecord.removeStateListener(_onLayerRecordLoad);
+                        // Not all state is applied to the layer record inside geoApi;
+                        // as a result, legend service reapplies all the state to all legend blocks after layer record is loaded
+                        node.reApplyStateSettings();
                     }
                 }
-            }
-
-            /**
-             * Applies the layerConfig state to the corresponding LegendBlock.
-             * Not all state is applied to the layer record inside geoApi;
-             * as a result, legend service reapplies all the state to all legend blocks after layer record is loaded
-             *
-             * @function _applyState
-             * @private
-             * @param {LegendBlock} legendNode legend block to apply the supplied state to
-             * @param {InitialLayerSettings} state the state to be applied to the legend block
-             */
-            function _applyState(legendNode, state) {
-                legendNode.opacity = state.opacity;
-                legendNode.visibility = state.visibility;
-                // TODO: uncomment when child proxy has extent available
-                // legendNode.boundingBox = state.boundingBox;
-                // legendNode.query = state.query;
-                // legendNode.snapshot = state.snapshot;
             }
 
             /**
@@ -331,48 +414,95 @@
             }
 
             /**
-             * A helper function creating (if doesn't exist) appropriate layerRecord for a provided entry config object and returns their proxy objects.
+             * A helper function creating (if doesn't exist) appropriate layerRecord for a provided blueprint returns its proxy objects as proxyWrappers array inside a promise.
              * Only entries (not groups or infos) can have direct proxies.
-             * A config legend entry must have a main proxy, and can optionally have several adjunct proxies through `controlledIds` property.
+             * Promise is returned because it might be needed to wait for a dynamic layer record to load.
+             * This will return a flat array of proxyWrappers for a dynamica layer record with the group nodes discarded.
              *
-             * @function _getLegendBlockProxies
+             * @function _getControlledLegendBlockProxy
              * @private
-             * @param {Object} blockConfig legend entry config object
-             * @return {Object} an object containing related proxies in the form of { main: <LayerProxy>, adjunct: [<LayerProxy>] }
+             * @param {LayerBlueprint} blueprint legend entry config object
+             * @return {Promise} a promise resolving with an array of proxyWrappers
              */
-            function _getLegendBlockProxies(blockConfig, { main: mainBlueprint, adjunct: adjunctBlueprints }) {
-                const mainLayerRecord = layerRegistry.makeLayerRecord(mainBlueprint);
-                layerRegistry.loadLayerRecord(mainBlueprint.config.id);
+            function _getControlledLegendBlockProxy(blueprint) {
 
-                let mainProxy;
+                const layerRecord = layerRegistry.makeLayerRecord(blueprint);
+                const layerConfig = blueprint.config;
+                layerRegistry.loadLayerRecord(layerRecord.config.id);
 
-                if (blockConfig.entryid) {
-                    // TODO: get WMS child proxy?
-                    console.log('wms child proxy, get out');
-                } else if (blockConfig.entryIndex) {
-                    mainProxy = mainLayerRecord.getChildProxy(blockConfig.entryIndex);
-                } else {
-                    mainProxy = mainLayerRecord.getProxy();
-                }
-
-                // TODO: for controlledIds (here and in the dynamic block), if the controlledId is a dynamic layer
-                // instead of grabbing the top proxy, expand the list to include all the child proxies;
-                // this is needed to properly propagate changes to the controlled dynamic layer
-
-                const adjunctLayerRecords = adjunctBlueprints.map(blueprint => {
-                    const layerRecord = layerRegistry.makeLayerRecord(blueprint);
-                    layerRegistry.loadLayerRecord(blueprint.config.id);
-
-                    return layerRecord;
+                // for all controlled layers, disable query and boundingbox controls
+                ['query', 'boundingBox'].forEach(controlName => {
+                    if (layerConfig.disabledControls.indexOf(controlName) === -1) {
+                        layerConfig.disabledControls.push(controlName);
+                    }
                 });
 
-                const adjunctProxies = adjunctLayerRecords.map(layerRecord =>
-                    layerRecord.getProxy());
+                let proxyPromise;
 
-                return {
-                    main: mainProxy,
-                    adjunct: adjunctProxies
-                };
+                if (blueprint.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    proxyPromise = $q(resolve => {
+                        layerRecord.addStateListener(_onLayerRecordLoad);
+
+                        function _onLayerRecordLoad(state) {
+                            if (state === 'rv-loaded') {
+
+                                layerRecord.removeStateListener(_onLayerRecordLoad);
+                                // tree consists of objects with entryIndex and its proxy wrapper,
+                                // for controlledLayers only proxyWrappers are needed
+                                const tree = _createDynamicChildTree(layerRecord, layerConfig);
+                                const flatTree = _flattenTree(tree).map(item =>
+                                    item.proxyWrapper);
+
+                                resolve(flatTree);
+                            }
+                        }
+                    });
+
+                } else {
+                    const proxy = layerRecord.getProxy();
+                    const proxyWrapper = new LegendBlock.ProxyWrapper(proxy, layerConfig);
+
+                    proxyPromise = $q.resolve([proxyWrapper]);
+                }
+
+                return proxyPromise;
+
+                function _flattenTree(tree) {
+                    const result = [].concat.apply([], tree.map(item => {
+                        if (item.childs) {
+                            // when flattening the tree, the groups are discarded as they will not be used
+                            return _flattenTree(item.childs);
+                        } else {
+                            return item;
+                        }
+                    }));
+
+                    return result;
+                }
+            }
+
+            /**
+             * A helper function creating (if doesn't exist) appropriate layerRecord for a provided blueprint returns its proxy object.
+             * Only entries (not groups or infos) can have direct proxies.
+             *
+             * @function _getLegendBlockProxy
+             * @private
+             * @param {LayerBlueprint} blueprint legend entry config object
+             * @return {Proxy} a layers proxy object
+             */
+            function _getLegendBlockProxy(blueprint) {
+                const layerRecord = layerRegistry.makeLayerRecord(blueprint);
+                layerRegistry.loadLayerRecord(layerRecord.config.id);
+
+                let proxy;
+
+                if (blockConfig.entryIndex) {
+                    proxy = layerRecord.getChildProxy(blockConfig.entryIndex);
+                } else {
+                    proxy = layerRecord.getProxy();
+                }
+
+                return proxy;
             }
 
             /**
@@ -390,11 +520,6 @@
                 // TODO: this should return something meaningful for info sections and maybe sets?
                 return blueprint;
             }
-
-        }
-
-        // ???
-        function getLegendBlock(id) {
 
         }
     }
