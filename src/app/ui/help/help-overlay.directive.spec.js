@@ -15,9 +15,7 @@ describe('rvHelpOverlay', () => {
         scope = $rootScope.$new();
 
         // create new element; set morph speed to 0 to speed up tests
-        directiveElement = $compile(angular.element(
-                '<rv-help-overlay></rv-help-overlay>'))
-            (scope);
+        directiveElement = $compile(angular.element( '<rv-help-overlay></rv-help-overlay>'))(scope);
         scope.$digest();
     });
 
