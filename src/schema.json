@@ -265,7 +265,8 @@
                     "items": { "oneOf": [ { "$ref": "#/definitions/entryGroup" }, { "$ref": "#/definitions/visibilitySet" }, { "$ref": "#/definitions/entry" }, { "$ref": "#/definitions/infoSection" } ] },
                     "minItems": 1
                 },
-                "controls": { "$ref": "#/definitions/legendGroupControls" }
+                "controls": { "$ref": "#/definitions/legendGroupControls" },
+                "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are blocked from modification either by the user or programmatically. These controls can be visible or not as defined in the `controls` array." }
             },
             "required": ["name", "children"],
             "additionalProperties": false
