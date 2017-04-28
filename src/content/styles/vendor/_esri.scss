@@ -1,9 +1,17 @@
 // ESRI specific css
 // scalebar dijit styles
 @mixin esri {
+    @include map;
     @include scalebar;
     @include overview;
     @include attribution;
+}
+
+@mixin map {
+    // makes bounding box ignore any mouse events and allow for hover tips to be triggered on feature layers underneath the bbox    .rv-esri-map.map {
+    .layersDiv g[id$="bbox_layer"] {
+        pointer-events: none;
+    }
 }
 
 @mixin scalebar {

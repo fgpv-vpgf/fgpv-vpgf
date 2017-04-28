@@ -293,6 +293,7 @@
              */
             _makeBbox () {
                 if (!this._bboxProxy) {
+                    // if chaning id prefix, update the corresponding css rule to make bboxes click-through
                     this._bboxProxy = layerRegistry
                         .makeBoundingBoxRecord(`${this.id}_bbox`, this._mainProxyWrapper.extent);
                 }
