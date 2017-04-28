@@ -124,7 +124,6 @@
              * Waits fro the layer to load or fail.
              *
              * // TODO: check if there is a better way to wait for layer to load than to wait for 'refresh' -> 'load' event chain
-             * // TODO: file-based layers don't fire these events; need a hack to handle those as well
              * @function _onLayerRecordLoad
              * @private
              * @param {String} state name of the new LayerRecord state
@@ -151,9 +150,86 @@
              * @private
              */
             function _advanceLoadingQueue() {
-                console.info('avancidng que');
+                synchronizeLayerOrder(configService._sharedConfig_.map.layerRecords);
                 ref.loadingCount = Math.max(--ref.loadingCount, 0);
                 _loadNextLayerRecord();
+            }
+        }
+
+        /**
+         * Synchronizes the layer order as seen by the user in the layer selector and the internal layer map stack order.
+         * This should be used everytime a new layer is added to the map or legend nodes in the layer selector are reordered.
+         *
+         * @function synchronizeLayerOrder
+         * @param {Array} layerRecords an array of layer records ordered as visible to the user in the layer selector UI component
+         */
+        function synchronizeLayerOrder(layerRecords) {
+            const mapBody = configService._sharedConfig_.map.body;
+            const boundingBoxRecords = configService._sharedConfig_.map.boundingBoxRecords;
+
+            const mapLayerStacks = {
+                0: mapBody.graphicsLayerIds,
+                1: mapBody.layerIds
+            };
+
+            const sortGroups = [0, 1];
+
+            sortGroups.forEach(sortGroup =>
+                _syncSortGroup(sortGroup));
+
+            // just in case the bbox layers got out of hand,
+            // push them to the bottom of the map stack (high drawing order)
+            const featureStackLastIndex = mapLayerStacks['0'].length - 1;
+            boundingBoxRecords.forEach(boundingBoxRecord =>
+                mapBody.reorderLayer(boundingBoxRecord, featureStackLastIndex));
+
+            /**
+             * A helper function which synchronizes a single sort group of layers between the layer selector and internal layer stack.
+             *
+             * @function _syncSortGroup
+             * @private
+             * @param {Number} sortGroup number of a sort group
+             */
+            function _syncSortGroup(sortGroup) {
+                // an ESRI array of layer ids added to the map object
+                // low index = low drawing order; legend: low index = high drawing order.
+                //
+                // for example there are following layers on the map object:
+                // ['basemap', 'one', 'two', 'three', 'bbox', 'highlight']
+                const mapLayerStack = mapLayerStacks[sortGroup.toString()]
+
+                // a filtered array of layer records that belong to the specified sort group and are in the map layer stack (not errored)
+                // this represents a layer order as visible by the user in the layer selector UI component
+                //
+                // for example the user reorders a layer through UI:
+                // ['three', 'one', 'two']
+                const layerRecordStack = layerRecords
+                    .filter(layerRecord =>
+                        Geo.Layer.SORT_GROUPS_[layerRecord.layerType] === sortGroup)
+                    .filter(layerRecord =>
+                        mapLayerStack.indexOf(layerRecord.config.id) !== -1);
+
+                // a sorted in decreasing order map stack index array of layers found in the previous step
+                // this just reflects the positions or slots of the layers from the specified sort group on the map
+                // for example: [3, 2, 1]
+                const layerRecordIndexes = layerRecordStack
+                    .map(layerRecord =>
+                        mapLayerStack.indexOf(layerRecord.config.id))
+                    .sort((a, b) =>
+                        a < b);
+
+                // layers are now iterated using their UI order and moved into the positions or slots found in the previous step
+                //
+                // the resulting map stack will be:
+                // ['basemap', 'three', 'two', 'one', 'bbox', 'highlight']
+                //
+                // since only the layers belonging to the sort group moved, the basemap, bbox, or highlight layers are not disturbed
+                layerRecordStack.forEach((layerRecord, index) => {
+                    // just in case ESRI does not check for this, do not move layers if its target and current indexes match
+                    if (layerRecordIndexes[index] !== mapLayerStack.indexOf(layerRecord.config.id)) {
+                        mapBody.reorderLayer(layerRecord._layer, layerRecordIndexes[index]);
+                    }
+                });
             }
         }
 
