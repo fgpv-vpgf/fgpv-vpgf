@@ -50,7 +50,7 @@
             get url() { return `//ajax.aspnetcdn.com/ajax/jQuery/jquery-${this.ourVersion}.min.js`; }
         },
         dataTables: {
-            get ourVersion() { return '1.10.11'; },
+            get ourVersion() { return '1.10.15'; },
             get theirVersion() { return $.fn.dataTable.version; },
             get url() { return `//cdn.datatables.net/${this.ourVersion}/js/jquery.dataTables.min.js`; }
         }
