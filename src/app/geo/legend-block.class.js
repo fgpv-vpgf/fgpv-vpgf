@@ -13,7 +13,7 @@
         .module('app.geo')
         .factory('LegendBlock', LegendBlockFactory);
 
-    function LegendBlockFactory($q, common, layerRegistry, configService) {
+    function LegendBlockFactory($q, Geo, common, layerRegistry, configService) {
 
         let legendBlockCounter = 0;
 
@@ -97,11 +97,11 @@
             get extent () {             return this._proxy.extent; }
             get symbology() {           return this._proxy.symbology; }
 
-            get opacity () { return this._proxy.opacity; }
-            get visibility () { return this._proxy.visibility; }
-            get query () { return this; }
-            get snapshot () { return this; }
-            get boundingBox () { return this._layerConfig.state.boundingBox; }
+            get opacity () {            return this._proxy.opacity; }
+            get visibility () {         return this._proxy.visibility; }
+            get query () {              return this; }
+            get snapshot () {           return this; }
+            get boundingBox () {        return this._layerConfig.state.boundingBox; }
             // bounding box belongs to the LegendBlock, not ProxyWrapper
 
             set opacity (value) {
@@ -121,8 +121,8 @@
             set query (value) { this._ = value; }
             set snapshot (value) { this._ = value; }
 
-            get metadataUrl () {        return this._layerConfig.metadataUrl; }
-            get catalogueUrl () {       return this._layerConfig.catalogueUrl; }
+            get metadataUrl () {            return this._layerConfig.metadataUrl; }
+            get catalogueUrl () {           return this._layerConfig.catalogueUrl; }
 
             get availableControls () {      return this._layerConfig.controls; }
             get disabledControls () {       return this._layerConfig.disabledControls; }
@@ -136,7 +136,7 @@
                 this._controlled = controlled;
             }
 
-            get isInteractive () { return false; }
+            get isInteractive () {          return false; }
 
             get id () {
                 if (!this._id) {
@@ -146,10 +146,10 @@
                 return this._id;
             }
 
-            get blockConfig () {    return this._blockConfig; }
-            get template () {       return this.blockType; }
+            get blockConfig () {            return this._blockConfig; }
+            get template () {               return this.blockType; }
 
-            get controlled () {         return this._controlled; }
+            get controlled () {             return this._controlled; }
 
             static INFO = 'info';
             static NODE = 'node';
@@ -162,10 +162,10 @@
                 super(blockConfig);
             }
 
-            get blockType () { return TYPES.INFO; }
+            get blockType () {              return TYPES.INFO; }
 
-            get infoType () {   return this.blockConfig.infoType; }
-            get content () {    return this.blockConfig.content; }
+            get infoType () {               return this.blockConfig.infoType; }
+            get content () {                return this.blockConfig.content; }
         }
 
         // can be node or group
@@ -178,14 +178,25 @@
                 this.isControlDisabled = ref.isControlDisabled.bind(this);
                 this.isControlSystemDisabled = ref.isControlSystemDisabled.bind(this);
                 this.isControlUserDisabled = ref.isControlUserDisabled.bind(this);
+
             }
 
-            get isInteractive () { return true; }
+            get isInteractive () {          return true; }
 
             _isSelected = false;
+            _reorderLayerRecordId = null;
 
-            get isSelected () {         return this._isSelected; }
-            set isSelected (value) {      this._isSelected = value; return this; }
+            get isSelected () {             return this._isSelected; }
+            set isSelected (value) {        this._isSelected = value; }
+
+            /**
+             * @return {String} id of the layer to be reorder when this legend block is moved
+             */
+            get reorderLayerRecordId () {   return this._reorderLayerRecordId; }
+            /**
+             * @param {String} value id of the layer to be reorder when this legend block is moved
+             */
+            set reorderLayerRecordId (value) {   this._reorderLayerRecordId = value; }
         }
 
         class LegendNode extends LegendEntry {
@@ -219,7 +230,7 @@
                     proxyWrapper.applyInitialStateSettings());
             }
 
-            get blockType () { return TYPES.NODE; }
+            get blockType () {              return TYPES.NODE; }
 
             get _allProxyWrappers () {      return [this._mainProxyWrapper].concat(this._controlledProxyWrappers); }
 
@@ -251,6 +262,8 @@
 
                 return state === 'rv-loading' || state === 'rv-refresh';
             }
+
+            get sortGroup () {          return Geo.Layer.SORT_GROUPS_[this._mainProxyWrapper.layerType]; }
 
             get name () {               return this._mainProxyWrapper.name; }
             get layerType () {          return this._mainProxyWrapper.layerType; }
@@ -388,6 +401,8 @@
 
                 return stateToTemplate[this.state]();
             }
+
+            get sortGroup () {              return Geo.Layer.SORT_GROUPS_[Geo.Layer.Types.ESRI_DYNAMIC]; }
 
             get isRefreshing () {
                 return this.state === 'rv-loading';

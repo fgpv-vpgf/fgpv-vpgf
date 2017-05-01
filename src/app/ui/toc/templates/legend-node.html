@@ -26,7 +26,11 @@
     </div>
 </div>
 
-<div class="rv-list-item-controls">
+<div class="rv-list-item-controls" ng-if="self.isReorder">
+    <rv-legend-control rv-drag-handle block="self.block" name="reorder" class="rv-list-item-control rv-stay-visible"></rv-legend-control>
+</div>
+
+<div class="rv-list-item-controls" ng-if="!self.isReorder">
     <md-menu md-position-mode="target-right target" class="rv-list-item-control"
         ng-if="self.intersect(self.block.availableControls, ['metadata', 'settings', 'data', 'symbology', 'boundary', 'reload', 'remove']).length > 0">
         <md-button
@@ -56,6 +60,7 @@
         ng-mouseenter="self.block.highlightSet = true"
         ng-mouseleave="self.block.highlightSet = false"></rv-legend-control>
     <rv-legend-control ng-if="!self.isInSet" block="self.block" name="visibilitynode" class="rv-stay-visible rv-list-item-control"></rv-legend-control>
+
     <rv-legend-control block="self.block" name="offscale" class="rv-stay-visible rv-list-item-control"></rv-legend-control>
 </div>
 

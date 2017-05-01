@@ -29,7 +29,9 @@
             loadLayerRecord,
 
             getBoundingBoxRecord,
-            makeBoundingBoxRecord
+            makeBoundingBoxRecord,
+
+            synchronizeLayerOrder
         };
 
         const ref = {

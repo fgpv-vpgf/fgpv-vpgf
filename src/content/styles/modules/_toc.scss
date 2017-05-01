@@ -18,7 +18,7 @@ $layer-item-height-touch: rem(7.2);
 
     .rv-toc {
         padding: rem(0.8) 0;
-        @include layer-list;
+        // @include layer-list;
     }
 
     @include toc-tools;
@@ -48,6 +48,10 @@ $layer-item-height-touch: rem(7.2);
         &.ng-hide + .rv-shadow {
             // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
             background-color: transparent !important;
+        }
+
+        @for $i from 0 to 2 {
+            @include sort-group($i);
         }
     }
 
@@ -219,6 +223,39 @@ $layer-item-height-touch: rem(7.2);
             .md-icon-button {
                 margin: 0;
             }
+        }
+    }
+}
+
+@mixin sort-group($index) {
+    &[data-sort-group="#{$index}"] {
+
+        > li:not([data-sort-group="#{$index}"]) {
+            opacity: 0.5 !important;
+
+            &:after {
+                content: '';
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.2);
+            }
+        }
+    }
+
+    &.rv-reorder {
+        li[data-sort-group="#{$index}"] {
+            margin-top: 0; // !important;
+
+            rv-legend-block:before {
+                background-color: lighten($color: $primary-color, $amount: $index * 20);
+            }
+        }
+
+        li[data-sort-group="#{$index}"] + li[data-sort-group="#{$index + 1}"] {
+            margin-top: rem(3.6);
         }
     }
 }
@@ -418,12 +455,12 @@ $layer-item-height-touch: rem(7.2);
 
     .rv-root {
         @for $i from 0 to 2 {
-            @include sort-group($i);
+            @include _sort-group($i);
         }
     }
 }
 
-@mixin sort-group($index) {
+@mixin _sort-group($index) {
     &[data-sort-group="#{$index}"] {
 
         > li:not([data-sort-group="#{$index}"]) {

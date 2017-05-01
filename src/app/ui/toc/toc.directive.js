@@ -1,6 +1,9 @@
 (() => {
     'use strict';
 
+    const LEGEND_ROOT_CLASS = '.rv-legend-root';
+    const REORDER_CLASS = 'rv-reorder';
+
     /**
      * @module rvToc
      * @memberof app.ui
@@ -19,7 +22,7 @@
      *
      * @return {object} directive body
      */
-    function rvToc($timeout, layoutService, dragulaService, geoService, animationService) {
+    function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoService, animationService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/toc/toc.html',
@@ -75,14 +78,14 @@
 
                     // get item above the drop position
                     const aboveItem = sibling.prev(); // can be [] if it's the first item in the list
-                    const aboveSortGroup = aboveItem.length > 0 ? aboveItem.scope().item.sortGroup : -1;
+                    const aboveSortGroup = aboveItem.length > 0 ? aboveItem.scope().block.sortGroup : -1;
 
                     // docs says sibling can be null when trying to drop on the last place in the list
                     // it doesn't seem to happen this way; if the sibling is the draggable item itself (has `gu-mirror` class), assume it's the end of the list
                     const belowItem = sibling.hasClass('gu-mirror') ? [] : sibling;
-                    const belowSortGroup = belowItem.length > 0 ? belowItem.scope().item.sortGroup : -1;
+                    const belowSortGroup = belowItem.length > 0 ? belowItem.scope().block.sortGroup : -1;
 
-                    const elementSortGroup = dragElement.scope().item.sortGroup;
+                    const elementSortGroup = dragElement.scope().block.sortGroup;
 
                     // if the drop place is surrounded by sort groups different from the element's sort group, forbid drop
                     if (elementSortGroup !== aboveSortGroup && elementSortGroup !== belowSortGroup) {
@@ -93,35 +96,19 @@
                     return true;
                 },
                 rvDragStart(evt, dragElement, source) {
-                    const sortGroup = dragElement.scope().item.sortGroup;
+                    const sortGroup = dragElement.scope().block.sortGroup;
                     source.attr('data-sort-group', sortGroup);
                 },
 
                 rvDragDrop(evt, dragElement, target, source, sibling) {
                     source.removeAttr('data-sort-group');
+                },
 
-                    // hack
-                    // when dropped at the end of the list, sibling, instead of being null as per docs, is the mirror node, argh...
-                    // FIXME: remove 'placeholder' part of the id; should be fixed by refactor - split layer id and legend id on legend entry
+                rvDragDropModel() {
+                    const layerRecords = self.configService._sharedConfig_.map._legendBlocks.entries.map(legendBlock =>
+                        layerRegistry.getLayerRecord(legendBlock.reorderLayerRecordId));
 
-                    const elementLayerId = dragElement.scope().item.id.replace('placeholder', '');
-
-                    let dropLayerId;
-
-                    if (sibling.hasClass('gu-mirror')) {
-                        dropLayerId = undefined;
-                    } else {
-                        const siblingIndex = geoService.legend.items.indexOf(sibling.scope().item);
-
-                        // go down the legend and find the first layer which is
-                        // an actual layer in the map stack the element layer is be rebased on top
-                        dropLayerId = geoService.legend.items.find((item, index) =>
-                            index >= siblingIndex && geoService._refactorIsLayerInMapStack(item.id, item.sortGroup));
-
-                        dropLayerId = typeof dropLayerId === 'undefined' ?
-                            undefined : dropLayerId.id.replace('placeholder', '');
-                    }
-                    geoService.moveLayer(elementLayerId, dropLayerId);
+                    layerRegistry.synchronizeLayerOrder(layerRecords);
                 },
 
                 rvDragCancel(evt, elem, target, source) {
@@ -178,8 +165,8 @@
 
             // on drop, remove data attribute from the list restoring normal appearance
             // call geoService to reorder layers
-            scope.$on('toc-bag.drop', (evt, dragElement, target, source, sibling) => {
-                self.dragulaOptions.rvDragDrop(evt, dragElement, target, source, sibling);
+            scope.$on('toc-bag.drop', (...args) => {
+                self.dragulaOptions.rvDragDrop(...args);
 
                 // stop and remove autoscroll
                 directiveElement.off('mousemove touchmove');
@@ -187,13 +174,17 @@
             });
 
             // on cancel, remove data attribute from the list restoring normal appearance
-            scope.$on('toc-bag.cancel', (evt, elem, target, source) => { // , sibling) => {
-                self.dragulaOptions.rvDragCancel(evt, elem, target, source);
+            scope.$on('toc-bag.cancel', (...args) => {
+                self.dragulaOptions.rvDragCancel(...args);
 
                 // stop and remove autoscroll
                 directiveElement.off('mousemove touchmove');
                 scrollAnimation.pause();
             });
+
+            // `drop-model` is fired when the model is synchronized
+            scope.$on('toc-bag.drop-model', () =>
+                self.dragulaOptions.rvDragDropModel());
 
             /**
              * @function toggleSortGroups
@@ -202,7 +193,7 @@
              */
             function toggleSortGroups(value) {
 
-                const legendListElement = directiveElement.find('.rv-root');
+                const legendListElement = directiveElement.find(LEGEND_ROOT_CLASS);
                 const legendListItemsElements = legendListElement.find('> li');
                 const sortGroupCount = parseInt(legendListItemsElements.last().attr('data-sort-group'));
                 let splitSortGroupElement;
@@ -210,12 +201,12 @@
                 const tl = animationService.timeLineLite({
                     paused: true,
                     onComplete: () => {
-                        legendListElement.addClass('rv-reorder');
+                        legendListElement.addClass(REORDER_CLASS);
                         animationService.set(legendListItemsElements,
                             { clearProps: 'margin-top' }
                         );
                     },
-                    onReverseComplete: () => legendListElement.removeClass('rv-reorder')
+                    onReverseComplete: () => legendListElement.removeClass(REORDER_CLASS)
                 });
 
                 for (let i = 0; i < sortGroupCount; i++) {

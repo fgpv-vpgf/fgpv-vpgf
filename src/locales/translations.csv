@@ -192,7 +192,7 @@ Table of Content templates placeholder loading error label,toc.tmp.label.error.l
 Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
 Table of Content open datatable label,toc.label.dataTable,Datatable,Tableau de données
 Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
-Table of Content keyboard reoder tooltip,toc.tooltip.reorder,Reorder,Réorganiser
+Table of Content keyboard reoder tooltip,toc.label.reorder,Reorder,Réorganiser
 ,toc.menu.visibility.title,Toggle Visibility,Basculer la visibilité
 ,toc.menu.visibility.allon,Show All,Montrer tout
 ,toc.menu.visibility.alloff,Hide All,Cacher tout

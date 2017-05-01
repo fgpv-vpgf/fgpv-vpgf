@@ -144,6 +144,7 @@
                 // convert the newly created config source into a types config and a Legend Group
                 const derivedEntryGroupConfig = new ConfigObject.legend.EntryGroup(derivedEntryGroupSource);
                 const legendBlockGroup = new LegendBlock.Group(derivedEntryGroupConfig);
+                legendBlockGroup.reorderLayerRecordId = layerConfig.id;
 
                 // wait for the dynamic layer record to load to get its children
                 const layerRecord = layerRegistry.getLayerRecord(blockConfig.layerId);
@@ -342,6 +343,7 @@
                 const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, layerConfig);
 
                 const node = new LegendBlock.Node(proxyWrapper, blockConfig);
+                node.reorderLayerRecordId = layerConfig.id;
 
                 const layerRecord = layerRegistry.getLayerRecord(blockConfig.layerId);
                 layerRecord.addStateListener(_onLayerRecordLoad);

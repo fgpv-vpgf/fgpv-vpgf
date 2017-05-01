@@ -224,6 +224,9 @@
 
             get icon () {    return 'editor:drag_handle'; }
             get label () {   return 'toc.label.reorder'; }
+
+            // visibility of this control is specified at the toc level
+            get isVisible () { return true; }
         }
 
         /**

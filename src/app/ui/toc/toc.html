@@ -33,8 +33,8 @@
 
         </div>
 
-        <ul class="rv-legend-list rv-legend-root rv-legend-level-0" dx-start-with="self.configService._sharedConfig_.map._legendBlocks">
-        <!--ul class="rv-legend-list rv-legend-root rv-legend-level-0" dx-start-with="self.secondToc"-->
+        <ul class="rv-legend-list rv-legend-root rv-legend-level-0" dx-start-with="self.configService._sharedConfig_.map._legendBlocks"
+            rv-dragula="toc-bag" rv-dragula-options="dragulaOptions" rv-dragula-model="self.configService._sharedConfig_.map._legendBlocks.entries">
 
             <!-- filter: { controlled: false } will filter out layer controled by a dynamic layer which is rendered as a group -->
             <li ng-repeat="block in $dxPrior.entries | filter: { controlled: false } track by block.id"
@@ -78,7 +78,7 @@
         <!--dragula='"bag-one"' dragula-scope="self.dragulaScope" dragula-model="::self.geoService.legend.items"-->
 
         <!-- Do not ask me what `dx-start-with` and `dx-connect` are and how this whole thing works as I'm not completely understan it myself. I'll update this comment when I get it. Read this is you are curious: https://github.com/dotJEM/angular-tree -->
-        <ul class="rv-layer-list rv-root rv-layer-level-0" dx-start-with="self.geoService.legend"
+        <!--ul class="rv-layer-list rv-root rv-layer-level-0" dx-start-with="self.geoService.legend"
             rv-dragula="toc-bag" rv-dragula-options="dragulaOptions" rv-dragula-model="self.geoService.legend.items">
 
             <li ng-repeat="item in $dxPrior.items track by item.id"
@@ -102,7 +102,7 @@
                 <md-progress-linear class="rv-progress-bottom" md-mode="indeterminate" ng-show="item.isLoading"></md-progress-linear>
 
             </li>
-        </ul>
+        </ul-->
         <md-divider class="rv-layer-list-divider"></md-divider>
 
     </div>

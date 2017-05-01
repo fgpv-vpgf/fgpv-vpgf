@@ -326,6 +326,9 @@
                     // update model after the layer has been moved in the map stack
                     sourceModel.splice(dropIndex, 0, sourceModel.splice(dragIndex, 1)[0]);
 
+                    // synchronize the layer order
+                    dragulaOptions.rvDragDropModel();
+
                     // this is only needed when moving an item down as ng-repeater will yank and reinsert it; when moving the item up; the other element is yanked and reinserted
                     scope.$digest(); // run digest cycle so repeater can update the template according to the changed model
                     scope.$applyAsync(() => // schedule setting focus back to the drag handle on a future digest cycle after template is updated

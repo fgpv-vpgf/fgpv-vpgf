@@ -20,7 +20,11 @@
     </div>
 </div>
 
-<div class="rv-list-item-controls">
+<div class="rv-list-item-controls" ng-if="self.isReorder">
+    <rv-legend-control rv-drag-handle block="self.block" name="reorder" class="rv-list-item-control rv-stay-visible"></rv-legend-control>
+</div>
+
+<div class="rv-list-item-controls" ng-if="!self.isReorder">
     <md-menu md-position-mode="target-right target" class="rv-list-item-control"
         ng-if="self.intersect(self.block.availableControls, ['metadata', 'settings', 'boundary', 'reload', 'remove']).length > 0">
         <md-button
