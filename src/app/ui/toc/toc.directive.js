@@ -105,7 +105,7 @@
                 },
 
                 rvDragDropModel() {
-                    const layerRecords = self.configService._sharedConfig_.map._legendBlocks.entries.map(legendBlock =>
+                    const layerRecords = self.configService.getSync.map._legendBlocks.entries.map(legendBlock =>
                         layerRegistry.getLayerRecord(legendBlock.reorderLayerRecordId));
 
                     layerRegistry.synchronizeLayerOrder(layerRecords);
@@ -241,6 +241,10 @@
         self.secondToc = tocService.secondToc;
 
         self.configService = configService;
+
+        // TODO: fix when config service can fire events
+        configService.getAsync.then(sharedConfig =>
+            (self.sharedConfig = sharedConfig));
 
         // reorder mode is off by default
         self.isReorder = false;
