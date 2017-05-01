@@ -265,8 +265,7 @@
                     "items": { "oneOf": [ { "$ref": "#/definitions/entryGroup" }, { "$ref": "#/definitions/visibilitySet" }, { "$ref": "#/definitions/entry" }, { "$ref": "#/definitions/infoSection" } ] },
                     "minItems": 1
                 },
-                "controls": { "$ref": "#/definitions/legendGroupControls" },
-                "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are blocked from modification either by the user or programmatically. These controls can be visible or not as defined in the `controls` array." }
+                "controls": { "$ref": "#/definitions/legendGroupControls" }
             },
             "required": ["name", "children"],
             "additionalProperties": false
@@ -545,7 +544,7 @@
                 "geoSearch": { "type": "object", "properties": { "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
                 "mouseInfo": { "type": "object", "properties": { "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
                 "northArrow": { "type": "object" },
-                "overviewMap": { "type": "object", "properties": { "maximizeButton": { "type": "boolean"}, "layerType": { "type": "string"} } },
+                "overviewMap": { "type": "object" },
                 "scaleBar": { "type": "object" },
                 "basemap": { "type": "object" }
             },

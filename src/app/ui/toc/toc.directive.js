@@ -239,8 +239,7 @@
         self.presets = tocService.presets;
 
         self.secondToc = tocService.secondToc;
-
-        self.configService = configService;
+        configService.onEveryConfigLoad(cfg => { self.map = cfg.map; });
 
         // TODO: fix when config service can fire events
         configService.getAsync.then(sharedConfig =>
@@ -250,6 +249,7 @@
         self.isReorder = false;
 
         /***/
+
 
         // hacky way to toggle filters panel modes;
         // TODO: replace with a sane methods

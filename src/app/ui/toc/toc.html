@@ -8,7 +8,7 @@
             <md-button
                 aria-label="{{ toc.menu.reorder.title | translate }}"
                 class="md-icon-button primary rv-icon-20"
-                ng-if="self.sharedConfig.map.legend.isReorderable"
+                ng-if="self.map.legend.isReorderable"
                 ng-class="{ selected: self.isReorder }"
                 ng-click="self.toggleReorderMode()">
                 <md-tooltip>{{ 'toc.menu.reorder.title' | translate }}</md-tooltip>
@@ -33,8 +33,8 @@
 
         </div>
 
-        <ul class="rv-legend-list rv-legend-root rv-legend-level-0" dx-start-with="self.sharedConfig.map._legendBlocks"
-            rv-dragula="toc-bag" rv-dragula-options="dragulaOptions" rv-dragula-model="self.sharedConfig.map._legendBlocks.entries">
+        <ul class="rv-legend-list rv-legend-root rv-legend-level-0" dx-start-with="self.map.legendBlocks"
+            rv-dragula="toc-bag" rv-dragula-options="dragulaOptions" rv-dragula-model="self.map.legendBlocks.entries">
 
             <!-- filter: { controlled: false } will filter out layer controled by a dynamic layer which is rendered as a group -->
             <li ng-repeat="block in $dxPrior.entries | filter: { controlled: false } track by block.id"

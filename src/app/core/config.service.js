@@ -77,6 +77,32 @@
                 throw new Error(`This doesn't work yet`);
             }
 
+            /**
+             * NOTE this has different semantics from most events as it will trigger if a listener is registered,
+             * but the config is already in a loaded state
+             * @param {Function} listener an event handler to be triggered on config changes
+             */
+            onEveryConfigLoad(listener) {
+                if (_loadingState >= States.LOADED) {
+                    listener(configs[currentLang()]);
+                }
+                this.listeners.push(listener);
+                return () => {
+                    const idx = this.listeners.indexOf(listener);
+                    if (idx < 0) {
+                        throw new Error('Attempting to remove a listener which is not registered.');
+                    }
+                    this.listeners.splice(idx, 1);
+                };
+            }
+
+            constructor() {
+                this.listeners = [];
+                $rootScope.$on(events.rvCfgInitialized, () => {
+                    this.listeners.forEach(l => l(configs[currentLang()]));
+                });
+            }
+
         }
 
         const jsonConfigs = {};

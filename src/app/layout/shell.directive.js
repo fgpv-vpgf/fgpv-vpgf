@@ -44,10 +44,11 @@
             $(window).on('resize', () => $rootElement.width() !== elemWidth ? updateClass() : null);
 
             // open legend panel if option is set in config for current viewport
-            configService.getAsync.then(config => {
+            configService.onEveryConfigLoad(config => {
                 if (config.ui.legendIsOpen && config.ui.legendIsOpen[layoutService.currentLayout()]) {
                     stateManager.setActive({ side: false }, 'mainToc');
                 }
+                scope.self.map = config.map;
             });
 
             storageService.panels.shell = el;
