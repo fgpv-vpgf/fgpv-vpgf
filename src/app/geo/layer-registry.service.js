@@ -19,7 +19,7 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($q, $timeout, $translate, gapiService, legendService, tooltipService, Geo) {
+    function layerRegistryFactory($q, $timeout, $translate, gapiService, legendService, tooltipService, Geo, $filter) {
 
         return (geoState, config) => layerRegistry(geoState, geoState.mapService.mapObject, config);
 
@@ -483,7 +483,7 @@
                         // make the content and display the hovertip
                         const template = `<div class="rv-tooltip-content">
                                 <rv-svg once="false" class="rv-tooltip-graphic" src="self.svgcode"></rv-svg>
-                                <span class="rv-tooltip-text">{{ self.name }}</span>
+                                <span class="rv-tooltip-text" ng-bind-html="self.name"></span>
                             </div>`;
 
                         hovertipState.tipContent = {
@@ -498,7 +498,7 @@
                     tipLoaded: e => {
                         // update the content of the tip with real data.
                         if (hovertipState.tipContent && hovertipState.tipContent.graphic === e.target) {
-                            hovertipState.tipContent.name = e.name;
+                            hovertipState.tipContent.name = $filter('picture')(e.name);
                             hovertipState.tipContent.svgcode = e.svgcode;
                         }
                     },

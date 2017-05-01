@@ -90,7 +90,9 @@
                                     ng-switch-when="esriFieldTypeDate"
                                     ng-bind-html="::row.value | dateTimeZone"></div>
                                 <div class="rv-details-attrib-value"
-                                    ng-switch-default ng-bind-html="::row.value | autolink"></div>
+                                    ng-switch-default
+                                    rv-picture
+                                    ng-bind-html="::row.value | picture | autolink"></div>
                             </li>
                         </ul>`;
 

@@ -35,6 +35,11 @@
                     text-overflow: ellipsis;
                     overflow: hidden;
                     white-space: nowrap;
+
+                    img {
+                        width: 100%;
+                        height: auto;
+                    }
                 }
 
                 .rv-tooltip-graphic {
