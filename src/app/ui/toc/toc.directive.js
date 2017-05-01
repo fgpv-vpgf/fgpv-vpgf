@@ -241,10 +241,6 @@
         self.secondToc = tocService.secondToc;
         configService.onEveryConfigLoad(cfg => { self.map = cfg.map; });
 
-        // TODO: fix when config service can fire events
-        configService.getAsync.then(sharedConfig =>
-            (self.sharedConfig = sharedConfig));
-
         // reorder mode is off by default
         self.isReorder = false;
 
