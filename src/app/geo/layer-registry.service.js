@@ -150,7 +150,7 @@
              * @private
              */
             function _advanceLoadingQueue() {
-                synchronizeLayerOrder(configService._sharedConfig_.map.layerRecords);
+                synchronizeLayerOrder(configService.getSync.map.layerRecords);
                 ref.loadingCount = Math.max(--ref.loadingCount, 0);
                 _loadNextLayerRecord();
             }
@@ -164,8 +164,8 @@
          * @param {Array} layerRecords an array of layer records ordered as visible to the user in the layer selector UI component
          */
         function synchronizeLayerOrder(layerRecords) {
-            const mapBody = configService._sharedConfig_.map.body;
-            const boundingBoxRecords = configService._sharedConfig_.map.boundingBoxRecords;
+            const mapBody = configService.getSync.map.body;
+            const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
 
             const mapLayerStacks = {
                 0: mapBody.graphicsLayerIds,
