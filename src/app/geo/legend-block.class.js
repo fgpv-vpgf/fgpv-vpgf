@@ -13,7 +13,7 @@
         .module('app.geo')
         .factory('LegendBlock', LegendBlockFactory);
 
-    function LegendBlockFactory($q, Geo, common, layerRegistry, configService) {
+    function LegendBlockFactory($q, Geo, common, layerRegistry, gapiService, configService) {
 
         let legendBlockCounter = 0;
 
@@ -96,6 +96,7 @@
             get geometryType () {       return this._proxy.geometryType; }
             get extent () {             return this._proxy.extent; }
             get symbology() {           return this._proxy.symbology; }
+            get formattedAttributes() { return this._proxy.formattedAttributes; }
 
             get opacity () {            return this._proxy.opacity; }
             get visibility () {         return this._proxy.visibility; }
@@ -341,6 +342,12 @@
 
             get formattedData () {
                 return this._mainProxyWrapper.formattedAttributes;
+            }
+
+            // FIXME this can probably move directly into geoApi
+            getSymbol(featureAttrs) {
+                return this.formattedData.then(attrSet =>
+                    gapiService.gapi.symbology.getGraphicIcon(featureAttrs, attrSet.renderer));
             }
 
             zoomToBoundary () {

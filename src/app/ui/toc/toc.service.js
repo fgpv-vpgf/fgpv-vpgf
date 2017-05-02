@@ -761,7 +761,7 @@
                     if (!attributes.columns.find(({ data }) => data === rvSymbolColumnName)) {
 
                         attributes.rows.forEach(row => {
-                            row.rvSymbol = geoService.retrieveSymbol(row, attributes.renderer);
+                            legendBlock.getSymbol(row).then(symbol => { row.rvSymbol = symbol; });
                             row.rvInteractive = '';
                         });
 
