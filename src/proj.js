@@ -277,6 +277,14 @@ module.exports = function (esriBundle) {
         '+datum=WGS84 +units=m +no_defs');
     proj4.defs('EPSG:102100', proj4.defs('EPSG:3857'));
 
+    // add UTM projections
+    let utm = 1;
+    while (utm <= 60) {
+        let zone = utm < 10 ? `0${utm}` : utm;
+        proj4.defs(`EPSG:326${zone}`, `+proj=utm +zone=${utm} +ellps=WGS84 +datum=WGS84 +units=m +no_defs`);
+        utm++;
+    }
+
     return {
         addProjection: proj4.defs, // straight passthrough at the moment, maybe add arg checking (two args)?
         checkProj,
