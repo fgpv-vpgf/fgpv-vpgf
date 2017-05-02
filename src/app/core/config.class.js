@@ -28,6 +28,11 @@
     // eslint-disable-next-line max-statements
     function ConfigObjectFactory(Geo, gapiService, common) {
 
+        const ref = {
+            legendElementCounter: 0,
+            walkFunction
+        };
+
         const { Layer: { Types: layerTypes }, Service: { Types: serviceTypes } } = Geo;
 
         const TYPES = {
@@ -51,7 +56,7 @@
                         'query',
 
                         'symbology',
-                        'reload',
+                        // 'reload',
                         'remove',
                         'settings'
                     ],
@@ -162,7 +167,7 @@
                             'metadata',
                             'boundaryZoom',
                             'refresh',
-                            // 'reload',
+                            'reload',
                             'remove',
                             'settings',
                             'data',
@@ -245,6 +250,16 @@
             get boundingBox () { return this._boundingBox; }
             get query () { return this._query; }
             get snapshot () { return this._snapshot; }
+
+            get JSON() {
+                return {
+                    opacity: this.opacity,
+                    visibility: this.visibility,
+                    boundingBox: this.boundingBox,
+                    query: this.query,
+                    snapshot: this.snapshot
+                };
+            }
         }
 
         /**
@@ -491,6 +506,16 @@
             get userDisabledControls () { return this._userDisabledControls; }
             get indent () { return this._indent; }
             get state () { return this._state; }
+
+            get JSON () {
+                return {
+                    index: this.index,
+                    name: this.name,
+                    state: this.state.JSON,
+                    controls: this.controls,
+                    disabledControls: this.disabledControls
+                }
+            }
         }
 
         class WMSLayerEntryNode extends LayerEntryNode {
@@ -507,6 +532,12 @@
             get id () { return this._id; }
 
             get layerType () { return layerTypes.OGC_WMS; }
+
+            get JOSN() {
+                return angular.merge(super.JOSN, {
+                    id: this.id
+                });
+            }
 
         }
 
@@ -549,6 +580,14 @@
             get extent () { return this._extent; }
 
             get layerType () { return layerTypes.ESRI_DYNAMIC; }
+
+            get JOSN() {
+                return angular.merge(super.JOSN, {
+                    outfields: this.outfields,
+                    stateOnly: this.stateOnly,
+                    extent: this.extent
+                });
+            }
         }
 
         class DynamicLayerNode extends LayerNode {
@@ -570,6 +609,14 @@
             }
             get childOptions () { return this._childOptions; }
             get tolerance () { return this._tolerance; }
+
+            get JSON () {
+                return {
+                    layerEntries: this.layerEntries.map(layerEntry =>
+                        layerEntry.JSON),
+                    tolerance: this.tolerance
+                };
+            }
         }
 
         /**
@@ -651,7 +698,7 @@
 
             }
 
-            _isSelected = false; // jshint ignore:line
+            _isSelected = false;
 
             get id () { return this._id; }
             get name () { return this._name; }
@@ -735,12 +782,21 @@
             }*/
         }
 
+        class LegendElement {
+            constructor() {
+                this._id = `${this.entryType}_${++ref.legendElementCounter}`;
+            }
+
+            get id () { return this._id; }
+        }
+
         /**
          * Typed representation of a InfoSection specified in the config's structured legend.
          * @class InfoSection
          */
-        class InfoSection {
+        class InfoSection extends LegendElement {
             constructor (entrySource) {
+                super();
                 this._infoType = entrySource.infoType;
                 this._content = entrySource.content;
             }
@@ -755,23 +811,31 @@
          * Typed representation of a VisibilitySet specified in the config's structured legend.
          * @class VisibilitySet
          */
-        class VisibilitySet {
+        class VisibilitySet extends LegendElement {
             constructor (visibilitySetSource) {
+                super();
                 this._exclusiveVisibility = visibilitySetSource.exclusiveVisibility.map(childConfig =>
                     _makeChildObject(childConfig));
+
+                this._walk = ref.walkFunction.bind(this);
             }
 
             get exclusiveVisibility () { return this._exclusiveVisibility; }
 
             get entryType () { return TYPES.legend.SET; }
+
+            walk (...args) {
+                return this._walk(...args);
+            }
         }
 
         /**
          * Typed representation of a Entry specified in the config's structured legend.
          * @class Entry
          */
-        class Entry {
+        class Entry extends LegendElement {
             constructor (entrySource) {
+                super();
                 this._layerId = entrySource.layerId;
                 this._controlledIds = entrySource.controlledIds || [];
                 this._entryIndex = entrySource.entryIndex;
@@ -783,8 +847,8 @@
                 this._userAdded = entrySource.userAdded || false;
             }
 
-            static ICONS = 'icons'; // jshint ignore:line
-            static IMAGES = 'images'; // jshint ignore:line
+            static ICONS = 'icons';
+            static IMAGES = 'images';
 
             get layerId () { return this._layerId; }
             get userAdded () { return this._userAdded; }
@@ -802,8 +866,9 @@
          * Typed representation of a EntryGroup specified in the config's structured legend.
          * @class Entry
          */
-        class EntryGroup {
-            constructor (entryGroupSource) {
+        class EntryGroup extends LegendElement {
+            constructor (entryGroupSource, type) {
+                super();
                 this._name = entryGroupSource.name;
                 this._children = entryGroupSource.children.map(childConfig =>
                     _makeChildObject(childConfig));
@@ -815,6 +880,8 @@
                 this._userDisabledControls = [];
 
                 this._expanded = entryGroupSource.expanded || false;
+
+                this._walk = ref.walkFunction.bind(this);
             }
 
             get name () { return this._name; }
@@ -825,6 +892,10 @@
             get expanded () { return this._expanded; }
 
             get entryType () { return TYPES.legend.GROUP; }
+
+            walk (...args) {
+                return this._walk(...args);
+            }
         }
 
         /**
@@ -905,7 +976,7 @@
             };
             const childType = _detectChildType(childConfig);
 
-            return new LEGEND_TYPE_TO_CLASS[childType](childConfig);
+            return new LEGEND_TYPE_TO_CLASS[childType](childConfig, childType);
 
             function _detectChildType(child) {
                 if (typeof child.infoType !== 'undefined') {
@@ -1134,13 +1205,19 @@
             // --- //
 
             _layerRecords = [];
+            _layerBlueprints = [];
             _boundingBoxRecords = [];
             _legendBlocks = {};
+            // holds an array of references to the legendBlock and the corresponding blockConfig objects that belong to a particular layerRecord in the form of
+            // { <layerRecordId>: [ { legendBlockId: <String>, blockConfigId: <String> }, ... ] }
+            _legendMappings = {};
 
-            get layerRecords () { return this._layerRecords; }
+            get layerRecords () {       return this._layerRecords; }
+            get layerBlueprints () {    return this._layerBlueprints; }
             get boundingBoxRecords () { return this._boundingBoxRecords; }
-            get legendBlocks () { return this._legendBlocks; }
-            set legendBlocks (lb) { this._legendBlocks = lb; }
+            get legendBlocks () {       return this._legendBlocks; }
+            set legendBlocks (lb) {     this._legendBlocks = lb; }
+            get legendMappings () {      return this._legendMappings; }
 
             get body () {       return this._body; }
             get node () {       return this._node; }
@@ -1207,6 +1284,27 @@
 
         function makeLayerConfig(layerType, source) {
             return LAYER_TYPE_TO_LAYER_NODE[layerType](source)
+        }
+
+        function walkFunction(action, decision = null) {
+            // roll in the results into a flat array
+            return [].concat.apply([], (this.children || this.exclusiveVisibility).map((child, index) => {
+                if (child.entryType === TYPES.legend.GROUP ||
+                    child.entryType === TYPES.legend.SET) {
+
+                    const actionResult = action(child, index, this);
+                    const walkResult = [];
+                    const proceed = decision ? decision(child, index, this) : true;
+
+                    if (proceed) {
+                        walkResult.concat(child.walk(action, decision));
+                    }
+
+                    return [].concat(actionResult, walkResult);
+                } else {
+                    return action(child, index, this);
+                }
+            }));
         }
 
         return {

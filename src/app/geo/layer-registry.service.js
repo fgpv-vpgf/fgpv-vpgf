@@ -60,16 +60,37 @@
          * @param {LayerBlueprint} layerBlueprint layerBlueprint used for creating the layer record
          * @return {LayerRecord} created layerRecord
          */
-        function makeLayerRecord(layerBlueprint) {
+        function makeLayerRecord(layerBlueprint, reload = false) {
             const layerRecords = configService.getSync.map.layerRecords;
 
             let layerRecord = getLayerRecord(layerBlueprint.config.id);
-            if (!layerRecord) {
-                layerRecord = layerBlueprint.generateLayer();
-                layerRecords.push(layerRecord);
+
+            if (layerRecord && reload) {
+                removeLayerRecord(layerRecord);
+                layerRecord = null;
             }
 
+            if (!layerRecord) {
+                layerRecord = layerBlueprint.generateLayer();
+                layerRecords.push(layerRecord); // TODO: add layer record to the place the previous one was removed from;
+            }
+
+
+            // TODO: pull into a separate function
             return layerRecord;
+        }
+
+        function removeLayerRecord(layerRecord) {
+            const mapBody = configService.getSync.map.body;
+            const layerRecords = configService.getSync.map.layerRecords;
+            const index = layerRecords.indexOf(layerRecord);
+
+            if (index !== -1) {
+                layerRecords.splice(index, 1);
+                mapBody.removeLayer(layerRecord._layer);
+            }
+
+            return index;
         }
 
         /**
@@ -77,7 +98,7 @@
          * @param {Number} id layer record id to load on the map
          * @return {Boolean} true if the layer record existed and was added to the map; false otherwise
          */
-        function loadLayerRecord(id) { //, pos = null) {
+        function loadLayerRecord(id) {
             const layerRecord = getLayerRecord(id);
 
             if (layerRecord) {

@@ -131,11 +131,12 @@
         }
 
         class LegendBlock {
-            constructor (blockConfig, controlled = false) {
+            constructor (blockConfig) {
                 this._blockConfig = blockConfig;
 
-                this._controlled = controlled;
             }
+
+            _controlled = false;
 
             get isInteractive () {          return false; }
 
@@ -150,6 +151,13 @@
             get blockConfig () {            return this._blockConfig; }
             get template () {               return this.blockType; }
 
+            /**
+             * @param {Boolean} value specifies if the LegendBlock is directly controlled by a parent LegendBlock and has no visible UI
+             */
+            set controlled (value) {        this._controlled = value; }
+            /**
+             * @returns {Boolean} returns true if the LegendBlock is directly controlled by a parent LegendBlock and has no visible UI
+             */
             get controlled () {             return this._controlled; }
 
             static INFO = 'info';
@@ -172,38 +180,44 @@
         // can be node or group
         class LegendEntry extends LegendBlock {
 
-            constructor(blockConfig, controlled) {
-                super(blockConfig, controlled);
+            constructor(blockConfig) {
+                super(blockConfig);
 
                 this.isControlVisible = ref.isControlVisible.bind(this);
                 this.isControlDisabled = ref.isControlDisabled.bind(this);
                 this.isControlSystemDisabled = ref.isControlSystemDisabled.bind(this);
                 this.isControlUserDisabled = ref.isControlUserDisabled.bind(this);
-
             }
 
             get isInteractive () {          return true; }
 
             _isSelected = false;
-            _reorderLayerRecordId = null;
+
+            _layerRecordId = null;
 
             get isSelected () {             return this._isSelected; }
             set isSelected (value) {        this._isSelected = value; }
 
             /**
-             * @return {String} id of the layer to be reorder when this legend block is moved
+             * @return {String} id of the layer bound to this legend block; this will be used in reordering and reloading
              */
-            get reorderLayerRecordId () {   return this._reorderLayerRecordId; }
+            set layerRecordId (value) {     this._layerRecordId = value; }
             /**
-             * @param {String} value id of the layer to be reorder when this legend block is moved
+             * @param {String} value id of the layer bound to this legend block; this will be used in reordering and reloading
              */
-            set reorderLayerRecordId (value) {   this._reorderLayerRecordId = value; }
+            get layerRecordId () {
+                if (this._layerRecordId === null) {
+                    console.error('layerRecordId must be set on all LegendBlocks which can be reloaded or reordered');
+                }
+
+                return this._layerRecordId;
+            }
         }
 
         class LegendNode extends LegendEntry {
 
-            constructor(mainProxyWrapper, blockConfig, controlled) {
-                super(blockConfig, controlled);
+            constructor(mainProxyWrapper, blockConfig) {
+                super(blockConfig);
 
                 this._mainProxyWrapper = mainProxyWrapper;
                 this._controlledProxyWrappers = [];
@@ -230,6 +244,9 @@
                 this._allProxyWrappers.map(proxyWrapper =>
                     proxyWrapper.applyInitialStateSettings());
             }
+
+            set reloadConfig (value) {      this._reloadConfig = value; }
+            get reloadConfig () {           return this._reloadConfig; }
 
             get blockType () {              return TYPES.NODE; }
 
@@ -363,8 +380,8 @@
         // who is responsible for populating legend groups with entries? legend service or the legend group itself
         class LegendGroup extends LegendEntry {
 
-            constructor(blockConfig, controlled) {
-                super(blockConfig, controlled);
+            constructor(blockConfig) {
+                super(blockConfig);
 
                 this._name = blockConfig.name;
                 this._expanded = blockConfig.expanded;
@@ -496,7 +513,7 @@
                     this._entries.splice(index, 1);
                 }
 
-                return this;
+                return index;
             }
 
             walk (...args) {
@@ -620,7 +637,7 @@
                     this._entries.splice(index, 1);
                 }
 
-                return this;
+                return index;
             }
 
             walk (...args) {
@@ -706,7 +723,7 @@
          * @function walkFunction
          * @private
          * @param {Function} action this will be called with every legend block and its children and the function returns flattened into an array and returned
-         * @param {Function} decision [optiona = null] if a legendBlock has children (group or set), this function is called to decide whether to walk block's children or not;
+         * @param {Function} decision [optional = null] if a legendBlock has children (group or set), this function is called to decide whether to walk block's children or not;
          * if this returns true, the children of the group/set are passed to the `action` function
          * @return {Array} a flattened array of results from the `action` function when executed with all the legend blocks
          */

@@ -22,7 +22,7 @@
      *
      * @return {object} directive body
      */
-    function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoService, animationService) {
+    function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoService, animationService, configService) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/toc/toc.html',
@@ -105,8 +105,10 @@
                 },
 
                 rvDragDropModel() {
-                    const layerRecords = self.configService.getSync.map._legendBlocks.entries.map(legendBlock =>
-                        layerRegistry.getLayerRecord(legendBlock.reorderLayerRecordId));
+                    const legendBlocks = configService.getSync.map.legendBlocks;
+
+                    const layerRecords = legendBlocks.entries.map(legendBlock =>
+                        layerRegistry.getLayerRecord(legendBlock.layerRecordId));
 
                     layerRegistry.synchronizeLayerOrder(layerRecords);
                 },

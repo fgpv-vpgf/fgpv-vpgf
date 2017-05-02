@@ -60,7 +60,7 @@
             return configService.getAsync
                 .then(config => {
                     mapService.makeMap(mapNode);
-                    config.map.legendBlocks = legendService.constructLegend(config.map.layers, config.map.legend);
+                    legendService.constructLegend(config.map.layers, config.map.legend);
                     service.isMapReady = true;
                     $rootScope.$broadcast(events.rvApiReady);
                 })
