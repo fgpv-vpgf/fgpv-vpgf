@@ -56,7 +56,7 @@
                         'query',
 
                         'symbology',
-                        // 'reload',
+                        'reload', // reload control is not allowed on groups, but since dynamice layer is represented by a group, it will be show up on the dynamic layer placeholder
                         'remove',
                         'settings'
                     ],
