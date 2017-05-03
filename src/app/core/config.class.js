@@ -1238,8 +1238,32 @@
             set isLoading (value) { this._isLoading = value;}
         }
 
+        class NavBar {
+            constructor(source) {
+                this._source = source;
+
+                this._zoom = source.zoom || 'buttons';
+                this._extra = source.extra || [];
+            }
+
+            get zoom () { return this._zoom; }
+            get extra () { return this._extra; }
+        }
+
+        class UI {
+            constructor(uiSource) {
+                this._source = uiSource;
+
+                this._navBar = new NavBar(uiSource.navBar);
+
+                // TODO: type the rest of the ui section
+            }
+
+            get navBar () { return this._navBar; }
+        }
+
         /**
-         * [partially]Typed representation of the app's config.
+         * Typed representation of the app's config.
          * @class ConfigObject
          */
         class ConfigObject {
@@ -1256,7 +1280,7 @@
 
                 this._map = new Map(configSource.map);
                 this._services = new Services(configSource.services);
-                this._ui = configSource.ui; // TODO: parse ui sections
+                this._ui = new UI(configSource.ui); // TODO: parse ui sections
             }
 
             /**

@@ -3,6 +3,7 @@
     "navBar": {
       "zoom": "buttons",
       "extra": [
+        "fullscreen",
         "geoLocator",
         "home",
         "help"

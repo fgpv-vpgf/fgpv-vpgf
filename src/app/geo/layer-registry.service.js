@@ -100,7 +100,7 @@
          * Removes the layer record with the specified id from the map and from the layer record collection.
          *
          * @function removeLayerRecord
-         * @param {LayerRecord} layerRecordId a layer record to be removed from the map
+         * @param {String} id a layer record id to be removed from the map
          * @return {Number} index of the removed layer record or -1 if the record was not found in the collection
          */
         function removeLayerRecord(id) {
