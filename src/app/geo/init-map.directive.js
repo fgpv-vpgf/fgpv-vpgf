@@ -19,9 +19,9 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
-    // jshint maxparams:11
+    // jshint maxparams:12
     function rvInitMap($rootScope, geoService, events, storageService, mapService, gapiService, $rootElement,
-        $interval, globalRegistry, animationService, stateManager) {
+        $interval, globalRegistry, animationService, stateManager, $timeout) {
 
         // key codes that are currently active
         let keyMap = [];
@@ -65,7 +65,7 @@
                         .to(el.find('.esriScalebar'), 0.3, {
                             left: 425,
                             ease: RV_SWIFT_IN_OUT_EASE
-                        }, 0);
+                        });
 
                     // coordinates animation
                     const coordAnimation = animationService.timeLineLite();
@@ -73,20 +73,37 @@
                         .to(el.parent().find('.rv-map-coordinates'), 0.3, {
                             left: 575,
                             ease: RV_SWIFT_IN_OUT_EASE
-                        }, 0);
+                        });
 
-                    // on basemap change, if projection is different, map is recreated with a new scalebar.
-                    // when this is done, the reference to the scale is lost and the animation break.
-                    $rootScope.$on('rvBasemapChange', () => {
-                        // remove the tween (reference is lost) and recreate it
-                        scaleAnimation.remove(scaleTween);
-                        scaleAnimation.to(el.find('.esriScalebar'), 0.3, {
-                            left: 425,
-                            ease: RV_SWIFT_IN_OUT_EASE
-                        }, 0);
+                    $rootScope.$on(events.rvBasemapChange, (event, projected) => {
+                        // something is going on... if position is bottom-right instead of bottom left, the scale is recreate in millisecond
+                        // and we don't need to wait to move it to the right place. Even when application start, if scalebar is on the left, sometime the animation is not done
+                        // for light map there is no problem but for heavy map there is a delay before we can set the scalebar and we can rely on map-update (fire multiple time too fast)
+                        // TODO: investigate what is going on between left and right because if right, no need for most of the following code and it is faster.
+                        if (!projected) {
+                            console.log('test');
+                            // if map haven't been reproject don't need to wait too long
+                            // weird thing, if scale on the right no need to recreate the animation
+                            $timeout(() => moveScale(scaleAnimation, scaleTween), 1000);
+                        } else {
+                            // track state of scalebar to see if it is moving (because it has been recreated)
+                            // loop until state is stable and we know scale is at the right place
+                            const state = ['init', 'init'];
+                            const update = $interval(() => {
+                                const scaleNode = el.find('.esriScalebar');
+                                scaleNode.css('display', 'none');
 
-                        // if main panel is active, run the animation
-                        if (stateManager.state.main.active) { scaleAnimation.play(); }
+                                // move scale and check state
+                                moveScale(scaleAnimation, scaleTween);
+                                state.push(scaleNode.css('left'));
+
+                                const lastValue = state[state.length - 1];
+                                if (lastValue === state[state.length - 2] && lastValue === state[state.length - 3]) {
+                                    $interval.cancel(update);
+                                    scaleNode.css('display', 'block');
+                                }
+                            }, 1250);
+                        }
                     });
 
                     // watch main panel open to move scalebar and map coordinates
@@ -99,6 +116,25 @@
                             coordAnimation.reverse();
                         }
                     });
+                }
+
+                /**
+                 * Recreate the scale bar animation and move if need be.
+                 *
+                 * @function moveScale
+                 * @private
+                 * @param {Object} scaleAnimation   scale animation
+                 * @param {Object} scaleTween       tween animation to remove because original element has been deleted
+                 */
+                function moveScale(scaleAnimation, scaleTween) {
+                    // remove the tween (reference is lost) and recreate it
+                    scaleAnimation.remove(scaleTween);
+                    scaleAnimation.to(el.find('.esriScalebar'), 0.3, {
+                        left: 425,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    }, 0);
+
+                    if (stateManager.state.main.active) { scaleAnimation.play(); }
                 }
             });
 

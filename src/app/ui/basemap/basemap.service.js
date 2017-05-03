@@ -152,9 +152,17 @@
 
             if ($injector.get('geoService').baseMapHasSameSP(basemap.id)) { // avoid circular dependency
                 $injector.get('geoService').selectBasemap(basemap); // avoid circular dependency
+
+                // broadcast basemap change with false because when projection is the same we dont recreate the animation
+                $rootScope.$broadcast('rvBasemapChange', false);
             } else {
                 // avoiding circular dependency on bookmarkService
                 $injector.get('reloadService').loadNewProjection(basemap.id); // avoid circular dependency
+
+                // broadcast basemap change with true because when projection is different a new scalebar will be created
+                // and we need to wait to recreate the animation
+                $rootScope.$broadcast('rvBasemapChange', true);
+
             }
         }
 
