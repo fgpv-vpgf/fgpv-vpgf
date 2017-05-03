@@ -55,6 +55,12 @@
             self.dragulaOptions = {
 
                 moves(el, source, handle) {
+                    // disable any reorder when the legend is structured;
+                    // drag handles are disabled in the template, but mouse reorder can be triggered without them
+                    if (!configService.getSync.map.legend.isReorderable) {
+                        return false;
+                    }
+
                     // elements are always draggable by default
                     // only allow reordering using the drag handle when using touch
                     if (isTouchDetected) {
