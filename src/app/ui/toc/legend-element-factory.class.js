@@ -176,7 +176,7 @@
 
             get icon () {    return 'navigation:refresh'; }
             get label () {   return 'toc.label.reload'; }
-            action () {      legendService.reloadLayer(this.block.layerRecordId); }
+            action () {      legendService.reloadBoundLegendBlocks(this.block.layerRecordId); }
         }
 
         class BoundaryControl extends BaseControl {

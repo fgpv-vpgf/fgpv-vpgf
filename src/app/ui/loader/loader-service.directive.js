@@ -252,7 +252,7 @@
         function configureOnContinue() {
             const layerBlueprint = new LayerBlueprint.service(null, self.layerSource);
 
-            legendService.importLayer(layerBlueprint);
+            legendService.importLayerBlueprint(layerBlueprint);
 
             // TODO: display error message if something breaks
             // TODO: close import wizard if build is successful

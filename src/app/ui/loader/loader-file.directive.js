@@ -348,7 +348,7 @@
 
             layerBlueprint.validateFileLayerSource()
                 .then(esriLayer => {
-                    legendService.importLayer(layerBlueprint);
+                    legendService.importLayerBlueprint(layerBlueprint);
                     closeLoaderFile();
                 }).catch(error => {
                     RV.logger.warn('loaderFileDirective', 'file is invalid ', error);

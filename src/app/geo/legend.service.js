@@ -20,8 +20,9 @@
 
         const service = {
             constructLegend,
-            importLayer,
-            reloadLayer
+            importLayerBlueprint,
+            reloadBoundLegendBlocks,
+            removeBoundLegendBlocks
         };
 
         return service;
@@ -48,7 +49,7 @@
             configService.getSync.map.legendBlocks = legendBlocks
         }
 
-        function importLayer(layerBlueprint) {
+        function importLayerBlueprint(layerBlueprint) {
             const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
             layerBlueprintsCollection.push(layerBlueprint);
 
@@ -74,45 +75,58 @@
             return legendBlock;
         }
 
-        function reloadLayer(layerRecordId) {
-            const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
-            const legendBlocks = configService.getSync.map.legendBlocks;
-            const legend = configService.getSync.map.legend;
-            const legendMappings = configService.getSync.map.legendMappings;
-
+        /**
+         * Reloads the layer record with the specified id in place and refreshes all legend blocks referencing this layer record.
+         * Also, this will trigger reloading of all additional layer records controlled by legend blocks related to this layer record.
+         *
+         * @function reloadBoundLegendBlocks
+         * @param {String} layerRecordId the layer record id
+         */
+        function reloadBoundLegendBlocks(layerRecordId) {
             // reset mapping for this layer blueprint
+            const legendMappings = configService.getSync.map.legendMappings;
             const mappings = legendMappings[layerRecordId];
             legendMappings[layerRecordId] = [];
 
-            // TODO: reload controlled layers as well
-            // TODO: run sync layer functions
+            // create a new record from its layer blueprint
+            const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
+            const layerBlueprint = layerBlueprintsCollection.find(blueprint =>
+                    blueprint.config.id === layerRecordId);
+            layerRegistry.regenerateLayerRecord(layerBlueprint);
 
-            mappings.forEach(({ legendBlockId, legendBlockConfigId}) => {
+            mappings.forEach(({ legendBlockId, legendBlockConfigId }) => {
                 // need to find the actual legend block mapped to the legendBlock being reloaded and its parent container legendGroup
-                let legendBlock;
-                let legendBlockParent;
-
-                legendBlocks.walk((entry, index, parentEntry) => {
-                    if (entry.id === legendBlockId) {
-                        legendBlock = entry;
-                        legendBlockParent = parentEntry;
-                    }
-                });
+                const legendBlocks = configService.getSync.map.legendBlocks;
+                const { legendBlock, legendBlockParent } = legendBlocks
+                    .walk((entry, index, parentEntry) =>
+                        entry.id === legendBlockId ? {
+                            legendBlock: entry,
+                            legendBlockParent: parentEntry
+                        } : null)
+                    .filter(a => a !== null)[0];
 
                 // need to find the block config the legend block was made from and create a new one
-                let legendBlockConfig;
+                const legend = configService.getSync.map.legend;
+                const legendBlockConfig = legend.root
+                    .walk(child =>
+                        child.id === legendBlockConfigId ? child : null)
+                    .filter(a => a !== null)[0];
 
-                legend.root.walk(child => {
-                    if (child.id === legendBlockConfigId) {
-                        legendBlockConfig = child;
-                    }
-                });
+                // all controlled layer records __must__ be reloaded before the legend block is made
+                // if this were to be done after, the state settings of the controlling legend block will not be applied correctly
+                // (`regenerateLayerRecord` will remove the layer from the map, but it's the logic inside `_makeLegendBlock` that adds the layer back to the map)
+                legendBlockConfig.controlledIds.forEach(controlledId =>
+                    reloadBoundLegendBlocks(controlledId));
 
-                const reloadedLegendBlock = _makeLegendBlock(legendBlockConfig, layerBlueprintsCollection, true);
+                const reloadedLegendBlock = _makeLegendBlock(legendBlockConfig, layerBlueprintsCollection);
 
                 const index = legendBlockParent.removeEntry(legendBlock);
                 legendBlockParent.addEntry(reloadedLegendBlock, index);
             });
+        }
+
+        function removeBoundLegendBlocks(layerRecordId) {
+
         }
 
         /**
@@ -120,11 +134,11 @@
          *
          * @function _makeLegendBlock
          * @private
-         * @param {Object} blockConfig
-         * @param {Array} layerBlueprints
+         * @param {Object} blockConfig a config object for the legend block to be created (any children will be recursively created)
+         * @param {Array} layerBlueprints a collection of all available layer blueprints
          * @return {LegendBlcok} the resulting LegendBlock object
          */
-        function _makeLegendBlock(blockConfig, layerBlueprints, reload = false) {
+        function _makeLegendBlock(blockConfig, layerBlueprints) {
             const legendTypes = ConfigObject.TYPES.legend;
             const legendMappings = configService.getSync.map.legendMappings;
 
@@ -495,7 +509,7 @@
              */
             function _getControlledLegendBlockProxy(blueprint) {
 
-                const layerRecord = layerRegistry.makeLayerRecord(blueprint, reload);
+                const layerRecord = layerRegistry.makeLayerRecord(blueprint);
                 const layerConfig = blueprint.config;
                 layerRegistry.loadLayerRecord(layerRecord.config.id);
 
@@ -560,7 +574,7 @@
              * @return {Proxy} a layers proxy object
              */
             function _getLegendBlockProxy(blueprint) {
-                const layerRecord = layerRegistry.makeLayerRecord(blueprint, reload);
+                const layerRecord = layerRegistry.makeLayerRecord(blueprint);
                 layerRegistry.loadLayerRecord(layerRecord.config.id);
 
                 let proxy;

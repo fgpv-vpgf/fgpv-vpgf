@@ -27,6 +27,8 @@
             getLayerRecord,
             makeLayerRecord,
             loadLayerRecord,
+            regenerateLayerRecord,
+            removeLayerRecord,
 
             getBoundingBoxRecord,
             makeBoundingBoxRecord,
@@ -60,29 +62,52 @@
          * @param {LayerBlueprint} layerBlueprint layerBlueprint used for creating the layer record
          * @return {LayerRecord} created layerRecord
          */
-        function makeLayerRecord(layerBlueprint, reload = false) {
+        function makeLayerRecord(layerBlueprint) {
             const layerRecords = configService.getSync.map.layerRecords;
 
             let layerRecord = getLayerRecord(layerBlueprint.config.id);
 
-            if (layerRecord && reload) {
-                removeLayerRecord(layerRecord);
-                layerRecord = null;
-            }
-
             if (!layerRecord) {
                 layerRecord = layerBlueprint.generateLayer();
-                layerRecords.push(layerRecord); // TODO: add layer record to the place the previous one was removed from;
+                layerRecords.push(layerRecord);
             }
 
-
-            // TODO: pull into a separate function
             return layerRecord;
         }
 
-        function removeLayerRecord(layerRecord) {
+        /**
+         * Generates a new layer record from the provided layer blueprint and replaces the previously generated layer record (keeping original position).
+         * This will also remove the corresponding layer from the map, but will not trigger the loading of the new layer.
+         *
+         * @function regenerateLayerRecord
+         * @param {LayerBlueprint} layerBlueprint the original layerBlueprint of the layer record to be regenerated
+         */
+        function regenerateLayerRecord(layerBlueprint) {
             const mapBody = configService.getSync.map.body;
             const layerRecords = configService.getSync.map.layerRecords;
+
+            let layerRecord = getLayerRecord(layerBlueprint.config.id);
+            const index = layerRecords.indexOf(layerRecord);
+
+            if (index !== -1) {
+                mapBody.removeLayer(layerRecord._layer);
+                layerRecord = layerBlueprint.generateLayer();
+                layerRecords[index] = layerRecord;
+            }
+        }
+
+        /**
+         * Removes the layer record with the specified id from the map and from the layer record collection.
+         *
+         * @function removeLayerRecord
+         * @param {LayerRecord} layerRecordId a layer record to be removed from the map
+         * @return {Number} index of the removed layer record or -1 if the record was not found in the collection
+         */
+        function removeLayerRecord(id) {
+            const mapBody = configService.getSync.map.body;
+            const layerRecords = configService.getSync.map.layerRecords;
+
+            let layerRecord = getLayerRecord(id);
             const index = layerRecords.indexOf(layerRecord);
 
             if (index !== -1) {
@@ -94,14 +119,26 @@
         }
 
         /**
-         * Finds a layer record with the specified id and adds it to the map
+         * Finds a layer record with the specified id and adds it to the map.
+         * If the layer is alredy loaded or is in the loading queue, it will not be added the second time.
+         *
          * @param {Number} id layer record id to load on the map
          * @return {Boolean} true if the layer record existed and was added to the map; false otherwise
          */
         function loadLayerRecord(id) {
             const layerRecord = getLayerRecord(id);
+            const mapBody = configService.getSync.map.body;
 
             if (layerRecord) {
+                const alreadyLoading = ref.loadingQueue.some(lr =>
+                    lr === layerRecord);
+                const alreadyLoaded = mapBody.graphicsLayerIds.concat(mapBody.layerIds)
+                    .indexOf(layerRecord.config.id) !== -1;
+
+                if (alreadyLoading || alreadyLoaded) {
+                    return false;
+                }
+
                 ref.loadingQueue.push(layerRecord);
                 _loadNextLayerRecord();
 
