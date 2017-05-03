@@ -212,7 +212,7 @@
 
             get icon () {    return 'action:delete'; }
             get label () {   return 'toc.label.remove'; }
-            action () {      legendService.removeLayer(this._layerProxy); }
+            action () {      tocService.removeLayer(this.block); }
         }
 
         class ReorderControl extends BaseControl {

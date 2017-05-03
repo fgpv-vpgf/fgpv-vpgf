@@ -15,9 +15,10 @@
         .factory('common', common);
 
     // TODO: add helper function to common
-    function common($timeout) {
+    function common($timeout, $q) {
         const service = {
             $timeout: $timeout,
+            $q: $q,
 
             intersect,
             removeFromArray

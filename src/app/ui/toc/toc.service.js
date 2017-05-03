@@ -17,7 +17,7 @@
 
     // jshint maxparams:14
     function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateManager,
-        geoService, metadataService, errorService, debounceService, $timeout, LegendBlock, configService) {
+        geoService, metadataService, errorService, debounceService, $timeout, LegendBlock, configService, legendService) {
 
         const service = {
             // method called by the options and flags set on the layer item
@@ -28,7 +28,9 @@
 
             toggleSettings,
             toggleMetadata,
-            toggleLayerFiltersPanel
+            toggleLayerFiltersPanel,
+
+            removeLayer
         };
 
         // toc preset controls (options and flags displayed on the layer item)
@@ -520,34 +522,16 @@
         return service;
 
         /**
-         * Simple function to remove layers.
-         * Hides the layer data and removes the node from the layer selector; removes the layer from
+         * Removes the provided legend block from the layer selector, hides the corresponding layer, displays a toast
+         * notification give the user a chance to undo.
+         * This will also close an open panel related to the layer being remove and restore this panel if the removal is cancelled.
+         *
+         * // TODO: come up with a better name; this one is not descriptive enough;
          * @function removeLayer
-         * @param  {Object} entry layerItem object from the `legendService`
+         * @param  {LegendBlock} legendBlock legend block to be remove from the layer selector
          */
-        // eslint-disable-next-line complexity
-        function removeLayer(entry) {
-            const isEntryVisible = entry.getVisibility();
-            const entryParent = entry.parent;
-
-            // close Settings or Metadata panel if displayed
-            const isSettingsVisible = stateManager.display.settings.data !== null ? true : false;
-
-            // if Metadata is loading the panel will be visible
-            // but isMetadataDisplay will still have value set to false until content is displayed
-            const isMetadataDisplay = stateManager.display.metadata.data !== null ? true : false;
-            const isMetadataLoading = stateManager.display.metadata.isLoading;
-            const isMetadataVisible = isMetadataDisplay || isMetadataLoading;
-
-            if (isMetadataVisible) {
-                toggleMetadata(entry, isMetadataVisible);
-            } else if (isSettingsVisible) {
-                toggleSettings(entry);
-            }
-
-            // pretend we removed the layer by setting it's visibility to off and remove it from the layer selector
-            entry.setVisibility(false);
-            const entryPosition = entryParent.remove(entry);
+        function removeLayer(legendBlock) {
+            const [resolve, reject] = legendService.removeLegendBlock(legendBlock);
 
             // create notification toast
             const undoToast = $mdToast.simple()
@@ -556,50 +540,50 @@
                 .parent(layoutService.panes.toc)
                 .position('bottom rv-flex');
 
-            // function to avoid cyclomatic check
-            const markRecDeleted = (entry, flag) => {
-                if (entry._layerRecord) {
-                    entry._layerRecord.deleted = flag;
+            // promise resolves with 'ok' when user clicks 'undo'
+            $mdToast.show(undoToast)
+                .then(response =>
+                    response === 'ok' ? _restoreLegendBlock() : resolve());
+
+            // name mapping between true panel names and their short names
+            const panelSwitch = {
+                filters: {
+                    panel: 'filtersFulldata',
+                    action: toggleLayerFiltersPanel
+                },
+                metadata: {
+                    panel: 'sideMetadata',
+                    action: toggleMetadata
+                },
+                settings: {
+                    panel: 'sideSettings',
+                    action: toggleSettings
                 }
             };
 
-            entry.removed = true;
-            markRecDeleted(entry, true);
+            // each legend block can have only one panel open at a time; find its name;
+            const openPanelName = Object.keys(panelSwitch)
+                .map(panelName => {
+                    const panelDisplay = stateManager.display[panelName];
+                    if (panelDisplay.requester && panelDisplay.requester.id === legendBlock.id) {
+                        return panelName;
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(a => a !== null)[0] || null;
 
-            // if filters is open, close it at the same time we remove the layer
-            const smRequest = stateManager.display.filters.requester;
-            const isFilterOpen = (smRequest !== null && smRequest.id === entry.id) ? true : false;
-            if (isFilterOpen) {
-                stateManager.setActive({ filtersFulldata: false });
+            if (openPanelName) {
+                stateManager.setActive({ [panelSwitch[openPanelName].panel]: false });
             }
 
-            $mdToast.show(undoToast)
-                .then(response => {
-                    if (response === 'ok') { // promise resolves with 'ok' when user clicks 'undo'
-                        // restore layer visibility on undo; and add it back to layer selector
-                        entryParent.add(entry, entryPosition);
+            console.log(stateManager.display);
 
-                        // restore filters or Metadata or Settings if one of them was opened it was open
-                        if (isFilterOpen) {
-                            toggleLayerFiltersPanel(entry);
-                        } else if (isMetadataVisible) {
-                            toggleMetadata(entry, !isMetadataVisible);
-                        } else if (isSettingsVisible) {
-                            toggleSettings(entry);
-                        }
+            function _restoreLegendBlock() {
+                reject();
 
-                        // restore original visibility, so if he removed and restored already invisible layer,
-                        // it is restored also invisible
-                        entry.setVisibility(isEntryVisible);
-                        entry.removed = false;
-                        markRecDeleted(entry, false);
-                    } else {
-                        if (entry.type !== 'placeholder') {
-                            // remove layer for real now
-                            geoService.removeLayer(entry.id);
-                        }
-                    }
-                });
+                panelSwitch[openPanelName].action(legendBlock);
+            }
         }
 
         // TODO: rename to something like `setVisibility` to make it clearer what this does

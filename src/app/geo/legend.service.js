@@ -15,14 +15,14 @@
         .module('app.geo')
         .factory('legendService', legendServiceFactory);
 
-    function legendServiceFactory($q, Geo, ConfigObject, configService, LegendBlock, LayerBlueprint,
+    function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, LayerBlueprint,
         layerRegistry, common) {
 
         const service = {
             constructLegend,
             importLayerBlueprint,
             reloadBoundLegendBlocks,
-            removeBoundLegendBlocks
+            removeLegendBlock
         };
 
         return service;
@@ -125,8 +125,39 @@
             });
         }
 
-        function removeBoundLegendBlocks(layerRecordId) {
+        /**
+         * Removes the legend block from the layer selector and toggles the corresponding layer record to invisible.
+         * Returns two functions to the caller to either finalize the removal process or undo it.
+         * Removal of the legend block is only possible with the auto legend, so it's guaranteed that there one-to-one relationship between legend blocks and layer records.
+         *
+         * @function removeLegendBlock
+         * @param {LegendBlock} legendBlock legend block to be removed from the layer selector
+         * @return {Array} returns two functions [resolve, reject]; calling `resolve` will clean up by removing the hidden layer record form the map; calling `reject` will restore the legend block and the corresponding layer record to its previous visibility
+         */
+        function removeLegendBlock(legendBlock) {
+            const cachedVisibility = legendBlock.visibility;
+            legendBlock.visibility = false;
 
+            const legendBlocks = configService.getSync.map.legendBlocks;
+            const legendBlockParent = legendBlocks
+                .walk((entry, index, parentEntry) =>
+                    entry === legendBlock ? parentEntry : null)
+                .filter(a => a !== null)[0];
+
+            const index = legendBlockParent.removeEntry(legendBlock);
+
+            return [_resolve, _reject];
+
+            function _resolve() {
+                layerRegistry.removeLayerRecord(legendBlock.layerRecordId);
+
+                // TODO: remove any bounding box layers associated with this legend block
+            }
+
+            function _reject() {
+                legendBlockParent.addEntry(legendBlock, index);
+                legendBlock.visibility = cachedVisibility;
+            }
         }
 
         /**
@@ -523,7 +554,7 @@
                 let proxyPromise;
 
                 if (blueprint.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                    proxyPromise = $q(resolve => {
+                    proxyPromise = common.$q(resolve => {
                         layerRecord.addStateListener(_onLayerRecordLoad);
 
                         function _onLayerRecordLoad(state) {
@@ -545,7 +576,7 @@
                     const proxy = layerRecord.getProxy();
                     const proxyWrapper = new LegendBlock.ProxyWrapper(proxy, layerConfig);
 
-                    proxyPromise = $q.resolve([proxyWrapper]);
+                    proxyPromise = common.$q.resolve([proxyWrapper]);
                 }
 
                 return proxyPromise;
