@@ -10,8 +10,7 @@
         ng-disabled="self.uiControl.isDisabled || self.uiControl.value">
 
         <md-tooltip ng-if="self.uiControl.tooltip" md-direction="top">{{ self.uiControl.tooltip | translate }}</md-tooltip>
-
-        {{ 'settings.label.enable' | translate }}
+        {{ self.uiControl.value ? 'settings.label.enabled' : 'settings.label.enable' | translate }}
 
     </md-button>
 

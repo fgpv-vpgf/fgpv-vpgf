@@ -109,6 +109,7 @@ Settings opacity slider label,settings.label.opacity,Opacity,Opacité
 Settings data header label,settings.label.data,Data,Données
 Settings snapshot mode label,settings.label.snapshot,Snapshot mode,Mode copie instantanée
 Settings snapshot mode enable label,settings.label.enable,Enable,Activer
+Settings snapshot mode enable label,settings.label.enabled,Enabled,Activée
 Settings query mode label,settings.label.query,Allow query,Permettre les requêtes
 Settings query mode aria,settings.aria.query,Allow query,Permettre les requêtes
 ,settings.reload.description,When a layer fails to load properly or becomes unresponsive, reloading the layer can solve the problem.

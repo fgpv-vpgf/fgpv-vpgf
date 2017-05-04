@@ -101,7 +101,7 @@
             get opacity () {            return this._proxy.opacity; }
             get visibility () {         return this._proxy.visibility; }
             get query () {              return this; }
-            get snapshot () {           return this; }
+            get snapshot () {           return this._layerConfig.state.snapshot; }
             get boundingBox () {        return this._layerConfig.state.boundingBox; }
             // bounding box belongs to the LegendBlock, not ProxyWrapper
 
@@ -119,8 +119,8 @@
 
                 this._proxy.setVisibility(value);
             }
-            set query (value) { this._ = value; }
-            set snapshot (value) { this._ = value; }
+            set query (value) {             this._ = value; }
+            set snapshot (value) {          this._layerConfig.state.snapshot = value; }
 
             get metadataUrl () {            return this._layerConfig.metadataUrl; }
             get catalogueUrl () {           return this._layerConfig.catalogueUrl; }
@@ -314,6 +314,9 @@
                     (proxyWrapper.opacity = value)
                 );
             }
+
+            get snapshot () {           return this._mainProxyWrapper.snapshot; }
+            set snapshot (value) {      this._mainProxyWrapper.snapshot = value; }
 
             /**
              * Creates and stores (if missing) a boundign box based on the full extent exposed by the proxy object.

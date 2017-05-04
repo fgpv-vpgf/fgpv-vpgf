@@ -30,7 +30,8 @@
             toggleMetadata,
             toggleLayerFiltersPanel,
 
-            removeLayer
+            removeLayer,
+            reloadLayer
         };
 
         // toc preset controls (options and flags displayed on the layer item)
@@ -520,6 +521,21 @@
         watchPanelState('filtersFulldata', 'filters');
 
         return service;
+
+        /**
+         * This will reload the layer records referenced by the specified legend block and all other legend blocks attached to that record;
+         * will also reload all controlled layer records.
+         *
+         * For simplicity, this will close all open panels even if they are not affected by the reload
+         * // TODO: close and reopen only the panel which is connected with the layer record being reloaded
+         * @function reloadLayer
+         * @param {LegendBlock} legendBlock legend block to be reloaded
+         */
+        function reloadLayer(legendBlock) {
+
+            stateManager.setActive({ filtersFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+            legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId);
+        }
 
         /**
          * Removes the provided legend block from the layer selector, hides the corresponding layer, displays a toast

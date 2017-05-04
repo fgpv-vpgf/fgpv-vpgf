@@ -63,7 +63,6 @@
                     const template = $templateCache.get(`app/ui/toc/templates/legend-${newTemplate}.html`);
                     element.empty().append($compile(template)(scope));
 
-
                     console.log(self.block.id, newTemplate);
                 }
             });

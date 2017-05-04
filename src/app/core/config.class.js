@@ -243,13 +243,16 @@
                 this._boundingBox = source.boundingBox;
                 this._query = source.query;
                 this._snapshot = source.snapshot;
+
+                // TODO: decide if we want to preserve any settings (apart from snapshot) through the layer reload
             }
 
-            get opacity () { return this._opacity; }
-            get visibility () { return this._visibility; }
-            get boundingBox () { return this._boundingBox; }
-            get query () { return this._query; }
-            get snapshot () { return this._snapshot; }
+            get opacity () {        return this._opacity; }
+            get visibility () {     return this._visibility; }
+            get boundingBox () {    return this._boundingBox; }
+            get query () {          return this._query; }
+            get snapshot () {       return this._snapshot; }
+            set snapshot (value) {  this._snapshot = value; }
 
             get JSON() {
                 return {
@@ -859,7 +862,7 @@
             get symbologyStack () { return this._symbologyStack; }
             get symbologyRenderStyle () { return this._symbologyRenderStyle; }
 
-            get entryType () { return TYPES.legend.NODE; }
+            get entryType () {              return TYPES.legend.NODE; }
         }
 
         /**
@@ -1327,7 +1330,7 @@
                     const proceed = decision ? decision(child, index, this) : true;
 
                     if (proceed) {
-                        walkResult.concat(child.walk(action, decision));
+                        walkResult.push.apply(walkResult, child.walk(action, decision));
                     }
 
                     return [].concat(actionResult, walkResult);

@@ -128,7 +128,10 @@
 
             get icon () {    return 'action:cached'; }
             get label () {   return 'settings.label.snapshot'; }
-            action () {      this._layerProxy.setSnapshot(); }
+            action () {
+                this.block.snapshot = true;
+                tocService.reloadLayer(this.block);
+            }
         }
 
         class MetadataControl extends BaseControl {
@@ -176,7 +179,7 @@
 
             get icon () {    return 'navigation:refresh'; }
             get label () {   return 'toc.label.reload'; }
-            action () {      legendService.reloadBoundLegendBlocks(this.block.layerRecordId); }
+            action () {      tocService.reloadLayer(this.block); }
         }
 
         class BoundaryControl extends BaseControl {
