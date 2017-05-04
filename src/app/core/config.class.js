@@ -56,7 +56,7 @@
                         'query',
 
                         'symbology',
-                        //'reload', // reload control is not allowed on groups, but since dynamic layer is represented by a group, it will be show up on the dynamic layer placeholder and error templates
+                        // 'reload', // reload control is not allowed on groups, but since dynamic layer is represented by a group, it will be show up on the dynamic layer placeholder and error templates
                         'remove',
                         'settings'
                     ],

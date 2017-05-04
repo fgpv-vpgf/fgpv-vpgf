@@ -222,9 +222,9 @@
                 // variable names ending in `source` are raw JSON objects
                 // variable names ending in `config` are typed objects
 
-                // this will load the layer record onto the map, but we don't need the root proxy of a dynamic layer as it's not used
-                _getLegendBlockProxy(blueprints.main);
-
+                // this will load the layer record onto the map, but only need the root proxy of a dynamic layer to catch if it errors on initial loading
+                const rootProxy = _getLegendBlockProxy(blueprints.main);
+                const rootProxyWrapper = new LegendBlock.ProxyWrapper(rootProxy, layerConfig);
                 // to create a group for a dynamic layer, create a entryGroup config object by using properties
                 // from dynamic layer definition config object
                 const derivedEntryGroupSource = {
@@ -236,7 +236,7 @@
 
                 // convert the newly created config source into a types config and a Legend Group
                 const derivedEntryGroupConfig = new ConfigObject.legend.EntryGroup(derivedEntryGroupSource);
-                const legendBlockGroup = new LegendBlock.Group(derivedEntryGroupConfig);
+                const legendBlockGroup = new LegendBlock.Group(derivedEntryGroupConfig, rootProxyWrapper);
                 // map this legend block to the layerRecord
                 legendBlockGroup.layerRecordId = layerConfig.id;
 

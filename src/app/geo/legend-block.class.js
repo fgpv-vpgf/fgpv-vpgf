@@ -381,9 +381,11 @@
         }
 
         // who is responsible for populating legend groups with entries? legend service or the legend group itself
+        // LegendGroup needs the dynamic layer record root proxy to know when the layer fails and display the error template when this happens
+        // If the layer fails on initial loading, there are no children to indicate the error state, so the error template must be displayed at the root of the dynamic record
         class LegendGroup extends LegendEntry {
 
-            constructor(blockConfig) {
+            constructor(blockConfig, rootProxyWrapper = null) {
                 super(blockConfig);
 
                 this._name = blockConfig.name;
@@ -391,6 +393,7 @@
                 this._availableControls = blockConfig.controls;
                 this._disabledControls = blockConfig.disabledControls;
                 this._userDisabledControls = blockConfig.userDisabledControls;
+                this._rootProxyWrapper = rootProxyWrapper;
 
                 this._aggregateStates = ref.aggregateStates;
                 this._walk = ref.walkFunction.bind(this);
@@ -411,22 +414,49 @@
             get userDisabledControls () {   return this._userDisabledControls; }
 
             get state () {
-                if (this.entries.length === 0) {
-                    return 'rv-loading';
+                if (this._rootProxyWrapper) {
+                    return this._rootProxyWrapper.state;
                 } else {
                     return 'rv-loaded';
                 }
             }
 
             get template () {
+                const availableControls = this._availableControls;
+
+                // only add `reload` control to the available controls when the dynamic layer is loading or already failed
                 const stateToTemplate = {
-                    'rv-loading': () => 'placeholder',
-                    'rv-loaded': () => super.template//,
-                    //'rv-refresh': () => super.template,
-                    //'rv-error': () => super.template
+                    'rv-loading': () => {
+                        _addReload();
+                        return 'placeholder';
+                    },
+                    'rv-loaded': () => {
+                        _removeReload()
+                        return super.template;
+                    },
+                    'rv-refresh': () => {
+                        _removeReload()
+                        return super.template;
+                    },
+                    'rv-error': () => {
+                        _addReload();
+                        return 'error';
+                    }
                 };
 
                 return stateToTemplate[this.state]();
+
+                function _addReload() {
+                    availableControls.push('reload');
+                }
+
+                function _removeReload() {
+                    const index = availableControls.indexOf('reload');
+
+                    if (index !== -1) {
+                        availableControls.splice(index, 1);
+                    }
+                }
             }
 
             get sortGroup () {              return Geo.Layer.SORT_GROUPS_[Geo.Layer.Types.ESRI_DYNAMIC]; }
