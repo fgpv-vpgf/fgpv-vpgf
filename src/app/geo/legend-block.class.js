@@ -738,7 +738,7 @@
                     const proceed = decision ? decision(entry, index, this) : true;
 
                     if (proceed) {
-                        walkResult.concat(entry.walk(action, decision));
+                        walkResult.push.apply(walkResult, entry.walk(action, decision));
                     }
 
                     return [].concat(actionResult, walkResult);

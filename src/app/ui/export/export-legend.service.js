@@ -31,7 +31,7 @@
         .module('app.ui')
         .service('exportLegendService', exportLegendService);
 
-    function exportLegendService($q, $rootElement, geoService, gapiService, graphicsService) {
+    function exportLegendService($q, $rootElement, geoService, LegendBlock, configService, gapiService, graphicsService) {
         const service = {
             generate
         };
@@ -53,7 +53,7 @@
             // I think this todo is done.
             // TODO: break item names when they overflow even if there are no spaces in the name
 
-            const legendData = extractLegendTree(geoService.legend);
+            const legendData = extractLegendTree(configService.getSync.map.legendBlocks);
 
             // resolve with an empty 0 x 0 canvas if there is not layers in the legend
             if (legendData.length === 0) {
@@ -402,41 +402,35 @@
         }
 
         /**
-         * Extract symbology legend tree from the legend entries
+         * Extract the flat symbology legend tree from the legend blocks
          *
          * @function extractLegendTree
          * @private
-         * @param {Object} legendEntry legend entry
+         * @param {LegendBlock} legendBlock the root legend block from which to extract the flat symbology tree.
+         * @return {Array} a flat array of layers and their symbology items
          */
-        function extractLegendTree(legendEntry) {
-            return legendEntry.items
-                // filter out placeholders, invisible and "removed" legend entries which are in the "undo" time frame which are not proper
+        function extractLegendTree(legendBlock) {
 
-                .filter(item =>
-                    item.options.visibility.value &&
-                    !item.removed &&
-                    item.type !== 'placeholder')
+            const TYPE_TO_SYMBOLOGY = {
+                [LegendBlock.TYPES.NODE]: entry =>
+                    ({
+                        name: entry.name,
+                        items: entry.symbologyStack.stack
+                    }),
+                [LegendBlock.TYPES.GROUP]: () => null,
+                [LegendBlock.TYPES.SET]: () => null,
+                [LegendBlock.TYPES.INFO]: () => null
+            }
 
-                .map(item => {
-                    if (item.type === 'group') {
-                        return {
-                            name: item.name,
-                            items: extractLegendTree(item)
-                        };
+            // TODO: decide if symbology from the controlled layers should be included in the export image
+            // TODO: decide if symbology from the duplicated layer should be included in the export image
+            const legendTreeData = legendBlock
+                .walk(entry =>
+                    entry.visibility ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null)
+                .filter(a =>
+                    a !== null);
 
-                    } else if (item.type === 'layer') {
-                        return {
-                            name: item.name,
-                            items: item.symbology.map(({ name, svgcode }) => {
-                                return {
-                                    name,
-                                    svgcode,
-                                    type: item.layerType
-                                };
-                            })
-                        };
-                    }
-                });
+            return legendTreeData;
         }
     }
 })();

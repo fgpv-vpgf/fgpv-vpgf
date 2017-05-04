@@ -56,7 +56,7 @@
                         'query',
 
                         'symbology',
-                        'reload', // reload control is not allowed on groups, but since dynamice layer is represented by a group, it will be show up on the dynamic layer placeholder
+                        //'reload', // reload control is not allowed on groups, but since dynamic layer is represented by a group, it will be show up on the dynamic layer placeholder and error templates
                         'remove',
                         'settings'
                     ],
@@ -841,7 +841,7 @@
                 this._entryIndex = entrySource.entryIndex;
                 this._entryId = entrySource.entryId;
                 this._coverIcon = entrySource.coverIcon;
-                this._symbologyStack = entrySource.symbologyStack;
+                this._symbologyStack = entrySource.symbologyStack || [];
                 this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
 
                 this._userAdded = entrySource.userAdded || false;
@@ -929,7 +929,13 @@
                             return 0;
                         })
                         .map(layerDefinition =>
-                            ({ layerId: layerDefinition.id }));
+                            ({
+                                layerId: layerDefinition.id,
+                                // in auto legend, default wms symbology to images;
+                                symbologyRenderStyle:
+                                    layerDefinition.layerType === layerTypes.OGC_WMS ?
+                                        Entry.IMAGES : Entry.ICONS
+                            }));
 
                 } else {
                     rootChildren = legendSource.root.children;
@@ -1071,7 +1077,7 @@
 
                 this._geoSearch = new GeoSearchComponent(componentsSource.geoSearch);
                 this._mouseInfo = new MouseInfoComponent(componentsSource.mouseInfo);
-                this._northArray = new NorthArrowComponent(componentsSource.northArrow);
+                this._northArrow = new NorthArrowComponent(componentsSource.northArrow);
                 this._overviewMap = new OverviewMapComponent(componentsSource.overviewMap);
                 this._scaleBar = new ScaleBarComponent(componentsSource.scaleBar);
                 this._basemap = new BasemapComponent(componentsSource.basemap);
@@ -1079,7 +1085,7 @@
 
             get geoSearch () { return this._geoSearch; }
             get mouseInfo () { return this._mouseInfo; }
-            get northArray () { return this._northArrow; }
+            get northArrow () { return this._northArrow; }
             get overviewMap () { return this._overviewMap; }
             get scaleBar () { return this._scaleBar; }
             get basemap () { return this._basemap; }
