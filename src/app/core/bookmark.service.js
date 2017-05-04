@@ -37,7 +37,7 @@
             // TODO: possibly race condition to clean up or need basemapService to expose original projection
 
             // we tack a flag at the end to indicate if we were in blank mode or not
-            const bmkey = geoService.mapManager.BasemapControl.basemapGallery.getSelected().id +
+            const bmkey = geoService.Map.BasemapControl.basemapGallery.getSelected().id +
                 (geoService.state.blankBaseMapId ? '1' : '0');
             const basemap = encode64(bmkey);
 
@@ -431,7 +431,7 @@
                 // find the LOD set for the basemap in the config file,
                 // then find the LOD closest to the scale provided by the bookmark.
                 const configLodSet = config.map.lods.find(lodset => lodset.id === lodId);
-                const zoomLod = gapiService.gapi.mapManager.findClosestLOD(configLodSet.lods, scale);
+                const zoomLod = gapiService.gapi.Map.findClosestLOD(configLodSet.lods, scale);
 
                 // Note: we used to use a centerAndZoom() call to position the map to the basemap co-ords.
                 //       it was causing a race condition during a projection change, so we now calculate

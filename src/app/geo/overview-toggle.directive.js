@@ -85,7 +85,7 @@
              * @function animationCompleted
              */
             function animationCompleted(isReversed = false) {
-                const overviewMapMap = geoService.mapManager.OverviewMapControl.map;
+                const overviewMapMap = geoService.map.instance.overviewMap.map;
                 const esriNode = el.parent().parent();
 
                 $timeout.cancel(timeoutPromise); // cancel existing timeout if present

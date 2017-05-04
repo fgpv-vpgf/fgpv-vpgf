@@ -177,10 +177,9 @@
          * @function onComplete
          */
         function onComplete() {
-            const mapManager = gapiService.gapi.mapManager;
-            const originalPanDuration = mapManager.mapDefault('panDuration');
             const map = configService.getSync.map.body;
-            mapManager.mapDefault('panDuration', 0);
+            const originalPanDuration = map.mapDefault('panDuration');
+            map.mapDefault('panDuration', 0);
 
             map.resize();
             map.reposition();
@@ -196,8 +195,13 @@
                     clearProps: 'top,left'
                 });
 
+<<<<<<< 2a93a037c9b52c2ac1174a397d4a313ae97c99a2
                 mapManager.mapDefault('panDuration', originalPanDuration);
             }, 350);
+=======
+                map.mapDefault('panDuration', originalPanDuration);
+            }, RV_DURATION * 1000);
+>>>>>>> wip
         }
     }
 })();

@@ -380,7 +380,7 @@
                 this._metadataUrl = source.metadataUrl;
                 this._catalogueUrl = source.catalogueUrl;
                 this._extent = source.extent ?
-                    gapiService.gapi.mapManager.getExtentFromJson(source.extent) :
+                    gapiService.gapi.Map.getExtentFromJson(source.extent) :
                     undefined;
 
                 const defaults = DEFAULTS.layer[this.layerType];
@@ -572,7 +572,7 @@
                 this._outfields = source.outfields || '*';
                 this._stateOnly = source.stateOnly;
                 this._extent = source.extent ?
-                    gapiService.gapi.mapManager.getExtentFromJson(source.extent) :
+                    gapiService.gapi.Map.getExtentFromJson(source.extent) :
                     undefined;
 
                 this.isLayerEntry = true;
@@ -680,7 +680,7 @@
                 const completeExtent = angular.extend({}, extent, { spatialReference: this._spatialReference });
                 console.info(completeExtent);
 
-                return gapiService.gapi.mapManager.getExtentFromJson(completeExtent);
+                return gapiService.gapi.Map.getExtentFromJson(completeExtent);
             }
         }
 
@@ -1226,18 +1226,12 @@
             set legendBlocks (lb) {     this._legendBlocks = lb; }
             get legendMappings () {      return this._legendMappings; }
 
-            get body () {       return this._body; }
+            get instance () {   return this._instance; }
             get node () {       return this._node; }
-            get manager () {    return this._manager; }
 
-            storeMapReference(node, body, manager) {
+            storeMapReference(node, instance) {
                 this._node = node;
-                this._body = body;
-                this._manager = manager;
-
-                this.components.basemap.body = this._manager.BasemapControl;
-                this.components.overviewMap.body = this._manager.OverviewMapControl;
-                this.components.scaleBar.body = this._manager.ScalebarControl;
+                this._instance = instance;
             }
 
             _isLoading = true;

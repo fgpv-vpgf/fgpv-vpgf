@@ -61,7 +61,7 @@
 
             } else {
                 // getNorthArrowAngle uses 180 degrees as north but here we expect 90 degrees to be north, so we correct the rotation by the subtraction
-                angleDegrees = 270 - gapiService.gapi.mapManager.getNorthArrowAngle(map);
+                angleDegrees = 270 - gapiService.gapi.Map.getNorthArrowAngle(map);
                 // since 90 degree is north, any deviation from this is the rotation angle
                 rotationAngle =  90 - angleDegrees;
                 // z is the hypotenuse line from center point to the top of the viewer. The triangle is always a right triangle

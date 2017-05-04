@@ -14,7 +14,7 @@ describe('geo', () => {
         $provide.factory('gapiService', () => {
             return {
                 gapi: {
-                    mapManager: {
+                    Map: {
                         Map: () => map,
                         setupMap: () => {}
                     },
@@ -156,7 +156,7 @@ describe('geo', () => {
             // TODO: re-enable the test after unit test code updated
             // temporary disabled for basemap reprojection code
             xit('should make a map', done => {
-                const m = gapiService.gapi.mapManager;
+                const m = gapiService.gapi.Map;
                 spyOn(m, 'Map')
                     .and.callThrough();
 

@@ -488,7 +488,7 @@
                 "altText": { "type": "string", "description": "Alt text for the basemap thumbnail image.Alt text for the basemap thumbnail image." },
                 "thumbnailUrl": { "type": "string", "description": "Path to image file to display in the basemap selector." },
                 "tileSchemaId": { "type": "string", "description": "The tile schema for this basemap (should reference map.tileSchemas.id)" },
-                "layers": { "$ref": "#/definitions/layerList" },
+                "layers": { "type": "array", "items": { "type": "string" }, "minItems": 1, "description": "A set of URLs which should be composited to form a basemap entry" },
                 "attribution": { "$ref": "#/definitions/attributionNode" },
                 "zoomLevels": {
                     "type": "object",
@@ -500,7 +500,7 @@
                     "additionalProperties": false
                 }
             },
-            "required": [ "id", "name", "description", "altText", "thumbnailUrl", "tileSchemaId" ],
+            "required": [ "id", "name", "description", "layers", "altText", "thumbnailUrl", "tileSchemaId" ],
             "additionalProperties": false
         },
 

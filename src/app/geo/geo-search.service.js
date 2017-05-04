@@ -463,14 +463,14 @@
             const gapi = gapiService.gapi;
 
             // set extent from bbox
-            const latlongExtent = gapi.mapManager.Extent(...bbox, { wkid: 4326 });
+            const latlongExtent = gapi.Map.Extent(...bbox, { wkid: 4326 });
 
             // reproject extent
             const projExtent = gapi.proj.localProjectExtent(
                 latlongExtent, mapSR);
 
             // set extent from reprojected values
-            const zoomExtent = gapi.mapManager.Extent(projExtent.x0, projExtent.y0,
+            const zoomExtent = gapi.Map.Extent(projExtent.x0, projExtent.y0,
                 projExtent.x1, projExtent.y1, projExtent.sr);
 
             // zoom to location (expand the bbox to include all the area)

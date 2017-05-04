@@ -52,8 +52,8 @@
                     configService.getAsync.then(cfg => cfg.map.body.disableKeyboardNavigation());
 
                     // reduce map animation time which in turn makes panning less jittery
-                    gapiService.gapi.mapManager.mapDefault('panDuration', 0);
-                    gapiService.gapi.mapManager.mapDefault('panRate', 0);
+                    gapiService.gapi.Map.mapDefault('panDuration', 0);
+                    gapiService.gapi.Map.mapDefault('panRate', 0);
 
                     el.on('keydown', keyDownHandler);
                     el.on('keyup', keyUpHandler);

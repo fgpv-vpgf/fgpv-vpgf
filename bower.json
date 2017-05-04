@@ -30,7 +30,7 @@
     "datatables.net-dt": "~1.10.11",
     "dotjem-angular-tree": "~0.2.1",
     "file-saver": "^1.3.3",
-    "geoapi": "http://fgpv.cloudapp.net/demo/gapi/geoapi-0.0.0-protoLR-31.tgz",
+    "geoapi": "http://fgpv.cloudapp.net/demo/gapi/geoapi-0.0.0-protoLR-34.tgz",
     "gsap": "^1.18.0",
     "jquery": "^2.2.1",
     "jquery-hoverintent": "~1.8.1",

@@ -557,7 +557,7 @@
 
                 // if extent suppressor is on, enforce it here
                 if (config.map.restrictNavigation && geoState.maxExtent) {
-                    const extentTest = gapiService.gapi.mapManager.enforceBoundary(params.extent, geoState.maxExtent);
+                    const extentTest = gapiService.gapi.Map.enforceBoundary(params.extent, geoState.maxExtent);
                     if (extentTest.adjusted) {
                         // NOTE: the map will not do a smooth pan because we have pan duration
                         // set to 0 for reasons (keyboard pan?).
@@ -995,7 +995,7 @@
                     // need to reproject in case full extent in a different sr than basemap
                     const gextent = gapiService.gapi.proj.localProjectExtent(l.fullExtent,
                         mapObject.spatialReference);
-                    const reprojLayerFullExt = gapiService.gapi.mapManager.Extent(gextent.x0, gextent.y0,
+                    const reprojLayerFullExt = gapiService.gapi.Map.Extent(gextent.x0, gextent.y0,
                         gextent.x1, gextent.y1, gextent.sr);
 
                     // check if current map extent already in layer extent
@@ -1032,7 +1032,7 @@
                         mapObject.spatialReference);
                 }
 
-                const reprojLayerFullExt = gapiService.gapi.mapManager.Extent(gextent.x0, gextent.y0,
+                const reprojLayerFullExt = gapiService.gapi.Map.Extent(gextent.x0, gextent.y0,
                     gextent.x1, gextent.y1, gextent.sr);
 
                 return mapObject.setExtent(reprojLayerFullExt);
