@@ -1,8 +1,8 @@
-/* global Ease, BezierEasing */
+/* global Ease, BezierEasing, screenfull */
 (() => {
     'use strict';
 
-    const RV_DURATION = 0.3;
+    const RV_DURATION = 0;
     const RV_SWIFT_IN_OUT_EASE = new Ease(BezierEasing(0.35, 0, 0.25, 1));
     const FULL_SCREEN_Z_INDEX = 50;
     // README: this is a simplest solution to https://github.com/fgpv-vpgf/fgpv-vpgf/issues/671
@@ -15,7 +15,7 @@
     /**
      * @module fullScreenService
      * @memberof app.ui
-     * @requires $rootElement, $timeout, storageService, gapiService, geoService
+     * @requires $rootElement, $timeout, storageService, gapiService
      * @description
      *
      * The `fullscreen` factory makes the map go "Boom!".
@@ -25,10 +25,10 @@
         .module('app.ui.common')
         .factory('fullScreenService', fullScreenService);
 
-    function fullScreenService($rootElement, $timeout, storageService, gapiService, geoService, animationService,
-        configService) {
+    function fullScreenService($rootElement, $timeout, storageService, gapiService, animationService, configService) {
         const ref = {
             isExpanded: false,
+            toggleLock: false,
             tl: undefined,
 
             body: angular.element('body'),
@@ -46,6 +46,8 @@
             isFullPageApp: configService.getAsync.then(conf => conf.fullscreen)
         };
 
+        screenfull.onchange(() => toggle(true));
+
         return service;
 
         /***/
@@ -53,15 +55,28 @@
         /**
          * Toggles the full-screen state by running animation which expands the shell node to take over the entire page at the same time animating the map container node to the map centered in the expanding container; reverse animation works similarly.
          * @function toggle
+         * @param   {Boolean}   autoToggle  true if toggle is caused by escape key in fullscreen mode, shoud be false otherwise
          */
-        function toggle() {
+        function toggle(autoToggle) {
+
+            // we handle two cases here:
+            //    - The user enables/disables fullscreen mode via a button in the viewer
+            //    - Fullscreen mode is disabled via the escape key
+            if (ref.toggleLock) {
+                ref.toggleLock = false;
+                return;
+            } else if (!autoToggle) {
+                ref.toggleLock = true;
+                screenfull.toggle();
+            }
+
             // pause and kill currently running animation
             if (ref.tl) {
                 ref.tl.pause().kill();
             }
 
             // store current center point of the map
-            ref.trueCenterPoint = geoService.mapObject.extent.getCenter();
+            ref.trueCenterPoint = configService.getSync.map.body.extent.getCenter();
 
             if (!ref.isExpanded) {
 
@@ -164,16 +179,17 @@
         function onComplete() {
             const mapManager = gapiService.gapi.mapManager;
             const originalPanDuration = mapManager.mapDefault('panDuration');
+            const map = configService.getSync.map.body;
             mapManager.mapDefault('panDuration', 0);
 
-            geoService.mapObject.resize();
-            geoService.mapObject.reposition();
+            map.resize();
+            map.reposition();
 
             // wait for a bit before recentring the map
             // if call right after animation completes, the map object still confused about its true size and extent
             $timeout(() => {
                 // center the map
-                geoService.mapObject.centerAt(ref.trueCenterPoint);
+                map.centerAt(ref.trueCenterPoint);
 
                 // clear offset properties on the map container node
                 animationService.set(ref.mapContainerNode, {
@@ -181,7 +197,7 @@
                 });
 
                 mapManager.mapDefault('panDuration', originalPanDuration);
-            }, RV_DURATION * 1000);
+            }, 350);
         }
     }
 })();
