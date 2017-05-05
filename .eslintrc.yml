@@ -4,6 +4,7 @@ globals:
   angular: true
   RV: true
   RColor: true
+  marked: true
 
 ecmaFeatures:
   modules: true

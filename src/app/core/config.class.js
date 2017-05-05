@@ -1248,7 +1248,7 @@
         }
 
         class NavBar {
-            constructor(source) {
+            constructor(source = {}) {
                 this._source = source;
 
                 this._zoom = source.zoom || 'buttons';
@@ -1259,16 +1259,83 @@
             get extra () { return this._extra; }
         }
 
+        class SideMenu {
+            constructor(source = {}) {
+                this._source = source;
+
+                this._logo = source.logo === 'true';
+                this._items = angular.isArray(source.items) ?
+                    source.items.map(subItems =>
+                        common.intersect(source.items, SideMenu.ITEMS)) :
+                    SideMenu.ITEMS_DEFAULT;
+            }
+
+            static AVAILABLE_ITEMS = [
+                'layers',
+                'basemap',
+                'about',
+                'fullscreen',
+                'export',
+                'share',
+                'touch',
+                'help',
+                'language'
+            ];
+
+            static ITEMS_DEFAULT = [
+                [
+                    'layers',
+                    'basemap'
+                ],
+                [
+                    'fullscreen',
+                    'export',
+                    'share',
+                    'touch',
+                    'help'
+                ],
+                [
+                    'language'
+                ]
+            ];
+
+            get source () { return this._source; }
+            get logo () { return this._logo; }
+            get items () { return this._items; }
+        }
+
+        class LegendIsOpen {
+            constructor(source = {}) {
+                this._source = source;
+
+                this._large = source.large === 'true';
+                this._medium = source.medium === 'true';
+                this._small = source.small === 'true';
+            }
+
+            get large () { return this._large; }
+            get medium () { return this._medium; }
+            get small () { return this._small; }
+        }
+
         class UI {
             constructor(uiSource) {
                 this._source = uiSource;
 
                 this._navBar = new NavBar(uiSource.navBar);
-
-                // TODO: type the rest of the ui section
+                this._logoUrl = uiSource.logoUrl || null;
+                this._restrictNavigation = uiSource.restrictNavigation === 'true';
+                this._sideMenu = new SideMenu(uiSource.sideMenu);
+                this._legendIsOpen = new LegendIsOpen(uiSource.legendIsOpen);
             }
 
-            get navBar () { return this._navBar; }
+            get source () {                 return this._source; }
+
+            get navBar () {                 return this._navBar; }
+            get logoUrl () {                return this._logoUrl; }
+            get restrictNavigation () {     return this._restrictNavigation; }
+            get sideMenu () {               return this._sideMenu; }
+            get legendIsOpen () {           return this._legendIsOpen; }
         }
 
         /**
@@ -1289,7 +1356,7 @@
 
                 this._map = new Map(configSource.map);
                 this._services = new Services(configSource.services);
-                this._ui = new UI(configSource.ui); // TODO: parse ui sections
+                this._ui = new UI(configSource.ui);
             }
 
             /**
@@ -1305,6 +1372,17 @@
             get ui () { return this._ui; }
             get services () { return this._services; }
             get map () { return this._map; }
+
+            get JSON () {
+                return {
+                    version: this.version,
+                    language: this.language,
+                    languages: this.languages,
+                    ui: this.ui.JSON,
+                    services: this.services.JSON,
+                    map: this.map.JSON
+                }
+            }
         }
 
         const LAYER_TYPE_TO_LAYER_NODE = {

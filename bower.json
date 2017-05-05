@@ -19,7 +19,7 @@
     "angular-minicolors": "^0.0.9",
     "angular-sanitize": "1.4.12",
     "angular-translate": "^2.15.1",
-    "angular-translate-loader-static-files": "^2.13.0",
+    "angular-translate-loader-static-files": "^2.15.1",
     "bezier-easing": "^1.0.0",
     "canvas-toBlob.js": "https://github.com/eligrey/canvas-toBlob.js.git",
     "datatables-buttons": "~1.1.2",

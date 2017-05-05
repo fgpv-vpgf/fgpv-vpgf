@@ -1,4 +1,3 @@
-/* global marked */
 (() => {
 
     // this is a default configuration of the side menu
@@ -42,7 +41,6 @@
      * @return {object} service object
      */
     // need to find a more elegant way to include all these dependencies
-    // jshint maxparams:16
     function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegistry, configService, events,
         stateManager, basemapService, fullScreenService, exportService, storageService, helpService, reloadService,
         translations, $mdDialog, pluginService) {
@@ -50,9 +48,7 @@
         const service = {
             open,
             close,
-            toggle,
 
-            config: {},
             controls: {},
 
             ShareController,
@@ -164,9 +160,7 @@
 
         init();
 
-        // if language change, reset menu item
-        $rootScope.$on(events.rvLangSwitch, init);
-
+        // TODO: is this affected by the config reload at all?
         // Add any MenuItem plugins as they are created to the menu
         pluginService.onCreate(globalRegistry.BasePlugins.MenuItem, mItem => {
             // first plugin created should add the plugin group
@@ -312,63 +306,23 @@
             return $mdSidenav('left').close();
         }
 
-        // FIXME: write a proper toggle function
-        /**
-         * Toggles side navigation panel.
-         *
-         * @function toggle
-         * @param  {object} argument [description]
-         */
-        function toggle(argument) {
-            console.log(argument);
-        }
-
         /**
          * Set up initial mapnav cluster buttons.
-         * Set up language change listener to update the buttons when a new config is loaded.
+         * Set up language change listener to update the buttons and language menus when a new config is loaded.
          *
          * @function init
          * @private
          */
         function init() {
-            setupSidenavButtons();
-            setupLanguages();
-        }
-
-        /**
-         * Merges a sidemenu snippet from the config file with the default configuration. This is a shallow extend and the top-level properties (`items` will be overwritten). Supplying an empty array as `items` will remove all the menu options.
-         *
-         * @function setupSidenavButtons
-         * @function private
-         */
-        function setupSidenavButtons() {
-            configService.getAsync.then(data => {
-                service.config = angular.extend({}, SIDENAV_CONFIG_DEFAULT, data.sideMenu);
-
-                // a hack to get the logo url from the config to the template; need to decide where such things will be defined in the new schema
-                service.config.logoUrl = data.logoUrl;
-
+            configService.onEveryConfigLoad(config => {
                 // all menu items should be defined in the config's ui section
                 // should we account for cases when the export url is not specified, but export option is enabled in the side menu thought the config and hide it ourselves?
                 // or just let it failed
                 // or do these checks together with layer definition validity checks and remove export from the sidemenu options at that point
-                service.controls.export.isHidden = !data.services.exportMapUrl;
-                // shareable should be deprecated;
-                service.controls.share.isHidden = !data.shareable;
-                service.controls.fullscreen.isHidden = data.fullscreen;
-            });
-        }
+                service.controls.export.isHidden = typeof config.services.exportMapUrl === 'undefined';
 
-        /**
-         * Generate the language selector menu
-         *
-         * @function setupLanguages
-         * @private
-         */
-        function setupLanguages() {
-            // get languages available from configService
-            configService.getAsync.then(cfg => {
-                const langs = cfg.languages;
+                // generate the language selector menu;
+                const langs = config.languages;
                 service.controls.language.children = langs.map(l =>
                     ({
                         type: 'link',
@@ -377,8 +331,7 @@
                         isChecked: isCurrentLanguage,
                         value: l
                     }));
-            })
-
+            });
 
             /**
              * Switches the language to the language represented by the sidemenu language control object.
