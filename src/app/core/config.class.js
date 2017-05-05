@@ -876,10 +876,15 @@
                 this._children = entryGroupSource.children.map(childConfig =>
                     _makeChildObject(childConfig));
 
-                this._controls = common.intersect(
+                this._controls = angular.isArray(entryGroupSource.controls) ? common.intersect(
                     entryGroupSource.controls,
-                    DEFAULTS.legend[TYPES.legend.GROUP].controls);
-                this._disabledControls = entryGroupSource.disabledControls || [];
+                    DEFAULTS.legend[TYPES.legend.GROUP].controls) :
+                    DEFAULTS.legend[TYPES.legend.GROUP].controls;
+
+                this._disabledControls = angular.isArray(entryGroupSource.disabledControls) ? common.intersect(
+                    entryGroupSource.disabledControls,
+                    DEFAULTS.legend[TYPES.legend.GROUP].disabledControls) :
+                    DEFAULTS.legend[TYPES.legend.GROUP].disabledControls;
                 this._userDisabledControls = [];
 
                 this._expanded = entryGroupSource.expanded || false;

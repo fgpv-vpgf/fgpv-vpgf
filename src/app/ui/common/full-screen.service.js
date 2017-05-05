@@ -179,6 +179,7 @@
             const map = configService.getSync.map.instance;
             const originalPanDuration = map.mapDefault('panDuration');
             map.mapDefault('panDuration', 0);
+            // TODO: fix after geoapi allows this through
             map._map.resize();
             map._map.reposition();
 

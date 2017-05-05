@@ -11,12 +11,18 @@
             display: flex;
             width: 100%;
             height: 100%;
+            flex-flow: row wrap;
         }
 
         .myMap {
-            flex: 1;
+            flex: 1 auto;
             margin: 10px;
             border: 1px solid black;
+            height: 820px;
+        }
+
+        .fullrow {
+            flex: 2 100%;
         }
 
         /* Edge hack, seems like body is at z-index 0 and sits on top of the map which is at z-index: -1 */
@@ -55,6 +61,15 @@
         </div>
 
         <div class="myMap" is="rv-map" rv-config="config_mobile_2_auto" rv-langs='["en-CA", "fr-CA"]'
+            rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'>
+            <noscript>
+                <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
+
+                <p>Cette carte interactive nécessite JavaScript. Pour voir ce contenu, s'il vous plaît, activer JavaScript dans votre navigateur ou télécharger un navigateur qui le prend en charge.</p>
+            </noscript>
+        </div>
+
+        <div class="myMap fullrow" is="rv-map" rv-config="config-mobile-3.json" rv-langs='["en-CA", "fr-CA"]'
             rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'>
             <noscript>
                 <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>

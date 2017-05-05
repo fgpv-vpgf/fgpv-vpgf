@@ -566,8 +566,6 @@
                 this._walk = ref.walkFunction.bind(this);
             }
 
-            get blockType () { return TYPES.SET; }
-
             _highlightSet = false;
 
             // sets are special snowflakes; they only support visibility controls
@@ -624,6 +622,7 @@
             addEntry (entry, position = this._entries.length) {
                 // since a set can have at most one visible child,
                 // as soon as there is one visible chilld, turn all subsequent children off
+                // TODO: fix issue when a dynamic layer takes time to load and toggles itself on, after this point making it possible to have several items visible in a set
                 if (this.visibility) {
                     entry.visibility = false;
                 }

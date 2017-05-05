@@ -306,48 +306,7 @@
         "name": "root",
         "children": [
           {
-            "layerId": "scaleDep",
-            "controlledIds": [
-              "ecogeo", "powerplant100mw-25"
-            ]
-          },
-          {
-            "layerId": "ecogeofull2"
-          },
-          {
-            "layerId": "ecogeofull2"
-          },
-          {
-            "layerId": "ecogeofull2"
-          },
-          {
-            "infoType": "text",
-            "content": "A man rushes his limp dog to the veterinarian. The doctor pronounces the dog dead. The agitated man demands a second opinion. The vet goes into the back room and comes out with a cat. The cat sniffs the body and meows. The vet says, I'm sorry, but the cat thinks that your dog is dead, too."
-          },
-          {
-            "name": "superGroup",
-            "expanded": true,
-            "controls": [
-              "visibility",
-              "settings"
-            ],
-            "disabledControls": [
-              "visibility"
-            ],
-            "children": [
-              {
-                "layerId": "esri_tile"
-              },
-              {
-                "layerId": "ecogeofull",
-                "controlledIds": [
-                  "powerplant100mw-12"
-                ]
-              }
-            ]
-          },
-          {
-            "name": "A Group with a Visibility Set",
+            "name": "A Simple Group with a Visibility Set",
             "expanded": true,
             "controls": [
               "visibility"
@@ -368,49 +327,47 @@
               }
             ]
           },
-          {
-            "name": "Cat GIFs",
+           {
+            "name": "A Complex Group with a Visibility Set",
+            "expanded": false,
             "children": [
               {
-                "infoType": "image",
-                "content": "https://advego.ru/uploads/scepsis/%D1%8F_%D1%81%D0%B4%D0%B5%D0%BB%D0%B0%D0%BB%D0%AA_32f0bf9b4f82c17317ae7bcb2e1a3d22.gif"
-              },
-              {
-                "infoType": "image",
-                "content": "https://s-media-cache-ak0.pinimg.com/originals/ac/cf/82/accf8215081bb1922ab317f31a6acb2b.gif"
-              },
-              {
-                "infoType": "image",
-                "content": "https://media.tenor.co/images/33065341659efcc8c214d8541e594124/tenor.gif"
-              },
-              {
-                "infoType": "image",
-                "content": "http://i3.kym-cdn.com/entries/icons/original/000/011/198/internet.gif"
+                "exclusiveVisibility": [
+                    {
+                      "layerId": "powerplant100mw-12"
+                    },
+                    {
+                      "layerId": "powerplant100mw-13"
+                    },
+                    {
+                      "name": "A group with a set inside a set",
+                      "children": [
+                        {
+                          "layerId": "powerplant100mw-22"
+                        },
+                        {
+                          "exclusiveVisibility": [
+                            {
+                              "layerId": "powerplant100mw-18"
+                            },
+                            {
+                              "layerId": "powerplant100mw-14"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "layerId": "powerplant100mw-19"
+                    }
+                  ]
               }
             ]
-          }
+           }
         ]
       }
     },
     "layers": [
-      {
-        "id": "powerplant100mw-25",
-        "name": "Power Plants, 25",
-        "layerType": "esriDynamic",
-        "layerEntries": [
-          {
-            "index": 11
-          },
-          {
-            "index": 30
-          }
-        ],
-        "state": {
-          "boundingBox": true,
-          "opacity": 0.2
-        },
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
-      },
       {
         "id": "powerplant100mw-2",
         "name": "Power Plants, 2",
@@ -421,6 +378,13 @@
           "boundingBox": false
         },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
+      },
+      {
+        "id": "powerplant100mw-22",
+        "name": "Power Plants, 22",
+        "layerType": "esriFeature",
+        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/22"
       },
       {
         "id": "powerplant100mw-3",
@@ -446,117 +410,34 @@
         "name": "Power Plants, 12",
         "layerType": "esriFeature",
         "state": {
-          "opacity": 0.4
+          "visibility": false,
+          "boundingBox": false
         },
-        "disabledControls": ["opacity"],
-        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/12"
       },
       {
-        "id": "scaleDep",
-        "name": "Air Ozone Scale Dep",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2",
+        "id": "powerplant100mw-13",
+        "name": "Power Plants, 13",
         "layerType": "esriFeature",
-        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
-        "state": {
-          "opacity": 0.75
-        },
-        "disabledControls": [ "query" ]
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/13"
       },
       {
-        "id":"ecogeo",
-        "name": "Eco Geo",
-        "layerType":"esriFeature",
-        "url":"http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer/6",
-        "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
+        "id": "powerplant100mw-14",
+        "name": "Power Plants, 14",
+        "layerType": "esriFeature",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/14"
       },
       {
-        "id": "ecogeofull2",
-        "name": "Eco Geo",
-        "layerType": "esriDynamic",
-        "layerEntries": [ { "index": 8 }, { "index": 6 } ],
-        "url": "http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer",
-        "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
+        "id": "powerplant100mw-18",
+        "name": "Power Plants, 18",
+        "layerType": "esriFeature",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/18"
       },
       {
-        "id": "ecogeofull",
-        "name": "Eco Geo",
-        "layerType": "esriDynamic",
-        "layerEntries": [
-          {
-            "index": 8,
-            "controls": ["opacity"]
-          },
-          {
-            "index": 7,
-            "state": {
-              "visibility": true,
-              "boundingBox": true
-            }
-          },
-          {
-            "index": 9
-          }
-        ],
-        "state": {
-          "visibility": false
-        },
-        "url": "http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer",
-        "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
-      },
-      {
-        "id": "scaleDepDynamic",
-        "name": "Air SO2 Scale Dep",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer",
-        "layerType": "esriDynamic",
-        "layerEntries": [
-          {
-          "index": 3
-          },
-          {
-          "index": 2
-          },
-          {
-          "index": 4
-          }
-        ],
-        "state": {
-          "visibility": false
-        }
-      },
-      {
-        "id": "esri_image",
-        "name": "Classified",
-        "layerType": "esriImage",
-        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/LCV_AAFC_CLASSIFIED_30M_1995/ImageServer",
-        "state": {
-          "visibility": false
-        }
-      },
-      {
-        "id": "water_wells",
-        "name": "Groundwater Information Network - Water wells",
-        "url": "http://gin.gw-info.net/service/gin/wms/mediator/gin_en",
-        "layerType": "ogcWms",
-        "featureInfoMimeType": "text/plain",
-        "layerEntries": [
-          {
-            "id": "WaterWells"
-          }
-        ],
-        "state": {
-          "visibility": false
-        }
-      },
-      {
-        "id":"esri_tile",
-        "name": "Some tile basemap",
-        "layerType":"esriTile",
-        "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer",
-        "state": {
-          "opacity": 0.5,
-          "visibility": false
-        }
+        "id": "powerplant100mw-19",
+        "name": "Power Plants, 19",
+        "layerType": "esriFeature",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/19"
       }
     ],
     "tileSchemas": [

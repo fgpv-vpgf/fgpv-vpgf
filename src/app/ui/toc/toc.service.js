@@ -597,8 +597,9 @@
 
             function _restoreLegendBlock() {
                 reject();
-
-                panelSwitch[openPanelName].action(legendBlock);
+                if (openPanelName) {
+                    panelSwitch[openPanelName].action(legendBlock);
+                }
             }
         }
 

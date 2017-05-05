@@ -7,7 +7,7 @@ This prevents focus from being applied to elements outside the basemap selector 
             <md-icon md-svg-src="community:chevron-double-left"></md-icon>
         </md-button>
 
-        <div class="rv-subsection" ng-repeat="tileSchema in self.geoService.configObject.map.tileSchemas">
+        <div class="rv-subsection" ng-repeat="tileSchema in self.map.tileSchemas">
 
             <div class="rv-subheader">
                 <h3 class="md-title">{{ tileSchema.name }}</h3>
@@ -20,7 +20,7 @@ This prevents focus from being applied to elements outside the basemap selector 
             <div class="rv-subcontent">
 
                 <ul class="rv-list rv-basemap-list">
-                    <li class="rv-basemap-list-item" ng-repeat="basemap in self.geoService.configObject.map.basemaps | filter:{ tileSchema: { id: tileSchema.id } }">
+                    <li class="rv-basemap-list-item" ng-repeat="basemap in self.map.basemaps | filter:{ tileSchema: { id: tileSchema.id } }">
                         <rv-basemap-item basemap="basemap" select="self.mapService.selectBasemap(basemap)"></rv-basemap-item>
                     </li>
                 </ul>

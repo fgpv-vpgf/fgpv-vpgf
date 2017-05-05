@@ -90,7 +90,8 @@
             const index = layerRecords.indexOf(layerRecord);
 
             if (index !== -1) {
-                map.removeLayer(layerRecord._layer);
+                // TODO: fix after geoapi allows this through
+                map._map.removeLayer(layerRecord._layer);
                 layerRecord = layerBlueprint.generateLayer();
                 layerRecords[index] = layerRecord;
             }

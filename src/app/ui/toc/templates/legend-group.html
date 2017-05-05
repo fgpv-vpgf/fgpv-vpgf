@@ -47,7 +47,10 @@
         </md-menu-content>
     </md-menu>
 
-    <rv-legend-control block="self.block" name="visibility{{ self.isInSet ? 'set' : 'node' }}" class="rv-stay-visible rv-list-item-control"></rv-legend-control>
+    <rv-legend-control ng-if="self.isInSet" block="self.block" name="visibilityset" class="rv-stay-visible rv-list-item-control"
+        ng-mouseenter="self.block.highlightSet = true"
+        ng-mouseleave="self.block.highlightSet = false"></rv-legend-control>
+    <rv-legend-control ng-if="!self.isInSet" block="self.block" name="visibilitynode" class="rv-stay-visible rv-list-item-control"></rv-legend-control>
 </div>
 
 <!--md-button
