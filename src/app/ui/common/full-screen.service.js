@@ -1,4 +1,5 @@
-/* global Ease, BezierEasing, screenfull */
+/*eslint max-statements: ["error", 32]*/
+/* global Ease, BezierEasing, screenfull, RV */
 (() => {
     'use strict';
 
@@ -25,7 +26,7 @@
         .module('app.ui.common')
         .factory('fullScreenService', fullScreenService);
 
-    function fullScreenService($rootElement, $timeout, storageService, gapiService, animationService, configService) {
+    function fullScreenService($rootElement, $timeout, storageService, gapiService, animationService, configService, appInfo) {
         const ref = {
             isExpanded: false,
             toggleLock: false,
@@ -58,6 +59,14 @@
          * @param   {Boolean}   autoToggle  true if toggle is caused by escape key in fullscreen mode, shoud be false otherwise
          */
         function toggle(autoToggle) {
+
+            // if there are multiple viewers on the page screenfull.onchange will trigger in all viewers when one of them goes into fullscreen mode
+            // avoid this by storing the actual fullscreen appID, if they don't match ignore the event
+            if (!autoToggle) {
+                RV._fullscreenToggleAppID = appInfo.id;
+            } else if (RV._fullscreenToggleAppID !== appInfo.id) {
+                return;
+            }
 
             onComplete();
             // we handle two cases here:
