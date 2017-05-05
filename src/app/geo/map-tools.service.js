@@ -46,8 +46,8 @@
             const map = configService.getSync.map.instance;
             // const map = geoService.mapObject;
             const mapPntCntr = map.extent.getCenter();
-            const mapScrnCntr = map.toScreen(mapPntCntr);
-            const wkid = map.spatialReference.wkid;
+            const mapScrnCntr = map._map.toScreen(mapPntCntr);
+            const wkid = map.extent.spatialReference.wkid;
 
             let screenX = null;
             let screenY = null;
@@ -61,15 +61,15 @@
 
             } else {
                 // getNorthArrowAngle uses 180 degrees as north but here we expect 90 degrees to be north, so we correct the rotation by the subtraction
-                angleDegrees = 270 - gapiService.gapi.Map.getNorthArrowAngle(map);
+                angleDegrees = 270 - map.getNorthArrowAngle(map);
                 // since 90 degree is north, any deviation from this is the rotation angle
                 rotationAngle =  90 - angleDegrees;
                 // z is the hypotenuse line from center point to the top of the viewer. The triangle is always a right triangle
                 const z = mapScrnCntr.y / Math.sin(angleDegrees * 0.01745329252); // 0.01745329252 is the radian conversion
                 // hard code north pole so that arrow does not continue pointing past it
-                const northPoint = gapiService.gapi.proj.localProjectPoint('EPSG:4326', map.spatialReference,
+                const northPoint = gapiService.gapi.proj.localProjectPoint('EPSG:4326', map.extent.spatialReference,
                     { x: -96, y: 90 });
-                const screenNorthPoint = map.toScreen(northPoint);
+                const screenNorthPoint = map._map.toScreen(northPoint);
                 screenY = screenNorthPoint.y;
                 // the would be the bottom of our triangle, the length from center to where the arrow should be placed
                 screenX = screenY < 0 ?

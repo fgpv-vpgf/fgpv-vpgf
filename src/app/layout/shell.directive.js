@@ -59,9 +59,6 @@
 
                 configService.getAsync.then(config => {
                     const mapConfig = config.map.components;
-
-                    // TODO: fix north arrow
-                    /*
                     if (mapConfig.northArrow && mapConfig.northArrow.enabled) {
                         // set initial position of the north arrow
                         updateNorthArrow();
@@ -69,7 +66,6 @@
                         // init here since rvExtentChange fires before rvApiReady which will cause gapi issues
                         $rootScope.$on(events.rvExtentChange, updateNorthArrow);
                     }
-                    */
 
                     if (mapConfig.mouseInfo.enabled) {
                         // set ouput spatial reference for mouse coordinates. If spatial reference is defined in configuration file

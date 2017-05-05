@@ -59,6 +59,7 @@
          */
         function toggle(autoToggle) {
 
+            onComplete();
             // we handle two cases here:
             //    - The user enables/disables fullscreen mode via a button in the viewer
             //    - Fullscreen mode is disabled via the escape key
@@ -81,8 +82,7 @@
             if (!ref.isExpanded) {
 
                 ref.tl = animationService.timeLineLite({
-                    paused: true,
-                    onComplete
+                    paused: true
                 });
 
                 // get the container of all map layers
@@ -132,8 +132,7 @@
                 ref.tl.play();
             } else {
                 ref.tl = animationService.timeLineLite({
-                    paused: true,
-                    onComplete
+                    paused: true
                 });
 
                 // need to restore host page content to visibility
@@ -180,15 +179,14 @@
             const map = configService.getSync.map.instance;
             const originalPanDuration = map.mapDefault('panDuration');
             map.mapDefault('panDuration', 0);
-
-            map.resize();
-            map.reposition();
+            map._map.resize();
+            map._map.reposition();
 
             // wait for a bit before recentring the map
             // if call right after animation completes, the map object still confused about its true size and extent
             $timeout(() => {
                 // center the map
-                map.centerAt(ref.trueCenterPoint);
+                map._map.centerAt(ref.trueCenterPoint);
 
                 // clear offset properties on the map container node
                 animationService.set(ref.mapContainerNode, {
@@ -196,7 +194,7 @@
                 });
 
                 map.mapDefault('panDuration', originalPanDuration);
-            }, 350);
+            }, 500);
         }
     }
 })();
