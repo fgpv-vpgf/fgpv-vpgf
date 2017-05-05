@@ -31,40 +31,40 @@ class BasicFC extends placeholderFC.PlaceholderFC {
 
     }
 
-    // returns a promise of an object with minScale and maxScale values for the feature class
-    // TODO we may be able to make scale stuff non-asynch. scales are stored in dynamiclayer.layerInfos[idx]
+    // returns an object with minScale and maxScale values for the feature class
     getScaleSet () {
         // basic case - we get it from the esri layer
+        // TODO need to test for missing layer??
         const l = this._parent._layer;
-        return Promise.resolve({
+        return {
             minScale: l.minScale,
             maxScale: l.maxScale
-        });
+        };
     }
 
     isOffScale (mapScale) {
-        return this.getScaleSet().then(scaleSet => {
-            // GIS for dummies.
-            // scale increases as you zoom out, decreases as you zoom in
-            // minScale means if you zoom out beyond this number, hide the layer
-            // maxScale means if you zoom in past this number, hide the layer
-            // 0 value for min or max scale means there is no hiding in effect
-            const result = {
-                offScale: false,
-                zoomIn: false
-            };
+        const scaleSet = this.getScaleSet();
 
-            // check if out of scale and set zoom direction to scaleSet
-            if (mapScale < scaleSet.maxScale && scaleSet.maxScale !== 0) {
-                result.offScale = true;
-                result.zoomIn = false;
-            } else if (mapScale > scaleSet.minScale && scaleSet.minScale !== 0) {
-                result.offScale = true;
-                result.zoomIn = true;
-            }
+        // GIS for dummies.
+        // scale increases as you zoom out, decreases as you zoom in
+        // minScale means if you zoom out beyond this number, hide the layer
+        // maxScale means if you zoom in past this number, hide the layer
+        // 0 value for min or max scale means there is no hiding in effect
+        const result = {
+            offScale: false,
+            zoomIn: false
+        };
 
-            return result;
-        });
+        // check if out of scale and set zoom direction to scaleSet
+        if (mapScale < scaleSet.maxScale && scaleSet.maxScale !== 0) {
+            result.offScale = true;
+            result.zoomIn = false;
+        } else if (mapScale > scaleSet.minScale && scaleSet.minScale !== 0) {
+            result.offScale = true;
+            result.zoomIn = true;
+        }
+
+        return result;
     }
 
     // TODO docs

@@ -63,9 +63,8 @@
                 console.log('leaf 0 name -- sb aafc_crop_spatial_density_wheat.tif ', proxyLeaf0.name);
                 console.log('leaf 0 type -- sb esriRaster ', proxyLeaf0.layerType);
 
-                layerRec.isOffScale(0, 20000).then(offscale => {
-                    console.log('offscale test - sb false, flase', offscale);
-                });
+                console.log('offscale test - sb false, flase', layerRec.isOffScale(0, 20000));
+                
 
                 // test get attribs
 

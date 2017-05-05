@@ -339,6 +339,9 @@ class DynamicRecord extends attribRecord.AttribRecord {
                             dFC.extent = ld.extent;
                         }
 
+                        dFC._scaleSet.minScale = ld.minScale;
+                        dFC._scaleSet.maxScale = ld.maxScale;
+
                         // skip a number of things if it is a raster layer
                         // either way, return a promise so our loadPromises have a good
                         // value to wait on.
@@ -387,9 +390,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
     // override to add child index parameter
     zoomToScale (childIdx, map, lods, zoomIn, zoomGraphic = false) {
         // get scale set from child, then execute zoom
-        return this._featClasses[childIdx].getScaleSet().then(scaleSet => {
-            return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, zoomGraphic);
-        });
+        const scaleSet = this._featClasses[childIdx].getScaleSet();
+        return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, zoomGraphic);
     }
 
     isOffScale (childIdx, mapScale) {

@@ -24,6 +24,13 @@ class DynamicFC extends attribFC.AttribFC {
         // visibility is kept stateful by the parent. keeping an internal property
         // just means we would need to keep it in synch.
         // the DynamicRecord onLoad handler will set the initial state, so don't do it here.
+
+        // will also cache scale levels to avoid asynching code.  initialize here with no limits,
+        // then update when layer loads
+        this._scaleSet = {
+            minScale: 0,
+            maxScale: 0
+        };
     }
 
     get supportsOpacity () { return this._parent._isTrueDynamic; }
@@ -51,14 +58,7 @@ class DynamicFC extends attribFC.AttribFC {
 
     // returns an object with minScale and maxScale values for the feature class
     getScaleSet () {
-        // get the layerData promise for this FC, wait for it to load,
-        // then return the scale data
-        return this.getLayerData().then(lData => {
-            return {
-                minScale: lData.minScale,
-                maxScale: lData.maxScale
-            };
-        });
+        return this._scaleSet;
     }
 
     get geomType () { return this._geometryType; }
