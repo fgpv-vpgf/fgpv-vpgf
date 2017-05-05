@@ -126,15 +126,11 @@
                 }
             },
             fullscreen: {
-                type: 'link',
+                type: 'fullscreen',
                 label: 'sidenav.label.fullscreen',
                 icon: 'navigation:fullscreen',
                 isHidden: false,
-                isChecked: fullScreenService.isExpanded,
-                action: () => {
-                    // service.close();
-                    fullScreenService.toggle();
-                }
+                isChecked: fullScreenService.isExpanded
             },
             touch: {
                 type: 'link',

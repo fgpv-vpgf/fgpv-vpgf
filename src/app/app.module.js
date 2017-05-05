@@ -25,6 +25,7 @@
         'app.templates',
         'app.geo',
         'app.ui',
+        'angularScreenfull',
 
         /*
          * Feature areas
