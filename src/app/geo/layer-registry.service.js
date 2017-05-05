@@ -159,7 +159,7 @@
                 return;
             }
 
-            const mapBody = configService.getSync.map.body;
+            const mapBody = configService.getSync.map.instance;
             const layerRecord = ref.loadingQueue.shift();
 
             let isRefreshed = false;
@@ -224,7 +224,7 @@
          * @param {Array} layerRecords an array of layer records ordered as visible to the user in the layer selector UI component
          */
         function synchronizeLayerOrder(layerRecords) {
-            const mapBody = configService.getSync.map.body;
+            const mapBody = configService.getSync.map.instance;
             const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
 
             const mapLayerStacks = {
@@ -319,7 +319,7 @@
          */
         function makeBoundingBoxRecord(id, bbExtent) {
             const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
-            const mapBody = configService.getSync.map.body;
+            const mapBody = configService.getSync.map.instance;
 
             let boundingBoxRecord = getBoundingBoxRecord(id);
             if (!boundingBoxRecord) {

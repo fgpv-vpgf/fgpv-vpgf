@@ -49,11 +49,12 @@
                 if (geoService.isMapReady) {
                     // disable the vendor built keyboard support
                     // TODO: can this be moved to map service? as it seems to be always executed
-                    configService.getAsync.then(cfg => cfg.map.body.disableKeyboardNavigation());
+                    const map = configService.getSync.map.instance;
+                    map.disableKeyboardNavigation();
 
                     // reduce map animation time which in turn makes panning less jittery
-                    gapiService.gapi.Map.mapDefault('panDuration', 0);
-                    gapiService.gapi.Map.mapDefault('panRate', 0);
+                    map.mapDefault('panDuration', 0);
+                    map.mapDefault('panRate', 0);
 
                     el.on('keydown', keyDownHandler);
                     el.on('keyup', keyUpHandler);
