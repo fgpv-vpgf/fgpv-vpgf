@@ -51,10 +51,9 @@
                 const proxyLeaf2 = layerRec.getChildProxy(2);
 
                 console.log('proxy leaf 2', proxyLeaf2);
-
-                proxyLeaf2.featureCount.then(fc => {
-                    console.log('feature count - sb 247', fc);
-                });
+                console.log('feature count - sb 247', proxyLeaf2.featureCount);
+                
+                console.log('leaf 2 offscale - sb true, false', layerRec.isOffScale(2, 20000));
 
             }
 

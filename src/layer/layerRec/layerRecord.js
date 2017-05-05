@@ -320,9 +320,8 @@ class LayerRecord extends root.Root {
     // TODO docs
     zoomToScale (map, lods, zoomIn, zoomGraphic = false) {
         // get scale set from child, then execute zoom
-        return this._featClasses[this._defaultFC].getScaleSet().then(scaleSet => {
-            return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, zoomGraphic);
-        });
+        const scaleSet = this._featClasses[this._defaultFC].getScaleSet();
+        return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, zoomGraphic);
     }
 
     // TODO docs
@@ -362,14 +361,16 @@ class LayerRecord extends root.Root {
 
     /**
     * Returns the visible scale values of the layer
-    * @returns {Promise} resolves in object properties .minScale and .maxScale
+    * @returns {Object} has properties .minScale and .maxScale
     */
     getVisibleScales () {
         // default layer, take from layer object
-        return Promise.resolve({
+        // TODO do we need to handle a missing layer case?
+        //      no one should be calling this until layer is loaded anyways
+        return {
             minScale: this._layer.minScale,
             maxScale: this._layer.maxScale
-        });
+        };
     }
 
     /**

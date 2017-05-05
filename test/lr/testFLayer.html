@@ -60,9 +60,7 @@
             function afterLoadTests() {
                 console.log('enhanced loaded')
 
-                layerRec.isOffScale(20000).then(offscale => {
-                    console.log('offscale test - sb false, flase', offscale);
-                });
+                console.log('offscale test - sb false, flase', layerRec.isOffScale(20000));
 
                 proxy.formattedAttributes.then(treats => {
                     console.log('formatted attribs test - sb ? ', treats);
