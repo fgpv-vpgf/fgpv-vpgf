@@ -190,7 +190,7 @@
             getLongLink();
 
             // fetch googleAPIKey - if it exists the short link switch option is shown
-            configService.getAsync.then(conf =>
+            configService.onEveryConfigLoad(conf =>
                 (self.googleAPIUrl = conf.googleAPIKey ?
                     `https://www.googleapis.com/urlshortener/v1/url?key=${conf.googleAPIKey}` : null)
             );
@@ -259,8 +259,7 @@
             self.close = $mdDialog.hide;
 
             // get about map description from markdown or config file
-            configService.getAsync
-                .then(conf =>
+            configService.onEveryConfigLoad(conf =>
                     (self.about = conf.about))
                 .then(about => {
                     if (about.type === 'config') {

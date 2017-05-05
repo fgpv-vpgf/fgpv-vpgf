@@ -34,23 +34,22 @@
             zoomScale
         };
 
-        // configure geosearch
-        configureSearch();
+        init();
 
-        // if language change, reset geosearch
-        $rootScope.$on(events.rvLangSwitch, () => {
-            configureSearch();
-            provinceList = undefined;
-            typeList = undefined;
-        });
+        return service;
 
         /**
-         * Configure search from config file
+         * Configure search from config file.
          *
-         * @function configureSearch
+         * @function init
+         * @private
          */
-        function configureSearch() {
-            configService.getAsync.then(config => {
+        function init() {
+            // reset geosearch on every config reload, this will include language changes as well
+            configService.onEveryConfigLoad(config => {
+                provinceList = undefined;
+                typeList = undefined;
+
                 if (typeof config.services.search === 'undefined') {
                     enabled = false;
                 } else {
@@ -60,8 +59,6 @@
                 }
             });
         }
-
-        return service;
 
         /**
          * Determines if search functionality is enabled/disabled by the config. If no type parameter is passed,

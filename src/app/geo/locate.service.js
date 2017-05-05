@@ -20,9 +20,12 @@
             find
         };
 
-        configService.getAsync.then(conf => {
+        // check for the googleAPIkey on every config reload
+        configService.onEveryConfigLoad(conf => {
             if (conf.services.googleAPIKey) {
                 apiURL = `https://www.googleapis.com/geolocation/v1/geolocate?key=${conf.services.googleAPIKey}`;
+            } else {
+                apiURL = undefined;
             }
         });
 
