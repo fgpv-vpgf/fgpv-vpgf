@@ -10,7 +10,7 @@ function esriMap(esriBundle, geoApi) {
 
         static get Extent () { return esriBundle.Extent; }
         get _passthroughBindings () { return ['on', 'reorderLayer', 'addLayer', 'disableKeyboardNavigation']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
-        get _passthroughProperties () { return ['graphicsLayerIds', 'layerIds', 'spatialReference']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
+        get _passthroughProperties () { return ['graphicsLayerIds', 'layerIds', 'spatialReference', 'extent']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
         constructor (domNode, opts) {
 
