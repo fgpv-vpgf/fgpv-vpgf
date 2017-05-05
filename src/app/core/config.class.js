@@ -1191,8 +1191,6 @@
                     this._basemaps[0])
                     .select();
 
-                // TODO: parse components subsections
-
                 this._layers = mapSource.layers;
                 this._legend = new Legend(mapSource.legend, this._layers);
 
@@ -1257,6 +1255,13 @@
 
             get zoom () { return this._zoom; }
             get extra () { return this._extra; }
+
+            get JSON () {
+                return {
+                    zoom: this.zoom,
+                    extra: this.extra
+                }
+            }
         }
 
         class SideMenu {
@@ -1300,8 +1305,16 @@
             ];
 
             get source () { return this._source; }
+
             get logo () { return this._logo; }
             get items () { return this._items; }
+
+            get JSON () {
+                return {
+                    logo: this.logo,
+                    items: this.items
+                }
+            }
         }
 
         class LegendIsOpen {
@@ -1316,6 +1329,14 @@
             get large () { return this._large; }
             get medium () { return this._medium; }
             get small () { return this._small; }
+
+            get JSON () {
+                return {
+                    large: this.large,
+                    medium: this.medium,
+                    small: this.small
+                }
+            }
         }
 
         class UI {
@@ -1336,6 +1357,16 @@
             get restrictNavigation () {     return this._restrictNavigation; }
             get sideMenu () {               return this._sideMenu; }
             get legendIsOpen () {           return this._legendIsOpen; }
+
+            get JSON () {
+                return {
+                    navBar: this.navBar.JSON,
+                    logoUrl: this.logoUrl,
+                    restrictNavigation: this.restrictNavigation,
+                    sideMenu: this.sideMenu.JSON,
+                    legendIsOpen: this.legendIsOpen.JSON
+                }
+            }
         }
 
         /**
