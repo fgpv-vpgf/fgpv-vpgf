@@ -9,8 +9,21 @@ function esriMap(esriBundle, geoApi) {
     class Map {
 
         static get Extent () { return esriBundle.Extent; }
+        get _passthroughBindings () { return ['on', 'reorderLayer', 'addLayer', 'disableKeyboardNavigation']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
+        get _passthroughProperties () { return ['graphicsLayerIds', 'layerIds', 'spatialReference']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
         constructor (domNode, opts) {
+
+            this._passthroughBindings.forEach(bindingName =>
+                this[bindingName] = (...args) => this._map[bindingName](...args));
+            this._passthroughProperties.forEach(propName => {
+                const descriptor = {
+                    enumerable: true,
+                    get: () => this._map[propName]
+                };
+                Object.defineProperty(this, propName, descriptor);
+            });
+
             this._map = new esriBundle.Map(domNode, { extent: opts.extent, lods: opts.lods });
             if (opts.proxyUrl) {
                 this.proxy = opts.proxyUrl;
@@ -68,8 +81,6 @@ function esriMap(esriBundle, geoApi) {
             const lodIdx = diffs.indexOf(Math.min(...diffs));
             return lods[lodIdx];
         }
-
-        on () { return this._map.on.apply(this._map, arguments); }
 
         /**
          * Calculate north arrow bearing. Angle returned is to to rotate north arrow image.
