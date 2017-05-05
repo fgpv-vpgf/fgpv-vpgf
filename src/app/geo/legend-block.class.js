@@ -371,7 +371,7 @@
             }
 
             zoomToBoundary () {
-                this._mainProxyWrapper.zoomToBoundary(configService.getSync.map.body);
+                this._mainProxyWrapper.zoomToBoundary(configService.getSync.map.instance);
             }
 
             get symbologyStack () {     return this._symbologyStack; }

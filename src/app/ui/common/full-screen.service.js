@@ -76,7 +76,7 @@
             }
 
             // store current center point of the map
-            ref.trueCenterPoint = configService.getSync.map.body.extent.getCenter();
+            ref.trueCenterPoint = configService.getSync.map.instance.extent.getCenter();
 
             if (!ref.isExpanded) {
 
@@ -177,7 +177,7 @@
          * @function onComplete
          */
         function onComplete() {
-            const map = configService.getSync.map.body;
+            const map = configService.getSync.map.instance;
             const originalPanDuration = map.mapDefault('panDuration');
             map.mapDefault('panDuration', 0);
 
@@ -195,13 +195,8 @@
                     clearProps: 'top,left'
                 });
 
-<<<<<<< 2a93a037c9b52c2ac1174a397d4a313ae97c99a2
-                mapManager.mapDefault('panDuration', originalPanDuration);
-            }, 350);
-=======
                 map.mapDefault('panDuration', originalPanDuration);
-            }, RV_DURATION * 1000);
->>>>>>> wip
+            }, 350);
         }
     }
 })();

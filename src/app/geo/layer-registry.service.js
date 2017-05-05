@@ -83,14 +83,14 @@
          * @param {LayerBlueprint} layerBlueprint the original layerBlueprint of the layer record to be regenerated
          */
         function regenerateLayerRecord(layerBlueprint) {
-            const mapBody = configService.getSync.map.body;
+            const map = configService.getSync.map.instance;
             const layerRecords = configService.getSync.map.layerRecords;
 
             let layerRecord = getLayerRecord(layerBlueprint.config.id);
             const index = layerRecords.indexOf(layerRecord);
 
             if (index !== -1) {
-                mapBody.removeLayer(layerRecord._layer);
+                map.removeLayer(layerRecord._layer);
                 layerRecord = layerBlueprint.generateLayer();
                 layerRecords[index] = layerRecord;
             }
@@ -104,7 +104,7 @@
          * @return {Number} index of the removed layer record or -1 if the record was not found in the collection
          */
         function removeLayerRecord(id) {
-            const mapBody = configService.getSync.map.body;
+            const map = configService.getSync.map.instance;
             const layerRecords = configService.getSync.map.layerRecords;
 
             let layerRecord = getLayerRecord(id);
@@ -112,7 +112,7 @@
 
             if (index !== -1) {
                 layerRecords.splice(index, 1);
-                mapBody.removeLayer(layerRecord._layer);
+                map.removeLayer(layerRecord._layer);
             }
 
             return index;
@@ -127,12 +127,12 @@
          */
         function loadLayerRecord(id) {
             const layerRecord = getLayerRecord(id);
-            const mapBody = configService.getSync.map.body;
+            const map = configService.getSync.map.instance;
 
             if (layerRecord) {
                 const alreadyLoading = ref.loadingQueue.some(lr =>
                     lr === layerRecord);
-                const alreadyLoaded = mapBody.graphicsLayerIds.concat(mapBody.layerIds)
+                const alreadyLoaded = map.graphicsLayerIds.concat(map.layerIds)
                     .indexOf(layerRecord.config.id) !== -1;
 
                 if (alreadyLoading || alreadyLoaded) {
