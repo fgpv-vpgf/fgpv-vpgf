@@ -634,6 +634,13 @@
 
             get id () { return this._id; }
             get lods () { return this._lods; }
+
+            get JSON () {
+                return {
+                    id: this.id,
+                    lods: this.lods
+                };
+            }
         }
 
         /**
@@ -642,12 +649,14 @@
          */
         class ExtentSet {
             constructor (source) {
+                this._source = source;
+
                 this._id = source.id;
                 this._spatialReference = source.spatialReference;
 
                 this._default = this._parseExtent(source.default);
-                this._full = this._parseExtent(source.full) || this._default;
-                this._maximum = this._parseExtent(source.maximum) || this._default;
+                this._full = source.full ? this._parseExtent(source.full) : this._default;
+                this._maximum = source.maximum ? this._parseExtent(source.maximum) : this._default;
             }
 
             get id () { return this._id; }
@@ -681,6 +690,17 @@
                 console.info(completeExtent);
 
                 return gapiService.gapi.Map.getExtentFromJson(completeExtent);
+            }
+
+            get JSON () {
+                return {
+                    id: this.id,
+                    spatialReference: this.spatialReference,
+                    // default, full, and maximum cannot change during runtime, so taking the source when serializing
+                    default: this._source.default,
+                    full: this._source.full || null,
+                    maximum: this._source.maximum || null
+                };
             }
         }
 
@@ -795,7 +815,14 @@
             get extentSet () { return this._extentSet; }
             get lodSet () { return this._lodSet; }
 
-            // TODO: it's not yet decided how the blank basemap will be made; see arc room for notes
+            /**
+             * Create a blank basemap from a basemap with the same tile schema.
+             * It's not really a blank basemap, it's a basemap with opacity set to 0.
+             *
+             * @function makeBlankBasemap
+             * @param {Basemap} basemap a basemap to serve as a basis for a blank basemap
+             * @return {Basempa} returns a copy of the provided basemap with opacity dialed all the way to 0 to make it appear blank
+             */
             makeBlankBasemap(basemap) {
                 const blankBasemap = new Basemap({
                     name: 'basemap.blank.title',
@@ -808,6 +835,15 @@
                 }, this);
 
                 return blankBasemap;
+            }
+
+            get JSON () {
+                return {
+                    id: this.id,
+                    name: this.name,
+                    extentSetId: this.extentSet.id,
+                    lodSetId: this.lodSet.id
+                };
             }
         }
 
