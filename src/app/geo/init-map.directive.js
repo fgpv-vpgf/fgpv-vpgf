@@ -21,7 +21,7 @@
 
     // jshint maxparams:11
     function rvInitMap($rootScope, geoService, events, storageService, mapService, gapiService, $rootElement,
-        $interval, globalRegistry, animationService, stateManager, configService) {
+        $interval, globalRegistry, animationService, stateManager) {
 
         // key codes that are currently active
         let keyMap = [];
@@ -49,12 +49,11 @@
                 if (geoService.isMapReady) {
                     // disable the vendor built keyboard support
                     // TODO: can this be moved to map service? as it seems to be always executed
-                    const map = configService.getSync.map.instance;
-                    map.disableKeyboardNavigation();
+                    geoService.map.disableKeyboardNavigation();
 
                     // reduce map animation time which in turn makes panning less jittery
-                    map.mapDefault('panDuration', 0);
-                    map.mapDefault('panRate', 0);
+                    geoService.map.mapDefault('panDuration', 0);
+                    geoService.map.mapDefault('panRate', 0);
 
                     el.on('keydown', keyDownHandler);
                     el.on('keyup', keyUpHandler);
@@ -262,19 +261,19 @@
                         break;
                     // + (plus) key pressed - zoom in
                     case 187:
-                        configService.getSync.map.instance.shiftZoom(1);
+                        geoService.map.shiftZoom(1);
                         break;
                     // + (plus) key pressed - FF and IE
                     case 61:
-                        configService.getSync.map.instance.shiftZoom(1);
+                        geoService.map.shiftZoom(1);
                         break;
                     // - (minus) key pressed - zoom out
                     case 189:
-                        configService.getSync.map.instance.shiftZoom(-1);
+                        geoService.map.shiftZoom(-1);
                         break;
                     // - (minus) key pressed - FF and IE
                     case 173:
-                        configService.getSync.map.instance.shiftZoom(-1);
+                        geoService.map.shiftZoom(-1);
                         break;
                 }
             }

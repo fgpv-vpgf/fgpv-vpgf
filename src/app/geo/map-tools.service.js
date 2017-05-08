@@ -43,10 +43,10 @@
         */
         function northArrow() {
             // TODO: fix after config service is done
-            const map = configService.getSync.map.instance;
+            const map = geoService.map;
             // const map = geoService.mapObject;
             const mapPntCntr = map.extent.getCenter();
-            const mapScrnCntr = map._map.toScreen(mapPntCntr);
+            const mapScrnCntr = map.toScreen(mapPntCntr);
             const wkid = map.extent.spatialReference.wkid;
 
             let screenX = null;
@@ -69,7 +69,7 @@
                 // hard code north pole so that arrow does not continue pointing past it
                 const northPoint = gapiService.gapi.proj.localProjectPoint('EPSG:4326', map.extent.spatialReference,
                     { x: -96, y: 90 });
-                const screenNorthPoint = map._map.toScreen(northPoint);
+                const screenNorthPoint = map.toScreen(northPoint);
                 screenY = screenNorthPoint.y;
                 // the would be the bottom of our triangle, the length from center to where the arrow should be placed
                 screenX = screenY < 0 ?

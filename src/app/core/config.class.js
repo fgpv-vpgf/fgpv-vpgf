@@ -626,7 +626,7 @@
 
                 this._default = this._parseExtent(source.default);
                 this._full = source.full ? this._parseExtent(source.full) : this._default;
-                this._maximum = source.maximum ? this._parseExtent(source.maximum) : this._default;
+                this._maximum = source.maximum ? this._parseExtent(source.maximum) : this._full;
             }
 
             get id () { return this._id; }
@@ -655,10 +655,7 @@
              * @return {Object} returns Esri extent object
              */
             _parseExtent (extent) {
-                console.info(extent);
                 const completeExtent = angular.extend({}, extent, { spatialReference: this._spatialReference });
-                console.info(completeExtent);
-
                 return gapiService.gapi.Map.getExtentFromJson(completeExtent);
             }
 

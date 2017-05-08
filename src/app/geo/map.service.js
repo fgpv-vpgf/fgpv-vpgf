@@ -36,6 +36,7 @@
                 lods: mapConfig.selectedBasemap.lods
             };
 
+
             // reset before rebuilding the map if `geoState` already has an instance of mapService
             // TODO: restore
             /*if (typeof geoState.mapService !== 'undefined') {
@@ -249,17 +250,14 @@
             const service = {
                 // baseMapHasSameSP,
                 selectBasemap,
-                setFullExtent,
                 setSelectedBaseMap,
                 zoomToGraphic,
                 validateProj,
-                validateExtent,
                 retrieveSymbol,
                 hilightGraphic,
                 clearHilight,
                 dropMapPin,
-                geolocate,
-                getFullExtent
+                geolocate
             };
 
             return buildMapObject();
@@ -649,27 +647,6 @@
             }
 
             /**
-             * Set the map to full extent.
-             * @function setFullExtent
-             */
-            function setFullExtent() {
-                const map = service.mapObject;
-                if (geoState.fullExtent) {
-                    map.setExtent(geoState.fullExtent);
-                } else {
-                    RV.logger.warn('mapService', 'geoService *fullExtent* value is not set');
-                }
-            }
-
-            /**
-             * Get the maps full extent.
-             * @function getFullExtent
-             */
-            function getFullExtent() {
-                return geoState.fullExtent;
-            }
-
-            /**
              * Fetches a graphic from the given layer.
              * Will attempt local copy, will hit the server if not available.
              *
@@ -951,28 +928,6 @@
             }
 
             /**
-            * Takes a config based extent and returns a proper extent. Casts to Extent class.
-            * Reprojects to map projection if required.
-            *
-            * @function enhanceConfigExtent
-            * @private
-            * @param {Object} extent   the extent to enhance
-            * @param {Object} mapSR    the spatial reference of the map
-            * @returns {Object}        extent cast in Extent prototype, and in map spatial reference
-            */
-            /*function enhanceConfigExtent(extent, mapSR) {
-                // const realExtent = gapiService.gapi.Map.getExtentFromJson(extent);
-
-                if (gapiService.gapi.proj.isSpatialRefEqual(mapSR, extent.spatialReference)) {
-                    // same spatial reference, no reprojection required
-                    return realExtent;
-                } else {
-                    // need to re-project
-                    return gapiService.gapi.proj.projectEsriExtent(realExtent, mapSR);
-                }
-            }*/
-
-            /**
             * Ready a trigger on the map load event.
             * Also initialize map full extent.
             * @function prepMapLoad
@@ -1093,9 +1048,10 @@
              * @param {Number} [factor = 1] multiplier used to expand the full extent
              * @return {Boolean} True if the visible extent is contained in the full extent - false if not contained
              */
+            /*
             function validateExtent(factor = 1) {
                 return getFullExtent().expand(factor).contains(service.mapObject.extent);
-            }
+            } */
         }
     }
 })();
