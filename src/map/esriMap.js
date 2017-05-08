@@ -13,7 +13,7 @@ function esriMap(esriBundle, geoApi) {
         // TODO when jshint parses instance fields properly we can change this from a property to a field
         get _passthroughBindings () { return [
             'on', 'reorderLayer', 'addLayer', 'disableKeyboardNavigation', 'removeLayer', 'resize', 'reposition',
-            'centerAt', 'setZoom', 'centerAt', 'toScreen'
+            'centerAt', 'setZoom', 'centerAt', 'toScreen', 'setExtent'
         ]; }
         get _passthroughProperties () { return ['graphicsLayerIds', 'layerIds', 'spatialReference', 'extent']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
@@ -74,6 +74,24 @@ function esriMap(esriBundle, geoApi) {
             return esriBundle.Extent({ xmin: extentJson.xmin, ymin: extentJson.ymin,
                 xmax: extentJson.xmax, ymax: extentJson.ymax,
                 spatialReference: { wkid: extentJson.spatialReference.wkid } });
+        }
+
+        /**
+         * Take a JSON object with extent properties and convert it to an ESRI Extent.
+         * Reprojects to map projection if required.
+         *
+         * @param {Object} extent   the extent to enhance
+         * @param {Object} mapSR    the spatial reference of the map
+         * @returns {Extent}        extent cast in Extent prototype, and in map spatial reference
+         */
+        enhanceConfigExtent (extent, mapSR) {
+            const realExtent = this.getExtentFromJson(extent);
+
+            if (geoApi.proj.isSpatialRefEqual(mapSR, extent.spatialReference)) {
+                return realExtent;
+            } else {
+                return geoApi.proj.projectEsriExtent(realExtent, mapSR);
+            }
         }
 
         /**
