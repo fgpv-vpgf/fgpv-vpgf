@@ -244,16 +244,14 @@
 
         self.geoService = geoService;
         self.config = tocService.data;
-        self.presets = tocService.presets;
 
-        self.secondToc = tocService.secondToc;
-        configService.onEveryConfigLoad(cfg => { self.map = cfg.map; });
+        configService.onEveryConfigLoad(cfg =>
+            (self.map = cfg.map));
 
         // reorder mode is off by default
         self.isReorder = false;
 
         /***/
-
 
         // hacky way to toggle filters panel modes;
         // TODO: replace with a sane methods
