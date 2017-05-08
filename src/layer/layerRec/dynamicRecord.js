@@ -233,6 +233,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
             }
         };
 
+        // shortcut var to track all leafs that need attention
+        // in the loading process
+        const leafsToInit = [];
+
         // this subfunction will recursively crawl a dynamic layerInfo structure.
         // it will generate proxy objects for all groups and leafs under the
         // input layerInfo.
@@ -273,6 +277,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 }
 
                 treeArray.push({ entryIndex: layerInfo.id });
+                leafsToInit.push(layerInfo.id.toString());
             }
         };
 
@@ -287,17 +292,6 @@ class DynamicRecord extends attribRecord.AttribRecord {
             });
         }
 
-        // trigger attribute load and set up children bundles.
-        //      do we need an options object, with .skip set for sub-layers we are not dealing with?
-        //      Alternate: add new option that is opposite of .skip.  Will be more of a
-        //                 .only, and we won't have to derive a "skip" set from our inclusive
-        //                 list
-        //      Furthermore: skipping / being effecient might not really matter here anymore.
-        //                   back in the day, loadLayerAttribs would actually load everything.
-        //                   now it just sets up promises that dont trigger until someone asks for
-        //                   the information. <-- for now we are doing this approach.
-        const attributeBundle = this._apiRef.attribs.loadLayerAttribs(this._layer);
-
         // converts server layer type string to client layer type string
         const serverLayerTypeToClientLayerType = serverType => {
             switch (serverType) {
@@ -311,55 +305,55 @@ class DynamicRecord extends attribRecord.AttribRecord {
             }
         };
 
+        // process each leaf we walked to in the processLayerInfo loop above
         // idx is a string
-        attributeBundle.indexes.forEach(idx => {
-            // if we don't have a defaulted sub-config, it means the attribute leaf is not present
-            // in our visible tree structure.
-            const subC = subConfigs[idx];
-            if (subC && subC.defaulted) {
-                const dFC = new dynamicFC.DynamicFC(this, idx, attributeBundle[idx], subC.config);
-                this._featClasses[idx] = dFC;
+        leafsToInit.forEach(idx => {
 
-                // if we have a proxy watching this leaf, replace its placeholder with the real data
-                const leafProxy = this._proxies[idx];
-                if (leafProxy) {
-                    leafProxy.convertToDynamicLeaf(dFC);
-                }
+            const subC = subConfigs[idx].config;
+            const attribPackage = this._apiRef.attribs.loadServerAttribs(this._layer.url, idx, subC.outfields);
+            const dFC = new dynamicFC.DynamicFC(this, idx, attribPackage, subC);
+            this._featClasses[idx] = dFC;
 
-                // load real symbols into our source
-                loadPromises.push(dFC.loadSymbology());
-
-                // update asynchronous values
-                const pLD = dFC.getLayerData()
-                    .then(ld => {
-                        dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
-
-                        // if we didn't have an extent defined on the config, use the layer extent
-                        if (!dFC.extent) {
-                            dFC.extent = ld.extent;
-                        }
-
-                        dFC._scaleSet.minScale = ld.minScale;
-                        dFC._scaleSet.maxScale = ld.maxScale;
-
-                        // skip a number of things if it is a raster layer
-                        // either way, return a promise so our loadPromises have a good
-                        // value to wait on.
-                        if (dFC.layerType === shared.clientLayerType.ESRI_FEATURE) {
-                            dFC.geomType = ld.geometryType;
-
-                            return this.getFeatureCount(idx).then(fc => {
-                                dFC.featureCount = fc;
-                            });
-                        } else {
-                            return Promise.resolve();
-                        }
-                    })
-                    .catch(() => {
-                        dFC.layerType = shared.clientLayerType.UNRESOLVED;
-                    });
-                loadPromises.push(pLD);
+            // if we have a proxy watching this leaf, replace its placeholder with the real data
+            const leafProxy = this._proxies[idx];
+            if (leafProxy) {
+                leafProxy.convertToDynamicLeaf(dFC);
             }
+
+            // load real symbols into our source
+            loadPromises.push(dFC.loadSymbology());
+
+            // update asynchronous values
+            const pLD = dFC.getLayerData()
+                .then(ld => {
+                    dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
+
+                    // if we didn't have an extent defined on the config, use the layer extent
+                    if (!dFC.extent) {
+                        dFC.extent = ld.extent;
+                    }
+
+                    dFC._scaleSet.minScale = ld.minScale;
+                    dFC._scaleSet.maxScale = ld.maxScale;
+
+                    // skip a number of things if it is a raster layer
+                    // either way, return a promise so our loadPromises have a good
+                    // value to wait on.
+                    if (dFC.layerType === shared.clientLayerType.ESRI_FEATURE) {
+                        dFC.geomType = ld.geometryType;
+
+                        return this.getFeatureCount(idx).then(fc => {
+                            dFC.featureCount = fc;
+                        });
+                    } else {
+                        return Promise.resolve();
+                    }
+                })
+                .catch(() => {
+                    dFC.layerType = shared.clientLayerType.UNRESOLVED;
+                });
+            loadPromises.push(pLD);
+
         });
 
         // TODO careful now, as the dynamicFC.DynamicFC constructor also appears to be setting visibility on the parent.

@@ -103,6 +103,10 @@
                     console.log('formatted attributes child 2', fa);
                 });
 
+                layerRec.getFormattedAttributes(3).then(fa => {
+                    console.log('formatted attributes child 3', fa);
+                });
+
                 console.log('child tree', layerRec.getChildTree());
 
                 console.log('root layer type - sb dynamic', proxy.layerType);
