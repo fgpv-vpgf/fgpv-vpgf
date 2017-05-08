@@ -370,6 +370,7 @@
           },
           {
             "name": "Cat GIFs",
+            "controls": [],
             "children": [
               {
                 "infoType": "image",

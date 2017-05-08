@@ -9,7 +9,8 @@
 
 @mixin map {
     // makes bounding box ignore any mouse events and allow for hover tips to be triggered on feature layers underneath the bbox    .rv-esri-map.map {
-    .layersDiv g[id$="bbox_layer"] {
+    // it seems that in 3.20 `layersDiv` class was changed to `esriMapLayers`
+    .esriMapLayers g[id$="bbox_layer"] {
         pointer-events: none;
     }
 }
