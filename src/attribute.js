@@ -1,24 +1,7 @@
 'use strict';
 
-// TODO consider refactoring this file so that the geoApi object is passed in along with the
-//      esriBundle, then reference the shared module from it.  See layer.js as example.
-const shared = require('./shared.js');
-
 /*
 Structure and naming:
-
-this is the Bundle. it is the topmost object in the structure.
-it packages up attributes for an entire layer object (i.e. FeatureLayer, DynamicLayer)
-{
-    layerId: <layerId for layer>,
-    indexes: ["6", "7"],
-    "6": {
-        <instance of a layer package, see below>
-    },
-    "7": {
-        <instance of a layer package, see below>
-    }
-}
 
 this is a layer Package.  it contains information about a single server-side layer.
 note this is not always 1-to-1 with client side. a client side DynamicLayer can have
@@ -79,27 +62,6 @@ this is a layer data object.  it contains information describing the server-side
 }
 
 */
-
-/**
-* Will generate an empty object structure to store a bundle of attributes for a full layer
-* @private
-* @return {Object} empty layer bundle object
-*/
-function newLayerBundle(layerId) {
-    const bundle = {
-        layerId, // for easy access to know what layer the results belong to
-        indexes: [], // for easy iteration over all indexes in the set
-        registerData
-    };
-
-    function registerData(layerPackage) {
-        layerPackage.layerId = bundle.layerId; // layerPackage is unaware of layerId. assign it during registration
-        bundle[layerPackage.featureIdx.toString()] = layerPackage;
-        bundle.indexes.push(layerPackage.featureIdx.toString());
-    }
-
-    return bundle;
-}
 
 /**
 * Will generate an empty object structure to store attributes for a single layer of features
@@ -288,141 +250,111 @@ function loadDataBatch(opts, callerDef) {
     });
 }
 
-/**
-* fetch attributes from an ESRI ArcGIS Server Feature Layer Service endpoint
-* @param {String} layerUrl an arcgis feature layer service endpoint
-* @param {Integer} featureIdx index of where the endpoint is. used for legend output
-* @param {String} attribs a comma separated list of attributes to download. '*' will download all
-* @param  {Object} esriBundle bundle of API classes
-* @return {Object} attributes in a packaged format for asynch access
-*/
-function loadFeatureAttribs(layerUrl, featureIdx, attribs, esriBundle, geoApi) {
+function loadServerAttribsBuilder(esriBundle, geoApi) {
 
-    const layerPackage = newLayerPackage(getLayerIndex(layerUrl), esriBundle);
+    /**
+    * fetch attributes from an ESRI ArcGIS Server Feature Layer Service endpoint
+    * @param {String} mapServiceUrl   an arcgis map server service endpoint (no integer index)
+    * @param {String} featureIdx      index of where the endpoint is.
+    * @param {String} attribs         an optional comma separated list of attributes to download. default '*' will download all
+    * @return {Object} attributes in a packaged format for asynch access
+    */
+    return (mapServiceUrl, featureIdx, attribs = '*') => {
 
-    // get information about this layer, asynch
-    layerPackage.layerData = new Promise((resolve, reject) => {
-        const layerData = {};
+        const layerUrl = mapServiceUrl + '/' + featureIdx;
+        const layerPackage = newLayerPackage(featureIdx, esriBundle);
 
-        // extract info for this service
-        const defService = esriBundle.esriRequest({
-            url: layerUrl,
-            content: { f: 'json' },
-            callbackParamName: 'callback',
-            handleAs: 'json',
-        });
+        // get information about this layer, asynch
+        layerPackage.layerData = new Promise((resolve, reject) => {
+            const layerData = {};
 
-        defService.then(serviceResult => {
-            if (serviceResult && (typeof serviceResult.error === 'undefined')) {
+            // extract info for this service
+            const defService = esriBundle.esriRequest({
+                url: layerUrl,
+                content: { f: 'json' },
+                callbackParamName: 'callback',
+                handleAs: 'json',
+            });
 
-                // properties for all endpoints
-                layerData.layerType = serviceResult.type;
-                layerData.geometryType = serviceResult.geometryType || 'none'; // TODO need to decide what propert default is. Raster Layer has null gt.
-                layerData.minScale = serviceResult.minScale;
-                layerData.maxScale = serviceResult.maxScale;
-                layerData.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
-                layerData.extent = serviceResult.extent;
+            defService.then(serviceResult => {
+                if (serviceResult && (typeof serviceResult.error === 'undefined')) {
 
-                if (serviceResult.type === 'Feature Layer') {
-                    layerData.supportsFeatures = true;
-                    layerData.fields = serviceResult.fields;
+                    // properties for all endpoints
+                    layerData.layerType = serviceResult.type;
+                    layerData.geometryType = serviceResult.geometryType || 'none'; // TODO need to decide what propert default is. Raster Layer has null gt.
+                    layerData.minScale = serviceResult.minScale;
+                    layerData.maxScale = serviceResult.maxScale;
+                    layerData.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
+                    layerData.extent = serviceResult.extent;
 
-                    // find object id field
-                    // NOTE cannot use arrow functions here due to bug
-                    serviceResult.fields.every(function (elem) {
-                        if (elem.type === 'esriFieldTypeOID') {
-                            layerData.oidField = elem.name;
-                            return false; // break the loop
+                    if (serviceResult.type === 'Feature Layer') {
+                        layerData.supportsFeatures = true;
+                        layerData.fields = serviceResult.fields;
+
+                        // find object id field
+                        // NOTE cannot use arrow functions here due to bug
+                        serviceResult.fields.every(function (elem) {
+                            if (elem.type === 'esriFieldTypeOID') {
+                                layerData.oidField = elem.name;
+                                return false; // break the loop
+                            }
+
+                            return true; // keep looping
+                        });
+
+                        // ensure our attribute list contains the object id
+                        if (attribs !== '*') {
+                            if (attribs.split(',').indexOf(layerData.oidField) === -1) {
+                                attribs += (',' + layerData.oidField);
+                            }
                         }
 
-                        return true; // keep looping
-                    });
+                        // add renderer and legend
+                        layerData.renderer = serviceResult.drawingInfo.renderer;
+                        layerData.legend = geoApi.symbology.rendererToLegend(layerData.renderer, featureIdx);
+                        geoApi.symbology.enhanceRenderer(layerData.renderer, layerData.legend);
 
-                    // ensure our attribute list contains the object id
-                    if (attribs !== '*') {
-                        if (attribs.split(',').indexOf(layerData.oidField) === -1) {
-                            attribs += (',' + layerData.oidField);
-                        }
+                        // temporarily store things for delayed attributes
+                        layerData.load = {
+                            // version number is only provided on 10.0 SP1 servers and up.
+                            // servers 10.1 and higher support the query limit flag
+                            supportsLimit: (serviceResult.currentVersion || 1) >= 10.1,
+                            layerUrl,
+                            attribs
+                        };
                     }
 
-                    // add renderer and legend
-                    layerData.renderer = serviceResult.drawingInfo.renderer;
-                    layerData.legend = geoApi.symbology.rendererToLegend(layerData.renderer, featureIdx);
-                    geoApi.symbology.enhanceRenderer(layerData.renderer, layerData.legend);
-
-                    // temporarily store things for delayed attributes
-                    layerData.load = {
-                        // version number is only provided on 10.0 SP1 servers and up.
-                        // servers 10.1 and higher support the query limit flag
-                        supportsLimit: (serviceResult.currentVersion || 1) >= 10.1,
-                        layerUrl,
-                        attribs
-                    };
-                }
-
-                // return the layer data promise result
-                resolve(layerData);
-            } else {
-                // case where error happened but service request was successful
-                console.warn('Service metadata load error');
-                if (serviceResult && serviceResult.error) {
-                    // reject with error
-                    reject(serviceResult.error);
+                    // return the layer data promise result
+                    resolve(layerData);
                 } else {
-                    reject(new Error('Unknown error loading service metadata'));
+                    // case where error happened but service request was successful
+                    console.warn('Service metadata load error');
+                    if (serviceResult && serviceResult.error) {
+                        // reject with error
+                        reject(serviceResult.error);
+                    } else {
+                        reject(new Error('Unknown error loading service metadata'));
+                    }
                 }
-            }
-        }, error => {
-            // failed to load service info. reject with error
-            console.warn('Service metadata load error : ' + error);
-            reject(error);
+            }, error => {
+                // failed to load service info. reject with error
+                console.warn('Service metadata load error : ' + error);
+                reject(error);
+            });
         });
-    });
 
-    return layerPackage;
-}
-
-// extract the options (including defaults) for a layer index
-function pluckOptions(featureIdx, options = {}) {
-    // handle missing layer
-    const opt = options[featureIdx] || {};
-
-    return {
-        skip: opt.skip || false,
-        attribs: opt.attribs || '*'
+        return layerPackage;
     };
 }
 
-/**
-* Ochestrate the attribute extraction of a feature layer object.
-* @private
-* @param  {Object} layer an ESRI API Feature layer object
-* @param  {Object} options information on layer and attribute skipping
-* @param  {Object} esriBundle bundle of API classes
-* @return {Object} attributes in layer bundle format (see newLayerBundle)
-*/
-function processFeatureLayer(layer, options, esriBundle, geoApi) {
+function loadFileAttribsBuilder(esriBundle, geoApi) {
 
-    // logic is in separate function to passify the cyclomatic complexity check.
-    // TODO we may want to support the option of a layer that points to a server based JSON file containing attributes
-
-    const result = newLayerBundle(layer.id);
-
-    if (layer.url) {
-        const idx = getLayerIndex(layer.url);
-        const opts = pluckOptions(idx, options);
-
-        // check for skip flag
-        if (!opts.skip) {
-            // call loadFeatureAttribs with options if present
-            result.registerData(loadFeatureAttribs(layer.url, idx, opts.attribs, esriBundle, geoApi));
-        }
-    } else {
+    return layer => {
         // feature layer was loaded from a file.
         // this approach is inefficient (duplicates attributes in layer and in attribute store),
         // but provides a consistent approach to attributes regardless of where the layer came from
 
-        const layerPackage = newLayerPackage(0, esriBundle); // files have no index (no server), so we use value 0
+        const layerPackage = newLayerPackage('0', esriBundle); // files have no index (no server), so we use value 0
 
         // it's local, no need to lazy-load
         layerPackage._attribData = Promise.resolve(createAttribSet(layer.objectIdField, layer.graphics.map(elem => {
@@ -445,125 +377,7 @@ function processFeatureLayer(layer, options, esriBundle, geoApi) {
             legend
         });
 
-        result.registerData(layerPackage);
-    }
-
-    return result;
-
-}
-
-/**
-* Ochestrate the attribute extraction of a dynamic map service layer object.
-* @private
-* @param  {Object} layer an ESRI API Dynamic Map Service layer object
-* @param  {Object} options information on layer and attribute skipping
-* @param  {Object} esriBundle bundle of API classes
-* @return {Object} attributes in layer bundle format (see newLayerBundle)
-*/
-function processDynamicLayer(layer, options, esriBundle, geoApi) {
-
-    // logic is in separate function to passify the cyclomatic complexity check.
-    // TODO we may want to support the option of a layer that points to a server based JSON file containing attributes
-
-    let idx = 0;
-    let opts;
-    const result = newLayerBundle(layer.id);
-    const lInfo = layer.layerInfos;
-
-    // for each layer leaf.  we use a custom loop as we need to skip sections
-    while (idx < lInfo.length) {
-
-        opts = pluckOptions(idx, options);
-
-        //  check if leaf node or group node
-        if (lInfo[idx].subLayerIds) {
-            // group node
-
-            if (opts.skip) {
-                // skip past all child indexes (thus avoiding processing all children).
-                // group indexes have property .subLayerIds that lists indexes of all immediate child layers
-                // child layers can be group layers as well.
-                // example: to skip Group A (index 0), we crawl to Leaf X (index 4), then add 1 to get to sibling layer Leaf W (index 5)
-                //  [0] Group A
-                //      [1] Leaf Z
-                //      [2] Group B
-                //          [3] Leaf Y
-                //          [4] Leaf X
-                //  [5] Leaf W
-
-                let lastIdx = idx;
-                while (lInfo[lastIdx].subLayerIds) {
-                    // find last child index of this group. the last child may be a group itself so we keep processing the while loop
-                    lastIdx = lInfo[lastIdx].subLayerIds[
-                        lInfo[lastIdx].subLayerIds.length - 1];
-                }
-
-                // lastIdx has made it to the very last child in the original group node.
-                // advance by 1 to get the next sibling index to the group
-                idx = lastIdx + 1;
-            } else {
-                // advance to the first child layer
-                idx += 1;
-            }
-        } else {
-            // leaf node
-
-            if (!opts.skip) {
-                // load the features, store promise in array
-                result.registerData(loadFeatureAttribs(layer.url + '/' + idx.toString(), idx,
-                    opts.attribs, esriBundle, geoApi));
-            }
-
-            // advance the loop
-            idx += 1;
-        }
-
-    }
-
-    return result;
-}
-
-function loadLayerAttribsBuilder(esriBundle, geoApi) {
-
-    /**
-    * Fetch attributes from a server-based Layer
-    * @param {Object} layer an ESRI API layer object
-    * @param {Object} options settings to determine if sub layers or certain attributes should be skipped.
-    * @return {Object} attributes bundle for given layer
-    */
-    return (layer, options) => {
-        /*
-        format of the options object
-        all parts are optional.  default values are skip: false and attribs: "*"
-        {
-            "<layerindex a>": {
-                "skip": true
-            },
-             "<layerindex b>": {
-                "skip": false,
-                "attribs": "field3,field8,field11"
-            },
-            "<layerindex d>": {
-            }
-        }
-        */
-
-        const shr = shared(esriBundle);
-        const lType = shr.getLayerType(layer);
-        switch (lType) {
-            case 'FeatureLayer':
-
-                return processFeatureLayer(layer, options, esriBundle, geoApi);
-
-            case 'ArcGISDynamicMapServiceLayer':
-
-                return processDynamicLayer(layer, options, esriBundle, geoApi);
-
-            // case 'WmsLayer':
-            // case 'ArcGISTiledMapServiceLayer':
-            default:
-                throw new Error('no support for loading attributes from layer type ' + lType);
-        }
+        return layerPackage;
     };
 }
 
@@ -571,7 +385,8 @@ function loadLayerAttribsBuilder(esriBundle, geoApi) {
 // TODO consider re-writing all the asynch stuff with the ECMA-7 style of asynch keywords
 module.exports = (esriBundle, geoApi) => {
     return {
-        loadLayerAttribs: loadLayerAttribsBuilder(esriBundle, geoApi),
+        loadServerAttribs: loadServerAttribsBuilder(esriBundle, geoApi),
+        loadFileAttribs: loadFileAttribsBuilder(esriBundle, geoApi),
         getLayerIndex
     };
 };

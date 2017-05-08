@@ -73,15 +73,23 @@ class FeatureRecord extends attribRecord.AttribRecord {
     onLoad () {
         const loadPromises = super.onLoad();
 
-        // set up attributes, set up children bundles.
-        const attributeBundle = this._apiRef.attribs.loadLayerAttribs(this._layer);
+        // get attribute package
+        let attribPackage;
+        let featIdx;
+        if (this.isFileLayer()) {
+            featIdx = '0';
+            attribPackage = this._apiRef.attribs.loadFileAttribs(this._layer);
+        } else {
+            const splitUrl = shared.parseUrlIndex(this._layer.url);
+            featIdx = splitUrl.index;
+            attribPackage = this._apiRef.attribs.loadServerAttribs(splitUrl.rootUrl, featIdx, this.config.outfields);
+        }
 
         // feature has only one layer
-        const idx = attributeBundle.indexes[0];
-        const aFC = new attribFC.AttribFC(this, idx, attributeBundle[idx], this.config);
+        const aFC = new attribFC.AttribFC(this, featIdx, attribPackage, this.config);
         aFC.nameField = this.config.nameField;
-        this._defaultFC = idx;
-        this._featClasses[idx] = aFC;
+        this._defaultFC = featIdx;
+        this._featClasses[featIdx] = aFC;
 
         const pLS = aFC.loadSymbology();
 

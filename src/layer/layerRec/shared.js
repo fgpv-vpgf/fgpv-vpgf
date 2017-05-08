@@ -46,6 +46,30 @@ function makeSymbologyArray(legendData) {
     });
 }
 
+function parseUrlIndex(url) {
+    // break url into root and index
+
+    // note we are returning index as a string for now.
+    const result = {
+        rootUrl: url,
+        index: '0'
+    };
+    const re = /\/(\d+)\/?$/;
+    const matches = url.match(re);
+
+    if (matches) {
+        result.index = matches[1];
+        result.rootUrl = url.substr(0, url.length - matches[0].length); // will drop trailing slash
+    } else {
+        // give up, dont crash with error.
+        // default configuration will make sense for non-feature urls,
+        // even though they should not be using this.
+        console.warn('Cannot extract layer index from url ' + url);
+    }
+
+    return result;
+}
+
 /**
  * @class IdentifyResult
  */
@@ -79,5 +103,6 @@ module.exports = () => ({
     states,
     clientLayerType,
     makeSymbologyArray,
-    IdentifyResult
+    IdentifyResult,
+    parseUrlIndex
 });
