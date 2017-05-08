@@ -9,7 +9,12 @@ function esriMap(esriBundle, geoApi) {
     class Map {
 
         static get Extent () { return esriBundle.Extent; }
-        get _passthroughBindings () { return ['on', 'reorderLayer', 'addLayer', 'disableKeyboardNavigation']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
+
+        // TODO when jshint parses instance fields properly we can change this from a property to a field
+        get _passthroughBindings () { return [
+            'on', 'reorderLayer', 'addLayer', 'disableKeyboardNavigation', 'removeLayer', 'resize', 'reposition',
+            'centerAt', 'setZoom', 'centerAt'
+        ]; }
         get _passthroughProperties () { return ['graphicsLayerIds', 'layerIds', 'spatialReference', 'extent']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
         constructor (domNode, opts) {
@@ -220,6 +225,31 @@ function esriMap(esriBundle, geoApi) {
         resetOverviewMap () {
             this.overviewMap.destroy();
             this.initOverviewMap();
+        }
+
+        /**
+         * Changes the zoom level by the specified value relative to the current level; can be negative.
+         * To avoid multiple chained zoom animations when rapidly pressing the zoom in/out icons, we
+         * update the zoom level only when the one before it resolves with the net zoom change.
+         *
+         * @function shiftZoom
+         * @param  {number} byValue a number of zoom levels to shift by
+         */
+        shiftZoom (byValue) {
+            const settings = {};
+            settings.zoomCounter += byValue;
+            settings.zoomPromise.then(() => {
+                if (settings.zoomCounter !== 0) {
+                    const zoomValue = this._map.getZoom() + settings.zoomCounter;
+                    const zoomPromise = this.setZoom(zoomValue);
+                    settings.zoomCounter = 0;
+
+                    // undefined signals we've zoomed in/out as far as we can
+                    if (typeof zoomPromise !== 'undefined') {
+                        settings.zoomPromise = zoomPromise;
+                    }
+                }
+            });
         }
 
         /**
