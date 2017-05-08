@@ -80,17 +80,16 @@ function esriMap(esriBundle, geoApi) {
          * Take a JSON object with extent properties and convert it to an ESRI Extent.
          * Reprojects to map projection if required.
          *
-         * @param {Object} extent   the extent to enhance
-         * @param {Object} mapSR    the spatial reference of the map
-         * @returns {Extent}        extent cast in Extent prototype, and in map spatial reference
+         * @param {Object} extent the extent to enhance
+         * @returns {Extent} extent cast in Extent prototype, and in map spatial reference
          */
-        enhanceConfigExtent (extent, mapSR) {
-            const realExtent = this.getExtentFromJson(extent);
+        enhanceConfigExtent (extent) {
+            const realExtent = Map.getExtentFromJson(extent);
 
-            if (geoApi.proj.isSpatialRefEqual(mapSR, extent.spatialReference)) {
+            if (geoApi.proj.isSpatialRefEqual(this._map.spatialReference, extent.spatialReference)) {
                 return realExtent;
             } else {
-                return geoApi.proj.projectEsriExtent(realExtent, mapSR);
+                return geoApi.proj.projectEsriExtent(realExtent, this._map.spatialReference);
             }
         }
 
