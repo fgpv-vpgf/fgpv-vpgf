@@ -184,7 +184,7 @@ module.exports = function () {
 
     // jscs:disable maximumLineLength
     config.iconCache = [
-        { file: 'content/images/iconsets/default-icons.svg', prefix: 'default', icons: 'check logo northarrow'.split(' '), isDefault: true },
+        { file: 'content/images/iconsets/default-icons.svg', prefix: 'default', icons: 'check logo northarrow snowman'.split(' '), isDefault: true },
         { file: 'content/images/iconsets/action-icons.svg', prefix: 'action', icons: 'settings_input_svideo search home history description delete settings info_outline info visibility visibility_off zoom_in zoom_out check_circle open_in_new print shopping_cart opacity swap_vert touch_app translate cached'.split(' ') },
         { file: 'content/images/iconsets/alert-icons.svg', prefix: 'alert', icons: 'error warning'.split(' ') },
         { file: 'content/images/iconsets/communication-icons.svg', prefix: 'communication', icons: 'location_on'.split(' ') },

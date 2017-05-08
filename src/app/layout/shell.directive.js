@@ -59,14 +59,6 @@
 
                 configService.getAsync.then(config => {
                     const mapConfig = config.map.components;
-                    if (mapConfig.northArrow && mapConfig.northArrow.enabled) {
-                        // set initial position of the north arrow
-                        updateNorthArrow();
-
-                        // init here since rvExtentChange fires before rvApiReady which will cause gapi issues
-                        $rootScope.$on(events.rvExtentChange, updateNorthArrow);
-                    }
-
                     if (mapConfig.mouseInfo.enabled) {
                         // set ouput spatial reference for mouse coordinates. If spatial reference is defined in configuration file
                         // use it. If not, use the basemap spatial reference
@@ -95,25 +87,6 @@
                     });
                 }
             });
-
-            /**
-            * Displays a north arrow along the top of the viewer
-            * @function  updateNorthArrow
-            */
-            function updateNorthArrow() {
-                const north = mapToolService.northArrow();
-                const arrowElem = el.find('.rv-north-arrow');
-                // hide the north arrow if projection is not supported
-                if (!north.projectionSupported) {
-                    arrowElem.css('display', 'none');
-                } else {
-                    arrowElem
-                        .css('display', 'block')
-                        .css('left', north.screenX)
-                        .css('top', Math.max(1, north.screenY))
-                        .css('transform', north.screenY > 0 ? '' : `rotate(${north.rotationAngle}deg)`);
-                }
-            }
 
             /**
             * Displays map coordinates on map
