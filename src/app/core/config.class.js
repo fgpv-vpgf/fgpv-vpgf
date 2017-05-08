@@ -392,36 +392,6 @@
                 this._disabledControls = defaultedSource.disabledControls;
                 this._userDisabledControls = defaultedSource.userDisabledControls;
 
-                /*this._state = new InitialLayerSettings(applyLayerNodeDefaults(source.state, defaults.state));
-
-                this._controls = applyLayerNodeDefaults(source.controls, defaults.controls);
-                this._disabledControls = applyLayerNodeDefaults(source.disabledControls, defaults.disabledControls);
-                this._userDisabledControls =
-                    applyLayerNodeDefaults(source.userDisabledControls, defaults.userDisabledControls);*/
-
-                /*
-                // defaulting initial layer state
-                this._state = new InitialLayerSettings(
-                    angular.extend({}, defaults.state, source.state));
-
-                // defaulting layer controls
-                if (typeof source.controls === 'undefined') {
-                    this._controls = angular.copy(defaults.controls);
-                } else {
-                    this._controls = common.intersect(source.controls, defaults.controls);
-                }
-
-                // defaulting layer disabled controls
-                if (typeof source.disabledControls === 'undefined') {
-                    this._disabledControls = angular.copy(defaults.disabledControls);
-                } else {
-                    this._disabledControls = common.intersect(source.disabledControls, defaults.controls);
-                }
-
-                // userDisabledControls cannot be specified in schema, using straight defaults
-                this._userDisabledControls = angular.copy(defaults.userDisabledControls);
-                */
-
                 // remove metadata control if no metadata url is specified after applying defaults
                 if (!source.metadataUrl) {
                     common.removeFromArray(this._controls, 'metadata');
