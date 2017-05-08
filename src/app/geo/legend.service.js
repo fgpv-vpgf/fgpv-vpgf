@@ -269,7 +269,7 @@
 
                         // apply group settings to the newly added controlled entries so any settings modified by the user
                         // while the controlled layers were loading would apply on top as well
-                        legendBlockGroup.reApplyStateSettings();
+                        legendBlockGroup.synchronizeControlledEntries();
                     }));
 
                 return legendBlockGroup;
@@ -291,7 +291,7 @@
                         tree.forEach(item =>
                             _addChildBlock(item, legendBlockGroup));
 
-                        legendBlockGroup.reApplyStateSettings();
+                        legendBlockGroup.synchronizeControlledEntries();
                     }
                 }
 
@@ -361,7 +361,7 @@
                  * @function _createDynamicChildLegendBlock
                  * @private
                  * @param {Object} treeChild a tree child object of the form { layerEntry: <Number>, childs: [<treechild>], name: <String> }, `childs` and `name` present only on groups
-                 * @param {Object} parentLayerConfigSource
+                 * @param {Object} parentLayerConfigSource config of the child parent for derving state defaults
                  */
                 function _createDynamicChildLegendBlock(treeChild, parentLayerConfigSource) {
                     let childLegendBlock;
@@ -467,7 +467,7 @@
                             node.addControlledProxyWrapper(proxyWrapper);
 
                             // reapply state setting to the node so any settings changed by the user will apply to the newly added controlled proxy (this is possible if the controlled is a dynamic layer and there is a lag when fetching its child proxies)
-                            node.reApplyStateSettings();
+                            node.synchronizeControlledProxyWrappers();
                         })
                     ));
 

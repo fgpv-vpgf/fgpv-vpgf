@@ -233,6 +233,7 @@
 
             reApplyStateSettings() {
                 if (!this._mainProxyWrapper.isInitialStateSettingsApplied) {
+                    this._mainProxyWrapper.applyInitialStateSettings();
                     this.boundingBox = this._mainProxyWrapper.boundingBox;
 
                     // TODO: uncomment thid when query is supported
@@ -240,9 +241,14 @@
 
                     // initial snapshot should be handled by geoapi
                 }
+            }
 
-                this._allProxyWrappers.map(proxyWrapper =>
-                    proxyWrapper.applyInitialStateSettings());
+            synchronizeControlledProxyWrappers() {
+                this._controlledProxyWrappers
+                    .forEach(proxyWrapper => {
+                        proxyWrapper.visibility = this.visibility;
+                        proxyWrapper.opacity = this.opacity;
+                    })
             }
 
             set reloadConfig (value) {      this._reloadConfig = value; }
@@ -407,6 +413,18 @@
                 this.opacity = this.opacity;
             }
 
+            synchronizeControlledEntries() {
+                // const visibility = this.visibility;
+
+                this._activeEntries
+                    .filter(entry =>
+                        entry.controlled)
+                    .forEach(controlledEntry => {
+                        controlledEntry.visibility = this.visibility;
+                        controlledEntry.opacity = this.opacity;
+                    })
+            }
+
             _entries = [];
 
             get availableControls () {      return this._availableControls; }
@@ -567,6 +585,7 @@
             }
 
             _highlightSet = false;
+            _selectedEntry = null;
 
             // sets are special snowflakes; they only support visibility controls
             // and it's not exposed in UI anyway since Sets don't have templates
@@ -587,7 +606,7 @@
                     if (decorator[name]) {
                         method = descriptor[name] || angular.noop;
                         descriptor[name] = function (value) {
-                            decorator[name](value);
+                            decorator[name](value, this);
                             method.call(this, value);
                         };
                     }
@@ -597,20 +616,47 @@
             get blockType () { return TYPES.SET; }
 
             get visibility () {
-                return this._activeEntries.some(entry =>
-                    entry.visibility);
+                const currentlySelected = this._activeEntries.find(entry =>
+                    entry.visibility && entry !== this._selectedEntry) || null;
+
+                if (currentlySelected) {
+                    if (this._selectedEntry) {
+                        this._selectedEntry.visibility = false;
+                    }
+                    this._selectedEntry = currentlySelected;
+                }
+
+                const isAllOff = this._activeEntries.every(entry =>
+                    !entry.visibility);
+
+                if (isAllOff) {
+                    if (this._selectedEntry) {
+                        this._selectedEntry.visibility = false;
+                    }
+                    this._selectedEntry = null;
+                }
+
+                return this._selectedEntry !== null;
             }
             set visibility (value) {
                 if (!value) {
                     this._activeEntries.forEach(entry =>
                         (entry.visibility = value));
                 } else if (!this.visibility) {
-                    // setting the set's visibility to true when one of the entries is alreayd visible has no effect
+                    // setting the set's visibility to true when one of the entries is already visible has no effect
                     // `this.visibility` will be `false` if there is no entries, so calling [0] should be safe
                     this._activeEntries[0].visibility = true;
                 }
 
                 return this;
+            }
+
+            _propagateVisibility(value, except = null) {
+                this._activeEntries.forEach(entry => {
+                    if (entry !== except) {
+                        entry.visibility = value;
+                    }
+                });
             }
 
             get _activeEntries () {
@@ -622,25 +668,10 @@
             addEntry (entry, position = this._entries.length) {
                 // since a set can have at most one visible child,
                 // as soon as there is one visible chilld, turn all subsequent children off
-                // TODO: fix issue when a dynamic layer takes time to load and toggles itself on, after this point making it possible to have several items visible in a set
                 if (this.visibility) {
                     entry.visibility = false;
                 }
                 this._entries.splice(position, 0, entry);
-
-                // used to propagate positive visibility change up to the containing LegendSet object to turn off all other entries
-                const visibilityDecorator = {
-                    set: value => {
-                        if (value) {
-                            this.visibility = false;
-                        }}
-                };
-
-                const visibilityPrototype = entry.blockType === TYPES.NODE ?
-                    LegendNode.prototype : LegendGroup.prototype;
-
-                const visibilityDescriptor =
-                    this._decorateDescriptor(visibilityPrototype, 'visibility', visibilityDecorator);
 
                 // LegendSet and the contained LegendBlock object will share a reference to `highlightSet` property
                 // which the legend block temlate will use to highlight set elements when hovered/focused
@@ -652,7 +683,6 @@
                     }
                 };
 
-                Object.defineProperty(entry, 'visibility', visibilityDescriptor);
                 Object.defineProperty(entry, 'highlightSet', highlightSetDescriptor);
 
                 entry.highlightSet = false;
