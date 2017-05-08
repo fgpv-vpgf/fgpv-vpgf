@@ -54,6 +54,9 @@ function esriMap(esriBundle, geoApi) {
                 this.initOverviewMap();
             }
 
+            this.zoomPromise = Promise.resolve();
+            this.zoomCounter = 0;
+
         }
 
         printLocal (options) { return printModule.printLocal(this._map, options); }
@@ -236,17 +239,16 @@ function esriMap(esriBundle, geoApi) {
          * @param  {number} byValue a number of zoom levels to shift by
          */
         shiftZoom (byValue) {
-            const settings = {};
-            settings.zoomCounter += byValue;
-            settings.zoomPromise.then(() => {
-                if (settings.zoomCounter !== 0) {
-                    const zoomValue = this._map.getZoom() + settings.zoomCounter;
-                    const zoomPromise = this.setZoom(zoomValue);
-                    settings.zoomCounter = 0;
+            this.zoomCounter += byValue;
+            this.zoomPromise.then(() => {
+                if (this.zoomCounter !== 0) {
+                    const zoomValue = this._map.getZoom() + this.zoomCounter;
+                    const zoomPromise = Promise.resolve(this.setZoom(zoomValue));
+                    this.zoomCounter = 0;
 
                     // undefined signals we've zoomed in/out as far as we can
                     if (typeof zoomPromise !== 'undefined') {
-                        settings.zoomPromise = zoomPromise;
+                        this.zoomPromise = zoomPromise;
                     }
                 }
             });

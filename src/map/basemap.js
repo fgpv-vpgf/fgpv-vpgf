@@ -21,7 +21,8 @@ function initBasemaps(esriBundle, basemapsConfig, map) {
     basemapsConfig.forEach(basemapConfig => {
 
         // create basemap, add to basemap gallery
-        const layers = basemapConfig.layers.map(config => new esriBundle.BasemapLayer({ url: config.url }));
+        const layers = basemapConfig.layers.map(config =>
+            new esriBundle.BasemapLayer({ url: config.url, opacity: config.opacity }));
 
         const basemap = new esriBundle.Basemap({
             id: basemapConfig.id,
