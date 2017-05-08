@@ -689,30 +689,39 @@
          * @class Basemap
          */
         class Basemap {
-            constructor ({ id, name, description, type, layers, attribution }, tileSchema) {
+            constructor ({ id, name, description, typeSummary, layers, thumbnailUrl = null, attribution, opacity = 1,
+                    altText, zoomLevels = {} }, tileSchema) {
                 this._id = id;
                 this._name = name;
                 this._description = description;
-                this._type = type;
+                this._typeSummary = typeSummary;
                 this._layers = layers;
                 this._url = layers[0].url;
+                this._thumbnailUrl = thumbnailUrl;
                 this._attribution = attribution;
                 this._tileSchema = tileSchema;
+                this._opacity = opacity;
 
+                this._altText = altText;
+                this._zoomLevels = zoomLevels;
             }
 
             _isSelected = false;
 
-            get id () { return this._id; }
-            get name () { return this._name; }
-            get description () { return this._description; }
-            get type () { return this._type; }
-            get layers () { return this._layers; }
-            get url () { return this._url; }
-            get attribution () { return this._attribution; }
-            get tileSchema () { return this._tileSchema; }
+            get id () {             return this._id; }
+            get name () {           return this._name; }
+            get description () {    return this._description; }
+            get typeSummary () {    return this._typeSummary; }
+            get layers () {         return this._layers; }
+            get url () {            return this._url; }
+            get thumbnailUrl () {   return this._thumbnailUrl; }
+            get attribution () {    return this._attribution; }
+            get tileSchema () {     return this._tileSchema; }
+            get opacity () {        return this._opacity; }
+            get altText () {        return this._altText; }
+            get zoomLevels () {     return this._zoomLevels; }
 
-            get isSelected () { return this._isSelected; }
+            get isSelected () {     return this._isSelected; }
             select () {
                 this._isSelected = true;
                 return this;
@@ -749,6 +758,21 @@
              * @return {Object} Esri extent object
              */
             get maximum () { return this._tileSchema.extentSet.maximum; }
+
+            get JSON () {
+                return {
+                    id: this.id,
+                    name: this.name,
+                    description: this.description,
+                    typeSummary: this.typeSummary,
+                    altText: this.altText,
+                    thumbnailUrl: this.thumbnailUrl,
+                    tileSchemaId: this.tileSchemaId,
+                    layers: this.layers,
+                    attribution: this.attribution,
+                    zoomLevels: this.zoomLevels
+                };
+            }
         }
 
         /**
@@ -772,17 +796,19 @@
             get lodSet () { return this._lodSet; }
 
             // TODO: it's not yet decided how the blank basemap will be made; see arc room for notes
-            /*makeBlankBasemap() {
-                return new Basemap({
-                    name: $translate.instant('basemap.blank.title'),
-                    description: $translate.instant('basemap.blank.desc'),
-                    type: 'blank',
-                    id: `blank_basemap_${this._id}`,
-                    url: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7/',
+            makeBlankBasemap(basemap) {
+                const blankBasemap = new Basemap({
+                    name: 'basemap.blank.title',
+                    description: 'basemap.blank.desc',
+                    id: `blank_basemap_${basemap.id}`,
+                    layers: basemap.layers,
+                    thumbnailUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
                     attribution: '',
-                    tileSchema: this
-                });
-            }*/
+                    opacity: 0
+                }, this);
+
+                return blankBasemap;
+            }
         }
 
         class LegendElement {
@@ -1187,6 +1213,18 @@
                     const basemap = new Basemap(basemapSource, tileSchema);
 
                     return basemap;
+                });
+
+                // making a blank basemap;
+                // find a first basemap in this tileschema and create a copy settign its opacity to 0
+                this._tileSchemas.forEach(tileSchema => {
+                    const basemap = mapSource.baseMaps.find(basemapSource =>
+                        tileSchema.id === basemapSource.tileSchemaId);
+
+                    if (basemap) {
+                        const blankBasemap = tileSchema.makeBlankBasemap(basemap);
+                        this._basemaps.push(blankBasemap);
+                    }
                 });
 
                 // calling select on a basemap only marks it as `selected`; to actually change the displayed basemap, call `changeBasemap` on `geoService`
