@@ -12,7 +12,7 @@
         .module('app.geo')
         .factory('locateService', locateService);
 
-    function locateService($http, geoService, configService, errorService) {
+    function locateService($http, gapiService, configService, errorService) {
 
         let apiURL;
         const location = {};
@@ -32,6 +32,27 @@
         return service;
 
         /**
+         * Takes a location object in lat/long, converts to current map spatialReference using
+         * reprojection method in geoApi, and zooms to the point.
+         *
+         * @function geolocate
+         * @param {Object} location is a location object, containing geometries in lat/long
+         */
+        function geolocate(location) {
+            const map = configService.getSync.map.instance;
+            const lods = configService.getSync.map.selectedBasemap.lods;
+
+            // get reprojected point and zoom to it
+            const geoPt = gapiService.gapi.proj.localProjectPoint(4326, map.spatialReference.wkid,
+                [parseFloat(location.longitude), parseFloat(location.latitude)]);
+            const zoomPt = gapiService.gapi.proj.Point(geoPt[0], geoPt[1], map.spatialReference);
+
+            // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
+            const sweetLod = gapiService.gapi.Map.findClosestLOD(lods, 50000);
+            map.centerAndZoom(zoomPt, Math.max(sweetLod.level, 0));
+        }
+
+        /**
          * Pans to the users location if possible, displaying an error message otherwise. The users
          * location is determined only once, and is reused on subsequent requests for performance.
          * @function find
@@ -39,14 +60,14 @@
         function find() {
             const onFailedBrowserCB = () =>
                 _apiLocate(
-                    geoService.geolocate,
+                    geolocate,
                     () => errorService.display('Your location could not be found.')
                 );
 
             if (location.latitude) {
-                geoService.geolocate(location);
+                geolocate(location);
             } else {
-                _browserLocate(geoService.geolocate, onFailedBrowserCB);
+                _browserLocate(geolocate, onFailedBrowserCB);
             }
         }
 
@@ -82,7 +103,7 @@
         function _apiLocate(onSuccess, onFailure) {
             if (typeof apiURL !== 'undefined') {
                 $http.post(apiURL).then(apiResponse => {
-                    geoService.geolocate({
+                    geolocate({
                         latitude: apiResponse.data.location.lat,
                         longitude: apiResponse.data.location.lng
                     });

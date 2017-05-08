@@ -256,8 +256,7 @@
                 retrieveSymbol,
                 hilightGraphic,
                 clearHilight,
-                dropMapPin,
-                geolocate
+                dropMapPin
             };
 
             return buildMapObject();
@@ -842,26 +841,6 @@
                         return map.centerAt(newPt);
                     });
                 }
-            }
-
-            /**
-            * Takes a location object in lat/long, converts to current map spatialReference using
-            * reprojection method in geoApi, and zooms to the point.
-            *
-            * @function geolocate
-            * @param {Object} location is a location object, containing geometries in lat/long
-            */
-            function geolocate(location) {
-                const map = service.mapObject;
-
-                // get reprojected point and zoom to it
-                const geoPt = gapiService.gapi.proj.localProjectPoint(4326, map.spatialReference.wkid,
-                    [parseFloat(location.longitude), parseFloat(location.latitude)]);
-                const zoomPt = gapiService.gapi.proj.Point(geoPt[0], geoPt[1], map.spatialReference);
-
-                // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
-                const sweetLod = gapiService.gapi.Map.findClosestLOD(map.__tileInfo.lods, 50000);
-                map.centerAndZoom(zoomPt, Math.max(sweetLod.level, 0));
             }
 
             /**
