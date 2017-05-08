@@ -13,7 +13,7 @@ function esriMap(esriBundle, geoApi) {
         // TODO when jshint parses instance fields properly we can change this from a property to a field
         get _passthroughBindings () { return [
             'on', 'reorderLayer', 'addLayer', 'disableKeyboardNavigation', 'removeLayer', 'resize', 'reposition',
-            'centerAt', 'setZoom', 'centerAt'
+            'centerAt', 'setZoom', 'centerAt', 'toScreen'
         ]; }
         get _passthroughProperties () { return ['graphicsLayerIds', 'layerIds', 'spatialReference', 'extent']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
