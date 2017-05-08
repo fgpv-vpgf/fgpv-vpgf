@@ -252,8 +252,8 @@
             const zoomPoint = gapiService.gapi.proj.Point(coords.x, coords.y, geoService.mapObject.spatialReference);
 
             // separate zoom and center calls, calling centerAndZoom sets the map to an extent made up of NaN
-            geoService.mapObject.setZoom(zoom);
-            geoService.mapObject.centerAt(zoomPoint);
+            configService.getSync.map.instance.setZoom(zoom);
+            configService.getSync.map.instance.centerAt(zoomPoint);
         }
     }
 

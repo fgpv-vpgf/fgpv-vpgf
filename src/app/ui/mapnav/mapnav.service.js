@@ -21,7 +21,7 @@
      * @return {object} service object
      */
     function mapNavigationService(stateManager, geoService, $rootScope, locateService,
-    helpService, basemapService, events, fullScreenService) {
+    helpService, basemapService, events, fullScreenService, configService) {
 
         const service = {
             controls: {}
@@ -40,7 +40,7 @@
                 label: 'nav.label.zoomIn',
                 icon: 'content:add',
                 tooltip: 'nav.tooltip.zoomIn',
-                action: () => geoService.shiftZoom(1)
+                action: () => configService.getSync.map.instance.shiftZoom(1)
             },
             slider: {
                 // TODO: add slider properties when we find a suitable slider lib
@@ -49,7 +49,7 @@
                 label: 'nav.label.zoomOut',
                 icon: 'content:remove',
                 tooltip: 'nav.tooltip.zoomOut',
-                action: () => geoService.shiftZoom(-1)
+                action: () => configService.getSync.map.instance.shiftZoom(-1)
             },
             geoLocator: {
                 label: 'nav.label.geoLocation',

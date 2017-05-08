@@ -18,8 +18,6 @@
         const service = {
             makeMap,
             selectBasemap,
-            setZoom,
-            shiftZoom,
 
             zoomToLatLong
         };
@@ -113,39 +111,6 @@
             // return onMapLoad.then(() => service);
 
 
-        }
-
-        /**
-         * Sets zoom level of the map to the specified level.
-         * @function setZoom
-         * @param {number} value a zoom level number
-         */
-        function setZoom(value) {
-            configService.getSync.map.body.setZoom(value);
-        }
-
-        /**
-         * Changes the zoom level by the specified value relative to the current level; can be negative.
-         * To avoid multiple chained zoom animations when rapidly pressing the zoom in/out icons, we
-         * update the zoom level only when the one before it resolves with the net zoom change.
-         *
-         * @function shiftZoom
-         * @param  {number} byValue a number of zoom levels to shift by
-         */
-        function shiftZoom(byValue) {
-            const settings = {};
-            settings.zoomCounter += byValue;
-            settings.zoomPromise.then(() => {
-                if (settings.zoomCounter !== 0) {
-                    const zoomValue = service.mapObject.getZoom() + settings.zoomCounter;
-                    const zoomPromise = service.mapObject.setZoom(zoomValue);
-                    settings.zoomCounter = 0;
-                    // undefined signals we've zoomed in/out as far as we can
-                    if (typeof zoomPromise !== 'undefined') {
-                        settings.zoomPromise = zoomPromise;
-                    }
-                }
-            });
         }
 
         /**

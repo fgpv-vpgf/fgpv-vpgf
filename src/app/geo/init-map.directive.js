@@ -262,19 +262,19 @@
                         break;
                     // + (plus) key pressed - zoom in
                     case 187:
-                        geoService.shiftZoom(1);
+                        configService.getSync.map.instance.shiftZoom(1);
                         break;
                     // + (plus) key pressed - FF and IE
                     case 61:
-                        geoService.shiftZoom(1);
+                        configService.getSync.map.instance.shiftZoom(1);
                         break;
                     // - (minus) key pressed - zoom out
                     case 189:
-                        geoService.shiftZoom(-1);
+                        configService.getSync.map.instance.shiftZoom(-1);
                         break;
                     // - (minus) key pressed - FF and IE
                     case 173:
-                        geoService.shiftZoom(-1);
+                        configService.getSync.map.instance.shiftZoom(-1);
                         break;
                 }
             }
