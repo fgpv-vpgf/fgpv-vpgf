@@ -943,10 +943,11 @@
         class Legend {
             constructor (legendSource, layersSource) {
                 this._type = legendSource.type;
+                this._reorderable = legendSource.reorderable;
 
                 let rootChildren;
 
-                if (this.isReorderable) {
+                if (this.reorderable) {
                     // since auto legend is a subset of structured legend, its children are automatically populated
                     const sortGroups = Geo.Layer.SORT_GROUPS_;
 
@@ -1004,7 +1005,11 @@
                 }
             }
 
-            get isReorderable () { return this._type === TYPES.legend.AUTOPOPULATE; }
+            get reorderable () {
+                // `auto` legend defaults to reorderable, unless explicitly set to false
+                return this._type === TYPES.legend.AUTOPOPULATE &&
+                    this._reorderable !== false;
+            }
 
             get type () { return this._type; }
             get root () { return this._root; }

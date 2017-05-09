@@ -8,7 +8,7 @@
             <md-button
                 aria-label="{{ toc.menu.reorder.title | translate }}"
                 class="md-icon-button primary rv-icon-20"
-                ng-if="self.map.legend.isReorderable"
+                ng-if="self.map.legend.reorderable"
                 ng-class="{ selected: self.isReorder }"
                 ng-click="self.toggleReorderMode()">
                 <md-tooltip>{{ 'toc.menu.reorder.title' | translate }}</md-tooltip>

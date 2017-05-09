@@ -354,7 +354,8 @@
         "legendAuto": {
             "type": "object",
             "properties": {
-                "type": { "type": "string", "enum": [ "autopopulate" ] }
+                "type": { "type": "string", "enum": [ "autopopulate" ] },
+                "reorderable": { "type": "boolean", "default": true }
             },
             "required": ["type"],
             "additionalProperties": false
