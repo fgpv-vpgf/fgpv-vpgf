@@ -22,6 +22,8 @@
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
 
+            api.debug(true);
+
             var config1 = {
                 id: 'dog',
                 name: 'Feature Test',
@@ -47,7 +49,8 @@
 
             console.log('loading state', proxy.state);
             
-            var map = new api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-110, 55] });
+            var eb = api.esriBundle();
+            var map = new eb.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-110, 55] });
             map.addLayer(layerRec._layer);
             console.log('mah map', map);
 

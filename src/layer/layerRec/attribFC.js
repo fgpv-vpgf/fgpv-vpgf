@@ -65,10 +65,11 @@ class AttribFC extends basicFC.BasicFC {
     *
     * @function getFeatureName
     * @param {String} objId      the object id of the attribute
-    * @param {Object} attribs    optional. the dictionary of attributes for the feature. uses internal attributes if not provided.
-    * @returns {Promise}         resolves with the name of the feature
+    * @param {Object} attribs    the dictionary of attributes for the feature.
+    * @returns {String}          the name of the feature
     */
     getFeatureName (objId, attribs) {
+        // TODO revisit the objId parameter.  Do we actually need this fallback anymore?
         let nameField = '';
 
         if (this.nameField) {
@@ -78,23 +79,11 @@ class AttribFC extends basicFC.BasicFC {
         }
 
         if (nameField) {
-            // determine if we have been given a set of attributes, or need to use our own
-            let attribPromise;
-            if (attribs) {
-                attribPromise = Promise.resolve(attribs);
-            } else {
-                attribPromise = this.getAttribs().then(layerAttribs => {
-                    return layerAttribs.features[layerAttribs.oidIndex[objId]].attributes;
-                });
-            }
-
-            // after attributes are loaded, extract name
-            return attribPromise.then(finalAttribs => {
-                return finalAttribs[nameField];
-            });
+            // extract name
+            return attribs[nameField];
         } else {
             // FIXME wire in "feature" to translation service
-            return Promise.resolve('Feature ' + objId);
+            return 'Feature ' + objId;
         }
     }
 

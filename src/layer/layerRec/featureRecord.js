@@ -155,23 +155,21 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
                 // get name via attribs and name field
                 const featAttribs = aInfo.features[aInfo.oidIndex[oid]].attributes;
-                const featNamePromise = this.getFeatureName(oid, featAttribs);
 
                 // get icon via renderer and geoApi call
                 const svgcode = this._apiRef.symbology.getGraphicIcon(featAttribs, lInfo.renderer);
 
-                featNamePromise.then(featName => {
-                    // duplicate the position so listener can verify this event is same as mouseOver event above
-                    const loadBundle = {
-                        type: 'tipLoaded',
-                        name: featName,
-                        target: e.target,
-                        svgcode
-                    };
+                // duplicate the position so listener can verify this event is same as mouseOver event above
+                const loadBundle = {
+                    type: 'tipLoaded',
+                    name: this.getFeatureName(oid, featAttribs),
+                    target: e.target,
+                    svgcode
+                };
 
-                    // tell anyone listening we moused into something
-                    this._fireEvent(this._hoverListeners, loadBundle);
-                });
+                // tell anyone listening we moused into something
+                this._fireEvent(this._hoverListeners, loadBundle);
+
             });
         }
     }
@@ -252,7 +250,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
                         const objIdStr = objId.toString();
 
                         // use object id find location of our feature in the feature array, and grab its attributes
-                        const featAttribs = attributes.features[attributes.oidIndex[objIdStr]];
+                        const featAttribs = attributes.features[attributes.oidIndex[objIdStr]].attributes;
                         return {
                             name: this.getFeatureName(objIdStr, featAttribs),
                             data: this.attributesToDetails(featAttribs, layerData.fields),
