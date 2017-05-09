@@ -17,12 +17,61 @@
     function mapServiceFactory($q, $timeout, gapiService, configService, events) {
         const service = {
             makeMap,
-            selectBasemap,
-
+            setAttribution,
             zoomToLatLong
         };
 
         return service;
+
+        function setAttribution(config) {
+            const cfgAtt = config.attribution;
+            const mapInstance = configService.getSync.map.instance;
+            const attNode = $(mapInstance.attribution.listNode.parentNode);
+            const logoNode = attNode.parent().find('.logo-med');
+
+            // esri default logo
+            // jscs:disable maximumLineLength
+            const esriLogo = 'url(data:image/png;base64,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)';
+            // jscs:enable maximumLineLength
+
+            // if config is undefined, show attribution text and use built in value
+            // if it is !== then undefined take values from config file
+            // for not esri basemap, logo should be disable if no custom logo are provided
+            // because esri logo and liks are the default values
+            if (typeof cfgAtt !== 'undefined') {
+                if (cfgAtt.text.enabled && cfgAtt.text.value) {
+                    // loop through node keys to replace value with content from configuration file
+                    // TODO: test when will we have a base map with multiple layers
+                    for (let [key] of Object.entries(mapInstance.attribution.itemNodes)) {
+                        mapInstance.attribution.itemNodes[key].innerText = cfgAtt.text.value;
+                    }
+                    attNode.show();
+                } else if (!cfgAtt.text.enabled) {
+                    attNode.hide();
+                }
+
+                if (cfgAtt.logo.enabled) {
+                    // if values are supplied in the config file, use them
+                    // if not use the esri default value
+                    if (cfgAtt.logo.value && cfgAtt.logo.link) {
+                        logoNode.css('background-image', `url(${cfgAtt.logo.value})`);
+                        mapInstance.mapDefault('logoLink', cfgAtt.logo.link);
+                    } else {
+                        logoNode.css('background-image', esriLogo);
+                        mapInstance.mapDefault('logoLink', 'http://www.esri.com'); // TODO: create a function in geoapi to get default config value
+                    }
+                    logoNode.show();
+                    logoNode.css('visibility', 'visible');
+                } else {
+                    logoNode.hide();
+                }
+            } else {
+                logoNode.css('background-image', esriLogo);
+                attNode.show();
+                logoNode.show();
+                logoNode.css('visibility', 'visible');
+            }
+        }
 
         function makeMap(mapNode) {
             const gapi = gapiService.gapi;
@@ -56,7 +105,7 @@
 
             mapConfig.storeMapReference(mapNode, mapInstance);
 
-            service.selectBasemap(mapConfig.selectedBasemap);
+            mapConfig.instance.selectBasemap(mapConfig.selectedBasemap);
 
             _setMapListeners(mapConfig);
 
@@ -96,39 +145,14 @@
         }
 
         /**
-         * Switch basemap based on the uid provided.
-         * @function selectBasemap
-         * @param {Basemap} basemap selected basemap
+         * Takes a location object in lat/long, converts to current map spatialReference using
+         * reprojection method in geoApi, and zooms to the point.
+         *
+         * @function zoomToLatLong
+         * @param {Object} location is a location object, containing geometries in the form of { longitude: <Number>, latitude: <Number> }
          */
-        function selectBasemap(basemap) {
-            const mapConfig = configService.getSync.map;
-
-            const oldBasemap = mapConfig.selectedBasemap.deselect();
-            basemap.select();
-
-            mapConfig.instance.basemapGallery.select(basemap.id);
-
-            events.$broadcast(events.rvBasemapChange);
-        }
-
-        /**
-        * Takes a location object in lat/long, converts to current map spatialReference using
-        * reprojection method in geoApi, and zooms to the point.
-        *
-        * @function zoomToLatLong
-        * @param {Object} location is a location object, containing geometries in the form of { longitude: <Number>, latitude: <Number> }
-        */
-        function zoomToLatLong({ longitude, latitude }) {
-            const mapBody = configService.getSync.map.instance;
-
-            // get reprojected point and zoom to it
-            const geoPt = gapiService.gapi.proj.localProjectPoint(4326, mapBody.spatialReference.wkid,
-                [parseFloat(longitude), parseFloat(latitude)]);
-            const zoomPt = gapiService.gapi.proj.Point(geoPt[0], geoPt[1], mapBody.spatialReference);
-
-            // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
-            const sweetLod = gapiService.gapi.Map.findClosestLOD(mapBody.__tileInfo.lods, 50000);
-            mapBody.centerAndZoom(zoomPt, Math.max(sweetLod.level, 0));
+        function zoomToLatLong(location) {
+            configService.getSync.map.instance.zoomToPoint(location);
         }
 
         /**
@@ -209,7 +233,6 @@
     function mapServiceFactory_($q, $timeout, gapiService, storageService, $rootElement, $compile, $rootScope,
         tooltipService, stateManager, configService) {
 
-        const settings = { zoomPromise: $q.resolve(), zoomCounter: 0 };
         return mapService;
 
         function mapService(geoState, config) {
@@ -267,57 +290,8 @@
                     mapConfig.map.instance.overviewMap.destroy();
                 }
 
-                // set selected base map id
                 // setSelectedBaseMap(geoState.configObject.map.selectedBasemap);
                 // setSelectedBaseMap(config.map.initialBasemapId || config.baseMaps[0].id, config);
-
-                // FIXME remove the hardcoded settings when we have code which does this properly
-                mapBody = gapi.Map(geoState.mapNode, { // TODO: need to find a place to store a reference to mapNode
-                    extent: mapConfig.selectedBasemap.default,
-                    lods: mapConfig.selectedBasemap.lods
-                });
-
-                // store map object in service
-                // service.mapObject = mapObject;
-
-                // TODO: convert service section of the config to typed objects
-                if (config.services && config.services.proxyUrl) {
-                    gapi.Map.setProxy(config.services.proxyUrl);
-                }
-
-                /*
-                if (config.baseMaps) {
-                    mapSettings.basemaps = config.baseMaps;
-                }
-                */
-
-                // TODO: components should be mandatory in the schema with value enabled false if not use
-                /*if (config.map.components.scaleBar && config.map.components.scaleBar.enabled) {
-                    mapSettings.scalebar = {
-                        enabled: true,
-                        attachTo: 'bottom-left',
-                        scalebarUnit: 'dual'
-                    };
-                }*/
-
-                // TODO: components should be mandatory in the schema with value enabled false if not use
-                /*if (config.map.components.overviewMap && config.map.components.overviewMap.enabled) {
-
-                    // FIXME: overviewMap has more settings
-                    mapSettings.overviewMap = config.map.components.overviewMap;
-                }*/
-
-                const onMapLoad = prepMapLoad(mapBody);
-
-                // setup map using configs
-                // FIXME: I should be migrated to the new config schema when geoApi is updated
-                const mapSettings = {
-                    basemaps: mapConfig.basemaps,
-                    scalebar: mapConfig.components.scaleBar,
-                    overviewMap: mapConfig.components.overviewMap
-                };
-                mapConfig.manager = gapi.Map.setupMap(mapBody, mapSettings);
-
 
                 // store references to esri objects
                 /* mapConfig.components.basemap.body = BasemapControl;
@@ -372,82 +346,7 @@
                 // geoState.mapService = service;
 
                 // return a promise that resolves in the service once the map has loaded
-                return onMapLoad.then(() => service);
             }
-
-            /**
-             * Retrieve full extent from extentSets.
-             * @function getFullExtFromExtentSets
-             * @private
-             */
-            /*function getFullExtFromExtentSets(extentSets) {
-
-                // FIXME: default basemap should be indicated in the config as well
-                // const currentBasemapExtentSetId = '123456789';
-
-                if (extentSets) {
-                    // In configSchema, at least one extent for a basemap
-                    const extentSetForId = extentSets.find(extentSet => {
-                        if (extentSet.id === geoState.selectedBaseMapExtentSetId) {
-                            return true;
-                        }
-                    });
-
-                    // no matching id in the extentset
-                    if (angular.isUndefined(extentSetForId)) {
-                        throw new Error('could not find an extent set with matching id.');
-                    }
-
-                    // find the full extent type from extentSetForId
-                    const lFullExtent = (extentSetForId.full) ? extentSetForId.full :
-                        (extentSetForId.default) ? extentSetForId.default :
-                        (extentSetForId.maximum) ? extentSetForId.maximum : null;
-
-                    return lFullExtent;
-                } else {
-                    return null;
-                }
-            }*/
-
-            /**
-             * Retrieve maximum extent from extentSets.
-             * @function getMaxExtFromExtentSets
-             * @param {Object} extentSets collection of extents from the app config
-             * @returns {Object|Null} the maximum extent as defined by the config. null if nothing is defined.
-             * @private
-             */
-            /*function getMaxExtFromExtentSets(extentSets) {
-
-                if (extentSets) {
-                    // In configSchema, at least one extent for a basemap
-                    const extentSetForId = extentSets.find(extentSet => {
-                        if (extentSet.id === geoState.selectedBaseMapExtentSetId) {
-                            return true;
-                        }
-                    });
-
-                    // no matching id in the extentset
-                    if (angular.isUndefined(extentSetForId)) {
-                        throw new Error('could not find an extent set with matching id.');
-                    }
-
-                    // find the maximum extent type from extentSetForId
-                    return extentSetForId.maximum || extentSetForId.full || extentSetForId.default || null;
-                } else {
-                    return null;
-                }
-            }*/
-
-            /**
-             * Retrieve default extent from extentSets.
-             * @function getDefaultExtFromExtentSets
-             * @private
-             */
-            /*function getDefaultExtFromExtentSets(extentSets) {
-                // TODO: Need to handle cases where an extentset not defined
-                return extentSets.find(extentSet => extentSet.id === geoState.selectedBaseMapExtentSetId)
-                    .default;
-            }*/
 
             /**
              * Retrieve level of details array from config for current basemap.
@@ -579,54 +478,6 @@
              * @param {Object} config base map configuration
              */
             // eslint-disable-next-line complexity
-            function setAttribution(config) {
-                const cfgAtt = config.attribution;
-                const attNode = $(service.mapObject.attribution.listNode.parentNode);
-                const logoNode = attNode.parent().find('.logo-med');
-
-                // esri default logo
-                // jscs:disable maximumLineLength
-                const esriLogo = 'url(data:image/png;base64,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)';
-                // jscs:enable maximumLineLength
-
-                // if config is undefined, show attribution text and use built in value
-                // if it is !== then undefined take values from config file
-                // for not esri basemap, logo should be disable if no custom logo are provided
-                // because esri logo and liks are the default values
-                if (typeof cfgAtt !== 'undefined') {
-                    if (cfgAtt.text.enabled && cfgAtt.text.value) {
-                        // loop through node keys to replace value with content from configuration file
-                        // TODO: test when will we have a base map with multiple layers
-                        for (let [key] of Object.entries(service.mapObject.attribution.itemNodes)) {
-                            service.mapObject.attribution.itemNodes[key].innerText = cfgAtt.text.value;
-                        }
-                        attNode.show();
-                    } else if (!cfgAtt.text.enabled) {
-                        attNode.hide();
-                    }
-
-                    if (cfgAtt.logo.enabled) {
-                        // if values are supplied in the config file, use them
-                        // if not use the esri default value
-                        if (cfgAtt.logo.value && cfgAtt.logo.link) {
-                            logoNode.css('background-image', `url(${cfgAtt.logo.value})`);
-                            config.map.instance.mapDefault('logoLink', cfgAtt.logo.link);
-                        } else {
-                            logoNode.css('background-image', esriLogo);
-                            config.map.instance.mapDefault('logoLink', 'http://www.esri.com'); // TODO: create a function in geoapi to get default config value
-                        }
-                        logoNode.show();
-                        logoNode.css('visibility', 'visible');
-                    } else {
-                        logoNode.hide();
-                    }
-                } else {
-                    logoNode.css('background-image', esriLogo);
-                    attNode.show();
-                    logoNode.show();
-                    logoNode.css('visibility', 'visible');
-                }
-            }
 
             /**
              * Fetches a graphic from the given layer.

@@ -11,28 +11,14 @@
      *
      */
     angular
-        .module('app.geo')
+        .module('app.ui')
         .factory('basemapService', basemapService);
 
-    function basemapService($rootScope, $rootElement, events, configService, $translate, $injector, $mdSidenav, $q) {
+    function basemapService($rootElement, $mdSidenav, $q) {
 
-        let bmSelected; // the current selected basemap
-        let bmBlankSelected = null; // the current selected blank basemap
-        let initialBasemapId;
         let closePromise;
 
-        const onChangeCallback = [];
-        const projections = [];
-
         const service = {
-            selectedBasemap: null,
-
-            // selectBasemap,
-
-            select,
-            getSelected,
-            reload,
-            setOnChangeCallback,
             open,
             close,
             toggle,
@@ -121,21 +107,23 @@
          * @param {Function} cb   a callback function which takes an optional parameter containing
          *                        the list of projections
          */
+        /*
         function setOnChangeCallback(cb) {
             onChangeCallback.push(cb);
-        }
+        }*/
 
         /**
          * Rebuilds the list of basemaps and projections based on the current configuration.
          * @function reload
          */
+        /*
         function reload() {
             projections.length = 0;
             configService.getAsync.then(conf => {
-                initialBasemapId = conf.map ? conf.map.initialBasemapId : null;
+                // initialBasemapId = conf.map ? conf.map.initialBasemapId : null;
                 _addBaseMaps(conf.baseMaps);
             });
-        }
+        }*/
 
         /*function selectBasemap(newSelection) {
             const oldSelection = service.selectedBasemap || { deselect: angular.noop };
@@ -156,6 +144,7 @@
          * @function select
          * @param {Object} basemap   the basemap object to set as selected
          */
+        /*
         function select(basemap) {
 
             // To avoid double checkmark on basemap selection
@@ -174,7 +163,7 @@
                 // avoiding circular dependency on bookmarkService
                 $injector.get('reloadService').loadNewProjection(basemap.id); // avoid circular dependency
             }
-        }
+        }*/
 
         /**
          * Get the currently selected basemap
@@ -182,9 +171,10 @@
          * @function getSelected
          * @returns {Object}    the basemap that is currently selected
          */
+        /*
         function getSelected() {
             return bmSelected;
-        }
+        }*/
 
         /**
          * Organizes basemaps into projection groupings and inserts a blank basemap
@@ -193,15 +183,15 @@
          * @private
          * @param {Array} basemapList   A list of basemap objects
          */
+        /*
         function _addBaseMaps(mapConfig) {
 
-            console.log(mapConfig);
+            //console.log(mapConfig);
 
             // creates lists of extentSets, tileShemas and basemaps;
             // the basemap list is flat and will be grouped by tileSchema id and sorted by basemap name directly in the template
 
 
-            /*
 
             basemapList.forEach(bm => {
                 const basemap = _normalizeBasemap(bm);
@@ -250,8 +240,8 @@
 
             bmSelected.selected = true;
             onChangeCallback.forEach(cb => cb(projections, bmSelected));
-            */
-        }
+        }*/
+
     }
 
     /**
@@ -273,4 +263,5 @@
             attribution: basemap.attribution
         };
     }*/
+
 })();
