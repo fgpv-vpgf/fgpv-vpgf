@@ -21,7 +21,7 @@ or a raster source. It is one atomic layer.
 Record represents a physical layer.  Think of a layer in the ESRI map stack. Think of
 something represented by an ESRI API layer object.
 
-Interfac is a classs that presents information to the UI and facilitates bindings.
+Interface is a class that presents information to the UI and facilitates bindings.
 It also exposes calls to perform actions on the layer (e.g. the action a UI button
 would execute).
 
@@ -38,11 +38,11 @@ leaf child layer.
 
 An interface object should exist for every layer-bound entry in the legend.
 Most Records will have one interface, as they just have one legend entry.
-Dynamic Records will also have interfaces for children. This can include
-group items, which don't have FC objects. Tricky, eh!
-
+Dynamic Records will also have interfaces for children.
 */
 
+// UPDATE: this idea was somewhat implemented. .layerInfo is still a promise, but we don't
+// set things to loaded until we've extracted upfront items from it.
 // IDEA: instead of having attribute .layerInfo as a promise,
 // we pair that promise with the layer's load event.  Essentially, don't
 // change our state to loaded until both the layer is loaded AND the .layerInfo
@@ -50,8 +50,6 @@ group items, which don't have FC objects. Tricky, eh!
 // can access it synchronously.
 // Risk: need to make sure we never need to use .layerInfo prior to the layer loading.
 // Risk: layer needs to wait until it has pulled additional info prior to being active (negligible?)
-// UPDATE: this was somewhat implemented. .layerInfo is still a promise, but we don't set things
-// to loaded until we've extracted upfront items from it.
 
 // TODO full review of use of object id, specificly the type -- is it string or integer
 // TODO ditto for featureIdx.
