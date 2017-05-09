@@ -161,7 +161,7 @@
             return wrapOutput(serverGeneratorPromise);
 
             function serverPrint(exportMapUrl, attempt = 0) {
-                const serverPromise = gapiService.gapi.mapPrint.printServer(mapInstance, {
+                const serverPromise = mapInstance.printServer({
                     url: exportMapUrl,
                     format: 'png32',
                     width: exportSize.width,
