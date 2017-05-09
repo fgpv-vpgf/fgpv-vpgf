@@ -36,7 +36,6 @@
                 lods: mapConfig.selectedBasemap.lods
             };
 
-
             // reset before rebuilding the map if `geoState` already has an instance of mapService
             // TODO: restore
             /*if (typeof geoState.mapService !== 'undefined') {
@@ -94,24 +93,6 @@
                 $rootScope.$broadcast('rvBasemapChange');
                 }*/
             //});
-
-            // TODO: remove all the code related to "blank" basemaps as they will be handled differently
-            /*if (config.map.initialBasemapId && config.map.initialBasemapId.startsWith(blankBaseMapIdPattern)) {
-                hideBaseMap(true);
-            }*/
-
-            // FIXME temp link for debugging
-            /* window.FGPV = {
-                layers: service.layers
-            };*/
-
-            // store service in geoState
-            // geoState.mapService = service;
-
-            // return a promise that resolves in the service once the map has loaded
-            // return onMapLoad.then(() => service);
-
-
         }
 
         /**
@@ -126,6 +107,8 @@
             basemap.select();
 
             mapConfig.instance.basemapGallery.select(basemap.id);
+
+            events.$broadcast(events.rvBasemapChange);
         }
 
         /**
@@ -344,11 +327,11 @@
                 selectBasemap(mapConfig.selectedBasemap);
                 // service.Map.BasemapControl.setBasemap(geoState.configObject.map.selectedBasemap.id);
 
-                mapConfig.components.basemap.body.basemapGallery.on('selection-change', event => {
-                    $rootElement.find('div.ovwContainer').append('<rv-overview-toggle></rv-overview-toggle>');
-                    $compile($rootElement.find('rv-overview-toggle')[0])($rootScope);
+                //mapConfig.components.basemap.body.basemapGallery.on('selection-change', event => {
+                 //   $rootElement.find('div.ovwContainer').append('<rv-overview-toggle></rv-overview-toggle>');
+                  //  $compile($rootElement.find('rv-overview-toggle')[0])($rootScope);
 
-                    console.log(event);
+                    //console.log(event);
 
                     //TODO: fix code setting basempa attribution
                     /*
@@ -373,7 +356,7 @@
                     // will be use by the scalebar animation. Animation needs to be recreated on projection change.
                     $rootScope.$broadcast('rvBasemapChange');
                     }*/
-                });
+                //});
 
                 // TODO: remove all the code related to "blank" basemaps as they will be handled differently
                 /*if (config.map.initialBasemapId && config.map.initialBasemapId.startsWith(blankBaseMapIdPattern)) {

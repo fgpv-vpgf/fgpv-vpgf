@@ -22,6 +22,7 @@
 
             self.arrowIcon = 'northarrow';
 
+            /*
             $rootScope.$on(events.rvApiReady, () => {
                 // a game of tug-o-war ensues with esri. We want to move overview map up one level but we are ensure when esri is finished
                 // initializing it. Moving it too soon fails, so we keep trying until it works (about 2-3 tries on average for chrome).
@@ -42,7 +43,7 @@
                     element.css('display', 'none'); // hide if disabled in the config
                 }
             });
-
+            */
 
             /**
             * Displays a north arrow along the top of the viewer

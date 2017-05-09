@@ -1,4 +1,3 @@
-/* global Ease, BezierEasing */
 (() => {
     'use strict';
 
@@ -19,7 +18,6 @@
         .module('app.geo')
         .directive('rvInitMap', rvInitMap);
 
-    // jshint maxparams:11
     function rvInitMap($rootScope, geoService, events, storageService, mapService, gapiService, $rootElement,
         $interval, globalRegistry, animationService, stateManager) {
 
