@@ -63,6 +63,18 @@ function esriMap(esriBundle, geoApi) {
         printServer (options) { return printModule.printServer(this._map, options); }
 
         /**
+         * Select a basemap which has been loaded in the basemapGallery
+         *
+         * @param {Object|String} value either an object with an id field or a string
+         */
+        selectBasemap (value) {
+            if (typeof value === 'object') {
+                value = value.id;
+            }
+            this.basemapGallery.select(value);
+        }
+
+        /**
          * Create an ESRI Extent object from extent setting JSON object.
          *
          * @function getExtentFromJson
@@ -91,6 +103,25 @@ function esriMap(esriBundle, geoApi) {
             } else {
                 return geoApi.proj.projectEsriExtent(realExtent, this._map.spatialReference);
             }
+        }
+
+        /**
+         * Takes a location object in lat/long, converts to current map spatialReference using
+         * reprojection method in geoApi, and zooms to the point.
+         *
+         * @function zoomToLatLong
+         * @param {Object} location is a location object, containing geometries in the form of { longitude: <Number>, latitude: <Number> }
+         */
+        zoomToPoint ({ longitude, latitude }) {
+
+            // get reprojected point and zoom to it
+            const geoPt = geoApi.proj.localProjectPoint(4326, this._map.spatialReference.wkid,
+                [parseFloat(longitude), parseFloat(latitude)]);
+            const zoomPt = geoApi.proj.Point(geoPt[0], geoPt[1], this._map.spatialReference);
+
+            // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
+            const sweetLod = Map.findClosestLOD(this._map.__tileInfo.lods, 50000);
+            this._map.centerAndZoom(zoomPt, Math.max(sweetLod.level, 0));
         }
 
         /**
