@@ -431,11 +431,30 @@
              */
             get userDisabledControls () { return this._userDisabledControls; }
             get state () { return this._state; }
+
+            get JSON() {
+                return {
+                    id: this.id,
+                    name: this.name,
+                    url: this.url,
+                    metadataUrl: this.metadataUrl,
+                    catalogueUrl: this.catalogueUrl,
+                    layerType: this.layerType,
+                    extent: this.source.extent,
+                    controls: this.controls,
+                    disabledControls: this.disabledControls,
+                    state: this.state.JSON
+                };
+            }
         }
 
         class BasicLayerNode extends LayerNode {
             constructor (source) {
                 super(source);
+            }
+
+            get JSON() {
+                return super.JSON;
             }
         }
 
@@ -451,6 +470,13 @@
             set nameField (value) { this._nameField = value; }
 
             get tolerance () { return this._tolerance; }
+
+            get JSON() {
+                return angular.merge(super.JSON, {
+                    nameField: this.nameField,
+                    tolerance: this.tolerance
+                });
+            }
         }
 
         // abstract
@@ -533,6 +559,15 @@
             }
             get featureInfoMimeType () { return this._featureInfoMimeType; }
             get legendMimeType () { return this._legendMimeType; }
+
+            get JSON() {
+                return angular.merge(super.JSON, {
+                    layerEntries: this.layerEntries.map(layerEntry =>
+                        layerEntry.JSON),
+                    featureInfoMimeType: this.featureInfoMimeType,
+                    legendMimeType: this.legendMimeType
+                });
+            }
         }
 
         class DynamicLayerEntryNode extends LayerEntryNode {
@@ -837,6 +872,14 @@
             get content () { return this._content; }
 
             get entryType () { return TYPES.legend.INFO; }
+
+            get JSON() {
+                return {
+                    infoType: this.infoType,
+                    content: this.content,
+                    entryType: this.entryType
+                };
+            }
         }
 
         /**
@@ -858,6 +901,14 @@
 
             walk (...args) {
                 return this._walk(...args);
+            }
+
+            get JSON() {
+                return {
+                    exclusiveVisibility: this.exclusiveVisibility.map(child =>
+                        child.JSON),
+                    entryType: this.entryType
+                };
             }
         }
 
@@ -892,6 +943,20 @@
             get symbologyRenderStyle () { return this._symbologyRenderStyle; }
 
             get entryType () {              return TYPES.legend.NODE; }
+
+            get JSON() {
+                return {
+                    layerId: this.layerId,
+                    userAdded: this.userAdded,
+                    controlledIds: this.controlledIds,
+                    entryIndex: this.entryIndex,
+                    entryId: this.entryId,
+                    coverIcon: this.coverIcon,
+                    symbologyStack: this.symbologyStack,
+                    symbologyRenderStyle: this.symbologyRenderStyle,
+                    entryType: this.entryType
+                };
+            }
         }
 
         /**
@@ -932,6 +997,18 @@
 
             walk (...args) {
                 return this._walk(...args);
+            }
+
+            get JSON() {
+                return {
+                    name: this.name,
+                    children: this.children.map(child =>
+                        child.JSON),
+                    controls: this.controls,
+                    disabledControls: this.disabledControls,
+                    expanded: this.expanded,
+                    entryType: this.entryType
+                };
             }
         }
 
@@ -1013,6 +1090,14 @@
 
             get type () { return this._type; }
             get root () { return this._root; }
+
+            get JSON() {
+                return {
+                    type: this.type,
+                    reorderable: this.reorderable,
+                    root: this.root.JSON
+                };
+            }
         }
 
         function _makeChildObject (childConfig) {
@@ -1056,6 +1141,12 @@
                     this._body = value;
                 }
             }
+
+            get JSON() {
+                return {
+                    enabled: this.enabled
+                };
+            }
         }
 
         class GeoSearchComponent extends ComponentBase {
@@ -1068,6 +1159,13 @@
 
             get showGraphic () { return this._showGraphic; }
             get showInfo () { return this._showInfo; }
+
+            get JSON() {
+                return angular.merge(super.JSON, {
+                    showGraphic: this.showGraphic,
+                    showInfo: this.showInfo
+                });
+            }
         }
 
         class MouseInfoComponent extends ComponentBase {
@@ -1078,11 +1176,21 @@
             }
 
             get spatialReference () { return this._spatialReference; }
+
+            get JSON() {
+                return angular.merge(super.JSON, {
+                    spatialReference: this.spatialReference
+                });
+            }
         }
 
         class NorthArrowComponent extends ComponentBase {
             constructor (source) {
                 super(source);
+            }
+
+            get JSON() {
+                return super.JSON;
             }
         }
 
@@ -1096,6 +1204,13 @@
 
             get maximizeButton () { return this._maximizeButton; }
             get layerType () { return this._layerType; }
+
+            get JSON() {
+                return angular.merge(super.JSON, {
+                    maximizeButton: this.maximizeButton,
+                    layerType: this.layerType
+                });
+            }
         }
 
         class ScaleBarComponent extends ComponentBase {
@@ -1105,6 +1220,13 @@
 
             get attachTo () { return 'bottom-left'; }
             get scalebarUnit () { return 'dual'; }
+
+            get JSON() {
+                return angular.merge(super.JSON, {
+                    attachTo: this.attachTo,
+                    scalebarUnit: this.scalebarUnit
+                });
+            }
         }
 
         class BasemapComponent extends ComponentBase {
@@ -1131,6 +1253,17 @@
             get overviewMap () { return this._overviewMap; }
             get scaleBar () { return this._scaleBar; }
             get basemap () { return this._basemap; }
+
+            get JSON() {
+                return {
+                    geoSearch: this.geoSearch.JSON,
+                    mouseInfo: this.mouseInfo.JSON,
+                    northArrow: this.northArrow.JSON,
+                    overviewMap: this.overviewMap.JSON,
+                    scaleBar: this.scaleBar.JSON,
+                    basemap: this.basemap.JSON
+                };
+            }
         }
 
         class SearchService {
@@ -1141,6 +1274,13 @@
 
             get disabledSearches () { return this._disabledSearches; }
             get serviceUrls () { return this._serviceUrls; }
+
+            get JSON() {
+                return {
+                    disabledSearches: this.disabledSearches,
+                    serviceUrls: this.serviceUrls
+                };
+            }
         }
 
         class ExportService {
@@ -1159,6 +1299,17 @@
             get legend () { return this._legend; }
             get footnote () { return this._footnote; }
             get timestamp () { return this._timestamp; }
+
+            get JSON() {
+                return {
+                    title: this.title,
+                    map: this.map,
+                    mapElements: this.mapElements,
+                    legend: this.legend,
+                    footnote: this.footnote,
+                    timestamp: this.timestamp
+                };
+            }
         }
 
         class Services {
@@ -1185,6 +1336,21 @@
             get search () { return this._search; }
             get export () { return this._export; }
             get rcsEndpoint () { return this._rcsEndpoint; }
+
+            get JSON() {
+                return {
+                    proxyUrl: this.proxyUrl,
+                    exportMapUrl: this.exportMapUrl,
+                    geometryUrl: this.geometryUrl,
+                    googleAPIKey: this.googleAPIKey,
+                    geolocation: this.geolocation,
+                    coordInfo: this.coordInfo,
+                    print: this.print,
+                    search: this.search,
+                    export: this.export,
+                    rcsEndpoint: this.rcsEndpoint
+                };
+            }
         }
 
         /**
@@ -1288,6 +1454,19 @@
             _isLoading = true;
             get isLoading () { return this._isLoading; }
             set isLoading (value) { this._isLoading = value;}
+
+            get JSON() {
+                return {
+                    initialBasemapId: this.source.initialBasemapId,
+                    components: this.components.JSON,
+                    extentSets: this.extentSets.JSON,
+                    lodSets: this.lodSets.JSON,
+                    legend: this.legend.JSON,
+                    // layers: this.layers, // this should map layerrecords I think
+                    tileSchemas: this.tileSchemas.JSON,
+                    basemaps: this.basemaps.JSON
+                };
+            }
         }
 
         class NavBar {
