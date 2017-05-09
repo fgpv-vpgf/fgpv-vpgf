@@ -489,26 +489,34 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // bundles results from all leaf layers
         const identifyResults = [];
 
-        // TODO add scale check to our filterting logic.  might require a scale to be included on the opts param
-        opts.layerIds = this._layer.visibleLayers
-            .filter(leafIndex => {
-                if (leafIndex === -1) {
-                    // this is marker for nothing is visible. get rid of it
-                    return false;
-                } else {
-                    const fc = this._featClasses[leafIndex];
-                    if (fc) {
-                        return fc.queryable;
-                    } else {
-                        // we dont have a feature class for this id.
-                        //  it is likely a a group or something visible but not active
+        if (this.state === shared.states.ERROR ||
+            this.state === shared.states.LOADING ||
+            this.state === shared.states.NEW) {
+            opts.layerIds = []; // quick quit
+        } else {
+            opts.layerIds = this._layer.visibleLayers
+                .filter(leafIndex => {
+                    if (leafIndex === -1) {
+                        // this is marker for nothing is visible. get rid of it
                         return false;
+                    } else {
+                        const fc = this._featClasses[leafIndex];
+                        if (fc) {
+                            // keep if it is queryable and on-scale
+                            return fc.queryable && !fc.isOffScale(opts.map.getScale()).offScale;
+                        } else {
+                            // we dont have a feature class for this id.
+                            //  it is likely a a group or something visible but not active
+                            return false;
+                        }
                     }
-                }
-            });
+                });
+        }
 
+        // if there are no layerIds to inspect, don't hit the server
         if (opts.layerIds.length === 0) {
-            return {};
+            // TODO verifiy this is correct result format if layer should be excluded from the identify process
+            return { identifyResults: [], identifyPromise: Promise.resolve() };
         }
 
         opts.layerIds.forEach(leafIndex => {

@@ -193,7 +193,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
         // TODO add full documentation for options parameter
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
-        // TODO verifiy this is correct behavior if layer should be excluded from the identify process
         if (this.state === shared.states.ERROR ||
             this.state === shared.states.LOADING ||
             this.state === shared.states.NEW ||
@@ -206,6 +205,8 @@ class FeatureRecord extends attribRecord.AttribRecord {
             console.log('early identify - query', this.isQueryable());
             console.log('early identify - offscale', this.isOffScale(opts.map.getScale()).offScale);
             */
+
+            // TODO verifiy this is correct result format if layer should be excluded from the identify process
             return { identifyResults: [], identifyPromise: Promise.resolve() };
         }
 
