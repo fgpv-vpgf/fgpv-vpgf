@@ -102,6 +102,24 @@ $result-item-height-touch: rem(4.8);
 
                         padding: 0 18px;
 
+                        .rv-results-item-tooltip {
+                            display: flex;
+                            position: absolute;
+                            background-color:  $divider-color-light;
+                            line-height: $result-item-height;
+                            white-space: nowrap;
+                            padding: 0 rem(2) 0 rem(2);
+                            min-width: rem(40);
+                            animation: anim 3s infinite alternate ease-in-out;
+                        }
+
+                        // Will not work in Safari because they can't have to empty
+                        // If we set 'to' and change keyframe values in javascript page reload in Safari
+                        @keyframes anim {
+                            from { left: 0%; }
+                            to { }
+                        }
+
                         .rv-results-item-main {
                             white-space: nowrap;
                             overflow: hidden;
