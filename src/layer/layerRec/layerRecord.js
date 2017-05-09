@@ -273,7 +273,7 @@ class LayerRecord extends root.Root {
             // need to reproject in case full extent in a different sr than basemap
             const gextent = this._apiRef.proj.localProjectExtent(this._layer.fullExtent, map.spatialReference);
 
-            const reprojLayerFullExt = this._apiRef.mapManager.Extent(gextent.x0, gextent.y0,
+            const reprojLayerFullExt = this._apiRef.Map.Extent(gextent.x0, gextent.y0,
                 gextent.x1, gextent.y1, gextent.sr);
 
             // check if current map extent already in layer extent
@@ -353,7 +353,7 @@ class LayerRecord extends root.Root {
 
         const projRawExtent = this._apiRef.proj.localProjectExtent(extent, map.spatialReference);
 
-        const projFancyExtent = this._apiRef.mapManager.Extent(projRawExtent.x0, projRawExtent.y0,
+        const projFancyExtent = this._apiRef.Map.Extent(projRawExtent.x0, projRawExtent.y0,
             projRawExtent.x1, projRawExtent.y1, projRawExtent.sr);
 
         return map.setExtent(projFancyExtent);
@@ -396,7 +396,7 @@ class LayerRecord extends root.Root {
         const buffSize = 2 * tolerance * map.extent.getWidth() / map.width;
 
         // Build tolerance envelope of correct size
-        const cBuff = new this._apiRef.mapManager.Extent(0, 0, buffSize, buffSize, point.spatialReference);
+        const cBuff = new this._apiRef.Map.Extent(0, 0, buffSize, buffSize, point.spatialReference);
 
         // move the envelope so it is centered around the point
         return cBuff.centerAt(point);

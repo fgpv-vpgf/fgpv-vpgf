@@ -194,6 +194,23 @@ class FeatureRecord extends attribRecord.AttribRecord {
     identify (opts) {
         // TODO add full documentation for options parameter
 
+        // early kickout check. not loaded/error; not visible; not queryable; off scale
+        // TODO verifiy this is correct behavior if layer should be excluded from the identify process
+        if (this.state === shared.states.ERROR ||
+            this.state === shared.states.LOADING ||
+            this.state === shared.states.NEW ||
+            !this.visibility ||
+            !this.isQueryable() ||
+            this.isOffScale(opts.map.getScale()).offScale) {
+            /*
+            console.log('early identify - state', this.state);
+            console.log('early identify - visible', this.visibility);
+            console.log('early identify - query', this.isQueryable());
+            console.log('early identify - offscale', this.isOffScale(opts.map.getScale()).offScale);
+            */
+            return { identifyResults: [], identifyPromise: Promise.resolve() };
+        }
+
         // TODO fix these params
         // TODO legendEntry.name, legendEntry.symbology appear to be fast links to populate the left side of the results
         //      view.  perhaps it should not be in this object anymore?
