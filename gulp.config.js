@@ -49,7 +49,8 @@ module.exports = function () {
             app + '*/**/*.js',
             app + 'app.module.js',
             '!' + app + '**/*.spec.js',
-            app + 'focus-manager.js'
+            app + 'focus-manager.js',
+            app + 'log-manager.js'
         ],
         jsOrder: [
             'lib.js',

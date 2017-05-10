@@ -41,6 +41,7 @@
     "moment-timezone": "^0.5.11",
     "marked": "^0.3.6",
     "screenfull": "https://github.com/sindresorhus/screenfull.js.git",
+    "js-logger": "^1.3.0",
     "logdown": "^2.2.0"
   },
   "overrides": {
