@@ -41,6 +41,8 @@
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
 
+            api.debug(true);
+
             var config1 = {
                 id: 'guts',
                 name: 'Dynamic Test',
@@ -87,7 +89,8 @@
             var proxy = layerRec.getProxy();
             console.log('proxy PROOF ', proxy);
 
-            map = new api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 7, center: [-110, 55] });
+            var eb = api.esriBundle();
+            map = new eb.Map(document.getElementById('map'), { basemap: 'topo', zoom: 7, center: [-110, 55] });
             map.addLayer(layerRec._layer);
             console.log('mah map', map);
 
@@ -107,7 +110,7 @@
 
                 var leaf4proxy = layerRec.getChildProxy(4);
                 var leaf3proxy = layerRec.getChildProxy(3);
-                leaf3proxy.setVisibility(true);
+                leaf3proxy.setVisibility(false);
                 leaf4proxy.setVisibility(true);
                 leaf3proxy.setQuery(true);
                 leaf4proxy.setQuery(true);
