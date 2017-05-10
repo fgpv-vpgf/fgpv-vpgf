@@ -22,28 +22,17 @@
 
             self.arrowIcon = 'northarrow';
 
-            /*
             $rootScope.$on(events.rvApiReady, () => {
-                // a game of tug-o-war ensues with esri. We want to move overview map up one level but we are ensure when esri is finished
-                // initializing it. Moving it too soon fails, so we keep trying until it works (about 2-3 tries on average for chrome).
-                const stopOverviewInterval = $interval(() => {
-                    if ($rootElement.find('rv-shell > div.esriOverviewMap').length > 0) {
-                        $interval.cancel(stopOverviewInterval);
-                        return;
-                    }
-                    const overviewMap = $rootElement.find('div.rv-esri-map > div.esriOverviewMap').first();
-                    overviewMap.parent().parent().prepend(overviewMap);
-                }, 200);
-
                 const mapConfig = configService.getSync.map.components;
                 if (mapConfig.northArrow && mapConfig.northArrow.enabled) {
+                    // required so that arrow moves behind overview map instead of in front
+                    $rootElement.find('.rv-esri-map > .esriMapContainer').first().after(element);
                     updateNorthArrow(); // set initial position
                     $rootScope.$on(events.rvExtentChange, updateNorthArrow); // update on extent changes
                 } else {
                     element.css('display', 'none'); // hide if disabled in the config
                 }
             });
-            */
 
             /**
             * Displays a north arrow along the top of the viewer
