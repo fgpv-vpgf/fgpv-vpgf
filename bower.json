@@ -42,6 +42,7 @@
     "marked": "^0.3.6",
     "screenfull": "https://github.com/sindresorhus/screenfull.js.git",
     "js-logger": "^1.3.0",
+    // TODO: remove once logs are converted to new style
     "logdown": "^2.2.0"
   },
   "overrides": {
