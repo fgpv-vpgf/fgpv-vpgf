@@ -68,6 +68,13 @@
             function afterLoadTests() {
                 console.log('enhanced loaded');
                
+                console.log('featurename test - sb pigdog', proxy.getFeatureName('3', {
+                    siteUUID: 'hogleg',
+                    siteNotes_en: 'doglog',
+                    siteShortName_en: 'pigdog',
+                    siteFullName_en: 'gutsy'
+                }));
+
                 // proxy.setOpacity(0.5);
             }
 

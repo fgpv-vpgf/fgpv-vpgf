@@ -66,7 +66,7 @@ this is a layer data object.  it contains information describing the server-side
 /**
 * Will generate an empty object structure to store attributes for a single layer of features
 * @private
-* @param  {Integer} featureIdx server index of the layer
+* @param  {String} featureIdx server index of the layer
 * @param  {Object} esriBundle bundle of API classes
 * @return {Object} empty layer package object
 */
@@ -290,6 +290,7 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
                     if (serviceResult.type === 'Feature Layer') {
                         layerData.supportsFeatures = true;
                         layerData.fields = serviceResult.fields;
+                        layerData.nameField = serviceResult.displayField;
 
                         // find object id field
                         // NOTE cannot use arrow functions here due to bug

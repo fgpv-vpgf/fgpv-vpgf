@@ -46,7 +46,7 @@
             var config1 = {
                 id: 'guts',
                 name: 'Dynamic Test',
-                url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer',                
+                url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer',
                 metadataUrl: 'http://www.github.com',
                 layerType: 'esriDynamic',
                 tolerance: 5,             
@@ -56,10 +56,10 @@
                     boundingBox: false,
                     query: true
                 },
-                layerEntries: [                   
+                layerEntries: [
                     {
                         index: 3,
-                        outfields: '*',                       
+                        outfields: '*',
                         state: {
                             opacity: 1,
                             visibility: true,
@@ -71,7 +71,7 @@
                     },
                     {
                         index: 4,
-                        outfields: '*',                       
+                        outfields: '*',
                         state: {
                             opacity: 1,
                             visibility: true,
@@ -115,6 +115,12 @@
                 leaf3proxy.setQuery(true);
                 leaf4proxy.setQuery(true);
                
+                console.log('featurename test - sb pigdog', leaf3proxy.getFeatureName('3', {
+                    SO2: 'hogleg',
+                    E_Province: 'doglog',
+                    City: 'pigdog'
+                }));
+
             }
 
         });

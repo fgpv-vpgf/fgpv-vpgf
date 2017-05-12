@@ -47,11 +47,13 @@ class LayerInterface {
     // fetches attributes for use in the datatable
     get formattedAttributes () { return undefined; } // returns Promise of Object
 
+    // returns a feature name of an attribute set
+    getFeatureName () { return undefined; } // returns String
+
     // these set values to the corresponding controls
     setVisibility () { return undefined; }
     setOpacity () { return undefined; }
     setQuery () { return undefined; }
-    setSnapshot () { return undefined; }
 
     zoomToBoundary () { return undefined; } // returns promise that resolves after zoom completes
 
@@ -96,7 +98,7 @@ class LayerInterface {
         newProp(this, 'geometryType', featureGetGeometryType);
         newProp(this, 'featureCount', featureGetFeatureCount);
 
-        this.setSnapshot = featureSetSnapshot;
+        this.getFeatureName = featureGetFeatureName;
     }
 
     convertToDynamicLeaf (dynamicFC) {
@@ -122,6 +124,7 @@ class LayerInterface {
         this.setOpacity = dynamicLeafSetOpacity;
         this.setQuery = dynamicLeafSetQuery;
         this.zoomToBoundary = dynamicLeafZoomToBoundary;
+        this.getFeatureName = featureGetFeatureName;
     }
 
     convertToPlaceholder (placeholderFC) {
@@ -323,13 +326,6 @@ function featureGetSnapshot() {
     return this._source.isSnapshot;
 }
 
-function featureSetSnapshot() {
-    // TODO trigger the snapshot process.  need the big picture on how this orchestrates.
-    //      it involves a layer reload so possible this function is irrelevant, as the record
-    //      will likely get nuked
-    console.log('MOCKING THE SNAPSHOT PROCESS');
-}
-
 function standardZoomToBoundary(map) {
     /* jshint validthis: true */
     this._source.zoomToBoundary(map);
@@ -338,6 +334,11 @@ function standardZoomToBoundary(map) {
 function dynamicLeafZoomToBoundary(map) {
     /* jshint validthis: true */
     this._source.zoomToBoundary(map);
+}
+
+function featureGetFeatureName(objId, attribs) {
+    /* jshint validthis: true */
+    return this._source.getFeatureName(objId, attribs);
 }
 
 module.exports = () => ({
