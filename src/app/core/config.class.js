@@ -5,7 +5,7 @@
      * @module ConfigObject
      * @memberof app.core
      * @requires dependencies
-     * @description     *
+     * @description
      *
      * ### About controls:
      * Each layer and group has two arrays of control settings: `controls` and `disabledControls`.

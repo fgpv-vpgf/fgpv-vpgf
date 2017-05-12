@@ -11,11 +11,9 @@
         <ul class="rv-records-list" ng-switch-when="EsriFeature">
             <li ng-repeat="item in self.item.data">
                 <rv-details-record-esrifeature
-                    ng-class="{ 'rv-selected': item.isSelected }"
                     item="item"
                     solorecord="self.item.data.length === 1"
                     requester="self.item.requester"></rv-details-record-esrifeature>
-                <div class="rv-shadow"></div>
             </li>
         </ul>
 

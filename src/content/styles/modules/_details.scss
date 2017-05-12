@@ -143,10 +143,11 @@
                     z-index: 0;
                 }
 
-                rv-toc-entry-symbology {
+                rv-symbology-stack {
                     margin: rem(0.8);
                     opacity: 1;
                     transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
                     // this makes the symbology image more opaque when the loading indicator is visible
                     &.rv-disabled {
                         opacity: 0.2;
@@ -235,69 +236,73 @@ $details-record-height: rem(6.0);
             }
         }
 
-        .rv-details-list {
-            @extend %zebra-list;
-
-            padding: rem(0.8) rem(1.6);
-            border-bottom: 1px solid $divider-color-light;
-
-            li {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: flex-end; // forces the key value to move the rigth of the container; key name is pushed to the left by the flexed span
-            }
-
-            .rv-details-attrib-key {
-                margin-right: 0;
-                padding-right: rem(1);
-                font-weight: bold;
-
-                // from MDN:
-                // The `word-break` CSS property is used to specify whether to break lines within words...
-                // break unbreakable strings to avoid scrollbars
-                word-break: break-word;
-            }
-
-            .rv-details-attrib-value {
-                margin-right: 0;
-                padding-left: rem(1.5);
-
-                // break unbreakable strings to avoid scrollbars
-                word-break: break-word;
-
-                // this will truncate anything overflowing (only link will overflow since we prevent them from wrapping)
-                overflow: hidden;
-                text-overflow: ellipsis;
-
-                // only use when render html inside details panel
-                ul li {
-                    display: list-item;
-                    list-style-type: disc;
-                }
-
-                a {
-                    // fix for https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1635
-                    // prevent wrapping links to truncate them as we don't want them to wrap
-                    white-space: nowrap;
-                }
-            }
-        }
-
         rv-details-record-esrifeature {
-            @extend %action-list-group;
+            .rv-record-header {
+                @extend %action-list-group;
 
-            height: $details-record-height;
-            padding-right: $details-padding + rem(1.0);
-            padding-left: $details-padding + rem(1.0);
+                height: $details-record-height;
+                padding-right: $details-padding + rem(1.0);
+                padding-left: $details-padding + rem(1.0);
 
-            .rv-toggled.md-toggle-icon {
-                transform: rotate(180deg) !important;
+                .rv-toggled.md-toggle-icon {
+                    transform: rotate(180deg) !important;
+                }
+
+                // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
+                &:hover ~ .rv-details-list:not(.ng-hide) ~ .rv-shadow {
+                    background-color: $primary-color;
+                }
             }
 
-            // hide list shadow when the layer list is closed; otherwise, it will still be visilbe
-            &:hover ~ .rv-details-list:not(.ng-hide) ~ .rv-shadow {
-                background-color: $primary-color;
+            .rv-details-list {
+                @extend %zebra-list;
+
+                padding: rem(0.8) rem(1.6);
+                border-bottom: 1px solid $divider-color-light;
+
+                li {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: flex-end; // forces the key value to move the rigth of the container; key name is pushed to the left by the flexed span
+                }
+
+                .rv-details-attrib-key {
+                    margin-right: 0;
+                    padding-right: rem(1);
+                    font-weight: bold;
+
+                    // from MDN:
+                    // The `word-break` CSS property is used to specify whether to break lines within words...
+                    // break unbreakable strings to avoid scrollbars
+                    word-break: break-word;
+                }
+
+                .rv-details-attrib-value {
+                    margin-right: 0;
+                    padding-left: rem(1.5);
+
+                    // break unbreakable strings to avoid scrollbars
+                    word-break: break-word;
+
+                    // this will truncate anything overflowing (only link will overflow since we prevent them from wrapping)
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    // only use when render html inside details panel
+                    ul li {
+                        display: list-item;
+                        list-style-type: disc;
+                    }
+
+                    a {
+                        // fix for https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1635
+                        // prevent wrapping links to truncate them as we don't want them to wrap
+                        white-space: nowrap;
+                    }
+                }
             }
+
+
         }
     }
 }
