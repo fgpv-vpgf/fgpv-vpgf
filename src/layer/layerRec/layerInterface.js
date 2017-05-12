@@ -51,7 +51,6 @@ class LayerInterface {
     setVisibility () { return undefined; }
     setOpacity () { return undefined; }
     setQuery () { return undefined; }
-    setSnapshot () { return undefined; }
 
     zoomToBoundary () { return undefined; } // returns promise that resolves after zoom completes
 
@@ -95,8 +94,6 @@ class LayerInterface {
         newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
         newProp(this, 'geometryType', featureGetGeometryType);
         newProp(this, 'featureCount', featureGetFeatureCount);
-
-        this.setSnapshot = featureSetSnapshot;
     }
 
     convertToDynamicLeaf (dynamicFC) {
@@ -321,13 +318,6 @@ function dynamicLeafSetQuery(value) {
 function featureGetSnapshot() {
     /* jshint validthis: true */
     return this._source.isSnapshot;
-}
-
-function featureSetSnapshot() {
-    // TODO trigger the snapshot process.  need the big picture on how this orchestrates.
-    //      it involves a layer reload so possible this function is irrelevant, as the record
-    //      will likely get nuked
-    console.log('MOCKING THE SNAPSHOT PROCESS');
 }
 
 function standardZoomToBoundary(map) {
