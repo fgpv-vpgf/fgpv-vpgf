@@ -87,7 +87,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
         // feature has only one layer
         const aFC = new attribFC.AttribFC(this, featIdx, attribPackage, this.config);
-        aFC.nameField = this.config.nameField;
         this._defaultFC = featIdx;
         this._featClasses[featIdx] = aFC;
 
@@ -96,6 +95,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         // update asynch data
         const pLD = aFC.getLayerData().then(ld => {
             this._geometryType = ld.geometryType;
+            aFC.nameField = this.config.nameField || ld.nameField || '';
         });
 
         const pFC = this.getFeatureCount().then(fc => {

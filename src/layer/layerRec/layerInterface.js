@@ -47,6 +47,9 @@ class LayerInterface {
     // fetches attributes for use in the datatable
     get formattedAttributes () { return undefined; } // returns Promise of Object
 
+    // returns a feature name of an attribute set
+    getFeatureName () { return undefined; } // returns String
+
     // these set values to the corresponding controls
     setVisibility () { return undefined; }
     setOpacity () { return undefined; }
@@ -94,6 +97,8 @@ class LayerInterface {
         newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
         newProp(this, 'geometryType', featureGetGeometryType);
         newProp(this, 'featureCount', featureGetFeatureCount);
+
+        this.getFeatureName = featureGetFeatureName;
     }
 
     convertToDynamicLeaf (dynamicFC) {
@@ -119,6 +124,7 @@ class LayerInterface {
         this.setOpacity = dynamicLeafSetOpacity;
         this.setQuery = dynamicLeafSetQuery;
         this.zoomToBoundary = dynamicLeafZoomToBoundary;
+        this.getFeatureName = featureGetFeatureName;
     }
 
     convertToPlaceholder (placeholderFC) {
@@ -328,6 +334,11 @@ function standardZoomToBoundary(map) {
 function dynamicLeafZoomToBoundary(map) {
     /* jshint validthis: true */
     this._source.zoomToBoundary(map);
+}
+
+function featureGetFeatureName(objId, attribs) {
+    /* jshint validthis: true */
+    return this._source.getFeatureName(objId, attribs);
 }
 
 module.exports = () => ({

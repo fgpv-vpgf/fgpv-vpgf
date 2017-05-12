@@ -70,17 +70,14 @@ class AttribFC extends basicFC.BasicFC {
     */
     getFeatureName (objId, attribs) {
         // TODO revisit the objId parameter.  Do we actually need this fallback anymore?
-        let nameField = '';
+        // NOTE: we used to have fallback logic here that would use layer settings
+        //       if this.nameField had no value. Logic has changed to now push
+        //       layer settings to this.nameField during the load event of the
+        //       Record.
 
-        if (this.nameField) {
-            nameField = this.nameField;
-        } else if (this._parent._layer && this._parent._layer.displayField) {
-            nameField = this._parent._layer.displayField;
-        }
-
-        if (nameField) {
+        if (this.nameField && attribs) {
             // extract name
-            return attribs[nameField];
+            return attribs[this.nameField];
         } else {
             // FIXME wire in "feature" to translation service
             return 'Feature ' + objId;

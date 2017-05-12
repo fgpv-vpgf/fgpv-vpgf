@@ -162,6 +162,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
             clone.name = origConfig.name;
             clone.index = origConfig.index;
             clone.stateOnly = origConfig.stateOnly;
+            clone.nameField = origConfig.nameField;
 
             // an empty string is a valid property, so be wary of falsy logic
             clone.outfields = origConfig.hasOwnProperty('outfields') ? origConfig.outfields : '*';
@@ -335,6 +336,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
                     dFC._scaleSet.minScale = ld.minScale;
                     dFC._scaleSet.maxScale = ld.maxScale;
+
+                    dFC.nameField = subC.nameField || ld.nameField || '';
 
                     // skip a number of things if it is a raster layer
                     // either way, return a promise so our loadPromises have a good
