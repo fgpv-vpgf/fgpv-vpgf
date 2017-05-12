@@ -52,7 +52,8 @@
          */
         function closeDetails() {
             stateManager.clearDisplayPanel('mainDetails');
-            geoService.clearHilight();
+            // TODO: refactor fix needed
+            // geoService.clearHilight();
 
             if (stateManager.panelHistory.find(x => x === 'mainToc')) {
                 stateManager.togglePanel('mainDetails', 'mainToc');
