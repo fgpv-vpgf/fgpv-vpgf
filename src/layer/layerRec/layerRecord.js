@@ -423,10 +423,7 @@ class LayerRecord extends root.Root {
     // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
     // TODO docs
     getProxy () {
-        // TODO figure out control name arrays from config (specifically, disabled list)
-        //      updated config schema uses term "enabled" but have a feeling it really means available
-        // TODO figure out how placeholders work with all this
-        // TODO does this even make sense in the baseclass anymore? Everything *should* be overriding this.
+        // NOTE baseclass used by things like WMSRecord, ImageRecord, TileRecord
         if (!this._rootProxy) {
             this._rootProxy = new layerInterface.LayerInterface(this, this.initialConfig.controls);
             this._rootProxy.convertToSingleLayer(this);

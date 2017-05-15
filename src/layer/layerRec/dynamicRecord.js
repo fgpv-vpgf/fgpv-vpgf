@@ -523,16 +523,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         }
 
         opts.layerIds.forEach(leafIndex => {
-
-            // TODO fix these params
-            // TODO legendEntry.name, legendEntry.symbology appear to be fast links to populate the left side of the results
-            //      view.  perhaps it should not be in this object anymore?
-            // TODO see how the client is consuming the internal pointer to layerRecord.  this may also now be
-            //      directly available via the legend object.
-            const identifyResult =
-                new shared.IdentifyResult('legendEntry.name', 'legendEntry.symbology', 'EsriFeature', this,
-                    leafIndex, 'legendEntry.master.name'); // provide name of the master group as caption
-
+            const identifyResult = new shared.IdentifyResult(this.getChildProxy(leafIndex));
             identifyResults[leafIndex] = identifyResult;
         });
 
