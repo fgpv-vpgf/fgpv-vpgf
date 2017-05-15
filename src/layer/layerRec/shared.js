@@ -75,25 +75,15 @@ function parseUrlIndex(url) {
  */
 class IdentifyResult {
     /**
-     * @param  {String} name      layer name of the queried layer
-     * @param  {Array} symbology array of layer symbology to be displayed in details panel
-     * @param  {String} format    indicates data formating template
-     * @param  {Object} layerRec  layer record for the queried layer
-     * @param  {Integer} featureIdx  optional feature index of queried layer (should be provided for attribute based layers)
-     * @param  {String} caption   optional captions to be displayed along with the name
+     * @param  {Object} proxy   proxy to the logical layer containing the results (i.e. a feature class)
      */
-    constructor (name, symbology, format, layerRec, featureIdx, caption) {
+    constructor (proxy) {
         // TODO revisit what should be in this class, and what belongs in the app
         // also what can be abstacted to come from layerRec
         this.isLoading = true;
         this.requestId = -1;
         this.requester = {
-            name,
-            symbology,
-            format,
-            caption,
-            layerRec,
-            featureIdx
+            proxy
         };
         this.data = [];
     }
