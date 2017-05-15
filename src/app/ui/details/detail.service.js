@@ -52,7 +52,7 @@
          */
         function closeDetails() {
             stateManager.clearDisplayPanel('mainDetails');
-            // TODO: refactor fix needed
+            // FIXME: refactor fix needed
             // geoService.clearHilight();
 
             if (stateManager.panelHistory.find(x => x === 'mainToc')) {
