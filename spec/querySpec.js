@@ -36,7 +36,7 @@ describe('Query', () => {
                 } 
             }
         }
-    var queryGeo;   // the module
+    let queryGeo;   // the module
 
     beforeEach(() => {
         spyOn(fakeBundle, 'Query').and.callThrough();
@@ -51,7 +51,7 @@ describe('Query', () => {
      * it is difficult to test on a mock the esri bundle
      */
     it ('checks whether query atrributes matches options atrributes from the user', (done) => {
-        var options = {
+        const options = {
             geometry: 'point',
             url:'./',
             featureLayer: new FakeFeatureLayer(),
@@ -80,7 +80,7 @@ describe('Query', () => {
     });
 
     it('takes in options with url but not featureLayer and should return a query', (done) => {
-        var options = {
+        const options = {
             geometry: 'point',
             url:'./'
         }
@@ -102,7 +102,7 @@ describe('Query', () => {
     });
 
     it ('takes in options with featureLayer but not url and should return a query', (done) => {
-        var options = {
+        const options = {
             geometry: 'point',
             featureLayer: new FakeFeatureLayer()
         }
@@ -122,7 +122,7 @@ describe('Query', () => {
     });
 
     it('takes in options with url and featureLayer and should return a query', (done) => {
-         var options = {
+         const options = {
             geometry: 'point',
             url:'./',
             featureLayer: new FakeFeatureLayer(),
