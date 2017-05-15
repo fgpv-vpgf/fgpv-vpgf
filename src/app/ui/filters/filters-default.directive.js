@@ -524,7 +524,7 @@
                                 oid: objId,
                                 symbology: {
                                     stack: [{ svgcode: data.rvSymbol }],
-                                    isInteractire: false,
+                                    isInteractive: false,
                                     renderStyle: ConfigObject.legend.Entry.ICONS
                                 }
                             }
@@ -588,7 +588,7 @@
 
                     // clear hilight when table closes or new table is opened
                     // TODO verify this is the proper location for this line
-                    // TODO: refactor fix needed
+                    // FIXME: refactor fix needed
                     // geoService.clearHilight();
 
                     // reinitialize to false when table is destroyed

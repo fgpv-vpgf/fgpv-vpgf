@@ -66,7 +66,7 @@
             // add hilights to all things in the layer.
             // featureIdx can be 0, so no falsy checks allowed
             // TODO is this the appropriate place for hilighting code?
-            // TODO: refactor restore
+            // FIXME: refactor restore
             /*
             if (item && item.requester && typeof item.requester.featureIdx !== 'undefined') {
                 geoService.hilightGraphic(item.requester.layerRec, item.requester.featureIdx,
