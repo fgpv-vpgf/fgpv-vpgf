@@ -3,29 +3,15 @@
 
 const queryModule = require('../src/query.js');
 
-// A fake method for QueryTask which is in EsriBundle
-function execute(query, returnFeatureSet, returnError) {
-    returnFeatureSet(query);
-}
-
-// A fake method for featureLayer which is in options
-function queryFeatures(query, returnFeatureSet, returnError) {
-    returnFeatureSet(query);
-}
-
-// A function that makes a fake query for testing purposes
-function makeFakeQuery() {
-    return new FakeQuery();
-}
-
 // A class that mocks the SpatialReference class from Esri
-function FakeSpatialReference() {
-
-}
+function FakeSpatialReference() {}
 
 // A class that mocks the FeatureLayer class from Esri
 function FakeFeatureLayer() {
-    this.queryFeatures = queryFeatures;
+    this.queryFeatures = 
+        (query, returnFeatureSet, returnError) => {
+            returnFeatureSet(query);
+        }
 }
 
 // A class that mocks the Query class from Esri
@@ -40,43 +26,22 @@ function FakeQuery() {
 }
 
 describe('Query', () => {
-    var fakeBundle; // mock-up esri bundle
+    const fakeBundle = {
+            Query: () => {return new FakeQuery();},
+            QueryTask: () => { 
+                return {
+                    execute: (query, returnFeatureSet, returnError) => {
+                        returnFeatureSet(query);
+                    }
+                } 
+            }
+        }
     var queryGeo;   // the module
-    var optionsWithUrl;
-    var optionsWithFeatureLayer;
-    var optionsWithUrlAndFeatureLayer;
-    let options;
 
     beforeEach(() => {
-        fakeBundle = {
-            Query: makeFakeQuery,
-            QueryTask: () => { 
-                return {execute: execute} 
-            }
-        };
-
-        optionsWithUrl = {
-            geometry: 'point',
-            url:'./'
-        }
-
-        optionsWithFeatureLayer = {
-            geometry: 'point',
-            featureLayer: new FakeFeatureLayer()
-        }
-
-        optionsWithUrlAndFeatureLayer = {
-            geometry: 'point',
-            url:'./',
-            featureLayer: new FakeFeatureLayer(),
-            outFields: 'outfields',
-            where: "letter = b",
-            returnGeometry: true,
-            outSpatialReference: new FakeSpatialReference()
-        }
-
+        spyOn(fakeBundle, 'Query').and.callThrough();
+        spyOn(fakeBundle, 'QueryTask').and.callThrough();
         queryGeo = queryModule(fakeBundle);
-
     });
 
     /** 
@@ -86,10 +51,16 @@ describe('Query', () => {
      * it is difficult to test on a mock the esri bundle
      */
     it ('checks whether query atrributes matches options atrributes from the user', (done) => {
-        options = optionsWithUrlAndFeatureLayer;
- 
-        spyOn(fakeBundle, 'Query').and.callThrough();
-        spyOn(fakeBundle, 'QueryTask').and.callThrough();
+        var options = {
+            geometry: 'point',
+            url:'./',
+            featureLayer: new FakeFeatureLayer(),
+            outFields: 'outfields',
+            where: "letter = b",
+            returnGeometry: true,
+            outSpatialReference: new FakeSpatialReference()
+        }
+
         const query = queryGeo.queryGeometry(options);
         expect(fakeBundle.Query).toHaveBeenCalled();
         expect(fakeBundle.QueryTask).toHaveBeenCalled();
@@ -109,10 +80,11 @@ describe('Query', () => {
     });
 
     it('takes in options with url but not featureLayer and should return a query', (done) => {
-        options = optionsWithUrl;
+        var options = {
+            geometry: 'point',
+            url:'./'
+        }
 
-        spyOn(fakeBundle, 'Query').and.callThrough();
-        spyOn(fakeBundle, 'QueryTask').and.callThrough();
         const query = queryGeo.queryGeometry(options);
         expect(fakeBundle.Query).toHaveBeenCalled();
         expect(fakeBundle.QueryTask).toHaveBeenCalled();
@@ -130,9 +102,11 @@ describe('Query', () => {
     });
 
     it ('takes in options with featureLayer but not url and should return a query', (done) => {
-        options = optionsWithFeatureLayer;
+        var options = {
+            geometry: 'point',
+            featureLayer: new FakeFeatureLayer()
+        }
 
-        spyOn(fakeBundle, 'Query').and.callThrough();
         const query = queryGeo.queryGeometry(options);
         expect(fakeBundle.Query).toHaveBeenCalled();
 
@@ -148,10 +122,16 @@ describe('Query', () => {
     });
 
     it('takes in options with url and featureLayer and should return a query', (done) => {
-        options = optionsWithUrlAndFeatureLayer;
+         var options = {
+            geometry: 'point',
+            url:'./',
+            featureLayer: new FakeFeatureLayer(),
+            outFields: 'outfields',
+            where: "letter = b",
+            returnGeometry: true,
+            outSpatialReference: new FakeSpatialReference()
+        }
 
-        spyOn(fakeBundle, 'Query').and.callThrough();
-        spyOn(fakeBundle, 'QueryTask').and.callThrough();
         const query = queryGeo.queryGeometry(options);
         expect(fakeBundle.Query).toHaveBeenCalled();
         expect(fakeBundle.QueryTask).toHaveBeenCalled();
