@@ -3,46 +3,44 @@
 const attributeModule = require('../src/attribute.js');
 
 describe('Attribute', () => {
-    let fakeBundle;
-    let fakeGapi;
+    const fakeBundle = {
+        esriRequest: (x) => { 
+            x.type = 'Feature Layer'; 
+            x.geometryType = 'esriGeometryPolygon';
+            x.minScale = 0;
+            x.maxScale = 0;
+            x.extent = {
+                xmin: -1.5698060093899999E7,
+                ymin: 5113378.755999997,
+                xmax: -5857565.7676,
+                ymax: 1.79468918812E7,
+                spatialReference: {
+                    wkid: 102100,
+                    latestWkid: 3857
+                }
+            }
+            x.drawingInfo = {
+                renderer: { }
+            }
+            x.fields = [
+                {
+                name: 'OBJECTID',
+                type: 'esriFieldTypeOID',
+                alias: 'OBJECTID',
+                domain: null
+                }
+            ]
+            return Promise.resolve(x); 
+        }
+    };
+    const fakeGapi = {
+        symbology: {
+            rendererToLegend: () => { return; },
+            enhanceRenderer: () => { return; }
+        }
+    };
     let attribute;
     beforeEach(() => {
-        fakeBundle = {
-            esriRequest: (x) => { 
-                x.type = 'Feature Layer'; 
-                x.geometryType = 'esriGeometryPolygon';
-                x.minScale = 0;
-                x.maxScale = 0;
-                x.extent = {
-                    xmin: -1.5698060093899999E7,
-                    ymin: 5113378.755999997,
-                    xmax: -5857565.7676,
-                    ymax: 1.79468918812E7,
-                    spatialReference: {
-                        wkid: 102100,
-                        latestWkid: 3857
-                    }
-                }
-                x.drawingInfo = {
-                    renderer: { }
-                }
-                x.fields = [
-                    {
-                    name: 'OBJECTID',
-                    type: 'esriFieldTypeOID',
-                    alias: 'OBJECTID',
-                    domain: null
-                    }
-                ]
-                return Promise.resolve(x); 
-            }
-        };
-        fakeGapi = {
-            symbology: {
-                rendererToLegend: () => { return; },
-                enhanceRenderer: () => { return; }
-            }
-        }
         attribute = attributeModule(fakeBundle, fakeGapi);
     });
 
@@ -63,7 +61,6 @@ describe('Attribute', () => {
 
     describe('loadServerAttribs', () => {
         it('should work for a Feature Layer requesting all attributes', (done) => {
-            spyOn(fakeBundle, 'esriRequest').and.callThrough();
             const mapURL = 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer';
             const res = attribute.loadServerAttribs(mapURL, 1);
             expect(res.featureIdx).toEqual(1);
@@ -83,7 +80,6 @@ describe('Attribute', () => {
         });
 
         it('should work for a Feature Layer requesting a specific attribute', (done) => {
-            spyOn(fakeBundle, 'esriRequest').and.callThrough();
             const mapURL = 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer';
             const res = attribute.loadServerAttribs(mapURL, 1, 'geometryType');
             expect(res.featureIdx).toEqual(1);
@@ -125,8 +121,7 @@ describe('Attribute', () => {
 
     describe('loadFileAttribs', () => {
         it('should work for a Feature Layer', (done) => {
-            let layer;
-            layer = {
+            const layer = {
                 objectIdField: 'OBJECTID',
                 graphics: {
                     map: () => {
