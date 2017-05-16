@@ -16,7 +16,8 @@
 
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
 
-            api.mapManager.setProxy('http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy');
+            api.Map.proxy = 'http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy';
+            console.log('whut?', api.Map.proxy);
 
             // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
 
@@ -27,7 +28,6 @@
                 
                 metadataUrl: 'http://www.github.com',
                 layerType: 'ogcWms',
-                controls: ['visibility', 'opacity', 'boundingBox'],
                 state: {
                     opacity: 1,
                     visibility: true,

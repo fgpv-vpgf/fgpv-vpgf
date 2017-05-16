@@ -50,6 +50,9 @@ class LayerInterface {
     // returns a feature name of an attribute set
     getFeatureName () { return undefined; } // returns String
 
+    // formats an attribute to standard details
+    attributesToDetails () { return undefined; } // returns Array
+
     // these set values to the corresponding controls
     setVisibility () { return undefined; }
     setOpacity () { return undefined; }
@@ -99,6 +102,7 @@ class LayerInterface {
         newProp(this, 'featureCount', featureGetFeatureCount);
 
         this.getFeatureName = featureGetFeatureName;
+        this.attributesToDetails = featureAttributesToDetails;
     }
 
     convertToDynamicLeaf (dynamicFC) {
@@ -125,6 +129,7 @@ class LayerInterface {
         this.setQuery = dynamicLeafSetQuery;
         this.zoomToBoundary = dynamicLeafZoomToBoundary;
         this.getFeatureName = featureGetFeatureName;
+        this.attributesToDetails = dynamicLeafAttributesToDetails;
     }
 
     convertToPlaceholder (placeholderFC) {
@@ -339,6 +344,16 @@ function dynamicLeafZoomToBoundary(map) {
 function featureGetFeatureName(objId, attribs) {
     /* jshint validthis: true */
     return this._source.getFeatureName(objId, attribs);
+}
+
+function featureAttributesToDetails(attribs, fields) {
+    /* jshint validthis: true */
+    return this._source.attributesToDetails(attribs, fields);
+}
+
+function dynamicLeafAttributesToDetails(attribs, fields) {
+    /* jshint validthis: true */
+    return this._source._parent.attributesToDetails(attribs, fields);
 }
 
 module.exports = () => ({
