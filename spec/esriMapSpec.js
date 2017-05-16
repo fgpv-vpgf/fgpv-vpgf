@@ -29,7 +29,7 @@ describe('ESRI Map', () => {
 
     const mapConfig = {
         basemaps: [ { layers: ['random url'] } ],
-        extent: {},
+        extent: jsonExtent,
         lods: []
     };
 

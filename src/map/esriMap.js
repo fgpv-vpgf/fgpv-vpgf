@@ -29,7 +29,7 @@ function esriMap(esriBundle, geoApi) {
                 Object.defineProperty(this, propName, descriptor);
             });
 
-            this._map = new esriBundle.Map(domNode, { extent: opts.extent, lods: opts.lods });
+            this._map = new esriBundle.Map(domNode, { extent: Map.getExtentFromJson(opts.extent), lods: opts.lods });
             if (opts.proxyUrl) {
                 this.proxy = opts.proxyUrl;
             }
