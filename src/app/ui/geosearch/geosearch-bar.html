@@ -19,9 +19,9 @@
             md-search-text="self.service.searchValue"
             md-items="option in self.onUpdateDebounce()"
             md-item-text="option">
-          <md-item-template>
+          <md-item-templateUrl>
             <span md-highlight-text="self.service.searchValue">{{ option }}</span>
-          </md-item-template>
+          </md-item-templateUrl>
         </md-autocomplete>
     </md-input-container>
 

@@ -43,14 +43,14 @@
 
                 <rv-legend-block
                     ng-if="$dxPrior.blockType !== 'set'"
-                    class="rv-legend-{{ block.template }}"
+                    class="rv-legend-{{ block.templateUrl }}"
                     block="block"
                     is-reorder="self.isReorder"
                     ng-class="{ 'rv-selected': block.isSelected }"></rv-legend-block>
 
                 <rv-legend-block
                     ng-if="$dxPrior.blockType === 'set'"
-                    class="rv-legend-{{ block.template }} rv-legend-set-{{ $dxPrior.id }}"
+                    class="rv-legend-{{ block.templateUrl }} rv-legend-set-{{ $dxPrior.id }}"
                     block="block"
                     is-reorder="self.isReorder"
                     is-in-set="true"

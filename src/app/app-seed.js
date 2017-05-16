@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * @function app.core.seed
  * @inner
@@ -12,7 +14,7 @@ angular.element(document)
         // The app nodes in the dom
         window.RV._nodes.forEach(node => {
 
-            // load shell template into the node
+            // load shell templateUrl into the node
             // we need to create an explicit child under app's root node, otherwise animation
             // doesnt' work; see this plunk: http://plnkr.co/edit/7EIM71IOwC8h1HdguIdD
             // or this one: http://plnkr.co/edit/Ds8e8d?p=preview
@@ -22,7 +24,7 @@ angular.element(document)
             // strictDi enforces explicit dependency names on each component: ngAnnotate should find most automatically
             // this checks for any failures; to fix a problem add 'ngInject'; to the function preamble
             angular.bootstrap(node, ['app'], {
-                strictDi: true
+                strictDi: false
             });
         });
     });

@@ -14,13 +14,14 @@
         /* Edge hack, seems like body is at z-index 0 and sits on top of the map which is at z-index: -1 */
         body { background: transparent; }
     </style>
+
+    <link href="../lib/styles.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="myMap" is="rv-map" rv-config="config.${lang}.json" rv-langs='["en-CA", "fr-CA"]'
-         rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'
-         rv-restore-bookmark="bookmark">
-
+    <div class="myMap" is="rv-map" data-rv-config="config.${lang}.json" data-rv-langs='["en-CA", "fr-CA"]'
+         data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-keys='["Airports"]'
+         data-rv-restore-bookmark="bookmark" >
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -29,32 +30,24 @@
     </div>
 
     <script>
-    var RV = { dojoURL: 'http://fgpv.cloudapp.net/demo/esrijso/dojo/dojo.js' };
-    var dojoConfig = {
-        baseUrl: 'http://fgpv.cloudapp.net/demo/esrijso/',
-        packages: [
-          { "name": "dojo", "location": 'http://fgpv.cloudapp.net/demo/esrijso/dojo' },
-          {"name": "dojox", "location": 'http://fgpv.cloudapp.net/demo/esrijso/dojox' },
-          {"name": "esri", "location": 'http://fgpv.cloudapp.net/demo/esrijso/esri' }
-        ]
-    };
-
-    const needIePolyfills = [
+    var needIePolyfills = [
         'Promise' in window,
         'TextDecoder' in window,
         'findIndex' in Array.prototype,
         'find' in Array.prototype,
         'from' in Array,
         'startsWith' in String.prototype,
-        'endsWith' in String.prototype
+        'endsWith' in String.prototype,
+        'outerHTML' in SVGElement.prototype
     ].some(function(x) { return !x; });
     if (needIePolyfills) {
+        // NOTE: this is the only correct way of injecting scripts into a page and have it execute before loading/executing any other scripts after this point (ie polyfills must be executed before the bootstrap)
+        // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
         document.write('<script src="../lib/ie-polyfills.js"><\/script>');
     }
     </script>
 
-    <!-- inject:js -->
-    <!-- endinject -->
+    <script src="../lib/main.js"></script>
 
     <script>
 

@@ -16,8 +16,10 @@
     </style>
 
     <!-- example of host page loading angular and jquery dependencies by itself -->
-    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.0.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script>
+    <!-- <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.0.min.js"></script> -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script> -->
+
+    <link href="../lib/styles.css" rel="stylesheet">
 
 </head>
 
@@ -33,28 +35,26 @@
     </div>
 
     <script>
-    var needIePolyfills = [
-        'Promise' in window,
-        'TextDecoder' in window,
-        'findIndex' in Array.prototype,
-        'find' in Array.prototype,
-        'from' in Array,
-        'startsWith' in String.prototype,
-        'endsWith' in String.prototype,
-        'outerHTML' in SVGElement.prototype
-    ].some(function(x) { return !x; });
-    if (needIePolyfills) {
-        // NOTE: this is the only correct way of injecting scripts into a page and have it execute before loading/executing any other scripts after this point (ie polyfills must be executed before the bootstrap)
-        // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
-        document.write('<script src="../lib/ie-polyfills.js"><\/script>');
-    }
-    </script>
+        var needIePolyfills = [
+            'Promise' in window,
+            'TextDecoder' in window,
+            'findIndex' in Array.prototype,
+            'find' in Array.prototype,
+            'from' in Array,
+            'startsWith' in String.prototype,
+            'endsWith' in String.prototype,
+            'outerHTML' in SVGElement.prototype
+        ].some(function(x) { return !x; });
+        if (needIePolyfills) {
+            // NOTE: this is the only correct way of injecting scripts into a page and have it execute before loading/executing any other scripts after this point (ie polyfills must be executed before the bootstrap)
+            // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
+            document.write('<script src="../lib/ie-polyfills.js"><\/script>');
+        }
+        </script>
 
-    <!-- inject:js -->
-    <!-- endinject -->
+        <script src="../lib/main.js"></script>
 
-    <script>
-
+        <script>
         // https://css-tricks.com/snippets/javascript/get-url-variables/
         function getQueryVariable(variable)
         {

@@ -7,6 +7,8 @@
     <link href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/favicon.ico" rel="icon" type="image/x-icon">
     <link rel="stylesheet" href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/css/theme.min.css">
 
+    <link href="../lib/styles.css" rel="stylesheet">
+
     <style>
         main div.myMap {
             height: 700px;
@@ -334,7 +336,6 @@
             text-shadow: none;
         }
     </style>
-
 </head>
 
 <body vocab="http://schema.org/" typeof="WebPage">
@@ -355,7 +356,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="list-inline margin-bottom-none">
-                            <li><a lang="fr" href="index-fgp-en.html">English</a></li>
+                            <li><a lang="fr" href="index-fgp-fr.html">Français</a></li>
                         </ul>
                     </div>
                 </div>
@@ -390,7 +391,7 @@
                 </section>
             </div>
         </div>
-                <div id="app-brand" class="wb-init wb-data-ajax-replace-inited">
+        <div id="app-brand" class="wb-init wb-data-ajax-replace-inited">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3">
@@ -417,7 +418,7 @@
                 </div>
             </div>
         </div>
-        <nav role="navigation" id="wb-sm" data-ajax-replace="http://wet-boew.github.io/themes-dist/GCWeb/ajax/sitemenu-fr.html" data-trgt="mb-pnl" class="wb-menu visible-md visible-lg" typeof="SiteNavigationElement">
+        <nav role="navigation" id="wb-sm" data-ajax-replace="http://wet-boew.github.io/themes-dist/GCWeb/ajax/sitemenu-en.html" data-trgt="mb-pnl" class="wb-menu visible-md visible-lg" typeof="SiteNavigationElement">
             <div class="container nvbar">
                 <h2>Topics menu</h2>
                 <div class="row">
@@ -432,7 +433,7 @@
                 <div class="row">
                     <ol class="breadcrumb">
                       <li><a href="fgp-intranet.html">Home</a></li>
-                      <li>Visualisateur pour la Plateforme géospatiale fédérale</li>
+                      <li>Federal Geospatial Platform Visualiser</li>
                     </ol>
                 </div>
             </div>
@@ -441,16 +442,16 @@
 
     <main role="main" property="mainContentOfPage" class="container">
         <section>
-          <h1 property="name" id="wb-cont" class="fgp-h1-top">Visualisateur pour la Plateforme géospatiale fédérale</h1>
+          <h1 property="name" id="wb-cont" class="fgp-h1-top">Federal Geospatial Platform Visualiser</h1>
           <div id="fgpSignIn" class="row">
             <div class="panel panel-default">
                 <div class="panel-body clearfix">
                     <div style="display:flex;">
-                        <button onclick="getBookmark()">Obtenir le lien</button>
+                        <button onclick="getBookmark()">Get Link</button>
                         <input type="text" id="bookmarkDisplay" style="width:100%;" />
-                        <button onclick="testBackToCart()">Retour au panier</button>
+                        <button onclick="testBackToCart()">backToCart</button>
                     </div>
-                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.rcs.${lang}.json" data-rv-langs='["fr-CA", "en-CA"]' data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-wait="true">
+                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.rcs.${lang}.json" data-rv-langs='["en-CA", "fr-CA"]' data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-wait="true">
                         <noscript>
                             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -465,45 +466,47 @@
 
     <footer role="contentinfo" id="wb-info">
         <nav role="navigation" class="container wb-navcurr">
-        <h2 class="wb-inv">Au sujet du gouvernement</h2>
-        <ul class="list-unstyled colcount-sm-2 colcount-md-3">
-        <li><a href="https://www.canada.ca/fr/contact.html">Contactez-nous</a></li>
-        <li><a href="https://www.canada.ca/fr/gouvernement/min.html">Ministères et organismes</a></li>
-        <li><a href="https://www.canada.ca/fr/gouvernement/fonctionpublique.html">Fonction publique et force militaire</a></li>
-        <li><a href="http://nouvelles.gc.ca/">Nouvelles</a></li>
-        <li><a href="https://www.canada.ca/fr/gouvernement/systeme/lois.html">Traités, lois et règlements</a></li>
-        <li><a href="https://www.canada.ca/fr/transparence/rapports.html">Rapports à l'échelle du gouvernement</a></li>
-        <li><a href="http://pm.gc.ca/fra">Premier ministre</a></li>
-        <li><a href="https://www.canada.ca/fr/gouvernement/systeme.html">Comment le gouvernement fonctionne</a></li>
-        <li><a href="http://ouvert.canada.ca/">Gouvernement ouvert</a></li>
-        </ul>
+            <h2 class="wb-inv">About government</h2>
+            <ul class="list-unstyled colcount-sm-2 colcount-md-3">
+                <li><a href="https://www.canada.ca/en/contact.html">Contact us</a></li>
+                <li><a href="https://www.canada.ca/en/government/dept.html">Departments and agencies</a></li>
+                <li><a href="https://www.canada.ca/en/government/publicservice.html">Public service and military</a></li>
+                <li><a href="http://news.gc.ca/">News</a></li>
+                <li><a href="https://www.canada.ca/en/government/system/laws.html">Treaties, laws and regulations</a></li>
+                <li><a href="https://www.canada.ca/en/transparency/reporting.html">Government-wide reporting</a></li>
+                <li><a href="http://pm.gc.ca/eng">Prime Minister</a></li>
+                <li><a href="https://www.canada.ca/en/government/system.html">How government works</a></li>
+                <li><a href="http://open.canada.ca/en/">Open government</a></li>
+            </ul>
         </nav>
         <div class="brand">
-        <div class="container">
-        <div class="row">
-        <nav class="col-md-10 ftr-urlt-lnk">
-        <h2 class="wb-inv">À propos du site</h2>
-        <ul>
-        <li><a href="https://www1.canada.ca/fr/contact/retroaction.html">Rétroaction</a></li>
-        <li><a href="https://www.canada.ca/fr/sociaux.html">Médias sociaux</a></li>
-        <li><a href="https://www.canada.ca/fr/mobile.html">Applications mobiles</a></li>
-        <li><a href="http://www1.canada.ca/fr/nouveausite.html">À propos de Canada.ca</a></li>
-        <li><a href="https://www.canada.ca/fr/transparence/avis.html">Avis</a></li>
-        <li><a href="https://www.canada.ca/fr/transparence/confidentialite.html">Confidentialité</a></li>
-        </ul>
-        </nav>
-        <div class="col-xs-6 visible-sm visible-xs tofpg">
-        <a href="#wb-cont">Haut de la page <span class="glyphicon glyphicon-chevron-up"></span></a>
-        </div>
-        <div class="col-xs-6 col-md-2 text-right">
-        <object type="image/svg+xml" tabindex="-1" role="img" data="./GCWeb/assets/wmms-blk.svg" aria-label="Symbole du gouvernement du Canada"></object>
-        </div>
-        </div>
-        </div>
+            <div class="container">
+                <div class="row">
+                    <nav class="col-md-10 ftr-urlt-lnk">
+                        <h2 class="wb-inv">About this site</h2>
+                        <ul>
+                            <li><a href="https://www1.canada.ca/en/contact/feedback.html">Feedback</a></li>
+                            <li><a href="https://www.canada.ca/en/social.html">Social media</a></li>
+                            <li><a href="https://www.canada.ca/en/mobile.html">Mobile applications</a></li>
+                            <li><a href="http://www1.canada.ca/en/newsite.html">About Canada.ca</a></li>
+                            <li><a href="https://www.canada.ca/en/transparency/terms.html">Terms and conditions</a></li>
+                            <li><a href="https://www.canada.ca/en/transparency/privacy.html">Privacy</a></li>
+                        </ul>
+                    </nav>
+
+                    <div class="col-xs-6 visible-sm visible-xs tofpg">
+                        <a href="#wb-cont">Top of Page <span class="glyphicon glyphicon-chevron-up"></span></a>
+                    </div>
+
+                    <div class="col-xs-6 col-md-2 text-right">
+                        <object type="image/svg+xml" tabindex="-1" role="img" data="http://wet-boew.github.io/themes-dist/GCWeb/assets/wmms-blk.svg" aria-label="Symbol of the Government of Canada"></object>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+    <script src="../lib/main.js"></script>
 
     <script>
         // credit: http://stackoverflow.com/a/21903119
@@ -529,32 +532,26 @@
     </script>
 
     <script>
-    var needIePolyfills = [
-        'Promise' in window,
-        'TextDecoder' in window,
-        'findIndex' in Array.prototype,
-        'find' in Array.prototype,
-        'from' in Array,
-        'startsWith' in String.prototype,
-        'endsWith' in String.prototype,
-        'outerHTML' in SVGElement.prototype
-    ].some(function(x) { return !x; });
-    if (needIePolyfills) {
-        // NOTE: this is the only correct way of injecting scripts into a page and have it execute before loading/executing any other scripts after this point (ie polyfills must be executed before the bootstrap)
-        // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
-        document.write('<script src="../lib/ie-polyfills.js"><\/script>');
-    }
-    </script>
+        var needIePolyfills = [
+            'Promise' in window,
+            'TextDecoder' in window,
+            'findIndex' in Array.prototype,
+            'find' in Array.prototype,
+            'from' in Array,
+            'startsWith' in String.prototype,
+            'endsWith' in String.prototype,
+            'outerHTML' in SVGElement.prototype
+        ].some(function(x) { return !x; });
+        if (needIePolyfills) {
+            // NOTE: this is the only correct way of injecting scripts into a page and have it execute before loading/executing any other scripts after this point (ie polyfills must be executed before the bootstrap)
+            // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
+            document.write('<script src="../lib/ie-polyfills.js"><\/script>');
+        }
 
-    <!-- inject:js -->
-    <!-- endinject -->
-
-    <script>
-
-        RV.ready(function() {
+        function init() {
             const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
             RV.getMap('fgpmap').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        });
+        }
 
         function queryStringToJSON(q) {
             var pairs = q.search.slice(1).split('&');
@@ -574,8 +571,8 @@
             RV.getMap('fgpmap').restoreSession(keysArr);
         } else {
             var bookmark = queryStr.rv;
-            console.log(bookmark);
-            RV.getMap('fgpmap').initialBookmark(bookmark);
+            // console.log(bookmark);
+            // RV.getMap('fgpmap').initialBookmark(bookmark);
         }
 
         function getBookmark(){
@@ -598,6 +595,5 @@
     </script>
     <script src="http://wet-boew.github.io/v4.0-ci/wet-boew/js/wet-boew.min.js"></script>
     <script src="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/js/theme.min.js"></script>
-
 </body>
 </html>

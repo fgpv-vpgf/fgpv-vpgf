@@ -3,7 +3,7 @@
     ng-mouseover="self.block.symbologyStack.fannedOut = true"
     ng-mouseleave="self.block.symbologyStack.fannedOut = false">
 
-    <rv-legend-control block="self.block" template="body" name="data"></rv-legend-control>
+    <rv-legend-control block="self.block" templateUrl="body" name="data"></rv-legend-control>
 </div>
 
 <rv-symbology-stack
@@ -42,16 +42,16 @@
 
         <md-menu-content rv-trap-focus="{{ ::self.appID }}" class="rv-menu rv-dense" width="4">
 
-            <rv-legend-control block="self.block" template="menu" name="metadata"></rv-legend-control>
-            <rv-legend-control block="self.block" template="menu" name="settings"></rv-legend-control>
-            <rv-legend-control block="self.block" template="menu" name="data"></rv-legend-control>
-            <rv-legend-control block="self.block" template="menu" name="symbology"></rv-legend-control>
+            <rv-legend-control block="self.block" templateUrl="menu" name="metadata"></rv-legend-control>
+            <rv-legend-control block="self.block" templateUrl="menu" name="settings"></rv-legend-control>
+            <rv-legend-control block="self.block" templateUrl="menu" name="data"></rv-legend-control>
+            <rv-legend-control block="self.block" templateUrl="menu" name="symbology"></rv-legend-control>
 
             <md-menu-divider></md-menu-divider>
 
-            <rv-legend-control block="self.block" template="menu" name="boundary"></rv-legend-control>
-            <rv-legend-control block="self.block" template="menu" name="reload"></rv-legend-control>
-            <rv-legend-control block="self.block" template="menu" name="remove"></rv-legend-control>
+            <rv-legend-control block="self.block" templateUrl="menu" name="boundary"></rv-legend-control>
+            <rv-legend-control block="self.block" templateUrl="menu" name="reload"></rv-legend-control>
+            <rv-legend-control block="self.block" templateUrl="menu" name="remove"></rv-legend-control>
 
         </md-menu-content>
     </md-menu>
@@ -83,7 +83,7 @@
     ng-if="!self.entry.options.data">
 </div>
 
-<rv-toc-entry-symbology entry="self.entry" template="self.entry.layertemplate" symbology="self.entry.symbology"></rv-toc-entry-symbology>
+<rv-toc-entry-symbology entry="self.entry" templateUrl="self.entry.layertemplate" symbology="self.entry.symbology"></rv-toc-entry-symbology>
 
 <div class="rv-layer-item-content">
     <div class="rv-layer-item-name">
@@ -91,7 +91,7 @@
     </div>
 
     <div class="rv-toc-entry-flags">
-        <rv-toc-entry-flag name="template" data="self.entry.features"></rv-toc-entry-flag>
+        <rv-toc-entry-flag name="templateUrl" data="self.entry.features"></rv-toc-entry-flag>
         <rv-toc-entry-flag name="data"></rv-toc-entry-flag>
         <rv-toc-entry-flag name="user"></rv-toc-entry-flag>
         <rv-toc-entry-flag name="scale"></rv-toc-entry-flag>
@@ -116,14 +116,14 @@
         </md-button>
 
         <md-menu-content rv-trap-focus="{{::self.appID}}" class="rv-menu rv-dense" width="4">
-            <rv-toc-entry-control template="menu-item" option="metadata"></rv-toc-entry-control>
-            <rv-toc-entry-control template="menu-item" option="settings"></rv-toc-entry-control>
-            <rv-toc-entry-control template="menu-item" option="data"></rv-toc-entry-control>
-            <rv-toc-entry-control template="menu-item" option="symbologyStack"></rv-toc-entry-control>
+            <rv-toc-entry-control templateUrl="menu-item" option="metadata"></rv-toc-entry-control>
+            <rv-toc-entry-control templateUrl="menu-item" option="settings"></rv-toc-entry-control>
+            <rv-toc-entry-control templateUrl="menu-item" option="data"></rv-toc-entry-control>
+            <rv-toc-entry-control templateUrl="menu-item" option="symbologyStack"></rv-toc-entry-control>
             <md-menu-divider></md-menu-divider>
-            <rv-toc-entry-control template="menu-item" option="boundaryZoom"></rv-toc-entry-control>
-            <rv-toc-entry-control template="menu-item" option="reload"></rv-toc-entry-control>
-            <rv-toc-entry-control template="menu-item" option="remove"></rv-toc-entry-control>
+            <rv-toc-entry-control templateUrl="menu-item" option="boundaryZoom"></rv-toc-entry-control>
+            <rv-toc-entry-control templateUrl="menu-item" option="reload"></rv-toc-entry-control>
+            <rv-toc-entry-control templateUrl="menu-item" option="remove"></rv-toc-entry-control>
         </md-menu-content>
     </md-menu>
 
