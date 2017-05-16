@@ -510,7 +510,6 @@
                     const layerRecord = configService.getSync.map.layerRecords.find(lr =>
                         lr.config.id === requester.legendEntry.layerRecordId);
 
-
                     // get object id from row data
                     const objId = data[displayData.oidField];
 
@@ -519,6 +518,7 @@
                         isLoading: false,
                         data: [
                             {
+                                // TODO: getFeatureName and attributesToDetails will be exposed on a proxy object
                                 name: layerRecord.getFeatureName(objId, data),
                                 data: layerRecord.attributesToDetails(data, displayData.fields),
                                 oid: objId,
@@ -531,10 +531,13 @@
                         ],
                         requestId: -1,
                         requester: {
-                            format: 'EsriFeature',
+                            layerProxy: requester.legendEntry.mainProxy
+                            //name: requester.name,
+                            //caption: layerRecord.name
+                            /*format: 'EsriFeature',
                             name: requester.name,
                             featureIdx: requester.legendEntry.featureIdx,
-                            legendEntry: requester.legendEntry
+                            legendEntry: requester.legendEntry*/
                         }
                     };
 
