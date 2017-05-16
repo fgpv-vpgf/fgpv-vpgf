@@ -191,42 +191,48 @@
 
             self.filteredSections = [];
 
-            const renderer = new marked.Renderer();
-            // make it easier to use images in markdown by prepending path to href if href is not an external source
-            // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
-            renderer.image = (href, title) => {
-                if (href.indexOf('http') === -1) {
-                    href = 'help/images/' + href;
-                }
-                return `<img src="${href}" alt="${title}">`;
-            };
+            // get help location
+            configService.getCurrent().then(conf => conf.hasOwnProperty('help') ?
+                    useMarkdown(conf.help.folderName) : useMarkdown('default'));
 
-            const mdLocation = `help/${configService.currentLang()}.md`;
-            $http.get(mdLocation).then(r => {
-                // matches help sections from markdown file where each section begins with one hashbang and a space
-                // followed by the section header, exactly 2 spaces, then up to but not including a double space
-                // note that the {2,} below is used as the double line deparator since each double new line is actually 6
-                // but we'll also accept more than a double space
-                const reg = /^#\s(.*)\n{2}(?:.*|\n(?!\n{2,}))*/gm;
-                let mdStr = r.data; // markdown file contents
-                let section; // used for storing individual section groupings
-                self.sections = []; // used in template for rendering help sections
+            function useMarkdown(foldername) {
+                const renderer = new marked.Renderer();
+                // make it easier to use images in markdown by prepending path to href if href is not an external source
+                // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
+                renderer.image = (href, title) => {
+                    if (href.indexOf('http') === -1) {
+                        href = `help/${foldername}/images/` + href;
+                    }
+                    return `<img src="${href}" alt="${title}">`;
+                };
 
-                // remove new line character ASCII (13) so that above regex is compatible with all
-                // operating systems (markdown file varies by OS new line preference)
-                mdStr = mdStr.replace(new RegExp(String.fromCharCode(13), 'g'), '');
+                const mdLocation = `help/${foldername}/${configService.currentLang()}.md`;
+                $http.get(mdLocation).then(r => {
+                    // matches help sections from markdown file where each section begins with one hashbang and a space
+                    // followed by the section header, exactly 2 spaces, then up to but not including a double space
+                    // note that the {2,} below is used as the double line deparator since each double new line is actually 6
+                    // but we'll also accept more than a double space
+                    const reg = /^#\s(.*)\n{2}(?:.*|\n(?!\n{2,}))*/gm;
+                    let mdStr = r.data; // markdown file contents
+                    let section; // used for storing individual section groupings
+                    self.sections = []; // used in template for rendering help sections
 
-                // start breaking down markdown file into sections where h1 headers (#) denote a new section
-                while (section = reg.exec(mdStr)) { // jshint ignore:line
-                    self.sections.push({
-                        header: section[1],
-                        // parse markdown on info section only. Note that the split/splice/join removes the header
-                        // and is a workaround for not being able to put info section into its own regex grouping like the header
-                        info: marked(section[0].split('\n').splice(2).join('\n'), { renderer }),
-                        isExpanded: false
-                    });
-                }
-            });
+                    // remove new line character ASCII (13) so that above regex is compatible with all
+                    // operating systems (markdown file varies by OS new line preference)
+                    mdStr = mdStr.replace(new RegExp(String.fromCharCode(13), 'g'), '');
+
+                    // start breaking down markdown file into sections where h1 headers (#) denote a new section
+                    while (section = reg.exec(mdStr)) { // jshint ignore:line
+                        self.sections.push({
+                            header: section[1],
+                            // parse markdown on info section only. Note that the split/splice/join removes the header
+                            // and is a workaround for not being able to put info section into its own regex grouping like the header
+                            info: marked(section[0].split('\n').splice(2).join('\n'), { renderer }),
+                            isExpanded: false
+                        });
+                    }
+                });
+            }
 
             self.searchTerm = '';
 

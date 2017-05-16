@@ -269,20 +269,21 @@
 
             // get about map description from markdown or config file
             configService.getCurrent().then(conf => self.about = conf.about)
-                .then(about => about.type === 'config' ? self.about = about.value : useMarkdown(about.value));
+                .then(about => about.hasOwnProperty('content') ?
+                    self.about = about.content : useMarkdown(about.folderName));
 
-            function useMarkdown() {
+            function useMarkdown(foldername) {
                 const renderer = new marked.Renderer();
                 // make it easier to use images in markdown by prepending path to href if href is not an external source
                 // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
                 renderer.image = (href, title) => {
                     if (href.indexOf('http') === -1) {
-                        href = 'about/images/' + href;
+                        href = `about/${foldername}/images/` + href;
                     }
                     return `<img src="${href}" alt="${title}">`;
                 };
 
-                const mdLocation = `about/${configService.currentLang()}.md`;
+                const mdLocation = `about/${foldername}/${configService.currentLang()}.md`;
                 $http.get(mdLocation).then(r => {
                     self.about = marked(r.data, { renderer });
                 });
