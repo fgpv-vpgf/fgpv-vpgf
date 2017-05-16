@@ -3,11 +3,6 @@
 
 const hilightModule = require('../src/hilight.js');
 
-// A method for Graphic which is in EsriBundle
-function makeFakeGraphic(properties) {
-    return new FakeGraphic(properties);
-}
-
 // A class that mocks the Extent class from Esri
 function Extent() {
     this.expand = (num) => {}
