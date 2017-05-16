@@ -105,6 +105,10 @@
 
                 layerRec.getFormattedAttributes(3).then(fa => {
                     console.log('formatted attributes child 3', fa);
+                    console.log('attributes to details ', leaf3proxy.attributesToDetails({
+                        PRUID: "pigdog",
+                        AREA: 33.33
+                    }, fa.fields));
                 });
 
                 console.log('child tree', layerRec.getChildTree());

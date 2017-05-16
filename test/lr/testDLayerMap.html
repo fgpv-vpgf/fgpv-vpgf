@@ -65,7 +65,7 @@
             var proxy = layerRec.getProxy();
             console.log('proxy PROOF ', proxy);
 
-            var map = new api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 7, center: [-110, 55] });
+            var map = new api.Map(document.getElementById('map'), { basemap: 'topo', zoom: 7, center: [-110, 55] });
             map.addLayer(layerRec._layer);
             console.log('mah map', map);
 

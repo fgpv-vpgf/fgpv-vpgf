@@ -64,6 +64,10 @@
 
                 proxy.formattedAttributes.then(treats => {
                     console.log('formatted attribs test - sb ? ', treats);
+                    console.log('attributes to details ', proxy.attributesToDetails({
+                        siteUUID: "pigdog",
+                        latitude: 33.33
+                    }, treats.fields));
                 });
 
                 // note using hack of layerRec._layer for zoom scales, as that thing is private
@@ -82,6 +86,7 @@
                 console.log('geom type layer root - sb point', proxy.geometryType);
                 console.log('feature count - sb 27', proxy.featureCount);
                 console.log('root layer extent - sb {}', proxy.extent);
+
 
             }
 
