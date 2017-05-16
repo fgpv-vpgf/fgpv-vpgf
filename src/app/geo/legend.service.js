@@ -262,7 +262,7 @@
                             const legendBlock = new LegendBlock.Node(proxyWrapper, entryConfig);
                             legendBlock.controlled = true;
                             legendBlock.layerRecordId = layerConfig.id;
-                            legendBlock.reApplyStateSettings();
+                            legendBlock.applyInitialStateSettings();
 
                             legendBlockGroup.addEntry(legendBlock);
                         })
@@ -316,7 +316,7 @@
                     } else {
                         const entryConfig = new ConfigObject.legend.Entry(item);
                         legendBlock = new LegendBlock.Node(item.proxyWrapper, entryConfig);
-                        legendBlock.reApplyStateSettings();
+                        legendBlock.applyInitialStateSettings();
                     }
                     // map all dynamic children to the block config and layer record of their root parent
                     legendBlock.layerRecordId = layerConfig.id;
@@ -490,7 +490,7 @@
                         // need to read the layer config state here and initialize the bounding box manually when the layer loads
                         // Not all state is applied to the layer record inside geoApi;
                         // as a result, legend service reapplies all the state to all legend blocks after layer record is loaded
-                        node.reApplyStateSettings();
+                        node.applyInitialStateSettings();
                     }
                 }
             }

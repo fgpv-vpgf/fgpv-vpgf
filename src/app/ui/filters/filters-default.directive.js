@@ -518,6 +518,7 @@
                         isLoading: false,
                         data: [
                             {
+                                // TODO: getFeatureName and attributesToDetails will be exposed on a proxy object
                                 name: layerRecord.getFeatureName(objId, data),
                                 data: layerRecord.attributesToDetails(data, displayData.fields),
                                 oid: objId,
@@ -530,10 +531,13 @@
                         ],
                         requestId: -1,
                         requester: {
-                            format: 'EsriFeature',
+                            layerProxy: requester.legendEntry.mainProxy
+                            //name: requester.name,
+                            //caption: layerRecord.name
+                            /*format: 'EsriFeature',
                             name: requester.name,
                             featureIdx: requester.legendEntry.featureIdx,
-                            legendEntry: requester.legendEntry
+                            legendEntry: requester.legendEntry*/
                         }
                     };
 

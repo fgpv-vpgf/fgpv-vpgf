@@ -218,15 +218,15 @@ $details-record-height: rem(6.0);
     }
 
     .rv-subcontent {
-        @include EsriFeature;
+        @include esriFeature;
         @include Text;
         @include HTML;
         @include nothing;
     }
 }
 
-@mixin EsriFeature {
-    &.rv-EsriFeature {
+@mixin esriFeature {
+    &.rv-esriFeature {
         .rv-records-list {
             @extend %action-list;
             @extend %shadow-group-list;
