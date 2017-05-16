@@ -14,7 +14,7 @@
         </md-button>
 
         <rv-symbology-stack
-            symbology="item.requester.symbology"
+            symbology="item.requester.symbologyStack"
             ng-class="{ 'rv-disabled' : item.data.length === 0 || item.isLoading }"></rv-symbology-stack>
 
         <span class="rv-details-layer-badge" ng-if="item.data.length > 0">{{ item.data.length }}</span>

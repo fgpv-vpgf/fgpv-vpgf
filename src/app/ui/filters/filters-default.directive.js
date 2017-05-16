@@ -519,10 +519,10 @@
                         data: [
                             {
                                 // TODO: getFeatureName and attributesToDetails will be exposed on a proxy object
-                                name: layerRecord.getFeatureName(objId, data),
+                                name: requester.legendEntry.mainProxy.getFeatureName(objId, data),
                                 data: layerRecord.attributesToDetails(data, displayData.fields),
                                 oid: objId,
-                                symbology: new SymbologyStack({}, [{ svgcode: data.rvSymbol }])
+                                symbology: [{ svgcode: data.rvSymbol }]
                             }
                         ],
                         requestId: -1,

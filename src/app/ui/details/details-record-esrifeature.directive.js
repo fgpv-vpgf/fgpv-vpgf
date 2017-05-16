@@ -50,7 +50,7 @@
                 excludedColumns.indexOf(column.key) === -1);
 
             // wrap raw symbology item into a symbology stack object
-            self.item.symbology = new SymbologyStack({}, self.item.symbology);
+            self.item.symbologyStack = new SymbologyStack({}, self.item.symbology);
 
             // FIXME: this no longer works
             function triggerZoom() {

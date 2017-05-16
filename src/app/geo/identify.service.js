@@ -42,6 +42,8 @@
             };
 
             const identifyInstances = configService.getSync.map.layerRecords
+                // TODO: can we expose identify on all layer record types and vet in geoapi for consistency
+                .filter(layerRecord => typeof layerRecord.identify !== 'undefined')
                 .map(layerRecord =>
                     layerRecord.identify(opts))
                 // identify function returns undefined is the layer is cannot be queries because it's not visible or for some other reason

@@ -82,7 +82,7 @@
 
                 // wrap symbology returned by the proxy into a symbology stack object
                 newValue.forEach(item => {
-                    item.requester.symbology = new SymbologyStack(item.requester.proxy)
+                    item.requester.symbologyStack = new SymbologyStack(item.requester.proxy)
                 });
             } else {
                 self.selectItem(null);
