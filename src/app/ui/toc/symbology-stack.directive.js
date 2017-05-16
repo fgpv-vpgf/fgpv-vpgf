@@ -25,7 +25,8 @@
      */
     angular
         .module('app.ui.toc')
-        .directive('rvSymbologyStack', rvSymbologyStack);
+        .directive('rvSymbologyStack', rvSymbologyStack)
+        .factory('SymbologyStack', symbologyStack);
 
     function rvSymbologyStack($q, Geo, animationService) {
         const directive = {
@@ -424,5 +425,45 @@
                 return metrics.width;
             }
         }
+    }
+
+    function symbologyStack(ConfigObject) {
+
+        class SymbologyStack {
+            /**
+             * @param {LayerProxy} proxy [optional = {}] layer proxy object
+             * @param {Array} symbols [optional = []] array of alternative symbology svg graphic elements
+             * @param {String} renderStyle [optional = ConfigObject.legend.Entry.ICONS] rendering style for symbology stack animation
+             * @param {Boolean} isInteractive [optional = false] specifies if the user can interact with the symbology stack
+             */
+            constructor(proxy = {}, symbols = [], renderStyle = ConfigObject.legend.Entry.ICONS,
+                isInteractive = false) {
+
+                this._proxy = proxy;
+                this._renderStyle = renderStyle;
+                this._isInteractive = isInteractive;
+                this._symbols = symbols;
+            }
+
+            get isInteractive () {  return this._isInteractive; }
+
+            _fannedOut = false;
+            _expanded = false;
+
+            get stack () {          return this._proxy.symbology || this._symbols; }
+            get renderStyle () {    return this._renderStyle; }
+
+            get fannedOut () {      return this._fannedOut; }
+            set fannedOut (value = !this.fannedOut) {
+                this._fannedOut = value;
+            }
+
+            get expanded () {       return this._expanded; }
+            set expanded (value = !this.expanded) {
+                this._expanded = value;
+            }
+        }
+
+        return SymbologyStack;
     }
 })();

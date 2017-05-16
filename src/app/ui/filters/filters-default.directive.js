@@ -72,7 +72,7 @@
      */
     // jshint maxparams:12
     function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate,
-        layoutService, detailService, $rootElement, $filter, keyNames, $sanitize, configService, ConfigObject) {
+        layoutService, detailService, $rootElement, $filter, keyNames, $sanitize, configService, SymbologyStack) {
 
         const directive = {
             restrict: 'E',
@@ -519,14 +519,10 @@
                         data: [
                             {
                                 // TODO: getFeatureName and attributesToDetails will be exposed on a proxy object
-                                name: requester.legendEntry.mainProxy.getFeatureName(objId, data),
-                                data: requester.legendEntry.mainProxy.attributesToDetails(data, displayData.fields),
+                                name: layerRecord.getFeatureName(objId, data),
+                                data: layerRecord.attributesToDetails(data, displayData.fields),
                                 oid: objId,
-                                symbology: {
-                                    stack: [{ svgcode: data.rvSymbol }],
-                                    isInteractive: false,
-                                    renderStyle: ConfigObject.legend.Entry.ICONS
-                                }
+                                symbology: new SymbologyStack({}, [{ svgcode: data.rvSymbol }])
                             }
                         ],
                         requestId: -1,

@@ -27,7 +27,7 @@
         return directive;
     }
 
-    function Controller($scope, $element, stateManager, geoService, detailService) {
+    function Controller($scope, $element, stateManager, geoService, detailService, SymbologyStack) {
         'ngInject';
         const self = this;
 
@@ -79,6 +79,11 @@
             if (newValue && newValue.length > 0) {
                 // pick selected item user previously selected one, otherwise pick the first one
                 selectItem(getSelectedItem(newValue) || newValue[0]);
+
+                // wrap symbology returned by the proxy into a symbology stack object
+                newValue.forEach(item => {
+                    item.requester.symbology = new SymbologyStack(item.requester.proxy)
+                });
             } else {
                 self.selectItem(null);
             }

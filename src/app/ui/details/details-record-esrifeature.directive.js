@@ -16,7 +16,7 @@
         .module('app.ui.details')
         .directive('rvDetailsRecordEsrifeature', rvDetailsRecordEsrifeature);
 
-    function rvDetailsRecordEsrifeature($compile, $filter, geoService, Geo) {
+    function rvDetailsRecordEsrifeature(geoService, Geo, SymbologyStack) {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/details/details-record-esrifeature.html',
@@ -45,9 +45,14 @@
 
             self.triggerZoom = triggerZoom;
 
+            // pre-filter the columns used by the datagrid out of the returned data
             self.item.data = self.item.data.filter(column =>
                 excludedColumns.indexOf(column.key) === -1);
 
+            // wrap raw symbology item into a symbology stack object
+            self.item.symbology = new SymbologyStack({}, self.item.symbology);
+
+            // FIXME: this no longer works
             function triggerZoom() {
                 let entry = self.requester.layerRec.legendEntry;
 

@@ -18,17 +18,27 @@
 
         return service;
 
+        /**
+         * Handles global map clicks.  Currently configured to walk through all layer records
+         * and trigger service side identify queries.
+         * GeoApi is responsible for performing client side spatial queries on registered
+         * feature layers or server side queries for everything else.
+         *
+         * @function identify
+         * @param {Event} clickEvent ESRI map click event which is used to run identify function
+         */
         function identify(clickEvent) {
             console.log(clickEvent);
 
+            // TODO: identify in geoApi uses some map function that need to be passed through the map wrapper
             const mapInstance = configService.getSync.map.instance;
             const opts = {
                 clickEvent,
-                map: mapInstance,
+                map: mapInstance._map,
                 geometry: clickEvent.mapPoint,
-                width: mapInstance.width,
-                height: mapInstance.height,
-                mapExtent: mapInstance.extent
+                width: mapInstance._map.width,
+                height: mapInstance._map.height,
+                mapExtent: mapInstance._map.extent
             };
 
             const identifyInstances = configService.getSync.map.layerRecords
@@ -46,7 +56,7 @@
                 const loadingPromise = identifyPromise.catch(error => {
                     // add common error handling
 
-                    RV.logger.warn('identifyService', `Identify query failed for with error`, error);
+                    RV.logger.warn('identifyService', `Identify query failed with error`, error);
 
                     identifyResults.forEach(identifyResult => {
                         // TODO: this outputs raw error message from the service
@@ -71,96 +81,27 @@
 
             // show details panel only when there is data
             stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
-        }
 
-        /**
-         * Modifies identify promises to always resolve, never reject.
-         * Any errors caught will be added to the details data object.
-         * Resolutions of these promises are for turning off loading indicator.
-         *
-         * @function makeInfalliblePromise
-         * @param  {Promise} promise [description]
-         * @return {Promise}                 promise that doesn't reject
-         */
-        function makeInfalliblePromise(promise) {
-            const modifiedPromise = $q(resolve =>
-                promise
-                    .then(() => resolve(true))
-                    .catch(() => resolve(true))
-            );
+            /**
+             * Modifies identify promises to always resolve, never reject.
+             * Any errors caught will be added to the details data object.
+             * Resolutions of these promises are for turning off loading indicator.
+             *
+             * @function makeInfalliblePromise
+             * @private
+             * @param  {Promise} promise [description]
+             * @return {Promise}                 promise that doesn't reject
+             */
+            function makeInfalliblePromise(promise) {
+                const modifiedPromise = $q(resolve =>
+                    promise
+                        .then(() => resolve(true))
+                        .catch(() => resolve(true))
+                );
 
-            return modifiedPromise;
-        }
-
-        /**
-         * Handles global map clicks.  Currently configured to walk through all registered dynamic
-         * layers and trigger service side identify queries, and perform client side spatial queries
-         * on registered feature layers.
-         * @function clickHandlerBuilder
-         * @param {Object} clickEvent an ESRI event object for map click events
-         */
-        /*function clickHandlerBuilder(clickEvent) {
-            geoState.mapService.clearHilight();
-
-            if (getVisibleLayers() === 0) {
-                return;
+                return modifiedPromise;
             }
-
-            const loadingPromises = [];
-            const details = {
-                data: []
-            };
-
-            // TODO: mapObject is accessible from all function, there is no need to pass it as a parameter
-            const opts = {
-                map: mapObject,
-                clickEvent,
-                geometry: clickEvent.mapPoint,
-                width: mapObject.width,
-                height: mapObject.height,
-                mapExtent: mapObject.extent
-            };
-
-            geoState.mapService.dropMapPin(clickEvent.mapPoint);
-
-            layerRegistry
-                .getAllQueryableLayerRecords()
-                .forEach(layerRecord => {
-                    const { identifyResults, identifyPromise } =
-                        identifyHandlers[layerRecord.config.layerType](layerRecord, opts);
-
-                    // identify function returns undefined is the layer is cannot be queries because it's not visible or for some other reason
-                    if (typeof identifyResults === 'undefined') {
-                        return;
-                    }
-
-                    // catch error on identify promises and store error messages to be shown in the details panel.
-                    const loadingPromise = identifyPromise.catch(error => {
-                        // add common error handling
-
-                        RV.logger.warn('identifyService', `Identify query failed for
-                            ${layerRecord.legendEntry.name} with error`, error);
-
-                        identifyResults.forEach(identifyResult => {
-                            // TODO: this outputs raw error message from the service
-                            // we might want to replace it with more user-understandable messages
-                            identifyResult.error = error.message;
-                            identifyResult.isLoading = false;
-                        });
-                    });
-
-                    const infallibleLoadingPromise = makeInfalliblePromise(loadingPromise);
-
-                    details.data.push(...identifyResults);
-                    loadingPromises.push(infallibleLoadingPromise);
-                });
-
-            details.isLoaded = $q.all(loadingPromises).then(() => true);
-            // show details panel only when there is data
-            if (details.data.length) {
-                stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
-            }
-        }*/
+        }
     }
 
     function _identifyServiceFactory($q, gapiService, stateManager, Geo) {
