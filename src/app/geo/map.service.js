@@ -14,7 +14,7 @@
         .module('app.geo')
         .factory('mapService', mapServiceFactory);
 
-    function mapServiceFactory($q, $timeout, gapiService, configService, events) {
+    function mapServiceFactory($q, $timeout, gapiService, configService, identifyService, events) {
         const service = {
             makeMap,
             setAttribution,
@@ -208,7 +208,9 @@
                     RV.logger.log('mapService', 'map update has ended');
 
                     _setLoadingFlag(false, 100);
-                }
+                },
+                click: identifyService.identify
+
             });
 
             /**
