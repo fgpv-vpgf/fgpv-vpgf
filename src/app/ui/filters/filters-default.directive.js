@@ -512,7 +512,6 @@
                     // TODO: disabled during refactor; needs to be restored
                     // const layerRecord = layerRegistry.getLayerRecord()
 
-
                     // get object id from row data
                     const objId = data[displayData.oidField];
 

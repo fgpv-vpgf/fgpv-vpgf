@@ -93,14 +93,12 @@
                 this._controlName = 'boundingBox';
             }
 
-            set value (value) { this.action(value); }
             get value () { return this.block.boundingBox; }
+            set value (value) { this.action(value); }
 
             get icon () {    return 'community:cube-outline'; }
             get label () {   return 'settings.label.boundingBox'; }
             action (value = !this.value) {
-                console.info('bb changed');
-
                 this.block.boundingBox = value;
             }
         }
@@ -112,9 +110,14 @@
                 this._controlName = 'query';
             }
 
-            get icon () {    return 'communication:location_on'; }
-            get label () {   return 'toc.label.query'; }
-            action () {      this._layerProxy.toggleQuery(!this._layerProxy.query); }
+            get value () {          return this.block.query; }
+            set value (value) {     this.action(value); }
+
+            get icon () {           return 'communication:location_on'; }
+            get label () {          return 'toc.label.query'; }
+            action (value = !this.value) {
+                this.block.query = value;
+            }
         }
 
         class SnapshotControl extends BaseControl {
@@ -386,7 +389,9 @@
             get icon () {    return 'community:map-marker-off'; }
             get label () {   return 'toc.label.flag.query'; }
 
-            get isVisible () { return true; }
+            get isVisible () {
+                return super.isVisible && !this.block.query;
+            }
         }
 
         class UserFlag extends BaseFlag {

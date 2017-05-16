@@ -81,6 +81,7 @@
 
                 this._proxy.setOpacity(this._layerConfig.state.opacity);
                 this._proxy.setVisibility(this._layerConfig.state.visibility);
+                this._proxy.setQuery(this._layerConfig.state.query);
 
                 this._isInitialStateSettingsApplied = true;
             }
@@ -100,7 +101,7 @@
 
             get opacity () {            return this._proxy.opacity; }
             get visibility () {         return this._proxy.visibility; }
-            get query () {              return this; }
+            get query () {              return this._proxy.query; }
             get snapshot () {           return this._layerConfig.state.snapshot; }
             get boundingBox () {        return this._layerConfig.state.boundingBox; }
             // bounding box belongs to the LegendBlock, not ProxyWrapper
@@ -119,7 +120,13 @@
 
                 this._proxy.setVisibility(value);
             }
-            set query (value) {             this._ = value; }
+            set query (value) {
+                if (this.isControlSystemDisabled('query')) {
+                    return;
+                }
+
+                this._proxy.setQuery(value);
+            }
             set snapshot (value) {          this._layerConfig.state.snapshot = value; }
 
             get metadataUrl () {            return this._layerConfig.metadataUrl; }
@@ -234,10 +241,11 @@
             reApplyStateSettings() {
                 if (!this._mainProxyWrapper.isInitialStateSettingsApplied) {
                     this._mainProxyWrapper.applyInitialStateSettings();
+
                     this.boundingBox = this._mainProxyWrapper.boundingBox;
 
-                    // TODO: uncomment thid when query is supported
                     // this.query = this._mainProxyWrapper.query;
+                    // TODO: uncomment thid when query is supported
 
                     // initial snapshot should be handled by geoapi
                 }
@@ -321,6 +329,10 @@
                 );
             }
 
+            // since query is applied only on the main proxy wrapper, we don't need to do an extra check if this control is available; it will be checked in the proxy wrapper
+            get query () {              return this._mainProxyWrapper.query; }
+            set query (value) {         this._mainProxyWrapper.query = value; }
+
             get snapshot () {           return this._mainProxyWrapper.snapshot; }
             set snapshot (value) {      this._mainProxyWrapper.snapshot = value; }
 
@@ -329,7 +341,6 @@
              *
              * @function _makeBbox
              * @private
-             * @return
              */
             _makeBbox () {
                 if (!this._bboxProxy) {
