@@ -22,7 +22,9 @@
     }
   },
   "about": {
-      "type": "markdown"
+      "markdown": {
+          "foldername": "indexOne"
+      }
   },
   "legendIsOpen": {
     "large": true,

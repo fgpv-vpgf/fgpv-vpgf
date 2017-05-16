@@ -854,9 +854,39 @@
              "type": "object",
              "description": "About properties",
              "properties": {
-                 "type": { "type": "string", "enum": ["config", "markdown"], "default": "config", "description": "Specifies to use string from config file or markdown" },
-                 "value": { "type": "string", "default": "", "description": "Gives a description about the map" }
+                 "config": {
+                     "type": "object",
+                     "description": "About properties from configuration file",
+                     "properties": {
+                         "value": { "type": "string", "default": "", "description": "Gives a description about the map" }
+                     },
+                     "additionalProperties": false,
+                     "required": [ "value" ]
+                },
+                "markdown": {
+                    "type": "object",
+                    "description": "About properties from markdown folder",
+                    "properties": {
+                        "foldername": { "type": "string", "default": "", "description": "Markdown folder name who contain the about description and images" }
+                    },
+                    "additionalProperties": false,
+                    "required": [ "foldername" ]
+                }
              },
+             "oneOf": [
+                 { "required": [ "config" ] },
+                 { "required": [ "markdown" ] }
+             ],
+             "additionalProperties": false
+         },
+
+         "help": {
+             "type": "object",
+             "description": "Help properties",
+             "properties": {
+                "foldername": { "type": "string", "default": "default", "description": "Help folder name who contain the help description and images" }
+            },
+            "required": [ "foldername" ],
              "additionalProperties": false
          },
 
