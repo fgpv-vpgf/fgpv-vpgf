@@ -74,6 +74,15 @@
                 this._isInitialStateSettingsApplied = false;
             }
 
+            /**
+             * @return {Proxy} original gapi proxy object
+             */
+            get proxy () { return this._proxy; }
+            /**
+             * @return {LayerNode} original typed layer config object
+             */
+            get layerConfig () { return this._layerConfig; }
+
             applyInitialStateSettings() {
                 if (this._isInitialStateSettingsApplied) {
                     return;
@@ -234,23 +243,29 @@
                     new SymbologyStack(this._mainProxyWrapper, blockConfig, true);
             }
 
+            /**
+             * @return {Proxy} the main proxy connected to the legend block
+             */
+            get mainProxy () { return this._mainProxyWrapper.proxy; }
+
             addControlledProxyWrapper(proxyWrapper) {
                 this._controlledProxyWrappers.push(proxyWrapper);
             }
 
-            reApplyStateSettings() {
+            applyInitialStateSettings() {
                 if (!this._mainProxyWrapper.isInitialStateSettingsApplied) {
                     this._mainProxyWrapper.applyInitialStateSettings();
 
+                    // bounding box is not linked to a proxy, so we need to apply it separately
                     this.boundingBox = this._mainProxyWrapper.boundingBox;
-
-                    // this.query = this._mainProxyWrapper.query;
-                    // TODO: uncomment thid when query is supported
-
-                    // initial snapshot should be handled by geoapi
                 }
             }
 
+            /**
+             * Synchonizes opacity and visiblity values of the controlled proxies to the main proxy connected to this legend block.
+             *
+             * @function synchronizeControlledProxyWrappers
+             */
             synchronizeControlledProxyWrappers() {
                 this._controlledProxyWrappers
                     .forEach(proxyWrapper => {
@@ -418,7 +433,7 @@
 
             get blockType () { return TYPES.GROUP; }
 
-            reApplyStateSettings() {
+            applyInitialStateSettings() {
                 // this will ensure all the controlled layers settings in this group match settings of the observable entries
                 this.visibility = this.visibility;
                 this.opacity = this.opacity;

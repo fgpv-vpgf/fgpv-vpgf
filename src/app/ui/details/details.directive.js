@@ -36,7 +36,8 @@
         self.selectItem = selectItem;
         self.expandPanel = detailService.expandPanel;
 
-        self.getSectionNode = () => $element.find('.rv-details');
+        self.getSectionNode = () =>
+            $element.find('.rv-details');
 
         /**
         * Set the selected item from the array of items if previously set.
@@ -65,10 +66,12 @@
             // add hilights to all things in the layer.
             // featureIdx can be 0, so no falsy checks allowed
             // TODO is this the appropriate place for hilighting code?
+            // FIXME: refactor restore
+            /*
             if (item && item.requester && typeof item.requester.featureIdx !== 'undefined') {
                 geoService.hilightGraphic(item.requester.layerRec, item.requester.featureIdx,
                     item.data.map(d => d.oid));
-            }
+            }*/
         }
 
         $scope.$watch('self.display.data', newValue => {

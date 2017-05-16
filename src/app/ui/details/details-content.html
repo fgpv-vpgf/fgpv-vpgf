@@ -1,21 +1,19 @@
 <div class="rv-subsection rv-hide-animate">
 
     <div
-        class="rv-subcontent rv-{{ self.item.requester.format }}"
+        class="rv-subcontent rv-{{ self.item.requester.layerProxy.layerType }}"
         ng-class="{ 'rv-hide': self.isHidden }"
-        ng-switch on="self.item.requester.format">
+        ng-switch on="self.item.requester.layerProxy.layerType">
 
         <p class="rv-nothing" ng-if="self.item.data.length === 0" translate>details.label.noresult</p>
 
         <!-- Feature Key-Value list presentation  -->
-        <ul class="rv-records-list" ng-switch-when="EsriFeature">
+        <ul class="rv-records-list" ng-switch-when="esriFeature">
             <li ng-repeat="item in self.item.data">
                 <rv-details-record-esrifeature
-                    ng-class="{ 'rv-selected': item.isSelected }"
                     item="item"
                     solorecord="self.item.data.length === 1"
                     requester="self.item.requester"></rv-details-record-esrifeature>
-                <div class="rv-shadow"></div>
             </li>
         </ul>
 
