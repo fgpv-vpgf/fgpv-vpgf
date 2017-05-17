@@ -690,8 +690,7 @@
              * @return {Object} returns Esri extent object
              */
             _parseExtent (extent) {
-                const completeExtent = angular.extend({}, extent, { spatialReference: this._spatialReference });
-                return gapiService.gapi.Map.getExtentFromJson(completeExtent);
+                return angular.extend({}, extent, { spatialReference: this._spatialReference });
             }
 
             get JSON () {

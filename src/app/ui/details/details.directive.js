@@ -27,7 +27,7 @@
         return directive;
     }
 
-    function Controller($scope, $element, stateManager, geoService, detailService) {
+    function Controller($scope, $element, stateManager, geoService, detailService, SymbologyStack) {
         'ngInject';
         const self = this;
 
@@ -49,7 +49,7 @@
         function getSelectedItem(items) {
             // get selected item if there is a match
             return items.find(item =>
-                `${item.requester.caption}${item.requester.name}` === self.selectedInfo) || items[0];
+                item.requester.proxy === self.selectedLayerProxy);
         }
 
         /**
@@ -59,7 +59,7 @@
          */
         function selectItem(item) {
             self.selectedItem = item;
-            self.selectedInfo = (item) ? `${item.requester.caption}${item.requester.name}` : null;
+            self.selectedLayerProxy = item ? item.requester.proxy : null;
 
             self.display.selectedItem = self.selectedItem;
 
@@ -78,7 +78,11 @@
             // if multiple points added to the details panel ...
             if (newValue && newValue.length > 0) {
                 // pick selected item user previously selected one, otherwise pick the first one
-                selectItem(self.selectedInfo ? getSelectedItem(newValue) : newValue[0]);
+                selectItem(getSelectedItem(newValue) || newValue[0]);
+
+                // wrap symbology returned by the proxy into a symbology stack object
+                newValue.forEach(item =>
+                    (item.requester.symbologyStack = new SymbologyStack(item.requester.proxy)));
             } else {
                 self.selectItem(null);
             }

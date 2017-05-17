@@ -1,6 +1,6 @@
 <div
     class="rv-record-header"
-    ng-class="{ 'rv-selected': self.isExpanded }">
+    ng-class="{ 'rv-selected rv-expanded': self.isExpanded }">
 
     <md-button
         ng-if="::!self.solorecord"
@@ -10,7 +10,7 @@
         ng-click="self.toggleDetails()"></md-button>
 
     <rv-symbology-stack
-        symbology="self.item.symbology"></rv-symbology-stack>
+        symbology="self.item.symbologyStack"></rv-symbology-stack>
 
     <span class="rv-group-name">
         {{ self.item.name }}
@@ -19,7 +19,7 @@
     <div class="rv-group-controls">
 
         <md-button class="md-icon-button rv-icon-20" ng-click="self.zoomToFeature()"
-            ng-disabled="!self.requester.layerProxy.visible">
+            ng-disabled="!self.requester.proxy.visible">
             <md-tooltip md-direction="top">{{ 'filter.tooltip.zoom' | translate }}</md-tooltip>
             <md-icon md-svg-src="action:zoom_in"></md-icon>
         </md-button>

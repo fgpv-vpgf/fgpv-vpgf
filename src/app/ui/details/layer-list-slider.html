@@ -12,14 +12,15 @@
             ng-mousedown="self.itemSelectedByMouse(item)">
 
         </md-button>
-        <rv-toc-entry-symbology
-            symbology="item.requester.symbology"
-            ng-class="{ 'rv-disabled' : item.data.length === 0 || item.isLoading }"></rv-toc-entry-symbology>
+
+        <rv-symbology-stack
+            symbology="item.requester.symbologyStack"
+            ng-class="{ 'rv-disabled' : item.data.length === 0 || item.isLoading }"></rv-symbology-stack>
+
         <span class="rv-details-layer-badge" ng-if="item.data.length > 0">{{ item.data.length }}</span>
         <md-progress-circular md-diameter="24" class="md-primary" md-mode="indeterminate" ng-if="item.isLoading"></md-progress-circular>
         <div class="rv-details-layer-name">
-            <span class="">{{ item.requester.name }}</span>
-            <span class="md-caption" ng-if="item.requester.caption">{{ item.requester.caption }}</span>
+            <span class="">{{ item.requester.proxy.name }}</span>
         </div>
     </li>
 </ul>

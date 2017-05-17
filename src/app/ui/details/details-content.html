@@ -1,9 +1,9 @@
 <div class="rv-subsection rv-hide-animate">
 
     <div
-        class="rv-subcontent rv-{{ self.item.requester.layerProxy.layerType }}"
+        class="rv-subcontent rv-{{ self.item.requester.proxy.layerType }}"
         ng-class="{ 'rv-hide': self.isHidden }"
-        ng-switch on="self.item.requester.layerProxy.layerType">
+        ng-switch on="self.item.requester.proxy.layerType">
 
         <p class="rv-nothing" ng-if="self.item.data.length === 0" translate>details.label.noresult</p>
 

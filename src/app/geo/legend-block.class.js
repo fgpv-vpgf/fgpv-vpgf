@@ -13,7 +13,7 @@
         .module('app.geo')
         .factory('LegendBlock', LegendBlockFactory);
 
-    function LegendBlockFactory($q, Geo, common, layerRegistry, gapiService, configService) {
+    function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, SymbologyStack) {
 
         let legendBlockCounter = 0;
 
@@ -34,32 +34,6 @@
             GROUP: 'group',
             SET: 'set'
         };
-
-        class SymbologyStack {
-            constructor(proxyWrapper, blockConfig, isInteractive = false) {
-                this._proxyWrapper = proxyWrapper;
-                this._blockConfig = blockConfig;
-                this._isInteractive = isInteractive;
-            }
-
-            get isInteractive () {  return this._isInteractive; }
-
-            _fannedOut = false; // jshint ignore:line
-            _expanded = false; // jshint ignore:line
-
-            get stack () {          return this._proxyWrapper.symbology || this._blockConfig.symbologyStack; }
-            get renderStyle () {    return this._blockConfig.symbologyRenderStyle; }
-
-            get fannedOut () {      return this._fannedOut; }
-            set fannedOut (value = !this.fannedOut) {
-                this._fannedOut = value;
-            }
-
-            get expanded () {       return this._expanded; }
-            set expanded (value = !this.expanded) {
-                this._expanded = value;
-            }
-        }
 
         class ProxyWrapper {
             constructor(proxy, layerConfig) {
@@ -239,8 +213,8 @@
                 this._controlledProxyWrappers = [];
 
                 this._aggregateStates = ref.aggregateStates;
-                this._symbologyStack =
-                    new SymbologyStack(this._mainProxyWrapper, blockConfig, true);
+                this._symbologyStack = new SymbologyStack(
+                    this.mainProxy, blockConfig.symbologyStack, blockConfig.symbologyRenderStyle, true);
             }
 
             /**
