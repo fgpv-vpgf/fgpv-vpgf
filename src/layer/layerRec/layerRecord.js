@@ -24,6 +24,9 @@ class LayerRecord extends root.Root {
     set state (value) { this._state = value; }
     get layerId () { return this.config.id; }
 
+    get rootUrl () { return this._rootUrl; }
+    set rootUrl (value) { this._rootUrl = value; }
+
     // TODO should probably remove passthrough bindings?
     get _layerPassthroughBindings () { return ['setOpacity', 'setVisibility']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
     get _layerPassthroughProperties () { return ['visibleAtMapScale', 'visible', 'spatialReference']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
@@ -470,6 +473,7 @@ class LayerRecord extends root.Root {
             this.constructLayer = () => { throw new Error('Cannot construct pre-made layers'); };
             this._layer = esriLayer;
             this.bindEvents(this._layer);
+            this._rootUrl = esriLayer.url || '';
 
             // TODO might want to change this to be whatever layer says it is
             this._state = shared.states.LOADING;
@@ -485,6 +489,7 @@ class LayerRecord extends root.Root {
             }
 
         } else {
+            this._rootUrl = config.url;
             this.constructLayer(config);
             this._state = shared.states.LOADING;
         }

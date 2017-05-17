@@ -82,6 +82,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         } else {
             const splitUrl = shared.parseUrlIndex(this._layer.url);
             featIdx = splitUrl.index;
+            this.rootUrl = splitUrl.rootUrl;
             attribPackage = this._apiRef.attribs.loadServerAttribs(splitUrl.rootUrl, featIdx, this.config.outfields);
         }
 
