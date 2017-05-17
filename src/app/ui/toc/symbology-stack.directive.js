@@ -454,12 +454,12 @@
             get renderStyle () {    return this._renderStyle; }
 
             get fannedOut () {      return this._fannedOut; }
-            set fannedOut (value = !this.fannedOut) {
+            set fannedOut (value) {
                 this._fannedOut = value;
             }
 
             get expanded () {       return this._expanded; }
-            set expanded (value = !this.expanded) {
+            set expanded (value) {
                 this._expanded = value;
             }
         }

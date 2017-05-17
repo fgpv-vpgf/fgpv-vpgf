@@ -81,9 +81,8 @@
                 selectItem(getSelectedItem(newValue) || newValue[0]);
 
                 // wrap symbology returned by the proxy into a symbology stack object
-                newValue.forEach(item => {
-                    item.requester.symbologyStack = new SymbologyStack(item.requester.proxy)
-                });
+                newValue.forEach(item =>
+                    (item.requester.symbologyStack = new SymbologyStack(item.requester.proxy)));
             } else {
                 self.selectItem(null);
             }
