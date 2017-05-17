@@ -82,47 +82,37 @@ function hilightBuilder(esriBundle) {
     * @method makeHilightLayer
     * @param {Object} options optional settings for the hilight layer
     *                         layerId - id to use for the hilight layer. defaults to rv_hilight
-    *                         pinSymbol - esri symbol in server json format to symbolize the click marker. defaults to a red pin
-    *                         hazeOpacity -  how opaque the haze sheet behind the hilight is. 0 to 255, 0 being transparent. defaults to 127
+    *                         markerSymbol - esri symbol in server json format to symbolize the click marker. defaults to a red pin
     * @return {Object} an ESRI GraphicsLayer
     */
     return options => {
         // set options
         let id = 'rv_hilight';
-        let hazeOpac = 127;
-        let pinSymbol = defaultSymbols.pinSymbol;
+        let markerSymbol = defaultSymbols.markerSymbol;
 
         if (options) {
             if (options.layerId) {
                 id = options.layerId;
             }
-            if (options.pinSymbol) {
-                pinSymbol = options.pinSymbol;
+            if (options.markerSymbol) {
+                markerSymbol = options.markerSymbol;
             }
-            if (options.hazeOpacity) {
-                hazeOpac = options.hazeOpacity;
-            }
+
         }
 
         const hgl = new esriBundle.GraphicsLayer({ id, visible: true });
-
-        // ensure highlight is top-most graphic layer
-        function moveHilightToTop() {
-            hgl._map.reorderLayer(hgl, hgl._map.graphicsLayerIds.length);
-        }
 
         /**
         * Add a graphic to indicate where user clicked.
         * @method addPin
         * @param {Point} point an ESRI point object to use as the graphic location
         */
-        hgl.addPin = point => {
+        hgl.addMarker = point => {
+            hgl.clear();
 
-            const pin = new esriBundle.Graphic({ symbol: pinSymbol });
-            pin.setGeometry(point);
-
-            hgl.add(pin);
-            moveHilightToTop();
+            const marker = new esriBundle.Graphic({ symbol: markerSymbol });
+            marker.setGeometry(point);
+            hgl.add(marker);
         };
 
         /**
@@ -131,29 +121,12 @@ function hilightBuilder(esriBundle) {
         * @param {Graphic|Array} graphic an ESRI graphic, or array of ESRI graphics. Should be in map spatialReference, and not bound to a layer
         */
         hgl.addHilight = graphic => {
+            hgl.clear();
 
             const graphics = Array.isArray(graphic) ? graphic : [graphic];
 
-            if (hgl._hilightGraphics) {
-                // if active hilight graphics, remove them
-                hgl._hilightGraphics.forEach(g => hgl.remove(g));
-            } else {
-                // first application of hilight. add haze background by creating a partially opaque layer for
-                // the whole map extent with some buffer. This will go under the highlighted graphic to make it stand out.
-                const hazeJson = {
-                    symbol: defaultSymbols.hazeSymbol
-                };
-                hazeJson.symbol.color[3] = hazeOpac;
-                const hazeGraphic = new esriBundle.Graphic(hazeJson);
-                hazeGraphic.setGeometry(hgl._map.extent.expand(1.5)); // expand to avoid edges on quick pan
-                hazeGraphic.haze = true;  // notifies layer to put this under any hilight graphics
-                hgl.add(hazeGraphic);
-            }
-
             // add new hilight graphics
-            hgl._hilightGraphics = graphics;
             graphics.forEach(g => hgl.add(g));
-            moveHilightToTop();
         };
 
         /**
@@ -161,23 +134,8 @@ function hilightBuilder(esriBundle) {
         * @method clearHilight
         */
         hgl.clearHilight = () => {
-            // clear tracking vars, wipe the layer
-            hgl._hilightGraphics = null;
             hgl.clear();
         };
-
-        hgl.on('graphic-node-add', e => {
-            // figure out if graphic needs to be at top or bottom of hilight layer
-            // haze polygon goes to bottom, everything else to top
-            const g = e.graphic;
-            const dojoShape = g.getShape();
-
-            if (g.haze) {
-                dojoShape.moveToBack();
-            } else {
-                dojoShape.moveToFront();
-            }
-        });
 
         return hgl;
     };

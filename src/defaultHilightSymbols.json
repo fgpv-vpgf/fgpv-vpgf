@@ -1,25 +1,9 @@
 {
-    "pinSymbol": {
-        "color": [252, 252, 0, 255],
-        "size": 24,
-        "yoffset": 12,
-        "type": "esriSMS",
-        "style": "esriSMSPath",
-        "outline": {
-            "color": [0, 0, 0, 255],
-            "width": 0.5,
-            "type": "esriSLS",
-            "style": "esriSLSSolid"
-        },
-        "path": "M18 8c0-3.31-2.69-6-6-6S6 4.69 6 8c0 4.5 6 11 6 11s6-6.5 6-11zm-8 0c0-1.1.9-2 2-2s2 .9 2 2-.89 2-2 2c-1.1 0-2-.9-2-2zM5 20v2h14v-2H5z"
-    },
-    "hazeSymbol": {
-        "color": [255, 255, 255, 127],
-        "type": "esriSFS",
-        "style": "esriSFSSolid",
-        "outline": {
-            "type": "esriSLS",
-            "style": "esriSLSNull"
-        }
+    "markerSymbol": {
+        "width": 24,
+        "height": 24,
+        "type": "esriPMS",
+        "contentType": "image/png",
+        "imageData": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAA+RJREFUSImdlU1MXFUUx3/vvTsCBWam0AHSASTiR62txtKvRVUi1hg1cWLERlclMTFpQnBv4sKkiYmJhnRloqEm1gV1waIu2gYlaWIJSCqdQhWZMnakUr7ni/l4993n4kGG+ULi2bx77j33/7/nf8+7R7Bp0US4UxhGn5TJADr/24RePSQtq99T0zYCIAAS6cjZbHZpwLRW0TSwLdAKNtoFfql1DTAlAV2rCyTSkZ6aypaLYiUa7Eym5wYUy6WRtpm0QBi7SMOOYaYTAyvRYFjYdrovI++h7UKWe/NQ7wFP7S44VAxDHOwT0eRMwDYe7BicNeHnCY1o3PHbW2w6Dvw3iZlxBYStTJSe3THwZlBjaT3n3w2Dpxoea95BT0BXJsKyJbYtywZNzsDcZoJbFwkwOgXeWvC6yxPYtkQoOwt26Qzml2Dibu5yGuvg4aozdmSDQKfagSCLUJhgm0WLWQnDYxrmtuSkIs9fXIWpOXi6rbRUGibCslLoJe5gcgZiSah6BPyNMBsBpRxi315o2w/jUzA6Ce0t4CpRhZaVQiwsBamsXqamuglhVAKQkTA+7ZzWXQ1dx22iCY2sdOZOPgsPV5yxKWHmr/wspJUhkVwgnVxHKMskvhEmvhHGJbx43a2E/nazkXKCF1bgTgiOPQOjd6DJB3VuuHIjJ9fsfXjqUUXWTLAeu48pnZIzLA9i+69rynWWVtf5/keYmc+l+ksQuo7CG6cglYHez2B9Axo8EE8567694PcVimQjFMVVEFmEJ/3w8gn49gqksjB8C04cgt/+cMBb98GH3TB4HSZnHeJiUwjdLkUBkSVwV0FvN1y47JBcvQmhCNTXwAdvw3TIAQfQKX4AQZXOoKXBkejCZTjXnSOJJ50C6O2G8D9w6frmBm3bd1vFKlsh0FQRdXMjzDyAlAlf/QA9b0HvuzA8BmffdIAGr+WDV1QUkAFoyukHekENHz0EP91yxoksfD0EZ16Fd07DRgq+vOTMb1mDG1qbioRAAYISEvl98Fw7TIYcP2XCd1fhvVfgxq/54ACnTxaDb1GIMrfD+69B6BtIpAUAUsL4tCS8LPLinn9ccvxwGXwdRO2e5iFJKqAXkFS54IuPYHENBq8ZrKxBPAZ+LxgGvNABLx2xyiAbKGUh9jQPCVu6+4WrNaCLtZKh+31w7gyM3obRoFMAr58Cb005WRxTci+26e4XLx75fGTi9497pKoaQI9tts7819FlaHQdswn+qfFEC/g8W51hKy6Xvq0A5Ua46no6Dp8fEQAdB85fHAt+GhbGvj4pM4Fyp/LXg7cKKN+fEEbFkGW5+jsOfjIC8C+5ZawGuwJscgAAAABJRU5ErkJggg=="
     }
 }
