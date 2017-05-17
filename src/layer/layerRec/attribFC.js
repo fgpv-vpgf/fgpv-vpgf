@@ -23,8 +23,8 @@ class AttribFC extends basicFC.BasicFC {
         this._layerPackage = layerPackage;
         this._geometryType = undefined; // this indicates unknown to the ui.
         this._fcount = undefined;
+        this._quickCache = {};
 
-        // moar?
     }
 
     /**
@@ -200,9 +200,38 @@ class AttribFC extends basicFC.BasicFC {
         return newA;
     }
 
-   // TODO perhaps a splitting of server url and layer index to make things consistent between feature and dynamic?
-   //      could be on constructor, then parent can easily feed in the treats.
+    /**
+    * Fetches feature information, including geometry, from esri servers for feature layer.
+    * @param {Integer} objectId for feature to be retrived from the server
+    * @returns {Promise} promise resolves with an esri Graphic (http://resources.arcgis.com/en/help/arcgis-rest-api/#/Feature_Map_Service_Layer/02r3000000r9000000/)
+    */
+    getServerFeatureInfo (objectId) {
+        if (this._quickCache[objectId]) {
+            return Promise.resolve(this._quickCache[objectId]);
+        }
+        return new Promise(
+            (resolve, reject) => {
+                const parent = this._parent;
+                const defData = parent._esriRequest({
+                    url: `${parent.rootUrl}/${this._idx}/${objectId}`,
+                    content: {
+                        f: 'json',
+                    },
+                    callbackParamName: 'callback',
+                    handleAs: 'json'
+                });
 
+                defData.then(
+                    serverFeature => {
+                        this._quickCache[objectId] = serverFeature;
+                        resolve(serverFeature);
+                    }, error => {
+                        console.warn(error);
+                        reject(error);
+                    }
+                );
+            });
+    }
 }
 
 module.exports = () => ({

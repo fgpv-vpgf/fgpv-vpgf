@@ -1103,38 +1103,6 @@ function makeShapeLayerBuilder(esriBundle, geoApi) {
     };
 }
 
-function getFeatureInfoBuilder(esriBundle) {
-    /**
-    * Fetches feature information, including geometry, from esri servers for feature layer.
-    * @param {layerUrl} layerUrl linking to layer where feature layer resides
-    * @param {objectId} objectId for feature to be retrived from a feature layer
-    * @returns {Promise} promise resolves with an esri Graphic (http://resources.arcgis.com/en/help/arcgis-rest-api/#/Feature_Map_Service_Layer/02r3000000r9000000/)
-    */
-    return (layerUrl, objectId) => {
-        return new Promise(
-            (resolve, reject) => {
-                const defData = esriBundle.esriRequest({
-                    url: layerUrl + objectId,
-                    content: {
-                        f: 'json',
-                    },
-                    callbackParamName: 'callback',
-                    handleAs: 'json'
-                });
-
-                defData.then(
-                    layerObj => {
-                        console.log(layerObj);
-                        resolve(layerObj);
-                    }, error => {
-                        console.warn(error);
-                        reject(error);
-                    }
-                );
-            });
-    };
-}
-
 function createImageRecordBuilder(esriBundle, geoApi, classBundle) {
     /**
     * Creates an Image Layer Record class
@@ -1243,7 +1211,6 @@ module.exports = function (esriBundle, geoApi) {
         createDynamicRecord: createDynamicRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createFeatureRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
         LayerDrawingOptions: esriBundle.LayerDrawingOptions,
-        getFeatureInfo: getFeatureInfoBuilder(esriBundle),
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
         makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi),
