@@ -72,8 +72,13 @@ class WmsRecord extends layerRecord.LayerRecord {
             'application/json': 'EsriFeature'
         };
 
-        // ignore layers with no mime type
-        if (!infoMap.hasOwnProperty(this.config.featureInfoMimeType)) {
+        // ignore layers with no mime type, not loaded, not visible, not queryable
+        if (this.state === shared.states.ERROR ||
+            this.state === shared.states.LOADING ||
+            this.state === shared.states.NEW ||
+            !this.visibility ||
+            !this.isQueryable() ||
+            !infoMap.hasOwnProperty(this.config.featureInfoMimeType)) {
             // TODO verifiy this is correct result format if layer should be excluded from the identify process
             return { identifyResults: [], identifyPromise: Promise.resolve() };
         }
