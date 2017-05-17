@@ -363,7 +363,7 @@
                 filters: false
             };
 
-            const dataPromise = $q(resolve => {
+            const dataPromise = $q((resolve, reject) => {
                 metadataService.loadFromURL(legendBlock.metadataUrl).then(mdata => {
                     const metadataPackage = {
                         metadata: mdata,
@@ -373,9 +373,12 @@
 
                     resolve(metadataPackage);
 
-                }).catch(() => {
+                }).catch(error => {
                     errorService.display($translate.instant('toc.error.resource.loadfailed'),
                         layoutService.panes.metadata);
+
+                    // display manager will stop the progress bar when datapromise is rejected
+                    reject(error);
                 });
             });
 
