@@ -56,7 +56,7 @@
             get url() { return `//cdn.datatables.net/${this.ourVersion}/js/jquery.dataTables.min.js`; }
         }
     };
-    const dependenciesOrder = ['jQuery', 'dataTables', 'angular'];
+    const dependenciesOrder = ['jQuery', 'dataTables'];
 
     const d = document;
     const scripts = d.getElementsByTagName('script'); // get scripts
@@ -96,6 +96,14 @@
             scriptsArr.push(dependency.url);
         }
     });
+
+    // if host page contains an angular version that differs from ours, clear global and push our version
+    // host page can continue to use their version if their app is loaded before ours, or they can manually
+    // bootstrap a scoped angular object like we do in app-seed.js
+    if (window.angular && window.angular.version.full !== dependencies.angular.ourVersion) {
+        window.angular = null;
+        scriptsArr.push(dependencies.angular.url);
+    }
 
     // in cases when Angular is loaded by the host page before jQuery (or jQuery is not loaded at all), the viewer will not work as Angular will not bind jQuery correctly even if bootstrap loads a correct version of jQuery
     // more info, third paragraph from the top: https://code.angularjs.org/1.4.12/docs/api/ng/function/angular.element
