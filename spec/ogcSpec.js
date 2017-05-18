@@ -113,93 +113,95 @@ class FakeClickEvent {
     get screenPoint() { return this._screenPoint }
 }
 
-describe('getFeatureInfoBuilder', () => {
-    let ogc;
-    const fakeWMSLayerObject = new FakeWMSLayer();
-    const fakeClickEventObject = new FakeClickEvent();
-    const layerList = ['street', 'traffic', 'transit'];
-    const mimeType = 'JPEG';
-    const fakeBundle = { // mock-up esri bundle
-        esriRequest: (data) => { return data }
-    };
+describe('ogc', () => {
+    describe('getFeatureInfoBuilder', () => {
+        let ogc;
+        const fakeWMSLayerObject = new FakeWMSLayer();
+        const fakeClickEventObject = new FakeClickEvent();
+        const layerList = ['street', 'traffic', 'transit'];
+        const mimeType = 'JPEG';
+        const fakeBundle = { // mock-up esri bundle
+            esriRequest: (data) => { return data }
+        };
 
-    beforeEach(() => {
-        ogc = ogcModule(fakeBundle);
-    });
-    
-    it('should handle click events for WMS layers', (done) => {
-        const layers = layerList.join(',');
-        const featureInfoBuilder = ogc.getFeatureInfo(fakeWMSLayerObject, fakeClickEventObject, layerList, mimeType);
+        beforeEach(() => {
+            ogc = ogcModule(fakeBundle);
+        });
         
-         // testing the return values in the promise
-        featureInfoBuilder.then(val => {
-            expect(val.url).toEqual('www.wmslayer.com');
-            expect(val.content.I).toEqual(fakeClickEventObject.screenPoint.x);
-            expect(val.content.J).toEqual(fakeClickEventObject.screenPoint.y);
-            expect(val.content.FORMAT).toEqual(fakeWMSLayerObject.imageFormat);
-            expect(val.content.VERSION).toEqual(fakeWMSLayerObject.version);
-            expect(val.content.LAYERS).toEqual(layers);
-            expect(val.content.INFO_FORMAT).toEqual(mimeType);
-            done();
-        }).catch(e => {
-            fail(`Exception was thrown: ${e}`);
-            done();
+        it('should handle click events for WMS layers', (done) => {
+            const layers = layerList.join(',');
+            const featureInfoBuilder = ogc.getFeatureInfo(fakeWMSLayerObject, fakeClickEventObject, layerList, mimeType);
+            
+            // testing the return values in the promise
+            featureInfoBuilder.then(val => {
+                expect(val.url).toEqual('www.wmslayer.com');
+                expect(val.content.I).toEqual(fakeClickEventObject.screenPoint.x);
+                expect(val.content.J).toEqual(fakeClickEventObject.screenPoint.y);
+                expect(val.content.FORMAT).toEqual(fakeWMSLayerObject.imageFormat);
+                expect(val.content.VERSION).toEqual(fakeWMSLayerObject.version);
+                expect(val.content.LAYERS).toEqual(layers);
+                expect(val.content.INFO_FORMAT).toEqual(mimeType);
+                done();
+            }).catch(e => {
+                fail(`Exception was thrown: ${e}`);
+                done();
+            });
         });
     });
-});
 
-describe('parseCapabilities', () => {
-    let ogc;
-    const wmsEndpoint = 'www.endpoint.io';
-    const fakeBundle = { // mock-up esri bundle
-        dojoQuery: (option, data) => { 
-            return [] 
-        },
-        esriRequest: function(data) { return new Deferred(data) }
-    };
-    
-    beforeEach(() => {
-        ogc = ogcModule(fakeBundle);
-    });
+    describe('parseCapabilities', () => {
+        let ogc;
+        const wmsEndpoint = 'www.endpoint.io';
+        const fakeBundle = { // mock-up esri bundle
+            dojoQuery: (option, data) => { 
+                return [] 
+            },
+            esriRequest: function(data) { return new Deferred(data) }
+        };
+        
+        beforeEach(() => {
+            ogc = ogcModule(fakeBundle);
+        });
 
-    it('Fetch layer data from a WMS endpoint', (done) => {
-        const metadataPromise = ogc.parseCapabilities(wmsEndpoint);
+        it('Fetch layer data from a WMS endpoint', (done) => {
+            const metadataPromise = ogc.parseCapabilities(wmsEndpoint);
 
-        // calling the promise to see the values
-        metadataPromise.then(val => {
-            expect(val.layers).not.toBe(undefined);
-            expect(val.queryTypes).not.toBe(undefined);
-            done();
-        }).catch(e => {
-            fail(`Exception was thrown: ${e}`);
-            done();
+            // calling the promise to see the values
+            metadataPromise.then(val => {
+                expect(val.layers).not.toBe(undefined);
+                expect(val.queryTypes).not.toBe(undefined);
+                done();
+            }).catch(e => {
+                fail(`Exception was thrown: ${e}`);
+                done();
+            });
         });
     });
-});
 
-describe('getLegendUrls', () => {
-    let ogc;
-    const fakeBundle = {}; // mock-up esri bundle
-    const fakeWMSLayerObject = new FakeWMSLayer();
-    const layerList = ['street', 'traffic', 'transit'];
+    describe('getLegendUrls', () => {
+        let ogc;
+        const fakeBundle = {}; // mock-up esri bundle
+        const fakeWMSLayerObject = new FakeWMSLayer();
+        const layerList = ['street', 'traffic', 'transit'];
 
-    // layerInfos that belong to the layer in layerList
-    const street = new FakeWMSLayerInfo('street', 'www.street.io');
-    const traffic = new FakeWMSLayerInfo('traffic', 'www.traffic.io');
-    const transit = new FakeWMSLayerInfo('transit', ' www.transit.io');
+        // layerInfos that belong to the layer in layerList
+        const street = new FakeWMSLayerInfo('street', 'www.street.io');
+        const traffic = new FakeWMSLayerInfo('traffic', 'www.traffic.io');
+        const transit = new FakeWMSLayerInfo('transit', ' www.transit.io');
 
-    beforeEach(() => {
-        ogc = ogcModule(fakeBundle);
-    });
+        beforeEach(() => {
+            ogc = ogcModule(fakeBundle);
+        });
 
-    it('get the legend urls', () => {
-        fakeWMSLayerObject.addLayerInfo(street);
-        fakeWMSLayerObject.addLayerInfo(traffic);
-        fakeWMSLayerObject.addLayerInfo(transit);
-        const legendUrls = ogc.getLegendUrls(fakeWMSLayerObject, layerList);
+        it('get the legend urls', () => {
+            fakeWMSLayerObject.addLayerInfo(street);
+            fakeWMSLayerObject.addLayerInfo(traffic);
+            fakeWMSLayerObject.addLayerInfo(transit);
+            const legendUrls = ogc.getLegendUrls(fakeWMSLayerObject, layerList);
 
-        for (let i = 0; i < legendUrls.length; i++) {
-            expect(legendUrls[i]).toEqual(fakeWMSLayerObject.layerInfos[i].legendURL);
-        }
+            for (let i = 0; i < legendUrls.length; i++) {
+                expect(legendUrls[i]).toEqual(fakeWMSLayerObject.layerInfos[i].legendURL);
+            }
+        });
     });
 });
