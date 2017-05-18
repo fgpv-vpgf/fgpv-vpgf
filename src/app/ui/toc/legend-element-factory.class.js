@@ -4,7 +4,7 @@
         .module('app.ui')
         .factory('LegendElementFactory', LegendElementFactory);
 
-    function LegendElementFactory($translate, geoService, tocService, legendService) {
+    function LegendElementFactory($translate, geoService, tocService, legendService, debounceService) {
 
         class BaseElement {
             constructor (legendBlock) {
@@ -47,8 +47,11 @@
             get label () {   return `toc.label.visibility.off`; }
 
             action (value = !this.value) {
-                this.block.visibility = value;
+                this._debouncedAction(value);
             }
+
+            _debouncedAction = debounceService.registerDebounce(
+                value => { this.block.visibility = value; });
         }
 
         class VisibilityNodeControl extends VisibilityControl {
@@ -81,6 +84,7 @@
 
             get icon () {    return 'action:opacity'; }
             get label () {   return 'settings.label.opacity'; }
+
             action (value = 1) {
                 this.block.opacity = value;
             }
@@ -98,9 +102,13 @@
 
             get icon () {    return 'community:cube-outline'; }
             get label () {   return 'settings.label.boundingBox'; }
+
             action (value = !this.value) {
-                this.block.boundingBox = value;
+                this._debouncedAction(value);
             }
+
+            _debouncedAction = debounceService.registerDebounce(
+                value => { this.block.boundingBox = value; }, 300);
         }
 
         class QueryControl extends BaseControl {
@@ -115,6 +123,7 @@
 
             get icon () {           return 'communication:location_on'; }
             get label () {          return 'toc.label.query'; }
+
             action (value = !this.value) {
                 this.block.query = value;
             }
@@ -127,10 +136,11 @@
                 this._controlName = 'snapshot';
             }
 
-            get value () { return this.block.snapshot; }
+            get value () {  return this.block.snapshot; }
 
-            get icon () {    return 'action:cached'; }
-            get label () {   return 'settings.label.snapshot'; }
+            get icon () {   return 'action:cached'; }
+            get label () {  return 'settings.label.snapshot'; }
+
             action () {
                 this.block.snapshot = true;
                 tocService.reloadLayer(this.block);
@@ -144,9 +154,10 @@
                 this._controlName = 'metadata';
             }
 
-            get icon () {    return 'action:description'; }
-            get label () {   return 'toc.label.metadata'; }
-            action () {      tocService.toggleMetadata(this.block); }
+            get icon () {   return 'action:description'; }
+            get label () {  return 'toc.label.metadata'; }
+
+            action () {     tocService.toggleMetadata(this.block); }
         }
 
         class SettingsControl extends BaseControl {
@@ -156,9 +167,10 @@
                 this._controlName = 'settings';
             }
 
-            get icon () {    return 'image:tune'; }
-            get label () {   return 'toc.label.settings'; }
-            action () {      tocService.toggleSettings(this.block); }
+            get icon () {   return 'image:tune'; }
+            get label () {  return 'toc.label.settings'; }
+
+            action () {     tocService.toggleSettings(this.block); }
         }
 
         class OffscaleControl extends BaseControl {
@@ -168,9 +180,10 @@
                 this._controlName = 'offscale';
             }
 
-            get icon () {    return `action:zoom_${this.block.outOfScale ? 'in' : 'out'}`; }
-            get label () {   return `toc.label.visibility.zoom${this.block.outOfScale ? 'In' : 'Out'}`; }
-            action () {      geoService.zoomToScale(this._layerProxy); }
+            get icon () {   return `action:zoom_${this.block.outOfScale ? 'in' : 'out'}`; }
+            get label () {  return `toc.label.visibility.zoom${this.block.outOfScale ? 'In' : 'Out'}`; }
+
+            action () {     geoService.zoomToScale(this._layerProxy); }
         }
 
         class ReloadControl extends BaseControl {
@@ -180,9 +193,10 @@
                 this._controlName = 'reload';
             }
 
-            get icon () {    return 'navigation:refresh'; }
-            get label () {   return 'toc.label.reload'; }
-            action () {      tocService.reloadLayer(this.block); }
+            get icon () {   return 'navigation:refresh'; }
+            get label () {  return 'toc.label.reload'; }
+
+            action () {     tocService.reloadLayer(this.block); }
         }
 
         class BoundaryControl extends BaseControl {
@@ -192,9 +206,10 @@
                 this._controlName = 'boundaryZoom';
             }
 
-            get icon () {    return 'action:zoom_in'; }
-            get label () {   return 'toc.label.boundaryZoom'; }
-            action () {      this.block.zoomToBoundary(); }
+            get icon () {   return 'action:zoom_in'; }
+            get label () {  return 'toc.label.boundaryoom'; }
+
+            action () {     this.block.zoomToBoundary(); }
         }
 
         class DataControl extends BaseControl {
@@ -204,9 +219,14 @@
                 this._controlName = 'data';
             }
 
-            get icon () {    return 'community:table-large'; }
-            get label () {   return 'toc.label.dataTable'; }
-            action () {      tocService.toggleLayerFiltersPanel(this.block); }
+            get icon () {   return 'community:table-large'; }
+            get label () {  return 'toc.label.dataTable'; }
+
+            action () {     this._debouncedAction();
+            }
+
+            _debouncedAction = debounceService.registerDebounce(
+                () => { tocService.toggleLayerFiltersPanel(this.block); }, 300);
         }
 
         class RemoveControl extends BaseControl {
@@ -216,9 +236,10 @@
                 this._controlName = 'remove';
             }
 
-            get icon () {    return 'action:delete'; }
-            get label () {   return 'toc.label.remove'; }
-            action () {      tocService.removeLayer(this.block); }
+            get icon () {   return 'action:delete'; }
+            get label () {  return 'toc.label.remove'; }
+
+            action () {     tocService.removeLayer(this.block); }
         }
 
         class ReorderControl extends BaseControl {
