@@ -851,12 +851,20 @@
          },
 
          "about": {
+            "description": "About properties from configuration file or Markdown folder",
+             "oneOf": [
+                { "type": "object", "properties": { "content": { "type": "string" } }, "required": ["content"], "additionalProperties": false },
+                { "type": "object", "properties": { "folderName": { "type": "string" } }, "required": ["folderName"], "additionalProperties": false }
+            ]
+         },
+
+         "help": {
              "type": "object",
-             "description": "About properties",
+             "description": "Help properties",
              "properties": {
-                 "type": { "type": "string", "enum": ["config", "markdown"], "default": "config", "description": "Specifies to use string from config file or markdown" },
-                 "value": { "type": "string", "default": "", "description": "Gives a description about the map" }
-             },
+                "folderName": { "type": "string", "default": "default", "description": "Help folder name who contain the help description and images" }
+            },
+            "required": [ "folderName" ],
              "additionalProperties": false
          },
 

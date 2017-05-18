@@ -13,8 +13,10 @@
     }
   },
   "about": {
-      "type": "config",
-      "value": "Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Duis maximus justo a felis volutpat dictum. Etiam at ultricies nibh. In vitae egestas elit, <a href='#'>vitae varius purus</a>. Fusce porta accumsan cursus. Sed interdum lectus in magna sollicitudin aliquam. Etiam molestie nulla id ornare scelerisque. Integer efficitur sollicitudin vestibulum. Fusce convallis urna libero, vel fermentum massa vulputate id. Nulla dignissim rhoncus mi nec pretium. Donec luctus feugiat orci vel fermentum. Nulla facilisi. Nulla facilisi.<br><br>Praesent at lacus at diam sollicitudin gravida. Donec quam ipsum, lacinia nec interdum eu, sagittis sit amet ligula. Sed aliquam ut elit in molestie. Phasellus convallis magna at varius malesuada. Cras odio massa, sollicitudin non ultricies eu, volutpat eu nibh. Nullam eget laoreet mauris. Nullam tincidunt mauris vitae lorem finibus, eu pellentesque metus pulvinar. Nulla facilisi. Nulla sem lacus, auctor finibus risus vel, consequat dignissim lorem. Nullam vitae hendrerit nisi, nec convallis nibh. Etiam ut lacinia elit. Mauris ultricies vulputate quam quis luctus. Phasellus quam velit, malesuada quis lorem in, mattis euismod libero. In fringilla velit ut blandit feugiat. Proin finibus sem non ullamcorper semper. Nunc a maximus ante, sit amet rutrum justo.<br><br>Nulla volutpat velit a nunc venenatis suscipit. Praesent iaculis porttitor nibh vitae commodo. Pellentesque in nibh a elit eleifend sollicitudin nec et erat. Integer porta consectetur lacus in dignissim. Quisque vitae dolor sed velit maximus ullamcorper non et leo. Integer mauris leo, pellentesque at nisl quis, fermentum venenatis ante. Phasellus ullamcorper eu orci ut vestibulum. Suspendisse id sem ac ipsum commodo accumsan eleifend vel justo. Praesent mollis lectus et cursus rutrum. In vitae sem eu sem tempus tincidunt commodo quis velit. Sed placerat ex varius, feugiat metus in, ornare mauris. Pellentesque blandit justo id leo ullamcorper, a condimentum risus pharetra. Aliquam malesuada massa neque, ullamcorper vulputate felis blandit sed. In et fringilla arcu. Etiam id venenatis risus. Etiam ut turpis at tortor aliquet finibus."
+    "content": "Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Duis maximus justo a felis volutpat dictum. Etiam at ultricies nibh. In vitae egestas elit, <a href='#'>vitae varius purus</a>. Fusce porta accumsan cursus. Sed interdum lectus in magna sollicitudin aliquam. Etiam molestie nulla id ornare scelerisque. Integer efficitur sollicitudin vestibulum. Fusce convallis urna libero, vel fermentum massa vulputate id. Nulla dignissim rhoncus mi nec pretium. Donec luctus feugiat orci vel fermentum. Nulla facilisi. Nulla facilisi.<br><br>Praesent at lacus at diam sollicitudin gravida. Donec quam ipsum, lacinia nec interdum eu, sagittis sit amet ligula. Sed aliquam ut elit in molestie. Phasellus convallis magna at varius malesuada. Cras odio massa, sollicitudin non ultricies eu, volutpat eu nibh. Nullam eget laoreet mauris. Nullam tincidunt mauris vitae lorem finibus, eu pellentesque metus pulvinar. Nulla facilisi. Nulla sem lacus, auctor finibus risus vel, consequat dignissim lorem. Nullam vitae hendrerit nisi, nec convallis nibh. Etiam ut lacinia elit. Mauris ultricies vulputate quam quis luctus. Phasellus quam velit, malesuada quis lorem in, mattis euismod libero. In fringilla velit ut blandit feugiat. Proin finibus sem non ullamcorper semper. Nunc a maximus ante, sit amet rutrum justo.<br><br>Nulla volutpat velit a nunc venenatis suscipit. Praesent iaculis porttitor nibh vitae commodo. Pellentesque in nibh a elit eleifend sollicitudin nec et erat. Integer porta consectetur lacus in dignissim. Quisque vitae dolor sed velit maximus ullamcorper non et leo. Integer mauris leo, pellentesque at nisl quis, fermentum venenatis ante. Phasellus ullamcorper eu orci ut vestibulum. Suspendisse id sem ac ipsum commodo accumsan eleifend vel justo. Praesent mollis lectus et cursus rutrum. In vitae sem eu sem tempus tincidunt commodo quis velit. Sed placerat ex varius, feugiat metus in, ornare mauris. Pellentesque blandit justo id leo ullamcorper, a condimentum risus pharetra. Aliquam malesuada massa neque, ullamcorper vulputate felis blandit sed. In et fringilla arcu. Etiam id venenatis risus. Etiam ut turpis at tortor aliquet finibus."
+  },
+  "help": {
+      "folderName": "indexFGP"
   },
   "search": {
     "serviceUrls": {
@@ -326,6 +328,23 @@
     ]
   },
   "sideMenu": {
-    "logo": true
+    "logo": true,
+    "items": [
+        [
+            "layers",
+            "basemap"
+        ],
+        [
+            "about",
+            "fullscreen",
+            "export",
+            "share",
+            "touch",
+            "help"
+        ],
+        [
+            "language"
+        ]
+    ]
   }
 }
