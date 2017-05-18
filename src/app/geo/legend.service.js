@@ -29,7 +29,14 @@
 
         /***/
 
-        // rename: construct config legend
+        /**
+         * Traverses a given legend structure and creates a corresponding hierarchy of legend blocks using any references layers from the supplied layer defintions array.
+         * It's possible to have layer definitions references more than once or not at all in the legend structure.
+         *
+         * @function constructLegend
+         * @param {Array} layerDefinitions an array of layer definitions from the config file or RCS snippets
+         * @param {Array} legendStructure a typed legend hierarchy containing Enry, EntryGroup, VisibilitySet, and InfoSections items
+         */
         function constructLegend(layerDefinitions, legendStructure) {
             const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
             const legendMappings = configService.getSync.map.legendMappings;
@@ -49,6 +56,13 @@
             configService.getSync.map.legendBlocks = legendBlocks
         }
 
+        /**
+         * Imports a layer blueprint, adds it to the map and to the legend structure.
+         *
+         * @function importLayerBlueprint
+         * @param {LayerBlueprint} layerBlueprint a layer blueprint to be imported into the map and added to the legend
+         * @return {LegendBlock} returns a corresponding, newly created legend block
+         */
         function importLayerBlueprint(layerBlueprint) {
             const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
             layerBlueprintsCollection.push(layerBlueprint);
@@ -69,6 +83,7 @@
 
             const blockConfig = new ConfigObject.legend.Entry(entryConfigObject);
 
+            // FIXME: this seems to alwyas insert a new layer at the bottom of the legend regardless of it's sorting group; needs fixing
             const legendBlock = _makeLegendBlock(blockConfig, [layerBlueprint]);
             configService.getSync.map.legendBlocks.addEntry(legendBlock);
 
@@ -544,12 +559,24 @@
                 const layerConfig = blueprint.config;
                 layerRegistry.loadLayerRecord(layerRecord.config.id);
 
+                const disabledOptions = {
+                    controls: ['query', 'boundingBox'],
+                    state: ['query', 'boundingBox']
+                };
+
                 // for all controlled layers, disable query and boundingbox controls
-                ['query', 'boundingBox'].forEach(controlName => {
+                disabledOptions.controls.forEach(controlName => {
                     if (layerConfig.disabledControls.indexOf(controlName) === -1) {
                         layerConfig.disabledControls.push(controlName);
                     }
                 });
+
+                // controlled layers can't have enabled bounding boxes or query states (even if specified in the config file)
+                disabledOptions.state.forEach(stateName =>
+                    (layerConfig.state[stateName] = false));
+
+                // controlled layers are not supposed to have hovertips
+                layerConfig.hovertipEnabled = false;
 
                 let proxyPromise;
 
