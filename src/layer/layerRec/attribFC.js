@@ -24,7 +24,6 @@ class AttribFC extends basicFC.BasicFC {
         this._geometryType = undefined; // this indicates unknown to the ui.
         this._fcount = undefined;
         this._quickCache = {};
-
     }
 
     /**
@@ -207,6 +206,7 @@ class AttribFC extends basicFC.BasicFC {
     */
     getServerFeatureInfo (objectId) {
         if (this._quickCache[objectId]) {
+            console.log('TEMP FETCH - got from quick cache', objectId);
             return Promise.resolve(this._quickCache[objectId]);
         }
         return new Promise(
@@ -223,6 +223,9 @@ class AttribFC extends basicFC.BasicFC {
 
                 defData.then(
                     serverFeature => {
+                        // server result omits spatial reference
+                        console.log('TEMP FETCH - got from server', objectId);
+                        serverFeature.feature.geometry.spatialReference = parent._layer.spatialReference;
                         this._quickCache[objectId] = serverFeature;
                         resolve(serverFeature);
                     }, error => {
@@ -232,6 +235,46 @@ class AttribFC extends basicFC.BasicFC {
                 );
             });
     }
+
+    /**
+     * Fetches a graphic from the given layer.
+     * Will attempt local copy, will hit the server if not available.
+     *
+     * @function fetchGraphic
+     * @param  {Integer} objId ID of object being searched for
+     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .source is where it came from - 'layer' or 'server'; also .layerFC for convenience
+     */
+    fetchGraphic (objId) {
+
+        const layerObj = this._parent._layer;
+        const result = {
+            graphic: null,
+            source: null,
+            layerFC: this
+        };
+
+        // if feature layer, check if graphic is already loaded on the client. return it if found.
+        if (layerObj.graphics) {
+            const myG = layerObj.graphics.find(g =>
+                g.attributes[layerObj.objectIdField] === objId);
+            if (myG) {
+                console.log('TEMP FETCH - got from local layer', objId);
+                result.graphic = myG;
+                result.source = 'layer';
+                return Promise.resolve(result);
+            }
+        }
+
+        // were not able to get a local copy of the graphic. to the server!
+        // TODO add some error handling. Cases: failed server call. server call is not a feature
+        return this.getServerFeatureInfo(objId)
+            .then(featureInfo => {
+                result.graphic = featureInfo.feature;
+                result.source = 'server';
+                return result;
+            });
+    }
+
 }
 
 module.exports = () => ({

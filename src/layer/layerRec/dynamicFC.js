@@ -20,6 +20,7 @@ class DynamicFC extends attribFC.AttribFC {
         super(parent, idx, layerPackage, config);
 
         this.opacity = config.state.opacity;
+        this._highlightFeature = true;
 
         // visibility is kept stateful by the parent. keeping an internal property
         // just means we would need to keep it in synch.
@@ -32,6 +33,9 @@ class DynamicFC extends attribFC.AttribFC {
             maxScale: 0
         };
     }
+
+    get highlightFeature () { return this._highlightFeature; }
+    set highlightFeature (value) { this._highlightFeature = value; }
 
     get supportsOpacity () { return this._parent._isTrueDynamic; }
 

@@ -163,6 +163,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
             clone.index = origConfig.index;
             clone.stateOnly = origConfig.stateOnly;
             clone.nameField = origConfig.nameField;
+            clone.highlightFeature = origConfig.highlightFeature || true; // simple default
 
             // an empty string is a valid property, so be wary of falsy logic
             clone.outfields = origConfig.hasOwnProperty('outfields') ? origConfig.outfields : '*';
@@ -313,6 +314,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
             const subC = subConfigs[idx].config;
             const attribPackage = this._apiRef.attribs.loadServerAttribs(this._layer.url, idx, subC.outfields);
             const dFC = new dynamicFC.DynamicFC(this, idx, attribPackage, subC);
+            dFC.highlightFeature = subC.highlightFeature;
             this._featClasses[idx] = dFC;
 
             // if we have a proxy watching this leaf, replace its placeholder with the real data
@@ -437,6 +439,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
      */
     getFormattedAttributes (childIndex) {
         return this._featClasses[childIndex].getFormattedAttributes();
+    }
+
+    fetchGraphic (childIndex, objId) {
+        return this._featClasses[childIndex].fetchGraphic(objId);
     }
 
     /**

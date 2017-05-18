@@ -44,7 +44,7 @@ function getGraphicsBuilder(esriBundle, geoApi) {
     /**
     * Generating a graphic from server geometry.
     * @method getUnboundGraphics
-    * @param {Array} graphicBundles set of graphic bundles with properties .graphic, .source, .layer, .featureIdx.
+    * @param {Array} graphicBundles set of graphic bundles with properties .graphic, .source, .layerFC
     * @param {Object} spatialReference the projection the unbound graphics should be in
     * @return {Array} a set of promises that resolve with an unbound graphic, one for each graphic bundle provided
     */
@@ -62,8 +62,7 @@ function getGraphicsBuilder(esriBundle, geoApi) {
                 }
 
                 // determine symbol for this server graphic
-                const attribs = bundle.layer.attributeBundle;
-                return attribs[bundle.featureIdx].layerData.then(layerData => {
+                return bundle.layerFC.getLayerData().then(layerData => {
                     const symb = geoApi.symbology.getGraphicSymbol(bundle.graphic.attributes, layerData.renderer);
                     return geoApi.hilight.geomToGraphic(geom, symb);
                 });

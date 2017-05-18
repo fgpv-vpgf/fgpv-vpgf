@@ -43,6 +43,7 @@ class LayerInterface {
     get opacity () { return undefined; } // returns Decimal
     get query () { return undefined; } // returns Boolean
     get snapshot () { return undefined; } // returns Boolean
+    get highlightFeature () { return undefined; } // returns Boolean
 
     // fetches attributes for use in the datatable
     get formattedAttributes () { return undefined; } // returns Promise of Object
@@ -58,6 +59,7 @@ class LayerInterface {
     setOpacity () { return undefined; }
     setQuery () { return undefined; }
 
+    fetchGraphic () { return undefined; } // returns promise that resolves with object containing graphics info
     zoomToBoundary () { return undefined; } // returns promise that resolves after zoom completes
 
     // updates what this interface is pointing to, in terms of layer data source.
@@ -100,9 +102,11 @@ class LayerInterface {
         newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
         newProp(this, 'geometryType', featureGetGeometryType);
         newProp(this, 'featureCount', featureGetFeatureCount);
+        newProp(this, 'highlightFeature', featureGetHighlightFeature);
 
         this.getFeatureName = featureGetFeatureName;
         this.attributesToDetails = featureAttributesToDetails;
+        this.fetchGraphic = featureFetchGraphic;
     }
 
     convertToDynamicLeaf (dynamicFC) {
@@ -124,12 +128,15 @@ class LayerInterface {
         newProp(this, 'featureCount', dynamicLeafGetFeatureCount);
         newProp(this, 'extent', dynamicLeafGetExtent);
 
+        newProp(this, 'highlightFeature', dynamicLeafGetHighlightFeature);
+
         this.setVisibility = dynamicLeafSetVisibility;
         this.setOpacity = dynamicLeafSetOpacity;
         this.setQuery = dynamicLeafSetQuery;
         this.zoomToBoundary = dynamicLeafZoomToBoundary;
         this.getFeatureName = featureGetFeatureName;
         this.attributesToDetails = dynamicLeafAttributesToDetails;
+        this.fetchGraphic = dynamicLeafFetchGraphic;
     }
 
     convertToPlaceholder (placeholderFC) {
@@ -331,6 +338,15 @@ function featureGetSnapshot() {
     return this._source.isSnapshot;
 }
 
+function featureGetHighlightFeature() {
+    return true;
+}
+
+function dynamicLeafGetHighlightFeature() {
+    /* jshint validthis: true */
+    return this._source.highlightFeature;
+}
+
 function standardZoomToBoundary(map) {
     /* jshint validthis: true */
     this._source.zoomToBoundary(map);
@@ -354,6 +370,16 @@ function featureAttributesToDetails(attribs, fields) {
 function dynamicLeafAttributesToDetails(attribs, fields) {
     /* jshint validthis: true */
     return this._source._parent.attributesToDetails(attribs, fields);
+}
+
+function featureFetchGraphic(oid) {
+    /* jshint validthis: true */
+    return this._source.fetchGraphic(oid);
+}
+
+function dynamicLeafFetchGraphic(oid) {
+    /* jshint validthis: true */
+    return this._source.fetchGraphic(oid);
 }
 
 module.exports = () => ({
