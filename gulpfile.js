@@ -542,7 +542,7 @@ function serve(isDev) {
  * Reloads core.js file on source files changes. Do not call directly.
  * @return {Stream}
  */
-gulp.task('reloadapp', 'Repackaging app...', ['jsrollup'], function () {
+gulp.task('reloadapp', 'Repackaging app...', ['jsrollup', 'inject'], function () {
     return gulp
         .src(config.jsInjectorFilePath)
         .pipe($.connect.reload());
