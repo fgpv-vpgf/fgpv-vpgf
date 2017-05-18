@@ -1,5 +1,16 @@
 (() => {
 
+    const DEFAULT_HOVERTIP_TEMPLATE = `
+        <div class="rv-tooltip-content" ng-if="self.name !== null">
+            <rv-svg once="false" class="rv-tooltip-graphic" src="self.svgcode"></rv-svg>
+            <span class="rv-tooltip-text" ng-if="self.name">{{ self.name }}</span>
+        </div>
+
+        <div class="rv-tooltip-content" ng-if="self.name === null">
+            <span class="rv-tooltip-text">{{ 'maptip.hover.label.loading' | translate }}</span>
+        </div>
+    `;
+
     /**
      * @module tooltipService
      * @memberof app.ui
@@ -417,11 +428,11 @@
         /**
          * @function addHoverTooltip
          * @param {Object} point tooltip origin point ({ x: <Number>, y: <Number> } in pixels relative to the map node)
-         * @param {String} content tooltips content that will be transcluded by the tooltip directive; should be valid HTML
          * @param {Object} self a self object that will be available on the tooltip directive scope
-         * @return {Object} a Tooltip instance
+         * @param {String} content tooltips content template that will be transcluded by the tooltip directive; should be valid HTML
+         * @return {Tooltip} a Tooltip instance
          */
-        function addHoverTooltip(point, content, self) {
+        function addHoverTooltip(point, self, content = DEFAULT_HOVERTIP_TEMPLATE) {
             const tooltipScope = $rootScope.$new();
             tooltipScope.self = self;
 
