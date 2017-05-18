@@ -20,7 +20,6 @@
         const ref = {
             walkFunction,
             aggregateStates,
-            getPropertyDescriptor,
 
             isControlVisible,
             isControlDisabled,
@@ -35,6 +34,13 @@
             SET: 'set'
         };
 
+        /**
+         * Links a proxy layer object with the corresponding layer. This is required since layer config might have
+         * client-only settings specified that are not available through the proxy. Also, initial opacity, visibility, and query
+         * states are set on the proxy objects here using the values from the layer config.
+         *
+         * @class ProxyWrapper
+         */
         class ProxyWrapper {
             constructor(proxy, layerConfig) {
                 this._proxy = proxy;
@@ -45,7 +51,7 @@
                 this.isControlSystemDisabled = ref.isControlSystemDisabled.bind(this);
                 this.isControlUserDisabled = ref.isControlUserDisabled.bind(this);
 
-                this._isInitialStateSettingsApplied = false;
+                this._initialStateSettingsApplied = false;
             }
 
             /**
@@ -57,8 +63,14 @@
              */
             get layerConfig () { return this._layerConfig; }
 
+            /**
+             * This will apply initial state values from the layer config object to the layer proxy object.
+             * This is needed to apply state settings that are not set in geoApi (dynamic layers, for example, start up as fully invisible to prevent flicker on initial load).
+             *
+             * @function applyInitialStateSettings
+             */
             applyInitialStateSettings() {
-                if (this._isInitialStateSettingsApplied) {
+                if (this._initialStateSettingsApplied) {
                     return;
                 }
 
@@ -66,10 +78,10 @@
                 this._proxy.setVisibility(this._layerConfig.state.visibility);
                 this._proxy.setQuery(this._layerConfig.state.query);
 
-                this._isInitialStateSettingsApplied = true;
+                this._initialStateSettingsApplied = true;
             }
 
-            get isInitialStateSettingsApplied () { return this._isInitialStateSettingsApplied }
+            get initialStateSettingsApplied () { return this._initialStateSettingsApplied }
 
             zoomToBoundary(...args) {          this._proxy.zoomToBoundary(...args); }
 
@@ -86,8 +98,9 @@
             get visibility () {         return this._proxy.visibility; }
             get query () {              return this._proxy.query; }
             get snapshot () {           return this._layerConfig.state.snapshot; }
+
+            // bounding box belongs to the LegendBlock, not ProxyWrapper; so, there the bbox setter is specified on the legendNode
             get boundingBox () {        return this._layerConfig.state.boundingBox; }
-            // bounding box belongs to the LegendBlock, not ProxyWrapper
 
             set opacity (value) {
                 if (this.isControlSystemDisabled('opacity')) {
@@ -110,6 +123,13 @@
 
                 this._proxy.setQuery(value);
             }
+
+            /**
+             * Layer config object persists through layer reload (corresponding layer record and legend blocks are destroyed),
+             * the changed snapshot value will be processed in geoApi on the subsequent generation of layer records.             *
+             *
+             * @param {Boolean} value stores the snapshot value on the layer config object
+             */
             set snapshot (value) {          this._layerConfig.state.snapshot = value; }
 
             get metadataUrl () {            return this._layerConfig.metadataUrl; }
@@ -227,7 +247,7 @@
             }
 
             applyInitialStateSettings() {
-                if (!this._mainProxyWrapper.isInitialStateSettingsApplied) {
+                if (!this._mainProxyWrapper.initialStateSettingsApplied) {
                     this._mainProxyWrapper.applyInitialStateSettings();
 
                     // bounding box is not linked to a proxy, so we need to apply it separately
@@ -323,6 +343,10 @@
             set query (value) {         this._mainProxyWrapper.query = value; }
 
             get snapshot () {           return this._mainProxyWrapper.snapshot; }
+            /**
+             * Setting snapshot to `true` is permanent - if a snapshoted layer is reloaded manually in the future, it reloads as a snapshoted layer.
+             * @param {Boolean} value specified layer's snapshot value
+             */
             set snapshot (value) {      this._mainProxyWrapper.snapshot = value; }
 
             /**
@@ -339,7 +363,6 @@
                 }
             }
             get boundingBox () {
-                // TODO: is extent always defined?
                 if (!this._mainProxyWrapper.extent) {
                     return false;
                 }
@@ -593,26 +616,6 @@
             get disabledControls () {       return []; }
             get userDisabledControls () {   return []; }
 
-            _decorateDescriptor(prototype, propertyName, decorator) {
-                const descriptor = getPropertyDescriptor(prototype, propertyName);
-                let method;
-
-                _updateProperty('set');
-                _updateProperty('get');
-
-                return descriptor;
-
-                function _updateProperty(name) {
-                    if (decorator[name]) {
-                        method = descriptor[name] || angular.noop;
-                        descriptor[name] = function (value) {
-                            decorator[name](value, this);
-                            method.call(this, value);
-                        };
-                    }
-                }
-            }
-
             get blockType () { return TYPES.SET; }
 
             get visibility () {
@@ -722,26 +725,35 @@
         return service;
 
         /**
+         * Checks if the specified controls is visible in the UI.
          *
-         * @param {String} controlName
-         * @return {Boolean} true if the control specified should be visible in UI
+         * @function isControlVisible
+         * @private
+         * @param {String} controlName the name of the control to be checked
+         * @return {Boolean} true if the control specified should be visible in the UI
          */
         function isControlVisible(controlName) {
             return this.availableControls.indexOf(controlName) !== -1;
         }
 
         /**
+         * Checks if the speicified controls is disabled in the UI.
          *
-         * @param {String} controlName
-         * @return {Boolean} true if the control specified should be disabled in UI
+         * @function isControlDisabled
+         * @private
+         * @param {String} controlName the name of the control to be checked
+         * @return {Boolean} true if the control specified should be disabled in the UI
          */
-        function isControlDisabled(controlname) {
-            return this.disabledControls.indexOf(controlname) !== -1;
+        function isControlDisabled(controlName) {
+            return this.disabledControls.indexOf(controlName) !== -1;
         }
 
         /**
+         * Checks if the specified control is locked to modification by the system and user.
          *
-         * @param {String} controlName
+         * @function isControlSystemDisabled
+         * @private
+         * @param {String} controlName the name of the control to be checked
          * @return {Boolean} true if the control specified is locked to modifications by the system and user
          */
         function isControlSystemDisabled(controlName) {
@@ -749,8 +761,11 @@
         }
 
         /**
+         * Checks if the specified control is locked to modification by the user.
          *
-         * @param {String} controlName
+         * @function isControlUserDisabled
+         * @private
+         * @param {String} controlName the name of the control to be checked
          * @return {Boolean} true if the control specified is locked to modifications by user but can be changed by the system
          */
         function isControlUserDisabled(controlName) {
@@ -808,28 +823,6 @@
                     return action(entry, index, this);
                 }
             }));
-        }
-
-        /**
-         * Returns a property descritpion of the specified object.
-         *
-         * @function getPropertyDescriptor
-         * @private
-         * @param {Object} obj object to get a descript from; usually a prototype
-         * @param {String} property property name
-         */
-        function getPropertyDescriptor(obj, property) {
-            if (obj === null) {
-                return null;
-            }
-
-            const descriptor = Object.getOwnPropertyDescriptor(obj, property);
-
-            if (obj.hasOwnProperty(property)) {
-                return Object.getOwnPropertyDescriptor(obj, property);
-            } else {
-                return getPropertyDescriptor(Object.getPrototypeOf(obj), property);
-            }
         }
     }
 })();

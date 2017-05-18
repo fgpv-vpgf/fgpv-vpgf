@@ -247,12 +247,20 @@
                 // TODO: decide if we want to preserve any settings (apart from snapshot) through the layer reload
             }
 
-            get opacity () {        return this._opacity; }
-            get visibility () {     return this._visibility; }
-            get boundingBox () {    return this._boundingBox; }
-            get query () {          return this._query; }
-            get snapshot () {       return this._snapshot; }
-            set snapshot (value) {  this._snapshot = value; }
+            get opacity () {            return this._opacity; }
+            set opacity (value) {       this._opacity = value; }
+
+            get visibility () {         return this._visibility; }
+            set visibility (value) {    this._visibility = value; }
+
+            get boundingBox () {        return this._boundingBox; }
+            set boundingBox (value) {   this._boundingBox = value; }
+
+            get query () {              return this._query; }
+            set query (value) {         this._query = value; }
+
+            get snapshot () {           return this._snapshot; }
+            set snapshot (value) {      this._snapshot = value; }
 
             get JSON() {
                 return {
@@ -398,18 +406,22 @@
                 }
             }
 
-            get source () { return this._source; }
+            get source () {                 return this._source; }
 
-            get id () { return this._id; }
-            get layerType () { return this._layerType; }
+            get id () {                     return this._id; }
+            get layerType () {              return this._layerType; }
 
-            get name () { return this._name; }
-            set name (value) { this._name = value; }
+            get name () {                   return this._name; }
+            set name (value) {              this._name = value; }
 
-            get url () { return this._url; }
-            get metadataUrl () { return this._metadataUrl; }
-            get catalogueUrl () { return this._catalogueUrl; }
-            get extent () { return this._extent; }
+            get url () {                    return this._url; }
+            get metadataUrl () {            return this._metadataUrl; }
+            get catalogueUrl () {           return this._catalogueUrl; }
+            get extent () {                 return this._extent; }
+
+            _hovertipEnabled = false;
+            get hovertipEnabled () {        return this._hovertipEnabled; }
+            set hovertipEnabled (value) {   this._hovertipEnabled = value; }
 
             /**
              * @return {Array} an array of control names which are visible in UI;
@@ -465,6 +477,8 @@
                 this._nameField = source.nameField;
                 this._tolerance = source.tolerance || 5;
             }
+
+            _hovertipEnabled = true;
 
             get nameField () { return this._nameField; }
             set nameField (value) { this._nameField = value; }
