@@ -126,7 +126,7 @@
 
             /**
              * Layer config object persists through layer reload (corresponding layer record and legend blocks are destroyed),
-             * the changed snapshot value will be processed in geoApi on the subsequent generation of layer records.             *
+             * the changed snapshot value will be processed in geoApi on the subsequent generation of layer records.
              *
              * @param {Boolean} value stores the snapshot value on the layer config object
              */
@@ -749,24 +749,24 @@
         }
 
         /**
-         * Checks if the specified control is locked to modification by the system and user.
+         * Checks if the specified control is locked from modification by the system and user.
          *
          * @function isControlSystemDisabled
          * @private
          * @param {String} controlName the name of the control to be checked
-         * @return {Boolean} true if the control specified is locked to modifications by the system and user
+         * @return {Boolean} true if the control specified is locked from modifications by the system and user
          */
         function isControlSystemDisabled(controlName) {
             return this.isControlDisabled(controlName);
         }
 
         /**
-         * Checks if the specified control is locked to modification by the user.
+         * Checks if the specified control is locked from modification by the user.
          *
          * @function isControlUserDisabled
          * @private
          * @param {String} controlName the name of the control to be checked
-         * @return {Boolean} true if the control specified is locked to modifications by user but can be changed by the system
+         * @return {Boolean} true if the control specified is locked from modifications by user but can be changed by the system
          */
         function isControlUserDisabled(controlName) {
             return this.userDisabledControls.indexOf(controlName) !== -1;

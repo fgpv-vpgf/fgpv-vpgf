@@ -83,7 +83,7 @@
 
             const blockConfig = new ConfigObject.legend.Entry(entryConfigObject);
 
-            // FIXME: this seems to alwyas insert a new layer at the bottom of the legend regardless of it's sorting group; needs fixing
+            // FIXME: this seems to always insert a new layer at the bottom of the legend regardless of it's sorting group; needs fixing
             const legendBlock = _makeLegendBlock(blockConfig, [layerBlueprint]);
             configService.getSync.map.legendBlocks.addEntry(legendBlock);
 
