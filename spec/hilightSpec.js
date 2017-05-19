@@ -8,33 +8,28 @@ function Extent() {
     this.expand = (num) => {}
 }
 
-// A class that mocks attribute from geoApi
-function FakeGeoApiAttribute() {
-    this.layerData = new Promise((resolve, reject) => {
+// A class that mocks layer fomr geoApi
+function FakeGeoApiLayerFC() {
+    this.getLayerData = () => {
+        return new Promise((resolve, reject) => {
             resolve([null]);
         });
-}
-
-// A class that mocks layer fomr geoApi
-function FakeGeoApiLayer() {
-    this.attributeBundle = 
-        [new FakeGeoApiAttribute()];
+    }
 }
 
 // A class that mocks fakeGraphicLayer object from Esri
 function FakeGraphicLayer() {
     this._map = new FakeMap();
-    this._hilightGraphics = null;
-    this.addPin;
+    this.graphics = [];
+    this.addMarker;
     this.addHilight;
     this.clearHilight;
-    this.graphic;
-    this.on = (event, graphicToRightHilightLayer) => {}
-    this.add = (pin) => {
-        this.graphic = pin;
+    this.add = g => {
+        this.graphics.push(g);
     }
-    this.clear = () => {}
-    this.remove = (g) => {}
+    this.clear = () => {
+        this.graphics = [];
+    }
 }
 
 // A class that mocks the hilight from geoApi
@@ -174,7 +169,7 @@ describe('hilight', () => {
                 {
                     graphic: new FakeGraphic(), 
                     source: 'server',
-                    layer: new FakeGeoApiLayer(),
+                    layerFC: new FakeGeoApiLayerFC(),
                     featureIdx: 0
                 }
             ];
@@ -192,7 +187,7 @@ describe('hilight', () => {
                 {
                     graphic: (properties) => { return new FakeGraphic(properties) }, 
                     source: 'local',
-                    layer: new FakeGeoApiLayer(),
+                    layerFC: new FakeGeoApiLayerFC(),
                     featureIdx: 0
                 }
             ];
@@ -227,13 +222,13 @@ describe('hilight', () => {
             expect(fakeBundle.GraphicsLayer).toHaveBeenCalled();        
         });
 
-        it('should add a graphic to graphicLayer.graphic.geometry', () => {
+        it('should add a graphic to graphicLayer.graphics[0].geometry', () => {
             const graphicLayer = hilight.makeHilightLayer(fakeBundle);
             let fakePointObject = new FakePoint();
 
-            // testing the method addPin
-            graphicLayer.addPin(fakePointObject);
-            expect(graphicLayer.graphic.geometry).toEqual(fakePointObject);
+            // testing the method addMarker
+            graphicLayer.addMarker(fakePointObject);
+            expect(graphicLayer.graphics[0].geometry).toEqual(fakePointObject);
         });
 
         // The case where the graphics layer had active hilight graphics was
@@ -244,7 +239,7 @@ describe('hilight', () => {
 
             // testing the method addHilight
             graphicLayer.addHilight(FakeHilightGraphicObject);
-            expect(graphicLayer._hilightGraphics[0]).toBe(FakeHilightGraphicObject);
+            expect(graphicLayer.graphics[0]).toBe(FakeHilightGraphicObject);
         });
 
         it('should clear the hilight graphics in the graphic layer', () => {
@@ -252,7 +247,7 @@ describe('hilight', () => {
 
             // testing the method clearHilight
             graphicLayer.clearHilight();
-            expect(graphicLayer._hilightGraphics).toBe(null);
+            expect(graphicLayer.graphics.length).toBe(0);
         });
     });
 });
