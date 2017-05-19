@@ -334,6 +334,13 @@
             return boundingBoxRecord;
         }
 
+        /**
+         * Binds onHover event (for feature layers) and displays a hover tooltip if allowed in the layer config.
+         *
+         * @function _setHoverTips
+         * @private
+         * @param {LayerRecord} layerRecord a layer record to set the hovertips on
+         */
         function _setHoverTips(layerRecord) {
             // TODO: layerRecord returns a promise on layerType to be consistent with dynamic children which don't know their type upfront
             // to not wait on promise, check the layerRecord config
@@ -341,23 +348,9 @@
                 return;
             }
 
-            // TODO: reenable when this option is added to the config
-            /*
-            if (!layerRecord.config.tooltipEnabled) {
+            if (!layerRecord.config.hovertipEnabled) {
                 return;
-            }*/
-
-            // TODO: where to put the template? it shouldn't be in layer registry
-            const tooltipTemplate = `
-                <div class="rv-tooltip-content" ng-if="self.name !== null">
-                    <rv-svg once="false" class="rv-tooltip-graphic" src="self.svgcode"></rv-svg>
-                    <span class="rv-tooltip-text" ng-if="self.name">{{ self.name }}</span>
-                </div>
-
-                <div class="rv-tooltip-content" ng-if="self.name === null">
-                    <span class="rv-tooltip-text">{{ 'maptip.hover.label.loading' | translate }}</span>
-                </div>
-            `;
+            }
 
             let tipContent;
 
@@ -378,7 +371,7 @@
                             graphic: e.target
                         };
 
-                        const tipRef = tooltipService.addHoverTooltip(e.point, tooltipTemplate, tipContent);
+                        const tipRef = tooltipService.addHoverTooltip(e.point, tipContent);
                     },
                     tipLoaded: e => {
                         // update the content of the tip with real data.
