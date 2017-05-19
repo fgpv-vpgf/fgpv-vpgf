@@ -104,10 +104,13 @@ function hilightBuilder(esriBundle) {
         /**
         * Add a graphic to indicate where user clicked.
         * @method addPin
-        * @param {Point} point an ESRI point object to use as the graphic location
+        * @param {Point} point          an ESRI point object to use as the graphic location
+        * @param {Boolean} clearLayer   indicates any previous graphics in the hilight layer should be removed. defaults to false
         */
-        hgl.addMarker = point => {
-            hgl.clear();
+        hgl.addMarker = (point, clearLayer = false) => {
+            if (clearLayer) {
+                hgl.clear();
+            }
 
             const marker = new esriBundle.Graphic({ symbol: markerSymbol });
             marker.setGeometry(point);
@@ -117,10 +120,13 @@ function hilightBuilder(esriBundle) {
         /**
         * Add a graphic or array of graphics to the highlight layer. Remove any previous graphics.
         * @method addHilight
-        * @param {Graphic|Array} graphic an ESRI graphic, or array of ESRI graphics. Should be in map spatialReference, and not bound to a layer
+        * @param {Graphic|Array} graphic  an ESRI graphic, or array of ESRI graphics. Should be in map spatialReference, and not bound to a layer
+        * @param {Boolean} clearLayer   indicates any previous graphics in the hilight layer should be removed. defaults to false
         */
-        hgl.addHilight = graphic => {
-            hgl.clear();
+        hgl.addHilight = (graphic, clearLayer = false) => {
+            if (clearLayer) {
+                hgl.clear();
+            }
 
             const graphics = Array.isArray(graphic) ? graphic : [graphic];
 
