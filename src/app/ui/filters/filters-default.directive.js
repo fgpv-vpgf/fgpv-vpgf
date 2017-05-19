@@ -47,10 +47,8 @@ const ROW_BUTTON_TEMPLATE = (row, disabled) =>
 // max field length accepted
 const fieldLength = 500;
 
-// use by keytable on focus event to prevent focus from jumping when keyboard scroll
-let scrollCell = false; // keep the cell info so when pages redraw, it can focus at the right place
-let draw = false; // if there is a scrollCell on table draw we set draw to true so we know draw has been fired by table redraw and we will need to focus to the right row
-let key = false; // false if user use the mouse to scroll and become true if user use arrow keys to navigate
+// use for keyboard navigation management
+let index; // keep the current selected cell information
 
 /**
  * @module rvFiltersDefault
@@ -170,7 +168,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
 
             // returns array of column indexes we want in the CSV export
             // are not the symbol or interactive column.
-            const exportColumns = (columns) => {
+            const exportColumns = columns => {
                 // map columns to their ordinal indexes. but mark the symbol and interactive column as -1.
                 // then filter out the -1. result is an array of column indexes that
                 // are not the symbol and interactive columns.
@@ -180,7 +178,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
             };
 
             // returns array of column info where .data field has any period characters escaped
-            const escapedColumns = (columns) => {
+            const escapedColumns = columns => {
                 // deep copy so we don't change the displayData.columns array.
                 // that array is used in other places, and messing with it will
                 // break things.
@@ -188,6 +186,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                 copyArray.forEach(column => {
                     column.data = column.data.replace(/\./g, '\\.');
                 });
+
                 return copyArray;
             };
 
@@ -236,9 +235,6 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                         displayBuffer: 10 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer.
                         // see key-focus event to see why we put 10
                     }, // turn on virtual scroller extension
-                    keys: {
-                        keys: [keyNames.LEFT_ARROW, keyNames.UP_ARROW, keyNames.RIGHT_ARROW, keyNames.DOWN_ARROW] // only navigate with arrow key
-                    }, // turn on keytable extension
                     /*select: true,*/ // allow row select,
                     buttons: [
                         // 'excelHtml5',
@@ -365,8 +361,19 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                     const header = el.find('.dataTables_scrollHead th');
                     header.slice(2, header.length).attr('tabindex', '-2');
 
-                    // set keytable extension
-                    setkeytable();
+                    // blur the focused cell on scroll so focus manager/datatables doesn't try to go back to the row
+                    // DOMMouseScroll (FF), mousewheel (Chrome, Safari and IE)
+                    self.tableBody.on('mousewheel DOMMouseScroll', () => {
+                        if (typeof index !== 'undefined') {
+                            self.table.cell(index.row, index.column).node().blur();
+                            index = undefined;
+                        }
+                    });
+
+                    // focus on close button when table open (wcag requirement)
+                    // at the same time it solve a problem because when focus is on menu button, even if focus is on the
+                    // table cell it goes inside the menu and loop through it at the same time as we navigate the table
+                    $rootElement.find('[type=\'filters\'] button.rv-close').rvFocus({ delay: 100 });
                 });
             }
 
@@ -376,9 +383,6 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
              * @private
              */
             function onTableDraw() {
-                // draw has been fired because of scrolling with the keyboard
-                if (scrollCell) { draw = true; }
-
                 // find all the button placeholders
                 Object.values(ROW_BUTTONS).forEach(button => {
 
@@ -399,82 +403,64 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                 });
 
                 // set again tabindex because new lines as been added to the dom
-                $rootElement.find('.dataTables_scrollBody td').attr('tabindex', '-2');
+                $rootElement.find('.dataTables_scrollBody td').attr('tabindex', '-3');
+
+                // set keyboard table navigation management
+                setkeytable();
             }
 
             /**
-             * KeyTable event initialisation.
+             * Manage keyboard table navigation.
              * @function setkeytable
              * @private
              */
             function setkeytable() {
-                // set table cell focusable
-                $rootElement.find('.dataTables_scrollBody td').attr('tabindex', '-2');
+                // check if we need to intialize the variable. We can't do this inside the init event
+                // because draw is fired before
+                self.tableBody = (typeof self.tableBody === 'undefined') ?
+                    $rootElement.find('.dataTables_scrollBody') : self.tableBody;
 
-                // DOMMouseScroll (FF), mousewheel (Chrome, Safari and IE)
-                layoutService.panes.filter.find('.dataTables_scrollBody').on('mousewheel DOMMouseScroll', () => {
-                    // if key is true it means user was using keyboard to navigate datatable so blur the focus
-                    // so datatables doesn't try to put back the focus where it was
-                    // then set user doesn't use keyboard navigation
-                    if (key) {
-                        self.table.cell.blur(); // keytable blur so key-focus event is off
-                        scrollCell.node().blur(); // javascript blur
-                        key = false;
-                    }
+                // when redraw focus is lost, put back focus on current cell
+                if (typeof index !== 'undefined') {
+                    self.table.cell(index.row, index.column).node().rvFocus();
+                }
+
+                // set current cell index when user click a cell
+                self.tableBody.on('click', 'td', event => {
+                    index = self.table.cell(event.currentTarget).index();
                 });
 
-                // focus on close button when table open (wcag requirement)
-                // at the same time it solve a problem because when focus is on menu button, even if focus is on the
-                // table cell it goes inside the menu and loop through it at the same time as we navigate the table
-                $rootElement.find('[type=\'filters\'] button.rv-close').rvFocus({ delay: 100 });
+                // handle keyboard navigation
+                self.tableBody.on('keydown', 'td', event => {
+                    // get index value of currrent cell
+                    index = self.table.cell(event.currentTarget).index();
 
-                // only focus the cell when user stop scrolling with the keyboard
-                self.table.on('key-focus', debounceService.registerDebounce((e, datatable, cell) => {
-                    // if there is a button inside the node, focus to it so keyboard user can interact with it
-                    // pressing tab will focus the next button
-                    const node = $(cell.node()).find('button');
-                    if (node.length === 0) {
-                        cell.node().rvFocus();
-                    } else {
-                        node.first().rvFocus();
-                    }
-                }, 10, false));
+                    // get arrays of rows indexes (specifically if reordered) and the index where it is in the arrays
+                    // get the number of columns
+                    const indexes = self.table.rows().indexes();
+                    const indexOf = indexes.indexOf(index.row);
+                    const columns = self.table.columns()[0].length - 1;
 
-                // when we navigate with the keyboard, the scroller extension has buffer items in memory. Without this
-                // workaround, the keyboard can only navigate inside those items.
-                self.table.on('key-focus', (e, datatable, cell) => {
-                    // known issue: Uncaught TypeError: Cannot read property 'top' of undefine at KeyTable._scroll (core.js:47509)
-                    //              Uncaught TypeError: Cannot read property 'row' of undefined at KeyTable._focus (core.js:47367)
-                    // when we scroll a lot of rows in one shot, datatables information is not updated well and keytable is not able to find where it should go
-                    // so it throws an error. The only way to solve this is to close then reopen the table
-                    // to solve/minimize the problem scroller displayBuffer has been increase from 3 to 10
-
-                    // there is a side effect when we mix mouse and keyboard. After a mouse scroll when we start to reuse the
-                    // keyboard the scroll jump to show the selected item at the second row.
-                    const info = datatable.scroller.page();
-                    const cellInfo = cell.index();
-
-                    if (!key || !draw) {
-                        // need to scroll where the focus is (if outside the visible items). It is not always done automatically
-                        // keep the cell in memory so when there is a draw, we can put back the focus at the right place
-                        scrollCell = cell;
-                        if (cellInfo.row < info.start || cellInfo.row >= info.end) {
-                            self.table.row(cellInfo.row - 1).scrollTo(false); // false because we doesn't want animation
-                        }
-                    } else if (draw) {
-                        // when the rows are drawn, it shift the focus for the active cell. Need to put it back with
-                        // the value in memory
-                        // after the draw, datatable.scroller.page() info are wrong so we can't use them to know if we are
-                        // in the visible area
-                        const focusRow = scrollCell[0][0].row;
-                        self.table.cell(focusRow, cellInfo.column).focus(); // keytable focus, not javascript
-                        self.table.row(focusRow - 1).scrollTo(false); // false because we doesn't want animation
-                        draw = false;
-                        scrollCell = false;
+                    let node;
+                    if (event.keyCode === keyNames.LEFT_ARROW) {
+                        // if try to move before first column, stay on it
+                        node = self.table.cell(index.row, (index.column !== 0) ? index.column - 1 : 0).node();
+                        node.rvFocus();
+                    } else if (event.keyCode === keyNames.RIGHT_ARROW) {
+                        // if try to move after last column, stay on it
+                        node = self.table.cell(index.row, (index.column !== columns) ?
+                            index.column + 1 : index.column).node();
+                        node.rvFocus();
+                    } else if (event.keyCode === keyNames.UP_ARROW) {
+                        node = self.table.cell(indexes[indexOf - 1], index.column).node();
+                        node.rvFocus();
+                    } else if (event.keyCode === keyNames.DOWN_ARROW) {
+                        node = self.table.cell(indexes[indexOf + 1], index.column).node();
+                        node.rvFocus();
                     }
 
-                    // user is using keyboard navigation
-                    key = true;
+                    // set index values. It will be use to blur the cell on mouse scroll
+                    index = self.table.cell(node).index();
                 });
             }
 
@@ -608,11 +594,6 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                 // TODO verify this is the proper location for this line
                 // FIXME: refactor fix needed
                 // geoService.clearHilight();
-
-                // reinitialize to false when table is destroyed
-                scrollCell = false;
-                draw = false;
-                key = false;
             }
         }
     }

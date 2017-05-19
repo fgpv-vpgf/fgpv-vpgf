@@ -19,7 +19,6 @@ import 'datatables.net-buttons';
 import 'datatables.net-buttons/js/buttons.html5.js';
 import 'datatables.net-buttons/js/buttons.print.js';
 import 'datatables.net-colreorder';
-import 'datatables.net-keytable';
 import 'datatables.net-scroller';
 import 'datatables.net-select';
 
