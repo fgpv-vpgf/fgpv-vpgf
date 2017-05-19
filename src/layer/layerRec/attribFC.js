@@ -111,9 +111,17 @@ class AttribFC extends basicFC.BasicFC {
                         title: field.alias || field.name
                     }));
 
+                // derive the icon for the row
+                const rows = aData.features.map(feature => {
+                    const att = feature.attributes;
+                    att.rvInteractive = '';
+                    att.rvSymbol = this._parent._apiRef.symbology.getGraphicIcon(att, lData.renderer);
+                    return att;
+                });
+
                 return {
                     columns,
-                    rows: aData.features.map(feature => feature.attributes),
+                    rows,
                     fields: lData.fields, // keep fields for reference ...
                     oidField: lData.oidField, // ... keep a reference to id field ...
                     oidIndex: aData.oidIndex, // ... and keep id mapping array
