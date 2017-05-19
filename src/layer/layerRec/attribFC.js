@@ -206,7 +206,6 @@ class AttribFC extends basicFC.BasicFC {
     */
     getServerFeatureInfo (objectId) {
         if (this._quickCache[objectId]) {
-            console.log('TEMP FETCH - got from quick cache', objectId);
             return Promise.resolve(this._quickCache[objectId]);
         }
         return new Promise(
@@ -224,7 +223,6 @@ class AttribFC extends basicFC.BasicFC {
                 defData.then(
                     serverFeature => {
                         // server result omits spatial reference
-                        console.log('TEMP FETCH - got from server', objectId);
                         serverFeature.feature.geometry.spatialReference = parent._layer.spatialReference;
                         this._quickCache[objectId] = serverFeature;
                         resolve(serverFeature);
@@ -258,7 +256,6 @@ class AttribFC extends basicFC.BasicFC {
             const myG = layerObj.graphics.find(g =>
                 g.attributes[layerObj.objectIdField] === objId);
             if (myG) {
-                console.log('TEMP FETCH - got from local layer', objId);
                 result.graphic = myG;
                 result.source = 'layer';
                 return Promise.resolve(result);
