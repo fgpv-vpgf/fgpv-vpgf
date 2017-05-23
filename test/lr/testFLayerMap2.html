@@ -27,8 +27,8 @@
             var config1 = {
                 id: 'dog',
                 name: 'Feature Test',
-                url: 'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/2',
-                nameField: 'siteShortName_en',
+                url: 'http://maps-cartes.dev.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/6',
+                nameField: 'Name',
                 metadataUrl: 'http://www.github.com',
                 layerType: 'esriFeature',
                 tolerance: 5,
@@ -68,14 +68,19 @@
             function afterLoadTests() {
                 console.log('enhanced loaded');
                
-                console.log('featurename test - sb pigdog', proxy.getFeatureName('3', {
-                    siteUUID: 'hogleg',
-                    siteNotes_en: 'doglog',
-                    siteShortName_en: 'pigdog',
-                    siteFullName_en: 'gutsy'
+                console.log('featurename test - sb pigdog', proxy.getFeatureName('121', {
+                    Description: 'hogleg',
+                    Category: 'doglog',
+                    Name: 'pigdog',
+                    Year: 'gutsy'
                 }));
 
-                // proxy.setOpacity(0.5);
+                // enable to test maptip lookup from full attribute cache
+                /*
+                layerRec.getAttribs().then(() => {
+                    console.log('attribs downlaoded');
+                });
+                */
             }
 
         });

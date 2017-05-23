@@ -75,8 +75,8 @@ class AttribRecord extends layerRecord.LayerRecord {
         return this._featClasses[this._defaultFC].getFeatureName(objId, attribs);
     }
 
-    fetchGraphic (objId) {
-        return this._featClasses[this._defaultFC].fetchGraphic(objId);
+    fetchGraphic (objId, ignoreLocal = false) {
+        return this._featClasses[this._defaultFC].fetchGraphic(objId, ignoreLocal);
     }
 
     getFeatureCount (url) {

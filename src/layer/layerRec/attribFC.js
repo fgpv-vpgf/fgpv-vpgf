@@ -36,6 +36,10 @@ class AttribFC extends basicFC.BasicFC {
         return this._layerPackage.getAttribs();
     }
 
+    attribsLoaded () {
+        return !!this._layerPackage._attribData;
+    }
+
     /**
     * Returns layer-specific data for this FC.
     *
@@ -247,10 +251,11 @@ class AttribFC extends basicFC.BasicFC {
      * Will attempt local copy, will hit the server if not available.
      *
      * @function fetchGraphic
-     * @param  {Integer} objId ID of object being searched for
+     * @param  {Integer} objId          ID of object being searched for
+     * @param  {Boolean} ignoreLocal    indicates if we should ignore any local graphic in the layer. cached or server value will be used. defaults to false.
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .source is where it came from - 'layer' or 'server'; also .layerFC for convenience
      */
-    fetchGraphic (objId) {
+    fetchGraphic (objId, ignoreLocal = false) {
 
         const layerObj = this._parent._layer;
         const result = {
@@ -260,7 +265,7 @@ class AttribFC extends basicFC.BasicFC {
         };
 
         // if feature layer, check if graphic is already loaded on the client. return it if found.
-        if (layerObj.graphics) {
+        if (!ignoreLocal && layerObj.graphics) {
             const myG = layerObj.graphics.find(g =>
                 g.attributes[layerObj.objectIdField] === objId);
             if (myG) {

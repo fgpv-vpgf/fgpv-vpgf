@@ -134,8 +134,26 @@ class FeatureRecord extends attribRecord.AttribRecord {
     get featureCount () { return this._fcount; }
 
     onMouseOver (e) {
+        /* discussion on quick-lookup.
+        there are two different ways to get attributes from the server for a single feature.
+        1. using the feature rest endpoint (FR)
+        2. using the feature layer's query function (FQ)
+        FR returns a smaller response object (it omits a pile of layer metadata). this is good.
+        FR is used in the hilight module. so we are already caching that response and have the
+        code to make the FR request. this is good.
+        FR always includes the geometry. which means if we hover over a feature with massive geometry and
+        a small attribute set, we will download way more data than we want. this is bad.
+        FQ has a larger response in general (metadata that we dont care about). this is bad.
+        FQ can omit the geometry. this is good.
+        FQ is not being used elsewhere, so we would have to write a new function and cache. this is bad.
+        Conclusion:  for time being, we will use the FR approach. In most cases it will be faster. The
+        one potential problem (massive geometry polys) would only have the impact of the maptip not showing
+        promptly (or timing out).
+        If we find this is a major issue, suggest re-doing fetchGraphic to use FQ for both hover and hilight,
+        adding parameters to include or omit the geometry.
+        */
+
         if (this._hoverListeners.length > 0) {
-            // TODO add in quick lookup for layers that dont have attributes loaded yet
 
             const showBundle = {
                 type: 'mouseOver',
@@ -147,12 +165,32 @@ class FeatureRecord extends attribRecord.AttribRecord {
             this._fireEvent(this._hoverListeners, showBundle);
 
             // pull metadata for this layer.
+            let oid;
             this.getLayerData().then(lInfo => {
-                // TODO this will change a bit after we add in quick lookup. for now, get all attribs
-                return Promise.all([Promise.resolve(lInfo), this.getAttribs()]);
-            }).then(([lInfo, aInfo]) => {
                 // graphic attributes will only have the OID if layer is server based
-                const oid = e.graphic.attributes[lInfo.oidField];
+                oid = e.graphic.attributes[lInfo.oidField];
+
+                let attribSetPromise;
+                if (this._featClasses[this._defaultFC].attribsLoaded()) {
+                    // we have already pulled attributes from the server. use them.
+                    attribSetPromise = this.getAttribs();
+                } else {
+                    // we have not pulled attributes from the server.
+                    // instead of downloading them all, just get the one
+                    // we are interested in
+                    attribSetPromise = this.fetchGraphic(oid, true).then(graphicBundle => {
+                        const fakeSet = {
+                            features: [
+                                graphicBundle.graphic
+                            ],
+                            oidIndex: {}
+                        };
+                        fakeSet.oidIndex[oid] = 0; // because only one feature added above
+                        return fakeSet;
+                    });
+                }
+                return Promise.all([Promise.resolve(lInfo), attribSetPromise]);
+            }).then(([lInfo, aInfo]) => {
 
                 // get name via attribs and name field
                 const featAttribs = aInfo.features[aInfo.oidIndex[oid]].attributes;

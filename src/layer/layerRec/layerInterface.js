@@ -372,14 +372,14 @@ function dynamicLeafAttributesToDetails(attribs, fields) {
     return this._source._parent.attributesToDetails(attribs, fields);
 }
 
-function featureFetchGraphic(oid) {
+function featureFetchGraphic(oid, ignoreLocal = false) {
     /* jshint validthis: true */
-    return this._source.fetchGraphic(oid);
+    return this._source.fetchGraphic(oid, ignoreLocal);
 }
 
-function dynamicLeafFetchGraphic(oid) {
+function dynamicLeafFetchGraphic(oid, ignoreLocal = false) {
     /* jshint validthis: true */
-    return this._source.fetchGraphic(oid);
+    return this._source.fetchGraphic(oid, ignoreLocal);
 }
 
 module.exports = () => ({

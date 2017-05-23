@@ -441,8 +441,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
         return this._featClasses[childIndex].getFormattedAttributes();
     }
 
-    fetchGraphic (childIndex, objId) {
-        return this._featClasses[childIndex].fetchGraphic(objId);
+    fetchGraphic (childIndex, objId, ignoreLocal = false) {
+        return this._featClasses[childIndex].fetchGraphic(objId, ignoreLocal);
     }
 
     /**
