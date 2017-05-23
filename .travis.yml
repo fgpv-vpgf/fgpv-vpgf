@@ -38,6 +38,5 @@ addons:
     packages:
     - g++-4.8
 after_success:
-- npm run start
 - source ./scripts/devdeploy.sh
 - source ./scripts/docdeploy.sh

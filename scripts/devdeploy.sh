@@ -23,8 +23,10 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     fi
 
     echo "Destintation: $DESTDIR"
-    # removes the previous build (necessary for long running branches)
-    ssh "$SSHSRV" rm -f -r "$DESTDIR"
-    ssh "$SSHSRV" mkdir -p "$DESTDIR/dist"
-    rsync -av --delete "build/" "$SSHSRV:$DESTDIR/prod"
+
+    npm run build-prod
+    rsync --delete-before -r "build/" "$SSHSRV:$DESTDIR/prod"
+    rsync --delete-before "dist/" "$SSHSRV:$DESTDIR/dist"
+    npm run build-dev
+    rsync --delete-before -r "build/" "$SSHSRV:$DESTDIR/dev"
 fi

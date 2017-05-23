@@ -9,9 +9,9 @@
 angular
     .module('app.core')
     .constant('version', {
-        major: '_MAJOR_',
-        minor: '_MINOR_',
-        patch: '_PATCH_',
-        hash: '_HASH_',
-        timestamp: '_TIMESTAMP_'
+        major: RVersion.major,
+        minor: RVersion.minor,
+        patch: RVersion.patch,
+        hash: RVersion.gitHash.substring(0, 9),
+        timestamp: + new Date()
     });
