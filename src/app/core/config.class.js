@@ -1448,16 +1448,20 @@
             // holds an array of references to the legendBlock and the corresponding blockConfig objects that belong to a particular layerRecord in the form of
             // { <layerRecordId>: [ { legendBlockId: <String>, blockConfigId: <String> }, ... ] }
             _legendMappings = {};
+            _highlightLayer = null;
 
-            get layerRecords () {       return this._layerRecords; }
-            get layerBlueprints () {    return this._layerBlueprints; }
-            get boundingBoxRecords () { return this._boundingBoxRecords; }
-            get legendBlocks () {       return this._legendBlocks; }
-            set legendBlocks (lb) {     this._legendBlocks = lb; }
-            get legendMappings () {      return this._legendMappings; }
+            get layerRecords () {           return this._layerRecords; }
+            get layerBlueprints () {        return this._layerBlueprints; }
+            get boundingBoxRecords () {     return this._boundingBoxRecords; }
+            get legendBlocks () {           return this._legendBlocks; }
+            set legendBlocks (lb) {         this._legendBlocks = lb; }
+            get legendMappings () {         return this._legendMappings; }
 
-            get instance () {   return this._instance; }
-            get node () {       return this._node; }
+            get highlightLayer () {         return this._highlightLayer; }
+            set highlightLayer (value) {    this._highlightLayer = value; }
+
+            get instance () {               return this._instance; }
+            get node () {                   return this._node; }
 
             storeMapReference(node, instance) {
                 this._node = node;

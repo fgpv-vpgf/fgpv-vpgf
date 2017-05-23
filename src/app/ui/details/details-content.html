@@ -8,20 +8,19 @@
         <p class="rv-nothing" ng-if="self.item.data.length === 0" translate>details.label.noresult</p>
 
         <!-- Feature Key-Value list presentation  -->
-        <ul class="rv-records-list" ng-switch-when="esriFeature">
-            <li ng-repeat="item in self.item.data">
-                <rv-details-record-esrifeature
-                    item="item"
-                    solorecord="self.item.data.length === 1"
-                    requester="self.item.requester"></rv-details-record-esrifeature>
-            </li>
-        </ul>
+        <rv-details-record-esrifeature
+            ng-switch-when="esriFeature"
+            item="self.item"></rv-details-record-esrifeature>
 
         <!-- Plain text presentation  -->
-        <div class="rv-details-text" ng-switch-when="Text" ng-bind-html="self.item.data[0] | autolink"></div>
+        <rv-details-record-text
+            ng-switch-when="Text"
+            item="self.item"></rv-details-record-text>
 
         <!-- Raw HTML presentation  -->
-        <rv-svg class="rv-details-html" ng-switch-when="HTML" src="self.item.data[0]" once="false"></rv-svg>
+        <rv-details-record-html
+            ng-switch-when="HTML"
+            item="self.item"></rv-details-record-html>
 
         <md-divider></md-divider>
     </div>

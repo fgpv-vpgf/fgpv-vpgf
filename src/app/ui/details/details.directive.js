@@ -27,7 +27,7 @@
         return directive;
     }
 
-    function Controller($scope, $element, stateManager, geoService, detailService, SymbologyStack) {
+    function Controller($scope, $element, events, stateManager, mapService, detailService, SymbologyStack) {
         'ngInject';
         const self = this;
 
@@ -58,23 +58,31 @@
          * @param  {Object} item data object
          */
         function selectItem(item) {
+            // item.data contains layer hits returned by identify
+            if (item && item.data.length > 0) {
+                // clear all highlighted features when the user switches to a different layer in the details layer selector which has hits
+                mapService.clearHighlight();
+            } else if (self.display.requester) {
+                // adding marker highlight to highlight the click point because there is no hits on the selected layer
+                mapService.addMarkerHighlight(self.display.requester.mapPoint, true);
+            }
+
+            if (self.selectedItem === item) {
+                // re-highlight features in this item
+                // the previous highlight might have been cancelled by panning, and the user can re-highlihght feature by clicking on the selected layer again
+                $scope.$broadcast(events.rvHighlightFeature, item);
+
+                // this item is already selected; exiting;
+                return;
+            }
+
             self.selectedItem = item;
             self.selectedLayerProxy = item ? item.requester.proxy : null;
 
             self.display.selectedItem = self.selectedItem;
-
-            // add hilights to all things in the layer.
-            // featureIdx can be 0, so no falsy checks allowed
-            // TODO is this the appropriate place for hilighting code?
-            // FIXME: refactor restore
-            /*
-            if (item && item.requester && typeof item.requester.featureIdx !== 'undefined') {
-                geoService.hilightGraphic(item.requester.layerRec, item.requester.featureIdx,
-                    item.data.map(d => d.oid));
-            }*/
         }
 
-        $scope.$watch('self.display.data', newValue => {
+        $scope.$watch('self.display.data', (newValue, oldValue) => {
             // if multiple points added to the details panel ...
             if (newValue && newValue.length > 0) {
                 // pick selected item user previously selected one, otherwise pick the first one
@@ -83,8 +91,8 @@
                 // wrap symbology returned by the proxy into a symbology stack object
                 newValue.forEach(item =>
                     (item.requester.symbologyStack = new SymbologyStack(item.requester.proxy)));
-            } else {
-                self.selectItem(null);
+            } else if (oldValue) {
+                selectItem(null);
             }
         });
     }
