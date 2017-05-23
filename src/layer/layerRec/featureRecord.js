@@ -232,24 +232,17 @@ class FeatureRecord extends attribRecord.AttribRecord {
         // TODO add full documentation for options parameter
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
-        if (this.state === shared.states.ERROR ||
-            this.state === shared.states.LOADING ||
-            this.state === shared.states.NEW ||
+        if (!shared.layerLoaded(this.state) ||
             !this.visibility ||
             !this.isQueryable() ||
             this.isOffScale(opts.map.getScale()).offScale) {
-            /*
-            console.log('early identify - state', this.state);
-            console.log('early identify - visible', this.visibility);
-            console.log('early identify - query', this.isQueryable());
-            console.log('early identify - offscale', this.isOffScale(opts.map.getScale()).offScale);
-            */
 
             // TODO verifiy this is correct result format if layer should be excluded from the identify process
             return { identifyResults: [], identifyPromise: Promise.resolve() };
         }
 
         const identifyResult = new shared.IdentifyResult(this.getProxy());
+        const tolerance = opts.tolerance || this.clickTolerance;
 
         // run a spatial query
         const qry = new this._apiRef.layer.Query();
@@ -261,7 +254,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         if (this._layer.geometryType === 'esriGeometryPolygon' && !this.isFileLayer()) {
             qry.geometry = opts.geometry;
         } else {
-            qry.geometry = this.makeClickBuffer(opts.clickEvent.mapPoint, opts.map, this.clickTolerance);
+            qry.geometry = this.makeClickBuffer(opts.clickEvent.mapPoint, opts.map, tolerance);
         }
 
         const identifyPromise = Promise.all([

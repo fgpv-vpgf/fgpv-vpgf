@@ -70,6 +70,17 @@ function parseUrlIndex(url) {
     return result;
 }
 
+function layerLoaded(state) {
+    switch (state) {
+        case states.ERROR:
+        case states.LOADING:
+        case states.NEW:
+            return false;
+        default:
+            return true;
+    }
+}
+
 /**
  * @class IdentifyResult
  */
@@ -94,5 +105,6 @@ module.exports = () => ({
     clientLayerType,
     makeSymbologyArray,
     IdentifyResult,
-    parseUrlIndex
+    parseUrlIndex,
+    layerLoaded
 });

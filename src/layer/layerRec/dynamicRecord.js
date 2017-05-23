@@ -498,9 +498,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // bundles results from all leaf layers
         const identifyResults = [];
 
-        if (this.state === shared.states.ERROR ||
-            this.state === shared.states.LOADING ||
-            this.state === shared.states.NEW) {
+        if (!shared.layerLoaded(this.state)) {
             opts.layerIds = []; // quick quit
         } else {
             opts.layerIds = this._layer.visibleLayers
@@ -533,7 +531,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
             identifyResults[leafIndex] = identifyResult;
         });
 
-        opts.tolerance = this.clickTolerance;
+        // TODO verify if 0 is valid click tolerance. if so, need to address falsy logic.
+        opts.tolerance = opts.tolerance || this.clickTolerance || 5;
 
         const identifyPromise = this._apiRef.layer.serverLayerIdentify(this._layer, opts)
             .then(clickResults => {
