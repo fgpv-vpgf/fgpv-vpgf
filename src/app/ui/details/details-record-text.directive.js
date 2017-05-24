@@ -25,7 +25,8 @@
             restrict: 'E',
             templateUrl: 'app/ui/details/details-record-text.html',
             scope: {
-                item: '='
+                item: '=',
+                mapPoint: '='
             },
             controller: Controller,
             controllerAs: 'self',
@@ -39,13 +40,30 @@
         'ngInject';
         const self = this;
 
-        $scope.$on(events.rvHighlightFeature, (event, item) => {
+        $scope.$on(events.rvHighlightDetailsItem, (event, item) => {
             if (item !== self.item) {
                 return;
             }
 
-            // adding marker highlight the click point because the layer doesn't support feature highlihght (not discernible geometry)
-            mapService.addMarkerHighlight(self.item.requester.mapPoint, true);
+            _redrawHighlight();
         });
+
+        // watch for selected item changes; reset the highlight;
+        $scope.$watch('self.item', newValue => {
+            if (typeof newValue !== 'undefined') {
+                _redrawHighlight();
+            }
+        });
+
+        /**
+         * Redraws marker highlight for text records.
+         *
+         * @function _redrawHighlight
+         * @private
+         */
+        function _redrawHighlight() {
+            // adding marker highlight the click point because the layer doesn't support feature highlihght (not discernible geometry)
+            mapService.addMarkerHighlight(self.mapPoint, true);
+        }
     }
 })();

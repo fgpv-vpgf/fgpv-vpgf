@@ -1,7 +1,8 @@
 <ul class="rv-records-list">
     <li ng-repeat="item in self.item.data">
         <rv-details-record-esrifeature-item
-            highlight="self.highlightFeature(item.oid)"
+            toggle-highlight="self.toggleHighlight"
+            init-highlight="self.initHighlight"
             item="item"
             solorecord="self.item.data.length === 1"
             requester="self.item.requester"></rv-details-record-esrifeature-item>

@@ -147,6 +147,18 @@
                 }
             }
 
+            & > .md-button {
+                margin: 0;
+
+                &:first-child {
+                    margin-left: rem(0.6);
+                }
+
+                &:last-child {
+                    margin-right: rem(0.6);
+                }
+            }
+
             // hide layer toggles except the visibility toggle
             & > * {
                 display: none;

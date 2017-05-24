@@ -24,7 +24,8 @@
                 item: '=',
                 requester: '=',
                 solorecord: '=',
-                highlight: '&'
+                toggleHighlight: '=',
+                initHighlight: '='
             },
             link: link,
             controller: Controller,
@@ -53,8 +54,8 @@
             // wrap raw symbology item into a symbology stack object
             self.item.symbologyStack = new SymbologyStack({}, self.item.symbology);
 
-            // higlight this feature as soon as the directive renders
-            self.highlight();
+            // highlight the feature as soon as it renders
+            self.initHighlight(self.item.oid);
 
             // FIXME: this no longer works
             function triggerZoom() {
@@ -89,6 +90,8 @@
         function toggleDetails() {
             self.isRendered = true;
             self.isExpanded = !self.isExpanded;
+
+            self.toggleHighlight(self.item.oid, self.isExpanded);
         }
 
         /**

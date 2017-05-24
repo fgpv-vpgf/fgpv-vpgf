@@ -10,16 +10,19 @@
         <!-- Feature Key-Value list presentation  -->
         <rv-details-record-esrifeature
             ng-switch-when="esriFeature"
+            map-point="self.mapPoint"
             item="self.item"></rv-details-record-esrifeature>
 
         <!-- Plain text presentation  -->
         <rv-details-record-text
             ng-switch-when="Text"
+            map-point="self.mapPoint"
             item="self.item"></rv-details-record-text>
 
         <!-- Raw HTML presentation  -->
         <rv-details-record-html
-            ng-switch-when="HTML"
+            ng-switch-when="ogcWms"
+            map-point="self.mapPoint"
             item="self.item"></rv-details-record-html>
 
         <md-divider></md-divider>

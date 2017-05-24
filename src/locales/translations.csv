@@ -26,6 +26,7 @@ Appbar aria label for tools icon,appbar.aria.tools,Tools,Outils
 rv-truncate directive show more,rv-truncate.showMore,Show More,Montrer davantage
 rv-truncate directive show less,rv-truncate.showLess,Hide,Masquer
 Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,Zoom à l'élément
+,filter.tooltip.highlight,Show on map,Afficher sur la carte
 Tooltip text for Details,filter.tooltip.description,Details,Détails
 Tooltip text for No Zoom Projection,filter.tooltip.nozoom,Data in custom projection. Cannot zoom to feature.,La donnée utilise une projection personnalisée. Le zoom à l'élément n'est pas supporté.
 DataTable text for Processing,filter.default.label.processing,Processing...,Traitement en cours...

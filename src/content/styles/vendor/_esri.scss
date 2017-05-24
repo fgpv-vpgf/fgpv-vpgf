@@ -29,7 +29,7 @@
         &.rv-map-highlight .esriMapLayers {
             > div:not(:first-child),
             > svg > g:not([id="rv_hilight_layer"]) {
-                    opacity: 0.2 !important;
+                    opacity: 0.1 !important;
             }
 
             > svg > g[id="rv_hilight_layer"] {
