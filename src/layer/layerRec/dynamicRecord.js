@@ -163,6 +163,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
             clone.index = origConfig.index;
             clone.stateOnly = origConfig.stateOnly;
             clone.nameField = origConfig.nameField;
+            clone.highlightFeature = origConfig.highlightFeature || true; // simple default
 
             // an empty string is a valid property, so be wary of falsy logic
             clone.outfields = origConfig.hasOwnProperty('outfields') ? origConfig.outfields : '*';
@@ -313,6 +314,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
             const subC = subConfigs[idx].config;
             const attribPackage = this._apiRef.attribs.loadServerAttribs(this._layer.url, idx, subC.outfields);
             const dFC = new dynamicFC.DynamicFC(this, idx, attribPackage, subC);
+            dFC.highlightFeature = subC.highlightFeature;
             this._featClasses[idx] = dFC;
 
             // if we have a proxy watching this leaf, replace its placeholder with the real data
@@ -439,6 +441,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
         return this._featClasses[childIndex].getFormattedAttributes();
     }
 
+    fetchGraphic (childIndex, objId, ignoreLocal = false) {
+        return this._featClasses[childIndex].fetchGraphic(objId, ignoreLocal);
+    }
+
     /**
      * Check to see if the attribute in question is an esriFieldTypeDate type.
      *
@@ -492,9 +498,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // bundles results from all leaf layers
         const identifyResults = [];
 
-        if (this.state === shared.states.ERROR ||
-            this.state === shared.states.LOADING ||
-            this.state === shared.states.NEW) {
+        if (!shared.layerLoaded(this.state)) {
             opts.layerIds = []; // quick quit
         } else {
             opts.layerIds = this._layer.visibleLayers
@@ -527,7 +531,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
             identifyResults[leafIndex] = identifyResult;
         });
 
-        opts.tolerance = this.clickTolerance;
+        // TODO verify if 0 is valid click tolerance. if so, need to address falsy logic.
+        opts.tolerance = opts.tolerance || this.clickTolerance || 5;
 
         const identifyPromise = this._apiRef.layer.serverLayerIdentify(this._layer, opts)
             .then(clickResults => {

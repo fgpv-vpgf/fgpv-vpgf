@@ -1,6 +1,7 @@
 'use strict';
 const root = require('./root.js')();
 const shared = require('./shared.js')();
+const rcolour = require('rcolor');
 
 class PlaceholderFC extends root.Root {
     // contains dummy stuff to stop placeholder states from freaking out
@@ -12,11 +13,9 @@ class PlaceholderFC extends root.Root {
         this.name = name;
         this._layerType = shared.clientLayerType.UNKNOWN;
 
-        // TODO random colours
-        this.symbology = [parent._apiRef.symbology.generatePlaceholderSymbology(name || '?', '#16bf27')];
+        const c = rcolour({ saturation: 0.4, value: 0.8 });
+        this.symbology = [parent._apiRef.symbology.generatePlaceholderSymbology(name || '?', c)];
     }
-
-    // TODO probably need more stuff
 
     getVisibility () {
         // TODO enhance to have some default value, assigned in constructor?

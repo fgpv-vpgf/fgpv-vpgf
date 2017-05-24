@@ -9,8 +9,7 @@ const attribFC = require('./attribFC.js')();
 class AttribRecord extends layerRecord.LayerRecord {
     // this class has functions common to layers that have attributes
 
-    // FIXME clickTolerance is not specific to AttribRecord but rather Feature and Dynamic
-    get clickTolerance () { return this.config.tolerance; }
+    get clickTolerance () { return this._tolerance; }
 
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
@@ -27,6 +26,7 @@ class AttribRecord extends layerRecord.LayerRecord {
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
 
         this._esriRequest = esriRequest;
+        this._tolerance = this.config.tolerance;
     }
 
     /**
@@ -73,6 +73,10 @@ class AttribRecord extends layerRecord.LayerRecord {
 
     getFeatureName (objId, attribs) {
         return this._featClasses[this._defaultFC].getFeatureName(objId, attribs);
+    }
+
+    fetchGraphic (objId, ignoreLocal = false) {
+        return this._featClasses[this._defaultFC].fetchGraphic(objId, ignoreLocal);
     }
 
     getFeatureCount (url) {

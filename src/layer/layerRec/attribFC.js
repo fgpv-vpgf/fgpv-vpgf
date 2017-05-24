@@ -23,8 +23,7 @@ class AttribFC extends basicFC.BasicFC {
         this._layerPackage = layerPackage;
         this._geometryType = undefined; // this indicates unknown to the ui.
         this._fcount = undefined;
-
-        // moar?
+        this._quickCache = {};
     }
 
     /**
@@ -35,6 +34,10 @@ class AttribFC extends basicFC.BasicFC {
     */
     getAttribs () {
         return this._layerPackage.getAttribs();
+    }
+
+    attribsLoaded () {
+        return !!this._layerPackage._attribData;
     }
 
     /**
@@ -112,9 +115,17 @@ class AttribFC extends basicFC.BasicFC {
                         title: field.alias || field.name
                     }));
 
+                // derive the icon for the row
+                const rows = aData.features.map(feature => {
+                    const att = feature.attributes;
+                    att.rvInteractive = '';
+                    att.rvSymbol = this._parent._apiRef.symbology.getGraphicIcon(att, lData.renderer);
+                    return att;
+                });
+
                 return {
                     columns,
-                    rows: aData.features.map(feature => feature.attributes),
+                    rows,
                     fields: lData.fields, // keep fields for reference ...
                     oidField: lData.oidField, // ... keep a reference to id field ...
                     oidIndex: aData.oidIndex, // ... and keep id mapping array
@@ -200,8 +211,79 @@ class AttribFC extends basicFC.BasicFC {
         return newA;
     }
 
-   // TODO perhaps a splitting of server url and layer index to make things consistent between feature and dynamic?
-   //      could be on constructor, then parent can easily feed in the treats.
+    /**
+    * Fetches feature information, including geometry, from esri servers for feature layer.
+    * @param {Integer} objectId for feature to be retrived from the server
+    * @returns {Promise} promise resolves with an esri Graphic (http://resources.arcgis.com/en/help/arcgis-rest-api/#/Feature_Map_Service_Layer/02r3000000r9000000/)
+    */
+    getServerFeatureInfo (objectId) {
+        if (this._quickCache[objectId]) {
+            return Promise.resolve(this._quickCache[objectId]);
+        }
+        return new Promise(
+            (resolve, reject) => {
+                const parent = this._parent;
+                const defData = parent._esriRequest({
+                    url: `${parent.rootUrl}/${this._idx}/${objectId}`,
+                    content: {
+                        f: 'json',
+                    },
+                    callbackParamName: 'callback',
+                    handleAs: 'json'
+                });
+
+                defData.then(
+                    serverFeature => {
+                        // server result omits spatial reference
+                        serverFeature.feature.geometry.spatialReference = parent._layer.spatialReference;
+                        this._quickCache[objectId] = serverFeature;
+                        resolve(serverFeature);
+                    }, error => {
+                        console.warn(error);
+                        reject(error);
+                    }
+                );
+            });
+    }
+
+    /**
+     * Fetches a graphic from the given layer.
+     * Will attempt local copy, will hit the server if not available.
+     *
+     * @function fetchGraphic
+     * @param  {Integer} objId          ID of object being searched for
+     * @param  {Boolean} ignoreLocal    indicates if we should ignore any local graphic in the layer. cached or server value will be used. defaults to false.
+     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .source is where it came from - 'layer' or 'server'; also .layerFC for convenience
+     */
+    fetchGraphic (objId, ignoreLocal = false) {
+
+        const layerObj = this._parent._layer;
+        const result = {
+            graphic: null,
+            source: null,
+            layerFC: this
+        };
+
+        // if feature layer, check if graphic is already loaded on the client. return it if found.
+        if (!ignoreLocal && layerObj.graphics) {
+            const myG = layerObj.graphics.find(g =>
+                g.attributes[layerObj.objectIdField] === objId);
+            if (myG) {
+                result.graphic = myG;
+                result.source = 'layer';
+                return Promise.resolve(result);
+            }
+        }
+
+        // were not able to get a local copy of the graphic. to the server!
+        // TODO add some error handling. Cases: failed server call. server call is not a feature
+        return this.getServerFeatureInfo(objId)
+            .then(featureInfo => {
+                result.graphic = featureInfo.feature;
+                result.source = 'server';
+                return result;
+            });
+    }
 
 }
 

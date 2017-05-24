@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Feature Layer Identify Test Page</title>
+    <title>Feature Layer Hilight Test Page</title>
     <style>
         .layerTile { position: absolute; }
     </style>
@@ -17,23 +17,12 @@
 
         var map;
         var layerRec;
+        var mahGrafix
 
         function clickHandler(clickBundle) {
             console.log('MOUSE CLICK EVENT', clickBundle);
 
-            const opts = {
-                map: map,
-                clickEvent: clickBundle,
-                geometry: clickBundle.mapPoint,
-                width: map.width,
-                height: map.height,
-                mapExtent: map.extent,
-            };
-
-            const { identifyResults, identifyPromise } = layerRec.identify(opts);
-
-            console.log('IDENTIFY RESULT', identifyResults);
-            console.log('IDENTIFY PROMISE', identifyPromise);
+            mahGrafix.addMarker(clickBundle.mapPoint);
 
         }
 
@@ -45,8 +34,8 @@
             var config1 = {
                 id: 'dog',
                 name: 'Feature Test',
-                url: 'http://maps-cartes.dev.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer/6',
-                nameField: 'Name',
+                url: 'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/2',
+                nameField: 'siteShortName_en',
                 metadataUrl: 'http://www.github.com',
                 layerType: 'esriFeature',
                 tolerance: 5,
@@ -71,11 +60,30 @@
             map = new eb.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-110, 55] });
             map.addLayer(layerRec._layer);
             console.log('mah map', map);
-            
+
+
+            mahGrafix = api.hilight.makeHilightLayer({});
+            map.addLayer(mahGrafix);
+            console.log("glayer", mahGrafix); 
+
             // add identify handler
             // layerRec.addHoverListener(hoverOverHandler);
 
             map.on('click', clickHandler);
+
+            function doHilight(oid) {
+                var gPromise = proxy.fetchGraphic(oid);
+                gPromise.then(gBundle => {
+                    var ubGraphics = api.hilight.getUnboundGraphics([gBundle], map.spatialReference);
+                    
+                    ubGraphics[0].then(unboundG => {
+                        console.log('unbound graphic for hilighting ', unboundG);
+                        mahGrafix.addHilight(unboundG);
+                    });
+                    
+                });
+
+            }
 
             // hack to wait for layer to load
             var to = setInterval(() => {
@@ -89,7 +97,11 @@
                 console.log('enhanced loaded');
                
                 proxy.zoomToBoundary(map);
-                // proxy.setOpacity(0.5);
+                
+                setTimeout(() => {
+                    doHilight(47202);
+                }, 5000);
+
             }
 
         });
