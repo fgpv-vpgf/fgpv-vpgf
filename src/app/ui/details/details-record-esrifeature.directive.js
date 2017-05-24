@@ -7,92 +7,131 @@
      * @restrict E
      * @description
      *
-     * The `rvDetailsRecordEsrifeature` directive renders a single identify result from an esri feature (and dynamic) layers.
-     * This directive is used to delay rendering of identify results. Sometimes there are hundreds of them and users are unlikely to look at most of them. The details record sections are collapsed and nothing beyond the title is added to the dom.
-     * Identify results is rendered when the collapsed section header is hovered over or receives focus. This removes the slight delay when compiled html is inseted into the template on section expand.
+     * The `rvDetailsRecordEsrifeature` directive renders the data content of details.
      *
      */
     angular
-        .module('app.ui.details')
+        .module('app.ui')
         .directive('rvDetailsRecordEsrifeature', rvDetailsRecordEsrifeature);
 
-    function rvDetailsRecordEsrifeature(geoService, Geo, SymbologyStack) {
+    /**
+     * `rvDetailsRecordEsrifeature` directive body.
+     *
+     * @function rvDetailsRecordEsrifeature
+     * @return {object} directive body
+     */
+    function rvDetailsRecordEsrifeature() {
         const directive = {
             restrict: 'E',
             templateUrl: 'app/ui/details/details-record-esrifeature.html',
             scope: {
-                item: '=item',
-                requester: '=requester',
-                solorecord: '='
+                item: '=',
+                mapPoint: '='
             },
-            link: link,
             controller: Controller,
             controllerAs: 'self',
             bindToController: true
         };
 
         return directive;
-
-        /***/
-
-        function link(scope, el) {
-            const self = scope.self;
-
-            const excludedColumns = ['rvSymbol', 'rvInteractive'];
-
-            self.isExpanded = self.solorecord;
-            self.isRendered = self.solorecord;
-
-            self.triggerZoom = triggerZoom;
-
-            // pre-filter the columns used by the datagrid out of the returned data
-            self.item.data = self.item.data.filter(column =>
-                excludedColumns.indexOf(column.key) === -1);
-
-            // wrap raw symbology item into a symbology stack object
-            self.item.symbologyStack = new SymbologyStack({}, self.item.symbology);
-
-            // FIXME: this no longer works
-            function triggerZoom() {
-                let entry = self.requester.layerRec.legendEntry;
-
-                // for dynamic layer we need to find the right layer entry inside the service to link to the proper layer
-                // we need this espcially for scale dependant layer for the "zoom to" to go to the proper zoom level for the
-                // selected layer
-                if (entry.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                    const index = entry.layerEntries.findIndex(item =>
-                        item.index === self.requester.featureIdx);
-                    entry = entry.items[index];
-                }
-
-                geoService.zoomToGraphic(self.requester.layerRec, entry,
-                    self.requester.featureIdx, self.item.oid);
-            }
-        }
     }
 
-    function Controller() {
+    function Controller($scope, events, mapService) {
+        'ngInject';
         const self = this;
 
-        self.toggleDetails = toggleDetails;
-        self.zoomToFeature = zoomToFeature;
+        self.initHighlight = initHighlight;
+        self.toggleHighlight = toggleHighlight;
+
+        let oidsAll = [];
+        let oidsToHighlight = [];
+
+        // redraw highlight when the already selected item is clicked in the details layer selector
+        $scope.$on(events.rvHighlightDetailsItem, (event, item) => {
+            if (item !== self.item) {
+                return;
+            }
+
+            _redrawHighlight();
+        });
+
+        // watch for selected item changes; reset the highlight;
+        $scope.$watch('self.item', newValue => {
+            if (typeof newValue !== 'undefined') {
+                oidsAll = [];
+                oidsToHighlight = [];
+
+                _redrawHighlight();
+            }
+        });
+
+        return;
 
         /**
-         * Expand/collapse identify record section.
-         * @function toggleDetails
+         * Highlights the feature with oid specified just after it renders on the page.
+         *
+         * @function initHighlight
+         * @param {String} oid feature oid
          */
-        function toggleDetails() {
-            self.isRendered = true;
-            self.isExpanded = !self.isExpanded;
+        function initHighlight(oid) {
+            if (oidsAll.length === 0) {
+                mapService.clearHighlight();
+            }
+
+            oidsAll.push(oid);
+            _drawFeatureHighlight(oid)
         }
 
         /**
-         * Zoom to identify result's feature
-         * TODO: implement
-         * @function zoomToFeature
+         * Highlights the feature with oid specified by adding it to the highlight layer.
+         *
+         * @function toggleHighlight
+         * @param {String} oid id of the feature to be highlighted
+         * @param {Boolean} value `true` if the oid should be highlighted; `false` if the oid should be dehighlighted
          */
-        function zoomToFeature() {
-            self.triggerZoom();
+        function toggleHighlight(oid, value) {
+
+            const index = oidsToHighlight.indexOf(oid);
+            if (value && index === -1) {
+                oidsToHighlight.push(oid);
+            } else if (index !== -1) {
+                oidsToHighlight.splice(index, 1);
+            }
+
+            _redrawHighlight();
+        }
+
+        /**
+         * Redraws highlight of the details feature set.
+         * If there are some "expanded" features, only they are added to the highlight layer;
+         * if there are no "expanded" features, all features are added to the highlight layer;
+         * if there are not features, a marker is added at the click point to indicated absence of hits;
+         *
+         * @function _redrawHighlight
+         * @private
+         */
+        function _redrawHighlight() {
+            const oids = oidsToHighlight.length > 0 ? oidsToHighlight : oidsAll;
+
+            mapService.clearHighlight();
+
+            if (oids.length > 0) {
+                oids.forEach(oid => _drawFeatureHighlight(oid));
+            } else if (self.mapPoint) {
+                mapService.addMarkerHighlight(self.mapPoint, true);
+            }
+        }
+
+        /**
+         * Adds a feature with the specified oid to the highlith layer.
+         *
+         * @function _drawFeatureHighlight
+         * @private
+         * @param {String} oid if of the feature to be highlighted
+         */
+        function _drawFeatureHighlight(oid) {
+            const graphiBundlePromise = self.item.requester.proxy.fetchGraphic(oid);
+            mapService.addGraphicHighlight(graphiBundlePromise, true);
         }
     }
 })();

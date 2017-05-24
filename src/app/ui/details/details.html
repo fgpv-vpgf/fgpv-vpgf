@@ -21,7 +21,9 @@ WARNING be sure to change the detail content display logic in both blocks (singl
 
         <md-content class="rv-details-data rv-content"
             rv-detect-scrollbar
-            rv-details-content rv-item="self.selectedItem">
+            rv-details-content
+            rv-item="self.selectedItem"
+            rv-map-point="self.display.requester.mapPoint">
         </md-content>
 
     </div>
@@ -33,7 +35,10 @@ WARNING be sure to change the detail content display logic in both blocks (singl
 
         <md-content class="rv-details-data rv-content"
             rv-detect-scrollbar
-            rv-details-content rv-item="self.selectedItem" rv-is-hidden="(self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data">
+            rv-details-content
+            rv-item="self.selectedItem"
+            rv-map-point="self.display.requester.mapPoint"
+            rv-is-hidden="(self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data">
         </md-content>
 
         <!-- the detail content  -->

@@ -13,7 +13,7 @@
         .module('app.ui.filters')
         .factory('detailService', detailService);
 
-    function detailService($mdDialog, stateManager, geoService, storageService) {
+    function detailService($mdDialog, stateManager, mapService, storageService) {
 
         const service = {
             expandPanel,
@@ -52,8 +52,9 @@
          */
         function closeDetails() {
             stateManager.clearDisplayPanel('mainDetails');
-            // FIXME: refactor fix needed
-            // geoService.clearHilight();
+
+            // remove highlighted features and the haze when the details panel is closed
+            mapService.clearHighlight(false);
 
             if (stateManager.panelHistory.find(x => x === 'mainToc')) {
                 stateManager.togglePanel('mainDetails', 'mainToc');

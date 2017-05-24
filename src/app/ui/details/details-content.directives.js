@@ -28,6 +28,7 @@
             templateUrl: 'app/ui/details/details-content.html',
             scope: {
                 item: '=rvItem',
+                mapPoint: '=rvMapPoint',
                 isHidden: '=?rvIsHidden'
             },
             controller: () => {},

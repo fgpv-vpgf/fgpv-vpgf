@@ -18,6 +18,25 @@
     .esriPopup {
         display: none;
     }
+
+    .rv-esri-map {
+        .esriMapLayers {
+            > div, > svg > g {
+                transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            }
+        }
+
+        &.rv-map-highlight .esriMapLayers {
+            > div:not(:first-child),
+            > svg > g:not([id="rv_hilight_layer"]) {
+                    opacity: 0.1 !important;
+            }
+
+            > svg > g[id="rv_hilight_layer"] {
+                opacity: 1 !important;
+            }
+        }
+    }
 }
 
 @mixin scalebar {

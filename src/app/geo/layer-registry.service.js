@@ -211,7 +211,7 @@
              * @private
              */
             function _advanceLoadingQueue() {
-                synchronizeLayerOrder(configService.getSync.map.layerRecords);
+                synchronizeLayerOrder();
                 ref.loadingCount = Math.max(--ref.loadingCount, 0);
                 _loadNextLayerRecord();
             }
@@ -224,9 +224,10 @@
          * @function synchronizeLayerOrder
          * @param {Array} layerRecords an array of layer records ordered as visible to the user in the layer selector UI component
          */
-        function synchronizeLayerOrder(layerRecords) {
+        function synchronizeLayerOrder(layerRecords = configService.getSync.map.layerRecords) {
             const mapBody = configService.getSync.map.instance;
             const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
+            const highlightLayer = configService.getSync.map.highlightLayer;
 
             const mapLayerStacks = {
                 0: mapBody.graphicsLayerIds,
@@ -243,6 +244,11 @@
             const featureStackLastIndex = mapLayerStacks['0'].length - 1;
             boundingBoxRecords.forEach(boundingBoxRecord =>
                 mapBody.reorderLayer(boundingBoxRecord, featureStackLastIndex));
+
+            // push the highlight layer on top of everything else
+            if (highlightLayer) {
+                mapBody.reorderLayer(highlightLayer, featureStackLastIndex);
+            }
 
             /**
              * A helper function which synchronizes a single sort group of layers between the layer selector and internal layer stack.

@@ -81,8 +81,13 @@
                 isLoaded: $q.all(allLoadingPromises).then(() => true)
             };
 
+            // store the mappoint in the requester so it's possible to show a marker if there is no feature to highlight
+            const requester = {
+                mapPoint: clickEvent.mapPoint
+            };
+
             // show details panel only when there is data
-            stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
+            stateManager.toggleDisplayPanel('mainDetails', details, requester, 0);
 
             /**
              * Modifies identify promises to always resolve, never reject.

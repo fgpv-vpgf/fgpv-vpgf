@@ -65,6 +65,8 @@
             rvMouseMove: 'rvMouseMove', // Fired when mouse move over the map (use to calculate mouse coordinates)
             rvBasemapChange: 'rvBasemapChange', // Fired when basemap is changed
 
+            rvHighlightDetailsItem: 'rvHighlightDetailsItem',
+
             rvGeosearchClose: 'rvGeosearchClose' // Fire when geosearch close
         };
     }

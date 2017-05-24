@@ -18,7 +18,11 @@
         const service = {
             makeMap,
             setAttribution,
-            zoomToLatLong
+            zoomToLatLong,
+
+            addGraphicHighlight,
+            addMarkerHighlight,
+            clearHighlight
         };
 
         return service;
@@ -104,7 +108,6 @@
             const mapInstance = new gapi.Map(mapNode, mapSettings);
 
             mapConfig.storeMapReference(mapNode, mapInstance);
-
             mapConfig.instance.selectBasemap(mapConfig.selectedBasemap);
 
             _setMapListeners(mapConfig);
@@ -178,9 +181,8 @@
             gapi.events.wrapEvents(mapConfig.instance, {
                 load: () => {
                     // setup hilight layer
-                    // TODO: fix layer highlighting
-                    //geoState.hilight = gapi.hilight.makeHilightLayer();
-                    // mapBody.addLayer(geoState.hilight);
+                    mapConfig.highlightLayer = gapi.hilight.makeHilightLayer({});
+                    mapConfig.instance.addLayer(mapConfig.highlightLayer);
 
                     // setup full extent
                     // TODO: full and max extents can be retrieved directly from the selectedBasemap
@@ -200,8 +202,13 @@
 
                     _setLoadingFlag(true, 300);
                 },
-                'extent-change': data =>
-                    events.$broadcast(events.rvExtentChange, data),
+                'extent-change': data => {
+                    // remove highlighted features and the haze when the map is panned, zoomed, etc.
+                    if (data.delta.x !== 0 || data.delta.y !== 0 || data.levelChange) {
+                        clearHighlight(false);
+                    }
+                    events.$broadcast(events.rvExtentChange, data);
+                },
                 'mouse-move': data =>
                     events.$broadcast(events.rvMouseMove, data.mapPoint),
                 'update-end': () => {
@@ -209,8 +216,11 @@
 
                     _setLoadingFlag(false, 100);
                 },
-                click: identifyService.identify
-
+                click: clickEvent => {
+                    clearHighlight();
+                    addMarkerHighlight(clickEvent.mapPoint);
+                    identifyService.identify(clickEvent);
+                }
             });
 
             /**
@@ -224,6 +234,71 @@
                 $timeout.cancel(mapLoadingTimeout);
                 mapLoadingTimeout = $timeout(() =>
                     (mapConfig.isMapLoading = isLoading), delay);
+            }
+        }
+
+        /**
+         * Adds the provided graphic to the highlight layer. Also can turn the "haze" on or off.
+         *
+         * @function addGraphicHighlight
+         * @param {Object} graphicBundlePromise the promise resolving with the graphic bundle; these bundles are returned by `fetchGraphic` when called on a proxy layer object
+         * @param {Boolean | null} showHaze [optional = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
+         */
+        function addGraphicHighlight(graphicBundlePromise, showHaze = false) {
+            const gapi = gapiService.gapi;
+            const mapConfig = configService.getSync.map;
+
+            graphicBundlePromise.then(graphicBundle => {
+                const ubGraphics = gapi.hilight.getUnboundGraphics(
+                    [graphicBundle], mapConfig.instance.spatialReference);
+
+                ubGraphics[0].then(unboundG => {
+                    console.log('unbound graphic for hilighting ', unboundG);
+                    mapConfig.highlightLayer.addHilight(unboundG);
+                });
+            });
+
+            _toggleHighlightHaze(showHaze);
+        }
+
+        /**
+         * Adds a marker to the highlight layer to accentuate the click point. Also can turn the "haze" on or off.
+         *
+         * @param {Object} mapPoint click point from the ESRI click event
+         * @param {Boolean | null} showHaze [optional = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
+         */
+        function addMarkerHighlight(mapPoint, showHaze = null) {
+            const mapConfig = configService.getSync.map;
+            mapConfig.highlightLayer.addMarker(mapPoint);
+
+            _toggleHighlightHaze(showHaze);
+        }
+
+        /**
+         * Removes the highlighted features and markers.
+         *
+         * @function clearHighlight
+         * @param {Boolean | null} showHaze [optional = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
+         */
+        function clearHighlight(showHaze = null) {
+            const mapConfig = configService.getSync.map;
+            mapConfig.highlightLayer.clearHilight();
+
+            _toggleHighlightHaze(showHaze);
+        }
+
+        /**
+         * Toggles the "haze" obscuring all other features and layers except the highlight layer.
+         *
+         * @function _toggleHighlightHaze
+         * @private
+         * @param {Boolean | null} value [optional = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
+         */
+        function _toggleHighlightHaze(value = null) {
+            const mapConfig = configService.getSync.map;
+
+            if (value !== null) {
+                angular.element(mapConfig.node).toggleClass('rv-map-highlight', value);
             }
         }
     }
