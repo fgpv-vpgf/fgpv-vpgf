@@ -13,11 +13,12 @@ const basicFC = require('./basicFC.js')();
 function getWMSLayerTitle(wmsLayer, wmsLayerId) {
     // TODO move this to ogc.js module?
 
+    let targetEntry = null;
+
     // crawl esri layerInfos (which is a nested structure),
     // returns sublayer that has matching id or null if not found.
     // written as function to allow recursion
     const crawlSubLayers = (subLayerInfos, wmsLayerId) => {
-        let targetEntry = null;
 
         // we use .some to allow the search to stop when we find something
         subLayerInfos.some(layerInfo => {
