@@ -14,7 +14,7 @@ module.exports = function (env) {
 
     const config = {
         entry: {
-            'rv-main': path.resolve(__dirname, 'src/app/app-loader.js'),
+            'rv1-main': path.resolve(__dirname, 'src/app/app-loader.js'),
             'ie-polyfills': path.resolve(__dirname, 'src/polyfill/polyfill-loader.js')
         },
 
