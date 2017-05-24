@@ -1,8 +1,8 @@
-/* global saveAs, RV */
+/* global RV */
 
 import 'canvas-to-blob';
-import 'file-saver';
 
+const FileSaver = require('file-saver');
 const templateUrl = require('./export.html');
 
 const EXPORT_IMAGE_GUTTER = 20; // padding around the export image
@@ -271,7 +271,7 @@ function exportService($mdDialog, $mdToast, storageService) {
             try {
                 if (!RV.isSafari) {
                     canvas.toBlob(blob => {
-                        saveAs(blob, `${fileName}.png`);
+                        FileSaver.saveAs(blob, `${fileName}.png`);
                     });
                 } else {
                     showToast('error.safari');

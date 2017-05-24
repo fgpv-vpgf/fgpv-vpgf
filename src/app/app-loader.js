@@ -40,5 +40,3 @@ import './focus-manager.js';
 import './app-seed.js';
 import '../plugins/core/back-to-cart.js';
 import '../content/styles/main.scss';
-
-require('es6-promise/auto');
