@@ -17,6 +17,7 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
         setAttribution,
         zoomToLatLong,
 
+        // TODO: should these functions be proxied through the geoService?
         addGraphicHighlight,
         addMarkerHighlight,
         clearHighlight

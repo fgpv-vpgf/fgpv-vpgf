@@ -60,9 +60,34 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
             this.map.setExtent(this.map.enhanceConfigExtent(configService.getSync.map.selectedBasemap.full));
         }
 
+         /**
+         * Check if visible extent is contained in the full extent.
+         *
+         * @function validateExtent
+         * @param {Number} [factor = 1] multiplier used to expand the full extent
+         * @return {Boolean} True if the visible extent is contained in the full extent - false if not contained
+         */
+        validateExtent(factor = 1) {
+            return this.map.enhanceConfigExtent(configService.getSync.map.selectedBasemap.full)
+                .expand(factor).contains(this.map.extent);
+        }
+
+        setExtent(value) {
+            return this.map.setExtent(value);
+        }
+
+        setScale(value) {
+            this.map.setScale(value);
+        }
+
         // FIXME from Alex: reload and snapshop should be called against legendService
         reloadLayer(l) { layerRegistry.reloadLayer(l); }
         snapshotLayer(l) { layerRegistry.snapshotLayer(l); }
+
+        get defaultExtent() {   return configService.getSync.map.selectedBasemap.default; }
+        get fullExtent() {      return configService.getSync.map.selectedBasemap.full; }
+        get maximumExtent() {   return configService.getSync.map.selectedBasemap.maximum; }
+        get currentExtent () {  return this.map.extent; }
     }
 
     return new GeoServiceInterface();
