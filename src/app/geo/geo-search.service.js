@@ -10,7 +10,7 @@
         .module('app.geo')
         .factory('geoSearch', geoSearch);
 
-    function geoSearch($http, $q, configService, geoService, gapiService, $rootScope, events, $translate) {
+    function geoSearch($http, $q, configService, geoService, mapService, gapiService, $rootScope, events, $translate) {
         let provinceList; // list of provinces fulfilled by getProvinces
         let typeList; // list of types fulfilled by getTypes
         let manualExtent; // extent object if manual extent filtering is required
@@ -275,9 +275,9 @@
             // capture the current extent here as it can change between queries
             let extent = bbox;
             if (extent === 'visible') { // get the viewers current extent
-                extent = geoService.mapObject.extent;
+                extent = geoService.currentExtent;
             } else if (extent === 'canada') { // get the full extent of Canada
-                extent = geoService.getFullExtent();
+                extent = geoService.fullExtent;
             }
 
             if (typeof extent === 'object') { // convert to lat/long geoName readable string
@@ -465,8 +465,8 @@
          * @param   {Array}    position       2 coordinates for the position in the form of [x, y]
          */
         function zoomSearchExtent(bbox, position) {
-            const mapObject = geoService.mapObject;
-            const mapSR = mapObject.spatialReference;
+            //const mapObject = geoService.mapObject;
+            const mapSR = geoService.currentExtent.spatialReference; //mapObject.spatialReference;
             const gapi = gapiService.gapi;
 
             // set extent from bbox
@@ -481,14 +481,14 @@
                 projExtent.x1, projExtent.y1, projExtent.sr);
 
             // zoom to location (expand the bbox to include all the area)
-            mapObject.setExtent(zoomExtent.expand(1.5)).then(() => {
+            geoService.setExtent(zoomExtent.expand(1.5)).then(() => {
                 // get reprojected point and create point
                 const geoPt = gapi.proj.localProjectPoint(4326, mapSR.wkid,
                     [parseFloat(position[0]), parseFloat(position[1])]);
                 const projPt = gapi.proj.Point(geoPt[0], geoPt[1], mapSR);
 
                 // show pin on the map
-                geoService.dropMapPin(projPt);
+                mapService.addMarkerHighlight(projPt, false);
             });
         }
 
@@ -501,7 +501,7 @@
          */
         function zoomScale(scale) {
             // remove space if scale is like 1 000 000 then use map to zoom to scale
-            geoService.mapObject.setScale(parseInt(scale.replace(/ /g, '')));
+            geoService.setScale(parseInt(scale.replace(/ /g, '')));
         }
 
         /**

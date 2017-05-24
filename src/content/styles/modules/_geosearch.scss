@@ -74,11 +74,13 @@ $result-item-height-touch: rem(4.8);
 
                 .rv-geosearch-province-filter {
                     flex: 2;
+                    min-width: rem(6.4);
                 }
 
                 .rv-geosearch-type-filter {
                     flex: 1;
                     margin-right: rem(1.0);
+                    min-width: rem(6.4);
                 }
             }
 
