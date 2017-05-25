@@ -214,26 +214,108 @@ function generateWMSSymbology(name, imageUri) {
     };
 
     if (imageUri) {
+        const renderPromise = renderSymbologyImage(imageUri).then(svgcode => {
+            symbologyItem.svgcode = svgcode;
 
-        const symbologyPromise = shared.convertImagetoDataURL(imageUri)
-            .then(imageUri =>
-                svgDrawImage(draw, imageUri))
-            .then(({ loader }) => {
-                draw.viewbox(0, 0, loader.width, loader.height);
-                symbologyItem.svgcode = draw.svg();
+            return symbologyItem;
+        });
 
-                return symbologyItem;
-            })
-            .catch(err => {
-                console.error('Cannot draw wms legend image; returning empty', err);
-                symbologyItem.svgcode = draw.svg();
-            });
-
-        return symbologyPromise;
+        return renderPromise;
     } else {
         symbologyItem.svgcode = draw.svg();
+
         return Promise.resolve(symbologyItem);
     }
+}
+
+/**
+ * Converts a config-supplied list of symbology to the format used by layer records.
+ *
+ * @private
+ * @function _listToSymbology
+ * @param {Function} conversionFunction a conversion function to wrap the supplied image into an image or an icon style symbology container
+ * @param {Array} list a list of config-supplied symbology items in the form of [ { text: <String>, image: <String> }, ... ] wher `image` can be dataURL or an actual url
+ * @return {Array} an array of converted symbology symbols in the form of [ { name: <String>, svgcode: <String> }, ... ]; items will be populated async as conversions are done
+ */
+function _listToSymbology(conversionFunction, list) {
+    const results = list.map(({ text, image }) => {
+        const result = {
+            name: text,
+            svgcode: null
+        };
+
+        conversionFunction(image).then(svgcode => {
+            result.svgcode = svgcode;
+        });
+
+        return result;
+    });
+
+    return results;
+}
+
+/**
+ * Renders a supplied image as an image-style symbology item (preserving the true image dimensions).
+ *
+ * @function renderSymbologyImage
+ * @param {String} imageUri a image dataUrl or a regular url
+ * @param {Object} draw [optional=null] an svg container to draw the image on; if not supplied, a new one is created
+ */
+function renderSymbologyImage(imageUri, draw = null) {
+    if (draw === null) {
+        draw = svgjs(window.document.createElement('div'))
+            .size(CONTAINER_SIZE, CONTAINER_SIZE)
+            .viewbox(0, 0, 0, 0);
+    }
+
+    const symbologyPromise = shared.convertImagetoDataURL(imageUri)
+        .then(imageUri =>
+            svgDrawImage(draw, imageUri))
+        .then(({ loader }) => {
+            draw.viewbox(0, 0, loader.width, loader.height);
+            return draw.svg();
+        })
+        .catch(err => {
+            console.error('Cannot draw symbology iamge; returning empty', err);
+            return draw.svg();
+        });
+
+    return symbologyPromise;
+}
+
+/**
+ * Renders a supplied image as an icon-style symbology item (fitting an image inside an icon container, usually 32x32 pixels).
+ *
+ * @function renderSymbologyIcon
+ * @param {String} imageUri a image dataUrl or a regular url
+ * @param {Object} draw [optional=null] an svg container to draw the image on; if not supplied, a new one is created
+ */
+function renderSymbologyIcon(imageUri, draw = null) {
+    if (draw === null) {
+        // create a temporary svg element and add it to the page; if not added, the element's bounding box cannot be calculated correctly
+        const container = window.document.createElement('div');
+        container.setAttribute('style', 'opacity:0;position:fixed;left:100%;top:100%;overflow:hidden');
+        window.document.body.appendChild(container);
+
+        draw = svgjs(container)
+            .size(CONTAINER_SIZE, CONTAINER_SIZE)
+            .viewbox(0, 0, CONTAINER_SIZE, CONTAINER_SIZE);
+    }
+
+    // need to draw the image to get its size (technically not needed if we have a url, but this is simpler)
+    const picturePromise = shared.convertImagetoDataURL(imageUri)
+        .then(imageUri =>
+            svgDrawImage(draw, imageUri))
+        .then(({ image }) => {
+            image.center(CONTAINER_CENTER, CONTAINER_CENTER);
+
+            // scale image to fit into the symbology item container
+            fitInto(image, CONTENT_IMAGE_SIZE);
+
+            return draw.svg();
+        });
+
+    return picturePromise;
 }
 
 /**
@@ -562,22 +644,6 @@ function symbolToLegend(symbol, label, window) {
     }
 
     /**
-     * Fits svg element in the size specified
-     * @param {Ojbect} element svg element to fit
-     * @param {Number} CONTAINER_SIZE width/height of a container to fit the element into
-     */
-    function fitInto(element, CONTAINER_SIZE) {
-        // const elementRbox = element.rbox();
-        // const elementRbox = element.screenBBox();
-
-        const elementRbox = element.node.getBoundingClientRect(); // marker.rbox(); //rbox doesn't work properly in Chrome for some reason
-        const scale = CONTAINER_SIZE / Math.max(elementRbox.width, elementRbox.height);
-        if (scale < 1) {
-            element.scale(scale);
-        }
-    }
-
-    /**
     * Convert an ESRI colour object to SVG rgb format.
     * @private
     * @param  {Array} c ESRI Colour array
@@ -622,6 +688,22 @@ function svgDrawImage(draw, imageUri, width = 0, height = 0, crossOrigin = true)
     });
 
     return promise;
+}
+
+/**
+ * Fits svg element in the size specified
+ * @param {Ojbect} element svg element to fit
+ * @param {Number} CONTAINER_SIZE width/height of a container to fit the element into
+ */
+function fitInto(element, CONTAINER_SIZE) {
+    // const elementRbox = element.rbox();
+    // const elementRbox = element.screenBBox();
+
+    const elementRbox = element.node.getBoundingClientRect(); // marker.rbox(); //rbox doesn't work properly in Chrome for some reason
+    const scale = CONTAINER_SIZE / Math.max(elementRbox.width, elementRbox.height);
+    if (scale < 1) {
+        element.scale(scale);
+    }
 }
 
 /**
@@ -864,6 +946,10 @@ module.exports = (esriBundle, geoApi, window) => {
         rendererToLegend: buildRendererToLegend(window),
         generatePlaceholderSymbology,
         generateWMSSymbology,
+
+        listToIconSymbology: list => _listToSymbology(renderSymbologyIcon, list),
+        listToImageSymbology: list => _listToSymbology(renderSymbologyImage, list),
+
         getZoomLevel,
         enhanceRenderer,
         mapServerToLocalLegend: buildMapServerToLocalLegend(esriBundle, geoApi)
