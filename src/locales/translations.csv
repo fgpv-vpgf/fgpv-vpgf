@@ -328,3 +328,5 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 Table of Content expand legend group,toc.label.group.expand,Expand Group,Ouvrir les groupes
 Table of Content collapse legend group,toc.label.group.collapse,Collapse Group,Fermer les groupes
 Export size selector,export.size.selector,Size Selector,Sélecteur de taille
+,lightbox.tooltip.next,Next,Prochain
+,lightbox.tooltip.previous,Previous,Précédent

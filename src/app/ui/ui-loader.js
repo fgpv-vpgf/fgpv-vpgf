@@ -64,6 +64,8 @@ import './help/help-search.directive.js';
 import './help/help.directive.js';
 import './help/help.service.js';
 
+import './lightbox/lightbox.directive.js';
+
 import './loader/layer-source-info.class.js';
 import './loader/layer-source.service.js';
 import './loader/loader-file.directive.js';
