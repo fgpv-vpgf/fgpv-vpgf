@@ -950,7 +950,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get entryId () { return this._entryId; }
         get coverIcon () { return this._coverIcon; }
         get symbologyStack () { return this._symbologyStack; }
+
         get symbologyRenderStyle () { return this._symbologyRenderStyle; }
+        set symbologyRenderStyle (value) { this._symbologyRenderStyle = value; }
 
         get entryType () {              return TYPES.legend.NODE; }
 
