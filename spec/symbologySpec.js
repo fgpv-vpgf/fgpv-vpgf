@@ -359,7 +359,7 @@ describe('Symbology', () => {
 
     describe('mapServerToLocalLegend', () => {
         const fakeURL = 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer/';
-        
+
         it('should work for a mapServerURL and layerIndex provided', (done) => {
             const res = symbology.mapServerToLocalLegend(fakeURL, 1);
             res.then(x => {
