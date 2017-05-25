@@ -4,8 +4,8 @@ const attributeModule = require('../src/attribute.js');
 
 describe('Attribute', () => {
     const fakeBundle = {
-        esriRequest: (x) => { 
-            x.type = 'Feature Layer'; 
+        esriRequest: (x) => {
+            x.type = 'Feature Layer';
             x.geometryType = 'esriGeometryPolygon';
             x.minScale = 0;
             x.maxScale = 0;
@@ -18,19 +18,19 @@ describe('Attribute', () => {
                     wkid: 102100,
                     latestWkid: 3857
                 }
-            }
+            };
             x.drawingInfo = {
                 renderer: { }
-            }
+            };
             x.fields = [
                 {
-                name: 'OBJECTID',
-                type: 'esriFieldTypeOID',
-                alias: 'OBJECTID',
-                domain: null
+                    name: 'OBJECTID',
+                    type: 'esriFieldTypeOID',
+                    alias: 'OBJECTID',
+                    domain: null
                 }
-            ]
-            return Promise.resolve(x); 
+            ];
+            return Promise.resolve(x);
         }
     };
     const fakeGapi = {
@@ -46,15 +46,19 @@ describe('Attribute', () => {
 
     describe('getLayerIndex', () => {
         it('should throw an error given a non-layer URL', () => {
-            expect(function() { attribute.getLayerIndex('http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer/') }).toThrowError();
+            expect(function () {
+                attribute.getLayerIndex('http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/');
+            }).toThrowError();
         });
 
         it('should throw an error given just a number as input', () => {
-            expect(function() { attribute.getLayerIndex('1') }).toThrowError();
+            expect(function () { attribute.getLayerIndex('1'); }).toThrowError();
         });
-        
+
         it('should skim the last number off the URL given a valid input', () => {
-            expect(attribute.getLayerIndex('http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer/1')).toEqual(1);
+            expect(attribute.getLayerIndex(
+                'http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer/1')
+            ).toEqual(1);
         });
 
     });
@@ -96,11 +100,11 @@ describe('Attribute', () => {
 
         it('should work for a non-Feature Layer', (done) => {
             spyOn(fakeBundle, 'esriRequest').and.callFake(x => {
-                x.type = 'Non-Feature Layer'; 
+                x.type = 'Non-Feature Layer';
                 x.geometryType = '';
                 x.minScale = 0;
                 x.maxScale = 0;
-                x.extent = { }
+                x.extent = { };
                 return Promise.resolve(x);
             });
             const mapURL = 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer';
@@ -132,8 +136,8 @@ describe('Attribute', () => {
                            {
                                attributes: { OBJECTID: 'two' }
                            }
-                        ] 
-                        return arr; 
+                        ];
+                        return arr;
                     }
                 },
                 fields: { },
@@ -142,7 +146,7 @@ describe('Attribute', () => {
                 maxScale: 0,
                 renderer: {
                     toJson: () => { return; }
-                 }
+                }
             };
             const res = attribute.loadFileAttribs(layer);
             expect(res.featureIdx).toEqual('0');
@@ -161,5 +165,5 @@ describe('Attribute', () => {
         });
 
     });
-    
+
 });

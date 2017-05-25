@@ -7,7 +7,7 @@ describe('AttribFC', () => {
         _apiRef: {
             symbology: {
                 generatePlaceholderSymbology: () => { return; },
-                getGraphicIcon: () => { return 'fakeSymbol' },
+                getGraphicIcon: () => { return 'fakeSymbol'; },
                 mapServerToLocalLegend: () => {
                     const x = {
                         layers: [
@@ -36,13 +36,13 @@ describe('AttribFC', () => {
                         LONG: 94
                     },
                     geometry: {
-                        paths: [ [
+                        paths: [[
                             [-94.7999999999999, 28.0000000000001],
                             [-95.3999999999999, 28.0000000000001]
-                        ] ]
+                        ]]
                     }
                 }
-            }
+            };
             return Promise.resolve(x);
         }
     };
@@ -88,7 +88,7 @@ describe('AttribFC', () => {
                 }
             });
             const res = attribFC.loadSymbology();
-            res.then(x => {
+            res.then(() => {
                 expect(attribFC.symbology[0].svgcode).toEqual('1');
                 expect(attribFC.symbology[0].name).toEqual('la');
                 done();
@@ -106,7 +106,7 @@ describe('AttribFC', () => {
                 legend: { }
             });
             const res = attribFC.loadSymbology();
-            res.then(x => {
+            res.then(() => {
                 expect(attribFC.symbology[0].svgcode).toEqual('123');
                 expect(attribFC.symbology[0].name).toEqual('label');
                 done();
@@ -124,7 +124,7 @@ describe('AttribFC', () => {
             attribFC.nameField = 'nf';
             const attribs = {
                 nf: 'fakeName'
-            }
+            };
             const res = attribFC.getFeatureName('1', attribs);
             expect(res).toEqual('fakeName');
         });
@@ -144,9 +144,9 @@ describe('AttribFC', () => {
 
         it('should work if formattedAttributes field is already defined', (done) => {
             attribFC._formattedAttributes = Promise.resolve({
-                columns: [ { } ],
-                rows: [ { } ],
-                fields: [ { } ],
+                columns: [{ }],
+                rows: [{ }],
+                fields: [{ }],
                 oidField: 'oid',
                 oidIndex: 'idx',
                 renderer: 'renderer'
@@ -215,7 +215,7 @@ describe('AttribFC', () => {
         it('should return false if attribute is not an esriFieldTypeDate type', (done) => {
             layerPackage.layerData = Promise.resolve({
                 fields: [
-                    { name: 'fakeName', type: 'notTypeDate'},
+                    { name: 'fakeName', type: 'notTypeDate' },
                     { name: 'a', type: 'esriFieldTypeDate' }
                 ]
             });
@@ -234,7 +234,7 @@ describe('AttribFC', () => {
             layerPackage.layerData = Promise.resolve({
                 fields: [
                     { name: 'a', type: 'randomType' },
-                    { name: 'fakeName', type: 'esriFieldTypeDate'}
+                    { name: 'fakeName', type: 'esriFieldTypeDate' }
                 ]
             });
             const res = attribFC.checkDateType('fakeName');
@@ -270,7 +270,7 @@ describe('AttribFC', () => {
             layerPackage.layerData = Promise.resolve({
                 fields: [
                     { name: 'attribute', alias: 'attrAlias' },
-                    { name: 'fakeName', type: 'esriFieldTypeDate'}
+                    { name: 'fakeName', type: 'esriFieldTypeDate' }
                 ]
             });
             const res = attribFC.aliasedFieldName('attribute');
@@ -333,14 +333,14 @@ describe('AttribFC', () => {
                             LONG: 2
                         },
                         geometry: {
-                            paths: [ [
+                            paths: [[
                                 [-94.7999999999999, 28.0000000000001],
                                 [-95.3999999999999, 28.0000000000001]
-                            ] ]
+                            ]]
                         }
                     }
                 }
-            }
+            };
             const res = attribFC.getServerFeatureInfo(1);
             res.then(x => {
                 expect(x.feature.attributes.OBJECTID).toEqual('5');

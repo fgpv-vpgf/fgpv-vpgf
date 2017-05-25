@@ -25,15 +25,15 @@ describe('test for getting correct zoom level', () => {
             { 'level': 17, 'resolution': 4.6302175937685215, 'scale': 17500 }
         ];
 
-    it("should get the highest zoom level", () => {
+    it('should get the highest zoom level', () => {
         expect(symbology.getZoomLevel(lods, 0)).toEqual(17);
     });
 
-    it("should get lowest zoom level", () => {
+    it('should get lowest zoom level', () => {
         expect(symbology.getZoomLevel(lods, 145000000)).toEqual(0);
     });
 
-    it("should get proper zoom level", () => {
+    it('should get proper zoom level', () => {
         expect(symbology.getZoomLevel(lods, 4500000)).toEqual(6);
     });
 

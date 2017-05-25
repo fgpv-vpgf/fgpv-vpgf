@@ -65,7 +65,7 @@ describe('Symbology', () => {
             );
             expect(renderer.svgcode).toBeUndefined();
             const res = symbology.enhanceRenderer(renderer, legend);
-            res.then(x => {
+            res.then(() => {
                 expect(renderer.svgcode).toEqual('1');
                 done();
             })
@@ -97,7 +97,7 @@ describe('Symbology', () => {
                 }));
             expect(renderer.defaultsvgcode).toBeUndefined();
             const res = symbology.enhanceRenderer(renderer, legend);
-            res.then(x => {
+            res.then(() => {
                 expect(renderer.defaultsvgcode).toEqual('1');
                 expect(renderer.uniqueValueInfos[0].svgcode).toEqual('1a');
                 expect(renderer.uniqueValueInfos[1].svgcode).toEqual('1b');
@@ -131,7 +131,7 @@ describe('Symbology', () => {
                 }));
             expect(renderer.defaultsvgcode).toBeUndefined();
             const res = symbology.enhanceRenderer(renderer, legend);
-            res.then(x => {
+            res.then(() => {
                 expect(renderer.defaultsvgcode).toEqual('1');
                 expect(renderer.classBreakInfos[0].svgcode).toEqual('1a');
                 expect(renderer.classBreakInfos[1].svgcode).toEqual('1b');
@@ -154,7 +154,7 @@ describe('Symbology', () => {
             );
             expect(renderer.svgcode).toBeUndefined();
             const res = symbology.enhanceRenderer(renderer, legend);
-            res.then(x => {
+            res.then(() => {
                 expect(renderer.svgcode).toBeUndefined();
                 done();
             })

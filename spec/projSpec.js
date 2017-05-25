@@ -11,8 +11,8 @@ let fakeEsri = {
 
 function makeFakeEsriExtent(o) {
     return {
-        "xmin":o.x0,"ymin":o.y0,"xmax":o.x1,"ymax":o.y1,
-        "spatialReference":{"wkid":o.sr}
+        xmin:o.x0, ymin:o.y0, xmax:o.x1, ymax:o.y1,
+        spatialReference:{ wkid:o.sr }
     };
 }
 
@@ -41,10 +41,10 @@ describe('Local projection', () => {
     const sampleExtent = makeFakeEsriExtent(sampleData);
     let proj;
 
-    proj4.defs("EPSG:3978", "+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
-    proj4.defs("EPSG:3979", "+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
-    proj4.defs("EPSG:102100", proj4.defs('EPSG:3857'));
-    proj4.defs("EPSG:54004", "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs");
+    proj4.defs('EPSG:3978', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+    proj4.defs('EPSG:3979', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+    proj4.defs('EPSG:102100', proj4.defs('EPSG:3857'));
+    proj4.defs('EPSG:54004', '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs');
 
     // setup function running before each test
     beforeEach(() => {
@@ -100,26 +100,24 @@ describe('geojson reprojection', () => {
     it('should reproject a point', () => {
         const geojsonTestPoint = require('./geojsonTestPoint.json');
         const proj = projBuilder(fakeEsri);
-        proj.addProjection("EPSG:3978", "+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+        proj.addProjection('EPSG:3978', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
         proj.projectGeojson(geojsonTestPoint, 'EPSG:3978');
         const pt = geojsonTestPoint.features[0].geometry.coordinates;
         expect(pt[0]).toBeCloseTo(-356765.042);
         expect(pt[1]).toBeCloseTo(125038.026);
-    })
-})
+    });
 
-describe("esri projection conversion function", () => {
-    const sampleData = {x0:-95,y0:49,x1:-94.5,y1:49.5,sr:4326};
-    const sampleExtent = makeFakeEsriExtent(sampleData);
+});
+
+describe('esri projection conversion function', () => {
     let esri;
-    let x;
 
     beforeEach(function() {
     //reset esri
         esri = null;
     });
 
-    it("should export esri server projection function", () => {
+    it('should export esri server projection function', () => {
         // make sure functions are exported properly
         esri = projBuilder(fakeEsri);
         expect(esri.esriServerProject).not.toBe(null);
@@ -138,12 +136,13 @@ describe("esri projection conversion function", () => {
         expect(fakeEsri.ProjectParameters).toHaveBeenCalled();
         expect(newPt).toEqual(jasmine.any(Promise));
     });
+
 });
 
 describe('spatialReference comparison', () => {
-    const sr1_3978 = { wkid: 3978 };
-    const sr2_3978 = { wkid: 3978 };
-    const sr3_10200 = { wkid: 10200 };
+    const srFirst3978 = { wkid: 3978 };
+    const srSecond3978 = { wkid: 3978 };
+    const srThird10200 = { wkid: 10200 };
     let proj;
 
     // setup function running before each test
@@ -151,19 +150,19 @@ describe('spatialReference comparison', () => {
         proj = projBuilder(fakeEsri);
     });
 
-    it("should detect same spatial reference", () => {
-        expect(proj.isSpatialRefEqual(sr1_3978, sr2_3978)).toBe(true);
+    it('should detect same spatial reference', () => {
+        expect(proj.isSpatialRefEqual(srFirst3978, srSecond3978)).toBe(true);
     });
 
-    it("should detect different spatial reference", () => {
-        expect(proj.isSpatialRefEqual(sr1_3978, sr3_10200)).toBe(false);
+    it('should detect different spatial reference', () => {
+        expect(proj.isSpatialRefEqual(srFirst3978, srThird10200)).toBe(false);
     });
 
 });
 
 describe('Check valid source projection', () => {
-    const sr1_3978 = { wkid: 3978 };
-    const sr2_fake = { wkid: 23412 };
+    const srFirst3978 = { wkid: 3978 };
+    const sr2fake = { wkid: 23412 };
     let proj;
 
     // setup function running before each test
@@ -171,12 +170,12 @@ describe('Check valid source projection', () => {
         proj = projBuilder(fakeEsri);
     });
 
-    it("should be valid spatial reference", () => {
-        expect(proj.checkProj(sr1_3978).foundProj).toBe(true);
+    it('should be valid spatial reference', () => {
+        expect(proj.checkProj(srFirst3978).foundProj).toBe(true);
     });
 
-    it("should not be valid spatial reference", () => {
-        expect(proj.checkProj(sr2_fake).foundProj).toBe(false);
+    it('should not be valid spatial reference', () => {
+        expect(proj.checkProj(sr2fake).foundProj).toBe(false);
     });
 
     it('should allow WKT without validation', () => {

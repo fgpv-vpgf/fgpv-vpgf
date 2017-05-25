@@ -23,7 +23,7 @@ describe('BasicFC', () => {
                                 ]
                             }
                         ]
-                    }
+                    };
                     return Promise.resolve(x);
                 }
             }
@@ -69,7 +69,7 @@ describe('BasicFC', () => {
                 outFields: ['DUID'],
                 geometry: 'line',
                 spatialRelationship: 'union'
-            }
+            };
             basicFC.queryable = fakeQuery;
             const res = basicFC.queryable;
             expect(res.returnGeometry).not.toBeTruthy();
@@ -121,13 +121,13 @@ describe('BasicFC', () => {
 
     describe('loadSymbology', () => {
         it('should throw error if URL is undefined', () => {
-            expect(function() { basicFC.loadSymbology() }).toThrowError();
+            expect(function () { basicFC.loadSymbology(); }).toThrowError();
         });
 
         it('should work if URL is not undefined', (done) => {
             parent._layer.url = 'fakeURL';
             const res = basicFC.loadSymbology();
-            res.then(x => {
+            res.then(() => {
                 expect(basicFC.symbology[0].svgcode).toEqual('1');
                 expect(basicFC.symbology[0].name).toEqual('la');
                 done();
