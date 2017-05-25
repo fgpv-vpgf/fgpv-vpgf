@@ -1,9 +1,9 @@
-/* Want to try using OOCSS and SMACSS according to this article: https://mattstauffer.co/blog/organizing-css-oocss-smacss-and-bem */
-@import "../../../lib/angular-material/angular-material.scss";
-@import "../../../lib/datatables.net-dt/css/jquery.dataTables"; //
-@import "../../../lib/datatables-scroller/css/scroller.dataTables.scss";
-@import "../../../lib/angular-dragula/dist/dragula";
-@import "../../../lib/jquery-minicolors/jquery.minicolors";
+
+@import "~angular-material/angular-material.scss";
+@import "~datatables.net-dt/css/jquery.dataTables.css";
+@import "~angular-dragula/dist/dragula.css";
+@import "~jquery-minicolors/jquery.minicolors.css";
+@import '~datatables.net-dt/css/jquery.dataTables.css';
 
 @import "common/_all.scss";
 

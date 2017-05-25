@@ -14,7 +14,7 @@
     class BackToCart extends RV.BasePlugins.MenuItem {
 
         get catalogURL () {
-            return this.templateUrl.replace('{RV_LAYER_LIST}', this.api.getRcsLayerIDs().toString());
+            return this.template.replace('{RV_LAYER_LIST}', this.api.getRcsLayerIDs().toString());
         }
 
         /**
@@ -29,8 +29,8 @@
             };
         }
 
-        init (templateUrl) {
-            this.templateUrl = templateUrl;
+        init (template) {
+            this.template = template;
             this.name = 'cartButtonLabel';
             this.translations = translations;
             this.action = this.onMenuItemClick();
