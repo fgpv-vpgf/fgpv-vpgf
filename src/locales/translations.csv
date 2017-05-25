@@ -325,3 +325,5 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 ,focus.dialog.escape,Escape,Échapper
 ,toc.menu.symbology,Show legend,Afficher la légende
 ,sidenav.menu.plugin,Plugin Links,Liens
+,lightbox.tooltip.next,Next,Prochain
+,lightbox.tooltip.previous,Previous,Précédent

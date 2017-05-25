@@ -299,9 +299,15 @@ $details-record-height: rem(6.0);
                         // prevent wrapping links to truncate them as we don't want them to wrap
                         white-space: nowrap;
                     }
+
+                    img {
+                        width: 100%;
+                        height: auto;
+                        display: grid;
+                        padding: rem(0.5); 
+                    }
                 }
             }
-
 
         }
     }
