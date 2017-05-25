@@ -173,11 +173,31 @@ $layer-item-height-touch: rem(7.2);
         &.rv-legend-info {
 
             height: auto;
-            margin: rem(0.6) 0;
 
-             .rv-list-item-content {
-                 margin-left: 0;
-             }
+            .rv-list-item-content {
+                margin-left: 0;
+            }
+
+            .rv-legend-unboundLayer {
+                margin: 0;
+
+                height: $layer-item-height;
+                @include touch {
+                    height: $layer-item-height-touch;
+                }
+
+                display: flex;
+                justify-content: center;
+
+                > div {
+                    display: flex;
+                    align-items: center;
+
+                    .rv-list-item-content {
+                    margin: 0 rem(1) 0 rem(1.6);
+                    }
+                }
+            }
 
              .rv-legend-title h3 {
                  margin: 0;
@@ -188,8 +208,11 @@ $layer-item-height-touch: rem(7.2);
              }
 
              .rv-legend-image img {
+                 margin: rem(0.6) 0;
                  max-width: 100%;
                  align-self: center;
+
+                 box-shadow: $whiteframe-shadow-1dp;
              }
         }
 

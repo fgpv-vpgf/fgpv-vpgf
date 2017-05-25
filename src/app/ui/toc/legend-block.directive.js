@@ -4,7 +4,7 @@ const templates = {
     error: require('./templates/legend-error.html'),
     flag: require('./templates/legend-flag.html'),
     node: require('./templates/legend-node.html'),
-    placeholder: require('./templates/legend-placeholder.html'),
+    placeholder: require('./templates/legend-placeholder.html')
 };
 
 /**
@@ -27,7 +27,7 @@ angular
     .module('app.ui')
     .directive('rvLegendBlock', rvLegendBlock);
 
-function rvLegendBlock(tocService, $compile, $templateCache, appInfo, common) {
+function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common) {
     const directive = {
         restrict: 'E',
         scope: {
@@ -63,6 +63,7 @@ function rvLegendBlock(tocService, $compile, $templateCache, appInfo, common) {
         self.element = element;
 
         self.intersect = common.intersect;
+        self.getTooltipDirection = getTooltipDirection;
 
         scope.$watch('self.block.template', newTemplate => {
             if (newTemplate) {
@@ -71,5 +72,18 @@ function rvLegendBlock(tocService, $compile, $templateCache, appInfo, common) {
                 console.log(self.block.id, newTemplate);
             }
         });
+
+        /**
+         * Maps tooltip direction on the legend items to the current layout size:
+         * - to the right of the legend item in large layouts
+         * - above the element on small and medium layouts
+         *
+         * @function getTooltipDirection
+         * @private
+         * @return {String} direction of the tooltip; either 'right' or 'top'
+         */
+        function getTooltipDirection() {
+            return layoutService.currentLayout() === layoutService.LAYOUT.LARGE ? 'right' : 'top';
+        }
     }
 }

@@ -2,9 +2,10 @@
     <md-icon md-svg-src="community:emoticon-happy"></md-icon>
 </div>
 
+<md-tooltip md-delay="1000" md-direction="{{ self.getTooltipDirection() }}">{{ self.block.name }}</md-tooltip>
+
 <div class="rv-list-item-content">
-    <div class="rv-list-item-name">
-        {{ self.block.name }}
+    <div class="rv-list-item-name" rv-truncate-title="self.block.name">
     </div>
 </div>
 
