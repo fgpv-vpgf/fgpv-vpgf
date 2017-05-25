@@ -5,6 +5,7 @@ import './basemap/basemap-item.directive.js';
 import './basemap/basemap.directive.js';
 import './basemap/basemap.service.js';
 
+import './common/button.decorator';
 import './common/detect-scrollbar.directive.js';
 import './common/dialog.decorator.js';
 import './common/dragula.directive.js';
