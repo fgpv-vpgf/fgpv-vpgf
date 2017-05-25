@@ -399,7 +399,7 @@ class LayerRecord extends root.Root {
         const buffSize = 2 * tolerance * map.extent.getWidth() / map.width;
 
         // Build tolerance envelope of correct size
-        const cBuff = new this._apiRef.Map.Extent(0, 0, buffSize, buffSize, point.spatialReference);
+        const cBuff = this._apiRef.Map.Extent(0, 0, buffSize, buffSize, point.spatialReference);
 
         // move the envelope so it is centered around the point
         return cBuff.centerAt(point);
