@@ -33,6 +33,7 @@
 @import "_geosearch.scss";
 @import "_truncate.scss";
 @import "_effects.scss";
+@import "_lightbox.scss";
 
 @include core;
 @include loading;
@@ -65,3 +66,4 @@
 @include tooltip;
 @include truncate;
 @include effects;
+@include lightbox;

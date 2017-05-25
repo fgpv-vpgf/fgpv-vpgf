@@ -1,6 +1,7 @@
 /* global linkifyStr, linkifyHtml, moment */
 
 import linkifyStr from 'linkifyjs/string';
+import linkifyHtml from 'linkifyjs/html';
 import 'moment-timezone';
 
 /**
@@ -14,7 +15,8 @@ import 'moment-timezone';
 angular
     .module('app.core')
     .filter('autolink', autolink)
-    .filter('dateTimeZone', dateTimeZone);
+    .filter('dateTimeZone', dateTimeZone)
+    .filter('picture', picture);
 
 function dateTimeZone() {
     const userTimeZone = moment.tz.guess();
@@ -76,6 +78,40 @@ function autolink() {
             const opts = angular.extend(defaultOptions, options);
             return (html.test(item)) ?
                 linkifyHtml((item || '').toString(), opts) : linkifyStr((item || '').toString(), opts);
+        }
+    }
+}
+
+function picture() {
+    return picture;
+
+    /**
+     * Picture filter replace a href by image tag or/and lightbox open on click.
+     *
+     * @function picture
+     * @param {Array|String} items array of strings or a single string to picture
+     * @return {Array|String} array or string of picture strings
+     */
+    function picture(items) {
+        // item must be a string
+        items = items.toString().split(';');
+        const results = Array.isArray(items) ? items.map(process) : process(items);
+
+        return results.join('');
+
+        /**
+         * Picture helper function.
+         *
+         * @function process
+         * @private
+         * @param {String} item string to set picture
+         * @return {String} picture element
+         */
+        function process(item) {
+            // check if it is a picture
+            const isPicture = /(.*?)\.(jpe?g|png|gif|bmp)$/.test(item);
+            return isPicture ?
+                `<a class="rv-picture-lightbox" href="${item}"><img src="${item}"></img></a>` : item;
         }
     }
 }
