@@ -2,8 +2,8 @@
 
     const DEFAULT_HOVERTIP_TEMPLATE = `
         <div class="rv-tooltip-content" ng-if="self.name !== null">
-            <rv-svg once="false" class="rv-tooltip-graphic" src="self.svgcode"></rv-svg>
-            <span class="rv-tooltip-text" ng-if="self.name">{{ self.name }}</span>
+            <rv-svg once="false" class="rv-tooltip-graphic" src="self.svgcode" ng-if="self.notPicture"></rv-svg>
+            <span class="rv-tooltip-text" ng-if="self.name" ng-bind-html="self.name"></span>
         </div>
 
         <div class="rv-tooltip-content" ng-if="self.name === null">
@@ -465,6 +465,9 @@
         function refreshHoverTooltip() {
             if (ref.hoverTooltip) {
                 ref.hoverTooltip.refresh();
+
+                // check if we show the symbol, we don't if tooltip is an image
+                ref.hoverTooltip._scope.self.notPicture = ref.hoverTooltip.node.find('img').length > 0 ? false : true;
             }
         }
     }

@@ -22,7 +22,7 @@
         .module('app.geo')
         .factory('layerRegistry', layerRegistryFactory);
 
-    function layerRegistryFactory($timeout, gapiService, Geo, configService, tooltipService) {
+    function layerRegistryFactory($timeout, gapiService, Geo, configService, tooltipService, $filter) {
         const service = {
             getLayerRecord,
             makeLayerRecord,
@@ -369,7 +369,6 @@
                 // for tooltips that are no longer active.
                 const typeMap = {
                     mouseOver: e => {
-
                         // make the content and display the hovertip
                         tipContent = {
                             name: null,
@@ -383,6 +382,7 @@
                         // update the content of the tip with real data.
                         if (tipContent && tipContent.graphic === e.target) {
                             tipContent.name = e.name;
+                            tipContent.name = $filter('picture')(e.name);
                             tipContent.svgcode = e.svgcode;
                         }
                         tooltipService.refreshHoverTooltip();
