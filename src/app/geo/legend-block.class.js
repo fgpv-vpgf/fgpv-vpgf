@@ -176,12 +176,19 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
     class LegendInfo extends LegendBlock {
         constructor(blockConfig) {
             super(blockConfig);
+
+            this._symbologyStack =
+                new SymbologyStack({}, blockConfig.symbologyStack, this.symbologyRenderStyle, true);
         }
 
         get blockType () {              return TYPES.INFO; }
 
         get infoType () {               return this.blockConfig.infoType; }
         get content () {                return this.blockConfig.content; }
+
+        get layerName () {              return this.blockConfig.layerName; }
+        get symbologyStack () {         return this._symbologyStack; }
+        get symbologyRenderStyle () {   return this.blockConfig.symbologyRenderStyle; }
     }
 
     // can be node or group

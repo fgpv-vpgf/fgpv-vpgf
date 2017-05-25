@@ -868,31 +868,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     /**
-     * Typed representation of a InfoSection specified in the config's structured legend.
-     * @class InfoSection
-     */
-    class InfoSection extends LegendElement {
-        constructor (entrySource) {
-            super();
-            this._infoType = entrySource.infoType;
-            this._content = entrySource.content;
-        }
-
-        get infoType () { return this._infoType; }
-        get content () { return this._content; }
-
-        get entryType () { return TYPES.legend.INFO; }
-
-        get JSON() {
-            return {
-                infoType: this.infoType,
-                content: this.content,
-                entryType: this.entryType
-            };
-        }
-    }
-
-    /**
      * Typed representation of a VisibilitySet specified in the config's structured legend.
      * @class VisibilitySet
      */
@@ -1020,6 +995,42 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 disabledControls: this.disabledControls,
                 expanded: this.expanded,
                 entryType: this.entryType
+            };
+        }
+    }
+
+    /**
+     * Typed representation of a InfoSection specified in the config's structured legend.
+     * @class InfoSection
+     */
+    class InfoSection extends LegendElement {
+        constructor (entrySource) {
+            super();
+            this._infoType = entrySource.infoType;
+            this._content = entrySource.content;
+
+            this._layerName = entrySource.layerName || '';
+            this._symbologyStack = entrySource.symbologyStack || [];
+            this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
+        }
+
+        get infoType () {               return this._infoType; }
+        get content () {                return this._content; }
+
+        get layerName () {              return this._layerName; }
+        get symbologyStack () {         return this._symbologyStack; }
+        get symbologyRenderStyle () {   return this._symbologyRenderStyle; }
+
+        get entryType () { return TYPES.legend.INFO; }
+
+        get JSON() {
+            return {
+                infoType: this.infoType,
+                content: this.content,
+                entryType: this.entryType,
+                layerName: this.layerName,
+                symbologyStack: this.symbologyStack,
+                symbologyRenderStyle: this.symbologyRenderStyle
             };
         }
     }
