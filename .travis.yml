@@ -1,6 +1,9 @@
 language: node_js
 node_js:
 - '6.9.1'
+cache:
+  directories:
+    - node_modules
 branches:
   only:
   - develop
@@ -8,21 +11,6 @@ branches:
   - /.+/
   - /^test/.*$/
   - /^v\d+\.\d+\.\d+(-.+)?$/
-before_install:
-- npm install -g gulp-cli
-- npm install -g bower
-before_script:
-- export DISPLAY=:99.0
-- sh -e /etc/init.d/xvfb start
-- npm start > /dev/null &
-- npm run update-webdriver
-- sleep 1
-- webdriver-manager start > /dev/null &
-- sleep 1
-script:
-- gulp test
-- gulp inject --protractor
-- node_modules/.bin/protractor src/e2e-test/protractor.conf.js --browser=firefox
 notifications:
   webhooks:
     urls:
@@ -50,7 +38,5 @@ addons:
     packages:
     - g++-4.8
 after_success:
-- gulp clean
-- gulp dist
-- source devdeploy.sh
+- source ./scripts/devdeploy.sh
 - source ./scripts/docdeploy.sh

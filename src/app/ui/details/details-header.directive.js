@@ -1,45 +1,43 @@
-(() => {
-    'use strict';
+const templateUrl = require('./details-header.html');
 
-    /**
-     * @module rvDetailsHeader
-     * @memberof app.ui
-     * @restrict E
-     * @description
-     *
-     * The `rvDetailsHeader` directive provides a custom header for details panel.
-     *
-     */
-    angular
-        .module('app.ui.details')
-        .directive('rvDetailsHeader', rvDetailsHeader);
+/**
+ * @module rvDetailsHeader
+ * @memberof app.ui
+ * @restrict E
+ * @description
+ *
+ * The `rvDetailsHeader` directive provides a custom header for details panel.
+ *
+ */
+angular
+    .module('app.ui')
+    .directive('rvDetailsHeader', rvDetailsHeader);
 
-    /**
-     * `rvDetailsHeader` directive body.
-     *
-     * @function rvDetailsHeader
-     * @return {object} directive body
-     */
-    function rvDetailsHeader() {
-        const directive = {
-            restrict: 'E',
-            templateUrl: 'app/ui/details/details-header.html',
-            scope: {
-                selectedItem: '='
-            },
-            controller: Controller,
-            controllerAs: 'self',
-            bindToController: true
-        };
+/**
+ * `rvDetailsHeader` directive body.
+ *
+ * @function rvDetailsHeader
+ * @return {object} directive body
+ */
+function rvDetailsHeader() {
+    const directive = {
+        restrict: 'E',
+        templateUrl,
+        scope: {
+            selectedItem: '='
+        },
+        controller: Controller,
+        controllerAs: 'self',
+        bindToController: true
+    };
 
-        return directive;
-    }
+    return directive;
+}
 
-    function Controller(detailService) {
-        'ngInject';
-        const self = this;
+function Controller(detailService) {
+    'ngInject';
+    const self = this;
 
-        self.expandPanel = detailService.expandPanel;
-        self.closeDetails = detailService.closeDetails;
-    }
-})();
+    self.expandPanel = detailService.expandPanel;
+    self.closeDetails = detailService.closeDetails;
+}

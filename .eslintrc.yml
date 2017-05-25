@@ -5,8 +5,6 @@ globals:
   RV: true
   RColor: true
   marked: true
-  Ease: true
-  BezierEasing: true
 
 ecmaFeatures:
   modules: true
