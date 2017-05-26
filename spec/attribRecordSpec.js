@@ -107,9 +107,13 @@ class Config {
 class EsriLayer {
     constructor () {
         this._graphics = [];
+        this._id = 113;
     }
 
     get graphics () { return this._graphics; }
+    get id () { return this._id; }
+
+    set id (val) { this.id = val; }
 }
 
 // A class that mocks the ESRI API class esriRequest
