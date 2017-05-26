@@ -42,7 +42,7 @@
         if (needIePolyfills) {
             // NOTE: this is the only correct way of injecting scripts into a page and have it execute before loading/executing any other scripts after this point (ie polyfills must be executed before the bootstrap)
             // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
-            document.write('<script src="../polyfills.js"><\/script>');
+            document.write('<script src="../ie-polyfills.js"><\/script>');
         }
 
         // https://css-tricks.com/snippets/javascript/get-url-variables/

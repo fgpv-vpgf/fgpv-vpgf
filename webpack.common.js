@@ -100,8 +100,7 @@ module.exports = function (env) {
             host: '0.0.0.0',
             publicPath: '/build/',
             historyApiFallback: true,
-            contentBase: 'build',
-            port: 3000,
+            port: 6001,
             stats: { colors: true },
             compress: true
         }
