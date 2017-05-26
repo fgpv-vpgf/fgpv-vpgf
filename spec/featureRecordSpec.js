@@ -58,18 +58,6 @@ class FakeGeoApiMap {
     Extent (x0, y0) { return new FakeExtent(x0, y0); }
 }
 
-// A class that mocks the proj module from geoApi
-class FakeProj {
-    constructor () {}
-
-    checkProj () {
-        return {
-            foundProj: false,
-            message: 'No WKT or WKID specified on extent.spatialReference'
-        };
-    }
-}
-
 // A class that mocks the object pointing to geoApi
 class ApiRef {
     constructor () {
@@ -122,11 +110,11 @@ class Config {
 class EsriLayer {
     constructor () {
         this._graphics = [];
-        this._url = 'www.url.io'
+        this._url = 'www.url.io';
     }
 
     get graphics () { return this._graphics; }
-    get url() { return this._url; }
+    get url () { return this._url; }
 }
 
 // A class that mocks the ESRI API class esriRequest
