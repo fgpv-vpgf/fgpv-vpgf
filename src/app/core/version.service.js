@@ -13,5 +13,5 @@ angular
         minor: RVersion.minor,
         patch: RVersion.patch,
         hash: RVersion.gitHash.substring(0, 9),
-        timestamp: + new Date()
+        timestamp: RVersion.timestamp
     });
