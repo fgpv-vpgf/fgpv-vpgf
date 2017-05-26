@@ -129,10 +129,13 @@ class Config {
 // A class that mocks the pre-constructed layer
 class EsriLayer {
     constructor () {
+        this._id = 113;
         this._url = 'www.esriLayer.io';
     }
-
+    get id () { return this._id; }
     get url () { return this._url; }
+
+    set id (val) { this.id = val; }
 }
 
 describe('imageRecord', () => {
