@@ -145,7 +145,13 @@ class Config {
 
 // A class that mocks the pre-constructed layer
 class EsriLayer {
-    constructor () {}
+    constructor () {
+        this._id = 113;
+    }
+
+    get id () { return this._id; }
+
+    set id (val) { this.id = val; }
 }
 
 // A class that mocks the LOD (level of detail) class
@@ -254,7 +260,6 @@ describe('layerRecord', () => {
         const zoomIn = true;
 
         let mapDone = layerRecordObject.setMapScale(map, lod1, zoomIn);
-        console.log(mapDone);
     });
 
     it('should zoom the map to an extent', (done) => {
