@@ -17,6 +17,8 @@
 
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
 
+            api.debug(true);
+
             function epsgLookup(code) {
                 console.log('imma searchin for ' + code);
                 return new Promise(resolve => {
@@ -95,7 +97,8 @@
                 var proxy = layerRec.getProxy();
                 console.log('proxy PROOF ', proxy);
 
-                var map = new api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-110, 55] });
+                var eb = api.esriBundle();
+                var map = new eb.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-110, 55] });
                 map.addLayer(layerRec._layer);
 
                 console.log('mah map', map);
