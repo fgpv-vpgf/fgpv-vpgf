@@ -140,8 +140,10 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
     class LegendBlock {
         constructor (blockConfig) {
             this._blockConfig = blockConfig;
-            this._controlled = false;
+
         }
+
+        _controlled = false;
 
         get isInteractive () {          return false; }
 
@@ -165,10 +167,10 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          */
         get controlled () {             return this._controlled; }
 
-        static get INFO () { return 'info'; }
-        static get NODE () { return 'node'; }
-        static get GROUP () { return 'group'; }
-        static get SET () { return 'set'; }
+        static INFO = 'info';
+        static NODE = 'node';
+        static GROUP = 'group';
+        static SET = 'set';
     }
 
     class LegendInfo extends LegendBlock {
@@ -192,12 +194,14 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             this.isControlDisabled = ref.isControlDisabled.bind(this);
             this.isControlSystemDisabled = ref.isControlSystemDisabled.bind(this);
             this.isControlUserDisabled = ref.isControlUserDisabled.bind(this);
-
-            this._isSelected = false;
-            this._layerRecordId = null;
         }
 
         get isInteractive () {          return true; }
+
+        _isSelected = false;
+
+        _layerRecordId = null;
+
         get isSelected () {             return this._isSelected; }
         set isSelected (value) {        this._isSelected = value; }
 
@@ -419,8 +423,6 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
 
             this._aggregateStates = ref.aggregateStates;
             this._walk = ref.walkFunction.bind(this);
-
-            this._entries = [];
         }
 
         get blockType () { return TYPES.GROUP; }
@@ -442,6 +444,8 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                     controlledEntry.opacity = this.opacity;
                 })
         }
+
+        _entries = [];
 
         get availableControls () {      return this._availableControls; }
         get disabledControls () {       return this._disabledControls; }
@@ -598,10 +602,10 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             this._selectedEntry = null;
 
             this._walk = ref.walkFunction.bind(this);
-
-            this._highlightSet = false;
-            this._selectedEntry = null;
         }
+
+        _highlightSet = false;
+        _selectedEntry = null;
 
         // sets are special snowflakes; they only support visibility controls
         // and it's not exposed in UI anyway since Sets don't have templates

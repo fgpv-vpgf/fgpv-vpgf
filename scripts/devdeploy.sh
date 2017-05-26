@@ -19,11 +19,12 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 
     else
         USER=${TRAVIS_REPO_SLUG/\/fgpv-vpgf/}
-        DESTDIR="$DESTDIR/users/$USER/$TRAVIS_BRANCH/"
+        DESTDIR="$DESTDIR/users/$USER/$TRAVIS_BRANCH"
     fi
 
     echo "Destintation: $DESTDIR"
-
+    ssh "$SSHSRV" rm -f -r "$DESTDIR"
+    ssh "$SSHSRV" mkdir -p "$DESTDIR/dist"
     npm run build -- --env.prod
     rsync --delete-before -r "build/" "$SSHSRV:$DESTDIR/prod"
     rsync --delete-before -r "dist/" "$SSHSRV:$DESTDIR/dist"

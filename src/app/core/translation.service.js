@@ -11,8 +11,6 @@ angular
     .factory('translationService', translationService);
 
 function translationService($q, translations, $translate) {
-    console.log(translations);
-
     const translationData = translations;
 
     return options => {

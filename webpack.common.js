@@ -8,6 +8,7 @@ const VersionPlugin         = require('./scripts/version_plugin.js');
 const WrapperPlugin         = require('wrapper-webpack-plugin');
 const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
+const ngAnnotatePlugin      = require('ng-annotate-webpack-plugin');
 
 
 module.exports = function (env) {
@@ -30,7 +31,7 @@ module.exports = function (env) {
                     exclude: /(node_modules|polyfill)/,
                     use: [{
                         loader: 'babel-loader',
-                        options: { presets: ['es2015'] }
+                        options: { presets: ['es2015', 'stage-2'] }
                     }]
                 },
                 {
@@ -53,7 +54,7 @@ module.exports = function (env) {
                 {
                     test: /\.(png|svg)$/,
                     use: 'url-loader'
-                },
+                }
             ]
         },
 
@@ -88,12 +89,16 @@ module.exports = function (env) {
 
             new VersionPlugin(),
 
-            new CleanWebpackPlugin(['build'])
+            new CleanWebpackPlugin(['build']),
+
+            new ngAnnotatePlugin()
         ],
 
         externals: { 'TweenLite': 'TweenLite' },
 
         devServer: {
+            host: '0.0.0.0',
+            publicPath: '/build/',
             historyApiFallback: true,
             contentBase: 'build',
             port: 3000,

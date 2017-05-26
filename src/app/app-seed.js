@@ -24,7 +24,7 @@ angular.element(document)
             // strictDi enforces explicit dependency names on each component: ngAnnotate should find most automatically
             // this checks for any failures; to fix a problem add 'ngInject'; to the function preamble
             angular.bootstrap(node, ['app'], {
-                strictDi: false
+                strictDi: true
             });
             delete window.angular;
             window.angular = existingWindowDotAngular;
