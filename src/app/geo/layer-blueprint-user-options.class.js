@@ -54,7 +54,7 @@ function LayerBlueprintUserOptionsFactory(Geo) {
 
             this._epsgLookup = epsgLookup;
             this._targetWkid = targetWkid;
-            this._colour = (new RColor()).get(true, 0.4, 0.8); // generate a nice random colour to use with imported file-based layers
+            this._colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
         }
 
         get epsgLookup() {

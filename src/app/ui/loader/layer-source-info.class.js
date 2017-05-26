@@ -100,7 +100,7 @@ function LayerSourceInfoFactory(Geo, gapiService) {
             this._rawData = rawData;
             this._targetWkid = targetWkid;
             this._formattedData = null;
-            this._colour = (new RColor()).get(true, 0.4, 0.8); // generate a nice random colour to use with imported file-based layers
+            this._colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
         }
 
         get targetWkid () { return this._targetWkid; }

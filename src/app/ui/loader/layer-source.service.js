@@ -322,7 +322,7 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
 
                 // load file data and return generated file options
                 return _loadFileData(fileInfo).then(rawData => {
-                    const targetWkid = configService.getSync.map.body.spatialReference.wkid
+                    const targetWkid = configService.getSync.map.instance.spatialReference.wkid
 
                     // upfront validation is expensive and time consuming - create all file options and let the user decide, then validate
                     const fileInfoOptions = [
