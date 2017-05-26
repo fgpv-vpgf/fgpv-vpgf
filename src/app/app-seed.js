@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * @function app.core.seed
  * @inner
@@ -24,5 +26,7 @@ angular.element(document)
             angular.bootstrap(node, ['app'], {
                 strictDi: true
             });
+            delete window.angular;
+            window.angular = existingWindowDotAngular;
         });
     });
