@@ -210,7 +210,7 @@ function legendEntryFactory($timeout, $translate, gapiService, Geo, layerDefault
             }
 
             // this.state = layerStates.default; ??
-            const colour = (new RColor()).get(true, 0.4, 0.8);
+            const colour = RColor({ saturation: 0.4, value: 0.8 });
             gapiService.gapi.symbology.generatePlaceholderSymbology(this.name, colour).then(symbologyItem => {
                 // do not override symbology if already set by something else
                 if (!this.symbology) {
