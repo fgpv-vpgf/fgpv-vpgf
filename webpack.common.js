@@ -84,7 +84,7 @@ module.exports = function (env) {
 
             new WrapperPlugin({
                 header: fileName => /\.js$/.test(fileName) ? fs.readFileSync('./scripts/header.js', 'utf8') : '',
-                footer: fileName => /\.js$/.test(fileName) ? fs.readFileSync('./scripts/footer.js', 'utf8') : '',
+                footer: fileName => /\.js$/.test(fileName) ? fs.readFileSync('./scripts/footer.js', 'utf8') : ''
             }),
 
             new VersionPlugin(),
@@ -95,6 +95,12 @@ module.exports = function (env) {
         ],
 
         externals: { 'TweenLite': 'TweenLite' },
+
+        watchOptions: {
+            aggregateTimeout: 300,
+            poll: 1000,
+            ignored: /node_modules/
+        },
 
         devServer: {
             host: '0.0.0.0',

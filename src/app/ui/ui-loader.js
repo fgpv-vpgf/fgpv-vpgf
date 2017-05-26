@@ -31,7 +31,10 @@ import './common/stepper/stepper.class.js';
 import './details/detail.service.js';
 import './details/details-content.directives.js';
 import './details/details-header.directive.js';
+import './details/details-record-text.directive.js';
+import './details/details-record-html.directive.js';
 import './details/details-record-esrifeature.directive.js';
+import './details/details-record-esrifeature-item.directive.js';
 import './details/details.directive.js';
 import './details/layer-list-slider.directive.js';
 
