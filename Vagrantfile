@@ -6,10 +6,26 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 6001, host: 6001, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 6003, host: 6003, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 35729, host: 35729, host_ip: "127.0.0.1"
+
   config.vm.synced_folder ".", "/vagrant"
 
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "1024"
+    host = RbConfig::CONFIG['host_os']
+
+    # Give VM 1/4 system memory
+    if host =~ /darwin/
+      # sysctl returns Bytes and we need to convert to MB
+      mem = `sysctl -n hw.memsize`.to_i / 1024
+    elsif host =~ /linux/
+      # meminfo shows KB and we need to convert to MB
+      mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i
+    elsif host =~ /mswin|mingw|cygwin/
+      # Windows code via https://github.com/rdsubhas/vagrant-faster
+      mem = `wmic computersystem Get TotalPhysicalMemory`.split[1].to_i / 1024
+    end
+
+    mem = mem / 1024 / 4
+    vb.customize ["modifyvm", :id, "--memory", mem]
     vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate//vagrant","1"]
   end
 
