@@ -3,6 +3,7 @@
 const wmsFCModule = require('../src/layer/layerRec/wmsFC.js')();
 
 describe('WmsFC', () => {
+    let i;
     let parent = {
         _apiRef: {
             layer: {
@@ -12,7 +13,7 @@ describe('WmsFC', () => {
                             { svgcode: '123' },
                             { svgcode: '456' },
                             { svgcode: '789' }
-                        ]
+                        ];
                         return x;
                     }
                 }
@@ -44,7 +45,7 @@ describe('WmsFC', () => {
                 { id: '1', name: '' },
                 { id: '2', name: '' }
             ]
-        }
+        };
         parent._layer = {
             layerInfos: [
                 {
@@ -69,25 +70,25 @@ describe('WmsFC', () => {
                     ]
                 }
             ]
-        }
+        };
         wmsFC = new wmsFCModule.WmsFC(parent, '1', config);
     });
 
     describe('loadSymbology', () => {
         afterEach((done) => {
-                expect(wmsFC.symbology[0].svgcode).toEqual('123');
-                expect(wmsFC.symbology[1].svgcode).toEqual('456');
-                expect(wmsFC.symbology[2].svgcode).toEqual('789');
-                done();
+            expect(wmsFC.symbology[0].svgcode).toEqual('123');
+            expect(wmsFC.symbology[1].svgcode).toEqual('456');
+            expect(wmsFC.symbology[2].svgcode).toEqual('789');
+            done();
         });
 
         it('should work for config specified names', (done) => {
-            for (var i = 0; i < parent.config.layerEntries.length; i++) {
+            for (i = 0; i < parent.config.layerEntries.length; i++) {
                 parent.config.layerEntries[i].name = 'name' + i;
             }
             const res = wmsFC.loadSymbology();
-            res.then(x => {
-                for (var i = 0; i < parent.config.layerEntries.length; i++) {
+            res.then(() => {
+                for (i = 0; i < parent.config.layerEntries.length; i++) {
                     expect(wmsFC.symbology[i].name).toEqual('name' + i);
                 }
                 done();
@@ -99,13 +100,13 @@ describe('WmsFC', () => {
         });
 
         it('should work for server specified names found in parent', (done) => {
-            for (var i = 0; i < parent.config.layerEntries.length; i++) {
+            for (i = 0; i < parent.config.layerEntries.length; i++) {
                 parent._layer.layerInfos[i].name = i.toString();
                 parent._layer.layerInfos[i].title = 'match' + i;
             }
             const res = wmsFC.loadSymbology();
-            res.then(x => {
-                for (var i = 0; i < parent.config.layerEntries.length; i++) {
+            res.then(() => {
+                for (i = 0; i < parent.config.layerEntries.length; i++) {
                     expect(wmsFC.symbology[i].name).toEqual('match' + i);
                 }
                 done();
@@ -117,13 +118,13 @@ describe('WmsFC', () => {
         });
 
         it('should work for server specified names found in children', (done) => {
-            for (var i = 0; i < parent._layer.layerInfos.length; i++) {
+            for (i = 0; i < parent._layer.layerInfos.length; i++) {
                 parent._layer.layerInfos[i].subLayers[0].name = i.toString();
                 parent._layer.layerInfos[i].subLayers[0].title = 'childMatch' + i;
             }
             const res = wmsFC.loadSymbology();
-            res.then(x => {
-                for (var i = 0; i < parent.config.layerEntries.length; i++) {
+            res.then(() => {
+                for (i = 0; i < parent.config.layerEntries.length; i++) {
                     expect(wmsFC.symbology[i].name).toEqual('childMatch' + i);
                 }
                 done();
@@ -136,8 +137,8 @@ describe('WmsFC', () => {
 
         it('should work for config id', (done) => {
             const res = wmsFC.loadSymbology();
-            res.then(x => {
-                for (var i = 0; i < parent.config.layerEntries.length; i++) {
+            res.then(() => {
+                for (i = 0; i < parent.config.layerEntries.length; i++) {
                     expect(wmsFC.symbology[i].name).toEqual(i.toString());
                 }
                 done();
@@ -153,7 +154,7 @@ describe('WmsFC', () => {
             parent._layer.layerInfos[1].name = '1';
             parent._layer.layerInfos[1].title = 'serverName';
             const res = wmsFC.loadSymbology();
-            res.then(x => {
+            res.then(() => {
                 expect(wmsFC.symbology[0].name).toEqual('configName');
                 expect(wmsFC.symbology[1].name).toEqual('serverName');
                 expect(wmsFC.symbology[2].name).toEqual('2');

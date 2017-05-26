@@ -65,7 +65,7 @@ describe('Symbology', () => {
             );
             expect(renderer.svgcode).toBeUndefined();
             const res = symbology.enhanceRenderer(renderer, legend);
-            res.then(x => {
+            res.then(() => {
                 expect(renderer.svgcode).toEqual('1');
                 done();
             })
@@ -97,7 +97,7 @@ describe('Symbology', () => {
                 }));
             expect(renderer.defaultsvgcode).toBeUndefined();
             const res = symbology.enhanceRenderer(renderer, legend);
-            res.then(x => {
+            res.then(() => {
                 expect(renderer.defaultsvgcode).toEqual('1');
                 expect(renderer.uniqueValueInfos[0].svgcode).toEqual('1a');
                 expect(renderer.uniqueValueInfos[1].svgcode).toEqual('1b');
@@ -131,7 +131,7 @@ describe('Symbology', () => {
                 }));
             expect(renderer.defaultsvgcode).toBeUndefined();
             const res = symbology.enhanceRenderer(renderer, legend);
-            res.then(x => {
+            res.then(() => {
                 expect(renderer.defaultsvgcode).toEqual('1');
                 expect(renderer.classBreakInfos[0].svgcode).toEqual('1a');
                 expect(renderer.classBreakInfos[1].svgcode).toEqual('1b');
@@ -154,7 +154,7 @@ describe('Symbology', () => {
             );
             expect(renderer.svgcode).toBeUndefined();
             const res = symbology.enhanceRenderer(renderer, legend);
-            res.then(x => {
+            res.then(() => {
                 expect(renderer.svgcode).toBeUndefined();
                 done();
             })
@@ -359,7 +359,7 @@ describe('Symbology', () => {
 
     describe('mapServerToLocalLegend', () => {
         const fakeURL = 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer/';
-        
+
         it('should work for a mapServerURL and layerIndex provided', (done) => {
             const res = symbology.mapServerToLocalLegend(fakeURL, 1);
             res.then(x => {

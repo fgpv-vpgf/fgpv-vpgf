@@ -16,19 +16,19 @@ describe('ESRI Map', () => {
     };
 
     const jsonExtent = {
-        "uid": "gray",
-        "type": "full",
-        "xmin": -2681457,
-        "ymin": -883440,
-        "xmax": 3549492,
-        "ymax": 3482193,
-        "spatialReference": {
-          "wkid": 3978
+        uid: 'gray',
+        type: 'full',
+        xmin: -2681457,
+        ymin: -883440,
+        xmax: 3549492,
+        ymax: 3482193,
+        spatialReference: {
+            wkid: 3978
         }
     };
 
     const mapConfig = {
-        basemaps: [ { layers: ['random url'] } ],
+        basemaps: [{ layers: ['random url'] }],
         extent: jsonExtent,
         lods: []
     };
