@@ -176,10 +176,8 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                     format in Geo.Layer.Ogc.INFO_FORMAT_MAP);
 
             const wmsLayerList = _flattenWmsLayerList(data.layers)
-                .map((layerEntry, index) => {
-                    layerEntry.index = index;
-                    return new ConfigObject.layers.WMSLayerEntryNode(layerEntry);
-                });
+                .map(layerEntry =>
+                    (new ConfigObject.layers.WMSLayerEntryNode(layerEntry)));
 
             const layerConfig = new ConfigObject.layers.WMSLayerNode({
                 id: `${Geo.Layer.Types.OGC_WMS}#${++ref.idCounter}`,
@@ -264,13 +262,13 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
          * @return {Array}        layer list
          */
         function _flattenWmsLayerList(layers, level = 0) {
-            return [].concat.apply([], layers.map(layer => {
+            return [].concat.apply([], layers.map((layer, index) => {
                 layer.level = level;
                 layer.indent = Array.from(Array(level)).fill('-').join('');
-                layer.id = layer.name
+                layer.index = `${level}-${index}`;
 
                 if (layer.layers.length > 0) {
-                    return [].concat(layer, _flattenWmsLayerList(layer.layers, level + 1));
+                    return [].concat(layer, _flattenWmsLayerList(layer.layers, ++level));
                 } else {
                     return layer;
                 }
