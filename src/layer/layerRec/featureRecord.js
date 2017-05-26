@@ -121,7 +121,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
     isFileLayer () {
         // TODO revisit.  is it robust enough?
-        return this._layer && this._layer.url === '';
+        return this._layer && !this._layer.url;
     }
 
     // TODO determine who is setting this. if we have an internal
@@ -177,8 +177,10 @@ class FeatureRecord extends attribRecord.AttribRecord {
                 } else {
                     // we have not pulled attributes from the server.
                     // instead of downloading them all, just get the one
-                    // we are interested in
-                    attribSetPromise = this.fetchGraphic(oid, true).then(graphicBundle => {
+                    // we are interested in.
+                    // we skip the client side graphic attributes if we are server based, as it will
+                    // only contain the OID.  File based layers will have all the attributes client side.
+                    attribSetPromise = this.fetchGraphic(oid, !this.isFileLayer()).then(graphicBundle => {
                         const fakeSet = {
                             features: [
                                 graphicBundle.graphic
