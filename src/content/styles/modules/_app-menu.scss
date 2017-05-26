@@ -99,6 +99,12 @@
                     display: flex;
                     justify-content: center;
                     align-items: center;
+
+                    @media (max-height: 450px) {
+                        width: rem(5);
+                        height: rem(5);
+                        margin-top: rem(1);
+                    }
                 }
 
                 &.rv-no-logo {
@@ -120,6 +126,11 @@
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+
+                    @media (max-height: 450px) {
+                        font-size: rem(1.8);
+                        line-height: rem(3.6);
+                    }
                 }
             }
 
