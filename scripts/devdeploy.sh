@@ -19,7 +19,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 
     else
         USER=${TRAVIS_REPO_SLUG/\/fgpv-vpgf/}
-        DESTDIR="$DESTDIR/users/$USER/$TRAVIS_BRANCH/"
+        DESTDIR="$DESTDIR/users/$USER/$TRAVIS_BRANCH"
     fi
 
     echo "Destintation: $DESTDIR"

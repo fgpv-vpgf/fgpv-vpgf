@@ -397,8 +397,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._disabledControls = defaultedSource.disabledControls;
             this._userDisabledControls = defaultedSource.userDisabledControls;
 
-            this._hovertipEnabled = false;
-
             // remove metadata control if no metadata url is specified after applying defaults
             if (!source.metadataUrl) {
                 common.removeFromArray(this._controls, 'metadata');
@@ -418,6 +416,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get catalogueUrl () {           return this._catalogueUrl; }
         get extent () {                 return this._extent; }
 
+        _hovertipEnabled = false;
         get hovertipEnabled () {        return this._hovertipEnabled; }
         set hovertipEnabled (value) {   this._hovertipEnabled = value; }
 
@@ -474,8 +473,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             this._nameField = source.nameField;
             this._tolerance = source.tolerance || 5;
-            this._hovertipEnabled = true;
         }
+
+        _hovertipEnabled = true;
 
         get nameField () { return this._nameField; }
         set nameField (value) { this._nameField = value; }
@@ -736,9 +736,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             this._altText = altText;
             this._zoomLevels = zoomLevels;
-
-            this._isSelected = false;
         }
+
+        _isSelected = false;
 
         get id () {             return this._id; }
         get name () {           return this._name; }
@@ -940,8 +940,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._userAdded = entrySource.userAdded || false;
         }
 
-        static get ICONS () { return 'icons'; }
-        static get IMAGES () { return 'images'; }
+        static ICONS = 'icons';
+        static IMAGES = 'images';
 
         get layerId () { return this._layerId; }
         get userAdded () { return this._userAdded; }
@@ -1422,16 +1422,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._legend = new Legend(mapSource.legend, this._layers);
 
             this._components = new Components(mapSource.components);
-
-            this._layerRecords = [];
-            this._layerBlueprints = [];
-            this._boundingBoxRecords = [];
-            this._legendBlocks = {};
-            // holds an array of references to the legendBlock and the corresponding blockConfig objects that belong to a particular layerRecord in the form of
-            // { <layerRecordId>: [ { legendBlockId: <String>, blockConfigId: <String> }, ... ] }
-            this._legendMappings = {};
-            this._highlightLayer = null;
-            this._isLoading = true;
         }
 
         get source () { return this._source; }
@@ -1447,6 +1437,15 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get selectedBasemap () { return this._basemaps.find(basemap => basemap.isSelected); }
 
         // --- //
+
+        _layerRecords = [];
+        _layerBlueprints = [];
+        _boundingBoxRecords = [];
+        _legendBlocks = {};
+        // holds an array of references to the legendBlock and the corresponding blockConfig objects that belong to a particular layerRecord in the form of
+        // { <layerRecordId>: [ { legendBlockId: <String>, blockConfigId: <String> }, ... ] }
+        _legendMappings = {};
+        _highlightLayer = null;
 
         get layerRecords () {           return this._layerRecords; }
         get layerBlueprints () {        return this._layerBlueprints; }
@@ -1466,6 +1465,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._instance = instance;
         }
 
+        _isLoading = true;
         get isLoading () { return this._isLoading; }
         set isLoading (value) { this._isLoading = value;}
 
@@ -1513,7 +1513,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 SideMenu.ITEMS_DEFAULT;
         }
 
-        static get AVAILABLE_ITEMS () { return [
+        static AVAILABLE_ITEMS = [
             'layers',
             'basemap',
             'about',
@@ -1523,9 +1523,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             'touch',
             'help',
             'language'
-        ]; }
+        ];
 
-        static get ITEMS_DEFAULT () { return [
+        static ITEMS_DEFAULT = [
             [
                 'layers',
                 'basemap'
@@ -1540,7 +1540,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             [
                 'language'
             ]
-        ]; }
+        ];
 
         get source () { return this._source; }
 

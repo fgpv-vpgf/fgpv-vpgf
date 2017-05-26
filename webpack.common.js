@@ -30,7 +30,7 @@ module.exports = function (env) {
                     exclude: /(node_modules|polyfill)/,
                     use: [{
                         loader: 'babel-loader',
-                        options: { presets: ['es2015'] }
+                        options: { presets: ['es2015', 'stage-2'] }
                     }]
                 },
                 {
