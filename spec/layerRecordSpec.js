@@ -26,6 +26,8 @@ class FakeExtent {
 
     centerAt (point) { return new FakeExtent(point.x / 2, point.y / 2); }
     getWidth () { return this._width; }
+    intersects () { return true; }
+    getCenter (point) { return new FakeExtent(point.x / 2, point.y / 2); }
 }
 
 // A class that mocks the Map class
@@ -52,6 +54,7 @@ class FakeMap {
             reject('Error');
         });
     }
+    centerAt () { return 'sadf'; }
 }
 
 // A class that mocks the layer class from Esri
@@ -258,8 +261,9 @@ describe('layerRecord', () => {
     it('should set the map scale', () => {
         const layerRecordObject = new layerRecord.LayerRecord(FakeLayerObject, apiRef, config, esriLayer);
         const zoomIn = true;
-
         let mapDone = layerRecordObject.setMapScale(map, lod1, zoomIn);
+
+        expect(mapDone).not.toBe(undefined);
     });
 
     it('should zoom the map to an extent', (done) => {
