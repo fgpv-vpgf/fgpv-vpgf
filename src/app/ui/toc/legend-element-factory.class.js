@@ -34,9 +34,9 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
     class VisibilityControl extends BaseControl {
         constructor (...args) {
             super(...args);
-
-            this._controlName = 'visibility';
         }
+
+        _controlName = 'visibility'; // jshint ignore:line
 
         set value (value) { this.action(value); }
         get value () { return this.block.visibility; }
@@ -48,8 +48,8 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
             this._debouncedAction(value);
         }
 
-        get _debouncedAction () { return debounceService.registerDebounce(
-            value => { this.block.visibility = value; }, 300); }
+        _debouncedAction = debounceService.registerDebounce(
+            value => { this.block.visibility = value; }, 300);
     }
 
     class VisibilityNodeControl extends VisibilityControl {
@@ -105,8 +105,8 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
             this._debouncedAction(value);
         }
 
-        get _debouncedAction () { return debounceService.registerDebounce(
-            value => { this.block.boundingBox = value; }, 300); }
+        _debouncedAction = debounceService.registerDebounce(
+            value => { this.block.boundingBox = value; }, 300);
     }
 
     class QueryControl extends BaseControl {
@@ -223,8 +223,8 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
         action () {     this._debouncedAction();
         }
 
-        get _debouncedAction () { return debounceService.registerDebounce(
-            () => { tocService.toggleLayerFiltersPanel(this.block); }, 300); }
+        _debouncedAction = debounceService.registerDebounce(
+            () => { tocService.toggleLayerFiltersPanel(this.block); }, 300);
     }
 
     class RemoveControl extends BaseControl {
@@ -300,7 +300,7 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
         }
 
         // TODO: remove; geoapi will return unresolved while the layer type is retrieved and unknown if it cannot retrieve it from the service
-        static get unresolvedType () { return 'unresolved'; } // jshint ignore:line
+        static unresolvedType = 'unresolved'; // jshint ignore:line
 
         get _styles () {
             return {

@@ -8,6 +8,7 @@ function version_plugin(options) {
     version.major = packageVersion[0];
     version.minor = packageVersion[1];
     version.patch = packageVersion[2];
+    version.timestamp = + new Date();
     version.gitHash = require('child_process').execSync('git rev-parse HEAD').toString().trim();
 }
 

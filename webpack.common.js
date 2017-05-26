@@ -30,7 +30,7 @@ module.exports = function (env) {
                     exclude: /(node_modules|polyfill)/,
                     use: [{
                         loader: 'babel-loader',
-                        options: { presets: ['es2015'] }
+                        options: { presets: ['es2015', 'stage-2'] }
                     }]
                 },
                 {
@@ -94,6 +94,7 @@ module.exports = function (env) {
         externals: { 'TweenLite': 'TweenLite' },
 
         devServer: {
+            host: '0.0.0.0',
             historyApiFallback: true,
             contentBase: 'build',
             port: 3000,
