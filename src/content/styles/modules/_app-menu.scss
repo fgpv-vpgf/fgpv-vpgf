@@ -93,15 +93,12 @@
                 }
 
                 div {
-                    // when height >= 450
-                    @include include-size(rv-tl) {
-                        width: rem(15);
-                        height: rem(15);
-                        margin-top: rem(3);
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                    }
+                    width: rem(15);
+                    height: rem(15);
+                    margin-top: rem(3);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
 
                     // when height < 450
                     @include include-size(rv-st) {
@@ -121,18 +118,15 @@
 
                 // reset overrides
                 h1 {
-                    // when height >= 450
-                    @include include-size(rv-tl) {
-                        line-height: rem(5.2);
-                        margin: 0;
-                        border: 0;
-                        padding: 0;
-                        padding: 0 rem(1.6);
-                        width: 100%;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                    }
+                    line-height: rem(5.2);
+                    margin: 0;
+                    border: 0;
+                    padding: 0;
+                    padding: 0 rem(1.6);
+                    width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
 
                     // when height < 450
                     @include include-size(rv-st) {

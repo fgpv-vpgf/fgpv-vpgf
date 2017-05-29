@@ -114,11 +114,16 @@ function rvShell($rootElement, $rootScope, events, storageService, stateManager,
     */
     function updateClass() {
         elemWidth = $rootElement.width();
+        elemHeight = $rootElement.height();
         $rootElement
             .removeClass('rv-small rv-medium rv-large')
-            .removeClass('rv-short rv-tall')
             .addClass('rv-' + layoutService.currentLayout())
-            .addClass('rv-' + layoutService.currentHeight());
+
+        if (layoutService.isShort()) {
+            $rootElement.addClass('rv-short');
+        } else {
+            $rootElement.removeClass('rv-short');
+        }
     }
 }
 
