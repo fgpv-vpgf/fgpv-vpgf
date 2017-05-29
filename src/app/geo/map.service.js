@@ -202,9 +202,11 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
             },
             'extent-change': data => {
                 // remove highlighted features and the haze when the map is panned, zoomed, etc.
-                if (data.delta.x !== 0 || data.delta.y !== 0 || data.levelChange) {
+                if (angular.isObject(data.delta) &&
+                    (data.delta.x !== 0 || data.delta.y !== 0 || data.levelChange)) {
                     clearHighlight(false);
                 }
+
                 events.$broadcast(events.rvExtentChange, data);
             },
             'mouse-move': data =>

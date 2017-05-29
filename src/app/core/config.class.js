@@ -950,7 +950,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get entryId () { return this._entryId; }
         get coverIcon () { return this._coverIcon; }
         get symbologyStack () { return this._symbologyStack; }
+
         get symbologyRenderStyle () { return this._symbologyRenderStyle; }
+        set symbologyRenderStyle (value) { this._symbologyRenderStyle = value; }
 
         get entryType () {              return TYPES.legend.NODE; }
 
@@ -1577,6 +1579,22 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    class Help {
+        constructor(helpSource = {}) {
+            this._source = helpSource;
+
+            this._folderName = helpSource.folderName || 'default';
+        }
+
+        get folderName () { return this._folderName; }
+
+        get JSON () {
+            return {
+                folderName: this.folderName
+            };
+        }
+    }
+
     class UI {
         constructor(uiSource) {
             this._source = uiSource;
@@ -1586,6 +1604,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._restrictNavigation = uiSource.restrictNavigation === 'true';
             this._sideMenu = new SideMenu(uiSource.sideMenu);
             this._legendIsOpen = new LegendIsOpen(uiSource.legendIsOpen);
+            this._help = new Help(uiSource.help);
         }
 
         get source () {                 return this._source; }
@@ -1595,6 +1614,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get restrictNavigation () {     return this._restrictNavigation; }
         get sideMenu () {               return this._sideMenu; }
         get legendIsOpen () {           return this._legendIsOpen; }
+        get help () {                   return this._help; }
 
         get JSON () {
             return {
@@ -1602,7 +1622,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 logoUrl: this.logoUrl,
                 restrictNavigation: this.restrictNavigation,
                 sideMenu: this.sideMenu.JSON,
-                legendIsOpen: this.legendIsOpen.JSON
+                legendIsOpen: this.legendIsOpen.JSON,
+                help: this.help.JSON
             }
         }
     }

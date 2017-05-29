@@ -457,6 +457,11 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             const layerConfig = blueprints.main.config;
             const mainProxy = _getLegendBlockProxy(blueprints.main, blockConfig);
 
+            // all wms layer default to image-style symbology, regardless of what the config says
+            if (layerConfig.layerType === Geo.Layer.Types.OGC_WMS) {
+                blockConfig.symbologyRenderStyle = ConfigObject.legend.Entry.IMAGES;
+            }
+
             const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, layerConfig);
 
             const node = new LegendBlock.Node(proxyWrapper, blockConfig);
