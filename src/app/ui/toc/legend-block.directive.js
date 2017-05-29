@@ -55,15 +55,16 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common)
         const self = scope.self;
 
         self.appID = appInfo.id;
+        self.isNameTruncated = false;
 
         // a shorthand for less verbocity
-        // self.layerProxy = self.block.layerProxy;
 
         // store reference to element on the scope so it can be passed to symbology stack as container
         self.element = element;
 
         self.intersect = common.intersect;
         self.getTooltipDirection = getTooltipDirection;
+        self.getTooltipDelay = getTooltipDelay;
 
         scope.$watch('self.block.template', newTemplate => {
             if (newTemplate) {
@@ -84,6 +85,19 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common)
          */
         function getTooltipDirection() {
             return layoutService.currentLayout() === layoutService.LAYOUT.LARGE ? 'right' : 'top';
+        }
+
+        /**
+         * Determines the delay before the legend block's tooltip is shown.
+         * This is a workaround to disabling tooltips for untruncated block names as Angular Material doesn't have a simple way of doing this, and writing a decorator is much more work and is probably not worth it.
+         * If the name is truncated, use normal delay; if not, use 500 seconds.
+         *
+         * @function getTooltipDelay
+         * @private
+         * @return {Number} a delay before the legend block tooltip is shown
+         */
+        function getTooltipDelay() {
+            return self.isNameTruncated ? 750 : 500000;
         }
     }
 }

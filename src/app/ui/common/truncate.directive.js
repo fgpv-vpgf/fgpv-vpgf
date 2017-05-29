@@ -78,7 +78,8 @@ function rvTruncateTitle(graphicsService) {
     const directive = {
         restrict: 'A',
         scope: {
-            rvTruncateTitle: '='
+            title: '=rvTruncateTitle',
+            isActive: '=?rvTruncateTitleIsActive'
         },
         link,
         controller: () => {},
@@ -93,7 +94,7 @@ function rvTruncateTitle(graphicsService) {
     function link(scope, el) {
         let string = '';
 
-        scope.$watch('self.rvTruncateTitle', newString => {
+        scope.$watch('self.title', newString => {
             if (newString) { string = newString; }
             update();
         });
@@ -115,6 +116,8 @@ function rvTruncateTitle(graphicsService) {
                 <span class="rv-truncate-title-left">${left}</span>
                 <span calss="rv-truncate-title-right">${right}</span>
             `);
+
+            scope.self.isActive = right !== '';
         }
 
         /**
