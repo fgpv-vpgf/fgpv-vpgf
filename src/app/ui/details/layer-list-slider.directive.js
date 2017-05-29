@@ -1,6 +1,4 @@
 import {Power1} from 'gsap';
-import 'jquery-hoverintent';
-
 const templateUrl = require('./layer-list-slider.html');
 
 const RV_SLIDE_DURATION = 0.3;
