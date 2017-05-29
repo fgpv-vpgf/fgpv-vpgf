@@ -2,7 +2,6 @@
 import 'jquery';
 import 'angular';
 import 'angular-aria';
-import 'angular-minicolors';
 import 'angular-animate';
 import 'angular-material';
 import 'angular-messages';
@@ -40,3 +39,9 @@ import './focus-manager.js';
 import './app-seed.js';
 import '../plugins/core/back-to-cart.js';
 import '../content/styles/main.scss';
+
+
+// HACKS
+// hoverintent is a function consuming the jQuery object where it adds a prototype method hoverIntent.
+import hoverintent from 'jquery-hoverintent';
+hoverintent($);
