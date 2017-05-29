@@ -117,7 +117,7 @@ function rvShell($rootElement, $rootScope, events, storageService, stateManager,
         elemHeight = $rootElement.height();
         $rootElement
             .removeClass('rv-small rv-medium rv-large')
-            .addClass('rv-' + layoutService.currentLayout())
+            .addClass('rv-' + layoutService.currentLayout());
 
         if (layoutService.isShort()) {
             $rootElement.addClass('rv-short');
