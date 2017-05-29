@@ -1,6 +1,8 @@
 <div
     class="rv-list-item-body">
 
+    <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}">{{ self.block.name }}</md-tooltip>
+
     <md-button
         ng-if="!self.isReorder"
         class="rv-body-button rv-button-square"
@@ -15,8 +17,9 @@
 </div>
 
 <div class="rv-list-item-content">
-    <div class="rv-list-item-name">
-        {{ self.block.name }}
+    <div class="rv-list-item-name"
+        rv-truncate-title="self.block.name"
+        rv-truncate-title-is-active="self.isNameTruncated">
     </div>
 </div>
 

@@ -1,10 +1,18 @@
+<div
+    class="rv-list-item-body">
+
+    <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}">{{ self.block.name }}</md-tooltip>
+</div>
+
 <div class="rv-icon-32">
     <md-icon md-svg-src="community:emoticon-sad"></md-icon>
 </div>
 
+
 <div class="rv-list-item-content">
-    <div class="rv-list-item-name">
-        {{ self.block.name }}
+    <div class="rv-list-item-name"
+        rv-truncate-title="self.block.name"
+        rv-truncate-title-is-active="self.isNameTruncated">
     </div>
 </div>
 

@@ -3,6 +3,8 @@
     ng-mouseover="self.block.symbologyStack.fannedOut = true"
     ng-mouseleave="self.block.symbologyStack.fannedOut = false">
 
+    <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}">{{ self.block.name }}</md-tooltip>
+
     <rv-legend-control block="self.block" template="body" name="data"></rv-legend-control>
 </div>
 
@@ -11,8 +13,9 @@
     container="self.element"></rv-symbology-stack>
 
 <div class="rv-list-item-content">
-    <div class="rv-list-item-name">
-        {{ self.block.name }} {{ self.block._mainProxy.state }}
+    <div class="rv-list-item-name"
+        rv-truncate-title="self.block.name"
+        rv-truncate-title-is-active="self.isNameTruncated">
     </div>
 
     <div class="rv-list-item-flags">

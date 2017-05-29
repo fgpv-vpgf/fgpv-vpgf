@@ -425,12 +425,12 @@ function rvSymbologyStack($q, Geo, animationService) {
     }
 }
 
-function symbologyStack(ConfigObject) {
+function symbologyStack(ConfigObject, gapiService) {
 
     class SymbologyStack {
         /**
-         * @param {LayerProxy} proxy [optional = {}] layer proxy object
-         * @param {Array} symbols [optional = []] array of alternative symbology svg graphic elements
+         * @param {LayerProxy} proxy [optional = {}] layer proxy object which can supply symbology stack; custom symbols will be used first; if they are not availalbe, symbology stack from the proxy object is used;
+         * @param {Array} symbols [optional = []] array of alternative symbology svg graphic elements; can be either [ { name: <String>, svgcode: <String> }, ... ] or [ { text: <String>, image: <String> }, ... ]; the latter example (usually coming from a config file) will be transformed into the format by wrapping images in svg containers;
          * @param {String} renderStyle [optional = ConfigObject.legend.Entry.ICONS] rendering style for symbology stack animation
          * @param {Boolean} isInteractive [optional = false] specifies if the user can interact with the symbology stack
          */
@@ -440,14 +440,29 @@ function symbologyStack(ConfigObject) {
             this._proxy = proxy;
             this._renderStyle = renderStyle;
             this._isInteractive = isInteractive;
-            this._symbols = symbols;
-            this._fannedOut = false;
-            this._expanded = false;
+
+            if (symbols.length === 0) {
+                return;
+            }
+
+            // custom symbology lists coming from the config file need to be converted to svg first
+            if (typeof symbols[0].image !== 'undefined') {
+                const renderStyleSwitch = {
+                    [ConfigObject.legend.Entry.ICONS]: gapiService.gapi.symbology.listToIconSymbology,
+                    [ConfigObject.legend.Entry.IMAGES]: gapiService.gapi.symbology.listToImageSymbology
+                };
+
+                this._symbols = renderStyleSwitch[renderStyle](symbols);
+            } else {
+                this._symbols = symbols;
+                this._fannedOut = false;
+                this._expanded = false;
+            }
         }
 
         get isInteractive () {  return this._isInteractive; }
 
-        get stack () {          return this._proxy.symbology || this._symbols; }
+        get stack () {          return this._symbols || this._proxy.symbology; }
         get renderStyle () {    return this._renderStyle; }
 
         get fannedOut () {      return this._fannedOut; }

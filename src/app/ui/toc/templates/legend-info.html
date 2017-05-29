@@ -5,4 +5,20 @@
     <p ng-switch-when="text">{{ self.block.content }}</p>
 
     <img ng-switch-when="image" ng-src="{{ self.block.content }}" alt="">
+
+    <div ng-switch-when="unboundLayer">
+        <rv-symbology-stack
+            symbology="self.block.symbologyStack"
+            container="self.element"></rv-symbology-stack>
+
+        <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}">{{ self.block.layerName }}</md-tooltip>
+
+        <div class="rv-list-item-content">
+            <div class="rv-list-item-name"
+                rv-truncate-title="self.block.layerName"
+                rv-truncate-title-is-active="self.isNameTruncated">
+            </div>
+        </div>
+
+    </div>
 </div>

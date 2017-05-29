@@ -1,3 +1,5 @@
+import marked from 'marked';
+
 const templateUrl = require('./help-summary.html');
 
 /**
