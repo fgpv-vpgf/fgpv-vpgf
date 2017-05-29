@@ -93,14 +93,18 @@
                 }
 
                 div {
-                    width: rem(15);
-                    height: rem(15);
-                    margin-top: rem(3);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
+                    // when height >= 450
+                    @include include-size(rv-tl) {
+                        width: rem(15);
+                        height: rem(15);
+                        margin-top: rem(3);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
 
-                    @media (max-height: 450px) {
+                    // when height < 450
+                    @include include-size(rv-st) {
                         width: rem(5);
                         height: rem(5);
                         margin-top: rem(1);
@@ -117,17 +121,21 @@
 
                 // reset overrides
                 h1 {
-                    line-height: rem(5.2);
-                    margin: 0;
-                    border: 0;
-                    padding: 0;
-                    padding: 0 rem(1.6);
-                    width: 100%;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
+                    // when height >= 450
+                    @include include-size(rv-tl) {
+                        line-height: rem(5.2);
+                        margin: 0;
+                        border: 0;
+                        padding: 0;
+                        padding: 0 rem(1.6);
+                        width: 100%;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
 
-                    @media (max-height: 450px) {
+                    // when height < 450
+                    @include include-size(rv-st) {
                         font-size: rem(1.8);
                         line-height: rem(3.6);
                     }
