@@ -99,6 +99,13 @@
                     display: flex;
                     justify-content: center;
                     align-items: center;
+
+                    // when height < 450
+                    @include include-size(rv-st) {
+                        width: rem(5);
+                        height: rem(5);
+                        margin-top: rem(1);
+                    }
                 }
 
                 &.rv-no-logo {
@@ -120,6 +127,12 @@
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+
+                    // when height < 450
+                    @include include-size(rv-st) {
+                        font-size: rem(1.8);
+                        line-height: rem(3.6);
+                    }
                 }
             }
 

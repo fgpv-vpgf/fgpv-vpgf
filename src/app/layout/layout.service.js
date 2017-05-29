@@ -17,6 +17,7 @@ function layoutService($rootElement, $rootScope, sideNavigationService, mapNavig
 
     const service = {
         currentLayout,
+        isShort,
         /**
          * Exposes sideNavigationSerivce
          * @member sidenav
@@ -57,6 +58,19 @@ function layoutService($rootElement, $rootScope, sideNavigationService, mapNavig
         } else {
             return service.LAYOUT.LARGE;
         }
+    }
+
+    /**
+    * Determines whether the current height as short or not depending on the height of the $rootElement
+    * @function  currentHeight
+    * @return  {String} either 'short' or null for not being short
+    */
+    function isShort() {
+        if ($rootElement.height() < 450) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -30,17 +30,19 @@ function rvShell($rootElement, $rootScope, events, storageService, stateManager,
     let outMouseSR;
 
     let elemWidth; // last known width of the $rootElement
+    let elemHeight; // last known height of the $rootElement
 
     return directive;
 
     function link(scope, el) {
 
         elemWidth = $rootElement.width();
+        elemHeight = $rootElement.height();
         updateClass(); // first run update
 
         // performance optimization - only update dom if the $rootElement width has changed
         // TODO: to further improve performance only have one listener regardless of the number of viewers on the page
-        $(window).on('resize', () => $rootElement.width() !== elemWidth ? updateClass() : null);
+        $(window).on('resize', () => $rootElement.width() !== elemWidth || $rootElement.height() !== elemHeight ? updateClass() : null);
 
         // open legend panel if option is set in config for current viewport
         configService.onEveryConfigLoad(config => {
@@ -112,9 +114,11 @@ function rvShell($rootElement, $rootScope, events, storageService, stateManager,
     */
     function updateClass() {
         elemWidth = $rootElement.width();
+        elemHeight = $rootElement.height();
         $rootElement
             .removeClass('rv-small rv-medium rv-large')
             .addClass('rv-' + layoutService.currentLayout());
+        $rootElement.toggleClass('rv-short', layoutService.isShort());
     }
 }
 

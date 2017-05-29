@@ -75,6 +75,10 @@ $keyboard-only: '.rv-keyboard-only';
         @at-root #{selector-append('.rv-large', &)} {
             @content;
         }
+    } @else if $name == rv-st {
+        @at-root #{selector-append('.rv-short', &)} {
+            @content;
+        }
     }
 }
 
