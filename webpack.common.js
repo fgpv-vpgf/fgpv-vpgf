@@ -33,6 +33,8 @@ module.exports = function (env) {
                     }, {
                         loader: 'babel-loader',
                         options: { presets: ['es2015', 'stage-2'], cacheDirectory: true }
+                    }, {
+                        loader: 'eslint-loader'
                     }]
                 },
                 {
