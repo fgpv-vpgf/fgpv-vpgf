@@ -12,7 +12,7 @@ const iconTemplateUrls = {
     maps: require('../../content/svgCache/maps.svg'),
     navigation: require('../../content/svgCache/navigation.svg'),
     social: require('../../content/svgCache/social.svg'),
-    toggle: require('../../content/svgCache/toggle.svg'),
+    toggle: require('../../content/svgCache/toggle.svg')
 };
 
 angular

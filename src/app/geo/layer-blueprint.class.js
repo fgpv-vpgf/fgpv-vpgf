@@ -83,7 +83,7 @@ function LayerBlueprintFactory($q, $http, LayerBlueprintUserOptions, gapiService
                 [layerTypes.ESRI_DYNAMIC]: ConfigObject.layers.DynamicLayerNode,
                 [layerTypes.OGC_WMS]: ConfigObject.layers.WMSLayerNode
             }
-        };
+        }
 
         static get LAYER_TYPE_TO_LAYER_RECORD() {
             const gapiLayer = gapiService.gapi.layer;
