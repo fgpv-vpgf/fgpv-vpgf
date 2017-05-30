@@ -3,7 +3,7 @@ const CommonConfig  = require('./webpack.common.js');
 
 module.exports = function (env) {
     const config = Merge(CommonConfig(env), {
-        devtool: 'cheap-source-map'
+        devtool: 'source-map'
     });
 
     return config;

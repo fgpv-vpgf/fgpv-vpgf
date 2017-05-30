@@ -8,7 +8,6 @@ const VersionPlugin         = require('./scripts/version_plugin.js');
 const WrapperPlugin         = require('wrapper-webpack-plugin');
 const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
-const ngAnnotatePlugin      = require('ng-annotate-webpack-plugin');
 
 
 module.exports = function (env) {
@@ -28,10 +27,14 @@ module.exports = function (env) {
             rules: [
                 {
                     test: /\.js$/,
-                    exclude: /(node_modules|polyfill)/,
+                    include: [path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/plugins')],
                     use: [{
+                        loader: 'ng-annotate-loader'
+                    }, {
                         loader: 'babel-loader',
-                        options: { presets: ['es2015', 'stage-2'] }
+                        options: { presets: ['es2015', 'stage-2'], cacheDirectory: true }
+                    }, {
+                        loader: 'eslint-loader'
                     }]
                 },
                 {
@@ -59,6 +62,8 @@ module.exports = function (env) {
         },
 
         plugins: [
+
+            new webpack.PrefetchPlugin(path.resolve(__dirname, 'src/app/app-loader.js')),
 
             new CopyWebpackPlugin([{
                 context: 'src/content/samples',
@@ -89,9 +94,7 @@ module.exports = function (env) {
 
             new VersionPlugin(),
 
-            new CleanWebpackPlugin(['build']),
-
-            new ngAnnotatePlugin()
+            new CleanWebpackPlugin(['build'])
         ],
 
         externals: { 'TweenLite': 'TweenLite' },
