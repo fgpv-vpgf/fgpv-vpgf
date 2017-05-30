@@ -282,6 +282,7 @@ Geometry types,geometry.type.esriGeometryPolyline,line|lines,ligne|lignes
 ,import.service.configure.primaryfield,Primary Field,Champ clé
 ,import.service.configure.layers,Layers,Couches
 ,import.service.configure.multipleselection,You can select several layers,Vous pouvez sélectionner plusieurs couches
+,import.service.configure.selectall,Select All,Tout Sélectionner
 ,stepper.continue,Continue,Continuer
 ,stepper.unresponsive,The application may feel unresponsive for a short time upon clicking the Continue button. This is normal while data is being processed.,L'application peut ne pas répondre pendant un court laps de temps après avoir cliqué sur le bouton Continuer. Cette situation est normale pendant le traitement des données.
 ,stepper.cancel,Cancel,Annuler

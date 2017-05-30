@@ -44,6 +44,12 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         Geo.Service.Types.RasterLayer
     ];
 
+    self.common = {
+        toggleLayers,
+        isSomeLayersSelected,
+        isAllLayersSelected
+    };
+
     // TODO: turn into a proper class
     self.connect = {
         step: {
@@ -272,6 +278,52 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         // if reset called before the first step is complete, layerBlueprint will not exist yet
         if (self.layerSource) {
             self.layerSource.reset();
+        }
+    }
+
+    /**
+     * Checks if all sub-layer options are selected.
+     *
+     * @function isAllLayersSelected
+     * @return {Boolean} true if all sub-layer options are selected
+     */
+    function isAllLayersSelected() {
+        const selectedLayers = self.layerSource.config.layerEntries;
+        const availableLayers = self.layerSource.layers;
+
+        return selectedLayers.length === availableLayers.length;
+    }
+
+    /**
+     * Checks if at least one, but not all sub-layer options are selected.
+     *
+     * @function isSomeLayersSelected
+     * @return {Boolean} true if at least one, but not all sub-layer options are selected
+     */
+    function isSomeLayersSelected() {
+        const selectedLayers = self.layerSource.config.layerEntries;
+        const availableLayers = self.layerSource.layers;
+
+        return (selectedLayers.length !== 0 &&
+            selectedLayers.length !== availableLayers.length);
+    }
+
+    /**
+     * Selects or deselects all sub-layer options depending on current state:
+     * - all selected -> deselect all
+     * - some selected -> select all
+     * - none selected -> select all
+     *
+     * @function toggleLayers
+     */
+    function toggleLayers() {
+        const selectedLayers = self.layerSource.config.layerEntries;
+        const availableLayers = self.layerSource.layers;
+
+        if (selectedLayers.length === availableLayers.length) {
+            self.layerSource.config.layerEntries = [];
+        } else if (selectedLayers.length >= 0) {
+            self.layerSource.config.layerEntries = self.layerSource.layers.slice(0);
         }
     }
 

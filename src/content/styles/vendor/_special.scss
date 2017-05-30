@@ -162,6 +162,51 @@ md-select-menu {
     }
 }
 
+// special option in the md-select header to preselect all the items
+.md-select-menu-container {
+    rv-select-header {
+        .rv-select-header-all {
+            height: rem(4.8);
+            padding: 0;
+            margin: 0;
+            padding-right: $select-option-padding;
+            display: flex;
+            align-items: center;
+
+            .md-container  {
+                margin-left: $select-option-padding * (2 / 3);
+            }
+
+            .md-label {
+                margin-left: $select-option-padding * 2.5;
+            }
+
+            &:before {
+                position: absolute;
+                content: "";
+                background-color: transparent;
+                width: rem(0.5);
+                left: 0;
+                height: 100%;
+                top: 0;
+                transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            }
+
+            // selection indicator
+            &[checked="checked"] {
+                color: black;
+
+                // the colour md-buttons get on hover
+                background-color: rgba(158,158,158,0.2);
+
+                &:before {
+                    background-color: $accent-color;
+                }
+            }
+        }
+    }
+}
+
 .rv-export-select {
     width: rem(25); // manually set the width of the export size selector; otherwise it will resize to fit the content
 
