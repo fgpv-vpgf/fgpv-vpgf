@@ -82,10 +82,20 @@
             <md-input-container class="md-block" ng-switch-when="dynamicservice">
                 <label translate>import.service.configure.layers</label>
                 <md-select
-                    name="layer"
+                    name="dynamicLayers"
                     ng-model="self.layerSource.config.layerEntries"
                     ng-model-options="{ trackBy: '$value.index' }"
                     required multiple>
+                    <rv-select-header>
+                        <md-checkbox
+                            ng-checked="self.common.isAllLayersSelected()"
+                            md-indeterminate="self.common.isSomeLayersSelected()"
+                            ng-click="self.common.toggleLayers()"
+                            class="md-primary rv-select-header-all">
+                            {{ 'import.service.configure.selectall' | translate }}
+                        </md-checkbox>
+                        <md-divider class="rv-layer-list-divider"></md-divider>
+                    </rv-select-header>
                     <md-option ng-repeat="layer in self.layerSource.layers"
                         ng-value="layer">
                         {{ layer.indent + ' ' + layer.name }}
@@ -101,10 +111,21 @@
             <md-input-container class="md-block" ng-switch-when="wms">
                 <label translate>import.service.configure.layers</label>
                 <md-select
-                    name="layers"
+                    name="wmsLayers"
                     ng-model="self.layerSource.config.layerEntries"
                     ng-model-options="{ trackBy: '$value.index' }"
                     required multiple>
+                    <rv-select-header>
+                        <md-checkbox
+                            ng-checked="self.common.isAllLayersSelected()"
+                            md-indeterminate="self.common.isSomeLayersSelected()"
+                            ng-click="self.common.toggleLayers()"
+                            class="md-primary rv-select-header-all">
+                            {{ 'import.service.configure.selectall' | translate }}
+                        </md-checkbox>
+                        <md-divider class="rv-layer-list-divider"></md-divider>
+                    </rv-select-header>
+
                     <md-option ng-repeat="layer in self.layerSource.layers"
                         ng-value="layer">
                         {{ layer.indent + ' ' + layer.desc }}
