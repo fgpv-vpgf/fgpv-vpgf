@@ -1,5 +1,7 @@
 /* global RV */
 
+import Colors from 'colors.js';
+
 // Need to add exported module to window as it needs it internally.
 import Flow from '@flowjs/ng-flow/dist/ng-flow-standalone';
 window.Flow = Flow;
@@ -355,6 +357,15 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
      * @function configureOnContinue
      */
     function configureOnContinue() {
+        var currColour = self.layerSource.colour;
+
+        // Check that the input is not a hexadecimal value
+        if (!currColour.startsWith('#') && !/((?:[A-Fa-f0-9]{3}){1,2})$/.test(currColour)) {
+            // remove any whitespace in color name
+            currColour = currColour.replace(/\s+/g, '');
+            self.layerSource.colour = Colors.name2hex(currColour);
+        }
+
         const layerBlueprint = new LayerBlueprint.file(self.layerSource);
 
         layerBlueprint.validateFileLayerSource()
