@@ -46,7 +46,7 @@
                         ng-class="{ 'rv-hide': !self.upload.file }"></md-progress-linear>
 
                     <!-- this field is needed to attach the error messages; is't hidden -->
-                    <input name="fileSelect" ng-model="self.upload.fileSelect" aria-label="Select File">
+                    <input name="fileSelect" ng-model="self.upload.fileSelect" aria-label="{{ import.file.select.title | translate }}">
                     <div ng-messages="self.upload.form.fileSelect.$error">
                         <div ng-message="upload-error">{{ 'import.file.upload.noaccess' | translate }}</div>
                     </div>
