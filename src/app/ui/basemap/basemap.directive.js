@@ -22,7 +22,7 @@ function rvBasemap() {
     return directive;
 }
 
-function Controller(geoService, basemapService, configService, events) {
+function Controller(geoService, mapService, basemapService, configService, events) {
     'ngInject';
     const self = this;
 
@@ -36,6 +36,8 @@ function Controller(geoService, basemapService, configService, events) {
         basemap.select();
         geoService.map.selectBasemap(basemap.id);
         events.$broadcast(events.rvBasemapChange);
+
+        mapService.setAttribution(basemap);
     }
 
     self.close = basemapService.close;

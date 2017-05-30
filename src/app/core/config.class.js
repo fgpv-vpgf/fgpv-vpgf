@@ -543,8 +543,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get layerType () { return layerTypes.OGC_WMS; }
 
-        get JOSN() {
-            return angular.merge(super.JOSN, {
+        get JSON() {
+            return angular.merge(super.JSON, {
                 id: this.id
             });
         }
@@ -600,8 +600,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get layerType () { return layerTypes.ESRI_DYNAMIC; }
 
-        get JOSN() {
-            return angular.merge(super.JOSN, {
+        get JSON() {
+            return angular.merge(super.JSON, {
                 outfields: this.outfields,
                 stateOnly: this.stateOnly,
                 extent: this.extent
@@ -716,6 +716,34 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    class Attribution {
+        constructor (source = {}) {
+            angular.merge(this._text, source.text);
+            angular.merge(this._logo, source.logo);
+        }
+
+        _text = {
+            enabled: true,
+            value: null
+        }
+
+        _logo = {
+            enabled: true,
+            value: null,
+            link: null
+        }
+
+        get text () { return this._text; }
+        get logo () { return this._logo; }
+
+        get JSON () {
+            return {
+                text: this.text,
+                logo: this.logo
+            };
+        }
+    }
+
     /**
      * Typed representation of a Basemap specified in the config.
      * @class Basemap
@@ -801,7 +829,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 thumbnailUrl: this.thumbnailUrl,
                 tileSchemaId: this.tileSchemaId,
                 layers: this.layers,
-                attribution: this.attribution,
+                attribution: this.attribution.JSON,
                 zoomLevels: this.zoomLevels
             };
         }
@@ -842,7 +870,15 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 id: `blank_basemap_${basemap.id}`,
                 layers: basemap.layers,
                 thumbnailUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
-                attribution: '',
+                // blank maps have no attributions
+                attribution: {
+                    text: {
+                        enabled: false
+                    },
+                    logo: {
+                        enabled: false
+                    }
+                },
                 opacity: 0
             }, this);
 
@@ -1661,7 +1697,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
 
         /**
-         * Returns orignal JOSN source of the config object.
+         * Returns orignal JSON source of the config object.
          * @return {Object} original json config object
          */
         get source () { return this._source; }
