@@ -15,7 +15,8 @@ function esriMap(esriBundle, geoApi) {
             'on', 'reorderLayer', 'addLayer', 'disableKeyboardNavigation', 'removeLayer', 'resize', 'reposition',
             'centerAt', 'setZoom', 'centerAndZoom', 'toScreen', 'setExtent'
         ]; }
-        get _passthroughProperties () { return ['graphicsLayerIds', 'layerIds', 'spatialReference', 'extent']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
+        get _passthroughProperties () { return ['graphicsLayerIds', 'layerIds', 'spatialReference', 'extent',
+            'attribution']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
         constructor (domNode, opts) {
 
