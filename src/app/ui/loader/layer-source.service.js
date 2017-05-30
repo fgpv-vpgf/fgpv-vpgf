@@ -176,6 +176,8 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                     format in Geo.Layer.Ogc.INFO_FORMAT_MAP);
 
             const wmsLayerList = _flattenWmsLayerList(data.layers)
+                // filter out all sublayers with no id/name (they can't be targeted and probably have no legend)
+                .filter(layerEntry => layerEntry.id)
                 .map((layerEntry, index) => {
                     layerEntry.index = index;
                     return new ConfigObject.layers.WMSLayerEntryNode(layerEntry);

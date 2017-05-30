@@ -57,7 +57,6 @@ function rvLegendControl(LegendElementFactory) {
         const self = scope.self;
 
         self.uiControl = LegendElementFactory.makeControl(self.block, self.name);
-        console.warn(self.uiControl);
 
         self.Math = window.Math;
 
