@@ -325,3 +325,5 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 ,focus.dialog.escape,Escape,Échapper
 ,toc.menu.symbology,Show legend,Afficher la légende
 ,sidenav.menu.plugin,Plugin Links,Liens
+Table of Content expand legend group,toc.label.group.expand,Expand Group,Agrandir le groupe
+Table of Content collapse legend group,toc.label.group.collapse,Collapse Group,Collapse du groupe
