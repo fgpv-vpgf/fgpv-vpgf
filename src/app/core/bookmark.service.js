@@ -13,7 +13,7 @@ angular
     .factory('bookmarkService', bookmarkService);
 
 function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
-        LayerRecordFactory, configService, gapiService, bookmarkVersions, Geo) {
+        LayerRecordFactory, configService, gapiService, bookmarkVersions, Geo, ConfigObject) {
 
     const blankPrefix = 'blank_basemap_';
 
@@ -35,33 +35,41 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
     function getBookmark() {
         // TODO: possibly race condition to clean up or need basemapService to expose original projection
 
-        // we tack a flag at the end to indicate if we were in blank mode or not
-        const bmkey = geoService.Map.BasemapControl.basemapGallery.getSelected().id +
-            (geoService.state.blankBaseMapId ? '1' : '0');
-        const basemap = encode64(bmkey);
+        const mapConfig = configService.getSync.map;
+        const mapInstance = mapConfig.instance;
 
-        const mapExtent = geoService.mapObject.extent.getCenter();
+        // we tack a flag at the end to indicate if we were in blank mode or not
+        const basemap = encode64(mapConfig.selectedBasemap.id + '0');
+
+        const mapExtent = mapInstance.extent.getCenter();
 
         // get zoom scale
         // get center coords
         const extent = {
             x: encode64(mapExtent.x),
             y: encode64(mapExtent.y),
-            scale: encode64(geoService.mapObject.getScale())
+            scale: encode64(mapInstance._map.getScale())
         };
 
         // loop through layers in legend, remove user added layers and "removed" layer which are in the "undo" time frame
-        const legend = geoService.legend.items.filter(legendEntry =>
-            !legendEntry.flags.user.visible && !legendEntry.removed);
-        const layerBookmarks = legend.map(legendEntry =>
-            encode64(makeLayerBookmark(legendEntry)));
+        // const legend = geoService.legend.items.filter(legendEntry =>
+        //     !legendEntry.flags.user.visible && !legendEntry.removed);
+
+
+        // const layerBookmarks = legend.map(legendEntry =>
+        //     encode64(makeLayerBookmark(legendEntry)));
+
+        const layerRecords = mapConfig.layerRecords;
+        const layerBookmarks = layerRecords.map(layerRecord =>
+            encode64(makeLayerBookmark(layerRecord)));
 
         // bookmarkVersions.? is the version. update this accordingly whenever the structure of the bookmark changes
         const bookmark = `${bookmarkVersions.B},${basemap},${extent.x},${extent.y},${extent.scale}` +
             (layerBookmarks.length > 0 ? `,${layerBookmarks.toString()}` : '');
-        RV.logger.log('bookmarkService', 'bookmark object', bookmark);
-        return bookmark;
 
+        RV.logger.log('bookmarkService', 'bookmark object', bookmark);
+
+        return bookmark;
     }
 
     /**
@@ -166,58 +174,6 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
     }
 
     /**
-     * Encode an object property (possibly nested), or handle the case that the property does not exist.
-     * Target property should be a boolean. All values will be converted to boolean result (encoded).
-     *
-     * @function encodeProperty
-     * @private
-     * @param {Object} obj          Object to inspect for the property
-     * @param {Array} propChain     Property names in an array. E.g. testing for obj.prop1.prop2 would use ['prop1', 'prop2']
-     * @returns {String}            One digit string representation the property (or default if missing), in binary. 1 or 0
-     */
-    function encodeProperty(obj, propChain) {
-        let pointer = obj;
-
-        // since we want to break the loop, use for instead of .forEach
-        for (let i = 0; i < propChain.length; i++) {
-            const p = propChain[i];
-            if (pointer.hasOwnProperty(p)) {
-                pointer = pointer[p];
-            } else {
-                // property doesn't exist.  default to false
-                pointer = false;
-                break;
-            }
-        }
-
-        // if we've made it here, our property exists and has a value.  encode it
-        return encodeBoolean(pointer);
-    }
-
-    /**
-     * Encode bookmark information of a sub-layer of legend (currently Dynamic only, possibly WMS in future)
-     *
-     * @function encodeLegendChild
-     * @private
-     * @param {Object} legendChild        Legend entry to encode
-     * @param {Boolean} root              True if legendChild is top-level in the legend
-     * @returns {String}                  Encoded information in a 24-char binary data string
-     */
-    function encodeLegendChild(legendChild, root) {
-
-        // TODO do we need this extra check?
-        //      will the getOpacity function handle the value of something without opacity?
-        const opacity = legendChild.options.opacity ? encodeOpacity(legendChild.getOpacity()) : encodeOpacity(1);
-        const viz = encodeBoolean(legendChild.getVisibility());
-        const query = encodeProperty(legendChild, ['options', 'query', 'value']);
-        const idx = encodeInteger(legendChild.featureIdx, 12);
-
-        // extra 00 is padding to make our child have a length that is a factor of 4 (so it is encoded in 6 hex character)
-        return opacity + viz + query + encodeBoolean(root) + idx + '00';
-
-    }
-
-    /**
      * Create bookmark sub-string for a layer.  Consists of <Layer Code><Layer Settings><Children Info><Layer Id>
      *
      * @function makeLayerBookmark
@@ -225,9 +181,13 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
      * @param {Object} legendEntry  Legend entry of the layer
      * @returns {String}            Layer information encoded in bookmark format.
      */
-    function makeLayerBookmark(legendEntry) {
+    function makeLayerBookmark(layerRecord) {
         // FIXME: remove use of accessing info via _layerRecord
         // returning <Layer Code><Layer Settings><Children Info><Layer Id>
+
+        let legendEntry = null;
+
+        const layerDefinition = layerRecord.config;
 
         // Layer Code
         const types = Geo.Layer.Types;
@@ -238,28 +198,16 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
             [types.ESRI_DYNAMIC]: '3',
             [types.ESRI_IMAGE]: '4'
         };
-        const layerCode = typeToCode[legendEntry._layerRecord.config.layerType];
+        const layerCode = typeToCode[layerDefinition.layerType];
 
         // Children Info (calculate first so we have the count when doing layer settings)
-        const childItems = [];
-        if (layerCode === typeToCode[types.ESRI_DYNAMIC] && legendEntry.items) {
+        let childItems = [];
+        if (layerCode === typeToCode[types.ESRI_DYNAMIC] && layerDefinition.layerEntries) {
 
-            // grab stuff on children.  we can't use walkItems because it returns a flat list.
+            // walk the child tree encoding each child
             // we need to be aware of hierarchy here (at least on the top level).
-            // loop over top-level children of the layer. these are the ones that have
-            // entries defined in .layerEntries in the config.
-            legendEntry.items.forEach(item => {
-
-                childItems.push(encodeLegendChild(item, true)); // it is a root
-
-                // tack on any children, which would have been auto-generated
-                // we can use walkItems here, as we dont care about sub-heirachy
-                if (item.type === 'group') {
-                    item.walkItems(subItem => {
-                        childItems.push(encodeLegendChild(subItem, false));
-                    });
-                }
-            });
+            // top-level children of the layer get rootFlag set to true
+            childItems = simpleWalk(layerRecord.getChildTree(), true);
 
             // TODO we currently have an open debate about disallowing funny nesting.
             // funny nesting is when you have the same layer endpoint showing
@@ -277,17 +225,54 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
 
         // <Layer Settings> = <Opacity><Visibility><Bounding Box><Snapshot><Query><Child Count>
 
-        const opacity = encodeOpacity(legendEntry.getOpacity());
-        const viz = encodeBoolean(legendEntry.getVisibility());
-        const bb = encodeProperty(legendEntry, ['options', 'boundingBox', 'value']);
-        const query = encodeProperty(legendEntry, ['options', 'query', 'value']);
-        const snap = encodeProperty(legendEntry, ['options', 'snapshot', 'value']);
+        const layerProxy = layerRecord.getProxy();
+
+        const opacity = encodeOpacity(layerProxy.opacity);
+        const viz = encodeBoolean(layerProxy.visibility);
+        const bb = encodeBoolean(layerDefinition.state.boundingBox);
+        const query = encodeBoolean(layerDefinition.state.query);
+        const snap = encodeBoolean(layerDefinition.state.snapshot);
 
         const layerSettingAndChildren = opacity + viz + bb + snap + query +
             encodeInteger(childItems.length, 9) + childItems.join('');
 
         // <Layer Code><Layer Settings><Children Info><Layer Id>
-        return layerCode + binaryToHex(layerSettingAndChildren) + legendEntry._layerRecord.layerId;
+        return layerCode + binaryToHex(layerSettingAndChildren) + layerDefinition.id;
+
+        function simpleWalk(treeChildren, root = false) {
+            // roll in the results into a flat array
+            return [].concat.apply([], treeChildren.map((treeChild, index) => {
+                if (treeChild.childs) {
+                    return [].concat(simpleWalk(treeChild.childs));
+                } else {
+                    return encodeLegendChild(treeChild, root);
+                }
+            }));
+        }
+
+        /**
+         * Encode bookmark information of a sub-layer of legend (currently Dynamic only, possibly WMS in future)
+         *
+         * @function encodeLegendChild
+         * @private
+         * @param {Object} legendChild        Legend entry to encode
+         * @param {Boolean} root              True if legendChild is top-level in the legend
+         * @returns {String}                  Encoded information in a 24-char binary data string
+         */
+        function encodeLegendChild(treeChild, root) {
+
+            const childProxy = layerRecord.getChildProxy(treeChild.entryIndex);
+            const childConfig = layerRecord.derivedChildConfigs[treeChild.entryIndex];
+
+            const opacity = encodeOpacity(childProxy.opacity);
+            const viz = encodeBoolean(childProxy.visibility);
+            const query = encodeBoolean(childConfig.state.query);
+            const idx = encodeInteger(treeChild.entryIndex, 12);
+
+            // extra 00 is padding to make our child have a length that is a factor of 4 (so it is encoded in 6 hex character)
+            return opacity + viz + query + encodeBoolean(root) + idx + '00';
+
+        }
     }
 
     /**

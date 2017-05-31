@@ -95,8 +95,6 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         get visibility () {         return this._proxy.visibility; }
         get query () {              return this._proxy.query; }
         get snapshot () {           return this._layerConfig.state.snapshot; }
-
-        // bounding box belongs to the LegendBlock, not ProxyWrapper; so, there the bbox setter is specified on the legendNode
         get boundingBox () {        return this._layerConfig.state.boundingBox; }
 
         set opacity (value) {
@@ -118,7 +116,17 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                 return;
             }
 
+            // bounding box belongs to the LegendBlock, not ProxyWrapper;
+            // so, setting boundingBox value doesn't call the proxy object,
+            // it just stores the value in the layer config state for future bookmark use
             this._proxy.setQuery(value);
+        }
+        set boundingBox (value) {
+            if (this.isControlSystemDisabled('boundingBox')) {
+                return;
+            }
+
+            this._layerConfig.state.boundingBox = value;
         }
 
         /**
@@ -387,6 +395,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             }
 
             this._bboxProxy.setVisibility(value);
+            this._mainProxyWrapper.boundingBox = value;
         }
 
         get userAdded () {
