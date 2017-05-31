@@ -7,7 +7,7 @@
         ng-if="!self.isReorder"
         class="rv-body-button rv-button-square"
         ng-click="self.block.expanded = !self.block.expanded"
-        aria-label="{{ toc.layer.label.symbology | translate }}">
+        aria-label="{{ self.block.expanded ? 'toc.label.group.collapse' : 'toc.label.group.expand' | translate }}">
     </md-button>
 </div>
 
