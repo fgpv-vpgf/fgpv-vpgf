@@ -156,6 +156,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 entry === legendBlock ? parentEntry : null)
             .filter(a => a !== null)[0];
 
+        // TODO: instead of removing the legen block form the selector, just hide it with some css
         const index = legendBlockParent.removeEntry(legendBlock);
 
         return [_resolve, _reject];
@@ -359,6 +360,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 dynamicLayerChildDefaults.userDisabledControls.push('opacity');
             }
 
+            layerRecord.derivedChildConfigs = [];
             const tree = layerRecord.getChildTree();
             tree.forEach(treeChild =>
                 _createDynamicChildLegendBlock(treeChild, layerConfig.source));
@@ -415,6 +417,12 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                     const derviedChildLayerConfig = new ConfigObject.layers.DynamicLayerEntryNode(
                         derivedChildLayerConfigSource);
                     const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, derviedChildLayerConfig);
+
+                    // TODO: bookmark V2 needs access to the updated state of the layerEntry config
+                    // the easiest way to get to it is from the layer record itself
+                    // otherwise, you need to figure out what legend block it belongs to and pull its ProxyWrapper
+                    // when implementing V3 or full state storage, it might make more sense to do it through the legendBlock/proxyWrapper
+                    layerRecord.derivedChildConfigs[treeChild.entryIndex] = derviedChildLayerConfig;
 
                     treeChild.proxyWrapper = proxyWrapper;
                 }
