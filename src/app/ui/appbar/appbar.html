@@ -1,7 +1,7 @@
 <div class="main-appbar rv-whiteframe-z2" ng-show="!self.stateManager.state.mainGeosearch.active">
     <md-button
         translate
-        aria-label="{{ appbar.aria.menu | translate }}"
+        aria-label="{{ 'appbar.aria.menu' | translate }}"
         class="md-icon-button black"
         rv-help="sidenav-button"
         ng-click="self.layoutService.sidenav.open()">
@@ -20,7 +20,7 @@
     </div>
 
     <md-button
-        aria-label="{{ appbar.aria.geosearch | translate }}"
+        aria-label="{{ 'appbar.aria.geosearch' | translate }}"
         class="md-icon-button primary rv-app-geosearch"
         ng-click="self.toggleGeosearch()">
         <md-tooltip>{{ 'appbar.tooltip.geosearch' | translate }}</md-tooltip>
@@ -28,7 +28,7 @@
     </md-button>
 
     <md-button
-        aria-label="{{ nav.tooltip.basemap | translate }}"
+        aria-label="{{ 'nav.tooltip.basemap' | translate }}"
         class="md-icon-button primary"
         ng-click="self.openBasemapSelector()"
         ng-show="self.stateManager.state.mainToc.active">
@@ -41,7 +41,7 @@
     </span>
 
     <md-button
-        aria-label="{{ appbar.aria.pointInfo | translate }}"
+        aria-label="{{ 'appbar.aria.pointInfo' | translate }}"
         class="md-icon-button primary"
         rv-help="details-button"
         ng-class="{ selected: self.stateManager.state.mainDetails.active }"
@@ -52,7 +52,7 @@
     </md-button>
 
     <md-button
-        aria-label="{{ appbar.aria.layers | translate }}"
+        aria-label="{{ 'appbar.aria.layers' | translate }}"
         class="md-icon-button primary"
         rv-help="toc-button"
         ng-class="{ selected: self.stateManager.state.mainToc.active }"
