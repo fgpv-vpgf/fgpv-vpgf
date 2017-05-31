@@ -4,7 +4,7 @@
     <span>{{ self.uiControl.label | translate }}</span>
 
     <md-button
-        aria-label="{{ self.uiControl.label | translate }}"
+        aria-label="{{ 'self.uiControl.label' | translate }}"
         class="rv-button-square"
         ng-click="self.uiControl.action()"
         ng-disabled="self.uiControl.isDisabled || self.uiControl.value">

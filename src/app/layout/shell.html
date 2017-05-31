@@ -18,7 +18,7 @@
     </div>
 </div>
 
-<div class="rv-esri-map" rv-init-map rv-overview-toggle tabindex="0" aria-label="{{ geo.aria.mapdescription | translate }}"></div>
+<div class="rv-esri-map" rv-init-map rv-overview-toggle tabindex="0" aria-label="{{ 'geo.aria.mapdescription' | translate }}"></div>
 
 <!--
     Each plug has a permanent position on the page defined through CSS; plugs themselves don't move or change size (with a small exception when the plug needs to change size to accomodate content's shadow). Plug's child is a panel (panelPlug - mainPanel), which does animate on enter and leave events. Panels take all availables space in their plug.
@@ -49,7 +49,7 @@
     <md-sidenav rv-basemap class="rv-basemap-selector md-sidenav-left md-whiteframe-z2" md-component-id="right">
         <rv-content-pane rv-trap-focus>
 
-            <md-button class="md-icon-button black rv-button-32 rv-minimize-button" ng-click="self.close()" aria-label="{{ contentPane.aria.close | translate }}">
+            <md-button class="md-icon-button black rv-button-32 rv-minimize-button" ng-click="self.close()" aria-label="{{ 'contentPane.aria.close' | translate }}">
                 <md-icon md-svg-src="community:chevron-double-left"></md-icon>
             </md-button>
 
