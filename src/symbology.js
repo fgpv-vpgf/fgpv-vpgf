@@ -163,7 +163,7 @@ function searchRenderer(attributes, renderer) {
 
     // make an empty svg graphic in case nothing is found to avoid undefined inside the filters
     if (typeof svgcode === 'undefined') {
-        svgcode = svgjs(document.createElement('div')).size(CONTAINER_SIZE, CONTAINER_SIZE).svg();
+        svgcode = svgjs(window.document.createElement('div')).size(CONTAINER_SIZE, CONTAINER_SIZE).svg();
     }
 
     return { svgcode, symbol };

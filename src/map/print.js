@@ -130,7 +130,7 @@ function showLayers(layers) {
 *                           resolve with a canvas element with user added layer on it
 */
 function generateLocalCanvas(map, options = null, canvas = null) {
-    canvas = canvas || document.createElement('canvas');  // create canvas element
+    canvas = canvas || window.document.createElement('canvas');  // create canvas element
 
     // find esri map's svg node
     // check if xmlns prefixes are set - they aren't; add them
