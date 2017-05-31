@@ -231,27 +231,13 @@ class LayerRecord extends root.Root {
      * @param {Array} lods            array of valid levels of detail for the map
      * @param {Object} scaleSet       contains .minScale and .maxScale for valid viewing scales
      * @param {Boolean} zoomIn        the zoom to scale direction; true need to zoom in; false need to zoom out
-     * @param {Boolean} zoomGraphic   an optional value when zoomToScale is use to zoom to a graphic element;
-     *                                    true used to zoom to a graphic element; false not used to zoom to a graphic element
      * @returns {Object} a level of detail (lod) object for the appropriate scale to zoom to
      */
-    findZoomScale (lods, scaleSet, zoomIn, zoomGraphic = false) {
+    findZoomScale (lods, scaleSet, zoomIn = true) {
         // TODO rename function to getZoomScale?
-        // TODO take a second look at parameters zoomIn and zoomGraphic. how are they derived (in the caller code)?
-        //      seems weird to me to do it this way
-        // TODO naming of "zoomIn" is very misleading and confusing. in practice, we are often
-        //      setting the value to false when we are zooming down close to the ground.
-        //      Need full analysis of usage, possibly rename parameter or update param docs.
-        // TODO update function parameters once things are working
 
-        // if the function is used to zoom to a graphic element and the layer is out of scale we always want
-        // the layer to zoom to the maximum scale allowed for the layer. In this case, zoomIn must be
-        // always false
-
-        zoomIn = (zoomGraphic) ? false : zoomIn;
-
-        // TODO double-check where lods are coming from in old code
-        // change search order of lods depending if we are zooming in or out
+        // the lods array is ordered largest scale to smallest scale.  e.g. world view to city view
+        // if zoomOut is false, we reverse the array so we search it in the other direction.
         const modLods = zoomIn ? lods : [...lods].reverse();
 
         return modLods.find(currentLod => zoomIn ? currentLod.scale < scaleSet.minScale :
@@ -301,30 +287,21 @@ class LayerRecord extends root.Root {
      * @param {Array} lods            level of details array for basemap
      * @param {Boolean} zoomIn        the zoom to scale direction; true need to zoom in; false need to zoom out
      * @param {Object} scaleSet       contains min and max scales for the layer.
-     * @param {Boolean} zoomGraphic   an optional value when zoomToScale is use to zoom to a graphic element;
-     *                                    true used to zoom to a graphic element; false not used to zoom to a graphic element
      */
-    _zoomToScaleSet (map, lods, zoomIn, scaleSet, zoomGraphic = false) {
+    _zoomToScaleSet (map, lods, zoomIn, scaleSet) {
         // TODO update function parameters once things are working
 
-        // if the function is used to zoom to a graphic element and the layer is out of scale we always want
-        // the layer to zoom to the maximum scale allowed for the layer. In this case, zoomIn must be
-        // always false
-        zoomIn = (zoomGraphic) ? false : zoomIn;
-
         // NOTE we use lods provided by config rather that system-ish map.__tileInfo.lods
-        const zoomLod = this.findZoomScale(lods, scaleSet, zoomIn, zoomGraphic = false);
+        const zoomLod = this.findZoomScale(lods, scaleSet, zoomIn);
 
-        // TODO ponder on the implementation of this
-        return this.setMapScale(this._layer, zoomLod, zoomIn);
-
+        return this.setMapScale(map, zoomLod, zoomIn);
     }
 
     // TODO docs
-    zoomToScale (map, lods, zoomIn, zoomGraphic = false) {
+    zoomToScale (map, lods, zoomIn) {
         // get scale set from child, then execute zoom
         const scaleSet = this._featClasses[this._defaultFC].getScaleSet();
-        return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, zoomGraphic);
+        return this._zoomToScaleSet(map, lods, zoomIn, scaleSet);
     }
 
     // TODO docs
@@ -334,32 +311,11 @@ class LayerRecord extends root.Root {
 
     /**
     * Zoom to layer boundary of the layer specified by layerId
-    * @param {Object} map  map object we want to execute the zoom on
+    * @param {Object} map  esriMap object we want to execute the zoom on
     * @return {Promise} resolves when map is done zooming
     */
     zoomToBoundary (map) {
-        return this.zoomToExtent(map, this.extent);
-    }
-
-    /**
-     * Worker function to zoom the map to an extent of possibly
-     * @param {Object} map        map object we want to execute the zoom on
-     * @param {Object} extent     map object we want to execute the zoom on
-     * @private
-     * @return {Promise} resolves when map is done zooming
-     */
-    zoomToExtent (map, extent) {
-        // TODO add some caching? make sure it will get wiped if we end up changing projections
-        //      or use wkid as caching key?
-        //      trickyier now that we are in shared function.
-        //      maybe return an object {promise, projected extent}, and caller can cache it?
-
-        const projRawExtent = this._apiRef.proj.localProjectExtent(extent, map.spatialReference);
-
-        const projFancyExtent = this._apiRef.Map.Extent(projRawExtent.x0, projRawExtent.y0,
-            projRawExtent.x1, projRawExtent.y1, projRawExtent.sr);
-
-        return map.setExtent(projFancyExtent);
+        return map.zoomToExtent(this.extent);
     }
 
     /**

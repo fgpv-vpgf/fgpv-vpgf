@@ -12,11 +12,12 @@ function esriMap(esriBundle, geoApi) {
 
         // TODO when jshint parses instance fields properly we can change this from a property to a field
         get _passthroughBindings () { return [
-            'on', 'reorderLayer', 'addLayer', 'disableKeyboardNavigation', 'removeLayer', 'resize', 'reposition',
-            'centerAt', 'setZoom', 'centerAndZoom', 'toScreen', 'setExtent'
+            'addLayer', 'centerAndZoom', 'centerAt', 'disableKeyboardNavigation', 'getScale', 'on', 'removeLayer',
+            'reorderLayer', 'reposition', 'resize', 'setExtent', 'setScale', 'setZoom', 'toScreen'
         ]; }
-        get _passthroughProperties () { return ['graphicsLayerIds', 'layerIds', 'spatialReference', 'extent',
-            'attribution']; } // TODO when jshint parses instance fields properly we can change this from a property to a field
+        get _passthroughProperties () { return [
+            'attribution', 'extent', 'graphicsLayerIds', 'layerIds', 'spatialReference', 'width'
+        ]; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
         constructor (domNode, opts) {
 
@@ -123,6 +124,26 @@ function esriMap(esriBundle, geoApi) {
             // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
             const sweetLod = Map.findClosestLOD(this._map.__tileInfo.lods, 50000);
             this._map.centerAndZoom(zoomPt, Math.max(sweetLod.level, 0));
+        }
+
+        /**
+         * Zoom the map to an extent. Extent can be in different projection
+         *
+         * @function zoomToExtent
+         * @param {Object} extent     map object we want to execute the zoom on
+         * @private
+         * @return {Promise} resolves when map is done zooming
+         */
+        zoomToExtent (extent) {
+            // TODO add some caching? make sure it will get wiped if we end up changing projections
+            //      or use wkid as caching key?
+
+            const projRawExtent = geoApi.proj.localProjectExtent(extent, this._map.spatialReference);
+
+            const projFancyExtent = esriBundle.Extent(projRawExtent.x0, projRawExtent.y0,
+                projRawExtent.x1, projRawExtent.y1, projRawExtent.sr);
+
+            return this._map.setExtent(projFancyExtent);
         }
 
         /**

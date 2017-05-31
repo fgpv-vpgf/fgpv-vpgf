@@ -55,11 +55,19 @@ class LayerInterface {
     attributesToDetails () { return undefined; } // returns Array
 
     // these set values to the corresponding controls
+
+    // param: boolean
     setVisibility () { return undefined; }
+
+    // param: numeric (between 0 and 1)
     setOpacity () { return undefined; }
+
+    // param: boolean
     setQuery () { return undefined; }
 
     fetchGraphic () { return undefined; } // returns promise that resolves with object containing graphics info
+
+    // param: esriMap
     zoomToBoundary () { return undefined; } // returns promise that resolves after zoom completes
 
     // param: string
