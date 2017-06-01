@@ -99,6 +99,10 @@ module.exports = function (env) {
 
         externals: { 'TweenLite': 'TweenLite' },
 
+        resolve: {
+            alias: {}
+        },
+
         watchOptions: {
             aggregateTimeout: 300,
             poll: 1000,
@@ -116,6 +120,10 @@ module.exports = function (env) {
     };
 
     config.plugins.push(...htmlInjectPlugins());
+
+    if (env.geoLocal) {
+        config.resolve.alias['geoApi$'] = path.resolve(__dirname, '../', env.geoLocal.length > 0 ? env.geoLocal : 'geoApi');
+    }
 
     if (env.inspect) {
         const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
