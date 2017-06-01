@@ -116,6 +116,18 @@ class DynamicFC extends attribFC.AttribFC {
         return this._parent._layer.visibleLayers.indexOf(parseInt(this._idx)) > -1;
     }
 
+    // TODO docs
+    setDefinitionQuery (query) {
+        const l = this._parent._layer;
+
+        // get layerDefinitions from layer, or init an empty array
+        const layerDef = Array.isArray(l.layerDefinitions) ? l.layerDefinitions : [];
+
+        // enhance the array and apply back to the layer
+        layerDef[parseInt(this._idx)] = query;
+        l.setLayerDefinitions(layerDef);
+    }
+
 }
 
 module.exports = () => ({

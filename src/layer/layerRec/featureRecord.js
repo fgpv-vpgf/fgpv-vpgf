@@ -293,6 +293,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
         return { identifyResults: [identifyResult], identifyPromise };
     }
 
+    // TODO docs
+    setDefinitionQuery (query) {
+        // very difficult.
+        this._layer.setDefinitionExpression(query);
+    }
+
 }
 
 module.exports = () => ({

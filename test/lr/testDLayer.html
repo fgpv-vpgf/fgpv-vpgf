@@ -138,6 +138,9 @@
                 console.log('root layer extent - sb {}', proxy.extent);
                 console.log('leaf layer extent - sb {}', leaf2proxy.extent);
 
+                leaf3proxy.setDefinitionQuery('test');
+                console.log('definition query - sb array with index 3 = test', layerRec._layer.layerDefinitions);
+
             }
 
         });

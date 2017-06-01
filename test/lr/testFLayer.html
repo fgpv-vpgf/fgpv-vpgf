@@ -87,6 +87,8 @@
                 console.log('feature count - sb 27', proxy.featureCount);
                 console.log('root layer extent - sb {}', proxy.extent);
 
+                proxy.setDefinitionQuery('test');
+                console.log('definition query - sb test', layerRec._layer.getDefinitionExpression());
 
             }
 
