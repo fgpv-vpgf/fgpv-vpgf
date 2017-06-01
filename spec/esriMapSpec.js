@@ -9,7 +9,9 @@ describe('ESRI Map', () => {
     const fakeEsri = {
         esriConfig: { defaults: { io: {} } },
         Extent: fakeEsriExtent,
-        Map: function () { return {}; },
+        Map: function () { return {
+            setExtent: () => { return Promise.resolve('done'); } }; 
+        },
         BasemapGallery: function () { return { add: () => {}, startup: () => {}, on: () => {} }; },
         BasemapLayer: function () { return {}; },
         Basemap: function () { return {}; }
@@ -67,6 +69,16 @@ describe('ESRI Map', () => {
         const result = Map.clipExtentCoords(-2681463.5, -2681457, -2681470, 3549492, -2681457, 13);
         expect(result[0]).toBeCloseTo(-2681444);
         expect(result[1]).toBeCloseTo(-2681457);
+    });
+
+    // TODO resolve why this test gives "Map.zoomToExtent is not a function"
+    //      it certainly appears to be a function
+    xit('should zoom the map to an extent', (done) => {
+        const result = Map.zoomToExtent(Map.getExtentFromJson(jsonExtent));
+        result.then( value => {
+            expect(value).toBe('done');
+            done();
+        })
     });
 
 });
