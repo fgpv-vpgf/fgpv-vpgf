@@ -5,7 +5,7 @@ const RV_SWIFT_IN_OUT_EASE = Power1;
 const TEMPLATE = `
     <md-button
         translate
-        aria-label="{{ geo.aria.overviewtoggle | translate }}"
+        aria-label="{{ 'geo.aria.overviewtoggle' | translate }}"
         class="md-icon-button rv-button-24 rv-overview-toggle"
         tabindex="-2"
         ng-click="self.toggleOverview()">
