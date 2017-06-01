@@ -235,13 +235,19 @@ class LayerRecord extends root.Root {
      */
     findZoomScale (lods, scaleSet, zoomIn = true) {
         // TODO rename function to getZoomScale?
+        // TODO determine if this function ever gets called when a layer is on-scale visible
+        // TODO optional. add quick check...if our minScale/maxScale we are comparing against is 0,
+        //      then no need to search array, just take first item.
 
         // the lods array is ordered largest scale to smallest scale.  e.g. world view to city view
         // if zoomOut is false, we reverse the array so we search it in the other direction.
         const modLods = zoomIn ? lods : [...lods].reverse();
 
-        return modLods.find(currentLod => zoomIn ? currentLod.scale < scaleSet.minScale :
+        const scaleLod = modLods.find(currentLod => zoomIn ? currentLod.scale < scaleSet.minScale :
                 currentLod.scale > scaleSet.maxScale);
+
+        // if we did not encounter a boundary go to first
+        return scaleLod || modLods[0];
     }
 
     /**

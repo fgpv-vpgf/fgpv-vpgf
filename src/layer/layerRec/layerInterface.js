@@ -70,6 +70,9 @@ class LayerInterface {
     // param: esriMap
     zoomToBoundary () { return undefined; } // returns promise that resolves after zoom completes
 
+    // param: esriMap, array of lods, boolean
+    zoomToScale () { return undefined; } // returns promise that resolves after zoom completes
+
     // param: string
     setDefinitionQuery () { return undefined; }
 
@@ -108,6 +111,7 @@ class LayerInterface {
         this.setQuery = standardSetQuery;
         this.zoomToBoundary = standardZoomToBoundary;
         this.validateProjection = standardValidateProjection;
+        this.zoomToScale = standardZoomToScale;
     }
 
     convertToFeatureLayer (layerRecord) {
@@ -150,6 +154,7 @@ class LayerInterface {
         this.setOpacity = dynamicLeafSetOpacity;
         this.setQuery = dynamicLeafSetQuery;
         this.zoomToBoundary = dynamicLeafZoomToBoundary;
+        this.zoomToScale = dynamicLeafZoomToScale;
         this.getFeatureName = featureGetFeatureName;
         this.attributesToDetails = dynamicLeafAttributesToDetails;
         this.fetchGraphic = dynamicLeafFetchGraphic;
@@ -165,6 +170,11 @@ class LayerInterface {
         newProp(this, 'state', standardGetState);
         newProp(this, 'layerType', standardGetLayerType);
     }
+
+    // TODO we might need a `converToDynamicLayer`. It calls `converToSingleLayer` and then
+    //      removes zoomToScale method, as this method will fail if called directly on a
+    //      dynamic layer proxy. As is, nothing should ever make that call. But we can
+    //      do this to be safe.
 
 }
 
@@ -372,6 +382,19 @@ function standardZoomToBoundary(map) {
 function dynamicLeafZoomToBoundary(map) {
     /* jshint validthis: true */
     this._source.zoomToBoundary(map);
+}
+
+function standardZoomToScale(map, lods, zoomIn) {
+    /* jshint validthis: true */
+    return this._source.zoomToScale(map, lods, zoomIn);
+}
+
+function dynamicLeafZoomToScale(map, lods, zoomIn) {
+    /* jshint validthis: true */
+
+    // this is not the greatest approach. zoom to scale is funny because logic guts live
+    // in the record class, but proxy dictates we trigger via the FC
+    return this._source._parent.zoomToScale(this._source._idx, map, lods, zoomIn);
 }
 
 function featureGetFeatureName(objId, attribs) {
