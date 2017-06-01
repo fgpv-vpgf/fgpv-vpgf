@@ -1,4 +1,4 @@
-﻿Language code (ISO 639-1),lang.code.code,en-CA,1,fr-CA,1
+Language code (ISO 639-1),lang.code.code,en-CA,1,fr-CA,1
 Language code (ISO 639-2/T),lang.code.iso.639.2,eng,1,fra,1
 Language direction,lang.dir,ltr,1,ltr,1
 Language name (English),lang.en,English,1,French,1
@@ -46,6 +46,27 @@ DataTable text for Last,filter.default.label.last,Last,1,Dernier,1
 DataTable text for Sort Ascending,filter.default.aria.sortasc,: activate to sort column ascending,1,: activer pour trier la colonne en ordre croissant,1
 DataTable text for Sort Descending,filter.default.aria.sortdsc,: activate to sort column descending,1,: activer pour trier la colonne en ordre décroissant,1
 DataTable text for thousands delimeter,filter.default.thousands.delim, ,1, ,1
+DataTable global filters aria label search icon,filter.aria.filters.search,Global Search,1,Recherche globale,1
+DataTable global filters search text placeholder,filter.search.placeholder,Search Text,1,Texte à rechercher,1
+Datatable open setting tooltip,filter.filters.setting.tooltip,Toggle filters setting,1,Basculer le réglage des filtres,1
+Datatable clears filters tooltip,filter.filters.clear.tooltip,Clear filters,1,Effacer les filtres,1
+Datatable apply filters on map text,filter.filters.apply,Apply to map,1,Appliquer à la carte,1
+DataTable string filter placeholder,filter.placeholder.string,text,1,texte,1
+DataTable selector filter placeholder,filter.placeholder.selector,selection,1,sélection,1
+DataTable min filter placeholder,filter.placeholder.min,min,1,min,1
+DataTable max filter placeholder,filter.placeholder.max,max,1,max,1
+DataTable date min filter placeholder,filter.placeholder.datemin, date min,1,date min,1
+DataTable date max filter placeholder,filter.placeholder.datemax, date max,1,date max,1
+Datatables setting section title,filter.settings.title, Settings,1, Paramètres,1
+Datatable settings description label,filter.setting.label.description, Description,1, Description,1
+Datatable settings field label,filter.setting.label.fields,Fields,1,Champs,1
+Datatable sort setting tooltip,filter.settings.sort,Sort,1,Trier,1
+Datatable reorder fields setting tooltip,filter.settings.reorder,Reorder fields,1,Réorganiser les champs,1
+Datatable settings reorder column label,filter.settings.label.reorder,Reorder,1,Réorganiser,1
+Datatable settings name column label,filter.settings.label.name,Name,1,Nom,1
+Datatable settings filter column label,filter.settings.label.filter,Filter,1,Filtre,1
+Datatable settings sort column label,filter.settings.label.sort,Sort,1,Trier,1
+Datatable settings display column label,filter.settings.label.display,Display,1,Afficher,1
 Details pane title,details.title,Feature Information,1,Information sur l'élément,1
 Details pane aria label for expand button,details.aria.expand,Expand,1,Agrandir,1
 Details pane tooltip for expand button,details.tooltip.expand,Expand,1,Agrandir,1
@@ -62,6 +83,7 @@ Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable Filte
 Filter pane menu label for Print,filter.menu.print,Print,1,Imprimer,1
 Filter pane menu label for Export,filter.menu.export,Export,1,Exporter,1
 Filter pane menu label for Filter by Extent,filter.menu.extent,Filter by Extent,1,Filtrer par étendue,1
+Filter pane menu label for show Filters,filter.menu.showfilters,Show Filters,1,Afficher les filtres,1
 Geosearch text place holder,geosearch.text.placeholder,Search Text,1,Texte à rechercher,1
 Geosearch province filter label,geosearch.label.province,Province,1,Province,1
 Geosearch type filter label,geosearch.label.type,Type,1,Type,1
@@ -180,11 +202,11 @@ Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer dat
 Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,1,La couche sera exclue de la carte - cliquer sur les résultats,1
 Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,1,La couche sera exclue de la carte - cliquer sur les résultats,1
 Table of Content user flag label,toc.label.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
-Table of Content filter by extent flag label,toc.label.flag.filter,Map data is filtered by your current extent,1,Les données sont filtrées selon l'étendue actuelle,1
+Table of Content filter by extent flag label,toc.label.flag.filter,Map data is filtered by your current extent and/or filters,1,Les données sont filtrées selon l'étendue actuelle,1
 Table of Content user flag tootlip,toc.tooltip.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
-Table of Content filter by extent flag label,toc.label.flag.wrongprojection,Layer cannot be displayed in your current projection,1,Le calque ne peut pas être affiché dans votre projection actuelle,1
+Table of Content filter by extent flag label,toc.label.flag.wrongprojection,Layer cannot be displayed in your current projection,1,Le calque ne peut pas être affiché dans votre projection actuelle et/ou les filtres,1
 Table of Content user flag tootlip,toc.tooltip.flag.wrongprojection,Current projection not supported,1,Projection actuelle non prise en charge,1
-Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Map data is filtered by your current extent,1,Les données sont filtrées selon l'étendue actuelle,1
+Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Map data is filtered by your current extent and/or filters,1,Les données sont filtrées selon l'étendue actuelle et/ou les filtres,1
 Table of Content error state label,toc.label.state.error,Error,1,Erreur,1
 Table of Content error state tootlip,toc.tooltip.state.error,Error,1,Erreur,1
 Table of Content loading state label,toc.label.state.loading,Updating,1,Mise à jour,1
