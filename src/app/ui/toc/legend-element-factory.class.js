@@ -205,7 +205,7 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
         }
 
         get icon () {   return 'action:zoom_in'; }
-        get label () {  return 'toc.label.boundaryoom'; }
+        get label () {  return 'toc.label.boundaryZoom'; }
 
         action () {     this.block.zoomToBoundary(); }
     }
