@@ -34,17 +34,25 @@ function rvFiltersDefaultMenu(layoutService) {
     }
 }
 
-function Controller($scope, stateManager, events, filterService, appInfo) {
+function Controller($scope, stateManager, events, filterService, appInfo, $rootScope, layoutService) {
     'ngInject';
     const self = this;
 
     self.setMode = setMode;
     self.filtersMode = stateManager.state.filters.morph;
-    self.applyFilter = filterService.setActive;
+    self.applyFilter = filterService.setActive; // use by filter by extent
     self.filter = filterService.filter;
+    self.showFilters = showFilters;
     self.dataPrint = dataPrint;
     self.dataExportCSV = dataExportCSV;
     self.appID = appInfo.id;
+
+    // check if filter size is modified from outside this directive and apply the filter mode. This can happen if config filters wants the panel maximize on open.
+    $rootScope.$watch(() => stateManager.state.filters.morph, val => { self.filtersMode = val });
+
+    function showFilters() {
+        layoutService.isFiltersVisible = self.filter.isOpen;
+    }
 
     function setMode(mode) {
         stateManager.setMorph('filters', mode);

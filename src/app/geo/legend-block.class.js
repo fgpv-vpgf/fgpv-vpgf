@@ -139,6 +139,13 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         }
 
         /**
+         * Set definition query to filter feature layer or dynamic layer
+         *
+         * @param {String} value the definition query to set
+         */
+        set definitionQuery (value) {   this._proxy.setDefinitionQuery(value); }
+
+        /**
          * Layer config object persists through layer reload (corresponding layer record and legend blocks are destroyed),
          * the changed snapshot value will be processed in geoApi on the subsequent generation of layer records.
          *
@@ -362,6 +369,13 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         // since query is applied only on the main proxy wrapper, we don't need to do an extra check if this control is available; it will be checked in the proxy wrapper
         get query () {              return this._mainProxyWrapper.query; }
         set query (value) {         this._mainProxyWrapper.query = value; }
+
+        /**
+         * Set definition query to filter feature layer or dynamic layer
+         *
+         * @param {String} value the definition query to set
+         */
+        set definitionQuery (value) {   this._mainProxyWrapper.definitionQuery = value; }
 
         get snapshot () {           return this._mainProxyWrapper.snapshot; }
         /**

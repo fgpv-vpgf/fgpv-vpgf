@@ -233,7 +233,7 @@ function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoServic
     }
 }
 
-function Controller(tocService, stateManager, geoService, keyNames, configService) {
+function Controller(tocService, stateManager, geoService, keyNames, configService, $rootScope, events, layoutService) {
     'ngInject';
     const self = this;
 
@@ -249,6 +249,27 @@ function Controller(tocService, stateManager, geoService, keyNames, configServic
 
     // reorder mode is off by default
     self.isReorder = false;
+
+    // check if we need to open a filter panel by default
+    configService.getAsync.then(config => {
+        if (config.ui.source.filterIsOpen && config.ui.source.filterIsOpen[layoutService.currentLayout()]) {
+
+            // FIXME: need to set inside legend-block class line 270. Need a way to have config.ui info
+            // when map is ready, geoService.legend is not undefined anymore
+            // $rootScope.$on(events.rvApiReady, () => {
+            //     // need to add placeholder because legend entry is not finish loading
+            //     const entry = geoService.legend.getItemById(`${config.filterIsOpen.id}placeholder`);
+            //
+            //     // when attributes are loaded, open table
+            //     $rootScope.$watch(() => entry._layerRecord.attributeBundle, val => {
+            //         if (typeof val !== 'undefined') {
+            //             tocService.actions.toggleLayerFiltersPanel(geoService.legend.
+            //                 getItemById(config.filterIsOpen.id));
+            //         }
+            //     });
+            // });
+        }
+    });
 
     /***/
 

@@ -43,6 +43,9 @@
                 <md-menu-item type="checkbox" ng-model="self.filter.isActive" ng-click="self.applyFilter(self.filter.isActive)" rv-right-icon="community:filter">
                     {{ 'filter.menu.extent' | translate }}
                 </md-menu-item>
+                <md-menu-item type="checkbox" ng-model="self.filter.isOpen" ng-click="self.showFilters()" rv-right-icon="community:filter">
+                    {{ 'filter.menu.showfilters' | translate }}
+                </md-menu-item>
             <md-menu-divider></md-menu-divider>
 
             <md-menu-item>
