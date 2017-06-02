@@ -16,6 +16,7 @@
     "lodash": "^4.17.4",
     "proj4": "^2.4.3",
     "rcolor": "1.0.1",
+    "rgbcolor": "1.0.1",
     "shpjs": "https://github.com/calvinmetcalf/shapefile-js.git#v3.3.1",
     "svg.js": "2.6.1",
     "terraformer": "~1.0.8",
