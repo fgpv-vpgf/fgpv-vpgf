@@ -28,7 +28,7 @@ class TranslationPlugin {
     init (srcChunks, compilation, done) {
         csv({
             noheader: true,
-            ignoreColumns: [0]
+            ignoreColumns: [0, 3, 5]
         })
         .fromFile(this.csvPath)
         .on('csv', (row, rowNum) => {
