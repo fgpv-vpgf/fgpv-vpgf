@@ -28,12 +28,14 @@ function rvMinicolors(graphicsService, $timeout) {
         el.minicolors(scope.options);
         el.on('blur', onBlur);
 
-        ngModel.$render = function () {
-            const color = ngModel.$viewValue;
-            el.minicolors('value', color);
+        ngModel.$render = () => {
+            $timeout(() => {
+                const color = ngModel.$viewValue;
+                el.minicolors('value', color);
+            }, 0, false);
         };
 
-        function onBlur(e) {
+        function onBlur() {
             let color = ngModel.$viewValue;
 
             // check that the input is not / does not contain a hexadecimal value
