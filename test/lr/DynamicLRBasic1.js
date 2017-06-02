@@ -5,7 +5,7 @@ import geoapi from '../../src/index';
 // "main": "test/lr/DynamicLRBasic1.js"
 
 geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-    console.log('TEST PAGE - Basic Testing on Dynamic Layer Record')
+    console.log('TEST PAGE - Basic Testing on Dynamic Layer Record');
 
     var config1 = {
         id: 'guts',
