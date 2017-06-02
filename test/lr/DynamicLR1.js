@@ -2,7 +2,7 @@ import geoapi from '../../src/index';
 
 // https://github.com/fgpv-vpgf/geoApi/wiki/Locally-Testing-GeoAPI
 // to run, temporarily update package.json
-// "main": "test/lr/DynamicLRBasic1.js"
+// "main": "test/lr/DynamicLR1.js"
 
 geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     console.log('TEST PAGE - Basic Testing on Dynamic Layer Record');
