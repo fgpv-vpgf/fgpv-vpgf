@@ -1067,7 +1067,7 @@ function makeCsvLayerBuilder(esriBundle, geoApi) {
 * @returns {Array} an array of arrays containing the parsed CSV
 */
 function csvPeek(csvData, delimiter) {
-    return csv2geojson.dsv(delimiter).parseRows(csvData);
+    return csv2geojson.dsv.dsvFormat(delimiter).parseRows(csvData);
 }
 
 function makeShapeLayerBuilder(esriBundle, geoApi) {
