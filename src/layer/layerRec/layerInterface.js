@@ -62,6 +62,9 @@ class LayerInterface {
     fetchGraphic () { return undefined; } // returns promise that resolves with object containing graphics info
     zoomToBoundary () { return undefined; } // returns promise that resolves after zoom completes
 
+    // param: string
+    setDefinitionQuery () { return undefined; }
+
     // updates what this interface is pointing to, in terms of layer data source.
     // often, the interface starts with a placeholder to avoid errors and return
     // defaults. This update happens after a layer has loaded, and new now want
@@ -107,6 +110,7 @@ class LayerInterface {
         this.getFeatureName = featureGetFeatureName;
         this.attributesToDetails = featureAttributesToDetails;
         this.fetchGraphic = featureFetchGraphic;
+        this.setDefinitionQuery = featureSetDefinitionQuery;
     }
 
     convertToDynamicLeaf (dynamicFC) {
@@ -137,6 +141,7 @@ class LayerInterface {
         this.getFeatureName = featureGetFeatureName;
         this.attributesToDetails = dynamicLeafAttributesToDetails;
         this.fetchGraphic = dynamicLeafFetchGraphic;
+        this.setDefinitionQuery = dynamicLeafSetDefinitionQuery;
     }
 
     convertToPlaceholder (placeholderFC) {
@@ -380,6 +385,16 @@ function featureFetchGraphic(oid, ignoreLocal = false) {
 function dynamicLeafFetchGraphic(oid, ignoreLocal = false) {
     /* jshint validthis: true */
     return this._source.fetchGraphic(oid, ignoreLocal);
+}
+
+function featureSetDefinitionQuery(query) {
+    /* jshint validthis: true */
+    this._source.setDefinitionQuery(query);
+}
+
+function dynamicLeafSetDefinitionQuery(query) {
+    /* jshint validthis: true */
+    this._source.setDefinitionQuery(query);
 }
 
 module.exports = () => ({
