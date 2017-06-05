@@ -14,7 +14,7 @@ angular
     .factory('geoService', geoService);
 
 function geoService($http, $q, $rootScope, events, mapService, layerRegistry, configService,
-    identifyService, /*LayerBlueprint,*/ ConfigObject, legendService) {
+    identifyService, /*LayerBlueprint,*/ bookmarkService, ConfigObject, legendService, $timeout) {
 
     // TODO update how the layerOrder works with the UI
     // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -43,13 +43,26 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
          * @param  {Object} mapNode    dom node to build the map on; need to be specified only the first time the map is created;
          * @return {Promise} resolving when all the map building is done
          */
-        assembleMap(mapNode) {
+        assembleMap(mapNode = null) {
             return configService.getAsync
                 .then(config => {
+                    // if any bookmark was loaded, apply it to the config
+                    // bookmarked changes to the layer definitions cannot be applied at this point as some layers migth be loaded through rcs keys
+                    // these changes are checked for and applied when a layerBlueprint is created
+                    if (bookmarkService.storedBookmark) {
+                        config.applyBookmark(bookmarkService.storedBookmark);
+                    }
+
                     mapService.makeMap(mapNode);
-                    legendService.constructLegend(config.map.layers, config.map.legend);
-                    this._isMapReady = true;
-                    $rootScope.$broadcast(events.rvApiReady);
+
+                    // FIXME: a stopgap measure to avoid race conditions
+                    // will be fixed in the new bookmark PR
+                    $timeout(() => {
+
+                        legendService.constructLegend(config.map.layers, config.map.legend);
+                        this._isMapReady = true;
+                        $rootScope.$broadcast(events.rvApiReady);
+                    }, 2000);
                 })
                 .catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
         }

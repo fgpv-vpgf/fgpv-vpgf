@@ -17,9 +17,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script>
 </head>
 
+<!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
+
 <body>
     <div class="myMap" is="rv-map" rv-config="config-mobile-2.json" rv-langs='["en-CA", "fr-CA"]'
-         rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'
+
          rv-restore-bookmark="bookmark">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>

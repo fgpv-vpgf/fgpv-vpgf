@@ -92,7 +92,12 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
             label: 'sidenav.label.share',
             icon: 'social:share',
             action: () => {
-                service.close();
+                // FIXME: bookmark share is turned off for the moment; need to PR some changes first
+
+                //reloadService.funReload();
+
+                return;
+                /*service.close();
 
                 $mdDialog.show({
                     controller: service.ShareController,
@@ -103,7 +108,7 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
                     clickOutsideToClose: true,
                     fullscreen: false,
                     onShowing: (scope, element) => (scope.element = element.find('.side-nav-summary'))
-                }).then(() => ($rootElement.find('.rv-shareLink').select()));
+                }).then(() => ($rootElement.find('.rv-shareLink').select()));*/
             }
         },
         about: {

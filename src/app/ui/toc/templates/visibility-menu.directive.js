@@ -54,15 +54,17 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
      * @param {Boolean} value [optional = true] if true, sets visibility of all entries (groups and leafs) to true; if false, sets visibility to false
      */
     function toggleLegendEntries(value = true) {
-        if (!geoService.isMapReady) {
+        if (!_legendBlocksReadyCheck()) {
             return;
         }
 
         // set visibility on all interactive legend blocks, but do not set visibility on children of LegendSets;
         // if we do set visibility on LegendSet's children, the last child in the set will be selected as opposed to the first one;
-        configService.getSync.map.legendBlocks
+        const mapConfig = configService.getSync.map;
+        mapConfig.legendBlocks
             .walk(_walkAction, _walkDecision);
 
+        // TODO: think about if this should toggle visiblity of legend blocks whose controls are disabled/userdisabled
         function _walkAction(block) {
             if (block.isInteractive) {
                 block.visibility = value
@@ -82,17 +84,20 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
      * @return {Boolean} value indicating if the check passed (all either visible or hidden)
      */
     function getLegendEntriesVisibility(value = true) {
-        if (!geoService.isMapReady) {
+        if (!_legendBlocksReadyCheck()) {
             return;
         }
 
         // find all interactive legendblocks whose visibility controls are not system disabled and aggregate their visibility
-        const isAllVisible = configService.getSync.map.legendBlocks
+        const mapConfig = configService.getSync.map;
+        const isAllVisible = mapConfig.legendBlocks
             .walk(block => {
                 if (!block.isInteractive) {
                     return null;
                 }
 
+                // TODO: the logic is not entirely correct as a group with only legend info blocks and disabled controls still have visiblity
+                // this causes the visibility menu not disable options correctly
                 return block.isControlSystemDisabled('visibility') ? null : block.visibility;
             })
             .filter(isVisible =>
@@ -101,5 +106,25 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
                 isVisible === value);
 
         return isAllVisible;
+    }
+
+    /**
+     * Checks if the legendBlocks hierarchy is initialized; false otherwise
+     *
+     * @function _legendBlocksReadyCheck
+     * @private
+     * @return {Boolean} true if the legendBlocks hierarchy is initialized; false otherwise
+     */
+    function _legendBlocksReadyCheck() {
+        if (!geoService.isMapReady) {
+            return false;
+        }
+
+        const mapConfig = configService.getSync.map;
+        if (mapConfig.legendBlocks === null) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -54,11 +54,12 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
      * @param {Boolean} value [optional = true] if true, expands all the groups and subgroups; if false, collapses them
      */
     function toggleLegendGroupEntries(value = true) {
-        if (!geoService.isMapReady) {
+        if (!_legendBlocksReadyCheck()) {
             return;
         }
 
-        configService.getSync.map.legendBlocks.walk(block => {
+        const mapConfig = configService.getSync.map;
+        mapConfig.legendBlocks.walk(block => {
             if (block.blockType === LegendBlock.TYPES.GROUP) {
                 (block.expanded = value);
             }
@@ -73,10 +74,11 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
      * @return {Boolean} value indicating if the check passed (all either expanded or collapsed)
      */
     function getLegendGroupEntriesExpandState(value = true) {
-        if (!geoService.isMapReady) {
+        if (!_legendBlocksReadyCheck()) {
             return;
         }
 
+        const mapConfig = configService.getSync.map;
         const isAllExpanded = configService.getSync.map.legendBlocks
             .walk(block =>
                 block.blockType === LegendBlock.TYPES.GROUP ? block.expanded : null)
@@ -86,5 +88,25 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
                 expanded === value);
 
         return isAllExpanded;
+    }
+
+        /**
+     * Checks if the legendBlocks hierarchy is initialized; false otherwise
+     *
+     * @function _legendBlocksReadyCheck
+     * @private
+     * @return {Boolean} true if the legendBlocks hierarchy is initialized; false otherwise
+     */
+    function _legendBlocksReadyCheck() {
+        if (!geoService.isMapReady) {
+            return false;
+        }
+
+        const mapConfig = configService.getSync.map;
+        if (mapConfig.legendBlocks === null) {
+            return false;
+        }
+
+        return true;
     }
 }

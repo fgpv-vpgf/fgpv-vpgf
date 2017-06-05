@@ -10,18 +10,28 @@ angular
     .module('app.core')
     .factory('reloadService', reloadService);
 
-function reloadService($translate, $rootScope, events, bookmarkService, geoService, configService) {
+function reloadService($translate, $rootScope, events, bookmarkService, mapService, geoService, configService) {
     const service = {
         loadNewProjection,
         loadNewLang,
         loadWithBookmark,
         loadWithExtraKeys,
-        bookmarkBlocking: false
+        bookmarkBlocking: false,
+
+        changeProjection
     };
 
     return service;
 
     /************************/
+
+    function changeProjection(startPoint) {
+        events.$broadcast(events.rvApiHalt);
+        const bookmark = bookmarkService.getBookmark(startPoint);
+        bookmarkService.parseBookmark(bookmark);
+
+        geoService.assembleMap();
+    }
 
     /**
      * Maintains state over projection switch. Updates the config to the current state,
@@ -31,7 +41,7 @@ function reloadService($translate, $rootScope, events, bookmarkService, geoServi
      * @param {String} basemapId     The id of the basemap to switch to
      */
     function loadNewProjection(basemapId) {
-        $rootScope.$broadcast(events.rvApiHalt);
+        events.$broadcast(events.rvApiHalt);
         const bookmark = bookmarkService.getBookmark();
 
         // get original config and add bookmark to it
