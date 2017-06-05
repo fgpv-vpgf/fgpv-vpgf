@@ -15,7 +15,7 @@ angular
     .directive('rvShell', rvShell);
 
 function rvShell($rootElement, $rootScope, events, storageService, stateManager, configService, layoutService,
-    mapToolService, debounceService, geoService) {
+    mapToolService, debounceService, geoService, $mdDialog) {
 
     const directive = {
         restrict: 'E',
@@ -56,6 +56,7 @@ function rvShell($rootElement, $rootScope, events, storageService, stateManager,
 
         // fix for IE 11 where focus can move to esri generated svg elements
         $rootScope.$on(events.rvApiReady, () => {
+            RV.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
             $rootElement.find('.rv-esri-map svg').attr('focusable', false);
 
             configService.getAsync.then(config => {

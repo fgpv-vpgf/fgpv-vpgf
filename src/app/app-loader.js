@@ -36,7 +36,6 @@ import './layout/layout-loader.js';
 import './app.module.js';
 import './focus-manager.js';
 import './app-seed.js';
-import '../plugins/core/back-to-cart.js';
 import '../content/styles/main.scss';
 
 

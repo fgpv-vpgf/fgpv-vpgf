@@ -520,7 +520,7 @@
             "uniqueItems": true,
             "items": {
                 "type": "string",
-                "enum": ["layers", "basemap", "about", "fullscreen", "export", "share", "touch", "help", "language"]
+                "enum": ["layers", "basemap", "about", "fullscreen", "export", "share", "touch", "help", "language", "plugins"]
             }
         },
 

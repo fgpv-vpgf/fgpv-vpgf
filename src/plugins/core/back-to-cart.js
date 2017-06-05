@@ -1,7 +1,18 @@
-/* global RV */
-(() => {
-    // define english/french translations for use inside plugin
-    const translations = {
+import MenuItem from '../base/menu-item';
+
+export default class BackToCart extends MenuItem {
+
+    buttonLabel = 'cartButtonLabel'; // from translations
+
+    get onClick () {
+        return () => {
+            // save bookmark in local storage so it is restored when user returns
+            sessionStorage.setItem(this.viewer.id, this.viewer.bookmark);
+            window.location.href = this.plugin.options.urlTemplate.replace('{RV_LAYER_LIST}', this.layers.rcsIds.toString());
+        };
+    }
+
+    translations = {
         'en-CA': {
             cartButtonLabel: 'Back to Cart'
         },
@@ -10,33 +21,5 @@
             cartButtonLabel: 'Retour au panier'
         }
     };
+}
 
-    class BackToCart extends RV.BasePlugins.MenuItem {
-
-        get catalogURL () {
-            return this.template.replace('{RV_LAYER_LIST}', this.api.getRcsLayerIDs().toString());
-        }
-
-        /**
-         * Returns a function to be executed when the link is clicked.
-         * @return  {Function}    Callback to be executed when link is clicked
-         */
-        onMenuItemClick () {
-            return () => {
-                // save bookmark in local storage so it is restored when user returns
-                sessionStorage.setItem(this.api.appInfo.id, this.api.getBookmark());
-                window.location.href = this.catalogURL;
-            };
-        }
-
-        init (template) {
-            this.template = template;
-            this.name = 'cartButtonLabel';
-            this.translations = translations;
-            this.action = this.onMenuItemClick();
-        }
-    }
-
-    // Register this plugin with global plugins namespace
-    RV.Plugins.BackToCart = BackToCart;
-})();

@@ -18,7 +18,7 @@ angular
     .directive('rvInitMap', rvInitMap);
 
 function rvInitMap($rootScope, geoService, events, storageService, mapService, gapiService, $rootElement,
-    $interval, globalRegistry, animationService, stateManager) {
+    $interval, animationService, stateManager) {
 
     // key codes that are currently active
     let keyMap = [];
@@ -230,7 +230,7 @@ function rvInitMap($rootScope, geoService, events, storageService, mapService, g
                 case 13:
                     // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
                     // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
-                    if ($rootElement.attr('rv-focus-status') === globalRegistry.focusStatusTypes.ACTIVE) {
+                    if ($rootElement.attr('rv-focus-status') === RV.focusStatusTypes.ACTIVE) {
                         event.mapPoint = mapPntCntr;
                         event.screenPoint = mapScrnCntr;
                         geoService.state.identifyService.clickHandler(event);

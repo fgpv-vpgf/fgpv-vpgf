@@ -1,3 +1,6 @@
+import Viewer from './api/viewer.class';
+import Layers from './api/layers.class';
+
 /**
  * @name pluginService
  * @module app.core
@@ -10,62 +13,80 @@ angular
     .module('app.core')
     .factory('pluginService', pluginService);
 
-function pluginService(translationService) {
+function pluginService($injector, events, $rootScope, translationService, appInfo) {
     const service = {
-        onCreate,
-        register
+        onCreate
     };
 
     const pluginList = []; // an array of registered plugin instances
     const onCreateList = []; // an array of object pairs in the form {class, callback}.
+    const API = buildAPI();
+
+    // Attaches a promise to the appRegistry which resolves with apiService
+    $rootScope.$on(events.rvApiReady, register_plugins);
 
     return service;
 
     /**
-     * Registers a plugin instance with this viewer instance. Triggers any onCreate callbacks registered
+     * Invokes all plugin constructors found in window.rvPlugins.add. Triggers any onCreate callbacks registered
      * to this plugin type.
      *
-     * @function    register
-     * @param       {Object}    plugin    the plugin instance being registered to this viewer
+     * @function    register_plugins
      */
-    function register() {
-        // this methods arguments are structured as [ PluginClass, id:string, ...pluginInitParams, mapApiReference]
-        // In other words, this function expects a minimum of three parameters such that:
-        //   - the first parameter is a plugin class reference
-        //   - the second parameter is a unique plugin id string
-        //   - the last parameter is the external api object
-        // Any additional parameters are passed directly to the plugins init method
-        const params = [...arguments];
-        const Plugin = params.splice(0, 1)[0];
-        const pluginId = params.splice(0, 1)[0];
-        const api = params.pop();
+    function register_plugins() {
 
-        const p = new Plugin(pluginId, api);
+        window.rvPlugins.add.forEach((pluginLoader, i) => {
 
-        // Plugins can define an init method which is an alternative to them overriding the constructor method.
-        // The former is used so that plugin authors don't need to capture and super() redundant parameters like API and plugin id for BasePlugin
-        if (typeof p.init === 'function') {
-            p.init(...params);
-        }
+            let pluginBuilder = pluginLoader;
 
-        // check if the plugin already exists or shares an id with another plugin
-        if (pluginList.find(pi => pi === p || pi.id === p.id)) {
-            throw new Error('A plugin with the same instance or ID has already been registered.');
-        }
+            if (typeof pluginLoader === 'function') {
+                pluginBuilder = pluginLoader({viewerID: appInfo.id});
 
-        // add plugin id to translations to avoid conflicts
-        Object.keys(p.translations).forEach(lang => {
-            p.translations[lang] = {
-                plugin: { [p.id]: p.translations[lang] }
+                if (!pluginBuilder) {
+                    return;
+                }
+            }
+
+            let pluginID;
+            if (typeof pluginBuilder[1] === 'string') {
+                pluginID = pluginBuilder[1];
+            } else if (pluginBuilder.length === 3) {
+                pluginID = pluginBuilder[2];
+            } else {
+                pluginID = i;
+            }
+
+            // check if the plugin already exists or shares an id with another plugin
+            if (pluginList.find(pi => pi.id === pluginID)) {
+                console.error('A plugin with the same instance or ID has already been registered.');
+                return;
+            }
+
+            API.plugin = {
+                id: pluginID,
+                options: pluginBuilder.length >= 2 ? pluginBuilder[1] : null
             };
+
+            const p = new pluginBuilder[0](API);
+
+            if (typeof p.init === 'function') {
+                p.init();
+            }
+
+            // add plugin id to translations to avoid conflicts
+            Object.keys(p.translations).forEach(lang => {
+                p.translations[lang] = {
+                    plugin: { [API.plugin.id]: p.translations[lang] }
+                };
+            });
+
+            // modify existing translations to include the plugin translations
+            translationService(p.translations);
+            pluginList.push(p);
+
+            // execute onCreate callbacks for this plugin type
+            onCreateList.filter(x => p instanceof x.pluginType).forEach(x => x.cb(p));
         });
-
-        // modify existing translations to include the plugin translations
-        translationService(p.translations);
-        pluginList.push(p);
-
-        // execute onCreate callbacks for this plugin type
-        onCreateList.filter(x => p instanceof x.pluginType).forEach(x => x.cb(p));
     }
 
     /**
@@ -84,5 +105,12 @@ function pluginService(translationService) {
 
         // trigger this callback for any plugin already created
         pluginList.filter(pi => pi instanceof pluginType).forEach(cb);
+    }
+
+    function buildAPI() {
+        return {
+            viewer: $injector.invoke(Viewer),
+            layers: $injector.instantiate(Layers)
+        };
     }
 }

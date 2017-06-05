@@ -66,9 +66,9 @@ function events($rootScope) {
 
 // Angular services that have no constructors (services that are just plain objects) are __shared__ across app instances
 // to have it per instance, the appInfo service needs to have some initialization logic
-function appInfo() {
+function appInfo($rootElement) {
     const service = {
-        id: null
+        id: $rootElement.closest('[is=rv-map]').attr('id')
         // something else ?
     };
 

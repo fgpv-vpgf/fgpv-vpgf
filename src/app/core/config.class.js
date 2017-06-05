@@ -1571,7 +1571,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             'share',
             'touch',
             'help',
-            'language'
+            'language',
+            'plugins'
         ];
 
         static ITEMS_DEFAULT = [
@@ -1588,6 +1589,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             ],
             [
                 'language'
+            ],
+            [
+                'plugins'
             ]
         ];
 
