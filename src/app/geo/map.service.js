@@ -80,8 +80,8 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
         const { map: mapConfig, services: servicesConfig } = configService.getSync;
 
         if (!mapNode) {
-            mapConfig.instance._map.destroy();
             mapNode = mapConfig.node;
+            mapConfig.instance._map.destroy();
             // FIXME: destroy scalebar and overview map at this point
         }
 
@@ -89,7 +89,7 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
             basemaps: mapConfig.basemaps,
             scalebar: mapConfig.components.scaleBar,
             overviewMap: mapConfig.components.overviewMap,
-            extent: _getStartExtent(mapConfig),
+            extent: _getStartExtent(mapConfig, mapNode),
             lods: mapConfig.selectedBasemap.lods
         };
 
@@ -169,9 +169,11 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
      *
      * @function _getStartExtent
      * @private
+     * @param {Map} mapConfig typed map config
+     * @param {Object} mapNode dom node of the map
      * @returns {Object}            An extent where the map should initialize
      */
-    function _getStartExtent(mapConfig) {
+    function _getStartExtent(mapConfig, mapNode) {
         if (!mapConfig.startPoint) {
             return mapConfig.selectedBasemap.default;
         }
@@ -183,8 +185,8 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
 
         // using resolution of our target level of detail, and the size of the map in pixels,
         // calculate a rough extent of where our map should initialize.
-        const xOffset = mapConfig.node.offsetWidth * zoomLod.resolution / 2;
-        const yOffset = mapConfig.node.offsetHeight * zoomLod.resolution / 2;
+        const xOffset = mapNode.offsetWidth * zoomLod.resolution / 2;
+        const yOffset = mapNode.offsetHeight * zoomLod.resolution / 2;
 
         return {
             xmin: mapConfig.startPoint.x - xOffset,

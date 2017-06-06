@@ -46,7 +46,7 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
         assembleMap(mapNode = null) {
             return configService.getAsync
                 .then(config => {
-                    this._isMapReady = false;
+                    // this._isMapReady = false;
 
                     // if any bookmark was loaded, apply it to the config
                     // bookmarked changes to the layer definitions cannot be applied at this point as some layers migth be loaded through rcs keys

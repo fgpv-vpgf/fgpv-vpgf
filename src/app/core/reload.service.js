@@ -14,10 +14,10 @@ function reloadService($translate, $rootScope, events, bookmarkService, mapServi
     const service = {
         loadNewProjection,
         loadNewLang,
-        loadWithBookmark,
         loadWithExtraKeys,
         bookmarkBlocking: false,
 
+        loadWithBookmark,
         changeProjection
     };
 
@@ -85,7 +85,7 @@ function reloadService($translate, $rootScope, events, bookmarkService, mapServi
 
             // modify the original config
             configService.getAsync.then(config => {
-                bookmarkService.parseBookmark(bookmark, config, {});
+                bookmarkService.parseBookmark(bookmark);
 
                 if (service.bookmarkBlocking) {
                     // broadcast startup event
