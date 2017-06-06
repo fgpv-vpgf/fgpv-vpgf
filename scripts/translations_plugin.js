@@ -6,6 +6,8 @@ class TranslationPlugin {
     constructor (csvPath) {
         this.translations = {};
         this.csvPath = csvPath;
+        this.ignoreCol = [0];   //the columns are ignored
+        this.addIgnoreCol(this.csvPath);
     }
 
     apply (compiler) {
@@ -28,7 +30,7 @@ class TranslationPlugin {
     init (srcChunks, compilation, done) {
         csv({
             noheader: true,
-            ignoreColumns: [0]
+            ignoreColumns: this.ignoreCol
         })
         .fromFile(this.csvPath)
         .on('csv', (row, rowNum) => {
@@ -61,6 +63,23 @@ class TranslationPlugin {
                     lastPlace = lastPlace[k]; // move placeholder forward
                 }
             });
+        });
+    }
+
+    addIgnoreCol(csvPath) {
+        csv({
+            noheader: true,
+            maxRowLength: 1
+        })
+        .fromFile(csvPath)
+        .on('csv', (row, rowNum) => {
+            if (rowNum === 0) {
+                for (let i = 3; i < row.length; i++) {
+                    if (i % 2 === 1 && this.ignoreCol.indexOf(i) == -1) {
+                        this.ignoreCol.push(i);
+                    }
+                }
+            }
         });
     }
 }

@@ -1,332 +1,332 @@
-﻿Language code (ISO 639-1),lang.code.code,en-CA,fr-CA
-Language code (ISO 639-2/T),lang.code.iso.639.2,eng,fra
-Language direction,lang.dir,ltr,ltr
-Language name (English),lang.en,English,French
-Language name (French),lang.fr,anglais,français
-Language name (native),lang.native,English,Français
-Appbar tooltip for layers icon,appbar.tooltip.layers,Layers,Couches
-Appbar headline for layers,appbar.headline.layers,Layers,Couches
-Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature Details,Détails sur l'élément
-Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,Menu
-Appbar tooltip for geosearch icon,appbar.tooltip.geosearch,Geolocation Search, Recherche géolocalisée
-Appbar tooltip for geosearch close icon,appbar.tooltip.geosearchclose,Close Geolocation Search, Fermer la recherche géolocalisée
-Appbar tooltip for tools icon,appbar.tooltip.tools,Tools,Outils
-Appbar aria label for layers icon,appbar.aria.layers,Sets,Séries
-Appbar aria label for point info icon,appbar.aria.pointInfo,Feature Details,Détails sur l'élément
-Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,Ouvrir le menu de navigation
-Appbar aria for geosearch close icon,appbar.aria.geosearchclose,Close Geolocation Search, Fermer la recherche géolocalisée
-Appbar aria label for geosearch icon,appbar.aria.geosearch,Geolocation Search, Recherche géolocalisée
-Map overview aria label for toggle icon,geo.aria.overviewtoggle,Expand/Shrink map overview,Agrandir/Minimiser l'aperçu de la carte
-Map aria label description,geo.aria.mapdescription,Interactive Map,Carte Interactive
-Map coordinates east label,geo.coord.east,E,E
-Map coordinates west label,geo.coord.west,W,O
-Map coordinates north label,geo.coord.north,N,N
-Map coordinates south label,geo.coord.south,S,S
-Appbar aria label for tools icon,appbar.aria.tools,Tools,Outils
-rv-truncate directive show more,rv-truncate.showMore,Show More,Montrer davantage
-rv-truncate directive show less,rv-truncate.showLess,Hide,Masquer
-Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,Zoom à l'élément
-,filter.tooltip.highlight,Show on map,Afficher sur la carte
-Tooltip text for Details,filter.tooltip.description,Details,Détails
-Tooltip text for No Zoom Projection,filter.tooltip.nozoom,Data in custom projection. Cannot zoom to feature.,La donnée utilise une projection personnalisée. Le zoom à l'élément n'est pas supporté.
-DataTable text for Processing,filter.default.label.processing,Processing...,Traitement en cours...
-DataTable text for Search,filter.default.label.search,Search: ,"Rechercher : "
-DataTable text for Length Menu,filter.default.label.length.menu,Show _MENU_ entries,Afficher _MENU_ éléments
-DataTable text for Info,filter.default.label.info,Showing _START_ to _END_ of _TOTAL_ entries,Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments
-DataTable text for Empty,filter.default.label.zero,Showing 0 to 0 of 0 entries,Affichage de l'élément 0 à 0 sur 0 élément
-DataTable text for Filtered,filter.default.label.filtered,(filtered from _MAX_ total entries),(filtrés de _MAX_ éléments au total)
-DataTable text for Postfix,filter.default.label.postfix,,
-DataTable text for Loading Records,filter.default.label.loadrec,Loading...,Chargement en cours...
-DataTable text for Zero records,filter.default.label.zerorecords,No matching records found,Aucun élément à afficher
-DataTable text for Empty table,filter.default.label.emptytable,No data available in table,Aucune donnée disponible dans le tableau
-DataTable text for First,filter.default.label.first,First,Premier
-DataTable text for Previous,filter.default.label.previous,Previous,Précédent
-DataTable text for Next,filter.default.label.next,Next,Suivant
-DataTable text for Last,filter.default.label.last,Last,Dernier
-DataTable text for Sort Ascending,filter.default.aria.sortasc,: activate to sort column ascending,: activer pour trier la colonne en ordre croissant
-DataTable text for Sort Descending,filter.default.aria.sortdsc,: activate to sort column descending,: activer pour trier la colonne en ordre décroissant
-DataTable text for thousands delimeter,filter.default.thousands.delim,","," "
-Details pane title,details.title,Feature Information,Information sur l'élément
-Details pane aria label for expand button,details.aria.expand,Expand,Agrandir
-Details pane tooltip for expand button,details.tooltip.expand,Expand,Agrandir
-Details pane label for no result,details.label.noresult,Nothing found,Aucun résultat
-Content pane aria label for close button,contentPane.aria.close,Close,Fermer
-Content pane tooltip for close button,contentPane.tooltip.close,Close,Fermer
-Filter pane title prefix,filter.title,Features: ,"Éléments : "
-Filter pane aria label for menu icon,filter.aria.menu,Open data panel menu,Ouvrir le menu du panneau de données
-Filter pane menu label for Minimize,filter.menu.minimize,Minimize,Réduire
-Filter pane menu label for Split View,filter.menu.splitView,Split View,Diviser la vue
-Filter pane menu label for Maximize,filter.menu.maximize,Maximize,Agrandir
-Filter pane menu label for Enable Search,filter.menu.enableSearch,Enable Search,Activer la recherche
-Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable Filters,Activer les filtres
-Filter pane menu label for Print,filter.menu.print,Print,Imprimer
-Filter pane menu label for Export,filter.menu.export,Export,Exporter
-Filter pane menu label for Filter by Extent,filter.menu.extent,Filter by Extent,Filtrer par étendue
-Geosearch text place holder,geosearch.text.placeholder,Search Text,Texte à rechercher
-Geosearch province filter label,geosearch.label.province,Province,Province
-Geosearch type filter label,geosearch.label.type,Type,Type
-Geosearch extent filter label,geosearch.aria.extent,Visible,Visible seulement
-Geosearch extent filter label,geosearch.label.extent,Visible,Visible seulement
-Geosearch scale type,geosearch.type.scale,Scale,Échelle
-Geosearch lat/long type,geosearch.type.latlong,Latitude/Longitude,Latitude/Longitude
-Geosearch FSA type,geosearch.type.fsa,Postal Code,Code postal
-Geosearch National Topographic System type,geosearch.type.nts,NTS,SNRC
-,geosearch.nomatches.label,No matches found for ""{{ noResultsSearchValue }}"",Aucun résultat correspondant à ""{{ noResultsSearchValue }}"".
-,geosearch.loadingfilters.label,Loading filters,Chargement des filtres
-Basemap refresh required,basemap.refresh.req,Map refresh required,Actualiser la carte
-Basemap blank title,basemap.blank.title,blank map,Carte vide
-Basemap blank description,basemap.blank.desc,Remove base map,Retirer la carte de base
-Basemap projection title,basemap.projection.title,{{name}} Maps,Cartes {{name}}
-,basemap.select,Select basemap,Sélectionner la carte de base
-,basemap.showdescription,Show basemap description,Montrer la description de la carte de base
-,basemap.hidedescription,Hide basemap description,Masquer la description de la carte de base
-WKIDs to name 3978 -> lambert,wkids.3978,Lambert,Lambert
-WKIDs to name 102100 -> Mercator,wkids.102100,Mercator,Mercator
-WKIDs to name other,wkids.other,Other,Autre
-Map Navigation slider only text,nav.sliderOnly,slider only,Curseur seulement
-Map Navigation slider text,nav.slider,slider,Curseur
-Map Navigation zoom in label,nav.label.zoomIn,Zoom in,Zoom avant
-Map Navigation zoom out label,nav.label.zoomOut,Zoom out,Zoom arrière
-Map Navigation geolocation label,nav.label.geoLocation,Your Location,Votre position
-Map Navigation search label,nav.label.search,Search,Recherche
-Map Navigation home label,nav.label.home,Canada,Canada
-Map Navigation history label,nav.label.history,History,Historique
-Map Navigation basemap label,nav.label.basemap,Basemap,Carte de base
-Map Navigation zoom in tooltip,nav.tooltip.zoomIn,Zoom in,Zoom avant
-Map Navigation zoom out tooltip,nav.tooltip.zoomOut,Zoom out,Zoom arrière
-Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your Location,Votre position
-Map Navigation search tooltip,nav.tooltip.search,Search,Recherche
-Map Navigation home tooltip,nav.tooltip.home,Canada,Canada
-Map Navigation history tooltip,nav.tooltip.history,History,Historique
-Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,Carte de base
-Metadata pane title,metadata.title,Metadata,Métadonnées
-Metadata pane expand,metadata.expand.tooltip,Expand Metadata,Agrandir métadonnées
-Hovertip loading text,maptip.hover.label.loading,Loading...,Chargement en cours...
-Settings main title,settings.title,Settings,Paramètres
-Settings visibility header label,settings.label.display,Display,Affichage
-Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,Zone de délimitation
-Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding Box,Zone de délimitation
-Settings opacity slider label,settings.label.opacity,Opacity,Opacité
-Settings data header label,settings.label.data,Data,Données
-Settings snapshot mode label,settings.label.snapshot,Snapshot mode,Mode copie instantanée
-Settings snapshot mode enable label,settings.label.enable,Enable,Activer
-Settings snapshot mode enable label,settings.label.enabled,Enabled,Activée
-Settings query mode label,settings.label.query,Allow query,Permettre les requêtes
-Settings query mode aria,settings.aria.query,Allow query,Permettre les requêtes
-,settings.reload.description,When a layer fails to load properly or becomes unresponsive, reloading the layer can solve the problem.
-Side Navigation main title,sidenav.title,FGP R2 Viewer,Visualiseur PGF R2
-Side Navigation about map,sidenav.label.about,About Map,À propos de la carte
-Side Navigation full screen,sidenav.label.fullscreen,Full Screen,Plein Écran
-Side Navigation share,sidenav.label.share,Share,Partager
-Side Navigation export,sidenav.label.export,Export,Exporter
-Bookmark share link,sidenav.label.sharelink,Link to Share,Lien de partage
-Bookmark short link,sidenav.label.shortlink,Short Link,Lien court
-Bookmark link copied feedback,sidenav.label.copysuccess,Link copied to clipboard,Lien copié dans le presse-papiers
-Bookmark link click to copy hint,sidenav.label.clicktocopy,Click to copy,Cliquez pour copier
-Bookmark link copy hint,sidenav.label.copy,Press Ctrl+C to copy,Appuyez sur « Ctrl+C » pour copier
-Side Navigation help,sidenav.label.help,Help,Aide
-Side Navigation touch mode,sidenav.label.touch,Touch Mode,Mode Tactile
-Side Navigation language,sidenav.label.language,Language,Langue
-Table of Content Unnamed service,toc.layer.unnamed,Unnamed Service #{{count}},Service sans nom #{{count}}
-Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,Menu du panneau des données ouvertes
-Table of Content show symbology label,toc.layer.label.symbology,Legend,La légende
-Table of Content show symbology label,toc.layer.label.symbologyShow,Expand legend,Développer la légende
-Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide legend,Masquer la légende
-Table of Content main title,toc.title,Layer Selector,Sélecteur de couche
-Table of Content toggle group visibility label,toc.label.toggleGroupViz,Toggle group visibility,Masquer le groupe de visibilité
-Table of Content toggle group visibility tootlip,toc.tooltip.toggleGroupViz,Toggle group visibility,Masquer le groupe de visibilité
-Table of Content extra menu items label,toc.label.extraMenu,Extra,Extra
-Table of Content extra menu items tootlip,toc.tooltip.extraMenu,Extra,Extra
-Table of Content metadata label,toc.label.metadata,Metadata,Métadonnées
-Table of Content metadata tootlip,toc.tooltip.metadata,Metadata,Métadonnées
-Table of Content query label,toc.label.query,Toggle query,Basculer la requête
-Table of Content query tootlip,toc.tooltip.query,Toggle query,Basculer la requête
-Table of Content settings label,toc.label.settings,Settings,Paramètres
-Table of Content settings tootlip,toc.tooltip.settings,Settings,Paramètres
-Table of Content visibilty off label,toc.label.visibility.off,Show layer,Afficher la couche
-Table of Content visibilty off tootlip,toc.tooltip.visibility.off,Show layer,Afficher la couche
-Table of Content visibilty on label,toc.label.visibility.on,Hide layer,Masquer la couche
-Table of Content visibilty on tootlip,toc.tooltip.visibility.on,Hide layer,Masquer la couche
-Table of Content visibilty zoom in label,toc.label.visibility.zoomIn,Zoom in to details,Zoom avant
-Table of Content visibilty zoom in tootlip,toc.tooltip.visibility.zoomIn,Zoom in to details,Zoom avant
-Table of Content visibilty zoom out label,toc.label.visibility.zoomOut,Zoom out to details,Zoom arrière
-Table of Content visibilty zoom out tootlip,toc.tooltip.visibility.zoomOut,Zoom out to details,Zoom arrière
-Table of Content reload label,toc.label.reload,Reload,Recharger
-Table of Content reload tootlip,toc.tooltip.reload,Reload,Recharger
-Table of Content remove label,toc.label.remove,Remove,Retirer
-Table of Content remove tootlip,toc.tooltip.remove,Remove,Retirer
-Table of Content remove state label,toc.label.state.remove,Layer removed,Couche retirée
-Table of Content remove action label,toc.label.action.remove,undo,annuler
-Table of Content filters label,toc.label.filters,,
-Table of Content filters tootlip,toc.tooltip.filters,,
-Table of Content feature layer flag label,toc.label.flag.feature,ESRI Feature Layer ({{count}} {{typeName}}),Couche d'éléments d'ESRI ({{count}} {{typeName}})
-,toc.label.flag.unresolved,Detecting layer type...,[fr] Detecting layer type...
-,toc.label.flag.unresolved,Cannot determine layer type,[fr] Cannot determine layer type
-Table of Content feature layer flag tootlip,toc.tooltip.flag.feature,ESRI Feature Layer ({{count}} {{typeName}}),Couche d'éléments d'ESRI ({{count}} {{typeName}})
-Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic Layer ({{count}} {{typeName}}),Couche dynamique d'ESRI ({{count}} {{typeName}})
-Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer ({{count}} {{typeName}}),Couche dynamique d'ESRI ({{count}} {{typeName}})
-Table of Content wms layer flag label,toc.label.flag.wms,OGC WMS Layer,Couche WMS de l'OGC
-Table of Content wms layer flag tootlip,toc.tooltip.flag.wms,OGC WMS Layer,Couche WMS de l'OGC
-Table of Content tile layer flag label,toc.label.flag.tile,ESRI Tile Layer,Couche de tuiles d'ESRI
-Table of Content tile layer flag tootlip,toc.tooltip.flag.tile,ESRI Tile Layer,Couche de tuiles d'ESRI
-Table of Content image layer flag label,toc.label.flag.image,ESRI Image Layer,Couche d'images d'ESRI
-Table of Content image layer flag tootlip,toc.tooltip.flag.image,ESRI Image Layer,Couche d'images d'ESRI
-Table of Content scale flag label,toc.label.flag.scale,Toggle scale,Basculer l'échelle
-Table of Content scale flag tootlip,toc.tooltip.flag.scale,Layer out of scale,Couche hors portée
-Table of Content data table flag label,toc.label.flag.data.table,Layer has viewable data,Données disponibles pour la visualisation associées à cette couche
-Table of Content data table flag tootlip,toc.tooltip.flag.data.table,Layer has viewable data,Données disponibles pour la visualisation associées à cette couche
-Table of Content data filter flag label,toc.label.flag.data.filter,Layer data is filtered,Couche de données filtrée
-Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer data is filtered,Couche de données filtrée
-Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,La couche sera exclue de la carte - cliquer sur les résultats
-Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,La couche sera exclue de la carte - cliquer sur les résultats
-Table of Content user flag label,toc.label.flag.user,Layer added by user,Couche ajoutée par l'utilisateur
-Table of Content filter by extent flag label,toc.label.flag.filter,Map data is filtered by your current extent,Les données sont filtrées selon l'étendue actuelle
-Table of Content user flag tootlip,toc.tooltip.flag.user,Layer added by user,Couche ajoutée par l'utilisateur
-Table of Content filter by extent flag label,toc.label.flag.wrongprojection,Layer cannot be displayed in your current projection,Le calque ne peut pas être affiché dans votre projection actuelle
-Table of Content user flag tootlip,toc.tooltip.flag.wrongprojection,Current projection not supported,Projection actuelle non prise en charge
-Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Map data is filtered by your current extent,Les données sont filtrées selon l'étendue actuelle
-Table of Content error state label,toc.label.state.error,Error,Erreur
-Table of Content error state tootlip,toc.tooltip.state.error,Error,Erreur
-Table of Content loading state label,toc.label.state.loading,Updating,Mise à jour
-Table of Content loading state tootlip,toc.tooltip.state.loading,Updating,Mise à jour
-Table of Content templates placeholder loading label,toc.tmp.label.state.loading,Loading layer...,Chargement de la couche...
-Table of Content templates placeholder loading error label,toc.tmp.label.error.loading,Can't load layer,Impossible de charger la couche
-Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
-Table of Content open datatable label,toc.label.dataTable,Datatable,Tableau de données
-Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,Zoomer à la limite
-Table of Content keyboard reoder tooltip,toc.label.reorder,Reorder,Réorganiser
-,toc.menu.visibility.title,Toggle Visibility,Basculer la visibilité
-,toc.menu.visibility.allon,Show All,Montrer tout
-,toc.menu.visibility.alloff,Hide All,Cacher tout
-,toc.menu.expand.title,Toggle Groups,Basculer les groupes
-,toc.menu.expand.allon,Expand Groups,Élargir les groupes
-,toc.menu.expand.alloff,Collapse Groups,Réduire les groupes
-,toc.menu.reorder.title,Reorder Layers,Réorganiser les couches
-,toc.menu.reorder.close,Stop Reordering,Arrêter de réorganiser
-While counting geometry,geometry.counting, ...counting, ...compte
-Geometry types,geometry.type.generic,feature|features,élément|éléments
-Geometry types,geometry.type.esriGeometryPoint,point|points,point|points
-Geometry types,geometry.type.esriGeometryPolygon,polygon|polygons,polygone|polygones
-Geometry types,geometry.type.esriGeometryPolyline,line|lines,ligne|lignes
-,export.close,Close,Fermer
-,export.save,Save,Sauver
-,export.download,Download,Télécharger
-,export.undo,Undo,Annuler
-,export.title,Enter Title,Titre
-,export.error.timeout,"Connection timed out. Stopping export task.","Connexion expirée. Processus d’exportation arrêté."
-,export.error.tainted,"We can't save the export image directly (same-origin policy exception). You can right click the image and select ""Save As..."" if supported by your browser.","Nous ne pouvons enregistrer l’image directement (exception liée à la politique de même origine). Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer sous... » si votre navigateur le permet."
-,export.error.somethingelseiswrong,"Ouch. Something went wrong. We cannot save the export image.","Aïe. Une erreur s'est produite. Nous ne pouvons enregistrer l’image créée par l'outil d'exportation."
-,export.error.minwidth, Too small. {{min}} px minimum., Trop petit. {{min}} px minimum.
-,export.error.minheight, Too small. {{min}} px minimum., Trop petit. {{min}} px minimum.
-,export.error.maxwidth, Too large. {{max}} px maximum., Trop grand. {{max}} px maximum.
-,export.error.maxheight, Too large. {{max}} px maximum., Trop grand. {{max}} px maximum.
-,export.error.safari,"We can't save the export image directly in Safari. You can right click the image and select ""Save Page As..."".","Nous ne pouvons enregistrer l’image directement à l'aide de Safari. Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer la page sous... »."
-,export.retry,Retry,Réessayer
-,export.size.customwidth, Width (pixels), Largeur (pixels)
-,export.size.customheight, Height (pixels), Hauteur (pixels)
-,export.generate, generate, générer
-,export.settings, Settings, Paramètres
-,export.component.title, Title, Titre
-,export.component.map, Map, Carte
-,export.component.legend, Legend, Légende
-,export.component.scale, Scalebar, Échelle graphique
-,export.component.mapelements, North arrow and scalebar, Flèche du nord et échelle graphique
-,export.component.footnote, Footnote, Référence
-,export.component.timestamp, Timestamp, Estampille temporelle
-,export.label.approx,approx.,approx.
-,export.size.default, Default, Par défaut
-,export.size.small, Small, Petit
-,export.size.medium, Medium, Médium
-,export.size.custom, Custom size, Format personnalisé
-,export.custom.note1,Custom sizes apply to the map image - the actual exported image size will vary based on the export options selected.,Les tailles personnalisées s'appliquent à l'image cartographique - la taille réelle de l'image exportée varie en fonction des options d'exportation sélectionnées.
-,export.custom.note2,You must first click on the Generate button below to create your custom size before downloading is enabled.,Vous devez d'abord cliquer sur le bouton « Générer » ci-dessous pour créer votre taille personnalisée avant d'activer le téléchargement.
-,import.title,Add Layer,Ajouter une couche
-,import.file.title,Import File,Importer un fichier
-,import.file.upload.title,Upload data,Charger des données
-,import.file.upload.summary,"GeoJSON, CSV or zipped Shapefile","GeoJSON, CSV ou Shapefile zippé"
-,import.file.upload.choose,choose a file,Choisir un fichier
-,import.file.upload.drop,Drop the file to upload,Déposer le fichier à téléverser
-,import.file.upload.or,or,ou
-,import.file.upload.fileurl,File URL,Adresse URL du fichier
-,import.file.upload.invalid,This is not a valid URL,Cette adresse URL n'est pas valide
-,import.file.upload.noaccess,Can't access file,Impossible d'accéder au fichier
-,import.file.select.title,Select file format,Sélectionner le format du fichier
-,import.file.select.fileformat,File Format,Format du fichier
-,import.file.select.wrong,Incorrect file format,Format de fichier incorrecte
-,import.file.configure.title,Configure layer,Configurer la couche
-,import.file.configure.layername,Layer Name,Nom de la couche
-,import.file.configure.primaryfield,Primary Field,Champ clé
-,import.file.configure.latitudefield,Latitude Field,Champ latitude
-,import.file.configure.longitudefield,Longitude Field,Champ longitude
-,import.file.configure.colourfield,Colour,Couleur
-,import.file.configure.invalid,ERROR: Invalid File,ERREUR: Le fichier est invalide
-,import.file.type.csv,CSV,CSV
-,import.file.type.shapefile,zipped Shapefile,Shapefile zippé
-,import.file.type.geojson,GeoJSON,GeoJSON
-,import.service.title,Import Service,Importer un service
-,import.service.connect.title,Connect service,Connecter le service
-,import.service.connect.serviceurl,Service layer URL,Adresse URL du service
-,import.service.connect.invalidurl,This is not a valid URL,Cette adresse URL n'est pas valide
-,import.service.connect.broken,Service does not respond,Le service ne répond pas
-,import.service.select.title,Select Service type,Sélectionner le type de service
-,import.service.select.servicetype,Service Type,Type de service
-,import.service.select.wrong,Service can not be imported using this type,Le service ne peut être importé en utilisant ce type
-,import.service.type.featurelayer,ESRI Feature Layer,Couche d'éléments d'ESRI
-,import.service.type.dynamicservice,ESRI Dynamic Layer,Couche dynamique d'ESRI
-,import.service.type.imageservice,ESRI Image Layer,Couche d'images d'ESRI
-,import.service.type.tileservice,ESRI Tile Layer,Couche de tuiles d'ESRI
-,import.service.type.wms,OGC Web Map Service,Couche WMS de l'OGC
-,import.service.type.rasterlayer,Raster Layer,Couche Raster
-,import.service.configure.title,Configure layer,Configurer la couche
-,import.service.configure.layername,Layer Name,Nom de la couche
-,import.service.configure.primaryfield,Primary Field,Champ clé
-,import.service.configure.layers,Layers,Couches
-,import.service.configure.multipleselection,You can select several layers,Vous pouvez sélectionner plusieurs couches
-,stepper.continue,Continue,Continuer
-,stepper.unresponsive,The application may feel unresponsive for a short time upon clicking the Continue button. This is normal while data is being processed.,L'application peut ne pas répondre pendant un court laps de temps après avoir cliqué sur le bouton Continuer. Cette situation est normale pendant le traitement des données.
-,stepper.cancel,Cancel,Annuler
-,config.service.rcs.error,"Layers could not be retrieved from the server, refresh to try again","Échec du SCR (RCS), démarrage de l'application avec un fichier de configuration"
-,config.service.rcs.action,DISMISS,ANNULER
-,helpui.title,Help,Aide
-,helpui.nothingfound,Nothing is found. Please try a different search.,Rien n’est trouvé. Veuillez essayer une recherche différente.
-,helpui.search,Search Help,Aide à la recherche
-,helpui.clearsearch,Clear,Effacer
-Error message when resource fails to load,toc.error.resource.loadfailed,There was an error retrieving this resource - try again later,Une erreur s'est produite lors du chargement de cette ressource - réessayez plus tard
-Error message when feature count cannot be retrieved,toc.error.resource.countfailed,Could not get number of,Impossible d'obtenir le nombre de
-,metadata.xslt.Abstract,Abstract,Résumé
-,metadata.xslt.Scope,Scope,Portée
-,metadata.xslt.hereBeScope,here be scope,la portée jusqu'ici
-,metadata.xslt.timePeriod,Time Period,Période
-,metadata.xslt.supplementalData,Supplemental Data,Données supplémentaires
-,metadata.xslt.contactInfo,Contact Information,Coordonnées
-,metadata.xslt.resourceProvider,Resource Provider,Fournisseur de la ressource
-,metadata.xslt.custodian,Custodian,Dépositaire
-,metadata.xslt.owner,Owner,Propriétaire
-,metadata.xslt.user,User,Utilisateur
-,metadata.xslt.distributor,Distributor,Distributeur
-,metadata.xslt.originator,Originator,Auteur
-,metadata.xslt.pointOfContact,Point of Contact,Point de contact
-,metadata.xslt.principalInvestigator,Principal Investigator,Chercheur principal
-,metadata.xslt.processor,Processor,Préparateur
-,metadata.xslt.publisher,Publisher,Éditeur
-,metadata.xslt.author,Author,Auteur
-,metadata.xslt.collaborator,Collaborator,Collaborateur
-,metadata.xslt.editor,Editor,Éditeur
-,metadata.xslt.mediator,Mediator,Médiateur
-,metadata.xslt.rightsHolder,Rights Holder,Titulaire des droits
-,metadata.xslt.cataloguePage,Data Catalogue Page,Page des données du catalogue
-,metadata.xslt.metadataPage,Raw Metadata,Métadonnées brutes
-,metadata.xslt.metadata,Metadata,Métadonnées
-,focus.dialog.press,Press,Appuyer
-,focus.dialog.enter,Enter,Entrer
-,focus.dialog.toactivate,to activate or skip with,pour activer ou sauter avec
-,focus.dialog.tab,Tab,Onglet
-,focus.dialog.main,We'll keep focus locked on the viewer - exit with,Nous allons garder le focus verrouillé sur le visualiseur - sortir à l'aide de
-,focus.dialog.escape,Escape,Échapper
-,toc.menu.symbology,Show legend,Afficher la légende
-,sidenav.menu.plugin,Plugin Links,Liens
-Table of Content expand legend group,toc.label.group.expand,Expand Group,Ouvrir les groupes
-Table of Content collapse legend group,toc.label.group.collapse,Collapse Group,Fermer les groupes
-Export size selector,export.size.selector,Size Selector,Sélecteur de taille
-,lightbox.tooltip.next,Next,Prochain
-,lightbox.tooltip.previous,Previous,Précédent
+﻿Language code (ISO 639-1),lang.code.code,en-CA,English Officially Reviewed,fr-CA,French Officially Reviewed
+Language code (ISO 639-2/T),lang.code.iso.639.2,eng,1,fra,1
+Language direction,lang.dir,ltr,1,ltr,1
+Language name (English),lang.en,English,1,French,1
+Language name (French),lang.fr,anglais,1,français,1
+Language name (native),lang.native,English,1,Français,1
+Appbar tooltip for layers icon,appbar.tooltip.layers,Layers,1,Couches,1
+Appbar headline for layers,appbar.headline.layers,Layers,1,Couches,1
+Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature Details,1,Détails sur l'élément,1
+Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,1,Menu,1
+Appbar tooltip for geosearch icon,appbar.tooltip.geosearch,Geolocation Search,1, Recherche géolocalisée,1
+Appbar tooltip for geosearch close icon,appbar.tooltip.geosearchclose,Close Geolocation Search,1, Fermer la recherche géolocalisée,1
+Appbar tooltip for tools icon,appbar.tooltip.tools,Tools,1,Outils,1
+Appbar aria label for layers icon,appbar.aria.layers,Sets,1,Séries,1
+Appbar aria label for point info icon,appbar.aria.pointInfo,Feature Details,1,Détails sur l'élément,1
+Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,1,Ouvrir le menu de navigation,1
+Appbar aria for geosearch close icon,appbar.aria.geosearchclose,Close Geolocation Search,1, Fermer la recherche géolocalisée,1
+Appbar aria label for geosearch icon,appbar.aria.geosearch,Geolocation Search,1, Recherche géolocalisée,1
+Map overview aria label for toggle icon,geo.aria.overviewtoggle,Expand/Shrink map overview,1,Agrandir/Minimiser l'aperçu de la carte,1
+Map aria label description,geo.aria.mapdescription,Interactive Map,1,Carte Interactive,1
+Map coordinates east label,geo.coord.east,E,1,E,1
+Map coordinates west label,geo.coord.west,W,1,O,1
+Map coordinates north label,geo.coord.north,N,1,N,1
+Map coordinates south label,geo.coord.south,S,1,S,1
+Appbar aria label for tools icon,appbar.aria.tools,Tools,1,Outils,1
+rv-truncate directive show more,rv-truncate.showMore,Show More,1,Montrer davantage,1
+rv-truncate directive show less,rv-truncate.showLess,Hide,1,Masquer,1
+Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,1,Zoom à l'élément,1
+,filter.tooltip.highlight,Show on map,1,Afficher sur la carte,1
+Tooltip text for Details,filter.tooltip.description,Details,1,Détails,1
+Tooltip text for No Zoom Projection,filter.tooltip.nozoom,Data in custom projection. Cannot zoom to feature.,1,La donnée utilise une projection personnalisée. Le zoom à l'élément n'est pas supporté.,1
+DataTable text for Processing,filter.default.label.processing,Processing...,1,Traitement en cours...,1
+DataTable text for Search,filter.default.label.search,Search: ,1,Rechercher : ,1
+DataTable text for Length Menu,filter.default.label.length.menu,Show _MENU_ entries,1,Afficher _MENU_ éléments,1
+DataTable text for Info,filter.default.label.info,Showing _START_ to _END_ of _TOTAL_ entries,1,Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments,1
+DataTable text for Empty,filter.default.label.zero,Showing 0 to 0 of 0 entries,1,Affichage de l'élément 0 à 0 sur 0 élément,1
+DataTable text for Filtered,filter.default.label.filtered,(filtered from _MAX_ total entries),1,(filtrés de _MAX_ éléments au total),1
+DataTable text for Postfix,filter.default.label.postfix,,1,,1
+DataTable text for Loading Records,filter.default.label.loadrec,Loading...,1,Chargement en cours...,1
+DataTable text for Zero records,filter.default.label.zerorecords,No matching records found,1,Aucun élément à afficher,1
+DataTable text for Empty table,filter.default.label.emptytable,No data available in table,1,Aucune donnée disponible dans le tableau,1
+DataTable text for First,filter.default.label.first,First,1,Premier,1
+DataTable text for Previous,filter.default.label.previous,Previous,1,Précédent,1
+DataTable text for Next,filter.default.label.next,Next,1,Suivant,1
+DataTable text for Last,filter.default.label.last,Last,1,Dernier,1
+DataTable text for Sort Ascending,filter.default.aria.sortasc,: activate to sort column ascending,1,: activer pour trier la colonne en ordre croissant,1
+DataTable text for Sort Descending,filter.default.aria.sortdsc,: activate to sort column descending,1,: activer pour trier la colonne en ordre décroissant,1
+DataTable text for thousands delimeter,filter.default.thousands.delim, ,1, ,1
+Details pane title,details.title,Feature Information,1,Information sur l'élément,1
+Details pane aria label for expand button,details.aria.expand,Expand,1,Agrandir,1
+Details pane tooltip for expand button,details.tooltip.expand,Expand,1,Agrandir,1
+Details pane label for no result,details.label.noresult,Nothing found,1,Aucun résultat,1
+Content pane aria label for close button,contentPane.aria.close,Close,1,Fermer,1
+Content pane tooltip for close button,contentPane.tooltip.close,Close,1,Fermer,1
+Filter pane title prefix,filter.title,Features: ,1,Éléments : ,1
+Filter pane aria label for menu icon,filter.aria.menu,Open data panel menu,1,Ouvrir le menu du panneau de données,1
+Filter pane menu label for Minimize,filter.menu.minimize,Minimize,1,Réduire,1
+Filter pane menu label for Split View,filter.menu.splitView,Split View,1,Diviser la vue,1
+Filter pane menu label for Maximize,filter.menu.maximize,Maximize,1,Agrandir,1
+Filter pane menu label for Enable Search,filter.menu.enableSearch,Enable Search,1,Activer la recherche,1
+Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable Filters,1,Activer les filtres,1
+Filter pane menu label for Print,filter.menu.print,Print,1,Imprimer,1
+Filter pane menu label for Export,filter.menu.export,Export,1,Exporter,1
+Filter pane menu label for Filter by Extent,filter.menu.extent,Filter by Extent,1,Filtrer par étendue,1
+Geosearch text place holder,geosearch.text.placeholder,Search Text,1,Texte à rechercher,1
+Geosearch province filter label,geosearch.label.province,Province,1,Province,1
+Geosearch type filter label,geosearch.label.type,Type,1,Type,1
+Geosearch extent filter label,geosearch.aria.extent,Visible,1,Visible seulement,1
+Geosearch extent filter label,geosearch.label.extent,Visible,1,Visible seulement,1
+Geosearch scale type,geosearch.type.scale,Scale,1,Échelle,1
+Geosearch lat/long type,geosearch.type.latlong,Latitude/Longitude,1,Latitude/Longitude,1
+Geosearch FSA type,geosearch.type.fsa,Postal Code,1,Code postal,1
+Geosearch National Topographic System type,geosearch.type.nts,NTS,1,SNRC,1
+,geosearch.nomatches.label,No matches found for ""{{ noResultsSearchValue }}"",1,Aucun résultat correspondant à ""{{ noResultsSearchValue }}"".,1
+,geosearch.loadingfilters.label,Loading filters,1,Chargement des filtres,1
+Basemap refresh required,basemap.refresh.req,Map refresh required,1,Actualiser la carte,1
+Basemap blank title,basemap.blank.title,blank map,1,Carte vide,1
+Basemap blank description,basemap.blank.desc,Remove base map,1,Retirer la carte de base,1
+Basemap projection title,basemap.projection.title,{{name}} Maps,1,Cartes {{name}},1
+,basemap.select,Select basemap,1,Sélectionner la carte de base,1
+,basemap.showdescription,Show basemap description,1,Montrer la description de la carte de base,1
+,basemap.hidedescription,Hide basemap description,1,Masquer la description de la carte de base,1
+WKIDs to name 3978 -> lambert,wkids.3978,Lambert,1,Lambert,1
+WKIDs to name 102100 -> Mercator,wkids.102100,Mercator,1,Mercator,1
+WKIDs to name other,wkids.other,Other,1,Autre,1
+Map Navigation slider only text,nav.sliderOnly,slider only,1,Curseur seulement,1
+Map Navigation slider text,nav.slider,slider,1,Curseur,1
+Map Navigation zoom in label,nav.label.zoomIn,Zoom in,1,Zoom avant,1
+Map Navigation zoom out label,nav.label.zoomOut,Zoom out,1,Zoom arrière,1
+Map Navigation geolocation label,nav.label.geoLocation,Your Location,1,Votre position,1
+Map Navigation search label,nav.label.search,Search,1,Recherche,1
+Map Navigation home label,nav.label.home,Canada,1,Canada,1
+Map Navigation history label,nav.label.history,History,1,Historique,1
+Map Navigation basemap label,nav.label.basemap,Basemap,1,Carte de base,1
+Map Navigation zoom in tooltip,nav.tooltip.zoomIn,Zoom in,1,Zoom avant,1
+Map Navigation zoom out tooltip,nav.tooltip.zoomOut,Zoom out,1,Zoom arrière,1
+Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your Location,1,Votre position,1
+Map Navigation search tooltip,nav.tooltip.search,Search,1,Recherche,1
+Map Navigation home tooltip,nav.tooltip.home,Canada,1,Canada,1
+Map Navigation history tooltip,nav.tooltip.history,History,1,Historique,1
+Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,1,Carte de base,1
+Metadata pane title,metadata.title,Metadata,1,Métadonnées,1
+Metadata pane expand,metadata.expand.tooltip,Expand Metadata,1,Agrandir métadonnées,1
+Hovertip loading text,maptip.hover.label.loading,Loading...,1,Chargement en cours...,1
+Settings main title,settings.title,Settings,1,Paramètres,1
+Settings visibility header label,settings.label.display,Display,1,Affichage,1
+Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,1,Zone de délimitation,1
+Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding Box,1,Zone de délimitation,1
+Settings opacity slider label,settings.label.opacity,Opacity,1,Opacité,1
+Settings data header label,settings.label.data,Data,1,Données,1
+Settings snapshot mode label,settings.label.snapshot,Snapshot mode,1,Mode copie instantanée,1
+Settings snapshot mode enable label,settings.label.enable,Enable,1,Activer,1
+Settings snapshot mode enable label,settings.label.enabled,Enabled,1,Activée,1
+Settings query mode label,settings.label.query,Allow query,1,Permettre les requêtes,1
+Settings query mode aria,settings.aria.query,Allow query,1,Permettre les requêtes,1
+,settings.reload.description,When a layer fails to load properly or becomes unresponsive,1, reloading the layer can solve the problem.,1
+Side Navigation main title,sidenav.title,FGP R2 Viewer,1,Visualiseur PGF R2,1
+Side Navigation about map,sidenav.label.about,About Map,1,À propos de la carte,1
+Side Navigation full screen,sidenav.label.fullscreen,Full Screen,1,Plein Écran,1
+Side Navigation share,sidenav.label.share,Share,1,Partager,1
+Side Navigation export,sidenav.label.export,Export,1,Exporter,1
+Bookmark share link,sidenav.label.sharelink,Link to Share,1,Lien de partage,1
+Bookmark short link,sidenav.label.shortlink,Short Link,1,Lien court,1
+Bookmark link copied feedback,sidenav.label.copysuccess,Link copied to clipboard,1,Lien copié dans le presse-papiers,1
+Bookmark link click to copy hint,sidenav.label.clicktocopy,Click to copy,1,Cliquez pour copier,1
+Bookmark link copy hint,sidenav.label.copy,Press Ctrl+C to copy,1,Appuyez sur « Ctrl+C » pour copier,1
+Side Navigation help,sidenav.label.help,Help,1,Aide,1
+Side Navigation touch mode,sidenav.label.touch,Touch Mode,1,Mode Tactile,1
+Side Navigation language,sidenav.label.language,Language,1,Langue,1
+Table of Content Unnamed service,toc.layer.unnamed,Unnamed Service #{{count}},1,Service sans nom #{{count}},1
+Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,1,Menu du panneau des données ouvertes,1
+Table of Content show symbology label,toc.layer.label.symbology,Legend,1,La légende,1
+Table of Content show symbology label,toc.layer.label.symbologyShow,Expand legend,1,Développer la légende,1
+Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide legend,1,Masquer la légende,1
+Table of Content main title,toc.title,Layer Selector,1,Sélecteur de couche,1
+Table of Content toggle group visibility label,toc.label.toggleGroupViz,Toggle group visibility,1,Masquer le groupe de visibilité,1
+Table of Content toggle group visibility tootlip,toc.tooltip.toggleGroupViz,Toggle group visibility,1,Masquer le groupe de visibilité,1
+Table of Content extra menu items label,toc.label.extraMenu,Extra,1,Extra,1
+Table of Content extra menu items tootlip,toc.tooltip.extraMenu,Extra,1,Extra,1
+Table of Content metadata label,toc.label.metadata,Metadata,1,Métadonnées,1
+Table of Content metadata tootlip,toc.tooltip.metadata,Metadata,1,Métadonnées,1
+Table of Content query label,toc.label.query,Toggle query,1,Basculer la requête,1
+Table of Content query tootlip,toc.tooltip.query,Toggle query,1,Basculer la requête,1
+Table of Content settings label,toc.label.settings,Settings,1,Paramètres,1
+Table of Content settings tootlip,toc.tooltip.settings,Settings,1,Paramètres,1
+Table of Content visibilty off label,toc.label.visibility.off,Show layer,1,Afficher la couche,1
+Table of Content visibilty off tootlip,toc.tooltip.visibility.off,Show layer,1,Afficher la couche,1
+Table of Content visibilty on label,toc.label.visibility.on,Hide layer,1,Masquer la couche,1
+Table of Content visibilty on tootlip,toc.tooltip.visibility.on,Hide layer,1,Masquer la couche,1
+Table of Content visibilty zoom in label,toc.label.visibility.zoomIn,Zoom in to details,1,Zoom avant,1
+Table of Content visibilty zoom in tootlip,toc.tooltip.visibility.zoomIn,Zoom in to details,1,Zoom avant,1
+Table of Content visibilty zoom out label,toc.label.visibility.zoomOut,Zoom out to details,1,Zoom arrière,1
+Table of Content visibilty zoom out tootlip,toc.tooltip.visibility.zoomOut,Zoom out to details,1,Zoom arrière,1
+Table of Content reload label,toc.label.reload,Reload,1,Recharger,1
+Table of Content reload tootlip,toc.tooltip.reload,Reload,1,Recharger,1
+Table of Content remove label,toc.label.remove,Remove,1,Retirer,1
+Table of Content remove tootlip,toc.tooltip.remove,Remove,1,Retirer,1
+Table of Content remove state label,toc.label.state.remove,Layer removed,1,Couche retirée,1
+Table of Content remove action label,toc.label.action.remove,undo,1,annuler,1
+Table of Content filters label,toc.label.filters,,1,,1
+Table of Content filters tootlip,toc.tooltip.filters,,1,,1
+Table of Content feature layer flag label,toc.label.flag.feature,ESRI Feature Layer ({{count}} {{typeName}}),1,Couche d'éléments d'ESRI ({{count}} {{typeName}}),1
+,toc.label.flag.unresolved,Detecting layer type...,1,[fr] Detecting layer type...,1
+,toc.label.flag.unresolved,Cannot determine layer type,1,[fr] Cannot determine layer type,1
+Table of Content feature layer flag tootlip,toc.tooltip.flag.feature,ESRI Feature Layer ({{count}} {{typeName}}),1,Couche d'éléments d'ESRI ({{count}} {{typeName}}),1
+Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic Layer ({{count}} {{typeName}}),1,Couche dynamique d'ESRI ({{count}} {{typeName}}),1
+Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer ({{count}} {{typeName}}),1,Couche dynamique d'ESRI ({{count}} {{typeName}}),1
+Table of Content wms layer flag label,toc.label.flag.wms,OGC WMS Layer,1,Couche WMS de l'OGC,1
+Table of Content wms layer flag tootlip,toc.tooltip.flag.wms,OGC WMS Layer,1,Couche WMS de l'OGC,1
+Table of Content tile layer flag label,toc.label.flag.tile,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
+Table of Content tile layer flag tootlip,toc.tooltip.flag.tile,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
+Table of Content image layer flag label,toc.label.flag.image,ESRI Image Layer,1,Couche d'images d'ESRI,1
+Table of Content image layer flag tootlip,toc.tooltip.flag.image,ESRI Image Layer,1,Couche d'images d'ESRI,1
+Table of Content scale flag label,toc.label.flag.scale,Toggle scale,1,Basculer l'échelle,1
+Table of Content scale flag tootlip,toc.tooltip.flag.scale,Layer out of scale,1,Couche hors portée,1
+Table of Content data table flag label,toc.label.flag.data.table,Layer has viewable data,1,Données disponibles pour la visualisation associées à cette couche,1
+Table of Content data table flag tootlip,toc.tooltip.flag.data.table,Layer has viewable data,1,Données disponibles pour la visualisation associées à cette couche,1
+Table of Content data filter flag label,toc.label.flag.data.filter,Layer data is filtered,1,Couche de données filtrée,1
+Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer data is filtered,1,Couche de données filtrée,1
+Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,1,La couche sera exclue de la carte - cliquer sur les résultats,1
+Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,1,La couche sera exclue de la carte - cliquer sur les résultats,1
+Table of Content user flag label,toc.label.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
+Table of Content filter by extent flag label,toc.label.flag.filter,Map data is filtered by your current extent,1,Les données sont filtrées selon l'étendue actuelle,1
+Table of Content user flag tootlip,toc.tooltip.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
+Table of Content filter by extent flag label,toc.label.flag.wrongprojection,Layer cannot be displayed in your current projection,1,Le calque ne peut pas être affiché dans votre projection actuelle,1
+Table of Content user flag tootlip,toc.tooltip.flag.wrongprojection,Current projection not supported,1,Projection actuelle non prise en charge,1
+Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Map data is filtered by your current extent,1,Les données sont filtrées selon l'étendue actuelle,1
+Table of Content error state label,toc.label.state.error,Error,1,Erreur,1
+Table of Content error state tootlip,toc.tooltip.state.error,Error,1,Erreur,1
+Table of Content loading state label,toc.label.state.loading,Updating,1,Mise à jour,1
+Table of Content loading state tootlip,toc.tooltip.state.loading,Updating,1,Mise à jour,1
+Table of Content templates placeholder loading label,toc.tmp.label.state.loading,Loading layer...,1,Chargement de la couche...,1
+Table of Content templates placeholder loading error label,toc.tmp.label.error.loading,Can't load layer,1,Impossible de charger la couche,1
+Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
+Table of Content open datatable label,toc.label.dataTable,Datatable,1,Tableau de données,1
+Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
+Table of Content keyboard reoder tooltip,toc.label.reorder,Reorder,1,Réorganiser,1
+,toc.menu.visibility.title,Toggle Visibility,1,Basculer la visibilité,1
+,toc.menu.visibility.allon,Show All,1,Montrer tout,1
+,toc.menu.visibility.alloff,Hide All,1,Cacher tout,1
+,toc.menu.expand.title,Toggle Groups,1,Basculer les groupes,1
+,toc.menu.expand.allon,Expand Groups,1,Élargir les groupes,1
+,toc.menu.expand.alloff,Collapse Groups,1,Réduire les groupes,1
+,toc.menu.reorder.title,Reorder Layers,1,Réorganiser les couches,1
+,toc.menu.reorder.close,Stop Reordering,1,Arrêter de réorganiser,1
+While counting geometry,geometry.counting, ...counting,1, ...compte,1
+Geometry types,geometry.type.generic,feature|features,1,élément|éléments,1
+Geometry types,geometry.type.esriGeometryPoint,point|points,1,point|points,1
+Geometry types,geometry.type.esriGeometryPolygon,polygon|polygons,1,polygone|polygones,1
+Geometry types,geometry.type.esriGeometryPolyline,line|lines,1,ligne|lignes,1
+,export.close,Close,1,Fermer,1
+,export.save,Save,1,Sauver,1
+,export.download,Download,1,Télécharger,1
+,export.undo,Undo,1,Annuler,1
+,export.title,Enter Title,1,Titre,1
+,export.error.timeout,Connection timed out. Stopping export task.,1,Connexion expirée. Processus d’exportation arrêté.,1
+,export.error.tainted,We can't save the export image directly (same-origin policy exception). You can right click the image and select "Save As..." if supported by your browser.,1,Nous ne pouvons enregistrer l’image directement (exception liée à la politique de même origine). Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer sous... » si votre navigateur le permet.,1
+,export.error.somethingelseiswrong,Ouch. Something went wrong. We cannot save the export image.,1,Aïe. Une erreur s'est produite. Nous ne pouvons enregistrer l’image créée par l'outil d'exportation.,1
+,export.error.minwidth, Too small. {{min}} px minimum.,1, Trop petit. {{min}} px minimum.,1
+,export.error.minheight, Too small. {{min}} px minimum.,1, Trop petit. {{min}} px minimum.,1
+,export.error.maxwidth, Too large. {{max}} px maximum.,1, Trop grand. {{max}} px maximum.,1
+,export.error.maxheight, Too large. {{max}} px maximum.,1, Trop grand. {{max}} px maximum.,1
+,export.error.safari,We can't save the export image directly in Safari. You can right click the image and select "Save Page As...".,1,Nous ne pouvons enregistrer l’image directement à l'aide de Safari. Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer la page sous... ».,1
+,export.retry,Retry,1,Réessayer,1
+,export.size.customwidth, Width (pixels),1, Largeur (pixels),1
+,export.size.customheight, Height (pixels),1, Hauteur (pixels),1
+,export.generate, generate,1, générer,1
+,export.settings, Settings,1, Paramètres,1
+,export.component.title, Title,1, Titre,1
+,export.component.map, Map,1, Carte,1
+,export.component.legend, Legend,1, Légende,1
+,export.component.scale, Scalebar,1, Échelle graphique,1
+,export.component.mapelements, North arrow and scalebar,1, Flèche du nord et échelle graphique,1
+,export.component.footnote, Footnote,1, Référence,1
+,export.component.timestamp, Timestamp,1, Estampille temporelle,1
+,export.label.approx,approx.,1,approx.,1
+,export.size.default, Default,1, Par défaut,1
+,export.size.small, Small,1, Petit,1
+,export.size.medium, Medium,1, Médium,1
+,export.size.custom, Custom size,1, Format personnalisé,1
+,export.custom.note1,Custom sizes apply to the map image - the actual exported image size will vary based on the export options selected.,1,Les tailles personnalisées s'appliquent à l'image cartographique - la taille réelle de l'image exportée varie en fonction des options d'exportation sélectionnées.,1
+,export.custom.note2,You must first click on the Generate button below to create your custom size before downloading is enabled.,1,Vous devez d'abord cliquer sur le bouton « Générer » ci-dessous pour créer votre taille personnalisée avant d'activer le téléchargement.,1
+,import.title,Add Layer,1,Ajouter une couche,1
+,import.file.title,Import File,1,Importer un fichier,1
+,import.file.upload.title,Upload data,1,Charger des données,1
+,import.file.upload.summary,"GeoJSON, CSV or zipped Shapefile",1,"GeoJSON, CSV ou Shapefile zippé",1
+,import.file.upload.choose,choose a file,1,Choisir un fichier,1
+,import.file.upload.drop,Drop the file to upload,1,Déposer le fichier à téléverser,1
+,import.file.upload.or,or,1,ou,1
+,import.file.upload.fileurl,File URL,1,Adresse URL du fichier,1
+,import.file.upload.invalid,This is not a valid URL,1,Cette adresse URL n'est pas valide,1
+,import.file.upload.noaccess,Can't access file,1,Impossible d'accéder au fichier,1
+,import.file.select.title,Select file format,1,Sélectionner le format du fichier,1
+,import.file.select.fileformat,File Format,1,Format du fichier,1
+,import.file.select.wrong,Incorrect file format,1,Format de fichier incorrecte,1
+,import.file.configure.title,Configure layer,1,Configurer la couche,1
+,import.file.configure.layername,Layer Name,1,Nom de la couche,1
+,import.file.configure.primaryfield,Primary Field,1,Champ clé,1
+,import.file.configure.latitudefield,Latitude Field,1,Champ latitude,1
+,import.file.configure.longitudefield,Longitude Field,1,Champ longitude,1
+,import.file.configure.colourfield,Colour,1,Couleur,1
+,import.file.configure.invalid,ERROR: Invalid File,1,ERREUR: Le fichier est invalide,1
+,import.file.type.csv,CSV,1,CSV,1
+,import.file.type.shapefile,zipped Shapefile,1,Shapefile zippé,1
+,import.file.type.geojson,GeoJSON,1,GeoJSON,1
+,import.service.title,Import Service,1,Importer un service,1
+,import.service.connect.title,Connect service,1,Connecter le service,1
+,import.service.connect.serviceurl,Service layer URL,1,Adresse URL du service,1
+,import.service.connect.invalidurl,This is not a valid URL,1,Cette adresse URL n'est pas valide,1
+,import.service.connect.broken,Service does not respond,1,Le service ne répond pas,1
+,import.service.select.title,Select Service type,1,Sélectionner le type de service,1
+,import.service.select.servicetype,Service Type,1,Type de service,1
+,import.service.select.wrong,Service can not be imported using this type,1,Le service ne peut être importé en utilisant ce type,1
+,import.service.type.featurelayer,ESRI Feature Layer,1,Couche d'éléments d'ESRI,1
+,import.service.type.dynamicservice,ESRI Dynamic Layer,1,Couche dynamique d'ESRI,1
+,import.service.type.imageservice,ESRI Image Layer,1,Couche d'images d'ESRI,1
+,import.service.type.tileservice,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
+,import.service.type.wms,OGC Web Map Service,1,Couche WMS de l'OGC,1
+,import.service.type.rasterlayer,Raster Layer,1,Couche Raster,1
+,import.service.configure.title,Configure layer,1,Configurer la couche,1
+,import.service.configure.layername,Layer Name,1,Nom de la couche,1
+,import.service.configure.primaryfield,Primary Field,1,Champ clé,1
+,import.service.configure.layers,Layers,1,Couches,1
+,import.service.configure.multipleselection,You can select several layers,1,Vous pouvez sélectionner plusieurs couches,1
+,stepper.continue,Continue,1,Continuer,1
+,stepper.unresponsive,The application may feel unresponsive for a short time upon clicking the Continue button. This is normal while data is being processed.,1,L'application peut ne pas répondre pendant un court laps de temps après avoir cliqué sur le bouton Continuer. Cette situation est normale pendant le traitement des données.,1
+,stepper.cancel,Cancel,1,Annuler,1
+,config.service.rcs.error,"Layers could not be retrieved from the server, refresh to try again",1,"Échec du SCR (RCS), démarrage de l'application avec un fichier de configuration",1
+,config.service.rcs.action,DISMISS,1,ANNULER,1
+,helpui.title,Help,1,Aide,1
+,helpui.nothingfound,Nothing is found. Please try a different search.,1,Rien n’est trouvé. Veuillez essayer une recherche différente.,1
+,helpui.search,Search Help,1,Aide à la recherche,1
+,helpui.clearsearch,Clear,1,Effacer,1
+Error message when resource fails to load,toc.error.resource.loadfailed,There was an error retrieving this resource - try again later,1,Une erreur s'est produite lors du chargement de cette ressource - réessayez plus tard,1
+Error message when feature count cannot be retrieved,toc.error.resource.countfailed,Could not get number of,1,Impossible d'obtenir le nombre de,1
+,metadata.xslt.Abstract,Abstract,1,Résumé,1
+,metadata.xslt.Scope,Scope,1,Portée,1
+,metadata.xslt.hereBeScope,here be scope,1,la portée jusqu'ici,1
+,metadata.xslt.timePeriod,Time Period,1,Période,1
+,metadata.xslt.supplementalData,Supplemental Data,1,Données supplémentaires,1
+,metadata.xslt.contactInfo,Contact Information,1,Coordonnées,1
+,metadata.xslt.resourceProvider,Resource Provider,1,Fournisseur de la ressource,1
+,metadata.xslt.custodian,Custodian,1,Dépositaire,1
+,metadata.xslt.owner,Owner,1,Propriétaire,1
+,metadata.xslt.user,User,1,Utilisateur,1
+,metadata.xslt.distributor,Distributor,1,Distributeur,1
+,metadata.xslt.originator,Originator,1,Auteur,1
+,metadata.xslt.pointOfContact,Point of Contact,1,Point de contact,1
+,metadata.xslt.principalInvestigator,Principal Investigator,1,Chercheur principal,1
+,metadata.xslt.processor,Processor,1,Préparateur,1
+,metadata.xslt.publisher,Publisher,1,Éditeur,1
+,metadata.xslt.author,Author,1,Auteur,1
+,metadata.xslt.collaborator,Collaborator,1,Collaborateur,1
+,metadata.xslt.editor,Editor,1,Éditeur,1
+,metadata.xslt.mediator,Mediator,1,Médiateur,1
+,metadata.xslt.rightsHolder,Rights Holder,1,Titulaire des droits,1
+,metadata.xslt.cataloguePage,Data Catalogue Page,1,Page des données du catalogue,1
+,metadata.xslt.metadataPage,Raw Metadata,1,Métadonnées brutes,1
+,metadata.xslt.metadata,Metadata,1,Métadonnées,1
+,focus.dialog.press,Press,1,Appuyer,1
+,focus.dialog.enter,Enter,1,Entrer,1
+,focus.dialog.toactivate,to activate or skip with,1,pour activer ou sauter avec,1
+,focus.dialog.tab,Tab,1,Onglet,1
+,focus.dialog.main,We'll keep focus locked on the viewer - exit with,1,Nous allons garder le focus verrouillé sur le visualiseur - sortir à l'aide de,1
+,focus.dialog.escape,Escape,1,Échapper,1
+,toc.menu.symbology,Show legend,1,Afficher la légende,1
+,sidenav.menu.plugin,Plugin Links,1,Liens,1
+Table of Content expand legend group,toc.label.group.expand,Expand Group,1,Ouvrir les groupes,1
+Table of Content collapse legend group,toc.label.group.collapse,Collapse Group,1,Fermer les groupes,1
+Export size selector,export.size.selector,Size Selector,1,Sélecteur de taille,1
+,lightbox.tooltip.next,Next,1,Prochain,1
+,lightbox.tooltip.previous,Previous,1,Précédent,1
