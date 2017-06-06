@@ -244,6 +244,10 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
                 mapConfig.highlightLayer = gapi.hilight.makeHilightLayer({});
                 mapConfig.instance.addLayer(mapConfig.highlightLayer);
 
+                // mark the map as loaded so data layers can be added
+                mapConfig.isLoaded = true;
+
+
                 // setup full extent
                 // TODO: full and max extents can be retrieved directly from the selectedBasemap
                 /*if (lFullExtent) {
@@ -254,6 +258,7 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
                 }*/
 
                 // TODO: fire `mapReady` event here instead of in geo service
+
 
                 _setLoadingFlag(false);
             },

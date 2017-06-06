@@ -1557,9 +1557,14 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get instance () {               return this._instance; }
         get node () {                   return this._node; }
 
+        // this indicates that the map finished loading the initial basemap and data layers can be safely added
+        get isLoaded () {               return this._isLoaded; }
+        set isLoaded (value) {          this._isLoaded = value; }
+
         storeMapReference(node, instance) {
             this._node = node;
             this._instance = instance;
+            this._isLoaded = false;
         }
 
         _isLoading = true;

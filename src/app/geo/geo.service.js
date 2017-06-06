@@ -46,6 +46,8 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
         assembleMap(mapNode = null) {
             return configService.getAsync
                 .then(config => {
+                    this._isMapReady = false;
+
                     // if any bookmark was loaded, apply it to the config
                     // bookmarked changes to the layer definitions cannot be applied at this point as some layers migth be loaded through rcs keys
                     // these changes are checked for and applied when a layerBlueprint is created
@@ -55,14 +57,9 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
 
                     mapService.makeMap(mapNode);
 
-                    // FIXME: a stopgap measure to avoid race conditions
-                    // will be fixed in the new bookmark PR
-                    $timeout(() => {
-
-                        legendService.constructLegend(config.map.layers, config.map.legend);
-                        this._isMapReady = true;
-                        $rootScope.$broadcast(events.rvApiReady);
-                    }, 2000);
+                    legendService.constructLegend(config.map.layers, config.map.legend);
+                    this._isMapReady = true;
+                    $rootScope.$broadcast(events.rvApiReady);
                 })
                 .catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
         }
