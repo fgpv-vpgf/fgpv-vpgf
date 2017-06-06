@@ -19,7 +19,7 @@ angular
     .module('app.geo')
     .factory('layerRegistry', layerRegistryFactory);
 
-function layerRegistryFactory($timeout, gapiService, Geo, configService, tooltipService, $filter) {
+function layerRegistryFactory($rootScope, $timeout, gapiService, Geo, configService, tooltipService, $filter) {
     const service = {
         getLayerRecord,
         makeLayerRecord,
@@ -34,6 +34,8 @@ function layerRegistryFactory($timeout, gapiService, Geo, configService, tooltip
     };
 
     const ref = {
+        mapLoadingWaitHandle: null,
+
         loadingQueue: [],
         loadingCount: 0
     };
@@ -153,11 +155,17 @@ function layerRegistryFactory($timeout, gapiService, Geo, configService, tooltip
      * @private
      */
     function _loadNextLayerRecord() {
+        const mapConfig = configService.getSync.map;
+        if (!mapConfig.isLoaded) {
+            _waitForMapLoad();
+            return;
+        }
+
         if (ref.loadingCount >= THROTTLE_COUNT || ref.loadingQueue.length === 0) {
             return;
         }
 
-        const mapBody = configService.getSync.map.instance;
+        const mapBody = mapConfig.instance;
         const layerRecord = ref.loadingQueue.shift();
 
         let isRefreshed = false;
@@ -204,6 +212,7 @@ function layerRegistryFactory($timeout, gapiService, Geo, configService, tooltip
 
         /**
          * Advances the loading queue and starts loading the next layer record if any is available.
+         *
          * @function _advanceLoadingQueue
          * @private
          */
@@ -211,6 +220,26 @@ function layerRegistryFactory($timeout, gapiService, Geo, configService, tooltip
             synchronizeLayerOrder();
             ref.loadingCount = Math.max(--ref.loadingCount, 0);
             _loadNextLayerRecord();
+        }
+
+        /**
+         * Wait for the map to finish initial load of the selected basemap.
+         * Adding layers before the basemap loads, will break everything.
+         *
+         * @private
+         * @function _waitForMapLoad
+         */
+        function _waitForMapLoad() {
+            if (ref.mapLoadingWaitHandle) {
+                return;
+            }
+
+            ref.mapLoadingWaitHandle = $rootScope.$watch(() => mapConfig.isLoaded, value => {
+                if (value) {
+                    ref.mapLoadingWaitHandle(); // de-register watch
+                    _loadNextLayerRecord();
+                }
+            });
         }
     }
 
