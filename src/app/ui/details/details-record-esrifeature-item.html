@@ -43,7 +43,7 @@
 <div class="rv-details-list-wrapper" ng-if="self.isRendered">
     <ul class="rv-details-list rv-toggle-slide ng-hide" ng-show="self.isExpanded">
 
-        <li ng-repeat="row in self.item.data" ng-switch on="row.type">
+        <li rv-lightbox ng-repeat="row in self.item.data" ng-switch on="row.type">
             <div class="rv-details-attrib-key">{{ ::row.key }}</div>
             <span flex></span>
 
@@ -51,7 +51,7 @@
                 ng-switch-when="esriFieldTypeDate"
                 ng-bind-html="::row.value | dateTimeZone"></div>
             <div class="rv-details-attrib-value"
-                ng-switch-default ng-bind-html="::row.value | autolink"></div>
+                ng-switch-default ng-bind-html="::row.value | picture | autolink"></div>
         </li>
     </ul>
 </div>
