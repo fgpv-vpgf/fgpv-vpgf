@@ -34,8 +34,6 @@
         </noscript>
     </div>
 
-    <!-- js_inject_point -->
-
     <script>
         var needIePolyfills = [
             'Promise' in window,
@@ -52,7 +50,11 @@
             // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
             document.write('<script src="../ie-polyfills.js"><\/script>');
         }
+    </script>
 
+    <!-- js_inject_point -->
+
+    <script>
         // https://css-tricks.com/snippets/javascript/get-url-variables/
         function getQueryVariable(variable)
         {
