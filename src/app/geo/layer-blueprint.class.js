@@ -13,8 +13,7 @@ angular
     .module('app.geo')
     .factory('LayerBlueprint', LayerBlueprintFactory);
 
-function LayerBlueprintFactory($q, $http, LayerBlueprintUserOptions, gapiService, Geo,
-    layerDefaults, LayerRecordFactory, ConfigObject, common) {
+function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookmarkService) {
 
     let idCounter = 0; // layer counter for generating layer ids
 
@@ -34,6 +33,17 @@ function LayerBlueprintFactory($q, $http, LayerBlueprintUserOptions, gapiService
                 console.warn('config is already set');
                 return;
             }
+
+            // check if there is a parsed and stored bookmark for this layer and apply if any
+            if (bookmarkService.storedBookmark) {
+                const bookmarkedLayer = bookmarkService.storedBookmark.bookmarkLayers.find(layer =>
+                    layer.id === value.id);
+
+                if (bookmarkedLayer) {
+                    value.applyBookmark(bookmarkedLayer);
+                }
+            }
+
             this._config = value;
         }
         get config() { return this._config; }

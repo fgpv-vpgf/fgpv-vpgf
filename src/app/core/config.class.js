@@ -438,8 +438,13 @@ function ConfigObjectFactory(Geo, gapiService, common) {
          * one use example is opacity on dynamic children whose parent layer is not a true dynamic - the child opacity
          * control is blocked to the user, but is still availabe to the system as child opacity will just reflect the opacity of the layer itself;
          */
-        get userDisabledControls () { return this._userDisabledControls; }
-        get state () { return this._state; }
+        get userDisabledControls () {   return this._userDisabledControls; }
+        get state () {                  return this._state; }
+
+        applyBookmark (value) {
+            this._state = new InitialLayerSettings(value.state);
+            this._source.state = value.state;
+        }
 
         get JSON() {
             return {
@@ -492,7 +497,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
     // abstract
     class LayerEntryNode {
-        constructor (source, parentSource = {}) {
+        constructor (source) {
             this._source = source;
 
             this._index = source.index;
@@ -517,6 +522,11 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get indent () { return this._indent; }
         get state () { return this._state; }
 
+        applyBookmark (value) {
+            this._state = new InitialLayerSettings(value.state);
+            this._source.state = value.state;
+        }
+
         get JSON () {
             return {
                 index: this.index,
@@ -529,8 +539,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     class WMSLayerEntryNode extends LayerEntryNode {
-        constructor (source, parentSource) {
-            super(source, parentSource);
+        constructor (source) {
+            super(source);
 
             this._level = source.level;
             this._desc = source.desc;
@@ -556,7 +566,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             super(source);
 
             this._layerEntries = source.layerEntries.map(layerEntry =>
-                (new WMSLayerEntryNode(layerEntry, source)));
+                (new WMSLayerEntryNode(layerEntry)));
             this._featureInfoMimeType = source.featureInfoMimeType;
             this._legendMimeType = source.legendMimeType || "image/png";
         }
@@ -582,8 +592,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     class DynamicLayerEntryNode extends LayerEntryNode {
-        constructor (source, parentSource) {
-            super(source, parentSource);
+        constructor (source) {
+            super(source);
 
             this._outfields = source.outfields || '*';
             this._stateOnly = source.stateOnly;
@@ -614,8 +624,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             super(source);
 
             this._layerEntries = source.layerEntries.map(layerEntry =>
-                (new DynamicLayerEntryNode(layerEntry, source)));
-            this._childOptions = source.childOptions;
+                (new DynamicLayerEntryNode(layerEntry)));
             this._tolerance = source.tolerance;
         }
 
@@ -626,15 +635,41 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         set layerEntries (value = []) {
             this._layerEntries = value;
         }
-        get childOptions () { return this._childOptions; }
         get tolerance () { return this._tolerance; }
 
+        _isResolved = false;
+        /**
+         * tldnr; A resolved dynamic layer has a layerEntry for each legend block rendered in the legend.
+         *
+         * When a dynamic layer is resolved, it service was contacted, and the underlying hierarchy is retrieved.
+         * A layerEntry specified in the initial config file or through the layer import wizard can point to a sub group,
+         * and elements of this subgroup need to be retrieved. After the layer loads and child tree is traversed, defaults are computed
+         * for all layer entries (specified in the config and autopopulated from the subgroups). New layer entries are dynamically created and
+         * added to the layer definition.
+         */
+        get isResolved () {        return this._isResolved; }
+        set isResolved (value) {   this._isResolved = value; }
+
+        applyBookmark (value) {
+            super.applyBookmark(value);
+
+            value.layerEntries.forEach(layerEntryBookmark => {
+                const existingLayerEntry = this.layerEntries.find(lr => lr.index === layerEntryBookmark.index);
+                if (existingLayerEntry) {
+                    existingLayerEntry.applyBookmark(layerEntryBookmark);
+                } else {
+                    this.layerEntries.push(new DynamicLayerEntryNode(layerEntryBookmark));
+                }
+            });
+        }
+
         get JSON () {
-            return {
+            return angular.merge(super.JSON, {
                 layerEntries: this.layerEntries.map(layerEntry =>
                     layerEntry.JSON),
-                tolerance: this.tolerance
-            };
+                tolerance: this.tolerance,
+                isResolved: this.isResolved
+            });
         }
     }
 
@@ -1412,6 +1447,19 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    class StartPoint {
+
+        constructor({ x, y, scale }) {
+            this._x = parseFloat(x);
+            this._y = parseFloat(y);
+            this._scale = scale;
+        }
+
+        get x () {      return this._x; }
+        get y () {      return this._y; }
+        get scale () {  return this._scale; }
+    }
+
     /**
      * Typed representation of a Map specified in the config.
      * @class Map
@@ -1490,7 +1538,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         _layerRecords = [];
         _layerBlueprints = [];
         _boundingBoxRecords = [];
-        _legendBlocks = {};
+        _legendBlocks = null;
         // holds an array of references to the legendBlock and the corresponding blockConfig objects that belong to a particular layerRecord in the form of
         // { <layerRecordId>: [ { legendBlockId: <String>, blockConfigId: <String> }, ... ] }
         _legendMappings = {};
@@ -1518,14 +1566,34 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get isLoading () { return this._isLoading; }
         set isLoading (value) { this._isLoading = value;}
 
+        _startPoint = null;
+        get startPoint () {         return this._startPoint; }
+        set startPoint (value) {    this._startPoint = value; }
+
+        applyBookmark (value) {
+            // apply new basemap
+            this.selectedBasemap.deselect();
+            this._basemaps.find(basemap => basemap.id === value.basemap).select();
+
+            // apply starting point
+            this.startPoint = new StartPoint(value);
+
+            // remove all previosly createad layer constructs
+            this._layerBlueprints = [];
+            this._layerRecords = [];
+            this._legendBlocks = null;
+            this._legendMappings = {};
+        }
+
         get JSON() {
             return {
                 initialBasemapId: this.source.initialBasemapId,
                 components: this.components.JSON,
                 extentSets: this.extentSets.JSON,
                 lodSets: this.lodSets.JSON,
-                legend: this.legend.JSON,
-                // layers: this.layers, // this should map layerrecords I think
+                // FIXME: write serialization functions for legend objects; will be used in full state restore
+                // legend: this.legendBlocks.map(legendBlock => legendBlock.JSON),
+                layers: this.layerRecords.map(layerRecord => layerRecord.JSON),
                 tileSchemas: this.tileSchemas.JSON,
                 basemaps: this.basemaps.JSON
             };
@@ -1709,6 +1777,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get ui () { return this._ui; }
         get services () { return this._services; }
         get map () { return this._map; }
+
+        applyBookmark (value) {
+            this.map.applyBookmark(value);
+        }
 
         get JSON () {
             return {

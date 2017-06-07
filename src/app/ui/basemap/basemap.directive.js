@@ -22,7 +22,7 @@ function rvBasemap() {
     return directive;
 }
 
-function Controller(geoService, mapService, basemapService, configService, events) {
+function Controller(geoService, mapService, basemapService, configService, events, reloadService) {
     'ngInject';
     const self = this;
 
@@ -31,14 +31,40 @@ function Controller(geoService, mapService, basemapService, configService, event
 
     self.geoService = geoService;
 
-    self.selectBasemap = basemap => {
-        configService.getSync.map.selectedBasemap.deselect();
-        basemap.select();
-        geoService.map.selectBasemap(basemap.id);
-        events.$broadcast(events.rvBasemapChange);
-
-        mapService.setAttribution(basemap);
-    }
-
     self.close = basemapService.close;
+    self.selectBasemap = selectBasemap;
+
+    return;
+
+    /**
+     * Change the the current basemap to the selected one.
+     * This will change the projection and trigger map reload if the selected basemap in a different projection.
+     *
+     * @function selectBasemap
+     * @param {Basempa} newWasemap a Basemap object from the config
+     */
+    function selectBasemap(newWasemap) {
+        const oldBasemap = configService.getSync.map.selectedBasemap;
+
+        oldBasemap.deselect();
+        newWasemap.select();
+
+        if (newWasemap.wkid !== oldBasemap.wkid) {
+            // cast the current center point into the new projection
+            // it will be encoded in the bookmark, so there is no need to do the calculation when the bookmark is loaded
+            const startPoint = mapService.getCenterPointInTargetBasemap(
+                configService.getSync.map.instance,
+                oldBasemap,
+                newWasemap);
+
+            // since the map will be reloaded after this point, and the newBasempa will be selected as part of the map contstruction process
+            // there is no need to broadcast events or set attribtion
+            reloadService.changeProjection(startPoint);
+        } else {
+            geoService.map.selectBasemap(newWasemap.id);
+            events.$broadcast(events.rvBasemapChange);
+
+            mapService.setAttribution(newWasemap);
+        }
+    }
 }

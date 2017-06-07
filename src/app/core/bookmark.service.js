@@ -12,19 +12,22 @@ angular
     .module('app.core')
     .factory('bookmarkService', bookmarkService);
 
-function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
+function bookmarkService($rootElement, $q, /*geoService, LayerBlueprint,*/
         LayerRecordFactory, configService, gapiService, bookmarkVersions, Geo, ConfigObject) {
 
-    const blankPrefix = 'blank_basemap_';
+    let _bookmarkObject = null;
 
     const service = {
         getBookmark,
-        parseBookmark
+        parseBookmark,
+
+        get storedBookmark() { return _bookmarkObject; }
     };
 
     return service;
 
     /************************/
+
 
     /**
      * Creates a bookmark containing the current state of the viewer
@@ -32,29 +35,29 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
      * @function getBookmark
      * @returns {String}    The bookmark containing basemap, extent, layers and their options
      */
-    function getBookmark() {
+    function getBookmark(startPoint = null) {
         // TODO: possibly race condition to clean up or need basemapService to expose original projection
-
         const mapConfig = configService.getSync.map;
-        const mapInstance = mapConfig.instance;
 
         // we tack a flag at the end to indicate if we were in blank mode or not
         const basemap = encode64(mapConfig.selectedBasemap.id + '0');
 
-        const mapExtent = mapInstance.extent.getCenter();
+        if (startPoint === null) {
+            const mapInstance = mapConfig.instance;
+            const mapExtent = mapInstance.extent.getCenter();
 
-        // get zoom scale
-        // get center coords
-        const extent = {
-            x: encode64(mapExtent.x),
-            y: encode64(mapExtent.y),
-            scale: encode64(mapInstance._map.getScale())
-        };
+            // get zoom scale
+            // get center coords
+            startPoint = {
+                x: mapExtent.x,
+                y: mapExtent.y,
+                scale: mapInstance._map.getScale()
+            };
+        }
 
         // loop through layers in legend, remove user added layers and "removed" layer which are in the "undo" time frame
         // const legend = geoService.legend.items.filter(legendEntry =>
         //     !legendEntry.flags.user.visible && !legendEntry.removed);
-
 
         // const layerBookmarks = legend.map(legendEntry =>
         //     encode64(makeLayerBookmark(legendEntry)));
@@ -64,7 +67,7 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
             encode64(makeLayerBookmark(layerRecord)));
 
         // bookmarkVersions.? is the version. update this accordingly whenever the structure of the bookmark changes
-        const bookmark = `${bookmarkVersions.B},${basemap},${extent.x},${extent.y},${extent.scale}` +
+        const bookmark = `${bookmarkVersions.B},${basemap},${encode64(startPoint.x)},${encode64(startPoint.y)},${encode64(startPoint.scale)}` +
             (layerBookmarks.length > 0 ? `,${layerBookmarks.toString()}` : '');
 
         RV.logger.log('bookmarkService', 'bookmark object', bookmark);
@@ -262,7 +265,8 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
         function encodeLegendChild(treeChild, root) {
 
             const childProxy = layerRecord.getChildProxy(treeChild.entryIndex);
-            const childConfig = layerRecord.derivedChildConfigs[treeChild.entryIndex];
+            const childConfig = layerRecord.config.layerEntries.find(layerEntry =>
+                layerEntry.index === treeChild.entryIndex);
 
             const opacity = encodeOpacity(childProxy.opacity);
             const viz = encodeBoolean(childProxy.visibility);
@@ -301,20 +305,29 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
      * @returns {Object}            The config with changes from the bookmark
      */
     // eslint-disable-next-line max-statements
-    function parseBookmark(bookmark, origConfig, opts) {
+    function parseBookmark(bookmark/*, origConfig, opts*/) {
         // this methods uses a lot of sub-methods because of the following rules
         // RULE #1 single method can't have more than 40 commands
         // RULE #2 obey all rules
 
-        const config = angular.copy(origConfig);
+        // const config = angular.copy(origConfig);
 
         const dBookmark = decodeURI(bookmark);
-        const { newKeyList, newBaseMap, newLang } = opts;
+        // const { newKeyList, newBaseMap, newLang } = opts;
 
         RV.logger.log('bookmarkService', 'in function *parseBookmark* the decoded URI is', dBookmark);
 
         const version = dBookmark.match(/^([^,]+)/)[0];
-        let blankBaseMap = false;
+
+        const bookmarkObject = {
+            basemap: null,
+            x: null,
+            y: null,
+            scale: null,
+            layers: null
+        };
+
+        //let blankBaseMap = false;
         let basemap;
         let x;
         let y;
@@ -333,36 +346,38 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
 
             // pull out non-layer info
             const chunks = [2, 3, 4, 5].map(i => decode64(info[i]));
-            basemap = chunks[0];
-            x = chunks[1];
-            y = chunks[2];
-            scale = chunks[3];
+            bookmarkObject.basemap = chunks[0];
+            bookmarkObject.x = chunks[1];
+            bookmarkObject.y = chunks[2];
+            bookmarkObject.scale = chunks[3];
 
             // also store any layer info
-            layers = info[6];
+            bookmarkObject.layers = info[6];
 
             if (version !== bookmarkVersions.A) {
-                blankBaseMap = basemap.substr(basemap.length - 1, 1) === '1';
-                basemap = basemap.substring(0, basemap.length - 1);
+                // blankBaseMap = basemap.substr(basemap.length - 1, 1) === '1';
+                bookmarkObject.basemap = bookmarkObject.basemap.substring(0, bookmarkObject.basemap.length - 1);
             }
         }
 
         decodeMainBookmark();
 
         // mark initial basemap
-        config.map.initialBasemapId = newBaseMap || basemap;
+        // FIXME: restore
+        // config.map.initialBasemapId = newBaseMap || basemap;
 
-        const origBasemapConfig = config.baseMaps.find(bm => bm.id === basemap);
+        /*const origBasemapConfig = config.baseMaps.find(bm => bm.id === basemap);
         if (blankBaseMap && !newBaseMap) {
             // we are not doing a schema change, and the basemap on the bookmark has the blank
             // flag set. Override the initial setting to be the blank key for the correct
             // projection.
             // TODO if possible, set geoService.state.blankBaseMapId = basemap;
             config.map.initialBasemapId = blankPrefix + origBasemapConfig.wkid;
-        }
+        }*/
 
+        // FIXME: restore
         // apply extent
-        const bookmarkSR = {
+        /*const bookmarkSR = {
             wkid: origBasemapConfig.wkid
         };
         const mapSR = {
@@ -371,8 +386,9 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
 
         // determine the zoom level. use bookmark basemap unless we are doing a projection switch
         let lodId = origBasemapConfig.lodId;
-        let extentId = origBasemapConfig.extentId;
+        let extentId = origBasemapConfig.extentId;*/
 
+        // FIXME: restore if needed
         /**
          * Does special logic to handle the case where we are using a bookmark
          * to change basemap schema.
@@ -380,7 +396,7 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
          * @function processSchemaChangeBookmark
          * @private
          */
-        function processSchemaChangeBookmark() {
+        /*function processSchemaChangeBookmark() {
             let newBasemapConfig;
             if (newBaseMap.indexOf(blankPrefix) === 0) {
                 // we are changing schemas, but are initializing with the blank basemap.
@@ -401,7 +417,7 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
 
         if (newBaseMap) {
             processSchemaChangeBookmark();
-        }
+        }*/
 
         /**
          * Derives an initial extent using information from the bookmark
@@ -411,6 +427,8 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
          * @private
          * @returns {Object}            An extent where the map should initialize
          */
+        // FIXME: restore
+        /*
         function deriveBookmarkExtent() {
             // find the LOD set for the basemap in the config file,
             // then find the LOD closest to the scale provided by the bookmark.
@@ -440,34 +458,39 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
         }
 
         const zoomExtent = deriveBookmarkExtent();
+        */
 
         // update the config file default extent.  if we don't have a full extent defined,
         // copy the original default to the full.  otherwise our zoom-to-canada button
         // will start zooming to our new initial extent.
-        const configExtSet = config.map.extentSets.find(extset => extset.id === extentId);
+        // FIXME: restore
+        /*const configExtSet = config.map.extentSets.find(extset => extset.id === extentId);
         if (!configExtSet.full) {
             configExtSet.full = configExtSet.default;
         }
-        configExtSet.default = zoomExtent;
+        configExtSet.default = zoomExtent;*/
 
-        let bookmarkLayers = {};
+        // let bookmarkLayers = {};
 
         // Make sure there are layers before trying to loop through them
-        if (layers) {
-            const layerData = layers.split(',');
+        if (bookmarkObject.layers) {
+            const layerData = bookmarkObject.layers.split(',');
 
             // create partial layer configs from layer bookmarks
-            bookmarkLayers = parseLayers(layerData, version);
+            bookmarkObject.bookmarkLayers = parseLayers(layerData, version);
 
+            // FIXME: restore
             // modify main config using layer configs
-            filterConfigLayers(bookmarkLayers, config);
+            //filterConfigLayers(bookmarkLayers, config);
         }
 
-        if (newKeyList) {
+        // FIXME: restore if needed; rcs layer loading should be separate from the bookmark
+        /*if (newKeyList) {
             modifyRcsKeyList(bookmarkLayers, newKeyList);
-        }
+        }*/
 
-        if (newLang) {
+        // FIXME: restore; lang changing should be separate from bookmark
+        /*if (newLang) {
             (() => {
                 const translatedLayers = {};
                 Object.entries(bookmarkLayers).forEach(([id, layer]) => {
@@ -479,10 +502,12 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
                 });
                 bookmarkLayers = translatedLayers;
             })();
-        }
+        }*/
 
         // set the new current config, RCS layers will be loaded on first getCurrent() call
         // FIXME oldConfig.setCurrent(addRcsConfigs(bookmarkLayers, config));
+
+        _bookmarkObject = bookmarkObject;
     }
 
     /**
@@ -584,7 +609,7 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
      * @returns {Object}                    Partial configs created from each layer bookmark
      */
     function parseLayers(layerDataStrings, version) {
-        const layerObjs = {};
+        const layerObjs = [];
 
         // due to the large divergance between version A and B,
         // and plans to secretly drop support for version A at some point,
@@ -593,7 +618,10 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
         // state snapshot refactor, which will likely change the whole situation.
 
         if (version === bookmarkVersions.A) {
-            const layerPatterns = [
+            console.warn('The Bookmark A format is no longer supported;')
+
+            return;
+            /*const layerPatterns = [
                 /^(.+?)(\d{7})$/, // feature
                 /^(.+?)(\d{6})$/, // wms
                 /^(.+?)(\d{5})$/, // tile
@@ -608,7 +636,7 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
                 const [, layerId, layerData] = layer.substring(2).match(layerPatterns[layerType]);
 
                 layerObjs[layerId] = LayerRecordFactory.parseLayerData(layerData, layerType);
-            });
+            });*/
 
         } else {
             // assume version B, get fancier after refactors
@@ -621,12 +649,20 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
                 const [, layerCode, layerSettingsHex] = layer.match(/^(.)(.{5})/);
 
                 // decode layer settings
+                // this is actually a bookmarked layer state
                 const layerSettings = extractLayerSettings(layerSettingsHex);
+
 
                 // get layer id from remaining data
                 const layerId = layer.substring(6 + (layerSettings.childCount * 6));
 
-                const snippet = makeLayerConfig(layerCode, layerSettings);
+                const snippet = {
+                    id: layerId,
+                    state: layerSettings
+                };
+
+                // const snippet = makeLayerConfig(layerCode, layerSettings);
+                // const snippet = {};
 
                 if (layerSettings.childCount > 0) {
                     // TODO currently we only have dynamic layers allowed to have childs
@@ -635,7 +671,9 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
                     //      and this part of the code will need to be adjusted.
 
                     snippet.layerEntries = [];
-                    snippet.childOptions = [];
+
+                    // snippet.layerEntries = {};
+                    // snippet.childOptions = [];
 
                     // get entire swath of child data
                     const childrenInfo = layer.substr(6, layerSettings.childCount * 6);
@@ -644,24 +682,31 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
                     const childItems = childrenInfo.match(/.{6}/g);
                     childItems.forEach(child => {
                         // decode from hex into settings
+                        // is is child layer state
                         const childSettings = extractChildSettings(child);
 
+                        snippet.layerEntries.push({
+                            stateOnly: true,
+                            state: childSettings,
+                            index: childSettings.index
+                        });
+
                         // build a config snippet for the child
-                        const childSnippet = {
+                        /*const childSnippet = {
                             index: childSettings.index
                         };
-                        optionInjector(childSnippet, ['opacity', 'visibility', 'query'], childSettings);
+                        //optionInjector(childSnippet, ['opacity', 'visibility', 'query'], childSettings);
 
                         // add child snippet to appropriate array in layer snippet
                         if (childSettings.root) {
                             snippet.layerEntries.push(childSnippet);
                         } else {
                             snippet.childOptions.push(childSnippet);
-                        }
+                        }*/
                     });
                 }
 
-                layerObjs[layerId] = snippet;
+                layerObjs.push(snippet);
             });
 
         }
@@ -676,7 +721,7 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
      * @param {Object} layerObjs    Object containing partial layer configs
      * @param {Object} config       The config object to modify
      */
-    function filterConfigLayers(layerObjs, config) {
+    /*function filterConfigLayers(layerObjs, config) {
         let configLayers = config.layers;
 
         // Loop through config layers and apply bookmark info
@@ -693,7 +738,7 @@ function bookmarkService($rootElement, $q, geoService, LayerBlueprint,
                 delete config.layers[config.layers.indexOf(layer)];
             }
         });
-    }
+    }*/
 
     /**
      * Updates layers in 'layerObjs' so that it matches 'keys'. *Modifies both params*

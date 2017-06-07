@@ -103,6 +103,9 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             }
 
             this._proxy.setOpacity(value);
+
+            // store opacity value in the layer config; will be used by full state restore
+            this._layerConfig.state.opacity = value;
         }
         set visibility (value) {
             if (this.isControlSystemDisabled('visibility')) {
@@ -110,6 +113,9 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             }
 
             this._proxy.setVisibility(value);
+
+            // store visibility value in the layer config; will be used by full state restore
+            this._layerConfig.state.visibility = value;
         }
         set query (value) {
             if (this.isControlSystemDisabled('query')) {
@@ -120,6 +126,9 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             // so, setting boundingBox value doesn't call the proxy object,
             // it just stores the value in the layer config state for future bookmark use
             this._proxy.setQuery(value);
+
+            // store query value in the layer config; will be used by full state restore
+            this._layerConfig.state.query = value;
         }
         set boundingBox (value) {
             if (this.isControlSystemDisabled('boundingBox')) {

@@ -17,6 +17,8 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
         setAttribution,
         zoomToLatLong,
 
+        getCenterPointInTargetBasemap,
+
         // TODO: should these functions be proxied through the geoService?
         addGraphicHighlight,
         addMarkerHighlight,
@@ -77,11 +79,17 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
         const gapi = gapiService.gapi;
         const { map: mapConfig, services: servicesConfig } = configService.getSync;
 
+        if (!mapNode) {
+            mapConfig.instance._map.destroy();
+            mapNode = mapConfig.node;
+            // FIXME: destroy scalebar and overview map at this point
+        }
+
         const mapSettings = {
             basemaps: mapConfig.basemaps,
             scalebar: mapConfig.components.scaleBar,
             overviewMap: mapConfig.components.overviewMap,
-            extent: mapConfig.selectedBasemap.default,
+            extent: _getStartExtent(mapConfig),
             lods: mapConfig.selectedBasemap.lods
         };
 
@@ -153,6 +161,61 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
      */
     function zoomToLatLong(location) {
         configService.getSync.map.instance.zoomToPoint(location);
+    }
+
+    /**
+     * Derives an initial extent using information from the bookmark
+     * and the config file
+     *
+     * @function _getStartExtent
+     * @private
+     * @returns {Object}            An extent where the map should initialize
+     */
+    function _getStartExtent(mapConfig) {
+        if (!mapConfig.startPoint) {
+            return mapConfig.selectedBasemap.default;
+        }
+
+        // find the LOD set for the basemap in the config file,
+        // then find the LOD closest to the scale provided by the bookmark.
+        const zoomLod = gapiService.gapi.Map.findClosestLOD(
+            mapConfig.selectedBasemap.lods, mapConfig.startPoint.scale)
+
+        // using resolution of our target level of detail, and the size of the map in pixels,
+        // calculate a rough extent of where our map should initialize.
+        const xOffset = mapConfig.node.offsetWidth * zoomLod.resolution / 2;
+        const yOffset = mapConfig.node.offsetHeight * zoomLod.resolution / 2;
+
+        return {
+            xmin: mapConfig.startPoint.x - xOffset,
+            xmax: mapConfig.startPoint.x + xOffset,
+            ymin: mapConfig.startPoint.y - yOffset,
+            ymax: mapConfig.startPoint.y + yOffset,
+            spatialReference: mapConfig.selectedBasemap.default.spatialReference
+        };
+    }
+
+    function getCenterPointInTargetBasemap(mapInstance, sourceBasemap, targetBasemap) {
+        const extentCenter = mapInstance.extent.getCenter();
+        const scale = mapInstance._map.getScale();
+
+        // find the LOD set for the basemap in the config file,
+        // then find the LOD closest to the scale provided by the bookmark.
+        const targetZoomLod = gapiService.gapi.Map.findClosestLOD(
+            targetBasemap.lods, scale);
+
+        // project bookmark point to the map's spatial reference
+        const coords = gapiService.gapi.proj.localProjectPoint(
+            sourceBasemap.default.spatialReference,
+            targetBasemap.default.spatialReference,
+            { x: extentCenter.x, y: extentCenter.y });
+        // const point = gapiService.gapi.proj.Point(coords.x, coords.y, targetBasemap.default.spatialReference);
+
+        return {
+            x: coords.x,
+            y: coords.y,
+            scale: targetZoomLod.scale
+        };
     }
 
     /**

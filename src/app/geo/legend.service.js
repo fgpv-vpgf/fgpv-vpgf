@@ -35,8 +35,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      * @param {Array} legendStructure a typed legend hierarchy containing Enry, EntryGroup, VisibilitySet, and InfoSections items
      */
     function constructLegend(layerDefinitions, legendStructure) {
-        const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
-        const legendMappings = configService.getSync.map.legendMappings;
+        const mapConfig = configService.getSync.map;
+
+        const layerBlueprintsCollection = mapConfig.layerBlueprints;
+        const legendMappings = mapConfig.legendMappings;
 
         // all layer defintions are passed as config fragments - turning them into layer blueprints
         const layerBluePrints = layerDefinitions.map(layerDefinition =>
@@ -48,9 +50,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         layerBluePrints.forEach(lb =>
             (legendMappings[lb.config.id] = []));
 
-        // in structured legend, the legend's root is actually a group, although it's not visible
         const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
-        configService.getSync.map.legendBlocks = legendBlocks
+        mapConfig.legendBlocks = legendBlocks;
     }
 
     /**
@@ -365,6 +366,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             tree.forEach(treeChild =>
                 _createDynamicChildLegendBlock(treeChild, layerConfig.source));
 
+            layerConfig.isResolved = true;
+
             return tree;
 
             /**
@@ -375,56 +378,112 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
              * @function _createDynamicChildLegendBlock
              * @private
              * @param {Object} treeChild a tree child object of the form { layerEntry: <Number>, childs: [<treechild>], name: <String> }, `childs` and `name` present only on groups
-             * @param {Object} parentLayerConfigSource config of the child parent for derving state defaults
+             * @param {Object} parentLayerConfigSource [optional] config of the child parent for derving state defaults
              */
-            function _createDynamicChildLegendBlock(treeChild, parentLayerConfigSource) {
+            function _createDynamicChildLegendBlock(treeChild, parentLayerConfigSource = {}) {
                 let childLegendBlock;
 
-                // get the initial layerEntry config from the layer record config, or
-                // create a source object if config object can't be found (this will happen when the dynamic subgroups are expanded)
-                const layerEntryConfig = layerConfig.layerEntries.find(entry =>
-                    entry.index === treeChild.entryIndex) || { source: { entryIndex: treeChild.entryIndex } };
-
-                // `layerEntryConfig` might have some controls and states specified;
-                // apply immediate parent state (which can be root) and child default values
-                const derivedChildLayerConfigSource = ConfigObject.applyLayerNodeDefaults(
-                    layerEntryConfig.source, dynamicLayerChildDefaults, parentLayerConfigSource);
+                let derivedLayerEntryConfig = _getLayerEntryConfig();
 
                 if (treeChild.childs) {
 
-                    // converting a child source config into a group source config;
-                    // for that we need to filter out `controls` array, add `name` and empty `children` array
-                    const derivedChildGroupConfigSource = angular.merge({},
-                        derivedChildLayerConfigSource,
-                        {
-                            children: [],
-                            controls: common.intersect(
-                                derivedChildLayerConfigSource.controls,
-                                groupDefaults.controls
-                            ),
-                            disabledControls: common.intersect(
-                                derivedChildLayerConfigSource.disabledControls,
-                                groupDefaults.controls),
-                            name: treeChild.name
-                        });
+                    const originalSource = angular.merge({}, derivedLayerEntryConfig.source);
 
-                    treeChild.groupSource = derivedChildGroupConfigSource;
+                    if (!layerConfig.isResolved) {
+                        // converting a child source config into a group source config;
+                        // for that we need to filter out `controls` array, add `name` and empty `children` array
+                        const derivedChildGroupSource = angular.extend({},
+                            originalSource,
+                            {
+                                children: [],
+                                controls: common.intersect(
+                                    originalSource.controls,
+                                    groupDefaults.controls
+                                ),
+                                disabledControls: common.intersect(
+                                    originalSource.disabledControls,
+                                    groupDefaults.controls),
+                                name: treeChild.name
+                            });
+
+                        // convert and store at this point; pass derivedGroupSource as source for LegendGroup
+                        derivedLayerEntryConfig = new ConfigObject.layers.DynamicLayerEntryNode(
+                            derivedChildGroupSource, true);
+                    }
+
+                    treeChild.groupSource = derivedLayerEntryConfig.source;
 
                     treeChild.childs.forEach(subTreeChild =>
-                        _createDynamicChildLegendBlock(subTreeChild, derivedChildLayerConfigSource));
+                        _createDynamicChildLegendBlock(subTreeChild, originalSource));
+
+
                 } else {
                     const mainProxy = layerRecord.getChildProxy(treeChild.entryIndex);
-                    const derviedChildLayerConfig = new ConfigObject.layers.DynamicLayerEntryNode(
-                        derivedChildLayerConfigSource);
-                    const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, derviedChildLayerConfig);
-
-                    // TODO: bookmark V2 needs access to the updated state of the layerEntry config
-                    // the easiest way to get to it is from the layer record itself
-                    // otherwise, you need to figure out what legend block it belongs to and pull its ProxyWrapper
-                    // when implementing V3 or full state storage, it might make more sense to do it through the legendBlock/proxyWrapper
-                    layerRecord.derivedChildConfigs[treeChild.entryIndex] = derviedChildLayerConfig;
+                    const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, derivedLayerEntryConfig);
 
                     treeChild.proxyWrapper = proxyWrapper;
+                }
+
+                if (!layerConfig.isResolved) {
+                    _saveLayerEntryConfig(derivedLayerEntryConfig);
+                }
+
+                /**
+                 * Saves the defaulted and resolved layerEntry to the parent layer record's config.
+                 * This will save the entries for dynamic subgroups as well to preserve the allowed and disabled controls arrays.
+                 * This is needed to generate bookmark from the all layerEntries, specified in the config and autogenerated
+                 * This will probably be also used in the full state restore later.
+                 *
+                 * @private
+                 * @function _saveLayerEntryConfig
+                 * @param {DynamicLayerEntryNode} layerEntryConfig fully defaulted dynamic child layer entry config
+                 */
+                function _saveLayerEntryConfig(layerEntryConfig) {
+                    let index = layerConfig.layerEntries.findIndex(entry =>
+                        entry.index === layerEntryConfig.index);
+
+                    index = index === -1 ? layerConfig.layerEntries.length : index;
+
+                    layerConfig.layerEntries[index] = layerEntryConfig;
+                }
+
+                /**
+                 * Retrieves a layer entry config object for a dynamic child using `entryIndex` specified in the parent function.
+                 * If a config cannot be found (for autogenerated children), creates an empty config source, defaults it, and converts to a proper config object.
+                 * All config created in this way are marked with `stateOnly` as they should not appear in the legend UI, but should still contribute their state.
+                 *
+                 * @private
+                 * @function _getLayerEntryConfig
+                 * @return {DynamicLayerEntryNode} a retrieved or generated dynamic child config
+                 */
+                function _getLayerEntryConfig() {
+                    // get the initial layerEntry config from the layer record config, or
+                    // create a source object if config object can't be found (this will happen when the dynamic subgroups are expanded)
+                    const defaultLayerEntryConfig = {
+                        source: {
+                            index: treeChild.entryIndex,
+                            stateOnly: true
+                        }
+                    };
+
+                    const layerEntryConfig = layerConfig.layerEntries.find(entry =>
+                        entry.index === treeChild.entryIndex) || defaultLayerEntryConfig;
+
+                    if (layerConfig.isResolved) {
+                        return layerEntryConfig;
+                    }
+
+                    // `layerEntryConfig` might have some controls and states specified;
+                    // apply immediate parent state (which can be root) and child default values
+                    const derivedChildLayerConfigSource = ConfigObject.applyLayerNodeDefaults(
+                        layerEntryConfig.source,
+                        dynamicLayerChildDefaults,
+                        parentLayerConfigSource);
+
+                    const derviedChildLayerConfig = new ConfigObject.layers.DynamicLayerEntryNode(
+                        derivedChildLayerConfigSource, true);
+
+                    return derviedChildLayerConfig;
                 }
             }
         }
