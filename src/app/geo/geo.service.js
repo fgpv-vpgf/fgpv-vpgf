@@ -30,38 +30,40 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
         get isMapReady() { return this._isMapReady; }
         get map() { return configService.getSync.map.instance; }
 
+        destroyMap() {
+            mapService.destroyMap();
+
+            return this;
+        }
+
         /**
          * Constructs a map on the given DOM node given the current config object.
-         * When switching languages, switch language using `$translate` and call `assembleMap` without parameters. This will rebuild the map using the exising map node.
+         * When switching languages, switch language using `configService.setLang` and call `assembleMap`. This will rebuild the map using the exising map node.
          *
          * ```js
-         * $translate.use(lang);
+         * configService.setLang(lang);
          * geoService.assembleMap();
          * ```
          *
          * @function assembleMap
-         * @param  {Object} mapNode    dom node to build the map on; need to be specified only the first time the map is created;
          * @return {Promise} resolving when all the map building is done
          */
-        assembleMap(mapNode = null) {
-            return configService.getAsync
-                .then(config => {
-                    // this._isMapReady = false;
+        assembleMap() {
+            return configService.getAsync.then(config => {
+                // if any bookmark was loaded, apply it to the config
+                // bookmarked changes to the layer definitions cannot be applied at this point as some layers migth be loaded through rcs keys
+                // these changes are checked for and applied when a layerBlueprint is created
+                if (bookmarkService.storedBookmark) {
+                    config.applyBookmark(bookmarkService.storedBookmark);
+                }
 
-                    // if any bookmark was loaded, apply it to the config
-                    // bookmarked changes to the layer definitions cannot be applied at this point as some layers migth be loaded through rcs keys
-                    // these changes are checked for and applied when a layerBlueprint is created
-                    if (bookmarkService.storedBookmark) {
-                        config.applyBookmark(bookmarkService.storedBookmark);
-                    }
+                mapService.makeMap();
 
-                    mapService.makeMap(mapNode);
-
-                    legendService.constructLegend(config.map.layers, config.map.legend);
-                    this._isMapReady = true;
-                    $rootScope.$broadcast(events.rvApiReady);
-                })
-                .catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
+                legendService.constructLegend(config.map.layers, config.map.legend);
+                this._isMapReady = true;
+                $rootScope.$broadcast(events.rvApiReady);
+            })
+            .catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
         }
 
         setFullExtent() {

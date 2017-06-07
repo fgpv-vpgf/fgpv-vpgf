@@ -27,10 +27,9 @@ function geosearchFiltersService($translate, events, configService, geoSearch, g
         extentChangeListener: angular.noop
     };
 
-    waitOnConfig();
-
-    // if language change, reset lists
-    events.$on(events.rvLangSwitch, waitOnConfig);
+    // geoSearch service fails if you call `getProvinces` or `getTypes` before config is ready; need to wait for config;
+    // TODO: change geoSearch external functions return promises to be trully async, and not just fail.
+    configService.onEveryConfigLoad(config => init());
 
     return service;
 
@@ -89,17 +88,6 @@ function geosearchFiltersService($translate, events, configService, geoSearch, g
 
             geoSearch.setExtent(targetExtentValue);
         }
-    }
-
-    /**
-     * geoSearch service fails if you call `getProvinces` or `getTypes` before config is ready; need to wait for config;
-     * TODO: change geoSearch external functions return promises to be trully async, and not just fail.
-     *
-     * @function waitOnConfig
-     * @private
-     */
-    function waitOnConfig() {
-        configService.getAsync.then(init);
     }
 
     /**

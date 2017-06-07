@@ -41,30 +41,30 @@ function Controller(geoService, mapService, basemapService, configService, event
      * This will change the projection and trigger map reload if the selected basemap in a different projection.
      *
      * @function selectBasemap
-     * @param {Basempa} newWasemap a Basemap object from the config
+     * @param {Basempa} newBasemap a Basemap object from the config
      */
-    function selectBasemap(newWasemap) {
+    function selectBasemap(newBasemap) {
         const oldBasemap = configService.getSync.map.selectedBasemap;
 
         oldBasemap.deselect();
-        newWasemap.select();
+        newBasemap.select();
 
-        if (newWasemap.wkid !== oldBasemap.wkid) {
+        if (newBasemap.wkid !== oldBasemap.wkid) {
             // cast the current center point into the new projection
             // it will be encoded in the bookmark, so there is no need to do the calculation when the bookmark is loaded
             const startPoint = mapService.getCenterPointInTargetBasemap(
                 configService.getSync.map.instance,
                 oldBasemap,
-                newWasemap);
+                newBasemap);
 
             // since the map will be reloaded after this point, and the newBasempa will be selected as part of the map contstruction process
             // there is no need to broadcast events or set attribtion
             reloadService.changeProjection(startPoint);
         } else {
-            geoService.map.selectBasemap(newWasemap.id);
+            geoService.map.selectBasemap(newBasemap.id);
             events.$broadcast(events.rvBasemapChange);
 
-            mapService.setAttribution(newWasemap);
+            mapService.setAttribution(newBasemap);
         }
     }
 }
