@@ -14,7 +14,7 @@ angular
     .module('app.ui')
     .directive('rvMinicolors', rvMinicolors);
 
-function rvMinicolors(graphicsService, $timeout) {
+function rvMinicolors(graphicsService) {
     const directive = {
         require: 'ngModel',
         restrict: 'A',
@@ -46,7 +46,7 @@ function rvMinicolors(graphicsService, $timeout) {
 
         function onBlur() {
             let color = ngModel.$viewValue;
-            color = colorHex(color);
+            color = _colorHex(color);
 
             /*
                 need to use ngModel to set the view value because of inconsistency with minicolors replacing
@@ -58,11 +58,11 @@ function rvMinicolors(graphicsService, $timeout) {
 
         function onKeyUp() {
             let color = ngModel.$viewValue;
-            color = colorHex(color);
+            color = _colorHex(color);
             el.siblings().filter('.minicolors-swatch').css('background-color', color);
         }
 
-        function colorHex(color) {
+        function _colorHex(color) {
 
             // remove any whitespace in color name
             color = color.replace(/\s/g, '');
