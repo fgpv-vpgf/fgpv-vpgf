@@ -237,6 +237,7 @@ function layerRegistryFactory($rootScope, $timeout, gapiService, Geo, configServ
             ref.mapLoadingWaitHandle = $rootScope.$watch(() => mapConfig.isLoaded, value => {
                 if (value) {
                     ref.mapLoadingWaitHandle(); // de-register watch
+                    ref.mapLoadingWaitHandle = null;
                     _loadNextLayerRecord();
                 }
             });

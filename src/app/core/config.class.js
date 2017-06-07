@@ -1555,14 +1555,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         set highlightLayer (value) {    this._highlightLayer = value; }
 
         get instance () {               return this._instance; }
-        get node () {                   return this._node; }
 
         // this indicates that the map finished loading the initial basemap and data layers can be safely added
         get isLoaded () {               return this._isLoaded; }
         set isLoaded (value) {          this._isLoaded = value; }
 
-        storeMapReference(node, instance) {
-            this._node = node;
+        storeMapReference(instance) {
             this._instance = instance;
             this._isLoaded = false;
         }
@@ -1575,6 +1573,23 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get startPoint () {         return this._startPoint; }
         set startPoint (value) {    this._startPoint = value; }
 
+        /**
+         * Resets all previously created map constructs like layer records, legend blocks, and legend mappings.
+         * Settings provided by the initial config like layer list and legend order are not modified.
+         *
+         * @function reset
+         */
+        reset () {
+            // remove all previosly createad layer constructs
+            this._layerBlueprints = [];
+            this._layerRecords = [];
+            this._legendBlocks = null;
+            this._legendMappings = {};
+
+            this._instance = null;
+            this._highlightLayer = null;
+        }
+
         applyBookmark (value) {
             // apply new basemap
             this.selectedBasemap.deselect();
@@ -1582,12 +1597,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             // apply starting point
             this.startPoint = new StartPoint(value);
-
-            // remove all previosly createad layer constructs
-            this._layerBlueprints = [];
-            this._layerRecords = [];
-            this._legendBlocks = null;
-            this._legendMappings = {};
         }
 
         get JSON() {

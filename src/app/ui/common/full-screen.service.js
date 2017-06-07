@@ -96,7 +96,7 @@ function fullScreenService($rootElement, $timeout, storageService, gapiService, 
             });
 
             // get the container of all map layers
-            ref.mapContainerNode = storageService.panels.map.find('> .container > .container');
+            ref.mapContainerNode = storageService.mapNode.find('> .container > .container');
             ref.shellNode = storageService.panels.shell;
             ref.shellNodeBox = ref.shellNode[0].getBoundingClientRect();
 

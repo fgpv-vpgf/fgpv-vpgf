@@ -10,13 +10,13 @@ angular
     .module('app.core')
     .factory('reloadService', reloadService);
 
-function reloadService($translate, $rootScope, events, bookmarkService, mapService, geoService, configService) {
+function reloadService(events, bookmarkService, geoService, configService) {
     const service = {
-        loadNewProjection,
-        loadNewLang,
+        // loadNewProjection,
         loadWithExtraKeys,
         bookmarkBlocking: false,
 
+        loadNewLang,
         loadWithBookmark,
         changeProjection
     };
@@ -30,7 +30,9 @@ function reloadService($translate, $rootScope, events, bookmarkService, mapServi
         const bookmark = bookmarkService.getBookmark(startPoint);
         bookmarkService.parseBookmark(bookmark);
 
-        geoService.assembleMap();
+        geoService
+            .destroyMap()
+            .assembleMap();
     }
 
     /**
@@ -40,7 +42,7 @@ function reloadService($translate, $rootScope, events, bookmarkService, mapServi
      * @function loadNewProjection
      * @param {String} basemapId     The id of the basemap to switch to
      */
-    function loadNewProjection(basemapId) {
+    /*function loadNewProjection(basemapId) {
         events.$broadcast(events.rvApiHalt);
         const bookmark = bookmarkService.getBookmark();
 
@@ -49,7 +51,7 @@ function reloadService($translate, $rootScope, events, bookmarkService, mapServi
             bookmarkService.parseBookmark(bookmark, config, { newBaseMap: basemapId });
             geoService.assembleMap();
         });
-    }
+    }*/
 
     /**
      * Maintains state over language switch. Gets the current state, switches to the new lang and its config,
@@ -59,12 +61,15 @@ function reloadService($translate, $rootScope, events, bookmarkService, mapServi
      * @param {String} lang      The code of the language to switch to
      */
     function loadNewLang(lang) {
-        $rootScope.$broadcast(events.rvApiHalt);
+        events.$broadcast(events.rvApiHalt);
+
         const bookmark = bookmarkService.getBookmark();
-        $translate.use(lang);
+
+        geoService.destroyMap();
+        configService.setLang(lang);
+
         configService.getAsync.then(config => {
-            bookmarkService.parseBookmark(bookmark, config, { newLang: lang });
-            $rootScope.$broadcast(events.rvLangSwitch);
+            bookmarkService.parseBookmark(bookmark);
             geoService.assembleMap();
         });
     }
@@ -78,10 +83,10 @@ function reloadService($translate, $rootScope, events, bookmarkService, mapServi
      */
     function loadWithBookmark(bookmark, initial) {
         if (!bookmark) {
-            $rootScope.$broadcast(events.rvBookmarkInit);
+            events.$broadcast(events.rvBookmarkInit);
             service.bookmarkBlocking = false;
         } else if (!initial || service.bookmarkBlocking) {
-            $rootScope.$broadcast(events.rvApiHalt);
+            events.$broadcast(events.rvApiHalt);
 
             // modify the original config
             configService.getAsync.then(config => {
@@ -89,11 +94,13 @@ function reloadService($translate, $rootScope, events, bookmarkService, mapServi
 
                 if (service.bookmarkBlocking) {
                     // broadcast startup event
-                    $rootScope.$broadcast(events.rvBookmarkInit);
+                    events.$broadcast(events.rvBookmarkInit);
                     service.bookmarkBlocking = false;
                 } else {
                     // loading a bookmark after initialization, reload the map
-                    geoService.assembleMap();
+                    geoService
+                        .destroyMap()
+                        .assembleMap();
                 }
             });
         }
@@ -101,12 +108,12 @@ function reloadService($translate, $rootScope, events, bookmarkService, mapServi
 
     function loadWithExtraKeys(bookmark, keys) {
         if (service.bookmarkBlocking) {
-            $rootScope.$broadcast(events.rvApiHalt);
+            events.$broadcast(events.rvApiHalt);
             configService.getAsync.then(config => {
                 bookmarkService.parseBookmark(bookmark, config, { newKeyList: keys });
 
                 // broadcast startup event
-                $rootScope.$broadcast(events.rvBookmarkInit);
+                events.$broadcast(events.rvBookmarkInit);
                 service.bookmarkBlocking = false;
             });
         }

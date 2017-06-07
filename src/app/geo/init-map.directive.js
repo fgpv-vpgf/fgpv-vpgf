@@ -37,8 +37,8 @@ function rvInitMap($rootScope, geoService, events, storageService, mapService, g
 
         // deregister after the first `rvReady` event as it's fired only once
         const deRegister = scope.$on(events.rvReady, () => {
-            storageService.panels.map = el;
-            geoService.assembleMap(el[0]);
+            storageService.mapNode = el;
+            geoService.assembleMap(/*el[0]*/);
             deRegister();
         });
 
@@ -175,7 +175,7 @@ function rvInitMap($rootScope, geoService, events, storageService, mapService, g
 
         } else if (keyMap.indexOf(event.which) === -1) {
             // enable keyboard support only when map is focused
-            if (storageService.panels.map.is($(document.activeElement))) {
+            if (storageService.mapNode.is($(document.activeElement))) {
                 keyMap.push(event.which);
                 animate(event);
             }
