@@ -7,6 +7,12 @@ html, body {
     -ms-overflow-style: scrollbar;
 }
 
+md-tooltip {
+    white-space: normal !important;
+    height: auto !important;
+    margin-top: auto !important;
+}
+
 .rv-hide {
     visibility: hidden !important;
     opacity: 0 !important;
