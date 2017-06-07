@@ -36,6 +36,10 @@
                 opacity: 1 !important;
             }
         }
+
+        > .esriMapContainer > .esriSimpleSlider {
+            display: none;
+        }
     }
 }
 
