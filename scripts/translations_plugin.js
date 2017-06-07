@@ -6,6 +6,8 @@ class TranslationPlugin {
     constructor (csvPath) {
         this.translations = {};
         this.csvPath = csvPath;
+        this.ignoreCol = [0]; //the columns are ignored, and first column is always ignored
+        this.addIgnoreCol(this.csvPath);
     }
 
     apply (compiler) {
@@ -28,7 +30,7 @@ class TranslationPlugin {
     init (srcChunks, compilation, done) {
         csv({
             noheader: true,
-            ignoreColumns: [0]
+            ignoreColumns: this.ignoreCol
         })
         .fromFile(this.csvPath)
         .on('csv', (row, rowNum) => {
@@ -61,6 +63,29 @@ class TranslationPlugin {
                     lastPlace = lastPlace[k]; // move placeholder forward
                 }
             });
+        });
+    }
+
+    /**
+     * Find the columns with translation bits, then append them to this.addignoreCol
+     * @private
+     * @method addIgnoreCol
+     * @param {String} The path to the csv file
+     */
+    addIgnoreCol(csvPath) {
+        csv({
+            noheader: true,
+            maxRowLength: 1 // only read the first row
+        })
+        .fromFile(csvPath)
+        .on('csv', (row, rowNum) => {
+            if (rowNum === 0) { // the first row if it exists
+                for (let i = 3; i < row.length; i++) { // starting in the 3rd column
+                    if (i % 2 === 1 && this.ignoreCol.indexOf(i) === -1) { // the column after a translation
+                        this.ignoreCol.push(i);
+                    }
+                }
+            }
         });
     }
 }
