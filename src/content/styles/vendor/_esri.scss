@@ -70,8 +70,8 @@
     }
 
     .scalebar_bottom-right {
-        right: 100px;
-        bottom: 25px;
+        right: 5px;
+        bottom: 1px;
     }
 
     .esriScalebar {
@@ -79,7 +79,7 @@
         position: absolute;
         width: 150px;
         height: 40px;
-        padding: 2px;
+        padding-left: 2px;
         background-color: rgba(255, 255, 255, 0.62);
     }
 
@@ -358,10 +358,11 @@
     .esriControlsBR {
         pointer-events: none; // €$₨¥
         position: absolute;
-        right: 5px;
+        left: 5px;
         bottom: 5px;
         z-index: 30;
-        text-align: right;
+        text-align: left;
+        transform: scaleX(-1);
 
         .esriAttribution {
             font-size: 13px;
@@ -376,6 +377,7 @@
             padding: 0 4px;
             margin: 0 5px 0 0;
             background: rgba(255,255,255,0.7);
+            transform: scaleX(-1);
 
             .esriAttributionLastItem span.esriAttributionDelim {
                 display: none;
@@ -384,6 +386,7 @@
     }
 
     .map .logo-med {
+        transform: scaleX(-1);
         display: inline-block;
         vertical-align: bottom;
         min-width: 65px;

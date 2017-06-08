@@ -1312,7 +1312,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             super(source);
         }
 
-        get attachTo () { return 'bottom-left'; }
+        get attachTo () { return 'bottom-right'; }
         get scalebarUnit () { return 'dual'; }
 
         get JSON() {
