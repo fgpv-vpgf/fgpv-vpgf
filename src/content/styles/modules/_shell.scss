@@ -35,18 +35,18 @@
 
         .rv-map-coordinates {
             position: absolute;
-            left: rem(17.5);
-            bottom: rem(0.5);
+            right: rem(15.5);
+            bottom: rem(0.1);
             padding: rem(0.2);
             display: flex;
             flex-direction: column;
-            font-size: rem(1.2);
-            font-weight: 500;
-            line-height: 1.5;
+            font-size: rem(1.1);
+            font-weight: 600;
+            height: rem(4);
             background-color: rgba(255, 255, 255, 0.62);
 
             span {
-                width: rem(16);
+                width: rem(17);
                 text-align: center;
             }
         }
