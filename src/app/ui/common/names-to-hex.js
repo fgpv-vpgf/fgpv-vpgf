@@ -2823,8 +2823,9 @@ const nameToHex = name => {
         { re: /[\xFD,\xFF]/g, ch: 'y' }
     ];
 
-    for (let i = 0; i < rExps.length; i++)
+    for (let i = 0; i < rExps.length; i++) {
         name = name.replace(rExps[i].re, rExps[i].ch);
+    }
 
     return names[name.toLowerCase()] ? names[name.toLowerCase()] : 'ffffff';
 }

@@ -73,7 +73,9 @@ function rvMinicolors(graphicsService) {
             }
 
             // ensure the color has a hash symbol at the start
-            if (color && color.charAt(0) !== '#')    color = '#' + color;
+            if (color && color.charAt(0) !== '#') {
+                color = '#' + color;
+            }
 
             return color;
         }
