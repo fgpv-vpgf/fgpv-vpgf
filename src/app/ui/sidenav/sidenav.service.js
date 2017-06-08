@@ -3,28 +3,6 @@ const templateURLs = {
     share: require('./share-dialog.html')
 };
 
-// this is a default configuration of the side menu
-// options are grouped into sections and will be rendered as distinct lists in the side menu panel
-const SIDENAV_CONFIG_DEFAULT = {
-    logo: true,
-    items: [
-        [
-            'layers',
-            'basemap'
-        ],
-        [
-            'fullscreen',
-            'export',
-            'share',
-            'touch',
-            'help'
-        ],
-        [
-            'language'
-        ]
-    ]
-};
-
 /**
  * @ngdoc service
  * @module sideNavigationService
@@ -44,16 +22,14 @@ angular
  * @return {object} service object
  */
 // need to find a more elegant way to include all these dependencies
-function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegistry, configService, events,
+function sideNavigationService($mdSidenav, $rootScope, $rootElement, configService, events,
     stateManager, basemapService, fullScreenService, exportService, storageService, helpService, reloadService,
     translations, $mdDialog, pluginService) {
 
     const service = {
         open,
         close,
-
         controls: {},
-
         ShareController,
         AboutController
     };
@@ -162,6 +138,7 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
         plugins: {
             type: 'group',
             label: 'sidenav.menu.plugin',
+            isHidden: true,
             icon: 'action:settings_input_svideo',
             children: []
         }
@@ -169,16 +146,13 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
 
     init();
 
-    // TODO: is this affected by the config reload at all?
-    // Add any MenuItem plugins as they are created to the menu
-    pluginService.onCreate(globalRegistry.BasePlugins.MenuItem, mItem => {
-        // first plugin created should add the plugin group
-        if (service.controls.plugins.children.length === 0) {
-            SIDENAV_CONFIG_DEFAULT.items.push(['plugins']);
-        }
-
-        mItem.label = mItem.name;
-        service.controls.plugins.children.push(mItem);
+    pluginService.onCreate(window.rvPlugins.backToCart, plugin => {
+        service.controls.plugins.children.push({
+            type: 'link',
+            label: plugin.buttonLabel,
+            action: plugin.onClick
+        });
+        service.controls.plugins.isHidden = false;
     });
 
     return service;
@@ -221,7 +195,7 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
         function getLongLink() {
             if (typeof URLS.long === 'undefined') { // no cached url exists
                 // eslint-disable-next-line no-return-assign
-                globalRegistry.getMap($rootElement.attr('id')).getBookmark().then(bookmark =>
+                RV.getMap($rootElement.attr('id')).getBookmark().then(bookmark =>
                     URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark))
                     .then(() => (selectURL()));
             } else { // cache exists
@@ -329,6 +303,7 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
             // or just let it failed
             // or do these checks together with layer definition validity checks and remove export from the sidemenu options at that point
             service.controls.export.isHidden = typeof config.services.exportMapUrl === 'undefined';
+            service.controls.plugins.isHidden = service.controls.plugins.children.length === 0;
 
             // generate the language selector menu;
             const langs = config.languages;

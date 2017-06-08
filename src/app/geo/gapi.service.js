@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('gapiService', gapi);
 
-function gapi($q, globalRegistry) {
+function gapi($q) {
     const service = {
         gapi: null, // actual gapi interface; available after gapiPromise resovles
         isReady: null
@@ -32,7 +32,7 @@ function gapi($q, globalRegistry) {
      */
     function init() {
         // wait for `gapiPromise` from the global registry to resolve
-        service.isReady = globalRegistry.gapiPromise
+        service.isReady = RV.gapiPromise
             .then(gapi => {
                 service.gapi = gapi;
                 return $q.resolve(null);

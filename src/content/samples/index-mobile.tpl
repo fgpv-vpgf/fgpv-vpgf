@@ -15,6 +15,8 @@
     <!-- example of host page loading angular and jquery dependencies by itself -->
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.0.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script>
+
+    <script src="../rv-plugins.js"></script>
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
@@ -42,30 +44,14 @@
             'outerHTML' in SVGElement.prototype
         ].some(function(x) { return !x; });
         if (needIePolyfills) {
-            // NOTE: this is the only correct way of injecting scripts into a page and have it execute before loading/executing any other scripts after this point (ie polyfills must be executed before the bootstrap)
-            // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
             document.write('<script src="../ie-polyfills.js"><\/script>');
         }
 
-        // https://css-tricks.com/snippets/javascript/get-url-variables/
-        function getQueryVariable(variable)
-        {
-            var query = window.location.search.substring(1);
-            var vars = query.split("&");
-            for (var i=0;i<vars.length;i++) {
-                    var pair = vars[i].split("=");
-                    if(pair[0] == variable){return pair[1];}
-            }
-            return(false);
-        }
-
-        function bookmark(){
-            return new Promise(function (resolve) {
-                var thing = getQueryVariable("rv");
-                console.log(thing);
-                resolve(thing);
-            });
-        }
+        window.rvPlugins.add.push(
+            event => [window.rvPlugins.backToCart, {
+                urlTemplate: window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}'
+            }, 'myUniquePluginID']
+        );
     </script>
 </body>
 

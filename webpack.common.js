@@ -15,7 +15,8 @@ module.exports = function (env) {
     const config = {
         entry: {
             'rv-main': path.resolve(__dirname, 'src/app/app-loader.js'),
-            'ie-polyfills': path.resolve(__dirname, 'src/polyfill/polyfill-loader.js')
+            'ie-polyfills': path.resolve(__dirname, 'src/polyfill/polyfill-loader.js'),
+            'rv-plugins': path.resolve(__dirname, 'src/plugins/plugin-loader.js')
         },
 
         output: {
@@ -82,7 +83,8 @@ module.exports = function (env) {
             new webpack.ProvidePlugin({
                 $: 'jquery',
                 jQuery: 'jquery',
-                'window.jQuery': 'jquery'
+                'window.jQuery': 'jquery',
+                RV: path.resolve(__dirname, 'src/app/global-registry')
             }),
 
             new TranslationPlugin('./src/locales/translations.csv'),
@@ -138,7 +140,7 @@ function htmlInjectPlugins() {
             return new HtmlWebpackPlugin({
                 filename: `samples/${file.replace(/\.[^/.]+$/, '.html')}`,
                 template: `src/content/samples/${file}`,
-                excludeChunks: ['ie-polyfills']
+                excludeChunks: ['ie-polyfills', 'rv-plugins']
             });
         }
     }).filter(x => typeof x !== 'undefined');

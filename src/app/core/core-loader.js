@@ -9,7 +9,6 @@ import './core.run.js';
 import './debounce.service.js';
 import './displaymanager.service.js';
 import './formatters.filter.js';
-import './global-registry.service.js';
 import './graphics.service.js';
 import './keycodes.constant.js';
 import './plugin.service.js';
