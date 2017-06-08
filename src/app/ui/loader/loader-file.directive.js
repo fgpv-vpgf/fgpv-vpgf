@@ -48,8 +48,10 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
             isActive: false,
             isCompleted: false,
             onContinue: uploadOnContinue,
-            onCancel: () =>
-                onCancel(self.upload.step),
+            onCancel: () => {
+                uploadReset();  // reset upload progress bar
+                onCancel(self.upload.step);
+            },
             onKeypress: event =>
                 { if (event.keyCode === keyNames.ENTER) { uploadOnContinue(); } }, // check if enter key have been pressed and call the next step if so
             reset: uploadReset,
@@ -305,6 +307,8 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
 
         // TODO: generalize resetting custom form validation
         select.selectResetValidation();
+
+        uploadReset();  // reset the upload progress bar
     }
 
     /**
