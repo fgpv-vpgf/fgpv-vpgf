@@ -43,14 +43,15 @@ function rvOverviewToggle($compile, $rootScope, geoService, $timeout, animationS
     return directive;
 
     function link(scope, el) {
-         // initializing
-        events.$on(events.rvApiReady, init);
 
+        // events.$on(events.rvApiReady, init);
         // events.$on(events.rvBasemapChange, init);
 
         // TODO: instead of relying on esri event here, listen on it in map service and re-emit as rv-basemapchange event
-        events.$on(events.rvApiReady, () =>
-            configService.getSync.map.instance.basemapGallery.on('selection-change', init));
+        events.$on(events.rvApiReady, () => {
+            init();
+            configService.getSync.map.instance.basemapGallery.on('selection-change', init);
+        });
 
         const self = scope.self;
         self.overviewActive = true;
