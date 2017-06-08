@@ -327,7 +327,10 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
         configure.form.$setUntouched();
 
         // this will reset all the user-editable options to their defaults
-        self.layerSource.reset();
+        // if reset is called before initial file upload, layerSource is undefined
+        if (self.layerSource) {
+            self.layerSource.reset();
+        }
 
         // TODO: generalize resetting custom form validation
         configure.configureResetValidation();
