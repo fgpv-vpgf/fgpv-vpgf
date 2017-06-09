@@ -6,7 +6,7 @@ angular.module('app.ui')
  *
  * @return {object} directive body
  */
-function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolService, $interval) {
+function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolService, $interval, $compile) {
     const directive = {
         restrict: 'E',
         link
@@ -24,6 +24,19 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
             if (mapConfig.northArrow && mapConfig.northArrow.enabled) {
                 // required so that arrow moves behind overview map instead of in front
                 $rootElement.find('.rv-esri-map > .esriMapContainer').first().after(element);
+
+                // remove any excessive icons
+                if (element.children().length >= 1) {
+                    element.children().remove();
+                }
+
+                // append the icon
+                const northArrowTemplate = `<md-icon md-svg-src="{{ self.arrowIcon }}"></md-icon>`;
+                const northArrowScope = $rootScope.$new();
+                northArrowScope.self = self;
+                const northArrowCompiledTemplate = $compile(northArrowTemplate)(northArrowScope);
+                element.append(northArrowCompiledTemplate);
+
                 updateNorthArrow(); // set initial position
                 $rootScope.$on(events.rvExtentChange, updateNorthArrow); // update on extent changes
             } else {
