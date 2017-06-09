@@ -24,6 +24,14 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
             if (mapConfig.northArrow && mapConfig.northArrow.enabled) {
                 // required so that arrow moves behind overview map instead of in front
                 $rootElement.find('.rv-esri-map > .esriMapContainer').first().after(element);
+
+                // append the icon
+                const northArrowTemplate = `<md-icon md-svg-src="{{ self.arrowIcon }}"></md-icon>`;
+                const northArrowScope = $rootScope.$new();
+                northArrowScope.self = self;
+                const northArrowCompiledTemplate = $compile(northArrowTemplate)(northArrowScope);
+                element.append(northArrowCompiledTemplate);
+
                 updateNorthArrow(); // set initial position
                 $rootScope.$on(events.rvExtentChange, updateNorthArrow); // update on extent changes
             } else {
@@ -41,14 +49,6 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                 element.css('display', 'none');
             } else {
                 self.arrowIcon = north.screenY > 0 ? 'snowman' : 'northarrow'; // change icon for north pole
-
-                // remove the icon if it had any then apend the new icon
-                element.children().remove();
-                const northArrowTemplate = `<md-icon md-svg-src="`+ self.arrowIcon +`"></md-icon>`;
-                const northArrowScope = $rootScope.$new();
-                const northArrowCompiledTemplate = $compile(northArrowTemplate)(northArrowScope);
-                element.append(northArrowCompiledTemplate);
-
                 element
                     .css('display', 'block')
                     .css('left', north.screenX)
