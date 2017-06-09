@@ -435,6 +435,22 @@ class LayerRecord extends root.Root {
     }
 
     /**
+     * Determines if layer's spatial ref matches the given spatial ref.
+     * Mainly used to determine if a tile wont display on a map.
+     * Highly recommend only calling this after a layer's load event has happened.
+     * @param {Object} spatialReference    spatial reference to compare against.
+     * @return {Boolean}                   true if layer has same sr as input. false otherwise.
+     */
+    validateProjection (spatialReference) {
+        if (spatialReference && this._layer && this._layer.spatialReference) {
+            return this._apiRef.proj.isSpatialRefEqual(spatialReference, this._layer.spatialReference);
+        } else {
+            console.warn('validateProjection called -- essential info wasnt available');
+            return false;
+        }
+    }
+
+    /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
      * should be fully merged with all layer options defined (i.e. this constructor
      * will not apply any defaults).
