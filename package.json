@@ -77,7 +77,7 @@
   },
   "scripts": {
     "build": "webpack",
-    "serve": "webpack-dev-server --hot --inline",
+    "serve": "webpack-dev-server --progress --hot --inline",
     "doc": "./node_modules/.bin/jsdoc -p -r -c .jsdoc.json -t node_modules/docdash -R README.md -d ./docbuild -u ./docs ./src/app",
     "svgcache": "node scripts/svgCache.js"
   }

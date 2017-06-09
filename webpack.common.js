@@ -70,6 +70,10 @@ module.exports = function (env) {
                 from: '**/*.json',
                 to: 'samples'
             },{
+                context: 'src/content/samples',
+                from: '**/*.html',
+                to: 'samples'
+            },{
                 from: 'src/locales/about',
                 to: 'samples/about'
             },{
@@ -111,8 +115,13 @@ module.exports = function (env) {
 
         devServer: {
             host: '0.0.0.0',
-            publicPath: '/build/',
-            historyApiFallback: true,
+            publicPath: '/',
+            historyApiFallback: {
+                index: '/samples/webpack-note.html',
+                verbose: true
+            },
+            disableHostCheck: true,
+            contentBase: false,
             port: 6001,
             stats: { colors: true },
             compress: true
