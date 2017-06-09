@@ -38,7 +38,7 @@ angular
     .module('app.core')
     .factory('configService', configService);
 
-function configService($q, $rootScope, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, ConfigObject) {
+function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, ConfigObject) {
     // let initializePromise;
     // let isInitialized = false;
 
@@ -78,6 +78,15 @@ function configService($q, $rootScope, $rootElement, $timeout, $http, $translate
         }
 
         /**
+         * Sets the current language to the supplied value and broadcasts config initialization event, since this is a new config object.
+         * @param {String} value language value to be set
+         */
+        setLang(value) {
+            $translate.use(value);
+            events.$broadcast(events.rvCfgInitialized);
+        }
+
+        /**
          * NOTE this has different semantics from most events as it will trigger if a listener is registered,
          * but the config is already in a loaded state
          * @param {Function} listener an event handler to be triggered on config changes
@@ -98,7 +107,7 @@ function configService($q, $rootScope, $rootElement, $timeout, $http, $translate
 
         constructor() {
             this.listeners = [];
-            $rootScope.$on(events.rvCfgInitialized, () => {
+            events.$on(events.rvCfgInitialized, () => {
                 this.listeners.forEach(l => l(configs[currentLang()]));
             });
         }
@@ -158,7 +167,7 @@ function configService($q, $rootScope, $rootElement, $timeout, $http, $translate
             if (lang === langs[0]) {
                 initialPromises[lang].then(cfg => {
                     _loadingState = States.LOADED;
-                    $rootScope.$broadcast(events.rvCfgInitialized);
+                    events.$broadcast(events.rvCfgInitialized);
                 });
             }
         });
@@ -177,7 +186,7 @@ function configService($q, $rootScope, $rootElement, $timeout, $http, $translate
                 };
                 mergeConfigParts(newConfig, configParts);
                 // configs[lang] = newConfig;
-                $rootScope.$broadcast(events.rvCfgUpdated, keys);
+                events.$broadcast(events.rvCfgUpdated, keys);
             })
             .catch(() => {
                 // TODO: possibly retry rcsLoad?

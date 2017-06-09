@@ -11,8 +11,9 @@ angular
     .module('app.geo')
     .factory('mapService', mapServiceFactory);
 
-function mapServiceFactory($q, $timeout, gapiService, configService, identifyService, events) {
+function mapServiceFactory($q, $timeout, storageService, gapiService, configService, identifyService, events) {
     const service = {
+        destroyMap,
         makeMap,
         setAttribution,
         zoomToLatLong,
@@ -75,21 +76,39 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
         }
     }
 
-    function makeMap(mapNode) {
+    /**
+     * Destroys the current ESRI map objects and resets the typed map config object.
+     *
+     * @function destroyMap
+     */
+    function destroyMap() {
+        const mapConfig = configService.getSync.map;
+
+        mapConfig.instance._map.destroy();
+        mapConfig.reset();
+        // FIXME: destroy scalebar and overview map at this point
+
+        storageService.mapNode.empty();
+    }
+
+    /**
+     * Creates an ESRI map object using map settings from the config file and map node from the storage service.
+     * The map node never changes, so for any subsequent map making, the same node is used.
+     *
+     * @function makeMap
+     */
+    function makeMap() {
         const gapi = gapiService.gapi;
         const { map: mapConfig, services: servicesConfig } = configService.getSync;
 
-        if (!mapNode) {
-            mapConfig.instance._map.destroy();
-            mapNode = mapConfig.node;
-            // FIXME: destroy scalebar and overview map at this point
-        }
+        // dom node to build the map on; need to be specified only the first time the map is created and stored for reuse;
+        const mapNode = storageService.mapNode;
 
         const mapSettings = {
             basemaps: mapConfig.basemaps,
             scalebar: mapConfig.components.scaleBar,
             overviewMap: mapConfig.components.overviewMap,
-            extent: _getStartExtent(mapConfig),
+            extent: _getStartExtent(mapConfig, mapNode),
             lods: mapConfig.selectedBasemap.lods
         };
 
@@ -109,15 +128,13 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
         if (servicesConfig.proxyUrl) {
             mapSettings.proxyUrl = servicesConfig.proxyUrl;
         }
-        const mapInstance = new gapi.Map(mapNode, mapSettings);
+        const mapInstance = new gapi.Map(mapNode[0], mapSettings);
 
-        mapConfig.storeMapReference(mapNode, mapInstance);
+        mapConfig.storeMapReference(mapInstance);
         mapConfig.instance.selectBasemap(mapConfig.selectedBasemap);
         setAttribution(mapConfig.selectedBasemap);
 
         _setMapListeners(mapConfig);
-
-        return;
 
         // TODO: move to _setMapListeners
         /*mapConfig.components.basemap.body.basemapGallery.on('selection-change', event => {
@@ -169,9 +186,11 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
      *
      * @function _getStartExtent
      * @private
+     * @param {Map} mapConfig typed map config
+     * @param {Object} mapNode dom node of the map
      * @returns {Object}            An extent where the map should initialize
      */
-    function _getStartExtent(mapConfig) {
+    function _getStartExtent(mapConfig, mapNode) {
         if (!mapConfig.startPoint) {
             return mapConfig.selectedBasemap.default;
         }
@@ -183,8 +202,8 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
 
         // using resolution of our target level of detail, and the size of the map in pixels,
         // calculate a rough extent of where our map should initialize.
-        const xOffset = mapConfig.node.offsetWidth * zoomLod.resolution / 2;
-        const yOffset = mapConfig.node.offsetHeight * zoomLod.resolution / 2;
+        const xOffset = mapNode.outerHeight(true) * zoomLod.resolution / 2;
+        const yOffset = mapNode.outerHeight(true) * zoomLod.resolution / 2;
 
         return {
             xmin: mapConfig.startPoint.x - xOffset,
@@ -244,6 +263,10 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
                 mapConfig.highlightLayer = gapi.hilight.makeHilightLayer({});
                 mapConfig.instance.addLayer(mapConfig.highlightLayer);
 
+                // mark the map as loaded so data layers can be added
+                mapConfig.isLoaded = true;
+
+
                 // setup full extent
                 // TODO: full and max extents can be retrieved directly from the selectedBasemap
                 /*if (lFullExtent) {
@@ -254,6 +277,7 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
                 }*/
 
                 // TODO: fire `mapReady` event here instead of in geo service
+
 
                 _setLoadingFlag(false);
             },
@@ -357,10 +381,8 @@ function mapServiceFactory($q, $timeout, gapiService, configService, identifySer
      * @param {Boolean | null} value [optional = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
      */
     function _toggleHighlightHaze(value = null) {
-        const mapConfig = configService.getSync.map;
-
         if (value !== null) {
-            angular.element(mapConfig.node).toggleClass('rv-map-highlight', value);
+            angular.element(storageService.mapNode).toggleClass('rv-map-highlight', value);
         }
     }
 }
@@ -769,8 +791,8 @@ function mapServiceFactory_($q, $timeout, gapiService, storageService, $rootElem
             // on identify, only filters panel can be open, so offset y position by filters panel height
             const filterPanelHeight = stateManager.panelDimension('filters').height;
 
-            const mapWidth = storageService.panels.map.outerWidth();
-            const mapHeight = storageService.panels.map.outerHeight();
+            const mapWidth = storageService.mapNode.outerWidth();
+            const mapHeight = storageService.mapNode.outerHeight();
             const xRatio = computeRatio(mainPanelWidth, mapWidth);
             const yRatio = computeRatio(filterPanelHeight, mapHeight);
 

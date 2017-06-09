@@ -11,6 +11,19 @@ angular
 
 function storageService() {
     const service = {
+
+        _mapNode: null,
+
+        set mapNode (value) {
+            if (this._mapNode) {
+                console.error('Map node can only be set once');
+                return;
+            }
+
+            this._mapNode = value;
+        },
+
+        get mapNode () { return this._mapNode; },
         /**
          * Panels
          */
