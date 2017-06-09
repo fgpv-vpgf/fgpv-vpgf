@@ -6,7 +6,7 @@ angular.module('app.ui')
  *
  * @return {object} directive body
  */
-function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolService, $interval) {
+function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolService, $interval, $compile) {
     const directive = {
         restrict: 'E',
         link
@@ -41,6 +41,14 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                 element.css('display', 'none');
             } else {
                 self.arrowIcon = north.screenY > 0 ? 'snowman' : 'northarrow'; // change icon for north pole
+
+                // remove the icon if it had any then apend the new icon
+                element.children().remove();
+                const northArrowTemplate = `<md-icon md-svg-src="`+ self.arrowIcon +`"></md-icon>`;
+                const northArrowScope = $rootScope.$new();
+                const northArrowCompiledTemplate = $compile(northArrowTemplate)(northArrowScope);
+                element.append(northArrowCompiledTemplate);
+
                 element
                     .css('display', 'block')
                     .css('left', north.screenX)
