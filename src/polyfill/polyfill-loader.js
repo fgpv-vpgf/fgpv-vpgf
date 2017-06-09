@@ -10,6 +10,7 @@ import './ie-outer.HTML';
 import './ie-string.endsWith';
 import './ie-string.repeat';
 import './ie-string.startsWith';
+import './ie-svg.contains';
 
 require('es6-promise/auto');
 
