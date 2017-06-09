@@ -25,6 +25,11 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                 // required so that arrow moves behind overview map instead of in front
                 $rootElement.find('.rv-esri-map > .esriMapContainer').first().after(element);
 
+                // remove any icons if it had any
+                if (element.children().length >= 1) {
+                    element.children().remove();
+                }
+
                 // append the icon
                 const northArrowTemplate = `<md-icon md-svg-src="{{ self.arrowIcon }}"></md-icon>`;
                 const northArrowScope = $rootScope.$new();
