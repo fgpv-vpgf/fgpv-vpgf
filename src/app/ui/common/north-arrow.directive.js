@@ -25,7 +25,7 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                 // required so that arrow moves behind overview map instead of in front
                 $rootElement.find('.rv-esri-map > .esriMapContainer').first().after(element);
 
-                // remove any icons if it had any
+                // remove any excessive icons
                 if (element.children().length >= 1) {
                     element.children().remove();
                 }
