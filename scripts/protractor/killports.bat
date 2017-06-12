@@ -1,0 +1,1 @@
+FOR /F "tokens=5 delims= " %%P IN ('netstat -ano ^| findstr ":%1 "') DO TaskKill.exe /f /PID %%P
