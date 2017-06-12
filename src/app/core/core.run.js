@@ -1,5 +1,4 @@
 /* global RV */
-
 angular
     .module('app.core')
     .run(debugBlock)
@@ -145,10 +144,11 @@ function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, e
  */
 function apiBlock($rootScope, globalRegistry, geoService, configService, events,
     LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo, $rootElement,
-    $mdDialog, pluginService, mapToolService) {
+    $mdDialog, pluginService, mapToolService, $mdSidenav) {
 
     const service = {
         setLanguage,
+        getCurrentLang,
         loadRcsLayers,
         getBookmark,
         centerAndZoom,
@@ -159,7 +159,13 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
             pluginService.register(...arguments, this);
         },
         northArrow: mapToolService.northArrow,
-        mapCoordinates: mapToolService.mapCoordinates
+        mapCoordinates: mapToolService.mapCoordinates,
+        getMapClickInfo: mapToolService.getMapClickInfo,
+        convertDDToDMS: mapToolService.convertDDToDMS,
+        setMapCursor,
+        projectGeometry,
+        toggleSideNav: val => { $mdSidenav('left')[val](); },
+        openDialogInfo: options => { pluginService.openDialogInfo(options); }
     };
 
     // Attaches a promise to the appRegistry which resolves with apiService
@@ -187,6 +193,15 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
      */
     function setLanguage(lang) {
         reloadService.loadNewLang(lang);
+    }
+
+    /**
+     * Get current language
+     *
+     * @function getCurrentLang
+     */
+    function getCurrentLang() {
+        return configService.getSync.language;
     }
 
     /**
@@ -250,6 +265,28 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         // separate zoom and center calls, calling centerAndZoom sets the map to an extent made up of NaN
         configService.getSync.map.instance.setZoom(zoom);
         configService.getSync.map.instance.centerAt(zoomPoint);
+    }
+
+    /**
+     * Set map cursor.
+     *
+     * @function setMapCursor
+     * @param {String} cursor     The to set
+     */
+    function setMapCursor(cursor) {
+        geoService.map.setMapCursor(cursor);
+    }
+
+    /**
+     * Project a geometry
+     *
+     * @function projectGeometry
+     * @param {Object} geometry     The geometry to project
+     * @param {Number} outSR        The output spatial reference ID
+     * @return {Object}             The projected geometry
+     */
+    function projectGeometry(geometry, outSR) {
+        return gapiService.gapi.proj.localProjectGeometry(outSR, geometry);
     }
 }
 
