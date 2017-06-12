@@ -65,6 +65,9 @@ class LayerInterface {
     // param: string
     setDefinitionQuery () { return undefined; }
 
+    // param: spatialReference object
+    validateProjection () { return undefined; } // returns Boolean
+
     // updates what this interface is pointing to, in terms of layer data source.
     // often, the interface starts with a placeholder to avoid errors and return
     // defaults. This update happens after a layer has loaded, and new now want
@@ -96,6 +99,7 @@ class LayerInterface {
         this.setOpacity = standardSetOpacity;
         this.setQuery = standardSetQuery;
         this.zoomToBoundary = standardZoomToBoundary;
+        this.validateProjection = standardValidateProjection;
     }
 
     convertToFeatureLayer (layerRecord) {
@@ -395,6 +399,11 @@ function featureSetDefinitionQuery(query) {
 function dynamicLeafSetDefinitionQuery(query) {
     /* jshint validthis: true */
     this._source.setDefinitionQuery(query);
+}
+
+function standardValidateProjection(spatialReference) {
+     /* jshint validthis: true */
+    return this._source.validateProjection(spatialReference);
 }
 
 module.exports = () => ({
