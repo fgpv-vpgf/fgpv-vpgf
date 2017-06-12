@@ -87,6 +87,14 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
         }
 
         /**
+         * Returns the current language.
+         * @return {String} the current language string
+         */
+        getLang() {
+            return ($translate.proposedLanguage() || $translate.use());
+        }
+
+        /**
          * NOTE this has different semantics from most events as it will trigger if a listener is registered,
          * but the config is already in a loaded state
          * @param {Function} listener an event handler to be triggered on config changes
