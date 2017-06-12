@@ -53,9 +53,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     function afterLoadTests() {
         console.log('enhanced loaded')
 
-        layerRec.getVisibleScales().then(vs => {
-            console.log('visible scale set - sb 0,0', vs);
-        });
+        console.log('visible scale set - sb 0,0', layerRec.getVisibleScales());
 
         console.log('queryable, should be false', proxy.query);
 
