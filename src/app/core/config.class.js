@@ -1124,11 +1124,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     class Legend {
         constructor (legendSource, layersSource) {
             this._type = legendSource.type;
-            this._reorderable = legendSource.reorderable;
 
             let rootChildren;
 
-            if (this.reorderable) {
+            if (this._type === TYPES.legend.AUTOPOPULATE) {
                 // since auto legend is a subset of structured legend, its children are automatically populated
                 const sortGroups = Geo.Layer.SORT_GROUPS_;
 
@@ -1186,19 +1185,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             }
         }
 
-        get reorderable () {
-            // `auto` legend defaults to reorderable, unless explicitly set to false
-            return this._type === TYPES.legend.AUTOPOPULATE &&
-                this._reorderable !== false;
-        }
-
         get type () { return this._type; }
         get root () { return this._root; }
 
         get JSON() {
             return {
                 type: this.type,
-                reorderable: this.reorderable,
                 root: this.root.JSON
             };
         }
@@ -1759,15 +1751,35 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    class UILegend {
+        constructor(uiLegendSource) {
+            this._reorderable = uiLegendSource.reorderable !== false;
+            this._allowImport = uiLegendSource.allowImport !== false;
+            this._isOpen = new LegendIsOpen(uiLegendSource.isOpen);
+        }
+
+        get reorderable () {    return this._reorderable; }
+        get allowImport () {    return this._allowImport; }
+        get isOpen () {         return this._isOpen; }
+
+        get JSON () {
+            return {
+                reorderable: this.reorderable,
+                allowImport: this.allowImport,
+                isOpen: this.isOpen.JSON
+            }
+        }
+    }
+
     class UI {
         constructor(uiSource) {
             this._source = uiSource;
 
             this._navBar = new NavBar(uiSource.navBar);
             this._logoUrl = uiSource.logoUrl || null;
-            this._restrictNavigation = uiSource.restrictNavigation === 'true';
+            this._restrictNavigation = uiSource.restrictNavigation === true;
             this._sideMenu = new SideMenu(uiSource.sideMenu);
-            this._legendIsOpen = new LegendIsOpen(uiSource.legendIsOpen);
+            this._legend = new UILegend(uiSource.legend);
             this._help = new Help(uiSource.help);
         }
 
@@ -1777,7 +1789,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get logoUrl () {                return this._logoUrl; }
         get restrictNavigation () {     return this._restrictNavigation; }
         get sideMenu () {               return this._sideMenu; }
-        get legendIsOpen () {           return this._legendIsOpen; }
+        get legend () {                 return this._legend; }
         get help () {                   return this._help; }
 
         get JSON () {
@@ -1786,7 +1798,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 logoUrl: this.logoUrl,
                 restrictNavigation: this.restrictNavigation,
                 sideMenu: this.sideMenu.JSON,
-                legendIsOpen: this.legendIsOpen.JSON,
+                legend: this.legend.JSON,
+                //legendIsOpen: this.legendIsOpen.JSON,
                 help: this.help.JSON
             }
         }
@@ -1811,6 +1824,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._map = new Map(configSource.map);
             this._services = new Services(configSource.services);
             this._ui = new UI(configSource.ui);
+
+            // post parsing runtimechecks
+            this.ui.legend._reorderable =
+                this.map.legend.type === TYPES.legend.AUTOPOPULATE && this.ui.legend._reorderable;
         }
 
         /**

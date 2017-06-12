@@ -56,7 +56,7 @@ function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoServic
             moves(el, source, handle) {
                 // disable any reorder when the legend is structured;
                 // drag handles are disabled in the template, but mouse reorder can be triggered without them
-                if (!configService.getSync.map.legend.reorderable) {
+                if (!configService.getSync.ui.legend.reorderable) {
                     return false;
                 }
 
@@ -245,7 +245,7 @@ function Controller(tocService, stateManager, geoService, keyNames, configServic
     self.config = tocService.data;
 
     configService.onEveryConfigLoad(cfg =>
-        (self.map = cfg.map));
+        (self.config = cfg));
 
     // reorder mode is off by default
     self.isReorder = false;
