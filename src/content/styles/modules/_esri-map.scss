@@ -11,8 +11,8 @@
         // they use clip to prevent duplciates of the map to be shown side by side when you are zoomed
         // far out;
         // this arbitrary clipping is annoying and it's purpose might not be obvious to users;
-        // Prior to JSAPI v3.15 use: div[id$="_container"].container
-        div[id$="_container"].esriMapContainer {
+        // ESRI JSAPI v3.15 changes the use of class="container" to class="esriMapContainer"
+        div[id$="_container"].container, div[id$="_container"].esriMapContainer {
             clip: auto !important;
         }
 
