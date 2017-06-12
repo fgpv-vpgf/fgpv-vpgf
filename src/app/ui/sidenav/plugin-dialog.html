@@ -1,0 +1,5 @@
+<md-dialog aria-label="{{'sidenav.label.about' | translate}}" class="side-nav-plugin">
+    <rv-content-pane close-panel="self.close()" title-style="title" title-value="{{ self.title }}">
+        <p class="rv-plugin" ng-bind-html="self.content" tabindex="-2"></p> <!-- set tabIndex, if not focus is not trap. Also let keyboard user focus text to scroll -->
+    </rv-content-pane>
+</md-dialog>
