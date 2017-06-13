@@ -1046,6 +1046,7 @@ function _layerRegistryFactory($q, $timeout, $translate, gapiService, legendServ
         */
         function zoomToBoundary(layerId) {
             // FIXME: proxy _layer reference
+            // NOTE zoomToBoundary is now a function on layer records / layer proxy in geoApi
             const l = layers[layerId]._layer;
 
             let gextent;
