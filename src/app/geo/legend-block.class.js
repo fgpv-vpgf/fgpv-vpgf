@@ -156,7 +156,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         _validProjection = true;
         get validProjection () { return this._validProjection; }
         /**
-         * Checks if the spacial reference of the layer matches the spacial reference of the current basemap.
+         * Checks if the spatial reference of the layer matches the spatial reference of the current basemap.
          * If it doesn't, the layer cannot be displayed on the map.
          *
          * @function validateProjection
