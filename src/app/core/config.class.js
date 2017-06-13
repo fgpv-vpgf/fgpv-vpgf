@@ -629,6 +629,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 (new DynamicLayerEntryNode(layerEntry)));
             this._tolerance = source.tolerance;
             this._filters = source.filters;
+
+            this._singleEntryCollapse = source.singleEntryCollapse === true;
         }
 
         get layerEntries () { return this._layerEntries; }
@@ -639,6 +641,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._layerEntries = value;
         }
         get tolerance () { return this._tolerance; }
+
+        _singleEntryCollapse = false;
+        get singleEntryCollapse () { return this._singleEntryCollapse; }
 
         _isResolved = false;
         /**

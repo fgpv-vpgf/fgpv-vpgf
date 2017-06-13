@@ -364,6 +364,9 @@
             "layerId": "oilsandsbasemaptile"
           },
           {
+            "layerId": "ecogeosec"
+          },
+          {
             "layerId": "ecogeofull2"
           },
           {
@@ -639,6 +642,15 @@
         "name": "Eco Geo",
         "layerType":"esriFeature",
         "url":"http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer/6",
+        "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
+      },
+      {
+        "id": "ecogeosec",
+        "name": "Eco Geo Single Entry Collapse True Horse Staple Battery",
+        "layerType": "esriDynamic",
+        "singleEntryCollapse": true,
+        "layerEntries": [ { "index": 4 } ],
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer",
         "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
       },
       {
