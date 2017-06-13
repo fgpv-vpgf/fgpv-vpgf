@@ -840,7 +840,13 @@ function ConfigObjectFactory(Geo, gapiService, common) {
          * Returns the wkid of the basemap projection.
          * @return {Number} wkid of the basemap projection
          */
-        get wkid () { return this._tileSchema.extentSet.spatialReference.wkid; }
+        get wkid () { return this.spatialReference.wkid; }
+
+        /**
+         * Returns the spatial reference of the basemap tile schema.
+         * @return {Object} spatial reference
+         */
+        get spatialReference () { return this._tileSchema.extentSet.spatialReference;  }
 
         /**
          * Returns the default extent as an Esri extent object.
@@ -900,7 +906,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
          *
          * @function makeBlankBasemap
          * @param {Basemap} basemap a basemap to serve as a basis for a blank basemap
-         * @return {Basempa} returns a copy of the provided basemap with opacity dialed all the way to 0 to make it appear blank
+         * @return {Basemap} returns a copy of the provided basemap with opacity dialed all the way to 0 to make it appear blank
          */
         makeBlankBasemap(basemap) {
             const blankBasemap = new Basemap({

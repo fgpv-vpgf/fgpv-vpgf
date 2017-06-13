@@ -355,6 +355,9 @@
             "layerId": "ecogeofull2"
           },
           {
+            "layerId": "oilsandsbasemaptile"
+          },
+          {
             "layerId": "ecogeofull2"
           },
           {
@@ -590,6 +593,12 @@
           "boundingBox": false
         },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+      },
+      {
+        "id": "oilsandsbasemaptile",
+        "name": "Oilsands basemap tile",
+        "layerType": "esriTile",
+        "url": "http://ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer/"
       },
       {
         "id": "powerplant100mw-12",
