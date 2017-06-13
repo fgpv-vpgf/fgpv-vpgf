@@ -4,7 +4,6 @@ import './geo.constant.service.js';
 import './geo.service.js';
 import './identify.service.js';
 import './init-map.directive.js';
-import './layer-blueprint-user-options.class.js';
 import './layer-blueprint.class.js';
 import './layer-record.class.js';
 import './layer-registry.service.js';

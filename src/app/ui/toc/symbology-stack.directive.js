@@ -76,8 +76,6 @@ function rvSymbologyStack($q, Geo, animationService) {
         };
 
         scope.$watchCollection('self.symbology.stack', (newStack, oldStack) => {
-            console.log('newStack, oldStack', newStack, oldStack);
-
             if (newStack) {
                 ref.isReady = false;
 
