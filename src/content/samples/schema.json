@@ -558,7 +558,7 @@
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriDynamic" ] },
-                "singleEntryCollapse": { "type": "boolean", "default": false, "description": "Indicates that the dynamic layer with a signle layer entry should be rendered without the root group." },
+                "singleEntryCollapse": { "type": "boolean", "default": false, "description": "Indicates that the dynamic layer with a single layer entry should be rendered without the root group." },
                 "layerEntries": {
                     "type": "array",
                     "items": { "$ref": "#/definitions/dynamicLayerEntryNode" },

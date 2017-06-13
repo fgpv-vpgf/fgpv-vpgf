@@ -291,10 +291,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 .length === 1;
 
             if (layerConfig.singleEntryCollapse && meetsCollapseCondition) {
-                return legendBlockGroup.entries[0];
-            } else {
-                return legendBlockGroup;
+                legendBlockGroup.collapsed = true;
             }
+
+            return legendBlockGroup;
 
             /**
              * A helper function to handle layerRecord state change. On loaded, it create child LegendBlocks for the dynamic layer and

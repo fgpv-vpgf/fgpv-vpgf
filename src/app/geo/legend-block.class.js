@@ -488,7 +488,13 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             this._walk = ref.walkFunction.bind(this);
         }
 
-        get blockType () { return TYPES.GROUP; }
+        get blockType () {      return TYPES.GROUP; }
+
+        // collapsed value specifies if the group node will be hidden from UI
+        // in such a case, its children will appear to be on the same level as the legend group would have been
+        _collapsed = false;
+        get collapsed () {       return this._collapse; }
+        set collapsed (value) {  this._collapse = value; }
 
         applyInitialStateSettings() {
             // this will ensure all the controlled layers settings in this group match settings of the observable entries
@@ -525,6 +531,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
 
         get template () {
             const availableControls = this._availableControls;
+            const collapsed = this.collapsed;
 
             // only add `reload` control to the available controls when the dynamic layer is loading or already failed
             const stateToTemplate = {
@@ -534,11 +541,11 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                 },
                 'rv-loaded': () => {
                     _removeReload()
-                    return super.template;
+                    return _collapsedCheck(super.template);
                 },
                 'rv-refresh': () => {
                     _removeReload()
-                    return super.template;
+                    return _collapsedCheck(super.template);
                 },
                 'rv-error': () => {
                     _addReload();
@@ -562,6 +569,10 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                 if (index !== -1) {
                     availableControls.splice(index, 1);
                 }
+            }
+
+            function _collapsedCheck(defaultValue) {
+                return collapsed ? 'collapsed' : defaultValue;
             }
         }
 

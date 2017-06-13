@@ -42,11 +42,24 @@
                 data-sort-group="{{ ::block.sortGroup }}">
 
                 <rv-legend-block
-                    ng-if="$dxPrior.blockType !== 'set'"
+                    ng-if="$dxPrior.blockType === 'info' || $dxPrior.blockType === 'node' || $dxPrior.blockType === 'group'"
                     class="rv-legend-{{ block.template }}"
                     block="block"
                     is-reorder="self.isReorder"
                     ng-class="{ 'rv-selected': block.isSelected }"></rv-legend-block>
+
+                <ul
+                    class="rv-legend-list rv-toggle-slide rv-legend-level-{{ ::$dxLevel }}"
+                    ng-if-start="block.blockType === 'group' && !block.collapsed"
+                    dx-connect="block"
+                    ng-show="block.expanded && !self.isReorder"></ul>
+
+                <div class="rv-shadow" ng-if-end></div>
+
+                <ul
+                    class="rv-legend-list"
+                    ng-if="block.blockType === 'group' && block.collapsed"
+                    dx-connect="block"></ul>
 
                 <rv-legend-block
                     ng-if="$dxPrior.blockType === 'set'"
@@ -55,14 +68,6 @@
                     is-reorder="self.isReorder"
                     is-in-set="true"
                     ng-class="{ 'rv-selected': block.isSelected }"></rv-legend-block>
-
-                <ul
-                    class="rv-legend-list rv-toggle-slide rv-legend-level-{{ ::$dxLevel }}"
-                    ng-if-start="block.blockType === 'group'"
-                    dx-connect="block"
-                    ng-show="block.expanded && !self.isReorder"></ul>
-
-                <div class="rv-shadow" ng-if-end></div>
 
                 <ul
                     class="rv-legend-list rv-legend-set"
