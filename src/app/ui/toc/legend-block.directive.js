@@ -4,7 +4,8 @@ const templates = {
     error: require('./templates/legend-error.html'),
     flag: require('./templates/legend-flag.html'),
     node: require('./templates/legend-node.html'),
-    placeholder: require('./templates/legend-placeholder.html')
+    placeholder: require('./templates/legend-placeholder.html'),
+    collapsed: ''
 };
 
 /**
