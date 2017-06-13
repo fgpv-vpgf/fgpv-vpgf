@@ -28,7 +28,7 @@
     "dotjem-angular-tree": "github:dotJEM/angular-tree",
     "es6-promise": "^4.1.0",
     "file-saver": "^1.3.3",
-    "geoApi": "github:fgpv-vpgf/geoApi#v0.0.0-protoLR-62",
+    "geoApi": "github:fgpv-vpgf/geoApi#v0.0.0-protoLR-63",
     "gsap": "^1.19.1",
     "jquery": "^2.2.1",
     "jquery-hoverintent": "^1.8.2",
