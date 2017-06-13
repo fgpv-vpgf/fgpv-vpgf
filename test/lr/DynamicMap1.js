@@ -126,7 +126,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     }, 1000);
 
     function afterLoadTests() {
-        console.log('enhanced loaded')
+        console.log('enhanced loaded');
 
         var leaf2proxy = layerRec.getChildProxy(2);
         var leaf3proxy = layerRec.getChildProxy(3);

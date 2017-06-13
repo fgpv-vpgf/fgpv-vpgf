@@ -407,8 +407,7 @@ class LayerRecord extends root.Root {
         if (spatialReference && this._layer && this._layer.spatialReference) {
             return this._apiRef.proj.isSpatialRefEqual(spatialReference, this._layer.spatialReference);
         } else {
-            console.warn('validateProjection called -- essential info wasnt available');
-            return false;
+            throw new error('validateProjection called -- essential info wasnt available');
         }
     }
 
