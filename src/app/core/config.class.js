@@ -992,6 +992,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._coverIcon = entrySource.coverIcon;
             this._symbologyStack = entrySource.symbologyStack || [];
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
+            this._hidden = entrySource.hidden === true;
 
             this._userAdded = entrySource.userAdded || false;
         }
@@ -1010,6 +1011,13 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get symbologyRenderStyle () { return this._symbologyRenderStyle; }
         set symbologyRenderStyle (value) { this._symbologyRenderStyle = value; }
 
+        /**
+         * Specifies if the legend block should be hidden from the UI.
+         *
+         * @return {Boolean} if true, the legend block will not be rendered in legend UI
+         */
+        get hidden () { return this._hidden; }
+
         get entryType () {              return TYPES.legend.NODE; }
 
         get JSON() {
@@ -1022,6 +1030,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 coverIcon: this.coverIcon,
                 symbologyStack: this.symbologyStack,
                 symbologyRenderStyle: this.symbologyRenderStyle,
+                hidden: this.hidden,
                 entryType: this.entryType
             };
         }

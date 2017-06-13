@@ -323,6 +323,10 @@
             "layerId": "DateLayer"
           },
           {
+            "layerId": "powerplant100mw-24",
+            "hidden": true
+          },
+          {
             "infoType": "unboundLayer",
             "layerName": "How to catch Santa (//www.pusheen.com/)",
             "symbologyStack": [
@@ -612,6 +616,12 @@
         "disabledControls": ["opacity"],
         "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/12"
+      },
+      {
+        "id": "powerplant100mw-24",
+        "name": "Power Plants, 24",
+        "layerType": "esriFeature",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/24"
       },
       {
         "id": "scaleDep",
