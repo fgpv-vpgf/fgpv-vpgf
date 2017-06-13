@@ -112,7 +112,6 @@ module.exports = function (env) {
         devServer: {
             host: '0.0.0.0',
             publicPath: '/build/',
-            historyApiFallback: true,
             port: 6001,
             stats: { colors: true },
             compress: true
