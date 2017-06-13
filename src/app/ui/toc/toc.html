@@ -3,7 +3,7 @@
 
         <div layout="row" class="rv-toc-tools">
 
-            <rv-loader-menu></rv-loader-menu>
+            <rv-loader-menu ng-if="self.config.ui.legend.allowImport"></rv-loader-menu>
 
             <md-button
                 aria-label="{{ 'toc.menu.reorder.title' | translate }}"

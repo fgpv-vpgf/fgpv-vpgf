@@ -286,7 +286,15 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                     legendBlockGroup.synchronizeControlledEntries();
                 }));
 
-            return legendBlockGroup;
+            const meetsCollapseCondition = layerConfig.layerEntries
+                .filter(layerEntry => !layerEntry.stateOnly)
+                .length === 1;
+
+            if (layerConfig.singleEntryCollapse && meetsCollapseCondition) {
+                return legendBlockGroup.entries[0];
+            } else {
+                return legendBlockGroup;
+            }
 
             /**
              * A helper function to handle layerRecord state change. On loaded, it create child LegendBlocks for the dynamic layer and
