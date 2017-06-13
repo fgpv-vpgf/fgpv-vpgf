@@ -4,7 +4,8 @@ const templates = {
     error: require('./templates/legend-error.html'),
     flag: require('./templates/legend-flag.html'),
     node: require('./templates/legend-node.html'),
-    placeholder: require('./templates/legend-placeholder.html')
+    placeholder: require('./templates/legend-placeholder.html'),
+    'bad-projection': require('./templates/legend-bad-projection.html')
 };
 
 /**
@@ -70,7 +71,6 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common)
             if (newTemplate) {
                 const template = $templateCache.get(templates[newTemplate]);
                 element.empty().append($compile(template)(scope));
-                console.log(self.block.id, newTemplate);
             }
         });
 

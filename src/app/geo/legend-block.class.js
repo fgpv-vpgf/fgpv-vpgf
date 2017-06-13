@@ -153,6 +153,24 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          */
         set snapshot (value) {          this._layerConfig.state.snapshot = value; }
 
+        _validProjection = true;
+        get validProjection () { return this._validProjection; }
+        /**
+         * Checks if the spacial reference of the layer matches the spacial reference of the current basemap.
+         * If it doesn't, the layer cannot be displayed on the map.
+         *
+         * @function validateProjection
+         * @param {SpatialReference} value spatial reference of the current basemap
+         */
+        validateProjection (value) {
+            // validate projection only for tile layers; although Aly said that wms, dynamic and image layers are potentially affected as well;
+            if (this.proxy.layerType !== Geo.Layer.Types.ESRI_TILE) {
+                return;
+            }
+
+            this._validProjection = this.proxy.validateProjection(value) !== false;
+        }
+
         get metadataUrl () {            return this._layerConfig.metadataUrl; }
         get catalogueUrl () {           return this._layerConfig.catalogueUrl; }
 
@@ -277,6 +295,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         applyInitialStateSettings() {
             if (!this._mainProxyWrapper.initialStateSettingsApplied) {
                 this._mainProxyWrapper.applyInitialStateSettings();
+                this._mainProxyWrapper.validateProjection(configService.getSync.map.selectedBasemap.spatialReference);
 
                 // bounding box is not linked to a proxy, so we need to apply it separately
                 this.boundingBox = this._mainProxyWrapper.boundingBox;
@@ -308,6 +327,10 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         get userDisabledControls () {   return this._mainProxyWrapper.userDisabledControls; }
 
         get state () {
+            if (!this._mainProxyWrapper.validProjection) {
+                return 'rv-bad-projection';
+            }
+
             const allStates = this._allProxyWrappers.map(proxyWrapper =>
                 proxyWrapper.state);
             const combinedState = this._aggregateStates(allStates);
@@ -320,7 +343,8 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                 'rv-loading': () => 'placeholder',
                 'rv-loaded': () => super.template,
                 'rv-refresh': () => super.template,
-                'rv-error': () => 'error'
+                'rv-error': () => 'error',
+                'rv-bad-projection': () => 'bad-projection'
             };
 
             return stateToTemplate[this.state]();
@@ -518,6 +542,10 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                 'rv-error': () => {
                     _addReload();
                     return 'error';
+                },
+                'rv-bad-projection': () => {
+                    _removeReload()
+                    return 'bad-projection';
                 }
             };
 
@@ -811,8 +839,9 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
     /**
      * Given an array of proxy states, returns the aggregates state using the following rules:
      * - `rv-error` if at least one proxy is errored
-     * - `rv-loading` if none is errored, but at least one is loading
-     * - `rv-refresh` if none is errored or loading, but at least one is refreshing
+     * - `rv-bad-projection` if none is errored, but at least one is not supported in the current projection
+     * - `rv-loading` if none is errored, all supported in the current projection, but at least one is loading
+     * - `rv-refresh` if none is errored or loading, all supported in the current projection, but at least one is refreshing
      * - `rv-loaded` if all proxies are loaded
      *
      * @function aggregateStates
@@ -821,7 +850,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
      * @return {String} the aggregated state of the states supplied
      */
     function aggregateStates(states) {
-        const stateNames = ['rv-error', 'rv-loading', 'rv-refresh', 'rv-loaded'];
+        const stateNames = ['rv-error', 'rv-bad-projection', 'rv-loading', 'rv-refresh', 'rv-loaded'];
 
         const stateValues = stateNames.map(name =>
             states.indexOf(name) !== -1);

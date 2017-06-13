@@ -139,12 +139,13 @@ $layer-item-height-touch: rem(7.2);
             }
         }
 
-        &.rv-legend-node {
+        &.rv-legend-node,
+        &.rv-legend-bad-projection {
             .rv-list-item-content {
                 .rv-list-item-flags {
                     display: flex;
 
-                    rv-legend-flag {
+                    rv-legend-flag > div {
                         margin: 0 rem(0.2);
 
                         &:first-child {
@@ -153,10 +154,6 @@ $layer-item-height-touch: rem(7.2);
 
                         &:last-child {
                             margin-right: 0;
-                        }
-
-                        &:empty {
-                            display: none;
                         }
                     }
                 }
@@ -167,6 +164,12 @@ $layer-item-height-touch: rem(7.2);
             // highlight the selected item
             &.rv-selected:before {
                 background-color: $accent-color;
+            }
+        }
+
+        &.rv-legend-bad-projection {
+            rv-legend-flag[name="badProjection"] md-icon {
+                color: $warning-color;
             }
         }
 
@@ -181,6 +184,10 @@ $layer-item-height-touch: rem(7.2);
             .rv-legend-unboundLayer {
                 margin: 0;
 
+                .rv-list-item-body {
+                    @extend %body-element;
+                }
+
                 height: $layer-item-height;
                 @include touch {
                     height: $layer-item-height-touch;
@@ -194,26 +201,43 @@ $layer-item-height-touch: rem(7.2);
                     align-items: center;
 
                     .rv-list-item-content {
-                    margin: 0 rem(1) 0 rem(1.6);
+                        margin: 0 rem(1) 0 rem(1.6);
+                    }
+
+                    // TODO: this can be moved to a mixin
+                    .rv-list-item-flags {
+                        display: flex;
+
+                        rv-legend-flag > div {
+                            margin: 0 rem(0.2);
+
+                            &:first-child {
+                                margin-left: 0;
+                            }
+
+                            &:last-child {
+                                margin-right: 0;
+                            }
+                        }
                     }
                 }
             }
 
-             .rv-legend-title h3 {
-                 margin: 0;
-             }
+            .rv-legend-title h3 {
+                margin: 0;
+            }
 
-             .rv-legend-text p {
-                 margin: rem(0.6) 0;
-             }
+            .rv-legend-text p {
+                margin: rem(0.6) 0;
+            }
 
-             .rv-legend-image img {
-                 margin: rem(0.6) 0;
-                 max-width: 100%;
-                 align-self: center;
+            .rv-legend-image img {
+                margin: rem(0.6) 0;
+                max-width: 100%;
+                align-self: center;
 
-                 box-shadow: $whiteframe-shadow-1dp;
-             }
+                box-shadow: $whiteframe-shadow-1dp;
+            }
         }
 
         &.rv-legend-placeholder {

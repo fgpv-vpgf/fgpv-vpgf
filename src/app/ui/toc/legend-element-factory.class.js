@@ -439,6 +439,19 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
         get isVisible () { return true; }
     }
 
+    class BadProjectionFlag extends BaseFlag {
+        constructor (...args) {
+            super(...args);
+
+            this._controlName = 'badProjection';
+        }
+
+        get icon () {    return 'alert:warning'; }
+        get label () {   return 'toc.label.flag.unsupportedprojection'; }
+
+        get isVisible () { return true; }
+    }
+
     const controlTypes = {
         flag: 'flag',
         control: 'control'
@@ -452,7 +465,8 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
             data: DataFlag,
             query: QueryFlag,
             user: UserFlag,
-            filter: FilterFlag
+            filter: FilterFlag,
+            badProjection: BadProjectionFlag
         },
         control: {
             visibility: VisibilityControl,

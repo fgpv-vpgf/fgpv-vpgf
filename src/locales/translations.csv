@@ -182,8 +182,9 @@ Table of Content remove action label,toc.label.action.remove,undo,1,annuler,1
 Table of Content filters label,toc.label.filters,,1,,1
 Table of Content filters tootlip,toc.tooltip.filters,,1,,1
 Table of Content feature layer flag label,toc.label.flag.feature,ESRI Feature Layer ({{count}} {{typeName}}),1,Couche d'éléments d'ESRI ({{count}} {{typeName}}),1
-,toc.label.flag.unresolved,Detecting layer type...,1,[fr] Detecting layer type...,1
-,toc.label.flag.unresolved,Cannot determine layer type,1,[fr] Cannot determine layer type,1
+,toc.label.flag.unresolved,Detecting layer type...,1,[fr] Detecting layer type...,0
+,toc.label.flag.unresolved,Cannot determine layer type,1,[fr] Cannot determine layer type,0
+,toc.label.flag.unsupportedprojection,Cannot display layer in the current projection,1,[fr]Cannot display layer in current projection,0
 Table of Content feature layer flag tootlip,toc.tooltip.flag.feature,ESRI Feature Layer ({{count}} {{typeName}}),1,Couche d'éléments d'ESRI ({{count}} {{typeName}}),1
 Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic Layer ({{count}} {{typeName}}),1,Couche dynamique d'ESRI ({{count}} {{typeName}}),1
 Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer ({{count}} {{typeName}}),1,Couche dynamique d'ESRI ({{count}} {{typeName}}),1
@@ -304,6 +305,7 @@ Geometry types,geometry.type.esriGeometryPolyline,line|lines,1,ligne|lignes,1
 ,import.service.configure.primaryfield,Primary Field,1,Champ clé,1
 ,import.service.configure.layers,Layers,1,Couches,1
 ,import.service.configure.multipleselection,You can select several layers,1,Vous pouvez sélectionner plusieurs couches,1
+,import.service.configure.selectall,Select All,1,Tout Sélectionner,0
 ,stepper.continue,Continue,1,Continuer,1
 ,stepper.unresponsive,The application may feel unresponsive for a short time upon clicking the Continue button. This is normal while data is being processed.,1,L'application peut ne pas répondre pendant un court laps de temps après avoir cliqué sur le bouton Continuer. Cette situation est normale pendant le traitement des données.,1
 ,stepper.cancel,Cancel,1,Annuler,1
