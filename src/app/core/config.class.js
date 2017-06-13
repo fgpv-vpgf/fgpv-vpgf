@@ -1695,9 +1695,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         constructor(source = {}) {
             this._source = source;
 
-            this._large = source.large === 'true';
-            this._medium = source.medium === 'true';
-            this._small = source.small === 'true';
+            this._large = source.large === true;
+            this._medium = source.medium === true;
+            this._small = source.small === true;
         }
 
         get large () { return this._large; }
@@ -1802,7 +1802,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 restrictNavigation: this.restrictNavigation,
                 sideMenu: this.sideMenu.JSON,
                 legend: this.legend.JSON,
-                //legendIsOpen: this.legendIsOpen.JSON,
                 help: this.help.JSON
             }
         }

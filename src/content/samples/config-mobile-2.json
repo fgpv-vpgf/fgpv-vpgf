@@ -19,7 +19,7 @@
       "small": false
     },
     "legend": {
-      "legendIsOpen": {
+      "isOpen": {
         "large": true,
         "medium": true,
         "small": false

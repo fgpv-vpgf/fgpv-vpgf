@@ -46,7 +46,7 @@ function rvShell($rootElement, $rootScope, events, storageService, stateManager,
 
         // open legend panel if option is set in config for current viewport
         configService.onEveryConfigLoad(config => {
-            if (config.ui.legendIsOpen && config.ui.legendIsOpen[layoutService.currentLayout()]) {
+            if (config.ui.legend.isOpen[layoutService.currentLayout()]) {
                 stateManager.setActive({ side: false }, 'mainToc');
             }
             scope.self.map = config.map;
@@ -102,10 +102,10 @@ function rvShell($rootElement, $rootScope, events, storageService, stateManager,
             coordElem[1].innerText = coords[1];
         }
 
-        // TODO: remove; opens the main panel for easier dev work
+        // FIXME: remove; opens the main panel for easier dev work
         // stateManager.setActive({ side: false }, 'mainLoaderService');
         // stateManager.setActive({ side: false }, 'mainLoaderFile');
-        stateManager.setActive({ side: false }, { mainToc: true });
+        // stateManager.setActive({ side: false }, { mainToc: true });
     }
 
     /**
