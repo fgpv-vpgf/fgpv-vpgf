@@ -2,7 +2,7 @@
 
 import linkifyStr from 'linkifyjs/string';
 import linkifyHtml from 'linkifyjs/html';
-import 'moment-timezone';
+import * as moment from 'moment-timezone';
 
 /**
  * @name autolink

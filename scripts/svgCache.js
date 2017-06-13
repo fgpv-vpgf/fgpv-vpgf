@@ -10,7 +10,7 @@ const iconCache = [
     { file: 'src/content/images/iconsets/hardware-icons.svg', prefix: 'hardware', icons: 'keyboard_arrow_right keyboard_arrow_down keyboard_arrow_up'.split(' ') },
     { file: 'src/content/images/iconsets/image-icons.svg', prefix: 'image', icons: 'tune photo'.split(' ') },
     { file: 'src/content/images/iconsets/maps-icons.svg', prefix: 'maps', icons: 'place layers my_location map layers_clear navigation'.split(' ') },
-    { file: 'src/content/images/iconsets/navigation-icons.svg', prefix: 'navigation', icons: 'menu check more_vert close more_horiz refresh arrow_back fullscreen'.split(' ') },
+    { file: 'src/content/images/iconsets/navigation-icons.svg', prefix: 'navigation', icons: 'menu check more_vert close more_horiz refresh arrow_back arrow_upward arrow_downward fullscreen'.split(' ') },
     { file: 'src/content/images/iconsets/social-icons.svg', prefix: 'social', icons: 'person share'.split(' ') },
     { file: 'src/content/images/iconsets/toggle-icons.svg', prefix: 'toggle', icons: 'radio_button_checked radio_button_unchecked check_box check_box_outline_blank'.split(' ') }
 ];

@@ -69,7 +69,8 @@ angular
  * @return {object} directive body
  */
 function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService,
-    detailService, $rootElement, $filter, keyNames, $sanitize, debounceService, configService, SymbologyStack) {
+    detailService, $rootElement, $filter, keyNames, $sanitize, debounceService, configService, SymbologyStack,
+    filterService, events) {
 
     const directive = {
         restrict: 'E',
@@ -98,6 +99,22 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
 
         layoutService.panes.filter = el;
 
+        // columns type with filters information
+        const columnTypes = {
+            string: {
+                init: () => ({ value: '', static: false })
+            },
+            selector: {
+                init: () => ({ value: [], static: false })
+            },
+            number: {
+                init: () => ({ min: '', max: '', static: false })
+            },
+            date: {
+                init: () => ({ min: null, max: null, static: false })
+            }
+        };
+
         /**
          * Creates a new datatables instance (destroying existing if any). It pulls the data from the stateManager display store.
          *
@@ -109,7 +126,9 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                 onTableDraw,
                 onTableInit,
                 onZoomClick,
-                onDetailsClick
+                onDetailsClick,
+                onTableSort,
+                onTableProcess
             };
 
             // TODO: move hardcoded stuff in consts
@@ -128,54 +147,8 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
             const tableNode = angular.element('<table class="display nowrap rv-data-table"></table>');
             containerNode.append(tableNode);
 
-            // disabled zoom row button if projection is not valid
-
-            // TODO: fix
-            // const isZoomEnabled = geoService.validateProj(
-            //    geoService.layers[requester.layerId]._layer.spatialReference);
-            const isZoomEnabled = true;
-            ROW_BUTTONS.zoom.self.enabled = isZoomEnabled;
-
-            // assign callbacks to row buttons
-            ROW_BUTTONS.details.self.action = row => {
-                const currentLayout = layoutService.currentLayout();
-                if (currentLayout === 'small' || currentLayout === 'medium') {
-                    onDetailsClick(row, true);
-                } else {
-                    onDetailsClick(row);
-                }
-            };
-
-            ROW_BUTTONS.zoom.self.action = onZoomClick;
-
-            // make new common scopes for row buttons
-            Object.values(ROW_BUTTONS).forEach(button => {
-                const buttonScope = scope.$new(true);
-                buttonScope.self = button.self;
-
-                if (button.name === 'rv-zoom-marker') {
-                    // disabled zoom button if layer is not visible
-                    // TODO: fix
-                    // buttonScope.self.visibility = requester.legendEntry.options.visibility;
-                    buttonScope.self.visibility = true;
-                }
-
-                button.scope = buttonScope;
-            });
-
-            // add the column interactive buttons renderer
-            addColumnInteractivity();
-
-            // returns array of column indexes we want in the CSV export
-            // are not the symbol or interactive column.
-            const exportColumns = columns => {
-                // map columns to their ordinal indexes. but mark the symbol and interactive column as -1.
-                // then filter out the -1. result is an array of column indexes that
-                // are not the symbol and interactive columns.
-                return columns
-                    .map((column, i) => (column.data === 'rvInteractive' || column.data === 'rvSymbol') ? -1 : i)
-                    .filter(idx => idx > -1);
-            };
+            // initialize iteractive buttons
+            initButtons();
 
             // returns array of column info where .data field has any period characters escaped
             const escapedColumns = columns => {
@@ -190,68 +163,53 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                 return copyArray;
             };
 
-            // set width from field length if it is a string field type. If it is the oid field,
-            // set width to 100px because we have the oid, the details and zoom to button. If it is
-            // another type of field, set width to be the title.
-            displayData.columns.forEach(column => {
-                const field = displayData.fields.find(field => field.name === column.data);
-
-                if (typeof field !== 'undefined') {
-                    if (field.type === 'esriFieldTypeString') {
-                        const width = getColumnWidth(column.title, field.length);
-                        column.width = `${width}px`;
-                        column.render = renderEllipsis(width);
-                    } else if (field.type === 'esriFieldTypeOID') {
-                        // set column to be 100px width because of details and zoom to buttons
-                        column.width = '100px';
-                    } else if (field.type === 'esriFieldTypeDate') {
-                        // convert each date cell to a better format
-                        displayData.rows.forEach(r =>
-                            (r[field.name] = $filter('dateTimeZone')(r[field.name])));
-                        const width = Math.max(getTextWidth(column.title), 175);
-                        column.width =  `${width}px`;
-                    } else {
-                        const width = getColumnWidth(column.title);
-                        column.width = `${width}px`;
-                        column.render = renderEllipsis(width);
-                    }
-                }
-            });
+            // initialize columns
+            const order = initColumns();
 
             // ~~I hate DataTables~~ Datatables are cool!
             self.table = tableNode
                 .on('init.dt', callbacks.onTableInit)
                 .on('draw.dt', callbacks.onTableDraw)
+                .on('order.dt', callbacks.onTableSort)
+                .on('processing.dt', callbacks.onTableProcess)
                 .DataTable({
                     dom: 'rti',
                     columns: escapedColumns(displayData.columns),
                     data: displayData.rows,
-                    order: [],
+                    order: order,
                     deferRender: true,
+                    processing: true, // show processing when filtering takes time
                     scrollY: true, // allow vertical scroller
                     scrollX: true, // allow horizontal scroller
+                    // need to remove autoWidth because we can have autoWidth and fix columns at the same time (if so, columns are note well displayed)
                     autoWidth: false, // without autoWidth, few columns will be stretched to fill availalbe width, and many columns will cause the table to scroll horizontally
                     scroller: {
                         displayBuffer: 10 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer.
                         // see key-focus event to see why we put 10
                     }, // turn on virtual scroller extension
+                    colReorder: {
+                        fixedColumnsLeft: 2, // fix symbol and interactive columns
+                        realtime: false// we need this to know when reorder is done
+                    },
                     /*select: true,*/ // allow row select,
                     buttons: [
                         // 'excelHtml5',
                         // 'pdfHtml5',
                         {
                             extend: 'print',
-                            title: self.display.requester.name,
+                            title: self.title,
                             exportOptions: {
-                                columns: exportColumns(displayData.columns),
+                                // columns: exportColumns(displayData.columns), TODO
+                                columns: ':not(.rv-filter-noexport)', // need to use class if we want to dynamicly show/hide columns
                                 orthogonal: null // use real data, not renderer
                             }
                         },
                         {
                             extend: 'csvHtml5',
-                            title: self.display.requester.name,
+                            title: self.title,
                             exportOptions: {
-                                columns: exportColumns(displayData.columns),
+                                // columns: exportColumns(displayData.columns), TODO: remove export part?
+                                columns: ':not(.rv-filter-noexport)', // need to use class if we want to dynamicly show/hide columns
                                 orthogonal: null // use real data, not renderer
                             }
                         }
@@ -260,18 +218,124 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                 });
 
             /**
+             * Initialize interactive buttons.
+             * @function initButtons
+             */
+            function initButtons() {
+                // disabled zoom row button if projection is not valid
+                // TODO: fix
+                // const isZoomEnabled = geoService.validateProj(
+                //    geoService.layers[requester.layerId]._layer.spatialReference);
+                const isZoomEnabled = true;
+                ROW_BUTTONS.zoom.self.enabled = isZoomEnabled;
+
+                // assign callbacks to row buttons
+                ROW_BUTTONS.details.self.action = row => {
+                    const currentLayout = layoutService.currentLayout();
+                    if (currentLayout === 'small' || currentLayout === 'medium') {
+                        onDetailsClick(row, true);
+                    } else {
+                        onDetailsClick(row);
+                    }
+                };
+
+                ROW_BUTTONS.zoom.self.action = onZoomClick;
+
+                // make new common scopes for row buttons
+                Object.values(ROW_BUTTONS).forEach(button => {
+                    const buttonScope = scope.$new(true);
+                    buttonScope.self = button.self;
+
+                    if (button.name === 'rv-zoom-marker') {
+                        // disabled zoom button if layer is not visible
+                        // TODO: fix
+                        // buttonScope.self.visibility = requester.legendEntry.options.visibility;
+                        buttonScope.self.visibility = true;
+                    }
+
+                    button.scope = buttonScope;
+                });
+            }
+
+            /**
+             * Initialize columns.
+             * @function initColumns
+             * @return {Array} order the columns order
+             */
+            function initColumns() {
+                // if it is the first time table is initialize, set columns and table info
+                let order = stateManager.display.filters.data.filter.order || [];
+                if (!displayData.filter.isInit) {
+                    // add the column interactive buttons renderer
+                    addColumnInteractivity();
+                    // set width from field length if it is a string field type. If it is the oid field,
+                    // set width to 100px because we have the oid, the details and zoom to button. If it is
+                    // another type of field, set width to be the title.
+                    displayData.columns.forEach((column, index) => {
+                        const field = displayData.fields.find(field => field.name === column.data);
+                        // if field is undefine it is an interactive or symbol column
+                        if (typeof field !== 'undefined') {
+                            // set position if not defined
+                            if (column.position === -1) { column.position = index; }
+
+                            if (field.type === 'esriFieldTypeString') {
+                                const width = getColumnWidth(column.title, field.length, 250);
+                                column.width = `${width}px`;
+                                column.type = 'string';
+                                column.render = renderEllipsis(width);
+                            } else if (field.type === 'esriFieldTypeOID') {
+                                // set column to be 100px width because of details and zoom to buttons
+                                column.width = '100px';
+                                column.type = 'number';
+                            } else if (field.type === 'esriFieldTypeDate') {
+                                // convert each date cell to a better format
+                                displayData.rows.forEach(r => { r[field.name] = $filter('dateTimeZone')(r[field.name]) });
+                                const width = getColumnWidth(column.title, 0, 400, 375);
+                                column.width =  `${width}px`;
+                                column.type = 'date';
+                            } else {
+                                const width = getColumnWidth(column.title, 0, 250, 120);
+                                column.width = `${width}px`;
+                                column.render = renderEllipsis(width);
+                                column.type = 'number';
+                            }
+
+                            // set filter initial value if not initialize
+                            if (!column.filter.init) {
+                                column.filter = columnTypes[column.type].init();
+                                column.filter.init = true;
+                            }
+                        }
+                    });
+
+                    // customize columns
+                    const config = requester.legendEntry._mainProxyWrapper.layerConfig.source.filters || { };
+                    const order = customizeColumns(config);
+
+                    // customize table
+                    customizeTable(config);
+
+                    // set title
+                    self.title = displayData.filter.title;
+                }
+
+                return order;
+            }
+
+            /**
              * Get column width from column title and field length.
              * @function getColumnWidth
              * @private
              * @param {Object} title    column title
-             * @param {Object} length   optional column length (characters)
-             * @param {Object}  maxLength   optional maximum column length (pixels)
+             * @param {Interger} length   optional column length (characters)
+             * @param {Integer}  maxLength   optional maximum column length (pixels)
+             * @param {Integer}  minLength   optional minimum column length (pixels)
              * @return {Number} width    width of the column
              */
-            function getColumnWidth(title, length = 0, maxLength = 200) {
+            function getColumnWidth(title, length = 0, maxLength = 200, minLength = 50) {
                 // get title length (minimum 50px)
                 let metricsTitle = getTextWidth(title);
-                metricsTitle = metricsTitle < 50 ? 50 : metricsTitle;
+                metricsTitle = metricsTitle < minLength ? minLength : metricsTitle;
 
                 // get column length (only type string have length)
                 if (length) {
@@ -346,6 +410,137 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
             }
 
             /**
+            * Customize table information (title, size, description, apply filters and global search).
+            * @function customizeTable
+            * @private
+            * @param {Object} config    configuration file for table
+            */
+            function customizeTable(config) {
+                // set title and description
+                displayData.filter.title = hasOwnProperty.call(config, 'title') ?
+                    config.title : self.display.requester.name;
+                displayData.filter.description = hasOwnProperty.call(config, 'description') ? config.description : '';
+
+                // check if we need to open in maximize view
+                if (hasOwnProperty.call(config, 'maximize') && config.maximize) {
+                    stateManager.state.filters.morph = 'full';
+                    stateManager.setMorph('filters', 'full');
+                }
+
+                // set global search and defaut value
+                filterService.isGlobalSearch = true; // enable by default
+                if (hasOwnProperty.call(config, 'search')) {
+                    filterService.isGlobalSearch = config.search.enabled;
+                    displayData.filter.globalSearch = config.search.enabled ? config.search.value || '' : '';
+                }
+
+                // apply filters on map
+                if (hasOwnProperty.call(config, 'applyMap') && config.applyMap) {
+                    filterService.applyFilters();
+                }
+            }
+
+            /**
+            * Customize columns information (position, title, width, display, sort order, filter).
+            * @function customizeColumns
+            * @private
+            * @param {Object} config    configuration file for columns
+            * @return {Array} order    columns order array
+            */
+            function customizeColumns(config) {
+                // check if colums configuration exist. If so use it to set columns
+                const order = [];
+                if (hasOwnProperty.call(config, 'columns')) {
+                    // create an array for columns (add symbol and interactive column first)
+                    const columns = [displayData.columns.find(column => column.data === 'rvSymbol'),
+                        displayData.columns.find(column => column.data === 'rvInteractive')];
+
+                    config.columns.forEach(configCol => {
+                        // find the data column who match the one in the config file
+                        const column = displayData.columns.find(col => configCol.data === col.data);
+
+                        // set position from the position in the configuration file array
+                        column.position = columns.length;
+
+                        // set title
+                        if (hasOwnProperty.call(configCol, 'title')) { column.title = configCol.title; }
+
+                        // set field description
+                        if (hasOwnProperty.call(configCol, 'description')) {
+                            column.description = configCol.description;
+                        }
+
+                        // set width and renderer accordingly
+                        if (hasOwnProperty.call(configCol, 'width')) {
+                            column.width = `${configCol.width}px`;
+                            column.render = renderEllipsis(configCol.width);
+                        }
+
+                        // set display (display can be modified in setting panel)
+                        if (hasOwnProperty.call(configCol, 'visible')) {
+                            column.display = configCol.visible;
+                            column.className = configCol.visible ? '' : 'rv-filter-noexport';
+                        }
+
+                        // set sort order
+                        if (hasOwnProperty.call(configCol, 'sort')) {
+                            order.push([column.position, configCol.sort]);
+                        }
+
+                        // set searchable (if false, data is there but not part of the filtering)
+                        if (hasOwnProperty.call(configCol, 'searchable')) {
+                            column.searchable = configCol.searchable;
+                        }
+
+                        // customize filter
+                        customizeFilter(configCol, column);
+                        columns.push(column);
+                    });
+
+                    displayData.columns = columns;
+                }
+
+                return order;
+            }
+
+            /**
+            * Customize filter information (type, default value and if it is static or not).
+            * @function customizeFilter
+            * @private
+            * @param {Object} config    configuration file for filter
+            * @return {Object} column    column to apply the filter to
+            */
+            function customizeFilter(config, column) {
+                // set filter type, value and if it can be modified
+                // if there is no filter properties, do not create the filter so set it to undefined
+                if (hasOwnProperty.call(config, 'filter')) {
+                    if (hasOwnProperty.call(config.filter, 'type')) {
+                        column.type = config.filter.type;
+                        column.filter = columnTypes[config.filter.type].init();
+                    }
+
+                    // set filter value
+                    if (hasOwnProperty.call(config.filter, 'value')) {
+                        if (column.type === 'string' || column.type === 'selector') {
+                            column.filter.value = config.filter.value;
+                        } else {
+                            const values = config.filter.value.split(',');
+                            column.filter.min = values[0];
+                            column.filter.max = values[1];
+                        }
+
+                        // enable apply on map button
+                        filterService.filter.isApplied = false;
+                    }
+
+                    // set if filter can be modified
+                    if (hasOwnProperty.call(config.filter, 'static')) {
+                        column.filter.static = config.filter.static;
+                    }
+                } else { column.filter = undefined; }
+            }
+
+            /**
              * Table initialization callback. This will hide the loading indicator.
              * @function onTableInit
              * @private
@@ -374,6 +569,32 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                     // at the same time it solve a problem because when focus is on menu button, even if focus is on the
                     // table cell it goes inside the menu and loop through it at the same time as we navigate the table
                     $rootElement.find('[type=\'filters\'] button.rv-close').rvFocus({ delay: 100 });
+
+                    // set table is initialize. Things that need to be done only once will be avoid at the next creation
+                    displayData.filter.isInit = true;
+
+                    // set colReorder extension
+                    setColumnReorder();
+
+                    // initialize a temporary array to store all the custom filters so they don't fire every time we add new one
+                    $.fn.dataTable.ext.searchTemp = [];
+
+                    // set active table so it can be accessed in filter-search.directive for global table search
+                    filterService.setTable(self.table, displayData.filter.globalSearch);
+
+                    // recalculate scroller space on table init because if the preopen table was maximized in setting view
+                    // the scroller is still in split view
+                    self.table.scroller.measure();
+
+                    // wrap the title inside a span so when we need to change it when global search is focused, there is no impact on the filters
+                    angular.element(filterService.getTable().header()).find('th').each((i, el) => {
+                        const title = el.innerHTML;
+                        el.innerHTML = '';
+                        el.append(angular.element(`<span data-rv-column="${title}">${title}</span>`)[0]);
+                    });
+
+                    // fired event to create filters
+                    events.$broadcast(events.rvTableReady);
                 });
             }
 
@@ -402,11 +623,35 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                     });
                 });
 
+                // hide processing display on redraw
+                $rootElement.find('.dataTables_processing').css('display', 'none');
+
                 // set again tabindex because new lines as been added to the dom
                 $rootElement.find('.dataTables_scrollBody td').attr('tabindex', '-3');
 
                 // set keyboard table navigation management
                 setkeytable();
+            }
+
+            /**
+             * Initialize the colReorder extenstion events to reorder stateManager on when columns reorder
+             * @function setColumnReorder
+             * @private
+             */
+            function setColumnReorder() {
+                self.table.on('column-reorder', (e, settings, details) => {
+                    // only reorder columns if modificattion have been made on the table itself
+                    // from the setting panel, we have another to deal with it
+                    if (!filterService.isSettingOpen) {
+                        // reorder columns in statemanager to preserve the order
+                        // remove the moved element then add a it back at the right place
+                        const item = displayData.columns.splice(details.from, 1)[0];
+                        displayData.columns.splice(details.to, 0, item);
+
+                        // redraw table to put back interactive column (the wrapper gets empty after a column reorder)
+                        self.table.draw();
+                    }
+                });
             }
 
             /**
@@ -462,6 +707,33 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                     // set index values. It will be use to blur the cell on mouse scroll
                     index = self.table.cell(node).index();
                 });
+            }
+
+            /**
+             * Table sort callback. This will update the sort columns so setting panel and table can be synchronize
+             * @function onTableSort
+             * @private
+             */
+            function onTableSort(e, settings) {
+                // reset sort values
+                stateManager.display.filters.data.columns.forEach(item => { item.sort = 'none'; });
+
+                // update sort column from the last sort, use value from statemanager because interactive column may have been added
+                settings.aLastSort.forEach(item => {
+                    stateManager.display.filters.data.columns[item.col].sort = item.dir;
+                });
+
+                // set columns sort array so it can be retreive on init
+                stateManager.display.filters.data.filter.order = settings.aaSorting;
+            }
+
+            /**
+             * Table processing callback. This will show processing notice when table process (mainly use when sort)
+             * @function onTableProcess
+             * @private
+             */
+            function onTableProcess(e, settings, processing) {
+                $rootElement.find('#processingIndicator').css('display', processing ? 'block' : 'none');
             }
 
             /**
@@ -594,6 +866,10 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                 // TODO verify this is the proper location for this line
                 // FIXME: refactor fix needed
                 // geoService.clearHilight();
+
+                // reset index and reference to tablebody for keytable navigation
+                index = undefined;
+                self.tableBody = undefined;
             }
         }
     }
@@ -612,6 +888,8 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
     self.display = stateManager.display.filters;
     self.appID = appInfo.id;
     self.draw = draw;
+    self.filterService = filterService;
+
 
     const languageObjects = {};
 
@@ -786,10 +1064,17 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
      * @param  {Number|String} index button selector: https://datatables.net/reference/api/button()
      */
     function triggerTableButton(index) {
+        // setting panel need to be close for datatable to export or print
+        const setting = filterService.isSettingOpen;
+        if (setting) { filterService.isSettingOpen = false; }
+
         // see `buttons` array in the DataTable constructor object in the directive above
         const button = self.table.button(index);
         if (button) {
             button.trigger();
         }
+
+        // set back previous state
+        filterService.isSettingOpen = setting;
     }
 }

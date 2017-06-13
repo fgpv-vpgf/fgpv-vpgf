@@ -32,6 +32,15 @@
                 flex-direction: column;
                 min-height: 0; // Firefox fix; otherwise div won't shrink: http://stackoverflow.com/questions/27424831/firefox-flexbox-overflow
 
+                .dataTables_processing {
+                    z-index: 50; // show processing notice when tables redraw from filtering or sorting
+                    background-color: $primary-color-light;
+                    bottom: -15px;
+                    top: inherit;
+                    padding-top: 15px;
+                    height: 45px;
+                }
+
                 .dataTables_scroll {
                     height: 100%;
                     display: flex;
@@ -39,7 +48,29 @@
                     min-height: 0; // Firefox fix; otherwise div won't shrink: http://stackoverflow.com/questions/27424831/firefox-flexbox-overflow
 
                     .dataTables_scrollHead {
-                        width: 100% !important;
+                        @include largeFilters;
+
+                        @include include-size(rv-lg) {
+                            .rv-filter-string, .rv-filter-selector, .rv-filter-number, .rv-filter-date {
+                                display: flex;
+                            }
+                        }
+
+                        th {
+                            user-select: none; // do not select header text to avoid table selection when drag & drop columns
+
+                            md-input-container {
+                                width: 100%; // because md-input-container with md-select inside will expand beyound the div
+                            }
+
+                            .rv-filter-selector {
+                                font-weight: normal;
+
+                                md-select {
+                                    padding-top: 4px;
+                                }
+                            }
+                        }
                     }
 
                     .dataTables_scrollBody {
@@ -100,6 +131,253 @@
                             }
                         }
                     }
+                }
+
+                .dataTables_info {
+                    border-top: 1px solid #111111; // solve a bug with Chrome where the border does not appear in maximized view
+                    z-index: 2;
+                }
+            }
+        }
+
+        rv-filters-setting-cluster {
+            position: absolute;
+            bottom: -6px;
+            right: 0;
+            z-index: 2;
+
+            .rv-button-group {
+                float: right;
+                height: 40px;
+
+                .rv-filters-apply {
+                    margin-top: 0;
+                    margin-bottom: 0;
+                }
+
+                .rv-filters-divider {
+                    @extend %filters-divider;
+                }
+            }
+        }
+    }
+}
+
+rv-filters-search {
+    display: flex;
+    align-items: center;
+    height: $toolbar-height - 8;
+
+    .rv-filters-search {
+        input {
+            top: 9px;
+
+            @include include-size(rv-gt-sm) {
+                width: 220px;
+            }
+        }
+
+        .md-button {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            min-width: 0;
+
+            md-icon {
+                height: 15px;
+            }
+        }
+    }
+
+    .rv-filters-divider {
+        @extend %filters-divider;
+    }
+}
+
+%filters-divider {
+    border-right: $divider-color 1px solid;
+    height: 65%;
+    display: inline-block;
+    vertical-align: middle;
+    margin: {
+        right: rem(0.4);
+        left: rem(0.4);
+    }
+}
+
+@mixin largeFilters {
+    .rv-filter-string, .rv-filter-selector, .rv-filter-number, .rv-filter-date {
+        display: none;
+        height: 35px;
+    }
+
+    md-input-container {
+        margin: 0;
+
+        input {
+            &[placeholder] {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+    }
+}
+
+rv-filters-setting-panel {
+    height: 100%;
+    width: 99%;
+    position: absolute;
+    padding-bottom: 45px;
+    overflow-y: auto;
+    user-select: none; // do not select header text to avoid table selection when drag & drop columns
+
+    md-content {
+        height: 100%;
+    }
+
+    .rv-filter-desc {
+        display: flex;
+        position: relative;
+        align-items: center;
+        height: 40px;
+
+        .rv-filter-desc-button {
+            text-align: left;
+            position: absolute;
+            padding: 0;
+            margin: 0;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1;
+        }
+    }
+
+    .rv-filter-desc-main {
+        padding: 5px;
+    }
+    .rv-filter-desc-column {
+        padding-left: 12px;
+    }
+
+    .rv-filter-setting {
+        background-color: $primary-color-dark;
+        color: $primary-color-text;
+        padding: 10px;
+
+        h4, h3, .md-toggle-icon {
+            color: $primary-color-text;
+
+            &.rv-toggled {
+                transform: rotate(180deg) !important;
+            }
+        }
+
+        ul {
+            list-style-type: none;
+
+            .rv-filter-list {
+                padding-left: 0px;
+            }
+
+            li.rv-mirror {
+                box-shadow: $whiteframe-shadow-4dp;
+                background-color: $primary-color;
+            }
+
+            li {
+                display: flex;
+                align-content: center;
+                max-width: 1000px;
+
+                span, button, div, md-icon {
+                    align-self: center;
+                    color: $primary-color-text;
+                }
+
+                .rv-filter-settting-reorder {
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .rv-filter-settting-name {
+                    flex: 1 0 30%;
+                    margin-left: 12px;
+                }
+
+                .rv-filter-settting-item {
+                    flex: 1 0 30%;
+                    margin-top: 20px;
+                    height: 40px;
+
+                    .rv-filter-number, .rv-filter-selector, .rv-filter-string, .rv-filter-date {
+                        height: 40px;
+                        align-items: center;
+                    }
+                }
+
+                .rv-filter-settting-sort {
+                    width: 60px;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .rv-filter-settting-display {
+                    width: 60px;
+                    display: flex;
+                    justify-content: center;
+
+                    md-checkbox {
+                        margin: 0;
+                    }
+                }
+            }
+        }
+
+        .rv-filter-setting-container {
+            .rv-filter-date {
+                bottom: 0px;
+            }
+        }
+
+        .rv-filter-number, .rv-filter-selector, .rv-filter-string, .rv-filter-date {
+            display: inline-flex;
+            width: 90%;
+
+            // TODO: create a mixin with same section inside export
+            input {
+                color: $primary-color-text;
+                border-color: $primary-color-light;
+
+                &::placeholder {
+                    color: $primary-color-text;
+                    opacity: 0.8;
+                }
+            }
+
+            md-input-container {
+                > label {
+                    color: $primary-color-light;
+                }
+
+                .md-input {
+                    color: $primary-color-text;
+                    border-color: $primary-color-light;
+
+                    &::placeholder {
+                        color: $primary-color-text;
+                        opacity: 0.8;
+                    }
+                }
+
+                div[ng-message], .md-char-counter {
+                    color: $primary-color-light;
+                }
+
+                &.md-input-invalid .md-input {
+                    border-color: $alert-color;
                 }
             }
         }

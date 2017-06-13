@@ -51,6 +51,11 @@ import './export/export.service.js';
 
 import './filters/filters-default-menu.directive.js';
 import './filters/filters-default.directive.js';
+import './filters/filters-definition.directive.js';
+import './filters/filters-number-only.directive.js';
+import './filters/filters-search.directive.js';
+import './filters/filters-setting-cluster.directive.js';
+import './filters/filters-setting-panel.directive.js';
 import './filters/filters.service.js';
 
 import './geosearch/geosearch-bar.directive.js';

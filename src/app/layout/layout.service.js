@@ -40,7 +40,8 @@ function layoutService($rootElement, $rootScope, sideNavigationService, mapNavig
             SMALL: 'small',
             MEDIUM: 'medium',
             LARGE: 'large'
-        }
+        },
+        isFiltersVisible: false
     };
 
     return service;

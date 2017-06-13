@@ -36,7 +36,11 @@ function rvDragula($compile, dragulaService, keyNames) {
         // set container and the mirror container to be the same element as we need
         const dragulaOptions = {
             containers: [el[0]],
-            mirrorContainer: el[0]
+            mirrorContainer: el[0],
+            rvDragCancel: () => { },
+            rvDragDrop: () => { },
+            rvDragStart: () => { },
+            rvDragDropModel: () => { }
         };
 
         // extend default options with extras from the the parent scope

@@ -478,6 +478,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             this._nameField = source.nameField;
             this._tolerance = source.tolerance || 5;
+            this._filters = this.filters;
         }
 
         _hovertipEnabled = true;
@@ -490,7 +491,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get JSON() {
             return angular.merge(super.JSON, {
                 nameField: this.nameField,
-                tolerance: this.tolerance
+                tolerance: this.tolerance,
+                filters: this.filters
             });
         }
     }
@@ -626,6 +628,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._layerEntries = source.layerEntries.map(layerEntry =>
                 (new DynamicLayerEntryNode(layerEntry)));
             this._tolerance = source.tolerance;
+            this._filters = source.filters;
         }
 
         get layerEntries () { return this._layerEntries; }
@@ -668,6 +671,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 layerEntries: this.layerEntries.map(layerEntry =>
                     layerEntry.JSON),
                 tolerance: this.tolerance,
+                filters: this.filters,
                 isResolved: this.isResolved
             });
         }
@@ -1701,6 +1705,31 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get JSON () {
             return {
+                large: this.large,
+                medium: this.medium,
+                small: this.small
+            }
+        }
+    }
+
+    class FilterIsOpen {
+        constructor(source = {}) {
+            this._source = source;
+
+            this.id = source.id;
+            this._large = source.large;
+            this._medium = source.medium;
+            this._small = source.small;
+        }
+
+        get id () { return this._id; }
+        get large () { return this._large; }
+        get medium () { return this._medium; }
+        get small () { return this._small; }
+
+        get JSON () {
+            return {
+                id: this.id,
                 large: this.large,
                 medium: this.medium,
                 small: this.small

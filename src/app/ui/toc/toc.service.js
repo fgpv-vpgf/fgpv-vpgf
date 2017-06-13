@@ -287,6 +287,17 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                         row.rvInteractive = '';
                     });
 
+                    // add filters attributes needed by every columns
+                    attributes.columns.forEach(columns => {
+                        columns.name = columns.data; // add name so we can get column from datatables (https://datatables.net/reference/type/column-selector)
+                        columns.display = true;
+                        columns.sort = 'none'; // can be none, asc or desc (values use by datatable)
+                        columns.filter = { };
+                        columns.width = '';
+                        columns.init = false;
+                        columns.position = -1; // use to synchronize columns when reorder
+                    });
+
                     // add a column for interactive actions (detail and zoom)
                     // do not add it inside an existing field because filters will not work properly and because of https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1631
                     attributes.columns.unshift({
@@ -294,7 +305,9 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                         title: '',
                         orderable: false,
                         render: '',
-                        width: '20px' // for datatables
+                        width: '20px', // for datatables
+                        position: 1, // for datatables
+                        className: 'rv-filter-noexport' // do not show when datatble export or print
                     });
 
                     // add a column for symbols
@@ -303,8 +316,21 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                         title: '',
                         orderable: false,
                         render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`,
-                        width: '20px' // for datatables
+                        width: '20px', // for datatables
+                        position: 0, // for datatables
+                        className: 'rv-filter-noexport' // do not show when datatble export or print
+
                     });
+                }
+
+                // add filters informations (use by filters to keep info on table so it persist when we change table)
+                if (typeof attributes.filter === 'undefined') {
+                    attributes.filter =  {
+                        globalSearch: '',
+                        isApplied: true,
+                        isActive: false,
+                        isInit: false
+                    };
                 }
 
                 return {
