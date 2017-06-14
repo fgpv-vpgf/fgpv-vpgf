@@ -100,7 +100,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         const legendMappings = configService.getSync.map.legendMappings;
         const mappings = legendMappings[layerRecordId];
         legendMappings[layerRecordId] = [];
-        
+
         // create a new record from its layer blueprint
         const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
         const layerBlueprint = layerBlueprintsCollection.find(blueprint =>
