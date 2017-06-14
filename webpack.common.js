@@ -1,6 +1,7 @@
 const webpack   = require('webpack');
 const path      = require('path');
 const fs        = require('fs');
+const SriPlugin = require('webpack-subresource-integrity');
 const ExtractTextPlugin     = require('extract-text-webpack-plugin');
 const TranslationPlugin     = require('./scripts/translations_plugin.js');
 const CopyWebpackPlugin     = require('copy-webpack-plugin');
@@ -8,7 +9,6 @@ const VersionPlugin         = require('./scripts/version_plugin.js');
 const WrapperPlugin         = require('wrapper-webpack-plugin');
 const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
-const AssetInjectHtmlWebpackPlugin     = require('asset-inject-html-webpack-plugin');
 
 module.exports = function (env) {
 
@@ -20,7 +20,8 @@ module.exports = function (env) {
 
         output: {
             path: path.resolve(__dirname, 'build'),
-            filename: '[name].js'
+            filename: '[name].js',
+            crossOriginLoading: 'anonymous'
         },
 
         module: {
@@ -98,7 +99,12 @@ module.exports = function (env) {
 
             new VersionPlugin(),
 
-            new CleanWebpackPlugin(['build'])
+            new CleanWebpackPlugin(['build']),
+
+            new SriPlugin({
+                hashFuncNames: ['sha256', 'sha384'],
+                enabled: true
+            })
         ],
 
         externals: { 'TweenLite': 'TweenLite' },
@@ -128,7 +134,7 @@ module.exports = function (env) {
         }
     };
 
-    config.plugins.push(...htmlInjectPlugins(), assetInjectPlugin());
+    config.plugins.push(...htmlInjectPlugins());
 
     if (env.geoLocal) {
         config.resolve.alias['geoApi$'] = path.resolve(__dirname, '../', env.geoLocal.length > 0 ? env.geoLocal : 'geoApi');
@@ -152,13 +158,4 @@ function htmlInjectPlugins() {
             });
         }
     }).filter(x => typeof x !== 'undefined');
-}
-
-function assetInjectPlugin() {
-    return new AssetInjectHtmlWebpackPlugin({
-        assets: {
-            js: '../rv-main.js',
-            css: '../rv-styles.css'
-        }
-    });
 }

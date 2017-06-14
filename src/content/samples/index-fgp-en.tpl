@@ -7,6 +7,10 @@
     <link href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/favicon.ico" rel="icon" type="image/x-icon">
     <link rel="stylesheet" href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/css/theme.min.css">
 
+    <% for (var index in htmlWebpackPlugin.files.css) { %>
+    <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" integrity="<%= htmlWebpackPlugin.files.cssIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"/>
+    <% } %>
+
     <style>
         main div.myMap {
             height: 700px;
@@ -543,6 +547,10 @@
             // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
             document.write('<script src="../ie-polyfills.js"><\/script>');
         }
+
+        <% for (var index in htmlWebpackPlugin.files.js) { %>
+        <script src="<%= htmlWebpackPlugin.files.js[index] %>" integrity="<%= htmlWebpackPlugin.files.jsIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"></script>
+        <% } %>
 
         function init() {
             const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
