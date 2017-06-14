@@ -286,6 +286,14 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                     legendBlockGroup.synchronizeControlledEntries();
                 }));
 
+            const meetsCollapseCondition = layerConfig.layerEntries
+                .filter(layerEntry => !layerEntry.stateOnly)
+                .length === 1;
+
+            if (layerConfig.singleEntryCollapse && meetsCollapseCondition) {
+                legendBlockGroup.collapsed = true;
+            }
+
             return legendBlockGroup;
 
             /**
@@ -701,6 +709,12 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
          * @return {Proxy} a layers proxy object
          */
         function _getLegendBlockProxy(blueprint) {
+
+            // hidden legend blocks can't have hover tooltips on the layers
+            if (blockConfig.hidden) {
+                blueprint.config.hovertipEnabled = false;
+            }
+
             const layerRecord = layerRegistry.makeLayerRecord(blueprint);
             layerRegistry.loadLayerRecord(layerRecord.config.id);
 

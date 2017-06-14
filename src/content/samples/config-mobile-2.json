@@ -12,16 +12,18 @@
     "sideMenu": {
       "logo": "true"
     },
-    "legendIsOpen": {
-      "large": true,
-      "medium": true,
-      "small": false
-    },
     "filterIsOpen": {
       "id": "DateLayer",
       "large": true,
       "medium": true,
       "small": false
+    },
+    "legend": {
+      "isOpen": {
+        "large": true,
+        "medium": true,
+        "small": false
+      }
     }
   },
   "version": "2.0",
@@ -321,6 +323,10 @@
             "layerId": "DateLayer"
           },
           {
+            "layerId": "powerplant100mw-24",
+            "hidden": true
+          },
+          {
             "infoType": "unboundLayer",
             "layerName": "How to catch Santa (//www.pusheen.com/)",
             "symbologyStack": [
@@ -356,6 +362,9 @@
           },
           {
             "layerId": "oilsandsbasemaptile"
+          },
+          {
+            "layerId": "ecogeosec"
           },
           {
             "layerId": "ecogeofull2"
@@ -598,6 +607,9 @@
         "id": "oilsandsbasemaptile",
         "name": "Oilsands basemap tile",
         "layerType": "esriTile",
+        "state": {
+          "opacity": 0.2
+        },
         "url": "http://ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer/"
       },
       {
@@ -610,6 +622,12 @@
         "disabledControls": ["opacity"],
         "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/12"
+      },
+      {
+        "id": "powerplant100mw-24",
+        "name": "Power Plants, 24",
+        "layerType": "esriFeature",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/24"
       },
       {
         "id": "scaleDep",
@@ -627,6 +645,15 @@
         "name": "Eco Geo",
         "layerType":"esriFeature",
         "url":"http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer/6",
+        "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
+      },
+      {
+        "id": "ecogeosec",
+        "name": "Eco Geo Single Entry Collapse True Horse Staple Battery",
+        "layerType": "esriDynamic",
+        "singleEntryCollapse": true,
+        "layerEntries": [ { "index": 4 } ],
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer",
         "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
       },
       {

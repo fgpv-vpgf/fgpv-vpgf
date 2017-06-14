@@ -47,7 +47,8 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
     self.common = {
         toggleLayers,
         isSomeLayersSelected,
-        isAllLayersSelected
+        isAllLayersSelected,
+        onDynamicLayerSection
     };
 
     // TODO: turn into a proper class
@@ -63,8 +64,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
                 if (event.keyCode === keyNames.ENTER) {
                     connectOnContinue();
                 }}, // check if enter key have been pressed and call the next step if so
-            reset: connectReset,
-            focus: 'serviceUrl'
+            reset: connectReset
         },
         form: null,
         serviceUrl: null,
@@ -80,8 +80,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
             onContinue: selectOnContinue,
             onCancel: () =>
                 onCancel(self.select.step),
-            reset: selectReset,
-            focus: 'serviceType'
+            reset: selectReset
         },
         serviceTypeResetValidation,
         form: null,
@@ -97,8 +96,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
             onContinue: configureOnContinue,
             onCancel: () =>
                 onCancel(self.configure.step),
-            reset: configureReset,
-            focus: 'layerServiceName'
+            reset: configureReset
         },
         form: null,
         defaultOptions: {}
@@ -279,6 +277,17 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         if (self.layerSource) {
             self.layerSource.reset();
         }
+    }
+
+    /**
+     * A helper function called when the dynamic layer selection changes to update the `singleEntryCollapse` property of the dynamic layer being imported.
+     * The option is enabled only if there is a single layer entry selected.
+     * @function onDynamicLayerSection
+     */
+    function onDynamicLayerSection() {
+        const config = self.layerSource.config;
+
+        config.singleEntryCollapse = config.layerEntries.length === 1;
     }
 
     /**

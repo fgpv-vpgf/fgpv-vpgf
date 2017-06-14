@@ -104,7 +104,12 @@
 @mixin content {
     &-content {
         margin-left: rem(3.6);
-        overflow: hidden;
+
+        // only hide overflow when animation
+        // if left, it will cut the ripple effect on checkboxes
+        .ng-animate {
+            overflow: hidden;
+        }
     }
 }
 

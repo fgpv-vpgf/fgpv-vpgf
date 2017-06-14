@@ -41,6 +41,7 @@ function layerNodeUpgrade(layerCfg) {
 
 // eslint-disable-next-line max-statements, complexity
 function oneToTwo(cfg) {
+    // FIXME: needs update as schema has changed: legendIsOpen moved to legend section in ui
     const topToUi = 'theme logoUrl navBar sideMenu restrictNavigation legendIsOpen'.split(' ');
     const topToService = 'googleApiKey export search'.split(' ');
     const baseMapDirectCopy =

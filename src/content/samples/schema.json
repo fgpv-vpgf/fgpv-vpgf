@@ -297,6 +297,7 @@
             "description": "",
             "properties": {
                 "layerId": {"type": "string", "description": "Link to a layer defined in the layers section"},
+                "hidden": {"type": "boolean", "default": false, "description": "Indicates that the legend block will be hidden from the UI and all its controls will be inaccessible to the user." },
                 "controlledIds": {
                     "type": "array",
                     "items": { "type": "string", "description": "Additional layer ids which are controlled by this layer" },
@@ -354,8 +355,7 @@
         "legendAuto": {
             "type": "object",
             "properties": {
-                "type": { "type": "string", "enum": [ "autopopulate" ] },
-                "reorderable": { "type": "boolean", "default": true }
+                "type": { "type": "string", "enum": [ "autopopulate" ] }
             },
             "required": ["type"],
             "additionalProperties": false
@@ -558,6 +558,7 @@
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriDynamic" ] },
+                "singleEntryCollapse": { "type": "boolean", "default": false, "description": "Indicates that the dynamic layer with a single layer entry should be rendered without the root group." },
                 "layerEntries": {
                     "type": "array",
                     "items": { "$ref": "#/definitions/dynamicLayerEntryNode" },
@@ -695,13 +696,21 @@
                     "required": [ "folderName" ],
                     "additionalProperties": false
                 },
-                "legendIsOpen": {
+                "legend": {
                     "type": "object",
-                    "description": "Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports",
                     "properties": {
-                        "large": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for large viewports" },
-                        "medium": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for medium viewports" },
-                        "small": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for small viewports" }
+                        "reorderable": { "type": "boolean", "default": true, "description": "Specifies if the items in the legend can be reordered; structured legend ignores this property." },
+                        "allowImport": { "type": "boolean", "default": true, "description": "Specifies if the user-added layers are allowed." },
+                        "isOpen": {
+                            "type": "object",
+                            "description": "Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports",
+                            "properties": {
+                                "large": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for large viewports" },
+                                "medium": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for medium viewports" },
+                                "small": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for small viewports" }
+                            },
+                            "additionalProperties": false
+                        }
                     },
                     "additionalProperties": false
                 },

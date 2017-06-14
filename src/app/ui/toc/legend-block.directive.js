@@ -5,7 +5,8 @@ const templates = {
     flag: require('./templates/legend-flag.html'),
     node: require('./templates/legend-node.html'),
     placeholder: require('./templates/legend-placeholder.html'),
-    'bad-projection': require('./templates/legend-bad-projection.html')
+    'bad-projection': require('./templates/legend-bad-projection.html'),
+    collapsed: ''
 };
 
 /**

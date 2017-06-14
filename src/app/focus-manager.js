@@ -15,12 +15,15 @@ const focusSelector = [
     'a[href]',
     'input:not([disabled])',
     'select:not([disabled])',
+    'md-select:not([disabled])',
+    'md-checkbox:not([disabled])',
+    'md-switch:not([disabled])',
+    'md-slider:not([disabled])',
     'textarea:not([disabled])',
     'button:not([disabled])',
     '.rv-esri-map',
     '[tabindex=-2]',
-    '[tabindex=-3]',
-    'md-switch'
+    '[tabindex=-3]'
 ].join(', ');
 
 // object containing all currently depressed keyboard keys

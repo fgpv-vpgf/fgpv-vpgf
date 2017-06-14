@@ -53,7 +53,9 @@
             form="self.configure.form"
             ng-switch on="self.layerSource.type">
 
-            <md-input-container class="md-block">
+            <md-input-container class="md-block"
+                ng-switch-when="featurelayer|wms"
+                ng-switch-when-separator="|">
                 <label translate>import.service.configure.layername</label>
                 <input name="layerServiceName" ng-model="self.layerSource.config.name" required>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
@@ -85,18 +87,20 @@
                     name="dynamicLayers"
                     ng-model="self.layerSource.config.layerEntries"
                     ng-model-options="{ trackBy: '$value.index' }"
+                    ng-change="self.common.onDynamicLayerSection()"
                     required multiple>
                     <rv-select-header>
                         <md-checkbox
                             ng-checked="self.common.isAllLayersSelected()"
                             md-indeterminate="self.common.isSomeLayersSelected()"
-                            ng-click="self.common.toggleLayers()"
+                            ng-click="self.common.toggleLayers(); self.common.onDynamicLayerSection();"
                             class="md-primary rv-select-header-all">
                             {{ 'import.service.configure.selectall' | translate }}
                         </md-checkbox>
                         <md-divider class="rv-layer-list-divider"></md-divider>
                     </rv-select-header>
-                    <md-option ng-repeat="layer in self.layerSource.layers"
+                    <md-option
+                        ng-repeat="layer in self.layerSource.layers"
                         ng-value="layer">
                         {{ layer.indent + ' ' + layer.name }}
                     </md-option>
@@ -106,6 +110,32 @@
                 <!--div class="errors" ng-messages="self.configure.form.primaryField.$error">
                         <div ng-message="required">Required</div>
                     </div-->
+            </md-input-container>
+
+            <!-- the singleEntryCollapse option is enabled to user interaction only when a single layer entry is selected -->
+            <md-input-container class="md-block"
+                ng-switch-when="dynamicservice">
+                <md-checkbox
+                    ng-model="self.layerSource.config.singleEntryCollapse"
+                    ng-true-value="false"
+                    ng-false-value="true"
+                    ng-disabled="self.layerSource.config.layerEntries.length !== 1"
+                    class="md-primary">
+                    {{ 'import.service.configure.singleentrycollapse' | translate }}
+                </md-checkbox>
+            </md-input-container>
+
+            <md-input-container class="md-block"
+                ng-if="!self.layerSource.config.singleEntryCollapse"
+                ng-switch-when="dynamicservice">
+                <label translate>import.service.configure.groupname</label>
+                <input name="layerServiceName"
+                    ng-model="self.layerSource.config.name" required>
+                <!-- TODO: decide whether and how to display a hint or error messages -->
+                <!--div ng-messages="self.configure.form.layerName.$error">
+                    <div ng-message="required">This is required!</div>
+                    <div ng-message="md-maxlength">That's too long!</div>
+                </div-->
             </md-input-container>
 
             <md-input-container class="md-block" ng-switch-when="wms">
