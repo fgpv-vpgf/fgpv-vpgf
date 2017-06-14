@@ -27,30 +27,41 @@ class AttribFC extends basicFC.BasicFC {
     }
 
     /**
-    * Returns attribute data for this FC.
-    *
-    * @function getAttribs
-    * @returns {Promise}         resolves with a layer attribute data object
-    */
+     * Returns attribute data for this FC.
+     *
+     * @function getAttribs
+     * @returns {Promise}         resolves with a layer attribute data object
+     */
     getAttribs () {
         return this._layerPackage.getAttribs();
     }
 
+    /**
+     * Indicates if attributes have been downloaded for this FC.
+     *
+     * @function attribsLoaded
+     * @returns {Boolean}         true if attributes are download / downloading.
+     */
     attribsLoaded () {
         return !!this._layerPackage._attribData;
     }
 
     /**
-    * Returns layer-specific data for this FC.
-    *
-    * @function getLayerData
-    * @returns {Promise}         resolves with a layer data object
-    */
+     * Returns layer-specific data for this FC.
+     *
+     * @function getLayerData
+     * @returns {Promise}         resolves with a layer data object
+     */
     getLayerData () {
         return this._layerPackage.layerData;
     }
 
-    // this will actively download / refresh the internal symbology
+    /**
+     * Download or refresh the internal symbology for the FC.
+     *
+     * @function loadSymbology
+     * @returns {Promise}         resolves when symbology has been downloaded
+     */
     loadSymbology () {
         return this.getLayerData().then(lData => {
             if (lData.layerType === 'Feature Layer') {
@@ -64,13 +75,13 @@ class AttribFC extends basicFC.BasicFC {
     }
 
     /**
-    * Extract the feature name from a feature as best we can.
-    *
-    * @function getFeatureName
-    * @param {String} objId      the object id of the attribute
-    * @param {Object} attribs    the dictionary of attributes for the feature.
-    * @returns {String}          the name of the feature
-    */
+     * Extract the feature name from a feature as best we can.
+     *
+     * @function getFeatureName
+     * @param {String} objId      the object id of the attribute
+     * @param {Object} attribs    the dictionary of attributes for the feature.
+     * @returns {String}          the name of the feature
+     */
     getFeatureName (objId, attribs) {
         // TODO revisit the objId parameter.  Do we actually need this fallback anymore?
         // NOTE: we used to have fallback logic here that would use layer settings
@@ -170,7 +181,6 @@ class AttribFC extends basicFC.BasicFC {
      * @return {Promise}              resolves to the best available user friendly attribute name
      */
     aliasedFieldName (attribName) {
-        // TEST STATUS none
         // grab attribute info (waiting for it it finish loading)
         return this.getLayerData().then(lData => {
             return AttribFC.aliasedFieldNameDirect(attribName, lData.fields);
@@ -178,8 +188,14 @@ class AttribFC extends basicFC.BasicFC {
 
     }
 
+    /**
+     * Get the best user-friendly name of a field. Uses alias if alias is defined, else uses the system attribute name.
+     *
+     * @param {String} attribName     the attribute name we want a nice name for
+     * @param {Array} fields          list of field definition objects (esri format) for the layer.
+     * @return {String}               the best available user friendly attribute name
+     */
     static aliasedFieldNameDirect (attribName, fields) {
-        // TEST STATUS none
         let fName = attribName;
 
         // search for aliases
@@ -248,7 +264,7 @@ class AttribFC extends basicFC.BasicFC {
 
     /**
      * Fetches a graphic from the given layer.
-     * Will attempt local copy, will hit the server if not available.
+     * Will attempt local copy (unless overridden), will hit the server if not available.
      *
      * @function fetchGraphic
      * @param  {Integer} objId          ID of object being searched for

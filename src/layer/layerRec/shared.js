@@ -23,10 +23,14 @@ const clientLayerType = {
     UNKNOWN: 'unknown'
 };
 
-// legend data is our modified legend structure.
-// it is similar to esri's server output, but all individual
-// items are promises.
-// TODO proper docs
+/**
+ * Takes an array of (possibly pending) legend data and constructs an array of default
+ * symbology objects. As each legend item loads, the symbology objects are updated.
+ *
+ * @function makeSymbologyArray
+ * @param  {Array} legendData    list of promises that resolve with legend data (svg and labels)
+ * @returns {Array} a list of symbology objects.
+ */
 function makeSymbologyArray(legendData) {
     return legendData.map(item => {
 
@@ -46,6 +50,14 @@ function makeSymbologyArray(legendData) {
     });
 }
 
+/**
+ * Splits an indexed map server url into an object with .rootUrl and .index
+ * properties.
+ *
+ * @function parseUrlIndex
+ * @param  {String} url    an indexed map server url
+ * @returns {Object}  the url split into the server root and the index.
+ */
 function parseUrlIndex(url) {
     // break url into root and index
 
@@ -70,6 +82,14 @@ function parseUrlIndex(url) {
     return result;
 }
 
+/**
+ * Takes a specific layer state and determines if the layer can be considered
+ * loaded or not.
+ *
+ * @function layerLoaded
+ * @param  {String} state    a layer state
+ * @returns {Boolean}        if the layer is loaded or not
+ */
 function layerLoaded(state) {
     switch (state) {
         case states.ERROR:

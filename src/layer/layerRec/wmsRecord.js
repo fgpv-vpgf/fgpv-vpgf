@@ -31,6 +31,12 @@ class WmsRecord extends layerRecord.LayerRecord {
 
     get layerType () { return shared.clientLayerType.OGC_WMS; }
 
+    /**
+     * Creates an options object for the map API object
+     *
+     * @function makeLayerConfig
+     * @returns {Object} an object with api options
+     */
     makeLayerConfig () {
         const cfg = super.makeLayerConfig();
         cfg.visibleLayers = this.config.layerEntries.map(le => le.id);
@@ -56,9 +62,11 @@ class WmsRecord extends layerRecord.LayerRecord {
     }
 
     /**
-     * Run a getFeatureInfo on a WMS layer, return the result as a promise.  Fills the panelData array on resolution.
+     * Run a getFeatureInfo on a WMS layer, return the result as a promise.
+     * Options:
+     * - clickEvent {Object} an event object from the mouse click event, where the user wants to identify.
      *
-     * @param {Object} opts additional argumets like map object, clickEvent, etc.
+     * @param {Object} opts     additional arguemets, see above.
      * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
      */
     identify (opts) {

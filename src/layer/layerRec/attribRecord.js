@@ -47,6 +47,12 @@ class AttribRecord extends layerRecord.LayerRecord {
         return this._featClasses[this._defaultFC].getFormattedAttributes();
     }
 
+    /**
+     * Test if an attribute field has a date data type.
+     *
+     * @param {String} attribName     the attribute name to check if it's a date field
+     * @return {Promise}              resolves with a boolean indicating if attrib name is a date field.
+     */
     checkDateType (attribName) {
         return this._featClasses[this._defaultFC].checkDateType(attribName);
     }
@@ -71,14 +77,38 @@ class AttribRecord extends layerRecord.LayerRecord {
         return this._featClasses[this._defaultFC].getLayerData();
     }
 
+    /**
+    * Extract the feature name from a feature as best we can.
+    *
+    * @function getFeatureName
+    * @param {String} objId      the object id of the attribute
+    * @param {Object} attribs    the dictionary of attributes for the feature.
+    * @returns {String}          the name of the feature
+    */
     getFeatureName (objId, attribs) {
         return this._featClasses[this._defaultFC].getFeatureName(objId, attribs);
     }
 
+    /**
+     * Fetches a graphic for the given object id.
+     * Will attempt local copy (unless overridden), will hit the server if not available.
+     *
+     * @function fetchGraphic
+     * @param  {Integer} objId          ID of object being searched for
+     * @param  {Boolean} ignoreLocal    indicates if we should ignore any local graphic in the layer. cached or server value will be used. defaults to false.
+     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .source is where it came from - 'layer' or 'server'; also .layerFC for convenience
+     */
     fetchGraphic (objId, ignoreLocal = false) {
         return this._featClasses[this._defaultFC].fetchGraphic(objId, ignoreLocal);
     }
 
+    /**
+     * Get feature count of a feature layer.
+     *
+     * @function getFeatureCount
+     * @param {String} url     server url of the feature layer. empty string for file based layers
+     * @return {Promise}       resolves with an integer indicating the feature count.
+     */
     getFeatureCount (url) {
         if (url) {
             // wrapping server call in a function, as we regularly encounter sillyness

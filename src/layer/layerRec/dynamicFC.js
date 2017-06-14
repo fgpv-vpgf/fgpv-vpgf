@@ -60,7 +60,12 @@ class DynamicFC extends attribFC.AttribFC {
         }
     }
 
-    // returns an object with minScale and maxScale values for the feature class
+    /**
+     * Returns an object with minScale and maxScale values for the feature class.
+     *
+     * @function getScaleSet
+     * @returns {Object} scale set for the feature class
+     */
     getScaleSet () {
         return this._scaleSet;
     }
@@ -71,6 +76,12 @@ class DynamicFC extends attribFC.AttribFC {
     get featureCount () { return this._fcount; }
     set featureCount (value) { this._fcount = value; }
 
+    /**
+     * Applies visibility to feature class by manipulating the parent record.
+     *
+     * @function setVisibility
+     * @param {Boolean} value the new visibility setting
+     */
     setVisibility (value) {
         // update visible layers array
         const vLayers = this._parent._layer.visibleLayers.concat();
@@ -111,12 +122,23 @@ class DynamicFC extends attribFC.AttribFC {
 
     }
 
-    // TODO extend this function to other FC's?  do they need it?
+    /**
+     * Returns the visibility of the feature class.
+     *
+     * @function getVisibility
+     * @returns {Boolean} visibility of the feature class
+     */
     getVisibility () {
+        // TODO extend this function to other FC's?  do they need it?
         return this._parent._layer.visibleLayers.indexOf(parseInt(this._idx)) > -1;
     }
 
-    // TODO docs
+    /**
+     * Applies a definition query to the feature class by manipulating the parent record.
+     *
+     * @function setDefinitionQuery
+     * @param {String} query a valid definition query
+     */
     setDefinitionQuery (query) {
         const l = this._parent._layer;
 

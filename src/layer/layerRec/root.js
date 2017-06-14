@@ -26,6 +26,11 @@ class Root {
 
     /**
      * Utility for triggering an event and giving it to the listeners
+     *
+     * @function _fireEvent
+     * @private
+     * @param {Array} handlerArray      array of event handler functions
+     * @param {...Object} eventParams   arbitrary set of parameters to pass to the event handler functions
      */
     _fireEvent (handlerArray, ...eventParams) {
         // if we don't copy the array we could be looping on an array
