@@ -47,7 +47,8 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
     self.common = {
         toggleLayers,
         isSomeLayersSelected,
-        isAllLayersSelected
+        isAllLayersSelected,
+        onDynamicLayerSection
     };
 
     // TODO: turn into a proper class
@@ -276,6 +277,17 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         if (self.layerSource) {
             self.layerSource.reset();
         }
+    }
+
+    /**
+     * A helper function called when the dynamic layer selection changes to update the `singleEntryCollapse` property of the dynamic layer being imported.
+     * The option is enabled only if there is a single layer entry selected.
+     * @function onDynamicLayerSection
+     */
+    function onDynamicLayerSection() {
+        const config = self.layerSource.config;
+
+        config.singleEntryCollapse = config.layerEntries.length === 1;
     }
 
     /**

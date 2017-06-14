@@ -87,13 +87,13 @@
                     name="dynamicLayers"
                     ng-model="self.layerSource.config.layerEntries"
                     ng-model-options="{ trackBy: '$value.index' }"
-                    ng-change="self.layerSource.config.singleEntryCollapse = self.layerSource.config.layerEntries.length === 1"
+                    ng-change="self.common.onDynamicLayerSection()"
                     required multiple>
                     <rv-select-header>
                         <md-checkbox
                             ng-checked="self.common.isAllLayersSelected()"
                             md-indeterminate="self.common.isSomeLayersSelected()"
-                            ng-click="self.common.toggleLayers()"
+                            ng-click="self.common.toggleLayers(); self.common.onDynamicLayerSection();"
                             class="md-primary rv-select-header-all">
                             {{ 'import.service.configure.selectall' | translate }}
                         </md-checkbox>
@@ -112,6 +112,7 @@
                     </div-->
             </md-input-container>
 
+            <!-- the singleEntryCollapse option is enabled to user interaction only when a single layer entry is selected -->
             <md-input-container class="md-block"
                 ng-switch-when="dynamicservice">
                 <md-checkbox
