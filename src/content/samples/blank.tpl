@@ -5,10 +5,14 @@
         <meta content="width=device-width,initial-scale=1" name="viewport">
         <title>Blank Test Page</title>
 
-        <!-- css_inject_point -->
+        <% for (var index in htmlWebpackPlugin.files.css) { %>
+        <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" integrity="<%= htmlWebpackPlugin.files.cssIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"/>
+        <% } %>
     </head>
 
     <body>
-    <!-- js_inject_point -->
+    <% for (var index in htmlWebpackPlugin.files.js) { %>
+    <script src="<%= htmlWebpackPlugin.files.js[index] %>" integrity="<%= htmlWebpackPlugin.files.jsIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"></script>
+    <% } %>
     </body>
 </html>
