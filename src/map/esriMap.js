@@ -12,11 +12,11 @@ function esriMap(esriBundle, geoApi) {
 
         // TODO when jshint parses instance fields properly we can change this from a property to a field
         get _passthroughBindings () { return [
-            'addLayer', 'centerAndZoom', 'centerAt', 'disableKeyboardNavigation', 'getScale', 'on', 'removeLayer',
-            'reorderLayer', 'reposition', 'resize', 'setExtent', 'setScale', 'setZoom', 'toScreen'
+            'addLayer', 'centerAndZoom', 'centerAt', 'destroy', 'disableKeyboardNavigation', 'getScale', 'on',
+            'removeLayer', 'reorderLayer', 'reposition', 'resize', 'setExtent', 'setScale', 'setZoom', 'toScreen'
         ]; }
         get _passthroughProperties () { return [
-            'attribution', 'extent', 'graphicsLayerIds', 'layerIds', 'spatialReference', 'width'
+            'attribution', 'extent', 'graphicsLayerIds', 'height', 'layerIds', 'spatialReference', 'width'
         ]; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
         constructor (domNode, opts) {
