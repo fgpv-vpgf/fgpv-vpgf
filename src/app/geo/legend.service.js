@@ -100,7 +100,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         const legendMappings = configService.getSync.map.legendMappings;
         const mappings = legendMappings[layerRecordId];
         legendMappings[layerRecordId] = [];
-
+        
         // create a new record from its layer blueprint
         const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
         const layerBlueprint = layerBlueprintsCollection.find(blueprint =>
@@ -134,6 +134,15 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             const reloadedLegendBlock = _makeLegendBlock(legendBlockConfig, layerBlueprintsCollection);
 
             const index = legendBlockParent.removeEntry(legendBlock);
+
+            if (legendBlock.blockType === LegendBlock.TYPES.NODE) {
+                layerRegistry.removeBoundingBoxRecord(`${legendBlock.id}_bbox`);
+            } else if (legendBlock.blockType === LegendBlock.TYPES.GROUP) {
+                legendBlock.entries.forEach(entries => {
+                    layerRegistry.removeBoundingBoxRecord(`${entries.id}_bbox`);
+                });
+            }
+
             legendBlockParent.addEntry(reloadedLegendBlock, index);
         });
     }
