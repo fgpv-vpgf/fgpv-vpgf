@@ -34,10 +34,10 @@ class ImageRecord extends layerRecord.LayerRecord {
     get layerType () { return shared.clientLayerType.ESRI_IMAGE; }
 
     /**
-    * Triggers when the layer loads.
-    *
-    * @function onLoad
-    */
+     * Triggers when the layer loads.
+     *
+     * @function onLoad
+     */
     onLoad () {
         const loadPromises = super.onLoad();
 

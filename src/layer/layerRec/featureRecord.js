@@ -37,6 +37,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
         }
     }
 
+    /**
+     * Creates an options object for the map API object
+     *
+     * @function makeLayerConfig
+     * @returns {Object} an object with api options
+     */
     makeLayerConfig () {
         const cfg = super.makeLayerConfig();
         cfg.mode = this.config.state.snapshot ? this._layerClass.MODE_SNAPSHOT
@@ -50,8 +56,13 @@ class FeatureRecord extends attribRecord.AttribRecord {
         return cfg;
     }
 
+    /**
+     * Indicates the geometry type of the layer.
+     *
+     * @function getGeomType
+     * @returns {String} the geometry type of the layer
+     */
     getGeomType () {
-        // standard case, layer has no geometry. This gets overridden in feature-based Record classes.
         return this._geometryType;
     }
 
@@ -114,11 +125,22 @@ class FeatureRecord extends attribRecord.AttribRecord {
         });
     }
 
+    /**
+     * Get feature count of this layer.
+     *
+     * @return {Promise}       resolves with an integer indicating the feature count.
+     */
     getFeatureCount () {
         // just use the layer url (or lack of in case of file layer)
         return super.getFeatureCount(this._layer.url);
     }
 
+    /**
+     * Indicates if the layer is file based.
+     *
+     * @function isFileLayer
+     * @returns {Boolean} true if layer is file based
+     */
     isFileLayer () {
         // TODO revisit.  is it robust enough?
         return this._layer && !this._layer.url;
@@ -133,11 +155,17 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
     get featureCount () { return this._fcount; }
 
+    /**
+     * Triggers when the mouse enters a feature of the layer.
+     *
+     * @function onMouseOver
+     * @param {Object} standard mouse event object
+     */
     onMouseOver (e) {
         /* discussion on quick-lookup.
         there are two different ways to get attributes from the server for a single feature.
         1. using the feature rest endpoint (FR)
-        2. using the feature layer's query function (FQ)
+        2. using the feature layer's query rest endpoint (FQ)
         FR returns a smaller response object (it omits a pile of layer metadata). this is good.
         FR is used in the hilight module. so we are already caching that response and have the
         code to make the FR request. this is good.
@@ -215,6 +243,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
         }
     }
 
+    /**
+     * Triggers when the mouse leaves a feature of the layer.
+     *
+     * @function onMouseOut
+     * @param {Object} standard mouse event object
+     */
     onMouseOut (e) {
         // tell anyone listening we moused out
         const outBundle = {
@@ -225,11 +259,17 @@ class FeatureRecord extends attribRecord.AttribRecord {
     }
 
     /**
-    * Run a query on a feature layer, return the result as a promise.  Fills the panelData array on resolution. // TODO update
-    * @function identify
-    * @param {Object} opts additional argumets like map object, clickEvent, etc.
-    * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
-    */
+     * Run a query on a feature layer, return the result as a promise.
+     * Options:
+     * - clickEvent {Object} an event object from the mouse click event, where the user wants to identify.
+     * - map {Object}        map object. A geoApi wrapper, such as esriMap, not an actual esri api map
+     * - geometry {Object}   geometry (in map coordinates) to identify against
+     * - tolerance {Integer} an optional click tolerance for the identify
+     *
+     * @function identify
+     * @param {Object} opts    additional arguemets, see above.
+     * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
+     */
     identify (opts) {
         // TODO add full documentation for options parameter
 
@@ -256,6 +296,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         if (this._layer.geometryType === 'esriGeometryPolygon' && !this.isFileLayer()) {
             qry.geometry = opts.geometry;
         } else {
+            // TODO investigate why we are using opts.clickEvent.mapPoint and not opts.geometry
             qry.geometry = this.makeClickBuffer(opts.clickEvent.mapPoint, opts.map, tolerance);
         }
 
@@ -293,7 +334,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
         return { identifyResults: [identifyResult], identifyPromise };
     }
 
-    // TODO docs
+    /**
+     * Applies a definition query to the layer.
+     *
+     * @function setDefinitionQuery
+     * @param {String} query a valid definition query
+     */
     setDefinitionQuery (query) {
         // very difficult.
         this._layer.setDefinitionExpression(query);

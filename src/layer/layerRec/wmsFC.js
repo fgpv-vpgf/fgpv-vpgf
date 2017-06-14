@@ -53,7 +53,12 @@ function getWMSLayerTitle(wmsLayer, wmsLayerId) {
  */
 class WmsFC extends basicFC.BasicFC {
 
-    // this will actively download / refresh the internal symbology
+    /**
+     * Download or refresh the internal symbology for the FC.
+     *
+     * @function loadSymbology
+     * @returns {Promise}         resolves when symbology has been downloaded
+     */
     loadSymbology () {
         const configLayerEntries =  this._parent.config.layerEntries;
         const gApi = this._parent._apiRef;
