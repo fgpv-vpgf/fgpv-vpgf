@@ -387,10 +387,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
     }
 
     // override to add child index parameter
-    zoomToScale (childIdx, map, lods, zoomIn, zoomGraphic = false) {
+    zoomToScale (childIdx, map, lods, zoomIn) {
         // get scale set from child, then execute zoom
         const scaleSet = this._featClasses[childIdx].getScaleSet();
-        return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, zoomGraphic);
+        return this._zoomToScaleSet(map, lods, zoomIn, scaleSet);
     }
 
     isOffScale (childIdx, mapScale) {

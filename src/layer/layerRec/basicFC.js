@@ -101,7 +101,7 @@ class BasicFC extends placeholderFC.PlaceholderFC {
     }
 
     zoomToBoundary (map) {
-        return this._parent.zoomToExtent(map, this.extent);
+        return map.zoomToExtent(this.extent);
     }
 
 }

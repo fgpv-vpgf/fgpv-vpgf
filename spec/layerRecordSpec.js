@@ -55,6 +55,9 @@ class FakeMap {
         });
     }
     centerAt () { return 'sadf'; }
+    zoomToExtent (extent) {
+        return Promise.resolve(extent);
+    }
 }
 
 // A class that mocks the layer class from Esri
@@ -184,7 +187,7 @@ describe('layerRecord', () => {
     const lod1 = new FakeLOD();
     const lod2 = new FakeLOD(1, 226, 226000);
     const lod3 = new FakeLOD(3, 339, 339000);
-    const lods = [lod1, lod2, lod3];
+    const lods = [lod3, lod2, lod1]; // LODS default in decreasing scale
     const map = new FakeMap();
 
     beforeEach(() => {
@@ -248,14 +251,12 @@ describe('layerRecord', () => {
         const layerRecordObject = new layerRecord.LayerRecord(FakeLayerObject, apiRef, config, esriLayer);
         const zoomIn = true;
         const scaleSet = {
-            minScale: 1,
-            maxScale: 2
+            minScale: 300000,
+            maxScale: 100000
         };
 
-        const zoomGraphic = true;
-
-        let output = layerRecordObject.findZoomScale(lods, scaleSet, zoomIn, zoomGraphic);
-        expect(output).toEqual(lod3);
+        let output = layerRecordObject.findZoomScale(lods, scaleSet, zoomIn);
+        expect(output).toEqual(lod2);
     });
 
     it('should set the map scale', () => {
@@ -264,20 +265,6 @@ describe('layerRecord', () => {
         let mapDone = layerRecordObject.setMapScale(map, lod1, zoomIn);
 
         expect(mapDone).not.toBe(undefined);
-    });
-
-    it('should zoom the map to an extent', (done) => {
-        const layerRecordObject = new layerRecord.LayerRecord(FakeLayerObject, apiRef, config, esriLayer);
-        const extent = new FakeExtent();
-        let promise = layerRecordObject.zoomToExtent(map, extent);
-
-        promise.then(val => {
-            expect(val).toEqual(extent);
-            done();
-        }).catch(e => {
-            fail(`Exception was thrown: ${e}`);
-            done();
-        });
     });
 
     it('should zoom to boundary', (done) => {

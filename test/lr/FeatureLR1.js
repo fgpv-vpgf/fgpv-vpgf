@@ -2,7 +2,7 @@ import geoapi from '../../src/index';
 
 // https://github.com/fgpv-vpgf/geoApi/wiki/Locally-Testing-GeoAPI
 // to run, temporarily update package.json
-// "main": "test/lr/FeatureLRBasic1.js"
+// "main": "test/lr/FeatureLR1.js"
 
 geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     console.log('TEST PAGE - Basic Testing on Feature Layer Record');

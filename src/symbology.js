@@ -904,41 +904,6 @@ function buildMapServerToLocalLegend(esriBundle, geoApi) {
     };
 }
 
-// TODO getZoomLevel should probably live in a file not named symbology
-/**
-* Takes the lod list and finds level as close to and above scale limit
-*
-* @param {Array} lods array of esri LODs https://developers.arcgis.com/javascript/jsapi/lod-amd.html
-* @param {Integer} maxScale object largest zoom level for said layer
-* @returns {Number} current LOD
-*/
-function getZoomLevel(lods, maxScale) {
-    // Find level as close to and above scaleLimit
-    const scaleLimit = maxScale; // maxScale obj in returned config
-    let found = false;
-    let currentLod = Math.ceil(lods.length / 2);
-    let lowLod = 0;
-    let highLod = lods.length - 1;
-
-    if (maxScale === 0) {
-        return lods.length - 1;
-    }
-
-    // Binary Search
-    while (!found) {
-        if (lods[currentLod].scale >= scaleLimit) {
-            lowLod = currentLod;
-        } else {
-            highLod = currentLod;
-        }
-        currentLod = Math.floor((highLod + lowLod) / 2);
-        if (highLod === lowLod + 1) {
-            found = true;
-        }
-    }
-    return currentLod;
-}
-
 module.exports = (esriBundle, geoApi, window) => {
     return {
         getGraphicIcon,
@@ -946,11 +911,8 @@ module.exports = (esriBundle, geoApi, window) => {
         rendererToLegend: buildRendererToLegend(window),
         generatePlaceholderSymbology,
         generateWMSSymbology,
-
         listToIconSymbology: list => _listToSymbology(renderSymbologyIcon, list),
         listToImageSymbology: list => _listToSymbology(renderSymbologyImage, list),
-
-        getZoomLevel,
         enhanceRenderer,
         mapServerToLocalLegend: buildMapServerToLocalLegend(esriBundle, geoApi)
     };
