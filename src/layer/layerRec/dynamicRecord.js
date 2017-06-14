@@ -95,14 +95,26 @@ class DynamicRecord extends attribRecord.AttribRecord {
         }
     }
 
-    // TODO docs
+    /**
+     * Get feature count of a child layer.
+     *
+     * @function getFeatureCount
+     * @param {String} featureIdx     index of the child
+     * @return {Promise}              resolves with an integer indicating the feature count.
+     */
     getFeatureCount (featureIdx) {
         // point url to sub-index we want
         // TODO might change how we manage index and url
         return super.getFeatureCount(this._layer.url + '/' + featureIdx);
     }
 
-    // TODO docs
+    /**
+     * Will set the layer opacity, and update all child FCs to the same opacity.
+     * Used for Dynamic layers that do not support child opacity.
+     *
+     * @function synchOpacity
+     * @param {Numeric} opacity     an opacity value (decimal between 0 and 1)
+     */
     synchOpacity (opacity) {
         // in the case where a dynamic layer does not support child opacity, if a user
         // changes the opacity of a child, it actually just adjusts the opacity of the layer.
@@ -124,10 +136,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
     }
 
     /**
-    * Triggers when the layer loads.
-    *
-    * @function onLoad
-    */
+     * Triggers when the layer loads.
+     *
+     * @function onLoad
+     */
     onLoad () {
         const loadPromises = super.onLoad();
         this._isTrueDynamic = this._layer.supportsDynamicLayers;
@@ -386,17 +398,40 @@ class DynamicRecord extends attribRecord.AttribRecord {
         });
     }
 
-    // override to add child index parameter
+    /**
+     * Zoom to a valid scale level for a child layer.
+     *
+     * @function zoomToScale
+     * @param {String}  childIndex    index of the child layer to target
+     * @param {Object} map            the map object
+     * @param {Array} lods            level of details array for basemap
+     * @param {Boolean} zoomIn        the zoom to scale direction; true need to zoom in; false need to zoom out
+     */
     zoomToScale (childIdx, map, lods, zoomIn) {
         // get scale set from child, then execute zoom
         const scaleSet = this._featClasses[childIdx].getScaleSet();
         return this._zoomToScaleSet(map, lods, zoomIn, scaleSet);
     }
 
+    /**
+     * Indicates if the child layer is not visible at the given scale.
+     *
+     * @function isOffScale
+     * @param {String}  childIndex    index of the child layer to target
+     * @param {Integer}  mapScale the scale to test against
+     * @returns {Boolean} true if layer is not visible at the scale
+     */
     isOffScale (childIdx, mapScale) {
         return this._featClasses[childIdx].isOffScale(mapScale);
     }
 
+    /**
+     * Indicates the layer is queryable.
+     *
+     * @function isQueryable
+     * @param {String}  childIndex    index of the child layer to target
+     * @returns {Boolean} the queryability of the layer
+     */
     isQueryable (childIdx) {
         return this._featClasses[childIdx].queryable;
     }
@@ -413,7 +448,15 @@ class DynamicRecord extends attribRecord.AttribRecord {
     }
     */
 
+    /**
+     * Get a structured representation of the heirarchy of child layers in this Record.
+     * We omit parts of the tree that were not specified to load / be used in the config.
+     *
+     * @function getChildTree
+     * @return {Object} structured representation of child layers
+     */
     getChildTree () {
+        // TODO document somehow the format of the return object
         if (this._childTree) {
             return this._childTree;
         } else {
@@ -424,6 +467,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
     /**
      * Get the best user-friendly name of a field. Uses alias if alias is defined, else uses the system attribute name.
      *
+     * @function aliasedFieldName
      * @param {String} attribName     the attribute name we want a nice name for
      * @param {String}  childIndex    index of the child layer whos attributes we are looking at
      * @return {Promise}              resolves to the best available user friendly attribute name
@@ -434,6 +478,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
     /**
      * Retrieves attributes from a layer for a specified feature index
+     * 
+     * @function getFormattedAttributes
      * @param {String}  childIndex  index of the child layer to get attributes for
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
@@ -441,6 +487,16 @@ class DynamicRecord extends attribRecord.AttribRecord {
         return this._featClasses[childIndex].getFormattedAttributes();
     }
 
+    /**
+     * Fetches a graphic from the given child layer.
+     * Will attempt local copy (unless overridden), will hit the server if not available.
+     *
+     * @function fetchGraphic
+     * @param {String}  childIndex    index of the child layer to target
+     * @param  {Integer} objId          ID of object being searched for
+     * @param  {Boolean} ignoreLocal    indicates if we should ignore any local graphic in the layer. cached or server value will be used. defaults to false.
+     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .source is where it came from - 'layer' or 'server'; also .layerFC for convenience
+     */
     fetchGraphic (childIndex, objId, ignoreLocal = false) {
         return this._featClasses[childIndex].fetchGraphic(objId, ignoreLocal);
     }
@@ -448,6 +504,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
     /**
      * Check to see if the attribute in question is an esriFieldTypeDate type.
      *
+     * @function checkDateType
      * @param {String} attribName     the attribute name we want to check if it's a date or not
      * @param {String}  childIndex    index of the child layer whos attributes we are looking at
      * @return {Promise}              resolves to true or false based on the attribName type being esriFieldTypeDate
@@ -457,44 +514,67 @@ class DynamicRecord extends attribRecord.AttribRecord {
     }
 
     /**
-    * Returns attribute data for a child layer.
-    *
-    * @function getAttribs
-    * @param {String} childIndex  the index of the child layer
-    * @returns {Promise}          resolves with a layer attribute data object
-    */
+     * Returns attribute data for a child layer.
+     *
+     * @function getAttribs
+     * @param {String} childIndex  the index of the child layer
+     * @returns {Promise}          resolves with a layer attribute data object
+     */
     getAttribs (childIndex) {
         return this._featClasses[childIndex].getAttribs();
     }
 
     /**
-    * Returns layer-specific data for a child layer
-    *
-    * @function getLayerData
-    * @param {String} childIndex  the index of the child layer
-    * @returns {Promise}          resolves with a layer data object
-    */
+     * Returns layer-specific data for a child layer
+     *
+     * @function getLayerData
+     * @param {String} childIndex  the index of the child layer
+     * @returns {Promise}          resolves with a layer data object
+     */
     getLayerData (childIndex) {
         return this._featClasses[childIndex].getLayerData();
     }
 
+    /**
+     * Extract the feature name from a feature as best we can.
+     *
+     * @function getFeatureName
+     * @param {String} childIndex  the index of the child layer
+     * @param {String} objId      the object id of the attribute
+     * @param {Object} attribs    the dictionary of attributes for the feature.
+     * @returns {String}          the name of the feature
+     */
     getFeatureName (childIndex, objId, attribs) {
         return this._featClasses[childIndex].getFeatureName(objId, attribs);
     }
 
+    /**
+     * Return symbology for a child layer.
+     *
+     * @function getSymbology
+     * @param {String} childIndex  the index of the child layer
+     * @returns {Object}           the symbology object
+     */
     getSymbology (childIndex) {
         return this._featClasses[childIndex].symbology;
     }
 
     /**
-    * Run a query on a dynamic layer, return the result as a promise.
-    * @function identify
-    * @param {Object} opts additional argumets like map object, clickEvent, etc.
-    * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
-    */
+     * Run a query on a dynamic layer, return the result as a promise.
+     * Options:
+     * - map {Object}             map object. A geoApi wrapper, such as esriMap, not an actual esri api map
+     * - geometry {Object}        geometry (in map coordinates) to identify against
+     * - mapExtent {Object}       extent object of the current map view
+     * - height {Integer}         height of the map view in pixels
+     * - width {Integer}          width of the map view in pixels
+     * - tolerance {Integer}      an optional click tolerance for the identify. Defaults to 5
+     * - returnGeometry {Boolean} if result geometery should be returned with results.  Defaults to false
+     *
+     * @function identify
+     * @param {Object} opts additional arguemets, see above.
+     * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
+     */
     identify (opts) {
-        // TODO add full documentation for options parameter
-
         // bundles results from all leaf layers
         const identifyResults = [];
 
@@ -590,10 +670,18 @@ class DynamicRecord extends attribRecord.AttribRecord {
         };
     }
 
-    // TODO docs
-    getChildName (index) {
+    /**
+     * Retrieves a child layer name from the server.
+     *
+     * @function getChildName
+     * @param {String}  childIndex  index of the child layer to get attributes for
+     * @return {String}             server name of the child layer
+     */
+    getChildName (childIndex) {
         // TODO revisit logic. is this the best way to do this? what are the needs of the consuming code?
         // TODO restructure so WMS can use this too?
+        // TODO what about config overrides of names?
+        // TODO WHO IS EVEN USING THIS?
         // will not use FC classes, as we also need group names
         return this._layer.layerInfos[index].name;
     }

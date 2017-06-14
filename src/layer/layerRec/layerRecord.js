@@ -64,7 +64,10 @@ class LayerRecord extends root.Root {
     }
 
     /**
-     * Attach event handlers to layer events
+     * Attach record event handlers to common layer events
+     *
+     * @function bindEvents
+     * @param {Object} layer the api layer object
      */
     bindEvents (layer) {
         // TODO optional refactor.  Rather than making the events object in the parameter,
@@ -85,7 +88,10 @@ class LayerRecord extends root.Root {
     }
 
     /**
-     * Perform layer initialization tasks
+     * Generates a new api layer object.
+     *
+     * @function constructLayer
+     * @returns {Object} the new api layer object.
      */
     constructLayer () {
         this._layer = this.layerClass(this.config.url, this.makeLayerConfig());
@@ -94,7 +100,11 @@ class LayerRecord extends root.Root {
     }
 
     /**
-     * Handle a change in layer state
+     * Reacts to a layer-level state change.
+     *
+     * @function _stateChange
+     * @private
+     * @param {String} newState the state the layer has now become
      */
     _stateChange (newState) {
         this._state = newState;
@@ -106,7 +116,10 @@ class LayerRecord extends root.Root {
     }
 
     /**
-     * Wire up state change listener
+     * Wire up state change listener.
+     *
+     * @function addStateListener
+     * @param {Function} listenerCallback function to call when a state change event happens
      */
     addStateListener (listenerCallback) {
         this._stateListeners.push(listenerCallback);
@@ -114,7 +127,10 @@ class LayerRecord extends root.Root {
     }
 
     /**
-     * Remove a state change listener
+     * Remove a state change listener.
+     *
+     * @function removeStateListener
+     * @param {Function} listenerCallback function to not call when a state change event happens
      */
     removeStateListener (listenerCallback) {
         const idx = this._stateListeners.indexOf(listenerCallback);
@@ -125,7 +141,10 @@ class LayerRecord extends root.Root {
     }
 
     /**
-     * Wire up mouse hover listener
+     * Wire up mouse hover listener.
+     *
+     * @function addHoverListener
+     * @param {Function} listenerCallback function to call when a hover event happens
      */
     addHoverListener (listenerCallback) {
         this._hoverListeners.push(listenerCallback);
@@ -133,7 +152,10 @@ class LayerRecord extends root.Root {
     }
 
     /**
-     * Remove a mouse hover listener
+     * Remove a mouse hover listener.
+     *
+     * @function removeHoverListener
+     * @param {Function} listenerCallback function to not call when a hover event happens
      */
     removeHoverListener (listenerCallback) {
         const idx = this._hoverListeners.indexOf(listenerCallback);
@@ -144,11 +166,11 @@ class LayerRecord extends root.Root {
     }
 
     /**
-    * Triggers when the layer loads.
-    * Returns an array of promises that need to resolve for layer to be loaded.
-    *
-    * @function onLoad
-    */
+     * Triggers when the layer loads.
+     *
+     * @function onLoad
+     * @returns {Array} list of promises that need to resolve for layer to be considered loaded.
+     */
     onLoad () {
         // only super-general stuff in here, that all layers should run.
         console.info(`Layer loaded: ${this._layer.id}`);
@@ -177,7 +199,10 @@ class LayerRecord extends root.Root {
     }
 
     /**
-     * Handles when the layer has an error
+     * Triggers when the layer has an error.
+     *
+     * @function onError
+     * @param {Object} e error event object
      */
     onError (e) {
         console.warn(`Layer error: ${e}`);
@@ -186,14 +211,18 @@ class LayerRecord extends root.Root {
     }
 
     /**
-     * Handles when the layer starts to update
+     * Triggers when the layer starts to update.
+     *
+     * @function onUpdateStart
      */
     onUpdateStart () {
         this._stateChange(shared.states.REFRESH);
     }
 
     /**
-     * Handles when the layer finishes updating
+     * Triggers when the layer finishes updating.
+     *
+     * @function onUpdateEnd
      */
     onUpdateEnd () {
         this._stateChange(shared.states.LOADED);
@@ -214,7 +243,10 @@ class LayerRecord extends root.Root {
     }
 
     /**
-     * Creates an options object for the physical layer
+     * Creates an options object for the map API object
+     *
+     * @function makeLayerConfig
+     * @returns {Object} an object with api options
      */
     makeLayerConfig () {
         return {
@@ -228,6 +260,7 @@ class LayerRecord extends root.Root {
      * Figure out visibility scale.  Will use layer minScale/maxScale
      * and map levels of detail to determine scale boundaries.
      *
+     * @function findZoomScale
      * @param {Array} lods            array of valid levels of detail for the map
      * @param {Object} scaleSet       contains .minScale and .maxScale for valid viewing scales
      * @param {Boolean} zoomIn        the zoom to scale direction; true need to zoom in; false need to zoom out
@@ -251,13 +284,14 @@ class LayerRecord extends root.Root {
     }
 
     /**
-    * Set map scale depending on zooming in or zooming out of layer visibility scale
-    *
-    * @param {Object} map layer to zoom to scale to for feature layers; parent layer for dynamic layers
-    * @param {Object} lod scale object the map will be set to
-    * @param {Boolean} zoomIn the zoom to scale direction; true need to zoom in; false need to zoom out
-    * @returns {Promise} resolves after map is done changing its extent
-    */
+     * Set map scale depending on zooming in or zooming out of layer visibility scale
+     *
+     * @function setMapScale
+     * @param {Object} map layer to zoom to scale to for feature layers; parent layer for dynamic layers
+     * @param {Object} lod scale object the map will be set to
+     * @param {Boolean} zoomIn the zoom to scale direction; true need to zoom in; false need to zoom out
+     * @returns {Promise} resolves after map is done changing its extent
+     */
     setMapScale (map, lod, zoomIn) {
         // TODO possible this would live in the map manager in a bigger refactor.
         // NOTE because we utilize the layer object's full extent (and not child feature class extents),
@@ -288,6 +322,7 @@ class LayerRecord extends root.Root {
      * Figure out visibility scale and zoom to it.  Will use layer minScale/maxScale
      * and map levels of detail to determine scale boundaries.
      *
+     * @function _zoomToScaleSet
      * @private
      * @param {Object} map            the map object
      * @param {Array} lods            level of details array for basemap
@@ -303,31 +338,48 @@ class LayerRecord extends root.Root {
         return this.setMapScale(map, zoomLod, zoomIn);
     }
 
-    // TODO docs
+    /**
+     * Zoom to a valid scale level for this layer.
+     *
+     * @function zoomToScale
+     * @param {Object} map            the map object
+     * @param {Array} lods            level of details array for basemap
+     * @param {Boolean} zoomIn        the zoom to scale direction; true need to zoom in; false need to zoom out
+     */
     zoomToScale (map, lods, zoomIn) {
         // get scale set from child, then execute zoom
         const scaleSet = this._featClasses[this._defaultFC].getScaleSet();
         return this._zoomToScaleSet(map, lods, zoomIn, scaleSet);
     }
 
-    // TODO docs
+    /**
+     * Indicates if the layer is not visible at the given scale.
+     *
+     * @function isOffScale
+     * @param {Integer}  mapScale the scale to test against
+     * @returns {Boolean} true if layer is not visible at the scale
+     */
     isOffScale (mapScale) {
         return this._featClasses[this._defaultFC].isOffScale(mapScale);
     }
 
     /**
-    * Zoom to layer boundary of the layer specified by layerId
-    * @param {Object} map  esriMap object we want to execute the zoom on
-    * @return {Promise} resolves when map is done zooming
-    */
+     * Zoom to layer boundary of the layer specified by layerId
+     * 
+     * @function zoomToBoundary
+     * @param {Object} map  esriMap object we want to execute the zoom on
+     * @return {Promise} resolves when map is done zooming
+     */
     zoomToBoundary (map) {
         return map.zoomToExtent(this.extent);
     }
 
     /**
-    * Returns the visible scale values of the layer
-    * @returns {Object} has properties .minScale and .maxScale
-    */
+     * Returns the visible scale values of the layer
+     * 
+     * @function getVisibleScales
+     * @returns {Object} has properties .minScale and .maxScale
+     */
     getVisibleScales () {
         // default layer, take from layer object
         // TODO do we need to handle a missing layer case?
@@ -339,9 +391,11 @@ class LayerRecord extends root.Root {
     }
 
     /**
-    * Returns the feature count
-    * @returns {Promise} resolves feature count
-    */
+     * Returns the feature count
+     * 
+     * @function getFeatureCount
+     * @returns {Promise} resolves feature count
+     */
     getFeatureCount () {
         // TODO determine best result to indicate that layer does not have features
         //      we may want a null so that UI can display a different message (or suppress the message).
@@ -351,6 +405,8 @@ class LayerRecord extends root.Root {
 
     /**
      * Create an extent centered around a point, that is appropriate for the current map scale.
+     * 
+     * @function makeClickBuffer
      * @param {Object} point       point on the map for extent center
      * @param {Object} map         map object the extent is relevant for
      * @param {Integer} tolerance  optional. distance in pixels from mouse point that qualifies as a hit. default is 5
@@ -367,26 +423,45 @@ class LayerRecord extends root.Root {
         return cBuff.centerAt(point);
     }
 
-    // TODO docs
     get symbology () { return this._featClasses[this._defaultFC].symbology; }
 
-    // TODO docs
+    /**
+     * Indicates the layer is queryable.
+     *
+     * @function isQueryable
+     * @returns {Boolean} the queryability of the layer
+     */
     isQueryable () {
         return this._featClasses[this._defaultFC].queryable;
     }
 
-    // TODO docs
+    /**
+     * Applies queryability to the layer.
+     *
+     * @function setQueryable
+     * @param {Boolean} value the new queryability setting
+     */
     setQueryable (value) {
         this._featClasses[this._defaultFC].queryable = value;
     }
 
+    /**
+     * Indicates the geometry type of the layer.
+     *
+     * @function getGeomType
+     * @returns {String} the geometry type of the layer
+     */
     getGeomType () {
         // standard case, layer has no geometry. This gets overridden in feature-based Record classes.
         return undefined;
     }
 
-    // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
-    // TODO docs
+    /**
+     * Provides the proxy interface object to the layer.
+     *
+     * @function getProxy
+     * @returns {Object} the proxy interface for the layer
+     */
     getProxy () {
         // NOTE baseclass used by things like WMSRecord, ImageRecord, TileRecord
         if (!this._rootProxy) {

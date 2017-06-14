@@ -31,7 +31,12 @@ class BasicFC extends placeholderFC.PlaceholderFC {
 
     }
 
-    // returns an object with minScale and maxScale values for the feature class
+    /**
+     * Returns an object with minScale and maxScale values for the feature class.
+     *
+     * @function getScaleSet
+     * @returns {Object} scale set for the feature class
+     */
     getScaleSet () {
         // basic case - we get it from the esri layer
         // TODO need to test for missing layer??
@@ -42,6 +47,13 @@ class BasicFC extends placeholderFC.PlaceholderFC {
         };
     }
 
+    /**
+     * Indicates if the feature class is not visible at the given scale.
+     *
+     * @function isOffScale
+     * @param {Integer}  mapScale the scale to test against
+     * @returns {Boolean} true if layer is not visible at the scale
+     */
     isOffScale (mapScale) {
         const scaleSet = this.getScaleSet();
 
@@ -67,20 +79,36 @@ class BasicFC extends placeholderFC.PlaceholderFC {
         return result;
     }
 
-    // TODO docs
+    /**
+     * Returns the visibility of the feature class.
+     *
+     * @function getVisibility
+     * @returns {Boolean} visibility of the feature class
+     */
     getVisibility () {
         return this._parent._layer.visible;
     }
 
-    // TODO docs
+    /**
+     * Applies visibility to feature class.
+     *
+     * @function setVisibility
+     * @param {Boolean} value the new visibility setting
+     */
     setVisibility (value) {
         // basic case - set layer visibility
         this._parent._layer.setVisibility(value);
     }
 
-    // this will actively download / refresh the internal symbology
-    // mergeAllLayers indicates we should collate entire parent legend into one block
-    //                e.g. for basemap tile. this._idx would have value 0, but we want all indexes
+    /**
+     * Download or refresh the internal symbology for the FC.
+     * mergeAllLayers indicates we should collate entire parent legend into one block.
+     * E.g. for basemap tile. the FC index would be 0, but we want all indexes
+     *
+     * @function loadSymbology
+     * @param {Boolean}     mergeAllLayers take entire service legend, no just legend for this FC. Defaults to false.
+     * @returns {Promise}   resolves when symbology has been downloaded
+     */
     loadSymbology (mergeAllLayers = false) {
         // get symbology from service legend.
         // this is used for non-feature based sources (tiles, image, raster).
@@ -100,6 +128,11 @@ class BasicFC extends placeholderFC.PlaceholderFC {
         }
     }
 
+    /**
+     * Zoom to the boundary of the FC.
+     * @param {Object} map  esriMap object we want to execute the zoom on
+     * @return {Promise} resolves when map is done zooming
+     */
     zoomToBoundary (map) {
         return map.zoomToExtent(this.extent);
     }

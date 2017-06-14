@@ -66,8 +66,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
         return this._geometryType;
     }
 
-    // returns the proxy interface object for the root of the layer (i.e. main entry in legend, not nested child things)
-    // TODO docs
+    /**
+     * Provides the proxy interface object to the layer.
+     *
+     * @function getProxy
+     * @returns {Object} the proxy interface for the layer
+     */
     getProxy () {
         if (!this._rootProxy) {
             this._rootProxy = new layerInterface.LayerInterface(this, this.initialConfig.controls);
@@ -77,10 +81,10 @@ class FeatureRecord extends attribRecord.AttribRecord {
     }
 
     /**
-    * Triggers when the layer loads.
-    *
-    * @function onLoad
-    */
+     * Triggers when the layer loads.
+     *
+     * @function onLoad
+     */
     onLoad () {
         const loadPromises = super.onLoad();
 
@@ -128,6 +132,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
     /**
      * Get feature count of this layer.
      *
+     * @function getFeatureCount
      * @return {Promise}       resolves with an integer indicating the feature count.
      */
     getFeatureCount () {

@@ -27,41 +27,41 @@ class AttribFC extends basicFC.BasicFC {
     }
 
     /**
-    * Returns attribute data for this FC.
-    *
-    * @function getAttribs
-    * @returns {Promise}         resolves with a layer attribute data object
-    */
+     * Returns attribute data for this FC.
+     *
+     * @function getAttribs
+     * @returns {Promise}         resolves with a layer attribute data object
+     */
     getAttribs () {
         return this._layerPackage.getAttribs();
     }
 
     /**
-    * Indicates if attributes have been downloaded for this FC.
-    *
-    * @function attribsLoaded
-    * @returns {Boolean}         true if attributes are download / downloading.
-    */
+     * Indicates if attributes have been downloaded for this FC.
+     *
+     * @function attribsLoaded
+     * @returns {Boolean}         true if attributes are download / downloading.
+     */
     attribsLoaded () {
         return !!this._layerPackage._attribData;
     }
 
     /**
-    * Returns layer-specific data for this FC.
-    *
-    * @function getLayerData
-    * @returns {Promise}         resolves with a layer data object
-    */
+     * Returns layer-specific data for this FC.
+     *
+     * @function getLayerData
+     * @returns {Promise}         resolves with a layer data object
+     */
     getLayerData () {
         return this._layerPackage.layerData;
     }
 
     /**
-    * Download or refresh the internal symbology for the FC.
-    *
-    * @function loadSymbology
-    * @returns {Promise}         resolves when symbology has been downloaded
-    */
+     * Download or refresh the internal symbology for the FC.
+     *
+     * @function loadSymbology
+     * @returns {Promise}         resolves when symbology has been downloaded
+     */
     loadSymbology () {
         return this.getLayerData().then(lData => {
             if (lData.layerType === 'Feature Layer') {
@@ -75,13 +75,13 @@ class AttribFC extends basicFC.BasicFC {
     }
 
     /**
-    * Extract the feature name from a feature as best we can.
-    *
-    * @function getFeatureName
-    * @param {String} objId      the object id of the attribute
-    * @param {Object} attribs    the dictionary of attributes for the feature.
-    * @returns {String}          the name of the feature
-    */
+     * Extract the feature name from a feature as best we can.
+     *
+     * @function getFeatureName
+     * @param {String} objId      the object id of the attribute
+     * @param {Object} attribs    the dictionary of attributes for the feature.
+     * @returns {String}          the name of the feature
+     */
     getFeatureName (objId, attribs) {
         // TODO revisit the objId parameter.  Do we actually need this fallback anymore?
         // NOTE: we used to have fallback logic here that would use layer settings

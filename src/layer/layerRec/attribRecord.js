@@ -105,6 +105,7 @@ class AttribRecord extends layerRecord.LayerRecord {
     /**
      * Get feature count of a feature layer.
      *
+     * @function getFeatureCount
      * @param {String} url     server url of the feature layer. empty string for file based layers
      * @return {Promise}       resolves with an integer indicating the feature count.
      */
