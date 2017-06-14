@@ -63,8 +63,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
                 if (event.keyCode === keyNames.ENTER) {
                     connectOnContinue();
                 }}, // check if enter key have been pressed and call the next step if so
-            reset: connectReset,
-            focus: 'serviceUrl'
+            reset: connectReset
         },
         form: null,
         serviceUrl: null,
@@ -80,8 +79,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
             onContinue: selectOnContinue,
             onCancel: () =>
                 onCancel(self.select.step),
-            reset: selectReset,
-            focus: 'serviceType'
+            reset: selectReset
         },
         serviceTypeResetValidation,
         form: null,
@@ -97,8 +95,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
             onContinue: configureOnContinue,
             onCancel: () =>
                 onCancel(self.configure.step),
-            reset: configureReset,
-            focus: 'layerServiceName'
+            reset: configureReset
         },
         form: null,
         defaultOptions: {}

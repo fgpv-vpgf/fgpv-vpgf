@@ -54,8 +54,7 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
             },
             onKeypress: event =>
                 { if (event.keyCode === keyNames.ENTER) { uploadOnContinue(); } }, // check if enter key have been pressed and call the next step if so
-            reset: uploadReset,
-            focus: 'dataUpload'
+            reset: uploadReset
         },
         form: null,
         file: null,
@@ -80,8 +79,7 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
             isCompleted: false,
             onContinue: selectOnContinue,
             onCancel: () => onCancel(self.select.step),
-            reset: selectReset,
-            focus: 'dataType'
+            reset: selectReset
         },
         selectResetValidation,
         form: null
@@ -95,8 +93,7 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
             isCompleted: false,
             onContinue: configureOnContinue,
             onCancel: () => onCancel(self.configure.step),
-            reset: configureReset,
-            focus: 'layerName'
+            reset: configureReset
         },
         configureResetValidation,
         colourPickerSettings: {

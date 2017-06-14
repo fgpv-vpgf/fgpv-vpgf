@@ -643,7 +643,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get tolerance () { return this._tolerance; }
 
         _singleEntryCollapse = false;
-        get singleEntryCollapse () { return this._singleEntryCollapse; }
+        set singleEntryCollapse (value) {   this._singleEntryCollapse = value; }
+        get singleEntryCollapse () {        return this._singleEntryCollapse; }
 
         _isResolved = false;
         /**
@@ -1766,7 +1767,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     class UILegend {
-        constructor(uiLegendSource) {
+        constructor(uiLegendSource = {}) {
             this._reorderable = uiLegendSource.reorderable !== false;
             this._allowImport = uiLegendSource.allowImport !== false;
             this._isOpen = new LegendIsOpen(uiLegendSource.isOpen);
