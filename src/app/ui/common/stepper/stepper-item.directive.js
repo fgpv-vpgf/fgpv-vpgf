@@ -102,7 +102,8 @@ function rvStepperItem($timeout) {
         // focus on the first input element when step is open. Need to be inside $timeout because focus manager tries to focus on close
         // when step is closed. We put 250 ms because with 100ms Safari sometimes lose focus.
         scope.$watch(() => self.isActive || self.step.isActive, (newv, oldv) => {
-            if (newv) {
+            // set focus to the next focusable element in the step only if the step itself is visible
+            if (newv && element.is(':visible')) {
                 $timeout(() => element.nextFocus(), 250);
             }
         });
