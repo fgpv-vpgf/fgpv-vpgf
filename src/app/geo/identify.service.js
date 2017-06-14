@@ -33,11 +33,11 @@ function identifyService($q, configService, stateManager) {
         const mapInstance = configService.getSync.map.instance;
         const opts = {
             clickEvent,
-            map: mapInstance._map,
+            map: mapInstance,
             geometry: clickEvent.mapPoint,
-            width: mapInstance._map.width,
-            height: mapInstance._map.height,
-            mapExtent: mapInstance._map.extent
+            width: mapInstance.width,
+            height: mapInstance.height,
+            mapExtent: mapInstance.extent
         };
 
         const identifyInstances = configService.getSync.map.layerRecords
