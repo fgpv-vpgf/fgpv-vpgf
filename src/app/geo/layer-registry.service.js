@@ -372,7 +372,7 @@ function layerRegistryFactory($rootScope, $timeout, gapiService, Geo, configServ
      * Remove bounding box with the id specified.
      *
      * @function removeBoundingBoxRecord
-     * @param {Number} id id of the bounding box record to be assigned to the created bounding box layer record
+     * @param {Number} id id of the bounding box record to be removed
      */
     function removeBoundingBoxRecord(id) {
         let boundingBoxRecord = getBoundingBoxRecord(id);
