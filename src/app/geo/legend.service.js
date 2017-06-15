@@ -134,6 +134,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             const reloadedLegendBlock = _makeLegendBlock(legendBlockConfig, layerBlueprintsCollection);
 
             const index = legendBlockParent.removeEntry(legendBlock);
+
+            _boundingBoxRemoval(legendBlock);
+
             legendBlockParent.addEntry(reloadedLegendBlock, index);
         });
     }
@@ -165,12 +168,28 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         function _resolve() {
             layerRegistry.removeLayerRecord(legendBlock.layerRecordId);
 
-            // TODO: remove any bounding box layers associated with this legend block
+            // remove any bounding box layers associated with this legend block
+            _boundingBoxRemoval(legendBlock);
         }
 
         function _reject() {
             legendBlockParent.addEntry(legendBlock, index);
             legendBlock.visibility = cachedVisibility;
+        }
+    }
+
+    /**
+     * Remove the bounding box associated with the node or group
+     * 
+     * @function _boundingBoxRemoval
+     * @private
+     * @param {LegendBlock} legendBlock legend block with bounding box to be removed from the map
+     */
+    function _boundingBoxRemoval(legendBlock) {
+        if (legendBlock.blockType === LegendBlock.TYPES.NODE) {
+            layerRegistry.removeBoundingBoxRecord(`${legendBlock.id}_bbox`);
+        } else if (legendBlock.blockType === LegendBlock.TYPES.GROUP) {
+            legendBlock.entries.forEach(entry => layerRegistry.removeBoundingBoxRecord(`${entry.id}_bbox`));
         }
     }
 
