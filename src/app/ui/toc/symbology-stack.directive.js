@@ -9,6 +9,7 @@ const RV_DURATION = 0.3;
 const RV_SWIFT_IN_OUT_EASE = Power1;
 
 /**
+ * @ngboc service
  * @module rvSymbologyStack
  * @memberof app.ui
  * @restrict E
@@ -17,8 +18,17 @@ const RV_SWIFT_IN_OUT_EASE = Power1;
  * The `rvSymbologyStack` directive generates a symbology list and toggles its visibility. It also wiggles the stacked symbology icons on mouse over and focus.
  *
  * ```html
- * <rv-layer-item-symbology symbology="layer.symbology"></rv-layer-item-symbology>
+ * <rv-layer-item-symbology symbology="layer.symbology" container="container"></rv-layer-item-symbology>
  * ```
+ *
+ */
+/**
+ * @module SymbologyStack
+ * @memberof app.ui
+ * @description
+ *
+ * `SymbologyStack` class provides a common wrapper around symbology list. This can be used in the details panel, in the legend, or other places where layer symbology need to be displayed.
+ * There are two sources of symbology: service symbology and user defined symbology.
  *
  */
 angular
@@ -425,8 +435,11 @@ function rvSymbologyStack($q, Geo, animationService) {
 
 function symbologyStack(ConfigObject, gapiService) {
 
+
     class SymbologyStack {
         /**
+         * Creates a new symbology stack. All parameters are options and if none is supplied, an empty stack will be created.
+         *
          * @param {LayerProxy} proxy [optional = {}] layer proxy object which can supply symbology stack; custom symbols will be used first; if they are not availalbe, symbology stack from the proxy object is used;
          * @param {Array} symbols [optional = []] array of alternative symbology svg graphic elements; can be either [ { name: <String>, svgcode: <String> }, ... ] or [ { text: <String>, image: <String> }, ... ]; the latter example (usually coming from a config file) will be transformed into the format by wrapping images in svg containers;
          * @param {String} renderStyle [optional = ConfigObject.legend.Entry.ICONS] rendering style for symbology stack animation
@@ -458,6 +471,9 @@ function symbologyStack(ConfigObject, gapiService) {
             }
         }
 
+        /**
+         * @return {Boolean} true if the symbology stack can be expanded by the user; false if not;
+         */
         get isInteractive () {  return this._isInteractive; }
 
         get stack () {          return this._symbols || this._proxy.symbology; }
