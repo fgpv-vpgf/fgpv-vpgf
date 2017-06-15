@@ -1797,7 +1797,15 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    /**
+     * @class ConfigObject.UI
+     */
     class UI {
+        /**
+         * A typed object corresponding to the config's `ui` section.
+         *
+         * @param {Object} uiSource original JSON object
+         */
         constructor(uiSource) {
             this._source = uiSource;
 
