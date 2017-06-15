@@ -61,6 +61,13 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // TODO ensure false is best default (what is better for UI)
         this._isTrueDynamic = false;
 
+        // manages delayed visibility changes to avoid cascading refreshes
+        this._visDelay = {
+            lastIdx: -1,
+            parentToggle: false,
+            parentValue: false
+        };
+
     }
 
     /**

@@ -84,7 +84,9 @@ class DynamicFC extends attribFC.AttribFC {
      */
     setVisibility (value) {
         // update visible layers array
-        const vLayers = this._parent._layer.visibleLayers.concat();
+        const eLayer = this._parent._layer;
+        const visDelay = this._parent._visDelay;
+        const vLayers = eLayer.visibleLayers.concat();
         const intIdx = parseInt(this._idx);
         const vIdx = vLayers.indexOf(intIdx);
         let dirty = false;
@@ -110,16 +112,34 @@ class DynamicFC extends attribFC.AttribFC {
         }
 
         if (dirty) {
-            this._parent._layer.setVisibleLayers(vLayers);
+            // boolean option will supress the layer from refreshing.
+            // useful because if a group visibility was toggled, we will have many children
+            // being set at the same time.
+            eLayer.setVisibleLayers(vLayers, true);
+
+            visDelay.lastIdx = this._idx; // setting on parent preserves value across children
             if (layerVisChange) {
-                this._parent._layer.setVisibility(value);
+                // let the timer know it has to adjust the layer visibility
+                visDelay.parentToggle = true;
+                visDelay.parentValue = value; // we store value to combat super-fast users
             }
+
+            const refreshCheck = () => {
+                if (visDelay.lastIdx === this._idx) {
+                    // appears no other visibility changes have happened in the delay window.
+                    // trigger a layer refresh or change the entire layer visibility
+                    if (visDelay.parentToggle) {
+                        visDelay.parentToggle = false;
+                        eLayer.setVisibility(visDelay.parentValue);
+                    } else {
+                        eLayer.refresh();
+                    }
+                }
+            };
+
+            setTimeout(refreshCheck, 50);
+
         }
-
-        // TODO add a timer or something to cache requests.
-        //      use setVisibileLayers(arry, true) to stall the redraw
-        //      then when timer runs out, call layer.refresh
-
     }
 
     /**
