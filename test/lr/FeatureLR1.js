@@ -50,7 +50,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     function afterLoadTests() {
         console.log('enhanced loaded')
 
-        console.log('offscale test - sb false, flase', layerRec.isOffScale(20000));
+        console.log('offscale test - sb false, flase', proxy.isOffScale(20000));
 
         proxy.formattedAttributes.then(treats => {
             console.log('formatted attribs test - sb ? ', treats);

@@ -65,6 +65,7 @@ class LayerInterface {
     // param: boolean
     setQuery () { return undefined; }
 
+    // param: integer, boolean (optional)
     fetchGraphic () { return undefined; } // returns promise that resolves with object containing graphics info
 
     // param: esriMap
@@ -78,6 +79,9 @@ class LayerInterface {
 
     // param: spatialReference object
     validateProjection () { return undefined; } // returns Boolean
+
+    // param: integer
+    isOffScale () { return undefined; } // returns Object {offScale: Boolean, zoomIn: Boolean}
 
     // updates what this interface is pointing to, in terms of layer data source.
     // often, the interface starts with a placeholder to avoid errors and return
@@ -112,6 +116,7 @@ class LayerInterface {
         this.zoomToBoundary = standardZoomToBoundary;
         this.validateProjection = standardValidateProjection;
         this.zoomToScale = standardZoomToScale;
+        this.isOffScale = standardIsOffScale;
     }
 
     convertToFeatureLayer (layerRecord) {
@@ -159,6 +164,7 @@ class LayerInterface {
         this.attributesToDetails = dynamicLeafAttributesToDetails;
         this.fetchGraphic = dynamicLeafFetchGraphic;
         this.setDefinitionQuery = dynamicLeafSetDefinitionQuery;
+        this.isOffScale = dynamicLeafIsOffScale;
     }
 
     convertToPlaceholder (placeholderFC) {
@@ -435,6 +441,16 @@ function dynamicLeafSetDefinitionQuery(query) {
 function standardValidateProjection(spatialReference) {
      /* jshint validthis: true */
     return this._source.validateProjection(spatialReference);
+}
+
+function standardIsOffScale(mapScale) {
+     /* jshint validthis: true */
+    return this._source.isOffScale(mapScale);
+}
+
+function dynamicLeafIsOffScale(mapScale) {
+     /* jshint validthis: true */
+    return this._source.isOffScale(mapScale);
 }
 
 module.exports = () => ({
