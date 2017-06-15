@@ -375,17 +375,18 @@ function layerRegistryFactory($rootScope, $timeout, gapiService, Geo, configServ
      * @param {Number} id id of the bounding box record to be removed
      */
     function removeBoundingBoxRecord(id) {
-        let boundingBoxRecord = getBoundingBoxRecord(id);
-        if (boundingBoxRecord) {
-            let boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
-            const index = boundingBoxRecords.indexOf(boundingBoxRecord);
-
-            // Do not need to check if index is valid because getBoundingBoxRecord does not return undefined
-            boundingBoxRecords.splice(index, 1);
-            const mapBody = configService.getSync.map.instance;
-            mapBody.removeLayer(boundingBoxRecord);
+        const boundingBoxRecord = getBoundingBoxRecord(id);
+        if (!boundingBoxRecord) {
             return;
         }
+
+        const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
+        const index = boundingBoxRecords.indexOf(boundingBoxRecord);
+
+        // Do not need to check if index is valid because getBoundingBoxRecord does not return undefined
+        boundingBoxRecords.splice(index, 1);
+        const mapBody = configService.getSync.map.instance;
+        mapBody.removeLayer(boundingBoxRecord);
     }
 
     /**
