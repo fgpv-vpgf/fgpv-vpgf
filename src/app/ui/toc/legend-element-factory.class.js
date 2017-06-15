@@ -1,3 +1,13 @@
+/**
+ * @ngdoc service
+ * @module LegendElementFactory
+ * @memberof app.geo
+ * @requires dependencies
+ * @description
+ *
+ * `LegendElementFactory` exposed two functions to create layer controls and flags objects.
+ *
+ */
 angular
     .module('app.ui')
     .factory('LegendElementFactory', LegendElementFactory);

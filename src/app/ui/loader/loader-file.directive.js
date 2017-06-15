@@ -182,7 +182,7 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
      * Waits until the layerBlueprint is create and ready (the data has been read) and moves to the next step.
      * @function onLayerBlueprintReady
      * @param  {String} name file name or url
-     * @param  {Object} file optional: html5 file object
+     * @param  {Object} file [optional] html5 file object
      * @return {Promise} layerBlueprint ready promise
      */
     function onLayerBlueprintReady(name, file) {
