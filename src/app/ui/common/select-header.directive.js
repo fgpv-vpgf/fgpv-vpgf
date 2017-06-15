@@ -1,12 +1,13 @@
 const templateUrl = require('./select-header.html');
 
 /**
- * This is a dumb wrapper around `md-select-header` component to avoid `can only have one , or <md-select> child element!"` error on `md-input-container`.
- *
+  * @ngdoc directive
  * @module rvSelectHeader
  * @memberof app.ui
  * @restrict E
  * @description
+ *
+ * This is a dumb wrapper around `md-select-header` component to avoid `can only have one , or <md-select> child element!"` error on `md-input-container`.
  *
  */
 angular

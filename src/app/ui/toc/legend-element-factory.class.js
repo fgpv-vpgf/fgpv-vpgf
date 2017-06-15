@@ -1,3 +1,13 @@
+/**
+ * @ngdoc service
+ * @module LegendElementFactory
+ * @memberof app.geo
+ * @requires dependencies
+ * @description
+ *
+ * `LegendElementFactory` exposed two functions to create layer controls and flags objects.
+ *
+ */
 angular
     .module('app.ui')
     .factory('LegendElementFactory', LegendElementFactory);
@@ -7,7 +17,6 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
     class BaseElement {
         constructor (legendBlock) {
             this._legendBlock = legendBlock;
-            // this._layerProxy = this._legendBlock.layerProxy; // a shortcut
         }
 
         get block () { return this._legendBlock; }
@@ -181,6 +190,7 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
         get icon () {   return `action:zoom_${this.block.outOfScale ? 'in' : 'out'}`; }
         get label () {  return `toc.label.visibility.zoom${this.block.outOfScale ? 'In' : 'Out'}`; }
 
+        // FIXME: this functionality is not yet implemented properly
         action () {     geoService.zoomToScale(this._layerProxy); }
     }
 
