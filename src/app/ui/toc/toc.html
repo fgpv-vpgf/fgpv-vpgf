@@ -57,7 +57,7 @@
                 <div class="rv-shadow" ng-if-end></div>
 
                 <ul
-                    class="rv-legend-list"
+                    class="rv-legend-list rv-group-collapsed"
                     ng-if="block.blockType === 'group' && block.collapsed"
                     dx-connect="block"></ul>
 
@@ -71,7 +71,7 @@
 
                 <ul
                     class="rv-legend-list rv-legend-set"
-                    ng-class="{ 'rv-legend-set-highlight': block.highlightSet }"
+                    ng-class="{ 'rv-legend-set-highlight': block.highlight }"
                     ng-if="block.blockType === 'set'"
                     dx-connect="block"></ul>
 

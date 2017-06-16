@@ -476,6 +476,9 @@
                   },
                   {
                     "layerId": "powerplant100mw-1"
+                  },
+                  {
+                    "layerId": "scaleDep2"
                   }
                 ]
               }
@@ -639,6 +642,18 @@
           "opacity": 0.75
         },
         "disabledControls": [ "query" ]
+      },
+      {
+        "id": "scaleDep2",
+        "name": "Air Ozone Scale something",
+        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer",
+        "singleEntryCollapse": true,
+        "layerEntries": [
+          {
+            "index": 2
+          }
+        ],
+        "layerType": "esriDynamic"
       },
       {
         "id":"ecogeo",
