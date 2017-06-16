@@ -188,3 +188,8 @@ La durée des chargements peut varier selon:
 Un comportement imprévu peut survenir lorsque des interactions avec la carte ont lieu avant la conclusion du chargement des données. Veuillez permettre le chargement complet de la page Web avant d’activer d’autres fonctions sur la carte.
 
 **Remarque**: Si l'indicateur de chargement de ligne de défilement apparaît au bas de la carte ou dans la légende, ou lorsque le tableau de données affiche un message de chargement en cours, attendez que l’indicateur de chargement disparaisse avant d’activer d’autres fonctions sur la carte.
+
+
+# Flèche Nord
+
+La carte principale contient une flèche nord. On le trouve en haut de la carte. Il se déplacera horizontalement sur l'écran de sorte qu'il traverse toujours une ligne droite imaginaire qui dépasse le centre de la carte et le pôle nord.

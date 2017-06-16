@@ -1,35 +1,33 @@
 Plugins allow viewer functionality to be added or modified. On a high level there are three kinds of plugins:
 
 1. {@tutorial core_plugins}
-  
-  Contain common functionality needed by many users. They are created and maintained by us. It comes bundled with the viewer code - no additional files need to be loaded. 
+
+  Contain common functionality needed by many users. They are created and maintained by us. It comes bundled with the viewer code - no additional files need to be loaded.
 
 2. {@tutorial external_plugins}
 
-  Not bundled with the viewer code - needs to be loaded manually before use. Can be created and maintained by us, third party developers, or yourself! 
+  Not bundled with the viewer code - needs to be loaded manually before use. Can be created and maintained by us, third party developers, or yourself!
 
 3. {@tutorial base_plugins}
 
   Are more 'abstract' in that they don't do anything useful right off the bat. They are an interface between external and core plugins to the viewer and therefore contain all the code needed to make a plugin. In fact, all plugins must extend a base plugin.
 
-## Registering a plugin 
+## Registering a plugin
 
 A plugin is registered to a specific viewer instance. If there is more than one viewer on the page with each one needing a specific plugin, you'll need to register a plugin for every viewer instance.
 
 This is how you register a plugin:
 ```js
-RV.ready(function() {
-  RV.getMap('fgp').registerPlugin(HelloWorldPlugin, 'The viewer id is {0}');
-});
+RV.getMap('fgp').registerPlugin(HelloWorldPlugin, 'The viewer id is {0}');
 ```
 
-We first wait for the viewer to load with `RV.ready` then call `registerPlugin` on the viewer instance. We pass the plugin class reference as the first parameter. Note that we do not instantiate the plugin here, the viewer will do this for us. 
+We call `registerPlugin` on the viewer instance, passing the plugin class reference as the first parameter. Note that we do not instantiate the plugin here, the viewer will do this for us.
 
 We can also pass zero or more other parameters, these will be passed to our plugins `init` method untouched. For now just ignore the string `'The viewer id is {0}'` in the above example, this will be explained in more detail below.
 
 ## HelloWorldPlugin example
 
-In this example we'll create a plugin which adds a link to the left menu of the viewer and displays an alert box when clicked. Our alert box will also contain the viewers id to give you a feel for accessing the API. Don't worry if you don't understand what's happening at first, it will make more sense as you read on. 
+In this example we'll create a plugin which adds a link to the left menu of the viewer and displays an alert box when clicked. Our alert box will also contain the viewers id to give you a feel for accessing the API. Don't worry if you don't understand what's happening at first, it will make more sense as you read on.
 
 ```js
 >> HelloWorldPlugin.js
@@ -124,4 +122,4 @@ class HelloWorldPlugin extends RV.Plugins.MenuItem {
 }
 ```
 
-What about translating the alert text? Unfortunately this is not yet possible :-1: 
+What about translating the alert text? Unfortunately this is not yet possible :-1:

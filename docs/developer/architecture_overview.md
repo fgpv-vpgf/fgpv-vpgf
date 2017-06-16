@@ -1,8 +1,8 @@
-This page is intended to help you assess the usefulness of this library for your project. It outlines our development goals, the libraries we use, and a brief introduction to the core components of the viewer itself. 
+This page is intended to help you assess the usefulness of this library for your project. It outlines our development goals, the libraries we use, and a brief introduction to the core components of the viewer itself.
 
 ## Design Goals
 
-1. Accessible 
+1. Accessible
   - Conforms to WCAG 2.0 level AA
   - Supports a wide variety of browsers (IE 11+, Firefox, and Chrome)
   - Mobile and tablet friendly design
@@ -37,7 +37,7 @@ This page is intended to help you assess the usefulness of this library for your
 ### Project Tools
 
 - [NodeJS](https://nodejs.org/en/)
-- [Gulp.js](http://gulpjs.com/)
+- [Webpack](https://webpack.github.io/)
 - [SASS](http://sass-lang.com/)
 
 ## Putting it all together
