@@ -17,7 +17,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script>
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
-    <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" integrity="<%= htmlWebpackPlugin.files.cssIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"/>
+        <% if (webpackConfig.output.crossOriginLoading) { %>
+            <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" integrity="<%= htmlWebpackPlugin.files.cssIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"/>
+        <% } else { %>
+            <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
+        <% } %>
     <% } %>
 </head>
 
@@ -55,7 +59,11 @@
     </script>
 
     <% for (var index in htmlWebpackPlugin.files.js) { %>
-    <script src="<%= htmlWebpackPlugin.files.js[index] %>" integrity="<%= htmlWebpackPlugin.files.jsIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"></script>
+        <% if (webpackConfig.output.crossOriginLoading) { %>
+            <script src="<%= htmlWebpackPlugin.files.js[index] %>" integrity="<%= htmlWebpackPlugin.files.jsIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"></script>
+        <% } else { %>
+            <script src="<%= htmlWebpackPlugin.files.js[index] %>"></script>
+        <% } %>
     <% } %>
 
     <script>
