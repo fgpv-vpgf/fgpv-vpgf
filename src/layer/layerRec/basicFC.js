@@ -48,11 +48,12 @@ class BasicFC extends placeholderFC.PlaceholderFC {
     }
 
     /**
-     * Indicates if the feature class is not visible at the given scale.
+     * Indicates if the feature class is not visible at the given scale,
+     * and if so, if we need to zoom in to see it or zoom out
      *
      * @function isOffScale
      * @param {Integer}  mapScale the scale to test against
-     * @returns {Boolean} true if layer is not visible at the scale
+     * @returns {Object} has boolean properties `offScale` and `zoomIn`
      */
     isOffScale (mapScale) {
         const scaleSet = this.getScaleSet();
