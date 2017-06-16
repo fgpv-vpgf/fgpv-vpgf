@@ -8,7 +8,11 @@
     <link rel="stylesheet" href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/css/theme.min.css">
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
-    <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" integrity="<%= htmlWebpackPlugin.files.cssIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"/>
+        <% if (webpackConfig.output.crossOriginLoading) { %>
+            <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" integrity="<%= htmlWebpackPlugin.files.cssIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"/>
+        <% } else { %>
+            <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
+        <% } %>
     <% } %>
 
     <style>
@@ -550,7 +554,11 @@
     }
 
     <% for (var index in htmlWebpackPlugin.files.js) { %>
-    <script src="<%= htmlWebpackPlugin.files.js[index] %>" integrity="<%= htmlWebpackPlugin.files.jsIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"></script>
+        <% if (webpackConfig.output.crossOriginLoading) { %>
+            <script src="<%= htmlWebpackPlugin.files.js[index] %>" integrity="<%= htmlWebpackPlugin.files.jsIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"></script>
+        <% } else { %>
+            <script src="<%= htmlWebpackPlugin.files.js[index] %>"></script>
+        <% } %>
     <% } %>
 
 

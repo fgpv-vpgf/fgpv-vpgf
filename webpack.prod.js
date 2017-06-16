@@ -2,12 +2,17 @@ const path          = require('path');
 const Merge         = require('webpack-merge');
 const webpack       = require('webpack');
 const CommonConfig  = require('./webpack.common.js');
+const SriPlugin     = require('webpack-subresource-integrity');
 
 const pkg                   = require('./package.json');
 const ZipPlugin             = require('zip-webpack-plugin');
 
 module.exports = function(env) {
     return Merge(CommonConfig(env), {
+        output: {
+            crossOriginLoading: 'anonymous'
+        },
+
         plugins: [
             new webpack.optimize.UglifyJsPlugin({
                 compress: {
@@ -29,6 +34,11 @@ module.exports = function(env) {
                 'process.env': {
                     'NODE_ENV': JSON.stringify('production')
                 }
+            }),
+
+            new SriPlugin({
+                hashFuncNames: ['sha256', 'sha384'],
+                enabled: true
             })
         ]
     });
