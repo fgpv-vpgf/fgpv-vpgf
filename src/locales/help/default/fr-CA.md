@@ -18,6 +18,12 @@ Vous pouvez également parcourir la carte en utilisant les touches fléchées ga
 Notez que la carte doit avoir le focus pour que les touches clavier fonctionnent. La carte à le focus lorsqu'il y a une bordure bleue autour d'elle.
 
 
+# Information de navigation
+
+Les informations de navigation se situent dans le coin inférieur droit de la carte et comprennent l'échelle de la carte et les coordonnées de positionnement du curseur de la souris.
+Les coordonnées de positionnement peuvent être en degrés minutes secondes (DMS), en degrés décimaux ou en mètres selon la projection et la configuration utilisées.
+
+
 # Cartes de base
 
 Le sélecteur de cartes de base modifie le fond de carte sous-jacent pour afficher une variété de contextes géographiques
@@ -52,6 +58,7 @@ Il existe une variété d'options et elle sont décrites ci-dessous. Notez que c
 | ![](menu/export.png) | Exporter | Ouvre la fênetre pour exporter une image  |
 | ![](menu/share.png) | Partager | Ouvre la fênetre pour partager un URL |
 | ![](menu/touch.png) | Mode tactile | Augmente la taille des boutons et améliore l'expérience des utilisateurs tactiles |
+| ![](menu/about.png) | À propos de la carte | Ouvre une fenêtre qui donne de l'information supplémentaire sur la carte |
 | ![](menu/help.png) | Aide | Ouvre la fenêtre d'aide |
 | ![](menu/language.png) | Langue | Affiche la liste des langues, prises en charge, que vous pouvez choisir |
 

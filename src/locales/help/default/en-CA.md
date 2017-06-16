@@ -18,6 +18,12 @@ You can also pan the map by using your left, right, up and down arrow keys, or b
 Note that the map __must be__ focused for key binding to work. The map has focus when there is a blue border around it.
 
 
+# Navigation Information
+
+The navigation information is located in the lower right corner of the map and includes map scale and mouse cursor positioning coordinates.
+The positioning coordinates can be in degrees minutes seconds (DMS), decimal degrees or meters depending on the projection and configuration used.
+
+
 # Basemap Selector
 
 The basemap selector modifies the underlying basemap to provide a variety of geographical contexts.
@@ -52,6 +58,7 @@ There are a variety of options described below. Note that some options may not b
 | ![](menu/export.png) | Export | Opens the export image dialog  |
 | ![](menu/share.png) | Share | Opens the share a url dialog |
 | ![](menu/touch.png) | Touch Mode | Increases button sizes and generally improves the experience for touch users |
+| ![](menu/about.png) | About Map | Opens a dialog window who provides additional information on the map  |
 | ![](menu/help.png) | Help | Opens the help dialog |
 | ![](menu/language.png) | Language | Displays a list of supported languages you can switch to |
 
