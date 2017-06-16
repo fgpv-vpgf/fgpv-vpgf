@@ -158,16 +158,85 @@ Cliquez sur le bouton de téléchargement dans l'en-tête pour obtenir l'image d
 
 # Tableau de données
 
-![](datatable/overview.png)
+![](datatable/overview_fr.png)
 
-Le panneau __table de données__ est affiché ci-dessus avec ses options de menu ouvertes. Vous pouvez faire défiler toutes les données ainsi que:
+Le panneau __tableau de données__ est affiché ci-dessus dans son état initial.
+
+ En plus de faire défiler les données, il est possible :
+- De trier les données en sélectionnant l'en-tête de la colonne
+- De se déplacer dans la table à l'aide des flèches de navigation
+- D’ouvrir le panneau de détails correspondant à une ligne donnée en sélectionnant l'icône Détails ![](datatable/details.png)
+- De déplacer la carte et de faire un zoom sur l'élément correspondant à une ligne donnée en sélectionnant l'icône Zoom ![](datatable/zoomto.png)
+- De déplacer les colonnes en cliquant sur l'en-tête lorsque l'icône du curseur devient une main et en la déplaçant près des icônes de tri de l'endroit ou elle doit se déplacer
+- De filtrer les colonnes par étendue numérique, texte, sélection ou date (si la configuration le permet)
+
+Si le nombre de caractères saisis dépasse la largeur de la boîte de texte, seuls les caractères visibles seront affichés, suivis de points de suspension (…). En sélectionnant  le champ à l’aide de la souris ou du clavier, le texte complet s’affichera dans une infobulle.
+
+Le nombre d’entités dans la couche s’affiche dans le coin inférieur gauche : Affichage de l'élément 1 à 4 sur 247 éléments.
+
+En démarrant le filtrage de la donnée, on obtient  plus de rétroaction : Affichage de l'élément 1 à 4 sur 15 éléments (filtrés de 247 éléments au total).
+
+### Groupe de contrôle des filtres
+
+![](datatable/apply_fr.png)
+
+Ce groupe de contrôle se trouve dans le coin inférieur droit et il permet de faire ce qui suit :
+- Appliquer les filtres du tableau de données
+    - Si le type de couche le permet, lors d'une modification des filtres, __APPLIQUER À LA CARTE__ apparaîtra. Après avoir appuyé sur ce bouton, la carte est rafraîchie et seules les données visibles de votre table sont affichées.
+- Effacer tous les filtres ![](datatable/clear.png)
+    - Selon la configuration, il est possible que certains filtres ne s'effacent pas (voir la section __Filtrer les données__ pour plus d'informations)
+- Ouvrir le panneau de configuration des filtres ![](datatable/setting.png).
+
+### Filtrer les données
+
+On peut filtrer les données par colonne. Une colonne est interrogeable s'il y un champ de saisie sous le titre de l’en-tête. Comme mentionné précédemment, il existe 4 types de filtres:
+- __Texte__ : Champ de saisie de type caractère. Utiliser le caractère générique \* pour remplacer une séquence de zéro ou plusieurs caractères (p. ex. _*levo_ va trouver Charlevoix)
+    - _Remarque, sans caractère générique, la recherche ne trouvera que les éléments où le mot cherché débute  la phrase._
+- __Numérique__ : Champs de saisie qui n'accepte que les nombres
+    - Si un minimum et un maximum sont définis le filtre recherchera une étendue
+    - Si, par exemple, seulement un minimum est défini, il effectuera l'opération _plus grand que_
+- __Sélection__ : Menu déroulant qui permet la sélection d'une ou de plusieurs valeurs prédéfinies
+- __Date__ : Similaire au champ numérique mais utilise des dates
+
+Certains filtres ne sont pas éditables; leur valeur ne peut donc pas être changée. Ils sont représentés par une ligne pointillée sous leur valeur.
+
+![](datatable/search_fr.png)
+
+Ce contrôle, que l'on retrouve dans le coin supérieur droit du tableau de données, permet de filtrer le tableau de données de manière globale.
+- Si on saisit la valeur _Brook_, le tableau de données sélectionnera les données qui contiennent _Brook_ à n'importe quel endroit (p. ex. _Corner Brook_ sera sélectionné)
+
+Lorsque que l'on sélectionne le champ de saisie, les noms des colonnes peuvent changer car ils reflètent les noms internes de la donnée. Ces noms permettent de préciser des recherches, par exemple :
+- Rechercher un texte: _nom du champ:valeur_ (p. ex. Type:'mon type')
+- Rechercher un nombre ou une date:
+    - Simple valeur: _nom du champ:[operateteur]valeur_  (p. ex. OBJECTID:<30). Les opérateurs suivants peuvent être utilisés: <, <=, >, >=.
+    - Étendue: _nom du champ:[valeur..valeur]_ (p. ex. OBJECTID:[30..50])
+- On peut également combiner des champs avec _&&_ (p. ex. Type:'mon type' && OBJECTID:<30)
+
+_Remarque: On ne peut appliquer à la carte les filtres définies à l'aide de ce contrôle. Ils ne s’appliquents qu'au tableau de données._
+
+### Panneau de configuration
+
+![](datatable/settingPanel_fr.png)
+
+Dans le panneau de configuration, si la configuration le permet, on peut retrouver une section __Description__ qui contient de l'information sur le jeu de données et les différentes colonnes.
+Les changements effectués dans le panneau de configuration sont conservés dans le tableau de données et vice-versa.
+Par la suite, on retrouve les  colonnes l'un à la suite de l'autre dans l'ordre d'affichage du tableau de données. Pour chaque colonne, on peut effectuer les actions suivantes:
+- Réorganiser : permet de déplacer les colonnes en appuyant sur l'icône et en la déplaçant
+- Nom : le nom du champ
+- Filtre : le filtre du champ (si présent)
+- Trier:  permet de trier les données en ordre croissant ou décroissant
+- Afficher : permet de voir ou de cacher une colonne. _Remarque : Si une colonne contient un filtre, les données seront filtrées même si la colonne n'est pas visible_
+
+### Menu d'options
+
+![](datatable/menu_fr.png)
+
+Le menu permet les actions suivantes:
 - Agrandir / réduire la taille de la table (via vue partagée / agrandir)
-- Trier les données en sélectionnant l'en-tête de la colonne
-- Filtrer les données de sorte que seules les données dans votre étendue actuelle soient affichées
-- Exporter les données sous forme de fichier csv
-- Imprimer les données
-
-Vous pouvez également ouvrir le panneau de détails correspondant à une ligne donnée en sélectionnant l'icône détails ![](datatable/details.png). Vous pouvez également déplacer et zoomer la carte sur l'élément correspondant à  une ligne donnée en sélectionnant l'icône zoom ![](datatable/zoomto.png).
+- Filtrer les données de sorte que seules les données dans l’étendue actuelle s’affichent
+- Afficher les filtres des colonnes de la table
+- Exporter les données sous forme de fichier .csv
+- Imprimer les données​
 
 
 # Panneau d’information (Point)
