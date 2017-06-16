@@ -1687,6 +1687,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             ],
             [
                 'language'
+            ],
+            [
+                'plugins'
             ]
         ];
 
