@@ -96,6 +96,8 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         var leaf1proxy = layerRec.getChildProxy(1);
 
 
+        console.log('symbology - sb 6 elements', leaf1proxy.symbology);
+
         // from invisible to semi visible
 
         leaf2proxy.setVisibility(true);
