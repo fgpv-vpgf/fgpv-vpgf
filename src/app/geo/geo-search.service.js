@@ -62,8 +62,6 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
         function hasAllServices(serviceUrls) {
             let hasAll = true;
             Object.keys(GEOSERVICE).forEach(service => {
-                // console.log(service);
-                // console.log(serviceUrls.hasOwnProperty(service));
                 if (! serviceUrls.hasOwnProperty(service)) {
                     hasAll = false;
                 }
