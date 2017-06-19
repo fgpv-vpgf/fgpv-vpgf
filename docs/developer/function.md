@@ -1,1 +1,1 @@
-The above resources are functional descriptions of interesting parst of the codebase. These guides are not a substitution for a thorough reading of the inline and API documentation; however, they will provide an overview and maybe shed some light on why things are done this way.
+The above resources are functional descriptions of interesting parts of the codebase. These guides are not a substitution for a thorough reading of the inline and API documentation; however, they will provide an overview and maybe shed some light on why things are done this way.

@@ -1,5 +1,5 @@
 /**
- * @ngdoc service
+ *
  * @name reloadService
  * @module app.core
  *

@@ -1,7 +1,5 @@
-/* global RV */
-
 /**
- * @ngdoc object
+ *
  * @module StepperFactory
  * @memberof app.ui
  * @description

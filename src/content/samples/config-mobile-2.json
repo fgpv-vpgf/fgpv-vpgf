@@ -331,27 +331,27 @@
             "layerName": "How to catch Santa (//www.pusheen.com/)",
             "symbologyStack": [
               {
-                "image": "http://imgur.com/iHMdEHO.gif",
+                "image": "http://fgpv.cloudapp.net/demo/__assets__/step1.gif",
                 "text":"1. Set your bait"
               },
               {
-                "image": "http://imgur.com/KJ7krEI.gif",
+                "image": "http://fgpv.cloudapp.net/demo/__assets__/step2.gif",
                 "text":"2. Hide"
               },
               {
-                "image": "http://imgur.com/yNaN9pG.gif",
+                "image": "http://fgpv.cloudapp.net/demo/__assets__/step3.gif",
                 "text":"3. Don't eat the bait"
               },
               {
-                "image": "http://imgur.com/HqiriZV.gif",
+                "image": "http://fgpv.cloudapp.net/demo/__assets__/step4.gif",
                 "text":"4. Don't do it"
               },
               {
-                "image": "http://imgur.com/IWL1UBN.gif",
+                "image": "http://fgpv.cloudapp.net/demo/__assets__/step5.gif",
                 "text":"5. Stop!!"
               },
               {
-                "image": "http://imgur.com/XVYE4s3.gif",
+                "image": "http://fgpv.cloudapp.net/demo/__assets__/step6.gif",
                 "text":"6. You ruinted it!"
               }
             ],
@@ -405,7 +405,7 @@
                 "layerName": "6 Reasons to be thankful for your cat (//www.pusheen.com/)",
                 "symbologyStack": [
                   {
-                    "image": "http://i.imgur.com/Xj5wOmy.png",
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/beautiful.png",
                     "text":""
                   }
                 ],
@@ -490,19 +490,19 @@
             "children": [
               {
                 "infoType": "image",
-                "content": "https://advego.ru/uploads/scepsis/%D1%8F_%D1%81%D0%B4%D0%B5%D0%BB%D0%B0%D0%BB%D0%AA_32f0bf9b4f82c17317ae7bcb2e1a3d22.gif"
+                "content": "http://fgpv.cloudapp.net/demo/__assets__/solazy.gif"
               },
               {
                 "infoType": "image",
-                "content": "https://s-media-cache-ak0.pinimg.com/originals/ac/cf/82/accf8215081bb1922ab317f31a6acb2b.gif"
+                "content": "http://fgpv.cloudapp.net/demo/__assets__/tenor.gif"
               },
               {
                 "infoType": "image",
-                "content": "https://media.tenor.co/images/33065341659efcc8c214d8541e594124/tenor.gif"
+                "content": "http://fgpv.cloudapp.net/demo/__assets__/internet.gif"
               },
               {
                 "infoType": "image",
-                "content": "http://i3.kym-cdn.com/entries/icons/original/000/011/198/internet.gif"
+                "content": "http://fgpv.cloudapp.net/demo/__assets__/cookies.gif"
               }
             ]
           }

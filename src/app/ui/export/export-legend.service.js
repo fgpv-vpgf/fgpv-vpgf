@@ -1,5 +1,3 @@
-/* global SVG, canvg */
-
 // margin of the legend container
 const LEGEND_MARGIN = {
     t: 20,
@@ -16,7 +14,7 @@ const IMAGE_GUTTER = 8;
 const SYMBOL_SIZE = 32;
 
 /**
- * @ngdoc service
+ *
  * @name exportLegendService
  * @module app.ui
  * @requires dependencies

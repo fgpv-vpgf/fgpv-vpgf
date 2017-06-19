@@ -1,5 +1,5 @@
 /**
- * @ngdoc service
+ *
  * @name debounceService
  * @module app.core
  *

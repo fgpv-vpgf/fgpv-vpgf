@@ -1,5 +1,5 @@
 /**
- * @ngdoc service
+ *
  * @module LegendElementFactory
  * @memberof app.geo
  * @requires dependencies
