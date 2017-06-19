@@ -26,7 +26,7 @@ module.exports = function (env) {
             rules: [
                 {
                     test: /\.js$/,
-                    include: [path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/plugins')],
+                    include: jsIncludeRule(),
                     use: [{
                         loader: 'ng-annotate-loader'
                     }, {
@@ -138,6 +138,26 @@ module.exports = function (env) {
         config.plugins.push(new BundleAnalyzerPlugin());
     }
     return config;
+
+    /**
+     * Returns an array of absolute directory paths to be used exclusively for js compilation.
+     *
+     * Note that geoApi needs to be included - its location dependent on env.geoLocal flag.
+     */
+    function jsIncludeRule() {
+        const arr = [
+            path.resolve(__dirname, 'src/app'),
+            path.resolve(__dirname, 'src/plugins')
+        ];
+
+        if (env.geoLocal) {
+            arr.push(path.resolve(__dirname, '../', env.geoLocal.length > 0 ? env.geoLocal : 'geoApi'));
+        } else {
+            arr.push(path.resolve(__dirname, 'node_modules/geoApi'));
+        }
+
+        return arr;
+    }
 }
 
 function htmlInjectPlugins() {
