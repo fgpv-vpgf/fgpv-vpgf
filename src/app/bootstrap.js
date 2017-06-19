@@ -2,8 +2,8 @@
 // eslint-disable-next-line max-statements
 // disabled checks on above line due to 'too many statements in this function' (jshint W071)
 
-// check if the global RV registry object already exists and store a reference
-const RV = window.RV = typeof window.RV === 'undefined' ? {} : window.RV;
+// check if window.RV has been created by ie-polyfills already, otherwise init
+const RV = window.RV = window.RV ? window.RV : {};
 
 // fixes logger issue where it can be called before it is loaded, this reverts it to console
 // TODO: load logger lib before app starts
