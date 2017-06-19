@@ -3,7 +3,7 @@ const GEOSERVICE = {
     geoLocation: 'geoLocation',
     geoSuggest: 'geoSuggest',
     provinces: 'provinces',
-    extra: 'extra'
+    types: 'types'
 };
 
 /**
