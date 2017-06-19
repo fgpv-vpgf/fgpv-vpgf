@@ -1,5 +1,3 @@
-/* global RV */
-
 import 'canvas-to-blob';
 
 const FileSaver = require('file-saver');
@@ -9,7 +7,7 @@ const EXPORT_IMAGE_GUTTER = 20; // padding around the export image
 const EXPORT_CLASS = '.rv-export';
 
 /**
- * @ngdoc service
+ *
  * @name exportService
  * @module app.ui
  * @requires dependencies

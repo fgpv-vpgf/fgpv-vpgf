@@ -9,7 +9,6 @@ const RV_DURATION = 0.3;
 const RV_SWIFT_IN_OUT_EASE = Power1;
 
 /**
- * @ngboc service
  * @module rvSymbologyStack
  * @memberof app.ui
  * @restrict E
