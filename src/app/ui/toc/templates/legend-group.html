@@ -51,52 +51,9 @@
         </md-menu-content>
     </md-menu>
 
-    <rv-legend-control ng-if="self.isInSet" block="self.block" name="visibilityset" class="rv-stay-visible rv-list-item-control"
-        ng-mouseenter="self.block.highlightSet = true"
-        ng-mouseleave="self.block.highlightSet = false"></rv-legend-control>
-    <rv-legend-control ng-if="!self.isInSet" block="self.block" name="visibilitynode" class="rv-stay-visible rv-list-item-control"></rv-legend-control>
+    <rv-legend-control ng-if="self.block.inSet" block="self.block" name="visibilityset" class="rv-stay-visible rv-list-item-control"
+        ng-mouseenter="self.block.visualParent.highlight = true"
+        ng-mouseleave="self.block.visualParent.highlight = false"></rv-legend-control>
+    <rv-legend-control ng-if="!self.block.inSet" block="self.block" name="visibilitynode" class="rv-stay-visible rv-list-item-control"></rv-legend-control>
+
 </div>
-
-<!--md-button
-    ng-if="!self.isReorder"
-    class="rv-group-body-button rv-button-square"
-    ng-click="self.defaultAction(self.entry)"
-    rv-help="group-toggle"></md-button>
-
-<div class="rv-icon-24 rv-group-toggle-icon">
-    <md-icon
-        class="md-toggle-icon"
-        ng-class="{ 'rv-toggled' : self.entry.expanded && !self.isReorder }"
-        md-svg-src="hardware:keyboard_arrow_down"></md-icon>
-</div>
-
-<span class="rv-group-name">
-    {{ self.entry.name }}
-</span>
-
-<div class="rv-toc-entry-controls" ng-if="self.isReorder">
-    <rv-toc-entry-control rv-drag-handle option="reorder"></rv-toc-entry-control>
-</div>
-
-<div class="rv-toc-entry-controls" ng-if="!self.isReorder">
-
-    <md-menu md-position-mode="target-right target" class="rv-hover-show">
-        <md-button
-            aria-label="{{ 'toc.layer.aria.openData' | translate }}"
-            class="md-icon-button rv-button-40 rv-icon-20"
-            ng-click="$mdOpenMenu($event)">
-            <md-icon md-svg-src="navigation:more_horiz"></md-icon>
-        </md-button>
-
-        <md-menu-content rv-trap-focus="{{::self.appID}}" class="rv-menu rv-dense" width="4">
-            <rv-toc-entry-control type="menu-item" option="settings"></rv-toc-entry-control>
-            <rv-toc-entry-control type="menu-item" option="boundaryZoom"></rv-toc-entry-control>
-            <md-menu-divider></md-menu-divider>
-            <rv-toc-entry-control type="menu-item" option="reload"></rv-toc-entry-control>
-            <rv-toc-entry-control type="menu-item" option="remove"></rv-toc-entry-control>
-        </md-menu-content>
-    </md-menu>
-
-    <rv-toc-entry-control option="visibility"></rv-toc-entry-control>
-
-</div-->

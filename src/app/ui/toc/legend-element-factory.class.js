@@ -2,12 +2,11 @@ angular
     .module('app.ui')
     .factory('LegendElementFactory', LegendElementFactory);
 
-function LegendElementFactory($translate, geoService, tocService, legendService, debounceService) {
+function LegendElementFactory($translate, tocService, debounceService) {
 
     class BaseElement {
         constructor (legendBlock) {
             this._legendBlock = legendBlock;
-            // this._layerProxy = this._legendBlock.layerProxy; // a shortcut
         }
 
         get block () { return this._legendBlock; }
@@ -171,17 +170,22 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
         action () {     tocService.toggleSettings(this.block); }
     }
 
-    class OffscaleControl extends BaseControl {
+    class ScaleControl extends BaseControl {
         constructor (...args) {
             super(...args);
 
-            this._controlName = 'offscale';
+            this._controlName = 'scale';
         }
 
-        get icon () {   return `action:zoom_${this.block.outOfScale ? 'in' : 'out'}`; }
-        get label () {  return `toc.label.visibility.zoom${this.block.outOfScale ? 'In' : 'Out'}`; }
+        get value () {  return this.block.scale; }
 
-        action () {     geoService.zoomToScale(this._layerProxy); }
+        get icon () {   return `action:zoom_${this.value.zoomIn ? 'in' : 'out'}`; }
+        get label () {  return `toc.label.visibility.zoom${this.value.zoomIn ? 'In' : 'Out'}`; }
+
+        action () {     this.block.zoomToScale(); }
+
+        // visibility of this control is specified in the legend node template
+        get isVisible () { return true; }
     }
 
     class ReloadControl extends BaseControl {
@@ -220,8 +224,7 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
         get icon () {   return 'community:table-large'; }
         get label () {  return 'toc.label.dataTable'; }
 
-        action () {     this._debouncedAction();
-        }
+        action () {     this._debouncedAction(); }
 
         _debouncedAction = debounceService.registerDebounce(
             () => { tocService.toggleLayerFiltersPanel(this.block); }, 300);
@@ -268,6 +271,7 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
 
         get icon () {    return 'maps:layers'; }
         get label () {   return 'toc.layer.label.symbology'; }
+
         action () {
             this._symbologyStack.expanded = !this._symbologyStack.expanded;
             this._symbologyStack.fannedOut = !this._symbologyStack.expanded;
@@ -382,9 +386,9 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
         }
 
         get icon () {    return 'maps:layers_clear'; }
-        get label () {   return 'toc.label.flag.scale'; }
+        get label () {   return 'toc.tooltip.flag.scale'; }
 
-        get isVisible () { return true; }
+        get isVisible () { return this.block.scale.offScale; }
     }
 
     class DataFlag extends BaseFlag {
@@ -478,7 +482,7 @@ function LegendElementFactory($translate, geoService, tocService, legendService,
             snapshot: SnapshotControl,
             metadata: MetadataControl,
             settings: SettingsControl,
-            offscale: OffscaleControl,
+            scale: ScaleControl,
             reload: ReloadControl,
             boundary: BoundaryControl,
             data: DataControl,

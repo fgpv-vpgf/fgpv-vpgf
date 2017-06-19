@@ -21,7 +21,9 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         isControlVisible,
         isControlDisabled,
         isControlSystemDisabled,
-        isControlUserDisabled
+        isControlUserDisabled,
+
+        get map () { return configService.getSync.map; }
     };
 
     const TYPES = {
@@ -79,8 +81,6 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         }
 
         get initialStateSettingsApplied () { return this._initialStateSettingsApplied }
-
-        zoomToBoundary(...args) {          this._proxy.zoomToBoundary(...args); }
 
         get state () {              return this._proxy.state; }
         get name () {               return (this._proxy || this._layerConfig).name; }
@@ -153,6 +153,16 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          */
         set snapshot (value) {          this._layerConfig.state.snapshot = value; }
 
+        /**
+         * Checks if the layer is off scale by calling its proxy object with the current map scale value.
+         *
+         * @param {Number} value this is mapScale number call `map.instance.getScale()` to get it
+         * @return {Object} of the form {offScale: <Boolean>, zoomIn: <Boolean> }
+         */
+        isOffScale (value) {            return this._proxy.isOffScale(value); }
+        zoomToBoundary(...args) {   this._proxy.zoomToBoundary(...args); }
+        zoomToScale(...args) {      this._proxy.zoomToScale(...args); }
+
         _validProjection = true;
         get validProjection () { return this._validProjection; }
         /**
@@ -208,6 +218,24 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          * @returns {Boolean} returns true if the LegendBlock is directly controlled by a parent LegendBlock and has no visible UI
          */
         get controlled () {             return this._controlled; }
+
+        _parent = null;
+        set parent (value) {            this._parent = value; }
+        /**
+         * @return {LegendEntry} a true parent of the legend block, can be a LegendGroup or a LegendSet
+         */
+        get parent () {                 return this._parent; }
+
+        /**
+         * @return {LegendEntry} a visual parent of the legend block, can be a LegendGroup or a LegendSet; in case of a collapsed group, a visual parent of its entries is the parent of the collapsed group
+         */
+        get visualParent () {
+            if (this.parent.blockType === LegendBlock.GROUP && this.parent.collapsed) {
+                return this.parent.parent;
+            }
+
+            return this.parent;
+        }
 
         static INFO = 'info';
         static NODE = 'node';
@@ -267,6 +295,17 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             }
 
             return this._layerRecordId;
+        }
+
+        /**
+         * @return {Boolean} true if the LegendEntry's visual parent is a set; an child entry of a collapsed group which is a part of a set, is be considered a part of that set;
+         */
+        get inSet () {
+            if (!this.parent) {
+                return false;
+            }
+
+            return this.visualParent.blockType === LegendBlock.SET;
         }
     }
 
@@ -459,8 +498,32 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                 gapiService.gapi.symbology.getGraphicIcon(featureAttrs, attrSet.renderer));
         }
 
+        /**
+         * Checks if the layer controlled by the main proxy object is off scale.
+         *
+         * @return {Object} in the form of { offScale: <Boolean>, zoomIn: <Boolean> }
+         */
+        get scale() {
+            return this._mainProxyWrapper.isOffScale(ref.map.instance.getScale());
+        }
+
+        /**
+         * Zooms the layer controlled by the main proxy object in or out so features are visible on the map.
+         *
+         * @function zoomToScale
+         */
+        zoomToScale () {
+            this._mainProxyWrapper.zoomToScale(
+                ref.map.instance, ref.map.selectedBasemap.lods, this.scale.zoomIn);
+        }
+
+        /**
+         * Zooms the layer controlled by the main proxy object to its bounding box.
+         *
+         * @function zoomToBoundary
+         */
         zoomToBoundary () {
-            this._mainProxyWrapper.zoomToBoundary(configService.getSync.map.instance);
+            this._mainProxyWrapper.zoomToBoundary(ref.map.instance);
         }
 
         get symbologyStack () {     return this._symbologyStack; }
@@ -486,7 +549,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
 
             this._aggregateStates = ref.aggregateStates;
             this._walk = ref.walkFunction.bind(this);
-        }
+                    }
 
         get blockType () {      return TYPES.GROUP; }
 
@@ -503,8 +566,6 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         }
 
         synchronizeControlledEntries() {
-            // const visibility = this.visibility;
-
             this._activeEntries
                 .filter(entry =>
                     entry.controlled)
@@ -559,10 +620,22 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
 
             return stateToTemplate[this.state]();
 
+            /**
+             * Adds a `reload` control to the list of available group controls.
+             *
+             * @function _addReload
+             * @private
+             */
             function _addReload() {
                 availableControls.push('reload');
             }
 
+            /**
+             * Removes a `reload` control to the list of available group controls.
+             *
+             * @function _removeReload
+             * @private
+             */
             function _removeReload() {
                 const index = availableControls.indexOf('reload');
 
@@ -571,6 +644,14 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                 }
             }
 
+            /**
+             * Checks if the group is collapsed. If so, return the name of the collapsed group template.
+             *
+             * @function _collapsedCheck
+             * @private
+             * @param {String} defaultValue the default tempalte name
+             * @return {String} template name
+             */
             function _collapsedCheck(defaultValue) {
                 return collapsed ? 'collapsed' : defaultValue;
             }
@@ -661,6 +742,8 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                 this._entries.splice(position, 0, entry);
             }
 
+            entry.parent = this;
+
             return this;
         }
 
@@ -694,7 +777,6 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             this._walk = ref.walkFunction.bind(this);
         }
 
-        _highlightSet = false;
         _selectedEntry = null;
 
         // sets are special snowflakes; they only support visibility controls
@@ -763,24 +845,15 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             }
             this._entries.splice(position, 0, entry);
 
-            // LegendSet and the contained LegendBlock object will share a reference to `highlightSet` property
-            // which the legend block temlate will use to highlight set elements when hovered/focused
-            const highlightSetDescriptor = {
-                get: () =>
-                    this._highlightSet,
-                set: value => {
-                    this._highlightSet = value;
-                }
-            };
-
-            Object.defineProperty(entry, 'highlightSet', highlightSetDescriptor);
-
-            entry.highlightSet = false;
+            entry.parent = this;
 
             return this;
         }
 
-        get highlightSet() { return this._highlightSet; }
+        // indicates if this set should be highlighted
+        _highlight = false;
+        set highlight (value) {     this._highlight = value; }
+        get highlight () {          return this._highlight; }
 
         removeEntry (entry) {
             const index = this._entries.indexOf(entry);
