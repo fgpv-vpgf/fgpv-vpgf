@@ -163,6 +163,13 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         zoomToBoundary(...args) {   this._proxy.zoomToBoundary(...args); }
         zoomToScale(...args) {      this._proxy.zoomToScale(...args); }
 
+        /**
+         * Returns the value of the `userAdded` state flag.
+         *
+         * @return {Boolean} `true` is the layer was added by a user
+         */
+        get userAdded () {              return this._layerConfig.state.userAdded; }
+
         _validProjection = true;
         get validProjection () { return this._validProjection; }
         /**
@@ -485,7 +492,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         }
 
         get userAdded () {
-            return this._blockConfig.userAdded;
+            return this._mainProxyWrapper.userAdded;
         }
 
         get formattedData () {
