@@ -6,7 +6,7 @@ const templateUrls = {
 };
 
 /**
- * @ngdoc directive
+ *
  * @module rvFiltersPanel
  * @memberof app.ui
  * @description
@@ -20,12 +20,6 @@ angular
     .module('app.ui')
     .directive('rvPanel', rvPanel);
 
-/**
- * `rvPanel` directive body.
- *
- * @function rvPanel
- * @return {object} directive body
- */
 function rvPanel(storageService) {
     const directive = {
         restrict: 'E',

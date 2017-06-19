@@ -1,7 +1,7 @@
 const templateUrl = require('./select-header.html');
 
 /**
-  * @ngdoc directive
+  *
  * @module rvSelectHeader
  * @memberof app.ui
  * @restrict E
