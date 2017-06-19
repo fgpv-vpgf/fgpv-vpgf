@@ -1394,6 +1394,11 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    /**
+     * Typed representation of the `services.export` section of the config.
+     * @class ExportService
+     */
+
     class ExportService {
         constructor (source) {
             this._title = source.title;
@@ -1423,6 +1428,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    /**
+     * Typed representation of the `services` section of the config.
+     * @class Services
+     */
     class Services {
         constructor (source) {
             this._proxyUrl = source.proxyUrl;
@@ -1433,7 +1442,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._coordInfo = source.coordInfo;
             this._print = source.print;
             this._search = source.search;
-            this._export = source.export;
+            this._export = new ExportService(source.export || {});
             this._rcsEndpoint = source.rcsEndpoint;
         }
 
@@ -1464,8 +1473,11 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    /**
+     * A map center point. Used in bookmarking. Passed to the config through the `applyBookmark` function.
+     * @class StartPoint
+     */
     class StartPoint {
-
         constructor({ x, y, scale }) {
             this._x = parseFloat(x);
             this._y = parseFloat(y);
@@ -1478,7 +1490,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     /**
-     * Typed representation of a Map specified in the config.
+     * Typed representation of the `map` section of the config.
      * @class Map
      */
     class Map {
@@ -1631,6 +1643,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    /**
+     * Typed representation of the `ui.navBar` section of the config.
+     * @class NavBar
+     */
     class NavBar {
         constructor(source = {}) {
             this._source = source;
@@ -1650,6 +1666,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    /**
+     * Typed representation of the `ui.sideMenu` section of the config.
+     * @class SideMenu
+     */
     class SideMenu {
         constructor(source = {}) {
             this._source = source;
@@ -1706,6 +1726,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    /**
+     * Typed representation of the `ui.legend.isOpen` section of the config.
+     * @class LegendIsOpen
+     */
     class LegendIsOpen {
         constructor(source = {}) {
             this._source = source;
@@ -1728,6 +1752,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    /**
+     * Typed representation of the `ui.filterIsOpen` section of the config.
+     * @class FilterIsOpen
+     */
     class FilterIsOpen {
         constructor(source = {}) {
             this._source = source;
@@ -1753,6 +1781,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    /**
+     * Typed representation of the `ui.help` section of the config.
+     * @class Help
+     */
     class Help {
         constructor(helpSource = {}) {
             this._source = helpSource;
@@ -1769,6 +1801,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    /**
+     * Typed representation of the `ui.legend` section of the config.
+     * @class UILegend
+     */
     class UILegend {
         constructor(uiLegendSource = {}) {
             this._reorderable = uiLegendSource.reorderable !== false;
@@ -1790,11 +1826,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     /**
+     * Typed representation of the `ui` section of the config.
      * @class ConfigObject.UI
      */
     class UI {
         /**
-         * A typed object corresponding to the config's `ui` section.
+         * Creates a new typed `UI` construct.
          *
          * @param {Object} uiSource original JSON object
          */
@@ -1885,18 +1922,14 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
-    const LAYER_TYPE_TO_LAYER_NODE = {
-        [layerTypes.ESRI_TILE]: BasicLayerNode,
-        [layerTypes.ESRI_FEATURE]: FeatureLayerNode,
-        [layerTypes.ESRI_IMAGE]: BasicLayerNode,
-        [layerTypes.ESRI_DYNAMIC]: DynamicLayerNode,
-        [layerTypes.OGC_WMS]: WMSLayerNode
-    };
-
-    function makeLayerConfig(layerType, source) {
-        return LAYER_TYPE_TO_LAYER_NODE[layerType](source)
-    }
-
+    /**
+     * A helper function that walks the config legend hierarachy and executes arbitrary code on legend config blocks.
+     *
+     * @function walkFunction
+     * @param {Function} action a function to execute on legend config blocks; it is called with `block`, `index` and `parent`
+     * @param {Function} decision [optional=null] a function that returns `true` or `false`; it is called with `block`, `index` and `parent` on legend config block that contain children; if `false` is return, children of the current block are not walled;
+     * @return {Array} an array of flattened results from the `action` function execution
+     */
     function walkFunction(action, decision = null) {
         // roll in the results into a flat array
         return [].concat.apply([], (this.children || this.exclusiveVisibility).map((child, index) => {
@@ -1939,7 +1972,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             WMSLayerEntryNode
         },
 
-        makeLayerConfig,
         applyLayerNodeDefaults,
 
         TYPES,

@@ -1,7 +1,7 @@
 const templateUrl = require('./tooltip-hover.html');
 
 /**
- * @ngdoc directive
+ *
  * @module rvTooltip
  * @memberof app.ui
  * @description
@@ -13,12 +13,6 @@ angular
     .module('app.ui')
     .directive('rvTooltip', rvTooltip);
 
-/**
- * `rvPanel` directive body.
- *
- * @function rvPanel
- * @return {object} directive body
- */
 function rvTooltip($q, debounceService) {
     const directive = {
         restrict: 'E',

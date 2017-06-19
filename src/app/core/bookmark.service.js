@@ -1,7 +1,5 @@
-/* global RV */
-
 /**
- * @ngdoc service
+ *
  * @name bookmarkService
  * @module app.core
  *
@@ -28,11 +26,11 @@ function bookmarkService($rootElement, $q, /*geoService, LayerBlueprint,*/
 
     /************************/
 
-
     /**
      * Creates a bookmark containing the current state of the viewer
      *
      * @function getBookmark
+     * @param {StartPoint} startPoint [optional] map center point cast into a target basemap projection; used when switching projections
      * @returns {String}    The bookmark containing basemap, extent, layers and their options
      */
     function getBookmark(startPoint = null) {
@@ -40,6 +38,7 @@ function bookmarkService($rootElement, $q, /*geoService, LayerBlueprint,*/
         const mapConfig = configService.getSync.map;
 
         // we tack a flag at the end to indicate if we were in blank mode or not
+        // when switching projections using bookmark, `selectedBasemap` is already set to target projection
         const basemap = encode64(mapConfig.selectedBasemap.id + '0');
 
         if (startPoint === null) {

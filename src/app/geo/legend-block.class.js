@@ -1,5 +1,5 @@
 /**
- * @ngdoc object
+ *
  * @module LegendBlock
  * @memberof app.geo
  * @requires dependencies
@@ -44,10 +44,10 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
      */
     class ProxyWrapper {
         /**
-         * blah
+         * Creates a new `ProxyWrapper` from a layer proxy object and layer config.
          *
-         * @param {LayerProxy} proxy a layer proxy object which will be coupled with a correspondign layer config object
-         * @param {LayerNode} layerConfig laye config defintion object from the config file; it may provide overrides and initial settings for the layer proxy object
+         * @param {LayerProxy} proxy a layer proxy object which will be coupled with a corresponding layer config object
+         * @param {LayerNode} layerConfig layer config defintion object from the config file; it may provide overrides and initial settings for the layer proxy object
          */
         constructor(proxy, layerConfig) {
             this._proxy = proxy;
