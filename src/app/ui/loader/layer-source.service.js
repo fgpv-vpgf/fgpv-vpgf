@@ -189,7 +189,10 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                 layerType: Geo.Layer.Types.OGC_WMS,
                 name: data.serviceName || url,
                 layerEntries: [],
-                featureInfoMimeType: formatType
+                featureInfoMimeType: formatType,
+                state: {
+                    userAdded: true
+                }
             });
 
             const layerInfo = new LayerSourceInfo.WMSServiceInfo(layerConfig, wmsLayerList);
@@ -202,7 +205,10 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                 id: `${Geo.Layer.Types.ESRI_FEATURE}#${++ref.idCounter}`,
                 url: url,
                 layerType: Geo.Layer.Types.ESRI_FEATURE,
-                name: data.serviceName
+                name: data.serviceName,
+                state: {
+                    userAdded: true
+                }
             });
 
             const layerInfo = new LayerSourceInfo.FeatureServiceInfo(layerConfig, data.fields);
@@ -220,7 +226,10 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                 url: data.index !== -1 ? data.rootUrl : url,
                 layerType: Geo.Layer.Types.ESRI_DYNAMIC,
                 name: data.serviceName,
-                layerEntries: []
+                layerEntries: [],
+                state: {
+                    userAdded: true
+                }
             });
 
             if (data.index !== -1) {
@@ -238,7 +247,10 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                 id: `${Geo.Layer.Types.ESRI_TILE}#${++ref.idCounter}`,
                 url: data.rootUrl, // tile will display all the sublayers, even if the url was pointing to a child
                 layerType: Geo.Layer.Types.ESRI_TILE,
-                name: data.serviceName
+                name: data.serviceName,
+                state: {
+                    userAdded: true
+                }
             });
 
             const layerInfo = new LayerSourceInfo.TileServiceInfo(layerConfig);
@@ -251,7 +263,10 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                 id: `${Geo.Layer.Types.ESRI_IMAGE}#${++ref.idCounter}`,
                 url: url,
                 layerType: Geo.Layer.Types.ESRI_IMAGE,
-                name: data.serviceName
+                name: data.serviceName,
+                state: {
+                    userAdded: true
+                }
             });
 
             const layerInfo = new LayerSourceInfo.ImageServiceInfo(layerConfig);
@@ -321,7 +336,10 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                     id: `${Geo.Layer.Types.ESRI_FEATURE}-file#${++ref.idCounter}`,
                     url: path,
                     layerType: Geo.Layer.Types.ESRI_FEATURE,
-                    name: typeof file !== 'undefined' ? file.name : path
+                    name: typeof file !== 'undefined' ? file.name : path,
+                    state: {
+                        userAdded: true
+                    }
                 });
 
                 // load file data and return generated file options

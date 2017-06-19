@@ -68,7 +68,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                     visibility: true,
                     boundingBox: false,
                     query: true,
-                    snapshot: false
+                    snapshot: false,
+                    userAdded: false
                 },
                 controls: [
                     'opacity',
@@ -94,7 +95,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                     visibility: true,
                     boundingBox: false,
                     query: true,
-                    snapshot: false
+                    snapshot: false,
+                    userAdded: false
                 },
                 controls: [
                     'opacity',
@@ -126,7 +128,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                     visibility: true,
                     boundingBox: false,
                     query: true,
-                    snapshot: false
+                    snapshot: false,
+                    userAdded: false
                 },
                 controls: [
                     'opacity',
@@ -153,7 +156,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                         visibility: true,
                         boundingBox: false,
                         query: true,
-                        snapshot: false
+                        snapshot: false,
+                        userAdded: false
                     },
                     controls: [
                         'opacity',
@@ -180,7 +184,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                     visibility: true,
                     boundingBox: false,
                     query: false,
-                    snapshot: false
+                    snapshot: false,
+                    userAdded: false
                 },
                 controls: [
                     'opacity',
@@ -206,7 +211,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                     visibility: true,
                     boundingBox: false,
                     query: false,
-                    snapshot: false
+                    snapshot: false,
+                    userAdded: false
                 },
                 controls: [
                     'opacity',
@@ -240,6 +246,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._boundingBox = source.boundingBox;
             this._query = source.query;
             this._snapshot = source.snapshot;
+            this._userAdded = source.userAdded;
 
             // TODO: decide if we want to preserve any settings (apart from snapshot) through the layer reload
         }
@@ -258,6 +265,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get snapshot () {           return this._snapshot; }
         set snapshot (value) {      this._snapshot = value; }
+
+        get userAdded () {          return this._userAdded; }
+        set userAdded (value) {     this._userAdded = value; }
 
         get JSON() {
             return {
@@ -313,7 +323,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
          */
         function _defaultState(state = {}, stateDefaults, parentState = {}) {
             const properies = [
-                'opacity', 'visibility', 'boundingBox', 'query', 'snapshot'
+                'opacity', 'visibility', 'boundingBox', 'query', 'snapshot', 'userAdded'
             ];
 
             properies.forEach(propName => {
@@ -1000,14 +1010,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
             this._hidden = entrySource.hidden === true;
 
-            this._userAdded = entrySource.userAdded || false;
         }
 
         static ICONS = 'icons';
         static IMAGES = 'images';
 
         get layerId () { return this._layerId; }
-        get userAdded () { return this._userAdded; }
         get controlledIds () { return this._controlledIds; }
         get entryIndex () { return this._entryIndex; }
         get entryId () { return this._entryId; }

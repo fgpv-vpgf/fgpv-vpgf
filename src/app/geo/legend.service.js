@@ -73,7 +73,6 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         // TODO: this can potentially move to blueprint code
         const entryConfigObject = {
             layerId: layerBlueprint.config.id,
-            userAdded: true,
             symbologyRenderStyle: layerBlueprint.config.layerType === Geo.Layer.Types.OGC_WMS ?
                 ConfigObject.legend.Entry.IMAGES :
                 ConfigObject.legend.Entry.ICONS
@@ -180,7 +179,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
     /**
      * Remove the bounding box associated with the node or group
-     * 
+     *
      * @function _boundingBoxRemoval
      * @private
      * @param {LegendBlock} legendBlock legend block with bounding box to be removed from the map
