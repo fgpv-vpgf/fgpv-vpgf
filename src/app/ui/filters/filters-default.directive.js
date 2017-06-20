@@ -265,6 +265,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
             function initColumns() {
                 // if it is the first time table is initialize, set columns and table info
                 let order = stateManager.display.filters.data.filter.order || [];
+                const config = requester.legendEntry._mainProxyWrapper.layerConfig.filters;
                 if (!displayData.filter.isInit) {
                     // add the column interactive buttons renderer
                     addColumnInteractivity();
@@ -309,15 +310,14 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                     });
 
                     // customize columns
-                    const config = requester.legendEntry._mainProxyWrapper.layerConfig.source.filters || { };
                     const order = customizeColumns(config);
-
-                    // customize table
-                    customizeTable(config);
-
-                    // set title
-                    self.title = displayData.filter.title;
                 }
+
+                // customize table
+                customizeTable(config);
+
+                // set title
+                self.title = displayData.filter.title;
 
                 return order;
             }
@@ -415,27 +415,28 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
             * @private
             * @param {Object} config    configuration file for table
             */
-            function customizeTable(config) {
+            function customizeTable(config = {}) {
                 // set title and description
-                displayData.filter.title = hasOwnProperty.call(config, 'title') ?
+                displayData.filter.title = config.title ?
                     config.title : self.display.requester.name;
-                displayData.filter.description = hasOwnProperty.call(config, 'description') ? config.description : '';
+                displayData.filter.description = config.description ? config.description : '';
 
-                // check if we need to open in maximize view
-                if (hasOwnProperty.call(config, 'maximize') && config.maximize) {
-                    stateManager.state.filters.morph = 'full';
+                // check if we need to open in maximize or default view
+                if (config.maximize) {
                     stateManager.setMorph('filters', 'full');
+                } else {
+                    stateManager.setMorph('filters', 'default');
                 }
 
                 // set global search and defaut value
                 filterService.isGlobalSearch = true; // enable by default
-                if (hasOwnProperty.call(config, 'search')) {
+                if (config.search) {
                     filterService.isGlobalSearch = config.search.enabled;
                     displayData.filter.globalSearch = config.search.enabled ? config.search.value || '' : '';
                 }
 
                 // apply filters on map
-                if (hasOwnProperty.call(config, 'applyMap') && config.applyMap) {
+                if (config.applyMap) {
                     filterService.applyFilters();
                 }
             }
@@ -447,10 +448,10 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
             * @param {Object} config    configuration file for columns
             * @return {Array} order    columns order array
             */
-            function customizeColumns(config) {
+            function customizeColumns(config = {}) {
                 // check if colums configuration exist. If so use it to set columns
                 const order = [];
-                if (hasOwnProperty.call(config, 'columns')) {
+                if (config.columns) {
                     // create an array for columns (add symbol and interactive column first)
                     const columns = [displayData.columns.find(column => column.data === 'rvSymbol'),
                         displayData.columns.find(column => column.data === 'rvInteractive')];
@@ -463,32 +464,30 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                         column.position = columns.length;
 
                         // set title
-                        if (hasOwnProperty.call(configCol, 'title')) { column.title = configCol.title; }
+                        if (configCol.title) { column.title = configCol.title; }
 
                         // set field description
-                        if (hasOwnProperty.call(configCol, 'description')) {
+                        if (configCol.description) {
                             column.description = configCol.description;
                         }
 
                         // set width and renderer accordingly
-                        if (hasOwnProperty.call(configCol, 'width')) {
+                        if (configCol.width) {
                             column.width = `${configCol.width}px`;
                             column.render = renderEllipsis(configCol.width);
                         }
 
                         // set display (display can be modified in setting panel)
-                        if (hasOwnProperty.call(configCol, 'visible')) {
-                            column.display = configCol.visible;
-                            column.className = configCol.visible ? '' : 'rv-filter-noexport';
-                        }
+                        column.display = configCol.visible;
+                        column.className = configCol.visible ? '' : 'rv-filter-noexport';
 
                         // set sort order
-                        if (hasOwnProperty.call(configCol, 'sort')) {
+                        if (configCol.sort) {
                             order.push([column.position, configCol.sort]);
                         }
 
                         // set searchable (if false, data is there but not part of the filtering)
-                        if (hasOwnProperty.call(configCol, 'searchable')) {
+                        if (configCol.searchable) {
                             column.searchable = configCol.searchable;
                         }
 
@@ -513,14 +512,14 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
             function customizeFilter(config, column) {
                 // set filter type, value and if it can be modified
                 // if there is no filter properties, do not create the filter so set it to undefined
-                if (hasOwnProperty.call(config, 'filter')) {
-                    if (hasOwnProperty.call(config.filter, 'type')) {
+                if (config.filter) {
+                    if (config.filter.type) {
                         column.type = config.filter.type;
                         column.filter = columnTypes[config.filter.type].init();
                     }
 
                     // set filter value
-                    if (hasOwnProperty.call(config.filter, 'value')) {
+                    if (config.filter.value) {
                         if (column.type === 'string' || column.type === 'selector') {
                             column.filter.value = config.filter.value;
                         } else {
@@ -534,7 +533,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                     }
 
                     // set if filter can be modified
-                    if (hasOwnProperty.call(config.filter, 'static')) {
+                    if (config.filter.static) {
                         column.filter.static = config.filter.static;
                     }
                 } else { column.filter = undefined; }
