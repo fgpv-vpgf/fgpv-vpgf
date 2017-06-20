@@ -77,7 +77,8 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
             if (typeof config.services.search === 'undefined'
                 || typeof config.services.search.serviceUrls === 'undefined'
                 || Object.keys(config.services.search.serviceUrls).length < Object.keys(GEOSERVICE).length
-                || ! hasAllServices(config.services.search.serviceUrls)) {
+                || ! hasAllServices(config.services.search.serviceUrls)
+                || ! config.map.components.geoSearch.enabled) {
                 enabled = false;
             } else {
                 enabled = true;
