@@ -171,7 +171,14 @@ md-select-menu {
 
 // special option in the md-select header to preselect all the items
 .md-select-menu-container {
-    rv-select-header {
+    md-select-header {
+        md-input-container {
+            height: rem(4.8);
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+
         .rv-select-header-all {
             height: rem(4.8);
             padding: 0;
