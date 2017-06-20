@@ -31,8 +31,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
         if (!esriLayer) {
             this._defaultFC = '0';
             this._featClasses['0'] = new placeholderFC.PlaceholderFC(this, this.name);
-
-            this._geometryType = undefined;
             this._fcount = undefined;
         }
     }
@@ -63,7 +61,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @returns {String} the geometry type of the layer
      */
     getGeomType () {
-        return this._geometryType;
+        return this._featClasses[this._defaultFC].geomType;
     }
 
     /**
@@ -110,7 +108,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
         // update asynch data
         const pLD = aFC.getLayerData().then(ld => {
-            this._geometryType = ld.geometryType;
+            aFC.geomType = ld.geometryType;
             aFC.nameField = this.config.nameField || ld.nameField || '';
         });
 
@@ -298,7 +296,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         // more accurate results without making the buffer if we're dealing with extents
         // polygons from added file need buffer
         // TODO further investigate why esri is requiring buffer for file-based polygons. logic says it shouldnt
-        if (this._layer.geometryType === 'esriGeometryPolygon' && !this.isFileLayer()) {
+        if (this.getGeomType() === 'esriGeometryPolygon' && !this.isFileLayer()) {
             qry.geometry = opts.geometry;
         } else {
             // TODO investigate why we are using opts.clickEvent.mapPoint and not opts.geometry

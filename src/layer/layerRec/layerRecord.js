@@ -107,8 +107,8 @@ class LayerRecord extends root.Root {
      * @param {String} newState the state the layer has now become
      */
     _stateChange (newState) {
+        // console.log(`State change for ${this.layerId} to ${newState}`);
         this._state = newState;
-        console.log(`State change for ${this.layerId} to ${newState}`);
 
         // if we don't copy the array we could be looping on an array
         // that is being modified as it is being read
@@ -287,18 +287,19 @@ class LayerRecord extends root.Root {
      * Set map scale depending on zooming in or zooming out of layer visibility scale
      *
      * @function setMapScale
-     * @param {Object} map layer to zoom to scale to for feature layers; parent layer for dynamic layers
-     * @param {Object} lod scale object the map will be set to
-     * @param {Boolean} zoomIn the zoom to scale direction; true need to zoom in; false need to zoom out
+     * @param {Object} map                   layer to zoom to scale to for feature layers; parent layer for dynamic layers
+     * @param {Object} lod                   scale object the map will be set to
+     * @param {Boolean} zoomIn               the zoom to scale direction; true need to zoom in; false need to zoom out
+     * @param {Boolean} positionOverLayer    ensures the map is over the layer's extent after zooming. only applied if zoomIn is true. defaults to true
      * @returns {Promise} resolves after map is done changing its extent
      */
-    setMapScale (map, lod, zoomIn) {
+    setMapScale (map, lod, zoomIn, positionOverLayer = true) {
         // TODO possible this would live in the map manager in a bigger refactor.
         // NOTE because we utilize the layer object's full extent (and not child feature class extents),
         //      this function stays in this class.
 
         // if zoom in is needed; must find center of layer's full extent and perform center&zoom
-        if (zoomIn) {
+        if (zoomIn && positionOverLayer) {
             // need to reproject in case full extent in a different sr than basemap
             const gextent = this._apiRef.proj.localProjectExtent(this._layer.fullExtent, map.spatialReference);
 
@@ -324,32 +325,36 @@ class LayerRecord extends root.Root {
      *
      * @function _zoomToScaleSet
      * @private
-     * @param {Object} map            the map object
-     * @param {Array} lods            level of details array for basemap
-     * @param {Boolean} zoomIn        the zoom to scale direction; true need to zoom in; false need to zoom out
-     * @param {Object} scaleSet       contains min and max scales for the layer.
+     * @param {Object} map                   the map object
+     * @param {Array} lods                   level of details array for basemap
+     * @param {Boolean} zoomIn               the zoom to scale direction; true need to zoom in; false need to zoom out
+     * @param {Object} scaleSet              contains min and max scales for the layer
+     * @param {Boolean} positionOverLayer    ensures the map is over the layer's extent after zooming. only applied if zoomIn is true. defaults to true
+     * @returns {Promise}                    promise that resolves after map finishes moving about
      */
-    _zoomToScaleSet (map, lods, zoomIn, scaleSet) {
+    _zoomToScaleSet (map, lods, zoomIn, scaleSet, positionOverLayer = true) {
         // TODO update function parameters once things are working
 
         // NOTE we use lods provided by config rather that system-ish map.__tileInfo.lods
         const zoomLod = this.findZoomScale(lods, scaleSet, zoomIn);
 
-        return this.setMapScale(map, zoomLod, zoomIn);
+        return this.setMapScale(map, zoomLod, zoomIn, positionOverLayer);
     }
 
     /**
      * Zoom to a valid scale level for this layer.
      *
      * @function zoomToScale
-     * @param {Object} map            the map object
-     * @param {Array} lods            level of details array for basemap
-     * @param {Boolean} zoomIn        the zoom to scale direction; true need to zoom in; false need to zoom out
+     * @param {Object} map                   the map object
+     * @param {Array} lods                   level of details array for basemap
+     * @param {Boolean} zoomIn               the zoom to scale direction; true need to zoom in; false need to zoom out
+     * @param {Boolean} positionOverLayer    ensures the map is over the layer's extent after zooming. only applied if zoomIn is true. defaults to true
+     * @returns {Promise}                    promise that resolves after map finishes moving about
      */
-    zoomToScale (map, lods, zoomIn) {
+    zoomToScale (map, lods, zoomIn, positionOverLayer = true) {
         // get scale set from child, then execute zoom
         const scaleSet = this._featClasses[this._defaultFC].getScaleSet();
-        return this._zoomToScaleSet(map, lods, zoomIn, scaleSet);
+        return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, positionOverLayer);
     }
 
     /**

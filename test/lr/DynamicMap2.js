@@ -2,7 +2,7 @@ import geoapi from '../../src/index';
 
 // https://github.com/fgpv-vpgf/geoApi/wiki/Locally-Testing-GeoAPI
 // to run, temporarily update package.json
-// "main": "test/lr/DynamicMap1.js"
+// "main": "test/lr/DynamicMap2.js"
 
 $('head').append('<link rel="stylesheet" href="http://js.arcgis.com/3.14/esri/css/esri.css" type="text/css" />');
 
@@ -11,13 +11,12 @@ $('body').append(`
 `);
 
 geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-    console.log('TEST PAGE - Map Testing on Dynamic Layer Record - visibility, opacity, zoom');
+    console.log('TEST PAGE - Zoom To Feature (point and poly) on Dynamic Layer Record');
 
     var config1 = {
         id: 'guts',
         name: 'Dynamic Test',
-        url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/Nest/MapServer',
-        nameField: 'siteShortName_en',
+        url: 'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands/MapServer',
         metadataUrl: 'http://www.github.com',
         layerType: 'esriDynamic',
         tolerance: 5,
@@ -40,17 +39,17 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
                     query: true
                 },
                 stateOnly: false,
-                name: 'Hamhocks'
+                name: 'Points'
             },
             { 
-                index: 2,
-                name: 'doggguts',
+                index: 1,
+                name: 'Polys',
                 state: {
                     opacity: 0,
-                    visibility: true,                            
+                    visibility: true,
                     query: false
                 },
-                stateOnly: true
+                stateOnly: false
             }
         ]
     };
@@ -129,21 +128,27 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     function afterLoadTests() {
         console.log('enhanced loaded');
 
-        var leaf2proxy = layerRec.getChildProxy(2);
-        var leaf3proxy = layerRec.getChildProxy(3);
-        
-        // remember, we are not using completeConfig swtich, so things get defaulted
-        console.log('leaf 3 visible, should be false', leaf3proxy.visibility);
-        console.log('leaf 2 visible, should be false', leaf2proxy.visibility);
-        
-        console.log('layer proxy visible -- sb false', proxy.visibility);
-        
-        leaf3proxy.setVisibility(true);
-        console.log('layer proxy visible -- sb true', proxy.visibility);
-        console.log('leaf 3 visible -- sb true', leaf3proxy.visibility);
-    
-        leaf3proxy.zoomToBoundary(map);
-        leaf3proxy.zoomToScale(map, mapOpts.lods, true);
+        var leaf0proxy = layerRec.getChildProxy(0); //points
+        var leaf1proxy = layerRec.getChildProxy(1); //polys
+
+        leaf0proxy.setVisibility(true);
+        leaf1proxy.setVisibility(true);
+
+        // zoom to a point
+        leaf0proxy.zoomToGraphic(1299, map, { x:0, y:0 }).then(() => {
+            console.log('zoom to point done');
+        });
+
+        // wait a bit to do poly zoom
+        var toTo = setTimeout(() => {
+            
+            clearTimeout(toTo);
+
+            leaf1proxy.zoomToGraphic(4, map, { x:0, y:0 }).then(() => {
+                console.log('zoom to poly done');
+            });
+
+        }, 5000);
 
     }
 

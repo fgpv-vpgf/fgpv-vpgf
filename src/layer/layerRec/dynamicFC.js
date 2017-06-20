@@ -70,9 +70,6 @@ class DynamicFC extends attribFC.AttribFC {
         return this._scaleSet;
     }
 
-    get geomType () { return this._geometryType; }
-    set geomType (value) { this._geometryType = value; }
-
     get featureCount () { return this._fcount; }
     set featureCount (value) { this._fcount = value; }
 

@@ -71,8 +71,11 @@ class LayerInterface {
     // param: esriMap
     zoomToBoundary () { return undefined; } // returns promise that resolves after zoom completes
 
-    // param: esriMap, array of lods, boolean
+    // param: esriMap, array of lods, boolean, optional boolean
     zoomToScale () { return undefined; } // returns promise that resolves after zoom completes
+
+    // param: Integer, esriMap, Object {x: Numeric, y: Numeric}
+    zoomToGraphic () { return undefined; } // returns promise that resolves after zoom completes
 
     // param: string
     setDefinitionQuery () { return undefined; }
@@ -132,6 +135,7 @@ class LayerInterface {
         this.attributesToDetails = featureAttributesToDetails;
         this.fetchGraphic = featureFetchGraphic;
         this.setDefinitionQuery = featureSetDefinitionQuery;
+        this.zoomToGraphic = featureZoomToGraphic;
     }
 
     convertToDynamicLeaf (dynamicFC) {
@@ -165,6 +169,7 @@ class LayerInterface {
         this.fetchGraphic = dynamicLeafFetchGraphic;
         this.setDefinitionQuery = dynamicLeafSetDefinitionQuery;
         this.isOffScale = dynamicLeafIsOffScale;
+        this.zoomToGraphic = dynamicLeafZoomToGraphic;
     }
 
     convertToPlaceholder (placeholderFC) {
@@ -390,17 +395,14 @@ function dynamicLeafZoomToBoundary(map) {
     this._source.zoomToBoundary(map);
 }
 
-function standardZoomToScale(map, lods, zoomIn) {
+function standardZoomToScale(map, lods, zoomIn, positionOverLayer = true) {
     /* jshint validthis: true */
-    return this._source.zoomToScale(map, lods, zoomIn);
+    return this._source.zoomToScale(map, lods, zoomIn, positionOverLayer);
 }
 
-function dynamicLeafZoomToScale(map, lods, zoomIn) {
+function dynamicLeafZoomToScale(map, lods, zoomIn, positionOverLayer = true) {
     /* jshint validthis: true */
-
-    // this is not the greatest approach. zoom to scale is funny because logic guts live
-    // in the record class, but proxy dictates we trigger via the FC
-    return this._source._parent.zoomToScale(this._source._idx, map, lods, zoomIn);
+    return this._source.zoomToScale(map, lods, zoomIn, positionOverLayer);
 }
 
 function featureGetFeatureName(objId, attribs) {
@@ -426,6 +428,16 @@ function featureFetchGraphic(oid, ignoreLocal = false) {
 function dynamicLeafFetchGraphic(oid, ignoreLocal = false) {
     /* jshint validthis: true */
     return this._source.fetchGraphic(oid, ignoreLocal);
+}
+
+function featureZoomToGraphic(oid, map, offsetFraction) {
+    /* jshint validthis: true */
+    return this._source.zoomToGraphic(oid, map, offsetFraction);
+}
+
+function dynamicLeafZoomToGraphic(oid, map, offsetFraction) {
+    /* jshint validthis: true */
+    return this._source.zoomToGraphic(oid, map, offsetFraction);
 }
 
 function featureSetDefinitionQuery(query) {

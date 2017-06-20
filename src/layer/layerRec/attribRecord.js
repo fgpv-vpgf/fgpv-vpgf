@@ -103,6 +103,19 @@ class AttribRecord extends layerRecord.LayerRecord {
     }
 
     /**
+     * Will attempt to zoom the map view so the a graphic is prominent.
+     *
+     * @function zoomToGraphic
+     * @param  {Integer} objId          Object ID of grahpic being searched for
+     * @param  {Object} map             wrapper object for the map we want to zoom
+     * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
+     * @return {Promise}                resolves after the map is done moving
+     */
+    zoomToGraphic (objId, map, offsetFraction) {
+        return this._featClasses[this._defaultFC].zoomToGraphic(objId, map, offsetFraction);
+    }
+
+    /**
      * Get feature count of a feature layer.
      *
      * @function getFeatureCount
