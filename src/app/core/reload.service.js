@@ -18,12 +18,23 @@ function reloadService(events, bookmarkService, geoService, configService) {
 
         loadNewLang,
         loadWithBookmark,
-        changeProjection
+        changeProjection,
+
+        reloadConfig
     };
 
     return service;
 
     /************************/
+
+    function reloadConfig() {
+        events.$broadcast(events.rvApiHalt);
+
+        geoService._isMapReady = false;
+        geoService.destroyMap();
+        configService.reInitialize();
+        geoService.assembleMap();
+    }
 
     function changeProjection(startPoint) {
         events.$broadcast(events.rvApiHalt);

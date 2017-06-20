@@ -203,6 +203,10 @@ const mapProxy = {
         return this._proxy('mapCoordinates');
     },
 
+    reInitialize() {
+        this._proxy('reInitialize');
+    },
+
     _init(appID) {
         this.appID = appID;
 
