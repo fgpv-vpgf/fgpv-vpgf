@@ -43,6 +43,7 @@
         <option value="config-sample-structured-legend-opacity-locked.json">multiple layers with opacity locked</option>
         <option value="config-sample-structured-legend-visibility-disable.json">multiple layers with visibility disabled</option>
         <option value="config-sample-structured-legend-visibility-locked.json">multiple layers with visibility locked</option>
+        <option value="config-sample-structured-legend-tile-layer-only-valid-one-proj.json">tile layer which is only valid in one of the basemap projections</option>
     </select>
 
     <div class="myMap" id="mobile-map" is="rv-map"
