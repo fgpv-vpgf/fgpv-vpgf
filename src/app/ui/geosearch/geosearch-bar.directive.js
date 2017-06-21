@@ -45,7 +45,7 @@ function rvGeosearchBar() {
     }
 }
 
-function Controller(appInfo, layoutService, debounceService, geosearchService) {
+function Controller(appInfo, layoutService, debounceService, geosearchService, configService) {
     'ngInject';
     const self = this;
 
@@ -121,8 +121,15 @@ function Controller(appInfo, layoutService, debounceService, geosearchService) {
      * @return {Promise} a promise resolving with geo search query suggestion if any
      */
     function getSuggestions() {
-        const suggestionsPromise = geosearchService.runQuery().then((data = {}) => {
-            return data.suggestions || [];
+        let suggestionsPromise = new Promise((resolve, reject) => {
+            resolve([]);
+        });
+        configService.onEveryConfigLoad(config => {
+            if (config.map.components.geoSearch.enabled) {
+                suggestionsPromise = geosearchService.runQuery().then((data = {}) => {
+                    return data.suggestions || [];
+                });
+            }
         });
 
         return suggestionsPromise;

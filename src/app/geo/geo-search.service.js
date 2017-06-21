@@ -74,11 +74,11 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
             provinceList = undefined;
             typeList = undefined;
 
-            if (typeof config.services.search === 'undefined'
+            if (! config.map.components.geoSearch.enabled
+                || typeof config.services.search === 'undefined'
                 || typeof config.services.search.serviceUrls === 'undefined'
                 || Object.keys(config.services.search.serviceUrls).length < Object.keys(GEOSERVICE).length
-                || ! hasAllServices(config.services.search.serviceUrls)
-                || ! config.map.components.geoSearch.enabled) {
+                || ! hasAllServices(config.services.search.serviceUrls)) {
                 enabled = false;
             } else {
                 enabled = true;
