@@ -203,6 +203,11 @@ const mapProxy = {
         return this._proxy('mapCoordinates');
     },
 
+
+     /**
+    * reinitial when a new config file is loaded
+    * @function  reInitialize
+    */
     reInitialize() {
         this._proxy('reInitialize');
     },
