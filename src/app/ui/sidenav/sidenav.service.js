@@ -26,23 +26,18 @@ const SIDENAV_CONFIG_DEFAULT = {
 };
 
 /**
- * @ngdoc service
+ *
  * @module sideNavigationService
  * @memberof app.ui
  *
  * @description
  * The `sideNavigationService` service provides access and controls the side navigation menu.
- *
+ * Exposes methods to close/open the side navigation panel.
  */
 angular
     .module('app.ui')
     .factory('sideNavigationService', sideNavigationService);
 
-/**
- * `sideNavigationService` exposes methods to close/open the side navigation panel.
- * @param  {object} $mdSidenav
- * @return {object} service object
- */
 // need to find a more elegant way to include all these dependencies
 function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegistry, configService, events,
     stateManager, basemapService, fullScreenService, exportService, storageService, helpService, reloadService,

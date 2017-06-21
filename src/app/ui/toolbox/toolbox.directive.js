@@ -1,7 +1,7 @@
 const templateUrl = require('./toolbox.html');
 
 /**
- * @ngdoc directive
+ *
  * @module app.ui.rvToolbox
  * @restrict E
  * @description

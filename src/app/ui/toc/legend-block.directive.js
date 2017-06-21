@@ -10,7 +10,7 @@ const templates = {
 };
 
 /**
- * @ngdoc directive
+ *
  * @module rvLegendBlock
  * @memberof app.ui
  * @restrict E

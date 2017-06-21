@@ -1,9 +1,11 @@
 /**
- * @module LegendBlockFactory
+ *
+ * @module LegendBlock
  * @memberof app.geo
  * @requires dependencies
  * @description
  *
+ * `LegendBlock` exposed five legend block classes and the ProxyWrapper class.
  *
  */
 angular
@@ -41,6 +43,12 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
      * @class ProxyWrapper
      */
     class ProxyWrapper {
+        /**
+         * Creates a new `ProxyWrapper` from a layer proxy object and layer config.
+         *
+         * @param {LayerProxy} proxy a layer proxy object which will be coupled with a corresponding layer config object
+         * @param {LayerNode} layerConfig layer config defintion object from the config file; it may provide overrides and initial settings for the layer proxy object
+         */
         constructor(proxy, layerConfig) {
             this._proxy = proxy;
             this._layerConfig = layerConfig;
@@ -608,11 +616,11 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                     return 'placeholder';
                 },
                 'rv-loaded': () => {
-                    _removeReload()
+                    _removeReload();
                     return _collapsedCheck(super.template);
                 },
                 'rv-refresh': () => {
-                    _removeReload()
+                    _removeReload();
                     return _collapsedCheck(super.template);
                 },
                 'rv-error': () => {
@@ -620,7 +628,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                     return 'error';
                 },
                 'rv-bad-projection': () => {
-                    _removeReload()
+                    _removeReload();
                     return 'bad-projection';
                 }
             };

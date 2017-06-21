@@ -1,7 +1,7 @@
 const templateUrl = require('./menulink.html');
 
 /**
- * @ngdoc directive
+ *
  * @module rvMenuLink
  * @memberof app.ui
  * @description

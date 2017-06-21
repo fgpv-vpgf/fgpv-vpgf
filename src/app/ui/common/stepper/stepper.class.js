@@ -1,7 +1,5 @@
-/* global RV */
-
 /**
- * @ngdoc object
+ *
  * @module StepperFactory
  * @memberof app.ui
  * @description
@@ -16,8 +14,6 @@ angular
     .factory('Stepper', StepperFactory);
 
 function StepperFactory($q) {
-    // jscs doesn't like enhanced object notation
-    // jscs:disable requireSpacesInAnonymousFunctionExpression
     /**
      * @class Stepper
      */

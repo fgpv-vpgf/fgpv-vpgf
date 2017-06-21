@@ -1,7 +1,7 @@
 // TODO: rename to rv-include
 
 /**
- * @ngdoc directive
+ *
  * @name rvSvg
  * @module app.ui
  * @restrict E

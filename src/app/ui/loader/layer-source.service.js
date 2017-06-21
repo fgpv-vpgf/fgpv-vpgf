@@ -29,6 +29,10 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
     /**
      * Get service info from the supplied url. Service info usually include information like service type, name, available fields, etc.
      * TODO: there is a lot of workarounds since wms layers need special handling, and it's not possible to immediately detect if the layer is not a service endpoint .
+     *
+     * @function fetchServiceInfo
+     * @param {String} serviceUrl a service url to load
+     * @return {Promise} a promise resolving with an array of at least one LayerSourceInfo objects; will reject if there is an error accessing the service or parsing its response;
      */
     function fetchServiceInfo(serviceUrl) {
         const matrix = {
@@ -64,6 +68,7 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
             }
         };
 
+        // check if it's a WMS first
         const fetchPromise = gapiService.gapi.layer.ogc.parseCapabilities(serviceUrl)
             .then(data => {
                 if (data.layers.length > 0) { // if there are layers, it's a wms layer
@@ -82,6 +87,12 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
 
         return fetchPromise;
 
+        /**
+         * @function _parseAsSomethingElse
+         * @private
+         * @param {Object} serviceInfo info object from geoApi prediction function
+         * @return {Promise} a promsie resolving with an array of at least one LayerSourceInfo objects
+         */
         function _parseAsSomethingElse(serviceInfo) {
             if (serviceInfo.serviceType === geoServiceTypes.Error) {
                 // this is not a service URL;
@@ -98,72 +109,15 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
             return parsingPromise;
         }
 
-        function _parseAsSomethingElse2(serviceInfo) {
-            if (serviceInfo.serviceType === Geo.Service.Types.Error) {
-                // this is not a service URL;
-                // in some cases, if URL is not a service URL, dojo script used to interogate the address
-                // will throw a page-level error which cannot be caught; in such cases, it's not clear to the user what has happened;
-                // timeout error will eventually be raised and this block will trigger
-                // TODO: as a workaround, block continue button until interogation is complete so users can't click multiple times, causing multiple checks
-                return $q.reject(serviceInfo); // reject promise if the provided url cannot be accessed
-
-            } else if (serviceInfo.serviceType === Geo.Service.Types.RasterLayer) {
-                return _parseAsRaster(serviceInfo);
-            } else if (serviceInfo.serviceType === Geo.Service.Types.DynamicService) {
-                return _parseAsDynamic(serviceInfo);
-            } else if (serviceInfo.serviceType === Geo.Service.Types.FeatureLayer) {
-                return _parseAsFeature(serviceInfo);
-            } else if (serviceInfo.serviceType === Geo.Service.Types.TileService) {
-                return _parseAsTile(serviceInfo);
-            } else {
-                throw Error('BBBB feck');
-            }
-        }
-
-        function _predictAsDynamic(serviceUrl) {
-            const layerId = serviceUrl.split('/').pop(); // get layer ID
-
-            // remove the layer id so we get a dynamic service instead
-            serviceUrl = serviceUrl.substring(0, serviceUrl.lastIndexOf('/'));
-
-            // get a dynamic service prediction (with the raster layer as one of its layers)
-            return gapiService.gapi.layer.predictLayerUrl(serviceUrl, Geo.Service.Types.DynamicService)
-                .then(data => ({
-                    data,
-                    layerInfo: _parseAsDynamic(data),
-                    layerId: parseInt(layerId)
-                }));
-        }
-
-        function _parseAsRaster(data) {
-            const doublePrediction = _predictAsDynamic(serviceUrl)
-                .then(({ layerInfo: [dynamicLayerInfo], layerId, data }) => {
-                    dynamicLayerInfo.config.layerEntries = [dynamicLayerInfo.layers.find(layer =>
-                        layer.index === layerId)];
-
-                    // create another layer info
-                    const rasterLayerList = _flattenDynamicLayerList(data.layers)
-                        .filter(layer =>
-                            layer.index === layerId)
-                        .map(layerEntry =>
-                            (new ConfigObject.layers.DynamicLayerEntryNode(layerEntry)));
-
-                    const rasterLayerConfig = new ConfigObject.layers.DynamicLayerNode({
-                        id: `${Geo.Layer.Types.ESRI_RASTER}#${++ref.idCounter}`,
-                        url: serviceUrl,
-                        layerType: Geo.Layer.Types.ESRI_DYNAMIC,
-                        name: data.serviceName,
-                        layerEntries: rasterLayerList
-                    });
-
-                    const rasterLayerInfo = new LayerSourceInfo.RasterServiceInfo(rasterLayerConfig);
-
-                    return [rasterLayerInfo, dynamicLayerInfo];
-                });
-
-            return doublePrediction;
-        }
-
+        /**
+         * Parses the supplied service url as if it's a WMS service.
+         *
+         * @function _parseAsWMS
+         * @private
+         * @param {String} url a service url to be used
+         * @param {Object} data parsed WMS capabilities data from the geoApi call
+         * @return {Promise} a promsie resolving with an array of a singe LayerSourceInfo.WMSServiceInfo object
+         */
         function _parseAsWMS(url, data) {
             RV.logger.log('layerBlueprint', `the url ${url} is a WMS`);
 
@@ -200,6 +154,15 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
             return [layerInfo];
         }
 
+        /**
+         * Parses the supplied service url as if it's a Feature service.
+         *
+         * @function _parseAsFeature
+         * @private
+         * @param {String} url a service url to be used
+         * @param {Object} data service info data from the geoApi predition call
+         * @return {Promise} a promsie resolving with a LayerSourceInfo.FeatureServiceInfo object
+         */
         function _parseAsFeature(url, data) {
             const layerConfig = new ConfigObject.layers.FeatureLayerNode({
                 id: `${Geo.Layer.Types.ESRI_FEATURE}#${++ref.idCounter}`,
@@ -216,6 +179,15 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
             return layerInfo;
         }
 
+        /**
+         * Parses the supplied service url as if it's a Dynamic service.
+         *
+         * @function _parseAsDynamic
+         * @private
+         * @param {String} url a service url to be used
+         * @param {Object} data service info data from the geoApi predition call
+         * @return {Promise} a promsie resolving with a LayerSourceInfo.DynamicServiceInfo object
+         */
         function _parseAsDynamic(url, data) {
             const dynamicLayerList = _flattenDynamicLayerList(data.layers)
                 .map(layerEntry =>
@@ -242,6 +214,15 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
             return layerInfo;
         }
 
+        /**
+         * Parses the supplied service url as if it's a Tile service.
+         *
+         * @function _parseAsTile
+         * @private
+         * @param {String} url a service url to be used
+         * @param {Object} data service info data from the geoApi predition call
+         * @return {Promise} a promsie resolving with a LayerSourceInfo.TileServiceInfo object
+         */
         function _parseAsTile(url, data) {
             const layerConfig = new ConfigObject.layers.BasicLayerNode({
                 id: `${Geo.Layer.Types.ESRI_TILE}#${++ref.idCounter}`,
@@ -258,6 +239,15 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
             return layerInfo;
         }
 
+        /**
+         * Parses the supplied service url as if it's a Image service.
+         *
+         * @function _parseAsImage
+         * @private
+         * @param {String} url a service url to be used
+         * @param {Object} data service info data from the geoApi predition call
+         * @return {Promise} a promsie resolving with a LayerSourceInfo.ImageServiceInfo object
+         */
         function _parseAsImage(url, data) {
             const layerConfig = new ConfigObject.layers.BasicLayerNode({
                 id: `${Geo.Layer.Types.ESRI_IMAGE}#${++ref.idCounter}`,
@@ -320,10 +310,19 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
         }
     }
 
+    /**
+     *
+     * @function fetchFileInfo
+     * @param {String} path an absolute url for a file being loaded from the network
+     * @param {Object} file html5 file object
+     * @param {Function} progressCallback a function to call with a progress updates while a file being read
+     * @return {Promise} a promise resolving with an array of three LayerSourceInfo objects; one for each supported file types: CSV, GeoJSON, ShapeFile; will reject if there is an error accessing the service or parsing its response;
+     */
     function fetchFileInfo(path, file, progressCallback = angular.noop) {
         const fetchPromise = gapiService.gapi.layer.predictLayerUrl(path)
             .then(fileInfo => {
-                // fileData is returned only if path is a url; if it's just a file name, only serviceType is returned                            this.fileData = fileInfo.fileData;
+                // fileData is returned only if path is a url; if it's just a file name, only serviceType is returned
+                // this.fileData = fileInfo.fileData;
                 this.layerType = Geo.Layer.Types.ESRI_FEATURE;
                 this.fileType = fileInfo.serviceType;
 
@@ -367,6 +366,14 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
 
         return fetchPromise;
 
+        /**
+         * Reads a file into memory.
+         *
+         * @private
+         * @function _loadFileData
+         * @param {Object} fileInfo file info object returned by the geoApi prediction function
+         * @return {Object?} raw file data
+         */
         function _loadFileData(fileInfo) {
             // if there is file object, read it and store the data
             if (typeof file !== 'undefined') {
@@ -385,7 +392,7 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
          * @private
          * @param {File} file a file object to read
          * @param {Function} progressCallback a function which is called during the process of reading file indicating how much of the total data has been read
-         * @return {Promise}      promise resolving with file's data
+         * @return {Promise} promise resolving with file's data
          */
         function _readFile(file, progressCallback) {
             const dataPromise = $q((resolve, reject) => {

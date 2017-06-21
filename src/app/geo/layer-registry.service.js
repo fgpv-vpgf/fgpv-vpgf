@@ -1,9 +1,8 @@
-/* global RV */
 const THROTTLE_COUNT = 2;
 const THROTTLE_TIMEOUT = 3000;
 
 /**
- * @ngdoc service
+ *
  * @module layerRegistry
  * @memberof app.geo
  * @requires gapiService
