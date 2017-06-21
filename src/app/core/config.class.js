@@ -408,10 +408,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._data = source.data;
             this._title = source.title;
             this._description = source.description;
-            this._visible = source.visible || true;
+            this._visible = typeof source.visible !== 'undefined' ? source.visible : true;
             this._width = source.width;
             this._sort = source.sort;
-            this._searchable = source.searchable || true;
+            this._searchable = typeof source.searchable !== 'undefined' ? source.searchable : true;
             this._filter = new FilterNode(source.filter);
         }
 
