@@ -16,7 +16,7 @@ class TranslationPlugin {
                 const sourceChunks = [];
                 chunks.forEach(chunk => {
                     chunk.files.forEach(filename => {
-                        if (/main\./.test(filename)) {
+                        if (/^rv-main\.js$/.test(filename)) {
                             sourceChunks.push(filename);
                         }
                     });
