@@ -18,12 +18,28 @@ function reloadService(events, bookmarkService, geoService, configService) {
 
         loadNewLang,
         loadWithBookmark,
-        changeProjection
+        changeProjection,
+
+        reloadConfig
     };
 
     return service;
 
     /************************/
+
+    /**
+     * Reload the new config file  and destroy old map and assemble a new Map
+     * the map using the new configs
+     * @function  reloadConfig
+     */
+    function reloadConfig() {
+        events.$broadcast(events.rvApiHalt);
+
+        geoService._isMapReady = false;
+        geoService.destroyMap();
+        configService.reInitialize();
+        geoService.assembleMap();
+    }
 
     function changeProjection(startPoint) {
         events.$broadcast(events.rvApiHalt);

@@ -356,7 +356,7 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
          * @return {Boolean} true is sidemenu language control object represents the currently selected language
          */
         function isCurrentLanguage(control) {
-            return control.value === configService.getSync.language;
+            return control.value === configService.getLang();
         }
     }
 }

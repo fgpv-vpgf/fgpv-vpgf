@@ -73,6 +73,15 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
             _initialize();
         }
 
+        /**
+         * reinitial when a new config file is loaded
+         * @function  reInitialize
+         */
+        reInitialize() {
+            _loadingState = States.NEW;
+            _initialize();
+        }
+
         rcsAddKeys() {
             throw new Error(`This doesn't work yet`);
         }
@@ -84,6 +93,15 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
         setLang(value) {
             $translate.use(value);
             events.$broadcast(events.rvCfgInitialized);
+        }
+
+        /**
+         * Get the language to the supplied value
+         * @function  getLang
+         * @returns  {function}    function tha returns the current language
+         */
+        getLang() {
+            return currentLang();
         }
 
         /**
@@ -222,7 +240,7 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
             }
         }
         languages.forEach(lang =>
-        (startupRcsLayers[lang] = []));
+            (startupRcsLayers[lang] = []));
 
         const configAttr = $rootElement.attr('rv-config');
         const svcAttr = $rootElement.attr('rv-service-endpoint');
