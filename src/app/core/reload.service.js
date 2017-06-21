@@ -27,6 +27,11 @@ function reloadService(events, bookmarkService, geoService, configService) {
 
     /************************/
 
+    /**
+     * Reload the new config file  and destroy old map and assemble a new Map
+     * the map using the new configs
+     * @function  reloadConfig
+     */
     function reloadConfig() {
         events.$broadcast(events.rvApiHalt);
 

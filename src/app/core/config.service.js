@@ -73,6 +73,10 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
             _initialize();
         }
 
+        /**
+         * reinitial when a new config file is loaded
+         * @function  reInitialize
+         */
         reInitialize() {
             _loadingState = States.NEW;
             _initialize();
@@ -91,6 +95,11 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
             events.$broadcast(events.rvCfgInitialized);
         }
 
+        /**
+         * Get the language to the supplied value
+         * @function  getLang
+         * @returns  {function}    function tha returns the current language
+         */
         getLang() {
             return currentLang();
         }
