@@ -442,15 +442,15 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         constructor(source = {}) {
             this._source = source;
 
-            this._title = source.title;
+            this._title = source.title || '';
             this._description = source.description;
             this._maximize = source.maximize || false;
             this._search = source.search;
             this._applyMap = source.applyMap || false;
-            if (source.columns) {
-                this._columns = source.columns.map(columnsSource =>
-                    (new ColumnNode(columnsSource)));
-            }        
+            this._columns = source.columns ?
+                source.columns.map(columnsSource =>
+                    (new ColumnNode(columnsSource))) :
+                [];
         }
 
         get title () { return this._title; }
@@ -599,7 +599,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             return angular.merge(super.JSON, {
                 nameField: this.nameField,
                 tolerance: this.tolerance,
-                filters: this.filters
+                filters: this.filters.JSON
             });
         }
     }
@@ -785,7 +785,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 layerEntries: this.layerEntries.map(layerEntry =>
                     layerEntry.JSON),
                 tolerance: this.tolerance,
-                filters: this.filters,
+                filters: this.filters.JSON,
                 isResolved: this.isResolved
             });
         }
