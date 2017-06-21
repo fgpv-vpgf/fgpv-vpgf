@@ -35,25 +35,26 @@
 
 <body>
     <select id="selectConfig">
-        <option selected="selected" value="config-sample-structured-visibility-sets.json">sample with visibility sets</option>
-        <option value="config-sample-structured-legend-controlled-layers.json">sample with controlled layers</option>
-        <option value="config-sample-structured-legend-one-child.json"> sample with direct linking of dynamic child</option>
-        <option value="config-sample-structured-legend-one-group.json">sample with one group linking to multiple layers in child entries</option>
-        <option value="config-sample-structured-nested-visibility-sets.json">nested visibility sets</option>
-        <option value="config-sample-structured-legend-dynamic-children-split-layers.json">dynamic layer with children split across multiple top level groups</option>
-        <option value="config-sample-structured-legend-one-group-proper-subset.json">dynamic layer controls several of the children in the dynamic group</option>
-        <option value="config-sample-structured-legend-one-layer-muti-legends.json">layer with single entry collapsed set </option>
-        <option value="config-sample-structured-legend-opacity-visibility-disable-locked.json">multiple layers with opacity, visibility disabled and locked</option>
-        <option value="config-sample-structured-legend-opacity-disable-locked.json">multiple layers with opacity disabled and locked</option>
-        <option value="config-sample-structured-legend-opacity-disable.json">multiple layers with opacity disabled</option>
-        <option value="config-sample-structured-legend-opacity-locked.json">multiple layers with opacity locked</option>
-        <option value="config-sample-structured-legend-visibility-disable.json">multiple layers with visibility disabled</option>
-        <option value="config-sample-structured-legend-visibility-locked.json">multiple layers with visibility locked</option>
-        <option value="config-sample-structured-legend-tile-layer-only-valid-one-proj.json">tile layer which is only valid in one of the basemap projections</option>
+        <option selected="selected" value="config-sample-01-structured-visibility-sets.json">01. Layer with visibility sets</option>
+        <option value="config-sample-02-structured-legend-controlled-layers.json">02. Layer with controlled layers</option>
+        <option value="config-sample-03-structured-legend-one-child.json">03. Layer with Direct linking of dynamic child</option>
+        <option value="config-sample-04-structured-legend-one-group.json">04. Layer with one group linking to multiple layers in child entries</option>
+        <option value="config-sample-05-structured-nested-visibility-sets.json">05. Nested visibility sets</option>
+        <option value="config-sample-06-structured-legend-dynamic-children-split-layers.json">06. Dynamic layer with children split across multiple top level groups</option>
+        <option value="config-sample-07-structured-legend-one-group-proper-subset.json">07. Dynamic layer controls several of the children in the dynamic group</option>
+        <option value="config-sample-08-structured-legend-one-layer-muti-legends.json">08. Layer with single entry collapsed set </option>
+        <option value="config-sample-09-structured-legend-opacity-visibility-disable-locked.json">09. Multiple layers with opacity, visibility both disabled and locked</option>
+        <option value="config-sample-10-structured-legend-opacity-disable-locked.json">10. Multiple layers with opacity disabled and locked</option>
+        <option value="config-sample-11-structured-legend-opacity-disable.json">11. Multiple layers with opacity disabled</option>
+        <option value="config-sample-12-structured-legend-opacity-locked.json">12. Multiple layers with opacity locked</option>
+        <option value="config-sample-13-structured-legend-visibility-disable-locked.json">13. Multiple layers with opacity disabled and locked</option>
+        <option value="config-sample-14-structured-legend-visibility-disable.json">14. Multiple layers with visibility disabled</option>
+        <option value="config-sample-15-structured-legend-visibility-locked.json">15. Multiple layers with visibility locked</option>
+        <option value="config-sample-16-structured-legend-tile-layer-only-valid-one-proj.json">16. Tile layer which is only valid in one of the basemap projections</option>
     </select>
 
     <div class="myMap" id="mobile-map" is="rv-map"
-        rv-config="config-sample-structured-visibility-sets.json"
+        rv-config="config-sample-01-structured-visibility-sets.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
         rv-restore-bookmark="bookmark">
