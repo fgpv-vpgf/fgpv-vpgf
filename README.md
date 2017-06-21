@@ -2,13 +2,10 @@
 
 [![Join the chat at https://gitter.im/fgpv-vpgf/fgpv-vpgf](https://img.shields.io/badge/GITTER-join%20chat-green.svg?style=flat-square)](https://gitter.im/fgpv-vpgf/fgpv-vpgf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Issue Stats](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf/badge/issue?style=flat-square)](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf)<br />
-[![PR Stats](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf/badge/pr?style=flat-square)](http://www.issuestats.com/github/fgpv-vpgf/fgpv-vpgf)
-
-[![Code Climate](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/gpa.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)<br />
+[![Code Climate](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/gpa.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)
 [![Issue Count](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/issue_count.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)
 
-[![Dependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf)<br />
+[![Dependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf)
 [![devDependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf/dev-status.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf#info=devDependencies)
 
 Federal Geospatial Platform Visualiser / Visualisateur pour la Plateforme géospatiale fédérale
@@ -18,70 +15,48 @@ Federal Geospatial Platform Visualiser / Visualisateur pour la Plateforme géosp
 Requirements:
 
 - [NodeJS](https://nodejs.org/)
-- [Bower](http://bower.io/) `npm install -g bower`
-- [Gulp](http://gulpjs.com/) `npm install -g gulp`
 
 Running a local build:
 
 0. Checkout the repo
 0. Switch to the develop branch (master is for stable, released code)
 0. Run `npm install` to install dependencies
-0. Run `gulp serve` to build and launch a dev server
+0. Run `npm run serve` to build and launch a dev server
 
 We use a fork and pull model for contributions, see our [contributing guidelines](https://github.com/fgpv-vpgf/fgpv-vpgf/blob/develop/CONTRIBUTING.md) for more details.
 
 ## Gulp Tasks
 
-### Code Analysis
+### Generating Local Builds
 
-- `gulp vet`
+- `npm run build`
 
-    Performs static code analysis on all javascript files. Runs jshint and jscs.
+    Builds development code and places it in the `build` directory. Performs eslint, SASS -> CSS, and babel compilation
 
-- `gulp vet --verbose`
+- `npm run build -- --env.prod`
 
-    Displays all files affected and extended information about the code analysis.
+    Builds production code and places it in the `build` directory. Performs same steps as development builds, but also places a zipped file of the build in the `dist` directory.
 
-- `gulp plato`
-
-    Performs code analysis using plato on all javascript files. Plato generates a report in the reports folder.
-
-### Testing
-
-- `gulp test`
-
-    Runs all unit tests using karma runner, jasmine, and sinon with phantomjs. Depends on vet task, for code analysis. Can specify additional browser to run tests in karma.config.js.
-
-- `gulp test --coverage`
-
-    Additionally generates a test coverage report.
-
-- `gulp test:auto`
-
-    Runs a watch to run all unit tests.
-
-### Cleaning Up
-
-- `gulp clean`
-
-    Remove all files from the build and temp folders.
-
-- `gulp clean-sass`
-
-    Remove all styles from the temp folder.
-
-### Styles
-
-- `gulp sass`
-
-    Compile sass files to CSS, add vendor prefixes, and copy to the temp folder.
 
 ### Serving Development Code
 
-- `gulp serve:dev`
+- `npm run serve`
 
-    Serves the development code. The goal of building for development is to do it as fast as possible, to keep development moving efficiently. This task vet JS code and serves all code from the source folders and compiles SASS to CSS in a temp folder. Reload on file change.
+    Serves the development code. Reloads on file change.
 
-- `gulp serve:dev --test`
+- `npm run serve -- --env.prod`
 
-    Runs unit tests on file change as well.
+    Serves the production code. Reloads on file change.
+
+### Optional Flags
+
+To run these flags, prefix with `--` then `--env.` as in `npm run serve -- --env.prod` where `prod` is a flag.
+
+- `geoLocal`
+    Replaces geoApi from npm node_module with a local geoApi repo folder located by ../geoApi
+
+- `geoLocal="path/to/geoApi"`
+    Same as no argument `geoLocal` but uses the provided path to local folder
+
+- `useMap`
+    Creates full independent source maps files for `development` code only. Build time will increase.

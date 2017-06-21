@@ -1,7 +1,4 @@
 {
-    "common": {
-        "title": "Common Module"
-    },
     "core": {
         "title": "Core Module"
     },

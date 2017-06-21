@@ -192,3 +192,10 @@ Load times may vary based on:
 Unanticipated behaviour may occur if any map interactions occur before data is fully loaded. Please allow the webpage to load completely before triggering any map functions.
 
 **Note:** If the scrolling loading line indicator appears at the bottom of the map or in the legend, or the data table panel displays a loading message, please allow the loading indicator to disappear before triggering any function on the map.
+
+
+# North Arrow
+
+![](north_arrow/arrow.png)
+
+The main map contains a north arrow. It can be found at the top of the map. It will move horizontally on the screen such that it always intersects with an imaginary straight line that passes over the center of the map and the north pole.
