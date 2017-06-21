@@ -13,6 +13,8 @@ module.exports = function(env) {
             crossOriginLoading: 'anonymous'
         },
 
+        devtool: 'source-map',
+
         plugins: [
             new webpack.optimize.UglifyJsPlugin({
                 compress: {
@@ -21,7 +23,8 @@ module.exports = function(env) {
                 },
                 mangle: {
                     screw_ie8 : true
-                }
+                },
+                sourceMap: true
             }),
 
             new ZipPlugin({
