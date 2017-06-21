@@ -451,7 +451,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
             function customizeColumns(config = {}) {
                 // check if colums configuration exist. If so use it to set columns
                 const order = [];
-                if (config.columns.length) {
+                if (config.columns.length > 0) {
                     // create an array for columns (add symbol and interactive column first)
                     const columns = [displayData.columns.find(column => column.data === 'rvSymbol'),
                         displayData.columns.find(column => column.data === 'rvInteractive')];
