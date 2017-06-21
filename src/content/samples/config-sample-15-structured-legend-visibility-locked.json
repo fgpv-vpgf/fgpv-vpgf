@@ -314,7 +314,7 @@
     "layers": [
       {
         "id": "somepowerplants",
-        "name": "Power Plants with opacity, visibility disabled and locked",
+        "name": "Power Plants with visibility locked",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
