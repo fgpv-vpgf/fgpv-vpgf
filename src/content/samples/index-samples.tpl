@@ -47,7 +47,7 @@
         <option value="config-sample-10-structured-legend-opacity-disable-locked.json">10. Multiple layers with opacity disabled and locked</option>
         <option value="config-sample-11-structured-legend-opacity-disable.json">11. Multiple layers with opacity disabled initially</option>
         <option value="config-sample-12-structured-legend-opacity-locked.json">12. Multiple layers with opacity locked</option>
-        <option value="config-sample-13-structured-legend-visibility-disable-locked.json">13. Multiple layers with opacity disabled and locked</option>
+        <option value="config-sample-13-structured-legend-visibility-disable-locked.json">13. Multiple layers with visibility disabled and locked</option>
         <option value="config-sample-14-structured-legend-visibility-disable.json">14. Multiple layers with visibility disabled initially</option>
         <option value="config-sample-15-structured-legend-visibility-locked.json">15. Multiple layers with visibility locked</option>
         <option value="config-sample-16-structured-legend-tile-layer-only-valid-one-proj.json">16. Tile layer which is only valid in one of the basemap projections</option>

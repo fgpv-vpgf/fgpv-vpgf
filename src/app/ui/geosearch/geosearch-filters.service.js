@@ -29,7 +29,11 @@ function geosearchFiltersService($translate, events, configService, geoSearch, g
 
     // geoSearch service fails if you call `getProvinces` or `getTypes` before config is ready; need to wait for config;
     // TODO: change geoSearch external functions return promises to be trully async, and not just fail.
-    configService.onEveryConfigLoad(config => init());
+    configService.onEveryConfigLoad(config => {
+        if (config.map.components.geoSearch.enabled) {
+            init();
+        }
+    });
 
     return service;
 

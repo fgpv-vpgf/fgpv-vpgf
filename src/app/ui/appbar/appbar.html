@@ -22,7 +22,8 @@
     <md-button
         aria-label="{{ 'appbar.aria.geosearch' | translate }}"
         class="md-icon-button primary rv-app-geosearch"
-        ng-click="self.toggleGeosearch()">
+        ng-click="self.toggleGeosearch()"
+        ng-if="self.config.map.components.geoSearch.enabled">
         <md-tooltip>{{ 'appbar.tooltip.geosearch' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:search"></md-icon>
     </md-button>

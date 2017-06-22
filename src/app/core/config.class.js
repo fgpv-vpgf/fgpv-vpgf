@@ -1372,15 +1372,20 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             this._showGraphic = source.showGraphic;
             this._showInfo = source.showInfo;
+            this._enabled = source.enabled;
         }
 
         get showGraphic () { return this._showGraphic; }
         get showInfo () { return this._showInfo; }
+        get enabled () { return this._enabled; }
+
+        set enabled (val) { this._enabled = val; }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 showGraphic: this.showGraphic,
-                showInfo: this.showInfo
+                showInfo: this.showInfo,
+                enabled: this.enabled
             });
         }
     }
@@ -1486,7 +1491,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     class SearchService {
         constructor (source) {
             this._disabledSearches = source.disabledSearches;
-            this._serviceUrls = source._serviceUrls;
+            this._serviceUrls = source.serviceUrls;
         }
 
         get disabledSearches () { return this._disabledSearches; }
@@ -1547,7 +1552,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._geolocation = source.geolocation;
             this._coordInfo = source.coordInfo;
             this._print = source.print;
-            this._search = source.search;
+            this._search = new SearchService(source.search || {}) // source.search;
             this._export = new ExportService(source.export || {});
             this._rcsEndpoint = source.rcsEndpoint;
         }
@@ -1996,6 +2001,43 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             // post parsing runtimechecks
             this.ui.legend._reorderable =
                 this.map.legend.type === TYPES.legend.AUTOPOPULATE && this.ui.legend._reorderable;
+
+            // set geoSearch.enable to false if it was false initialy or does not have all services
+            this.map.components.geoSearch.enabled = this.map.components.geoSearch.enabled
+                                                        && hasAllSearchServices(this.services.search);
+
+            /**
+             * Return true if all search services are included in the config file, false otherwise
+             *
+             * @function hasAllSearchServices
+             * @private
+             * @param   {Object}    search   The search service the config file contains
+             * @returns   {boolean}    True if it has all the required geo services, false otherwise
+             */
+            function hasAllSearchServices(search) {
+                const GEOSERVICES = new Set([  // required geo search services
+                    'geoNames',
+                    'geoLocation',
+                    'geoSuggest',
+                    'provinces',
+                    'types'
+                ]);
+
+                // check if the number of all required search services is correct
+                if (typeof search === 'undefined' || typeof search.serviceUrls === 'undefined'
+                    || Object.keys(search.serviceUrls).length < GEOSERVICES.length) {
+                        return false;
+                }
+
+                // check if the serives match what were required
+                for (let service of GEOSERVICES) {
+                    if (! search.serviceUrls.hasOwnProperty(service)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
         }
 
         /**
