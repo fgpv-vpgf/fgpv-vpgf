@@ -379,6 +379,102 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    class FilterNode {
+        constructor(source = {}) {
+            this._source = source;
+
+            this._type = source.type;
+            this._value = source.value;
+            this._static = source.static || false;
+        }
+
+        get type () { return this._type; }
+        get value () { return this._value; }
+        get static () { return this._static; }
+
+        get JSON () {
+            return {
+                type: this.type,
+                value: this.value,
+                static: this.static
+            }
+        }
+    }
+
+    class ColumnNode {
+        constructor(source = {}) {
+            this._source = source;
+
+            this._data = source.data;
+            this._title = source.title;
+            this._description = source.description;
+            this._visible = typeof source.visible !== 'undefined' ? source.visible : true;
+            this._width = source.width;
+            this._sort = source.sort;
+            this._searchable = typeof source.searchable !== 'undefined' ? source.searchable : true;
+            this._filter = new FilterNode(source.filter);
+        }
+
+        get data () { return this._data; }
+        get title () { return this._title; }
+        get description () { return this._description; }
+        get visible () { return this._visible; }
+        get width () { return this._width; }
+        get sort () { return this._sort; }
+        get searchable () { return this._searchable; }
+        get filter () { return this._filter; }
+
+        get JSON () { 
+            return {
+                data: this.data,
+                title: this.title,
+                description: this.description,
+                visible: this.visible,
+                width: this.width,
+                sort: this.sort,
+                searchable: this.searchable,
+                filter: this.filter.JSON
+            }
+        }
+    }
+
+    class FiltersNode {
+        constructor(source = {}) {
+            this._source = source;
+
+            this._title = source.title || '';
+            this._description = source.description;
+            this._maximize = source.maximize || false;
+            this._search = source.search;
+            this._applyMap = source.applyMap || false;
+            this._columns = source.columns ?
+                source.columns.map(columnsSource =>
+                    (new ColumnNode(columnsSource))) :
+                [];
+        }
+
+        get title () { return this._title; }
+        get description () { return this._description; }
+
+        get maximize () { return this._maximize; }
+        set maximize (value) { this._maximize = value; }
+
+        get search () { return this._search; }
+        get applyMap () { return this._applyMap; }
+        get columns () { return this._columns; }
+
+        get JSON () {
+            return {
+                title: this.title,
+                description: this.description,
+                maximize: this.maximize,
+                search: this.search,
+                applyMap: this.applyMap,
+                columns: this.columns.JSON
+            }
+        }
+    }
+
     // abstract
     class LayerNode {
         /**
@@ -488,7 +584,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             this._nameField = source.nameField;
             this._tolerance = source.tolerance || 5;
-            this._filters = this.filters;
+            this._filters = new FiltersNode(source.filters);
         }
 
         _hovertipEnabled = true;
@@ -497,12 +593,13 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         set nameField (value) { this._nameField = value; }
 
         get tolerance () { return this._tolerance; }
+        get filters () { return this._filters; }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 nameField: this.nameField,
                 tolerance: this.tolerance,
-                filters: this.filters
+                filters: this.filters.JSON
             });
         }
     }
@@ -638,7 +735,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._layerEntries = source.layerEntries.map(layerEntry =>
                 (new DynamicLayerEntryNode(layerEntry)));
             this._tolerance = source.tolerance;
-            this._filters = source.filters;
+            this._filters = new FiltersNode(source.filters);
 
             this._singleEntryCollapse = source.singleEntryCollapse === true;
         }
@@ -651,6 +748,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._layerEntries = value;
         }
         get tolerance () { return this._tolerance; }
+        get filters () { return this._filters; }
 
         _singleEntryCollapse = false;
         set singleEntryCollapse (value) {   this._singleEntryCollapse = value; }
@@ -687,7 +785,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 layerEntries: this.layerEntries.map(layerEntry =>
                     layerEntry.JSON),
                 tolerance: this.tolerance,
-                filters: this.filters,
+                filters: this.filters.JSON,
                 isResolved: this.isResolved
             });
         }

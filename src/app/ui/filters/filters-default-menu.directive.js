@@ -55,7 +55,14 @@ function Controller($scope, stateManager, events, filterService, appInfo, $rootS
     }
 
     function setMode(mode) {
+        const requester = stateManager.display.filters.requester;
+        const config = requester.legendEntry._mainProxyWrapper.layerConfig.filters;
         stateManager.setMorph('filters', mode);
+        if (mode === 'full') {
+            config.maximize = true;
+        } else {
+            config.maximize = false;
+        }
     }
 
     /**
