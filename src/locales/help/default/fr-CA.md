@@ -65,7 +65,7 @@ Il existe une variété d'options et elle sont décrites ci-dessous. Notez que c
 
 # Partager
 
-L'option partager est utilisé pour générer une URL partageable de la carte dans son état actuel avec les jeux de données sélectionnés. Elle est accessible dans le menu principal. Vous pouvez également avoir la possibilité de générer un lien court qui réduit considérablement la longueur du lien. Une fois que vous mettez en surbrillance le lien, copiez-le comme vous copiez normalement du texte (clic droit -> copier ou Ctrl+C)
+L'option partager est utilisé pour générer une URL partageable de la carte dans son état actuel avec les jeux de données sélectionnés. Elle est accessible dans le menu principal. Si une clé "Google API" est configurée pour la carte, vous aurez également la possibilité de générer un lien court. Une fois que vous mettez en surbrillance le lien, copiez-le comme vous copiez normalement du texte (clic droit -> copier ou Ctrl+C)
 
 
 # Couches

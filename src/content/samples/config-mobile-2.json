@@ -1,5 +1,6 @@
 {
   "ui": {
+    "fullscreen": true,
     "navBar": {
       "zoom": "buttons",
       "extra": [

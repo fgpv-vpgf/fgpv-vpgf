@@ -65,7 +65,7 @@ There are a variety of options described below. Note that some options may not b
 
 # Share
 
-Share is used to generate a shareable URL of the current map state with selected datasets. It can be accessed in the main menu. You may also have the option to generate a short link which greatly reduces the length of the link. Once you highlight the link copy it as you normally would copy text (right click -> copy or Ctrl+C)
+Share is used to generate a shareable URL of the current map state with selected datasets. It can be accessed in the main menu. If a Google API Key is configured for the map, you will also have the option to generate a short link. Once you highlight the link copy it as you normally would copy text (right click -> copy or Ctrl+C)
 
 
 # Layers
