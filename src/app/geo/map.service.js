@@ -86,9 +86,9 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
 
         mapConfig.instance._map.destroy();
         mapConfig.reset();
-        // FIXME: destroy scalebar and overview map at this point
 
         storageService.mapNode.empty();
+        // FIXME: do we need to destroy scalebar and overview map even after we empty the node
     }
 
     /**
@@ -112,18 +112,6 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
             lods: mapConfig.selectedBasemap.lods
         };
 
-        // reset before rebuilding the map if `geoState` already has an instance of mapService
-        // TODO: restore
-        /*if (typeof geoState.mapService !== 'undefined') {
-            // NOTE: Possible to have dom listeners stick around after the node is destroyed
-            const mapService = geoState.mapService;
-            mapService.mapObject.destroy();
-            mapService..ScalebarControl.destroy();
-            mapService..OverviewMapControl.destroy();
-            mapService.mapObject = null;
-        }*/
-
-
         // TODO: convert service section of the config to typed objects
         if (servicesConfig.proxyUrl) {
             mapSettings.proxyUrl = servicesConfig.proxyUrl;
@@ -135,38 +123,6 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
         setAttribution(mapConfig.selectedBasemap);
 
         _setMapListeners(mapConfig);
-
-        // TODO: move to _setMapListeners
-        /*mapConfig.components.basemap.body.basemapGallery.on('selection-change', event => {
-            $rootElement.find('div.ovwContainer').append('<rv-overview-toggle></rv-overview-toggle>');
-            $compile($rootElement.find('rv-overview-toggle')[0])($rootScope);
-
-            console.log(event);
-
-            //TODO: fix code setting basempa attribution
-            /*
-            // get selected basemap configuration
-            const selectedBaseMapCfg = config.baseMaps.find(bm => {
-                return bm.id === event.target._selectedBasemap.id;
-            });
-
-            // hide attribution and set logo not visible between basemap change selection to avoid stuff moving
-            // when we change language
-            const attNode = $(service.mapObject.attribution.listNode.parentNode);
-            const logoNode = attNode.parent().find('.logo-med');
-            attNode.hide();
-            logoNode.css('visibility', 'hidden');
-
-            // set attribution if not a blank map
-            if (geoState.blankBaseMapId === null) {
-                $timeout(() => setAttribution(selectedBaseMapCfg), 500);
-            }
-
-            // TODO: refactor/fix
-            // will be use by the scalebar animation. Animation needs to be recreated on projection change.
-            $rootScope.$broadcast('rvBasemapChange');
-            }*/
-        //});
     }
 
     /**
@@ -214,6 +170,15 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
         };
     }
 
+    /**
+     * A helper function for reprojecting a center point of the source basemap to the target basemap.
+     * Used for bookmarking.
+     *
+     * @param {ESRI Map} mapInstance a geoapi map wrapper
+     * @param {Basemap} sourceBasemap currently selected basemap
+     * @param {Basemap} targetBasemap a target basemap to projection the center point to
+     * @return {Object} in the form of { x: Number, y: Number, scale: Number }
+     */
     function getCenterPointInTargetBasemap(mapInstance, sourceBasemap, targetBasemap) {
         const extentCenter = mapInstance.extent.getCenter();
         const scale = mapInstance._map.getScale();
@@ -228,7 +193,6 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
             sourceBasemap.default.spatialReference,
             targetBasemap.default.spatialReference,
             { x: extentCenter.x, y: extentCenter.y });
-        // const point = gapiService.gapi.proj.Point(coords.x, coords.y, targetBasemap.default.spatialReference);
 
         return {
             x: coords.x,
@@ -238,22 +202,17 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
     }
 
     /**
-    * Ready a trigger on the map load event.
-    * Also initialize map full extent.
-    * @function _setMapListeners
-    * @private
-    */
+     * Ready a trigger on the map load event.
+     * Also initialize map full extent.
+     *
+     * @function _setMapListeners
+     * @param {Map} mapConfig typed map config object
+     * @private
+     */
     function _setMapListeners(mapConfig) {
         // we are returning a promise that resolves when the map load happens.
         const gapi = gapiService.gapi;
         let mapLoadingTimeout;
-
-        // const map = service.mapObject;
-        // const lFullExtent = getFullExtFromExtentSets(config.map.extentSets);
-        // const lMaxExtent = getMaxExtFromExtentSets(config.map.extentSets);
-
-        //const lFullExtent = gapiService.gapi..getExtentFromJson(geoState.selectedBaseMap.tileSchema.extentSet.full);
-        //const lMaxExtent = gapiService.gapi..getExtentFromJson(geoState.selectedBaseMap.tileSchema.extentSet.maximum);
 
         _setLoadingFlag(true);
 
@@ -266,24 +225,10 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
                 // mark the map as loaded so data layers can be added
                 mapConfig.isLoaded = true;
 
-
-                // setup full extent
-                // TODO: full and max extents can be retrieved directly from the selectedBasemap
-                /*if (lFullExtent) {
-                    geoState.fullExtent = enhanceConfigExtent(lFullExtent, map.extent.spatialReference);
-                }
-                if (lMaxExtent) {
-                    geoState.maxExtent = enhanceConfigExtent(lMaxExtent, map.extent.spatialReference);
-                }*/
-
-                // TODO: fire `mapReady` event here instead of in geo service
-
-
+                // TODO: maybe it makes sense to fire `mapReady` event here instead of in geo service
                 _setLoadingFlag(false);
             },
             'update-start': () => {
-                RV.logger.log('mapService', 'map update has started');
-
                 _setLoadingFlag(true, 300);
             },
             'extent-change': data => {
@@ -298,8 +243,6 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
             'mouse-move': data =>
                 events.$broadcast(events.rvMouseMove, data.mapPoint),
             'update-end': () => {
-                RV.logger.log('mapService', 'map update has ended');
-
                 _setLoadingFlag(false, 100);
             },
             click: clickEvent => {
@@ -311,6 +254,7 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
 
         /**
          * Sets `isMapLoading` flag indicating map layers are updating.
+         *
          * @function _setLoadingFlag
          * @param {Boolean} isLoading defaults to true; flag indicating if one or more layers begins updating their content
          * @param {Number}  delay     defaults to 0; delay before setting `isMapLoading` state; useful to avoid setting indicator for a small amounts of time
@@ -386,10 +330,6 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
         }
     }
 }
-
-
-
-
 
 function mapServiceFactory_($q, $timeout, gapiService, storageService, $rootElement, $compile, $rootScope,
     tooltipService, stateManager, configService) {

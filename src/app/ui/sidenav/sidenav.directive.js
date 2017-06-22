@@ -32,7 +32,7 @@ function Controller(sideNavigationService, version, configService) {
 
     // expose sidemenu config to the template
     configService.onEveryConfigLoad(config =>
-        (self.config = config.ui.sideMenu));
+        (self.uiConfig = config.ui));
 
     self.service = sideNavigationService;
 

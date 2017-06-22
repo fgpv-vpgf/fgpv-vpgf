@@ -1785,7 +1785,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         constructor(source = {}) {
             this._source = source;
 
-            this._logo = source.logo === 'true';
+            this._logo = source.logo === true;
             this._items = angular.isArray(source.items) ?
                 source.items.map(subItems =>
                     common.intersect(source.items, SideMenu.ITEMS)) :
