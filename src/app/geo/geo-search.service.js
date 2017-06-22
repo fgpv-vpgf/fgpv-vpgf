@@ -1,11 +1,3 @@
-const GEOSERVICE = {
-    geoNames: 'geoNames',
-    geoLocation: 'geoLocation',
-    geoSuggest: 'geoSuggest',
-    provinces: 'provinces',
-    types: 'types'
-};
-
 /**
  * @module geoSearch
  * @memberof app.geo
@@ -52,39 +44,12 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
      * @private
      */
     function init() {
-         /**
-         * Return true if all serviceUrls are included in the config file, false otherwise
-         *
-         * @function hasAllServices
-         * @param   {Object}    serviceUrls   the service urls the config file contains
-         * @private
-         */
-        function hasAllServices(serviceUrls) {
-            let hasAll = true;
-            Object.keys(GEOSERVICE).forEach(service => {
-                if (! serviceUrls.hasOwnProperty(service)) {
-                    hasAll = false;
-                }
-            });
-            return hasAll;
-        }
-
         // reset geosearch on every config reload, this will include language changes as well
         configService.onEveryConfigLoad(config => {
             provinceList = undefined;
             typeList = undefined;
-
-            if (! config.map.components.geoSearch.enabled
-                || typeof config.services.search === 'undefined'
-                || typeof config.services.search.serviceUrls === 'undefined'
-                || Object.keys(config.services.search.serviceUrls).length < Object.keys(GEOSERVICE).length
-                || ! hasAllServices(config.services.search.serviceUrls)) {
-                enabled = false;
-            } else {
-                enabled = true;
-                serviceUrls = config.services.search.serviceUrls;
-                disableSearch = config.services.search.disabledSearches;
-            }
+            serviceUrls = config.services.search.serviceUrls;
+            disableSearch = config.services.search.disabledSearches;
         });
     }
 

@@ -652,7 +652,7 @@
         "mapComponentsNode": {
             "type": "object",
             "properties": {
-                "geoSearch": { "type": "object", "properties": { "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
+                "geoSearch": { "type": "object", "properties": { "enabled": {"type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
                 "mouseInfo": { "type": "object", "properties": { "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
                 "northArrow": { "type": "object" },
                 "overviewMap": { "type": "object" },
