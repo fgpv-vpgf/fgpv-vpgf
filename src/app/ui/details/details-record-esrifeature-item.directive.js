@@ -24,7 +24,8 @@ function rvDetailsRecordEsrifeatureItem(geoService, Geo, SymbologyStack) {
             requester: '=',
             solorecord: '=',
             toggleHighlight: '=',
-            initHighlight: '='
+            initHighlight: '=',
+            findFeature: '='
         },
         link: link,
         controller: Controller,
@@ -44,8 +45,6 @@ function rvDetailsRecordEsrifeatureItem(geoService, Geo, SymbologyStack) {
         self.isExpanded = self.solorecord;
         self.isRendered = self.solorecord;
 
-        self.triggerZoom = triggerZoom;
-
         // pre-filter the columns used by the datagrid out of the returned data
         self.item.data = self.item.data.filter(column =>
             excludedColumns.indexOf(column.key) === -1);
@@ -55,23 +54,6 @@ function rvDetailsRecordEsrifeatureItem(geoService, Geo, SymbologyStack) {
 
         // highlight the feature as soon as it renders
         self.initHighlight(self.item.oid);
-
-        // FIXME: this no longer works
-        function triggerZoom() {
-            let entry = self.requester.layerRec.legendEntry;
-
-            // for dynamic layer we need to find the right layer entry inside the service to link to the proper layer
-            // we need this espcially for scale dependant layer for the "zoom to" to go to the proper zoom level for the
-            // selected layer
-            if (entry.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                const index = entry.layerEntries.findIndex(item =>
-                    item.index === self.requester.featureIdx);
-                entry = entry.items[index];
-            }
-
-            geoService.zoomToGraphic(self.requester.layerRec, entry,
-                self.requester.featureIdx, self.item.oid);
-        }
     }
 }
 
@@ -80,7 +62,6 @@ function Controller(mapService) {
     const self = this;
 
     self.toggleDetails = toggleDetails;
-    self.zoomToFeature = zoomToFeature;
 
     /**
      * Expand/collapse identify record section.
@@ -91,14 +72,5 @@ function Controller(mapService) {
         self.isExpanded = !self.isExpanded;
 
         self.toggleHighlight(self.item.oid, self.isExpanded);
-    }
-
-    /**
-     * Zoom to identify result's feature
-     * TODO: implement
-     * @function zoomToFeature
-     */
-    function zoomToFeature() {
-        self.triggerZoom();
     }
 }

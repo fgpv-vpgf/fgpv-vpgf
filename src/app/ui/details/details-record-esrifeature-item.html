@@ -24,8 +24,8 @@
             <md-icon md-svg-src="community:lightbulb-outline"></md-icon>
         </md-button-->
 
-        <md-button class="md-icon-button rv-icon-20" ng-click="self.zoomToFeature()"
-            ng-disabled="!self.requester.proxy.visible">
+        <md-button class="md-icon-button rv-icon-20" ng-click="self.findFeature(self.item.oid)"
+            ng-disabled="!self.requester.proxy.visibility">
             <md-tooltip md-direction="top">{{ 'filter.tooltip.zoom' | translate }}</md-tooltip>
             <md-icon md-svg-src="action:zoom_in"></md-icon>
         </md-button>
