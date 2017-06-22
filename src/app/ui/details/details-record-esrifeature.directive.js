@@ -35,12 +35,13 @@ function rvDetailsRecordEsrifeature() {
     return directive;
 }
 
-function Controller($scope, events, mapService) {
+function Controller($scope, events, mapService, geoService, configService, storageService) {
     'ngInject';
     const self = this;
 
     self.initHighlight = initHighlight;
     self.toggleHighlight = toggleHighlight;
+    self.findFeature = findFeature;
 
     let oidsAll = [];
     let oidsToHighlight = [];
@@ -65,6 +66,22 @@ function Controller($scope, events, mapService) {
     });
 
     return;
+
+    /**
+     * Zooms to layer scale, and centers the map on the feature with the oid specified.
+     * This function is calling `zoomToGraphic` directly on the layer proxy returned by geoApi `identify` functions, since it's not trivial to match this proxy object to the originating layer record or legend block.
+     *
+     * @param {Number} oid object id to zoom to on the map
+     */
+    function findFeature(oid) {
+        const proxy = self.item.requester.proxy;
+
+        proxy.zoomToGraphic(
+            oid, configService.getSync.map.instance, storageService.getPanelOffset()).then(() => {
+                const graphiBundlePromise = proxy.fetchGraphic(oid);
+                geoService.addGraphicHighlight(graphiBundlePromise, true);
+            });
+    }
 
     /**
      * Highlights the feature with oid specified just after it renders on the page.

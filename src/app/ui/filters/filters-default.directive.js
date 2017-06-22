@@ -70,7 +70,7 @@ angular
  */
 function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService,
     detailService, $rootElement, $filter, keyNames, $sanitize, debounceService, configService, SymbologyStack,
-    filterService, events) {
+    storageService, filterService, events) {
 
     const directive = {
         restrict: 'E',
@@ -608,7 +608,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
 
                     // set the disabled argument value
                     button.disabledArg = (button.name === 'rv-zoom-marker') ?
-                        '!self.enabled || !self.visibility.value' : '';
+                        '!self.enabled || !self.visibility' : '';
 
                     // and replace when with properly compiled directives
                     tableNode.find(button.name).each((index, item) => {
@@ -743,16 +743,19 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
              */
             function onZoomClick(rowNumber) {
                 const data = self.table.row(rowNumber).data();
+                const oid = data[displayData.oidField];
 
-                // get object id from row data
-                const objId = data[displayData.oidField];
-                const layer = geoService.layers[requester.layerId];
-                const zoomLayer = requester.legendEntry;
+                requester.legendEntry.zoomToGraphic(oid, storageService.getPanelOffset()).then(() => {
+                    const graphiBundlePromise = requester.legendEntry.fetchGraphic(oid);
+                    geoService.addGraphicHighlight(graphiBundlePromise, true);
+                });
+
+                console.log(layoutService);
+
+                // FIXME: this is a tiy bit ugly
                 const filterPanel = $rootElement.find('rv-panel[type="filters"]');
                 const otherPanels = $rootElement.find('rv-appbar, rv-mapnav, rv-panel:not([type="filters"])');
                 let ignoreClick = true;
-
-                geoService.zoomToGraphic(layer, zoomLayer, requester.legendEntry.featureIdx, objId);
 
                 const removeZoomtoTransparency = () => {
                     otherPanels.removeClass('rv-lt-lg-hide');
@@ -779,7 +782,8 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
              * Row details click handler. Will display details for the feature clicked.
              * @function onDetailsClick
              * @private
-             * @param  {Number} rowNumber number of the row clicked
+             * @param {Number} rowNumber number of the row clicked
+             * @param {Boolean} useDialog if true, a popup dialog with the details data will be opened
              */
             function onDetailsClick(rowNumber, useDialog = false) {
                 const data = self.table.row(rowNumber).data();
@@ -804,12 +808,6 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                     requestId: -1,
                     requester: {
                         proxy: requester.legendEntry.mainProxy
-                        //name: requester.name,
-                        //caption: layerRecord.name
-                        /*format: 'EsriFeature',
-                        name: requester.name,
-                        featureIdx: requester.legendEntry.featureIdx,
-                        legendEntry: requester.legendEntry*/
                     }
                 };
 
@@ -823,9 +821,6 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                 } else {
                     stateManager.toggleDisplayPanel('mainDetails', details, {}, 0);
                 }
-
-                //const layer = geoService.layers[requester.layerId];
-                //geoService.hilightGraphic(layer, requester.legendEntry.featureIdx, objId);
             }
 
             /**
