@@ -24,6 +24,7 @@ function rvDetailsHeader() {
         restrict: 'E',
         templateUrl,
         scope: {
+            title: '=',
             selectedItem: '='
         },
         controller: Controller,

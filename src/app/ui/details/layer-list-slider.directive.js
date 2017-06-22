@@ -46,10 +46,10 @@ function rvLayerListSlider(animationService) {
         // This will explicitly "animate" the overflow property from hidden to auto and not try to figure
         // out what it was initially on the reverse run.
         .fromTo(element, 0.01, {
-                'overflow-y': 'hidden'
-            }, {
-                'overflow-y': 'auto'
-            }, RV_SLIDE_DURATION / 2);
+            'overflow-y': 'hidden'
+        }, {
+            'overflow-y': 'auto'
+        }, RV_SLIDE_DURATION / 2);
 
         // Place rv-expanded class on parent element once defined in details.directive.js
         const pElemWatcher = scope.$watch(self.getSectionNode, node => {

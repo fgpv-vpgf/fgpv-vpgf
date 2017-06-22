@@ -71,6 +71,7 @@ Details pane title,details.title,Feature Information,1,Information sur l'éléme
 Details pane aria label for expand button,details.aria.expand,Expand,1,Agrandir,1
 Details pane tooltip for expand button,details.tooltip.expand,Expand,1,Agrandir,1
 Details pane label for no result,details.label.noresult,Nothing found,1,Aucun résultat,1
+Details pane label for searching,details.label.searching,Searching ...,1,[fr] Searching ...,0
 Content pane aria label for close button,contentPane.aria.close,Close,1,Fermer,1
 Content pane tooltip for close button,contentPane.tooltip.close,Close,1,Fermer,1
 Filter pane title prefix,filter.title,Features: ,1,Éléments : ,1

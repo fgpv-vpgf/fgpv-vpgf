@@ -40,13 +40,14 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
         $element.find('.rv-details');
 
     /**
-    * Set the selected item from the array of items if previously set.
-    * @private
-    * @function  getSelectedItem
-    * @param {Object} items data objects array
-    * @return {Object}      selected item in details panel
-    */
-    function getSelectedItem(items) {
+     * Find and return a details item whose proxy object matches the proxy of the previously selected item.
+     *
+     * @private
+     * @function  findPreviouslySelected
+     * @param {Object} items data objects array
+     * @return {Object}      selected item in details panel
+     */
+    function findPreviouslySelected(items) {
         // get selected item if there is a match
         return items.find(item =>
             item.requester.proxy === self.selectedLayerProxy);
@@ -76,14 +77,48 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
     $scope.$watch('self.display.data', (newValue, oldValue) => {
         // if multiple points added to the details panel ...
         if (newValue && newValue.length > 0) {
-            // pick selected item user previously selected one, otherwise pick the first one
-            selectItem(getSelectedItem(newValue) || newValue[0]);
+
+            const previouslySelected = findPreviouslySelected(newValue);
+            if (previouslySelected) {
+                // pick selected item user previously selected one,
+                selectItem(previouslySelected);
+            } else if (newValue.length === 1) {
+                // or if there is a single item, pick that
+                selectItem(newValue[0]);
+            } else {
+                // otherwise, wait for the first item to get results and select that
+                const deRegister = $scope.$watch(_waitForFirstResult, item => {
+                    if (!item) {
+                        return;
+                    }
+
+                    deRegister();
+                    // if the user alreayd selected an item, do not override the selection
+                    if (self.selectedItem) {
+                        return;
+                    }
+
+                    selectItem(item);
+                });
+            }
 
             // wrap symbology returned by the proxy into a symbology stack object
             newValue.forEach(item =>
                 (item.requester.symbologyStack = new SymbologyStack(item.requester.proxy)));
+
         } else if (oldValue) {
             selectItem(null);
+        }
+
+        /**
+         * Checks if at least one fo the item received results.
+         *
+         * @function _waitForFirstResult
+         * @private
+         * @return {Boolean} `true` if at least one item received results
+         */
+        function _waitForFirstResult() {
+            return self.display.data.find(item => item.data.length > 0);
         }
     });
 }
