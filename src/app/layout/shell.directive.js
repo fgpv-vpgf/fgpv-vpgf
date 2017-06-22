@@ -122,11 +122,10 @@ function rvShell($rootElement, $rootScope, events, storageService, stateManager,
     }
 }
 
-function Controller($translate, geoService, configService) {
+function Controller(geoService, configService) {
     'ngInject';
     const self = this;
 
     self.geoService = geoService;
     self.configService = configService; // TODO: fix when config service can fire events
-    self.translate = tag => $translate.instant('focus.dialog.' + tag);
 }

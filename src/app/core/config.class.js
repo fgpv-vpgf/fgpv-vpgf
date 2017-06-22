@@ -424,7 +424,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get searchable () { return this._searchable; }
         get filter () { return this._filter; }
 
-        get JSON () { 
+        get JSON () {
             return {
                 data: this.data,
                 title: this.title,
@@ -1950,6 +1950,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._sideMenu = new SideMenu(uiSource.sideMenu);
             this._legend = new UILegend(uiSource.legend);
             this._help = new Help(uiSource.help);
+            this._fullscreen = uiSource.fullscreen;
         }
 
         get source () {                 return this._source; }
@@ -1960,6 +1961,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get sideMenu () {               return this._sideMenu; }
         get legend () {                 return this._legend; }
         get help () {                   return this._help; }
+        get fullscreen () {             return this._fullscreen; }
 
         get JSON () {
             return {
@@ -1968,7 +1970,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 restrictNavigation: this.restrictNavigation,
                 sideMenu: this.sideMenu.JSON,
                 legend: this.legend.JSON,
-                help: this.help.JSON
+                help: this.help.JSON,
+                fullscreen: this.fullscreen
             }
         }
     }
