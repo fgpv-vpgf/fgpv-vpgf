@@ -49,7 +49,8 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
 
                 const subMatrix = {
                     get [geoServiceTypes.FeatureLayer]() {
-                        return defaultSet.concat(_parseAsFeature)
+                        // adding as Feature layer is the first option
+                        return [_parseAsFeature].concat(defaultSet);
                     },
                     [geoServiceTypes.RasterLayer]: defaultSet,
                     [geoServiceTypes.GroupLayer]: defaultSet
