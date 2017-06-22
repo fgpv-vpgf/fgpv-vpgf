@@ -21,7 +21,6 @@ import './common/resize.directive.js';
 import './common/reverse.filter.js';
 import './common/select-menu.decorator.js';
 import './common/select.decorator.js';
-import './common/select-header.directive.js';
 import './common/state.directive.js';
 import './common/svg.directive.js';
 import './common/toggle-slide.animation.js';
