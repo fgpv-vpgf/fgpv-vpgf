@@ -60,7 +60,7 @@ md-menu-content {
             padding-right: rem(1.6) !important;
         }
 
-        &[rv-right-icon="true"] .md-button {
+        &[rv-right-icon="none"] .md-button {
             padding-left: rem(1.6) + rem(4);
         }
 
