@@ -11,6 +11,12 @@ const HtmlWebpackPlugin     = require('html-webpack-plugin');
 
 module.exports = function (env) {
 
+    const geoPath = env.geoLocal ?
+                        env.geoLocal.length > 0 ?
+                            env.geoLocal :
+                            path.resolve(__dirname, '../', 'geoApi') :
+                        path.resolve(__dirname, 'node_modules/geoApi');
+
     const config = {
         entry: {
             'rv-main': path.resolve(__dirname, 'src/app/app-loader.js'),
@@ -26,7 +32,7 @@ module.exports = function (env) {
             rules: [
                 {
                     test: /\.js$/,
-                    include: [path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/plugins'), geoapiPath()],
+                    include: [path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/plugins'), geoPath],
                     use: [{
                         loader: 'ng-annotate-loader'
                     }, {
@@ -61,7 +67,7 @@ module.exports = function (env) {
         },
 
         plugins: [
-            new webpack.PrefetchPlugin(geoapiPath()),
+            new webpack.PrefetchPlugin(geoPath),
             new webpack.PrefetchPlugin(path.resolve(__dirname, 'src/app/app-loader.js')),
 
             new webpack.optimize.ModuleConcatenationPlugin(),
@@ -104,6 +110,10 @@ module.exports = function (env) {
 
         externals: { 'TweenLite': 'TweenLite' },
 
+        resolve: {
+            modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules')]
+        },
+
         watchOptions: {
             aggregateTimeout: 300,
             poll: 1000,
@@ -128,23 +138,11 @@ module.exports = function (env) {
     config.plugins.push(...htmlInjectPlugins());
 
     if (env.geoLocal) {
-        config.resolve = config.resolve ? config.resolve : {};
         config.resolve.alias = config.resolve.alias ? config.resolve.alias : {};
-        config.resolve.alias['geoApi$'] = geoapiPath();
-    }
-
-    if (env.inspect) {
-        const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-        config.plugins.push(new BundleAnalyzerPlugin());
+        config.resolve.alias['geoApi$'] = geoPath;
     }
 
     return config;
-
-    function geoapiPath() {
-        return env.geoLocal ?
-            path.resolve(__dirname, '../', env.geoLocal.length > 0 ? env.geoLocal : 'geoApi') :
-            path.resolve(__dirname, 'node_modules/geoApi');
-    }
 }
 
 function htmlInjectPlugins() {
