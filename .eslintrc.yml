@@ -11,9 +11,8 @@ globals:
   SVG: true
   canvg: true
 
-ecmaFeatures:
-  modules: true
-  jsx: true
+parserOptions:
+  sourceType: "module"
 
 env:
   amd: true

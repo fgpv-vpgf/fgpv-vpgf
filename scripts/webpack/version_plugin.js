@@ -1,4 +1,4 @@
-const pkg           = require('../package.json');
+const pkg           = require('../../package.json');
 const ConcatSource  = require('webpack-sources').ConcatSource;
 
 const version = {};
@@ -17,7 +17,7 @@ version_plugin.prototype.apply = function(compiler) {
         compilation.plugin('optimize-chunk-assets', (chunks, done) => {
             chunks.forEach(chunk => {
                 chunk.files.forEach(filename => {
-                    if (/main\./.test(filename)) {
+                    if (/^rv-main\.js$/.test(filename)) {
                         const content = `var RVersion = ${JSON.stringify(version)};`;
                         compilation.assets[filename] = new ConcatSource(content, compilation.assets[filename]);
                     }
