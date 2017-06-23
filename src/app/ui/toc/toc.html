@@ -41,13 +41,15 @@
                 class="rv-toggle-slide"
                 data-sort-group="{{ ::block.sortGroup }}">
 
+                <!-- legend block -->
                 <rv-legend-block
-                    ng-if="$dxPrior.blockType === 'info' || $dxPrior.blockType === 'node' || $dxPrior.blockType === 'group'"
                     class="rv-legend-{{ block.template }}"
                     block="block"
                     is-reorder="self.isReorder"
                     ng-class="{ 'rv-selected': block.isSelected }"></rv-legend-block>
 
+
+                <!-- regular group children list -->
                 <ul
                     class="rv-legend-list rv-toggle-slide rv-legend-level-{{ ::$dxLevel }}"
                     ng-if-start="block.blockType === 'group' && !block.collapsed"
@@ -56,19 +58,13 @@
 
                 <div class="rv-shadow" ng-if-end></div>
 
+                <!-- collapsed group children list where the group block is not shown and items do not have extra indentation -->
                 <ul
                     class="rv-legend-list rv-group-collapsed"
                     ng-if="block.blockType === 'group' && block.collapsed"
                     dx-connect="block"></ul>
 
-                <rv-legend-block
-                    ng-if="$dxPrior.blockType === 'set'"
-                    class="rv-legend-{{ block.template }} rv-legend-set-{{ $dxPrior.id }}"
-                    block="block"
-                    is-reorder="self.isReorder"
-                    is-in-set="true"
-                    ng-class="{ 'rv-selected': block.isSelected }"></rv-legend-block>
-
+                <!-- visibility set children list -->
                 <ul
                     class="rv-legend-list rv-legend-set"
                     ng-class="{ 'rv-legend-set-highlight': block.highlight }"

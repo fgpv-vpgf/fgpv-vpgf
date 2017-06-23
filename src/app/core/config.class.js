@@ -7,15 +7,15 @@
  * ### About controls:
  * Each layer and group has two arrays of control settings: `controls` and `disabledControls`.
  * `controls` specify if the layer has corresponding ui elements to control the setting
- * `disabledConrols` specify if the corresponding setting can be modified
+ * `disabledControls` specify if the corresponding setting can be modified
  *
  * #### Control behaviour
  * | control | disabledControl | result                                                          |
  * |---------|-----------------|-----------------------------------------------------------------|
- * | x       |                 | control is visible to the user and can be modified              |
- * |         | x               | control is invisible and is locked to modification              |
- * |         |                 | control is invisible to the user, but can be modified indirecly |
- * | x       | x               | control is visible and is locked to modifications               |
+ * | x       |                 | control is visible to the user and can be modified                             |
+ * |         | x               | control is invisible and is locked to modification                             |
+ * |         |                 | control is invisible to the user, but can be modified indirecly, by a parent   |
+ * | x       | x               | control is visible and is locked to modifications                              |
  *
  */
 angular
@@ -1166,7 +1166,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             this._disabledControls = angular.isArray(entryGroupSource.disabledControls) ? common.intersect(
                 entryGroupSource.disabledControls,
-                DEFAULTS.legend[TYPES.legend.GROUP].disabledControls) :
+                DEFAULTS.legend[TYPES.legend.GROUP].controls) :
                 DEFAULTS.legend[TYPES.legend.GROUP].disabledControls;
             this._userDisabledControls = [];
 
@@ -1785,7 +1785,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         constructor(source = {}) {
             this._source = source;
 
-            this._logo = source.logo === 'true';
+            this._logo = source.logo === true;
             this._items = angular.isArray(source.items) ?
                 source.items.map(subItems =>
                     common.intersect(source.items, SideMenu.ITEMS)) :

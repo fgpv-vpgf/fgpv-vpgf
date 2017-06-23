@@ -31,9 +31,13 @@ WARNING be sure to change the detail content display logic in both blocks (singl
     <!-- this handles the case of multiple layers returning results. shows the side selector  -->
     <div class="rv-details rv-multiple" ng-if="self.display.data.length > 1">
 
-        <rv-details-header selected-item="self.selectedItem"></rv-details-header>
+        <rv-details-header
+            title="self.selectedItem ? self.selectedItem.requester.proxy.name : (self.display.isLoading ? 'details.label.searching' : 'details.label.noresult')"
+            selected-item="self.selectedItem"></rv-details-header>
 
+        <!-- the detail content  -->
         <md-content class="rv-details-data rv-content"
+            ng-show="self.selectedItem"
             rv-detect-scrollbar
             rv-details-content
             rv-item="self.selectedItem"
@@ -41,7 +45,6 @@ WARNING be sure to change the detail content display logic in both blocks (singl
             rv-is-hidden="(self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data">
         </md-content>
 
-        <!-- the detail content  -->
         <!-- the side selector  -->
         <rv-layer-list-slider class="rv-details-layer-list"></rv-layer-list-slider>
     </div>

@@ -5,7 +5,7 @@
         ng-class="{ 'rv-hide': self.isHidden }"
         ng-switch on="self.item.requester.proxy.layerType">
 
-        <p class="rv-nothing" ng-if="self.item.data.length === 0" translate>details.label.noresult</p>
+        <p class="rv-nothing" ng-if="self.item.data.length === 0">{{ 'details.label.noresult' | translate }}</p>
 
         <!-- Feature Key-Value list presentation  -->
         <rv-details-record-esrifeature

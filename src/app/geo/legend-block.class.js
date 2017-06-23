@@ -838,14 +838,6 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             return this;
         }
 
-        _propagateVisibility(value, except = null) {
-            this._activeEntries.forEach(entry => {
-                if (entry !== except) {
-                    entry.visibility = value;
-                }
-            });
-        }
-
         get _activeEntries () {
             return this.entries.filter(entry =>
                 entry.blockType === TYPES.GROUP ||
@@ -875,6 +867,12 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
 
             if (index !== -1) {
                 this._entries.splice(index, 1);
+            }
+
+            // if the entry being remove is the selected entry, reset selected entry to null
+            // when the entry is reloaded, its layer config is reused and the visibility set will change visibility of the selectedEntry false during the next digest cycle
+            if (entry === this._selectedEntry) {
+                this._selectedEntry = null;
             }
 
             return index;

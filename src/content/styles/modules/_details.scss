@@ -106,6 +106,10 @@
                 flex-direction: column;
                 overflow: hidden;
 
+                &.rv-disabled {
+                    color: rgba(0,0,0,0.38);
+                }
+
                 > span {
                     white-space: nowrap;
                     overflow: hidden;
@@ -304,7 +308,7 @@ $details-record-height: rem(6.0);
                         width: 100%;
                         height: auto;
                         display: grid;
-                        padding: rem(0.5); 
+                        padding: rem(0.5);
                     }
                 }
             }

@@ -1,3 +1,5 @@
+import * as moment from 'moment-timezone';
+
 /**
  * @name version
  * @memberof app.core
@@ -13,5 +15,7 @@ angular
         minor: RVersion.minor,
         patch: RVersion.patch,
         hash: RVersion.gitHash.substring(0, 9),
-        timestamp: RVersion.timestamp
+        get timestamp() {
+            return moment.tz(RVersion.timestamp, moment.tz.guess()).format('YYYY-MM-DD HH:mm:ss');
+        }
     });

@@ -29,11 +29,35 @@ angular
  * - configure translation provider by prepping static loader (and optionally setting preferred language if we know what it is),
  * - configure theme colours for angular material
  */
-function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider) {
+function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider, $parseProvider) {
 
+    configureParser();
     configureTranslations();
     configureTheme();
     configureIconsets();
+
+    /**
+     * Configures the praser provider by adding accented characters as valid identifiers in Angular expressions.
+     * This solves the problem with French characters used in datatable field names when they are bound to the template.
+     * Potentially, it should work for other languages using accented characters. The condition can be expanded if needed.
+     *
+     * @function configureParser
+     */
+    function configureParser() {
+        $parseProvider.setIdentifierFns(_isValidIdentifier, _isValidIdentifier);
+
+        // original Angular issue: https://github.com/angular/angular.js/issues/2174
+        // PR that fixes it https://github.com/angular/angular.js/commit/bd0915c4007dcc5b0cae6968598731117c510ffa
+        // eslint-disable-next-line complexity
+        function _isValidIdentifier(ch) {
+            return ('a' <= ch && ch <= 'z' ||
+                    'A' <= ch && ch <= 'Z' ||
+                    '_' === ch || ch === '$' ||
+                    'à' <= ch && ch <= 'ÿ' ||
+                    'À' <= ch && ch <= 'Ÿ' ||
+                    'Ç' === ch || ch === 'ç');
+        }
+    }
 
     /**
      * Configure angular translation provider. Set locale files location and file name pattern.

@@ -1,4 +1,3 @@
-
 <ul class="rv-list">
     <li
         ng-repeat="item in self.display.data | orderBy:['data.length == 0','-isLoading']"
@@ -19,7 +18,7 @@
 
         <span class="rv-details-layer-badge" ng-if="item.data.length > 0">{{ item.data.length }}</span>
         <md-progress-circular md-diameter="24" class="md-primary" md-mode="indeterminate" ng-if="item.isLoading"></md-progress-circular>
-        <div class="rv-details-layer-name">
+        <div class="rv-details-layer-name" ng-class="{ 'rv-disabled': item.data.length === 0 }">
             <span class="">{{ item.requester.proxy.name }}</span>
         </div>
     </li>
