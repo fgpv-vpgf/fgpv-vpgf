@@ -93,13 +93,12 @@ function convertImageToCanvas(url, canvas = null, crossOrigin = true) {
 function convertImagetoDataURL(imageUri, imageType = 'image/png') {
     // this is already a dataUrl, just return
     if (imageUri.startsWith('data')) {
-        console.log('ImageUri is already a data url');
         return Promise.resolve(imageUri);
     }
 
     const loadingPromise = convertImageToCanvas(imageUri)
         .then(canvas => {
-            console.log('Converting image to dataURL');
+            // Converting image to dataURL
             return canvas.toDataURL(imageType);
         })
         .catch(error => {

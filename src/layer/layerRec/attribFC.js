@@ -26,6 +26,9 @@ class AttribFC extends basicFC.BasicFC {
         this._quickCache = {};
     }
 
+    get geomType () { return this._geometryType; }
+    set geomType (value) { this._geometryType = value; }
+
     /**
      * Returns attribute data for this FC.
      *
@@ -298,6 +301,64 @@ class AttribFC extends basicFC.BasicFC {
                 result.graphic = featureInfo.feature;
                 result.source = 'server';
                 return result;
+            });
+    }
+
+    /**
+     * Will attempt to zoom the map view so the a graphic is prominent.
+     *
+     * @function zoomToGraphic
+     * @param  {Integer} objId          Object ID of grahpic being searched for
+     * @param  {Object} map             wrapper object for the map we want to zoom
+     * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
+     * @return {Promise}                resolves after the map is done moving
+     */
+    zoomToGraphic (objId, map, offsetFraction) {
+
+        return this.fetchGraphic(objId)
+            .then(fetchedGraphic => {
+                const gapi = this._parent._apiRef;
+
+                // make new graphic (on the chance it came from server and is just raw json geometry)
+                const graphic = gapi.proj.Graphic({ geometry: fetchedGraphic.graphic.geometry });
+
+                // TODO only do this if projections are actually different.
+                // reproject graphic to spatialReference of the map
+                const graphicExtent = gapi.proj.localProjectExtent(
+                    gapi.proj.graphicsUtils.graphicsExtent([graphic]),
+                    map.spatialReference);
+
+                // need to make new esri extent to use getCenter function
+                const extent = gapi.Map.Extent(graphicExtent.x0, graphicExtent.y0,
+                    graphicExtent.x1, graphicExtent.y1, graphicExtent.sr);
+
+                // move map according to geometry
+                let geomZoomPromise;
+                if (this.geomType === 'esriGeometryPoint') {
+                    // zoom to point at a decent scale for hilighting a point
+                    const sweetLod = gapi.Map.findClosestLOD(map.lods, 50000);
+                    geomZoomPromise = map.centerAndZoom(extent.getCenter(), Math.max(sweetLod.level, 0));
+                } else {
+                    // zoom to the extent of the geometery
+                    geomZoomPromise = map.setExtent(extent, true);
+                }
+
+                // make next step wait for map to zoom, and pass it our projected target extent.
+                return geomZoomPromise.then(() => extent);
+            }).then(extent => {
+
+                // determine if our optimal zoom is offscale
+                const scale = this.isOffScale(map.getScale());
+
+                // adjust the scale if the layer is offscale
+                const scaleZoomPromise = scale.offScale ?
+                    this.zoomToScale(map, map.lods, scale.zoomIn, false) : Promise.resolve();
+
+                return scaleZoomPromise.then(() => extent);
+
+            }).then(extent => {
+                // map is at best position we can manage. do any offsetting for UI elements
+                return map.moveToOffsetExtent(extent, offsetFraction);
             });
     }
 

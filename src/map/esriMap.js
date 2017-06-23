@@ -20,6 +20,7 @@ function esriMap(esriBundle, geoApi) {
             'attribution', 'extent', 'graphicsLayerIds', 'height', 'layerIds', 'spatialReference', 'width'
         ]; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
+        // TODO add docs for opts parameter properties
         constructor (domNode, opts) {
 
             this._passthroughBindings.forEach(bindingName =>
@@ -39,7 +40,6 @@ function esriMap(esriBundle, geoApi) {
 
             if (opts.basemaps) {
                 this.basemapGallery = basemap.initBasemaps(esriBundle, opts.basemaps, this._map);
-                this.basemapGallery.on('selection-change', () => this.resetOverviewMap());
             } else {
                 throw new Error('The basemaps option is required to and at least one basemap must be defined');
             }
@@ -55,6 +55,7 @@ function esriMap(esriBundle, geoApi) {
 
             if (opts.overviewMap) {
                 this.initOverviewMap();
+                this.basemapGallery.on('selection-change', () => this.resetOverviewMap());
             }
 
             this.zoomPromise = Promise.resolve();
@@ -85,10 +86,7 @@ function esriMap(esriBundle, geoApi) {
          * @return {Object} an ESRI Extent object
          */
         static getExtentFromJson (extentJson) {
-
-            return esriBundle.Extent({ xmin: extentJson.xmin, ymin: extentJson.ymin,
-                xmax: extentJson.xmax, ymax: extentJson.ymax,
-                spatialReference: { wkid: extentJson.spatialReference.wkid } });
+            return esriBundle.Extent(extentJson);
         }
 
         /**
@@ -123,7 +121,7 @@ function esriMap(esriBundle, geoApi) {
             const zoomPt = geoApi.proj.Point(geoPt[0], geoPt[1], this._map.spatialReference);
 
             // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
-            const sweetLod = Map.findClosestLOD(this._map.__tileInfo.lods, 50000);
+            const sweetLod = Map.findClosestLOD(this.lods, 50000);
             this._map.centerAndZoom(zoomPt, Math.max(sweetLod.level, 0));
         }
 
@@ -341,6 +339,37 @@ function esriMap(esriBundle, geoApi) {
         }
 
         /**
+         * Will position the map so that the target extent is in view. Offsetting is available
+         * to allow the view to take into account UI elements that cover the map
+         * (e.g. legend and grid are open, so want extent visible in remaining map area)
+         *
+         * @function moveToOffsetExtent
+         * @param {Object} targetExtent     an ESRI extent to position the map to
+         * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
+         * @return {Promise}                resolves after the map is done moving
+         */
+        moveToOffsetExtent (targetExtent, offsetFraction) {
+            const currentExtent = this.extent;
+
+            let xOffset = currentExtent.getWidth() * -offsetFraction.x;
+            let yOffset = currentExtent.getHeight() * offsetFraction.y;
+
+            if (currentExtent.getWidth() < targetExtent.getWidth() ||
+                currentExtent.getHeight() < targetExtent.getHeight()) {
+                // the target extent doesn't fit in the current extent,
+                // offset the target extent using provided fractions
+
+                xOffset = targetExtent.getWidth() * -offsetFraction.x;
+                yOffset = targetExtent.getHeight() * offsetFraction.y;
+            }
+
+            const point = targetExtent.getCenter();
+            const offsetCenter = point.offset(xOffset, yOffset);
+
+            return this.centerAt(offsetCenter);
+        }
+
+        /**
          * Set proxy service URL to avoid same origin issues.
          */
         set proxy (proxyUrl) { esriBundle.esriConfig.defaults.io.proxyUrl = proxyUrl; }
@@ -354,6 +383,11 @@ function esriMap(esriBundle, geoApi) {
 
         set overviewMap (val) { this._overviewMap = val; }
         get overviewMap () { return this._overviewMap; }
+
+        // TODO an alternate approach: store opts.lods in the constructor and return that here.
+        //      need to consider impact (it could be .__tileInfo adjusts to current basemap, thus
+        //      preventing us from zooming to lods that have no tiles)
+        get lods () { return this._map.__tileInfo.lods; }
 
     }
 

@@ -409,15 +409,17 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * Zoom to a valid scale level for a child layer.
      *
      * @function zoomToScale
-     * @param {String}  childIndex    index of the child layer to target
-     * @param {Object} map            the map object
-     * @param {Array} lods            level of details array for basemap
-     * @param {Boolean} zoomIn        the zoom to scale direction; true need to zoom in; false need to zoom out
+     * @param {String}  childIndex           index of the child layer to target
+     * @param {Object} map                   the map object
+     * @param {Array} lods                   level of details array for basemap
+     * @param {Boolean} zoomIn               the zoom to scale direction; true need to zoom in; false need to zoom out
+     * @param {Boolean} positionOverLayer    ensures the map is over the layer's extent after zooming. only applied if zoomIn is true. defaults to true
+     * @returns {Promise}                    promise that resolves after map finishes moving about
      */
-    zoomToScale (childIdx, map, lods, zoomIn) {
+    zoomToScale (childIdx, map, lods, zoomIn, positionOverLayer = true) {
         // get scale set from child, then execute zoom
         const scaleSet = this._featClasses[childIdx].getScaleSet();
-        return this._zoomToScaleSet(map, lods, zoomIn, scaleSet);
+        return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, positionOverLayer);
     }
 
     /**
@@ -507,6 +509,20 @@ class DynamicRecord extends attribRecord.AttribRecord {
      */
     fetchGraphic (childIndex, objId, ignoreLocal = false) {
         return this._featClasses[childIndex].fetchGraphic(objId, ignoreLocal);
+    }
+
+    /**
+     * Will attempt to zoom the map view so the a graphic is prominent.
+     *
+     * @function zoomToGraphic
+     * @param {String}  childIndex    index of the child layer to target
+     * @param  {Integer} objId          Object ID of grahpic being searched for
+     * @param  {Object} map             wrapper object for the map we want to zoom
+     * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
+     * @return {Promise}                resolves after the map is done moving
+     */
+    zoomToGraphic (childIndex, objId, map, offsetFraction) {
+        return this._featClasses[childIndex].zoomToGraphic(objId, map, offsetFraction);
     }
 
     /**

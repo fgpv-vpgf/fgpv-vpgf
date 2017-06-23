@@ -1,9 +1,11 @@
 {
   "name": "geoApi",
-  "version": "0.0.0-protoLR-68",
+  "version": "0.0.0-protoLR-69",
   "description": "",
   "main": "src/index.js",
   "dependencies": {
+    "babel-preset-latest": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
     "canvg-origin": "^1.0.0",
     "csv2geojson": "5.0.2",
     "dgeni": "^0.4.7",

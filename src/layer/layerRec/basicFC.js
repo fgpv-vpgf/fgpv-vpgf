@@ -138,6 +138,21 @@ class BasicFC extends placeholderFC.PlaceholderFC {
         return map.zoomToExtent(this.extent);
     }
 
+    /**
+     * Zoom to a valid scale level for this layer.
+     *
+     * @function zoomToScale
+     * @param {Object} map                   the map object
+     * @param {Array} lods                   level of details array for basemap
+     * @param {Boolean} zoomIn               the zoom to scale direction; true need to zoom in; false need to zoom out
+     * @param {Boolean} positionOverLayer    ensures the map is over the layer's extent after zooming. only applied if zoomIn is true. defaults to true
+     * @returns {Promise}                    promise that resolves after map finishes moving about
+     */
+    zoomToScale (map, lods, zoomIn, positionOverLayer = true) {
+        // get scale set from child, then execute zoom
+        const scaleSet = this.getScaleSet();
+        return this._parent._zoomToScaleSet(map, lods, zoomIn, scaleSet, positionOverLayer);
+    }
 }
 
 module.exports = () => ({

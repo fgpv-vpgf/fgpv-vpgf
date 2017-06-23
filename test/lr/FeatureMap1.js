@@ -2,7 +2,7 @@ import geoapi from '../../src/index';
 
 // https://github.com/fgpv-vpgf/geoApi/wiki/Locally-Testing-GeoAPI
 // to run, temporarily update package.json
-// "main": "test/lr/DynamicMap1.js"
+// "main": "test/lr/FeatureMap1.js"
 
 $('head').append('<link rel="stylesheet" href="http://js.arcgis.com/3.14/esri/css/esri.css" type="text/css" />');
 
@@ -11,50 +11,26 @@ $('body').append(`
 `);
 
 geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-    console.log('TEST PAGE - Map Testing on Dynamic Layer Record - visibility, opacity, zoom');
+    console.log('TEST PAGE - Zoom To Feature (poly) on Feature Layer Record');
 
-    var config1 = {
-        id: 'guts',
-        name: 'Dynamic Test',
-        url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/Nest/MapServer',
+        var config1 = {
+        id: 'dog',
+        name: 'Feature Test',
+        url: 'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands/MapServer/1',
         nameField: 'siteShortName_en',
         metadataUrl: 'http://www.github.com',
-        layerType: 'esriDynamic',
+        layerType: 'esriFeature',
         tolerance: 5,
-        controls: ['visibility', 'opacity', 'boundingBox', 'query', 'data'],
+        controls: ['snapshot', 'visibility', 'opacity', 'boundingBox', 'query', 'data'],
         state: {
             opacity: 1,
             visibility: true,
             boundingBox: false,
-            query: true
-        },
-        layerEntries: [
-            {
-                index: 0,
-                outfields: '*',
-                controls: ['visibility', 'opacity', 'boundingBox', 'query'],
-                state: {
-                    opacity: 1,
-                    visibility: true,
-                    boundingBox: false,
-                    query: true
-                },
-                stateOnly: false,
-                name: 'Hamhocks'
-            },
-            { 
-                index: 2,
-                name: 'doggguts',
-                state: {
-                    opacity: 0,
-                    visibility: true,                            
-                    query: false
-                },
-                stateOnly: true
-            }
-        ]
+            query: true,
+            snapshot: false
+        }
     };
-    
+
     var mapOpts = {
         extent: {
             xmax: -5007771.626060756,
@@ -107,7 +83,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         ]
     };
 
-    var layerRec = api.layer.createDynamicRecord(config1);
+    var layerRec = api.layer.createFeatureRecord(config1);
     console.log('layer PROOF ', layerRec);
     var proxy = layerRec.getProxy();
     console.log('proxy PROOF ', proxy);
@@ -129,21 +105,10 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     function afterLoadTests() {
         console.log('enhanced loaded');
 
-        var leaf2proxy = layerRec.getChildProxy(2);
-        var leaf3proxy = layerRec.getChildProxy(3);
-        
-        // remember, we are not using completeConfig swtich, so things get defaulted
-        console.log('leaf 3 visible, should be false', leaf3proxy.visibility);
-        console.log('leaf 2 visible, should be false', leaf2proxy.visibility);
-        
-        console.log('layer proxy visible -- sb false', proxy.visibility);
-        
-        leaf3proxy.setVisibility(true);
-        console.log('layer proxy visible -- sb true', proxy.visibility);
-        console.log('leaf 3 visible -- sb true', leaf3proxy.visibility);
-    
-        leaf3proxy.zoomToBoundary(map);
-        leaf3proxy.zoomToScale(map, mapOpts.lods, true);
+        // zoom to a point
+        proxy.zoomToGraphic(4, map, { x:0, y:0 }).then(() => {
+            console.log('zoom to poly done');
+        });
 
     }
 
