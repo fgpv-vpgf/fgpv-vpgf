@@ -37,7 +37,7 @@ function rvAppbar(storageService) {
     return directive;
 }
 
-function Controller(layoutService, stateManager, debounceService, basemapService, geosearchService, configService) {
+function Controller(layoutService, stateManager, debounceService, basemapService, geosearchService, configService, geoSearch) {
     'ngInject';
     const self = this;
     self.layoutService = layoutService;
@@ -48,6 +48,9 @@ function Controller(layoutService, stateManager, debounceService, basemapService
     self.toggleToolbox = toggleToolbox;
     self.openBasemapSelector = basemapService.open;
     self.toggleGeosearch = geosearchService.toggle;
+
+    self.geoSearch = geoSearch;
+    window.miles = geoSearch;
 
     configService.onEveryConfigLoad(cfg =>
         (self.config = cfg));

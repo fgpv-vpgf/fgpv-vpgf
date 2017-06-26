@@ -30,7 +30,8 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
         getTypes,
         isEnabled,
         zoomSearchExtent,
-        zoomScale
+        zoomScale,
+        externalApiError: false
     };
 
     init();
@@ -139,7 +140,9 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
                     provinceList.push({ code: -1, abbr: '...', name: '...' });
 
                     resolve(provinceList);
-                }, reject);
+                }, response => {
+                    service.externalApiError = true;
+                });
             }
         });
     }
@@ -176,7 +179,9 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
                     typeList.push({ code: -1, name: '...' });
 
                     resolve(typeList);
-                }, reject);
+                }, response => {
+                    service.externalApiError = true;
+                });
             }
         });
     }
