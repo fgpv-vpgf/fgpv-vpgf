@@ -9,7 +9,7 @@ angular
     .module('app.layout')
     .factory('layoutService', layoutService);
 
-function layoutService($rootElement, $rootScope, sideNavigationService, mapNavigationService) {
+function layoutService($rootElement, $rootScope) {
 
     const ref = {
         onResizeSubscriptions: [] // [ { element: <Node>, listeners: [Function ... ] } ... ]
@@ -18,23 +18,27 @@ function layoutService($rootElement, $rootScope, sideNavigationService, mapNavig
     const service = {
         currentLayout,
         isShort,
-        /**
-         * Exposes sideNavigationSerivce
-         * @member sidenav
-         * @see sideNavigationSerivce
-         */
-        sidenav: sideNavigationService,
-        /**
-         * Exposes mapNavigationService
-         * @member mapnav
-         * @see mapNavigationService
-         */
-        mapnav: mapNavigationService,
+
         // FIXME explain how the two members below are different from those in storageService
         panels: {},
         panes: {}, // registry for content pane nodes,
 
+        _mapNode: null,
+        set mapNode (value) {
+            if (this._mapNode) {
+                console.error('Map node can only be set once');
+                return;
+            }
+
+            this._mapNode = value;
+        },
+
+        get mapNode () { return this._mapNode; },
+
+        get mainPanelsOffset () { return getPanelOffset() },
+
         onResize,
+        peekAtMap,
 
         LAYOUT: {
             SMALL: 'small',
@@ -119,6 +123,7 @@ function layoutService($rootElement, $rootScope, sideNavigationService, mapNavig
          *
          * @function watchBBoxChanges
          * @private
+         * @prop {Object} element element to watch for changes
          * @return {Object} object in the form of { width: <Number>, height: <Number> } which reflects the size of the node
          */
         function watchBBoxChangesBuilder(element) {
@@ -131,5 +136,52 @@ function layoutService($rootElement, $rootScope, sideNavigationService, mapNavig
                 };
             };
         }
+    }
+
+    function peekAtMap() {
+        // filter out the shell it's a container for everything
+        const filteredPanels = Object.entries(service.panels)
+            .filter(( [name] ) => name !== 'shell')
+            .map(([name, panel]) => panel);
+
+        // convert panel of jQuery object into a jQuery array
+        const jQuerywrappedPanels = angular.element(angular.element.map(filteredPanels, el => el.get() ));
+
+        let ignoreClick = true;
+
+        // otherPanels.addClass('rv-lt-lg-hide');
+        jQuerywrappedPanels.addClass('rv-peek rv-peek-enabled');
+        jQuerywrappedPanels.on('click.peek mousedown.peek touchstart.peek', () =>
+            ignoreClick ? (ignoreClick = false) : removePeekTransparency());
+        const deRegisterReiszeWatcher = service.onResize($rootElement, (newDimensions, oldDimensions) => {
+            if (newDimensions.width !== oldDimensions.width || newDimensions.height !== oldDimensions.height) {
+                removePeekTransparency();
+            }
+        });
+
+        function removePeekTransparency() {
+            jQuerywrappedPanels.removeClass('rv-peek-enabled');
+            jQuerywrappedPanels.off('.peek');
+            deRegisterReiszeWatcher();
+        }
+    }
+
+    /**
+     * Returns the main and data panel offsets relative to the visible map.
+     *
+     * @return {Object} fractions of the current extent occupied by main and data panels in the form of { x: <Number>, y: <Number> }
+     */
+    function getPanelOffset() {
+        // calculate what portion of the screen the main and filter panels take
+        const { main, filters } = service.panels;
+
+        const offsetFraction = {
+            x: (main.filter(':visible').length > 0 ? main.width() : 0) /
+                service.mapNode.width() / 2,
+            y: (filters.filter(':visible').length > 0 ? filters.height() : 0) /
+                service.mapNode.height() / 2
+        };
+
+        return offsetFraction;
     }
 }

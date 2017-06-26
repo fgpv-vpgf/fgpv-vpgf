@@ -2,7 +2,10 @@ rv-appbar {
     position: absolute;
     transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
 
+    height: $toolbar-height;
+
     @include include-size(rv-gt-sm) {
+        width: $toolbar-width;
         left: $viewport-gutter;
         top: $viewport-gutter;
     }

@@ -35,7 +35,7 @@ function rvDetailsRecordEsrifeature() {
     return directive;
 }
 
-function Controller($scope, events, mapService, geoService, configService, storageService) {
+function Controller($scope, events, mapService, geoService, configService, layoutService) {
     'ngInject';
     const self = this;
 
@@ -75,12 +75,7 @@ function Controller($scope, events, mapService, geoService, configService, stora
      */
     function findFeature(oid) {
         const proxy = self.item.requester.proxy;
-
-        proxy.zoomToGraphic(
-            oid, configService.getSync.map.instance, storageService.getPanelOffset()).then(() => {
-                const graphiBundlePromise = proxy.fetchGraphic(oid);
-                geoService.addGraphicHighlight(graphiBundlePromise, true);
-            });
+        mapService.zoomToFeature(proxy, oid);
     }
 
     /**

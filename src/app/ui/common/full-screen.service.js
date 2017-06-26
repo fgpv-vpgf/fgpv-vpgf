@@ -17,7 +17,7 @@ const FULL_SCREEN_Z_INDEX = 50;
 /**
  * @module fullScreenService
  * @memberof app.ui
- * @requires $rootElement, $timeout, storageService, gapiService
+ * @requires $rootElement, $timeout, layoutService, gapiService
  * @description
  *
  * The `fullscreen` factory makes the map go "Boom!".
@@ -27,7 +27,7 @@ angular
     .module('app.ui')
     .factory('fullScreenService', fullScreenService);
 
-function fullScreenService($rootElement, $timeout, storageService, gapiService, animationService, configService, appInfo) {
+function fullScreenService($rootElement, $timeout, layoutService, gapiService, animationService, configService, appInfo) {
     const ref = {
         isExpanded: false,
         toggleLock: false,
@@ -96,8 +96,8 @@ function fullScreenService($rootElement, $timeout, storageService, gapiService, 
             });
 
             // get the container of all map layers
-            ref.mapContainerNode = storageService.mapNode.find('> .container > .container');
-            ref.shellNode = storageService.panels.shell;
+            ref.mapContainerNode = layoutService.mapNode.find('> .container > .container');
+            ref.shellNode = layoutService.panels.shell;
             ref.shellNodeBox = ref.shellNode[0].getBoundingClientRect();
 
             // make overflow on the root element visible so we can 'pop' the map shell out

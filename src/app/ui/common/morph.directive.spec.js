@@ -15,13 +15,13 @@ describe('rvMorph', () => {
         $provide.service('animationService', () => {});
     }
 
-    function mockStorageService($provide) {
-        $provide.service('storageService', $q => () => $q.resolve());
+    function mocklayoutService($provide) {
+        $provide.service('layoutService', $q => () => $q.resolve());
     }
 
     beforeEach(() => {
         // mock the module with bardjs
-        bard.appModule('app.ui.common', 'app.common.router', mockAnimationService, mockStorageService);
+        bard.appModule('app.ui.common', 'app.common.router', mockAnimationService, mocklayoutService);
 
         // inject angular services
         bard.inject('$compile', '$rootScope', 'stateManager');

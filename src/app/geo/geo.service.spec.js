@@ -27,8 +27,8 @@ describe('geo', () => {
     }
 
     // fake gapi service
-    function mockStorageService($provide) {
-        $provide.service('storageService', $q => () => $q.resolve());
+    function mocklayoutService($provide) {
+        $provide.service('layoutService', $q => () => $q.resolve());
     }
 
     function mockTooltipService($provide) {
@@ -59,7 +59,7 @@ describe('geo', () => {
 
     beforeEach(() => {
 
-        bard.appModule('app.geo', 'app.common.router', mockStorageService, mockGapiService,
+        bard.appModule('app.geo', 'app.common.router', mocklayoutService, mockGapiService,
             mockConfigService, mockTranslateService, mockEvents, mockMdSidenav, mockTooltipService);
 
         // inject services

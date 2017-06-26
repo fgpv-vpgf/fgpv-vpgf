@@ -13,7 +13,7 @@ angular
     .module('app.ui')
     .directive('rvLightbox', rvLightbox);
 
-function rvLightbox($mdDialog, storageService) {
+function rvLightbox($mdDialog, layoutService) {
     const directive = {
         restrict: 'A',
         scope: '=',
@@ -39,7 +39,7 @@ function rvLightbox($mdDialog, storageService) {
 
                 $mdDialog.show({
                     controller: LightboxController,
-                    parent: storageService.panels.shell,
+                    parent: layoutService.panels.shell,
                     locals: {
                         items: { images }
                     },

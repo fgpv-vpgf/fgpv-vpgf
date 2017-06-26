@@ -19,7 +19,7 @@ angular
  * @function rvAppbar
  * @return {object} directive body
  */
-function rvAppbar(storageService) {
+function rvAppbar(layoutService) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -31,16 +31,16 @@ function rvAppbar(storageService) {
     };
 
     function link(scope, el) {
-        storageService.panels.sidePanel = el;
+        layoutService.panels.sidePanel = el;
     }
 
     return directive;
 }
 
-function Controller(layoutService, stateManager, debounceService, basemapService, geosearchService, configService) {
+function Controller(sideNavigationService, stateManager, debounceService, basemapService, geosearchService, configService) {
     'ngInject';
     const self = this;
-    self.layoutService = layoutService;
+    self.sideNavigationService = sideNavigationService;
     self.stateManager = stateManager;
 
     self.toggleDetails = toggleDetails;

@@ -40,7 +40,7 @@ angular
 
 // need to find a more elegant way to include all these dependencies
 function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegistry, configService, events,
-    stateManager, basemapService, fullScreenService, exportService, storageService, helpService, reloadService,
+    stateManager, basemapService, fullScreenService, exportService, layoutService, helpService, reloadService,
     translations, $mdDialog, pluginService) {
 
     const service = {
@@ -93,7 +93,7 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
                     controller: service.ShareController,
                     controllerAs: 'self',
                     templateUrl: templateURLs.share,
-                    parent: storageService.panels.shell,
+                    parent: layoutService.panels.shell,
                     disableParentScroll: false,
                     clickOutsideToClose: true,
                     fullscreen: false,
@@ -114,7 +114,7 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
                     controller: service.AboutController,
                     controllerAs: 'self',
                     templateUrl: templateURLs.about,
-                    parent: storageService.panels.shell,
+                    parent: layoutService.panels.shell,
                     disableParentScroll: false,
                     clickOutsideToClose: true,
                     fullscreen: false

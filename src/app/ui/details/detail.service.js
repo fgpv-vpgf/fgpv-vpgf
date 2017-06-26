@@ -12,7 +12,7 @@ angular
     .module('app.ui')
     .factory('detailService', detailService);
 
-function detailService($mdDialog, stateManager, mapService, storageService) {
+function detailService($mdDialog, stateManager, mapService, layoutService) {
 
     const service = {
         expandPanel,
@@ -30,7 +30,7 @@ function detailService($mdDialog, stateManager, mapService, storageService) {
     function expandPanel(hasBackdrop = true) {
         $mdDialog.show({
             controller: () => {},
-            parent: storageService.panels.shell,
+            parent: layoutService.panels.shell,
             locals: {
                 item: stateManager.display.details.selectedItem,
                 cancel: $mdDialog.cancel
