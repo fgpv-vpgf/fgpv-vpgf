@@ -166,7 +166,7 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         projectGeometry,
         toggleSideNav: val => { $mdSidenav('left')[val](); },
         openDialogInfo: options => { pluginService.openDialogInfo(options); },
-        reInitialize: () => reloadService.reloadConfig()
+        reInitialize: bookmark => reloadService.reloadConfig(bookmark)
     };
 
     // Attaches a promise to the appRegistry which resolves with apiService
