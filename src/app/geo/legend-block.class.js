@@ -164,12 +164,33 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         /**
          * Checks if the layer is off scale by calling its proxy object with the current map scale value.
          *
-         * @param {Number} value this is mapScale number call `map.instance.getScale()` to get it
          * @return {Object} of the form {offScale: <Boolean>, zoomIn: <Boolean> }
          */
-        isOffScale (value) {            return this._proxy.isOffScale(value); }
-        zoomToBoundary(...args) {   this._proxy.zoomToBoundary(...args); }
-        zoomToScale(...args) {      this._proxy.zoomToScale(...args); }
+        isOffScale () {                 return this._proxy.isOffScale(ref.map.instance.getScale()); }
+        zoomToBoundary() {              return this._proxy.zoomToBoundary(ref.map.instance); }
+        zoomToScale() {
+            return this._proxy.zoomToScale(
+                ref.map.instance, ref.map.selectedBasemap.lods, this.isOffScale().zoomIn);
+        }
+
+        /**
+         * Zooms to a graphic with the specified oid.
+         *
+         * @param {Number} oid object oid
+         * @param {Object} offsetFraction fractions of the current extent occupied by main and data panels in the form of { x: <Number>, y: <Number> }
+         * @return {Promise} a promise resolving when the extent change is comlete
+         */
+        zoomToGraphic(oid, offsetFraction) {
+            return this._proxy.zoomToGraphic(oid, ref.map.instance, offsetFraction);
+        }
+
+        /**
+         * Retrieves a graphic with the id specified.
+         *
+         * @param {Number} oid the object id to be returned
+         * @return {Promise} a promise resolving with a graphic object
+         */
+        fetchGraphic(oid) {         return this._proxy.fetchGraphic(oid); }
 
         /**
          * Returns the value of the `userAdded` state flag.
@@ -518,28 +539,39 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          *
          * @return {Object} in the form of { offScale: <Boolean>, zoomIn: <Boolean> }
          */
-        get scale() {
-            return this._mainProxyWrapper.isOffScale(ref.map.instance.getScale());
-        }
+        get scale() { return this._mainProxyWrapper.isOffScale(); }
 
         /**
          * Zooms the layer controlled by the main proxy object in or out so features are visible on the map.
          *
          * @function zoomToScale
+         * @return {Promise} resolving when the extent change has ended
          */
-        zoomToScale () {
-            this._mainProxyWrapper.zoomToScale(
-                ref.map.instance, ref.map.selectedBasemap.lods, this.scale.zoomIn);
-        }
+        zoomToScale () { return this._mainProxyWrapper.zoomToScale(); }
 
         /**
          * Zooms the layer controlled by the main proxy object to its bounding box.
          *
          * @function zoomToBoundary
          */
-        zoomToBoundary () {
-            this._mainProxyWrapper.zoomToBoundary(ref.map.instance);
-        }
+        zoomToBoundary () { this._mainProxyWrapper.zoomToBoundary(); }
+
+        /**
+         * Zooms to a graphic with the specified oid.
+         *
+         * @param {Number} oid object oid
+         * @param {Object} offsetFraction fractions of the current extent occupied by main and data panels in the form of { x: <Number>, y: <Number> }
+         * @return {Promise} a promise resolving when the extent change is comlete
+         */
+        zoomToGraphic (oid, offsetFraction) { return this._mainProxyWrapper.zoomToGraphic(oid, offsetFraction); }
+
+        /**
+         * Retrieves a graphic object from the main connected layer given the object id.
+         *
+         * @param {Number} oid the object id
+         * @return {Promise} a promise resolving with a graphic
+         */
+        fetchGraphic(oid) {         return this._mainProxyWrapper.fetchGraphic(oid); }
 
         get symbologyStack () {     return this._symbologyStack; }
 
