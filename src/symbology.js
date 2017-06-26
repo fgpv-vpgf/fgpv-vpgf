@@ -118,9 +118,10 @@ function searchRenderer(attributes, renderer) {
             //           'value1, ' or 'value1'
             //      need to brew up some samples to see what is possible in ArcMap 
             if (renderer.field2) {
-                graphicKey = graphicKey + ', ' + attributes[renderer.field2];
+                const delim = renderer.fieldDelimiter || ', ';
+                graphicKey = graphicKey + delim + attributes[renderer.field2];
                 if (renderer.field3) {
-                    graphicKey = graphicKey + ', ' + attributes[renderer.field3];
+                    graphicKey = graphicKey + delim + attributes[renderer.field3];
                 }
             }
 
