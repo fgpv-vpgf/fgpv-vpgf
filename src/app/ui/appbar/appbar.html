@@ -23,10 +23,21 @@
         aria-label="{{ 'appbar.aria.geosearch' | translate }}"
         class="md-icon-button primary rv-app-geosearch"
         ng-click="self.toggleGeosearch()"
-        ng-if="self.config.map.components.geoSearch.enabled">
+        ng-if="self.config.map.components.geoSearch.enabled && !self.geoSearch.externalApiError">
         <md-tooltip>{{ 'appbar.tooltip.geosearch' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:search"></md-icon>
     </md-button>
+
+    <!-- workaround for AM issue where tooltips are not shown when inside a disabled element, see https://github.com/angular/material/issues/1667 -->
+    <div
+        class="md-icon-button primary rv-app-geosearch"
+        disabled="disabled"
+        ng-if="self.geoSearch.externalApiError"
+        aria-label="{{ 'appbar.aria.geosearch' | translate }}">
+        <md-tooltip>{{ 'appbar.aria.geoApiError' | translate }}</md-tooltip>
+        <md-icon md-svg-src="action:search"></md-icon>
+    </div>
+
 
     <md-button
         aria-label="{{ 'nav.tooltip.basemap' | translate }}"
