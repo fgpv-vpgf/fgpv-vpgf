@@ -29,20 +29,9 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
 
     let outMouseSR;
 
-    let elemWidth; // last known width of the $rootElement
-    let elemHeight; // last known height of the $rootElement
-
     return directive;
 
     function link(scope, el) {
-
-        elemWidth = $rootElement.width();
-        elemHeight = $rootElement.height();
-        updateClass(); // first run update
-
-        // performance optimization - only update dom if the $rootElement width has changed
-        // TODO: to further improve performance only have one listener regardless of the number of viewers on the page
-        $(window).on('resize', () => $rootElement.width() !== elemWidth || $rootElement.height() !== elemHeight ? updateClass() : null);
 
         // open legend panel if option is set in config for current viewport
         configService.onEveryConfigLoad(config => {
@@ -102,23 +91,40 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
             coordElem[1].innerText = coords[1];
         }
 
+        // set a resize listener on the root element to update it's layout styling based on the changed size
+        _updateShallLayoutClass();
+        layoutService.onResize($rootElement,
+            debounceService.registerDebounce(_updateShallLayoutClass, 350, false));
+
         // FIXME: remove; opens the main panel for easier dev work
         // stateManager.setActive({ side: false }, 'mainLoaderService');
         // stateManager.setActive({ side: false }, 'mainLoaderFile');
         // stateManager.setActive({ side: false }, { mainToc: true });
-    }
 
-    /**
-    * Updates the $rootElement class with rv-small, rv-medium, or rv-large depending on its width
-    * @function  updateClass
-    */
-    function updateClass() {
-        elemWidth = $rootElement.width();
-        elemHeight = $rootElement.height();
-        $rootElement
-            .removeClass('rv-small rv-medium rv-large')
-            .addClass('rv-' + layoutService.currentLayout());
-        $rootElement.toggleClass('rv-short', layoutService.isShort());
+        /**
+         * Updates the $rootElement class with rv-small, rv-medium, or rv-large depending on its width and height.
+         *
+         * @function  updateClass
+         * @param {Object} newD new dimensions in the form of { width: <Number>, height: <Number> }
+         * @param {Object} oldD old dimensions in the form of { width: <Number>, height: <Number> }
+         */
+        function _updateShallLayoutClass(newD, oldD) {
+            // the first time the watch is triggered, newD is undefined
+            if (!newD) {
+                return;
+            }
+
+            // if dimensions are 0, something is wrong (I'm looking at you, IE)
+            // this happens in IE when switching to full screen; just ignore
+            if (newD.width === 0 || newD.heigth === 0) {
+                return;
+            }
+
+            $rootElement
+                .removeClass('rv-small rv-medium rv-large')
+                .addClass('rv-' + layoutService.currentLayout())
+                .toggleClass('rv-short', layoutService.isShort());
+        }
     }
 }
 
