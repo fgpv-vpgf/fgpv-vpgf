@@ -77,13 +77,14 @@ describe('DynamicFC', () => {
             spyOn(parent._layer, 'setVisibleLayers').and.callThrough();
             spyOn(parent._layer, 'setVisibility');
             parent._layer.visibleLayers = [ ];
+            parent._visDelay = {};
         });
 
         it('should work when adding first visible layer and visibility changes', () => {
             parent._layer.visibleLayers.push(-1);
             dynamicFC.setVisibility(5);
             expect(parent._layer.setVisibleLayers).toHaveBeenCalled();
-            expect(parent._layer.setVisibility).toHaveBeenCalled();
+            expect(parent._layer.setVisibility).not.toHaveBeenCalled();
             expect(parent.visibleLayers).toEqual([1]);
         });
 
@@ -107,7 +108,7 @@ describe('DynamicFC', () => {
             parent._layer.visibleLayers.push(1);
             dynamicFC.setVisibility();
             expect(parent._layer.setVisibleLayers).toHaveBeenCalled();
-            expect(parent._layer.setVisibility).toHaveBeenCalled();
+            expect(parent._layer.setVisibility).not.toHaveBeenCalled();
             expect(parent.visibleLayers).toEqual([-1]);
         });
 
