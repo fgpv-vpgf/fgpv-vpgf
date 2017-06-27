@@ -149,14 +149,6 @@ describe('featureRecord', () => {
         expect(cfg.visible).toEqual(2);
     });
 
-    it('should return the geometry type', () => {
-        const featureRecordObject = new featureRecord.FeatureRecord(layerClass, esriRequest, apiRef, config, esriLayer);
-        let geomtype = featureRecordObject.getGeomType();
-
-        // should not be defined since it was not set
-        expect(geomtype).toBe(undefined);
-    });
-
     it('should return the proxy', () => {
         const featureRecordObject = new featureRecord.FeatureRecord(layerClass, esriRequest, apiRef, config, esriLayer);
 

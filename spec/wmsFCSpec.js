@@ -71,6 +71,9 @@ describe('WmsFC', () => {
                 }
             ]
         };
+        parent._visDelay = {
+            lastIdx: '2'
+        };
         wmsFC = new wmsFCModule.WmsFC(parent, '1', config);
     });
 
