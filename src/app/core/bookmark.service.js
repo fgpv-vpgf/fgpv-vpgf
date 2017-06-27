@@ -18,8 +18,8 @@ function bookmarkService($rootElement, $q, /*geoService, LayerBlueprint,*/
     const service = {
         getBookmark,
         parseBookmark,
-
-        get storedBookmark() { return _bookmarkObject; }
+        get storedBookmark() { return _bookmarkObject; },
+        emptyStoredBookmark() { _bookmarkObject = null; }
     };
 
     return service;

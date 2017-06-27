@@ -207,9 +207,10 @@ const mapProxy = {
      /**
     * reinitial when a new config file is loaded
     * @function  reInitialize
+    * @param {String} bookmark     The new bookmark when config is reloaded
     */
-    reInitialize() {
-        this._proxy('reInitialize');
+    reInitialize(bookmark = null) {
+        this._proxy('reInitialize', bookmark);
     },
 
     _init(appID) {

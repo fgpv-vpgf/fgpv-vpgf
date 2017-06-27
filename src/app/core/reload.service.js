@@ -31,14 +31,28 @@ function reloadService(events, bookmarkService, geoService, configService) {
      * Reload the new config file  and destroy old map and assemble a new Map
      * the map using the new configs
      * @function  reloadConfig
+     * @param {String} bookmark     The new bookmark when config is reloaded
      */
-    function reloadConfig() {
+    function reloadConfig(bookmark) {
         events.$broadcast(events.rvApiHalt);
 
         geoService._isMapReady = false;
         geoService.destroyMap();
+        bookmarkService.emptyStoredBookmark();
         configService.reInitialize();
-        geoService.assembleMap();
+
+        if (!bookmark) {
+            geoService.assembleMap();
+            return;
+        }
+
+        // modify the original config
+        configService.getAsync.then(config => {
+            bookmarkService.parseBookmark(bookmark);
+
+            // loading a bookmark after initialization, reload the map
+            geoService.assembleMap();
+        });
     }
 
     function changeProjection(startPoint) {

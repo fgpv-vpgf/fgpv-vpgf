@@ -16,6 +16,19 @@
             margin: 10px;
         }
 
+        #bookmarkLoad {
+            margin: 10px;
+            width: 100%;
+        }
+
+        #bookmarkURL {
+            width: 80%;
+        }
+
+        #submitButton {
+            width: 17.5%;
+        }
+
         .myMap {
             height: 100%;
             margin: 10px;
@@ -35,7 +48,7 @@
 
 <body>
     <select id="selectConfig">
-        <option selected="selected" value="config-sample-01-structured-visibility-sets.json">01. Layer with visibility sets</option>
+        <option value="config-sample-01-structured-visibility-sets.json">01. Layer with visibility sets</option>
         <option value="config-sample-02-structured-legend-controlled-layers.json">02. Layer with controlled layers</option>
         <option value="config-sample-03-structured-legend-one-child.json">03. Layer with Direct linking of dynamic child</option>
         <option value="config-sample-04-structured-legend-one-group.json">04. Layer with one group linking to multiple layers in child entries</option>
@@ -53,10 +66,14 @@
         <option value="config-sample-16-structured-legend-tile-layer-only-valid-one-proj.json">16. Tile layer which is only valid in one of the basemap projections</option>
     </select>
 
+    <form id="bookmarkLoad">
+        <input id="bookmarkURL" type="text">
+        <button id="submitButton" type="button">Load Bookmark</button>
+    </form>
+
     <div class="myMap" id="mobile-map" is="rv-map"
         rv-config="config-sample-01-structured-visibility-sets.json"
         rv-langs='["en-CA", "fr-CA"]'
-        rv-wait="true"
         rv-restore-bookmark="bookmark">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
@@ -134,17 +151,33 @@
             var keysArr = keys.split(',');
             RV.getMap('mobile-map').restoreSession(keysArr);
         } else {
-            var bookmark = queryStr.rv;
-            // console.log(bookmark);
-            RV.getMap('mobile-map').initialBookmark(bookmark);
+            const bookmark = queryStr.rv;
 
+            // update the config values if needed
+            var previouslySelectedConfig = sessionStorage.getItem('sampleConfig');
+            if (previouslySelectedConfig) {
+                document.getElementById('mobile-map').setAttribute('rv-config', previouslySelectedConfig);
+                document.getElementById('selectConfig').value = previouslySelectedConfig;
+            } else {
+                const currentConfig = document.getElementById('mobile-map').getAttribute('rv-config');
+                sessionStorage.setItem('sampleConfig', currentConfig);
+            }
 
             document.getElementById('selectConfig').addEventListener("change", changeConfig);
+            document.getElementById('submitButton').addEventListener("click", loadBookmark);
 
+            // load book mark
+            function loadBookmark() {
+                let bookmarkURL = document.getElementById('bookmarkURL').value;
+                RV.getMap('mobile-map').useBookmark(bookmarkURL);
+            }
+
+            // change and load the new config
             function changeConfig() {
                 var selectedConfig = document.getElementById('selectConfig').value;
                 document.getElementById('mobile-map').setAttribute('rv-config', selectedConfig);
                 RV.getMap('mobile-map').reInitialize();
+                sessionStorage.setItem('sampleConfig', selectedConfig);
             }
 
         }
