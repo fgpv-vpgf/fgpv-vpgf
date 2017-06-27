@@ -157,16 +157,85 @@ Click on the download button in the header to get the final generated map image.
 
 # Data Table Panel
 
-![](datatable/overview.png)
+![](datatable/overview_en.png)
 
-The data table panel is shown above with its menu options open. You can scroll through all the data as well as:
-- increase/decrease the size of the table (via split view/maximize options)
-- sort the data by selecting the column header
-- filter the data such that only data in your current extent is shown
-- export the data as a csv file
-- print the data
+The panel __Data Table__ is shown above in its initial state.
 
-You can also open a corresponding details panel for an given row by selecting the ![](datatable/details.png) details icon. You can also pan and zoom the map to a given row by selecting the ![](datatable/zoomto.png) zoom icon.
+In addition to scrolling data, it is possible to:
+- Sort the data by selecting the header of the column
+- Move around the table using the navigation arrows
+- Open the detail panel corresponding to a given line by selecting the Details icon ![](datatable/details.png)
+- Move the map and zoom the item corresponding to a given line by selecting the Zoom Icon ![](datatable/zoomto.png)
+- Move the columns by clicking on the header when the cursor icon becomes a hand and moving it around the sorting icons of the place where it should move
+- Filter the columns by numerical range, text, selection or date (if the configuration allows it)
+
+If the number of characters entered exceeds the width of the text box, only the visible characters will be displayed, followed by ellipses (...). By selecting the field with the mouse or the keyboard, the full text will be displayed in a tooltip.
+
+The number of entities in the layer is displayed in the lower left corner: Showing 1 to 4 of 247 entries.
+
+By starting the filtering of the data, more feedback is obtained: Showing 1 to 4 of 15 entries (filtered from 247 total entries).
+
+### Filter Control Group
+
+![](datatable/apply_en.png)
+
+This control group is located in the lower right corner and allows you to do the following:
+- Apply data table filters
+    - If the layer type allows it, when modifying the filters, __APPLY TO MAP__ will appear. After pressing this button, the map is refreshed and only the visible data of your table is displayed.
+- Clear all filters ![](datatable/clear.png)
+- Depending on the configuration, some filters may not be editable (see section __Filter Data__ for more information)
+- Open the filter control panel ![](datatable/setting.png)
+
+### Filter data
+
+Data can be filtered by column. A column is searchable if there is an input field under the title of the header. As mentioned previously, there are 4 types of filters:
+- __Text__: Character input field. Use the wildcard character \* to replace a sequence of zero or more characters (e.g. _* levo_ will find Charlevoix)
+    - _Note, without a generic character, the search will find only the elements where the word searched begins the sentence._
+- __Number__: Input fields that accept only numbers
+    - If a minimum and a maximum are defined the filter will search for a range
+    - If, for example, only a minimum is defined, it will perform the operation _greater than_
+- __Selection__: Drop-down menu which allows the selection of one or more predefined values
+- __Date__: Similar to the numeric field but uses dates
+
+Some filters are not editable; Their value can not be changed. They are represented by a dashed line below their value.
+
+![](datatable/search_en.png)
+
+This control, which is found in the upper right corner of the data table, allows to filter the data table globally.
+- If you enter the _Brook_ value, the data table will select the data that contains _Brook_ at any location (e.g ._Corner Brook_ will be selected)
+
+When the input field is selected, the column names may change because they reflect the internal names of the data. These names allow you to do specific searches, for example:
+- Search text: _name of field:value_ (e.g. Type:'my type')
+- Search a number or date:
+    - Simple value: _field name:[operator]value_ (eg OBJECTID:<30). The following operators can be used: <, <=,>,> =.
+    - Range: _field name:[value..value]_ (e.g. OBJECTID:[30..50])
+- You can also combine fields with _&&_ (e.g. Type:'my type' && OBJECTID:<30)
+
+_Note: The filters defined by this control can not be applied to the map. They apply only to the data table._
+
+### Configuration Panel
+
+![](datatable/settingPanel_en.png)
+
+In the configuration panel, if the configuration allows it , you can find a __Description__ section that contains information about the dataset and the different columns.
+Changes made in the configuration panel are retained in the data table and vice versa.
+Subsequently, the columns are found one after the other in the order in which the data table is displayed. For each column, the following actions can be carried out:
+- Reorder: allows you to move the columns by pressing the icon and moving it
+- Name: the name of the field
+- Filter: the field filter (if present)
+- Sort: allows you to sort data in ascending or descending order
+- Display: allows you to see or hide a column. _Note: If a column contains a filter, the data will be filtered even if the column is not visible_
+
+### Menu of options
+
+![](datatable/menu_en.png)
+
+The menu allows the following actions:
+- Enlarge / reduce the size of the table (via shared view / enlarge)
+- Filter data so that only data in the current spatial extent is displayed
+- Show table column filters
+- Export the data as a .csv file
+- Print the data
 
 
 # Feature Details Panel
