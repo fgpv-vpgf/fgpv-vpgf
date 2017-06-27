@@ -350,7 +350,8 @@ function mapServiceFactory($q, $timeout, layoutService, gapiService, configServi
         }
 
         const zoomPromise = proxy.zoomToGraphic(
-            oid, configService.getSync.map.instance, offset).then(() => {
+            oid, configService.getSync.map.instance, offset)
+            .then(() => {
                 const graphiBundlePromise = proxy.fetchGraphic(oid);
                 service.addGraphicHighlight(graphiBundlePromise, true);
             });

@@ -19,7 +19,6 @@ function layoutService($rootElement, $rootScope) {
         currentLayout,
         isShort,
 
-        // FIXME explain how the two members below are different from those in storageService
         panels: {},
         panes: {}, // registry for content pane nodes,
 
@@ -123,7 +122,7 @@ function layoutService($rootElement, $rootScope) {
          *
          * @function watchBBoxChanges
          * @private
-         * @prop {Object} element element to watch for changes
+         * @param {Object} element element to watch for changes
          * @return {Object} object in the form of { width: <Number>, height: <Number> } which reflects the size of the node
          */
         function watchBBoxChangesBuilder(element) {
@@ -138,6 +137,12 @@ function layoutService($rootElement, $rootScope) {
         }
     }
 
+    /**
+     * Briefly makes all panels almost transparent so the map underneath can be clearly see.
+     * Restores the regular opacity on the next click/touch event.
+     *
+     * @function peekAtMap
+     */
     function peekAtMap() {
         // filter out the shell it's a container for everything
         const filteredPanels = Object.entries(service.panels)
@@ -152,14 +157,14 @@ function layoutService($rootElement, $rootScope) {
         // otherPanels.addClass('rv-lt-lg-hide');
         jQuerywrappedPanels.addClass('rv-peek rv-peek-enabled');
         jQuerywrappedPanels.on('click.peek mousedown.peek touchstart.peek', () =>
-            ignoreClick ? (ignoreClick = false) : removePeekTransparency());
+            ignoreClick ? (ignoreClick = false) : _removePeekTransparency());
         const deRegisterReiszeWatcher = service.onResize($rootElement, (newDimensions, oldDimensions) => {
             if (newDimensions.width !== oldDimensions.width || newDimensions.height !== oldDimensions.height) {
-                removePeekTransparency();
+                _removePeekTransparency();
             }
         });
 
-        function removePeekTransparency() {
+        function _removePeekTransparency() {
             jQuerywrappedPanels.removeClass('rv-peek-enabled');
             jQuerywrappedPanels.off('.peek');
             deRegisterReiszeWatcher();
