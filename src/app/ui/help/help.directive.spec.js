@@ -22,8 +22,8 @@ describe('rvHelp', () => {
         $provide.service('$mdDialog', () => {});
     }
 
-    function mockStorageService($provide) {
-        $provide.factory('storageService', () => {
+    function mocklayoutService($provide) {
+        $provide.factory('layoutService', () => {
             return {};
         });
     }
@@ -37,7 +37,7 @@ describe('rvHelp', () => {
     beforeEach(() => {
         // mock the module with bardjs
         bard.appModule('app.ui.common', 'app.ui.help', mockTranslate, mockTranslates,
-            mockDialog, mockStorageService, mockSideNavigationService);
+            mockDialog, mocklayoutService, mockSideNavigationService);
 
         // inject angular services
         bard.inject('$compile', '$rootScope', 'helpService');

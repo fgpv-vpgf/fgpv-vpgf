@@ -96,6 +96,10 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
             mapService.addGraphicHighlight(graphicBundlePromise, showHaze);
         }
 
+        zoomToFeature (proxy, oid) {
+            mapService.zoomToFeature(proxy, oid);
+        }
+
         // FIXME from Alex: reload and snapshop should be called against legendService
         reloadLayer(l) { layerRegistry.reloadLayer(l); }
         snapshotLayer(l) { layerRegistry.snapshotLayer(l); }

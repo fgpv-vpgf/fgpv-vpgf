@@ -34,4 +34,23 @@
             transform: rotate(360deg);
         }
     }
+
+    .rv-peek {
+        & > * {
+            transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+        }
+
+        &.rv-peek-enabled {
+            outline: 1px solid #999;
+
+            > * {
+                opacity: 0.14 !important;
+
+
+                @include rv-whiteframe-base {
+                    box-shadow: $whiteframe-shadow-1dp;
+                }
+            }
+        }
+    }
 }

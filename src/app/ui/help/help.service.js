@@ -102,7 +102,7 @@ function highlightFilter($sce) {
     };
 }
 
-function helpService($mdDialog, $translate, translations, storageService) {
+function helpService($mdDialog, $translate, translations, layoutService) {
     // all help sections (populated when elements tagged with rv-help are created)
     const registry = [];
 
@@ -133,7 +133,7 @@ function helpService($mdDialog, $translate, translations, storageService) {
             controllerAs: 'self',
             bindToController: true,
             templateUrl,
-            parent: storageService.panels.shell,
+            parent: layoutService.panels.shell,
             disableParentScroll: false,
             clickOutsideToClose: true,
             fullscreen: false

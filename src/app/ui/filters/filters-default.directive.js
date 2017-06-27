@@ -70,7 +70,7 @@ angular
  */
 function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService,
     detailService, $rootElement, $filter, keyNames, $sanitize, debounceService, configService, SymbologyStack,
-    storageService, filterService, events) {
+    filterService, events) {
 
     const directive = {
         restrict: 'E',
@@ -745,37 +745,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                 const data = self.table.row(rowNumber).data();
                 const oid = data[displayData.oidField];
 
-                requester.legendEntry.zoomToGraphic(oid, storageService.getPanelOffset()).then(() => {
-                    const graphiBundlePromise = requester.legendEntry.fetchGraphic(oid);
-                    geoService.addGraphicHighlight(graphiBundlePromise, true);
-                });
-
-                console.log(layoutService);
-
-                // FIXME: this is a tiy bit ugly
-                const filterPanel = $rootElement.find('rv-panel[type="filters"]');
-                const otherPanels = $rootElement.find('rv-appbar, rv-mapnav, rv-panel:not([type="filters"])');
-                let ignoreClick = true;
-
-                const removeZoomtoTransparency = () => {
-                    otherPanels.removeClass('rv-lt-lg-hide');
-                    filterPanel.removeClass('zoomto-transparent');
-                    filterPanel.off('.zoomTO');
-                    $(window).off('.zoomTo');
-                };
-
-                otherPanels.addClass('rv-lt-lg-hide');
-                filterPanel.addClass('zoomto-transparent');
-
-                // eslint-disable-next-line no-return-assign
-                filterPanel.on('click.zoomTO mousedown.zoomTO touchstart.zoomTO', () =>
-                    ignoreClick ? ignoreClick = false : removeZoomtoTransparency()
-                );
-
-                // ensures that resizing from sm/md to lg and back does not persist transparency
-                $(window).on('resize.zoomTO', () =>
-                    layoutService.currentLayout() === 'large' ? removeZoomtoTransparency() : undefined
-                );
+                geoService.zoomToFeature(requester.legendEntry.mainProxy, oid);
             }
 
             /**

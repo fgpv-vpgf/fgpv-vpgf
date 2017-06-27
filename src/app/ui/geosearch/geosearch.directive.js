@@ -19,7 +19,7 @@ angular
  * @function rvGeosearch
  * @return {object} directive body
  */
-function rvGeosearch(storageService, layoutService, debounceService, globalRegistry, $rootElement, $rootScope,
+function rvGeosearch(layoutService, debounceService, globalRegistry, $rootElement, $rootScope,
     stateManager, events) {
     const directive = {
         restrict: 'E',
@@ -40,7 +40,7 @@ function rvGeosearch(storageService, layoutService, debounceService, globalRegis
                 const debounceUpdateMaxHeight = debounceService.registerDebounce(newDimensions =>
                     geosearchContentNode.css('max-height', newDimensions.height - 10), 175, false, true); // 10 accounts for top margin :()
 
-                layoutService.onResize(storageService.panels.main, debounceUpdateMaxHeight);
+                layoutService.onResize(layoutService.panels.main, debounceUpdateMaxHeight);
             }
 
             // force focus on open geosearch because sometimes it is lost

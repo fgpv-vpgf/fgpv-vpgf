@@ -11,7 +11,7 @@ angular
     .module('app.geo')
     .factory('mapService', mapServiceFactory);
 
-function mapServiceFactory($q, $timeout, storageService, gapiService, configService, identifyService, events) {
+function mapServiceFactory($q, $timeout, layoutService, gapiService, configService, identifyService, events) {
     const service = {
         destroyMap,
         makeMap,
@@ -23,7 +23,9 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
         // TODO: should these functions be proxied through the geoService?
         addGraphicHighlight,
         addMarkerHighlight,
-        clearHighlight
+        clearHighlight,
+
+        zoomToFeature
     };
 
     return service;
@@ -87,7 +89,7 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
         mapConfig.instance._map.destroy();
         mapConfig.reset();
 
-        storageService.mapNode.empty();
+        layoutService.mapNode.empty();
         // FIXME: do we need to destroy scalebar and overview map even after we empty the node
     }
 
@@ -102,7 +104,7 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
         const { map: mapConfig, services: servicesConfig } = configService.getSync;
 
         // dom node to build the map on; need to be specified only the first time the map is created and stored for reuse;
-        const mapNode = storageService.mapNode;
+        const mapNode = layoutService.mapNode;
 
         const mapSettings = {
             basemaps: mapConfig.basemaps,
@@ -326,7 +328,33 @@ function mapServiceFactory($q, $timeout, storageService, gapiService, configServ
      */
     function _toggleHighlightHaze(value = null) {
         if (value !== null) {
-            angular.element(storageService.mapNode).toggleClass('rv-map-highlight', value);
+            angular.element(layoutService.mapNode).toggleClass('rv-map-highlight', value);
         }
+    }
+
+    /**
+     * Zoom to a single feature given its proxy layer object and oid.
+     * Takes into account main panel offset and trigger `peekAtMap` if offsets are too great.
+     *
+     * @param {LayerProxy} proxy proxy layer object containing the feature
+     * @param {Number} oid feature object id
+     * @return {Promise} a promise resolving after map completes extent change
+     */
+    function zoomToFeature(proxy, oid) {
+        const offset = layoutService.mainPanelsOffset
+        const peekFactor = 0.4;
+        // if either of the offsets is greater than 80%, peek at the map instead of offsetting the map extent
+        if (offset.x > peekFactor || offset.y > peekFactor) {
+            offset.x = offset.y = 0;
+            layoutService.peekAtMap();
+        }
+
+        const zoomPromise = proxy.zoomToGraphic(
+            oid, configService.getSync.map.instance, offset).then(() => {
+                const graphiBundlePromise = proxy.fetchGraphic(oid);
+                service.addGraphicHighlight(graphiBundlePromise, true);
+            });
+
+        return zoomPromise;
     }
 }

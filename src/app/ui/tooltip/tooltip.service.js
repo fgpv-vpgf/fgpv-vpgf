@@ -20,7 +20,7 @@ angular
     .module('app.ui')
     .factory('tooltipService', tooltipService);
 
-function tooltipService($rootScope, $compile, $q, storageService, events) {
+function tooltipService($rootScope, $compile, $q, layoutService, events) {
     /**
      * Tooltip's origin point is generally the position of the initial mouse cursor or clientX/Y of a mouse event when the tooltip was first created.
      * Movement and Collision strategies are defined in the TooltipService on initialization and then passed to Tooltip instances.
@@ -418,8 +418,8 @@ function tooltipService($rootScope, $compile, $q, storageService, events) {
 
         // create both tooltip movement strategies
         ref.followMapStrategy = new FollowMap();
-        ref.followMouseStrategy = new FollowMouse(storageService.panels.shell);
-        ref.containInsideStrategy = new ContainInside(storageService.panels.shell);
+        ref.followMouseStrategy = new FollowMouse(layoutService.panels.shell);
+        ref.containInsideStrategy = new ContainInside(layoutService.panels.shell);
     }
 
     /**
@@ -437,7 +437,7 @@ function tooltipService($rootScope, $compile, $q, storageService, events) {
         removeHoverTooltip();
 
         ref.hoverTooltip = new Tooltip(ref.followMouseStrategy, ref.containInsideStrategy, content, tooltipScope);
-        storageService.panels.shell.append(ref.hoverTooltip.node);
+        layoutService.panels.shell.append(ref.hoverTooltip.node);
 
         ref.hoverTooltip.position(point.x, point.y);
 

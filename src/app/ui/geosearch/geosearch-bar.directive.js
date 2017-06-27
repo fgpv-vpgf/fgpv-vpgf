@@ -45,7 +45,7 @@ function rvGeosearchBar() {
     }
 }
 
-function Controller(appInfo, layoutService, debounceService, geosearchService) {
+function Controller(appInfo, sideNavigationService, debounceService, geosearchService) {
     'ngInject';
     const self = this;
 
@@ -56,7 +56,7 @@ function Controller(appInfo, layoutService, debounceService, geosearchService) {
     self.service = geosearchService;
 
     self.geosearchMenuClass = GEOSEARCH_MENU_CLASS;
-    self.layoutService = layoutService;
+    self.sideNavigationService = sideNavigationService;
     self.searchLength = 0;
 
     self.onUpdateDebounce = onUpdateDebounceBuilder();

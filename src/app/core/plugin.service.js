@@ -10,7 +10,7 @@ angular
     .module('app.core')
     .factory('pluginService', pluginService);
 
-function pluginService(translationService, $mdDialog, storageService) {
+function pluginService(translationService, $mdDialog, layoutService) {
     const service = {
         onCreate,
         register,
@@ -101,7 +101,7 @@ function pluginService(translationService, $mdDialog, storageService) {
                 items: opts.items
             },
             template: opts.template,
-            parent: storageService.panels.shell,
+            parent: layoutService.panels.shell,
             disableParentScroll: opts.hasOwnProperty('disableParentScroll') ? opts.disableParentScroll : false,
             clickOutsideToClose: opts.hasOwnProperty('clickOutsideToClose') ? opts.clickOutsideToClose : true,
             fullscreen: opts.hasOwnProperty('fullscreen') ? opts.fullscreen : false
