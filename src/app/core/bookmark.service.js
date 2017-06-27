@@ -10,8 +10,7 @@ angular
     .module('app.core')
     .factory('bookmarkService', bookmarkService);
 
-function bookmarkService($rootElement, $q, /*geoService, LayerBlueprint,*/
-        LayerRecordFactory, configService, gapiService, bookmarkVersions, Geo, ConfigObject) {
+function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, ConfigObject) {
 
     let _bookmarkObject = null;
 

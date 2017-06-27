@@ -6,6 +6,8 @@ $result-item-height-touch: rem(4.8);
     .rv-geosearch-bar {
         @extend %appbar;
 
+        height: $toolbar-height;
+
         flex-shrink: 0;
 
         // style autocomplete control
