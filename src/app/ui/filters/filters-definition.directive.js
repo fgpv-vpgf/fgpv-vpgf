@@ -313,23 +313,28 @@ function rvFiltersDefinition(stateManager, events, $compile, filterService, layo
         function setDateFilter(filter, index) {
             $.fn.dataTable.ext.searchTemp.push((settings, data) => {
                 // check if it is a valid date and remove leading 0 because it doesn't set the date properly
-                let flag = false;
                 const i = settings._colReorder.fnTranspose(index); // get the real index if columns have been reordered
+                if (i === -1) { return false; }
+
+                // Date value is null, only show row if there are no filters
+                if (data[i] === '') {
+                    return !filter.min && !filter.max;
+                }
+
                 const date = data[i].split('-');
                 const val = (date.length === 3) ?
                     new Date(`${date[0]}-${parseInt(date[1])}-${parseInt(date[2])}`) : false;
 
                 if (val) {
+                    // set date to filter values or minimum / maximum date value
+                    const min = (filter.min !== null) ? filter.min : new Date(-8640000000000000);
+                    const max = (filter.max !== null) ? filter.max : new Date(8640000000000000);
+
                     // check date
-                    const min = (filter.min !== null) ? filter.min : false;
-                    const max = (filter.max !== null) ? filter.max : false;
-
-                    if ((val >= min && !max) || (!min && val <= max) || (val >= min && val <= max)) {
-                        flag = true;
-                    }
+                    return (val >= min && val <= max)
+                } else {
+                    return false;
                 }
-
-                return flag;
             });
         }
     }
