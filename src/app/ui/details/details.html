@@ -18,7 +18,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
     <div class="rv-details" ng-if="self.display.data.length === 1">
 
         <rv-details-header
-            title="self.selectedItem.requester.proxy.name"
+            header-title="self.selectedItem.requester.proxy.name"
             selected-item="self.selectedItem"></rv-details-header>
 
         <md-content class="rv-details-data rv-content"
@@ -34,7 +34,7 @@ WARNING be sure to change the detail content display logic in both blocks (singl
     <div class="rv-details rv-multiple" ng-if="self.display.data.length > 1">
 
         <rv-details-header
-            title="self.selectedItem ? self.selectedItem.requester.proxy.name : (self.display.isLoading ? 'details.label.searching' : 'details.label.noresult')"
+            header-title="self.selectedItem ? self.selectedItem.requester.proxy.name : (self.display.isLoading ? 'details.label.searching' : 'details.label.noresult')"
             selected-item="self.selectedItem"></rv-details-header>
 
         <!-- the detail content  -->
