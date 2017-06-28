@@ -201,6 +201,14 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          */
         get userAdded () {              return this._layerConfig.state.userAdded; }
 
+        /**
+         * Returns the value of the `filter` state flag.
+         *
+         * @return {Boolean} `true` is the layer has filter
+         */
+        get filter () {                return this._layerConfig.filter; }
+        set filter (value) {           this._layerConfig.filter = value; }
+
         _validProjection = true;
         get validProjection () { return this._validProjection; }
         /**
@@ -537,6 +545,15 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         get userAdded () {
             return this._mainProxyWrapper.userAdded;
         }
+
+        get filter () {
+            return this._mainProxyWrapper.filter;
+        }
+        set filter (value) {
+            this._mainProxyWrapper.filter = value;
+        }
+
+        get queryUrl () { return this._mainProxyWrapper.queryUrl; }
 
         get formattedData () {
             return this._mainProxyWrapper.formattedAttributes;
