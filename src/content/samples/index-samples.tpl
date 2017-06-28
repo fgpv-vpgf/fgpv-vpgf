@@ -22,7 +22,7 @@
         }
 
         #bookmarkURL {
-            width: 80%;
+            width: 75%;
         }
 
         #clearButton {
