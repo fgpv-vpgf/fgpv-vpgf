@@ -65,6 +65,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
         layerBlueprintsCollection.push(layerBlueprint);
 
+        const legendBlocks = configService.getSync.map.legendBlocks;
+
         // add a new mapping for layer blueprint
         const legendMappings = configService.getSync.map.legendMappings;
         legendMappings[layerBlueprint.config.id] = [];
@@ -78,13 +80,28 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 ConfigObject.legend.Entry.ICONS
         };
 
-        const blockConfig = new ConfigObject.legend.Entry(entryConfigObject);
+        const sortGroups = Geo.Layer.SORT_GROUPS_;
 
-        // FIXME: this seems to always insert a new layer at the bottom of the legend regardless of it's sorting group; needs fixing
-        const legendBlock = _makeLegendBlock(blockConfig, [layerBlueprint]);
-        configService.getSync.map.legendBlocks.addEntry(legendBlock);
+        const importedBlockConfig = new ConfigObject.legend.Entry(entryConfigObject);
+        const importedLegendBlock = _makeLegendBlock(importedBlockConfig, [layerBlueprint]);
 
-        return legendBlock;
+        let position = 0;
+        // find an appropriate spot in a auto legend;
+        if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
+            position = legendBlocks.entries.findIndex(block =>
+                sortGroups[block.layerType] === sortGroups[importedLegendBlock.layerType]);
+
+            // if the sort group for this layer doesn't exist, insert at the bottom of the legend
+            position = position === -1 ? legendBlocks.entries.length : position;
+        }
+
+        // add the new legend block to the legend block (always to the root group)
+        legendBlocks.addEntry(importedLegendBlock, position);
+
+        // add the new block config to the legend config (always to the root group)
+        configService.getSync.map.legend.addChild(importedBlockConfig, position);
+
+        return importedLegendBlock;
     }
 
     /**
@@ -103,7 +120,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         // create a new record from its layer blueprint
         const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
         const layerBlueprint = layerBlueprintsCollection.find(blueprint =>
-                blueprint.config.id === layerRecordId);
+            blueprint.config.id === layerRecordId);
         layerRegistry.regenerateLayerRecord(layerBlueprint);
 
         mappings.forEach(({ legendBlockId, legendBlockConfigId }) => {
@@ -164,6 +181,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
         return [_resolve, _reject];
 
+        // FIXME: need to remove the enty from the legend config as well, or it will be recreated on the full state restore
         function _resolve() {
             layerRegistry.removeLayerRecord(legendBlock.layerRecordId);
 
