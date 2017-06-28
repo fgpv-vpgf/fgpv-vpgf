@@ -381,7 +381,7 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                 return _readFile(file, progressCallback);
 
             } else if (typeof fileInfo.fileData !== 'undefined') {
-                return fileInfo.fileData
+                return $q.resolve(fileInfo.fileData);
 
             } else {
                 throw new Error('Cannot retrieve file data');

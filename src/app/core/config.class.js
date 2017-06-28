@@ -1315,7 +1315,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
          *
          * @function addChild
          * @param {LegendElement} child a legendElement child to be inserted
-         * @param {Number} position [optional=0] to be insereted at
+         * @param {Number} [position=0] to be inserted at
          */
         addChild (child, position = 0) {
             this._root.children.splice(position, 0, child);
