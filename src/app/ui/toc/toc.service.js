@@ -52,6 +52,14 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
      * @param {LegendBlock} legendBlock legend block to be reloaded
      */
     function reloadLayer(legendBlock) {
+        // get filters configuration and check if static field were used. If so, filters can't be remove and flag need to stay
+        const config = configService.getSync.map.layerRecords.find(item =>
+            item.config.id === legendBlock.layerRecordId).initialConfig.filters;
+        const staticField = config.columns.find(col =>
+            col.filter.static === true);
+
+        // reset filter flag
+        legendBlock.filter = (typeof staticField !== 'undefined' && config.applyMap) ? true : false;
 
         stateManager.setActive({ filtersFulldata: false } , { sideMetadata: false }, { sideSettings: false });
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId);
@@ -329,6 +337,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                         globalSearch: '',
                         isApplied: true,
                         isActive: false,
+                        isMapFiltered: false,
                         isInit: false
                     };
                 }
