@@ -22,11 +22,17 @@
         }
 
         #bookmarkURL {
-            width: 80%;
+            width: 75%;
+        }
+
+        #clearButton {
+            color: #ffffff;
+            background-color: #ff0000;
+
         }
 
         #submitButton {
-            width: 17.5%;
+            background-color: #00ff00;
         }
 
         .myMap {
@@ -64,10 +70,23 @@
         <option value="config-sample-14-structured-legend-visibility-disable.json">14. Multiple layers with visibility disabled initially</option>
         <option value="config-sample-15-structured-legend-visibility-locked.json">15. Multiple layers with visibility locked</option>
         <option value="config-sample-16-structured-legend-tile-layer-only-valid-one-proj.json">16. Tile layer which is only valid in one of the basemap projections</option>
+        <option value="config-sample-17.json">17. Layer with only Information section</option>
+        <option value="config-sample-18.json">18. Layer with symbology overridden by config file specified image file</option>
+        <option value="config-sample-19.json">19. Layer with Viewer with “About map” text changed</option>
+        <option value="config-sample-20.json">20. Layer with Bounding box disabled</option>
+        <option value="config-sample-21.json">21. Layer with Query disabled</option>
+        <option value="config-sample-22.json">22. Layer with Snapshot disabled</option>
+        <option value="config-sample-23.json">23. Layer with Metadata disabled</option>
+        <option value="config-sample-24.json">24. Layer with Boundary zoom disabled</option>
+        <option value="config-sample-25.json">25. Layer with Reload disabled</option>
+        <option value="config-sample-26.json">26. Layer with Remove disabled</option>
+        <option value="config-sample-27.json">27. Layer with Settings disabled</option>
+        <option value="config-sample-28.json">28. Layer with Data table disabled</option>
     </select>
 
     <form id="bookmarkLoad">
         <input id="bookmarkURL" type="text">
+        <button id="clearButton" type="button">Clear</button>
         <button id="submitButton" type="button">Load Bookmark</button>
     </form>
 
@@ -165,11 +184,16 @@
 
             document.getElementById('selectConfig').addEventListener("change", changeConfig);
             document.getElementById('submitButton').addEventListener("click", loadBookmark);
+            document.getElementById('clearButton').addEventListener("click", clearBookmark);
 
             // load book mark
             function loadBookmark() {
                 let bookmarkURL = document.getElementById('bookmarkURL').value;
                 RV.getMap('mobile-map').useBookmark(bookmarkURL);
+            }
+
+            function clearBookmark() {
+                document.getElementById('bookmarkURL').value = '';
             }
 
             // change and load the new config
