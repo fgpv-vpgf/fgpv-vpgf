@@ -329,6 +329,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                         globalSearch: '',
                         isApplied: true,
                         isActive: false,
+                        isMapFiltered: false,
                         isInit: false
                     };
                 }

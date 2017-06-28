@@ -12,7 +12,7 @@ angular
     .factory('filterService', filterService);
 
 function filterService(stateManager, geoService, $rootScope, $q, gapiService, debounceService, $rootElement, $timeout,
-    layoutService) {
+    layoutService, layerRegistry) {
 
     // timestamps can be watched for key changes to filter data
     const filterTimeStamps = {
@@ -33,6 +33,7 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
         filter: {
             isActive: false,
             isApplied: true,
+            isMapFiltered: false,
             isOpen: true
         },
         setTable,
@@ -72,8 +73,10 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
         if (filterTimeStamps.onCreated !== null) { // ignore if no DataTable is active
             service.filter.isActive = value;
             stateManager.display.filters.data.filter.isActive = value; // set on layer so it can persist when we change layer
-            stateManager.display.filters.requester.legendEntry.flags.filter.visible =
-                service.filter.isActive || service.filter.isApplied;
+
+            // filter flag
+            stateManager.display.filters.requester.legendEntry.filter =
+                service.filter.isActive || service.filter.isMapFiltered;
 
             filteredState().then(() => {
                 filterTimeStamps.onChanged = Date.now();
@@ -120,7 +123,7 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
 
         // recompute oidColNum for data table filter since it may not be first index
         oidColNum = stateManager.display.filters.data.columns.findIndex(col =>
-                col.data === stateManager.display.filters.data.oidField);
+            col.data === stateManager.display.filters.data.oidField);
 
         // add a DataTable filter which only accepts rows with oidField values in the validOIDs list
         $.fn.dataTable.ext.searchTemp.push((settings, data) =>
@@ -189,9 +192,11 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
             }
         });
 
-        // TODO check how
-        // check if we need to show filter flag (we show it if there is static filter or filter by extent is enable)
-        // filters.requester.legendEntry.flags.filter.visible = (service.filter.isActive || filter) ? true : false;
+        // remove filter flag is filter by extend is not active (data is not filtered)
+        service.filter.isMapFiltered = false;
+        filters.data.filter.isMapFiltered = service.filter.isMapFiltered;  // set on layer so it can persist when we change layer
+        stateManager.display.filters.requester.legendEntry.filter =
+            service.filter.isActive || service.filter.isMapFiltered;
 
         // if filter by extent is enable, manually trigger the on extentChange event to refresh the table
         if (service.filter.isActive) { onExtentChange(); }
@@ -229,6 +234,11 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
 
         // set layer defintion query
         setDefinitionExpression(filters.requester.legendEntry, defs);
+
+        // set filter flag (data is filtered)
+        service.filter.isMapFiltered = true;
+        filters.data.filter.isMapFiltered = service.filter.isMapFiltered;  // set on layer so it can persist when we change layer
+        stateManager.display.filters.requester.legendEntry.filter = service.filter.isMapFiltered;
     }
 
     /**
@@ -431,8 +441,8 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
         } else {
             service.filters[column] = false;
 
-            service.filter.isApplied =
-                stateManager.display.filters.requester.legendEntry.flags.filter.visible ? false : true;
+            // check filter flag to know if filter is applied
+            service.filter.isApplied = stateManager.display.filters.requester.legendEntry.filters ? false : true;
 
             filtersObject.each(el => {
                 // check if another field have a filter. If so, show Apply Map
@@ -465,15 +475,18 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
     function onCreate() {
         // recompute oidColNum for data table filter since it may not be first index
         oidColNum = stateManager.display.filters.data.columns.findIndex(col =>
-                col.data === stateManager.display.filters.data.oidField);
+            col.data === stateManager.display.filters.data.oidField);
 
-        // TODO: fix
+        // FIXME: Reactive filter flag
         // service.filter.isActive = stateManager.display.filters.requester.legendEntry.flags.filter.visible;
+        service.filter.isActive = stateManager.display.filters.requester.legendEntry.filters
+
 
         // set filter extent and apply map button from table information
         const filter = stateManager.display.filters.data.filter;
         service.filter.isActive = filter.isActive;
         service.filter.isApplied = filter.isApplied;
+        service.filter.isMapFiltered = filter.isMapFiltered;
 
         // check if we need to show the filters (need this check when table is created)
         layoutService.isFiltersVisible = service.filter.isOpen;
@@ -514,9 +527,13 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
             return;
         }
 
-        const layer = stateManager.display.filters.requester.legendEntry.master ?
-            stateManager.display.filters.requester.legendEntry.master._layerRecord._layer :
-            stateManager.display.filters.requester.legendEntry._layerRecord._layer;
+        // FIXME: is legendEntry.master still relevant?
+        // const layer = stateManager.display.filters.requester.legendEntry.master ?
+        //     stateManager.display.filters.requester.legendEntry.master._layerRecord._layer :
+        //     stateManager.display.filters.requester.legendEntry._layerRecord._layer;
+
+        const layer =
+            layerRegistry.getLayerRecord(stateManager.display.filters.requester.legendEntry.layerRecordId)._layer;
 
         // wait until layer has finished updating before filtering
         const stopUpdateWatcher = $rootScope.$watch(() => layer.updating, updating => {
@@ -563,18 +580,19 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
      */
     function queryMapserver(lastOID = 0) {
         const state = stateManager.display.filters;
+        const legEntry =state.requester.legendEntry;
+        const layerRecId = layerRegistry.getLayerRecord(legEntry.layerRecordId);
 
         const queryOpts = {
-            geometry: geoService.mapObject.extent,
+            geometry: geoService.map.extent,
             outFields: [state.data.oidField]
         };
 
         // query the layer itself instead of making a mapserver request
-        if (state.requester.legendEntry.layerType === 'esriFeature') {
-            queryOpts.featureLayer = state.requester.legendEntry._layerRecord._layer;
-
+        if (legEntry.parentLayerType === 'esriFeature' && legEntry.layerType === 'esriFeature') {
+            queryOpts.featureLayer = layerRecId._layer;
         } else {
-            queryOpts.url = queryURL(state.requester.legendEntry);
+            queryOpts.url = legEntry.mainProxy.queryUrl;
         }
 
         // only include oidField values after previous mapserver query resulted in a exceededTransferLimit exception
@@ -596,19 +614,5 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
                 return validOIDs;
             }
         });
-    }
-
-    /**
-     * Determines the map server url for a given legendEntry. Recurse upward to parent if url is not
-     * present, but keep featureIdx of first child encountered.
-     *
-     * @function queryURL
-     * @private
-     * @param   {Object}  legendEntry    the legendEntry object to derive a url
-     * @param   {Number}  featureIdx     the featureIdx to use, defaults to first legendEntry's featureIdx
-     * @return {String} the legend entry url
-     */
-    function queryURL(legendEntry, featureIdx = legendEntry.featureIdx) {
-        return legendEntry.url ? legendEntry.url + '/' + featureIdx : queryURL(legendEntry.parent, featureIdx);
     }
 }

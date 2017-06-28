@@ -247,6 +247,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._query = source.query;
             this._snapshot = source.snapshot;
             this._userAdded = source.userAdded;
+            this._filters = source.filters;
 
             // TODO: decide if we want to preserve any settings (apart from snapshot) through the layer reload
         }
@@ -423,6 +424,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get sort () { return this._sort; }
         get searchable () { return this._searchable; }
         get filter () { return this._filter; }
+        get queryUrl () { return this._queryUrl; }
 
         get JSON () {
             return {
@@ -595,6 +597,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get tolerance () { return this._tolerance; }
         get filters () { return this._filters; }
 
+        get queryUrl () { return this._queryUrl; }
+
         get JSON() {
             return angular.merge(super.JSON, {
                 nameField: this.nameField,
@@ -749,6 +753,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
         get tolerance () { return this._tolerance; }
         get filters () { return this._filters; }
+
+        get queryUrl () { return this._queryUrl; }
 
         _singleEntryCollapse = false;
         set singleEntryCollapse (value) {   this._singleEntryCollapse = value; }
