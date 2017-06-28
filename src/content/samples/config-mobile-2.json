@@ -524,6 +524,7 @@
             "applyMap": true,
             "columns": [{
                 "data": "OBJECTID",
+                "sort": "desc",
                 "filter": {
                     "type": "number",
                     "value": "0,100"
