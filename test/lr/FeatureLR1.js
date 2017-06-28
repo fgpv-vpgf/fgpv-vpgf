@@ -77,6 +77,9 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         console.log('feature count - sb 27', proxy.featureCount);
         console.log('root layer extent - sb {}', proxy.extent);
 
+        console.log('root layer type - sb feature', proxy.layerType);
+        console.log('root parent layer type - sb feature', proxy.parentLayerType);
+
         proxy.setDefinitionQuery('test');
         console.log('definition query - sb test', layerRec._layer.getDefinitionExpression());
 

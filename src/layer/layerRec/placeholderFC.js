@@ -42,6 +42,12 @@ class PlaceholderFC extends root.Root {
     get layerType () {return this._layerType; }
     set layerType (value) { this._layerType = value; }
 
+    // really this is the client layer type. how it is implemented in the map stack.
+    // for FCs, it is essentially giving information about what type of Record
+    // the FC is living in. Helps differentiate a feature-based FC living in a
+    // feature Record (feature layer) vs a dynamic Record (dynamic layer)
+    get parentLayerType () { return this._parent.layerType; }
+
 }
 
 module.exports = () => ({

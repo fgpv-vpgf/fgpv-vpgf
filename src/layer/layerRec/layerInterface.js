@@ -31,6 +31,7 @@ class LayerInterface {
 
     // these are needed for the type flag
     get layerType () { return undefined; } // returns String
+    get parentLayerType () { return undefined; } // returns String
     get geometryType () { return undefined; } // returns String
     get featureCount () { return undefined; } // returns Integer
     get extent () { return undefined; } // returns Object (Esri Extent)
@@ -110,6 +111,7 @@ class LayerInterface {
 
         newProp(this, 'geometryType', standardGetGeometryType);
         newProp(this, 'layerType', standardGetLayerType);
+        newProp(this, 'parentLayerType', standardGetParentLayerType);
         newProp(this, 'featureCount', standardGetFeatureCount);
         newProp(this, 'extent', standardGetExtent);
 
@@ -154,6 +156,7 @@ class LayerInterface {
 
         newProp(this, 'geometryType', dynamicLeafGetGeometryType);
         newProp(this, 'layerType', dynamicLeafGetLayerType);
+        newProp(this, 'parentLayerType', dynamicLeafGetParentLayerType);
         newProp(this, 'featureCount', dynamicLeafGetFeatureCount);
         newProp(this, 'extent', dynamicLeafGetExtent);
 
@@ -180,6 +183,7 @@ class LayerInterface {
         newProp(this, 'name', standardGetName);
         newProp(this, 'state', standardGetState);
         newProp(this, 'layerType', standardGetLayerType);
+        newProp(this, 'parentLayerType', standardGetParentLayerType);
     }
 
     // TODO we might need a `converToDynamicLayer`. It calls `converToSingleLayer` and then
@@ -258,6 +262,16 @@ function standardGetLayerType() {
 function dynamicLeafGetLayerType() {
     /* jshint validthis: true */
     return this._source.layerType;
+}
+
+function standardGetParentLayerType() {
+    /* jshint validthis: true */
+    return this._source.parentLayerType;
+}
+
+function dynamicLeafGetParentLayerType() {
+    /* jshint validthis: true */
+    return this._source.parentLayerType;
 }
 
 function standardGetExtent() {

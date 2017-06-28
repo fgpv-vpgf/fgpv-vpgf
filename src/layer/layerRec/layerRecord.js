@@ -33,6 +33,12 @@ class LayerRecord extends root.Root {
     get userLayer () { return this._user; } // indicates if layer was added by a user
     set userLayer (value) { this._user = value; }
 
+    // really this is the client layer type. how it is implemented in the map stack.
+    // layerType is implemented by the classes that inherit LayerRecord. So if someone forgets
+    // they will get a lovely null here to remind them.
+    // in the case of a record, the implementation will usually match the record type.
+    get parentLayerType () { return this.layerType; }
+
     get visibility () {
         if (this._layer) {
             return this._layer.visible;

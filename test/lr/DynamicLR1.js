@@ -42,10 +42,10 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
                 name: 'doggguts',
                 state: {
                     opacity: 0,
-                    visibility: false,                            
+                    visibility: false,
                     query: false
                 },
-                stateOnly: true                       
+                stateOnly: true
             }
         ]
     };
@@ -105,6 +105,9 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
 
         console.log('root layer type - sb dynamic', proxy.layerType);
         console.log('leaf layer type - sb feature', leaf3proxy.layerType);
+
+        console.log('root parent layer type - sb dynamic', proxy.parentLayerType);
+        console.log('leaf parent layer type - sb dynamic', leaf3proxy.parentLayerType);
 
         console.log('leaf loaded state', leaf3proxy.state);
         console.log('layer loaded state', proxy.state);                
