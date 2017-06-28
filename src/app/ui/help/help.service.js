@@ -214,7 +214,7 @@ function helpService($mdDialog, $translate, translations, layoutService) {
                 // followed by the section header, exactly 2 spaces, then up to but not including a double space
                 // note that the {2,} below is used as the double line deparator since each double new line is actually 6
                 // but we'll also accept more than a double space
-                const reg = /^#\s(.*)\n{2}(?:.*|\n(?!\n{2,}))*/gm;
+                const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
                 let mdStr = r.data; // markdown file contents
                 let section; // used for storing individual section groupings
                 self.sections = []; // used in template for rendering help sections
