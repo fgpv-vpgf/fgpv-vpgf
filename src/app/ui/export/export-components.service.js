@@ -18,7 +18,6 @@ function exportComponentsService($q, ExportComponent, configService, exportSizes
     const initialExportConfig = {
         title: {
             generators: [exportGenerators.titleGenerator],
-            value: '',
             isVisible: false
         },
         map: {
@@ -28,14 +27,13 @@ function exportComponentsService($q, ExportComponent, configService, exportSizes
                 exportGenerators.mapServerGenerator],
             graphicOrder: [0, 2, 1]
         },
-        mapelements: {
+        mapElements: {
             generators: [exportGenerators.scalebarGenerator, exportGenerators.northarrowGenerator]
         },
         legend: {
             generators: [exportGenerators.legendGenerator]
         },
         footnote: {
-            value: '',
             generators: [exportGenerators.footnoteGenerator]
         },
         timestamp: {
@@ -45,7 +43,7 @@ function exportComponentsService($q, ExportComponent, configService, exportSizes
     };
 
     // indicates the order of the components, top to bottom
-    const componentOrder = ['title', 'map', 'mapelements', 'legend', 'footnote', 'timestamp'];
+    const componentOrder = ['title', 'map', 'mapElements', 'legend', 'footnote', 'timestamp'];
 
     const service = {
         items: null,
@@ -77,6 +75,7 @@ function exportComponentsService($q, ExportComponent, configService, exportSizes
      *
      * @function init
      * @param {Boolean} force [optional = false] inidicates that export components will be created anew, all setting will be reset to defaults; the config will be read again; this should be used after switching being different config files
+     * @return {Promise} a promise resolving after the initialization is complete
      */
     function init(force = false) {
         let initPromise;
@@ -86,11 +85,15 @@ function exportComponentsService($q, ExportComponent, configService, exportSizes
             service.items = [];
 
             initPromise = configService.getAsync.then(config => {
-                const newConfig = angular.merge({}, initialExportConfig, config.export);
 
                 componentOrder.forEach(id => {
-                    const componentConfig = newConfig[id];
-                    service.items.push(new ExportComponent(id, componentConfig));
+                    const exportComponent = config.services.export[id];
+
+                    // add generators and graphic orders to the export component configs
+                    exportComponent.generators = initialExportConfig[id].generators;
+                    exportComponent.graphicOrder = initialExportConfig[id].graphicOrder;
+
+                    service.items.push(new ExportComponent(id, exportComponent));
                 });
             });
         } else {
