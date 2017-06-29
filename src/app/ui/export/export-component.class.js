@@ -12,24 +12,22 @@ angular
     .factory('ExportComponent', ExportComponentFactory);
 
 function ExportComponentFactory($q, graphicsService) {
-    // jscs doesn't like enhanced object notation
-    // jscs:disable requireSpacesInAnonymousFunctionExpression
     class ExportComponent {
         /**
          * @function constructor
          * @param {String} id internal name of the component
-         * @param {Object} [optional] optional initial setting of the component
-         *                  value {Object} [optional] - value object which will be passed to component generators
-         *                  generators {Array} [optional] - an array of graphic generator functions
+         * @param {ExportComponent} [optional] optional initial setting of the component
+         *                  value {Object} [optional={}] - value object which will be passed to component generators
+         *                  generators {Array} [optional=[]] - an array of graphic generator functions
          *                      a generator function takes three parameters:
          *                          exportSize {ExportSize} - the currently selected map size
          *                          showToast {Function} - a function display a toast notifcation for the user
          *                          value {Object} [optional] - any value stored in the component
          *                      generator function may optionally return a value object which will override the component's stored value object (this can be useful if generator updates the value and it needs to persist)
-         *                  graphicOrder {Array} [optional] - an array if indexes indicating in what order the generator output should be merged; the length must match the number of generator functions; for example graphicorder [1, 3, 2] will merge the output of the third generator on top of the first, and the output of the second on top of that
-         *                  isVisible {Boolean} [optional] - a flag indicating if the component is visible in the export dialog
-         *                  isSelectable {Boolean} [optional] - a flag indicating if the user can change wheather the compoenent is included in the map export image
-         *                  isSelected {Boolean} [optional] - a flag indicating if the compoenent is included in the map export image
+         *                  graphicOrder {Array} [optional=null - an array if indexes indicating in what order the generator output should be merged; the length must match the number of generator functions; for example graphicorder [1, 3, 2] will merge the output of the third generator on top of the first, and the output of the second on top of that
+         *                  isVisible {Boolean} [optional=true] - a flag indicating if the component is visible in the export dialog
+         *                  isSelectable {Boolean} [optional=true] - a flag indicating if the user can change wheather the compoenent is included in the map export image
+         *                  isSelected {Boolean} [optional=true] - a flag indicating if the compoenent is included in the map export image
          */
         constructor(id, { value = {}, generators = [], graphicOrder = null, isVisible = true,
             isSelectable = true, isSelected = true }) {
@@ -137,7 +135,6 @@ function ExportComponentFactory($q, graphicsService) {
             }
         }
     }
-    // jscs:enable requireSpacesInAnonymousFunctionExpression
 
     return ExportComponent;
 }
