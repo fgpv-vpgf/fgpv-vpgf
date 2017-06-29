@@ -511,7 +511,7 @@
         </div>
     </footer>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
     <script>
         // credit: http://stackoverflow.com/a/21903119
@@ -552,6 +552,7 @@
         // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
         document.write('<script src="../ie-polyfills.js"><\/script>');
     }
+    </script>
 
     <% for (var index in htmlWebpackPlugin.files.js) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
@@ -561,6 +562,7 @@
         <% } %>
     <% } %>
 
+    <script>
 
         RV.ready(function() {
             const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
