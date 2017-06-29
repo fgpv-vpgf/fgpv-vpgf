@@ -1536,10 +1536,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get JSON() {
             return {
-                isSelected: this._isSelected,
-                isSelectable: this._isSelectable,
-                isVisible: this._isVisible,
-                value: this._value
+                isSelected: this.isSelected,
+                isSelectable: this.isSelectable,
+                isVisible: this.isVisible,
+                value: this.value
             };
         }
     }
