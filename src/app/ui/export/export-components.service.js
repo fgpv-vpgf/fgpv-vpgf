@@ -59,6 +59,7 @@ function exportComponentsService($q, ExportComponent, configService, exportSizes
      * Generates (or regenerates) the graphics from all export components after they initialized.
      * @function update
      * @param {Function} showToast [optional = angular.noop] a function to show notification toasts in the export dialog
+     * @return {Object} the service itself
      */
     function update(showToast = angular.noop) {
 
