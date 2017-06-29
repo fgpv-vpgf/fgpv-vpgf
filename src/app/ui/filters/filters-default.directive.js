@@ -310,7 +310,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                     });
 
                     // customize columns
-                    const order = customizeColumns(config);
+                    order = customizeColumns(config);
                 }
 
                 // customize table
