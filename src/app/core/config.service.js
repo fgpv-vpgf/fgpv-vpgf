@@ -53,8 +53,14 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
 
     let _loadingState = States.NEW;
     let _remoteConfig = false;
+    let languages;
+
+    const jsonConfigs = {};
+    let bookmarkConfig;
+    const startupRcsLayers = {}; // partial config promises, one array per language entry
 
     const configs = {};
+    const rcsLayerData = {};
     const configObjects = {};
     const initialPromises = {}; // only the initial configurations (i.e. whatever comes in config attribute)
 
@@ -82,8 +88,21 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
             _initialize();
         }
 
-        rcsAddKeys() {
-            throw new Error(`This doesn't work yet`);
+        rcsAddKeys(keys) {
+            const endpoint = this.getSync.services.rcsEndpoint;
+            const rcsData = rcsLoad(endpoint, keys, languages);
+            languages.forEach(lang => {
+                if (!rcsLayerData[lang]) {
+                    rcsLayerData[lang] = [];
+                }
+                rcsData[lang].then(data => {
+                    const layers = data.layers;
+                    rcsLayerData[lang].push(...layers);
+                    if (lang === currentLang()) {
+                        events.$broadcast(events.rvCfgUpdated, layers);
+                    }
+                });
+            });
         }
 
         /**
@@ -131,11 +150,6 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
         }
 
     }
-
-    const jsonConfigs = {};
-    let bookmarkConfig;
-    const startupRcsLayers = {}; // partial config promises, one array per language entry
-    let languages;
 
     return new ConfigService();
 
