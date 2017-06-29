@@ -236,6 +236,10 @@ function LegendElementFactory($translate, tocService, debounceService) {
 
         action () {     this._debouncedAction(); }
 
+        get isVisible () {
+            return super.isVisible && this.block.featureCount !== -1;
+        }
+
         _debouncedAction = debounceService.registerDebounce(
             () => { tocService.toggleLayerFiltersPanel(this.block); }, 300);
     }
@@ -415,6 +419,11 @@ function LegendElementFactory($translate, tocService, debounceService) {
 
         get icon () {    return 'community:table-large'; }
         get label () {   return 'toc.label.flag.data.table'; }
+
+        get isVisible () {
+            return this.block.isControlVisible(this._controlName) &&
+                !this.block.isControlDisabled(this._controlName) && this.block.featureCount !== -1;
+        }
     }
 
     class QueryFlag extends BaseFlag {
