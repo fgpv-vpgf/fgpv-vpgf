@@ -359,7 +359,7 @@ function LegendElementFactory($translate, tocService, debounceService) {
         }
 
         get data () {
-            const { layerType, geometryType, featureCount } = this.block;
+            const { parentLayerType, geometryType, featureCount } = this.block;
 
             const dataObject = {
                 unknown: 'toc.label.flag.unknown',
@@ -376,14 +376,14 @@ function LegendElementFactory($translate, tocService, debounceService) {
                 },
                 get esriFeature() { return this._countData; },
                 get esriDynamic() { return this._countData; }
-            }[layerType || TypeFlag.unresolvedType];
+            }[parentLayerType || TypeFlag.unresolvedType];
 
             return dataObject;
         }
 
-        get style () {   return this._styles[this.block.layerType || TypeFlag.unresolvedType]; }
-        get icon () {    return this._icons[this.block.layerType || TypeFlag.unresolvedType]; }
-        get label () {   return this._labels[this.block.layerType || TypeFlag.unresolvedType]; /* include feature count and feature types ? */ }
+        get style () {   return this._styles[this.block.parentLayerType || TypeFlag.unresolvedType]; }
+        get icon () {    return this._icons[this.block.parentLayerType || TypeFlag.unresolvedType]; }
+        get label () {   return this._labels[this.block.parentLayerType || TypeFlag.unresolvedType]; /* include feature count and feature types ? */ }
 
         get isVisible () { return true; }
     }

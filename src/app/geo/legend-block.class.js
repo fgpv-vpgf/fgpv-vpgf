@@ -93,6 +93,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         get state () {              return this._proxy.state; }
         get name () {               return (this._proxy || this._layerConfig).name; }
         get layerType () {          return this._proxy.layerType; }
+        get parentLayerType () {    return this._proxy.parentLayerType; }
         get featureCount () {       return this._proxy.featureCount; }
         get geometryType () {       return this._proxy.geometryType; }
         get extent () {             return this._proxy.extent; }
@@ -210,7 +211,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          */
         validateProjection (value) {
             // validate projection only for tile layers; although Aly said that wms, dynamic and image layers are potentially affected as well;
-            if (this.proxy.layerType !== Geo.Layer.Types.ESRI_TILE) {
+            if (this.proxy.parentLayerType !== Geo.Layer.Types.ESRI_TILE) {
                 return;
             }
 
@@ -435,6 +436,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
 
         get name () {               return this._mainProxyWrapper.name; }
         get layerType () {          return this._mainProxyWrapper.layerType; }
+        get parentLayerType () {    return this._mainProxyWrapper.parentLayerType; }
         get featureCount () {       return this._mainProxyWrapper.featureCount; }
         get geometryType () {       return this._mainProxyWrapper.geometryType; }
 

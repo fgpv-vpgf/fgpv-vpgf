@@ -1,6 +1,6 @@
 A layer's symbology or legend is a collection of image-labels pairs explaining features available in the layer. Internally, it's referred to as a "symbology stack" with the "stack" bit describing its vertical orientation when rendered in the UI.
 
-As of version 2.0, symbology is only an information devices, and provides no interactivity. However, there are plans to provide additional filtering capabilities to layers support filtering using the renderer clauses, see issue [#1442](https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1442) for more details.
+As of version 2.0, symbology is for information only, and provides no interactivity. However, there are plans to provide layer filtering by symbol, see issue [#1442](https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1442) for more details.
 
 ### Symbology Stack
 
