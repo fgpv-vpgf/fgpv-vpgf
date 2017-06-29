@@ -214,18 +214,8 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
      * @param {Array}  keys  array of RCS keys (String) to be added
      */
     function loadRcsLayers(keys) {
-
-        // trigger RCS web call, insert into config
-        configService.rcsAddKeys(keys)
-            .then(newLayerConfigs => {
-                // call layer register in geo module on those nodes
-                const layerBlueprints = newLayerConfigs.map(layerConfig => {
-                    layerConfig.origin = 'rcs';
-                    return new LayerBlueprint.service(layerConfig, geoService.epsgLookup);
-                });
-                geoService.constructLayers(layerBlueprints);
-            });
-
+        // trigger RCS web call
+        configService.rcsAddKeys(keys);
     }
 
     /**

@@ -45,6 +45,7 @@ function events($rootScope) {
         rvApiHalt: 'rvApiHalt', // Fired when API should be put back into 'queue' mode
         rvApiReady: 'rvApiReady', // Fired when API should let calls through
         rvBookmarkInit: 'rvBookmarkInit', // Fired after the bookmark has modified the config
+        rvBookmarkDetected: 'rvBookmarkDetected', // Fired if we actually have a bookmark in play
 
         rvDataPrint: 'rvDataPrint', // these data events should be removed after switching to angular 1.5 or 2 or React
         rvDataExportCSV: 'rvDataExportCSV',
