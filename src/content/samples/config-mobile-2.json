@@ -396,6 +396,9 @@
                 "symbologyRenderStyle": "icons"
               },
               {
+                "layerId": "crop_density_wheat"
+              },
+              {
                 "layerId": "ecogeofull",
                 "controlledIds": [
                   "powerplant100mw-12"
@@ -512,54 +515,65 @@
     },
     "layers": [
         {
-        "id":"DateLayer",
-        "name":"Date layer field",
-        "layerType":"esriFeature",
-        "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/NEB/Incident/MapServer/0",
-        "filters": {
-            "title": "my custom title",
-            "description": "This table is use to show all possibilities when we start to use custom filters. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at tristique felis. Nullam porttitor vel dui nec pharetra. Nulla sit amet pulvinar diam. Ut id urna eros. Praesent ultrices, mi ac scelerisque eleifend, nisi sem mollis ipsum, vel hendrerit tortor risus id diam. Nam eu pellentesque risus. Nam quis nibh vel turpis egestas vulputate. Vivamus nibh eros, vulputate convallis consequat nec, ultricies a lorem. Fusce vitae nisi justo. Proin eu leo et mauris porta lobortis. Proin scelerisque elit vel fringilla volutpat.",
-            "maximize": true,
-            "search": { "enabled": true, "value": "INC2008" },
-            "applyMap": true,
-            "columns": [{
-                "data": "OBJECTID",
+          "id": "crop_density_wheat",
+          "name": "Crop Destiny",
+          "layerType": "esriDynamic",
+          "singleEntryCollapse": true,
+          "layerEntries": [
+            {
+              "index": 0
+            }
+          ],
+          "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/aafc_crop_spatial_density_wheat/MapServer"
+        },
+        {
+          "id":"DateLayer",
+          "name":"Date layer field",
+          "layerType":"esriFeature",
+          "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/NEB/Incident/MapServer/0",
+          "filters": {
+              "title": "my custom title",
+              "description": "This table is use to show all possibilities when we start to use custom filters. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at tristique felis. Nullam porttitor vel dui nec pharetra. Nulla sit amet pulvinar diam. Ut id urna eros. Praesent ultrices, mi ac scelerisque eleifend, nisi sem mollis ipsum, vel hendrerit tortor risus id diam. Nam eu pellentesque risus. Nam quis nibh vel turpis egestas vulputate. Vivamus nibh eros, vulputate convallis consequat nec, ultricies a lorem. Fusce vitae nisi justo. Proin eu leo et mauris porta lobortis. Proin scelerisque elit vel fringilla volutpat.",
+              "maximize": true,
+              "search": { "enabled": true, "value": "INC2008" },
+              "applyMap": true,
+              "columns": [{
+                  "data": "OBJECTID",
+                  "filter": {
+                      "type": "number",
+                      "value": "0,100"
+                  }
+              }, {
+                "data": "YEAR",
+                "description": "This field represent the number of incidents in a certain period of time...",
                 "sort": "desc",
+                "visible": false
+              }, {
+                "data": "INCIDENT_T",
+                "title": "Incident Type",
+                "visible": true,
+                "width": 100,
                 "filter": {
-                    "type": "number",
-                    "value": "0,100"
+                    "type": "selector",
+                    "value": ["\"Fire\"", "\"Fatality\""],
+                    "static": false
                 }
-            }, {
-              "data": "YEAR",
-              "description": "This field represent the number of incidents in a certain period of time...",
-              "sort": "desc",
-              "visible": false
-            }, {
-              "data": "INCIDENT_T",
-              "title": "Incident Type",
-              "visible": true,
-              "width": 100,
-              "filter": {
-                  "type": "selector",
-                  "value": ["\"Fire\"", "\"Fatality\""],
-                  "static": false
-              }
-            }, {
-              "data": "INCIDENT_N",
-              "title": "Incident Report Number",
-              "description": "This field represent the number of incidents in a certain period of time...",
-              "visible": true,
-              "width": 450,
-              "sort": "asc",
-              "searchable": true,
-              "filter": {
-                  "type": "string",
-                  "value": "INC2008",
-                  "static": true
-              }
-            }]
-        }
-    },
+              }, {
+                "data": "INCIDENT_N",
+                "title": "Incident Report Number",
+                "description": "This field represent the number of incidents in a certain period of time...",
+                "visible": true,
+                "width": 450,
+                "sort": "asc",
+                "searchable": true,
+                "filter": {
+                    "type": "string",
+                    "value": "INC2008",
+                    "static": true
+                }
+              }]
+          }
+      },
       {
         "id": "powerplant100mw-25",
         "name": "Power Plants, 25",

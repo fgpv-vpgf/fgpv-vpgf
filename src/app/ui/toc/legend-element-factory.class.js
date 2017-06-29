@@ -365,14 +365,19 @@ function LegendElementFactory($translate, tocService, debounceService) {
                 unknown: 'toc.label.flag.unknown',
                 unresolved: {},
                 get _countData() {
-                    return {
-                        count: featureCount,
-
+                    let content;
+                    if (!geometryType) {
+                        content = $translate.instant('geometry.type.imagery');
+                    } else {
                         // need to translate the substution variable itself; can't think of any other way :(
-                        typeName: $translate
+                        const typeName = $translate
                             .instant(`geometry.type.${geometryType}`)
-                            .split('|')[featureCount === 1 ? 0 : 1]
-                    };
+                            .split('|')[featureCount === 1 ? 0 : 1];
+
+                        content = `${featureCount} ${typeName}`;
+                    }
+
+                    return { content };
                 },
                 get esriFeature() { return this._countData; },
                 get esriDynamic() { return this._countData; }
