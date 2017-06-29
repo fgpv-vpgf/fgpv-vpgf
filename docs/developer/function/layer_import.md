@@ -4,8 +4,8 @@ The "Layer Import Wizard" or `loader` (as it's referenced in the code), is a maj
 
 ## Importing Files
 
-Main directive: __rvLoaderFile__
-Services used: __layerSource, legendServcie__
+Main directive: __rvLoaderFile__ \
+Services used: __layerSource, legendServcie__ \
 Classes used: __LayerSourceInfo, LayerBlueprint__
 
 The UI for importing files is a stepper (wizard), with three steps: file uploading, format selection, and configuration.
@@ -60,8 +60,8 @@ _Note:_ After multiple validations, the layer might still fail when added to the
 
 ## Importing Services
 
-Main directive: __rvLoaderService__
-Services used: __layerSource, legendServcie__
+Main directive: __rvLoaderService__\
+Services used: __layerSource, legendServcie__\
 Classes used: __LayerSourceInfo, LayerBlueprint__
 
 The UI for importing services is a stepper (wizard), with three steps: service connection, service type selection,  and configuration.
