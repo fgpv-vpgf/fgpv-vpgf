@@ -1506,18 +1506,57 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     /**
+     * Typed representation of the `services.export.[components]` section of the config.
+     * @class ExportComponent
+     */
+    class ExportComponent {
+        constructor (source = { value: '', isSelectable: false, isSelected: false, isVisible: false }) {
+            this._isSelected = source.isSelected;
+            this._isSelectable = source.isSelectable;
+            this._isVisible = source.isVisible;
+            this._value = source.value;
+        }
+
+        get isSelected () {         return this._isSelected; }
+        set isSelected (value) {    this._isSelected = value; }
+        get isSelectable () {       return this._isSelectable; }
+        set isSelectable (value) {  this._isSelectable = value; }
+        get isVisible () {          return this._isVisible; }
+        set isVisible (value) {     this._isVisible = value; }
+        get value () {              return this._value; }
+        set value (value) {         this._value = value; }
+
+        _generators = [];
+        _graphicOrder = null;
+
+        get generators () { return this._generators; }
+        set generators(value = []) { this._generators = value; }
+        get graphicOrder () { return this._graphicOrder; }
+        set graphicOrder(value = null) { this._graphicOrder = value; }
+
+        get JSON() {
+            return {
+                isSelected: this.isSelected,
+                isSelectable: this.isSelectable,
+                isVisible: this.isVisible,
+                value: this.value
+            };
+        }
+    }
+
+    /**
      * Typed representation of the `services.export` section of the config.
      * @class ExportService
      */
-
     class ExportService {
         constructor (source) {
-            this._title = source.title;
-            this._map = source.map;
-            this._mapElements = source.mapElements;
-            this._legend = source.legend;
-            this._footnote = source.footnote;
-            this._timestamp = source.timestamp;
+            this._title = new ExportComponent(source.title);
+            this._title.isVisible = false; // rendered export title should not be visible in the ui
+            this._map = new ExportComponent(source.map);
+            this._mapElements = new ExportComponent(source.mapElements);
+            this._legend = new ExportComponent(source.legend);
+            this._footnote = new ExportComponent(source.footnote);
+            this._timestamp = new ExportComponent(source.timestamp);
         }
 
         get title () { return this._title; }
@@ -1529,12 +1568,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get JSON() {
             return {
-                title: this.title,
-                map: this.map,
-                mapElements: this.mapElements,
-                legend: this.legend,
-                footnote: this.footnote,
-                timestamp: this.timestamp
+                title: this.title.JSON,
+                map: this.map.JSON,
+                mapElements: this.mapElements.JSON,
+                legend: this.legend.JSON,
+                footnote: this.footnote.JSON,
+                timestamp: this.timestamp.JSON
             };
         }
     }

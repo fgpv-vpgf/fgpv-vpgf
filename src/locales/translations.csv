@@ -184,13 +184,13 @@ Table of Content remove state label,toc.label.state.remove,Layer removed,1,Couch
 Table of Content remove action label,toc.label.action.remove,undo,1,annuler,1
 Table of Content filters label,toc.label.filters,,1,,1
 Table of Content filters tootlip,toc.tooltip.filters,,1,,1
-Table of Content feature layer flag label,toc.label.flag.feature,ESRI Feature Layer ({{count}} {{typeName}}),1,Couche d'éléments d'ESRI ({{count}} {{typeName}}),1
+Table of Content feature layer flag label,toc.label.flag.feature,ESRI Feature Layer ({{content}}),1,Couche d'éléments d'ESRI ({{content}}),1
 ,toc.label.flag.unresolved,Detecting layer type...,1,[fr] Detecting layer type...,0
 ,toc.label.flag.unresolved,Cannot determine layer type,1,[fr] Cannot determine layer type,0
 ,toc.label.flag.unsupportedprojection,Cannot display layer in the current projection,1,[fr]Cannot display layer in current projection,0
-Table of Content feature layer flag tootlip,toc.tooltip.flag.feature,ESRI Feature Layer ({{count}} {{typeName}}),1,Couche d'éléments d'ESRI ({{count}} {{typeName}}),1
-Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic Layer ({{count}} {{typeName}}),1,Couche dynamique d'ESRI ({{count}} {{typeName}}),1
-Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer ({{count}} {{typeName}}),1,Couche dynamique d'ESRI ({{count}} {{typeName}}),1
+Table of Content feature layer flag tootlip,toc.tooltip.flag.feature,ESRI Feature Layer ({{content}}),1,Couche d'éléments d'ESRI ({{content}}),1
+Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic Layer ({{content}}),1,Couche dynamique d'ESRI ({{content}}),1
+Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer ({{content}}),1,Couche dynamique d'ESRI ({{content}}),1
 Table of Content wms layer flag label,toc.label.flag.wms,OGC WMS Layer,1,Couche WMS de l'OGC,1
 Table of Content wms layer flag tootlip,toc.tooltip.flag.wms,OGC WMS Layer,1,Couche WMS de l'OGC,1
 Table of Content tile layer flag label,toc.label.flag.tile,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
@@ -234,6 +234,7 @@ Geometry types,geometry.type.generic,feature|features,1,élément|éléments,1
 Geometry types,geometry.type.esriGeometryPoint,point|points,1,point|points,1
 Geometry types,geometry.type.esriGeometryPolygon,polygon|polygons,1,polygone|polygones,1
 Geometry types,geometry.type.esriGeometryPolyline,line|lines,1,ligne|lignes,1
+Geometry types,geometry.type.imagery,imagery,1,[fr]imagery,0
 ,export.close,Close,1,Fermer,1
 ,export.save,Save,1,Sauver,1
 ,export.download,Download,1,Télécharger,1

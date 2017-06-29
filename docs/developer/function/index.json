@@ -6,5 +6,9 @@
 
     "layer_import": {
         "title": "User-Added Layers"
+    },
+
+    "symbology": {
+        "title": "Symbology a.k.a Legend"
     }
 }

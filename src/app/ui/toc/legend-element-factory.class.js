@@ -359,31 +359,36 @@ function LegendElementFactory($translate, tocService, debounceService) {
         }
 
         get data () {
-            const { layerType, geometryType, featureCount } = this.block;
+            const { parentLayerType, geometryType, featureCount } = this.block;
 
             const dataObject = {
                 unknown: 'toc.label.flag.unknown',
                 unresolved: {},
                 get _countData() {
-                    return {
-                        count: featureCount,
-
+                    let content;
+                    if (!geometryType) {
+                        content = $translate.instant('geometry.type.imagery');
+                    } else {
                         // need to translate the substution variable itself; can't think of any other way :(
-                        typeName: $translate
+                        const typeName = $translate
                             .instant(`geometry.type.${geometryType}`)
-                            .split('|')[featureCount === 1 ? 0 : 1]
-                    };
+                            .split('|')[featureCount === 1 ? 0 : 1];
+
+                        content = `${featureCount} ${typeName}`;
+                    }
+
+                    return { content };
                 },
                 get esriFeature() { return this._countData; },
                 get esriDynamic() { return this._countData; }
-            }[layerType || TypeFlag.unresolvedType];
+            }[parentLayerType || TypeFlag.unresolvedType];
 
             return dataObject;
         }
 
-        get style () {   return this._styles[this.block.layerType || TypeFlag.unresolvedType]; }
-        get icon () {    return this._icons[this.block.layerType || TypeFlag.unresolvedType]; }
-        get label () {   return this._labels[this.block.layerType || TypeFlag.unresolvedType]; /* include feature count and feature types ? */ }
+        get style () {   return this._styles[this.block.parentLayerType || TypeFlag.unresolvedType]; }
+        get icon () {    return this._icons[this.block.parentLayerType || TypeFlag.unresolvedType]; }
+        get label () {   return this._labels[this.block.parentLayerType || TypeFlag.unresolvedType]; /* include feature count and feature types ? */ }
 
         get isVisible () { return true; }
     }
