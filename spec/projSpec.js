@@ -1,7 +1,7 @@
+import proj4 from 'proj4';
+
 /* jshint jasmine: true */
-'use strict';
 const projBuilder = require('../src/proj.js');
-const proj4 = require('proj4');
 
 let fakeEsri = {
     EsriExtent: {},
@@ -61,44 +61,38 @@ describe('Local projection', () => {
     // each test is also a name and a function
     // tests use expect to generate testing assertions
     // see the jasmine page for a full list of built in tests
-    // post webpack: proj4 inconsistency
-    xit('should use the target WKID when reprojecting', () => {
+    it('should use the target WKID when reprojecting', () => {
         let res = proj.localProjectExtent(sampleExtent, 3978);
         expect(res.sr).toEqual(3978);
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should reproject from A -> B -> A without deviation within the same projection type', () => {
+    it('should reproject from A -> B -> A without deviation within the same projection type', () => {
         let res = proj.localProjectExtent(sampleExtent, 54004);
         res = proj.localProjectExtent(makeFakeEsriExtent(res), 4326);
         'x0 x1 y0 y1'.split(' ').forEach(x => expect(res[x]).toBeCloseTo(sampleData[x], 5));
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should project a single point', () => {
+    it('should project a single point', () => {
         const res = proj.localProjectPoint(4326, 54004, [-95, 49]);
         expect(res[0]).toBeCloseTo(-10575351.62536099);
         expect(res[1]).toBeCloseTo(6242595.999953201);
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should project an extent with a WKT spatial reference', () => {
+    it('should project an extent with a WKT spatial reference', () => {
         const res = proj.localProjectExtent(sampleWktExtent, 4326);
         const expectedRes = { x0:-172.14169532688865, y0:34.89804295089334, x1:-11.276472960723352,
             y1:83.27265193258071 }; // jshint ignore:line
         'x0 x1 y0 y1'.split(' ').forEach(x => expect(res[x]).toBeCloseTo(expectedRes[x], 5));
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should project a point with a WKT spatial reference', () => {
+    it('should project a point with a WKT spatial reference', () => {
         const res = proj.localProjectPoint(sampleWktExtent.spatialReference.wkt, 4326,
             [-2293629.397399999, -685380.4041000009]); // jshint ignore:line
         expect(res[0]).toBeCloseTo(-120.8064032804029);
         expect(res[1]).toBeCloseTo(38.828788226505736);
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should reproject from mercator to lambert', () => {
+    it('should reproject from mercator to lambert', () => {
         const josmExtent = { type:'extent', xmin:-13316443.76, ymin:6388804.5583, xmax:-10471824.465,
             ymax:9225974.5022, spatialReference:{ wkid:102100 } }; // jshint ignore:line
         const expectedRes = { x0:-1729118.683387185, y0:74576.19391872548, x1:66964.16600783693,
@@ -107,16 +101,14 @@ describe('Local projection', () => {
         'x0 x1 y0 y1'.split(' ').forEach(x => expect(res[x]).toBeCloseTo(expectedRes[x], 5));
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should not fail silently if a projection is not set', () => {
+    it('should not fail silently if a projection is not set', () => {
         expect(() => proj.localProjectExtent(sampleExtent, 111111)).toThrow();
     });
 
 });
 
 describe('geojson reprojection', () => {
-    // post webpack: proj4 inconsistency
-    xit('should reproject a point', () => {
+    it('should reproject a point', () => {
         const geojsonTestPoint = require('./geojsonTestPoint.json');
         const proj = projBuilder(fakeEsri);
         proj.addProjection('EPSG:3978', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0' +
@@ -137,16 +129,14 @@ describe('esri projection conversion function', () => {
         esri = null;
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should export esri server projection function', () => {
+    it('should export esri server projection function', () => {
         // make sure functions are exported properly
         esri = projBuilder(fakeEsri);
         expect(esri.esriServerProject).not.toBe(null);
     });
 
     // calls fake geosvc and makes sure the parameters are correct
-    // post webpack: proj4 inconsistency
-    xit('should call esri server from wrapper function', () => {
+    it('should call esri server from wrapper function', () => {
         let esri = projBuilder(fakeEsri);
         spyOn(fakeEsri, 'GeometryService');
         spyOn(fakeEsri, 'ProjectParameters');
@@ -172,13 +162,11 @@ describe('spatialReference comparison', () => {
         proj = projBuilder(fakeEsri);
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should detect same spatial reference', () => {
+    it('should detect same spatial reference', () => {
         expect(proj.isSpatialRefEqual(srFirst3978, srSecond3978)).toBe(true);
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should detect different spatial reference', () => {
+    it('should detect different spatial reference', () => {
         expect(proj.isSpatialRefEqual(srFirst3978, srThird10200)).toBe(false);
     });
 
@@ -194,23 +182,19 @@ describe('Check valid source projection', () => {
         proj = projBuilder(fakeEsri);
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should be valid spatial reference', () => {
+    it('should be valid spatial reference', () => {
         expect(proj.checkProj(srFirst3978).foundProj).toBe(true);
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should not be valid spatial reference', () => {
+    it('should not be valid spatial reference', () => {
         expect(proj.checkProj(sr2fake).foundProj).toBe(false);
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should allow WKT without validation', () => {
+    it('should allow WKT without validation', () => {
         expect(proj.checkProj({ wkt:'random text' }).foundProj).toBe(true);
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should attempt to lookup unknown references if lookup callback is provided (lookup found case)', (done) => {
+    it('should attempt to lookup unknown references if lookup callback is provided (lookup found case)', (done) => {
         const res = proj.checkProj({ wkid: 26914 }, mockEpsgLookup);
         expect(res.foundProj).toBe(false);
         res.lookupPromise
@@ -224,8 +208,7 @@ describe('Check valid source projection', () => {
             });
     });
 
-    // post webpack: proj4 inconsistency
-    xit('should attempt to lookup unknown references if lookup callback is provided (lookup failed case)', (done) => {
+    it('should attempt to lookup unknown references if lookup callback is provided (lookup failed case)', (done) => {
         const res = proj.checkProj({ wkid: 1234 }, mockEpsgLookup);
         expect(res.foundProj).toBe(false);
         res.lookupPromise
