@@ -236,6 +236,7 @@ function LegendElementFactory($translate, tocService, debounceService) {
 
         action () {     this._debouncedAction(); }
 
+        // control is only visible if the layer has data that is not disabled
         get isVisible () {
             return super.isVisible && this.block.featureCount !== -1;
         }
@@ -420,6 +421,7 @@ function LegendElementFactory($translate, tocService, debounceService) {
         get icon () {    return 'community:table-large'; }
         get label () {   return 'toc.label.flag.data.table'; }
 
+        // flag is only visible if the layer has data that is not disabled
         get isVisible () {
             return this.block.isControlVisible(this._controlName) &&
                 !this.block.isControlDisabled(this._controlName) && this.block.featureCount !== -1;
