@@ -13,13 +13,13 @@ angular
     .module('app.geo')
     .directive('rvInitMap', rvInitMap);
 
-function rvInitMap($rootScope, geoService, events, layoutService, mapService, gapiService, $rootElement,
-    $interval, globalRegistry, animationService, stateManager) {
+function rvInitMap($rootScope, geoService, events, layoutService, $rootElement, $interval, globalRegistry) {
 
     // key codes that are currently active
     let keyMap = [];
     // interval which runs animation logic
     let animationInterval;
+    let mapInstance;
 
     const directive = {
         restrict: 'A',
@@ -38,22 +38,24 @@ function rvInitMap($rootScope, geoService, events, layoutService, mapService, ga
             deRegister();
         });
 
-        scope.$watch(() => geoService.isMapReady, () => {
-            if (geoService.isMapReady) {
-                // disable the vendor built keyboard support
-                // TODO: can this be moved to map service? as it seems to be always executed
-                geoService.map.disableKeyboardNavigation();
+        $rootScope.$on(events.rvMapLoaded, (_, i) => {
+            mapInstance = i;
+            mapInstance.disableKeyboardNavigation();
 
-                // reduce map animation time which in turn makes panning less jittery
-                geoService.map.mapDefault('panDuration', 0);
-                geoService.map.mapDefault('panRate', 0);
+            // reduce map animation time which in turn makes panning less jittery
+            mapInstance.mapDefault('panDuration', 0);
+            mapInstance.mapDefault('panRate', 0);
 
-                el.on('keydown', keyDownHandler);
-                el.on('keyup', keyUpHandler);
+            el
+                .off('keydown', keyDownHandler)
+                .off('keyup', keyUpHandler)
+                .off('mousedown', mouseDownHandler)
+                .off('mouseup', mouseUpHandler)
 
-                el.on('mousedown', mouseDownHandler);
-                el.on('mouseup', mouseUpHandler);
-            }
+                .on('keydown', keyDownHandler)
+                .on('keyup', keyUpHandler)
+                .on('mousedown', mouseDownHandler)
+                .on('mouseup', mouseUpHandler);
         });
 
         /**
@@ -64,7 +66,9 @@ function rvInitMap($rootScope, geoService, events, layoutService, mapService, ga
          */
         function mouseDownHandler(event) {
             mouseMoveHanlder = mouseMoveHandlerBuilder(event);
-            el.on('mousemove', mouseMoveHanlder);
+            el
+            .off('mousemove')
+            .on('mousemove', mouseMoveHanlder);
         }
 
         /**
@@ -169,12 +173,12 @@ function rvInitMap($rootScope, geoService, events, layoutService, mapService, ga
         // calculate the pan distance of x and y in Point format given some
         // x and y in ScreenPoint format (currently 10). This ensures we pan by some
         // arbitrary constant pixel which won't change with zooming (as opposed to panning by distance)
-        let mapPntCntr = geoService.mapObject.extent.getCenter();
-        let mapScrnCntr = geoService.mapObject.toScreen(mapPntCntr);
+        let mapPntCntr = mapInstance.extent.getCenter();
+        let mapScrnCntr = mapInstance.toScreen(mapPntCntr);
         mapScrnCntr.x += 10;
         mapScrnCntr.y += 10;
-        let mapPntHorDiff = Math.abs(geoService.mapObject.toMap(mapScrnCntr).x - mapPntCntr.x);
-        let mapPntVertDiff = Math.abs(geoService.mapObject.toMap(mapScrnCntr).y - mapPntCntr.y);
+        let mapPntHorDiff = Math.abs(mapInstance.toMap(mapScrnCntr).x - mapPntCntr.x);
+        let mapPntVertDiff = Math.abs(mapInstance.toMap(mapScrnCntr).y - mapPntCntr.y);
 
         let x = 0;
         let y = 0;
@@ -237,7 +241,7 @@ function rvInitMap($rootScope, geoService, events, layoutService, mapService, ga
             animationInterval = $interval(() => {
                 mapPntCntr.x += hasShiftMultiplier * x;
                 mapPntCntr.y += hasShiftMultiplier * y;
-                geoService.mapObject.centerAt(mapPntCntr);
+                mapInstance.centerAt(mapPntCntr);
             }, 40);
         }
     }

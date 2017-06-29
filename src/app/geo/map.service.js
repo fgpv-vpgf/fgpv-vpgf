@@ -220,6 +220,7 @@ function mapServiceFactory($q, $timeout, layoutService, gapiService, configServi
 
         gapi.events.wrapEvents(mapConfig.instance, {
             load: () => {
+                events.$broadcast(events.rvMapLoaded, mapConfig.instance);
                 // setup hilight layer
                 mapConfig.highlightLayer = gapi.hilight.makeHilightLayer({});
                 mapConfig.instance.addLayer(mapConfig.highlightLayer);
