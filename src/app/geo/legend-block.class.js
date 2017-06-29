@@ -598,7 +598,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
 
             this._aggregateStates = ref.aggregateStates;
             this._walk = ref.walkFunction.bind(this);
-                    }
+        }
 
         get blockType () {      return TYPES.GROUP; }
 

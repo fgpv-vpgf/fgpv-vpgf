@@ -291,7 +291,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
      */
     function applyLayerNodeDefaults(ownSource =
         { state: {}, controls: [], disabledControls: [], userDisabledControls: [] },
-        ownDefaults, parentSource = {}) {
+    ownDefaults, parentSource = {}) {
         const ownSourceCopy = angular.copy(ownSource);
 
         ownSourceCopy.state = _defaultState(ownSourceCopy.state, ownDefaults.state, parentSource.state);
@@ -903,7 +903,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
      */
     class Basemap {
         constructor ({ id, name, description, typeSummary, layers, thumbnailUrl = null, attribution, opacity = 1,
-                altText, zoomLevels = {} }, tileSchema) {
+            altText, zoomLevels = {} }, tileSchema) {
             this._id = id;
             this._name = name;
             this._description = description;
@@ -1308,6 +1308,18 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get type () { return this._type; }
         get root () { return this._root; }
+
+        /**
+         * Inserts a child into the root group of the legend config.
+         * Unless specified, the child is inserted at the top of the legend.
+         *
+         * @function addChild
+         * @param {LegendElement} child a legendElement child to be inserted
+         * @param {Number} [position=0] to be inserted at
+         */
+        addChild (child, position = 0) {
+            this._root.children.splice(position, 0, child);
+        }
 
         get JSON() {
             return {
@@ -2068,7 +2080,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 // check if the number of all required search services is correct
                 if (typeof search === 'undefined' || typeof search.serviceUrls === 'undefined'
                     || Object.keys(search.serviceUrls).length < GEOSERVICES.length) {
-                        return false;
+                    return false;
                 }
 
                 // check if the serives match what were required
