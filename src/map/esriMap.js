@@ -14,7 +14,7 @@ function esriMap(esriBundle, geoApi) {
         get _passthroughBindings () { return [
             'addLayer', 'centerAndZoom', 'centerAt', 'destroy', 'disableKeyboardNavigation', 'getScale', 'on',
             'removeLayer', 'reorderLayer', 'reposition', 'resize', 'setExtent', 'setMapCursor', 'setScale',
-            'setZoom', 'toScreen'
+            'setZoom', 'toMap', 'toScreen'
         ]; }
         get _passthroughProperties () { return [
             'attribution', 'extent', 'graphicsLayerIds', 'height', 'layerIds', 'spatialReference', 'width'
