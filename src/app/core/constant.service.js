@@ -54,6 +54,7 @@ function events($rootScope) {
         rvCfgUpdated: 'rvCfgUpdated',
         // TODO find a better name for this one:  rvCfgUpdating: 'rvCfgUpdating',
 
+        rvMapLoaded: 'rvMapLoaded',
         rvMapPan: 'rvMapPan',
         rvExtentChange: 'extentChange', // TODO: rename event to `rvExtentChange` and all the instances that use hardcoded `extentChange` instance
         rvMouseMove: 'rvMouseMove', // Fired when mouse move over the map (use to calculate mouse coordinates)
