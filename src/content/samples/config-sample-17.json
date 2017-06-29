@@ -316,15 +316,9 @@
           {
             "name": "Layer with only Information section",
             "expanded": true,
-            "controls": [
-              "visibility"
-            ],
-            "children": [
-              {
-                "infoType": "text",
-                "content": "A man rushes his limp dog to the veterinarian. The doctor pronounces the dog dead. The agitated man demands a second opinion. The vet goes into the back room and comes out with a cat. The cat sniffs the body and meows. The vet says, I'm sorry, but the cat thinks that                 your dog is dead, too."
-              }
-            ]
+            "infoType": "text",
+            "content": "A man rushes his limp dog to the veterinarian. The doctor pronounces the dog dead. The agitated man demands a second opinion. The vet goes into the back room and comes out with a cat. The cat sniffs the body and meows. The vet says, I'm sorry, but the cat thinks that                 your dog is dead, too."
+
           }
         ]
       }
