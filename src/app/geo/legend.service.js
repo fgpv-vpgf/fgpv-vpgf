@@ -286,7 +286,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
             // convert the newly created config source into a types config and a Legend Group
             const derivedEntryGroupConfig = new ConfigObject.legend.EntryGroup(derivedEntryGroupSource);
-            const legendBlockGroup = new LegendBlock.Group(derivedEntryGroupConfig, rootProxyWrapper);
+            const legendBlockGroup = new LegendBlock.Group(derivedEntryGroupConfig, rootProxyWrapper, true);
             // map this legend block to the layerRecord
             legendBlockGroup.layerRecordId = layerConfig.id;
 
@@ -366,7 +366,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
                 if (item.childs) {
                     const groupConfig = new ConfigObject.legend.EntryGroup(item.groupSource);
-                    legendBlock = new LegendBlock.Group(groupConfig);
+                    legendBlock = new LegendBlock.Group(groupConfig, rootProxyWrapper);
 
                     item.childs.forEach(child =>
                         _addChildBlock(child, legendBlock));
@@ -391,7 +391,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
          * @private
          * @param {LayerRecord} layerRecord the loaded dynamic layer record to travers
          * @param {LayerNode} layerConfig the typed and defaults config of the supplied dynamic layer record
-         * @return {Object}
+         * @return {Object} a tree structure of dynamic children cast to proper legend block classes and with defaults applied
          */
         function _createDynamicChildTree(layerRecord, layerConfig) {
             const dynamicLayerChildDefaults = angular.copy(

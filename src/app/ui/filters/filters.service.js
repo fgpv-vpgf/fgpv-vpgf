@@ -465,7 +465,7 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
     function onCreate() {
         // recompute oidColNum for data table filter since it may not be first index
         oidColNum = stateManager.display.filters.data.columns.findIndex(col =>
-                col.data === stateManager.display.filters.data.oidField);
+            col.data === stateManager.display.filters.data.oidField);
 
         // TODO: fix
         // service.filter.isActive = stateManager.display.filters.requester.legendEntry.flags.filter.visible;
