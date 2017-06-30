@@ -61,6 +61,7 @@
     "ng-annotate-loader": "^0.6.1",
     "ngtemplate-loader": "^2.0.1",
     "node-sass": "^4.5.3",
+    "on-build-webpack": "^0.1.0",
     "protractor": "^5.1.2",
     "raw-loader": "^0.5.1",
     "resolve-url-loader": "^2.0.3",
