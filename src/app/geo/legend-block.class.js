@@ -320,7 +320,9 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         set isSelected (value) {        this._isSelected = value; }
 
         /**
-         * @return {String} id of the layer bound to this legend block; this will be used in reordering and reloading
+         * Sets layer record id on legend entry.
+         *
+         * @param {String} value id of the layer bound to this legend block; this will be used in reordering and reloading
          */
         set layerRecordId (value) {     this._layerRecordId = value; }
         /**
@@ -586,7 +588,13 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
     // If the layer fails on initial loading, there are no children to indicate the error state, so the error template must be displayed at the root of the dynamic record
     class LegendGroup extends LegendEntry {
 
-        constructor(blockConfig, rootProxyWrapper = null) {
+        /**
+         *
+         * @param {EntryGroup} blockConfig the entry group config object
+         * @param {ProxyWrapper} rootProxyWrapper the proxy wrapper containing the layer proxy object of a dynamic layer root
+         * @param {Boolean} [isDynamicRoot=false] specifying if this group is the root of a dynamic layer
+         */
+        constructor(blockConfig, rootProxyWrapper = null, isDynamicRoot = false) {
             super(blockConfig);
 
             this._name = blockConfig.name;
@@ -595,6 +603,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             this._disabledControls = blockConfig.disabledControls;
             this._userDisabledControls = blockConfig.userDisabledControls;
             this._rootProxyWrapper = rootProxyWrapper;
+            this._isDynamicRoot = isDynamicRoot;
 
             this._aggregateStates = ref.aggregateStates;
             this._walk = ref.walkFunction.bind(this);
@@ -631,12 +640,23 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         get disabledControls () {       return this._disabledControls; }
         get userDisabledControls () {   return this._userDisabledControls; }
 
-        get state () {
+        /**
+         * @return {Boolean} true if the group is part of the user-added dynamic layer
+         */
+        get userAdded () {
             if (this._rootProxyWrapper) {
-                return this._rootProxyWrapper.state;
-            } else {
-                return 'rv-loaded';
+                return this._rootProxyWrapper.userAdded;
             }
+
+            return false;
+        }
+
+        get state () {
+            if (this._isDynamicRoot) {
+                return this._rootProxyWrapper.state;
+            }
+
+            return 'rv-loaded';
         }
 
         get template () {
