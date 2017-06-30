@@ -71,10 +71,6 @@ angular.extend(GEO.Layer, {
     }
 });
 
-// this is populated with default schema snippets during build;
-// const LAYER_CONFIG_DEFAULTS = '_LAYER_CONFIG_DEFAULTS_';
-GEO.Metadata = { XSLT_LANGUAGE_NEUTRAL: '_XSLT_BLOB_' };
-
 /**
  * @module Geo
  * @memberof app.geo
