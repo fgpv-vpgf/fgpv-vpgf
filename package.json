@@ -1,6 +1,6 @@
 {
   "name": "geoApi",
-  "version": "0.0.0-protoLR-73",
+  "version": "0.0.0-protoLR-74",
   "description": "",
   "main": "src/index.js",
   "dependencies": {

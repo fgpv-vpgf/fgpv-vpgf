@@ -29,6 +29,8 @@ class AttribFC extends basicFC.BasicFC {
     get geomType () { return this._geometryType; }
     set geomType (value) { this._geometryType = value; }
 
+    get queryUrl () { return `${this._parent.rootUrl}/${this._idx}`; }
+
     /**
      * Returns attribute data for this FC.
      *
