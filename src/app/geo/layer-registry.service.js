@@ -18,7 +18,7 @@ angular
     .module('app.geo')
     .factory('layerRegistry', layerRegistryFactory);
 
-function layerRegistryFactory($rootScope, $timeout, gapiService, Geo, configService, tooltipService, $filter) {
+function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService, Geo, configService, tooltipService) {
     const service = {
         getLayerRecord,
         makeLayerRecord,
@@ -204,6 +204,7 @@ function layerRegistryFactory($rootScope, $timeout, gapiService, Geo, configServ
             ) {
                 layerRecord.removeStateListener(_onLayerRecordLoad);
 
+                events.$broadcast(events.rvLayerRecordLoaded, layerRecord.config.id);
                 $timeout.cancel(throttleTimeoutHandle);
                 _setHoverTips(layerRecord);
                 _advanceLoadingQueue();
