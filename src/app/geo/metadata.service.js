@@ -1,3 +1,5 @@
+import XSLT from 'XSLT/xstyle_default_i18n.xsl';
+
 /**
  * @module metadataService
  * @memberof app.geo
@@ -28,17 +30,15 @@ function metadataService($q, $http, $translate, Geo) {
     * @return {Promise} a promise resolving with an HTML fragment
     */
     function loadFromURL(xmlUrl, params) {
-
         if (cache.xmlUrl) {
             return $q.resolve(cache.xmlUrl);
         }
 
-        // fill placeholders in XSLT with appropriate translations
-        const xsltString = Geo.Metadata.XSLT_LANGUAGE_NEUTRAL.replace(/\{\{([\w\.]+)\}\}/g, (match, tag) =>
-            $translate.instant(tag));
-
         return loadXmlFile(xmlUrl)
-            .then(xmlData => applyXSLT(xmlData, xsltString, params))
+            .then(xmlData => applyXSLT(
+                xmlData,
+                XSLT.replace(/\{\{([\w\.]+)\}\}/g, (_, tag) => $translate.instant(tag)),
+                params))
             .then(transformedXMLData => {
                 cache.xmlUrl = transformedXMLData;
                 return transformedXMLData;
