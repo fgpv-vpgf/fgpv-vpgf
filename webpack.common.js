@@ -62,6 +62,10 @@ module.exports = function (env) {
                 {
                     test: /\.(png|svg)$/,
                     use: 'url-loader'
+                },
+                {
+                    test: /\.xsl$/,
+                    use: 'raw-loader'
                 }
             ]
         },
@@ -111,7 +115,10 @@ module.exports = function (env) {
         externals: { 'TweenLite': 'TweenLite' },
 
         resolve: {
-            modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules')]
+            modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules')],
+            alias: {
+                XSLT: path.resolve(__dirname, 'src/content/metadata/')
+            }
         },
 
         watchOptions: {
@@ -138,7 +145,6 @@ module.exports = function (env) {
     config.plugins.push(...htmlInjectPlugins());
 
     if (env.geoLocal) {
-        config.resolve.alias = config.resolve.alias ? config.resolve.alias : {};
         config.resolve.alias['geoApi$'] = geoPath;
     }
 
