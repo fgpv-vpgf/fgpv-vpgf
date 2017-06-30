@@ -208,6 +208,7 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
             if (data.index !== -1) {
                 layerConfig.layerEntries = [dynamicLayerList.find(layerEntry =>
                     layerEntry.index === data.index)];
+                layerConfig.singleEntryCollapse = true;
             }
 
             const layerInfo = new LayerSourceInfo.DynamicServiceInfo(layerConfig, dynamicLayerList);
