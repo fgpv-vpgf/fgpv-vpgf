@@ -35,6 +35,8 @@ class FeatureRecord extends attribRecord.AttribRecord {
         }
     }
 
+    get queryUrl () { return `${this.rootUrl}/${this._defaultFC}`; }
+
     /**
      * Creates an options object for the map API object
      *

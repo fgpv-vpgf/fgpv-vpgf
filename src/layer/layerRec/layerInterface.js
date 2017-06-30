@@ -49,6 +49,8 @@ class LayerInterface {
     // fetches attributes for use in the datatable
     get formattedAttributes () { return undefined; } // returns Promise of Object
 
+    get queryUrl () { return undefined; } // returns String
+
     // returns a feature name of an attribute set
     getFeatureName () { return undefined; } // returns String
 
@@ -132,6 +134,7 @@ class LayerInterface {
         newProp(this, 'geometryType', featureGetGeometryType);
         newProp(this, 'featureCount', featureGetFeatureCount);
         newProp(this, 'highlightFeature', featureGetHighlightFeature);
+        newProp(this, 'queryUrl', featureGetQueryUrl);
 
         this.getFeatureName = featureGetFeatureName;
         this.attributesToDetails = featureAttributesToDetails;
@@ -161,6 +164,7 @@ class LayerInterface {
         newProp(this, 'extent', dynamicLeafGetExtent);
 
         newProp(this, 'highlightFeature', dynamicLeafGetHighlightFeature);
+        newProp(this, 'queryUrl', dynamicLeafGetQueryUrl);
 
         this.setVisibility = dynamicLeafSetVisibility;
         this.setOpacity = dynamicLeafSetOpacity;
@@ -272,6 +276,16 @@ function standardGetParentLayerType() {
 function dynamicLeafGetParentLayerType() {
     /* jshint validthis: true */
     return this._source.parentLayerType;
+}
+
+function featureGetQueryUrl() {
+    /* jshint validthis: true */
+    return this._source.queryUrl;
+}
+
+function dynamicLeafGetQueryUrl() {
+    /* jshint validthis: true */
+    return this._source.queryUrl;
 }
 
 function standardGetExtent() {

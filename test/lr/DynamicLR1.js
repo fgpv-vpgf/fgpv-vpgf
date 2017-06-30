@@ -131,6 +131,8 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         console.log('root layer extent - sb {}', proxy.extent);
         console.log('leaf layer extent - sb {}', leaf2proxy.extent);
 
+        console.log('leaf query url - sb root plus index 2', leaf2proxy.queryUrl);
+
         leaf3proxy.setDefinitionQuery('test');
         console.log('definition query - sb array with index 3 = test', layerRec._layer.layerDefinitions);
 

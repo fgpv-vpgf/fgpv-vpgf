@@ -80,6 +80,8 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         console.log('root layer type - sb feature', proxy.layerType);
         console.log('root parent layer type - sb feature', proxy.parentLayerType);
 
+        console.log('root query url - sb root plus index 2', proxy.queryUrl);
+
         proxy.setDefinitionQuery('test');
         console.log('definition query - sb test', layerRec._layer.getDefinitionExpression());
 
