@@ -1,11 +1,16 @@
+const fs            = require('fs');
 const path          = require('path');
 const Merge         = require('webpack-merge');
 const webpack       = require('webpack');
 const CommonConfig  = require('./webpack.common.js');
 const SriPlugin     = require('webpack-subresource-integrity');
+const pkg           = require('./package.json');
+const ZipPlugin     = require('zip-webpack-plugin');
+const CopyPlugin    = require('copy-webpack-plugin');
+const onBuildPlugin = require('on-build-webpack');
+const exec          = require( 'child_process' ).exec;
 
-const pkg                   = require('./package.json');
-const ZipPlugin             = require('zip-webpack-plugin');
+exec('rm -r dist');
 
 module.exports = function(env) {
     return Merge(CommonConfig(env), {
@@ -27,9 +32,22 @@ module.exports = function(env) {
                 sourceMap: true
             }),
 
+            new CopyPlugin([{
+                context: 'src/locales/help/default',
+                from: '**/*',
+                to: 'help'
+            }]),
+
             new ZipPlugin({
                 path:  path.resolve(__dirname, 'dist'),
                 filename:  path.resolve(__dirname, `dist/fgpv-${pkg.version}.zip`),
+                exclude: [/samples/, /help/],
+            }),
+
+            new ZipPlugin({
+                path:  path.resolve(__dirname, 'dist'),
+                filename:  path.resolve(__dirname, `dist/help-${pkg.version}.zip`),
+                include: [/help/],
                 exclude: [/samples/]
             }),
 
@@ -42,6 +60,10 @@ module.exports = function(env) {
             new SriPlugin({
                 hashFuncNames: ['sha256', 'sha384'],
                 enabled: true
+            }),
+
+            new onBuildPlugin(() => {
+                exec('rm -r build/help');
             })
         ]
     });
