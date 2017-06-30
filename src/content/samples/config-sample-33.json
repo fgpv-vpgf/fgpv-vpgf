@@ -313,6 +313,19 @@
           },
           {
             "layerId": "1"
+          },
+          {
+            "name": "group",
+            "expanded": true,
+            "controls": [
+              "visibility",
+              "settings"
+            ],
+            "children": [
+              {
+                "layerId": "2"
+              }
+            ]
           }
         ]
       }
@@ -320,7 +333,7 @@
     "layers": [
        {
         "id": "0",
-        "name": "Zoom scale dependent layer group",
+        "name": "Zoom scale layer complete",
         "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer",
         "layerType": "esriDynamic",
         "layerEntries": [
@@ -340,9 +353,29 @@
       },
       {
         "id": "1",
-        "name": "Standalone Zoom scale dependent layer",
+        "name": "Zoom scale single",
         "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer/1",
         "layerType": "esriFeature"
+      },
+      {
+        "id": "2",
+        "name": "Zoom scale layer in group",
+        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 1
+          },
+          {
+            "index": 2
+          },
+          {
+            "index": 3
+          },
+          {
+            "index": 4
+          }
+        ]
       }
     ],
     "tileSchemas": [
