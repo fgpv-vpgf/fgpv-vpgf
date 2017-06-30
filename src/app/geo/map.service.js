@@ -176,7 +176,8 @@ function mapServiceFactory($q, $timeout, layoutService, gapiService, configServi
      * A helper function for reprojecting a center point of the source basemap to the target basemap.
      * Used for bookmarking.
      *
-     * @param {ESRI Map} mapInstance a geoapi map wrapper
+     * @function getCenterPointInTargetBasemap
+     * @param {ESRIMapWrapper} mapInstance a geoapi map wrapper
      * @param {Basemap} sourceBasemap currently selected basemap
      * @param {Basemap} targetBasemap a target basemap to projection the center point to
      * @return {Object} in the form of { x: Number, y: Number, scale: Number }
