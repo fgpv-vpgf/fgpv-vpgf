@@ -136,6 +136,9 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         leaf3proxy.setDefinitionQuery('test');
         console.log('definition query - sb array with index 3 = test', layerRec._layer.layerDefinitions);
 
+        console.log('root index - sb X', proxy.itemIndex);
+        console.log('leaf index - sb 2', leaf2proxy.itemIndex);
+
     }
 
 });

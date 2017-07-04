@@ -29,6 +29,8 @@ class LayerInterface {
     // can be group or node name
     get name () { return undefined; } // returns String
 
+    get itemIndex () { return undefined; } // returns String
+
     // these are needed for the type flag
     get layerType () { return undefined; } // returns String
     get parentLayerType () { return undefined; } // returns String
@@ -110,6 +112,7 @@ class LayerInterface {
         newProp(this, 'query', standardGetQuery);
 
         newProp(this, 'name', standardGetName);
+        newProp(this, 'itemIndex', standardGetItemIndex);
 
         newProp(this, 'geometryType', standardGetGeometryType);
         newProp(this, 'layerType', standardGetLayerType);
@@ -151,6 +154,7 @@ class LayerInterface {
         newProp(this, 'state', dynamicLeafGetState);
 
         newProp(this, 'name', dynamicLeafGetName);
+        newProp(this, 'itemIndex', dynamicLeafGetItemIndex);
 
         newProp(this, 'visibility', dynamicLeafGetVisibility);
         newProp(this, 'opacity', dynamicLeafGetOpacity);
@@ -491,6 +495,17 @@ function standardIsOffScale(mapScale) {
 function dynamicLeafIsOffScale(mapScale) {
      /* jshint validthis: true */
     return this._source.isOffScale(mapScale);
+}
+
+// TODO maybe expose a property instead of using the private var
+function standardGetItemIndex() {
+     /* jshint validthis: true */
+    return this._source._defaultFC;
+}
+
+function dynamicLeafGetItemIndex() {
+     /* jshint validthis: true */
+    return this._source._idx;
 }
 
 module.exports = () => ({
