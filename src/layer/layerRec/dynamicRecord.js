@@ -68,6 +68,11 @@ class DynamicRecord extends attribRecord.AttribRecord {
             parentValue: false
         };
 
+        // trickery. no code here ever uses this, because a dynamic record has no concept of a default feature class
+        // (whereas the other Records do). However, since we use the value as a unique key for tracking bounding
+        // boxes, and a dynamic record can have a bounding box at the root level, we need to return a value.
+        this._defaultFC = 'X';
+
     }
 
     /**

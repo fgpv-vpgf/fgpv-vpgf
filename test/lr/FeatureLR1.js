@@ -85,5 +85,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         proxy.setDefinitionQuery('test');
         console.log('definition query - sb test', layerRec._layer.getDefinitionExpression());
 
+        console.log('root index - sb 2', proxy.itemIndex);
+
     }
 });
