@@ -1278,22 +1278,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             } else {
                 rootChildren = legendSource.root.children;
-
-                // removing the `remove` control :) from the structured legend
-                const controlName = 'remove';
-
-                _removeControlOption(DEFAULTS.legend[TYPES.legend.GROUP].controls, controlName);
-
-                Object.values(Geo.Layer.Types).forEach(layerType => {
-                    const layerDefaults = DEFAULTS.layer[layerType];
-
-                    _removeControlOption(layerDefaults.controls, controlName);
-
-                    // for layers which can have children - Dynamic layer and potentilally WMS
-                    if (layerDefaults.child) {
-                        _removeControlOption(layerDefaults.child.controls, controlName);
-                    }
-                });
             }
 
             this._root = new EntryGroup({
@@ -2061,7 +2045,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             // set geoSearch.enable to false if it was false initialy or does not have all services
             this.map.components.geoSearch.enabled = this.map.components.geoSearch.enabled
-                                                        && hasAllSearchServices(this.services.search);
+                && hasAllSearchServices(this.services.search);
 
             /**
              * Return true if all search services are included in the config file, false otherwise

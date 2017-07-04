@@ -1,3 +1,5 @@
+/* eslint max-statements: ["error", 32] */
+
 /**
  *
  * @module LegendElementFactory
@@ -12,7 +14,10 @@ angular
     .module('app.ui')
     .factory('LegendElementFactory', LegendElementFactory);
 
-function LegendElementFactory($translate, tocService, debounceService) {
+function LegendElementFactory($translate, ConfigObject, tocService, debounceService, configService) {
+    const ref = {
+        autoLegendEh: configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE
+    };
 
     class BaseElement {
         constructor (legendBlock) {
@@ -256,6 +261,13 @@ function LegendElementFactory($translate, tocService, debounceService) {
         get label () {  return 'toc.label.remove'; }
 
         action () {     tocService.removeLayer(this.block); }
+
+        /**
+         * The remove control is visible for every element in an auto legend and user-added layer unless prohibited by the layer config.
+         *
+         * @return {Boolean} true if the remove control should be visible
+         */
+        get isVisible () {  return super.isVisible && (ref.autoLegendEh || this.block.userAdded); }
     }
 
     class ReorderControl extends BaseControl {

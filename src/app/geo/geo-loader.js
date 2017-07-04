@@ -7,7 +7,6 @@ import './init-map.directive.js';
 import './layer-blueprint.class.js';
 import './layer-registry.service.js';
 import './legend-block.class.js'
-import './legend-entry.service.js';
 import './legend.service.js';
 import './locate.service.js';
 import './map-tools.service.js';

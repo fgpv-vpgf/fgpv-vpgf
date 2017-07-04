@@ -99,6 +99,7 @@ function rvOverviewToggle($compile, $rootScope, geoService, $timeout, animationS
              * @param   {Boolean}   isReversed  if true overview map is full size, defaults to false
              *
              * @function animationCompleted
+             * @return {Object} ovwContainer jQuery node
              */
             function animationCompleted(isReversed = false) {
                 const overviewMapMap = configService.getSync.map.instance.overviewMap.map;
