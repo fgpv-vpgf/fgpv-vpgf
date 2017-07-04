@@ -770,6 +770,11 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         applyBookmark (value) {
             super.applyBookmark(value);
 
+            // errored dynamic layers will have no children array bookmarked; use config value
+            if (!angular.isArray(value.layerEntries)) {
+                return;
+            }
+
             value.layerEntries.forEach(layerEntryBookmark => {
                 const existingLayerEntry = this.layerEntries.find(lr => lr.index === layerEntryBookmark.index);
                 if (existingLayerEntry) {
@@ -1258,10 +1263,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                         if (sortGroups[a.layerType] < sortGroups[b.layerType]) {
                             return -1;
                         } else if ((sortGroups[a.layerType] > sortGroups[b.layerType])) {
-                            return 1;
-                        } else if (a.name < b.name) {
-                            return -1;
-                        } else if (a.name > b.name) {
                             return 1;
                         }
 
@@ -1788,6 +1789,14 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             // apply starting point
             this.startPoint = new StartPoint(value);
+
+            if (this.legend.type === TYPES.legend.AUTOPOPULATE) {
+                // filter out layers that are not present in the bookmark preserving the bookmark layer order
+                this._layers = value.bookmarkLayers.map(bookmarkedLayer =>
+                    this._layers.find(layer => layer.id === bookmarkedLayer.id));
+
+                this._legend = new Legend(this.source.legend, this._layers);
+            }
         }
 
         get JSON() {
