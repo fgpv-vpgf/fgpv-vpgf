@@ -53,16 +53,12 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             };
         }
 
-        // loop through layers in legend, remove user added layers and "removed" layer which are in the "undo" time frame
-        // const legend = geoService.legend.items.filter(legendEntry =>
-        //     !legendEntry.flags.user.visible && !legendEntry.removed);
-
-        // const layerBookmarks = legend.map(legendEntry =>
-        //     encode64(makeLayerBookmark(legendEntry)));
-
+        // removes layers in the "undo" time frame will be bookmarked
         const layerRecords = mapConfig.layerRecords;
-        const layerBookmarks = layerRecords.map(layerRecord =>
-            encode64(makeLayerBookmark(layerRecord)));
+        const layerBookmarks = layerRecords
+            // bookmarking layer records that are errored or still loading will break during subsequent loading of this bookmark
+            .filter(layerRecord => layerRecord.state === 'rv-loaded')
+            .map(layerRecord => encode64(makeLayerBookmark(layerRecord)));
 
         // bookmarkVersions.? is the version. update this accordingly whenever the structure of the bookmark changes
         const bookmark = `${bookmarkVersions.B},${basemap},${encode64(startPoint.x)},${encode64(startPoint.y)},${encode64(startPoint.scale)}` +
@@ -183,7 +179,6 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
      * @returns {String}            Layer information encoded in bookmark format.
      */
     function makeLayerBookmark(layerRecord) {
-        // FIXME: remove use of accessing info via _layerRecord
         // returning <Layer Code><Layer Settings><Children Info><Layer Id>
 
         let legendEntry = null;
