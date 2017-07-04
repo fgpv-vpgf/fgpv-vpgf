@@ -12,10 +12,13 @@
     "sideMenu": {
       "logo": true
     },
-    "legendIsOpen": {
-      "large": true,
-      "medium": true,
-      "small": false
+    "legend": {
+      "isOpen": {
+        "large": true,
+        "medium": true,
+        "small": false
+      },
+      "reorderable": false
     }
   },
   "version": "2.0",
@@ -39,7 +42,7 @@
     }
   },
   "map": {
-    "initialBasemapId": "baseNrCan",
+    "initialBasemapId": "baseEsriStreet",
     "components": {
       "geoSearch": {
         "enabled": true,
@@ -306,16 +309,69 @@
         "name": "root",
         "children": [
           {
-            "name": "A Group",
+            "name": "Supergroup",
             "expanded": true,
             "controls": [
-              "visibility"
+              "visibility",
+              "settings"
             ],
             "children": [
               {
-                "exclusiveVisibility": [
+                "layerId": "0"
+              },
+              {
+                "layerId": "1"
+              },
+              {
+                "infoType": "unboundLayer",
+                "layerName": "How to catch Santa (//www.pusheen.com/)",
+                "symbologyStack": [
                   {
-                    "layerId": "powerplant100mw-electric"
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step1.gif",
+                    "text":"1. Set your bait"
+                  },
+                  {
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step2.gif",
+                    "text":"2. Hide"
+                  },
+                  {
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step3.gif",
+                    "text":"3. Don't eat the bait"
+                  },
+                  {
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step4.gif",
+                    "text":"4. Don't do it"
+                  },
+                  {
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step5.gif",
+                    "text":"5. Stop!!"
+                  },
+                  {
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step6.gif",
+                    "text":"6. You ruinted it!"
+                  }
+                ],
+                "symbologyRenderStyle": "images"
+              },
+              {
+                "name": "Cat GIFs",
+                "controls": [],
+                "children": [
+                  {
+                    "infoType": "image",
+                    "content": "http://fgpv.cloudapp.net/demo/__assets__/solazy.gif"
+                  },
+                  {
+                    "infoType": "image",
+                    "content": "http://fgpv.cloudapp.net/demo/__assets__/tenor.gif"
+                  },
+                  {
+                    "infoType": "image",
+                    "content": "http://fgpv.cloudapp.net/demo/__assets__/internet.gif"
+                  },
+                  {
+                    "infoType": "image",
+                    "content": "http://fgpv.cloudapp.net/demo/__assets__/cookies.gif"
                   }
                 ]
               }
@@ -326,14 +382,33 @@
     },
     "layers": [
       {
-        "id": "powerplant100mw-electric",
-        "name": "Electric Transmission Line",
-        "layerType": "esriFeature",
-        "disabledControls": [
-          "metadata"
-        ],
-        "metadataUrl": "http://csw.open.canada.ca/geonetwork/srv/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&ElementSetName=full&id=3a1eb6ef-6054-4f9d-b1f6-c30322cd7abf",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+        "id": "0",
+        "name": "Oilsands basemap tile layer",
+        "layerType": "esriTile",
+        "state": {
+          "opacity": 0.2
+        },
+        "url": "http://ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer/"
+      },
+      {
+        "id": "1",
+        "name": "Dynamic layer",
+        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 1
+          },
+          {
+            "index": 2
+          },
+          {
+            "index": 3
+          },
+          {
+            "index": 4
+          }
+        ]
       }
     ],
     "tileSchemas": [

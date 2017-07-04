@@ -12,10 +12,12 @@
     "sideMenu": {
       "logo": true
     },
-    "legendIsOpen": {
+    "legend": {
+      "isOpen": {
       "large": true,
       "medium": true,
       "small": false
+      }
     }
   },
   "version": "2.0",
@@ -329,9 +331,6 @@
         "id": "powerplant100mw-electric",
         "name": "Electric Transmission Line",
         "layerType": "esriFeature",
-        "disabledControls": [
-          "metadata"
-        ],
         "metadataUrl": "http://csw.open.canada.ca/geonetwork/srv/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&ElementSetName=full&id=3a1eb6ef-6054-4f9d-b1f6-c30322cd7abf",
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
       }

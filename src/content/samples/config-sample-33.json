@@ -12,10 +12,13 @@
     "sideMenu": {
       "logo": true
     },
-    "legendIsOpen": {
-      "large": true,
-      "medium": true,
-      "small": false
+    "legend": {
+      "isOpen": {
+        "large": true,
+        "medium": true,
+        "small": false
+      },
+      "reorderable": false
     }
   },
   "version": "2.0",
@@ -306,18 +309,21 @@
         "name": "root",
         "children": [
           {
-            "name": "A Group",
+            "layerId": "0"
+          },
+          {
+            "layerId": "1"
+          },
+          {
+            "name": "group",
             "expanded": true,
             "controls": [
-              "visibility"
+              "visibility",
+              "settings"
             ],
             "children": [
               {
-                "exclusiveVisibility": [
-                  {
-                    "layerId": "powerplant100mw-electric"
-                  }
-                ]
+                "layerId": "2"
               }
             ]
           }
@@ -325,15 +331,51 @@
       }
     },
     "layers": [
+       {
+        "id": "0",
+        "name": "Zoom scale layer complete",
+        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 1
+          },
+          {
+            "index": 2
+          },
+          {
+            "index": 3
+          },
+          {
+            "index": 4
+          }
+        ]
+      },
       {
-        "id": "powerplant100mw-electric",
-        "name": "Electric Transmission Line",
-        "layerType": "esriFeature",
-        "disabledControls": [
-          "metadata"
-        ],
-        "metadataUrl": "http://csw.open.canada.ca/geonetwork/srv/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&ElementSetName=full&id=3a1eb6ef-6054-4f9d-b1f6-c30322cd7abf",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+        "id": "1",
+        "name": "Zoom scale single",
+        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer/1",
+        "layerType": "esriFeature"
+      },
+      {
+        "id": "2",
+        "name": "Zoom scale layer in group",
+        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 1
+          },
+          {
+            "index": 2
+          },
+          {
+            "index": 3
+          },
+          {
+            "index": 4
+          }
+        ]
       }
     ],
     "tileSchemas": [

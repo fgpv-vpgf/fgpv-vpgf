@@ -18,7 +18,7 @@
 
         #bookmarkLoad {
             margin: 10px;
-            width: 100%;
+            width: 90%;
         }
 
         #bookmarkURL {
@@ -82,6 +82,11 @@
         <option value="config-sample-26.json">26. Layer with Remove disabled</option>
         <option value="config-sample-27.json">27. Layer with Settings disabled</option>
         <option value="config-sample-28.json">28. Layer with Data table disabled</option>
+        <option value="config-sample-29.json">29. Layer with metadata included</option>
+        <option value="config-sample-30.json">30. Viewer with Map re-order disabled for auto legends</option>
+        <option value="config-sample-31.json">31. Layer with customized title of a data table</option>
+        <option value="config-sample-32.json">32. Super group with tile layer, dynamic layer- Controls visibility/settings and disable visibility</option>
+        <option value="config-sample-33.json">33. Zoom scale dependent layer as a part of visibility group and standalone</option>
     </select>
 
     <form id="bookmarkLoad">
