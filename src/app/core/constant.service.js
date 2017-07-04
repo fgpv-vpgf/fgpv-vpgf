@@ -30,9 +30,11 @@ function events($rootScope) {
     return {
         /**
          * A shorthand for $rootScope.$on; no need to inject `$rootScope` separately;
+         *
          * @function $on
          * @param {String} eventName event name to listen once
          * @param {Function} listener a callback function to execute
+         * @return {Function} a deregister function
          */
         $on: (...args) =>
             $rootScope.$on(...args),
@@ -54,6 +56,7 @@ function events($rootScope) {
         rvCfgUpdated: 'rvCfgUpdated',
         // TODO find a better name for this one:  rvCfgUpdating: 'rvCfgUpdating',
 
+        rvLayerRecordLoaded: 'rvLayerRecordLoaded',
         rvMapLoaded: 'rvMapLoaded',
         rvMapPan: 'rvMapPan',
         rvExtentChange: 'extentChange', // TODO: rename event to `rvExtentChange` and all the instances that use hardcoded `extentChange` instance

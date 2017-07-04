@@ -1922,10 +1922,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         constructor(source = {}) {
             this._source = source;
 
-            this.id = source.id;
-            this._large = source.large;
-            this._medium = source.medium;
-            this._small = source.small;
+            this._id = source.id;
+            this._large = this._id ? source.large : false;
+            this._medium = this._id ? source.medium : false;
+            this._small = this._id ? source.small : false ;
         }
 
         get id () { return this._id; }
@@ -2007,6 +2007,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._legend = new UILegend(uiSource.legend);
             this._help = new Help(uiSource.help);
             this._fullscreen = uiSource.fullscreen;
+            this._filterIsOpen = new FilterIsOpen(uiSource.filterIsOpen);
         }
 
         get source () {                 return this._source; }
@@ -2018,6 +2019,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get legend () {                 return this._legend; }
         get help () {                   return this._help; }
         get fullscreen () {             return this._fullscreen; }
+        get filterIsOpen () {           return this._filterIsOpen; }
 
         get JSON () {
             return {
@@ -2027,7 +2029,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 sideMenu: this.sideMenu.JSON,
                 legend: this.legend.JSON,
                 help: this.help.JSON,
-                fullscreen: this.fullscreen
+                fullscreen: this.fullscreen,
+                filterIsOpen: this.filterIsOpen.JSON
             }
         }
     }
