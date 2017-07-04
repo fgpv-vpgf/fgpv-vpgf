@@ -10,6 +10,9 @@
         "help"
       ]
     },
+    "about": {
+      "folderName": "indexOne"
+    },
     "sideMenu": {
       "logo": true
     },

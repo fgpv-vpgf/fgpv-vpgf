@@ -1861,7 +1861,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 'export',
                 'share',
                 'touch',
-                'help'
+                'help',
+                "about"
             ],
             [
                 'language'
@@ -1960,6 +1961,36 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     /**
+     * Typed representation of the `ui.about` section of the config.
+     * @class About
+     */
+    class About {
+        constructor(aboutSource) {
+            this._source = aboutSource;
+            this._isMarkdown = true;
+
+            if (aboutSource.content) {
+                this._content = aboutSource.content
+            } else {
+                this._folderName = aboutSource.folderName;
+                this._isMarkdown = false;
+            }
+        }
+
+        get content() { return this._content; }
+        get folderName() { return this._folderName; }
+        get isMarkdown() { return this._isMarkdown; }
+
+        get JSON () {
+            return {
+                content: this.content,
+                folderName: this.folderName,
+                isMarkdown: this.isMarkdown
+            };
+        }
+    }
+
+    /**
      * Typed representation of the `ui.legend` section of the config.
      * @class UILegend
      */
@@ -2004,6 +2035,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._help = new Help(uiSource.help);
             this._fullscreen = uiSource.fullscreen;
             this._filterIsOpen = new FilterIsOpen(uiSource.filterIsOpen);
+            if (uiSource.about && (uiSource.about.content || uiSource.about.folderName)) {
+                this._about = new About(uiSource.about);
+            }
         }
 
         get source () {                 return this._source; }
@@ -2016,6 +2050,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get help () {                   return this._help; }
         get fullscreen () {             return this._fullscreen; }
         get filterIsOpen () {           return this._filterIsOpen; }
+        get about() {                   return this._about; }
 
         get JSON () {
             return {
@@ -2026,7 +2061,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 legend: this.legend.JSON,
                 help: this.help.JSON,
                 fullscreen: this.fullscreen,
-                filterIsOpen: this.filterIsOpen.JSON
+                filterIsOpen: this.filterIsOpen.JSON,
+                about: this.about.JSON
             }
         }
     }
