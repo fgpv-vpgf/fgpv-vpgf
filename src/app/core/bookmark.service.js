@@ -53,8 +53,12 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             };
         }
 
-        // removes layers in the "undo" time frame will be bookmarked
-        const layerRecords = mapConfig.layerRecords;
+        // - removed layers in the "undo" time frame will be bookmarked
+        // - bookmark layers in the same order they appear in the main panel - needed for autolegend only
+        const layerRecords = mapConfig.legendBlocks.entries.map(legendBlock =>
+            mapConfig.layerRecords.find(layerRecord =>
+                layerRecord.config.id === legendBlock.layerRecordId));
+
         const layerBookmarks = layerRecords
             // bookmarking layer records that are errored or still loading will break during subsequent loading of this bookmark
             .filter(layerRecord => layerRecord.state === 'rv-loaded')

@@ -1259,10 +1259,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                             return -1;
                         } else if ((sortGroups[a.layerType] > sortGroups[b.layerType])) {
                             return 1;
-                        } else if (a.name < b.name) {
-                            return -1;
-                        } else if (a.name > b.name) {
-                            return 1;
                         }
 
                         return 0;
@@ -1788,6 +1784,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             // apply starting point
             this.startPoint = new StartPoint(value);
+
+            // filter out layers that are not present in the bookmark preserving the bookmark layer order
+            this._layers = value.bookmarkLayers.map(bookmarkedLayer =>
+                this._layers.find(layer => layer.id === bookmarkedLayer.id));
+
+            this._legend = new Legend(this.source.legend, this._layers);
         }
 
         get JSON() {
