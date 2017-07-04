@@ -196,27 +196,27 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
         const keys = rcsInit(svcAttr, keysAttr, languages);
         languages.forEach(lang => {
             $q.all([startupRcsLayers[lang], initialPromises[lang]])
-            .then(configParts => {
-                // generate a blank config, merge in all the stuff we have loaded
-                // the merged config is our promise result for all to use
-                const newConfig = {
-                    layers: []
-                };
-                mergeConfigParts(newConfig, configParts);
-                // configs[lang] = newConfig;
-                events.$broadcast(events.rvCfgUpdated, keys);
-            })
-            .catch(() => {
-                // TODO: possibly retry rcsLoad?
-                console.warn('RCS failed, starting app with file-only config.');
-                const toast = $mdToast.simple()
-                    .textContent($translate.instant('config.service.rcs.error'))
-                    .action($translate.instant('config.service.rcs.action'))
-                    .highlightAction(true)
-                    .hideDelay(0)
-                    .position('bottom rv-flex-global');
-                $mdToast.show(toast);
-            });
+                .then(configParts => {
+                    // generate a blank config, merge in all the stuff we have loaded
+                    // the merged config is our promise result for all to use
+                    const newConfig = {
+                        layers: []
+                    };
+                    mergeConfigParts(newConfig, configParts);
+                    // configs[lang] = newConfig;
+                    events.$broadcast(events.rvCfgUpdated, keys);
+                })
+                .catch(() => {
+                    // TODO: possibly retry rcsLoad?
+                    console.warn('RCS failed, starting app with file-only config.');
+                    const toast = $mdToast.simple()
+                        .textContent($translate.instant('config.service.rcs.error'))
+                        .action($translate.instant('config.service.rcs.action'))
+                        .highlightAction(true)
+                        .hideDelay(0)
+                        .position('bottom rv-flex-global');
+                    $mdToast.show(toast);
+                });
         });
     }
 

@@ -53,16 +53,10 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             };
         }
 
-        // loop through layers in legend, remove user added layers and "removed" layer which are in the "undo" time frame
-        // const legend = geoService.legend.items.filter(legendEntry =>
-        //     !legendEntry.flags.user.visible && !legendEntry.removed);
-
-        // const layerBookmarks = legend.map(legendEntry =>
-        //     encode64(makeLayerBookmark(legendEntry)));
-
-        const layerRecords = mapConfig.layerRecords;
-        const layerBookmarks = layerRecords.map(layerRecord =>
-            encode64(makeLayerBookmark(layerRecord)));
+        const layerBookmarks = _getLayerRecords()
+            // filter out `userAdded` layers
+            .filter(layerRecord => !layerRecord.config.state.userAdded)
+            .map(layerRecord => encode64(makeLayerBookmark(layerRecord)));
 
         // bookmarkVersions.? is the version. update this accordingly whenever the structure of the bookmark changes
         const bookmark = `${bookmarkVersions.B},${basemap},${encode64(startPoint.x)},${encode64(startPoint.y)},${encode64(startPoint.scale)}` +
@@ -71,6 +65,18 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         RV.logger.log('bookmarkService', 'bookmark object', bookmark);
 
         return bookmark;
+
+        function _getLayerRecords() {
+            if (mapConfig.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
+                // - removed layers in the "undo" time frame will be bookmarked
+                // - bookmark layers in the same order they appear in the main panel - needed for autolegend only
+                return mapConfig.legendBlocks.entries.map(legendBlock =>
+                    mapConfig.layerRecords.find(layerRecord =>
+                        layerRecord.config.id === legendBlock.layerRecordId));
+            } else {
+                return mapConfig.layerRecords;
+            }
+        }
     }
 
     /**
@@ -183,7 +189,6 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
      * @returns {String}            Layer information encoded in bookmark format.
      */
     function makeLayerBookmark(layerRecord) {
-        // FIXME: remove use of accessing info via _layerRecord
         // returning <Layer Code><Layer Settings><Children Info><Layer Id>
 
         let legendEntry = null;
@@ -203,7 +208,9 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
 
         // Children Info (calculate first so we have the count when doing layer settings)
         let childItems = [];
-        if (layerCode === typeToCode[types.ESRI_DYNAMIC] && layerDefinition.layerEntries) {
+        // errored dynamic layers have no child tree, skip this step
+        if (layerCode === typeToCode[types.ESRI_DYNAMIC] && layerDefinition.layerEntries &&
+            layerRecord.state !== Geo.Layer.States.ERROR) {
 
             // walk the child tree encoding each child
             // we need to be aware of hierarchy here (at least on the top level).

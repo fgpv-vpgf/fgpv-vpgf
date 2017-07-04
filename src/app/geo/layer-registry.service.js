@@ -359,7 +359,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         let boundingBoxRecord = getBoundingBoxRecord(id);
         if (!boundingBoxRecord) {
             boundingBoxRecord = gapiService.gapi.layer.bbox.makeBoundingBox(
-                    id, bbExtent, mapBody.extent.spatialReference);
+                id, bbExtent, mapBody.extent.spatialReference);
 
             boundingBoxRecords.push(boundingBoxRecord);
             mapBody.addLayer(boundingBoxRecord);

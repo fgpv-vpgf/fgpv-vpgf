@@ -98,7 +98,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         // add the new legend block to the legend block (always to the root group)
         legendBlocks.addEntry(importedLegendBlock, position);
 
-        // add the new block config to the legend config (always to the root group)
+        // add the new block config to the legend config (always to the root group), so it will be preserved when map is rebuilt
         configService.getSync.map.legend.addChild(importedBlockConfig, position);
 
         return importedLegendBlock;
@@ -176,12 +176,18 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 entry === legendBlock ? parentEntry : null)
             .filter(a => a !== null)[0];
 
-        // TODO: instead of removing the legen block form the selector, just hide it with some css
+        // TODO: instead of removing the legend block form the selector, just hide it with some css
         const index = legendBlockParent.removeEntry(legendBlock);
 
         return [_resolve, _reject];
 
         // FIXME: need to remove the enty from the legend config as well, or it will be recreated on the full state restore
+        /**
+         * A helper function that remove remaining layer elements from config.
+         *
+         * @function _resolve
+         * @private
+         */
         function _resolve() {
             layerRegistry.removeLayerRecord(legendBlock.layerRecordId);
 
@@ -189,6 +195,12 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             _boundingBoxRemoval(legendBlock);
         }
 
+        /**
+         * A helper function that restored layer elements.
+         *
+         * @function _reject
+         * @private
+         */
         function _reject() {
             legendBlockParent.addEntry(legendBlock, index);
             legendBlock.visibility = cachedVisibility;
