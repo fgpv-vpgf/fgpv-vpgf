@@ -1967,12 +1967,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     class About {
         constructor(aboutSource = {}) {
             this._source = aboutSource;
-
-            if (aboutSource.content) {
-                this._content = aboutSource.content;
-            } else {
-                this._folderName = aboutSource.folderName;
-            }
+            this._content = aboutSource.content;
+            this._folderName = aboutSource.folderName;
         }
 
         get content() { return this._content; }
