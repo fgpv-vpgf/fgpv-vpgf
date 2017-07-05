@@ -263,12 +263,10 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
 
         // get about map description from markdown or config file
         configService.onEveryConfigLoad(config => {
-            if (config.ui.about) {
-                if (config.ui.about.isMarkdown) {
-                    self.about = config.ui.about.content;
-                } else {
-                    useMarkdown(config.ui.about.folderName).then(html => { self.about = html; });
-                }
+            if (config.ui.about.content) {
+                self.about = config.ui.about.content;
+            } else if (config.ui.about.folderName) {
+                useMarkdown(config.ui.about.folderName).then(html => { self.about = html; });
             }
         });
 

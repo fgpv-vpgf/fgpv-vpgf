@@ -1862,7 +1862,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 'share',
                 'touch',
                 'help',
-                "about"
+                'about'
             ],
             [
                 'language'
@@ -1965,27 +1965,23 @@ function ConfigObjectFactory(Geo, gapiService, common) {
      * @class About
      */
     class About {
-        constructor(aboutSource) {
+        constructor(aboutSource = {}) {
             this._source = aboutSource;
-            this._isMarkdown = true;
 
             if (aboutSource.content) {
-                this._content = aboutSource.content
+                this._content = aboutSource.content;
             } else {
                 this._folderName = aboutSource.folderName;
-                this._isMarkdown = false;
             }
         }
 
         get content() { return this._content; }
         get folderName() { return this._folderName; }
-        get isMarkdown() { return this._isMarkdown; }
 
-        get JSON () {
+        get JSON() {
             return {
                 content: this.content,
-                folderName: this.folderName,
-                isMarkdown: this.isMarkdown
+                folderName: this.folderName
             };
         }
     }
@@ -2035,9 +2031,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._help = new Help(uiSource.help);
             this._fullscreen = uiSource.fullscreen;
             this._filterIsOpen = new FilterIsOpen(uiSource.filterIsOpen);
-            if (uiSource.about && (uiSource.about.content || uiSource.about.folderName)) {
-                this._about = new About(uiSource.about);
-            }
+            this._about = new About(uiSource.about);
         }
 
         get source () {                 return this._source; }
