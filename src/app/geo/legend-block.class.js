@@ -99,6 +99,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         get extent () {             return this._proxy.extent; }
         get symbology() {           return this._proxy.symbology; }
         get formattedAttributes() { return this._proxy.formattedAttributes; }
+        get itemIndex () {          return this._proxy.itemIndex; }
 
         get opacity () {            return this._proxy.opacity; }
         get visibility () {         return this._proxy.visibility; }
@@ -441,6 +442,9 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         get parentLayerType () {    return this._mainProxyWrapper.parentLayerType; }
         get featureCount () {       return this._mainProxyWrapper.featureCount; }
         get geometryType () {       return this._mainProxyWrapper.geometryType; }
+        // on change, update the corresponding css rule to make bboxes click-through
+        get bboxID () {             return this.layerRecordId + '_' + this.itemIndex + '_bbox'; }
+        get itemIndex () {          return this._mainProxyWrapper.itemIndex; }
 
         get visibility () {         return this._mainProxyWrapper.visibility; }
         set visibility (value) {
@@ -495,22 +499,28 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          */
         _makeBbox () {
             if (!this._bboxProxy) {
-                // if chaning id prefix, update the corresponding css rule to make bboxes click-through
-                this._bboxProxy = layerRegistry
-                    .makeBoundingBoxRecord(`${this.id}_bbox`, this._mainProxyWrapper.extent);
+                this._bboxProxy = layerRegistry.getBoundingBoxRecord(this.bboxID);
+
+                if (!this._bboxProxy) {
+                    this._bboxProxy = layerRegistry.makeBoundingBoxRecord(this.bboxID, this._mainProxyWrapper.extent);
+                }
             }
         }
+
         get boundingBox () {
             if (!this._mainProxyWrapper.extent) {
                 return false;
             }
 
-            if (!this._bboxProxy) {
-                return false;
+            const bbox = layerRegistry.getBoundingBoxRecord(this.bboxID);
+
+            if (!this._bboxProxy && bbox) {
+                this._bboxProxy = bbox;
             }
 
-            return this._bboxProxy.visible;
+            return this._bboxProxy ? this._bboxProxy.visible : false;
         }
+
         set boundingBox (value) {
             if (!this._bboxProxy) {
                 if (value) {
