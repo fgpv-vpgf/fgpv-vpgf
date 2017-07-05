@@ -1,3 +1,5 @@
+import marked from 'marked';
+
 const templateURLs = {
     about: require('./about-dialog.html'),
     share: require('./share-dialog.html')
@@ -261,9 +263,9 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
 
         // get about map description from markdown or config file
         configService.onEveryConfigLoad(config => {
-            if (config.ui.about.isMarkdown) {
+            if (config.ui.about.content) {
                 self.about = config.ui.about.content;
-            } else {
+            } else if (config.ui.about.folderName) {
                 useMarkdown(config.ui.about.folderName).then(html => { self.about = html; });
             }
         });
