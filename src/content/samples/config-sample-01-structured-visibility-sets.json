@@ -1,5 +1,6 @@
 {
   "ui": {
+    "title": "Custom Title",
     "navBar": {
       "zoom": "buttons",
       "extra": [

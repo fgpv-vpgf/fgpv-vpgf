@@ -8,7 +8,7 @@
                 <md-icon md-svg-src="logo" ng-if="!self.uiConfig.logoUrl"></md-icon>
             </div>
 
-            <h1 translate class="app-logotype md-heading">sidenav.title</h1>
+            <h1 class="app-logotype md-heading">{{ self.uiConfig.title || 'sidenav.title' | translate }}</h1>
         </div>
     </header>
 
