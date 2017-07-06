@@ -275,11 +275,12 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
 
             const opacity = encodeOpacity(childProxy.opacity);
             const viz = encodeBoolean(childProxy.visibility);
+            const bb = encodeBoolean(childConfig.state.boundingBox);
             const query = encodeBoolean(childConfig.state.query);
             const idx = encodeInteger(treeChild.entryIndex, 12);
 
-            // extra 00 is padding to make our child have a length that is a factor of 4 (so it is encoded in 6 hex character)
-            return opacity + viz + query + encodeBoolean(root) + idx + '00';
+            // extra 0 is padding to make our child have a length that is a factor of 4 (so it is encoded in 6 hex character)
+            return opacity + viz + bb + query + encodeBoolean(root) + idx + '0';
 
         }
     }
@@ -565,13 +566,14 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
      * @returns {Object}                    Child layer settings decoded in an object
      */
     function extractChildSettings(childSettingsHex) {
-        const [, opac, vis, query, root, idx] =
-                    hexToBinary(childSettingsHex).match(/^(.{7})(.)(.)(.)(.{12})/);
+        const [, opac, vis, bb, query, root, idx] =
+                    hexToBinary(childSettingsHex).match(/^(.{7})(.)(.)(.)(.)(.{12})/);
 
         // Note that property names here must match how they are spelled in the config options
         return {
             opacity: decodeOpacity(opac),
             visibility: decodeBoolean(vis),
+            boundingBox: decodeBoolean(bb),
             query: decodeBoolean(query),
             index: parseInt(idx, 2),
             root: decodeBoolean(root)
