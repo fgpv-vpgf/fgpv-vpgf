@@ -9,6 +9,10 @@
             display: none;
         }
     }
+
+    md-select-value {
+        width: 1px; // not sure why, but this forces obedience to parent width
+    }
 }
 
 md-input-container {
