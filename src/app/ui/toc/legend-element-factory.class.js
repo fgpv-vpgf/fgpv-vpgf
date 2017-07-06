@@ -378,37 +378,37 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
         }
 
         get data () {
-            const { parentLayerType, geometryType, featureCount } = this.block;
+            const { layerType, geometryType, featureCount } = this.block;
 
             const dataObject = {
-                unknown: 'toc.label.flag.unknown',
+                unknown: {},
                 unresolved: {},
-                get _countData() {
-                    let content;
-                    // it's possible to have a layer with geometry defined, but no actual data, which makes it a raster layer?
-                    if (!geometryType || featureCount === -1) {
-                        content = $translate.instant('geometry.type.imagery');
-                    } else {
+                get esriFeature() {
+                    let content = '';
+
+                    // only if there a valid feature count, display it
+                    if (typeof featureCount !== 'undefined' && featureCount !== -1) {
                         // need to translate the substution variable itself; can't think of any other way :(
                         const typeName = $translate
                             .instant(`geometry.type.${geometryType}`)
                             .split('|')[featureCount === 1 ? 0 : 1];
 
-                        content = `${featureCount} ${typeName}`;
+                        content = `(${featureCount} ${typeName})`;
                     }
 
                     return { content };
                 },
-                get esriFeature() { return this._countData; },
-                get esriDynamic() { return this._countData; }
-            }[parentLayerType || TypeFlag.unresolvedType];
+
+                get esriRaster() {  return this.esriDynamic; },
+                get esriDynamic() { return { content: `(${$translate.instant('geometry.type.imagery')})` }; }
+            }[layerType || TypeFlag.unresolvedType];
 
             return dataObject;
         }
 
         get style () {   return this._styles[this.block.parentLayerType || TypeFlag.unresolvedType]; }
         get icon () {    return this._icons[this.block.parentLayerType || TypeFlag.unresolvedType]; }
-        get label () {   return this._labels[this.block.parentLayerType || TypeFlag.unresolvedType]; /* include feature count and feature types ? */ }
+        get label () {   return this._labels[this.block.parentLayerType || TypeFlag.unresolvedType]; }
 
         get isVisible () { return true; }
     }
