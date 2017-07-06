@@ -760,6 +760,28 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         }
 
         /**
+         * @return {Boolean} `true` is all observed legend blocks are set to be queriable; `false` otherwise;
+         */
+        get query () {
+            return this._observableEntries.some(entry =>
+                entry.query);
+        }
+        /**
+         * @param {Boolean} value zxxzcs
+         * @return {LegendGroup} this for chaining
+         */
+        set query (value) {
+            if (this.isControlSystemDisabled('query')) {
+                return;
+            }
+
+            this._activeEntries.forEach(entry =>
+                (entry.query = value));
+
+            return this;
+        }
+
+        /**
          * @return {Number} returns opacity of the group;
          * it's equal to the child opacity values if they are the same or 0.5 if not;
          * TODO: might want to add a description what 0.5 value means in such cases;
@@ -797,6 +819,8 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         }
 
         get entries () {                return this._entries; }
+
+        // active entries are legend blocks that directly or indirectly control map data, namely legend nodes, groups, and sets
         get _activeEntries () {
             return this.entries
                 .filter(entry =>
@@ -805,6 +829,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                     entry.blockType === TYPES.NODE);
         }
         get _observableEntries () {
+            // observable entries are a subset of active entries which are not controlled blocks and are rendered in the UI
             // when calculating group opacity or visibility, exclude controlled layers as they might have locked opacity specified in the config
             return this._activeEntries.filter(entry =>
                 !entry.controlled);

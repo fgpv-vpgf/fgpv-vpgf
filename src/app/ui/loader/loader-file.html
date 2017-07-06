@@ -61,7 +61,7 @@
                         type="url"
                         ng-focus="self.upload.fileReset(); self.upload.fileUrlResetValidation()"
                         ng-model="self.upload.fileUrl"
-                        ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
+                        ng-model-options="{ updateOn: 'default blur', debounce: { default: 30, blur: 0 } }"
                         ng-keypress="self.upload.step.onKeypress($event)"
                         required>
 

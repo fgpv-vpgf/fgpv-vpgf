@@ -14,7 +14,7 @@ angular
     .module('app.ui')
     .factory('LegendElementFactory', LegendElementFactory);
 
-function LegendElementFactory($translate, ConfigObject, tocService, debounceService, configService) {
+function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounceService, configService) {
     const ref = {
         autoLegendEh: configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE
     };
@@ -241,9 +241,11 @@ function LegendElementFactory($translate, ConfigObject, tocService, debounceServ
 
         action () {     this._debouncedAction(); }
 
-        // control is only visible if the layer has data that is not disabled
         get isVisible () {
-            return super.isVisible && this.block.featureCount !== -1;
+            // data control is visible for all feature layers unless the controls is disallowed or disabled in the config
+            return super.isVisible &&
+                !this.block.isControlDisabled(this._controlName) &&
+                this.block.layerType === Geo.Layer.Types.ESRI_FEATURE;
         }
 
         _debouncedAction = debounceService.registerDebounce(
@@ -376,36 +378,37 @@ function LegendElementFactory($translate, ConfigObject, tocService, debounceServ
         }
 
         get data () {
-            const { parentLayerType, geometryType, featureCount } = this.block;
+            const { layerType, geometryType, featureCount } = this.block;
 
             const dataObject = {
-                unknown: 'toc.label.flag.unknown',
+                unknown: {},
                 unresolved: {},
-                get _countData() {
-                    let content;
-                    if (!geometryType) {
-                        content = $translate.instant('geometry.type.imagery');
-                    } else {
+                get esriFeature() {
+                    let content = '';
+
+                    // only if there a valid feature count, display it
+                    if (typeof featureCount !== 'undefined' && featureCount !== -1) {
                         // need to translate the substution variable itself; can't think of any other way :(
                         const typeName = $translate
                             .instant(`geometry.type.${geometryType}`)
                             .split('|')[featureCount === 1 ? 0 : 1];
 
-                        content = `${featureCount} ${typeName}`;
+                        content = `(${featureCount} ${typeName})`;
                     }
 
                     return { content };
                 },
-                get esriFeature() { return this._countData; },
-                get esriDynamic() { return this._countData; }
-            }[parentLayerType || TypeFlag.unresolvedType];
+
+                get esriRaster() {  return this.esriDynamic; },
+                get esriDynamic() { return { content: `(${$translate.instant('geometry.type.imagery')})` }; }
+            }[layerType || TypeFlag.unresolvedType];
 
             return dataObject;
         }
 
         get style () {   return this._styles[this.block.parentLayerType || TypeFlag.unresolvedType]; }
         get icon () {    return this._icons[this.block.parentLayerType || TypeFlag.unresolvedType]; }
-        get label () {   return this._labels[this.block.parentLayerType || TypeFlag.unresolvedType]; /* include feature count and feature types ? */ }
+        get label () {   return this._labels[this.block.parentLayerType || TypeFlag.unresolvedType]; }
 
         get isVisible () { return true; }
     }
@@ -433,10 +436,11 @@ function LegendElementFactory($translate, ConfigObject, tocService, debounceServ
         get icon () {    return 'community:table-large'; }
         get label () {   return 'toc.label.flag.data.table'; }
 
-        // flag is only visible if the layer has data that is not disabled
         get isVisible () {
-            return this.block.isControlVisible(this._controlName) &&
-                !this.block.isControlDisabled(this._controlName) && this.block.featureCount !== -1;
+            // data flag is visible for all feature layers unless the controls is disallowed or disabled in the config
+            return super.isVisible &&
+                !this.block.isControlDisabled(this._controlName) &&
+                this.block.layerType === Geo.Layer.Types.ESRI_FEATURE;
         }
     }
 
