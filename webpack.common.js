@@ -77,7 +77,11 @@ module.exports = function (env) {
             new webpack.optimize.ModuleConcatenationPlugin(),
 
             new CopyWebpackPlugin([{
-                context: 'src/content/samples',
+                context: 'src/content/samples/config',
+                from: '**/*.json',
+                to: 'samples/config'
+            },{
+            context: 'src/content/samples',
                 from: '**/*.json',
                 to: 'samples'
             },{
