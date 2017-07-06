@@ -81,6 +81,10 @@ module.exports = function (env) {
                 from: '**/*.json',
                 to: 'samples/config'
             },{
+            context: 'src/content/samples',
+                from: '**/*.json',
+                to: 'samples'
+            },{
                 context: 'src/content/samples',
                 from: '**/*.html',
                 to: 'samples'

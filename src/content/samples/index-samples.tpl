@@ -94,7 +94,6 @@
         <option value="config/config-sample-38.json">38. Set width for a column</option>
         <option value="config/config-sample-39.json">39. Order Fields</option>
         <option value="config/config-sample-40.json">40. Hide/Display field</option>
-        <option value="config/config-sample-41.json">41. Exporting with a map</option>
     </select>
 
     <form id="bookmarkLoad">

@@ -25,7 +25,7 @@
 
 <body>
     <div class="myMap" id="mobile-map" is="rv-map"
-        rv-config="config/config-mobile-2.json"
+        rv-config="config-mobile-2.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
         rv-restore-bookmark="bookmark">
