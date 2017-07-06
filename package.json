@@ -1,6 +1,6 @@
 {
   "name": "geoApi",
-  "version": "0.0.0-protoLR-75",
+  "version": "0.0.0-protoLR-76",
   "description": "",
   "main": "src/index.js",
   "dependencies": {
@@ -19,7 +19,7 @@
     "proj4": "^2.4.3",
     "rcolor": "1.0.1",
     "rgbcolor": "1.0.1",
-    "shpjs": "https://github.com/fgpv-vpgf/shapefile-js.git#v3.5.0",
+    "shpjs": "https://github.com/fgpv-vpgf/shapefile-js.git#v3.6.0",
     "svg.js": "2.6.1",
     "terraformer": "~1.0.8",
     "terraformer-arcgis-parser": "~1.0.5",
