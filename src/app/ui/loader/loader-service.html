@@ -13,7 +13,7 @@
                     type="url"
                     ng-change="self.connect.serviceUrlResetValidation()"
                     ng-model="self.connect.serviceUrl"
-                    ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
+                    ng-model-options="{ updateOn: 'default blur', debounce: { default: 30, blur: 0 } }"
                     ng-keypress="self.connect.step.onKeypress($event)"
                     required>
                 <div ng-messages="self.connect.form.serviceUrl.$error">
