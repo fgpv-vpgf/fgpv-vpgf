@@ -674,6 +674,7 @@
                 "fullscreen": { "type": "boolean", "default": false, "description": "Indicates viewer takes up entire viewport" },
                 "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
                 "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
+                "title": { "type": "string", "description": "An optional title to be used in the place of the default viewer title" },
                 "navBar": { "$ref": "#/definitions/navBarNode" },
                 "sideMenu": { "$ref": "#/definitions/sideMenuNode" },
                 "restrictNavigation": {
