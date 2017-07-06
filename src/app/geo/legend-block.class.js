@@ -829,7 +829,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                     entry.blockType === TYPES.NODE);
         }
         get _observableEntries () {
-            // obserbale entrise are a subset of active entries which are not controlled blocks and are rendered in the UI
+            // observable entries are a subset of active entries which are not controlled blocks and are rendered in the UI
             // when calculating group opacity or visibility, exclude controlled layers as they might have locked opacity specified in the config
             return this._activeEntries.filter(entry =>
                 !entry.controlled);
