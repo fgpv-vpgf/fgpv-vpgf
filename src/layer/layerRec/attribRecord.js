@@ -120,7 +120,7 @@ class AttribRecord extends layerRecord.LayerRecord {
      *
      * @function getFeatureCount
      * @param {String} url     server url of the feature layer. empty string for file based layers
-     * @return {Promise}       resolves with an integer indicating the feature count.
+     * @return {Promise}       resolves with an integer indicating the feature count. -1 if error occured.
      */
     getFeatureCount (url) {
         if (url) {
