@@ -12,10 +12,10 @@ const HtmlWebpackPlugin     = require('html-webpack-plugin');
 module.exports = function (env) {
 
     const geoPath = env.geoLocal ?
-                        env.geoLocal.length > 0 ?
-                            env.geoLocal :
-                            path.resolve(__dirname, '../', 'geoApi') :
-                        path.resolve(__dirname, 'node_modules/geoApi');
+        env.geoLocal.length > 0 ?
+            env.geoLocal :
+            path.resolve(__dirname, '../', 'geoApi') :
+        path.resolve(__dirname, 'node_modules/geoApi');
 
     const config = {
         entry: {
@@ -81,7 +81,7 @@ module.exports = function (env) {
                 from: '**/*.json',
                 to: 'samples/config'
             },{
-            context: 'src/content/samples',
+                context: 'src/content/samples',
                 from: '**/*.json',
                 to: 'samples'
             },{

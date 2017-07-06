@@ -119,6 +119,7 @@
                 ng-switch-when="dynamicservice">
                 <md-checkbox
                     ng-model="self.layerSource.config.singleEntryCollapse"
+                    md-indeterminate="self.layerSource.config.layerEntries.length === 0"
                     ng-true-value="false"
                     ng-false-value="true"
                     ng-disabled="self.layerSource.config.layerEntries.length !== 1"
