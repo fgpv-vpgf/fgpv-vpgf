@@ -36,7 +36,8 @@
     "moment-timezone": "^0.5.13",
     "rcolor": "^1.0.1",
     "screenfull": "^3.2.0",
-    "svg.textflow.js": "github:fgpv-vpgf/svg.textflow.js"
+    "svg.textflow.js": "github:fgpv-vpgf/svg.textflow.js",
+    "text-encoding": "^0.6.4"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
