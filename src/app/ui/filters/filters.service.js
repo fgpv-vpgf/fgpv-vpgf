@@ -491,12 +491,13 @@ function filterService(stateManager, geoService, $rootScope, $q, gapiService, de
         // check if we need to show the filters (need this check when table is created)
         layoutService.isFiltersVisible = service.filter.isOpen;
 
-        // set layer type to see if we show apply filter button. Only works on feature layer
-        // not user added layer (FeatureLayer: layer created by value (from a feature collection) does not support definition expressions and time definitions)
+        // set layer type to see if we show apply filter button. Only works on feature/dynamic layer
+        // user added layer (layer created by value from a feature collection like CSV file) does not support definition expressions and time definitions)
+        // user added layer from server support definition expression and time defintion
         const layerType = stateManager.display.filters.requester.legendEntry.layerType;
-        const user = stateManager.display.filters.requester.legendEntry.userAdded;
-        service.isFeatureLayer = (layerType === 'esriFeature' && !user) ? true : false;
-        service.isDynamicLayer = (layerType === 'esriDynamicLayerEntry' && !user) ? true : false;
+        const url = layerRegistry.getLayerRecord(stateManager.display.filters.requester.legendEntry.layerRecordId).rootUrl;
+        service.isFeatureLayer = (layerType === 'esriFeature' && url !== "") ? true : false;
+        service.isDynamicLayer = (layerType === 'esriDynamicLayerEntry' && url !== "") ? true : false;
 
         filteredState().then(() => {
             filterTimeStamps.onCreated = Date.now();
