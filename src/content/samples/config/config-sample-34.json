@@ -12,6 +12,12 @@
     "sideMenu": {
       "logo": true
     },
+    "filterIsOpen": {
+      "id": "0",
+      "large": true,
+      "medium": true,
+      "small": false
+    },
     "legend": {
       "isOpen": {
         "large": true,
