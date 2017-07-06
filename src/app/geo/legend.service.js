@@ -379,6 +379,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 if (item.childs) {
                     const groupConfig = new ConfigObject.legend.EntryGroup(item.groupSource);
                     legendBlock = new LegendBlock.Group(groupConfig, rootProxyWrapper);
+                    legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
 
                     item.childs.forEach(child =>
                         _addChildBlock(child, legendBlock));
@@ -386,10 +387,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 } else {
                     const entryConfig = new ConfigObject.legend.Entry(item);
                     legendBlock = new LegendBlock.Node(item.proxyWrapper, entryConfig);
+                    legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
                     legendBlock.applyInitialStateSettings();
                 }
-                // map all dynamic children to the block config and layer record of their root parent
-                legendBlock.layerRecordId = layerConfig.id;
 
                 parentLegendGroup.addEntry(legendBlock);
             }
