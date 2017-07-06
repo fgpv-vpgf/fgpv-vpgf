@@ -188,7 +188,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                         // see key-focus event to see why we put 10
                     }, // turn on virtual scroller extension
                     colReorder: {
-                        fixedColumnsLeft: 2, // fix symbol and interactive columns
+                        fixedColumnsLeft: displayData.columns.length, // disable drag and drop for all columns, only allow reordering from settings
                         realtime: false// we need this to know when reorder is done
                     },
                     /*select: true,*/ // allow row select,
