@@ -38,7 +38,7 @@
             right: rem(15.5);
             bottom: rem(0.1);
             padding: rem(0.2);
-            display: flex;
+            display: flex !important;
             flex-direction: column;
             font-size: rem(1.1);
             font-weight: 600;
