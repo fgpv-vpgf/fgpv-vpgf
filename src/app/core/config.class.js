@@ -2021,6 +2021,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             this._navBar = new NavBar(uiSource.navBar);
             this._logoUrl = uiSource.logoUrl || null;
+            this._title = uiSource.title || null;
             this._restrictNavigation = uiSource.restrictNavigation === true;
             this._sideMenu = new SideMenu(uiSource.sideMenu);
             this._legend = new UILegend(uiSource.legend);
@@ -2034,6 +2035,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get navBar () {                 return this._navBar; }
         get logoUrl () {                return this._logoUrl; }
+        get title () {                  return this._title; }
         get restrictNavigation () {     return this._restrictNavigation; }
         get sideMenu () {               return this._sideMenu; }
         get legend () {                 return this._legend; }
@@ -2046,6 +2048,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             return {
                 navBar: this.navBar.JSON,
                 logoUrl: this.logoUrl,
+                title: this.title,
                 restrictNavigation: this.restrictNavigation,
                 sideMenu: this.sideMenu.JSON,
                 legend: this.legend.JSON,
