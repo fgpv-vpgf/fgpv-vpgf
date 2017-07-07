@@ -56,7 +56,8 @@ function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider, $p
                     'à' <= ch && ch <= 'ÿ' ||
                     'À' <= ch && ch <= 'Ÿ' ||
                     'Ç' === ch || ch === 'ç' ||
-                    '0' <= ch && ch <= '9');
+                    '0' <= ch && ch <= '9'  ||
+                    ch === '’');
         }
     }
 
