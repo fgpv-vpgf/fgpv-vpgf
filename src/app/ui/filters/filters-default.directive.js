@@ -211,7 +211,10 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                                 // columns: exportColumns(displayData.columns), TODO: remove export part?
                                 columns: ':not(.rv-filter-noexport)', // need to use class if we want to dynamicly show/hide columns
                                 orthogonal: null // use real data, not renderer
-                            }
+                            },
+                            // allow for accented characters to export correctly
+                            charset: 'UTF-16LE',
+                            bom: true
                         }
                     ],
                     oLanguage: oLang
