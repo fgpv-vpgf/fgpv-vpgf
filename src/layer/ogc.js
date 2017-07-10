@@ -104,7 +104,7 @@ function parseCapabilitiesBuilder(esriBundle) {
         // recursively called on all child <Layer> nodes
         function getLayers(xmlNode) {
             if (! xmlNode) {
-                return [].map(layer => {});
+                return [];
             }
             return query('> Layer', xmlNode).map(layer => {
                 const nameNode = getImmediateChild(layer, 'Name');
