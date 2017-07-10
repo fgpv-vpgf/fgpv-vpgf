@@ -94,6 +94,10 @@
         <option value="config/config-sample-38.json">38. Set width for a column</option>
         <option value="config/config-sample-39.json">39. Order Fields</option>
         <option value="config/config-sample-40.json">40. Hide/Display field</option>
+        <option value="config/config-sample-41.json">41. ABOUT MAP with custom content</option>
+        <option value="config/config-sample-42.json">42. Sample with hidden layer</option>
+        <option value="config/config-sample-43.json">43. Map with custom title</option>
+        <option value="config/config-sample-44.json">44. Viewer with custom name and logo</option>
     </select>
 
     <form id="bookmarkLoad">
