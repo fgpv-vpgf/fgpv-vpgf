@@ -1,5 +1,3 @@
-/* global RV */
-
 /**
  * @module gapiService
  * @memberof app.geo
