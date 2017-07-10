@@ -26,7 +26,11 @@ angular.element(document)
             angular.bootstrap(node, ['app'], {
                 strictDi: true
             });
-            delete window.angular;
-            window.angular = existingWindowDotAngular;
+
+            // only do this if there is another version present - protractor needs angular reference otherwise
+            if (existingWindowDotAngular) {
+                delete window.angular;
+                window.angular = existingWindowDotAngular;
+            }
         });
     });

@@ -15,9 +15,6 @@ angular
 // TODO: add helper function to common
 function common($timeout, $q) {
     const service = {
-        $timeout: $timeout,
-        $q: $q,
-
         intersect,
         removeFromArray
     };
