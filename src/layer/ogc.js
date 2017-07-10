@@ -103,6 +103,9 @@ function parseCapabilitiesBuilder(esriBundle) {
         // pick title, name and queryable nodes/attributes
         // recursively called on all child <Layer> nodes
         function getLayers(xmlNode) {
+            if (! xmlNode) {
+                return [];
+            }
             return query('> Layer', xmlNode).map(layer => {
                 const nameNode = getImmediateChild(layer, 'Name');
                 const titleNode = getImmediateChild(layer, 'Title');
