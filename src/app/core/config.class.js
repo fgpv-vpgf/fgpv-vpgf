@@ -1872,6 +1872,17 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             }
         }
 
+        static AVAILABLE_ITEMS = [
+            'layers',
+            'basemap',
+            'about',
+            'fullscreen',
+            'export',
+            'share',
+            'touch',
+            'help',
+            'language'
+        ];
 
         get source () { return this._source; }
 
