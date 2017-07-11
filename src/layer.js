@@ -948,44 +948,45 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         const destLookup = projectionLookup(geoApi.proj, destProj, opts.epsgLookup);
 
         // make the layer
-        const buildLayer = new Promise(resolve => {
+        const buildLayer = () => {
+            return new Promise(resolve => {
+                // project data and convert to esri json format
+                // console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
+                geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
+                const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
+                const geometryType = layerDefinition.drawingInfo.geometryType;
 
-            // project data and convert to esri json format
-            // console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
-            geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
-            const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
-            const geometryType = layerDefinition.drawingInfo.geometryType;
+                const fs = {
+                    features: esriJson,
+                    geometryType
+                };
+                const layer = new esriBundle.FeatureLayer(
+                    {
+                        layerDefinition: layerDefinition,
+                        featureSet: fs
+                    }, {
+                        mode: esriBundle.FeatureLayer.MODE_SNAPSHOT,
+                        id: layerId
+                    });
 
-            const fs = {
-                features: esriJson,
-                geometryType
-            };
-            const layer = new esriBundle.FeatureLayer(
-                {
-                    layerDefinition: layerDefinition,
-                    featureSet: fs
-                }, {
-                    mode: esriBundle.FeatureLayer.MODE_SNAPSHOT,
-                    id: layerId
-                });
+                // ＼(｀O´)／ manually setting SR because it will come out as 4326
+                layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
 
-            // ＼(｀O´)／ manually setting SR because it will come out as 4326
-            layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
+                if (opts.colour) {
+                    layer.renderer.symbol.color = new esriBundle.Color(opts.colour);
+                }
 
-            if (opts.colour) {
-                layer.renderer.symbol.color = new esriBundle.Color(opts.colour);
-            }
+                // initializing layer using JSON does not set this property. do it manually.
+                layer.geometryType = geometryType;
 
-            // initializing layer using JSON does not set this property. do it manually.
-            layer.geometryType = geometryType;
-
-            resolve(layer);
-        });
+                resolve(layer);
+            });
+        };
 
         // call promises in order
         return srcLookup
             .then(() => destLookup)
-            .then(() => buildLayer);
+            .then(() => buildLayer());
 
     };
 }
