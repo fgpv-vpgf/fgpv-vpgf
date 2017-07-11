@@ -37,6 +37,15 @@ function mdTooltipDirective($delegate, $rootElement, $timeout) {
             return (scope, el, attrs, ctrls) => {
                 let showTooltipTimeout;
 
+                // this prevents multiple tooltips from displaying at the same time by only showing the most recent (and hiding the others)
+                scope.$watch('mdVisible', isVisible => {
+                    const siblings = $('md-tooltip');
+                    if (siblings.length > 1 && isVisible) {
+                        siblings.addClass('rv-hide');
+                        el.removeClass('rv-hide');
+                    }
+                });
+
                 // if touch mode is on - hide the tooltip on touchstart, then show it after 1 second if no touchend or touchcancel event is fired
                 // did not use native md-delay since we don't want to change the delay for mouse hovers or on focus, just touch.
                 // md-visible did/does not work for managing the visibility of the tooltip; this may be a bug or the documentation is misleading on its use.
