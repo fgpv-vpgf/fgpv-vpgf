@@ -112,6 +112,21 @@ class FeatureRecord extends attribRecord.AttribRecord {
         const pLD = aFC.getLayerData().then(ld => {
             aFC.geomType = ld.geometryType;
             aFC.nameField = this.config.nameField || ld.nameField || '';
+
+            // trickery. file layer can have field names that are bad keys.
+            // our file loader will have corrected them, but config.nameField will have
+            // been supplied from the wizard (it pre-fetches fields to present a choice
+            // to the user). If the nameField was adjusted for bad characters, we need to
+            // re-synchronize it here.
+            if (this.isFileLayer() && ld.fields.findIndex(f => f.name === aFC.nameField) === -1) {
+                const validField = ld.fields.find(f => f.alias === aFC.nameField);
+                if (validField) {
+                    aFC.nameField = validField.name;
+                } else {
+                    // give warning. impact is tooltips will have no text, details pane no header
+                    console.warn(`Cannot find name field in layer field list: ${aFC.nameField}`);
+                }
+            }
         });
 
         const pFC = this.getFeatureCount().then(fc => {
