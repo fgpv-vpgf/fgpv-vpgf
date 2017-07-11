@@ -1841,7 +1841,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._source = source;
             this._logo = source.logo === true;
 
-            const sideMenuitems = [
+            const ITEMS_DEFAULT = [
                 [
                     'layers',
                     'basemap'
@@ -1862,14 +1862,14 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 ]
             ];
 
-            //remove help if help or its folderName is absent
-            if (! helpSource || ! helpSource.folderName) {
-                sideMenuitems[1].splice(sideMenuitems[1].indexOf('help'));
-            }
-
             this._items = angular.isArray(source.items) ?
                 source.items.map(subItems =>
-                    common.intersect(source.items, SideMenu.ITEMS)) : sideMenuitems;
+                    common.intersect(source.items, SideMenu.AVAILABLE_ITEMS)) : ITEMS_DEFAULT;
+
+            //remove help if help or its folderName is absent
+            if (! helpSource || ! helpSource.folderName) {
+                ITEMS_DEFAULT[1].splice(ITEMS_DEFAULT[1].indexOf('help'));
+            }
         }
 
 
