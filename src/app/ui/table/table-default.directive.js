@@ -181,8 +181,6 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     processing: true, // show processing when filtering takes time
                     scrollY: true, // allow vertical scroller
                     scrollX: true, // allow horizontal scroller
-                    // need to remove autoWidth because we can have autoWidth and fix columns at the same time (if so, columns are note well displayed)
-                    autoWidth: false, // without autoWidth, few columns will be stretched to fill availalbe width, and many columns will cause the table to scroll horizontally
                     scroller: {
                         displayBuffer: 10 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer.
                         // see key-focus event to see why we put 10
