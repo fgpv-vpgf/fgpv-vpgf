@@ -595,6 +595,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get tolerance () { return this._tolerance; }
         get filters () { return this._filters; }
 
+        get queryUrl () { return this._queryUrl; }
+
         get JSON() {
             return angular.merge(super.JSON, {
                 nameField: this.nameField,
@@ -749,6 +751,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
         get tolerance () { return this._tolerance; }
         get filters () { return this._filters; }
+
+        get queryUrl () { return this._queryUrl; }
 
         _singleEntryCollapse = false;
         set singleEntryCollapse (value) {   this._singleEntryCollapse = value; }

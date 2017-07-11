@@ -482,7 +482,7 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
         get icon () {    return 'community:filter'; }
         get label () {   return 'toc.label.flag.filter'; }
 
-        get isVisible () { return true; }
+        get isVisible () { return this.block.filter; }
     }
 
     class BadProjectionFlag extends BaseFlag {
