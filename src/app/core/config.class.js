@@ -1810,11 +1810,15 @@ function ConfigObjectFactory(Geo, gapiService, common) {
      * @class NavBar
      */
     class NavBar {
-        constructor(source = {}) {
+        constructor(source = {}, helpSource) {
             this._source = source;
-
             this._zoom = source.zoom || 'buttons';
             this._extra = source.extra || [];
+
+            // remove help if help or its folderName is absent
+            if (! helpSource || ! helpSource.folderName) {
+                this._extra.splice(this._extra.indexOf('help'));
+            }
         }
 
         get zoom () { return this._zoom; }
@@ -1833,48 +1837,41 @@ function ConfigObjectFactory(Geo, gapiService, common) {
      * @class SideMenu
      */
     class SideMenu {
-        constructor(source = {}) {
+        constructor(source = {}, helpSource) {
             this._source = source;
-
             this._logo = source.logo === true;
+
+            const sideMenuitems = [
+                [
+                    'layers',
+                    'basemap'
+                ],
+                [
+                    'fullscreen',
+                    'export',
+                    'share',
+                    'touch',
+                    'help',
+                    'about'
+                ],
+                [
+                    'language'
+                ],
+                [
+                    'plugins'
+                ]
+            ];
+
+            //remove help if help or its folderName is absent
+            if (! helpSource || ! helpSource.folderName) {
+                sideMenuitems[1].splice(sideMenuitems[1].indexOf('help'));
+            }
+
             this._items = angular.isArray(source.items) ?
                 source.items.map(subItems =>
-                    common.intersect(source.items, SideMenu.ITEMS)) :
-                SideMenu.ITEMS_DEFAULT;
+                    common.intersect(source.items, SideMenu.ITEMS)) : sideMenuitems;
         }
 
-        static AVAILABLE_ITEMS = [
-            'layers',
-            'basemap',
-            'about',
-            'fullscreen',
-            'export',
-            'share',
-            'touch',
-            'help',
-            'language'
-        ];
-
-        static ITEMS_DEFAULT = [
-            [
-                'layers',
-                'basemap'
-            ],
-            [
-                'fullscreen',
-                'export',
-                'share',
-                'touch',
-                'help',
-                'about'
-            ],
-            [
-                'language'
-            ],
-            [
-                'plugins'
-            ]
-        ];
 
         get source () { return this._source; }
 
@@ -1951,8 +1948,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     class Help {
         constructor(helpSource = {}) {
             this._source = helpSource;
-
-            this._folderName = helpSource.folderName || 'default';
+            this._folderName = helpSource.folderName;
         }
 
         get folderName () { return this._folderName; }
@@ -2023,11 +2019,11 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         constructor(uiSource) {
             this._source = uiSource;
 
-            this._navBar = new NavBar(uiSource.navBar);
+            this._navBar = new NavBar(uiSource.navBar, uiSource.help);
             this._logoUrl = uiSource.logoUrl || null;
             this._title = uiSource.title || null;
             this._restrictNavigation = uiSource.restrictNavigation === true;
-            this._sideMenu = new SideMenu(uiSource.sideMenu);
+            this._sideMenu = new SideMenu(uiSource.sideMenu, uiSource.help);
             this._legend = new UILegend(uiSource.legend);
             this._help = new Help(uiSource.help);
             this._fullscreen = uiSource.fullscreen;

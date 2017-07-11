@@ -12,6 +12,8 @@
     "sideMenu": {
       "logo": true
     },
+    "help": {
+    },
     "legendIsOpen": {
       "large": true,
       "medium": true,
