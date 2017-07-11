@@ -1864,11 +1864,11 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             this._items = angular.isArray(source.items) ?
                 source.items.map(subItems =>
-                    common.intersect(source.items, SideMenu.AVAILABLE_ITEMS)) : ITEMS_DEFAULT;
+                    common.intersect(source.items, SideMenu.AVAILABLE_ITEMS)) : angular.copy(ITEMS_DEFAULT);
 
             //remove help if help or its folderName is absent
             if (! helpSource || ! helpSource.folderName) {
-                ITEMS_DEFAULT[1].splice(ITEMS_DEFAULT[1].indexOf('help'));
+                this._items[1].splice(this._items[1].indexOf('help'));
             }
         }
 
