@@ -16,7 +16,9 @@ angular
 
 function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounceService, configService) {
     const ref = {
-        autoLegendEh: configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE
+        get autoLegendEh() {
+            return configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE;
+        }
     };
 
     class BaseElement {
