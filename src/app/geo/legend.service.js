@@ -52,10 +52,25 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         mapConfig.legendBlocks = legendBlocks;
     }
 
+    /**
+     * Instantiates and registers a layer blueprint based on the given layer definition,
+     * and imports it into the legend.
+     *
+     * @function addLayerDefinition
+     * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
+     * @returns {LegendBlock} returns a corresponding, newly created legend block
+     */
     function addLayerDefinition(layerDefinition) {
         return importLayerBlueprint(createBlueprint(layerDefinition));
     }
 
+    /**
+     * Instantiates and registers a layer blueprint based on the given layer definition.
+     *
+     * @function addLayerDefinition
+     * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
+     * @returns {LayerBlueprint}
+     */
     function createBlueprint(layerDefinition) {
         const blueprint = new LayerBlueprint.service(layerDefinition);
         configService.getSync.map.layerBlueprints.push(blueprint);
