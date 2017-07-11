@@ -39,9 +39,6 @@ angular
     .factory('configService', configService);
 
 function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, ConfigObject) {
-    // let initializePromise;
-    // let isInitialized = false;
-
     const DEFAULT_LANGS = ['en-CA', 'fr-CA'];
 
     const States = {
@@ -53,9 +50,9 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
 
     let _loadingState = States.NEW;
     let _remoteConfig = false;
+    let languages;
 
     const configs = {};
-    const configObjects = {};
     const initialPromises = {}; // only the initial configurations (i.e. whatever comes in config attribute)
 
     class ConfigService {
@@ -82,8 +79,18 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
             _initialize();
         }
 
-        rcsAddKeys() {
-            throw new Error(`This doesn't work yet`);
+        /**
+         * Load RCS layers after the map has been instantiated.
+         * Triggers an event to update the config when done
+         *
+         * @memberof app.core
+         * @function rcsAddKeys
+         * @param {Array}  keys  array of RCS keys (String) to be added
+         */
+        rcsAddKeys(keys) {
+            const endpoint = this.getSync.services.rcsEndpoint;
+            _rcsAddKeys(endpoint, keys);
+
         }
 
         /**
@@ -132,11 +139,6 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
 
     }
 
-    const jsonConfigs = {};
-    let bookmarkConfig;
-    const startupRcsLayers = {}; // partial config promises, one array per language entry
-    let languages;
-
     return new ConfigService();
 
     /***************/
@@ -174,7 +176,6 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
                     if (schemaUpgrade.isV1Schema(cfg.version)) {
                         cfg = schemaUpgrade.oneToTwo(cfg);
                     }
-                    jsonConfigs[lang] = cfg;
                     cfg.language = lang;
                     cfg.languages = langs;
                     cfg.services.rcsEndpoint = svcAttr;
@@ -190,34 +191,6 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
             }
         });
 
-    }
-
-    function rcsLoader(svcAttr, keysAttr, languages) {
-        const keys = rcsInit(svcAttr, keysAttr, languages);
-        languages.forEach(lang => {
-            $q.all([startupRcsLayers[lang], initialPromises[lang]])
-                .then(configParts => {
-                    // generate a blank config, merge in all the stuff we have loaded
-                    // the merged config is our promise result for all to use
-                    const newConfig = {
-                        layers: []
-                    };
-                    mergeConfigParts(newConfig, configParts);
-                    // configs[lang] = newConfig;
-                    events.$broadcast(events.rvCfgUpdated, keys);
-                })
-                .catch(() => {
-                    // TODO: possibly retry rcsLoad?
-                    console.warn('RCS failed, starting app with file-only config.');
-                    const toast = $mdToast.simple()
-                        .textContent($translate.instant('config.service.rcs.error'))
-                        .action($translate.instant('config.service.rcs.action'))
-                        .highlightAction(true)
-                        .hideDelay(0)
-                        .position('bottom rv-flex-global');
-                    $mdToast.show(toast);
-                });
-        });
     }
 
     /**
@@ -239,8 +212,6 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
                 // TODO: better way to handle when no languages are specified?
             }
         }
-        languages.forEach(lang =>
-            (startupRcsLayers[lang] = []));
 
         const configAttr = $rootElement.attr('rv-config');
         const svcAttr = $rootElement.attr('rv-service-endpoint');
@@ -249,8 +220,34 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
         $translate.use(languages[0]);
         configLoader(configAttr, svcAttr, languages);
 
-        if (svcAttr) {
-            rcsLoader(svcAttr, keysAttr, languages);
+        // handle if any rcs keys were on the html tag.
+        if (svcAttr && keysAttr) {
+            try {
+                const keys = angular.fromJson(keysAttr);
+
+                // TODO small potential for race condition. In all likelyhood, if rvBookmarkDetected
+                //      is raised it should happen long before rvApiReady, but nothing is ever guaranteed
+                //      with single-thread-asynch.
+                let deregisterReadyListener;
+                let deregisterBookmarkListener;
+
+                // wait for map to be ready, then trigger the rcs load.
+                deregisterReadyListener = events.$on(events.rvApiReady, () => {
+                    deregisterReadyListener();
+                    deregisterBookmarkListener();
+                    _rcsAddKeys(svcAttr, keys);
+                });
+
+                // if we have a bookmark, abort loading from the rcs tags.
+                // the layers we want will be encoded in the bookmark
+                deregisterBookmarkListener = events.$on(events.rvBookmarkDetected, () => {
+                    deregisterReadyListener();
+                    deregisterBookmarkListener();
+                });
+
+            } catch (e) {
+                RV.logger.error('configService', 'RCS key retrieval failed with error', e);
+            }
         }
     }
 
@@ -264,108 +261,27 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
     }
 
     /**
-     * Modifies a config by merging in separate config chunks.
-     * @function mergeConfigParts
-     * @private
-     * @param {object} targetConfig  the config object to merge things into. Object will be modified
-     * @param {array}   configParts  array of config chunks to merge
+     * Load RCS layers after the map has been instantiated.
+     * Triggers an event to update the config when done
+     * @function _rcsAddKeys
+     * @param {String} endpoint           RCS server url
+     * @param {Array} keys                array of RCS keys (String) to be added
+     * @return {Void}
      */
-    function mergeConfigParts(targetConfig, configParts) {
-        configParts.forEach(part => {
-            Object.entries(part).forEach(([key, value]) => {
-                // if this section is an array just concat, e.g. layers, basemaps
-                // otherwise merge into existing section
-                if (Array.isArray(targetConfig[key])) {
-                    targetConfig[key] = targetConfig[key].concat(value);
-                } else {
-                    targetConfig[key] = value;
-                }
-            });
-        });
-    }
-
-    /**
-     * Config initialization block for rcs retrieved config snippets
-     * @function rcsInit
-     * @private
-     * @param {string}  svcAttr     the server path tied to the config attribute
-     * @param {string}  keysAttr    list of keys marking which layers to retrieve
-     * @param {array}   langs       array of languages which have configs
-     * @return {array}              the list of keys used for the RCS request (parsed from keysAttr)
-     */
-    function rcsInit(svcAttr, keysAttr, langs) {
-        let keys;
-        if (keysAttr) {
-            try {
-                keys = angular.fromJson(keysAttr);
-            } catch (e) {
-                RV.logger.error('configService', 'RCS key retrieval failed with error', e);
-            }
-
-            const rcsData = rcsLoad(svcAttr, keys, langs);
-            langs.forEach(lang => {
-                // add the rcs data promises to our partials set
-                startupRcsLayers[lang].push(rcsData[lang]);
-            });
-        } else {
-            RV.logger.warn('configService', 'RCS endpoint set but no keys were specified');
-        }
-        return keys;
-    }
-
-    /**
-     * Add RCS config layers to configuration after startup has finished
-     * @function rcsAddKeys
-     * @param {Array} keys                list of keys marking which layers to retrieve
-     * @param {Boolean} [fromApi=true]    determines if we are adding keys from the api. false if from internal reloads
-     * @return {Promise} promise of full config nodes for newly added layers
-     */
-    function rcsAddKeys(keys, fromApi = true) {
-
-        // strip languages out of data object.
-        const langs =  Object.keys(jsonConfigs);
-
-        // get array of promises containing RCS bundles per language
-        const rcsDataSet = rcsLoad(configs[currentLang()].services.rcsEndpoint, keys, langs);
-
-        return $q(resolve => {
-            const currLang = currentLang();
-
-            langs.forEach(lang => {
-                // wait for rcs data to finish loading
-                rcsDataSet[lang].then(rcsConfig => {
-
-                    // store list of layer ids, so we can identify new items in the config later
-                    const newIds = rcsConfig.layers.map(layer => layer.id);
-
-                    initialPromises[lang].then(fullConfig => {
-                        if (!fromApi) {
-                            // it is possible the rcs keys we are adding already exist in the current
-                            // config object. we want to remove those keys prior to doing the merge below
-                            newIds.forEach(newId => {
-                                const oldLayer = fullConfig.layers.find(c => c.id === newId);
-                                if (oldLayer) {
-                                    fullConfig.layers.splice(fullConfig.layers.indexOf(oldLayer), 1);
-                                }
-                            });
-                        }
-
-                        // call the merge into config, passing result and targeting innards of config service (all languages)
-                        // make rcs value an array, as it will be a singleton with all things mooshed into .layers
-                        mergeConfigParts(fullConfig, [rcsConfig]);
-
-                        if (lang === currLang) {
-                            // pull fully populated layer config nodes out the main config
-                            const newConfigs = fullConfig.layers.filter(layerConfig =>
-                                newIds.indexOf(layerConfig.id) > -1);
-
-                            // return the new configs to the caller
-                            resolve(newConfigs);
-                        }
-                    });
+    function _rcsAddKeys(endpoint, keys) {
+        const rcsData = rcsLoad(endpoint, keys, languages);
+        languages.forEach(lang => {
+            rcsData[lang].then(data => {
+                const layers = data.layers;
+                initialPromises[lang].then(() => {
+                    // feed the keys into the config, then tell the map
+                    // the config has updated
+                    configs[lang].map.layers.push(...layers);
+                    if (lang === currentLang()) {
+                        events.$broadcast(events.rvCfgUpdated, layers);
+                    }
                 });
             });
-
         });
     }
 

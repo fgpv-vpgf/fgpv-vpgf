@@ -62,6 +62,10 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
                 legendService.constructLegend(config.map.layers, config.map.legend);
                 this._isMapReady = true;
                 $rootScope.$broadcast(events.rvApiReady);
+                events.$on(events.rvCfgUpdated, (evt, layers) => {
+                    console.info(layers);
+                    layers.forEach(layer => legendService.addLayerDefinition(layer));
+                });
             })
             .catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
         }
@@ -98,6 +102,10 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
 
         zoomToFeature (proxy, oid) {
             mapService.zoomToFeature(proxy, oid);
+        }
+
+        getRcsLayerIDs () {
+            return layerRegistry.getRcsLayerIDs();
         }
 
         // FIXME from Alex: reload and snapshop should be called against legendService

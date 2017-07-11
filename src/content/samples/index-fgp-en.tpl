@@ -457,7 +457,7 @@
                         <input type="text" id="bookmarkDisplay" style="width:100%;" />
                         <button onclick="testBackToCart()">backToCart</button>
                     </div>
-                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.rcs.[lang].json" data-rv-langs='["en-CA", "fr-CA"]' data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-wait="true">
+                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.rcs.[lang].json" data-rv-langs='["en-CA", "fr-CA"]' data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-keys='' data-rv-wait="true">
                         <noscript>
                             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -512,6 +512,7 @@
         </div>
     </footer>
 
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script>
         // credit: http://stackoverflow.com/a/21903119
         function getUrlParameter(sParam) {
@@ -551,15 +552,17 @@
             // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
             document.write('<script src="../ie-polyfills.js"><\/script>');
         }
+    </script>
 
-            <% for (var index in htmlWebpackPlugin.files.js) { %>
-                <% if (webpackConfig.output.crossOriginLoading) { %>
-                    <script src="<%= htmlWebpackPlugin.files.js[index] %>" integrity="<%= htmlWebpackPlugin.files.jsIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"></script>
-                <% } else { %>
-                    <script src="<%= htmlWebpackPlugin.files.js[index] %>"></script>
-                <% } %>
-            <% } %>
+    <% for (var index in htmlWebpackPlugin.files.js) { %>
+        <% if (webpackConfig.output.crossOriginLoading) { %>
+            <script src="<%= htmlWebpackPlugin.files.js[index] %>" integrity="<%= htmlWebpackPlugin.files.jsIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"></script>
+        <% } else { %>
+            <script src="<%= htmlWebpackPlugin.files.js[index] %>"></script>
+        <% } %>
+    <% } %>
 
+    <script>
         function init() {
             const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
             RV.getMap('fgpmap').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
@@ -585,7 +588,7 @@
         } else {
             var bookmark = queryStr.rv;
             // console.log(bookmark);
-            // RV.getMap('fgpmap').initialBookmark(bookmark);
+            RV.getMap('fgpmap').initialBookmark(bookmark);
         }
 
         function getBookmark(){

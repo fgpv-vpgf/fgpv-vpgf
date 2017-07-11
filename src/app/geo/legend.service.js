@@ -19,6 +19,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         constructLegend,
         importLayerBlueprint,
         reloadBoundLegendBlocks,
+        addLayerDefinition,
         removeLegendBlock
     };
 
@@ -41,17 +42,39 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         const legendMappings = mapConfig.legendMappings;
 
         // all layer defintions are passed as config fragments - turning them into layer blueprints
-        const layerBluePrints = layerDefinitions.map(layerDefinition =>
-            new LayerBlueprint.service(layerDefinition));
-
-        layerBlueprintsCollection.push.apply(layerBlueprintsCollection, layerBluePrints);
+        const layerBlueprints = layerDefinitions.map(createBlueprint);
 
         // create mapping for all layer blueprints
-        layerBluePrints.forEach(lb =>
+        layerBlueprints.forEach(lb =>
             (legendMappings[lb.config.id] = []));
 
         const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
         mapConfig.legendBlocks = legendBlocks;
+    }
+
+    /**
+     * Instantiates and registers a layer blueprint based on the given layer definition,
+     * and imports it into the legend.
+     *
+     * @function addLayerDefinition
+     * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
+     * @returns {LegendBlock} returns a corresponding, newly created legend block
+     */
+    function addLayerDefinition(layerDefinition) {
+        return importLayerBlueprint(createBlueprint(layerDefinition));
+    }
+
+    /**
+     * Instantiates and registers a layer blueprint based on the given layer definition.
+     *
+     * @function addLayerDefinition
+     * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
+     * @returns {LayerBlueprint}
+     */
+    function createBlueprint(layerDefinition) {
+        const blueprint = new LayerBlueprint.service(layerDefinition);
+        configService.getSync.map.layerBlueprints.push(blueprint);
+        return blueprint;
     }
 
     /**
@@ -119,8 +142,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
         // create a new record from its layer blueprint
         const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
-        const layerBlueprint = layerBlueprintsCollection.find(blueprint =>
-            blueprint.config.id === layerRecordId);
+        const layerBlueprint = layerBlueprintsCollection.find(blueprint => blueprint.config.id === layerRecordId);
         layerRegistry.regenerateLayerRecord(layerBlueprint);
 
         mappings.forEach(({ legendBlockId, legendBlockConfigId }) => {
@@ -229,7 +251,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      * @private
      * @param {Object} blockConfig a config object for the legend block to be created (any children will be recursively created)
      * @param {Array} layerBlueprints a collection of all available layer blueprints
-     * @return {LegendBlcok} the resulting LegendBlock object
+     * @return {LegendBlock} the resulting LegendBlock object
      */
     function _makeLegendBlock(blockConfig, layerBlueprints) {
         const legendTypes = ConfigObject.TYPES.legend;

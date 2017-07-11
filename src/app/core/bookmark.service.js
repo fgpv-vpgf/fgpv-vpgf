@@ -17,6 +17,9 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
     const service = {
         getBookmark,
         parseBookmark,
+        adjustRcsLanguage,
+        extractRcsLayers,
+        insertRcsLayers,
         get storedBookmark() { return _bookmarkObject; },
         emptyStoredBookmark() { _bookmarkObject = null; }
     };
@@ -215,6 +218,10 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             // walk the child tree encoding each child
             // we need to be aware of hierarchy here (at least on the top level).
             // top-level children of the layer get rootFlag set to true
+            // NOTE: our decision is that if a child item is deleted, it
+            //       is preserved in the bookmark (and will re-appear when
+            //       bookmark is restored). Encoding deleted children will
+            //       be entertained when we move to super-fancy state storage.
             childItems = simpleWalk(layerRecord.getChildTree(), true);
 
             // TODO we currently have an open debate about disallowing funny nesting.
@@ -367,116 +374,6 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
 
         decodeMainBookmark();
 
-        // mark initial basemap
-        // FIXME: restore
-        // config.map.initialBasemapId = newBaseMap || basemap;
-
-        /*const origBasemapConfig = config.baseMaps.find(bm => bm.id === basemap);
-        if (blankBaseMap && !newBaseMap) {
-            // we are not doing a schema change, and the basemap on the bookmark has the blank
-            // flag set. Override the initial setting to be the blank key for the correct
-            // projection.
-            // TODO if possible, set geoService.state.blankBaseMapId = basemap;
-            config.map.initialBasemapId = blankPrefix + origBasemapConfig.wkid;
-        }*/
-
-        // FIXME: restore
-        // apply extent
-        /*const bookmarkSR = {
-            wkid: origBasemapConfig.wkid
-        };
-        const mapSR = {
-            wkid: origBasemapConfig.wkid
-        };
-
-        // determine the zoom level. use bookmark basemap unless we are doing a projection switch
-        let lodId = origBasemapConfig.lodId;
-        let extentId = origBasemapConfig.extentId;*/
-
-        // FIXME: restore if needed
-        /**
-         * Does special logic to handle the case where we are using a bookmark
-         * to change basemap schema.
-         *
-         * @function processSchemaChangeBookmark
-         * @private
-         */
-        /*function processSchemaChangeBookmark() {
-            let newBasemapConfig;
-            if (newBaseMap.indexOf(blankPrefix) === 0) {
-                // we are changing schemas, but are initializing with the blank basemap.
-                // need to find the first valid basemap in the new collection
-                // and steal it's settings for extents and lods.
-                // blank basemap codes start with the prefix and end with the WKID
-                const newWkid = parseInt(newBaseMap.substr(blankPrefix.length));
-                newBasemapConfig = config.baseMaps.find(bm => bm.wkid === newWkid);
-            } else {
-                // just grab the config for the given basemap id
-                newBasemapConfig = config.baseMaps.find(bm => bm.id === newBaseMap);
-            }
-
-            lodId = newBasemapConfig.lodId;
-            extentId = newBasemapConfig.extentId;
-            mapSR.wkid = newBasemapConfig.wkid;
-        }
-
-        if (newBaseMap) {
-            processSchemaChangeBookmark();
-        }*/
-
-        /**
-         * Derives an initial extent using information from the bookmark
-         * and the config file
-         *
-         * @function deriveBookmarkExtent
-         * @private
-         * @returns {Object}            An extent where the map should initialize
-         */
-        // FIXME: restore
-        /*
-        function deriveBookmarkExtent() {
-            // find the LOD set for the basemap in the config file,
-            // then find the LOD closest to the scale provided by the bookmark.
-            const configLodSet = config.map.lods.find(lodset => lodset.id === lodId);
-            const zoomLod = gapiService.gapi.Map.findClosestLOD(configLodSet.lods, scale);
-
-            // Note: we used to use a centerAndZoom() call to position the map to the basemap co-ords.
-            //       it was causing a race condition during a projection change, so we now calculate
-            //       the new initial extent and set it prior to map creation.
-
-            // project bookmark point to the map's spatial reference
-            const coords = gapiService.gapi.proj.localProjectPoint(bookmarkSR, mapSR, { x: x, y: y });
-            const zoomPoint = gapiService.gapi.proj.Point(coords.x, coords.y, mapSR);
-
-            // using resolution of our target level of detail, and the size of the map in pixels,
-            // calculate a rough extent of where our map should initialize.
-            const domNode = $rootElement.find('rv-shell')[0];
-            const xOffset = domNode.offsetWidth * zoomLod.resolution / 2;
-            const yOffset = domNode.offsetHeight * zoomLod.resolution / 2;
-            return {
-                xmin: zoomPoint.x - xOffset,
-                xmax: zoomPoint.x + xOffset,
-                ymin: zoomPoint.y - yOffset,
-                ymax: zoomPoint.y + yOffset,
-                spatialReference: zoomPoint.spatialReference
-            };
-        }
-
-        const zoomExtent = deriveBookmarkExtent();
-        */
-
-        // update the config file default extent.  if we don't have a full extent defined,
-        // copy the original default to the full.  otherwise our zoom-to-canada button
-        // will start zooming to our new initial extent.
-        // FIXME: restore
-        /*const configExtSet = config.map.extentSets.find(extset => extset.id === extentId);
-        if (!configExtSet.full) {
-            configExtSet.full = configExtSet.default;
-        }
-        configExtSet.default = zoomExtent;*/
-
-        // let bookmarkLayers = {};
-
         // Make sure there are layers before trying to loop through them
         if (bookmarkObject.layers) {
             const layerData = bookmarkObject.layers.split(',');
@@ -489,46 +386,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             //filterConfigLayers(bookmarkLayers, config);
         }
 
-        // FIXME: restore if needed; rcs layer loading should be separate from the bookmark
-        /*if (newKeyList) {
-            modifyRcsKeyList(bookmarkLayers, newKeyList);
-        }*/
-
-        // FIXME: restore; lang changing should be separate from bookmark
-        /*if (newLang) {
-            (() => {
-                const translatedLayers = {};
-                Object.entries(bookmarkLayers).forEach(([id, layer]) => {
-                    if (id.startsWith('rcs.')) {
-                        const key = extractRcsKey(id);
-                        layer.id = `rcs.${key}.${newLang.substring(0, 2)}`;
-                    }
-                    translatedLayers[layer.id] = layer;
-                });
-                bookmarkLayers = translatedLayers;
-            })();
-        }*/
-
-        // set the new current config, RCS layers will be loaded on first getCurrent() call
-        // FIXME oldConfig.setCurrent(addRcsConfigs(bookmarkLayers, config));
-
         _bookmarkObject = bookmarkObject;
-    }
-
-    /**
-     * Injects a list of options into a target object. Follows the config-file format
-     * of defining options.
-     *
-     * @function optionInjector
-     * @private
-     * @param {Object} target      Object to have options injected into. Param is modified.
-     * @param {Array} propList     List of property names (strings) to add as options
-     * @param {Object} settings    Object containing the option values. Property names must match option names
-     */
-    function optionInjector(target, propList, settings) {
-        propList.forEach(prop => {
-            target[prop] = { value: settings[prop] };
-        });
     }
 
     /**
@@ -579,33 +437,6 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
     }
 
     /**
-     * Generates a layer config snippet with options initialized
-     * based on the layer type and contents of the bookmark settings
-     *
-     * @function makeLayerConfig
-     * @private
-     * @param {String} layerCode      Code specifying the type of the layer
-     * @param {Object} layerSettings  Decoded layer settings in an object
-     * @returns {Object}              Config snippet for layer, with options defined
-     */
-    function makeLayerConfig(layerCode, layerSettings) {
-
-        const codeToProps = {
-            0: ['opacity', 'visibility', 'boundingBox', 'snapshot', 'query'], // feature
-            1: ['opacity', 'visibility', 'boundingBox', 'query'], // wms
-            2: ['opacity', 'visibility', 'boundingBox'], // tile
-            3: ['opacity', 'visibility', 'boundingBox', 'query'], // dynamic
-            4: ['opacity', 'visibility', 'boundingBox'] // image
-        };
-
-        const layerProps = codeToProps[layerCode];
-        const result = { options: {} };
-        optionInjector(result.options, layerProps, layerSettings);
-
-        return result;
-    }
-
-    /**
      * Turns layer bookmarks into partial layer configs
      *
      * @function parseLayers
@@ -626,23 +457,6 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             console.warn('The Bookmark A format is no longer supported;')
 
             return;
-            /*const layerPatterns = [
-                /^(.+?)(\d{7})$/, // feature
-                /^(.+?)(\d{6})$/, // wms
-                /^(.+?)(\d{5})$/, // tile
-                /^(.+?)(\d{6})$/, // dynamic
-                /^(.+?)(\d{5})$/ // image
-            ];
-
-            // Loop through bookmark layers and create config snippets
-            layerDataStrings.forEach(layer => {
-                layer = decode64(layer);
-                const layerType = parseInt(layer.substring(0, 2));
-                const [, layerId, layerData] = layer.substring(2).match(layerPatterns[layerType]);
-
-                layerObjs[layerId] = LayerRecordFactory.parseLayerData(layerData, layerType);
-            });*/
-
         } else {
             // assume version B, get fancier after refactors
 
@@ -666,9 +480,6 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
                     state: layerSettings
                 };
 
-                // const snippet = makeLayerConfig(layerCode, layerSettings);
-                // const snippet = {};
-
                 if (layerSettings.childCount > 0) {
                     // TODO currently we only have dynamic layers allowed to have childs
                     //      so this code adds dynamic-specific properties to the config snippet.
@@ -676,9 +487,6 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
                     //      and this part of the code will need to be adjusted.
 
                     snippet.layerEntries = [];
-
-                    // snippet.layerEntries = {};
-                    // snippet.childOptions = [];
 
                     // get entire swath of child data
                     const childrenInfo = layer.substr(6, layerSettings.childCount * 6);
@@ -695,19 +503,6 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
                             state: childSettings,
                             index: childSettings.index
                         });
-
-                        // build a config snippet for the child
-                        /*const childSnippet = {
-                            index: childSettings.index
-                        };
-                        //optionInjector(childSnippet, ['opacity', 'visibility', 'query'], childSettings);
-
-                        // add child snippet to appropriate array in layer snippet
-                        if (childSettings.root) {
-                            snippet.layerEntries.push(childSnippet);
-                        } else {
-                            snippet.childOptions.push(childSnippet);
-                        }*/
                     });
                 }
 
@@ -720,109 +515,60 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
     }
 
     /**
-     * Updates layers in the config, merging the layerObj if they are in the bookmark & deleting the ones not present. *Modifies both params*
+     * Updates the rcs keys in the stored bookmark to compensate for a language switch.
      *
-     * @function filterConfigLayers
-     * @param {Object} layerObjs    Object containing partial layer configs
-     * @param {Object} config       The config object to modify
+     * @function adjustRcsLanguage
+     * @param {String} newLang    the language key to adjust the rcs keys to
      */
-    /*function filterConfigLayers(layerObjs, config) {
-        let configLayers = config.layers;
-
-        // Loop through config layers and apply bookmark info
-        configLayers.slice().forEach(layer => {
-            const id = layer.id;
-            const bookmarkLayer = layerObjs[id];
-            if (bookmarkLayer) {
-                // apply bookmark layer info to config
-                angular.merge(config.layers[config.layers.indexOf(layer)], bookmarkLayer);
-
-                delete layerObjs[id];
-            } else {
-                // layer was removed in bookmarked state, remove it from config object
-                delete config.layers[config.layers.indexOf(layer)];
-            }
-        });
-    }*/
-
-    /**
-     * Updates layers in 'layerObjs' so that it matches 'keys'. *Modifies both params*
-     *
-     * @function modifyRcsKeyList
-     * @param {Object} layerObjs    Object containing partial layer configs
-     * @param {Array} keys          List containing all wanted rcs keys
-     */
-    function modifyRcsKeyList(layerObjs, keys) {
-        // Loop through keys in layerObjs
-        Object.keys(layerObjs).forEach(id => {
-            // strip rcs. and .en/.fr from the layer id
-            const plainID = extractRcsKey(id);
-            if (keys.indexOf(plainID) > -1) {
-                // id is in both layerObjs and keys, safe to remove from keyList
-                delete keys[keys.indexOf(plainID)];
-            } else {
-                // id isn't in keys, remove from layerObjs (assumed to be removed from cart)
-                delete layerObjs[id];
-            }
-        });
-
-        // for each of the remaining keys in the new list
-        // add them to layerObjs to be loaded
-        keys.forEach(id => {
-            layerObjs[id] = {};
-        });
+    function adjustRcsLanguage(newLang) {
+        if (_bookmarkObject && _bookmarkObject.bookmarkLayers) {
+            const trimLang = newLang.substring(0, 2);
+            _bookmarkObject.bookmarkLayers.forEach(bmLayer => {
+                const id = bmLayer.id;
+                if (id.indexOf('rcs.') === 0) {
+                    bmLayer.id = id.substr(0, id.length - 2) + trimLang;
+                }
+            });
+        }
     }
 
     /**
-     * Adds RCS layers to a config, used to modify a bookmark config before first use
+     * Removes any RCS based layer config objects from the bookmark, and returns them.
      *
-     * @function addRcsConfigs
-     * @private
-     * @param {Object} rcsBookmarks     Config snippets for rcs layers created from a bookmark
-     * @param {Object} config           The config to add the final rcs layers to
-     * @returns {Promise}               A promise that resolves with the modified config
+     * @function extractRcsLayers
+     * @returns {Array} list of any RCS based layer config objects in the bookmark
      */
-    function addRcsConfigs(rcsBookmarks, config) {
-        if (Object.keys(rcsBookmarks).length > 0) {
-            // create a lookup object against rcs key. the layer ids will be language specific.
-            // until we update the bookmark format to encode langauge, we cannot be guaranteed
-            // the page is loading in the same language the bookmark was created in.
-            const noLangRcsBM = {};
-            Object.keys(rcsBookmarks).forEach(id => {
-                noLangRcsBM[extractRcsKey(id)] = rcsBookmarks[id];
+    function extractRcsLayers() {
+        const rcsLayers = [];
+        const regLayers = [];
+        if (_bookmarkObject && _bookmarkObject.bookmarkLayers) {
+            // sort layers into two buckets.
+            _bookmarkObject.bookmarkLayers.forEach(bmLayer => {
+                const id = bmLayer.id;
+                if (id.indexOf('rcs.') === 0) {
+                    rcsLayers.push(bmLayer);
+                } else {
+                    regLayers.push(bmLayer);
+                }
             });
 
-            // download rcs fragments, then merge in any bookmark information
-            return configService
-                .rcsAddKeys(Object.keys(noLangRcsBM), false)
-                .then(rcsConfigs => {
-                    const configSnippets = rcsConfigs.map(cfg => {
-                        const rcsBM = noLangRcsBM[extractRcsKey(cfg.id)];
-                        const merge = angular.merge(cfg, rcsBM, { origin: 'rcs' });
-
-                        // check if it is a dynamic service and layers entries are different.
-                        // if so, replace layerEntries by bookmark snippet because user made modification like remove a layer
-                        // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1611
-                        // for nested group, even if we remove a child from a subgroup, when it reloads the child we be there again
-                        // there is no childOptions value on cfg (rcsConfigs) so they are alwas merge by rcsBookmarks
-                        // TODO: refactor to solve this
-                        if (merge.layerType === Geo.Layer.Types.ESRI_DYNAMIC &&
-                            !angular.equals(cfg.layerEntries, rcsBM.layerEntries) &&
-                            rcsBM.layerEntries && rcsBM.layerEntries.length > 0) {
-                            merge.layerEntries = rcsBM.layerEntries;
-                        }
-
-                        return merge;
-                    });
-
-                    config.layers = config.layers.concat(configSnippets);
-
-                    return config;
-                })
-                .catch(() => config);
+            // overwrite the bookmark objection with the non-rcs layer array
+            _bookmarkObject.bookmarkLayers = regLayers;
         }
+        return rcsLayers;
+    }
 
-        return $q.resolve(config);
+    /**
+     * Inserts RCS based layer config objects into the bookmark
+     *
+     * @function insertRcsLayers
+     * @param {Array} rcsLayerConfigs list of RCS based layer config objects to add to the bookmark
+     */
+    function insertRcsLayers(rcsLayerConfigs) {
+        // TODO handle the case where the if fails?
+        if (_bookmarkObject && _bookmarkObject.bookmarkLayers) {
+            _bookmarkObject.bookmarkLayers.push(...rcsLayerConfigs);
+        }
     }
 
     /**
