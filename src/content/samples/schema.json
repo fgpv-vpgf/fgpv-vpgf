@@ -693,7 +693,7 @@
                     "type": "object",
                     "description": "Help properties",
                     "properties": {
-                        "folderName": { "type": "string", "default": "default", "description": "Help folder name who contain the help description and images" }
+                        "folderName": { "type": "string", "description": "Help folder name who contain the help description and images" }
                     },
                     "required": [ "folderName" ],
                     "additionalProperties": false
