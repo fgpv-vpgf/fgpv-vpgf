@@ -29,7 +29,7 @@ angular
     .module('app.ui')
     .directive('rvLegendBlock', rvLegendBlock);
 
-function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common) {
+function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common, configService, ConfigObject) {
     const directive = {
         restrict: 'E',
         scope: {
@@ -57,6 +57,22 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common)
 
         self.appID = appInfo.id;
         self.isNameTruncated = false;
+        self.hasMenu = () => {
+            const autoLegendEh  = configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE;
+            const options       = common.intersect(self.block.availableControls, ['metadata', 'settings', 'data', 'symbology', 'boundary', 'reload', 'remove']);
+
+            if (options.length === 0) {
+                return false;
+            } else if (autoLegendEh || self.block.userAdded) {
+                return true;
+            // special case where 'remove' is the only menu option and it is hidden for layers in structured legends that are not user added
+            // prevents user from opening an empty menu
+            } else if (options.length === 1 && options[0] === 'remove') {
+                return false;
+            } else {
+                return true;
+            }
+        };
 
         // a shorthand for less verbocity
 
