@@ -17,7 +17,6 @@ import './common/menuItem.decorator.js';
 import './common/morph.directive.js';
 import './common/north-arrow.directive.js';
 import './common/plug-slide.animation.js';
-import './common/resize.directive.js';
 import './common/reverse.filter.js';
 import './common/select-menu.decorator.js';
 import './common/select.decorator.js';
