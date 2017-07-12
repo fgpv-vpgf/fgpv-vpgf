@@ -713,11 +713,13 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 undefined;
 
             this.isLayerEntry = true;
+            this._filters = new FiltersNode(source.filters);
         }
 
         get outfields () { return this._outfields; }
         get stateOnly () { return this._stateOnly; }
         get extent () { return this._extent; }
+        get filters () { return this._filters; }
 
         get layerType () { return layerTypes.ESRI_DYNAMIC; }
 
@@ -725,7 +727,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             return angular.merge(super.JSON, {
                 outfields: this.outfields,
                 stateOnly: this.stateOnly,
-                extent: this.extent
+                extent: this.extent,
+                filters: this.filters.JSON
             });
         }
     }
@@ -737,8 +740,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._layerEntries = source.layerEntries.map(layerEntry =>
                 (new DynamicLayerEntryNode(layerEntry)));
             this._tolerance = source.tolerance;
-            this._filters = new FiltersNode(source.filters);
-
             this._singleEntryCollapse = source.singleEntryCollapse === true;
         }
 
@@ -750,7 +751,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._layerEntries = value;
         }
         get tolerance () { return this._tolerance; }
-        get filters () { return this._filters; }
 
         get queryUrl () { return this._queryUrl; }
 
@@ -794,7 +794,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 layerEntries: this.layerEntries.map(layerEntry =>
                     layerEntry.JSON),
                 tolerance: this.tolerance,
-                filters: this.filters.JSON,
                 isResolved: this.isResolved
             });
         }

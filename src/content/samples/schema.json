@@ -250,7 +250,8 @@
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode", "description": "Allows for overriding the bounding box supplied by the service." },
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
-                "stateOnly": { "type": "boolean", "default": false, "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)." }
+                "stateOnly": { "type": "boolean", "default": false, "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)." },
+                "filters": { "$ref": "#/definitions/filtersNode", "description": "Settings for filters inside data panel"}
             },
             "required": ["index"],
             "additionalProperties": false
@@ -568,8 +569,7 @@
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
-                "state": { "$ref": "#/definitions/initialLayerSettings" },
-                "filters": { "$ref": "#/definitions/filtersNode", "description": "Settings for filters inside data panel"}
+                "state": { "$ref": "#/definitions/initialLayerSettings" }
             },
             "required": [ "id", "layerType", "layerEntries", "url" ],
             "additionalProperties": false
