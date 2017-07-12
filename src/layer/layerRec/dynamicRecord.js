@@ -285,7 +285,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 // process the kids in the group.
                 // store the child leaves in the internal variable
                 layerInfo.subLayerIds.forEach(slid => {
-                    processLayerInfo(this._layer.layerInfos[slid], treeGroup.childs);
+                    processLayerInfo(this._layer.layerInfos.find(li => li.id === slid), treeGroup.childs);
                 });
 
             } else {
@@ -313,7 +313,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         if (this.config.layerEntries) {
             this.config.layerEntries.forEach(le => {
                 if (!le.stateOnly) {
-                    processLayerInfo(this._layer.layerInfos[le.index], this._childTree);
+                    processLayerInfo(this._layer.layerInfos.find(li => li.id === le.index), this._childTree);
                 }
             });
         }
@@ -712,7 +712,9 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // TODO what about config overrides of names?
         // TODO WHO IS EVEN USING THIS?
         // will not use FC classes, as we also need group names
-        return this._layer.layerInfos[index].name;
+
+        const intIdx = parseInt(childIndex);
+        return this._layer.layerInfos.find(li => li.id === intIdx).name;
     }
 
     // TODO we may want version of layerRecord.zoomToBoundary that targets a child index.
