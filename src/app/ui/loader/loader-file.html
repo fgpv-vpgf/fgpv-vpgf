@@ -37,7 +37,7 @@
                                 {{ "import.file.upload.choose" | translate }}
                             </md-button>
                         </div>
-                        <span class="md-caption" translate>import.file.upload.drop</span>
+                        <span class="md-caption">{{ 'import.file.upload.drop' | translate }}</span>
                     </div>
 
                     <md-progress-linear
@@ -50,12 +50,13 @@
                     <div ng-messages="self.upload.form.fileSelect.$error">
                         <div ng-message="upload-error">{{ 'import.file.upload.noaccess' | translate }}</div>
                     </div>
+
                 </md-input-container>
 
-                <span class="md-subhead rv-loader-file-upload-or" translate>import.file.upload.or</span>
+                <span class="md-subhead rv-loader-file-upload-or">{{ 'import.file.upload.or' | translate }}</span>
 
                 <md-input-container class="md-block">
-                    <label translate>import.file.upload.fileurl</label>
+                    <label>{{ 'import.file.upload.fileurl' | translate }}</label>
                     <input
                         name="fileUrl"
                         type="url"
@@ -64,6 +65,10 @@
                         ng-model-options="{ updateOn: 'default blur', debounce: { default: 30, blur: 0 } }"
                         ng-keypress="self.upload.step.onKeypress($event)"
                         required>
+
+                    <md-progress-linear
+                        md-mode="indeterminate"
+                        ng-class="{ 'rv-hide': !self.upload.httpProgress }"></md-progress-linear>
 
                     <!-- TODO: decide whether and how to display a hint or error messages -->
                     <div ng-messages="self.upload.form.fileUrl.$error">
@@ -80,7 +85,7 @@
                 summary-value="{{ self.layerSource.type && self.select.step.isCompleted ? 'import.file.type.' + self.layerSource.type : '' }}">
 
                 <md-input-container class="md-block">
-                    <label translate>import.file.select.fileformat</label>
+                    <label>{{ 'import.file.select.fileformat' | translate }}</label>
                     <md-select
                         name="dataType"
                         ng-disabled="self.layerSourceOptions.length === 1"
@@ -110,7 +115,7 @@
             <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.layerSource.type">
 
                 <md-input-container class="md-block">
-                    <label translate>import.file.configure.layername</label>
+                    <label>{{ 'import.file.configure.layername' | translate }}</label>
                     <input name="layerName"
                         ng-change="self.configure.configureResetValidation()"
                         ng-model="self.layerSource.config.name" required>
@@ -122,7 +127,7 @@
                 </md-input-container>
 
                 <md-input-container class="md-block">
-                    <label translate>import.file.configure.primaryfield</label>
+                    <label>{{ 'import.file.configure.primaryfield ' | translate }}</label>
                     <md-select
                         name="primaryField"
                         md-on-open="self.configure.configureResetValidation()"
@@ -140,7 +145,7 @@
 
                 <div layout="row" ng-switch-when="csv">
                     <md-input-container class="md-block" flex>
-                        <label translate>import.file.configure.latitudefield</label>
+                        <label>{{ 'import.file.configure.latitudefield' | translate }}</label>
                         <md-select
                             name="latitude"
                             md-on-open="self.configure.configureResetValidation()"
@@ -156,7 +161,7 @@
                         </div-->
                     </md-input-container>
                     <md-input-container class="md-block" flex>
-                        <label translate>import.file.configure.longitudefield</label>
+                        <label>{{ 'import.file.configure.longitudefield' | translate }}</label>
                         <md-select
                             name="longitude"
                             md-on-open="self.configure.configureResetValidation()"
@@ -176,7 +181,7 @@
 
                 <div layout="row">
                     <md-input-container class="md-block" flex>
-                        <label translate>import.file.configure.colourfield</label>
+                        <label>{{ 'import.file.configure.colourfield' | translate }}</label>
                         <input rv-minicolors options="self.configure.colourPickerSettings"
                             name="layerName"
                             ng-change="self.configure.configureResetValidation()"
@@ -190,7 +195,7 @@
                 </div>
 
                 <div ng-messages="self.configure.form.$error" class="rv-form-error">
-                    <div ng-message="invalid" translate>import.file.configure.invalid</div>
+                    <div ng-message="invalid">{{ 'import.file.configure.invalid' | translate }}</div>
                 </div>
 
                 <p class="md-caption">{{ 'stepper.unresponsive' | translate }}</p>
@@ -200,7 +205,7 @@
 
         <div class="rv-file-drop-container" flow-drop>
             <div class="rv-file-drop-title">
-                <span class="md-display-2" translate>import.file.upload.drop</span>
+                <span class="md-display-2">{{ 'import.file.upload.drop' | translate }}</span>
                 <md-icon md-svg-src="file:file_upload"></md-icon>
             </div>
         </div>

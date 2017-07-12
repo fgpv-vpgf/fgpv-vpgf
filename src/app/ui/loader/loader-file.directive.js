@@ -1,5 +1,3 @@
-/* global RV */
-
 // Need to add exported module to window as it needs it internally.
 import Flow from '@flowjs/ng-flow/dist/ng-flow-standalone';
 window.Flow = Flow;
@@ -32,7 +30,7 @@ function rvLoaderFile() {
     return directive;
 }
 
-function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint, $rootElement,
+function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlueprint, $rootElement,
     keyNames, layerSource, legendService) {
     'ngInject';
     const self = this;
@@ -52,8 +50,8 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
                 uploadReset();  // reset upload progress bar
                 onCancel(self.upload.step);
             },
-            onKeypress: event =>
-                { if (event.keyCode === keyNames.ENTER) { uploadOnContinue(); } }, // check if enter key have been pressed and call the next step if so
+            onKeypress: event => {
+                if (event.keyCode === keyNames.ENTER) { uploadOnContinue(); } }, // check if enter key have been pressed and call the next step if so
             reset: uploadReset
         },
         form: null,
@@ -68,6 +66,7 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
         fileUrlReset,
         fileUrlResetValidation,
 
+        httpProgress: false, // shows progress loading file using $http
         progress: 0
     };
 
@@ -153,11 +152,31 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
      * @function uploadOnContinue
      */
     function uploadOnContinue() {
-        onLayerBlueprintReady(self.upload.fileUrl)
-            .catch(error => {
-                RV.logger.error('loaderFileDirective', 'problem retrieving file link with error', error);
-                toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
+        self.upload.httpProgress = true;
+        _loadFile(self.upload.fileUrl).then(arrayBuffer =>
+            onLayerBlueprintReady(self.upload.fileUrl, arrayBuffer)
+        ).catch(error => {
+            RV.logger.error('loaderFileDirective', 'problem retrieving file link with error', error);
+            toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
+        }).finally(() => (self.upload.httpProgress = false));
+
+        /**
+         * Tries to load a file specified using $http service.
+         *
+         * @function _loadFile
+         * @param {String} url absolute file url
+         * @return {Promise} a promise resolving with file arraybuffer if successful
+         */
+        function _loadFile(url) {
+            const promise = $http.get(url, { responseType: 'arraybuffer' }).then(response =>
+                response.data
+            ).catch(error => {
+                console.log(error);
+                throw new Error('Cannot retrieve file data');
             });
+
+            return promise;
+        }
     }
 
     /**
@@ -170,42 +189,46 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
             const file = files[0];
             self.upload.file = file; // store the first file from the array;
 
-            onLayerBlueprintReady(file.name, file.file)
-                .catch(error => {
-                    RV.logger.error('loaderFileDirective', 'file upload has failed with error', error);
-                    toggleErrorMessage(self.upload.form, 'fileSelect', 'upload-error', false);
-                });
+            _readFile(file.file, _updateProgress).then(arrayBuffer =>
+                onLayerBlueprintReady(file.name, arrayBuffer)
+            ).catch(error => {
+                RV.logger.error('loaderFileDirective', 'file upload has failed with error', error);
+                toggleErrorMessage(self.upload.form, 'fileSelect', 'upload-error', false);
+            });
         }
-    }
 
-    /**
-     * Waits until the layerBlueprint is create and ready (the data has been read) and moves to the next step.
-     * @function onLayerBlueprintReady
-     * @param  {String} name file name or url
-     * @param  {Object} file [optional] html5 file object
-     * @return {Promise} layerBlueprint ready promise
-     */
-    function onLayerBlueprintReady(name, file) {
+        /**
+         * Reads HTML5 File object data.
+         * @private
+         * @param {File} file a file object to read
+         * @param {Function} progressCallback a function which is called during the process of reading file indicating how much of the total data has been read
+         * @return {Promise} promise resolving with file's data
+         */
+        function _readFile(file, progressCallback) {
+            const dataPromise = $q((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = () => {
+                    RV.logger.error('layerBlueprint', 'failed to read a file');
+                    reject('Failed to read a file');
+                };
+                reader.onload = () =>
+                    resolve(reader.result);
+                reader.onprogress = event =>
+                    progressCallback(event);
 
-        const layerSourcePromise = layerSource.fetchFileInfo(name, file, updateProgress)
-            .then(({ options: layerSourceOptions, preselectedIndex }) => {
-                self.layerSourceOptions = layerSourceOptions;
-                self.layerSource = layerSourceOptions[preselectedIndex];
+                reader.readAsArrayBuffer(file);
             });
 
-        // add some delay before going to the next step
-        // explicitly move to step 1 (select); if the current step is not 0 (upload), drag-dropping a file may advance farther than needed when using just `stepper.nextStep()`
-        stepper.moveToStep(1, $timeout(() =>
-            layerSourcePromise, 300));
-
-        return layerSourcePromise;
+            return dataPromise;
+        }
 
         /**
          * Updates file load progress status.
-         * @function  updateProgress
+         * @function  _updateProgress
+         * @private
          * @param  {Object} event ProgressEvent object
          */
-        function updateProgress(event) {
+        function _updateProgress(event) {
             // indicates if the resource concerned by the ProgressEvent has a length that can be calculated.
             if (event.lengthComputable) {
                 const percentLoaded = Math.round((event.loaded / event.total) * 100);
@@ -218,6 +241,29 @@ function Controller($scope, $q, $timeout, stateManager, Stepper, LayerBlueprint,
                 }
             }
         }
+    }
+
+    /**
+     * Waits until the layerBlueprint is create and ready (the data has been read) and moves to the next step.
+     * @function onLayerBlueprintReady
+     * @param  {String} name file name or url
+     * @param  {ArrayBuffer} arrayBuffer raw file data
+     * @return {Promise} layerBlueprint ready promise
+     */
+    function onLayerBlueprintReady(name, arrayBuffer) {
+
+        const layerSourcePromise = layerSource.fetchFileInfo(name, arrayBuffer)
+            .then(({ options: layerSourceOptions, preselectedIndex }) => {
+                self.layerSourceOptions = layerSourceOptions;
+                self.layerSource = layerSourceOptions[preselectedIndex];
+            });
+
+        // add some delay before going to the next step
+        // explicitly move to step 1 (select); if the current step is not 0 (upload), drag-dropping a file may advance farther than needed when using just `stepper.nextStep()`
+        stepper.moveToStep(1, $timeout(() =>
+            layerSourcePromise, 300));
+
+        return layerSourcePromise;
     }
 
     /**

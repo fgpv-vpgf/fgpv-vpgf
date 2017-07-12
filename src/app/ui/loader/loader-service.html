@@ -7,7 +7,7 @@
             summary-value="{{ self.connect.step.isCompleted ? self.connect.serviceUrl : '' }}">
 
             <md-input-container class="md-block">
-                <label translate>import.service.connect.serviceurl</label>
+                <label>{{ 'import.service.connect.serviceurl' | translate }}</label>
                 <input
                     name="serviceUrl"
                     type="url"
@@ -28,7 +28,7 @@
         <rv-stepper-item step="self.select.step" form="self.select.form"
             summary-value="{{ self.select.step.isCompleted ? 'import.service.type.' + self.layerSource.type : '' }}">
             <md-input-container class="md-block">
-                <label translate>import.service.select.servicetype</label>
+                <label>{{ 'import.service.select.servicetype' | translate }}</label>
                 <md-select
                     name="serviceType"
                     ng-disabled="self.layerSourceOptions.length === 1"
@@ -56,7 +56,7 @@
             <md-input-container class="md-block"
                 ng-switch-when="featurelayer|wms"
                 ng-switch-when-separator="|">
-                <label translate>import.service.configure.layername</label>
+                <label>{{ 'import.service.configure.layername' | translate }}</label>
                 <input name="layerServiceName" ng-model="self.layerSource.config.name" required>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
                 <!--div ng-messages="self.configure.form.layerName.$error">
@@ -66,7 +66,7 @@
             </md-input-container>
 
             <md-input-container class="md-block" ng-switch-when="featurelayer">
-                <label translate>import.service.configure.primaryfield</label>
+                <label>{{ 'import.service.configure.primaryfield' | translate }}</label>
                 <md-select
                     name="primaryField"
                     ng-model="self.layerSource.config.nameField"
@@ -82,7 +82,7 @@
             </md-input-container>
 
             <md-input-container class="md-block" ng-switch-when="dynamicservice">
-                <label translate>import.service.configure.layers</label>
+                <label>{{ 'import.service.configure.layers' | translate }}</label>
                 <md-select
                     name="dynamicLayers"
                     ng-model="self.layerSource.config.layerEntries"
@@ -107,7 +107,7 @@
                         {{ layer.indent + ' ' + layer.name }}
                     </md-option>
                 </md-select>
-                <div class="rv-hint" translate>import.service.configure.multipleselection</div>
+                <div class="rv-hint">{{ 'import.service.configure.multipleselection' | translate }}</div>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
                 <!--div class="errors" ng-messages="self.configure.form.primaryField.$error">
                         <div ng-message="required">Required</div>
@@ -131,7 +131,7 @@
             <md-input-container class="md-block"
                 ng-if="!self.layerSource.config.singleEntryCollapse"
                 ng-switch-when="dynamicservice">
-                <label translate>import.service.configure.groupname</label>
+                <label>{{ 'import.service.configure.groupname' | translate }}</label>
                 <input name="layerServiceName"
                     ng-model="self.layerSource.config.name" required>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
@@ -142,7 +142,7 @@
             </md-input-container>
 
             <md-input-container class="md-block" ng-switch-when="wms">
-                <label translate>import.service.configure.layers</label>
+                <label>{{ 'import.service.configure.layers' | translate }}</label>
                 <md-select
                     name="wmsLayers"
                     ng-model="self.layerSource.config.layerEntries"
@@ -167,7 +167,7 @@
                         {{ layer.indent + ' ' + layer.desc }}
                     </md-option>
                 </md-select>
-                <div class="rv-hint" translate>import.service.configure.multipleselection</div>
+                <div class="rv-hint">{{ 'import.service.configure.multipleselection' | translate }}</div>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
                 <!--div class="errors" ng-messages="self.configure.form.layers.$error">
                     <div ng-message="required">Required</div>
