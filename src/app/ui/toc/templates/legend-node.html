@@ -35,7 +35,7 @@
 
 <div class="rv-list-item-controls" ng-if="!self.isReorder">
     <md-menu md-position-mode="target-right target" class="rv-list-item-control"
-        ng-if="self.intersect(self.block.availableControls, ['metadata', 'settings', 'data', 'symbology', 'boundary', 'reload', 'remove']).length > 0">
+        ng-if="::self.hasMenu()">
         <md-button
             aria-label="{{ 'toc.entry.aria.openData' | translate }}"
             class="md-icon-button rv-button-40 rv-icon-20"

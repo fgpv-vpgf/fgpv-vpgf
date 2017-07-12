@@ -345,6 +345,9 @@
         "id": "powerplant100mw-electric",
         "name": "Electric Transmission Line",
         "layerType": "esriFeature",
+        "controls": [
+            "remove"
+        ],
         "state": {
           "visibility": false,
           "boundingBox": false
