@@ -315,105 +315,55 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
     /**
      *
      * @function fetchFileInfo
-     * @param {String} path an absolute url for a file being loaded from the network
-     * @param {Object} file html5 file object
-     * @param {Function} progressCallback a function to call with a progress updates while a file being read
+     * @param {String} path a file path, either from the local filesystem or an absolute url
+     * @param {ArrayBuffer} arrayBuffer raw file data
      * @return {Promise} a promise resolving with an array of three LayerSourceInfo objects; one for each supported file types: CSV, GeoJSON, ShapeFile; will reject if there is an error accessing the service or parsing its response;
      */
-    function fetchFileInfo(path, file, progressCallback = angular.noop) {
-        const fetchPromise = gapiService.gapi.layer.predictLayerUrl(path)
-            .then(fileInfo => {
-                // fileData is returned only if path is a url; if it's just a file name, only serviceType is returned
-                // this.fileData = fileInfo.fileData;
-                this.layerType = Geo.Layer.Types.ESRI_FEATURE;
-                this.fileType = fileInfo.serviceType;
+    function fetchFileInfo(path, arrayBuffer) {
+        // convert forward slashes to backward slashes and poop the file name
+        const fileName = path.replace(/\\/g, '/').split('/').pop();
 
-                // error type means the file cannot be accessed
-                if (this.fileType === Geo.Service.Types.Error) {
-                    throw new Error('Cannot retrieve file data');
-                }
+        const fetchPromise = gapiService.gapi.layer.predictLayerUrl(fileName).then(fileInfo => {
+            // fileData is returned only if path is a url; if it's just a file name, only serviceType is returned
+            // this.fileData = fileInfo.fileData;
+            this.layerType = Geo.Layer.Types.ESRI_FEATURE;
+            this.fileType = fileInfo.serviceType;
 
-                const layerConfig = new ConfigObject.layers.FeatureLayerNode({
-                    id: `${Geo.Layer.Types.ESRI_FEATURE}-file#${++ref.idCounter}`,
-                    url: path,
-                    layerType: Geo.Layer.Types.ESRI_FEATURE,
-                    name: typeof file !== 'undefined' ? file.name : path,
-                    state: {
-                        userAdded: true
-                    }
-                });
-
-                // load file data and return generated file options
-                return _loadFileData(fileInfo).then(rawData => {
-                    const targetWkid = configService.getSync.map.instance.spatialReference.wkid
-
-                    // upfront validation is expensive and time consuming - create all file options and let the user decide, then validate
-                    const fileInfoOptions = [
-                        new LayerSourceInfo.CSVFileInfo(layerConfig, rawData, targetWkid),
-                        new LayerSourceInfo.GeoJSONFileInfo(layerConfig, rawData, targetWkid),
-                        new LayerSourceInfo.ShapefileFileInfo(layerConfig, rawData, targetWkid)
-                    ];
-
-                    const preselectedIndex = fileInfo.serviceType ?
-                        fileInfoOptions.findIndex(option =>
-                            option.type === fileInfo.serviceType) :
-                        0;
-
-                    return {
-                        options: fileInfoOptions,
-                        preselectedIndex
-                    };
-                });
-            });
-
-        return fetchPromise;
-
-        /**
-         * Reads a file into memory.
-         *
-         * @private
-         * @function _loadFileData
-         * @param {Object} fileInfo file info object returned by the geoApi prediction function
-         * @return {Object?} raw file data
-         */
-        function _loadFileData(fileInfo) {
-            // if there is file object, read it and store the data
-            if (typeof file !== 'undefined') {
-                return _readFile(file, progressCallback);
-
-            } else if (typeof fileInfo.fileData !== 'undefined') {
-                return $q.resolve(fileInfo.fileData);
-
-            } else {
+            // error type means the file cannot be accessed
+            if (this.fileType === Geo.Service.Types.Error) {
                 throw new Error('Cannot retrieve file data');
             }
-        }
 
-        /**
-         * Reads HTML5 File object data.
-         * @private
-         * @param {File} file a file object to read
-         * @param {Function} progressCallback a function which is called during the process of reading file indicating how much of the total data has been read
-         * @return {Promise} promise resolving with file's data
-         */
-        function _readFile(file, progressCallback) {
-            const dataPromise = $q((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onerror = () => {
-                    RV.logger.error('layerBlueprint', 'failed to read a file');
-                    reject('Failed to read a file');
-                };
-                reader.onload = () =>
-                    resolve(reader.result);
-                reader.onprogress = event =>
-                    progressCallback(event);
-
-                reader.readAsArrayBuffer(file);
+            const layerConfig = new ConfigObject.layers.FeatureLayerNode({
+                id: `${Geo.Layer.Types.ESRI_FEATURE}-file#${++ref.idCounter}`,
+                url: path,
+                layerType: Geo.Layer.Types.ESRI_FEATURE,
+                name: fileName,
+                state: {
+                    userAdded: true
+                }
             });
 
-            return dataPromise;
-        }
+            const targetWkid = configService.getSync.map.instance.spatialReference.wkid
+
+            // upfront validation is expensive and time consuming - create all file options and let the user decide, then validate
+            const fileInfoOptions = [
+                new LayerSourceInfo.CSVFileInfo(layerConfig, arrayBuffer, targetWkid),
+                new LayerSourceInfo.GeoJSONFileInfo(layerConfig, arrayBuffer, targetWkid),
+                new LayerSourceInfo.ShapefileFileInfo(layerConfig, arrayBuffer, targetWkid)
+            ];
+
+            const preselectedIndex = fileInfo.serviceType ?
+                fileInfoOptions.findIndex(option =>
+                    option.type === fileInfo.serviceType) :
+                0;
+
+            return {
+                options: fileInfoOptions,
+                preselectedIndex
+            };
+        });
+
+        return fetchPromise;
     }
-
-
 }
