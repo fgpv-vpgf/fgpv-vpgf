@@ -330,7 +330,10 @@
         "layerType": "esriDynamic",
         "layerEntries": [
           {
-            "index": 22
+            "index": 22,
+            "table": {
+                "title": "A custom title"
+            }
           }
         ],
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
