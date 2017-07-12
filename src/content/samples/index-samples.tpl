@@ -98,6 +98,7 @@
         <option value="config/config-sample-42.json">42. Sample with hidden layer</option>
         <option value="config/config-sample-43.json">43. Map with custom title</option>
         <option value="config/config-sample-44.json">44. Viewer with custom name and logo</option>
+        <option value="config/config-sample-45.json">45. Viewer defaulting to Mercator, with no layers</option>
     </select>
 
     <form id="bookmarkLoad">
