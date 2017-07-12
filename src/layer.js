@@ -48,36 +48,6 @@ const serviceType = {
     Error: 'error'
 };
 
-// attempts to determine if a path points to a location on the internet,
-// or is a local file.  Returns true if internetish
-function isServerFile(url) {
-    // TODO possibly enhance to be better check, or support more cases
-
-    const lowUrl = url.toLowerCase();
-    const tests = [/^http:/, /^https:/, /^ftp:/, /^\/\//];
-    return tests.some(test => lowUrl.match(test));
-
-}
-
-// will grab a file from a server address as binary.
-// returns a promise that resolves with the file data.
-function getServerFile(url, esriBundle) {
-    return new Promise((resolve, reject) => {
-        // extract info for this service
-        const defService = esriBundle.esriRequest({
-            url: url,
-            handleAs: 'arraybuffer'
-        });
-
-        defService.then(srvResult => {
-            resolve(srvResult);
-        }, error => {
-            // something went wrong
-            reject(error);
-        });
-    });
-}
-
 // returns a standard information object with serviceType
 // supports predictLayerUrl
 // type is serviceType enum value
@@ -113,26 +83,6 @@ function makeLayerInfo(type, name, url, json) {
         info.serviceType = serviceType.DynamicService;
     }
     return info;
-}
-
-// returns promise of standard information object with serviceType
-// and fileData if file is located online (not on disk).
-function makeFileInfo(type, url, esriBundle) {
-    return new Promise(resolve => {
-        const info = makeInfo(type);
-        if (url && isServerFile(url)) {
-            // be a pal and download the file content
-            getServerFile(url, esriBundle).then(data => {
-                info.fileData = data;
-                resolve(info);
-            }).catch(() => {
-                info.serviceType = serviceType.Error;
-                resolve(info);
-            });
-        } else {
-            resolve(info);
-        }
-    });
 }
 
 // inspects the JSON that was returned from a service.
@@ -309,7 +259,7 @@ function pokeEsriService(url, esriBundle, hint) {
 // resolves with promise of information object
 // - serviceType : the type of file (CSV, Shape, GeoJSON, Unknown)
 // - fileData : if the file is located on a server, will xhr
-function pokeFile(url, esriBundle, hint) {
+function pokeFile(url, hint) {
 
     // reaction functions to different files
     // overkill right now, as files just identify the type right now
@@ -318,23 +268,23 @@ function pokeFile(url, esriBundle, hint) {
 
     // csv
     fileHandler[serviceType.CSV] = () => {
-        return makeFileInfo(serviceType.CSV, url, esriBundle);
+        return makeInfo(serviceType.CSV);
     };
 
     // geojson
     fileHandler[serviceType.GeoJSON] = () => {
-        return makeFileInfo(serviceType.GeoJSON, url, esriBundle);
+        return makeInfo(serviceType.GeoJSON);
     };
 
     // csv
     fileHandler[serviceType.Shapefile] = () => {
-        return makeFileInfo(serviceType.Shapefile, url, esriBundle);
+        return makeInfo(serviceType.Shapefile);
     };
 
     // couldnt figure it out
     fileHandler[serviceType.Unknown] = () => {
         // dont supply url, as we don't want to download random files
-        return makeFileInfo(serviceType.Unknown);
+        return makeInfo(serviceType.Unknown);
     };
 
     return new Promise(resolve => {
@@ -425,7 +375,7 @@ function predictLayerUrlBuilder(esriBundle) {
 
             // hint flavour to flavour-handler
             flavourToHandler.F_FILE = () => {
-                return pokeFile(url, esriBundle, hint);
+                return pokeFile(url, hint);
             };
 
             flavourToHandler.F_ESRI = () => {
@@ -467,7 +417,7 @@ function predictLayerUrlBuilder(esriBundle) {
             return new Promise(resolve => {
                 // no hint. run tests until we find a match.
                 // test for file
-                pokeFile(url, esriBundle).then(infoFile => {
+                pokeFile(url).then(infoFile => {
                     if (infoFile.serviceType === serviceType.Unknown ||
                         infoFile.serviceType === serviceType.Error) {
 
@@ -839,6 +789,69 @@ function extractFields(geoJson) {
 }
 
 /**
+ * Rename any fields with invalid names. Both parameters are modified in place.
+ *
+ * @function cleanUpFields
+ * @param {Object} geoJson           layer data in geoJson format
+ * @param {Object} layerDefinition   layer definition of feature layer not yet created
+ */
+function cleanUpFields(geoJson, layerDefinition) {
+    /*
+        loop through layerDef fields
+        if we find a bad field
+            store orig name
+            loop
+                make a new name -- spaces to underscore
+                check if new name exists fields
+                if yes, increase underscores
+                if no, exit loop
+            end loop
+            add alias to fieldDef equal to name
+            update fieldDef name to be newName
+
+            loop through geoJson features
+            update new property
+            delete old property
+        end if
+
+    */
+
+    const badField = name => {
+        // basic for now. check for spaces.
+        return name.indexOf(' ') > -1;
+    };
+
+    layerDefinition.fields.forEach(f => {
+        if (badField(f.name)) {
+            const oldField = f.name;
+            let newField;
+            let underscore = '_';
+            let badNewName;
+
+            // determine a new field name that is not bad and is unique, then update the field definition
+            do {
+                newField = oldField.replace(/ /g, underscore);
+                badNewName = layerDefinition.fields.find(f2 => f2.name === newField);
+                if (badNewName) {
+                    // new field already exists. enhance it
+                    underscore += '_';
+                }
+            } while (badNewName)
+
+            f.alias = oldField;
+            f.name = newField;
+
+            // update the geoJson to reflect the field name change.
+            geoJson.features.forEach(gf => {
+                gf.properties[newField] = gf.properties[oldField];
+                delete gf.properties[oldField];
+            });
+        }
+    });
+
+}
+
+/**
  * Makes an attempt to load and register a projection definition.
  * Returns promise resolving when process is complete
  * projModule - proj module from geoApi
@@ -941,6 +954,10 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
             layerDefinition.fields = layerDefinition.fields.concat(extractFields(geoJson));
         }
 
+        // clean the fields. in particular, CSV files can be loaded with spaces in
+        // the field names
+        cleanUpFields(geoJson, layerDefinition);
+
         const destProj = 'EPSG:' + targetWkid;
 
         // look up projection definitions if they don't already exist and we have enough info
@@ -978,7 +995,6 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
 
                 // initializing layer using JSON does not set this property. do it manually.
                 layer.geometryType = geometryType;
-
                 resolve(layer);
             });
         };
