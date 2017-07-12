@@ -174,7 +174,7 @@ rv-filters-search {
 
             @include include-size(rv-gt-sm) {
                 width: 220px;
-                -ms-flex-preferred-size: 220px;
+                flex-basis: 220px;
             }
         }
 
