@@ -796,26 +796,6 @@ function extractFields(geoJson) {
  * @param {Object} layerDefinition   layer definition of feature layer not yet created
  */
 function cleanUpFields(geoJson, layerDefinition) {
-    /*
-        loop through layerDef fields
-        if we find a bad field
-            store orig name
-            loop
-                make a new name -- spaces to underscore
-                check if new name exists fields
-                if yes, increase underscores
-                if no, exit loop
-            end loop
-            add alias to fieldDef equal to name
-            update fieldDef name to be newName
-
-            loop through geoJson features
-            update new property
-            delete old property
-        end if
-
-    */
-
     const badField = name => {
         // basic for now. check for spaces.
         return name.indexOf(' ') > -1;
@@ -883,7 +863,6 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
     *   - renderer: a string identifying one of the properties in defaultRenders
     *   - sourceProjection: a string matching a proj4.defs projection to be used for the source data (overrides
     *     geoJson.crs)
-    *   - fields: an array of fields to be appended to the FeatureLayer layerDefinition (OBJECTID is set by default)
     *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
     *     definition or null if not found
     *   - layerId: a string to use as the layerId
@@ -896,6 +875,15 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
     * @returns {Promise} a promise resolving with a {FeatureLayer}
     */
     return (geoJson, opts) => {
+
+        // NOTE we used to have a 'fields' option where a caller could specify a custom field list.
+        //      this was problematic as changes made by assignIds would not be reflected in the
+        //      supplied list. Our UI currently has no way of doing custom lists; it just
+        //      throws every field in, so technically it's not used / not required.
+        //      If we decide we need this, we can add it back, and will need to either
+        //      a) stop the standard file load wizard from passing the .fields option.
+        //      b) write code here that synchs the .fields option with any changes
+        //         made by assignIds
 
         // TODO add documentation on why we only support layers with WKID (and not WKT).
         let targetWkid;
@@ -931,10 +919,6 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
                 targetWkid = opts.targetWkid;
             } else {
                 throw new Error('makeGeoJsonLayer - missing opts.targetWkid arguement');
-            }
-
-            if (opts.fields) {
-                layerDefinition.fields = layerDefinition.fields.concat(opts.fields);
             }
 
             if (opts.layerId) {
@@ -1013,7 +997,6 @@ function makeCsvLayerBuilder(esriBundle, geoApi) {
     * Constructs a FeatureLayer from CSV data. Accepts the following options:
     *   - targetWkid: Required. an integer for an ESRI wkid the spatial reference the returned layer should be in
     *   - renderer: a string identifying one of the properties in defaultRenders
-    *   - fields: an array of fields to be appended to the FeatureLayer layerDefinition (OBJECTID is set by default)
     *   - latfield: a string identifying the field containing latitude values ('Lat' by default)
     *   - lonfield: a string identifying the field containing longitude values ('Long' by default)
     *   - delimiter: a string defining the delimiter character of the file (',' by default)
@@ -1095,7 +1078,6 @@ function makeShapeLayerBuilder(esriBundle, geoApi) {
     *   - renderer: a string identifying one of the properties in defaultRenders
     *   - sourceProjection: a string matching a proj4.defs projection to be used for the source data (overrides
     *     geoJson.crs)
-    *   - fields: an array of fields to be appended to the FeatureLayer layerDefinition (OBJECTID is set by default)
     *   - epsgLookup: a function that takes an EPSG code (string or number) and returns a promise of a proj4 style
     *     definition or null if not found
     *   - layerId: a string to use as the layerId
