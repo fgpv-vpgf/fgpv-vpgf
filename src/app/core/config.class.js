@@ -713,11 +713,13 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 undefined;
 
             this.isLayerEntry = true;
+            this._table = new TableNode(source.table);
         }
 
         get outfields () { return this._outfields; }
         get stateOnly () { return this._stateOnly; }
         get extent () { return this._extent; }
+        get table () { return this._table; }
 
         get layerType () { return layerTypes.ESRI_DYNAMIC; }
 
@@ -725,7 +727,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             return angular.merge(super.JSON, {
                 outfields: this.outfields,
                 stateOnly: this.stateOnly,
-                extent: this.extent
+                extent: this.extent,
+                table: this.table.JSON
             });
         }
     }
