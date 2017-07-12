@@ -24,8 +24,14 @@
     "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
     "exportMapUrl": "http://webservices-staging.maps.canada.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
     "export": {
+      "title": {
+        "value": "Title"
+      },
+      "map": {},
+      "mapElements": {},
+      "legend":{},
       "footnote": {
-        "value": "This is a footnote added from the configuration file."
+        "value": ""
       }
     },
     "search": {
