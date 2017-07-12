@@ -250,7 +250,8 @@
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode", "description": "Allows for overriding the bounding box supplied by the service." },
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
-                "stateOnly": { "type": "boolean", "default": false, "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)." }
+                "stateOnly": { "type": "boolean", "default": false, "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)." },
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for table panel"}
             },
             "required": ["index"],
             "additionalProperties": false
