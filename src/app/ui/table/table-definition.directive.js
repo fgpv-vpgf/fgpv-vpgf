@@ -53,7 +53,8 @@ const FILTERS = {
     }
 };
 
-const map = { };
+const columnNameMap = { };
+let counter = 0;
 
 // jscs:disable maximumLineLength
 const FILTERS_TEMPLATE = {
@@ -62,7 +63,7 @@ const FILTERS_TEMPLATE = {
             <md-input-container class="md-block" md-no-float flex>
                 <input ng-click="self.prevent($event)"
                         ng-keypress="self.prevent($event)"
-                        ng-change="self.change('${map[column]}', self.${column}.value)"
+                        ng-change="self.change('${columnNameMap[column]}', self.${column}.value)"
                         ng-model="self.${column}.value" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.placeholder | translate }}"
                         ng-disabled="self.${column}.static" />
             </md-input-container>
@@ -72,7 +73,7 @@ const FILTERS_TEMPLATE = {
             <md-input-container class="md-block" md-no-float flex>
                 <md-select ng-click="self.prevent($event)"
                     ng-model="self.${column}.value"
-                    md-on-close="self.change('${map[column]}', self.${column}.value)"
+                    md-on-close="self.change('${columnNameMap[column]}', self.${column}.value)"
                     ng-disabled="self.${column}.static"
                     placeholder="{{ self.placeholder | translate }}" multiple>
                     <md-option ng-repeat="value in self.${column}.values" ng-value="value">
@@ -86,14 +87,14 @@ const FILTERS_TEMPLATE = {
             <md-input-container class="md-block" md-no-float flex>
                 <input rv-table-number-only
                         ng-click="self.prevent($event)"
-                        ng-change="self.change('${map[column]}', self.${column}.min, self.${column}.max)"
+                        ng-change="self.change('${columnNameMap[column]}', self.${column}.min, self.${column}.max)"
                         ng-model="self.${column}.min" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.min.placeholder | translate }}"
                         ng-disabled="self.${column}.static" />
             </md-input-container>
             <md-input-container class="md-block" md-no-float flex>
                 <input rv-table-number-only
                         ng-click="self.prevent($event)"
-                        ng-change="self.change('${map[column]}', self.${column}.min, self.${column}.max)"
+                        ng-change="self.change('${columnNameMap[column]}', self.${column}.min, self.${column}.max)"
                         ng-model="self.${column}.max" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.max.placeholder | translate }}"
                         ng-disabled="self.${column}.static" />
             </md-input-container>
@@ -102,14 +103,14 @@ const FILTERS_TEMPLATE = {
         `<div class="rv-filter-date" ng-show="self.${column}.filtersVisible">
             <md-datepicker
                 ng-click="self.prevent($event)"
-                ng-change="self.change('${map[column]}', self.${column}.min, self.${column}.max)"
+                ng-change="self.change('${columnNameMap[column]}', self.${column}.min, self.${column}.max)"
                 ng-model="self.${column}.min"
                 md-placeholder="{{ self.min.placeholder | translate }}"
                 ng-disabled="self.${column}.static">
             </md-datepicker>
             <md-datepicker
                 ng-click="self.prevent($event)"
-                ng-change="self.change('${map[column]}', self.${column}.min, self.${column}.max)"
+                ng-change="self.change('${columnNameMap[column]}', self.${column}.min, self.${column}.max)"
                 ng-model="self.${column}.max"
                 md-placeholder="{{ self.max.placeholder | translate }}"
                 ng-disabled="self.${column}.static">
@@ -270,15 +271,10 @@ function rvTableDefinition(stateManager, events, $compile, tableService, layoutS
             filter.scope = filterScope;
 
             if (!column.simpleColumnName) {
-                if (typeof window.counter !== 'undefined') {
-                    window.counter++;
-                } else {
-                    window.counter = 0;
-                }
-
-                const simpleColumnName = 'a' + window.counter;
-                column.simpleColumnName = simpleColumnName
-                map[simpleColumnName] = column.name;
+                const simpleColumnName = 'a' + counter;     // set a simplified column name for parsing purposes
+                column.simpleColumnName = simpleColumnName;
+                columnNameMap[simpleColumnName] = column.name;
+                counter++;
             }
 
             filter.scope.self[column.simpleColumnName] = column.filter;
