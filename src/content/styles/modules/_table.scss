@@ -24,6 +24,12 @@
 
             table {
                 table-layout: fixed; // make autowidth: false works for datatable https://datatables.net/forums/discussion/30530/set-fixed-column-width
+
+                thead > tr > th > span {
+                    display: block;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
             }
 
             .dataTables_wrapper {
