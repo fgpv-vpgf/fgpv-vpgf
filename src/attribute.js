@@ -170,20 +170,20 @@ function getLayerIndex(layerUrl) {
 }
 
 /**
-* Recursive function to load a full set of attributes, regardless of the maximum output size of the service.
-* Passes result back on the provided Deferred object.
-*
-* @private
-* @param  {Object} opts options object that consists of these properties
-*         - maxId: integer, largest object id that has already been downloaded.
-*         - supportsLimit: boolean, indicates if server result will notify us if our request surpassed the record limit.
-*         - batchSize: integer, maximum number of results the service will return. if -1, means currently unknown. only required if supportsLimit is false.
-*         - layerUrl: string, URL to feature layer endpoint.
-*         - oidField: string, name of attribute containing the object id for the layer.
-*         - attribs: string, a comma separated list of attributes to download. '*' will download all.
-*         - esriBundle: object, standard set of ESRI API objects.
-* @param  {Object} callerDef deferred object that resolves when current data has been downloaded
-*/
+ * Recursive function to load a full set of attributes, regardless of the maximum output size of the service.
+ * Passes result back on the provided Deferred object.
+ *
+ * @private
+ * @param  {Object} opts options object that consists of these properties
+ *         - maxId: integer, largest object id that has already been downloaded.
+ *         - supportsLimit: boolean, indicates if server result will notify us if our request surpassed the record limit.
+ *         - batchSize: integer, maximum number of results the service will return. if -1, means currently unknown. only required if supportsLimit is false.
+ *         - layerUrl: string, URL to feature layer endpoint.
+ *         - oidField: string, name of attribute containing the object id for the layer.
+ *         - attribs: string, a comma separated list of attributes to download. '*' will download all.
+ *         - esriBundle: object, standard set of ESRI API objects.
+ * @param  {Object} callerDef deferred object that resolves when current data has been downloaded
+ */
 function loadDataBatch(opts, callerDef) {
     //  fetch attributes from feature layer. where specifies records with id's higher than stuff already
     //  downloaded. no geometry.
@@ -311,7 +311,9 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
                         }
 
                         // add renderer and legend
-                        layerData.renderer = serviceResult.drawingInfo.renderer;
+                        layerData.renderer = geoApi.symbology.cleanRenderer(serviceResult.drawingInfo.renderer,
+                            serviceResult.fields);
+
                         layerData.legend = geoApi.symbology.rendererToLegend(layerData.renderer, featureIdx);
                         geoApi.symbology.enhanceRenderer(layerData.renderer, layerData.legend);
 
