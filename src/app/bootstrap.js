@@ -25,8 +25,7 @@ Object.assign(RV, {
     ready,
     allScriptsLoaded: false,
     debug: {},
-    _nodes: null,
-    _deferredPolyfills: RV._deferredPolyfills || [] // holds callback for any polyfills or patching that needs to be done after the core.js is loaded
+    _nodes: null
 });
 
 const customAttrs = ['config', 'langs', 'service-endpoint', 'restore-bookmark', 'wait', 'keys', 'fullpage-app'];
