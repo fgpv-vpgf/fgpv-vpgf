@@ -19,12 +19,12 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
         // method called by the options and flags set on the layer item
         actions: {
             toggleLayerGroup,
-            toggleLayerFiltersPanel
+            toggleLayerTablePanel
         },
 
         toggleSettings,
         toggleMetadata,
-        toggleLayerFiltersPanel,
+        toggleLayerTablePanel,
 
         removeLayer,
         reloadLayer
@@ -33,12 +33,12 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
     let errorToast;
 
     // debounce toggle filter function
-    const debToggleFilter = debounceService.registerDebounce(debToggleLayerFiltersPanel);
+    const debToggleFilter = debounceService.registerDebounce(debToggleLayerTablePanel);
 
-    // set state change watches on metadata, settings and filters panel
+    // set state change watches on metadata, settings and table panel
     watchPanelState('sideMetadata', 'metadata');
     watchPanelState('sideSettings', 'settings');
-    watchPanelState('filtersFulldata', 'filters');
+    watchPanelState('tableFulldata', 'table');
 
     return service;
 
@@ -52,16 +52,16 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
      * @param {LegendBlock} legendBlock legend block to be reloaded
      */
     function reloadLayer(legendBlock) {
-        // get filters configuration and check if static field were used. If so, filters can't be remove and flag need to stay
+        // get table configuration and check if static field were used. If so, table can't be remove and flag need to stay
         const config = configService.getSync.map.layerRecords.find(item =>
-            item.config.id === legendBlock.layerRecordId).initialConfig.filters;
+            item.config.id === legendBlock.layerRecordId).initialConfig.table;
         const staticField = config.columns.find(col =>
             col.filter.static === true);
 
         // reset filter flag
         legendBlock.filter = (typeof staticField !== 'undefined' && config.applyMap) ? true : false;
 
-        stateManager.setActive({ filtersFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+        stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId);
     }
 
@@ -91,9 +91,9 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
 
         // name mapping between true panel names and their short names
         const panelSwitch = {
-            filters: {
-                panel: 'filtersFulldata',
-                action: toggleLayerFiltersPanel
+            table: {
+                panel: 'tableFulldata',
+                action: toggleLayerTablePanel
             },
             metadata: {
                 panel: 'sideMetadata',
@@ -186,7 +186,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
         };
 
         const panelToClose = {
-            filters: false
+            table: false
         };
 
         stateManager
@@ -195,12 +195,12 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
     }
 
     /**
-     * Opens filters panel with data from the provided layer object (debounce).
-     * @function toggleLayerFiltersPanel
+     * Opens table panel with data from the provided layer object (debounce).
+     * @function toggleLayerTablePanel
      * @param  {Object} entry layer object whose data should be displayed.
      * @private
      */
-    function debToggleLayerFiltersPanel(entry) {
+    function debToggleLayerTablePanel(entry) {
         const requester = {
             id: entry.id,
             name: entry.name,
@@ -226,7 +226,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                     });
 
                     // add a column for interactive actions (detail and zoom)
-                    // do not add it inside an existing field because filters will not work properly and because of https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1631
+                    // do not add it inside an existing field because table will not work properly and because of https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1631
                     attributes.columns.unshift({
                         data: 'rvInteractive',
                         title: '',
@@ -262,7 +262,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                 if (errorToast) {
                     errorService.remove();
                 }
-                return stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0);
+                return stateManager.toggleDisplayPanel('tableFulldata', dataPromise, requester, 0);
             })
             .catch(() => {
                 errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
@@ -271,7 +271,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
     }
 
 
-    function toggleLayerFiltersPanel(legendBlock) {
+    function toggleLayerTablePanel(legendBlock) {
         const requester = {
             id: legendBlock.id,
             name: legendBlock.name,
@@ -359,7 +359,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                 if (errorToast) {
                     errorService.remove();
                 }
-                return stateManager.toggleDisplayPanel('filtersFulldata', dataPromise, requester, 0);
+                return stateManager.toggleDisplayPanel('tableFulldata', dataPromise, requester, 0);
             })
             .catch(() => {
                 errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
@@ -368,11 +368,11 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
     }
 
     /**
-     * Opens filters panel with data from the provided layer object.
-     * @function toggleLayerFiltersPanel
+     * Opens table panel with data from the provided layer object.
+     * @function toggleLayerTablePanel
      * @param  {Object} entry layer object whose data should be displayed.
      */
-    function toggleLayerFiltersPanel2(entry) {
+    function toggleLayerTablePanel2(entry) {
         debToggleFilter(entry);
     }
 
@@ -392,7 +392,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
         };
 
         const panelToClose = {
-            filters: false
+            table: false
         };
 
         const dataPromise = $q((resolve, reject) => {
@@ -425,10 +425,10 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
      *
      * @function watchPanelState
      * @param  {String} panelName    name of the panel to watch as specified in the stateManager
-     * @param  {String} displayName type of the display data (layer toggle name: 'settings', 'metadata', 'filters')
+     * @param  {String} displayName type of the display data (layer toggle name: 'settings', 'metadata', 'table')
      */
     function watchPanelState(panelName, displayName) {
-        // clear display on metadata, settings, and filters panels when closed
+        // clear display on metadata, settings, and table panels when closed
         $rootScope.$on('stateChangeComplete', (event, name, property, value) => {
             if (property === 'active' && name === panelName && value === false) {
                 stateManager.clearDisplayPanel(panelName);

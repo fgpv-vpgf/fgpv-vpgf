@@ -60,7 +60,7 @@ Often used for determining event key presses, this maps keyboard keys to their n
 
 ***
 
-There are three parent panel types; the main panel, the side panel, and the filters panel. Within these parent panels are child panels, such as the legend, settings, or datatables. Since multiple child panels can be open inside a parent panel, the following two files handles the animation and display of this functionality.
+There are three parent panel types; the main panel, the side panel, and the table panel. Within these parent panels are child panels, such as the legend, settings, or datatables. Since multiple child panels can be open inside a parent panel, the following two files handles the animation and display of this functionality.
 
 # statemanager.service.js
 

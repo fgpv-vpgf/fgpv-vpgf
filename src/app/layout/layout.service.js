@@ -44,7 +44,7 @@ function layoutService($rootElement, $rootScope) {
             MEDIUM: 'medium',
             LARGE: 'large'
         },
-        isFiltersVisible: false
+        isTableVisible: false
     };
 
     return service;
@@ -178,12 +178,12 @@ function layoutService($rootElement, $rootScope) {
      */
     function getPanelOffset() {
         // calculate what portion of the screen the main and filter panels take
-        const { main, filters } = service.panels;
+        const { main, table } = service.panels;
 
         const offsetFraction = {
             x: (main.filter(':visible').length > 0 ? main.width() : 0) /
                 service.mapNode.width() / 2,
-            y: (filters.filter(':visible').length > 0 ? filters.height() : 0) /
+            y: (table.filter(':visible').length > 0 ? table.height() : 0) /
                 service.mapNode.height() / 2
         };
 

@@ -241,7 +241,7 @@ function Controller($scope, tocService, stateManager, geoService, keyNames, conf
         initialTableDeregister: angular.noop
     };
 
-    self.toggleFiltersFull = toggleFiltersFull;
+    self.toggleTableFull = toggleTableFull;
     self.toggleReorderMode = toggleReorderMode;
     self.tocKeyDownHandler = tocKeyDownHandler;
 
@@ -253,9 +253,9 @@ function Controller($scope, tocService, stateManager, geoService, keyNames, conf
     configService.onEveryConfigLoad(cfg => {
         self.config = cfg
 
-        // check if we need to open a filter panel by default
-        if (self.config.ui.filterIsOpen[layoutService.currentLayout()]) {
-            _openInitialTable(self.config.ui.filterIsOpen.id);
+        // check if we need to open a table panel by default
+        if (self.config.ui.tableIsOpen[layoutService.currentLayout()]) {
+            _openInitialTable(self.config.ui.tableIsOpen.id);
         }
     });
 
@@ -289,7 +289,7 @@ function Controller($scope, tocService, stateManager, geoService, keyNames, conf
 
             // open the datatable if the legend block is found
             if (legendBlock) {
-                tocService.toggleLayerFiltersPanel(legendBlock);
+                tocService.toggleLayerTablePanel(legendBlock);
             }
 
             ref.initialTableDeregister();
@@ -298,9 +298,9 @@ function Controller($scope, tocService, stateManager, geoService, keyNames, conf
 
     /***/
 
-    // hacky way to toggle filters panel modes;
+    // hacky way to toggle table panel modes;
     // TODO: replace with a sane methods
-    function toggleFiltersFull() {
+    function toggleTableFull() {
         const views = [
             'default',
             'minimized',
@@ -308,16 +308,16 @@ function Controller($scope, tocService, stateManager, geoService, keyNames, conf
             'attached'
         ];
 
-        let currentMode = stateManager.state.filters.morph; // stateManager.getMode('filters');
+        let currentMode = stateManager.state.table.morph;
         let index = (views.indexOf(currentMode) + 1) % 4;
 
-        // Make sure the filters panel is open
+        // Make sure the table panel is open
         stateManager.setActive({
             side: false
         }, {
-            filtersFulldata: true
+            tableFulldata: true
         });
-        stateManager.setMode('filters', views[index]);
+        stateManager.setMode('table', views[index]);
     }
 
     /**

@@ -1,25 +1,25 @@
-const templateUrl = require('./filters-search.html');
+const templateUrl = require('./search.html');
 
 /**
- * @module rvFiltersSearch
+ * @module rvTableSearch
  * @memberof app.ui
  * @restrict E
  * @description
  *
- * The `rvFiltersSearch` directive let user enter text for a global search.
+ * The `rvTableSearch` directive let user enter text for a global search.
  *
  */
 angular
     .module('app.ui')
-    .directive('rvFiltersSearch', rvFiltersSearch);
+    .directive('rvTableSearch', rvTableSearch);
 
 /**
- * `rvFiltersSearch` directive body.
+ * `rvTableSearch` directive body.
  *
- * @function rvFiltersSearch
+ * @function rvTableSearch
  * @return {object} directive body
  */
-function rvFiltersSearch(filterService, stateManager, $rootScope, events) {
+function rvTableSearch(tableService, stateManager, $rootScope, events) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -52,9 +52,9 @@ function rvFiltersSearch(filterService, stateManager, $rootScope, events) {
      * @param   {String}   value   value to use to show column name (data = data source and title = alias name)
      */
     function changeColumnsName(value) {
-        const columns = stateManager.display.filters.data.columns;
+        const columns = stateManager.display.table.data.columns;
 
-        angular.element(filterService.getTable().header()).find('th').each((i, el) => {
+        angular.element(tableService.getTable().header()).find('th').each((i, el) => {
             if (columns[i].data !== 'rvSymbol' && columns[i].data !== 'rvInteractive') {
                 // TODO check if needed
                 //const index = el.innerHTML.indexOf('<div');
@@ -68,7 +68,7 @@ function rvFiltersSearch(filterService, stateManager, $rootScope, events) {
     }
 }
 
-function Controller(filterService, debounceService, $timeout, $rootElement, stateManager, $rootScope, events, $scope) {
+function Controller(tableService, debounceService, $timeout, $rootElement, stateManager, $rootScope, events, $scope) {
     'ngInject';
     const self = this;
 
@@ -76,7 +76,7 @@ function Controller(filterService, debounceService, $timeout, $rootElement, stat
     self.search = debounceService.registerDebounce(search, 1200, false);
     self.clear = clear;
 
-    self.service = filterService;
+    self.service = tableService;
     self.searchFilter = {};
 
     // all test operations for filtering (\\ is use to escape character when we remove the operand)
@@ -91,7 +91,7 @@ function Controller(filterService, debounceService, $timeout, $rootElement, stat
 
     $rootScope.$on(events.rvTableReady, () => {
         // set global search from saved state
-        self.searchText = stateManager.display.filters.data.filter.globalSearch;
+        self.searchText = stateManager.display.table.data.filter.globalSearch;
 
         // filter for complex query
         $.fn.dataTable.ext.searchTemp.push((settings, data) => filterComplex(settings, data));
@@ -100,9 +100,9 @@ function Controller(filterService, debounceService, $timeout, $rootElement, stat
     });
 
     $scope.stateManager = stateManager;
-    $scope.$watch('stateManager.display.filters.data.filter.globalSearch', value => {
+    $scope.$watch('stateManager.display.table.data.filter.globalSearch', value => {
         if (value === '_reset_') {
-            stateManager.display.filters.data.filter.globalSearch = '';
+            stateManager.display.table.data.filter.globalSearch = '';
             self.searchText = '';
         }
     });
@@ -118,7 +118,7 @@ function Controller(filterService, debounceService, $timeout, $rootElement, stat
         $rootElement.find('.dataTables_processing').css('display', 'block');
 
         // set filter information if user enter value
-        const table = filterService.getTable();
+        const table = tableService.getTable();
         buildFilters(table);
 
         // if user enter value is not valid filters, simply search the whole datatable
@@ -130,7 +130,7 @@ function Controller(filterService, debounceService, $timeout, $rootElement, stat
         }
 
         // keep global search value for this table
-        if (!init) { stateManager.display.filters.data.filter.globalSearch = self.searchText; }
+        if (!init) { stateManager.display.table.data.filter.globalSearch = self.searchText; }
     }
 
     /**

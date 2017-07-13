@@ -157,12 +157,12 @@ describe('stateManager', () => {
         it('should change modes correctly', () => {
             let state = stateManager.state;
 
-            expect(state.filters.morph)
+            expect(state.table.morph)
                 .toBe('default');
 
-            stateManager.setMorph('filters', 'half');
+            stateManager.setMorph('table', 'half');
 
-            expect(state.filters.morph)
+            expect(state.table.morph)
                 .toBe('half');
         });
 

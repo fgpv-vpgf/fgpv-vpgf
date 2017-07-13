@@ -1,5 +1,5 @@
 const templateUrls = {
-    filters: require('./filters-panel.html'),
+    table: require('./table-panel.html'),
     main: require('./main-panel.html'),
     other: require('./other-panel.html'),
     side: require('./side-panel.html')
@@ -7,11 +7,11 @@ const templateUrls = {
 
 /**
  *
- * @module rvFiltersPanel
+ * @module rvTablePanel
  * @memberof app.ui
  * @description
  *
- * The `rvPanel` directive is reused by all the core panels of the viewer; main, side and filters.
+ * The `rvPanel` directive is reused by all the core panels of the viewer; main, side and table.
  *
  * HTML example:
  * <rv-panel type="main" close-button="false"></rv-panel>

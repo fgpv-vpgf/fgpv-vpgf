@@ -62,7 +62,7 @@ function displayManager($timeout, $q, $rootElement) {
      * @function toggleDisplayPanel
      * @param  {String} panelName        panel to open; `statemanager.constant.service` `initialState` for valid panel names; any panel with a `display` property is a valid target;
      * @param  {Object} dataPromise      data object or a promise returning a data object; both can be plain data object or containers `{data: data, isLoaded: <boolean|promise> }`, where isLoaded can be a promise;
-     * @param  {Object} requester        an optional object requesting display change; must have `id` attribute if you want the panel to toggle off on the same requester; requester object can be used to immediately pass content to the panel - for example passing layer name to the filters panel to be displayed in the panel header while the datatable is being constructed;
+     * @param  {Object} requester        an optional object requesting display change; must have `id` attribute if you want the panel to toggle off on the same requester; requester object can be used to immediately pass content to the panel - for example passing layer name to the table panel to be displayed in the panel header while the datatable is being constructed;
      * @param  {Number} delay            an optional time to wait (in milliseconds) before setting loading indicator
      * @return {Object} promise          resolves as undefined iff panel data has resolved, rejects otherwise.
      */
@@ -156,7 +156,7 @@ function displayManager($timeout, $q, $rootElement) {
             display.data = data;
 
             // in some cases you might not want to turn off the loading indicator from tocService toggle function
-            // with the filters panel for example: fetching data for the table takes time, but generating the actual table also takes time; so you want to turn off the loading indicator from filters panel
+            // with the table panel for example: fetching data for the table takes time, but generating the actual table also takes time; so you want to turn off the loading indicator from table panel
             // when `isLoaded` promise resolves, the loading indicator is removed if the resolved value is not false
             $q
                 .resolve(isLoaded)

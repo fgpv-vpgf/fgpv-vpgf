@@ -12,7 +12,7 @@
     "sideMenu": {
       "logo": "true"
     },
-    "filterIsOpen": {
+    "tableIsOpen": {
       "id": "DateLayer",
       "large": true,
       "medium": true,

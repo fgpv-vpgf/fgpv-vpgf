@@ -1,25 +1,25 @@
-const templateUrl = require('./filters-setting-panel.html');
+const templateUrl = require('./setting-panel.html');
 
 /**
- * @module rvFiltersSettingPanel
+ * @module rvTableSettingPanel
  * @memberof app.ui
  * @restrict E
  * @description
  *
- * The `rvFiltersSettingPanel` directive for a filters setting panel.
+ * The `rvTableSettingPanel` directive for a table setting panel.
  *
  */
 angular
     .module('app.ui')
-    .directive('rvFiltersSettingPanel', rvFiltersSettingPanel);
+    .directive('rvTableSettingPanel', rvTableSettingPanel);
 
 /**
- * `rvFiltersSettingPanel` directive body.
+ * `rvTableSettingPanel` directive body.
  *
- * @function rvFiltersSettingPanel
+ * @function rvTableSettingPanel
  * @return {object} directive body
  */
-function rvFiltersSettingPanel(stateManager, dragulaService, animationService, filterService, $timeout) {
+function rvTableSettingPanel(stateManager, dragulaService, animationService, tableService, $timeout) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -63,12 +63,12 @@ function rvFiltersSettingPanel(stateManager, dragulaService, animationService, f
 
             rvDragDrop() {
                 // update datatable order (need to reset before setting back the order, if not order is not set properly)
-                const table = filterService.getTable();
+                const table = tableService.getTable();
                 table.colReorder.reset();
 
                 // set a timeout because model needs ot be updated before we reorder the fields
                 $timeout(() => {
-                    table.colReorder.order(stateManager.display.filters.data.columns.map(item => item.position));
+                    table.colReorder.order(stateManager.display.table.data.columns.map(item => item.position));
                 }, 250);
             }
         };
@@ -80,7 +80,7 @@ function rvFiltersSettingPanel(stateManager, dragulaService, animationService, f
 
         // on drag start
         // TODO: abstract the scrolling animation, to avoid code duplication (already in toc.directive)
-        scope.$on('filters-bag.drag', (evt, dragElement, source) => {
+        scope.$on('table-bag.drag', (evt, dragElement, source) => {
             // handle autoscroll when dragging layers
             const scrollElem = source.closest('md-content');
             directiveElement.on('mousemove touchmove', event => {
@@ -119,7 +119,7 @@ function rvFiltersSettingPanel(stateManager, dragulaService, animationService, f
         });
 
         // on drop, set columns order on stateManager
-        scope.$on('filters-bag.drop-model', () => {
+        scope.$on('table-bag.drop-model', () => {
             self.dragulaOptions.rvDragDrop();
 
             // stop and remove autoscroll
@@ -128,7 +128,7 @@ function rvFiltersSettingPanel(stateManager, dragulaService, animationService, f
         });
 
         // on cancel
-        scope.$on('filters-bag.cancel', () => {
+        scope.$on('table-bag.cancel', () => {
             // stop and remove autoscroll
             directiveElement.off('mousemove touchmove');
             scrollAnimation.pause();
@@ -136,17 +136,17 @@ function rvFiltersSettingPanel(stateManager, dragulaService, animationService, f
     }
 }
 
-function Controller($scope, events, filterService, stateManager) {
+function Controller($scope, events, tableService, stateManager) {
     'ngInject';
     const self = this;
 
     self.sort = onSort;
     self.display = onDisplay;
-    self.filterService = filterService;
+    self.tableService = tableService;
 
     $scope.$on(events.rvTableReady, () => {
-        self.description = stateManager.display.filters.data.filter.description;
-        self.columns = stateManager.display.filters.data.columns;
+        self.description = stateManager.display.table.data.filter.description;
+        self.columns = stateManager.display.table.data.columns;
         $scope.columns = self.columns;
 
         init();
@@ -163,7 +163,7 @@ function Controller($scope, events, filterService, stateManager) {
         // toggle the visibility
         self.columns.forEach(column => {
             if (!column.display) {
-                self.filterService.getTable().column(`${column.name}:name`).visible(false);
+                self.tableService.getTable().column(`${column.name}:name`).visible(false);
             }
         });
     }
@@ -183,7 +183,7 @@ function Controller($scope, events, filterService, stateManager) {
         });
 
         // sort columns
-        const table = self.filterService.getTable();
+        const table = self.tableService.getTable();
         if (sorts.length) {
             table.order(sorts).draw();
         }
@@ -212,7 +212,7 @@ function Controller($scope, events, filterService, stateManager) {
      */
     function onDisplay(columnInfo) {
         // get column
-        const column = self.filterService.getTable().column(`${columnInfo.name}:name`);
+        const column = self.tableService.getTable().column(`${columnInfo.name}:name`);
 
         // toggle the visibility and class name use to show/hide collumn when export or print
         column.visible(columnInfo.display);

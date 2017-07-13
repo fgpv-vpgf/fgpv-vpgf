@@ -1,8 +1,8 @@
 <md-input-container md-no-float
-    class="rv-filters-search md-block"
+    class="rv-table-search md-block"
     ng-if="self.service.isGlobalSearch">
     <input
-        aria-label={{ filter.aria.filters.search | translate }}"
+        aria-label={{ filter.aria.table.search | translate }}"
         ng-model="self.searchText"
         ng-keyup="self.search()"
         placeholder="{{ 'filter.search.placeholder' | translate }}">
@@ -10,8 +10,8 @@
         <md-icon md-svg-src="navigation:close"></md-icon>
     </md-button>
     <md-icon ng-show="self.searchText.length <= 2" md-svg-src="action:search">
-        <md-tooltip>{{ 'filter.aria.filters.search' | translate }}</md-tooltip>
+        <md-tooltip>{{ 'filter.aria.table.search' | translate }}</md-tooltip>
     </md-icon>
 </md-input-container>
 
-<span class="rv-filters-divider" ng-if="self.service.isGlobalSearch"></span>
+<span class="rv-table-divider" ng-if="self.service.isGlobalSearch"></span>

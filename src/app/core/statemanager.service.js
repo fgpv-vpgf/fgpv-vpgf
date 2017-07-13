@@ -368,7 +368,7 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
         if (panelToOpen.name === 'mainDetails') {
             $rootElement.find('rv-panel[type="main"]').css('z-index', 4);
         // prevent main panel from overlapping details panel in small/medium layouts
-        } else if (panelToOpen.name === 'filters') {
+        } else if (panelToOpen.name === 'table') {
             $rootElement.find('rv-panel[type="main"]').css('z-index', 2);
         }
 

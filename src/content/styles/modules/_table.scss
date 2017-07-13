@@ -1,11 +1,11 @@
-@mixin filters {
-    .filters-panel {
+@mixin table {
+    .table-panel {
         .rv-content {
             height: 50%; // in Safari, content panel does not update to the right height when switch from maximized to split view
         }
     }
 
-    .rv-filters {
+    .rv-table {
         display: flex;
         flex-direction: column;
         position: absolute;
@@ -140,7 +140,7 @@
             }
         }
 
-        rv-filters-setting-cluster {
+        rv-table-setting-cluster {
             position: absolute;
             bottom: -6px;
             right: 0;
@@ -163,12 +163,12 @@
     }
 }
 
-rv-filters-search {
+rv-table-search {
     display: flex;
     align-items: center;
     height: $toolbar-height - 8;
 
-    .rv-filters-search {
+    .rv-table-search {
         input {
             top: 9px;
 
@@ -225,7 +225,7 @@ rv-filters-search {
     }
 }
 
-rv-filters-setting-panel {
+rv-table-setting-panel {
     height: 100%;
     width: 99%;
     position: absolute;

@@ -15,7 +15,7 @@ Only content that appears in either the main navigation bar or the secondary con
 ### Basemap
 ![](./images/modules/basemap.png)
 
-The basemap selector panel can be accessed by clicking on the icon in the [appbar](#appbar) (only visible when the layer list is open). 
+The basemap selector panel can be accessed by clicking on the icon in the [appbar](#appbar) (only visible when the layer list is open).
 
 Code in this sub-module should remain focused on generating a list of available basemaps (from the config), tracking the currently selected basemap, rendering the slide out menu panel, and rendering individual basemap options and their descriptions. You should not put basemap switching logic in here, this belongs in the GEO module.
 
@@ -50,9 +50,9 @@ Some notable directives and services in this sub-module include:
 
 ![](./images/modules/export.png)
 
-Allows the map to be exported in image format. This includes functionality for rendering the map, layer list, scale bar, and north arrow. 
+Allows the map to be exported in image format. This includes functionality for rendering the map, layer list, scale bar, and north arrow.
 
-### Filters
+### Table
 
 ![](./images/modules/filters.png)
 
@@ -66,13 +66,13 @@ This is what the menu looks like:
 
 ![](./images/modules/filters-options.png)
 
-The `filters-default.directive.js` file handles the creation of the DataTable instance. The `filters.service.js` file handles filtering by extent.
+The `table-default.directive.js` file handles the creation of the DataTable instance. The `table.service.js` file handles filtering by extent.
 
 ### Help
 
 ![](./images/modules/help.png)
 
-Relates to anything in the help dialog popup including its display and search capabilities. Please note that there are remnants of an overlay help system that are not yet implemented. 
+Relates to anything in the help dialog popup including its display and search capabilities. Please note that there are remnants of an overlay help system that are not yet implemented.
 
 ### Loader
 
@@ -101,9 +101,9 @@ Secondary panel to the right of the layer list. Only available for layers with m
 There are three panels in the viewer:
 - 'main' panel which is used for the layer list, layer details view, and import functionality
 - 'side' panel which is used for settings and metadata
-- 'filters' panel for the DataTable
+- 'table' panel for the DataTable
 
-While this sub-module is not meant for any particular content implementation, it handles the panels headers like the close and expand buttons as well as their animations from open to close. 
+While this sub-module is not meant for any particular content implementation, it handles the panels headers like the close and expand buttons as well as their animations from open to close.
 
 ### Settings
 
@@ -123,7 +123,7 @@ This is where you'll find various application settings such as the language sele
 
 ### TOC
 
-Also known as "Table of Contents", "Legend", or more recently "Layer List". 
+Also known as "Table of Contents", "Legend", or more recently "Layer List".
 
 ![](./images/modules/toc.png)
 

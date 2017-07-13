@@ -18,7 +18,7 @@
 @import "_typography.scss";
 @import "_symbology.scss";
 @import "_details.scss";
-@import "_filters.scss";
+@import "_table.scss";
 @import "_help.scss";
 @import "_stepper.scss";
 @import "_file-drop.scss";
@@ -52,7 +52,7 @@
 @include typography;
 @include symbology;
 @include details;
-@include filters;
+@include table;
 @include help;
 @include stepper;
 @include file-drop;
