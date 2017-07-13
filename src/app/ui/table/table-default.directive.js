@@ -1,4 +1,4 @@
-const templateUrl = require('./filters-default.html');
+const templateUrl = require('./default.html');
 
 // button blueprints to be added to the table rows
 // `self` property is named so intentionally, as it will be passed on a scope to the ROW_BUTTON_TEMPLATE
@@ -51,26 +51,26 @@ const fieldLength = 500;
 let index; // keep the current selected cell information
 
 /**
- * @module rvFiltersDefault
+ * @module rvTableDefault
  * @memberof app.ui
  * @description
  *
- * The `rvFiltersDefault` directive is a filters and datatable panel component.
+ * The `rvTableDefault` directive is a filters and datatable panel component.
  *
  */
 angular
     .module('app.ui')
-    .directive('rvFiltersDefault', rvFiltersDefault);
+    .directive('rvTableDefault', rvTableDefault);
 
 /**
- * `rvFiltersDefault` directive displays the datatable with layer data.
+ * `rvTableDefault` directive displays the datatable with layer data.
  *
- * @function rvFiltersDefault
+ * @function rvTableDefault
  * @return {object} directive body
  */
-function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService,
+function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService,
     detailService, $rootElement, $filter, keyNames, $sanitize, debounceService, configService, SymbologyStack,
-    filterService, events) {
+    tableService, events) {
 
     const directive = {
         restrict: 'E',
@@ -97,7 +97,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
         self.createTable = createTable;
         self.destroyTable = destroyTable;
 
-        layoutService.panes.filter = el;
+        layoutService.panes.table = el;
 
         // columns type with filters information
         const columnTypes = {
@@ -132,11 +132,11 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
             };
 
             // TODO: move hardcoded stuff in consts
-            containerNode = containerNode || el.find('.rv-filters-data-container');
+            containerNode = containerNode || el.find('.rv-table-data-container');
             self.destroyTable();
 
-            const requester = stateManager.display.filters.requester;
-            const displayData = stateManager.display.filters.data;
+            const requester = stateManager.display.table.requester;
+            const displayData = stateManager.display.table.data;
 
             // forced delay of a 100 to prevent the loading indicator from flickering if the table is created too fast; it's annoying; it means that switching tables takes at least 100ms no matter how small the table is; in majority of cases it should take more than 100ms to get data and create a table anyway;
             const forcedDelay = $q(fulfill =>
@@ -267,8 +267,8 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
              */
             function initColumns() {
                 // if it is the first time table is initialize, set columns and table info
-                let order = stateManager.display.filters.data.filter.order || [];
-                const config = requester.legendEntry._mainProxyWrapper.layerConfig.filters;
+                let order = stateManager.display.table.data.filter.order || [];
+                const config = requester.legendEntry._mainProxyWrapper.layerConfig.table;
                 if (!displayData.filter.isInit) {
                     // add the column interactive buttons renderer
                     addColumnInteractivity();
@@ -426,21 +426,21 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
 
                 // check if we need to open in maximize or default view
                 if (config.maximize) {
-                    stateManager.setMorph('filters', 'full');
+                    stateManager.setMorph('table', 'full');
                 } else {
-                    stateManager.setMorph('filters', 'default');
+                    stateManager.setMorph('table', 'default');
                 }
 
                 // set global search and defaut value
-                filterService.isGlobalSearch = true; // enable by default
+                tableService.isGlobalSearch = true; // enable by default
                 if (config.search) {
-                    filterService.isGlobalSearch = config.search.enabled;
+                    tableService.isGlobalSearch = config.search.enabled;
                     displayData.filter.globalSearch = config.search.enabled ? config.search.value || '' : '';
                 }
 
                 // apply filters on map
                 if (config.applyMap) {
-                    filterService.applyFilters();
+                    tableService.applyFilters();
                 }
             }
 
@@ -532,7 +532,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                         }
 
                         // enable apply on map button
-                        filterService.filter.isApplied = false;
+                        tableService.filter.isApplied = false;
                     }
 
                     // set if filter can be modified
@@ -551,8 +551,8 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                 // turn off loading indicator after the table initialized or the forced delay whichever takes longer; cancel loading timeout as well
                 forcedDelay.then(() => {
                     // TODO: these ought to be moved to a helper function in displayManager
-                    stateManager.display.filters.isLoading = false;
-                    $timeout.cancel(stateManager.display.filters.loadingTimeout);
+                    stateManager.display.table.isLoading = false;
+                    $timeout.cancel(stateManager.display.table.loadingTimeout);
 
                     // set header focusable
                     const header = el.find('.dataTables_scrollHead th');
@@ -570,7 +570,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                     // focus on close button when table open (wcag requirement)
                     // at the same time it solve a problem because when focus is on menu button, even if focus is on the
                     // table cell it goes inside the menu and loop through it at the same time as we navigate the table
-                    $rootElement.find('[type=\'filters\'] button.rv-close').rvFocus({ delay: 100 });
+                    $rootElement.find('[type=\'table\'] button.rv-close').rvFocus({ delay: 100 });
 
                     // set table is initialize. Things that need to be done only once will be avoid at the next creation
                     displayData.filter.isInit = true;
@@ -582,14 +582,14 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                     $.fn.dataTable.ext.searchTemp = [];
 
                     // set active table so it can be accessed in filter-search.directive for global table search
-                    filterService.setTable(self.table, displayData.filter.globalSearch);
+                    tableService.setTable(self.table, displayData.filter.globalSearch);
 
                     // recalculate scroller space on table init because if the preopen table was maximized in setting view
                     // the scroller is still in split view
                     self.table.scroller.measure();
 
                     // wrap the title inside a span so when we need to change it when global search is focused, there is no impact on the filters
-                    angular.element(filterService.getTable().header()).find('th').each((i, el) => {
+                    angular.element(tableService.getTable().header()).find('th').each((i, el) => {
                         const title = el.innerHTML;
                         el.innerHTML = '';
                         el.appendChild(angular.element(`<span data-rv-column="${title}">${title}</span>`)[0]);
@@ -644,7 +644,7 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
                 self.table.on('column-reorder', (e, settings, details) => {
                     // only reorder columns if modificattion have been made on the table itself
                     // from the setting panel, we have another to deal with it
-                    if (!filterService.isSettingOpen) {
+                    if (!tableService.isSettingOpen) {
                         // reorder columns in statemanager to preserve the order
                         // remove the moved element then add a it back at the right place
                         const item = displayData.columns.splice(details.from, 1)[0];
@@ -718,15 +718,15 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
              */
             function onTableSort(e, settings) {
                 // reset sort values
-                stateManager.display.filters.data.columns.forEach(item => { item.sort = 'none'; });
+                stateManager.display.table.data.columns.forEach(item => { item.sort = 'none'; });
 
                 // update sort column from the last sort, use value from statemanager because interactive column may have been added
                 settings.aLastSort.forEach(item => {
-                    stateManager.display.filters.data.columns[item.col].sort = item.dir;
+                    stateManager.display.table.data.columns[item.col].sort = item.dir;
                 });
 
                 // set columns sort array so it can be retreive on init
-                stateManager.display.filters.data.filter.order = settings.aaSorting;
+                stateManager.display.table.data.filter.order = settings.aaSorting;
             }
 
             /**
@@ -847,29 +847,29 @@ function rvFiltersDefault($timeout, $q, stateManager, $compile, geoService, $tra
  * it also watches for dispaly data changes and re-creates the table when it does change.
  * @function Controller
  */
-function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events, filterService,
+function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events, tableService,
     configService, appInfo) {
     'ngInject';
     const self = this;
 
-    self.display = stateManager.display.filters;
+    self.display = stateManager.display.table;
     self.appID = appInfo.id;
     self.draw = draw;
-    self.filterService = filterService;
+    self.tableService = tableService;
 
 
     const languageObjects = {};
 
-    let isFullyOpen = false; // flag inicating that filters panel fully opened
+    let isFullyOpen = false; // flag inicating that table panel fully opened
     let deferredAction = null; // deferred function to create a table
 
     activate();
 
     function activate() {
-        // wait for morph on filters panel to complete and redraw the datatable
+        // wait for morph on table panel to complete and redraw the datatable
         $scope.$on('stateChangeComplete', (event, name, property, value) => {
-            if (name === 'filters') {
-                RV.logger.log('filtersDefaultDirective', event, name, property, value);
+            if (name === 'table') {
+                RV.logger.log('tableDefaultDirective', event, name, property, value);
                 self.draw(value);
 
                 if (property === 'active') {
@@ -883,8 +883,8 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
             }
         });
 
-        // watch filterService onCreate to make a new table
-        $scope.$watch(() => filterService.filterTimeStamps.onCreated, val => {
+        // watch tableService onCreate to make a new table
+        $scope.$watch(() => tableService.filterTimeStamps.onCreated, val => {
             if (val !== null) {
                 if (isFullyOpen) {
                     self.createTable(getDToLang());
@@ -896,13 +896,13 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
             }
         });
 
-        $scope.$watch(() => filterService.filterTimeStamps.onDeleted, val => {
+        $scope.$watch(() => tableService.filterTimeStamps.onDeleted, val => {
             if (val !== null) {
                 self.destroyTable();
             }
         });
 
-        $scope.$watch(() => filterService.filterTimeStamps.onChanged, val => {
+        $scope.$watch(() => tableService.filterTimeStamps.onChanged, val => {
             if (val !== null) {
                 self.table.draw();
             }
@@ -910,13 +910,13 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
 
         // wait for print event and print the table
         $scope.$on(events.rvDataPrint, () => {
-            RV.logger.log('filtersDefaultDirective', 'printing Datatable');
+            RV.logger.log('tableDefaultDirective', 'printing Datatable');
             triggerTableButton(0);
         });
 
         // wait for data export CSV event and export
         $scope.$on(events.rvDataExportCSV, () => {
-            RV.logger.log('filtersDefaultDirective', 'exporting CSV Datatable');
+            RV.logger.log('tableDefaultDirective', 'exporting CSV Datatable');
             triggerTableButton(1);
         });
 
@@ -998,7 +998,7 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
     // redraw the table using scroller extension
     function draw(value) {
         if (self.table) {
-            RV.logger.log('filtersDefaultDirective', 'drawing table');
+            RV.logger.log('tableDefaultDirective', 'drawing table');
 
             const scroll = self.table.scroller;
             if (value === 'default') {
@@ -1032,8 +1032,8 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
      */
     function triggerTableButton(index) {
         // setting panel need to be close for datatable to export or print
-        const setting = filterService.isSettingOpen;
-        if (setting) { filterService.isSettingOpen = false; }
+        const setting = tableService.isSettingOpen;
+        if (setting) { tableService.isSettingOpen = false; }
 
         // see `buttons` array in the DataTable constructor object in the directive above
         const button = self.table.button(index);
@@ -1042,6 +1042,6 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
         }
 
         // set back previous state
-        filterService.isSettingOpen = setting;
+        tableService.isSettingOpen = setting;
     }
 }

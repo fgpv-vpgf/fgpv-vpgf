@@ -1,0 +1,30 @@
+<div class="rv-button-group">
+    <md-button
+        aria-label="{{ filter.table.apply | translate }}"
+        class="rv-table-apply primary"
+        rv-help="table-apply-button"
+        ng-click="self.tableService.applyTable()"
+        ng-show="!self.tableService.filter.isApplied && (self.tableService.isFeatureLayer || self.tableService.isDynamicLayer)">
+        {{ 'filter.table.apply' | translate }}
+    </md-button>
+
+    <md-button
+        aria-label="{{ filter.table.clear.tooltip | translate }}"
+        class="md-icon-button primary"
+        rv-help="table-clear-button"
+        ng-click="self.tableService.clearTable()">
+        <md-tooltip>{{ 'filter.table.clear.tooltip' | translate }}</md-tooltip>
+        <md-icon md-svg-src="community:filter"></md-icon>
+    </md-button>
+
+    <span class="rv-table-divider"></span>
+
+    <md-button
+        aria-label="{{ filter.table.setting.tooltip | translate }}"
+        class="md-icon-button primary"
+        rv-help="table-setting-button"
+        ng-click="self.tableService.toggleSetting()">
+        <md-tooltip>{{ 'filter.table.setting.tooltip' | translate }}</md-tooltip>
+        <md-icon md-svg-src="action:settings"></md-icon>
+    </md-button>
+</div>

@@ -438,7 +438,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
-    class FiltersNode {
+    class TableNode {
         constructor(source = {}) {
             this._source = source;
 
@@ -584,7 +584,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             this._nameField = source.nameField;
             this._tolerance = source.tolerance || 5;
-            this._filters = new FiltersNode(source.filters);
+            this._table = new TableNode(source.table);
         }
 
         _hovertipEnabled = true;
@@ -593,7 +593,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         set nameField (value) { this._nameField = value; }
 
         get tolerance () { return this._tolerance; }
-        get filters () { return this._filters; }
+        get table () { return this._table; }
 
         get queryUrl () { return this._queryUrl; }
 
@@ -601,7 +601,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             return angular.merge(super.JSON, {
                 nameField: this.nameField,
                 tolerance: this.tolerance,
-                filters: this.filters.JSON
+                table: this.table.JSON
             });
         }
     }
@@ -737,7 +737,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._layerEntries = source.layerEntries.map(layerEntry =>
                 (new DynamicLayerEntryNode(layerEntry)));
             this._tolerance = source.tolerance;
-            this._filters = new FiltersNode(source.filters);
+            this._table = new TableNode(source.table);
 
             this._singleEntryCollapse = source.singleEntryCollapse === true;
         }
@@ -750,7 +750,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._layerEntries = value;
         }
         get tolerance () { return this._tolerance; }
-        get filters () { return this._filters; }
+        get table () { return this._table; }
 
         get queryUrl () { return this._queryUrl; }
 
@@ -794,7 +794,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 layerEntries: this.layerEntries.map(layerEntry =>
                     layerEntry.JSON),
                 tolerance: this.tolerance,
-                filters: this.filters.JSON,
+                table: this.table.JSON,
                 isResolved: this.isResolved
             });
         }
@@ -1924,10 +1924,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     /**
-     * Typed representation of the `ui.filterIsOpen` section of the config.
-     * @class FilterIsOpen
+     * Typed representation of the `ui.tableIsOpen` section of the config.
+     * @class TableIsOpen
      */
-    class FilterIsOpen {
+    class TableIsOpen {
         constructor(source = {}) {
             this._source = source;
 
@@ -2038,7 +2038,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._legend = new UILegend(uiSource.legend);
             this._help = new Help(uiSource.help);
             this._fullscreen = uiSource.fullscreen;
-            this._filterIsOpen = new FilterIsOpen(uiSource.filterIsOpen);
+            this._tableIsOpen = new TableIsOpen(uiSource.tableIsOpen);
             this._about = new About(uiSource.about);
         }
 
@@ -2052,7 +2052,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get legend () {                 return this._legend; }
         get help () {                   return this._help; }
         get fullscreen () {             return this._fullscreen; }
-        get filterIsOpen () {           return this._filterIsOpen; }
+        get tableIsOpen () {           return this._tableIsOpen; }
         get about() {                   return this._about; }
 
         get JSON () {
@@ -2065,7 +2065,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 legend: this.legend.JSON,
                 help: this.help.JSON,
                 fullscreen: this.fullscreen,
-                filterIsOpen: this.filterIsOpen.JSON,
+                tableIsOpen: this.tableIsOpen.JSON,
                 about: this.about.JSON
             }
         }

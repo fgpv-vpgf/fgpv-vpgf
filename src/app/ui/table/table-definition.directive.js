@@ -82,14 +82,14 @@ const FILTERS_TEMPLATE = {
     number: column =>
         `<div class="rv-filter-number" ng-show="self.${column}.filtersVisible">
             <md-input-container class="md-block" md-no-float flex>
-                <input rv-filters-number-only
+                <input rv-table-number-only
                         ng-click="self.prevent($event)"
                         ng-change="self.change('${column}', self.${column}.min, self.${column}.max)"
                         ng-model="self.${column}.min" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.min.placeholder | translate }}"
                         ng-disabled="self.${column}.static" />
             </md-input-container>
             <md-input-container class="md-block" md-no-float flex>
-                <input rv-filters-number-only
+                <input rv-table-number-only
                         ng-click="self.prevent($event)"
                         ng-change="self.change('${column}', self.${column}.min, self.${column}.max)"
                         ng-model="self.${column}.max" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.max.placeholder | translate }}"
@@ -117,25 +117,25 @@ const FILTERS_TEMPLATE = {
 // jscs:enable maximumLineLength
 
 /**
- * @module rvFiltersDefinition
+ * @module rvTableDefinition
  * @memberof app.ui
  * @restrict E
  * @description
  *
- * The `rvFiltersDefinition` directive for a filters setting panel.
+ * The `rvTableDefinition` directive for a filters setting panel.
  *
  */
 angular
     .module('app.ui')
-    .directive('rvFiltersDefinition', rvFiltersDefinition);
+    .directive('rvTableDefinition', rvTableDefinition);
 
 /**
- * `rvFiltersDefinition` directive body.
+ * `rvTableDefinition` directive body.
  *
- * @function rvFiltersDefinition
+ * @function rvTableDefinition
  * @return {object} directive body
  */
-function rvFiltersDefinition(stateManager, events, $compile, filterService, layoutService, $rootScope) {
+function rvTableDefinition(stateManager, events, $compile, tableService, layoutService, $rootScope) {
     const directive = {
         restrict: 'A',
         template: '',
@@ -197,8 +197,8 @@ function rvFiltersDefinition(stateManager, events, $compile, filterService, layo
          * @param {Object} el element to add filter to
          */
         function setFilters() {
-            const table = filterService.getTable();
-            const displayData = stateManager.display.filters.data;
+            const table = tableService.getTable();
+            const displayData = stateManager.display.table.data;
 
             // make sure there is item inside columns (it is null first time it is run)
             const columns = displayData.columns !== null ? displayData.columns : [];
@@ -254,10 +254,10 @@ function rvFiltersDefinition(stateManager, events, $compile, filterService, layo
         function setFilter(column) {
             // set change action (callback)
             const filter = FILTERS[column.type];
-            filter.self.change = filterService[columnTypes[column.type].callback];
+            filter.self.change = tableService[columnTypes[column.type].callback];
 
             // set prevent default sorting
-            filter.self.prevent = filterService.preventSorting;
+            filter.self.prevent = tableService.preventSorting;
 
             // set filter initial value
             filter.self[column] = column.filter;
@@ -340,9 +340,9 @@ function rvFiltersDefinition(stateManager, events, $compile, filterService, layo
     }
 }
 
-function Controller(filterService) {
+function Controller(tableService) {
     'ngInject';
     const self = this;
 
-    self.filterService = filterService;
+    self.tableService = tableService;
 }

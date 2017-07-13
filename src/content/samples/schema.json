@@ -370,7 +370,7 @@
             "additionalProperties": false
         },
 
-        "filtersNode": {
+        "tableNode": {
             "type": "object",
             "properties": {
                 "title": {
@@ -406,7 +406,7 @@
                     "description": "Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled."
                 }
             },
-            "description": "Specifies how layers columns (filters) and global search are set",
+            "description": "Specifies how layers columns and global search are set",
             "additionalProperties": false
         },
         "columnNode": {
@@ -444,17 +444,17 @@
                     "description": "Specifies if column can be filter. True: column can be filter; False: no filter can be applied from global search or filter. If this is false, do not set a filter because it will not be use."
                 },
                 "filter": {
-                    "type": "object",
-                    "items": { "$ref": "#/definitions/filterNode" },
-                    "description": "Specifies the filter information for a column."
+                    "$ref": "#/definitions/filterNode"
                 }
             },
             "required": ["data"],
             "additionalProperties": false,
             "description": "Specifies option for each column. OID field must be present, if not data will not appear. The order they appears inside the table is the same as the order of this array."
         },
+
         "filterNode": {
             "type": "object",
+            "description": "Specifies the filter information for a column.",
             "properties": {
                 "type": {
                     "type": "string",
@@ -475,7 +475,6 @@
             "required": ["type"],
             "additionalProperties": false
         },
-
 
         "basicLayer": {
             "type": "object",
@@ -520,7 +519,7 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
-                "filters": { "$ref": "#/definitions/filtersNode", "description": "Settings for filters inside data panel"}
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table"}
             },
             "required": [ "id", "layerType", "url" ],
             "additionalProperties": false
@@ -569,7 +568,7 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
-                "filters": { "$ref": "#/definitions/filtersNode", "description": "Settings for filters inside data panel"}
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table"}
             },
             "required": [ "id", "layerType", "layerEntries", "url" ],
             "additionalProperties": false
@@ -716,14 +715,14 @@
                     },
                     "additionalProperties": false
                 },
-                "filterIsOpen": {
+                "tableIsOpen": {
                     "type": "object",
-                    "description": "Specifies whether the filter panel is opened by default on initial loading of the map for small, medium, and large viewports",
+                    "description": "Specifies whether the table panel is opened by default on initial loading of the map for small, medium, and large viewports",
                     "properties": {
                         "id": { "type": "string", "description": "The id of the layer for referencing within the viewer" },
-                        "large": { "type": "boolean", "default": false, "description": "Whether the filter panel is opened by default on initial loading of the map for large viewports" },
-                        "medium": { "type": "boolean", "default": false, "description": "Whether the filter panel is opened by default on initial loading of the map for medium viewports" },
-                        "small": { "type": "boolean", "default": false, "description": "Whether the filter panel is opened by default on initial loading of the map for small viewports" }
+                        "large": { "type": "boolean", "default": false, "description": "Whether the table panel is opened by default on initial loading of the map for large viewports" },
+                        "medium": { "type": "boolean", "default": false, "description": "Whether the table panel is opened by default on initial loading of the map for medium viewports" },
+                        "small": { "type": "boolean", "default": false, "description": "Whether the table panel is opened by default on initial loading of the map for small viewports" }
                     },
                     "additionalProperties": false,
                     "required": ["id"]
