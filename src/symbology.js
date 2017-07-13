@@ -83,6 +83,58 @@ function enhanceRenderer(renderer, legend) {
 }
 
 /**
+ * Will inspect the field names in a renderer and adjust any mis-matched casing
+ * to align with the layer field definitions
+ *
+ * @private
+ * @param  {Object} renderer a layer renderer in json format
+ * @param  {Array} fields   list of field objects for the layer
+ * @returns {Object} the renderer with any fields adjusted with proper case
+ */
+function cleanRenderer(renderer, fields) {
+
+    const enhanceField = (fieldName, fields) => {
+        if (!fieldName) {
+            // testing an undefined/unused field. return original value.
+            return fieldName;
+        }
+        let myField = fields.find(f => f.name === fieldName);
+        if (myField) {
+            // field is valid. donethanks.
+            return fieldName;
+        } else {
+            // do case-insensitive search
+            const lowName = fieldName.toLowerCase();
+            myField = fields.find(f => f.name.toLowerCase() === lowName);
+            if (myField) {
+                // use the field definition casing
+                return myField.name;
+            } else {
+                throw new Error('could not find renderer field');
+            }
+        }
+    };
+
+    switch (renderer.type) {
+        case SIMPLE:
+            break;
+        case UNIQUE_VALUE:
+            ['field1', 'field2', 'field3'].forEach(f => {
+                // call ehnace case for each field
+                renderer[f] = enhanceField(renderer[f], fields);
+            });
+            break;
+        case CLASS_BREAKS:
+            renderer.field = enhanceField(renderer.field, fields);
+            break;
+        default:
+            // Renderer we dont support
+            console.warn('encountered unsupported renderer type: ' + renderer.type);
+    }
+    return renderer;
+}
+
+/**
  * Given feature attributes, find the renderer node that would draw it
  *
  * @method searchRenderer
@@ -936,6 +988,7 @@ module.exports = (esriBundle, geoApi, window) => {
         listToIconSymbology: list => _listToSymbology(renderSymbologyIcon, list),
         listToImageSymbology: list => _listToSymbology(renderSymbologyImage, list),
         enhanceRenderer,
+        cleanRenderer,
         mapServerToLocalLegend: buildMapServerToLocalLegend(esriBundle, geoApi)
     };
 };
