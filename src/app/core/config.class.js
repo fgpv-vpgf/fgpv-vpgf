@@ -1868,7 +1868,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             //remove help if help or its folderName is absent
             if (! helpSource || ! helpSource.folderName) {
-                this._items[1].splice(this._items[1].indexOf('help'));
+                this._items[1].splice(this._items[1].indexOf('help'), 1);
             }
         }
 
