@@ -257,7 +257,7 @@ Geometry types,geometry.type.imagery,imagery,1,[fr]imagery,0
 ,export.component.map, Map,1, Carte,1
 ,export.component.legend, Legend,1, Légende,1
 ,export.component.scale, Scalebar,1, Échelle graphique,1
-,export.component.mapelements, North arrow and scalebar,1, Flèche du nord et échelle graphique,1
+,export.component.mapElements, North arrow and scalebar,1, Flèche du nord et échelle graphique,1
 ,export.component.footnote, Footnote,1, Référence,1
 ,export.component.timestamp, Timestamp,1, Estampille temporelle,1
 ,export.label.approx,approx.,1,approx.,1
