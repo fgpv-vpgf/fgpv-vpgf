@@ -47,12 +47,6 @@ angular
     .module('app.ui')
     .directive('rvContentPane', rvContentPane);
 
-/**
- * `rvContentPane` directive body.
- *
- * @function rvContentPane
- * @return {object} directive body
- */
 function rvContentPane($compile) {
     const directive = {
         restrict: 'E',
@@ -73,7 +67,7 @@ function rvContentPane($compile) {
         },
         transclude: true,
         link: link,
-        controller: Controller,
+        controller: () => {},
         controllerAs: 'self',
         bindToController: true
     };
@@ -152,18 +146,5 @@ function rvContentPane($compile) {
                 footer.append(footerElement);
             }
         }
-    }
-}
-
-/**
- * Skeleton controller function.
- */
-function Controller() {
-    // const self = this;
-
-    activate();
-
-    function activate() {
-
     }
 }

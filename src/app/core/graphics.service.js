@@ -1,4 +1,3 @@
-/* global canvg, SVG */
 /**
  * @name graphicsService
  * @constant
@@ -79,6 +78,8 @@ function graphicsService($q) {
      * Creates an instance of SVG.JS object.
      *
      * @function createSvg
+     * @param {Number} width width of the svg container
+     * @param {Number} height height of the svg container
      * @return {Object} svg object
      */
     function createSvg(width, height) {
@@ -94,7 +95,7 @@ function graphicsService($q) {
      * @function mergeCanvases
      * @param {Array} canvases an array of canvases to mergeCanvases; the first item acts as a base on which all other canvases are rendered in order
      * @param {Array} offsets [optional = []] must be of n-1 length where n is the number of canvases; provides x and y offsets when merging canvases on the base canvas
-     *
+     * @return {Object} merged canvas object
      */
     function mergeCanvases(canvases, offsets = []) {
         canvases = canvases.filter(v => v);

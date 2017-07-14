@@ -338,10 +338,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          * @param {String} value id of the layer bound to this legend block; this will be used in reordering and reloading
          */
         get layerRecordId () {
-            if (this._layerRecordId === null) {
-                console.error('layerRecordId must be set on all LegendBlocks which can be reloaded or reordered');
-            }
-
+            // layerRecordId is null until set in by the legend service;
             return this._layerRecordId;
         }
 
@@ -641,8 +638,8 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         // collapsed value specifies if the group node will be hidden from UI
         // in such a case, its children will appear to be on the same level as the legend group would have been
         _collapsed = false;
-        get collapsed () {       return this._collapse; }
-        set collapsed (value) {  this._collapse = value; }
+        get collapsed () {       return this._collapsed; }
+        set collapsed (value) {  this._collapsed = value; }
 
         applyInitialStateSettings() {
             // this will ensure all the controlled layers settings in this group match settings of the observable entries
