@@ -641,8 +641,8 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         // collapsed value specifies if the group node will be hidden from UI
         // in such a case, its children will appear to be on the same level as the legend group would have been
         _collapsed = false;
-        get collapsed () {       return this._collapse; }
-        set collapsed (value) {  this._collapse = value; }
+        get collapsed () {       return this._collapsed; }
+        set collapsed (value) {  this._collapsed = value; }
 
         applyInitialStateSettings() {
             // this will ensure all the controlled layers settings in this group match settings of the observable entries

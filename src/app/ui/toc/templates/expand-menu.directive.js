@@ -90,7 +90,7 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
         return isAllExpanded;
     }
 
-        /**
+    /**
      * Checks if the legendBlocks hierarchy is initialized; false otherwise
      *
      * @function _legendBlocksReadyCheck

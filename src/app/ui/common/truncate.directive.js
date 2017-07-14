@@ -133,7 +133,7 @@ function rvTruncateTitle(graphicsService) {
          */
         function splitString(string, widthToFit) {
 
-            // TODO: use [getComputerStyles](https://developer.mozilla.org/en/docs/Web/API/Window/getComputedStyle) to get the actual font name and font size instead of this hardcoded font
+            // TODO: use [getComputedStyles](https://developer.mozilla.org/en/docs/Web/API/Window/getComputedStyle) to get the actual font name and font size instead of this hardcoded font
             const stringWidth = graphicsService.getTextWidth(canvas, string, 'normal 16px Roboto');
 
             if (stringWidth < widthToFit) {

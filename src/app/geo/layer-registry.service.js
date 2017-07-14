@@ -250,12 +250,19 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
      * This should be used everytime a new layer is added to the map or legend nodes in the layer selector are reordered.
      *
      * @function synchronizeLayerOrder
-     * @param {Array} layerRecords an array of layer records ordered as visible to the user in the layer selector UI component
      */
-    function synchronizeLayerOrder(layerRecords = configService.getSync.map.layerRecords) {
+    function synchronizeLayerOrder() {
         const mapBody = configService.getSync.map.instance;
         const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
         const highlightLayer = configService.getSync.map.highlightLayer;
+
+        // an array of layer records ordered as visible to the user in the layer selector UI component
+        const orderedLayerRecords = configService.getSync.map.legendBlocks
+            .walk(lb => lb.layerRecordId) // get a flat list of layer record ids as they appear in UI
+            .filter(id => id !== null) // filter out artificial groups
+            .reduce((a, b) =>
+                a.concat(a.indexOf(b) < 0 ? b : []), []) // remove duplicates (dynamic group and its children with have the same layer id)
+            .map(getLayerRecord); // get appropriate layer records
 
         const mapLayerStacks = {
             0: mapBody.graphicsLayerIds,
@@ -298,7 +305,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             //
             // for example the user reorders a layer through UI:
             // ['three', 'one', 'two']
-            const layerRecordStack = layerRecords
+            const layerRecordStack = orderedLayerRecords
                 .filter(layerRecord =>
                     Geo.Layer.SORT_GROUPS_[layerRecord.layerType] === sortGroup)
                 .filter(layerRecord =>
@@ -311,7 +318,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                 .map(layerRecord =>
                     mapLayerStack.indexOf(layerRecord.config.id))
                 .sort((a, b) =>
-                    a < b);
+                    b - a);
 
             // layers are now iterated using their UI order and moved into the positions or slots found in the previous step
             //

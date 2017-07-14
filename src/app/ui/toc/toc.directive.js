@@ -16,11 +16,6 @@ angular
     .module('app.ui')
     .directive('rvToc', rvToc);
 
-/**
- * `rvToc` directive body.
- *
- * @return {object} directive body
- */
 function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoService, animationService, configService) {
     const directive = {
         restrict: 'E',
@@ -110,12 +105,7 @@ function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoServic
             },
 
             rvDragDropModel() {
-                const legendBlocks = configService.getSync.map.legendBlocks;
-
-                const layerRecords = legendBlocks.entries.map(legendBlock =>
-                    layerRegistry.getLayerRecord(legendBlock.layerRecordId));
-
-                layerRegistry.synchronizeLayerOrder(layerRecords);
+                layerRegistry.synchronizeLayerOrder();
             },
 
             rvDragCancel(evt, elem, target, source) {
@@ -160,7 +150,7 @@ function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoServic
 
                         scrollAnimation = animationService.to(scrollElem, scrollDuration,
                             { scrollTo: { y: scrollElem[0].scrollHeight - scrollElem.height() },
-                            ease: 'Linear.easeNone' });
+                                ease: 'Linear.easeNone' });
                     }
 
                 // stop scrolling

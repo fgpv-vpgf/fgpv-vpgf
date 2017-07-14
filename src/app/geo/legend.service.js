@@ -1,4 +1,3 @@
-/* global RV */
 /**
  * @module legendService
  * @memberof app.geo
@@ -69,7 +68,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      *
      * @function addLayerDefinition
      * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
-     * @returns {LayerBlueprint}
+     * @returns {LayerBlueprint} generated layer blueprint
      */
     function createBlueprint(layerDefinition) {
         const blueprint = new LayerBlueprint.service(layerDefinition);
@@ -199,6 +198,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             .filter(a => a !== null)[0];
 
         // TODO: instead of removing the legend block form the selector, just hide it with some css
+        // FIXME: when removing a single child of a collapsed dynamic group or a single child from a dynamic group, need to remove the group itself since it no longer serves any purpose
         const index = legendBlockParent.removeEntry(legendBlock);
 
         return [_resolve, _reject];
@@ -815,6 +815,5 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             // TODO: this should return something meaningful for info sections and maybe sets?
             return blueprint;
         }
-
     }
 }
