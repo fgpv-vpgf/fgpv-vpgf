@@ -110,7 +110,11 @@ function cleanRenderer(renderer, fields) {
                 // use the field definition casing
                 return myField.name;
             } else {
-                throw new Error('could not find renderer field');
+                // decided error here was too destructive. it would tank the layer,
+                // while the drawback would mainly only be failed symbols.
+                // just return fieldName and hope for luck.
+                console.warn(`could not find renderer field ${fieldName}`);
+                return fieldName;
             }
         }
     };
