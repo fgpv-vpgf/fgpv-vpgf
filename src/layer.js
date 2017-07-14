@@ -490,6 +490,12 @@ function validateGeoJson(geoJson) {
     };
 
     const fields = extractFields(geoJson);
+    const oid = 'OBJECTID';
+
+    // object id will be added by the loader later, so present it as an option for the user to pick
+    if (fields.indexOf(f => f.name === oid) === -1) {
+        fields.push({ name: oid, type: 'esriFieldTypeString' });
+    }
 
     const res = {
         fields: fields,
@@ -783,9 +789,13 @@ function extractFields(geoJson) {
         throw new Error('Field extraction requires at least one feature');
     }
 
-    return Object.keys(geoJson.features[0].properties).map(function (prop) {
-        return { name: prop, type: 'esriFieldTypeString' };
-    });
+    if (geoJson.features[0].properties) {
+        return Object.keys(geoJson.features[0].properties).map(function (prop) {
+            return { name: prop, type: 'esriFieldTypeString' };
+        });
+    } else {
+        return [];
+    }
 }
 
 /**
