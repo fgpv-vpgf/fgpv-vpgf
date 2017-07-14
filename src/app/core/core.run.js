@@ -1,4 +1,3 @@
-/* global RV */
 angular
     .module('app.core')
     .run(debugBlock)
@@ -14,7 +13,7 @@ angular
  * The `runBlock` triggers config and locale file loading, sets language of the app.
  */
 function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, events, configService,
-        gapiService, appInfo) {
+    gapiService, appInfo) {
 
     const promises = [
         configService.initialize(),
@@ -125,8 +124,9 @@ function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, e
      * Adding `{{ ::$root.uid($id) }}` inside a template will return a `{appid}-{scopeid}` string. If this used several times inside a single template, the same id is returned, so you don't have to store it to reuse. Don't forget a one-time binding.
      * @function uid
      * @private
-     * @param {String|Number} id
-     * @return {String|Number} suffix [optional]
+     * @param {String|Number} id ui element id
+     * @param {String|Number} [suffix] an optional suffix to be appended to the resulting id
+     * @return {String} generated template element id
      */
     function uid(id, suffix) {
         suffix = suffix ? `-${suffix}` : '';
@@ -181,8 +181,6 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
     $rootScope.$on(events.rvApiHalt, () => {
         globalRegistry.getMap(appInfo.id)._deregisterMap();
     });
-
-    /**********************/
 
     /**
      * Sets the translation language and reloads the map
@@ -249,8 +247,8 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
      */
     function centerAndZoom(x, y, spatialReference, zoom) {
         const coords = gapiService.gapi.proj.localProjectPoint(
-                            spatialReference, geoService.mapObject.spatialReference, { x: x, y: y }
-                );
+            spatialReference, geoService.mapObject.spatialReference, { x: x, y: y }
+        );
         const zoomPoint = gapiService.gapi.proj.Point(coords.x, coords.y, geoService.mapObject.spatialReference);
 
         // separate zoom and center calls, calling centerAndZoom sets the map to an extent made up of NaN

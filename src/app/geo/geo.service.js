@@ -66,8 +66,7 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
                     console.info(layers);
                     layers.forEach(layer => legendService.addLayerDefinition(layer));
                 });
-            })
-            .catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
+            }).catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
         }
 
         setFullExtent() {
@@ -76,7 +75,7 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
             this.map.setExtent(this.map.enhanceConfigExtent(configService.getSync.map.selectedBasemap.full));
         }
 
-         /**
+        /**
          * Check if visible extent is contained in the full extent.
          *
          * @function validateExtent

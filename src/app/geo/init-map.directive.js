@@ -63,12 +63,13 @@ function rvInitMap($rootScope, geoService, events, layoutService, $rootElement, 
          *
          * @function mouseDownHandler
          * @private
+         * @param {Event} event mouse down event when the user starts dragging the map
          */
         function mouseDownHandler(event) {
             mouseMoveHanlder = mouseMoveHandlerBuilder(event);
             el
-            .off('mousemove')
-            .on('mousemove', mouseMoveHanlder);
+                .off('mousemove')
+                .on('mousemove', mouseMoveHanlder);
         }
 
         /**
@@ -77,6 +78,8 @@ function rvInitMap($rootScope, geoService, events, layoutService, $rootElement, 
          *
          * @function mouseMoveHandlerBuilder
          * @private
+         * @param {Event} startingEvent mouse down event when the user starts dragging the map
+         * @return {Function} a function handling mouse movements when the user pans the map
          */
         function mouseMoveHandlerBuilder(startingEvent) {
             // TODO: IE is not fast enough to sustain this approach as the mousemove event don't start to fire immediately after mouseover event
@@ -163,8 +166,8 @@ function rvInitMap($rootScope, geoService, events, layoutService, $rootElement, 
      * @function animate
      * @param {Object} event     the keydown/keyup browser event
      */
+    // eslint-disable-next-line complexity
     function animate() {
-        /*jshint maxcomplexity:16 */
         stopAnimate();
         if (keyMap.length === 0) {
             return;
@@ -186,51 +189,51 @@ function rvInitMap($rootScope, geoService, events, layoutService, $rootElement, 
         for (let i = 0; i < keyMap.length; i++) {
             switch (keyMap[i]) {
                 // enter key is pressed - trigger identify
-                case 13:
-                    // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
-                    // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
-                    if ($rootElement.attr('rv-focus-status') === globalRegistry.focusStatusTypes.ACTIVE) {
-                        event.mapPoint = mapPntCntr;
-                        event.screenPoint = mapScrnCntr;
-                        geoService.state.identifyService.clickHandler(event);
-                    }
-                    break;
-                // shift key pressed - pan distance increased
-                case 16:
-                    hasShiftMultiplier = 2;
-                    break;
-                // left arrow key pressed
-                case 37:
-                    x -= mapPntHorDiff;
-                    break;
-                // up arrow key pressed
-                case 38:
-                    y += mapPntVertDiff;
-                    break;
-                // right arrow key pressed
-                case 39:
-                    x += mapPntHorDiff;
-                    break;
-                // down arrow key pressed
-                case 40:
-                    y -= mapPntVertDiff;
-                    break;
-                // + (plus) key pressed - zoom in
-                case 187:
-                    geoService.map.shiftZoom(1);
-                    break;
-                // + (plus) key pressed - FF and IE
-                case 61:
-                    geoService.map.shiftZoom(1);
-                    break;
-                // - (minus) key pressed - zoom out
-                case 189:
-                    geoService.map.shiftZoom(-1);
-                    break;
-                // - (minus) key pressed - FF and IE
-                case 173:
-                    geoService.map.shiftZoom(-1);
-                    break;
+            case 13:
+                // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
+                // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
+                if ($rootElement.attr('rv-focus-status') === globalRegistry.focusStatusTypes.ACTIVE) {
+                    event.mapPoint = mapPntCntr;
+                    event.screenPoint = mapScrnCntr;
+                    geoService.state.identifyService.clickHandler(event);
+                }
+                break;
+            // shift key pressed - pan distance increased
+            case 16:
+                hasShiftMultiplier = 2;
+                break;
+            // left arrow key pressed
+            case 37:
+                x -= mapPntHorDiff;
+                break;
+            // up arrow key pressed
+            case 38:
+                y += mapPntVertDiff;
+                break;
+            // right arrow key pressed
+            case 39:
+                x += mapPntHorDiff;
+                break;
+            // down arrow key pressed
+            case 40:
+                y -= mapPntVertDiff;
+                break;
+            // + (plus) key pressed - zoom in
+            case 187:
+                geoService.map.shiftZoom(1);
+                break;
+            // + (plus) key pressed - FF and IE
+            case 61:
+                geoService.map.shiftZoom(1);
+                break;
+            // - (minus) key pressed - zoom out
+            case 189:
+                geoService.map.shiftZoom(-1);
+                break;
+            // - (minus) key pressed - FF and IE
+            case 173:
+                geoService.map.shiftZoom(-1);
+                break;
             }
         }
 
