@@ -1,16 +1,16 @@
 /**
- * @module rvFiltersNumberOnly
+ * @module rvTableNumberOnly
  * @memberof app.ui
  * @restrict E
  * @description
  *
- * The `rvFiltersNumberOnly` directive is use to enforce numbers input tag (http://codepen.io/apuchkov/pen/ILjFr).
+ * The `rvTableNumberOnly` directive is use to enforce numbers input tag (http://codepen.io/apuchkov/pen/ILjFr).
  */
 angular
     .module('app.ui')
-    .directive('rvFiltersNumberOnly', rvFiltersNumberOnly);
+    .directive('rvTableNumberOnly', rvTableNumberOnly);
 
-function rvFiltersNumberOnly() {
+function rvTableNumberOnly() {
     return {
         require: 'ngModel',
         link: (scope, element, attr, ngModelCtrl) => {

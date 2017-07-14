@@ -69,7 +69,7 @@ div.sm-button {
     min-width: 65px;
 }
 
-rv-panel[type='filters'] {
+rv-panel[type='table'] {
 
     @include include-size(rv-sm) {
         &.default, &.full, &.attached {
@@ -120,7 +120,7 @@ rv-panel[type='filters'] {
         @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $height: 100px);
     }
 
-    rv-filters-default {
+    rv-table-default {
         @include content-plug;
     }
 }

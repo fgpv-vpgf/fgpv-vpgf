@@ -251,7 +251,7 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
         }
 
         _debouncedAction = debounceService.registerDebounce(
-            () => { tocService.toggleLayerFiltersPanel(this.block); }, 300);
+            () => { tocService.toggleLayerTablePanel(this.block); }, 300);
     }
 
     class RemoveControl extends BaseControl {

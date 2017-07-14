@@ -48,11 +48,11 @@ DataTable text for Last,filter.default.label.last,Last,1,Dernier,1
 DataTable text for Sort Ascending,filter.default.aria.sortasc,: activate to sort column ascending,1,: activer pour trier la colonne en ordre croissant,1
 DataTable text for Sort Descending,filter.default.aria.sortdsc,: activate to sort column descending,1,: activer pour trier la colonne en ordre décroissant,1
 DataTable text for thousands delimeter,filter.default.thousands.delim, ,1, ,1
-DataTable global filters aria label search icon,filter.aria.filters.search,Global Search,1,Recherche globale,1
+DataTable global filters aria label search icon,filter.aria.table.search,Global Search,1,Recherche globale,1
 DataTable global filters search text placeholder,filter.search.placeholder,Search Text,1,Texte à rechercher,1
-Datatable open setting tooltip,filter.filters.setting.tooltip,Toggle filters setting,1,Basculer le réglage des filtres,1
-Datatable clears filters tooltip,filter.filters.clear.tooltip,Clear filters,1,Effacer les filtres,1
-Datatable apply filters on map text,filter.filters.apply,Apply to map,1,Appliquer à la carte,1
+Datatable open setting tooltip,filter.table.setting.tooltip,Toggle filters setting,1,Basculer le réglage des filtres,1
+Datatable clears filters tooltip,filter.table.clear.tooltip,Clear filters,1,Effacer les filtres,1
+Datatable apply filters on map text,filter.table.apply,Apply to map,1,Appliquer à la carte,1
 DataTable string filter placeholder,filter.placeholder.string,text,1,texte,1
 DataTable selector filter placeholder,filter.placeholder.selector,selection,1,sélection,1
 DataTable min filter placeholder,filter.placeholder.min,min,1,min,1

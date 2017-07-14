@@ -33,7 +33,7 @@
         </li>
          <!--only create the element when columns is set. If not, the dragula directive fired and scope is not set -->
          <ul class="rv-filter-list"
-            rv-dragula="filters-bag" rv-dragula-options="dragulaOptions" rv-dragula-model="self.columns"
+            rv-dragula="table-bag" rv-dragula-options="dragulaOptions" rv-dragula-model="self.columns"
             ng-if="self.columns.length">
             <!-- do not show first 2 columns (symbol and interactive buttons). Uge ng-show because ng-if doesn't work with dragula -->
             <li ng-repeat="column in self.columns"  data-name="{{ ::column.data }}" ng-show="$index>1" class="rv-filter-setting-item">
@@ -48,7 +48,7 @@
 
                 <span class="rv-filter-settting-name">{{ column.title }}</span>
 
-                <div rv-filters-definition class="rv-filter-settting-item" info="column"></div>
+                <div rv-table-definition class="rv-filter-settting-item" info="column"></div>
 
                 <div class="rv-filter-settting-sort">
                     <md-button

@@ -12,7 +12,7 @@
     "sideMenu": {
       "logo": true
     },
-    "filterIsOpen": {
+    "tableIsOpen": {
       "id": "0",
       "large": true,
       "medium": true,
@@ -324,7 +324,7 @@
         "id": "0",
         "name": "Electric Transmission Line",
         "layerType": "esriFeature",
-        "filters": {
+        "table": {
           "columns": [
             {
               "data": "OBJECTID",

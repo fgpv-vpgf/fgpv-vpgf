@@ -16,7 +16,7 @@
     "sideMenu": {
       "logo": true
     },
-    "filterIsOpen": {
+    "tableIsOpen": {
       "id": "DateLayer",
       "large": true,
       "medium": true,
@@ -535,9 +535,9 @@
           "layerType":"esriFeature",
           "metadataUrl": "http://csw.open.canada.ca/geonetwork/srv/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&ElementSetName=full&id=3a1eb6ef-6054-4f9d-b1f6-c30322cd7abf",
           "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/NEB/Incident/MapServer/0",
-          "filters": {
+          "table": {
               "title": "my custom title",
-              "description": "This table is use to show all possibilities when we start to use custom filters. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at tristique felis. Nullam porttitor vel dui nec pharetra. Nulla sit amet pulvinar diam. Ut id urna eros. Praesent ultrices, mi ac scelerisque eleifend, nisi sem mollis ipsum, vel hendrerit tortor risus id diam. Nam eu pellentesque risus. Nam quis nibh vel turpis egestas vulputate. Vivamus nibh eros, vulputate convallis consequat nec, ultricies a lorem. Fusce vitae nisi justo. Proin eu leo et mauris porta lobortis. Proin scelerisque elit vel fringilla volutpat.",
+              "description": "This table is use to show all possibilities when we start to use custom table. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at tristique felis. Nullam porttitor vel dui nec pharetra. Nulla sit amet pulvinar diam. Ut id urna eros. Praesent ultrices, mi ac scelerisque eleifend, nisi sem mollis ipsum, vel hendrerit tortor risus id diam. Nam eu pellentesque risus. Nam quis nibh vel turpis egestas vulputate. Vivamus nibh eros, vulputate convallis consequat nec, ultricies a lorem. Fusce vitae nisi justo. Proin eu leo et mauris porta lobortis. Proin scelerisque elit vel fringilla volutpat.",
               "maximize": true,
               "search": { "enabled": true, "value": "INC2008" },
               "applyMap": true,

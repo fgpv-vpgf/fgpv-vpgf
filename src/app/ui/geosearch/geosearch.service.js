@@ -79,7 +79,7 @@ function geosearchService($q, $rootScope, stateManager, layoutService, geoSearch
         // stateManager is a mess; it needs to be refactored; this won't happen.
 
         // check if another panel was open before opening geosearch
-        // if filters is open, toggle mainToc otherwise the last panel
+        // if table is open, toggle mainToc otherwise the last panel
         // if not, only close geosearch
         const panels = stateManager.panelHistory;
         if (panels.length > 0) {
