@@ -270,8 +270,11 @@ function rvTableDefinition(stateManager, events, $compile, tableService, layoutS
             filterScope.self = filter.self;
             filter.scope = filterScope;
 
+            // Using default column name results in errors with specific characters (accents, brackets, etc.) for template data binding
+            // Need to provide a simplified column name for data binding and also keep a reference to the default name
+            // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2019
             if (!column.simpleColumnName) {
-                const simpleColumnName = 'a' + counter;     // set a simplified column name for parsing purposes
+                const simpleColumnName = 'a' + counter;
                 column.simpleColumnName = simpleColumnName;
                 columnNameMap[simpleColumnName] = column.name;
                 counter++;
