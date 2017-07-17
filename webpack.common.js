@@ -3,11 +3,13 @@ const path      = require('path');
 const fs        = require('fs');
 const ExtractTextPlugin     = require('extract-text-webpack-plugin');
 const TranslationPlugin     = require('./scripts/webpack/translations_plugin.js');
+const SchemaValidatorPlugin = require('./scripts/webpack/schema_validation_plugin.js');
 const CopyWebpackPlugin     = require('copy-webpack-plugin');
 const VersionPlugin         = require('./scripts/webpack/version_plugin.js');
 const WrapperPlugin         = require('wrapper-webpack-plugin');
 const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
+const WebpackShellPlugin    = require('webpack-shell-plugin');
 
 module.exports = function (env) {
 
@@ -113,7 +115,9 @@ module.exports = function (env) {
 
             new VersionPlugin(),
 
-            new CleanWebpackPlugin(['build'])
+            new CleanWebpackPlugin(['build']),
+
+            new SchemaValidatorPlugin()
         ],
 
         externals: { 'TweenLite': 'TweenLite' },
