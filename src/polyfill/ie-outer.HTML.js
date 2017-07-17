@@ -1,3 +1,4 @@
+// see this comment: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1272#issuecomment-255395614
 // correctly serializes svg (and xml in general) content in IE
 function serializeSvgContent(element) {
     var result = '<' + element.nodeName;
@@ -89,3 +90,9 @@ function newSvg(svg) {
 
     return this;
 }
+
+// defer patching until the SVGjs library is loaded; function in `_deferredPolyfills` will be executed by the bootstrap
+window.RV = window.RV ? window.RV : {};
+window.RV._deferredPolyfills = window.RV._deferredPolyfills ? window.RV._deferredPolyfills : [];
+
+window.RV._deferredPolyfills.push(function() { SVG.extend(SVG.Element, { svg: newSvg }) });

@@ -1,6 +1,7 @@
 /* global Logdown */
 // eslint-disable-next-line max-statements
-// disabled checks on above line due to 'too many statements in this function' (jshint W071)
+
+import geoapi from 'geoApi';
 
 // check if window.RV has been created by ie-polyfills already, otherwise init
 const RV = window.RV = window.RV ? window.RV : {};
@@ -25,8 +26,11 @@ Object.assign(RV, {
     ready,
     allScriptsLoaded: false,
     debug: {},
-    _nodes: null
+    _nodes: null,
+    _deferredPolyfills: RV._deferredPolyfills || [] // holds callback for any polyfills or patching that needs to be done after the core.js is loaded
 });
+
+RV._deferredPolyfills.forEach(dp => dp());
 
 const customAttrs = ['config', 'langs', 'service-endpoint', 'restore-bookmark', 'wait', 'keys', 'fullpage-app'];
 
@@ -47,8 +51,6 @@ headNode.appendChild(fontsLink);
 const mapRegistry = [];
 let readyQueue = []; // array of callbacks waiting on script loading to complete
 
-// appeasing this rule makes the code fail disallowSpaceAfterObjectKeys
-/* jscs:disable requireSpacesInAnonymousFunctionExpression */
 const mapProxy = {
     _appPromise: null,
     _initAppPromise: null,
@@ -203,7 +205,7 @@ const mapProxy = {
     },
 
 
-     /**
+    /**
     * reinitial when a new config file is loaded
     * @function  reInitialize
     * @param {String} bookmark     The new bookmark when config is reloaded
@@ -247,7 +249,6 @@ const mapProxy = {
         this._init();
     }
 };
-/* jshint:enable requireSpacesInAnonymousFunctionExpression */
 
 // convert html collection to array:
 // https://babeljs.io/docs/learn-es2015/#math-number-string-object-apis
@@ -332,6 +333,7 @@ function enhanceLogger(enabledMethods = []) {
  *
  * @function    getLogdownInstance
  * @param       {String}  prefix    the name/prefix of the logger instance
+ * @return {Object} an instance of the logdown logger
  */
 function getLogdownInstance(prefix) {
     let logger = Logdown._instances.find(ld => ld.opts.prefix.trim() === prefix);
@@ -406,7 +408,7 @@ RV.debug._trackFocus = trackFocusBuilder();
  * Builds a focus tracking debug option.
  * @function trackFocusBuilder
  * @private
- * @return function  enables/disabled focus/blur event tracking on the page; this function accepts a boolean - `true` enables tracking; `false`, disables it
+ * @return {Function} enables/disabled focus/blur event tracking on the page; this function accepts a boolean - `true` enables tracking; `false`, disables it
  */
 function trackFocusBuilder() {
     let lastActiveElement = document.activeElement;
