@@ -53,6 +53,9 @@ const FILTERS = {
     }
 };
 
+const columnNameMap = { };
+let counter = 0;
+
 // jscs:disable maximumLineLength
 const FILTERS_TEMPLATE = {
     string: column =>
@@ -60,7 +63,7 @@ const FILTERS_TEMPLATE = {
             <md-input-container class="md-block" md-no-float flex>
                 <input ng-click="self.prevent($event)"
                         ng-keypress="self.prevent($event)"
-                        ng-change="self.change('${column}', self.${column}.value)"
+                        ng-change="self.change('${columnNameMap[column]}', self.${column}.value)"
                         ng-model="self.${column}.value" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.placeholder | translate }}"
                         ng-disabled="self.${column}.static" />
             </md-input-container>
@@ -70,7 +73,7 @@ const FILTERS_TEMPLATE = {
             <md-input-container class="md-block" md-no-float flex>
                 <md-select ng-click="self.prevent($event)"
                     ng-model="self.${column}.value"
-                    md-on-close="self.change('${column}', self.${column}.value)"
+                    md-on-close="self.change('${columnNameMap[column]}', self.${column}.value)"
                     ng-disabled="self.${column}.static"
                     placeholder="{{ self.placeholder | translate }}" multiple>
                     <md-option ng-repeat="value in self.${column}.values" ng-value="value">
@@ -84,14 +87,14 @@ const FILTERS_TEMPLATE = {
             <md-input-container class="md-block" md-no-float flex>
                 <input rv-table-number-only
                         ng-click="self.prevent($event)"
-                        ng-change="self.change('${column}', self.${column}.min, self.${column}.max)"
+                        ng-change="self.change('${columnNameMap[column]}', self.${column}.min, self.${column}.max)"
                         ng-model="self.${column}.min" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.min.placeholder | translate }}"
                         ng-disabled="self.${column}.static" />
             </md-input-container>
             <md-input-container class="md-block" md-no-float flex>
                 <input rv-table-number-only
                         ng-click="self.prevent($event)"
-                        ng-change="self.change('${column}', self.${column}.min, self.${column}.max)"
+                        ng-change="self.change('${columnNameMap[column]}', self.${column}.min, self.${column}.max)"
                         ng-model="self.${column}.max" class="ng-pristine ng-valid md-input ng-touched" placeholder="{{ self.max.placeholder | translate }}"
                         ng-disabled="self.${column}.static" />
             </md-input-container>
@@ -100,14 +103,14 @@ const FILTERS_TEMPLATE = {
         `<div class="rv-filter-date" ng-show="self.${column}.filtersVisible">
             <md-datepicker
                 ng-click="self.prevent($event)"
-                ng-change="self.change('${column}', self.${column}.min, self.${column}.max)"
+                ng-change="self.change('${columnNameMap[column]}', self.${column}.min, self.${column}.max)"
                 ng-model="self.${column}.min"
                 md-placeholder="{{ self.min.placeholder | translate }}"
                 ng-disabled="self.${column}.static">
             </md-datepicker>
             <md-datepicker
                 ng-click="self.prevent($event)"
-                ng-change="self.change('${column}', self.${column}.min, self.${column}.max)"
+                ng-change="self.change('${columnNameMap[column]}', self.${column}.min, self.${column}.max)"
                 ng-model="self.${column}.max"
                 md-placeholder="{{ self.max.placeholder | translate }}"
                 ng-disabled="self.${column}.static">
@@ -266,16 +269,27 @@ function rvTableDefinition(stateManager, events, $compile, tableService, layoutS
             const filterScope = scope.$new(true);
             filterScope.self = filter.self;
             filter.scope = filterScope;
-            filter.scope.self[column.name] = column.filter;
 
-            $rootScope.$watch(() => layoutService.isFiltersVisible, val => { filter.self[column.name].filtersVisible = val });
+            // Using default column name results in errors with specific characters (accents, brackets, etc.) for template data binding
+            // Need to provide a simplified column name for data binding and also keep a reference to the default name
+            // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2019
+            if (!column.simpleColumnName) {
+                const simpleColumnName = 'a' + counter;
+                column.simpleColumnName = simpleColumnName;
+                columnNameMap[simpleColumnName] = column.name;
+                counter++;
+            }
+
+            filter.scope.self[column.simpleColumnName] = column.filter;
+
+            $rootScope.$watch(() => layoutService.isFiltersVisible, val => { filter.self[column.simpleColumnName].filtersVisible = val });
 
             // create directive
-            const template = FILTERS_TEMPLATE[column.type](column.name);
+            const template = FILTERS_TEMPLATE[column.type](column.simpleColumnName);
 
             // return directive, scope and column type
             return { directive: $compile(template)(filter.scope),
-                    scope: filter.scope.self[column.name] };
+                    scope: filter.scope.self[column.simpleColumnName] };
         }
 
         /**
