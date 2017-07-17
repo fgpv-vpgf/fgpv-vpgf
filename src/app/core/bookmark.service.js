@@ -384,6 +384,8 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             // FIXME: restore
             // modify main config using layer configs
             //filterConfigLayers(bookmarkLayers, config);
+        } else {
+            bookmarkObject.bookmarkLayers = [];
         }
 
         _bookmarkObject = bookmarkObject;
