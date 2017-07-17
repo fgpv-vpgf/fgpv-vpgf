@@ -10,7 +10,7 @@
       ]
     },
     "sideMenu": {
-      "logo": "true"
+      "logo": true
     },
     "tableIsOpen": {
       "id": "DateLayer",

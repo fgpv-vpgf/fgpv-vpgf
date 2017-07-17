@@ -316,8 +316,7 @@
       }
     ],
     "legend": {
-      "type": "autopopulate",
-      "layerId": ["0"]
+      "type": "autopopulate"
     },
     "layers": [
       {
