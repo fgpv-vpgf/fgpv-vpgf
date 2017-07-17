@@ -260,6 +260,7 @@
             "type": "object",
             "properties": {
                 "name" : { "type": "string", "description": "Title of the group" },
+                "expanded": { "type": "boolean", "default": true },
                 "children": {
                     "type": "array",
                     "items": { "oneOf": [ { "$ref": "#/definitions/entryGroup" }, { "$ref": "#/definitions/visibilitySet" }, { "$ref": "#/definitions/entry" }, { "$ref": "#/definitions/infoSection" } ] },
@@ -343,6 +344,7 @@
                 {
                     "type": "object",
                     "properties": {
+                        "name": { "type": "string", "default":"" },
                         "infoType": { "type": "string", "enum": [ "text" ] },
                         "content": { "type": "string" }
                     },
@@ -355,7 +357,9 @@
         "legendAuto": {
             "type": "object",
             "properties": {
-                "type": { "type": "string", "enum": [ "autopopulate" ] }
+                "type": { "type": "string", "enum": [ "autopopulate" ] },
+                "layerId": { "type": "array", "items": { "type": "string" }, "default": [] },
+                "reorderable": {"type": "boolean", "default": true}
             },
             "required": ["type"],
             "additionalProperties": false
@@ -598,7 +602,21 @@
                 "altText": { "type": "string", "description": "Alt text for the basemap thumbnail image.Alt text for the basemap thumbnail image." },
                 "thumbnailUrl": { "type": "string", "description": "Path to image file to display in the basemap selector." },
                 "tileSchemaId": { "type": "string", "description": "The tile schema for this basemap (should reference map.tileSchemas.id)" },
-                "layers": { "type": "array", "items": { "type": "string" }, "minItems": 1, "description": "A set of URLs which should be composited to form a basemap entry" },
+                "layers": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": { "type": "string", "default": "" },
+                            "layerType": { "type": "string", "default": ""},
+                            "url": { "type": "string", "default": "" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["id", "layerType", "url"]
+                     },
+                    "minItems": 1,
+                    "description": "A set of URLs which should be composited to form a basemap entry"
+                },
                 "attribution": { "$ref": "#/definitions/attributionNode" },
                 "zoomLevels": {
                     "type": "object",
@@ -610,7 +628,7 @@
                     "additionalProperties": false
                 }
             },
-            "required": [ "id", "name", "description", "layers", "altText", "thumbnailUrl", "tileSchemaId" ],
+            "required": [ "id", "name", "description", "layers", "altText", "tileSchemaId" ],
             "additionalProperties": false
         },
 
@@ -784,8 +802,7 @@
                     "additionalProperties": false
                 }
             },
-            "additionalProperties": false,
-            "required": ["serviceUrls"]
+            "additionalProperties": false
         },
 
         "map": {

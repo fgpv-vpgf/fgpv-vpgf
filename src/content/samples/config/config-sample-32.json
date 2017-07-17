@@ -329,37 +329,6 @@
                 "layerId": "1"
               },
               {
-                "infoType": "unboundLayer",
-                "layerName": "How to catch Santa (//www.pusheen.com/)",
-                "symbologyStack": [
-                  {
-                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step1.gif",
-                    "text":"1. Set your bait"
-                  },
-                  {
-                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step2.gif",
-                    "text":"2. Hide"
-                  },
-                  {
-                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step3.gif",
-                    "text":"3. Don't eat the bait"
-                  },
-                  {
-                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step4.gif",
-                    "text":"4. Don't do it"
-                  },
-                  {
-                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step5.gif",
-                    "text":"5. Stop!!"
-                  },
-                  {
-                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step6.gif",
-                    "text":"6. You ruinted it!"
-                  }
-                ],
-                "symbologyRenderStyle": "images"
-              },
-              {
                 "name": "Cat GIFs",
                 "controls": [],
                 "children": [
