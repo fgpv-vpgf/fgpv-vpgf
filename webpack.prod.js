@@ -8,9 +8,7 @@ const pkg           = require('./package.json');
 const ZipPlugin     = require('zip-webpack-plugin');
 const CopyPlugin    = require('copy-webpack-plugin');
 const onBuildPlugin = require('on-build-webpack');
-const exec          = require( 'child_process' ).exec;
-
-exec('rm -r dist');
+const WebpackShellPlugin = require('webpack-shell-plugin');
 
 module.exports = function(env) {
     return Merge(CommonConfig(env), {
@@ -55,8 +53,9 @@ module.exports = function(env) {
                 enabled: true
             }),
 
-            new onBuildPlugin(() => {
-                exec('rm -r build/help');
+            new WebpackShellPlugin({
+                onBuildStart: ['rm -r dist'],
+                onBuildEnd: ['rm -r build/help']
             })
         ]
     });
