@@ -259,7 +259,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         // an array of layer records ordered as visible to the user in the layer selector UI component
         const orderedLayerRecords = configService.getSync.map.legendBlocks
             .walk(lb => lb.layerRecordId) // get a flat list of layer record ids as they appear in UI
-            .filter(id => id !== null) // filter out artificial groups
+            .filter(id => id) // this will strip all falsy values like `undefined` and `null` since ids should be strings; filter out artificial groups that don't have ids set to null and legend info elements
             .reduce((a, b) =>
                 a.concat(a.indexOf(b) < 0 ? b : []), []) // remove duplicates (dynamic group and its children with have the same layer id)
             .map(getLayerRecord); // get appropriate layer records
