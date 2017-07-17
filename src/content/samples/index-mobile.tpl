@@ -9,6 +9,7 @@
     <style>
         .myMap {
             height: 100%;
+            margin: 1px;
         }
     </style>
 
