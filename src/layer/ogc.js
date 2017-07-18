@@ -19,19 +19,22 @@ function getFeatureInfoBuilder(esriBundle) {
         const srList = wmsLayer.spatialReferences;
         const layers = layerList.join(',');
 
+        // tear off any decimals from the screenpoint coords.
+        const intX = parseInt(clickEvent.screenPoint.x);
+        const intY = parseInt(clickEvent.screenPoint.y);
+
         if (srList && srList.length > 1) {
             wkid = srList[0];
         } else if (esriMap.spatialReference.wkid) {
             wkid = esriMap.spatialReference.wkid;
         }
         if (wmsLayer.version === '1.3' || wmsLayer.version === '1.3.0') {
-            req = { CRS: 'EPSG:' + wkid, I: clickEvent.screenPoint.x, J: clickEvent.screenPoint.y,
-                    STYLES: '', FORMAT: wmsLayer.imageFormat };
+            req = { CRS: 'EPSG:' + wkid, I: intX, J: intY, STYLES: '', FORMAT: wmsLayer.imageFormat };
             if (yxList.indexOf(String(wkid)) > -1) {
                 req.BBOX = `${ext.ymin},${ext.xmin},${ext.ymax},${ext.xmax}`;
             }
         } else {
-            req = { SRS: 'EPSG:' + wkid, X: clickEvent.screenPoint.x, Y: clickEvent.screenPoint.y };
+            req = { SRS: 'EPSG:' + wkid, X: intX, Y: intY };
         }
         if (!req.hasOwnProperty('BBOX')) {
             req.BBOX = `${ext.xmin},${ext.ymin},${ext.xmax},${ext.ymax}`;
