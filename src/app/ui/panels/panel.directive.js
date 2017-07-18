@@ -66,7 +66,7 @@ function Controller($attrs, stateManager, layoutService, $element, debounceServi
     /**
      * Temporary function to close the panel.
      * @function closePanel
-     * @return {function} a function that debounces when closing panel was invoked more than once
+     * @return {function} a function that debounces when closingPanel was invoked more than once
      */
     function closePanel() {
         return debounceService.registerDebounce(() => {
