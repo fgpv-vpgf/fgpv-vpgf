@@ -55,13 +55,13 @@ function rvPanel(layoutService) {
  * Skeleton controller function.
  * @function Controller
  */
-function Controller($attrs, stateManager, layoutService, $element) {
+function Controller($attrs, stateManager, layoutService, $element, debounceService) {
     'ngInject';
     const self = this;
 
     layoutService.panels[$attrs.type] = $element;
 
-    self.closePanel = self.closeButton !== 'false' ? closePanel : undefined;
+    self.closePanel = self.closeButton !== 'false' ? closePanel() : undefined;
 
     /**
      * Temporary function to close the panel.
@@ -69,6 +69,8 @@ function Controller($attrs, stateManager, layoutService, $element) {
      * FIXME: this should be handled in the shatehelper
      */
     function closePanel() {
-        stateManager.setActive($attrs.type);
+        return debounceService.registerDebounce(() => {
+            stateManager.setActive($attrs.type);
+        });
     }
 }
