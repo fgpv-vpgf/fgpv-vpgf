@@ -327,7 +327,13 @@
           "columns": [
             {
               "data": "OBJECTID",
-              "sort": "desc"
+              "sort": "desc",
+              "width": 10,
+              "title": "This is an OBJECTID title that never ends, yes it goes on and on my friends. Some people say it will end but it never really does, it just keeps going on and on forever because [repeat from the start]"
+            },
+            {
+              "data": "Country",
+              "width": 20
             }
           ]
         },

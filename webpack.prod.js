@@ -54,8 +54,8 @@ module.exports = function(env) {
             }),
 
             new WebpackShellPlugin({
-                onBuildStart: ['rm -r dist'],
-                onBuildEnd: ['rm -r build/help']
+                onBuildStart: ['rm -rf dist'],
+                onBuildEnd: ['rm -rf build/help']
             })
         ]
     });
