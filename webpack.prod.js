@@ -7,7 +7,6 @@ const SriPlugin     = require('webpack-subresource-integrity');
 const pkg           = require('./package.json');
 const ZipPlugin     = require('zip-webpack-plugin');
 const CopyPlugin    = require('copy-webpack-plugin');
-const onBuildPlugin = require('on-build-webpack');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
 module.exports = function(env) {
