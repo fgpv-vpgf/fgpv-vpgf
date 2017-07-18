@@ -1,3 +1,5 @@
+import screenfull from 'screenfull';
+
 /**
  * @module ConfigObject
  * @memberof app.core
@@ -1820,7 +1822,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             // remove help if help or its folderName is absent
             if (! helpSource || ! helpSource.folderName) {
-                this._extra.splice(this._extra.indexOf('help'));
+                common.removeFromArray(this._extra, 'help');
             }
         }
 
@@ -1869,9 +1871,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 source.items.map(subItems =>
                     common.intersect(source.items, SideMenu.AVAILABLE_ITEMS)) : angular.copy(ITEMS_DEFAULT);
 
-            //remove help if help or its folderName is absent
+            // remove help if help or its folderName is absent
             if (! helpSource || ! helpSource.folderName) {
-                this._items[1].splice(this._items[1].indexOf('help'), 1);
+                common.removeFromArray(this.items[1], 'help');
             }
         }
 
@@ -2101,6 +2103,16 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             // set geoSearch.enable to false if it was false initialy or does not have all services
             this.map.components.geoSearch.enabled = this.map.components.geoSearch.enabled
                 && hasAllSearchServices(this.services.search);
+
+            // remove fullscreenoption if fullscreen functionality is not available
+            if (!screenfull.enabled) {
+                const optionName = 'fullscreen';
+
+                this.ui.sideMenu.items.forEach(section =>
+                    common.removeFromArray(section, optionName));
+
+                common.removeFromArray(this.ui.navBar.extra, optionName);
+            }
 
             /**
              * Return true if all search services are included in the config file, false otherwise

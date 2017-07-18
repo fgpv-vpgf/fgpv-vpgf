@@ -18,7 +18,7 @@ angular
  * @return {object} service object
  */
 function mapNavigationService(stateManager, geoService, $rootScope, locateService,
-helpService, basemapService, events, fullScreenService) {
+    helpService, basemapService, events, fullScreenService) {
 
     const service = {
         controls: {}
@@ -30,7 +30,6 @@ helpService, basemapService, events, fullScreenService) {
             label: 'sidenav.label.fullscreen',
             icon: 'navigation:fullscreen',
             tooltip: 'sidenav.label.fullscreen',
-            visible: fullScreenService.isFullPageApp,
             action: () => fullScreenService.toggle(false)
         },
         zoomIn: {
