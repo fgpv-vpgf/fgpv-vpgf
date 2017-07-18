@@ -554,53 +554,55 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             function onTableInit() {
                 // turn off loading indicator after the table initialized or the forced delay whichever takes longer; cancel loading timeout as well
                 forcedDelay.then(() => {
-                    // TODO: these ought to be moved to a helper function in displayManager
-                    stateManager.display.table.isLoading = false;
-                    $timeout.cancel(stateManager.display.table.loadingTimeout);
+                    if (self.tableBody) {
+                        // TODO: these ought to be moved to a helper function in displayManager
+                        stateManager.display.table.isLoading = false;
+                        $timeout.cancel(stateManager.display.table.loadingTimeout);
 
-                    // set header focusable
-                    const header = el.find('.dataTables_scrollHead th');
-                    header.slice(2, header.length).attr('tabindex', '-2');
+                        // set header focusable
+                        const header = el.find('.dataTables_scrollHead th');
+                        header.slice(2, header.length).attr('tabindex', '-2');
 
-                    // blur the focused cell on scroll so focus manager/datatables doesn't try to go back to the row
-                    // DOMMouseScroll (FF), mousewheel (Chrome, Safari and IE)
-                    self.tableBody.on('mousewheel DOMMouseScroll', () => {
-                        if (typeof index !== 'undefined') {
-                            self.table.cell(index.row, index.column).node().blur();
-                            index = undefined;
-                        }
-                    });
+                        // blur the focused cell on scroll so focus manager/datatables doesn't try to go back to the row
+                        // DOMMouseScroll (FF), mousewheel (Chrome, Safari and IE)
+                        self.tableBody.on('mousewheel DOMMouseScroll', () => {
+                            if (typeof index !== 'undefined') {
+                                self.table.cell(index.row, index.column).node().blur();
+                                index = undefined;
+                            }
+                        });
 
-                    // focus on close button when table open (wcag requirement)
-                    // at the same time it solve a problem because when focus is on menu button, even if focus is on the
-                    // table cell it goes inside the menu and loop through it at the same time as we navigate the table
-                    $rootElement.find('[type=\'table\'] button.rv-close').rvFocus({ delay: 100 });
+                        // focus on close button when table open (wcag requirement)
+                        // at the same time it solve a problem because when focus is on menu button, even if focus is on the
+                        // table cell it goes inside the menu and loop through it at the same time as we navigate the table
+                        $rootElement.find('[type=\'table\'] button.rv-close').rvFocus({ delay: 100 });
 
-                    // set table is initialize. Things that need to be done only once will be avoid at the next creation
-                    displayData.filter.isInit = true;
+                        // set table is initialize. Things that need to be done only once will be avoid at the next creation
+                        displayData.filter.isInit = true;
 
-                    // set colReorder extension
-                    setColumnReorder();
+                        // set colReorder extension
+                        setColumnReorder();
 
-                    // initialize a temporary array to store all the custom filters so they don't fire every time we add new one
-                    $.fn.dataTable.ext.searchTemp = [];
+                        // initialize a temporary array to store all the custom filters so they don't fire every time we add new one
+                        $.fn.dataTable.ext.searchTemp = [];
 
-                    // set active table so it can be accessed in filter-search.directive for global table search
-                    tableService.setTable(self.table, displayData.filter.globalSearch);
+                        // set active table so it can be accessed in filter-search.directive for global table search
+                        tableService.setTable(self.table, displayData.filter.globalSearch);
 
-                    // recalculate scroller space on table init because if the preopen table was maximized in setting view
-                    // the scroller is still in split view
-                    self.table.scroller.measure();
+                        // recalculate scroller space on table init because if the preopen table was maximized in setting view
+                        // the scroller is still in split view
+                        self.table.scroller.measure();
 
-                    // wrap the title inside a span so when we need to change it when global search is focused, there is no impact on the filters
-                    angular.element(tableService.getTable().header()).find('th').each((i, el) => {
-                        const title = el.innerHTML;
-                        el.innerHTML = '';
-                        el.appendChild(angular.element(`<span title="${title}" data-rv-column="${title}">${title}</span>`)[0]);
-                    });
+                        // wrap the title inside a span so when we need to change it when global search is focused, there is no impact on the filters
+                        angular.element(tableService.getTable().header()).find('th').each((i, el) => {
+                            const title = el.innerHTML;
+                            el.innerHTML = '';
+                            el.appendChild(angular.element(`<span title="${title}" data-rv-column="${title}">${title}</span>`)[0]);
+                        });
 
-                    // fired event to create filters
-                    events.$broadcast(events.rvTableReady);
+                        // fired event to create filters
+                        events.$broadcast(events.rvTableReady);
+                    }
                 });
             }
 
