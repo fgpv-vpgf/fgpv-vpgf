@@ -38,9 +38,15 @@ function common($timeout, $q) {
      */
     function intersect(array1 = [], array2 = []) {
         return array1.filter(item =>
-                array2.indexOf(item) !== -1);
+            array2.indexOf(item) !== -1);
     }
 
+    /**
+     * Removes an item from an array if found
+     *
+     * @param {Array} array an array to remove the item from
+     * @param {String|Number|Object} name a string|number|object to remove from the provided array
+     */
     function removeFromArray(array, name) {
         let index = array.indexOf(name);
         if (index !== -1) {

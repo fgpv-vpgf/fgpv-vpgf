@@ -48,7 +48,11 @@ function fullScreenService($rootElement, $timeout, layoutService, gapiService, a
         isFullPageApp: configService.getAsync.then(conf => conf.fullscreen)
     };
 
-    screenfull.onchange(() => toggle(true));
+    if (screenfull.enabled) {
+        screenfull.onchange(() => toggle(true));
+    } else {
+        service.toggle = angular.noop;
+    }
 
     return service;
 
