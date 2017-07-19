@@ -2105,7 +2105,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this.map.components.geoSearch.enabled = this.map.components.geoSearch.enabled
                 && hasAllSearchServices(this.services.search);
 
-            // remove fullscreenoption if fullscreen functionality is not available
+            // remove fullscreen option if fullscreen functionality is not available
             if (!screenfull.enabled) {
                 const optionName = 'fullscreen';
 

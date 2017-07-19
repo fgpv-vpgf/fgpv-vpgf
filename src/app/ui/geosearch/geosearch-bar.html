@@ -36,4 +36,9 @@
         <md-tooltip>{{ 'appbar.aria.geosearchclose' | translate }}</md-tooltip>
         <md-icon md-svg-src="navigation:close"></md-icon>
     </md-button>
+
+    <md-progress-linear
+            class="rv-progress-bottom"
+            md-mode="indeterminate"
+            ng-show="self.service.isLoading"></md-progress-linear>
 </div>
