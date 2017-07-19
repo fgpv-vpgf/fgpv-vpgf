@@ -62,11 +62,14 @@ function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider, $p
                     ch === '’');
         }
 
+        // use moment timezone to parse dates in all formats
         $mdDateLocaleProvider.parseDate = dateString => {
             const userTimeZone = moment.tz.guess();
             const time = moment.tz(dateString, userTimeZone);
             if (time.isValid()) {
                 const date = new Date(time);
+                // JS parses inconsistently for local time vs UTC
+                // apply time offset to ensure date entered is not given in UTC (a day behind)
                 return new Date(date.getTime() + Math.abs(date.getTimezoneOffset()*60000));
             }
 
