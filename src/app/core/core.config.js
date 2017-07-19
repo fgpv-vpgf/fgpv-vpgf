@@ -1,3 +1,5 @@
+import * as moment from 'moment-timezone';
+
 const iconTemplateUrls = {
     action: require('../../content/svgCache/action.svg'),
     alert: require('../../content/svgCache/alert.svg'),
@@ -29,7 +31,7 @@ angular
  * - configure translation provider by prepping static loader (and optionally setting preferred language if we know what it is),
  * - configure theme colours for angular material
  */
-function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider, $parseProvider) {
+function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider, $parseProvider, $mdDateLocaleProvider) {
 
     configureParser();
     configureTranslations();
@@ -58,6 +60,20 @@ function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider, $p
                     'Ç' === ch || ch === 'ç' ||
                     '0' <= ch && ch <= '9'  ||
                     ch === '’');
+        }
+
+        // use moment timezone to parse dates in all formats
+        $mdDateLocaleProvider.parseDate = dateString => {
+            const userTimeZone = moment.tz.guess();
+            const time = moment.tz(dateString, userTimeZone);
+            if (time.isValid()) {
+                const date = new Date(time);
+                // JS parses inconsistently for local time vs UTC
+                // apply time offset to ensure date entered is not given in UTC (a day behind)
+                return new Date(date.getTime() + Math.abs(date.getTimezoneOffset()*60000));
+            }
+
+            return new Date(NaN);
         }
     }
 
