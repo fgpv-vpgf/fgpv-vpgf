@@ -10,8 +10,11 @@
 @mixin map {
     // makes bounding box ignore any mouse events and allow for hover tips to be triggered on feature layers underneath the bbox    .rv-esri-map.map {
     // it seems that in 3.20 `layersDiv` class was changed to `esriMapLayers`
-    .esriMapLayers g[id$="bbox_layer"] {
-        pointer-events: none;
+    // allow mouse events through feature highlights: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2189
+    .esriMapLayers g {
+        &[id$="bbox_layer"], &[id="rv_hilight_layer"] {
+            pointer-events: none;
+        }
     }
 
     // no idea what this is, but it seems we don't need this
