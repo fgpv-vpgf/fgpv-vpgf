@@ -463,6 +463,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get search () { return this._search; }
         get applyMap () { return this._applyMap; }
+        set applyMap (value) { this._applyMap = value; }
         get columns () { return this._columns; }
 
         get JSON () {
