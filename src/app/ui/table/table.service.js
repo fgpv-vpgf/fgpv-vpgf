@@ -390,7 +390,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // keep filter state to know when to show apply map button
         setFiltersState(column, `${min}${max}`);
 
-        // redraw table to filter (filters for range number are added on the table itself in filter-definition.directive)
+        // redraw table to filter (filters for range number are added on the table itself in table-definition.directive)
         // use timeout for redraw so processing can show
         $timeout(() => { service.getTable().draw(); }, 100);
 
@@ -415,7 +415,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // keep filter state to know when to show apply map button
         setFiltersState(column, `${min}${max}`);
 
-        // redraw table to filter (filters for range date are added on the table itself in filter-definition.directive)
+        // redraw table to filter (filters for range date are added on the table itself in table-definition.directive)
         // use timeout for redraw so processing can show
         $timeout(() => { service.getTable().draw(); }, 100);
 
