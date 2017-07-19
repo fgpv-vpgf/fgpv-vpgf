@@ -9,15 +9,15 @@
         </md-button>
 
         <md-menu-content rv-trap-focus="{{::self.appID}}" class="rv-menu rv-dense" width="5">
-            <!--md-menu-item type="radio" ng-model="self.filtersMode" value="minimized" ng-click="self.setMode(self.filtersMode)">
+            <!--md-menu-item type="radio" ng-model="self.tableMode" value="minimized" ng-click="self.setMode(self.tableMode)">
                 {{ 'filter.menu.minimize' | translate }}
             </md-menu-item-->
 
-            <md-menu-item type="radio" ng-model="self.filtersMode" value="default" ng-click="self.setMode(self.filtersMode)" ng-if="self.currentLayout() === 'large'" rv-right-icon="none">
+            <md-menu-item type="radio" ng-model="self.tableMode" value="default" ng-click="self.setMode(self.tableMode)" ng-if="self.currentLayout() === 'large'" rv-right-icon="none">
                 {{ 'filter.menu.splitView' | translate }}
             </md-menu-item>
 
-            <md-menu-item type="radio" ng-model="self.filtersMode" value="full" ng-click="self.setMode(self.filtersMode)" ng-if="self.currentLayout() === 'large'" rv-right-icon="none">
+            <md-menu-item type="radio" ng-model="self.tableMode" value="full" ng-click="self.setMode(self.tableMode)" ng-if="self.currentLayout() === 'large'" rv-right-icon="none">
                 {{ 'filter.menu.maximize' | translate }}
             </md-menu-item>
 
