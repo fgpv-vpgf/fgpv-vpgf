@@ -6,11 +6,6 @@
 
     <div class="rv-geosearch-results">
 
-        <md-progress-linear
-            class="rv-progress-top"
-            md-mode="indeterminate"
-            ng-show="self.service.isLoading"></md-progress-linear>
-
         <span class="rv-no-results" ng-if="self.service.noResultsSearchValue">{{ 'geosearch.nomatches.label' | translate:self.service }}</span>
 
         <ul class="rv-results-list">
