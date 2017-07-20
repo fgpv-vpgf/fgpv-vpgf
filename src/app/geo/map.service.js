@@ -109,9 +109,10 @@ function mapServiceFactory($q, $timeout, referenceService, gapiService, configSe
         const mapSettings = {
             basemaps: mapConfig.basemaps,
             scalebar: mapConfig.components.scaleBar,
-            overviewMap: mapConfig.components.overviewMap,
+            overviewMap: mapConfig.components.overviewMap.enabled ? mapConfig.components.overviewMap : false,
             extent: _getStartExtent(mapConfig, mapNode),
-            lods: mapConfig.selectedBasemap.lods
+            lods: mapConfig.selectedBasemap.lods,
+            tileSchemas: mapConfig.tileSchemas
         };
 
         // TODO: convert service section of the config to typed objects
