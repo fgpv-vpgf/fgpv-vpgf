@@ -616,6 +616,11 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
         return;
     }
 
+    // Calling rvFocus implies the viewer should be active
+    viewerGroup
+        .contains(jqueryElem)
+        .setStatus(statuses.ACTIVE);
+
     // clear any delayed focus movements
     clearTimeout(focusoutTimerCancel);
 
