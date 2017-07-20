@@ -20,7 +20,19 @@ function esriMap(esriBundle, geoApi) {
             'attribution', 'extent', 'graphicsLayerIds', 'height', 'layerIds', 'spatialReference', 'width'
         ]; } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
-        // TODO add docs for opts parameter properties
+        /*
+         * Option params
+         * - basemaps: array of basemap options.  See config schema baseMapNode
+         * - scalebar: object to show scalebar. Has .enabled property, and optional .attachTo and .scalebarUnit properties
+         * - overviewMap: object to show overview map. Has .enabled and .expandFactor properties
+         * - extent: extent object for initial extent
+         * - lods: array of level of details. See config schema lodSetNode.lods
+         * - tileSchema: object describing schema of map. See config schema tileSchemaNode
+         * - proxyUrl: url to proxy for use by mapping api. optional
+         * 
+         * @param {Object} domNode  the DOM node where the map will be created
+         * @param {Object} opts     options object for the map (see above)
+         */
         constructor (domNode, opts) {
 
             this._passthroughBindings.forEach(bindingName =>
@@ -44,7 +56,7 @@ function esriMap(esriBundle, geoApi) {
                 throw new Error('The basemaps option is required to and at least one basemap must be defined');
             }
 
-            if (opts.scalebar) {
+            if (opts.scalebar && opts.scalebar.enabled) {
                 this.scalebar = new esriBundle.Scalebar({
                     map: this._map,
                     attachTo: opts.scalebar.attachTo,
@@ -53,9 +65,23 @@ function esriMap(esriBundle, geoApi) {
                 this.scalebar.show();
             }
 
-            if (opts.overviewMap) {
-                this.initOverviewMap();
-                this.basemapGallery.on('selection-change', () => this.resetOverviewMap());
+            if (opts.overviewMap && opts.overviewMap.enabled) {
+                const expand = opts.overviewMap.expandFactor;
+
+                if (opts.tileSchema.overviewUrl) {
+                    // initial implementation.  we only are supporting tile layers.
+                    // if we want to enhance to have other layer types, will need to determine
+                    // how to go about it. we could just use raw objects in a switch statement here,
+                    // or attempt to wire in the layer records.
+                    const customOverview = new esriBundle.ArcGISTiledMapServiceLayer(opts.tileSchema.overviewUrl.url);
+                    customOverview.on('load', () => {
+                        this.initOverviewMap(expand, customOverview);
+                    });
+                } else {
+                    // we use the active basemap, and reset the overview whenever it changes
+                    this.initOverviewMap(expand);
+                    this.basemapGallery.on('selection-change', () => this.resetOverviewMap(expand));
+                }
             }
 
             this.zoomPromise = Promise.resolve();
@@ -290,13 +316,21 @@ function esriMap(esriBundle, geoApi) {
             };
         }
 
-        initOverviewMap () {
-            this.overviewMap = new esriBundle.OverviewMap({ map: this._map, expandFactor: 1, visible: true });
+        initOverviewMap (expandFactor, baseLayer) {
+            const opts = {
+                map: this._map,
+                expandFactor,
+                visible: true
+            };
+            if (baseLayer) {
+                opts.baseLayer = baseLayer;
+            }
+            this.overviewMap = new esriBundle.OverviewMap(opts);
             this.overviewMap.startup();
         }
-        resetOverviewMap () {
+        resetOverviewMap (expandFactor) {
             this.overviewMap.destroy();
-            this.initOverviewMap();
+            this.initOverviewMap(expandFactor);
         }
 
         /**
