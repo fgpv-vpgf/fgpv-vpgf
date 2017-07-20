@@ -1027,7 +1027,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get name () { return this._name; }
         get id () { return this._id; }
 
-        get overviewUrl () { return this.__overviewUrl; }
+        get overviewUrl () { return this._overviewUrl; }
 
         get extentSet () { return this._extentSet; }
         get lodSet () { return this._lodSet; }
@@ -1062,6 +1062,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             return blankBasemap;
         }
 
+        // TODO add overviewUrl object to this?
         get JSON () {
             return {
                 id: this.id,
@@ -1432,15 +1433,18 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             this._maximizeButton = source.maximizeButton;
             this._layerType = source.layerType;
+            this._expandFactor = source.expandFactor;
         }
 
         get maximizeButton () { return this._maximizeButton; }
         get layerType () { return this._layerType; }
+        get expandFactor () { return this._expandFactor; }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 maximizeButton: this.maximizeButton,
-                layerType: this.layerType
+                layerType: this.layerType,
+                expandFactor: this.expandFactor
             });
         }
     }
