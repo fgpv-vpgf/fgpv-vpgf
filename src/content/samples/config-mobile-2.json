@@ -72,6 +72,7 @@
       },
       "overviewMap": {
         "enabled": true,
+        "expandFactor": 3,
         "layerType": "imagery"
       },
       "scaleBar": {
@@ -785,7 +786,12 @@
         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
         "name": "Lambert Maps",
         "extentSetId": "EXT_NRCAN_Lambert_3978",
-        "lodSetId": "LOD_NRCAN_Lambert_3978"
+        "lodSetId": "LOD_NRCAN_Lambert_3978",
+        "overviewUrl": {
+            "id": "CBMT_Overview",
+            "layerType": "esriTile",
+            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+        }
       },
       {
         "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",

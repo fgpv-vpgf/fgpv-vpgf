@@ -1014,10 +1014,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
      * @class TileSchema
      */
     class TileSchema {
-        constructor ({ id, lodSetId, name }, extentSet, lodSet) {
+        constructor ({ id, lodSetId, name, overviewUrl }, extentSet, lodSet) {
             this._id = id;
             this._name = name;
             this._lodSetId = lodSetId;
+
+            this._overviewUrl = overviewUrl;
 
             this._extentSet = extentSet;
             this._lodSet = lodSet;
@@ -1025,6 +1027,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get name () { return this._name; }
         get id () { return this._id; }
+
+        get overviewUrl () { return this.__overviewUrl; }
 
         get extentSet () { return this._extentSet; }
         get lodSet () { return this._lodSet; }
