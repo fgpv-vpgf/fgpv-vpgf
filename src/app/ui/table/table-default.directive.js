@@ -594,7 +594,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     angular.element(tableService.getTable().header()).find('th').each((i, el) => {
                         const title = el.innerHTML;
                         el.innerHTML = '';
-                        el.append(angular.element(`<span title="${title}" data-rv-column="${title}">${title}</span>`)[0]);
+                        el.appendChild(angular.element(`<span title="${title}" data-rv-column="${title}">${title}</span>`)[0]);
                     });
 
                     // fired event to create filters
