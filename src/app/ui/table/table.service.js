@@ -126,7 +126,8 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             col.data === stateManager.display.table.data.oidField);
 
         // add a DataTable filter which only accepts rows with oidField values in the validOIDs list
-
+        $.fn.dataTable.ext.searchTemp.push((settings, data) =>
+            validOIDs.indexOf(parseInt(data[settings._colReorder.fnTranspose(oidColNum)])) !== -1);
     }
 
     /**
