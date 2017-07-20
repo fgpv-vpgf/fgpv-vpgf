@@ -48,7 +48,7 @@
 // more styling on top of the default material slider control
 @mixin slider-setting {
     .rv-slider {
-        display: flex;
+        display: block;
         flex-direction: column;
 
         > md-icon {
