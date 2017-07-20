@@ -19,5 +19,10 @@ md-input-container {
     &.rv-table-search {
         display: flex;
         align-items: center;
+
+        // remove clear button rendered by IE;
+        input::-ms-clear {
+            display: none;
+        }
     }
 }
