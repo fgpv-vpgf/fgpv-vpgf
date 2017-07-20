@@ -44,7 +44,7 @@ function layoutService($rootElement, $rootScope) {
             MEDIUM: 'medium',
             LARGE: 'large'
         },
-        isTableVisible: false
+        isFiltersVisible: false
     };
 
     return service;
