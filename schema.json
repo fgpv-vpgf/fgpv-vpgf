@@ -125,7 +125,8 @@
                 "id": { "type": "string", "description": "A unique id identifying a tile schema (combination of an extent set and a zoom scale)" },
                 "name": { "type": "string", "description": "The name to display in the basemap selector for the set of basemaps referencing this schema" },
                 "extentSetId": { "type": "string", "description": "The extent set to be used for this basemap (should reference map.extentSets.id)" },
-                "lodSetId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" }
+                "lodSetId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" },
+                "overviewUrl": { "$ref": "#/definitions/basicLayerNode", "description": "Optional. If set, the overview map will use this layer instead of the active basemap" }
             },
             "required": ["extentSetId", "lodSetId", "id", "name"],
             "additionalProperties": false
@@ -671,10 +672,10 @@
         "mapComponentsNode": {
             "type": "object",
             "properties": {
-                "geoSearch": { "type": "object", "properties": { "enabled": {"type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
+                "geoSearch": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
                 "mouseInfo": { "type": "object", "properties": { "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
                 "northArrow": { "type": "object" },
-                "overviewMap": { "type": "object" },
+                "overviewMap": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "expandFactor": { "type": "number", "default": 2 }}},
                 "scaleBar": { "type": "object" },
                 "basemap": { "type": "object" }
             },
