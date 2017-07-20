@@ -41,9 +41,13 @@ function mdDialog($delegate, $q) {
                     .attr('rv-trap-focus', '')
                     .removeAttr('tabindex');
 
-                // if an element with property rv-close-button exists we set focus on it. Sometimes the close button is
-                // not the first focusable element, but in most cases it should be the first focused element
-                if (opts.focusOnOpen) {
+                // rv-focus attribute in dialogs bypasses default focus to close behaviour
+                const rvFocus = element.find('rv-focus');
+                if (rvFocus) {
+                    rvFocus.first().rvFocus();
+                } else if (opts.focusOnOpen) {
+                    // if an element with property rv-close-button exists we set focus on it. Sometimes the close button is
+                    // not the first focusable element, but in most cases it should be the first focused element
                     const closeBtn = $(element).find('[rv-close-button]');
                     if (closeBtn.length === 0) {
                         element.nextFocus();
