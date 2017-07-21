@@ -12,6 +12,9 @@
     "sideMenu": {
       "logo": true
     },
+    "help": {
+      "folderName": "default"
+    },
     "legendIsOpen": {
       "large": true,
       "medium": true,
