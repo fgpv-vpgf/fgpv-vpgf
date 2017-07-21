@@ -74,7 +74,11 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
         self.display.selectedItem = self.selectedItem;
     }
 
+    let deRegisterFirstResultWatch = angular.noop;
+
     $scope.$watch('self.display.data', (newValue, oldValue) => {
+        deRegisterFirstResultWatch();
+
         // if multiple points added to the details panel ...
         if (newValue && newValue.length > 0) {
 
@@ -87,12 +91,12 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
                 selectItem(newValue[0]);
             } else {
                 // otherwise, wait for the first item to get results and select that
-                const deRegister = $scope.$watch(_waitForFirstResult, item => {
+                deRegisterFirstResultWatch = $scope.$watch(_waitForFirstResult, item => {
                     if (!item) {
                         return;
                     }
 
-                    deRegister();
+                    deRegisterFirstResultWatch();
                     // if the user alreayd selected an item, do not override the selection
                     if (self.selectedItem) {
                         return;
