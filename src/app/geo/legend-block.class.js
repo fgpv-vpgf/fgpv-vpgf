@@ -895,6 +895,9 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             this._walk = ref.walkFunction.bind(this);
         }
 
+        // `_selectedEntry` starts as `null`, but can never go back to null after being set unless that entry is removed from the visibility group;
+        // this keeps track of the last entry made visible inside the visibility group even if it's currently invisible;
+        // tracking the last entry selected, allows to restore its visibility (instead of falling back to the first entry) when the legend group itself made visible by its parent;
         _selectedEntry = null;
 
         // sets are special snowflakes; they only support visibility controls
@@ -905,37 +908,42 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
 
         get blockType () { return TYPES.SET; }
 
+        /**
+         * @return {Boolean} true if one of the visibility group's entries is visible; false, if no entries are visible
+         */
         get visibility () {
-            const currentlySelected = this._activeEntries.find(entry =>
+            // find a new entry selected in the visibility group by a user;
+            // it must differ from the already selected entry tracked by the visibility group
+            const newlySelectedEntry = this._activeEntries.find(entry =>
                 entry.visibility && entry !== this._selectedEntry) || null;
 
-            if (currentlySelected) {
+            // if found, hide the tracked entry, and keep the reference to the new one
+            if (newlySelectedEntry) {
                 if (this._selectedEntry) {
                     this._selectedEntry.visibility = false;
                 }
-                this._selectedEntry = currentlySelected;
+                this._selectedEntry = newlySelectedEntry;
             }
 
             const isAllOff = this._activeEntries.every(entry =>
                 !entry.visibility);
 
-            if (isAllOff) {
-                if (this._selectedEntry) {
-                    this._selectedEntry.visibility = false;
-                }
-                this._selectedEntry = null;
+            if (isAllOff && this._selectedEntry) {
+                this._selectedEntry.visibility = false;
             }
 
-            return this._selectedEntry !== null;
+            return this._selectedEntry === null ? false : this._selectedEntry.visibility;
         }
         set visibility (value) {
             if (!value) {
                 this._activeEntries.forEach(entry =>
                     (entry.visibility = value));
-            } else if (!this.visibility) {
+            } else if (!this.visibility && this._activeEntries.length > 0) {
                 // setting the set's visibility to true when one of the entries is already visible has no effect
-                // `this.visibility` will be `false` if there is no entries, so calling [0] should be safe
-                this._activeEntries[0].visibility = true;
+                // `this.visibility` will be `false` if there is no visible entries, so turning visiblity on
+                // the selected entry (if available) or the first entry in the group
+
+                (this._selectedEntry || this._activeEntries[0]).visibility = true;
             }
 
             return this;
