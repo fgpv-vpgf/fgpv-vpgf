@@ -53,9 +53,9 @@ function generateUUID() {
 * @return {Promise} conversion promise resolving into a canvas of the image
 */
 function convertImageToCanvas(url, canvas = null, crossOrigin = true) {
-    canvas = canvas || document.createElement('canvas');
+    canvas = canvas || window.document.createElement('canvas');
 
-    const image = document.createElement('img'); // create image node
+    const image = window.document.createElement('img'); // create image node
 
     if (crossOrigin) {
         image.crossOrigin = 'Anonymous'; // configure the CORS request
@@ -93,13 +93,12 @@ function convertImageToCanvas(url, canvas = null, crossOrigin = true) {
 function convertImagetoDataURL(imageUri, imageType = 'image/png') {
     // this is already a dataUrl, just return
     if (imageUri.startsWith('data')) {
-        console.log('ImageUri is already a data url');
         return Promise.resolve(imageUri);
     }
 
     const loadingPromise = convertImageToCanvas(imageUri)
         .then(canvas => {
-            console.log('Converting image to dataURL');
+            // Converting image to dataURL
             return canvas.toDataURL(imageType);
         })
         .catch(error => {

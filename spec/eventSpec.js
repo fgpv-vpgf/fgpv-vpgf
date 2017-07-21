@@ -8,43 +8,43 @@ function makeFakeLayer(x) {
         on: (e) => {
             return makeFakeEvent(e);
         },
-        'target': x.target,
-        'spatialReference': {'wkid': x.sr}
+        target: x.target,
+        spatialReference: { wkid: x.sr }
     };
 }
 
-function makeFakeEvent(e) {
+function makeFakeEvent() {
     return {
         error: undefined,
         info: null,
         target: '1'
-    }
+    };
 }
 
 describe('events wrapping', () => {
-    const sampleData = {target: 'hello', sr: 4326};
+    const sampleData = { target: 'hello', sr: 4326 };
     const sampleLayer = makeFakeLayer(sampleData);
 
-    afterEach(function() {
+    afterEach(function () {
         sampleLayer.on.calls.reset();
     });
 
     it('should properly convert to the right dojo name', () => {
         const myevent = events();
         spyOn(sampleLayer, 'on');
-        myevent.wrapEvents(sampleLayer, {updateEnd: (x) => {
+        myevent.wrapEvents(sampleLayer, { updateEnd: () => {
             console.log('Hi');
-        }});
+        } });
         expect(sampleLayer.on.calls.mostRecent().args[0]).toEqual('update-end');
     });
 
     it('should trigger a layer event', (done) => {
         const myevent = events();
         spyOn(sampleLayer, 'on').and.callThrough();
-        myevent.wrapEvents(sampleLayer, {updateEnd: (x) => {
+        myevent.wrapEvents(sampleLayer, { updateEnd: (x) => {
             expect(x.target).toEqual(x.layer);
             done();
-            }
+        }
         });
         sampleLayer.on.calls.mostRecent().args[1](makeFakeEvent(sampleData));
     });
@@ -52,10 +52,10 @@ describe('events wrapping', () => {
     it('should trigger a non-layer event', (done) => {
         const myevent = events();
         spyOn(sampleLayer, 'on').and.callThrough();
-        myevent.wrapEvents(sampleLayer, {click: (x) => {
+        myevent.wrapEvents(sampleLayer, { click: () => {
             expect(sampleLayer.on).toHaveBeenCalled();
             done();
-            }
+        }
         });
         sampleLayer.on.calls.mostRecent().args[1](makeFakeEvent(sampleData));
     });

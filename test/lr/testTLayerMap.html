@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tile Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.14/esri/css/esri.css">
+</head>
+<body>
+    <div id="map" style="height: 700px; width: 900px; margin: 0; overflow: hidden;"></div>
+    <p id="mess" />
+    <script src="../../dist/geoapi.js"></script>
+    <script>
+        // http://localhost:6002/test/testDLayer.html
+
+        // testing a dynamic layer sourced from a map server that has tiles
+
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
+
+            var config1 = {
+                id: 'guts',
+                name: 'Tile Test',
+                url: 'http://ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer/',
+                metadataUrl: 'http://www.github.com',
+                layerType: 'esriTile',
+                tolerance: 5,
+                state: {
+                    opacity: 1,
+                    visibility: true,
+                    boundingBox: false,
+                    query: true
+                }
+            };
+           
+            var layerRec = api.layer.createTileRecord(config1);
+            console.log('layer PROOF ', layerRec);
+            var proxy = layerRec.getProxy();
+            console.log('proxy PROOF ', proxy);
+
+            var map = new api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 7, center: [-110, 55] });
+            map.addLayer(layerRec._layer);
+            console.log('mah map', map);
+
+            // hack to wait for layer to load
+
+            var to = setInterval(() => {
+                console.log('hoot');
+                if (layerRec.state === 'rv-loaded') {
+                    console.log('toot');
+                    clearInterval(to);
+                    afterLoadTests();
+                }
+            }, 1000);
+
+            function afterLoadTests() {
+                console.log('enhanced loaded')
+
+
+            }
+
+        });
+    </script>
+</body>
+</html>

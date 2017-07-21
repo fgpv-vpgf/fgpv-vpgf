@@ -1,5 +1,5 @@
-'use strict';
-const proj4 = require('proj4');
+import proj4 from 'proj4';
+
 const terraformer = require('terraformer');
 const teraProj = require('terraformer-proj4js');
 

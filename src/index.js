@@ -1,12 +1,10 @@
 'use strict';
 const attribute = require('./attribute.js');
-const basemap = require('./basemap.js');
 const events = require('./events.js');
 const hilight = require('./hilight.js');
 const layer = require('./layer.js');
 const legend = require('./legend.js');
-const mapManager = require('./mapManager.js');
-const mapPrint = require('./mapPrint.js');
+const esriMap = require('./map/esriMap.js');
 const proj = require('./proj.js');
 const query = require('./query.js');
 const shared = require('./shared.js');
@@ -19,9 +17,7 @@ function initAll(esriBundle, window) {
     api.layer = layer(esriBundle, api);
     api.legend = legend();
     api.proj = proj(esriBundle);
-    api.basemap = basemap(esriBundle);
-    api.mapManager = mapManager(esriBundle, api);
-    api.mapPrint = mapPrint(esriBundle, api);
+    api.Map = esriMap(esriBundle, api);
     api.attribs = attribute(esriBundle, api);
     api.symbology = symbology(esriBundle, api, window);
     api.hilight = hilight(esriBundle, api);

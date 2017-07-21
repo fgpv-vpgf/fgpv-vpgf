@@ -22,11 +22,12 @@
     <script>
         geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             
-
+            api.debug(true);
             
-            var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'terrain', zoom: 6, center: [-100, 60] });
+            var eb = api.esriBundle();
+            map = new eb.Map(document.getElementById('map'), { basemap: 'terrain', zoom: 6, center: [-100, 60] });
 
-            var mahLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0', {mode: api.layer.FeatureLayer.MODE_SNAPSHOT});
+            var mahLayer = new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/JOSM/Oilsands/MapServer/0', {mode: api.layer.FeatureLayer.MODE_SNAPSHOT});
            
             // add highlight layer
             var mahGrafix = api.hilight.makeHilightLayer({
@@ -54,7 +55,7 @@
             map.addLayer(mahLayer);
                        
             map.on('click', function(evt) {  
-                 mahGrafix.addPin(evt.mapPoint);
+                 mahGrafix.addMarker(evt.mapPoint);
                             
             });
             
@@ -68,11 +69,17 @@
                 return api.hilight.cloneLayerGraphic(dumb);
             }
             
-            mahLayer.on('update-end', function(evt) {           
-                mahGrafix.addHilight(findId(479));
+            mahLayer.on('update-end', function(evt) {         
+                //mahLayer.setVisibility(false);  
+                mahGrafix.addHilight(findId(1479));
+                console.log('g 1', mahGrafix.graphics[0]);
+                mahLayer.setOpacity(0.3);
                 
                 setTimeout(() => {
-                    mahGrafix.addHilight(findId(358));
+                    mahLayer.setOpacity(1);
+                    mahGrafix.addHilight(findId(1977));
+                    console.log('g 2', mahGrafix.graphics[0]);
+                    mahLayer.setOpacity(0.3);
                 }, 5000);
 
                 setTimeout(() => {
@@ -80,7 +87,10 @@
                 }, 10000);
 
                 setTimeout(() => {
-                    mahGrafix.addHilight([findId(358), findId(479)]);
+                    mahLayer.setOpacity(1);
+                    mahGrafix.addHilight([findId(1859), findId(1738)]);
+                    console.log('g 3', mahGrafix.graphics[0]);
+                    mahLayer.setOpacity(0.3);
                 }, 15000);
 
             });

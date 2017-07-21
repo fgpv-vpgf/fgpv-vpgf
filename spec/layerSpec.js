@@ -13,7 +13,8 @@ describe('Layer', () => {
             getProjection: () => Promise.resolve(null),
             projectGeojson: () => { return; }
         },
-        shared: { generateUUID: () => 'layer0' }
+        shared: { generateUUID: () => 'layer0' },
+        events: { wrapEvents: () => { return; } }
     };
     beforeEach(() => {
         layer = layerBuilder(mockEsri, mockGapi);
@@ -22,8 +23,8 @@ describe('Layer', () => {
     it('should use 4326 as a default projection for GeoJSON', (done) => {
         const geojsonTestPoint = require('./geojsonTestPoint.json');
         spyOn(mockGapi.proj, 'projectGeojson');
-        const res = layer.makeGeoJsonLayer(geojsonTestPoint, {targetWkid: 54004});
-        res.then(x => {
+        const res = layer.makeGeoJsonLayer(geojsonTestPoint, { targetWkid: 54004 });
+        res.then(() => {
             const args = mockGapi.proj.projectGeojson.calls.mostRecent().args;
             expect(args[1]).toEqual('EPSG:54004');
             expect(args[2]).toEqual('EPSG:4326');
