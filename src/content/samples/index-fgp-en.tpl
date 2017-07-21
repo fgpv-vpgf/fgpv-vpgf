@@ -563,11 +563,10 @@
     <% } %>
 
     <script>
-        function init() {
-            const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-            RV.getMap('fgpmap').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-            RV.getMap('fgpmap').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
-        }
+
+        const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
+        RV.getMap('fgpmap').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
+        RV.getMap('fgpmap').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
 
         function queryStringToJSON(q) {
             var pairs = q.search.slice(1).split('&');
