@@ -267,7 +267,7 @@ function isSpatialRefEqual(sr1, sr2) {
 
 module.exports = function (esriBundle) {
     // TODO: Move Point and SpatialReference to its own (geometry) module
-
+    // TODO some of the hardcoded 102### projections might be removed after https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2234
     // TODO consider moving this elsewhere.  state is bad, but these are common, and we have no service for esri defs
     proj4.defs('EPSG:3978', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 ' +
         '+lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
@@ -276,6 +276,10 @@ module.exports = function (esriBundle) {
     proj4.defs('EPSG:54004', '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 ' +
         '+datum=WGS84 +units=m +no_defs');
     proj4.defs('EPSG:102100', proj4.defs('EPSG:3857'));
+    proj4.defs('EPSG:102187', '+proj=tmerc +lat_0=0 +lon_0=-114 +k=0.9999 +x_0=0 +y_0=0 ' +
+        '+ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+    proj4.defs('EPSG:102190', '+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 ' +
+        '+x_0=1000000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
 
     // add UTM projections
     let utm = 1;
