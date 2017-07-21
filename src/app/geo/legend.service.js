@@ -211,7 +211,19 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
          * @private
          */
         function _resolve() {
-            layerRegistry.removeLayerRecord(legendBlock.layerRecordId);
+            // FIXME: in cases of removing dynamic children, they also need to be removed from the structure returned by `layerRecord.getChildTree()`
+            // without this, loading from the bookmark, removed dynamic children will come back with their visibility set to "off"
+
+            // check if any other blocks reference this layer record
+            // if none found, it's safe to remove the layer record
+            const isSafeToRemove = legendBlocks
+                .walk(entry => entry.layerRecordId === legendBlock.layerRecordId)
+                .filter(a => a)
+                .length === 0;
+
+            if (isSafeToRemove) {
+                layerRegistry.removeLayerRecord(legendBlock.layerRecordId);
+            }
 
             // remove any bounding box layers associated with this legend block
             _boundingBoxRemoval(legendBlock);
