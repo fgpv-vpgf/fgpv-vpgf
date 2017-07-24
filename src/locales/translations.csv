@@ -90,8 +90,8 @@ Filter pane menu label for show Filters,filter.menu.showfilters,Show Filters,1,A
 Geosearch text place holder,geosearch.text.placeholder,Search Text,1,Texte à rechercher,1
 Geosearch province filter label,geosearch.label.province,Province,1,Province,1
 Geosearch type filter label,geosearch.label.type,Type,1,Type,1
-Geosearch extent filter label,geosearch.aria.extent,Visible,1,Visible seulement,1
-Geosearch extent filter label,geosearch.label.extent,Visible,1,Visible seulement,1
+Geosearch extent filter label,geosearch.aria.extent,Visible on map,1,Visible sur la carte,1
+Geosearch extent filter label,geosearch.label.extent,Visible on map,1,Visible sur la carte,1
 Geosearch scale type,geosearch.type.scale,Scale,1,Échelle,1
 Geosearch lat/long type,geosearch.type.latlong,Latitude/Longitude,1,Latitude/Longitude,1
 Geosearch FSA type,geosearch.type.fsa,Postal Code,1,Code postal,1
