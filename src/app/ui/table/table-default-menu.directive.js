@@ -42,7 +42,7 @@ function Controller($scope, stateManager, events, tableService, appInfo, $rootSc
     self.tableMode = stateManager.state.table.morph;
     self.applyFilter = tableService.setActive; // use by filter by extent
     self.filter = tableService.filter;
-    self.showTable = showTable;
+    self.showFilters = showFilters;
     self.dataPrint = dataPrint;
     self.dataExportCSV = dataExportCSV;
     self.appID = appInfo.id;
@@ -50,8 +50,9 @@ function Controller($scope, stateManager, events, tableService, appInfo, $rootSc
     // check if filter size is modified from outside this directive and apply the filter mode. This can happen if config table wants the panel maximize on open.
     $rootScope.$watch(() => stateManager.state.table.morph, val => { self.tableMode = val });
 
-    function showTable() {
-        layoutService.isTableVisible = self.filter.isOpen;
+    function showFilters() {
+        stateManager.display.table.data.filter.isOpen = self.filter.isOpen;
+        layoutService.isFiltersVisible = stateManager.display.table.data.filter.isOpen;
     }
 
     function setMode(mode) {
