@@ -158,6 +158,8 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
             .then(({ options: layerSourceOptions, preselectedIndex }) => {
                 self.layerSourceOptions = layerSourceOptions;
                 self.layerSource = layerSourceOptions[preselectedIndex];
+                // when isThinking is false we know the user canceled
+                return !connect.step.isThinking;
             })
             .catch(error => {
                 toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false);
@@ -193,6 +195,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         const connect = self.connect;
 
         connect.serviceUrl = '';
+        connect.step.isThinking = false;
         connect.form.$setPristine();
         connect.form.$setUntouched();
 
