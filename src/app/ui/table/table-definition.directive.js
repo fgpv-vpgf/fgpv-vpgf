@@ -36,7 +36,7 @@ const FILTERS = {
             prevent: angular.noop
         }
     },
-    date: {
+    'rv-date': {
         name: 'rv-filter-date',
         scope: null,
         self: {
@@ -99,7 +99,7 @@ const FILTERS_TEMPLATE = {
                         ng-disabled="self.${column}.static" />
             </md-input-container>
         </div>`,
-    date: column =>
+    'rv-date': column =>
         `<div class="rv-filter-date" ng-show="self.${column}.filtersVisible">
             <md-datepicker
                 ng-click="self.prevent($event)"
@@ -166,7 +166,7 @@ function rvTableDefinition(stateManager, events, $compile, tableService, layoutS
             number: {
                 callback: 'onFilterNumberChange'
             },
-            date: {
+            'rv-date': {
                 callback: 'onFilterDateChange'
             }
         };
@@ -221,7 +221,7 @@ function rvTableDefinition(stateManager, events, $compile, tableService, layoutS
                         // set string filter from existing value
                         if (column.type === 'number') {
                             setNumberFilter(filterInfo.scope, i);
-                        } else if (column.type === 'date') {
+                        } else if (column.type === 'rv-date') {
                             setDateFilter(filterInfo.scope, i);
                         } else if (column.type === 'string') {
                             const val = `^${column.filter.value.replace(/\*/g, '.*')}.*$`;

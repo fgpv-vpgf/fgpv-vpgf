@@ -179,7 +179,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
                     } else if (column.type === 'number') {
                         column.filter.min = '';
                         column.filter.max = '';
-                    } else if (column.type === 'date') {
+                    } else if (column.type === 'rv-date') {
                         column.filter.min = null;
                         column.filter.max = null;
                     }
@@ -277,7 +277,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             if (max !== '') {
                 defs.push(`${column.name} <= ${max}`);
             }
-        } else if (column.type === 'date') {
+        } else if (column.type === 'rv-date') {
             const min = column.filter.min;
             const max = column.filter.max;
 
