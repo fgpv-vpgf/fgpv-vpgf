@@ -107,6 +107,7 @@ $result-item-height-touch: rem(4.8);
                         padding: 0 18px;
 
                         .rv-results-item-tooltip {
+                            top: 0;
                             display: flex;
                             position: absolute;
                             background-color:  $divider-color-light;
@@ -121,7 +122,7 @@ $result-item-height-touch: rem(4.8);
                         // If we set 'to' and change keyframe values in javascript page reload in Safari
                         @keyframes anim {
                             from { left: 0%; }
-                            to { }
+                            to { left: -10%; }
                         }
 
                         .rv-results-item-main {
