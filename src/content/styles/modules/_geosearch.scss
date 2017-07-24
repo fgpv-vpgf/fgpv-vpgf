@@ -115,14 +115,14 @@ $result-item-height-touch: rem(4.8);
                             white-space: nowrap;
                             padding: 0 rem(2) 0 rem(2);
                             min-width: rem(40);
-                            animation: anim 3s infinite alternate ease-in-out;
+                            animation: anim 4s infinite alternate ease-in-out;
                         }
 
                         // Will not work in Safari because they can't have to empty
                         // If we set 'to' and change keyframe values in javascript page reload in Safari
                         @keyframes anim {
                             from { left: 0%; }
-                            to { left: -10%; }
+                            to { left: -100%; }
                         }
 
                         .rv-results-item-main {
