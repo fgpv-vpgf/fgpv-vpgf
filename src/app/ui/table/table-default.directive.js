@@ -110,7 +110,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             number: {
                 init: () => ({ min: '', max: '', static: false })
             },
-            date: {
+            'rv-date': {
                 init: () => ({ min: null, max: null, static: false })
             }
         };
@@ -165,6 +165,9 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
 
             // initialize columns
             const order = initColumns();
+
+            // define pre-deformatting function for date columns
+            $.fn.dataTable.ext.order['rv-date-pre'] = d => parseInt(d.replace(/\D/g,''));
 
             // ~~I hate DataTables~~ Datatables are cool!
             self.table = tableNode
@@ -296,7 +299,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                                 displayData.rows.forEach(r => { r[field.name] = $filter('dateTimeZone')(r[field.name]) });
                                 const width = getColumnWidth(column.title, 0, 400, 375);
                                 column.width =  `${width}px`;
-                                column.type = 'date';
+                                column.type = 'rv-date';
                             } else {
                                 const width = getColumnWidth(column.title, 0, 250, 120);
                                 column.width = `${width}px`;
