@@ -489,6 +489,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         service.filter.isOpen = filter.isOpen;
 
         // check if we need to show the filters (need this check when table is created)
+        // always show filters if settings panel is open
         layoutService.isFiltersVisible = service.isSettingOpen ? true : service.filter.isOpen;
 
         // set layer type to see if we show apply filter button. Only works on feature/dynamic layer
