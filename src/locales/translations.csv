@@ -73,7 +73,7 @@ Details pane title,details.title,Feature Information,1,Information sur l'éléme
 Details pane aria label for expand button,details.aria.expand,Expand,1,Agrandir,1
 Details pane tooltip for expand button,details.tooltip.expand,Expand,1,Agrandir,1
 Details pane label for no result,details.label.noresult,Nothing found,1,Aucun résultat,1
-Details pane label for searching,details.label.searching,Searching ...,1,[fr] Searching ...,0
+Details pane label for searching,details.label.searching,Searching ...,1,Recherche ...,1
 Content pane aria label for close button,contentPane.aria.close,Close,1,Fermer,1
 Content pane tooltip for close button,contentPane.tooltip.close,Close,1,Fermer,1
 Filter pane title prefix,filter.title,Features: ,1,Éléments : ,1
@@ -90,8 +90,8 @@ Filter pane menu label for show Filters,filter.menu.showfilters,Show Filters,1,A
 Geosearch text place holder,geosearch.text.placeholder,Search Text,1,Texte à rechercher,1
 Geosearch province filter label,geosearch.label.province,Province,1,Province,1
 Geosearch type filter label,geosearch.label.type,Type,1,Type,1
-Geosearch extent filter label,geosearch.aria.extent,Visible,1,Visible seulement,1
-Geosearch extent filter label,geosearch.label.extent,Visible,1,Visible seulement,1
+Geosearch extent filter label,geosearch.aria.extent,Visible on map,1,Visible sur la carte,1
+Geosearch extent filter label,geosearch.label.extent,Visible on map,1,Visible sur la carte,1
 Geosearch scale type,geosearch.type.scale,Scale,1,Échelle,1
 Geosearch lat/long type,geosearch.type.latlong,Latitude/Longitude,1,Latitude/Longitude,1
 Geosearch FSA type,geosearch.type.fsa,Postal Code,1,Code postal,1
@@ -185,9 +185,9 @@ Table of Content remove action label,toc.label.action.remove,undo,1,annuler,1
 Table of Content filters label,toc.label.filters,,1,,1
 Table of Content filters tootlip,toc.tooltip.filters,,1,,1
 Table of Content feature layer flag label,toc.label.flag.feature,ESRI Feature Layer {{content}},1,Couche d'éléments d'ESRI {{content}},1
-,toc.label.flag.unresolved,Detecting layer type...,1,[fr] Detecting layer type...,0
-,toc.label.flag.unresolved,Cannot determine layer type,1,[fr] Cannot determine layer type,0
-,toc.label.flag.unsupportedprojection,Cannot display layer in the current projection,1,[fr]Cannot display layer in current projection,0
+,toc.label.flag.unresolved,Detecting layer type...,1,Détection du type de couche...,1
+,toc.label.flag.unresolved,Cannot determine layer type,1,Impossible de déterminer le type de couche,1
+,toc.label.flag.unsupportedprojection,Cannot display layer in the current projection,1,Impossible d'afficher la couche dans la projection actuelle,1
 Table of Content feature layer flag tootlip,toc.tooltip.flag.feature,ESRI Feature Layer {{content}},1,Couche d'éléments d'ESRI {{content}},1
 Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic Layer {{content}},1,Couche dynamique d'ESRI {{content}},1
 Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer {{content}},1,Couche dynamique d'ESRI {{content}},1
@@ -234,7 +234,7 @@ Geometry types,geometry.type.generic,feature|features,1,élément|éléments,1
 Geometry types,geometry.type.esriGeometryPoint,point|points,1,point|points,1
 Geometry types,geometry.type.esriGeometryPolygon,polygon|polygons,1,polygone|polygones,1
 Geometry types,geometry.type.esriGeometryPolyline,line|lines,1,ligne|lignes,1
-Geometry types,geometry.type.imagery,imagery,1,[fr]imagery,0
+Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,export.close,Close,1,Fermer,1
 ,export.save,Save,1,Sauver,1
 ,export.download,Download,1,Télécharger,1
@@ -305,13 +305,13 @@ Geometry types,geometry.type.imagery,imagery,1,[fr]imagery,0
 ,import.service.type.wms,OGC Web Map Service,1,Couche WMS de l'OGC,1
 ,import.service.type.rasterlayer,Raster Layer,1,Couche Raster,1
 ,import.service.configure.title,Configure layer,1,Configurer la couche,1
-,import.service.configure.groupname,Group Name,1,[fr] Group Name,0
+,import.service.configure.groupname,Group Name,1,Nom de groupe,1
 ,import.service.configure.layername,Layer Name,1,Nom de la couche,1
 ,import.service.configure.primaryfield,Primary Field,1,Champ clé,1
 ,import.service.configure.layers,Layers,1,Couches,1
 ,import.service.configure.multipleselection,You can select several layers,1,Vous pouvez sélectionner plusieurs couches,1
-,import.service.configure.selectall,Select All,1,Tout Sélectionner,0
-,import.service.configure.singleentrycollapse,Display as a group,1,[fr],0
+,import.service.configure.selectall,Select All,1,Tout Sélectionner,1
+,import.service.configure.singleentrycollapse,Display as a group,1,Affichage en groupe,1
 ,stepper.continue,Continue,1,Continuer,1
 ,stepper.unresponsive,The application may feel unresponsive for a short time upon clicking the Continue button. This is normal while data is being processed.,1,L'application peut ne pas répondre pendant un court laps de temps après avoir cliqué sur le bouton Continuer. Cette situation est normale pendant le traitement des données.,1
 ,stepper.cancel,Cancel,1,Annuler,1
