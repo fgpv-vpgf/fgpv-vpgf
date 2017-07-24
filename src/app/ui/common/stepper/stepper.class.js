@@ -127,16 +127,16 @@ function StepperFactory($q) {
             // create a cancel promise for the move can be canceled by calling `cancelMove` on the stepper instance
             // technically, it's a deferred
             const cancelPromise = $q(resolve =>
-                (this._resolveCancelPromise = resolve)).then(() =>
-                    (isMoveCanceled = true));
+                (this._resolveCancelPromise = resolve)).then(() => {
+                    isMoveCanceled = true;
+                    this._think(currentStep, false);
+                });
 
             // TODO: switch to $q.race when we update to Angular 1.5+
             // wraps regular promise in $q since Promise doesn't have `finally`
             // can't use Promise.race - it resolves on reject: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
-            $q.when(continuePromise.then(isCanceled => {
-                // when isCanceled is true we know the user canceled the step move sometime between the promise being created and it being resolved.
-                // in any case, do not move forward when the user canceled
-                if (!isMoveCanceled && isCanceled !== true) {
+            $q.when(continuePromise.then(() => {
+                if (!isMoveCanceled) {
 
                     // TODO: it's possible to click the `cancel/continue` button at the moment when the transition to a differnt step starts and this will yo-yo stepper in place
                     // one solution would be to disable `cancel/continue` buttons when transition starts
@@ -196,6 +196,8 @@ function StepperFactory($q) {
          * @return {Object}            itself for chaining
          */
         _reset(step) {
+            this.cancelMove();
+
             if (angular.isFunction(step.reset)) {
                 step.reset();
             }
