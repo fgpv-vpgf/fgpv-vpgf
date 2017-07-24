@@ -338,7 +338,8 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                         isApplied: true,
                         isActive: false,
                         isMapFiltered: false,
-                        isInit: false
+                        isInit: false,
+                        isOpen: true
                     };
                 }
 
