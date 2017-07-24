@@ -486,9 +486,10 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         service.filter.isActive = filter.isActive;
         service.filter.isApplied = filter.isApplied;
         service.filter.isMapFiltered = filter.isMapFiltered;
+        service.filter.isOpen = filter.isOpen;
 
         // check if we need to show the filters (need this check when table is created)
-        layoutService.isFiltersVisible = service.filter.isOpen;
+        layoutService.isFiltersVisible = service.isSettingOpen ? true : service.filter.isOpen;
 
         // set layer type to see if we show apply filter button. Only works on feature/dynamic layer
         // user added layer (layer created by value from a feature collection like CSV file) does not support definition expressions and time definitions)
