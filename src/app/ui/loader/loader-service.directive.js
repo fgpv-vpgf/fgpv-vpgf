@@ -195,7 +195,6 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         const connect = self.connect;
 
         connect.serviceUrl = '';
-        connect.step.isThinking = false;
         connect.form.$setPristine();
         connect.form.$setUntouched();
 
