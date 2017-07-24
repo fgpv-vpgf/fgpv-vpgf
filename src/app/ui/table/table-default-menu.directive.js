@@ -52,7 +52,7 @@ function Controller($scope, stateManager, events, tableService, appInfo, $rootSc
 
     function showFilters() {
         stateManager.display.table.data.filter.isOpen = self.filter.isOpen;
-        layoutService.isFiltersVisible = stateManager.display.table.data.filter.isOpen;
+        layoutService.isFiltersVisible = tableService.isSettingOpen ? true : stateManager.display.table.data.filter.isOpen;
     }
 
     function setMode(mode) {
