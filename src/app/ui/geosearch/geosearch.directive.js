@@ -91,7 +91,7 @@ function Controller(geosearchService, events, debounceService) {
 
         // check it the text exceed the menu width. If so, set the animation so text will move and
         // user will be able to see it.
-        div.style.left = $(div).width() > 380 ? `${360 - $(div).width()}px` : 0;
+        div.style.left = div.clientWidth > 380 ? `${360 - div.clientWidth}px` : 0;
     }
 
     /**
