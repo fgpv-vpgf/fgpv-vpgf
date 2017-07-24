@@ -51,7 +51,8 @@ function Controller($scope, stateManager, events, tableService, appInfo, $rootSc
     $rootScope.$watch(() => stateManager.state.table.morph, val => { self.tableMode = val });
 
     function showFilters() {
-        layoutService.isFiltersVisible = self.filter.isOpen;
+        stateManager.display.table.data.filter.isOpen = self.filter.isOpen;
+        layoutService.isFiltersVisible = stateManager.display.table.data.filter.isOpen;
     }
 
     function setMode(mode) {
