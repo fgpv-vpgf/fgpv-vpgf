@@ -127,8 +127,10 @@ function StepperFactory($q) {
             // create a cancel promise for the move can be canceled by calling `cancelMove` on the stepper instance
             // technically, it's a deferred
             const cancelPromise = $q(resolve =>
-                (this._resolveCancelPromise = resolve)).then(() =>
-                    (isMoveCanceled = true));
+                (this._resolveCancelPromise = resolve)).then(() => {
+                    isMoveCanceled = true;
+                    this._think(currentStep, false);
+                });
 
             // TODO: switch to $q.race when we update to Angular 1.5+
             // wraps regular promise in $q since Promise doesn't have `finally`
@@ -194,6 +196,8 @@ function StepperFactory($q) {
          * @return {Object}            itself for chaining
          */
         _reset(step) {
+            this.cancelMove();
+
             if (angular.isFunction(step.reset)) {
                 step.reset();
             }
