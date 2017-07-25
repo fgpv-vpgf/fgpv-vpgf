@@ -107,6 +107,7 @@ $result-item-height-touch: rem(4.8);
                         padding: 0 18px;
 
                         .rv-results-item-tooltip {
+                            top: 0;
                             display: flex;
                             position: absolute;
                             background-color:  $divider-color-light;
