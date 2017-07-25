@@ -1,5 +1,3 @@
-import 'canvas-to-blob';
-
 const FileSaver = require('file-saver');
 const templateUrl = require('./export.html');
 
