@@ -544,10 +544,36 @@ function validateCSV(data) {
         } else {
             // check field counts of each row
             if (rows.every(rowArr => rowArr.length === fc)) {
+                // regex values
+                const latValueRegex = new RegExp(/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/);
+                const longValueRegex = new RegExp(/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/);
+                const latNameRegex = new RegExp(/^.*(y|la).*$/i);
+                const longNameRegex = new RegExp(/^.*(x|lo).*$/i);
+
+                // candidate fields for latitude and longitude
+                const latCandidates = findCandidates(rows, latValueRegex, latNameRegex);
+                const longCandidates = findCandidates(rows, longValueRegex, longNameRegex);
+
+                // reject if no latitude or longitude candidates were found
+                if (latCandidates.length === 0 || longCandidates.length === 0) {
+                    return Promise.reject(new Error('Invalid csv format'));
+                }
 
                 const res = {
                     formattedData,
-                    smartDefaults: guessCSVfields(rows), // calculate smart defaults
+
+                    // default display fields
+                    smartDefaults: guessCSVfields(rows, latCandidates, longCandidates),
+
+                    // candidate fields for latitude and longitude wrapped in an object with an esri type
+                    latFields: latCandidates.map(field => ({
+                        name: field,
+                        type: 'esriFieldTypeString'
+                    })),
+                    longFields: longCandidates.map(field => ({
+                            name: field,
+                            type: 'esriFieldTypeString'
+                    })),
 
                     // make field list esri-ish for consistancy
                     fields: rows[0].map(field => ({
@@ -608,21 +634,7 @@ function validateFile(type, data) {
  * @param  {Array} rows csv data
  * @return {Object}      an object with lat and long string properties indicating corresponding field names
  */
-function guessCSVfields(rows) {
-    // magic regexes
-    // TODO: in case of performance issues with running regexes on large csv files, limit to, say, the first hundred rows
-    // TODO: explain regexes
-    const latValueRegex = new RegExp(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/); // filters by field value
-    const longValueRegex = new RegExp(/^[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/);
-    const latNameRegex = new RegExp(/^.*(y|la).*$/i); // filters by field name
-    const longNameRegex = new RegExp(/^.*(x|lo).*$/i);
-
-    const latCandidates = findCandidates(rows, latValueRegex, latNameRegex); // filter out all columns that are not lat based on row values
-    const longCandidates = findCandidates(rows, longValueRegex, longNameRegex); // filter out all columns that are not long based on row values
-
-    // console.log(latCandidates);
-    // console.log(longCandidates);
-
+function guessCSVfields(rows, latCandidates, longCandidates) {
     // pick the first lat guess or null
     const lat = latCandidates[0] || null;
 
@@ -637,18 +649,28 @@ function guessCSVfields(rows) {
         long,
         primary
     };
+}
 
-    function findCandidates(rows, valueRegex, nameRegex) {
-        const fields = rows[0]; // first row must be headers
+/**
+ * Find the suitable candidate fields that passes the regular expressions specified
+ *
+ * @method findCandidates
+ * @private
+ * @param  {Array} rows csv data
+ * @param {RegExp} regular expression for the value of the field
+ * @param {RegExp} regular expression for the name of the filed
+ * @return {Array} a list of suitable candidate fields
+ */
+function findCandidates(rows, valueRegex, nameRegex) {
+    const fields = rows[0]; // first row must be headers
 
-        const candidates =
-            fields.filter((field, index) =>
-                rows.every((row, rowIndex) =>
-                    rowIndex === 0 || valueRegex.test(row[index]))) // skip first row as its just headers
-            .filter(field => nameRegex.test(field));
+    const candidates =
+        fields.filter((field, index) =>
+            rows.every((row, rowIndex) =>
+                rowIndex === 0 || valueRegex.test(row[index]))) // skip first row as its just headers
+        .filter(field => nameRegex.test(field));
 
-        return candidates;
-    }
+    return candidates;
 }
 
 function serverLayerIdentifyBuilder(esriBundle) {
