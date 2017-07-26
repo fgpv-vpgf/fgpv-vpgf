@@ -27,11 +27,7 @@
     "datatables.net-select": "^1.2.2",
     "dotjem-angular-tree": "github:dotJEM/angular-tree",
     "file-saver": "^1.3.3",
-<<<<<<< 8791e824d61bdba8eb696ebd8eabf10daadf59c1
-    "geoApi": "github:fgpv-vpgf/geoApi#v2.0.1-3",
-=======
     "geoApi": "github:fgpv-vpgf/geoApi#v2.1.0-1",
->>>>>>> fix(geo): custom overview and bugs
     "gsap": "^1.19.1",
     "jquery": "^2.2.1",
     "jquery-hoverintent": "^1.8.2",
