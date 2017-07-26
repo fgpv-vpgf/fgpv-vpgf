@@ -209,11 +209,24 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         };
         const layerCode = typeToCode[layerDefinition.layerType];
 
+        // determines what states we should inspect dynamic children
+        // for bookmark. if not loaded & stable, we ignore children
+        // and let them go back to default when bookmark loads
+        const goodState = state => {
+            switch (state) {
+                case Geo.Layer.States.ERROR:
+                case Geo.Layer.States.LOADING:
+                case Geo.Layer.States.NEW:
+                    return false;
+                default:
+                    return true;
+            }
+        };
+
         // Children Info (calculate first so we have the count when doing layer settings)
         let childItems = [];
-        // errored dynamic layers have no child tree, skip this step
         if (layerCode === typeToCode[types.ESRI_DYNAMIC] && layerDefinition.layerEntries &&
-            layerRecord.state !== Geo.Layer.States.ERROR) {
+            goodState(layerRecord.state)) {
 
             // walk the child tree encoding each child
             // we need to be aware of hierarchy here (at least on the top level).
