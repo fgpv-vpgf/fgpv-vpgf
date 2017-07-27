@@ -389,6 +389,11 @@ rv-table-setting-panel {
                 &.md-input-invalid .md-input {
                     border-color: $alert-color;
                 }
+
+                // remove clear button rendered by IE;
+                input::-ms-clear {
+                    display: none;
+                }
             }
         }
     }
