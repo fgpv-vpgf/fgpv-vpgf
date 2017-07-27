@@ -651,7 +651,7 @@ function guessCSVfields(rows, latCandidates, longCandidates) {
     // pick the candidate most likely to be the longitude
     let long = longCandidates.find(field => field !== lat) || null;
     for (let j in longCandidates) {
-        if (longNameRegex.test(longCandidates[j])) {
+        if (longNameRegex.test(longCandidates[j]) && longCandidates[j] !== lat) {
             long = longCandidates[j];
             break;
         }
