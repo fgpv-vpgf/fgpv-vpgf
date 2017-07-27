@@ -143,8 +143,8 @@ function LayerSourceInfoFactory(Geo, gapiService) {
 
         validate () {
             const validationPromise = super.validate().then(validationResult => {
-                this.latDefaultfield = validationResult.smartDefaults.lat;
-                this.longDefaultfield = validationResult.smartDefaults.long;
+                this.latfield = validationResult.smartDefaults.lat;
+                this.lonfield = validationResult.smartDefaults.long;
                 this.latFields = validationResult.latFields;
                 this.longFields = validationResult.longFields;
 
