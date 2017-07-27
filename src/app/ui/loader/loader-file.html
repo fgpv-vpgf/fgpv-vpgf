@@ -151,7 +151,7 @@
                             md-on-open="self.configure.configureResetValidation()"
                             ng-model="self.layerSource.latfield"
                             required>
-                            <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                            <md-option ng-repeat="field in self.layerSource.latFields" value="{{ field.name }}">
                                 {{ field.name }}
                             </md-option>
                         </md-select>
@@ -167,7 +167,7 @@
                             md-on-open="self.configure.configureResetValidation()"
                             ng-model="self.layerSource.lonfield"
                             required>
-                            <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                            <md-option ng-repeat="field in self.layerSource.longFields" value="{{ field.name }}">
                                 {{ field.name }}
                             </md-option>
                         </md-select>
